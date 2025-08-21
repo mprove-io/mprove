@@ -12,9 +12,6 @@ import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface DeleteProjectDialogData {
   apiService: ApiService;
@@ -50,11 +47,11 @@ export class DeleteProjectDialogComponent implements OnInit {
   }
 
   delete() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendDeleteProjectRequestPayload = {
+    let payload: ToBackendDeleteProjectRequestPayload = {
       projectId: this.ref.data.projectId
     };
 
@@ -62,18 +59,17 @@ export class DeleteProjectDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteProject,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteProjectResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteProjectResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             localStorage.setItem(
-              constants.LOCAL_STORAGE_DELETED_PROJECT_NAME,
+              LOCAL_STORAGE_DELETED_PROJECT_NAME,
               this.ref.data.projectName
             );
-            this.router.navigate([common.PATH_PROJECT_DELETED]);
+            this.router.navigate([PATH_PROJECT_DELETED]);
             this.navQuery.clearProjectAndDeps();
             this.projectQuery.reset();
           }

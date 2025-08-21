@@ -8,10 +8,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import { ChartTypeItem } from '../../models/models.component';
 import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';
 
@@ -35,25 +32,24 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
   yAxisIndexList: number[];
 
   @Output() chartSeriesElementUpdate =
-    new EventEmitter<interfaces.EventChartSeriesElementUpdate>();
+    new EventEmitter<EventChartSeriesElementUpdate>();
 
-  @Output() chartToggleSeries =
-    new EventEmitter<interfaces.EventChartToggleSeries>();
+  @Output() chartToggleSeries = new EventEmitter<EventChartToggleSeries>();
 
   seriesTypesList: ChartTypeItem[] = [
     {
       label: 'Line',
-      value: common.ChartTypeEnum.Line,
+      value: ChartTypeEnum.Line,
       iconPath: 'assets/charts/line.svg'
     },
     {
       label: 'Bar',
-      value: common.ChartTypeEnum.Bar,
+      value: ChartTypeEnum.Bar,
       iconPath: 'assets/charts/bar_vertical.svg'
     }
   ];
 
-  seriesTypeEnum = common.ChartTypeEnum;
+  seriesTypeEnum = ChartTypeEnum;
 
   seriesTypeForm: FormGroup = this.fb.group({
     seriesType: [undefined]
@@ -77,16 +73,16 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
     });
   }
 
-  seriesTypeChange(newSeriesTypeValue?: common.ChartTypeEnum) {
+  seriesTypeChange(newSeriesTypeValue?: ChartTypeEnum) {
     (document.activeElement as HTMLElement).blur();
 
-    if (common.isDefined(newSeriesTypeValue)) {
+    if (isDefined(newSeriesTypeValue)) {
       this.seriesTypeForm.controls['seriesType'].setValue(newSeriesTypeValue);
     }
 
     let seriesType = this.seriesTypeForm.controls['seriesType'].value;
 
-    let newSeriesPart: common.MconfigChartSeries = {
+    let newSeriesPart: MconfigChartSeries = {
       type: seriesType
     };
 
@@ -102,7 +98,7 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
 
     let yAxisIndex = this.yAxisIndexForm.controls['yAxisIndex'].value;
 
-    let newSeriesPart: common.MconfigChartSeries = {
+    let newSeriesPart: MconfigChartSeries = {
       yAxisIndex: yAxisIndex
     };
 
@@ -116,7 +112,7 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
   emitChartToggleSeries(item: { dataRowId?: string; dataField?: string }) {
     let { dataRowId, dataField } = item;
 
-    let event: interfaces.EventChartToggleSeries = {
+    let event: EventChartToggleSeries = {
       seriesDataRowId: dataRowId,
       seriesDataField: dataField
     };
@@ -127,11 +123,11 @@ export class ChartEditorSeriesElementComponent implements OnChanges {
   emitChartSeriesElementUpdate(item: {
     seriesDataRowId: string;
     seriesDataField: string;
-    seriesPart: common.MconfigChartSeries;
+    seriesPart: MconfigChartSeries;
   }) {
     let { seriesDataRowId, seriesDataField, seriesPart } = item;
 
-    let event: interfaces.EventChartSeriesElementUpdate = {
+    let event: EventChartSeriesElementUpdate = {
       seriesDataRowId: seriesDataRowId,
       seriesDataField: seriesDataField,
       seriesPart: seriesPart

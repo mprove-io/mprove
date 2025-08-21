@@ -5,7 +5,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -15,18 +14,18 @@ import { common } from '~front/barrels/common';
 export class StatusRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
-  spinnerName = common.makeId();
-  queryStatusEnum = common.QueryStatusEnum;
+  spinnerName = makeId();
+  queryStatusEnum = QueryStatusEnum;
 
   timeColumnsLimit: number;
   isLimitReached = false;
   isRunning = false;
   topQueryError: string;
 
-  timeSpec: common.TimeSpecEnum;
-  timeSpecDetail: common.DetailUnitEnum;
+  timeSpec: TimeSpecEnum;
+  timeSpecDetail: DetailUnitEnum;
 
-  someRowsHaveFormulaErrors = common.SOME_ROWS_HAVE_FORMULA_ERRORS;
+  someRowsHaveFormulaErrors = SOME_ROWS_HAVE_FORMULA_ERRORS;
 
   agInit(params: ICellRendererParams<DataRow>) {
     this.checkParams(params);
@@ -43,26 +42,26 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
     this.params = params;
 
     this.topQueryError =
-      params.data.rowType === common.RowTypeEnum.Formula
+      params.data.rowType === RowTypeEnum.Formula
         ? params.data.topQueryError
         : undefined;
 
     this.isRunning =
-      this.params.data.query?.status === common.QueryStatusEnum.Running ||
-      (this.params.data.rowType === common.RowTypeEnum.Formula &&
+      this.params.data.query?.status === QueryStatusEnum.Running ||
+      (this.params.data.rowType === RowTypeEnum.Formula &&
         this.params.column.getColDef().type === 'running');
 
     this.timeColumnsLimit = this.reportQuery.getValue().timeColumnsLimit;
 
     this.timeSpec = this.reportQuery.getValue().timeSpec;
-    this.timeSpecDetail = common.getTimeSpecDetail({
+    this.timeSpecDetail = getTimeSpecDetail({
       timeSpec: this.timeSpec,
       weekStart: this.structQuery.getValue().weekStart
     });
 
     this.isLimitReached =
-      this.params.data.query?.status === common.QueryStatusEnum.Completed &&
-      this.timeSpec === common.TimeSpecEnum.Timestamps &&
+      this.params.data.query?.status === QueryStatusEnum.Completed &&
+      this.timeSpec === TimeSpecEnum.Timestamps &&
       this.params.data.query.data.length === this.timeColumnsLimit;
   }
 

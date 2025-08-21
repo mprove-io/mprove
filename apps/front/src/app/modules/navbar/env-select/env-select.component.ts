@@ -12,8 +12,6 @@ import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -29,7 +27,7 @@ export class EnvSelectComponent {
     this.envSelectElement?.close();
   }
 
-  envsList: common.EnvsItem[] = [];
+  envsList: EnvsItem[] = [];
   envsListLoading = false;
   envsListLength = 0;
 
@@ -82,22 +80,18 @@ export class EnvSelectComponent {
   openEnvSelect() {
     this.envsListLoading = true;
 
-    let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
+    let payload: ToBackendGetEnvsListRequestPayload = {
       projectId: this.selectedProjectId,
       isFilter: true
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
         payload: payload
       })
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetEnvsListResponse) =>
-            resp.payload.envsList
-        ),
+        map((resp: ToBackendGetEnvsListResponse) => resp.payload.envsList),
         tap(x => {
           this.envsList = x;
           this.envsListLoading = false;
@@ -120,27 +114,27 @@ export class EnvSelectComponent {
       )
       .subscribe();
 
-    let repoId = this.nav.isRepoProd === true ? common.PROD_REPO_ID : userId;
+    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : userId;
 
     let urlParts = this.router.url.split('/');
 
     let navArray = checkNavMain({
       urlParts: urlParts,
       navArray: [
-        common.PATH_ORG,
+        PATH_ORG,
         this.nav.orgId,
-        common.PATH_PROJECT,
+        PATH_PROJECT,
         this.nav.projectId,
-        common.PATH_REPO,
+        PATH_REPO,
         repoId,
-        common.PATH_BRANCH,
+        PATH_BRANCH,
         this.nav.branchId,
-        common.PATH_ENV,
+        PATH_ENV,
         this.selectedEnvId
       ]
     });
 
-    if (urlParts[11] === common.PATH_REPORTS) {
+    if (urlParts[11] === PATH_REPORTS) {
       let uiState = this.uiQuery.getValue();
       uiState.gridApi?.deselectAll();
     }

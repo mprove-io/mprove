@@ -24,9 +24,6 @@ import {
 import { DOUBLE_UNDERSCORE, MALLOY_FILTER_ANY } from '~common/constants/top';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import { FractionTypeItem } from '../fraction.component';
 
 @Component({
@@ -50,97 +47,97 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
   defaultStringValue = 'abc';
 
-  fractionOperatorEnum = common.FractionOperatorEnum;
-  fractionTypeEnum = common.FractionTypeEnum;
-  fieldClassEnum = common.FieldClassEnum;
+  fractionOperatorEnum = FractionOperatorEnum;
+  fractionTypeEnum = FractionTypeEnum;
+  fieldClassEnum = FieldClassEnum;
 
   @Input() suggestModelDimension: string;
   @Input() structId: string;
 
   @Input() isDisabled: boolean;
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   fractionForm: FormGroup;
 
   fractionStringTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.StringIsAnyValue,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringIsAnyValue,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is equal to',
-      value: common.FractionTypeEnum.StringIsEqualTo,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringIsEqualTo,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'starts with',
-      value: common.FractionTypeEnum.StringStartsWith,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringStartsWith,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'ends with',
-      value: common.FractionTypeEnum.StringEndsWith,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringEndsWith,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'contains',
-      value: common.FractionTypeEnum.StringContains,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringContains,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'matches',
-      value: common.FractionTypeEnum.StringIsLike,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringIsLike,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.StringIsNull,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringIsNull,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is empty',
-      value: common.FractionTypeEnum.StringIsEmpty,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.StringIsEmpty,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is not equal to',
-      value: common.FractionTypeEnum.StringIsNotEqualTo,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.StringIsNotEqualTo,
+      operator: FractionOperatorEnum.And
     },
     {
       label: 'does not start with',
-      value: common.FractionTypeEnum.StringDoesNotStartWith,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.StringDoesNotStartWith,
+      operator: FractionOperatorEnum.And
     },
     {
       label: 'does not end with',
-      value: common.FractionTypeEnum.StringDoesNotEndWith,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.StringDoesNotEndWith,
+      operator: FractionOperatorEnum.And
     },
     {
       label: 'does not contain',
-      value: common.FractionTypeEnum.StringDoesNotContain,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.StringDoesNotContain,
+      operator: FractionOperatorEnum.And
     },
     {
       label: 'does not match',
-      value: common.FractionTypeEnum.StringIsNotLike,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.StringIsNotLike,
+      operator: FractionOperatorEnum.And
     },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.StringIsNotNull,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.StringIsNotNull,
+      operator: FractionOperatorEnum.And
     },
     {
       label: 'is not empty',
-      value: common.FractionTypeEnum.StringIsNotEmpty,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.StringIsNotEmpty,
+      operator: FractionOperatorEnum.And
     }
   ];
 
@@ -180,11 +177,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
   onOpenSelect() {
     if (
-      common.isDefined(this.suggestModelDimension) &&
-      (this.fraction.type === common.FractionTypeEnum.StringIsEqualTo ||
-        this.fraction.type === common.FractionTypeEnum.StringIsNotEqualTo)
+      isDefined(this.suggestModelDimension) &&
+      (this.fraction.type === FractionTypeEnum.StringIsEqualTo ||
+        this.fraction.type === FractionTypeEnum.StringIsNotEqualTo)
     ) {
-      let reg = common.MyRegex.CAPTURE_SUGGEST_MODEL_FIELD_G();
+      let reg = MyRegex.CAPTURE_SUGGEST_MODEL_FIELD_G();
 
       let r = reg.exec(this.suggestModelDimension);
 
@@ -200,12 +197,12 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               this.loading = true;
               this.cd.detectChanges();
 
-              let newMconfig: common.Mconfig = {
+              let newMconfig: Mconfig = {
                 structId: this.structId,
-                mconfigId: common.makeId(),
-                queryId: common.makeId(),
+                mconfigId: makeId(),
+                queryId: makeId(),
                 modelId: modelId,
-                modelType: common.ModelTypeEnum.Malloy,
+                modelType: ModelTypeEnum.Malloy,
                 dateRangeIncludesRightSide: undefined,
                 storePart: undefined,
                 modelLabel: 'empty',
@@ -218,10 +215,10 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 // joinAggregations: [],
                 sortings: [],
                 sorts: undefined,
-                timezone: common.UTC,
+                timezone: UTC,
                 limit: 500,
                 filters: [],
-                chart: common.makeCopy(common.DEFAULT_CHART),
+                chart: makeCopy(DEFAULT_CHART),
                 temp: true,
                 serverTs: 1
               };
@@ -230,16 +227,16 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
               let query;
 
-              let queryOperation1: common.QueryOperation = {
-                type: common.QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+              let queryOperation1: QueryOperation = {
+                type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,
                 fieldId: fieldId,
                 sortFieldId: fieldId,
                 desc: false,
                 timezone: newMconfig.timezone
               };
 
-              let queryOperation2: common.QueryOperation = {
-                type: common.QueryOperationTypeEnum.WhereOrHaving,
+              let queryOperation2: QueryOperation = {
+                type: QueryOperationTypeEnum.WhereOrHaving,
                 timezone: newMconfig.timezone,
                 filters: [
                   {
@@ -248,8 +245,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       {
                         brick: `f\`%${term}%\``,
                         parentBrick: `f\`%${term}%\``,
-                        type: common.FractionTypeEnum.StringContains,
-                        operator: common.FractionOperatorEnum.Or,
+                        type: FractionTypeEnum.StringContains,
+                        operator: FractionOperatorEnum.Or,
                         stringValue: term
                       }
                     ]
@@ -257,66 +254,30 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 ]
               };
 
-              let queryOperations: common.QueryOperation[] = common.isDefined(
-                queryOperation2
-              )
+              let queryOperations: QueryOperation[] = isDefined(queryOperation2)
                 ? [queryOperation1, queryOperation2]
                 : [queryOperation1];
 
-              let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
-                {
-                  projectId: nav.projectId,
-                  isRepoProd: nav.isRepoProd,
-                  branchId: nav.branchId,
-                  envId: nav.envId,
-                  mconfig: newMconfig,
-                  cellMetricsStartDateMs: undefined,
-                  cellMetricsEndDateMs: undefined,
-                  queryOperations: queryOperations
-                };
+              let payload: ToBackendCreateTempMconfigAndQueryRequestPayload = {
+                projectId: nav.projectId,
+                isRepoProd: nav.isRepoProd,
+                branchId: nav.branchId,
+                envId: nav.envId,
+                mconfig: newMconfig,
+                cellMetricsStartDateMs: undefined,
+                cellMetricsEndDateMs: undefined,
+                queryOperations: queryOperations
+              };
 
               let q1Resp = await this.apiService
                 .req({
                   pathInfoName:
-                    apiToBackend.ToBackendRequestInfoNameEnum
-                      .ToBackendCreateTempMconfigAndQuery,
+                    ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery,
                   payload: payload
                 })
                 .pipe(
-                  tap(
-                    (
-                      resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse
-                    ) => {
-                      if (
-                        resp.info?.status === common.ResponseInfoStatusEnum.Ok
-                      ) {
-                        return resp;
-                      }
-                    }
-                  ),
-                  take(1)
-                )
-                .toPromise();
-
-              let q2Resp = await this.apiService
-                .req({
-                  pathInfoName:
-                    apiToBackend.ToBackendRequestInfoNameEnum
-                      .ToBackendRunQueries,
-                  payload: {
-                    projectId: nav.projectId,
-                    isRepoProd: nav.isRepoProd,
-                    branchId: nav.branchId,
-                    envId: nav.envId,
-                    mconfigIds: [q1Resp.payload.mconfig.mconfigId]
-                    // queryIds: [q1Resp.payload.query.queryId]
-                  } as apiToBackend.ToBackendRunQueriesRequestPayload
-                })
-                .pipe(
-                  tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-                    if (
-                      resp.info?.status === common.ResponseInfoStatusEnum.Ok
-                    ) {
+                  tap((resp: ToBackendCreateTempMconfigAndQueryResponse) => {
+                    if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
                       return resp;
                     }
                   }),
@@ -324,19 +285,41 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 )
                 .toPromise();
 
-              let q3Resp: apiToBackend.ToBackendGetQueryResponse;
+              let q2Resp = await this.apiService
+                .req({
+                  pathInfoName:
+                    ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+                  payload: {
+                    projectId: nav.projectId,
+                    isRepoProd: nav.isRepoProd,
+                    branchId: nav.branchId,
+                    envId: nav.envId,
+                    mconfigIds: [q1Resp.payload.mconfig.mconfigId]
+                    // queryIds: [q1Resp.payload.query.queryId]
+                  } as ToBackendRunQueriesRequestPayload
+                })
+                .pipe(
+                  tap((resp: ToBackendRunQueriesResponse) => {
+                    if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+                      return resp;
+                    }
+                  }),
+                  take(1)
+                )
+                .toPromise();
+
+              let q3Resp: ToBackendGetQueryResponse;
 
               while (
-                common.isUndefined(q3Resp) ||
-                q3Resp?.payload.query.status === common.QueryStatusEnum.Running
+                isUndefined(q3Resp) ||
+                q3Resp?.payload.query.status === QueryStatusEnum.Running
               ) {
-                await common.sleep(500);
+                await sleep(500);
 
                 q3Resp = await this.apiService
                   .req({
                     pathInfoName:
-                      apiToBackend.ToBackendRequestInfoNameEnum
-                        .ToBackendGetQuery,
+                      ToBackendRequestInfoNameEnum.ToBackendGetQuery,
                     payload: {
                       projectId: nav.projectId,
                       isRepoProd: nav.isRepoProd,
@@ -344,13 +327,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                       envId: nav.envId,
                       mconfigId: q1Resp.payload.mconfig.mconfigId,
                       queryId: q2Resp.payload.runningQueries[0].queryId
-                    } as apiToBackend.ToBackendGetQueryRequestPayload
+                    } as ToBackendGetQueryRequestPayload
                   })
                   .pipe(
-                    tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                      if (
-                        resp.info?.status === common.ResponseInfoStatusEnum.Ok
-                      ) {
+                    tap((resp: ToBackendGetQueryResponse) => {
+                      if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
                         return resp;
                       }
                     })
@@ -358,14 +339,14 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                   .toPromise();
               }
 
-              this.items = common.isDefined(q3Resp?.payload?.query?.data)
+              this.items = isDefined(q3Resp?.payload?.query?.data)
                 ? q3Resp.payload.query.data.map((row: any, i: number) => ({
                     id: i,
                     name: row['row'][fieldId.split('.').join(DOUBLE_UNDERSCORE)]
                   }))
                 : [];
 
-              if (common.isDefinedAndNotEmpty(this.searchValue)) {
+              if (isDefinedAndNotEmpty(this.searchValue)) {
                 this.items = [
                   {
                     id: 0,
@@ -381,9 +362,7 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 ];
               }
 
-              if (
-                q3Resp?.payload.query.status === common.QueryStatusEnum.Error
-              ) {
+              if (q3Resp?.payload.query.status === QueryStatusEnum.Error) {
                 throw new Error(
                   `Suggest Values Query Error: ${q3Resp.payload.query.lastErrorMessage}`
                 );
@@ -458,64 +437,54 @@ export class FractionStringComponent implements OnInit, OnDestroy {
     let fractionType = this.fraction.type;
 
     let sqlBrick =
-      fractionType === common.FractionTypeEnum.StringIsEqualTo
+      fractionType === FractionTypeEnum.StringIsEqualTo
         ? `-${value}-`
-        : fractionType === common.FractionTypeEnum.StringStartsWith
+        : fractionType === FractionTypeEnum.StringStartsWith
           ? `${value}%`
-          : fractionType === common.FractionTypeEnum.StringEndsWith
+          : fractionType === FractionTypeEnum.StringEndsWith
             ? `%${value}`
-            : fractionType === common.FractionTypeEnum.StringContains
+            : fractionType === FractionTypeEnum.StringContains
               ? `%${value}%`
-              : fractionType === common.FractionTypeEnum.StringIsLike
+              : fractionType === FractionTypeEnum.StringIsLike
                 ? `any` // TODO: remove
-                : fractionType === common.FractionTypeEnum.StringIsNotEqualTo
+                : fractionType === FractionTypeEnum.StringIsNotEqualTo
                   ? `not -${value}-`
-                  : fractionType ===
-                      common.FractionTypeEnum.StringDoesNotStartWith
+                  : fractionType === FractionTypeEnum.StringDoesNotStartWith
                     ? `${value}% not`
-                    : fractionType ===
-                        common.FractionTypeEnum.StringDoesNotEndWith
+                    : fractionType === FractionTypeEnum.StringDoesNotEndWith
                       ? `not %${value}`
-                      : fractionType ===
-                          common.FractionTypeEnum.StringDoesNotContain
+                      : fractionType === FractionTypeEnum.StringDoesNotContain
                         ? `not %${value}%`
-                        : fractionType ===
-                            common.FractionTypeEnum.StringIsNotLike
+                        : fractionType === FractionTypeEnum.StringIsNotLike
                           ? `any` // TODO: remove
                           : '';
 
     let mBrick =
-      fractionType === common.FractionTypeEnum.StringIsEqualTo
+      fractionType === FractionTypeEnum.StringIsEqualTo
         ? `f\`${value}\``
-        : fractionType === common.FractionTypeEnum.StringStartsWith
+        : fractionType === FractionTypeEnum.StringStartsWith
           ? `f\`${value}%\``
-          : fractionType === common.FractionTypeEnum.StringEndsWith
+          : fractionType === FractionTypeEnum.StringEndsWith
             ? `f\`%${value}\``
-            : fractionType === common.FractionTypeEnum.StringContains
+            : fractionType === FractionTypeEnum.StringContains
               ? `f\`%${value}%\``
-              : fractionType === common.FractionTypeEnum.StringIsLike
+              : fractionType === FractionTypeEnum.StringIsLike
                 ? `f\`${value}\``
-                : fractionType === common.FractionTypeEnum.StringIsNotEqualTo
+                : fractionType === FractionTypeEnum.StringIsNotEqualTo
                   ? `f\`-${value}\``
-                  : fractionType ===
-                      common.FractionTypeEnum.StringDoesNotStartWith
+                  : fractionType === FractionTypeEnum.StringDoesNotStartWith
                     ? `f\`-${value}%\``
-                    : fractionType ===
-                        common.FractionTypeEnum.StringDoesNotEndWith
+                    : fractionType === FractionTypeEnum.StringDoesNotEndWith
                       ? `f\`-%${value}\``
-                      : fractionType ===
-                          common.FractionTypeEnum.StringDoesNotContain
+                      : fractionType === FractionTypeEnum.StringDoesNotContain
                         ? `f\`-%${value}%\``
-                        : fractionType ===
-                            common.FractionTypeEnum.StringIsNotLike
+                        : fractionType === FractionTypeEnum.StringIsNotLike
                           ? `f\`-${value}\``
                           : '';
 
-    let newFraction: common.Fraction = {
-      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
-      parentBrick: common.isDefined(this.fraction.parentBrick)
-        ? mBrick
-        : undefined,
+    let newFraction: Fraction = {
+      brick: isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
+      parentBrick: isDefined(this.fraction.parentBrick) ? mBrick : undefined,
       operator: this.fraction.operator,
       type: fractionType,
       stringValue: value
@@ -539,11 +508,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = MALLOY_FILTER_ANY;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType
         };
 
@@ -555,13 +524,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`${this.defaultStringValue}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `-${this.defaultStringValue}-`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -576,13 +545,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`${this.defaultStringValue}%\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `${this.defaultStringValue}%`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -597,13 +566,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`%${this.defaultStringValue}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `%${this.defaultStringValue}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -618,13 +587,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`%${this.defaultStringValue}%\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `%${this.defaultStringValue}%`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -639,11 +608,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`a%c\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`, // TODO: remove
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `any`, // TODO: remove
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -658,11 +627,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = 'f`null`';
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `null`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `null`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType
         };
 
@@ -674,11 +643,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = 'f`empty`';
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `blank`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `blank`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType
         };
 
@@ -690,13 +659,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`-${this.defaultStringValue}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `not -${this.defaultStringValue}-`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -710,13 +679,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`-${this.defaultStringValue}%\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `${this.defaultStringValue}% not`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -730,13 +699,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`-%${this.defaultStringValue}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `not %${this.defaultStringValue}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -750,13 +719,13 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`-%${this.defaultStringValue}%\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `not %${this.defaultStringValue}%`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -770,11 +739,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = `f\`-a%c\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`, // TODO: remove
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `any`, // TODO: remove
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType,
           stringValue: this.defaultStringValue
         };
@@ -788,13 +757,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = 'f`-empty`';
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : `not blank`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `not blank`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -806,13 +773,11 @@ export class FractionStringComponent implements OnInit, OnDestroy {
         let mBrick = 'f`-null`';
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : `not null`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `not null`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 

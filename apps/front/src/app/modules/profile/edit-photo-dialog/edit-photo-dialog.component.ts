@@ -12,8 +12,6 @@ import { ImageCropperComponent } from 'ngx-image-cropper';
 import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface EditPhotoDialogData {
   apiService: ApiService;
@@ -90,7 +88,7 @@ export class EditPhotoDialogComponent implements OnInit {
   save() {
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendSetAvatarRequestPayload = {
+    let payload: ToBackendSetAvatarRequestPayload = {
       avatarBig: this.croppedImage,
       avatarSmall: this.compressedImage
     };
@@ -99,14 +97,13 @@ export class EditPhotoDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetAvatar,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSetAvatarResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSetAvatarResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.navQuery.updatePart({
               avatarSmall: resp.payload.avatarSmall,
               avatarBig: resp.payload.avatarBig

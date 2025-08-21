@@ -24,9 +24,6 @@ import {
 } from '~front/app/services/highlight.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -70,8 +67,8 @@ export class FilesRightComponent {
       this.nav = x;
 
       if (
-        common.isDefined(this.prevEnvId) &&
-        common.isDefined(this.prevBranchId) &&
+        isDefined(this.prevEnvId) &&
+        isDefined(this.prevBranchId) &&
         (this.prevEnvId !== this.nav.envId ||
           this.prevBranchId !== this.nav.branchId)
       ) {
@@ -115,7 +112,7 @@ export class FilesRightComponent {
     tap(x => {
       this.secondFileNodeId = x;
 
-      if (common.isDefined(this.secondFileNodeId)) {
+      if (isDefined(this.secondFileNodeId)) {
         let ar = this.secondFileNodeId.split('/');
         this.secondFileName = ar[ar.length - 1];
 
@@ -191,7 +188,7 @@ export class FilesRightComponent {
   }
 
   validate() {
-    let payload: apiToBackend.ToBackendValidateFilesRequestPayload = {
+    let payload: ToBackendValidateFilesRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -200,14 +197,13 @@ export class FilesRightComponent {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendValidateFilesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendValidateFilesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -228,21 +224,21 @@ export class FilesRightComponent {
     let id = ar.join('.');
     let dotExt = `.${ext}`;
 
-    if (dotExt === common.FileExtensionEnum.Store) {
+    if (dotExt === FileExtensionEnum.Store) {
       this.navigateService.navigateToChart({
         modelId: id,
-        chartId: common.EMPTY_CHART_ID
+        chartId: EMPTY_CHART_ID
       });
-    } else if (dotExt === common.FileExtensionEnum.Report) {
+    } else if (dotExt === FileExtensionEnum.Report) {
       this.navigateService.navigateToReport({ reportId: id });
-    } else if (dotExt === common.FileExtensionEnum.Dashboard) {
+    } else if (dotExt === FileExtensionEnum.Dashboard) {
       this.navigateService.navigateToDashboard({
         dashboardId: id
       });
-    } else if (dotExt === common.FileExtensionEnum.Chart) {
+    } else if (dotExt === FileExtensionEnum.Chart) {
       let nav = this.navQuery.getValue();
 
-      let payload: apiToBackend.ToBackendGetChartRequestPayload = {
+      let payload: ToBackendGetChartRequestPayload = {
         projectId: nav.projectId,
         isRepoProd: nav.isRepoProd,
         branchId: nav.branchId,
@@ -251,29 +247,28 @@ export class FilesRightComponent {
         timezone: uiState.timezone
       };
 
-      this.spinner.show(constants.APP_SPINNER_NAME);
+      this.spinner.show(APP_SPINNER_NAME);
 
       this.apiService
         .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetChart,
           payload: payload
         })
         .pipe(
-          map((resp: apiToBackend.ToBackendGetChartResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          map((resp: ToBackendGetChartResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               this.memberQuery.update(resp.payload.userMember);
 
-              if (common.isDefined(resp.payload.chart)) {
+              if (isDefined(resp.payload.chart)) {
                 this.navigateService.navigateToChart({
                   modelId: resp.payload.chart.modelId,
                   chartId: id
                 });
               } else {
-                this.spinner.hide(constants.APP_SPINNER_NAME);
+                this.spinner.hide(APP_SPINNER_NAME);
               }
             } else {
-              this.spinner.hide(constants.APP_SPINNER_NAME);
+              this.spinner.hide(APP_SPINNER_NAME);
             }
           }),
           take(1)
@@ -292,7 +287,7 @@ export class FilesRightComponent {
       .errors.map(e =>
         e.lines
           .map(l =>
-            common.encodeFilePath({
+            encodeFilePath({
               filePath: l.fileId.split('/').slice(1).join('/')
             })
           )
@@ -300,15 +295,15 @@ export class FilesRightComponent {
       )
       .flat();
 
-    if (common.isDefined(this.secondFileNodeId)) {
+    if (isDefined(this.secondFileNodeId)) {
       let fileIdAr = this.secondFileNodeId.split('/');
       fileIdAr.shift();
 
       let filePath = fileIdAr.join('/');
 
-      let secondFileId = common.encodeFilePath({ filePath: filePath });
+      let secondFileId = encodeFilePath({ filePath: filePath });
 
-      this.isSecondFileValid = common.isUndefined(secondFileId)
+      this.isSecondFileValid = isUndefined(secondFileId)
         ? true
         : errorFileIds.indexOf(secondFileId) < 0;
     } else {
@@ -317,23 +312,23 @@ export class FilesRightComponent {
   }
 
   checkContent() {
-    if (common.isDefined(this.secondFileNodeId)) {
+    if (isDefined(this.secondFileNodeId)) {
       let nav = this.navQuery.getValue();
 
-      let fileItems = common.getFileItems({ nodes: this.repo.nodes });
+      let fileItems = getFileItems({ nodes: this.repo.nodes });
 
       if (fileItems.map(x => x.fileNodeId).indexOf(this.secondFileNodeId) < 0) {
         setTimeout(() => {
           this.uiQuery.updatePart({ secondFileNodeId: undefined });
         }, 0);
       } else {
-        let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
+        let getFilePayload: ToBackendGetFileRequestPayload = {
           projectId: nav.projectId,
           isRepoProd: nav.isRepoProd,
           branchId: nav.branchId,
           envId: nav.envId,
           fileNodeId: this.secondFileNodeId,
-          panel: common.PanelEnum.Tree
+          panel: PanelEnum.Tree
         };
 
         this.isShowSpinner = true;
@@ -343,14 +338,13 @@ export class FilesRightComponent {
 
         this.apiService
           .req({
-            pathInfoName:
-              apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
+            pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetFile,
             payload: getFilePayload,
             showSpinner: false
           })
           .pipe(
-            tap(async (resp: apiToBackend.ToBackendGetFileResponse) => {
-              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+            tap(async (resp: ToBackendGetFileResponse) => {
+              if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
                 let repoState = this.repoQuery.getValue();
                 // biome-ignore format: theme breaks
                 let newRepoState: RepoState = Object.assign(resp.payload.repo, <RepoState>{
@@ -392,7 +386,7 @@ export class FilesRightComponent {
 
   setLanguage() {
     if (
-      common.isUndefined(this.secondFileNodeId) ||
+      isUndefined(this.secondFileNodeId) ||
       this.isEditorOptionsInitComplete === false
     ) {
       return;
@@ -402,7 +396,7 @@ export class FilesRightComponent {
     this.struct = this.structQuery.getValue();
 
     let mdir = this.struct.mproveDirValue;
-    if (common.isDefined(this.struct.mproveDirValue)) {
+    if (isDefined(this.struct.mproveDirValue)) {
       if (mdir.substring(0, 1) === '.') {
         mdir = mdir.substring(1);
       }
@@ -415,9 +409,7 @@ export class FilesRightComponent {
     let ext = ar.pop();
     let dotExt = `.${ext}`;
 
-    if (
-      constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
-    ) {
+    if (BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0) {
       this.lang = 'YAML';
     } else {
       let language = this.languages.find(
@@ -433,12 +425,11 @@ export class FilesRightComponent {
         : VS_LIGHT_THEME_EXTRA_SINGLE_READ;
 
     if (
-      this.secondFileName === common.MPROVE_CONFIG_FILENAME ||
-      ((this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH ||
-        (common.isDefined(mdir) &&
+      this.secondFileName === MPROVE_CONFIG_FILENAME ||
+      ((this.struct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH ||
+        (isDefined(mdir) &&
           this.secondFileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
-        constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
-          0)
+        BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0)
     ) {
       this.showGoTo = true;
     } else {
@@ -453,8 +444,8 @@ export class FilesRightComponent {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath })
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }
 }

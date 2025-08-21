@@ -19,12 +19,10 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface AddEnvUserDialogData {
   apiService: ApiService;
-  env: common.Env;
+  env: Env;
 }
 
 @Component({
@@ -48,7 +46,7 @@ export class AddEnvUserDialogComponent implements OnInit {
 
   env = this.ref.data.env;
 
-  membersList: common.EnvUser[] = [];
+  membersList: EnvUser[] = [];
   membersListLoading = false;
   membersListLength = 0;
 
@@ -74,24 +72,22 @@ export class AddEnvUserDialogComponent implements OnInit {
   openUserSelect() {
     this.membersListLoading = true;
 
-    let env: common.Env = this.ref.data.env;
+    let env: Env = this.ref.data.env;
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendGetMembersListRequestPayload = {
+    let payload: ToBackendGetMembersListRequestPayload = {
       projectId: env.projectId
     };
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembersList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetMembersList,
         payload: payload
       })
       .pipe(
         map(
-          (resp: apiToBackend.ToBackendGetMembersListResponse) =>
-            resp.payload.membersList
+          (resp: ToBackendGetMembersListResponse) => resp.payload.membersList
         ),
         tap(x => {
           this.membersList = x;
@@ -112,9 +108,9 @@ export class AddEnvUserDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let dataEnv: common.Env = this.ref.data.env;
+    let dataEnv: Env = this.ref.data.env;
 
-    let payload: apiToBackend.ToBackendCreateEnvUserRequestPayload = {
+    let payload: ToBackendCreateEnvUserRequestPayload = {
       projectId: dataEnv.projectId,
       envId: dataEnv.envId,
       envUserId: this.addEnvUserForm.value.envUserId
@@ -124,14 +120,13 @@ export class AddEnvUserDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateEnvUser,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateEnvUserResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateEnvUserResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
           }

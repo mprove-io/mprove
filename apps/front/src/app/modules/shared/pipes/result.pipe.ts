@@ -1,28 +1,27 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { common } from '~front/barrels/common';
 
 @Pipe({ standalone: false, name: 'result' })
 export class ResultPipe implements PipeTransform {
   transform(value: string) {
-    if (common.isUndefined(value)) {
+    if (isUndefined(value)) {
       return value;
     }
 
-    if (value === common.FieldResultEnum.DayOfWeek) {
+    if (value === FieldResultEnum.DayOfWeek) {
       return 'ENUM';
-    } else if (value === common.FieldResultEnum.DayOfWeekIndex) {
+    } else if (value === FieldResultEnum.DayOfWeekIndex) {
       return 'ENUM';
-    } else if (value === common.FieldResultEnum.MonthName) {
+    } else if (value === FieldResultEnum.MonthName) {
       return 'ENUM';
-    } else if (value === common.FieldResultEnum.Number) {
+    } else if (value === FieldResultEnum.Number) {
       return 'NUMBER';
-    } else if (value === common.FieldResultEnum.QuarterOfYear) {
+    } else if (value === FieldResultEnum.QuarterOfYear) {
       return 'ENUM';
-    } else if (value === common.FieldResultEnum.String) {
+    } else if (value === FieldResultEnum.String) {
       return 'STRING';
-    } else if (value === common.FieldResultEnum.Ts) {
+    } else if (value === FieldResultEnum.Ts) {
       return 'TIMESTAMP';
-    } else if (value === common.FieldResultEnum.Yesno) {
+    } else if (value === FieldResultEnum.Yesno) {
       return 'YES-NO';
     }
 

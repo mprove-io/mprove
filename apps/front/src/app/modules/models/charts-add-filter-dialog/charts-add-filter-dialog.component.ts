@@ -7,24 +7,22 @@ import {
   OnInit
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerModule } from 'ngx-spinner';
-import { ApiService } from '~front/app/services/api.service';
-import { common } from '~front/barrels/common';
-import { SharedModule } from '../../shared/shared.module';
-
-import uFuzzy from '@leeoniya/ufuzzy';
 import { TippyDirective } from '@ngneat/helipopper';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
+import { ApiService } from '~front/app/services/api.service';
 import { ChartService } from '~front/app/services/chart.service';
 import { StructService } from '~front/app/services/struct.service';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface ChartsAddFilterDialogData {
   apiService: ApiService;
-  chart: common.ChartX;
-  model: common.Model;
-  mconfig: common.MconfigX;
+  chart: ChartX;
+  model: Model;
+  mconfig: MconfigX;
   parameterAddedFn: () => void;
 }
 
@@ -48,8 +46,8 @@ export class ChartsAddFilterDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  chart: common.ChartX;
-  sortedFieldsY: common.ModelFieldY[];
+  chart: ChartX;
+  sortedFieldsY: ModelFieldY[];
 
   addFilterForm: FormGroup;
 
@@ -75,23 +73,23 @@ export class ChartsAddFilterDialogComponent implements OnInit {
       .filter(x => x.hidden === false)
       .map(x =>
         Object.assign({}, x, {
-          partLabel: common.isDefined(x.groupLabel)
+          partLabel: isDefined(x.groupLabel)
             ? `${x.topLabel} ${x.groupLabel} ${x.label}`
             : `${x.topLabel} ${x.label}`
-        } as common.ModelFieldY)
+        } as ModelFieldY)
       )
       .sort((a, b) =>
-        a.fieldClass !== common.FieldClassEnum.Dimension &&
-        b.fieldClass === common.FieldClassEnum.Dimension
+        a.fieldClass !== FieldClassEnum.Dimension &&
+        b.fieldClass === FieldClassEnum.Dimension
           ? 1
-          : a.fieldClass === common.FieldClassEnum.Dimension &&
-              b.fieldClass !== common.FieldClassEnum.Dimension
+          : a.fieldClass === FieldClassEnum.Dimension &&
+              b.fieldClass !== FieldClassEnum.Dimension
             ? -1
-            : a.fieldClass !== common.FieldClassEnum.Filter &&
-                b.fieldClass === common.FieldClassEnum.Filter
+            : a.fieldClass !== FieldClassEnum.Filter &&
+                b.fieldClass === FieldClassEnum.Filter
               ? 1
-              : a.fieldClass === common.FieldClassEnum.Filter &&
-                  b.fieldClass !== common.FieldClassEnum.Filter
+              : a.fieldClass === FieldClassEnum.Filter &&
+                  b.fieldClass !== FieldClassEnum.Filter
                 ? -1
                 : a.partLabel > b.partLabel
                   ? 1
@@ -111,7 +109,7 @@ export class ChartsAddFilterDialogComponent implements OnInit {
   }
 
   save() {
-    if (common.isUndefined(this.newFieldId)) {
+    if (isUndefined(this.newFieldId)) {
       return;
     }
 
@@ -119,48 +117,48 @@ export class ChartsAddFilterDialogComponent implements OnInit {
 
     let newMconfig = this.structService.makeMconfig();
 
-    let newFraction: common.Fraction;
+    let newFraction: Fraction;
 
     let field = this.ref.data.model.fields.find(x => x.id === this.newFieldId);
 
-    if (newMconfig.modelType === common.ModelTypeEnum.Store) {
+    if (newMconfig.modelType === ModelTypeEnum.Store) {
       // if (newMconfig.isStoreModel === true) {
       let storeFilter =
-        field.fieldClass === common.FieldClassEnum.Filter
-          ? (this.ref.data.model.content as common.FileStore).fields.find(
+        field.fieldClass === FieldClassEnum.Filter
+          ? (this.ref.data.model.content as FileStore).fields.find(
               f => f.name === field.id
             )
           : undefined;
 
       let storeResultFraction =
-        field.fieldClass === common.FieldClassEnum.Filter
+        field.fieldClass === FieldClassEnum.Filter
           ? undefined
-          : (this.ref.data.model.content as common.FileStore).results.find(
+          : (this.ref.data.model.content as FileStore).results.find(
               r => r.result === field.result
             ).fraction_types[0];
 
-      let logicGroup = common.isUndefined(storeResultFraction)
+      let logicGroup = isUndefined(storeResultFraction)
         ? undefined
-        : common.FractionLogicEnum.Or;
+        : FractionLogicEnum.Or;
 
-      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
+      let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
-        : (this.ref.data.model.content as common.FileStore).results
+        : (this.ref.data.model.content as FileStore).results
             .find(r => r.result === field.result)
             .fraction_types.map(ft => {
               let options = [];
 
-              let optionOr: common.FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.Or,
+              let optionOr: FractionSubTypeOption = {
+                logicGroup: FractionLogicEnum.Or,
                 typeValue: ft.type,
-                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
-              let optionAndNot: common.FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.AndNot,
-                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+              let optionAndNot: FractionSubTypeOption = {
+                logicGroup: FractionLogicEnum.AndNot,
+                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -171,35 +169,34 @@ export class ChartsAddFilterDialogComponent implements OnInit {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFraction?.meta,
-        operator: common.isUndefined(logicGroup)
+        operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
+          : logicGroup === FractionLogicEnum.Or
+            ? FractionOperatorEnum.Or
+            : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
-        type: common.FractionTypeEnum.StoreFraction,
+        type: FractionTypeEnum.StoreFraction,
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFraction?.type,
-        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+        storeFractionSubTypeLabel: isDefined(storeResultFraction?.type)
           ? storeFractionSubTypeOptions.find(
               k => k.typeValue === storeResultFraction?.type
             ).label
           : storeResultFraction?.type,
         storeFractionLogicGroupWithSubType:
-          common.isDefined(logicGroup) &&
-          common.isDefined(storeResultFraction?.type)
-            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFraction.type}`
+          isDefined(logicGroup) && isDefined(storeResultFraction?.type)
+            ? `${logicGroup}${TRIPLE_UNDERSCORE}${storeResultFraction.type}`
             : undefined,
-        controls: common.isUndefined(storeResultFraction)
+        controls: isUndefined(storeResultFraction)
           ? storeFilter.fraction_controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -210,10 +207,10 @@ export class ChartsAddFilterDialogComponent implements OnInit {
               };
               return newControl;
             })
-          : (this.ref.data.model.content as common.FileStore).results
+          : (this.ref.data.model.content as FileStore).results
               .find(r => r.result === field.result)
               .fraction_types[0].controls.map(control => {
-                let newControl: common.FractionControl = {
+                let newControl: FractionControl = {
                   options: control.options,
                   value: control.value,
                   label: control.label,
@@ -225,24 +222,24 @@ export class ChartsAddFilterDialogComponent implements OnInit {
                 return newControl;
               })
       };
-    } else if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+    } else if (newMconfig.modelType === ModelTypeEnum.Malloy) {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(field.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(field.result)
       };
     } else {
       newFraction = {
         brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(field.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(field.result)
       };
     }
 
     let newFilters = [];
 
-    let newFilter: common.Filter = {
+    let newFilter: Filter = {
       fieldId: field.id,
       fractions: [newFraction]
     };
@@ -251,13 +248,13 @@ export class ChartsAddFilterDialogComponent implements OnInit {
       a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
     );
 
-    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.WhereOrHaving,
+          type: QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
           // fieldId: field.id,
           filters: newFilters
@@ -278,15 +275,15 @@ export class ChartsAddFilterDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  searchFn(term: string, modelField: common.ModelField) {
+  searchFn(term: string, modelField: ModelField) {
     // let haystack = [
-    //   common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
+    //   isDefinedAndNotEmpty(modelFieldY.groupLabel)
     //     ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
     //     : `${modelFieldY.topLabel} ${modelFieldY.label}`
     // ];
 
     let haystack = [
-      common.isDefinedAndNotEmpty(modelField.groupLabel)
+      isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
         : `${modelField.topLabel} ${modelField.label}`
     ];

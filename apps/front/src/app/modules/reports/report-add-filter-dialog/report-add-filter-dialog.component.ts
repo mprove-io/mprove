@@ -17,6 +17,7 @@ import {
   ValidationErrors,
   Validators
 } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -26,26 +27,21 @@ import {
   MALLOY_FILTER_ANY,
   SuggestField
 } from '~common/_index';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
-import { SharedModule } from '../../shared/shared.module';
-
-import uFuzzy from '@leeoniya/ufuzzy';
 import { SelectItem } from '~front/app/interfaces/select-item';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
+import { ApiService } from '~front/app/services/api.service';
 import { ReportService } from '~front/app/services/report.service';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface ReportAddFilterDialogData {
   reportService: ReportService;
-  report: common.ReportX;
+  report: ReportX;
   apiService: ApiService;
 }
 
 export class StoreFilterForItem {
-  value: common.StoreFilterForEnum;
+  value: StoreFilterForEnum;
   label: string;
 }
 
@@ -88,16 +84,16 @@ export class ReportAddFilterDialogComponent implements OnInit {
   storeFiltersSpinnerName = 'reportAddStoreFiltersSpinnerName';
   suggestFieldsSpinnerName = 'reportAddSuggestFieldsSpinnerName';
 
-  malloyResultsList = constants.RESULTS_LIST;
+  malloyResultsList = RESULTS_LIST;
   storeResultsList: string[] = [];
 
-  modelTypeStore = common.ModelTypeEnum.Store;
-  modelTypeMalloy = common.ModelTypeEnum.Malloy;
-  storeFilterForFilter = common.StoreFilterForEnum.Filter;
-  storeFilterForResult = common.StoreFilterForEnum.Result;
-  fieldResultString = common.FieldResultEnum.String;
+  modelTypeStore = ModelTypeEnum.Store;
+  modelTypeMalloy = ModelTypeEnum.Malloy;
+  storeFilterForFilter = StoreFilterForEnum.Filter;
+  storeFilterForResult = StoreFilterForEnum.Result;
+  fieldResultString = FieldResultEnum.String;
 
-  fieldResult = common.FieldResultEnum.String;
+  fieldResult = FieldResultEnum.String;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -107,30 +103,30 @@ export class ReportAddFilterDialogComponent implements OnInit {
     })
   );
 
-  report: common.ReportX;
+  report: ReportX;
 
   modelTypeForm = this.fb.group({
     modelType: [undefined]
   });
 
-  modelTypesList: SelectItem<common.ModelTypeEnum>[] = [
+  modelTypesList: SelectItem<ModelTypeEnum>[] = [
     {
       label: 'Malloy',
-      value: common.ModelTypeEnum.Malloy
+      value: ModelTypeEnum.Malloy
     },
     {
       label: 'Store',
-      value: common.ModelTypeEnum.Store
+      value: ModelTypeEnum.Store
     }
   ];
 
-  storeModels: common.Model[] = [];
+  storeModels: Model[] = [];
   storeModelsList: StoreModelItem[] = [];
   storeModelsLoading = false;
   storeModelsLoaded = false;
 
   storeModelSet = false;
-  storeModel: common.Model;
+  storeModel: Model;
 
   storeModelForm = this.fb.group({
     storeModel: [undefined]
@@ -143,11 +139,11 @@ export class ReportAddFilterDialogComponent implements OnInit {
   storeFilterForList: StoreFilterForItem[] = [
     {
       label: 'Filter',
-      value: common.StoreFilterForEnum.Filter
+      value: StoreFilterForEnum.Filter
     },
     {
       label: 'Result',
-      value: common.StoreFilterForEnum.Result
+      value: StoreFilterForEnum.Result
     }
   ];
 
@@ -159,30 +155,26 @@ export class ReportAddFilterDialogComponent implements OnInit {
     storeFilter: [undefined]
   });
 
-  suggestFields: common.SuggestField[] = [];
+  suggestFields: SuggestField[] = [];
   suggestFieldsLoading = false;
   suggestFieldsLoaded = false;
 
-  emptySuggestField = Object.assign(
-    {},
-    common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
-    {
-      modelFieldRef: undefined,
-      topLabel: 'Empty',
-      partNodeLabel: undefined,
-      partFieldLabel: undefined,
-      partLabel: undefined,
-      fieldClass: undefined,
-      result: undefined
-    }
-  ) as common.SuggestField;
+  emptySuggestField = Object.assign({}, makeCopy(EMPTY_MCONFIG_FIELD), {
+    modelFieldRef: undefined,
+    topLabel: 'Empty',
+    partNodeLabel: undefined,
+    partFieldLabel: undefined,
+    partLabel: undefined,
+    fieldClass: undefined,
+    result: undefined
+  }) as SuggestField;
 
   labelForm: FormGroup<{
     label: FormControl<string>;
   }>;
 
   fieldResultForm: FormGroup<{
-    fieldResult: FormControl<common.FieldResultEnum>;
+    fieldResult: FormControl<FieldResultEnum>;
   }>;
 
   suggestFieldForm: FormGroup<{
@@ -220,13 +212,11 @@ export class ReportAddFilterDialogComponent implements OnInit {
       suggestField: [this.emptySuggestField]
     });
 
-    this.modelTypeForm.controls['modelType'].setValue(
-      common.ModelTypeEnum.Malloy
-    );
+    this.modelTypeForm.controls['modelType'].setValue(ModelTypeEnum.Malloy);
 
     setTimeout(() => {
       if (
-        this.fieldResult === common.FieldResultEnum.String &&
+        this.fieldResult === FieldResultEnum.String &&
         this.suggestFieldsLoaded === false
       ) {
         this.loadSuggestFields();
@@ -236,15 +226,15 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
   labelValidator(group: AbstractControl): ValidationErrors | null {
     if (
-      common.isUndefined(this.labelForm) ||
-      common.isUndefined(this.labelForm.controls['label'].value)
+      isUndefined(this.labelForm) ||
+      isUndefined(this.labelForm.controls['label'].value)
     ) {
       return null;
     }
 
     let label: string = this.labelForm.controls['label'].value.toLowerCase();
 
-    let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
+    let id = MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
     let labels = this.report.extendedFilters
       .filter(y => !!y.field.label)
@@ -265,14 +255,13 @@ export class ReportAddFilterDialogComponent implements OnInit {
     this.formsError = undefined;
 
     if (
-      this.modelTypeForm.controls['modelType'].value ===
-      common.ModelTypeEnum.Store
+      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
     ) {
       this.storeModelSet = false;
 
       this.storeModelForm.controls['storeModel'].setValue(undefined);
       this.storeFilterForForm.controls['storeFilterFor'].setValue(
-        common.StoreFilterForEnum.Filter
+        StoreFilterForEnum.Filter
       );
       this.storeFilterForm.controls['storeFilter'].setValue(undefined);
       this.fieldResultForm.controls['fieldResult'].setValue(undefined);
@@ -285,7 +274,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       this.storeModelForm.controls['storeModel'].setValue(undefined);
       this.storeFilterForForm.controls['storeFilterFor'].setValue(undefined);
       this.fieldResultForm.controls['fieldResult'].setValue(
-        common.FieldResultEnum.String
+        FieldResultEnum.String
       );
     }
   }
@@ -310,11 +299,11 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     if (
       this.storeFilterForForm.controls['storeFilterFor'].value ===
-      common.StoreFilterForEnum.Result
+      StoreFilterForEnum.Result
     ) {
-      if (this.storeResultsList.indexOf(common.FieldResultEnum.String) > -1) {
+      if (this.storeResultsList.indexOf(FieldResultEnum.String) > -1) {
         this.fieldResultForm.controls['fieldResult'].setValue(
-          common.FieldResultEnum.String
+          FieldResultEnum.String
         );
       } else {
         this.fieldResultForm.controls['fieldResult'].setValue(undefined);
@@ -330,13 +319,13 @@ export class ReportAddFilterDialogComponent implements OnInit {
     this.formsError = undefined;
   }
 
-  resultChange(fieldResult: common.FieldResultEnum) {
+  resultChange(fieldResult: FieldResultEnum) {
     this.formsError = undefined;
 
     this.fieldResult = fieldResult;
 
     if (
-      this.fieldResult === common.FieldResultEnum.String &&
+      this.fieldResult === FieldResultEnum.String &&
       this.suggestFieldsLoaded === false
     ) {
       this.loadSuggestFields();
@@ -362,7 +351,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     this.spinner.show(this.storeModelsSpinnerName);
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -371,15 +360,14 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.storeModels = resp.payload.models.filter(
-              model => model.type === common.ModelTypeEnum.Store
+              model => model.type === ModelTypeEnum.Store
               // model => model.isStoreModel === true
             );
 
@@ -422,7 +410,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     this.spinner.show(this.storeFiltersSpinnerName);
 
-    let payload: apiToBackend.ToBackendGetModelRequestPayload = {
+    let payload: ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -432,17 +420,16 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetModelResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetModelResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.storeModel = resp.payload.model;
 
             this.storeFiltersList = resp.payload.model.fields
-              .filter(x => x.fieldClass === common.FieldClassEnum.Filter)
+              .filter(x => x.fieldClass === FieldClassEnum.Filter)
               .map(field => {
                 let storeFiltersItem: StoreFiltersItem = {
                   value: field.id,
@@ -453,7 +440,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
               });
 
             this.storeResultsList =
-              (resp.payload.model.content as common.FileStore).results?.map(
+              (resp.payload.model.content as FileStore).results?.map(
                 result => result.result
               ) || [];
 
@@ -480,7 +467,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetSuggestFieldsRequestPayload = {
+    let payload: ToBackendGetSuggestFieldsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       isRepoProd: nav.isRepoProd,
@@ -493,13 +480,12 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetSuggestFieldsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetSuggestFieldsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.suggestFields = [
               this.emptySuggestField,
               ...resp.payload.suggestFields
@@ -525,20 +511,17 @@ export class ReportAddFilterDialogComponent implements OnInit {
     }
 
     if (
-      this.modelTypeForm.controls['modelType'].value ===
-      common.ModelTypeEnum.Store
+      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
     ) {
-      if (
-        common.isUndefined(this.storeModelForm.controls['storeModel'].value)
-      ) {
+      if (isUndefined(this.storeModelForm.controls['storeModel'].value)) {
         this.formsError = 'Model must be selected';
         return;
       }
 
       if (
         this.storeFilterForForm.controls['storeFilterFor'].value ===
-          common.StoreFilterForEnum.Filter &&
-        common.isUndefined(this.storeFilterForm.controls['storeFilter'].value)
+          StoreFilterForEnum.Filter &&
+        isUndefined(this.storeFilterForm.controls['storeFilter'].value)
       ) {
         this.formsError = 'Filter must be selected';
         return;
@@ -546,8 +529,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
       if (
         this.storeFilterForForm.controls['storeFilterFor'].value ===
-          common.StoreFilterForEnum.Result &&
-        common.isUndefined(this.fieldResultForm.controls['fieldResult'].value)
+          StoreFilterForEnum.Result &&
+        isUndefined(this.fieldResultForm.controls['fieldResult'].value)
       ) {
         this.formsError = 'Result must be selected';
         return;
@@ -560,40 +543,39 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let label: string = this.labelForm.controls['label'].value;
 
-    let id = common.MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
+    let id = MyRegex.replaceSpacesWithUnderscores(label).toLowerCase();
 
-    let fraction: common.Fraction;
+    let fraction: Fraction;
 
     let storeFilter;
 
     if (
-      this.modelTypeForm.controls['modelType'].value ===
-      common.ModelTypeEnum.Store
+      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
     ) {
       storeFilter =
         this.storeFilterForForm.controls['storeFilterFor'].value ===
-        common.StoreFilterForEnum.Filter
-          ? (this.storeModel.content as common.FileStore).fields.find(
+        StoreFilterForEnum.Filter
+          ? (this.storeModel.content as FileStore).fields.find(
               f => f.name === this.storeFilterForm.controls['storeFilter'].value
             )
           : undefined;
 
       let storeResultFraction =
         this.storeFilterForForm.controls['storeFilterFor'].value ===
-        common.StoreFilterForEnum.Filter
+        StoreFilterForEnum.Filter
           ? undefined
-          : (this.storeModel.content as common.FileStore).results.find(
+          : (this.storeModel.content as FileStore).results.find(
               r =>
                 r.result === this.fieldResultForm.controls['fieldResult'].value
             ).fraction_types[0];
 
-      let logicGroup = common.isUndefined(storeResultFraction)
+      let logicGroup = isUndefined(storeResultFraction)
         ? undefined
-        : common.FractionLogicEnum.Or;
+        : FractionLogicEnum.Or;
 
-      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
+      let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
-        : (this.storeModel.content as common.FileStore).results
+        : (this.storeModel.content as FileStore).results
             .find(
               r =>
                 r.result === this.fieldResultForm.controls['fieldResult'].value
@@ -602,16 +584,16 @@ export class ReportAddFilterDialogComponent implements OnInit {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.Or,
+                logicGroup: FractionLogicEnum.Or,
                 typeValue: ft.type,
-                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.AndNot,
-                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: FractionLogicEnum.AndNot,
+                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -622,12 +604,12 @@ export class ReportAddFilterDialogComponent implements OnInit {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
             });
 
-      let controls = common.isUndefined(storeResultFraction)
+      let controls = isUndefined(storeResultFraction)
         ? storeFilter.fraction_controls.map(control => {
-            let newControl: common.FractionControl = {
+            let newControl: FractionControl = {
               options: control.options,
               value: control.value,
               label: control.label,
@@ -638,13 +620,13 @@ export class ReportAddFilterDialogComponent implements OnInit {
             };
             return newControl;
           })
-        : (this.storeModel.content as common.FileStore).results
+        : (this.storeModel.content as FileStore).results
             .find(
               r =>
                 r.result === this.fieldResultForm.controls['fieldResult'].value
             )
             .fraction_types[0].controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -658,46 +640,44 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
       fraction = {
         meta: storeResultFraction?.meta,
-        operator: common.isUndefined(logicGroup)
+        operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
+          : logicGroup === FractionLogicEnum.Or
+            ? FractionOperatorEnum.Or
+            : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
-        type: common.FractionTypeEnum.StoreFraction,
+        type: FractionTypeEnum.StoreFraction,
         storeResult: this.fieldResultForm.controls['fieldResult'].value,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFraction?.type,
-        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+        storeFractionSubTypeLabel: isDefined(storeResultFraction?.type)
           ? storeFractionSubTypeOptions.find(
               k => k.typeValue === storeResultFraction?.type
             ).label
           : storeResultFraction?.type,
         storeFractionLogicGroupWithSubType:
-          common.isDefined(logicGroup) &&
-          common.isDefined(storeResultFraction?.type)
-            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFraction.type}`
+          isDefined(logicGroup) && isDefined(storeResultFraction?.type)
+            ? `${logicGroup}${TRIPLE_UNDERSCORE}${storeResultFraction.type}`
             : undefined,
         controls: controls
       };
     } else if (
-      this.modelTypeForm.controls['modelType'].value ===
-      common.ModelTypeEnum.Malloy
+      this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Malloy
     ) {
       fraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(
           this.fieldResultForm.controls['fieldResult'].value
         )
       };
     } else {
       fraction = {
         brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(
           this.fieldResultForm.controls['fieldResult'].value
         )
       };
@@ -705,38 +685,36 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let suggestField = this.suggestFieldForm.controls['suggestField'].value;
 
-    let newReportField: common.ReportField = {
+    let newReportField: ReportField = {
       id: id,
       hidden: false,
       label: label,
-      maxFractions: common.isDefined(storeFilter)
+      maxFractions: isDefined(storeFilter)
         ? Number(storeFilter.max_fractions)
         : undefined,
       storeModel:
-        this.modelTypeForm.controls['modelType'].value ===
-        common.ModelTypeEnum.Store
+        this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Store
           ? this.storeModelForm.controls['storeModel'].value
           : undefined,
       storeFilter:
         this.modelTypeForm.controls['modelType'].value ===
-          common.ModelTypeEnum.Store &&
+          ModelTypeEnum.Store &&
         this.storeFilterForForm.controls['storeFilterFor'].value ===
-          common.StoreFilterForEnum.Filter
+          StoreFilterForEnum.Filter
           ? this.storeFilterForm.controls['storeFilter'].value
           : undefined,
       storeResult:
         this.modelTypeForm.controls['modelType'].value ===
-          common.ModelTypeEnum.Store &&
+          ModelTypeEnum.Store &&
         this.storeFilterForForm.controls['storeFilterFor'].value ===
-          common.StoreFilterForEnum.Result
+          StoreFilterForEnum.Result
           ? this.fieldResultForm.controls['fieldResult'].value
           : undefined,
       result:
-        this.modelTypeForm.controls['modelType'].value ===
-        common.ModelTypeEnum.Malloy
+        this.modelTypeForm.controls['modelType'].value === ModelTypeEnum.Malloy
           ? this.fieldResultForm.controls['fieldResult'].value
           : undefined,
-      suggestModelDimension: common.isDefined(suggestField?.modelFieldRef)
+      suggestModelDimension: isDefined(suggestField?.modelFieldRef)
         ? suggestField?.modelFieldRef
         : undefined,
       fractions: [fraction],
@@ -747,7 +725,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: undefined,
       rowIds: undefined,
       reportFields: [...this.report.fields, newReportField],

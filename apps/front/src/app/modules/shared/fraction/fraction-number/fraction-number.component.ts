@@ -12,8 +12,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { ValidationService } from '~front/app/services/validation.service';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import {
   FractionNumberBetweenOptionItem,
   FractionTypeItem
@@ -42,15 +40,15 @@ export class FractionNumberComponent implements OnInit {
   defaultNumberValue1 = 100;
   defaultNumberValue2 = 200;
 
-  fractionOperatorEnum = common.FractionOperatorEnum;
-  fractionTypeEnum = common.FractionTypeEnum;
+  fractionOperatorEnum = FractionOperatorEnum;
+  fractionTypeEnum = FractionTypeEnum;
 
   @Input() isDisabled: boolean;
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   numberValuesForm: FormGroup;
   numberSingleValueForm: FormGroup;
@@ -59,97 +57,97 @@ export class FractionNumberComponent implements OnInit {
   fractionNumberTypesList: FractionTypeItem[] = [
     {
       label: 'is any value',
-      value: common.FractionTypeEnum.NumberIsAnyValue,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsAnyValue,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is equal to',
-      value: common.FractionTypeEnum.NumberIsEqualTo,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsEqualTo,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is greater than',
-      value: common.FractionTypeEnum.NumberIsGreaterThan,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsGreaterThan,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is greater than or equal to',
-      value: common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsGreaterThanOrEqualTo,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is less than',
-      value: common.FractionTypeEnum.NumberIsLessThan,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsLessThan,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is less than or equal to',
-      value: common.FractionTypeEnum.NumberIsLessThanOrEqualTo,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsLessThanOrEqualTo,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is between',
-      value: common.FractionTypeEnum.NumberIsBetween,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsBetween,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is null',
-      value: common.FractionTypeEnum.NumberIsNull,
-      operator: common.FractionOperatorEnum.Or
+      value: FractionTypeEnum.NumberIsNull,
+      operator: FractionOperatorEnum.Or
     },
     {
       label: 'is not equal to',
-      value: common.FractionTypeEnum.NumberIsNotEqualTo,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.NumberIsNotEqualTo,
+      operator: FractionOperatorEnum.And
     },
     // {
     //   label: 'is not greater than',
-    //   value: common.FractionTypeEnum.NumberIsNotGreaterThan, // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
+    //   value: FractionTypeEnum.NumberIsNotGreaterThan, // not supported (malloy issue)
+    //   operator: FractionOperatorEnum.And
     // },
     // {
     //   label: 'is not greater than or equal to',
-    //   value: common.FractionTypeEnum.NumberIsNotGreaterThanOrEqualTo, // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
+    //   value: FractionTypeEnum.NumberIsNotGreaterThanOrEqualTo, // not supported (malloy issue)
+    //   operator: FractionOperatorEnum.And
     // },
     // {
     //   label: 'is not less than',
-    //   value: common.FractionTypeEnum.NumberIsNotLessThan, // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
+    //   value: FractionTypeEnum.NumberIsNotLessThan, // not supported (malloy issue)
+    //   operator: FractionOperatorEnum.And
     // },
     // {
     //   label: 'is not less than or equal to',
-    //   value: common.FractionTypeEnum.NumberIsNotLessThanOrEqualTo, // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
+    //   value: FractionTypeEnum.NumberIsNotLessThanOrEqualTo, // not supported (malloy issue)
+    //   operator: FractionOperatorEnum.And
     // },
     // {
     //   label: 'is not between',
-    //   value: common.FractionTypeEnum.NumberIsNotBetween, // not supported (malloy issue)
-    //   operator: common.FractionOperatorEnum.And
+    //   value: FractionTypeEnum.NumberIsNotBetween, // not supported (malloy issue)
+    //   operator: FractionOperatorEnum.And
     // },
     {
       label: 'is not null',
-      value: common.FractionTypeEnum.NumberIsNotNull,
-      operator: common.FractionOperatorEnum.And
+      value: FractionTypeEnum.NumberIsNotNull,
+      operator: FractionOperatorEnum.And
     }
   ];
 
   fractionNumberBetweenOptionsList: FractionNumberBetweenOptionItem[] = [
     {
       label: '[inclusive]',
-      value: common.FractionNumberBetweenOptionEnum.Inclusive
+      value: FractionNumberBetweenOptionEnum.Inclusive
     },
     {
       label: '[left inclusive)',
-      value: common.FractionNumberBetweenOptionEnum.LeftInclusive
+      value: FractionNumberBetweenOptionEnum.LeftInclusive
     },
     {
       label: '(right inclusive]',
-      value: common.FractionNumberBetweenOptionEnum.RightInclusive
+      value: FractionNumberBetweenOptionEnum.RightInclusive
     },
     {
       label: '(exclusive)',
-      value: common.FractionNumberBetweenOptionEnum.Exclusive
+      value: FractionNumberBetweenOptionEnum.Exclusive
     }
   ];
 
@@ -208,11 +206,11 @@ export class FractionNumberComponent implements OnInit {
     });
   }
 
-  // getValueBrick(fractionType: common.FractionTypeEnum, value: string) {
+  // getValueBrick(fractionType: FractionTypeEnum, value: string) {
   //   let newBrick =
-  //     fractionType === common.FractionTypeEnum.NumberIsEqualTo
+  //     fractionType === FractionTypeEnum.NumberIsEqualTo
   //       ? value
-  //       : fractionType === common.FractionTypeEnum.NumberIsNotEqualTo
+  //       : fractionType === FractionTypeEnum.NumberIsNotEqualTo
   //         ? `not ${value}`
   //         : '';
 
@@ -225,24 +223,22 @@ export class FractionNumberComponent implements OnInit {
     let fractionType = this.fraction.type;
 
     let sqlBrick =
-      fractionType === common.FractionTypeEnum.NumberIsEqualTo
+      fractionType === FractionTypeEnum.NumberIsEqualTo
         ? value
-        : fractionType === common.FractionTypeEnum.NumberIsNotEqualTo
+        : fractionType === FractionTypeEnum.NumberIsNotEqualTo
           ? `not ${value}`
           : '';
 
     let mBrick =
-      fractionType === common.FractionTypeEnum.NumberIsEqualTo
+      fractionType === FractionTypeEnum.NumberIsEqualTo
         ? `f\`${value}\``
-        : fractionType === common.FractionTypeEnum.NumberIsNotEqualTo
+        : fractionType === FractionTypeEnum.NumberIsNotEqualTo
           ? `f\`not ${value}\``
           : '';
 
-    let newFraction: common.Fraction = {
-      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
-      parentBrick: common.isDefined(this.fraction.parentBrick)
-        ? mBrick
-        : undefined,
+    let newFraction: Fraction = {
+      brick: isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
+      parentBrick: isDefined(this.fraction.parentBrick) ? mBrick : undefined,
       operator: this.fraction.operator,
       type: fractionType,
       numberValues: value
@@ -251,15 +247,15 @@ export class FractionNumberComponent implements OnInit {
     return newFraction;
   }
 
-  // getSingleBrick(fractionType: common.FractionTypeEnum, value: number) {
+  // getSingleBrick(fractionType: FractionTypeEnum, value: number) {
   //   let newBrick =
-  //     fractionType === common.FractionTypeEnum.NumberIsGreaterThan
+  //     fractionType === FractionTypeEnum.NumberIsGreaterThan
   //       ? `> ${value}`
-  //       : fractionType === common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo
+  //       : fractionType === FractionTypeEnum.NumberIsGreaterThanOrEqualTo
   //         ? `>= ${value}`
-  //         : fractionType === common.FractionTypeEnum.NumberIsLessThan
+  //         : fractionType === FractionTypeEnum.NumberIsLessThan
   //           ? `< ${value}`
-  //           : fractionType === common.FractionTypeEnum.NumberIsLessThanOrEqualTo
+  //           : fractionType === FractionTypeEnum.NumberIsLessThanOrEqualTo
   //             ? `<= ${value}`
   //             : '';
 
@@ -272,32 +268,30 @@ export class FractionNumberComponent implements OnInit {
     let fractionType = this.fraction.type;
 
     let sqlBrick =
-      fractionType === common.FractionTypeEnum.NumberIsGreaterThan
+      fractionType === FractionTypeEnum.NumberIsGreaterThan
         ? `> ${value}`
-        : fractionType === common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo
+        : fractionType === FractionTypeEnum.NumberIsGreaterThanOrEqualTo
           ? `>= ${value}`
-          : fractionType === common.FractionTypeEnum.NumberIsLessThan
+          : fractionType === FractionTypeEnum.NumberIsLessThan
             ? `< ${value}`
-            : fractionType === common.FractionTypeEnum.NumberIsLessThanOrEqualTo
+            : fractionType === FractionTypeEnum.NumberIsLessThanOrEqualTo
               ? `<= ${value}`
               : '';
 
     let mBrick =
-      fractionType === common.FractionTypeEnum.NumberIsGreaterThan
+      fractionType === FractionTypeEnum.NumberIsGreaterThan
         ? `f\`> ${value}\``
-        : fractionType === common.FractionTypeEnum.NumberIsGreaterThanOrEqualTo
+        : fractionType === FractionTypeEnum.NumberIsGreaterThanOrEqualTo
           ? `f\`>= ${value}\``
-          : fractionType === common.FractionTypeEnum.NumberIsLessThan
+          : fractionType === FractionTypeEnum.NumberIsLessThan
             ? `f\`< ${value}\``
-            : fractionType === common.FractionTypeEnum.NumberIsLessThanOrEqualTo
+            : fractionType === FractionTypeEnum.NumberIsLessThanOrEqualTo
               ? `f\`<= ${value}\``
               : '';
 
-    let newFraction: common.Fraction = {
-      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
-      parentBrick: common.isDefined(this.fraction.parentBrick)
-        ? mBrick
-        : undefined,
+    let newFraction: Fraction = {
+      brick: isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
+      parentBrick: isDefined(this.fraction.parentBrick) ? mBrick : undefined,
       operator: this.fraction.operator,
       type: fractionType,
       numberValue1: Number(value)
@@ -307,26 +301,26 @@ export class FractionNumberComponent implements OnInit {
   }
 
   // getBetweenBrick(
-  //   fractionType: common.FractionTypeEnum,
-  //   option: common.FractionNumberBetweenOptionEnum,
+  //   fractionType: FractionTypeEnum,
+  //   option: FractionNumberBetweenOptionEnum,
   //   n1: number,
   //   n2: number
   // ) {
   //   let content =
-  //     option === common.FractionNumberBetweenOptionEnum.Inclusive
+  //     option === FractionNumberBetweenOptionEnum.Inclusive
   //       ? `[${n1}, ${n2}]`
-  //       : option === common.FractionNumberBetweenOptionEnum.LeftInclusive
+  //       : option === FractionNumberBetweenOptionEnum.LeftInclusive
   //         ? `[${n1}, ${n2})`
-  //         : option === common.FractionNumberBetweenOptionEnum.RightInclusive
+  //         : option === FractionNumberBetweenOptionEnum.RightInclusive
   //           ? `(${n1}, ${n2}]`
-  //           : option === common.FractionNumberBetweenOptionEnum.Exclusive
+  //           : option === FractionNumberBetweenOptionEnum.Exclusive
   //             ? `(${n1}, ${n2})`
   //             : '';
 
   //   let newBrick =
-  //     fractionType === common.FractionTypeEnum.NumberIsBetween
+  //     fractionType === FractionTypeEnum.NumberIsBetween
   //       ? content
-  //       : fractionType === common.FractionTypeEnum.NumberIsNotBetween
+  //       : fractionType === FractionTypeEnum.NumberIsNotBetween
   //         ? `not ${content}`
   //         : '';
 
@@ -334,58 +328,54 @@ export class FractionNumberComponent implements OnInit {
   // }
 
   getChangedBetweenFraction(item: {
-    fractionOperator: common.FractionOperatorEnum;
-    fractionType: common.FractionTypeEnum;
-    betweenOption: common.FractionNumberBetweenOptionEnum;
+    fractionOperator: FractionOperatorEnum;
+    fractionType: FractionTypeEnum;
+    betweenOption: FractionNumberBetweenOptionEnum;
     n1: number;
     n2: number;
   }) {
     let { fractionOperator, fractionType, betweenOption, n1, n2 } = item;
 
     let sqlContent =
-      betweenOption === common.FractionNumberBetweenOptionEnum.Inclusive
+      betweenOption === FractionNumberBetweenOptionEnum.Inclusive
         ? `[${n1}, ${n2}]`
-        : betweenOption === common.FractionNumberBetweenOptionEnum.LeftInclusive
+        : betweenOption === FractionNumberBetweenOptionEnum.LeftInclusive
           ? `[${n1}, ${n2})`
-          : betweenOption ===
-              common.FractionNumberBetweenOptionEnum.RightInclusive
+          : betweenOption === FractionNumberBetweenOptionEnum.RightInclusive
             ? `(${n1}, ${n2}]`
-            : betweenOption === common.FractionNumberBetweenOptionEnum.Exclusive
+            : betweenOption === FractionNumberBetweenOptionEnum.Exclusive
               ? `(${n1}, ${n2})`
               : '';
 
     let sqlBrick =
-      fractionType === common.FractionTypeEnum.NumberIsBetween
+      fractionType === FractionTypeEnum.NumberIsBetween
         ? sqlContent
-        : fractionType === common.FractionTypeEnum.NumberIsNotBetween
+        : fractionType === FractionTypeEnum.NumberIsNotBetween
           ? `not ${sqlContent}`
           : '';
 
     let mBrick =
-      betweenOption === common.FractionNumberBetweenOptionEnum.Inclusive
-        ? fractionType === common.FractionTypeEnum.NumberIsBetween
+      betweenOption === FractionNumberBetweenOptionEnum.Inclusive
+        ? fractionType === FractionTypeEnum.NumberIsBetween
           ? `f\`[${n1} to ${n2}]\``
           : `f\`not [${n1} to ${n2}]\``
-        : betweenOption === common.FractionNumberBetweenOptionEnum.LeftInclusive
-          ? fractionType === common.FractionTypeEnum.NumberIsBetween
+        : betweenOption === FractionNumberBetweenOptionEnum.LeftInclusive
+          ? fractionType === FractionTypeEnum.NumberIsBetween
             ? `f\`[${n1} to ${n2})\``
             : `f\`not [${n1} to ${n2})\``
-          : betweenOption ===
-              common.FractionNumberBetweenOptionEnum.RightInclusive
-            ? fractionType === common.FractionTypeEnum.NumberIsBetween
+          : betweenOption === FractionNumberBetweenOptionEnum.RightInclusive
+            ? fractionType === FractionTypeEnum.NumberIsBetween
               ? `f\`(${n1} to ${n2}]\``
               : `f\`not (${n1} to ${n2}]\``
-            : betweenOption === common.FractionNumberBetweenOptionEnum.Exclusive
-              ? fractionType === common.FractionTypeEnum.NumberIsBetween
+            : betweenOption === FractionNumberBetweenOptionEnum.Exclusive
+              ? fractionType === FractionTypeEnum.NumberIsBetween
                 ? `f\`(${n1} to ${n2})\``
                 : `f\`not (${n1} to ${n2})\``
               : '';
 
-    let newFraction: common.Fraction = {
-      brick: common.isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
-      parentBrick: common.isDefined(this.fraction.parentBrick)
-        ? mBrick
-        : undefined,
+    let newFraction: Fraction = {
+      brick: isDefined(this.fraction.parentBrick) ? mBrick : sqlBrick,
+      parentBrick: isDefined(this.fraction.parentBrick) ? mBrick : undefined,
       operator: fractionOperator,
       type: fractionType,
       numberBetweenOption: betweenOption,
@@ -428,11 +418,11 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = MALLOY_FILTER_ANY;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType
         };
 
@@ -446,13 +436,13 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = `f\`${newNumberValues}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `${newNumberValues}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           numberValues: newNumberValues
         };
@@ -468,13 +458,13 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = `f\`> ${newNumberValue1}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `> ${newNumberValue1}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           numberValue1: newNumberValue1
         };
@@ -490,13 +480,13 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = `f\`>= ${newNumberValue1}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `>= ${newNumberValue1}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           numberValue1: newNumberValue1
         };
@@ -512,13 +502,13 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = `f\`< ${newNumberValue1}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `< ${newNumberValue1}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           numberValue1: newNumberValue1
         };
@@ -534,13 +524,13 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = `f\`<= ${newNumberValue1}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `<= ${newNumberValue1}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           numberValue1: newNumberValue1
         };
@@ -554,11 +544,11 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = 'f`null`';
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `null`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `null`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType
         };
 
@@ -567,7 +557,7 @@ export class FractionNumberComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.NumberIsBetween: {
-        let newBetweenOption = common.FractionNumberBetweenOptionEnum.Inclusive;
+        let newBetweenOption = FractionNumberBetweenOptionEnum.Inclusive;
         let newNumberValue1 = this.defaultNumberValue1;
         let newNumberValue2 = this.defaultNumberValue2;
 
@@ -580,7 +570,7 @@ export class FractionNumberComponent implements OnInit {
 
         // this.fraction = {
         //   brick: newBrick,
-        //   operator: common.FractionOperatorEnum.Or,
+        //   operator: FractionOperatorEnum.Or,
         //   type: fractionType,
         //   numberBetweenOption: newBetweenOption,
         //   numberValue1: newNumberValue1,
@@ -588,7 +578,7 @@ export class FractionNumberComponent implements OnInit {
         // };
 
         this.fraction = this.getChangedBetweenFraction({
-          fractionOperator: common.FractionOperatorEnum.Or,
+          fractionOperator: FractionOperatorEnum.Or,
           fractionType: fractionType,
           betweenOption: newBetweenOption,
           n1: newNumberValue1,
@@ -607,13 +597,13 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = `f\`not ${newNumberValues}\``;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : `not ${newNumberValues}`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType,
           numberValues: newNumberValues
         };
@@ -625,7 +615,7 @@ export class FractionNumberComponent implements OnInit {
       }
 
       case this.fractionTypeEnum.NumberIsNotBetween: {
-        let newBetweenOption = common.FractionNumberBetweenOptionEnum.Inclusive;
+        let newBetweenOption = FractionNumberBetweenOptionEnum.Inclusive;
         let newNumberValue1 = this.defaultNumberValue1;
         let newNumberValue2 = this.defaultNumberValue2;
 
@@ -638,7 +628,7 @@ export class FractionNumberComponent implements OnInit {
 
         // this.fraction = {
         //   brick: newBrick,
-        //   operator: common.FractionOperatorEnum.And,
+        //   operator: FractionOperatorEnum.And,
         //   type: fractionType,
         //   numberBetweenOption: newBetweenOption,
         //   numberValue1: newNumberValue1,
@@ -646,7 +636,7 @@ export class FractionNumberComponent implements OnInit {
         // };
 
         this.fraction = this.getChangedBetweenFraction({
-          fractionOperator: common.FractionOperatorEnum.And,
+          fractionOperator: FractionOperatorEnum.And,
           fractionType: fractionType,
           betweenOption: newBetweenOption,
           n1: newNumberValue1,
@@ -663,13 +653,11 @@ export class FractionNumberComponent implements OnInit {
         let mBrick = 'f`not null`';
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : `not null`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `not null`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 

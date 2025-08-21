@@ -1,7 +1,7 @@
-import { common } from '~front/barrels/common';
+import { isUndefined } from '~common/functions/is-undefined';
 
 export function getFileExtension(value: string) {
-  if (common.isUndefined(value)) {
+  if (isUndefined(value)) {
     return value;
   }
 

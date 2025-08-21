@@ -10,7 +10,6 @@ import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { TimeService } from '~front/app/services/time.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -18,12 +17,12 @@ import { common } from '~front/barrels/common';
   templateUrl: './query-status.component.html'
 })
 export class QueryStatusComponent implements OnChanges {
-  queryStatusEnum = common.QueryStatusEnum;
+  queryStatusEnum = QueryStatusEnum;
 
-  spinnerName = common.makeId();
+  spinnerName = makeId();
 
   @Input()
-  query: common.Query;
+  query: Query;
 
   @Input()
   showDataRowsLength: boolean;
@@ -66,12 +65,12 @@ export class QueryStatusComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (common.isDefined(changes.query)) {
+    if (isDefined(changes.query)) {
       this.query = changes.query.currentValue;
 
       this.calculateTimes();
 
-      if (this.query.status === common.QueryStatusEnum.Running) {
+      if (this.query.status === QueryStatusEnum.Running) {
         this.spinner.show(this.spinnerName);
       } else {
         this.spinner.hide(this.spinnerName);
@@ -82,29 +81,29 @@ export class QueryStatusComponent implements OnChanges {
   }
 
   calculateTimes() {
-    if (common.isUndefined(this.nav?.serverTimeDiff)) {
+    if (isUndefined(this.nav?.serverTimeDiff)) {
       return;
     }
 
-    this.completedTimeAgo = common.isDefined(this.query.lastCompleteTs)
+    this.completedTimeAgo = isDefined(this.query.lastCompleteTs)
       ? this.timeService.timeAgoFromNow(
           this.query.lastCompleteTs + this.nav.serverTimeDiff
         )
       : '';
 
-    this.canceledTimeAgo = common.isDefined(this.query.lastCancelTs)
+    this.canceledTimeAgo = isDefined(this.query.lastCancelTs)
       ? this.timeService.timeAgoFromNow(
           this.query.lastCancelTs + this.nav.serverTimeDiff
         )
       : '';
 
-    this.errorTimeAgo = common.isDefined(this.query.lastErrorTs)
+    this.errorTimeAgo = isDefined(this.query.lastErrorTs)
       ? this.timeService.timeAgoFromNow(
           this.query.lastErrorTs + this.nav.serverTimeDiff
         )
       : '';
 
-    let s = common.isDefined(this.query.lastRunTs)
+    let s = isDefined(this.query.lastRunTs)
       ? this.timeService.secondsAgoFromNow(
           this.query.lastRunTs + this.nav.serverTimeDiff
         )

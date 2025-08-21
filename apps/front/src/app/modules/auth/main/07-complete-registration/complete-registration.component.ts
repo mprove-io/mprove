@@ -4,13 +4,23 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { COMPLETE_REGISTRATION_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_LOGIN_SUCCESS } from '~common/constants/top';
+import {
+  APP_SPINNER_NAME,
+  LOCAL_STORAGE_TOKEN
+} from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendCompleteUserRegistrationRequestPayload,
+  ToBackendCompleteUserRegistrationResponse
+} from '~common/interfaces/to-backend/users/to-backend-complete-user-registration';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -18,7 +28,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './complete-registration.component.html'
 })
 export class CompleteRegistrationComponent implements OnInit {
-  pageTitle = constants.COMPLETE_REGISTRATION_PAGE_TITLE;
+  pageTitle = COMPLETE_REGISTRATION_PAGE_TITLE;
 
   emailConfirmationToken: string;
   bToken: string;
@@ -65,7 +75,7 @@ export class CompleteRegistrationComponent implements OnInit {
     this.emailConfirmationToken =
       this.route.snapshot.queryParamMap.get('token');
     this.bToken = this.route.snapshot.queryParamMap.get('b');
-    if (common.isDefined(this.bToken)) {
+    if (isDefined(this.bToken)) {
       this.email = atob(this.bToken);
     }
   }
@@ -77,35 +87,33 @@ export class CompleteRegistrationComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendCompleteUserRegistrationRequestPayload =
-      {
-        emailConfirmationToken: this.emailConfirmationToken,
-        newPassword: this.setPasswordForm.value.newPassword
-      };
+    let payload: ToBackendCompleteUserRegistrationRequestPayload = {
+      emailConfirmationToken: this.emailConfirmationToken,
+      newPassword: this.setPasswordForm.value.newPassword
+    };
 
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCompleteUserRegistration,
+          ToBackendRequestInfoNameEnum.ToBackendCompleteUserRegistration,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCompleteUserRegistrationResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCompleteUserRegistrationResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let user = resp.payload.user;
             let token = resp.payload.token;
 
-            if (common.isDefined(user) && common.isDefined(token)) {
+            if (isDefined(user) && isDefined(token)) {
               // first email verification
               this.myDialogService.showEmailConfirmed();
               this.userQuery.update(user);
               // console.log('stopWatch from CompleteRegistrationComponent - 2');
               this.authService.stopWatch();
-              localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
-              this.router.navigate([common.PATH_LOGIN_SUCCESS]);
+              localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
+              this.router.navigate([PATH_LOGIN_SUCCESS]);
             }
           }
         }),

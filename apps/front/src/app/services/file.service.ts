@@ -1,8 +1,15 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { decodeFilePath } from '~common/functions/decode-file-path';
+import { getFileIds } from '~common/functions/get-file-ids';
+import {
+  ToBackendGetFileRequestPayload,
+  ToBackendGetFileResponse
+} from '~common/interfaces/to-backend/files/to-backend-get-file';
 import { FileQuery, FileState } from '../queries/file.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepoQuery, RepoState } from '../queries/repo.query';
@@ -50,14 +57,14 @@ export class FileService {
 
   getFile(item: {
     fileId: string;
-    panel: common.PanelEnum;
+    panel: PanelEnum;
     skipCheck?: boolean;
   }) {
     let { fileId, panel, skipCheck } = item;
 
     if (skipCheck !== true) {
       let repo = this.repoQuery.getValue();
-      let fileIds = common.getFileIds({ nodes: repo.nodes });
+      let fileIds = getFileIds({ nodes: repo.nodes });
 
       if (fileIds.indexOf(fileId) < 0) {
         return of(undefined).pipe(
@@ -69,30 +76,29 @@ export class FileService {
     let fileName: string;
 
     let fileNodeId =
-      this.nav.projectId + '/' + common.decodeFilePath({ filePath: fileId });
+      this.nav.projectId + '/' + decodeFilePath({ filePath: fileId });
 
     let fileNodeIdParts = fileNodeId.split('/');
 
     fileName = fileNodeIdParts[fileNodeIdParts.length - 1];
 
-    let getFilePayload: apiToBackend.ToBackendGetFileRequestPayload = {
+    let getFilePayload: ToBackendGetFileRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fileNodeId: fileNodeId,
-      panel: panel || common.PanelEnum.Tree
+      panel: panel || PanelEnum.Tree
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetFile,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetFile,
         payload: getFilePayload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetFileResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetFileResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let repoState = this.repoQuery.getValue();
             let newRepoState: RepoState = Object.assign(resp.payload.repo, <
               RepoState

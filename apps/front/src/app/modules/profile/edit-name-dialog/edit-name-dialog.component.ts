@@ -15,8 +15,6 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface EditNameDialogData {
@@ -78,7 +76,7 @@ export class EditNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendSetUserNameRequestPayload = {
+    let payload: ToBackendSetUserNameRequestPayload = {
       firstName: this.editNameForm.value.firstName,
       lastName: this.editNameForm.value.lastName
     };
@@ -87,14 +85,13 @@ export class EditNameDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserName,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetUserName,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSetUserNameResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSetUserNameResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let user = resp.payload.user;
             this.userQuery.update(user);
           }

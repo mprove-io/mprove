@@ -9,8 +9,6 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   standalone: false,
@@ -28,18 +26,18 @@ export class StoreFractionSubTypeComponent {
     this.fractionSubTypeSelect?.close();
   }
 
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
   @Input() isDisabled: boolean;
   @Input() modelContent: any;
-  @Input() fieldResult: common.FieldResultEnum | string;
-  @Input() fractionControl: common.FractionControl;
+  @Input() fieldResult: FieldResultEnum | string;
+  @Input() fractionControl: FractionControl;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
-  logicGroupEnumOr = common.FractionLogicEnum.Or;
-  logicGroupEnumAndNot = common.FractionLogicEnum.AndNot;
+  logicGroupEnumOr = FractionLogicEnum.Or;
+  logicGroupEnumAndNot = FractionLogicEnum.AndNot;
 
   constructor(private fb: FormBuilder) {}
 
@@ -50,32 +48,32 @@ export class StoreFractionSubTypeComponent {
     });
   }
 
-  subTypeChange(item: common.FractionSubTypeOption) {
-    let storeTypeFraction = (this.modelContent as common.FileStore).results
+  subTypeChange(item: FractionSubTypeOption) {
+    let storeTypeFraction = (this.modelContent as FileStore).results
       .find(r => r.result === this.fieldResult)
       .fraction_types.find(ft => ft.type === item.typeValue);
 
-    let newFraction: common.Fraction = {
+    let newFraction: Fraction = {
       meta: storeTypeFraction.meta,
       operator:
-        item.logicGroup === common.FractionLogicEnum.Or
-          ? common.FractionOperatorEnum.Or
-          : common.FractionOperatorEnum.And,
+        item.logicGroup === FractionLogicEnum.Or
+          ? FractionOperatorEnum.Or
+          : FractionOperatorEnum.And,
       logicGroup: item.logicGroup,
-      type: common.FractionTypeEnum.StoreFraction,
+      type: FractionTypeEnum.StoreFraction,
       storeFractionSubType: item.typeValue,
       storeFractionSubTypeOptions: this.fraction.storeFractionSubTypeOptions,
-      storeFractionSubTypeLabel: common.isDefined(item.typeValue)
+      storeFractionSubTypeLabel: isDefined(item.typeValue)
         ? this.fraction.storeFractionSubTypeOptions.find(
             k => k.typeValue === item.typeValue
           ).label
         : item.typeValue,
-      storeFractionLogicGroupWithSubType: `${item.logicGroup}${common.TRIPLE_UNDERSCORE}${item.typeValue}`,
-      controls: (this.modelContent as common.FileStore).results
+      storeFractionLogicGroupWithSubType: `${item.logicGroup}${TRIPLE_UNDERSCORE}${item.typeValue}`,
+      controls: (this.modelContent as FileStore).results
         .find(r => r.result === this.fieldResult)
         .fraction_types.find(ft => ft.type === item.typeValue)
         .controls.map(control => {
-          let newControl: common.FractionControl = {
+          let newControl: FractionControl = {
             options: control.options,
             value: control.value,
             label: control.label,

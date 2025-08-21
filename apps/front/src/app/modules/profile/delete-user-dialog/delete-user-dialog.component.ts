@@ -10,9 +10,6 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface DeleteUserDialogData {
   apiService: ApiService;
@@ -44,7 +41,7 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   delete() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.ref.close();
 
@@ -54,14 +51,13 @@ export class DeleteUserDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteUser,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteUserResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.router.navigate([common.PATH_USER_DELETED]);
+        tap((resp: ToBackendDeleteUserResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.router.navigate([PATH_USER_DELETED]);
           }
         }),
         take(1)

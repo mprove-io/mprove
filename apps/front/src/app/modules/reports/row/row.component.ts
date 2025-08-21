@@ -19,10 +19,8 @@ import { DataService } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { ReportService } from '~front/app/services/report.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
-export interface FilterX2 extends common.FilterX {
+export interface FilterX2 extends FilterX {
   listen: string;
 }
 
@@ -40,10 +38,10 @@ export class RowComponent {
     this.formatNumberSelectElement?.close();
   }
 
-  rowTypeFormula = common.RowTypeEnum.Formula;
-  rowTypeMetric = common.RowTypeEnum.Metric;
-  rowTypeHeader = common.RowTypeEnum.Header;
-  rowTypeEmpty = common.RowTypeEnum.Empty;
+  rowTypeFormula = RowTypeEnum.Formula;
+  rowTypeMetric = RowTypeEnum.Metric;
+  rowTypeHeader = RowTypeEnum.Header;
+  rowTypeEmpty = RowTypeEnum.Empty;
 
   formulaForm: FormGroup = this.fb.group({
     formula: [undefined, [Validators.required]]
@@ -76,7 +74,7 @@ export class RowComponent {
 
   isValid = false;
 
-  report: common.ReportX;
+  report: ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
       // this.resetInputs();
@@ -88,7 +86,7 @@ export class RowComponent {
   reportSelectedNodes: IRowNode<DataRow>[] = [];
   reportSelectedNode: IRowNode<DataRow>;
 
-  mconfig: common.MconfigX;
+  mconfig: MconfigX;
   parametersFilters: FilterX2[] = [];
 
   showMetricsChart: boolean;
@@ -104,30 +102,28 @@ export class RowComponent {
           ? this.reportSelectedNodes[0]
           : undefined;
 
-      if (common.isDefined(this.reportSelectedNode)) {
+      if (isDefined(this.reportSelectedNode)) {
         let struct = this.structQuery.getValue();
 
-        this.formatNumberExamples = constants.FORMAT_NUMBER_EXAMPLES.map(
-          example => {
-            example.output = this.dataService.formatValue({
-              value: example.input,
-              formatNumber: example.id,
-              fieldResult: common.FieldResultEnum.Number,
-              currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
-              currencySuffix: this.reportSelectedNode.data.currencySuffix,
-              thousandsSeparator: struct.thousandsSeparator
-            });
+        this.formatNumberExamples = FORMAT_NUMBER_EXAMPLES.map(example => {
+          example.output = this.dataService.formatValue({
+            value: example.input,
+            formatNumber: example.id,
+            fieldResult: FieldResultEnum.Number,
+            currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
+            currencySuffix: this.reportSelectedNode.data.currencySuffix,
+            thousandsSeparator: struct.thousandsSeparator
+          });
 
-            return example;
-          }
-        );
+          return example;
+        });
       }
 
       // console.log('selectedRowNode', this.repSelectedNode);
 
       if (
-        common.isDefined(this.reportSelectedNode) &&
-        this.reportSelectedNode.data.rowType === common.RowTypeEnum.Metric
+        isDefined(this.reportSelectedNode) &&
+        this.reportSelectedNode.data.rowType === RowTypeEnum.Metric
       ) {
         this.mconfig = this.reportSelectedNode.data.mconfig;
 
@@ -137,9 +133,9 @@ export class RowComponent {
 
         // let timeSpec = this.repQuery.getValue().timeSpec;
 
-        // let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+        // let timeSpecWord = getTimeSpecWord({ timeSpec: timeSpec });
 
-        // let timeFieldIdSpec = `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+        // let timeFieldIdSpec = `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
         this.parametersFilters =
           this.reportSelectedNode.data.mconfig.extendedFilters
@@ -148,7 +144,7 @@ export class RowComponent {
                 filter // TODO: row store parametersFiltersWithExcludedTime
               ) =>
                 this.reportSelectedNode.data.mconfig.modelType ===
-                common.ModelTypeEnum.Store
+                ModelTypeEnum.Store
                   ? // this.reportSelectedNode.data.mconfig.isStoreModel === true
                     this.reportSelectedNode.data.mconfig.filters
                       .map(f => f.fieldId)
@@ -168,10 +164,8 @@ export class RowComponent {
             });
       }
 
-      if (common.isDefined(this.reportSelectedNode)) {
-        if (
-          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula
-        ) {
+      if (isDefined(this.reportSelectedNode)) {
+        if (this.reportSelectedNode.data.rowType === RowTypeEnum.Formula) {
           setValueAndMark({
             control: this.formulaForm.controls['formula'],
             value: this.reportSelectedNode.data.formula
@@ -179,8 +173,8 @@ export class RowComponent {
         }
 
         if (
-          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Header ||
-          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula
+          this.reportSelectedNode.data.rowType === RowTypeEnum.Header ||
+          this.reportSelectedNode.data.rowType === RowTypeEnum.Formula
         ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
@@ -189,8 +183,8 @@ export class RowComponent {
         }
 
         if (
-          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula ||
-          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Metric
+          this.reportSelectedNode.data.rowType === RowTypeEnum.Formula ||
+          this.reportSelectedNode.data.rowType === RowTypeEnum.Metric
         ) {
           setValueAndMark({
             control: this.formatNumberForm.controls['formatNumber'],
@@ -240,14 +234,14 @@ export class RowComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       formula: value
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditFormula,
+      changeType: ChangeTypeEnum.EditFormula,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -264,14 +258,14 @@ export class RowComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       name: value
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditInfo,
+      changeType: ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -293,14 +287,14 @@ export class RowComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       formatNumber: value
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditInfo,
+      changeType: ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -320,14 +314,14 @@ export class RowComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       currencyPrefix: value
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditInfo,
+      changeType: ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -347,14 +341,14 @@ export class RowComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       currencySuffix: value
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditInfo,
+      changeType: ChangeTypeEnum.EditInfo,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -367,7 +361,7 @@ export class RowComponent {
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.Delete,
+      changeType: ChangeTypeEnum.Delete,
       rowChange: undefined,
       rowIds: this.reportSelectedNodes.map(node => node.data.rowId),
       reportFields: this.report.fields,

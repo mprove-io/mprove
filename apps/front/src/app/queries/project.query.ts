@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { Project } from '~common/interfaces/backend/project';
 import { BaseQuery } from './base.query';
 
-export class ProjectState extends common.Project {}
+export class ProjectState extends Project {}
 
 let projectState: ProjectState = {
   orgId: undefined,

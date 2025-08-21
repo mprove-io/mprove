@@ -9,7 +9,6 @@ import { QDataRow } from '~front/app/services/data.service';
 import { MconfigService } from '~front/app/services/mconfig.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { StructService } from '~front/app/services/struct.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -18,11 +17,11 @@ import { common } from '~front/barrels/common';
   styleUrls: ['main-table.component.scss']
 })
 export class MainTableComponent {
-  fieldClassDimension = common.FieldClassEnum.Dimension;
-  fieldClassMeasure = common.FieldClassEnum.Measure;
-  fieldClassCalculation = common.FieldClassEnum.Calculation;
+  fieldClassDimension = FieldClassEnum.Dimension;
+  fieldClassMeasure = FieldClassEnum.Measure;
+  fieldClassCalculation = FieldClassEnum.Calculation;
 
-  fieldResultNumber = common.FieldResultEnum.Number;
+  fieldResultNumber = FieldResultEnum.Number;
 
   @Input()
   isTableHeaderWide: boolean;
@@ -31,24 +30,24 @@ export class MainTableComponent {
   isFormat = true;
 
   @Input()
-  modelFields: common.ModelField[];
+  modelFields: ModelField[];
 
   @Input()
-  mconfigFields: common.MconfigField[];
+  mconfigFields: MconfigField[];
 
-  // mconfigDimensions: common.MconfigField[] = [];
-  // mconfigNotDimensions: common.MconfigField[] = [];
+  // mconfigDimensions: MconfigField[] = [];
+  // mconfigNotDimensions: MconfigField[] = [];
 
   @Input()
   qData: QDataRow[];
 
   @Input()
-  mconfig: common.MconfigX;
+  mconfig: MconfigX;
 
   @Input()
   isEdit: boolean;
 
-  chart: common.ChartX;
+  chart: ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
@@ -72,19 +71,19 @@ export class MainTableComponent {
   //   console.log('changes');
   //   console.log(changes);
 
-  //   if (common.isDefined(changes.mconfigFields?.currentValue)) {
+  //   if (isDefined(changes.mconfigFields?.currentValue)) {
   //     this.mconfigDimensions = (
   //       changes.mconfigFields.currentValue as any
   //     ).filter(
-  //       (x: common.MconfigField) =>
-  //         x.fieldClass === common.FieldClassEnum.Dimension
+  //       (x: MconfigField) =>
+  //         x.fieldClass === FieldClassEnum.Dimension
   //     );
 
   //     this.mconfigNotDimensions = (
   //       changes.mconfigFields.currentValue as any
   //     ).filter(
-  //       (x: common.MconfigField) =>
-  //         x.fieldClass !== common.FieldClassEnum.Dimension
+  //       (x: MconfigField) =>
+  //         x.fieldClass !== FieldClassEnum.Dimension
   //     );
   //   }
   // }
@@ -93,20 +92,20 @@ export class MainTableComponent {
     // const { fieldId, desc } = params;
     let newMconfig = this.structService.makeMconfig();
 
-    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+    if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Sort,
+          type: QueryOperationTypeEnum.Sort,
           sortFieldId: fieldId,
           desc: desc,
           timezone: newMconfig.timezone
         }
       });
     } else {
-      let newSortings: common.Sorting[] = [];
+      let newSortings: Sorting[] = [];
 
       let fIndex = newMconfig.sortings.findIndex(
         sorting => sorting.fieldId === fieldId
@@ -115,7 +114,7 @@ export class MainTableComponent {
       if (fIndex > -1 && newMconfig.sortings[fIndex].desc === true && desc) {
         // desc should be removed from sortings and asc should be added to end
 
-        let sorting: common.Sorting = { fieldId: fieldId, desc: false };
+        let sorting: Sorting = { fieldId: fieldId, desc: false };
 
         newSortings = [
           ...newMconfig.sortings.slice(0, fIndex),
@@ -142,7 +141,7 @@ export class MainTableComponent {
         ];
       } else if (fIndex < 0) {
         // should be added to sortings
-        let sorting: common.Sorting = { fieldId: fieldId, desc: desc };
+        let sorting: Sorting = { fieldId: fieldId, desc: desc };
 
         newSortings = [...newMconfig.sortings, sorting];
       }
@@ -173,7 +172,7 @@ export class MainTableComponent {
     }
   }
 
-  replaceColumn(column: common.MconfigField) {
+  replaceColumn(column: MconfigField) {
     this.myDialogService.showReplaceColumnField({
       apiService: this.apiService,
       chart: this.chart,
@@ -185,23 +184,22 @@ export class MainTableComponent {
   remove(fieldId: string) {
     let newMconfig = this.structService.makeMconfig();
 
-    let fields: common.ModelField[] = this.modelQuery.getValue().fields;
+    let fields: ModelField[] = this.modelQuery.getValue().fields;
 
-    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let { queryOperationType, sortFieldId, desc } =
-        common.sortFieldsOnSelectChange({
-          mconfig: newMconfig,
-          selectFieldId: fieldId,
-          modelFields: fields,
-          mconfigFields: this.mconfig.fields
-        });
+    if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
+      let { queryOperationType, sortFieldId, desc } = sortFieldsOnSelectChange({
+        mconfig: newMconfig,
+        selectFieldId: fieldId,
+        modelFields: fields,
+        mconfigFields: this.mconfig.fields
+      });
 
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Remove,
+          type: QueryOperationTypeEnum.Remove,
           fieldId: fieldId,
           sortFieldId: sortFieldId,
           desc: desc,
@@ -214,17 +212,17 @@ export class MainTableComponent {
         fieldId: fieldId
       });
 
-      newMconfig = common.setChartTitleOnSelectChange({
+      newMconfig = setChartTitleOnSelectChange({
         mconfig: newMconfig,
         fields: fields
       });
 
-      newMconfig = common.setChartFields({
+      newMconfig = setChartFields({
         mconfig: newMconfig,
         fields: fields
       });
 
-      newMconfig = common.sortChartFieldsOnSelectChange({
+      newMconfig = sortChartFieldsOnSelectChange({
         mconfig: newMconfig,
         fields: fields
       });
@@ -254,9 +252,9 @@ export class MainTableComponent {
 
   //   let newMconfig = this.structService.makeMconfig();
 
-  //   if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-  //     let queryOperation: common.QueryOperation = {
-  //       type: common.QueryOperationTypeEnum.Move,
+  //   if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
+  //     let queryOperation: QueryOperation = {
+  //       type: QueryOperationTypeEnum.Move,
   //       moveFieldIds: newColumnsOrder,
   //       timezone: newMconfig.timezone
   //     };
@@ -295,9 +293,9 @@ export class MainTableComponent {
 
   //   let newMconfig = this.structService.makeMconfig();
 
-  //   if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
-  //     let queryOperation: common.QueryOperation = {
-  //       type: common.QueryOperationTypeEnum.Move,
+  //   if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
+  //     let queryOperation: QueryOperation = {
+  //       type: QueryOperationTypeEnum.Move,
   //       moveFieldIds: newColumnsOrder,
   //       timezone: newMconfig.timezone
   //     };
@@ -339,13 +337,13 @@ export class MainTableComponent {
     let dimensions = newColumnsOrder.filter(
       fieldId =>
         this.mconfigFields.find(x => x.id === fieldId).fieldClass ===
-        common.FieldClassEnum.Dimension
+        FieldClassEnum.Dimension
     );
 
     let notDimensions = newColumnsOrder.filter(
       fieldId =>
         this.mconfigFields.find(x => x.id === fieldId).fieldClass !==
-        common.FieldClassEnum.Dimension
+        FieldClassEnum.Dimension
     );
 
     let moveFieldIds = [...dimensions, ...notDimensions];
@@ -358,13 +356,13 @@ export class MainTableComponent {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (this.mconfig.modelType === common.ModelTypeEnum.Malloy) {
+    if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Move,
+          type: QueryOperationTypeEnum.Move,
           moveFieldIds: moveFieldIds,
           timezone: newMconfig.timezone
         }

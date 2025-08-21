@@ -5,7 +5,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -15,7 +14,7 @@ import { common } from '~front/barrels/common';
 export class StatusHeaderComponent implements IHeaderAngularComp {
   params: IHeaderParams<DataRow>;
 
-  spinnerName = common.makeId();
+  spinnerName = makeId();
 
   isRunning = false;
 

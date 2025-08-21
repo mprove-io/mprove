@@ -9,8 +9,6 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface DeleteConnectionDialogData {
   apiService: ApiService;
@@ -48,7 +46,7 @@ export class DeleteConnectionDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendDeleteConnectionRequestPayload = {
+    let payload: ToBackendDeleteConnectionRequestPayload = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       connectionId: this.dataItem.connectionId
@@ -58,14 +56,13 @@ export class DeleteConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteConnection,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteConnectionResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteConnectionResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let connectionsState = this.connectionsQuery.getValue();
             this.connectionsQuery.update({
               connections: connectionsState.connections.filter(

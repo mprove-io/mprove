@@ -6,10 +6,7 @@ import {
   Output
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-
 import { MconfigChartYAxis } from '~common/_index';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   standalone: false,
@@ -29,18 +26,18 @@ export class ChartEditorYAxisElementComponent {
   isExpanded: boolean;
 
   @Input()
-  chartType: common.ChartTypeEnum;
+  chartType: ChartTypeEnum;
 
   @Output() chartToggleYAxisElement =
-    new EventEmitter<interfaces.EventChartToggleYAxisElement>();
+    new EventEmitter<EventChartToggleYAxisElement>();
 
   @Output() chartDeleteYAxisElement =
-    new EventEmitter<interfaces.EventChartDeleteYAxisElement>();
+    new EventEmitter<EventChartDeleteYAxisElement>();
 
   @Output() chartYAxisElementUpdate =
-    new EventEmitter<interfaces.EventChartYAxisElementUpdate>();
+    new EventEmitter<EventChartYAxisElementUpdate>();
 
-  uiChartTypes = common.UI_CHART_TYPES;
+  uiChartTypes = UI_CHART_TYPES;
 
   constructor(private fb: FormBuilder) {}
 
@@ -48,7 +45,7 @@ export class ChartEditorYAxisElementComponent {
   // }
 
   emitChartToggleYAxisElement() {
-    let event: interfaces.EventChartToggleYAxisElement = {
+    let event: EventChartToggleYAxisElement = {
       yAxisIndex: this.yAxisIndex
     };
 
@@ -58,17 +55,17 @@ export class ChartEditorYAxisElementComponent {
   emitChartDeleteYAxisElement(event: any) {
     event.stopPropagation();
 
-    let eventDeleteYAxisElement: interfaces.EventChartDeleteYAxisElement = {
+    let eventDeleteYAxisElement: EventChartDeleteYAxisElement = {
       yAxisIndex: this.yAxisIndex
     };
 
     this.chartDeleteYAxisElement.emit(eventDeleteYAxisElement);
   }
 
-  emitChartYAxisElementUpdate(item: { yAxisPart: common.MconfigChartYAxis }) {
+  emitChartYAxisElementUpdate(item: { yAxisPart: MconfigChartYAxis }) {
     let { yAxisPart } = item;
 
-    let event: interfaces.EventChartYAxisElementUpdate = {
+    let event: EventChartYAxisElementUpdate = {
       yAxisIndex: this.yAxisIndex,
       yAxisPart: yAxisPart
     };
@@ -77,7 +74,7 @@ export class ChartEditorYAxisElementComponent {
   }
 
   toggleScale() {
-    let newYAxisPart: common.MconfigChartYAxis = {
+    let newYAxisPart: MconfigChartYAxis = {
       scale: !this.yAxisElement.scale
     };
 

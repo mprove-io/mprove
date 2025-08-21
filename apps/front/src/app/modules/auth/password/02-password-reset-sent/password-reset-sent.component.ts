@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { PASSWORD_RESET_EMAIL_SENT_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_LOGIN, PATH_PROFILE } from '~common/constants/top';
 import { AuthService } from '~front/app/services/auth.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -11,7 +11,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './password-reset-sent.component.html'
 })
 export class PasswordResetSentComponent implements OnInit {
-  pageTitle = constants.PASSWORD_RESET_EMAIL_SENT_PAGE_TITLE;
+  pageTitle = PASSWORD_RESET_EMAIL_SENT_PAGE_TITLE;
 
   email: string;
 
@@ -29,9 +29,9 @@ export class PasswordResetSentComponent implements OnInit {
 
   done() {
     if (this.authService.authenticated()) {
-      this.router.navigate([common.PATH_PROFILE]);
+      this.router.navigate([PATH_PROFILE]);
     } else {
-      this.router.navigate([common.PATH_LOGIN]);
+      this.router.navigate([PATH_LOGIN]);
     }
   }
 }

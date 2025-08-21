@@ -10,8 +10,6 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import { FractionTypeItem } from '../fraction.component';
 
 @Component({
@@ -33,61 +31,61 @@ export class FractionBooleanComponent {
     this.fractionBooleanValueSelectElement?.close();
   }
 
-  fractionOperatorEnum = common.FractionOperatorEnum;
-  fractionTypeEnum = common.FractionTypeEnum;
+  fractionOperatorEnum = FractionOperatorEnum;
+  fractionTypeEnum = FractionTypeEnum;
 
   @Input() isDisabled: boolean;
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   fractionBooleanTypesList: FractionTypeItem[] = [
     {
-      operator: common.FractionOperatorEnum.And, // "And" isntead of "Or"
+      operator: FractionOperatorEnum.And, // "And" isntead of "Or"
       label: 'is any value',
-      value: common.FractionTypeEnum.BooleanIsAnyValue
+      value: FractionTypeEnum.BooleanIsAnyValue
     },
     {
-      operator: common.FractionOperatorEnum.And,
+      operator: FractionOperatorEnum.And,
       label: 'is true',
-      value: common.FractionTypeEnum.BooleanIsTrue
+      value: FractionTypeEnum.BooleanIsTrue
     },
     {
-      operator: common.FractionOperatorEnum.And,
+      operator: FractionOperatorEnum.And,
       label: 'is false or null',
-      value: common.FractionTypeEnum.BooleanIsFalseOrNull
+      value: FractionTypeEnum.BooleanIsFalseOrNull
     },
     {
-      operator: common.FractionOperatorEnum.And,
+      operator: FractionOperatorEnum.And,
       label: 'is false',
-      value: common.FractionTypeEnum.BooleanIsFalse
+      value: FractionTypeEnum.BooleanIsFalse
     },
     {
-      operator: common.FractionOperatorEnum.And,
+      operator: FractionOperatorEnum.And,
       label: 'is null',
-      value: common.FractionTypeEnum.BooleanIsNull
+      value: FractionTypeEnum.BooleanIsNull
     },
     // {
-    //   operator: common.FractionOperatorEnum.And,
+    //   operator: FractionOperatorEnum.And,
     //   label: 'is not true',
-    //   value: common.FractionTypeEnum.BooleanIsNotTrue // not supported (malloy issue)
+    //   value: FractionTypeEnum.BooleanIsNotTrue // not supported (malloy issue)
     // },
     // {
-    //   operator: common.FractionOperatorEnum.And,
+    //   operator: FractionOperatorEnum.And,
     //   label: 'is not false or null',
-    //   value: common.FractionTypeEnum.BooleanIsNotFalseOrNull // not supported (malloy issue)
+    //   value: FractionTypeEnum.BooleanIsNotFalseOrNull // not supported (malloy issue)
     // },
     // {
-    //   operator: common.FractionOperatorEnum.And,
+    //   operator: FractionOperatorEnum.And,
     //   label: 'is not false',
-    //   value: common.FractionTypeEnum.BooleanIsNotFalse // not supported (malloy issue)
+    //   value: FractionTypeEnum.BooleanIsNotFalse // not supported (malloy issue)
     // },
     {
-      operator: common.FractionOperatorEnum.And,
+      operator: FractionOperatorEnum.And,
       label: 'is not null',
-      value: common.FractionTypeEnum.BooleanIsNotNull
+      value: FractionTypeEnum.BooleanIsNotNull
     }
   ];
 
@@ -104,15 +102,15 @@ export class FractionBooleanComponent {
     let fractionType = fractionTypeItem.value;
 
     switch (fractionType) {
-      case common.FractionTypeEnum.BooleanIsAnyValue: {
+      case FractionTypeEnum.BooleanIsAnyValue: {
         let mBrick = MALLOY_FILTER_ANY;
 
         this.fraction = {
-          brick: common.isDefined(this.fraction.parentBrick) ? mBrick : `any`,
-          parentBrick: common.isDefined(this.fraction.parentBrick)
+          brick: isDefined(this.fraction.parentBrick) ? mBrick : `any`,
+          parentBrick: isDefined(this.fraction.parentBrick)
             ? mBrick
             : undefined,
-          operator: common.FractionOperatorEnum.And, // "And" isntead of "Or"
+          operator: FractionOperatorEnum.And, // "And" isntead of "Or"
           type: fractionType
         };
 
@@ -120,13 +118,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsTrue: {
+      case FractionTypeEnum.BooleanIsTrue: {
         let mBrick = 'f`true`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -135,13 +133,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsFalse: {
+      case FractionTypeEnum.BooleanIsFalse: {
         let mBrick = 'f`=false`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -150,13 +148,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsFalseOrNull: {
+      case FractionTypeEnum.BooleanIsFalseOrNull: {
         let mBrick = 'f`false`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -165,13 +163,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsNull: {
+      case FractionTypeEnum.BooleanIsNull: {
         let mBrick = 'f`null`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -180,13 +178,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsNotTrue: {
+      case FractionTypeEnum.BooleanIsNotTrue: {
         let mBrick = 'f`not true`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -195,13 +193,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsNotFalse: {
+      case FractionTypeEnum.BooleanIsNotFalse: {
         let mBrick = 'f`not =false`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -210,13 +208,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsNotFalseOrNull: {
+      case FractionTypeEnum.BooleanIsNotFalseOrNull: {
         let mBrick = 'f`not false`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 
@@ -225,13 +223,13 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case common.FractionTypeEnum.BooleanIsNotNull: {
+      case FractionTypeEnum.BooleanIsNotNull: {
         let mBrick = 'f`not null`';
 
         this.fraction = {
           brick: mBrick,
           parentBrick: mBrick,
-          operator: common.FractionOperatorEnum.And,
+          operator: FractionOperatorEnum.And,
           type: fractionType
         };
 

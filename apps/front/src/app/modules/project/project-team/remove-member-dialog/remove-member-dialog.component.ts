@@ -9,8 +9,6 @@ import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { TeamQuery } from '~front/app/queries/team.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface RemoveMemberDialogData {
   apiService: ApiService;
@@ -46,7 +44,7 @@ export class RemoveMemberDialogComponent implements OnInit {
   remove() {
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendDeleteMemberRequestPayload = {
+    let payload: ToBackendDeleteMemberRequestPayload = {
       projectId: this.ref.data.projectId,
       memberId: this.ref.data.memberId
     };
@@ -55,14 +53,13 @@ export class RemoveMemberDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteMember,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteMemberResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteMemberResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let teamState = this.teamQuery.getValue();
 
             this.teamQuery.update({

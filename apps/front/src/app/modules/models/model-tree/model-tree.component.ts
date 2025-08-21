@@ -23,9 +23,8 @@ import { MconfigService } from '~front/app/services/mconfig.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';
 import { UiService } from '~front/app/services/ui.service';
-import { common } from '~front/barrels/common';
 
-export class ModelNodeExtra extends common.ModelNode {
+export class ModelNodeExtra extends ModelNode {
   isSelected: boolean;
   isFiltered: boolean;
   children?: ModelNodeExtra[];
@@ -41,25 +40,25 @@ export class ModelNodeExtra extends common.ModelNode {
 })
 // implements OnDestroy
 export class ModelTreeComponent implements AfterViewInit {
-  nodeClassInfo = common.FieldClassEnum.Info;
-  nodeClassDimension = common.FieldClassEnum.Dimension;
-  nodeClassMeasure = common.FieldClassEnum.Measure;
-  nodeClassCalculation = common.FieldClassEnum.Calculation;
-  nodeClassFilter = common.FieldClassEnum.Filter;
+  nodeClassInfo = FieldClassEnum.Info;
+  nodeClassDimension = FieldClassEnum.Dimension;
+  nodeClassMeasure = FieldClassEnum.Measure;
+  nodeClassCalculation = FieldClassEnum.Calculation;
+  nodeClassFilter = FieldClassEnum.Filter;
 
-  modelTreeLevelsFlatTime = common.ModelTreeLevelsEnum.FlatTime;
-  modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
-  modelTreeLevelsNestedFlatTime = common.ModelTreeLevelsEnum.NestedFlatTime;
-  modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
+  modelTreeLevelsFlatTime = ModelTreeLevelsEnum.FlatTime;
+  modelTreeLevelsFlat = ModelTreeLevelsEnum.Flat;
+  modelTreeLevelsNestedFlatTime = ModelTreeLevelsEnum.NestedFlatTime;
+  modelTreeLevelsNested = ModelTreeLevelsEnum.Nested;
 
-  modelTypeMalloy = common.ModelTypeEnum.Malloy;
+  modelTypeMalloy = ModelTypeEnum.Malloy;
 
   nodesExtra: ModelNodeExtra[] = [];
 
   @Output()
   expandFilters = new EventEmitter();
 
-  chart: common.ChartX;
+  chart: ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
@@ -67,8 +66,8 @@ export class ModelTreeComponent implements AfterViewInit {
   );
 
   model: ModelState;
-  mconfig: common.MconfigX;
-  modelTreeLevels = common.ModelTreeLevelsEnum.Flat;
+  mconfig: MconfigX;
+  modelTreeLevels = ModelTreeLevelsEnum.Flat;
 
   nodesExtra$ = combineLatest([
     this.modelQuery.select(),
@@ -79,8 +78,8 @@ export class ModelTreeComponent implements AfterViewInit {
     tap(
       ([model, chart, modelTreeLevels, searchSchemaWord]: [
         ModelState,
-        common.ChartX,
-        common.ModelTreeLevelsEnum,
+        ChartX,
+        ModelTreeLevelsEnum,
         string
       ]) => {
         this.model = model;
@@ -163,8 +162,8 @@ export class ModelTreeComponent implements AfterViewInit {
 
     //       let levelPath: string = projectId;
 
-    //       if (common.isDefined(x.fileId)) {
-    //         x.fileId.split(common.TRIPLE_UNDERSCORE).forEach(part => {
+    //       if (isDefined(x.fileId)) {
+    //         x.fileId.split(TRIPLE_UNDERSCORE).forEach(part => {
     //           levelPath = levelPath ? `${levelPath}/${part}` : part;
     //           this.itemsTree.treeModel.getNodeById(levelPath).expand();
     //         });
@@ -186,8 +185,8 @@ export class ModelTreeComponent implements AfterViewInit {
 
   nodeOnClick(node: TreeNode) {
     if (
-      node.data.nodeClass === common.FieldClassEnum.Filter ||
-      node.data.nodeClass === common.FieldClassEnum.Info
+      node.data.nodeClass === FieldClassEnum.Filter ||
+      node.data.nodeClass === FieldClassEnum.Info
     ) {
       return;
     }
@@ -201,9 +200,9 @@ export class ModelTreeComponent implements AfterViewInit {
       (node.data.required === false ||
         node.data.isSelected === false ||
         [
-          common.FieldClassEnum.Dimension,
-          common.FieldClassEnum.Measure,
-          common.FieldClassEnum.Calculation
+          FieldClassEnum.Dimension,
+          FieldClassEnum.Measure,
+          FieldClassEnum.Calculation
         ].indexOf(node.data?.nodeClass) < 0)
     ) {
       this.selectField(node);
@@ -213,14 +212,13 @@ export class ModelTreeComponent implements AfterViewInit {
   selectField(node: TreeNode) {
     let newMconfig = this.structService.makeMconfig();
 
-    if (this.model.type === common.ModelTypeEnum.Malloy) {
-      let { queryOperationType, sortFieldId, desc } =
-        common.sortFieldsOnSelectChange({
-          mconfig: newMconfig,
-          selectFieldId: node.data.id,
-          modelFields: this.model.fields,
-          mconfigFields: this.mconfig.fields
-        });
+    if (this.model.type === ModelTypeEnum.Malloy) {
+      let { queryOperationType, sortFieldId, desc } = sortFieldsOnSelectChange({
+        mconfig: newMconfig,
+        selectFieldId: node.data.id,
+        modelFields: this.model.fields,
+        mconfigFields: this.mconfig.fields
+      });
 
       this.chartService.editChart({
         mconfig: newMconfig,
@@ -244,7 +242,7 @@ export class ModelTreeComponent implements AfterViewInit {
         newMconfig.select = [...newMconfig.select, node.data.id];
       }
 
-      let fields: common.ModelField[];
+      let fields: ModelField[];
       this.modelQuery.fields$
         .pipe(
           tap(x => (fields = x)),
@@ -252,17 +250,17 @@ export class ModelTreeComponent implements AfterViewInit {
         )
         .subscribe();
 
-      newMconfig = common.setChartTitleOnSelectChange({
+      newMconfig = setChartTitleOnSelectChange({
         mconfig: newMconfig,
         fields: fields
       });
 
-      newMconfig = common.setChartFields({
+      newMconfig = setChartFields({
         mconfig: newMconfig,
         fields: fields
       });
 
-      newMconfig = common.sortChartFieldsOnSelectChange({
+      newMconfig = sortChartFieldsOnSelectChange({
         mconfig: newMconfig,
         fields: fields
       });
@@ -294,50 +292,48 @@ export class ModelTreeComponent implements AfterViewInit {
         ...newMconfig.filters.slice(filterIndex + 1)
       ];
     } else {
-      let newFraction: common.Fraction;
+      let newFraction: Fraction;
 
-      if (newMconfig.modelType === common.ModelTypeEnum.Store) {
+      if (newMconfig.modelType === ModelTypeEnum.Store) {
         // if (newMconfig.isStoreModel === true) {
         let field = this.model.fields.find(x => x.id === node.data.id);
 
         let storeFilter =
-          field.fieldClass === common.FieldClassEnum.Filter
-            ? (this.model.content as common.FileStore).fields.find(
+          field.fieldClass === FieldClassEnum.Filter
+            ? (this.model.content as FileStore).fields.find(
                 f => f.name === field.id
               )
             : undefined;
 
         let storeResultFraction =
-          field.fieldClass === common.FieldClassEnum.Filter
+          field.fieldClass === FieldClassEnum.Filter
             ? undefined
-            : (this.model.content as common.FileStore).results.find(
+            : (this.model.content as FileStore).results.find(
                 r => r.result === field.result
               ).fraction_types[0];
 
-        let logicGroup = common.isUndefined(storeResultFraction)
+        let logicGroup = isUndefined(storeResultFraction)
           ? undefined
-          : common.FractionLogicEnum.Or;
+          : FractionLogicEnum.Or;
 
-        let storeFractionSubTypeOptions = common.isUndefined(
-          storeResultFraction
-        )
+        let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
           ? []
-          : (this.model.content as common.FileStore).results
+          : (this.model.content as FileStore).results
               .find(r => r.result === field.result)
               .fraction_types.map(ft => {
                 let options = [];
 
                 let optionOr: FractionSubTypeOption = {
-                  logicGroup: common.FractionLogicEnum.Or,
+                  logicGroup: FractionLogicEnum.Or,
                   typeValue: ft.type,
-                  value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                  value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
                   label: ft.label
                 };
                 options.push(optionOr);
 
                 let optionAndNot: FractionSubTypeOption = {
-                  logicGroup: common.FractionLogicEnum.AndNot,
-                  value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                  logicGroup: FractionLogicEnum.AndNot,
+                  value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
                   typeValue: ft.type,
                   label: ft.label
                 };
@@ -348,35 +344,34 @@ export class ModelTreeComponent implements AfterViewInit {
               .flat()
               .sort((a, b) => {
                 if (a.logicGroup === b.logicGroup) return 0;
-                return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+                return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
               });
 
         newFraction = {
           meta: storeResultFraction?.meta,
-          operator: common.isUndefined(logicGroup)
+          operator: isUndefined(logicGroup)
             ? undefined
-            : logicGroup === common.FractionLogicEnum.Or
-              ? common.FractionOperatorEnum.Or
-              : common.FractionOperatorEnum.And,
+            : logicGroup === FractionLogicEnum.Or
+              ? FractionOperatorEnum.Or
+              : FractionOperatorEnum.And,
           logicGroup: logicGroup,
           brick: undefined,
-          type: common.FractionTypeEnum.StoreFraction,
+          type: FractionTypeEnum.StoreFraction,
           storeResult: field.result,
           storeFractionSubTypeOptions: storeFractionSubTypeOptions,
           storeFractionSubType: storeResultFraction?.type,
-          storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+          storeFractionSubTypeLabel: isDefined(storeResultFraction?.type)
             ? storeFractionSubTypeOptions.find(
                 k => k.typeValue === storeResultFraction?.type
               ).label
             : storeResultFraction?.type,
           storeFractionLogicGroupWithSubType:
-            common.isDefined(logicGroup) &&
-            common.isDefined(storeResultFraction?.type)
-              ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFraction.type}`
+            isDefined(logicGroup) && isDefined(storeResultFraction?.type)
+              ? `${logicGroup}${TRIPLE_UNDERSCORE}${storeResultFraction.type}`
               : undefined,
-          controls: common.isUndefined(storeResultFraction)
+          controls: isUndefined(storeResultFraction)
             ? storeFilter.fraction_controls.map(control => {
-                let newControl: common.FractionControl = {
+                let newControl: FractionControl = {
                   options: control.options,
                   value: control.value,
                   label: control.label,
@@ -387,10 +382,10 @@ export class ModelTreeComponent implements AfterViewInit {
                 };
                 return newControl;
               })
-            : (this.model.content as common.FileStore).results
+            : (this.model.content as FileStore).results
                 .find(r => r.result === field.result)
                 .fraction_types[0].controls.map(control => {
-                  let newControl: common.FractionControl = {
+                  let newControl: FractionControl = {
                     options: control.options,
                     value: control.value,
                     label: control.label,
@@ -405,12 +400,12 @@ export class ModelTreeComponent implements AfterViewInit {
       } else {
         newFraction = {
           brick: 'any',
-          operator: common.FractionOperatorEnum.Or,
-          type: common.getFractionTypeForAny(node.data.fieldResult)
+          operator: FractionOperatorEnum.Or,
+          type: getFractionTypeForAny(node.data.fieldResult)
         };
       }
 
-      let newFilter: common.Filter = {
+      let newFilter: Filter = {
         fieldId: node.data.id,
         fractions: [newFraction]
       };
@@ -456,8 +451,8 @@ export class ModelTreeComponent implements AfterViewInit {
     // let flatNodesMeasuresAndCalculations: ModelNodeExtra[] = [];
 
     if (
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat ||
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime
+      this.modelTreeLevels === ModelTreeLevelsEnum.Flat ||
+      this.modelTreeLevels === ModelTreeLevelsEnum.FlatTime
     ) {
       nestedNodes.forEach(topNode => {
         topNode.children.forEach(middleNode => {
@@ -468,45 +463,33 @@ export class ModelTreeComponent implements AfterViewInit {
               leafNode.joinLabel = topNode.label;
               leafNode.timeLabel = middleNode.label;
 
-              if (
-                this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime
-              ) {
-                if (leafNode.nodeClass === common.FieldClassEnum.Filter) {
+              if (this.modelTreeLevels === ModelTreeLevelsEnum.FlatTime) {
+                if (leafNode.nodeClass === FieldClassEnum.Filter) {
                   flatNodesFilters.push(leafNode);
-                } else if (
-                  leafNode.nodeClass === common.FieldClassEnum.Dimension
-                ) {
+                } else if (leafNode.nodeClass === FieldClassEnum.Dimension) {
                   flatNodesDimensions.push(leafNode);
-                } else if (
-                  leafNode.nodeClass === common.FieldClassEnum.Measure
-                ) {
+                } else if (leafNode.nodeClass === FieldClassEnum.Measure) {
                   flatNodesMeasures.push(leafNode);
                   // flatNodesMeasuresAndCalculations.push(leafNode);
-                } else if (
-                  leafNode.nodeClass === common.FieldClassEnum.Calculation
-                ) {
+                } else if (leafNode.nodeClass === FieldClassEnum.Calculation) {
                   flatNodesCalculations.push(leafNode);
                   // flatNodesMeasuresAndCalculations.push(leafNode);
                 }
               }
             });
 
-            if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat) {
+            if (this.modelTreeLevels === ModelTreeLevelsEnum.Flat) {
               flatNodesDimensions.push(middleNode);
             }
           } else {
-            if (middleNode.nodeClass === common.FieldClassEnum.Filter) {
+            if (middleNode.nodeClass === FieldClassEnum.Filter) {
               flatNodesFilters.push(middleNode);
-            } else if (
-              middleNode.nodeClass === common.FieldClassEnum.Dimension
-            ) {
+            } else if (middleNode.nodeClass === FieldClassEnum.Dimension) {
               flatNodesDimensions.push(middleNode);
-            } else if (middleNode.nodeClass === common.FieldClassEnum.Measure) {
+            } else if (middleNode.nodeClass === FieldClassEnum.Measure) {
               flatNodesMeasures.push(middleNode);
               // flatNodesMeasuresAndCalculations.push(middleNode);
-            } else if (
-              middleNode.nodeClass === common.FieldClassEnum.Calculation
-            ) {
+            } else if (middleNode.nodeClass === FieldClassEnum.Calculation) {
               flatNodesCalculations.push(middleNode);
               // flatNodesMeasuresAndCalculations.push(middleNode);
             }
@@ -516,14 +499,14 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesMeasures.length > 0) {
         flatNodes.push({
-          id: `${common.ModelNodeIdSuffixEnum.Measures}`,
-          label: common.ModelNodeLabelEnum.Measures,
+          id: `${ModelNodeIdSuffixEnum.Measures}`,
+          label: ModelNodeLabelEnum.Measures,
           description: undefined,
           hidden: false,
           required: false,
           isField: false,
           children: [],
-          nodeClass: common.FieldClassEnum.Info,
+          nodeClass: FieldClassEnum.Info,
           isSelected: false,
           isFiltered: false
         });
@@ -533,14 +516,14 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesCalculations.length > 0) {
         flatNodes.push({
-          id: `${common.ModelNodeIdSuffixEnum.Calculations}`,
-          label: common.ModelNodeLabelEnum.Calculations,
+          id: `${ModelNodeIdSuffixEnum.Calculations}`,
+          label: ModelNodeLabelEnum.Calculations,
           description: undefined,
           hidden: false,
           required: false,
           isField: false,
           children: [],
-          nodeClass: common.FieldClassEnum.Info,
+          nodeClass: FieldClassEnum.Info,
           isSelected: false,
           isFiltered: false
         });
@@ -550,14 +533,14 @@ export class ModelTreeComponent implements AfterViewInit {
 
       // if (flatNodesMeasuresAndCalculations.length > 0) {
       //   flatNodes.push({
-      //     id: `${common.ModelNodeIdSuffixEnum.MeasuresAndCalculations}`,
-      //     label: common.ModelNodeLabelEnum.MeasuresAndCalculations,
+      //     id: `${ModelNodeIdSuffixEnum.MeasuresAndCalculations}`,
+      //     label: ModelNodeLabelEnum.MeasuresAndCalculations,
       //     description: undefined,
       //     hidden: false,
       //     required: false,
       //     isField: false,
       //     children: [],
-      //     nodeClass: common.FieldClassEnum.Info,
+      //     nodeClass: FieldClassEnum.Info,
       //     isSelected: false,
       //     isFiltered: false
       //   });
@@ -567,14 +550,14 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesDimensions.length > 0) {
         flatNodes.push({
-          id: `${common.ModelNodeIdSuffixEnum.Dimensions}`,
-          label: common.ModelNodeLabelEnum.Dimensions,
+          id: `${ModelNodeIdSuffixEnum.Dimensions}`,
+          label: ModelNodeLabelEnum.Dimensions,
           description: undefined,
           hidden: false,
           required: false,
           isField: false,
           children: [],
-          nodeClass: common.FieldClassEnum.Info,
+          nodeClass: FieldClassEnum.Info,
           isSelected: false,
           isFiltered: false
         });
@@ -584,14 +567,14 @@ export class ModelTreeComponent implements AfterViewInit {
 
       if (flatNodesFilters.length > 0) {
         flatNodes.push({
-          id: `${common.ModelNodeIdSuffixEnum.Filters}`,
-          label: common.ModelNodeLabelEnum.FilterOnlyFields,
+          id: `${ModelNodeIdSuffixEnum.Filters}`,
+          label: ModelNodeLabelEnum.FilterOnlyFields,
           description: undefined,
           hidden: false,
           required: false,
           isField: false,
           children: [],
-          nodeClass: common.FieldClassEnum.Info,
+          nodeClass: FieldClassEnum.Info,
           isSelected: false,
           isFiltered: false
         });
@@ -600,7 +583,7 @@ export class ModelTreeComponent implements AfterViewInit {
       }
     }
 
-    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.Nested) {
+    if (this.modelTreeLevels === ModelTreeLevelsEnum.Nested) {
       nestedNodes.forEach(topNode => {
         topNode.children.forEach(middleNode => {
           middleNode.joinLabel = topNode.label;
@@ -617,8 +600,8 @@ export class ModelTreeComponent implements AfterViewInit {
 
     let nestedFlatTimeNodes: ModelNodeExtra[];
 
-    if (this.modelTreeLevels === common.ModelTreeLevelsEnum.NestedFlatTime) {
-      nestedFlatTimeNodes = common.makeCopy(nestedNodes);
+    if (this.modelTreeLevels === ModelTreeLevelsEnum.NestedFlatTime) {
+      nestedFlatTimeNodes = makeCopy(nestedNodes);
 
       nestedFlatTimeNodes.forEach(topNode => {
         let newTopNodeChildren: ModelNodeExtra[] = [];
@@ -644,15 +627,15 @@ export class ModelTreeComponent implements AfterViewInit {
     }
 
     let nodesExtra =
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat ||
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime
+      this.modelTreeLevels === ModelTreeLevelsEnum.Flat ||
+      this.modelTreeLevels === ModelTreeLevelsEnum.FlatTime
         ? flatNodes
-        : this.modelTreeLevels === common.ModelTreeLevelsEnum.NestedFlatTime
+        : this.modelTreeLevels === ModelTreeLevelsEnum.NestedFlatTime
           ? nestedFlatTimeNodes
           : nestedNodes;
 
-    if (common.isDefinedAndNotEmpty(searchSchemaWord)) {
-      let filteredNodesExtra: ModelNodeExtra[] = common.makeCopy(nodesExtra);
+    if (isDefinedAndNotEmpty(searchSchemaWord)) {
+      let filteredNodesExtra: ModelNodeExtra[] = makeCopy(nodesExtra);
 
       filteredNodesExtra = filteredNodesExtra.filter(aNode => {
         let aCheck = false;
@@ -691,13 +674,12 @@ export class ModelTreeComponent implements AfterViewInit {
         }
 
         return aCheck === true &&
-          (this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat ||
-            this.modelTreeLevels === common.ModelTreeLevelsEnum.FlatTime)
+          (this.modelTreeLevels === ModelTreeLevelsEnum.Flat ||
+            this.modelTreeLevels === ModelTreeLevelsEnum.FlatTime)
           ? aNode.children.length > 0
           : aCheck === true
-            ? aNode.children.filter(
-                x => x.nodeClass !== common.FieldClassEnum.Info
-              ).length > 0
+            ? aNode.children.filter(x => x.nodeClass !== FieldClassEnum.Info)
+                .length > 0
             : aNode.isField === false ||
               this.fieldSearchFn({
                 term: searchSchemaWord,
@@ -709,7 +691,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
       this.nodesExtra =
         // filteredNodesExtra.filter(
-        //   x => x.nodeClass !== common.FieldClassEnum.Info
+        //   x => x.nodeClass !== FieldClassEnum.Info
         // ).length === 0
         //   ? []
         //   :
@@ -728,7 +710,7 @@ export class ModelTreeComponent implements AfterViewInit {
     let { term, label, timeLabel, joinLabel } = item;
 
     let haystack = [
-      common.isDefinedAndNotEmpty(timeLabel)
+      isDefinedAndNotEmpty(timeLabel)
         ? `${joinLabel} ${timeLabel} ${label}`
         : `${joinLabel} ${label}`
     ];
@@ -743,11 +725,11 @@ export class ModelTreeComponent implements AfterViewInit {
   updateNodeExtra(node: ModelNode): ModelNodeExtra {
     return Object.assign(node, <ModelNodeExtra>{
       isSelected:
-        common.isDefined(this.mconfig?.structId) && node.isField === true
+        isDefined(this.mconfig?.structId) && node.isField === true
           ? this.mconfig.select.findIndex(x => x === node.id) > -1
           : false,
       isFiltered:
-        common.isDefined(this.mconfig?.structId) && node.isField === true
+        isDefined(this.mconfig?.structId) && node.isField === true
           ? this.mconfig.filters.findIndex(
               filter => filter.fieldId === node.id
             ) > -1
@@ -770,8 +752,8 @@ export class ModelTreeComponent implements AfterViewInit {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath }),
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: fieldLineNumber
     });
   }
@@ -791,7 +773,7 @@ export class ModelTreeComponent implements AfterViewInit {
     });
   }
 
-  setModelTreeLevels(modelTreeLevels: common.ModelTreeLevelsEnum) {
+  setModelTreeLevels(modelTreeLevels: ModelTreeLevelsEnum) {
     this.uiQuery.updatePart({ modelTreeLevels: modelTreeLevels });
     this.uiService.setUserUi({ modelTreeLevels: modelTreeLevels });
   }

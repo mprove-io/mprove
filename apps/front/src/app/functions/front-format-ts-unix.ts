@@ -1,10 +1,9 @@
-import { enums } from '~common/barrels/enums';
-
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import timezone from 'dayjs/plugin/customParseFormat';
 import customParseFormat from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
 
 // function content is the same as nodeFormatTsUnix
 
@@ -14,28 +13,28 @@ dayjs.extend(customParseFormat);
 dayjs.extend(advancedFormat);
 
 export function frontFormatTsUnix(item: {
-  timeSpec: enums.TimeSpecEnum;
+  timeSpec: TimeSpecEnum;
   unixTimeZoned: number;
 }) {
   let { timeSpec, unixTimeZoned } = item;
 
   let date = dayjs.unix(unixTimeZoned).utc();
 
-  return timeSpec === enums.TimeSpecEnum.Years
+  return timeSpec === TimeSpecEnum.Years
     ? date.format('YYYY') // format(date, 'yyyy')
-    : timeSpec === enums.TimeSpecEnum.Quarters
+    : timeSpec === TimeSpecEnum.Quarters
       ? 'Q' + date.format('Q YYYY') // format(date, 'QQQ yyyy')
-      : timeSpec === enums.TimeSpecEnum.Months
+      : timeSpec === TimeSpecEnum.Months
         ? date.format('MMM YYYY') // format(date, 'MMM yyyy')
-        : timeSpec === enums.TimeSpecEnum.Weeks
+        : timeSpec === TimeSpecEnum.Weeks
           ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
-          : timeSpec === enums.TimeSpecEnum.Days
+          : timeSpec === TimeSpecEnum.Days
             ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
-            : timeSpec === enums.TimeSpecEnum.Hours
+            : timeSpec === TimeSpecEnum.Hours
               ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
-              : timeSpec === enums.TimeSpecEnum.Minutes
+              : timeSpec === TimeSpecEnum.Minutes
                 ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
-                : timeSpec === enums.TimeSpecEnum.Timestamps // not *_ts
+                : timeSpec === TimeSpecEnum.Timestamps // not *_ts
                   ? date.format('HH:mm:ss.SSS DD MMM YYYY') //
                   : `${unixTimeZoned}`;
 }

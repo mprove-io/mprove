@@ -7,8 +7,14 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetDashboardsRequestPayload,
+  ToBackendGetDashboardsResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardsQuery } from '../queries/dashboards.query';
 import { MemberQuery } from '../queries/member.query';
@@ -60,7 +66,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
+    let payload: ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -69,13 +75,12 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetDashboardsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
@@ -90,16 +95,15 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
 
             return true;
           } else if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
-            resp.info.error.message ===
-              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.info?.status === ResponseInfoStatusEnum.Error &&
+            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               nav.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               nav.projectId,
-              common.PATH_INFO
+              PATH_INFO
             ]);
 
             return false;

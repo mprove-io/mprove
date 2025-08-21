@@ -1,4 +1,5 @@
-import { common } from '~front/barrels/common';
+import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
+import { isDefined } from '~common/functions/is-defined';
 
 export function makeInitials(item: {
   firstName: string;
@@ -8,24 +9,21 @@ export function makeInitials(item: {
   let { firstName, lastName, alias } = item;
 
   let firstLetter =
-    common.isDefined(firstName) && firstName.length > 0
-      ? firstName[0]
-      : alias[0];
+    isDefined(firstName) && firstName.length > 0 ? firstName[0] : alias[0];
 
   let secondLetter =
-    common.isDefined(firstName) &&
+    isDefined(firstName) &&
     firstName.length > 0 &&
-    common.isDefined(lastName) &&
+    isDefined(lastName) &&
     lastName.length > 0
       ? lastName[0]
-      : common.isDefined(firstName) && firstName.length > 1
+      : isDefined(firstName) && firstName.length > 1
         ? firstName[1]
         : alias.length > 1
           ? alias[1]
           : '_';
 
   return (
-    common.capitalizeFirstLetter(firstLetter) +
-    common.capitalizeFirstLetter(secondLetter)
+    capitalizeFirstLetter(firstLetter) + capitalizeFirstLetter(secondLetter)
   );
 }

@@ -22,9 +22,6 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../shared.module';
 
 export interface EditDashboardInfoDialogData {
@@ -33,7 +30,7 @@ export interface EditDashboardInfoDialogData {
   isRepoProd: boolean;
   branchId: string;
   envId: string;
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
 }
 
 @Component({
@@ -49,7 +46,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -107,7 +104,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       this.titleForm.controls['title'].valid &&
       this.rolesForm.controls['roles'].valid
     ) {
-      this.spinner.show(constants.APP_SPINNER_NAME);
+      this.spinner.show(APP_SPINNER_NAME);
 
       this.ref.close();
 
@@ -116,7 +113,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       let newTitle: string = this.titleForm.controls['title'].value;
       let roles: string = this.rolesForm.controls['roles'].value;
 
-      let payload: apiToBackend.ToBackendSaveModifyDashboardRequestPayload = {
+      let payload: ToBackendSaveModifyDashboardRequestPayload = {
         projectId: this.ref.data.projectId,
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
@@ -126,7 +123,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         dashboardTitle: newTitle.trim(),
         accessRoles: roles,
         tilesGrid: this.ref.data.dashboard.tiles.map(x => {
-          let y = common.makeCopy(x);
+          let y = makeCopy(x);
           delete y.mconfig;
           delete y.query;
           return y;
@@ -138,41 +135,36 @@ export class EditDashboardInfoDialogComponent implements OnInit {
       apiService
         .req({
           pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum
-              .ToBackendSaveModifyDashboard,
+            ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
           payload: payload,
           showSpinner: true
         })
         .pipe(
-          tap(
-            async (resp: apiToBackend.ToBackendSaveModifyDashboardResponse) => {
-              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                let newDashboard = resp.payload.dashboard;
-                let newDashboardPart = resp.payload.newDashboardPart;
+          tap(async (resp: ToBackendSaveModifyDashboardResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+              let newDashboard = resp.payload.dashboard;
+              let newDashboardPart = resp.payload.newDashboardPart;
 
-                if (common.isDefined(newDashboard)) {
-                  let dashboards = this.dashboardsQuery.getValue().dashboards;
+              if (isDefined(newDashboard)) {
+                let dashboards = this.dashboardsQuery.getValue().dashboards;
 
-                  let newDashboards = [
-                    newDashboardPart,
-                    ...dashboards.filter(
-                      x => x.dashboardId !== newDashboardPart.dashboardId
-                    )
-                  ];
+                let newDashboards = [
+                  newDashboardPart,
+                  ...dashboards.filter(
+                    x => x.dashboardId !== newDashboardPart.dashboardId
+                  )
+                ];
 
-                  this.dashboardsQuery.update({ dashboards: newDashboards });
+                this.dashboardsQuery.update({ dashboards: newDashboards });
 
-                  let currentDashboard = this.dashboardQuery.getValue();
+                let currentDashboard = this.dashboardQuery.getValue();
 
-                  if (
-                    currentDashboard.dashboardId === newDashboard.dashboardId
-                  ) {
-                    this.dashboardQuery.update(newDashboard);
-                  }
+                if (currentDashboard.dashboardId === newDashboard.dashboardId) {
+                  this.dashboardQuery.update(newDashboard);
                 }
               }
             }
-          ),
+          }),
           take(1)
         )
         .subscribe();

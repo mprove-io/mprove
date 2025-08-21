@@ -6,8 +6,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { AuthService } from '~front/app/services/auth.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -16,7 +14,7 @@ import { constants } from '~front/barrels/constants';
 })
 // , OnDestroy
 export class LoginSuccessComponent implements OnInit {
-  pageTitle = constants.LOGIN_SUCCESS_PAGE_TITLE;
+  pageTitle = LOGIN_SUCCESS_PAGE_TITLE;
 
   spinnerName = 'loginSuccessSpinner';
 
@@ -64,29 +62,29 @@ export class LoginSuccessComponent implements OnInit {
           envId = x.envId;
 
           if (
-            common.isUndefined(orgId) ||
-            common.isUndefined(projectId) ||
-            common.isUndefined(isRepoProd) ||
-            common.isUndefined(branchId)
+            isUndefined(orgId) ||
+            isUndefined(projectId) ||
+            isUndefined(isRepoProd) ||
+            isUndefined(branchId)
           ) {
             this.navigateService.navigateToProfile();
           } else {
-            let repoId = isRepoProd === true ? common.PROD_REPO_ID : userId;
+            let repoId = isRepoProd === true ? PROD_REPO_ID : userId;
 
             let navParts = [
-              common.PATH_ORG,
+              PATH_ORG,
               orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               projectId,
-              common.PATH_REPO,
+              PATH_REPO,
               repoId,
-              common.PATH_BRANCH,
+              PATH_BRANCH,
               branchId,
-              common.PATH_ENV,
+              PATH_ENV,
               envId,
-              common.PATH_REPORTS,
-              common.PATH_REPORT,
-              common.LAST_SELECTED_REPORT_ID
+              PATH_REPORTS,
+              PATH_REPORT,
+              LAST_SELECTED_REPORT_ID
             ];
 
             this.navigateService.navigateTo({ navParts: navParts });

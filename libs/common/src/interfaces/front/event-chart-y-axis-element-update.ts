@@ -1,4 +1,4 @@
-import { MconfigChartYAxis } from '~common/_index';
+import { MconfigChartYAxis } from '~common/interfaces/blockml/mconfig-chart-y-axis';
 
 export class EventChartYAxisElementUpdate {
   yAxisIndex: number;

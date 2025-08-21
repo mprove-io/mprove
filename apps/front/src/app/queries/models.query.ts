@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { ModelX } from '~common/interfaces/backend/model-x';
 import { BaseQuery } from './base.query';
 
 export class ModelsState {
-  models: common.ModelX[];
+  models: ModelX[];
 }
 
 let modelsState: ModelsState = {

@@ -5,7 +5,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { AuthService } from '~front/app/services/auth.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -13,7 +12,7 @@ import { common } from '~front/barrels/common';
   templateUrl: './user-menu.component.html'
 })
 export class UserMenuComponent implements OnInit {
-  pathProfile = common.PATH_PROFILE;
+  pathProfile = PATH_PROFILE;
 
   lastUrl: string;
 
@@ -40,7 +39,7 @@ export class UserMenuComponent implements OnInit {
   }
 
   navigateProfile() {
-    this.router.navigate([common.PATH_PROFILE]);
+    this.router.navigate([PATH_PROFILE]);
   }
 
   logout() {

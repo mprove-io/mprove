@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { tap } from 'rxjs/operators';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
-
-import { tap } from 'rxjs/operators';
-import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
 
 @Component({
   standalone: false,
@@ -29,7 +28,7 @@ export class DashboardsListComponent {
     })
   );
 
-  filteredDashboards: common.DashboardX[];
+  filteredDashboards: DashboardX[];
   filteredDashboards$ = this.filteredDashboardsQuery.select().pipe(
     tap(x => {
       this.filteredDashboards = x.filteredDashboards.filter(
@@ -51,7 +50,7 @@ export class DashboardsListComponent {
     this.navigateService.navigateToDashboard({ dashboardId: dashboardId });
   }
 
-  trackByFn(index: number, item: common.DashboardX) {
+  trackByFn(index: number, item: DashboardX) {
     return item.dashboardId;
   }
 }

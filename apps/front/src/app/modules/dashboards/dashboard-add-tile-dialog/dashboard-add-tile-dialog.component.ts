@@ -9,15 +9,22 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { EMPTY_CHART_ID } from '~common/constants/top';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { Model } from '~common/interfaces/blockml/model';
+import {
+  ToBackendGetModelsRequestPayload,
+  ToBackendGetModelsResponse
+} from '~common/interfaces/to-backend/models/to-backend-get-models';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface DashboardAddTileDialogData {
   apiService: ApiService;
-  dashboard: common.Dashboard;
+  dashboard: Dashboard;
 }
 
 @Component({
@@ -35,7 +42,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
   spinnerName = 'dashboardAddTile';
 
-  models: common.Model[];
+  models: Model[];
 
   constructor(
     public ref: DialogRef<DashboardAddTileDialogData>,
@@ -59,11 +66,11 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
     this.spinner.show(this.spinnerName);
 
-    // await common.sleep(5000);
+    // await sleep(5000);
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -72,13 +79,12 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.models = resp.payload.models.filter(y => y.hasAccess === true);
 
             this.spinner.hide(this.spinnerName);
@@ -99,7 +105,7 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
     this.navigateService.navigateToChart({
       modelId: modelId,
-      chartId: common.EMPTY_CHART_ID
+      chartId: EMPTY_CHART_ID
     });
   }
 }

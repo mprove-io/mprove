@@ -24,8 +24,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface RenameFolderDialogData {
   apiService: ApiService;
@@ -97,8 +95,8 @@ export class RenameFolderDialogComponent implements OnInit {
     let isNavigateNewFile = false;
     let newFileId: string;
 
-    if (common.isDefined(selectedFileId)) {
-      let selectedPath = common.decodeFilePath({ filePath: selectedFileId });
+    if (isDefined(selectedFileId)) {
+      let selectedPath = decodeFilePath({ filePath: selectedFileId });
 
       let fromPath = this.ref.data.nodeId.split('/').slice(1).join('/');
 
@@ -115,11 +113,11 @@ export class RenameFolderDialogComponent implements OnInit {
           .slice(fromPath.split('/').length)
           .join('/');
 
-        let newPath = common.isDefinedAndNotEmpty(relativePath)
+        let newPath = isDefinedAndNotEmpty(relativePath)
           ? `${toPath}/${relativePath}`
           : toPath;
 
-        newFileId = common.encodeFilePath({ filePath: newPath });
+        newFileId = encodeFilePath({ filePath: newPath });
       }
     }
 
@@ -127,7 +125,7 @@ export class RenameFolderDialogComponent implements OnInit {
     let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
     let newSecondFileNodeId: string;
 
-    if (common.isDefined(secondFileNodeId)) {
+    if (isDefined(secondFileNodeId)) {
       if (secondFileNodeId.startsWith(this.ref.data.nodeId + '/')) {
         isRenameSecondFile = true;
 
@@ -143,13 +141,13 @@ export class RenameFolderDialogComponent implements OnInit {
           .slice(fromPath.split('/').length)
           .join('/');
 
-        newSecondFileNodeId = common.isDefinedAndNotEmpty(relativePath)
+        newSecondFileNodeId = isDefinedAndNotEmpty(relativePath)
           ? `${toPath}/${relativePath}`
           : toPath;
       }
     }
 
-    let payload: apiToBackend.ToBackendRenameCatalogNodeRequestPayload = {
+    let payload: ToBackendRenameCatalogNodeRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
@@ -161,14 +159,13 @@ export class RenameFolderDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRenameCatalogNode,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRenameCatalogNodeResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendRenameCatalogNodeResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -183,7 +180,7 @@ export class RenameFolderDialogComponent implements OnInit {
 
             if (isNavigateNewFile === true) {
               this.navigateService.navigateToFileLine({
-                panel: common.PanelEnum.Tree,
+                panel: PanelEnum.Tree,
                 encodedFileId: newFileId
               });
             }

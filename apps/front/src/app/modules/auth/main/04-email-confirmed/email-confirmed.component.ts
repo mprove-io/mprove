@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { EMAIL_IS_CONFIRMED_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_LOGIN } from '~common/constants/top';
 
 @Component({
   standalone: false,
@@ -10,7 +10,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './email-confirmed.component.html'
 })
 export class EmailConfirmedComponent implements OnInit {
-  pageTitle = constants.EMAIL_IS_CONFIRMED_PAGE_TITLE;
+  pageTitle = EMAIL_IS_CONFIRMED_PAGE_TITLE;
 
   constructor(
     private router: Router,
@@ -22,6 +22,6 @@ export class EmailConfirmedComponent implements OnInit {
   }
 
   ok() {
-    this.router.navigate([common.PATH_LOGIN]);
+    this.router.navigate([PATH_LOGIN]);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
-import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
+import { SPECIAL_ERROR } from '~common/constants/top-front';
+import { ErrorData } from '~common/interfaces/front/error-data';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
   CreateDashboardDialogComponent,
@@ -235,7 +235,7 @@ import {
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 
 export interface ErrorDialogData {
-  errorData: interfaces.ErrorData;
+  errorData: ErrorData;
   isThrow: boolean;
 }
 
@@ -256,7 +256,7 @@ export class MyDialogService {
     }
 
     if (isThrow === true) {
-      throw new Error(constants.SPECIAL_ERROR);
+      throw new Error(SPECIAL_ERROR);
     }
   }
 

@@ -11,6 +11,7 @@ import {
   ViewChild
 } from '@angular/core';
 import { Router } from '@angular/router';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { Subscription } from 'rxjs';
 import { finalize, take, tap } from 'rxjs/operators';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
@@ -22,10 +23,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-
-import uFuzzy from '@leeoniya/ufuzzy';
 
 @Component({
   standalone: false,
@@ -35,15 +32,15 @@ import uFuzzy from '@leeoniya/ufuzzy';
 })
 export class FilesTreeComponent implements OnDestroy {
   @Input()
-  panel: common.PanelEnum;
+  panel: PanelEnum;
 
-  panelTree = common.PanelEnum.Tree;
-  panelChangesToCommit = common.PanelEnum.ChangesToCommit;
-  panelChangesToPush = common.PanelEnum.ChangesToPush;
+  panelTree = PanelEnum.Tree;
+  panelChangesToCommit = PanelEnum.ChangesToCommit;
+  panelChangesToPush = PanelEnum.ChangesToPush;
 
-  repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
+  repoStatusNeedPush = RepoStatusEnum.NeedPush;
 
-  topNodes: common.DiskCatalogNode[] = [];
+  topNodes: DiskCatalogNode[] = [];
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
@@ -107,7 +104,7 @@ export class FilesTreeComponent implements OnDestroy {
 
       this.fileId = x.fileId;
 
-      if (common.isUndefined(x.fileId)) {
+      if (isUndefined(x.fileId)) {
         this.fileNodeId = undefined;
         this.cd.detectChanges();
         return;
@@ -125,7 +122,7 @@ export class FilesTreeComponent implements OnDestroy {
         )
         .subscribe();
 
-      let filePath = common.decodeFilePath({ filePath: x.fileId });
+      let filePath = decodeFilePath({ filePath: x.fileId });
 
       let fIdAr = filePath.split('/');
 
@@ -148,7 +145,7 @@ export class FilesTreeComponent implements OnDestroy {
 
   private timer: any;
 
-  filteredFileItems: common.FileItem[] = [];
+  filteredFileItems: FileItem[] = [];
 
   constructor(
     private repoQuery: RepoQuery,
@@ -172,8 +169,8 @@ export class FilesTreeComponent implements OnDestroy {
     let mproveDirValue = this.struct.mproveDirValue;
 
     if (
-      common.isUndefined(mproveDirValue) ||
-      mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH
+      isUndefined(mproveDirValue) ||
+      mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
     } else {
@@ -202,8 +199,8 @@ export class FilesTreeComponent implements OnDestroy {
       .pipe(
         tap(x => {
           if (
-            this.panel === common.PanelEnum.Tree &&
-            common.isDefined(x.fileId) &&
+            this.panel === PanelEnum.Tree &&
+            isDefined(x.fileId) &&
             this.file.isExist === true
           ) {
             let projectId: string;
@@ -218,7 +215,7 @@ export class FilesTreeComponent implements OnDestroy {
 
             let levelPath: string = projectId;
 
-            let filePath = common.decodeFilePath({ filePath: x.fileId });
+            let filePath = decodeFilePath({ filePath: x.fileId });
 
             filePath.split('/').forEach(part => {
               levelPath = levelPath ? `${levelPath}/${part}` : part;
@@ -241,21 +238,21 @@ export class FilesTreeComponent implements OnDestroy {
 
   changeToCommitOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.ChangesToCommit,
+      panel: PanelEnum.ChangesToCommit,
       encodedFileId: fileId
     });
   }
 
   changeToPushOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.ChangesToPush,
+      panel: PanelEnum.ChangesToPush,
       encodedFileId: fileId
     });
   }
 
   fileItemOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
+      panel: PanelEnum.Tree,
       encodedFileId: fileId
     });
   }
@@ -268,7 +265,7 @@ export class FilesTreeComponent implements OnDestroy {
       }
     } else {
       this.navigateService.navigateToFileLine({
-        panel: common.PanelEnum.Tree,
+        panel: PanelEnum.Tree,
         encodedFileId: node.data.fileId
       });
     }
@@ -295,7 +292,7 @@ export class FilesTreeComponent implements OnDestroy {
     let fromNodeId = event.node.id;
     let toNodeId = parentId + '/' + event.node.name;
 
-    let payload: apiToBackend.ToBackendMoveCatalogNodeRequestPayload = {
+    let payload: ToBackendMoveCatalogNodeRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -306,8 +303,8 @@ export class FilesTreeComponent implements OnDestroy {
     let isMoveSuccess = false;
     let newFileId: string;
 
-    if (common.isDefined(this.fileId)) {
-      let selectedPath = common.decodeFilePath({ filePath: this.fileId });
+    if (isDefined(this.fileId)) {
+      let selectedPath = decodeFilePath({ filePath: this.fileId });
 
       let fromPath = fromNodeId.split('/').slice(1).join('/');
       let toPath = toNodeId.split('/').slice(1).join('/');
@@ -321,24 +318,23 @@ export class FilesTreeComponent implements OnDestroy {
             ? ''
             : selectedPath.slice(fromPath.length + 1);
 
-        let newPath = common.isDefinedAndNotEmpty(relativePath)
+        let newPath = isDefinedAndNotEmpty(relativePath)
           ? `${toPath}/${relativePath}`
           : toPath;
 
-        newFileId = common.encodeFilePath({ filePath: newPath });
+        newFileId = encodeFilePath({ filePath: newPath });
       }
     }
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMoveCatalogNode,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendMoveCatalogNodeResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendMoveCatalogNodeResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             isMoveSuccess = true;
 
             this.repoQuery.update(resp.payload.repo);
@@ -347,9 +343,9 @@ export class FilesTreeComponent implements OnDestroy {
               needValidate: resp.payload.needValidate
             });
 
-            if (common.isDefined(newFileId)) {
+            if (isDefined(newFileId)) {
               this.navigateService.navigateToFileLine({
-                panel: common.PanelEnum.Tree,
+                panel: PanelEnum.Tree,
                 encodedFileId: newFileId
               });
             }
@@ -362,37 +358,33 @@ export class FilesTreeComponent implements OnDestroy {
           if (isMoveSuccess === false) {
             let repoId =
               this.nav.isRepoProd === true
-                ? common.PROD_REPO_ID
+                ? PROD_REPO_ID
                 : this.userQuery.getValue().userId;
 
             let arStart = [
-              common.PATH_ORG,
+              PATH_ORG,
               this.nav.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               this.nav.projectId,
-              common.PATH_REPO,
+              PATH_REPO,
               repoId,
-              common.PATH_BRANCH,
+              PATH_BRANCH,
               this.nav.branchId,
-              common.PATH_ENV,
+              PATH_ENV,
               this.nav.envId,
-              common.PATH_FILES
+              PATH_FILES
             ];
 
             let arStartStr = arStart.join('/');
 
-            let arNext = [
-              ...arStart,
-              common.PATH_FILE,
-              common.LAST_SELECTED_FILE_ID
-            ];
+            let arNext = [...arStart, PATH_FILE, LAST_SELECTED_FILE_ID];
 
             this.router
               .navigateByUrl(arStartStr, { skipLocationChange: true })
               .then(() => {
                 this.router.navigate(arNext, {
                   queryParams: {
-                    panel: common.PanelEnum.Tree
+                    panel: PanelEnum.Tree
                   }
                 });
               });
@@ -403,11 +395,11 @@ export class FilesTreeComponent implements OnDestroy {
   }
 
   makeFilteredFileItems() {
-    let filteredFileItems = common.getFileItems({ nodes: this.repo.nodes });
+    let filteredFileItems = getFileItems({ nodes: this.repo.nodes });
 
     let idxs;
 
-    if (common.isDefinedAndNotEmpty(this.word)) {
+    if (isDefinedAndNotEmpty(this.word)) {
       let haystack = filteredFileItems.map(
         x => `${x.parentPath}/${x.fileName}`
       );
@@ -418,7 +410,7 @@ export class FilesTreeComponent implements OnDestroy {
 
     filteredFileItems =
       idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): common.FileItem => filteredFileItems[idx])
+        ? idxs.map((idx: number): FileItem => filteredFileItems[idx])
         : [];
 
     this.filteredFileItems = filteredFileItems.sort((a, b) => {

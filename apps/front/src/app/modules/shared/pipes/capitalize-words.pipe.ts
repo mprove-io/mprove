@@ -1,10 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { common } from '~front/barrels/common';
 
 @Pipe({ standalone: false, name: 'capitalizeWords' })
 export class CapitalizeWordsPipe implements PipeTransform {
   transform(value: string) {
-    if (common.isDefined(value)) {
+    if (isDefined(value)) {
       let newValue = value
         .split(' ')
         .map(x => x.charAt(0).toUpperCase() + x.slice(1))

@@ -2,8 +2,14 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { common } from '~front/barrels/common';
-import { enums } from '~front/barrels/enums';
+import {
+  PARAMETER_REPO_ID,
+  PATH_INFO,
+  PATH_ORG,
+  PATH_PROJECT,
+  PROD_REPO_ID
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';
@@ -33,7 +39,7 @@ export class RepoIdResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let repoId = route.params[common.PARAMETER_REPO_ID];
+    let repoId = route.params[PARAMETER_REPO_ID];
 
     let userId;
     this.userQuery.userId$
@@ -43,27 +49,27 @@ export class RepoIdResolver implements Resolve<Observable<boolean>> {
       )
       .subscribe();
 
-    if (repoId !== common.PROD_REPO_ID && repoId !== userId) {
+    if (repoId !== PROD_REPO_ID && repoId !== userId) {
       this.myDialogService.showError({
         errorData: {
-          message: enums.ErEnum.FRONT_FORBIDDEN_REPO
+          message: ErEnum.FRONT_FORBIDDEN_REPO
         },
         isThrow: false
       });
 
       this.router.navigate([
-        common.PATH_ORG,
+        PATH_ORG,
         nav.orgId,
-        common.PATH_PROJECT,
+        PATH_PROJECT,
         nav.projectId,
-        common.PATH_INFO
+        PATH_INFO
       ]);
 
       return of(false);
     }
 
     this.navQuery.updatePart({
-      isRepoProd: repoId === common.PROD_REPO_ID
+      isRepoProd: repoId === PROD_REPO_ID
     });
 
     return of(false);

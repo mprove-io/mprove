@@ -13,13 +13,10 @@ import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportsQuery } from '~front/app/queries/reports.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;
-  report: common.ReportX;
+  report: ReportX;
   projectId: string;
   branchId: string;
   envId: string;
@@ -57,17 +54,17 @@ export class DeleteReportDialogComponent implements OnInit {
 
   delete() {
     if (this.ref.data.isStartSpinnerUntilNavEnd === true) {
-      this.spinner.show(constants.APP_SPINNER_NAME);
+      this.spinner.show(APP_SPINNER_NAME);
     }
 
     this.ref.close();
 
     let { projectId, branchId, isRepoProd } = this.ref.data;
 
-    let report: common.ReportX = this.ref.data.report;
+    let report: ReportX = this.ref.data.report;
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendDeleteReportRequestPayload = {
+    let payload: ToBackendDeleteReportRequestPayload = {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
@@ -77,14 +74,13 @@ export class DeleteReportDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteReport,
         payload: payload,
         showSpinner: !this.ref.data.isStartSpinnerUntilNavEnd
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteReportResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteReportResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let reports = this.reportsQuery.getValue().reports;
 
             this.reportsQuery.update({

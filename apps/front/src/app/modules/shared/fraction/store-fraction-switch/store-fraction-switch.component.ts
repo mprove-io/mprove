@@ -6,8 +6,6 @@ import {
   Output
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   standalone: false,
@@ -17,13 +15,13 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 // implements OnInit
 export class StoreFractionSwitchComponent {
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
   @Input() isDisabled: boolean;
-  @Input() fractionControl: common.FractionControl;
+  @Input() fractionControl: FractionControl;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   constructor(private fb: FormBuilder) {}
 
@@ -35,11 +33,11 @@ export class StoreFractionSwitchComponent {
   }
 
   toggleSwitch() {
-    let newControl = common.makeCopy(this.fractionControl);
+    let newControl = makeCopy(this.fractionControl);
 
     newControl.value = !newControl.value;
 
-    let newFraction = common.makeCopy(this.fraction);
+    let newFraction = makeCopy(this.fraction);
 
     let controlIndex = newFraction.controls.findIndex(
       control => control.name === this.fractionControl.name

@@ -5,8 +5,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -14,9 +12,9 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './org-account.component.html'
 })
 export class OrgAccountComponent implements OnInit {
-  pageTitle = constants.ORGANIZATION_ACCOUNT_PAGE_TITLE;
+  pageTitle = ORGANIZATION_ACCOUNT_PAGE_TITLE;
 
-  org: common.Org;
+  org: Org;
   org$ = this.orgQuery.select().pipe(
     tap(x => {
       this.org = x;

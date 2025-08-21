@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 import { formatSpecifier } from 'd3-format';
-import { common } from '~front/barrels/common';
+import { isUndefined } from '~common/functions/is-undefined';
+import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
+import { MyRegex } from '~common/models/my-regex';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {
@@ -58,11 +60,11 @@ export class ValidationService {
   }
 
   static dayOfWeekIndexValuesValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
-    if (control.value.match(common.MyRegex.IS_DAY_OF_WEEK_INDEX_VALUES())) {
+    if (control.value.match(MyRegex.IS_DAY_OF_WEEK_INDEX_VALUES())) {
       return null;
     } else {
       return { isNotDayOfWeekIndexValues: true };
@@ -70,11 +72,11 @@ export class ValidationService {
   }
 
   static lowerCaseValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
-    if (control.value.match(common.MyRegex.HAS_UPPERCASE_VALUES())) {
+    if (control.value.match(MyRegex.HAS_UPPERCASE_VALUES())) {
       return { isNotLowerCaseValues: true };
     } else {
       return null;
@@ -82,11 +84,11 @@ export class ValidationService {
   }
 
   static numberValuesOrEmptyValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
-    if (control.value.match(common.MyRegex.IS_NUMBER_VALUES())) {
+    if (control.value.match(MyRegex.IS_NUMBER_VALUES())) {
       return null;
     } else {
       return { isNotNumberValues: true };
@@ -96,13 +98,13 @@ export class ValidationService {
   static timestampValidator(control: FormControl) {
     let value = control.value;
 
-    if (common.isUndefinedOrEmpty(value)) {
+    if (isUndefinedOrEmpty(value)) {
       return null;
     }
 
     if (value.endsWith('.')) {
       return { wrongTimestamp: true };
-    } else if (value.match(common.MyRegex.IS_TIMESTAMP())) {
+    } else if (value.match(MyRegex.IS_TIMESTAMP())) {
       // Additional validation for date correctness (e.g., leap years, month lengths)
       let [datePart, timePart] = value.replace('T', ' ').split(' ');
       let [year, month, day] = datePart.split('-').map(Number);
@@ -162,7 +164,7 @@ export class ValidationService {
   }
 
   static formatNumberValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
@@ -175,11 +177,11 @@ export class ValidationService {
   }
 
   static numberOrEmptyValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
-    if (control.value.toString().match(common.MyRegex.IS_NUMBER())) {
+    if (control.value.toString().match(MyRegex.IS_NUMBER())) {
       return null;
     } else {
       return { isNotNumber: true };
@@ -187,11 +189,11 @@ export class ValidationService {
   }
 
   static integerOrEmptyValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
-    if (control.value.toString().match(common.MyRegex.IS_INTEGER())) {
+    if (control.value.toString().match(MyRegex.IS_INTEGER())) {
       return null;
     } else {
       return { isNotInteger: true };
@@ -199,14 +201,12 @@ export class ValidationService {
   }
 
   static zeroToThreeDigitsIntegerOrEmptyValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
     if (
-      control.value
-        .toString()
-        .match(common.MyRegex.IS_ZERO_TO_THREE_DIGITS_INTEGER())
+      control.value.toString().match(MyRegex.IS_ZERO_TO_THREE_DIGITS_INTEGER())
     ) {
       return null;
     } else {
@@ -215,13 +215,13 @@ export class ValidationService {
   }
 
   static fileNameWrongChars(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
     let wrongChars: string[] = [];
 
-    let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_VIEW_REF_CHARS_G();
+    let reg2 = MyRegex.CAPTURE_NOT_ALLOWED_VIEW_REF_CHARS_G();
     let r2;
 
     while ((r2 = reg2.exec(control.value.toString()))) {
@@ -236,13 +236,13 @@ export class ValidationService {
   }
 
   static connectionNameWrongChars(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
     let wrongChars: string[] = [];
 
-    let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_CONNECTION_NAME_CHARS_G();
+    let reg2 = MyRegex.CAPTURE_NOT_ALLOWED_CONNECTION_NAME_CHARS_G();
     let r2;
 
     while ((r2 = reg2.exec(control.value.toString()))) {
@@ -257,13 +257,13 @@ export class ValidationService {
   }
 
   static envVariableNameWrongChars(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
     let wrongChars: string[] = [];
 
-    let reg2 = common.MyRegex.CAPTURE_NOT_ALLOWED_ENV_VAR_CHARS_G();
+    let reg2 = MyRegex.CAPTURE_NOT_ALLOWED_ENV_VAR_CHARS_G();
     let r2;
 
     while ((r2 = reg2.exec(control.value.toString()))) {
@@ -278,7 +278,7 @@ export class ValidationService {
   }
 
   static notZeroOrEmptyValidator(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
@@ -302,7 +302,7 @@ export class ValidationService {
   // }
 
   static checkTextSize(control: FormControl) {
-    if (common.isUndefined(control.value) || control.value === '') {
+    if (isUndefined(control.value) || control.value === '') {
       return null;
     }
 
@@ -331,7 +331,7 @@ export class ValidationService {
   //           }),
   //           catchError(e => {
   //             this.printer.log(
-  //               enums.busEnum.VALIDATION_SERVICE,
+  //               busEnum.VALIDATION_SERVICE,
   //               `caught error accessing API`
   //             );
   //             this.router.navigate(['/404']);

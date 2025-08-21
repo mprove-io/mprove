@@ -17,9 +17,8 @@ import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
 
-export class BmlErrorExtra extends common.BmlError {
+export class BmlErrorExtra extends BmlError {
   errorExt: any;
   sortOrder: number;
 }
@@ -27,7 +26,7 @@ export class BmlErrorExtra extends common.BmlError {
 export class BmlErrorsNode {
   title: string;
   message: string;
-  lines: common.DiskFileLine[];
+  lines: DiskFileLine[];
   id: string;
   name: string;
   isError: boolean;
@@ -59,9 +58,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
           return Object.assign({}, error, <BmlErrorExtra>{
             errorExt: errorExt,
-            sortOrder: common.isDefined(errorExt)
-              ? this.errorSortOrder(errorExt)
-              : 1,
+            sortOrder: isDefined(errorExt) ? this.errorSortOrder(errorExt) : 1,
             title: transformBlockmlErrorTitle(error.title)
           });
         })
@@ -78,7 +75,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
       let nodes: BmlErrorsNode[] = [];
 
       this.errors.forEach(error => {
-        let errorId = common.makeId();
+        let errorId = makeId();
 
         if (error.lines.length > 0) {
           error.lines.forEach(line => {
@@ -94,7 +91,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
             let node = nodes.find(y => y.id === line.fileId);
 
-            if (common.isUndefined(node)) {
+            if (isUndefined(node)) {
               let newNode: BmlErrorsNode = {
                 id: line.fileId,
                 name: line.fileName,
@@ -109,7 +106,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
             } else {
               let eNode = node.children.find(k => k.id === errorId);
 
-              if (common.isDefined(eNode)) {
+              if (isDefined(eNode)) {
                 eNode.lines.push(line);
               } else {
                 node.children.push(newErrorNode);
@@ -171,7 +168,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
   file$ = this.fileQuery.select().pipe(
     tap(x => {
-      if (common.isUndefined(x.fileId)) {
+      if (isUndefined(x.fileId)) {
         this.fileNodeId = undefined;
         this.cd.detectChanges();
         return;
@@ -189,7 +186,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
         )
         .subscribe();
 
-      let filePath = common.decodeFilePath({ filePath: x.fileId });
+      let filePath = decodeFilePath({ filePath: x.fileId });
 
       let fIdAr = filePath.split('/');
 
@@ -225,8 +222,8 @@ export class BlockmlErrorsComponent implements OnDestroy {
             )
             .subscribe();
 
-          if (common.isDefined(x.fileId)) {
-            let filePath = common.decodeFilePath({ filePath: x.fileId });
+          if (isDefined(x.fileId)) {
+            let filePath = decodeFilePath({ filePath: x.fileId });
 
             let fileIdAr = filePath.split('/');
 
@@ -234,7 +231,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
             let node = this.itemsTree.treeModel.getNodeById(fileId);
 
-            if (common.isDefined(node)) {
+            if (isDefined(node)) {
               node.expand();
             }
           }
@@ -267,33 +264,33 @@ export class BlockmlErrorsComponent implements OnDestroy {
     switch (ext) {
       case 'other':
         return 1;
-      case common.FileExtensionEnum.Yml:
+      case FileExtensionEnum.Yml:
         return 2;
-      case common.FileExtensionEnum.Md:
+      case FileExtensionEnum.Md:
         return 3;
-      case common.FileExtensionEnum.Store:
+      case FileExtensionEnum.Store:
         return 7;
-      case common.FileExtensionEnum.Report:
+      case FileExtensionEnum.Report:
         return 8;
-      case common.FileExtensionEnum.Dashboard:
+      case FileExtensionEnum.Dashboard:
         return 9;
-      case common.FileExtensionEnum.Chart:
+      case FileExtensionEnum.Chart:
         return 10;
       default:
         return 0;
     }
   }
 
-  goToFileLine(line: common.DiskFileLine) {
+  goToFileLine(line: DiskFileLine) {
     let lineFileIdAr = line.fileId.split('/');
     lineFileIdAr.shift();
 
     let filePath = lineFileIdAr.join('/');
 
-    let fileId = common.encodeFilePath({ filePath: filePath });
+    let fileId = encodeFilePath({ filePath: filePath });
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
+      panel: PanelEnum.Tree,
       encodedFileId: fileId,
       lineNumber: line.lineNumber
     });

@@ -18,9 +18,6 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface CreateProjectDialogData {
   apiService: ApiService;
@@ -42,9 +39,8 @@ export class CreateProjectDialogComponent implements OnInit {
 
   createProjectForm: FormGroup;
 
-  projectRemoteRepoTypeEnum = common.ProjectRemoteTypeEnum;
-  projectRemoteRepoType: common.ProjectRemoteTypeEnum =
-    common.ProjectRemoteTypeEnum.GitClone;
+  projectRemoteRepoTypeEnum = ProjectRemoteTypeEnum;
+  projectRemoteRepoType: ProjectRemoteTypeEnum = ProjectRemoteTypeEnum.GitClone;
 
   noteId: string;
   publicKey: string;
@@ -78,23 +74,21 @@ export class CreateProjectDialogComponent implements OnInit {
       ]
     });
 
-    let payload: apiToBackend.ToBackendGenerateProjectRemoteKeyRequestPayload =
-      {
-        orgId: this.ref.data.orgId
-      };
+    let payload: ToBackendGenerateProjectRemoteKeyRequestPayload = {
+      orgId: this.ref.data.orgId
+    };
 
     let apiService: ApiService = this.ref.data.apiService;
 
     apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendGenerateProjectRemoteKey,
+          ToBackendRequestInfoNameEnum.ToBackendGenerateProjectRemoteKey,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGenerateProjectRemoteKeyResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGenerateProjectRemoteKeyResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.noteId = resp.payload.noteId;
             this.publicKey = resp.payload.publicKey;
 
@@ -119,17 +113,17 @@ export class CreateProjectDialogComponent implements OnInit {
     }
 
     if (
-      this.projectRemoteRepoType === common.ProjectRemoteTypeEnum.GitClone &&
+      this.projectRemoteRepoType === ProjectRemoteTypeEnum.GitClone &&
       !this.createProjectForm.controls['projectGitUrl'].valid
     ) {
       return;
     }
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateProjectRequestPayload = {
+    let payload: ToBackendCreateProjectRequestPayload = {
       orgId: this.ref.data.orgId,
       name: this.createProjectForm.value.projectName,
       remoteType: this.projectRemoteRepoType,
@@ -141,25 +135,24 @@ export class CreateProjectDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateProject,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateProject,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateProjectResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateProjectResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               resp.payload.project.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               resp.payload.project.projectId,
-              common.PATH_REPO,
-              common.PROD_REPO_ID,
-              common.PATH_BRANCH,
+              PATH_REPO,
+              PROD_REPO_ID,
+              PATH_BRANCH,
               resp.payload.project.defaultBranch,
-              common.PATH_ENV,
-              common.PROJECT_ENV_PROD,
-              common.PATH_FILES
+              PATH_ENV,
+              PROJECT_ENV_PROD,
+              PATH_FILES
             ]);
           }
         }),
@@ -169,11 +162,11 @@ export class CreateProjectDialogComponent implements OnInit {
   }
 
   managedOnClick() {
-    this.projectRemoteRepoType = common.ProjectRemoteTypeEnum.Managed;
+    this.projectRemoteRepoType = ProjectRemoteTypeEnum.Managed;
   }
 
   gitCloneOnClick() {
-    this.projectRemoteRepoType = common.ProjectRemoteTypeEnum.GitClone;
+    this.projectRemoteRepoType = ProjectRemoteTypeEnum.GitClone;
   }
 
   isDeployKeyAddedOnClick(event: any) {

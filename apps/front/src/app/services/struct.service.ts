@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { common } from '~front/barrels/common';
+import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { isDefined } from '~common/functions/is-defined';
+import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { ChartQuery } from '../queries/chart.query';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { StructQuery, StructState } from '../queries/struct.query';
@@ -30,7 +34,7 @@ export class StructService {
     })
   );
 
-  mconfig: common.MconfigX;
+  mconfig: MconfigX;
 
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
@@ -51,11 +55,11 @@ export class StructService {
     this.chart$.subscribe();
   }
 
-  makeMconfig(): common.MconfigX {
-    let newMconfigId = common.makeId();
-    let newQueryId = common.makeId();
+  makeMconfig(): MconfigX {
+    let newMconfigId = makeId();
+    let newQueryId = makeId();
 
-    let emptyMconfig: common.MconfigX = {
+    let emptyMconfig: MconfigX = {
       structId: this.model.structId,
       mconfigId: newMconfigId,
       queryId: newQueryId,
@@ -79,15 +83,15 @@ export class StructService {
       limit: 500,
       filters: [],
       extendedFilters: [],
-      chart: common.makeCopy(common.DEFAULT_CHART),
+      chart: makeCopy(DEFAULT_CHART),
       temp: true,
       serverTs: 1
     };
 
-    let mconfigCopy = common.makeCopy(this.mconfig);
+    let mconfigCopy = makeCopy(this.mconfig);
 
-    return common.isDefined(this.mconfig.structId)
-      ? Object.assign(mconfigCopy, <common.MconfigX>{
+    return isDefined(this.mconfig.structId)
+      ? Object.assign(mconfigCopy, <MconfigX>{
           mconfigId: newMconfigId,
           queryId: newQueryId,
           temp: true,

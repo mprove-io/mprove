@@ -4,12 +4,20 @@ import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, from, of } from 'rxjs';
 import { concatMap, delay, map, startWith, take, tap } from 'rxjs/operators';
+import { VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_LOGIN } from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import {
+  ToBackendResendUserEmailRequestPayload,
+  ToBackendResendUserEmailResponse
+} from '~common/interfaces/to-backend/users/to-backend-resend-user-email';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -17,7 +25,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './verify-email.component.html'
 })
 export class VerifyEmailComponent implements OnInit, OnDestroy {
-  pageTitle = constants.VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE;
+  pageTitle = VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE;
 
   userId: string;
 
@@ -26,7 +34,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
       this.userId = state.userId;
     }),
     map(state => {
-      if (common.isUndefined(state.email)) {
+      if (isUndefined(state.email)) {
         this.authService.logout();
       }
       return state.email;
@@ -56,27 +64,26 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   }
 
   resendEmail() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendResendUserEmailRequestPayload = {
+    let payload: ToBackendResendUserEmailRequestPayload = {
       userId: this.userId
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendResendUserEmail,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendResendUserEmailResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendResendUserEmailResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let isEmailVerified = resp.payload.isEmailVerified;
 
             if (isEmailVerified === true) {
-              this.router.navigate([common.PATH_LOGIN]);
+              this.router.navigate([PATH_LOGIN]);
             } else {
-              this.spinner.hide(constants.APP_SPINNER_NAME);
+              this.spinner.hide(APP_SPINNER_NAME);
               this.startTimer();
             }
           }
@@ -106,7 +113,7 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (common.isDefined(this.timerSubscription)) {
+    if (isDefined(this.timerSubscription)) {
       this.timerSubscription?.unsubscribe();
       this.timerSubscription = undefined;
     }

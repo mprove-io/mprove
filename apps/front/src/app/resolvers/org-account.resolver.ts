@@ -7,8 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { PARAMETER_ORG_ID } from '~common/constants/top';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetOrgRequestPayload,
+  ToBackendGetOrgResponse
+} from '~common/interfaces/to-backend/orgs/to-backend-get-org';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { OrgQuery } from '../queries/org.query';
@@ -44,18 +49,18 @@ export class OrgAccountResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let payload: apiToBackend.ToBackendGetOrgRequestPayload = {
-      orgId: route.params[common.PARAMETER_ORG_ID]
+    let payload: ToBackendGetOrgRequestPayload = {
+      orgId: route.params[PARAMETER_ORG_ID]
     };
 
     return this.apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrg,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetOrgResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetOrgResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let org = resp.payload.org;
             this.orgQuery.update(org);
             return true;

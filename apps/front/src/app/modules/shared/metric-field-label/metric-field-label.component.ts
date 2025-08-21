@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -9,7 +8,7 @@ import { common } from '~front/barrels/common';
 // implements OnChanges
 export class MetricFieldLabelComponent {
   @Input()
-  metric: common.ModelMetric;
+  metric: ModelMetric;
 
   @Input()
   isShowTop: boolean;

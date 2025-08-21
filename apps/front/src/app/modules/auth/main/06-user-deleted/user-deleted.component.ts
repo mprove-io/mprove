@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
+import { USER_DELETED_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_REGISTER } from '~common/constants/top';
 import { UserQuery } from '~front/app/queries/user.query';
 import { AuthService } from '~front/app/services/auth.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -13,7 +13,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './user-deleted.component.html'
 })
 export class UserDeletedComponent implements OnInit {
-  pageTitle = constants.USER_DELETED_PAGE_TITLE;
+  pageTitle = USER_DELETED_PAGE_TITLE;
 
   email: string;
 
@@ -39,6 +39,6 @@ export class UserDeletedComponent implements OnInit {
   }
 
   createNewAccount() {
-    this.router.navigate([common.PATH_REGISTER]);
+    this.router.navigate([PATH_REGISTER]);
   }
 }

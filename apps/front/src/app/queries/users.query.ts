@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { apiToBackend } from '~front/barrels/api-to-backend';
+import { OrgUsersItem } from '~common/interfaces/to-backend/org-users/to-backend-get-org-users';
 import { BaseQuery } from './base.query';
 
 export class UsersState {
-  users: apiToBackend.OrgUsersItem[];
+  users: OrgUsersItem[];
   total: number;
 }
 

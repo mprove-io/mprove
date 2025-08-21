@@ -6,7 +6,6 @@ import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ReportService } from '~front/app/services/report.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -31,7 +30,7 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
     })
   );
 
-  report: common.ReportX;
+  report: ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
       this.report = x;
@@ -60,7 +59,7 @@ export class RowIdRendererComponent implements ICellRendererAngularComp {
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.Delete,
+      changeType: ChangeTypeEnum.Delete,
       rowChange: undefined,
       rowIds: [this.reportSelectedNode.data.rowId],
       reportFields: this.report.fields,

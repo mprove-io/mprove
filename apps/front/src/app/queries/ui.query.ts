@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { GridApi, IRowNode } from 'ag-grid-community';
-import { DataRow } from '~front/app/interfaces/data-row';
-import { common } from '~front/barrels/common';
+import { Column, GridApi, IRowNode } from 'ag-grid-community';
 import {
   DEFAULT_METRICS_COLUMN_NAME_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
-} from '../constants/top';
-import { ChartPointsData } from '../interfaces/chart-points-data';
+} from '~common/constants/top-front';
+import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
+import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboard-link';
+import { ProjectFileLink } from '~common/interfaces/backend/project-file-link';
+import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
+import { ProjectReportLink } from '~common/interfaces/backend/project-report-link';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { ChartPointsData } from '~common/interfaces/front/chart-points-data';
+import { DataRow } from '~common/interfaces/front/data-row';
 import { BaseQuery } from './base.query';
 
 export interface RepChartData {
   rows: DataRow[];
-  columns: common.Column[];
+  columns: Column[];
   firstDataTimeColumnIndex: number;
   lastDataTimeColumnIndex: number;
 }
@@ -29,7 +37,7 @@ export class UiState {
   showSchema: boolean;
   searchSchemaWord: string;
   searchMetricsWord: string;
-  panel: common.PanelEnum;
+  panel: PanelEnum;
   needSave: boolean;
   showTileParameters: boolean;
   showDashboardsLeftPanel: boolean;
@@ -45,15 +53,15 @@ export class UiState {
   metricsTimeColumnsWideWidth: number;
   secondFileNodeId: string;
   //
-  modelTreeLevels: common.ModelTreeLevelsEnum;
+  modelTreeLevels: ModelTreeLevelsEnum;
   timezone: string;
-  timeSpec: common.TimeSpecEnum;
-  timeRangeFraction: common.Fraction;
-  projectFileLinks: common.ProjectFileLink[];
-  projectModelLinks: common.ProjectModelLink[];
-  projectChartLinks: common.ProjectChartLink[];
-  projectDashboardLinks: common.ProjectDashboardLink[];
-  projectReportLinks: common.ProjectReportLink[];
+  timeSpec: TimeSpecEnum;
+  timeRangeFraction: Fraction;
+  projectFileLinks: ProjectFileLink[];
+  projectModelLinks: ProjectModelLink[];
+  projectChartLinks: ProjectChartLink[];
+  projectDashboardLinks: ProjectDashboardLink[];
+  projectReportLinks: ProjectReportLink[];
 }
 
 let uiState: UiState = {
@@ -76,7 +84,7 @@ let uiState: UiState = {
   showSchema: false,
   searchSchemaWord: undefined,
   searchMetricsWord: undefined,
-  panel: common.PanelEnum.Tree,
+  panel: PanelEnum.Tree,
   needSave: false,
   showTileParameters: false,
   showDashboardsLeftPanel: true,

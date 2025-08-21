@@ -6,9 +6,14 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { PARAMETER_ORG_ID } from '~common/constants/top';
+import { LOCAL_STORAGE_ORG_ID } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetOrgRequestPayload,
+  ToBackendGetOrgResponse
+} from '~common/interfaces/to-backend/orgs/to-backend-get-org';
 import { NavQuery } from '../queries/nav.query';
 import { ApiService } from '../services/api.service';
 
@@ -23,18 +28,18 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let payload: apiToBackend.ToBackendGetOrgRequestPayload = {
-      orgId: route.params[common.PARAMETER_ORG_ID]
+    let payload: ToBackendGetOrgRequestPayload = {
+      orgId: route.params[PARAMETER_ORG_ID]
     };
 
     return this.apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrg,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrg,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetOrgResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetOrgResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let org = resp.payload.org;
 
             this.navQuery.updatePart({
@@ -43,7 +48,7 @@ export class OrgResolver implements Resolve<Observable<boolean>> {
               orgOwnerId: org.ownerId
             });
 
-            localStorage.setItem(constants.LOCAL_STORAGE_ORG_ID, org.orgId);
+            localStorage.setItem(LOCAL_STORAGE_ORG_ID, org.orgId);
 
             return true;
           } else {

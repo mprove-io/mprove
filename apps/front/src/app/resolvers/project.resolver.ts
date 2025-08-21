@@ -7,9 +7,14 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { PARAMETER_PROJECT_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { LOCAL_STORAGE_PROJECT_ID } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetProjectRequestPayload,
+  ToBackendGetProjectResponse
+} from '~common/interfaces/to-backend/projects/to-backend-get-project';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -47,19 +52,18 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
       nav: nav
     });
 
-    let payload: apiToBackend.ToBackendGetProjectRequestPayload = {
-      projectId: route.params[common.PARAMETER_PROJECT_ID]
+    let payload: ToBackendGetProjectRequestPayload = {
+      projectId: route.params[PARAMETER_PROJECT_ID]
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetProjectResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetProjectResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let project = resp.payload.project;
 
             this.navQuery.updatePart({
@@ -68,13 +72,10 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
               projectDefaultBranch: project.defaultBranch,
               isRepoProd: true,
               branchId: project.defaultBranch,
-              envId: common.PROJECT_ENV_PROD
+              envId: PROJECT_ENV_PROD
             });
 
-            localStorage.setItem(
-              constants.LOCAL_STORAGE_PROJECT_ID,
-              project.projectId
-            );
+            localStorage.setItem(LOCAL_STORAGE_PROJECT_ID, project.projectId);
 
             this.memberQuery.update(resp.payload.userMember);
 

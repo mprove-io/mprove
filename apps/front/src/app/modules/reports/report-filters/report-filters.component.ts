@@ -3,8 +3,6 @@ import { MALLOY_FILTER_ANY } from '~common/_index';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportService } from '~front/app/services/report.service';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   standalone: false,
@@ -13,7 +11,7 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 export class ReportFiltersComponent {
   @Input()
-  report: common.ReportX;
+  report: ReportX;
 
   constructor(
     private reportService: ReportService,
@@ -21,9 +19,9 @@ export class ReportFiltersComponent {
   ) {}
 
   fractionUpdate(
-    reportField: common.ReportField,
+    reportField: ReportField,
     fieldIndex: number,
-    eventFractionUpdate: interfaces.EventFractionUpdate
+    eventFractionUpdate: EventFractionUpdate
   ) {
     let fractions = reportField.fractions;
 
@@ -45,7 +43,7 @@ export class ReportFiltersComponent {
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: undefined,
       rowIds: undefined,
       reportFields: newReportFields,
@@ -53,12 +51,12 @@ export class ReportFiltersComponent {
     });
   }
 
-  addFraction(reportField: common.ReportField, fieldIndex: number) {
+  addFraction(reportField: ReportField, fieldIndex: number) {
     let fractions = reportField.fractions;
 
-    let newFraction: common.Fraction;
+    let newFraction: Fraction;
 
-    if (common.isDefined(reportField.storeModel)) {
+    if (isDefined(reportField.storeModel)) {
       let store = this.modelsQuery
         .getValue()
         .models.find(m => m.modelId === reportField.storeModel);
@@ -66,44 +64,42 @@ export class ReportFiltersComponent {
       //   x => x.modelId === reportField.store
       // );
 
-      let storeFilter = common.isDefined(reportField.storeFilter)
-        ? (store.content as common.FileStore).fields.find(
+      let storeFilter = isDefined(reportField.storeFilter)
+        ? (store.content as FileStore).fields.find(
             f => f.name === reportField.storeFilter
           )
         : undefined;
 
-      let storeResultFirstTypeFraction = common.isDefined(
-        reportField.storeFilter
-      )
+      let storeResultFirstTypeFraction = isDefined(reportField.storeFilter)
         ? undefined
-        : (store.content as common.FileStore).results.find(
+        : (store.content as FileStore).results.find(
             r => r.result === reportField.storeResult
           ).fraction_types[0];
 
-      let logicGroup = common.isUndefined(storeResultFirstTypeFraction)
+      let logicGroup = isUndefined(storeResultFirstTypeFraction)
         ? undefined
-        : common.FractionLogicEnum.Or;
+        : FractionLogicEnum.Or;
 
-      let storeFractionSubTypeOptions = common.isUndefined(
+      let storeFractionSubTypeOptions = isUndefined(
         storeResultFirstTypeFraction
       )
         ? []
-        : (store.content as common.FileStore).results
+        : (store.content as FileStore).results
             .find(r => r.result === reportField.storeResult)
             .fraction_types.map(ft => {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.Or,
+                logicGroup: FractionLogicEnum.Or,
                 typeValue: ft.type,
-                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.AndNot,
-                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: FractionLogicEnum.AndNot,
+                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -114,37 +110,34 @@ export class ReportFiltersComponent {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFirstTypeFraction?.meta,
-        operator: common.isUndefined(logicGroup)
+        operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
+          : logicGroup === FractionLogicEnum.Or
+            ? FractionOperatorEnum.Or
+            : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
-        type: common.FractionTypeEnum.StoreFraction,
+        type: FractionTypeEnum.StoreFraction,
         storeResult: reportField.storeResult,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFirstTypeFraction?.type,
-        storeFractionSubTypeLabel: common.isDefined(
-          storeResultFirstTypeFraction?.type
-        )
+        storeFractionSubTypeLabel: isDefined(storeResultFirstTypeFraction?.type)
           ? storeFractionSubTypeOptions.find(
               k => k.typeValue === storeResultFirstTypeFraction?.type
             ).label
           : storeResultFirstTypeFraction?.type,
         storeFractionLogicGroupWithSubType:
-          common.isDefined(logicGroup) &&
-          common.isDefined(storeResultFirstTypeFraction?.type)
-            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFirstTypeFraction.type}`
+          isDefined(logicGroup) && isDefined(storeResultFirstTypeFraction?.type)
+            ? `${logicGroup}${TRIPLE_UNDERSCORE}${storeResultFirstTypeFraction.type}`
             : undefined,
-        controls: common.isUndefined(storeResultFirstTypeFraction)
+        controls: isUndefined(storeResultFirstTypeFraction)
           ? storeFilter.fraction_controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -156,7 +149,7 @@ export class ReportFiltersComponent {
               return newControl;
             })
           : storeResultFirstTypeFraction.controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -172,8 +165,8 @@ export class ReportFiltersComponent {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(reportField.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(reportField.result)
       };
     }
 
@@ -191,7 +184,7 @@ export class ReportFiltersComponent {
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: undefined,
       rowIds: undefined,
       reportFields: newReportFields,
@@ -200,13 +193,13 @@ export class ReportFiltersComponent {
   }
 
   deleteFraction(
-    reportField: common.ReportField,
+    reportField: ReportField,
     fieldIndex: number,
     fractionIndex: number
   ) {
     let fractions = reportField.fractions;
 
-    let newReportFields: common.ReportField[];
+    let newReportFields: ReportField[];
 
     if (fractions.length === 1) {
       newReportFields = [
@@ -232,7 +225,7 @@ export class ReportFiltersComponent {
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: undefined,
       rowIds: undefined,
       reportFields: newReportFields,
@@ -240,14 +233,14 @@ export class ReportFiltersComponent {
     });
   }
 
-  deleteFilter(reportField: common.ReportField) {
+  deleteFilter(reportField: ReportField) {
     let newReportFields = this.report.fields.filter(
       x => x.id !== reportField.id
     );
 
     this.reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: undefined,
       rowIds: undefined,
       reportFields: newReportFields,

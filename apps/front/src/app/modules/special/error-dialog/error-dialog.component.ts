@@ -7,9 +7,6 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   selector: 'm-error-dialog',
@@ -32,18 +29,18 @@ export class ErrorDialogComponent implements OnInit {
   traceId: string;
 
   constructor(
-    public ref: DialogRef<interfaces.ErrorData>,
+    public ref: DialogRef<ErrorData>,
     private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {
-    this.spinner.hide(constants.APP_SPINNER_NAME);
+    this.spinner.hide(APP_SPINNER_NAME);
 
     if (this.ref.data?.skipLogToConsole !== true) {
       console.log(this.ref.data);
 
       let stack = this.ref.data?.originalError?.stack;
-      if (common.isDefined(stack)) {
+      if (isDefined(stack)) {
         console.log(stack);
       }
     }
@@ -51,13 +48,13 @@ export class ErrorDialogComponent implements OnInit {
     this.description = this.ref.data.description;
     this.buttonText = this.ref.data.buttonText;
 
-    this.message = common.transformErrorMessage(
+    this.message = transformErrorMessage(
       this.ref.data?.response?.body?.info?.error?.message ||
         this.ref.data?.message ||
         this.ref.data
     );
 
-    this.originalErrorMessage = common.transformErrorMessage(
+    this.originalErrorMessage = transformErrorMessage(
       this.ref.data?.response?.body?.info?.error?.originalError?.message
     );
 
@@ -70,7 +67,7 @@ export class ErrorDialogComponent implements OnInit {
   }
 
   onOk() {
-    if (common.isDefined(this.ref.data.onClickFnBindThis)) {
+    if (isDefined(this.ref.data.onClickFnBindThis)) {
       this.ref.data.onClickFnBindThis();
     }
     this.ref.close();

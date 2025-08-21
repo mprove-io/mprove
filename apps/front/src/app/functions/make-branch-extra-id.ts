@@ -1,12 +1,11 @@
-import { common } from '~front/barrels/common';
+import { isUndefined } from '~common/functions/is-undefined';
 
 export function makeBranchExtraId(item: {
   isRepoProd: boolean;
   branchId: string;
   userId: string;
 }) {
-  return common.isUndefined(item.isRepoProd) ||
-    common.isUndefined(item.branchId)
+  return isUndefined(item.isRepoProd) || isUndefined(item.branchId)
     ? undefined
     : item.isRepoProd === true
       ? `production-${item.branchId}`

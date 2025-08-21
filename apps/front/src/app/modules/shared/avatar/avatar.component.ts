@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { UserQuery } from '~front/app/queries/user.query';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -9,7 +8,7 @@ import { common } from '~front/barrels/common';
   templateUrl: './avatar.component.html'
 })
 export class AvatarComponent {
-  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+  restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
   @Input()
   avatar: string;

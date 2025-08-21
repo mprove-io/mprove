@@ -1,6 +1,7 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { common } from '~front/barrels/common';
+import { PARAMETER_ORG_ID, PATH_PROFILE } from '~common/constants/top';
+import { isDefined } from '~common/functions/is-defined';
 import { NavState } from '../queries/nav.query';
 
 export function checkNavOrg(item: {
@@ -10,10 +11,10 @@ export function checkNavOrg(item: {
 }) {
   let { nav, route, router } = item;
 
-  let parametersOrgId = route.params[common.PARAMETER_ORG_ID];
+  let parametersOrgId = route.params[PARAMETER_ORG_ID];
 
-  if (common.isDefined(parametersOrgId) && nav.orgId !== parametersOrgId) {
-    router.navigate([common.PATH_PROFILE]);
+  if (isDefined(parametersOrgId) && nav.orgId !== parametersOrgId) {
+    router.navigate([PATH_PROFILE]);
     return of(false);
   }
 }

@@ -7,9 +7,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -17,9 +14,9 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './profile.component.html'
 })
 export class ProfileComponent implements OnInit {
-  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+  restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
-  pageTitle = constants.PROFILE_PAGE_TITLE;
+  pageTitle = PROFILE_PAGE_TITLE;
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -45,26 +42,25 @@ export class ProfileComponent implements OnInit {
   }
 
   changePassword() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let email: string;
     this.userQuery.email$.pipe(take(1)).subscribe(x => (email = x));
 
-    let payload: apiToBackend.ToBackendResetUserPasswordRequestPayload = {
+    let payload: ToBackendResetUserPasswordRequestPayload = {
       email: email
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendResetUserPassword,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendResetUserPasswordResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendResetUserPasswordResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             localStorage.setItem('PASSWORD_RESET_EMAIL', email);
-            this.router.navigate([common.PATH_PASSWORD_RESET_SENT_AUTH]);
+            this.router.navigate([PATH_PASSWORD_RESET_SENT_AUTH]);
           }
         }),
         take(1)

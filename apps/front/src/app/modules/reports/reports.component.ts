@@ -11,7 +11,10 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import uFuzzy from '@leeoniya/ufuzzy';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { IRowNode } from 'ag-grid-community';
+import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { NgxSpinnerService } from 'ngx-spinner';
 import {
   Subscription,
@@ -23,9 +26,15 @@ import {
   take,
   tap
 } from 'rxjs';
+import { MALLOY_FILTER_ANY } from '~common/_index';
+import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { DataPoint } from '~front/app/interfaces/data-point';
 import { DataRow } from '~front/app/interfaces/data-row';
+import { RefreshItem } from '~front/app/interfaces/refresh-item';
+import { SeriesPart } from '~front/app/interfaces/series-part';
+import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
@@ -34,31 +43,15 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
 import { StructReportResolver } from '~front/app/resolvers/struct-report.resolver';
 import { ApiService } from '~front/app/services/api.service';
+import { DataService } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import {
-  constants,
-  constants as frontConstants
-} from '~front/barrels/constants';
-
-import uFuzzy from '@leeoniya/ufuzzy';
-import { NgSelectComponent } from '@ng-select/ng-select';
-import { EChartsInitOpts, EChartsOption } from 'echarts';
-import { MALLOY_FILTER_ANY } from '~common/_index';
-import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
-import { DataPoint } from '~front/app/interfaces/data-point';
-import { RefreshItem } from '~front/app/interfaces/refresh-item';
-import { SeriesPart } from '~front/app/interfaces/series-part';
-import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
-import { DataService } from '~front/app/services/data.service';
 
 export class TimeSpecItem {
   label: string;
-  value: common.TimeSpecEnum;
+  value: TimeSpecEnum;
 }
 
 @Component({
@@ -79,28 +72,28 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   isInitialScrollCompleted = false;
 
-  pageTitle = frontConstants.REPORTS_PAGE_TITLE;
+  pageTitle = frontREPORTS_PAGE_TITLE;
 
-  pathReports = common.PATH_REPORTS;
-  pathReportsList = common.PATH_REPORTS_LIST;
+  pathReports = PATH_REPORTS;
+  pathReportsList = PATH_REPORTS_LIST;
 
-  rowTypeFormula = common.RowTypeEnum.Formula;
-  rowTypeMetric = common.RowTypeEnum.Metric;
-  rowTypeHeader = common.RowTypeEnum.Header;
-  rowTypeEmpty = common.RowTypeEnum.Empty;
+  rowTypeFormula = RowTypeEnum.Formula;
+  rowTypeMetric = RowTypeEnum.Metric;
+  rowTypeHeader = RowTypeEnum.Header;
+  rowTypeEmpty = RowTypeEnum.Empty;
 
-  fractionTypeEnum = common.FractionTypeEnum;
+  fractionTypeEnum = FractionTypeEnum;
 
-  fractionTypeTsIsBetween = common.FractionTypeEnum.TsIsBetween;
+  fractionTypeTsIsBetween = FractionTypeEnum.TsIsBetween;
 
-  timeSpecYears = common.TimeSpecEnum.Years;
-  timeSpecQuarters = common.TimeSpecEnum.Quarters;
-  timeSpecMonths = common.TimeSpecEnum.Months;
-  timeSpecWeeks = common.TimeSpecEnum.Weeks;
-  timeSpecDays = common.TimeSpecEnum.Days;
-  timeSpecHours = common.TimeSpecEnum.Hours;
-  timeSpecMinutes = common.TimeSpecEnum.Minutes;
-  timeSpecTimestamps = common.TimeSpecEnum.Timestamps;
+  timeSpecYears = TimeSpecEnum.Years;
+  timeSpecQuarters = TimeSpecEnum.Quarters;
+  timeSpecMonths = TimeSpecEnum.Months;
+  timeSpecWeeks = TimeSpecEnum.Weeks;
+  timeSpecDays = TimeSpecEnum.Days;
+  timeSpecHours = TimeSpecEnum.Hours;
+  timeSpecMinutes = TimeSpecEnum.Minutes;
+  timeSpecTimestamps = TimeSpecEnum.Timestamps;
 
   isShow = true;
   showSearch = true;
@@ -110,7 +103,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   showMetrics = false;
   filtersIsExpanded = false;
 
-  emptyReportId = common.EMPTY_REPORT_ID;
+  emptyReportId = EMPTY_REPORT_ID;
 
   notEmptySelectQueriesLength = 0;
 
@@ -131,7 +124,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     })
   );
 
-  report: common.ReportX;
+  report: ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
       this.report = x;
@@ -139,7 +132,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.isShow = true;
 
       this.notEmptySelectQueriesLength = this.report.rows.filter(
-        row => common.isDefined(row.query) && row.mconfig.select.length > 0
+        row => isDefined(row.query) && row.mconfig.select.length > 0
       ).length;
 
       this.isAutoRun = this.uiQuery.getValue().isAutoRun;
@@ -151,10 +144,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.cd.detectChanges();
 
-      if (
-        x.draft === false &&
-        this.report.reportId !== common.EMPTY_REPORT_ID
-      ) {
+      if (x.draft === false && this.report.reportId !== EMPTY_REPORT_ID) {
         this.setProjectReportLink({ reportId: this.report.reportId });
       }
     })
@@ -164,16 +154,16 @@ export class ReportsComponent implements OnInit, OnDestroy {
     refresh: [undefined]
   });
 
-  refreshList: RefreshItem[] = constants.REFRESH_LIST;
+  refreshList: RefreshItem[] = REFRESH_LIST;
 
   searchMetricsWord: string;
   searchReportsWord: string;
 
   filteredDraftsLength: number;
 
-  reports: common.ReportX[];
-  reportsFilteredByWord: common.ReportX[];
-  filteredReports: common.ReportX[];
+  reports: ReportX[];
+  reportsFilteredByWord: ReportX[];
+  filteredReports: ReportX[];
 
   reports$ = this.reportsQuery.select().pipe(
     tap(x => {
@@ -190,7 +180,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     timezone: [undefined]
   });
 
-  timezones = common.getTimezones();
+  timezones = getTimezones();
 
   struct$ = this.structQuery.select().pipe(
     tap(x => {
@@ -209,35 +199,35 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecList: TimeSpecItem[] = [
     {
       label: 'Days',
-      value: common.TimeSpecEnum.Days
+      value: TimeSpecEnum.Days
     },
     {
       label: 'Weeks',
-      value: common.TimeSpecEnum.Weeks
+      value: TimeSpecEnum.Weeks
     },
     {
       label: 'Months',
-      value: common.TimeSpecEnum.Months
+      value: TimeSpecEnum.Months
     },
     {
       label: 'Quarters',
-      value: common.TimeSpecEnum.Quarters
+      value: TimeSpecEnum.Quarters
     },
     {
       label: 'Years',
-      value: common.TimeSpecEnum.Years
+      value: TimeSpecEnum.Years
     },
     {
       label: 'Hours',
-      value: common.TimeSpecEnum.Hours
+      value: TimeSpecEnum.Hours
     },
     {
       label: 'Minutes',
-      value: common.TimeSpecEnum.Minutes
+      value: TimeSpecEnum.Minutes
     },
     {
       label: 'Timestamps',
-      value: common.TimeSpecEnum.Timestamps
+      value: TimeSpecEnum.Timestamps
     }
   ];
 
@@ -245,7 +235,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   eChartOptions: EChartsOption;
 
   isCompleted = false;
-  lastCompletedQuery: common.Query;
+  lastCompletedQuery: Query;
 
   completedQueriesAndFormulasLength = 0;
   newQueriesLength = 0;
@@ -272,23 +262,23 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
         repChartData.rows.forEach(row => {
           if (
-            common.isDefined(row.formula) ||
-            (common.isDefined(row.query) &&
-              row.query.status === common.QueryStatusEnum.Completed)
+            isDefined(row.formula) ||
+            (isDefined(row.query) &&
+              row.query.status === QueryStatusEnum.Completed)
           ) {
             completedQueriesAndFormulasLength++;
           }
 
           if (
-            common.isDefined(row.query) &&
-            row.query.status === common.QueryStatusEnum.New
+            isDefined(row.query) &&
+            row.query.status === QueryStatusEnum.New
           ) {
             newQueriesLength++;
           }
 
           if (
-            common.isDefined(row.query) &&
-            row.query.status === common.QueryStatusEnum.Running
+            isDefined(row.query) &&
+            row.query.status === QueryStatusEnum.Running
           ) {
             runningQueriesLength++;
           }
@@ -302,8 +292,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         let completedQueries = [
           ...repChartData.rows.filter(
             r =>
-              common.isDefined(r.query) &&
-              r.query.status === common.QueryStatusEnum.Completed
+              isDefined(r.query) && r.query.status === QueryStatusEnum.Completed
           )
         ]
           .map(r => r.query)
@@ -364,7 +353,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
                 dataPoint[rowName] = record?.value;
 
-                if (row.showChart === true && common.isDefined(record?.value)) {
+                if (row.showChart === true && isDefined(record?.value)) {
                   recordsWithValuesLength++;
                 }
               });
@@ -378,9 +367,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.selectedDataRowsLength = repChartData.rows.filter(
           row =>
             row.showChart === true &&
-            [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
-              row.rowType
-            ) > -1
+            [RowTypeEnum.Metric, RowTypeEnum.Formula].indexOf(row.rowType) > -1
         ).length;
 
         // console.log('this.report.chart');
@@ -429,22 +416,22 @@ export class ReportsComponent implements OnInit, OnDestroy {
           },
           // tooltip: {
           //   trigger: 'item'
-          //   // , valueFormatter: (value: any) => `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+          //   // , valueFormatter: (value: any) => `${isDefined(value) ? value.toFixed(2) : 'Null'}`
           // },
           tooltip: {
             confine: true,
             trigger: 'axis',
             order: 'valueDesc',
             valueFormatter: (value: any) =>
-              `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+              `${isDefined(value) ? value.toFixed(2) : 'Null'}`
           },
           xAxis: {
             type: 'time',
             axisLabel:
               [
-                common.TimeSpecEnum.Hours,
-                common.TimeSpecEnum.Minutes,
-                common.TimeSpecEnum.Timestamps
+                TimeSpecEnum.Hours,
+                TimeSpecEnum.Minutes,
+                TimeSpecEnum.Timestamps
               ].indexOf(this.uiQuery.getValue().timeSpec) > -1
                 ? { fontSize: 13 }
                 : {
@@ -480,10 +467,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
                     .filter(
                       row =>
                         row.showChart === true &&
-                        [
-                          common.RowTypeEnum.Metric,
-                          common.RowTypeEnum.Formula
-                        ].indexOf(row.rowType) > -1
+                        [RowTypeEnum.Metric, RowTypeEnum.Formula].indexOf(
+                          row.rowType
+                        ) > -1
                     )
                     .find(row => row.rowId === chartSeriesElement.dataRowId);
 
@@ -499,7 +485,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
                   let seriesPart: SeriesPart = {
                     seriesRowId: seriesRow.rowId,
                     seriesRowName: seriesRow.name,
-                    isMetric: seriesRow.rowType === common.RowTypeEnum.Metric,
+                    isMetric: seriesRow.rowType === RowTypeEnum.Metric,
                     showMetricsModelName: showMetricsModelName,
                     showMetricsTimeFieldName: showMetricsTimeFieldName,
                     seriesName: seriesElement.name.toString(),
@@ -534,7 +520,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     )
   );
 
-  fractions: common.Fraction[] = [];
+  fractions: Fraction[] = [];
   showMetricsModelName = false;
   showMetricsTimeFieldName = false;
   showMetricsChart = false;
@@ -564,10 +550,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
           ? x.reportSelectedNodes[0]
           : undefined;
 
-      if (common.isDefined(this.reportSelectedNode)) {
-        if (
-          this.reportSelectedNode.data.rowType === common.RowTypeEnum.Formula
-        ) {
+      if (isDefined(this.reportSelectedNode)) {
+        if (this.reportSelectedNode.data.rowType === RowTypeEnum.Formula) {
           setValueAndMark({
             control: this.formulaForm.controls['formula'],
             value: this.reportSelectedNode.data.formula
@@ -575,8 +559,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
         }
 
         if (
-          this.reportSelectedNode.data.rowType !== common.RowTypeEnum.Empty &&
-          this.reportSelectedNode.data.rowType !== common.RowTypeEnum.Metric
+          this.reportSelectedNode.data.rowType !== RowTypeEnum.Empty &&
+          this.reportSelectedNode.data.rowType !== RowTypeEnum.Metric
         ) {
           setValueAndMark({
             control: this.nameForm.controls['name'],
@@ -661,9 +645,9 @@ export class ReportsComponent implements OnInit, OnDestroy {
         concatMap(() => {
           if (
             this.report?.rows
-              .filter(row => common.isDefined(row.query))
+              .filter(row => isDefined(row.query))
               .map(row => row.query.status)
-              .indexOf(common.QueryStatusEnum.Running) > -1
+              .indexOf(QueryStatusEnum.Running) > -1
           ) {
             return this.getRepObservable();
           } else {
@@ -675,7 +659,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   stopCheckRunning() {
-    if (common.isDefined(this.checkRunning$)) {
+    if (isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }
   }
@@ -684,7 +668,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let uiState = this.uiQuery.getValue();
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendGetReportRequestPayload = {
+    let payload: ToBackendGetReportRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -697,14 +681,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReport,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetReportResponse) => {
+        tap((resp: ToBackendGetReportResponse) => {
           if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
+            resp.info?.status === ResponseInfoStatusEnum.Ok &&
             this.report.reportId === resp.payload.report.reportId
           ) {
             this.memberQuery.update(resp.payload.userMember);
@@ -729,53 +712,50 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: this.report.rows
-        .filter(
-          row => common.isDefined(row.query) && row.mconfig.select.length > 0
-        )
+        .filter(row => isDefined(row.query) && row.mconfig.select.length > 0)
         .map(row => row.mconfig.mconfigId)
       // queryIds: this.report.rows
       //   .filter(
-      //     row => common.isDefined(row.query) && row.mconfig.select.length > 0
+      //     row => isDefined(row.query) && row.mconfig.select.length > 0
       //   )
       //   .map(row => row.query.queryId)
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { runningQueries } = resp.payload;
             if (
               runningQueries
                 .map(y => y.queryId)
                 .some(qId =>
                   this.report.rows
-                    .filter(r => common.isDefined(r.query))
+                    .filter(r => isDefined(r.query))
                     .map(r => r.query.queryId)
                     .includes(qId)
                 )
             ) {
-              let tReport = common.makeCopy(this.report);
+              let tReport = makeCopy(this.report);
 
               tReport.rows
-                .filter(row => common.isDefined(row.query))
+                .filter(row => isDefined(row.query))
                 .forEach(row => {
                   let runningQuery = runningQueries.find(
                     q => q.queryId === row.query.queryId
                   );
 
-                  if (common.isDefined(runningQuery)) {
+                  if (isDefined(runningQuery)) {
                     row.query = runningQuery;
                   }
                 });
@@ -812,12 +792,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
     }
   }
 
-  timeSpecChange(timeSpecValue?: common.TimeSpecEnum) {
+  timeSpecChange(timeSpecValue?: TimeSpecEnum) {
     if (timeSpecValue === this.timeSpecForm.controls['timeSpec'].value) {
       return;
     }
 
-    if (common.isDefined(timeSpecValue)) {
+    if (isDefined(timeSpecValue)) {
       this.timeSpecForm.controls['timeSpec'].setValue(timeSpecValue);
     }
 
@@ -825,27 +805,25 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let fraction = this.fractions[0];
 
-    if (fraction.type === common.FractionTypeEnum.TsIsInLast) {
+    if (fraction.type === FractionTypeEnum.TsIsInLast) {
       let tsLastUnit =
-        timeSpec === common.TimeSpecEnum.Timestamps
-          ? common.FractionTsUnitEnum.Minutes
+        timeSpec === TimeSpecEnum.Timestamps
+          ? FractionTsUnitEnum.Minutes
           : timeSpec;
 
       let mBrick =
         fraction.tsLastCompleteOption ===
-        common.FractionTsLastCompleteOptionEnum.CompleteWithCurrent
+        FractionTsLastCompleteOptionEnum.CompleteWithCurrent
           ? `f\`${fraction.tsLastValue} ${tsLastUnit}\``
           : fraction.tsLastCompleteOption ===
-              common.FractionTsLastCompleteOptionEnum.Complete
+              FractionTsLastCompleteOptionEnum.Complete
             ? `f\`last ${fraction.tsLastValue} ${tsLastUnit}\``
             : MALLOY_FILTER_ANY;
 
-      let newFraction: common.Fraction = {
-        brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
-        parentBrick: common.isDefined(fraction.parentBrick)
-          ? mBrick
-          : undefined,
-        operator: common.FractionOperatorEnum.Or,
+      let newFraction: Fraction = {
+        brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
+        parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+        operator: FractionOperatorEnum.Or,
         type: fraction.type,
         tsLastValue: fraction.tsLastValue,
         tsLastUnit: tsLastUnit,
@@ -856,20 +834,18 @@ export class ReportsComponent implements OnInit, OnDestroy {
         timeSpec: timeSpec,
         timeRangeFraction: newFraction
       });
-    } else if (fraction.type === common.FractionTypeEnum.TsIsInNext) {
+    } else if (fraction.type === FractionTypeEnum.TsIsInNext) {
       let tsNextUnit =
-        timeSpec === common.TimeSpecEnum.Timestamps
-          ? common.FractionTsUnitEnum.Minutes
+        timeSpec === TimeSpecEnum.Timestamps
+          ? FractionTsUnitEnum.Minutes
           : timeSpec;
 
       let mBrick = `f\`next ${fraction.tsNextValue} ${tsNextUnit}\``;
 
-      let newFraction: common.Fraction = {
-        brick: common.isDefined(fraction.parentBrick) ? mBrick : `any`,
-        parentBrick: common.isDefined(fraction.parentBrick)
-          ? mBrick
-          : undefined,
-        operator: common.FractionOperatorEnum.Or,
+      let newFraction: Fraction = {
+        brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
+        parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+        operator: FractionOperatorEnum.Or,
         type: fraction.type,
         tsNextValue: fraction.tsNextValue,
         tsNextUnit: tsNextUnit
@@ -960,7 +936,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  navToReport(report: common.ReportX) {
+  navToReport(report: ReportX) {
     if (this.reportSelectedNodes.length > 0) {
       this.isShow = false;
       this.uiQuery.getValue().gridApi.deselectAll();
@@ -979,7 +955,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteDraftReport(event: any, report: common.ReportX) {
+  deleteDraftReport(event: any, report: ReportX) {
     event.stopPropagation();
     this.reportService.deleteDraftReports({ reportIds: [report.reportId] });
   }
@@ -990,7 +966,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.myDialogService.showReportSaveAs({
       apiService: this.apiService,
       reports: this.reports.filter(
-        x => x.draft === false && x.reportId !== common.EMPTY_REPORT_ID
+        x => x.draft === false && x.reportId !== EMPTY_REPORT_ID
       ),
       report: this.report
     });
@@ -1042,20 +1018,18 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let draftReports = this.reports.filter(x => x.draft === true);
     let nonDraftReports = this.reports.filter(x => x.draft === false);
 
-    if (common.isDefinedAndNotEmpty(this.searchReportsWord)) {
+    if (isDefinedAndNotEmpty(this.searchReportsWord)) {
       let haystack = nonDraftReports.map(x =>
-        common.isDefined(x.title) ? `${x.title}` : `${x.reportId}`
+        isDefined(x.title) ? `${x.title}` : `${x.reportId}`
       );
       let opts = {};
       let uf = new uFuzzy(opts);
       idxs = uf.filter(haystack, this.searchReportsWord);
     }
 
-    this.reportsFilteredByWord = common.isDefinedAndNotEmpty(
-      this.searchReportsWord
-    )
+    this.reportsFilteredByWord = isDefinedAndNotEmpty(this.searchReportsWord)
       ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): common.ReportX => nonDraftReports[idx])
+        ? idxs.map((idx: number): ReportX => nonDraftReports[idx])
         : []
       : nonDraftReports;
 
@@ -1100,16 +1074,13 @@ export class ReportsComponent implements OnInit, OnDestroy {
     // console.log('checkAutoRun');
 
     let newQueries = this.report.rows.filter(
-      row =>
-        common.isDefined(row.query) &&
-        row.query.status === common.QueryStatusEnum.New
+      row => isDefined(row.query) && row.query.status === QueryStatusEnum.New
     );
 
     if (
       this.isAutoRun === true &&
       newQueries.length > 0 &&
-      (this.report?.timeRangeFraction.type !==
-        common.FractionTypeEnum.TsIsBetween ||
+      (this.report?.timeRangeFraction.type !== FractionTypeEnum.TsIsBetween ||
         this.report?.rangeStart < this.report?.rangeEnd)
     ) {
       setTimeout(() => {
@@ -1121,7 +1092,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   checkRefreshSelector() {
     if (this.isAutoRun === false) {
-      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
+      if (isDefined(this.refreshForm.controls.refresh.value)) {
         this.refreshForm.controls.refresh.setValue(undefined);
       }
 
@@ -1131,7 +1102,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
       this.refreshChange();
     } else if (this.isAutoRun === true) {
-      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
+      if (isUndefined(this.refreshForm.controls.refresh.value)) {
         this.refreshForm.controls.refresh.setValue(0);
       }
 
@@ -1153,7 +1124,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     this.refreshId = this.report?.reportId;
 
-    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
+    if (isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
       return;
     }
 
@@ -1174,7 +1145,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
           // this.isRunButtonPressed === false &&
           this.notEmptySelectQueriesLength > 0 &&
           (this.report?.timeRangeFraction.type !==
-            common.FractionTypeEnum.TsIsBetween ||
+            FractionTypeEnum.TsIsBetween ||
             this.report?.rangeStart < this.report?.rangeEnd)
         ) {
           this.run();
@@ -1190,7 +1161,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   toggleSearch() {
     this.showSearch = !this.showSearch;
 
-    if (this.showSearch === false && common.isDefined(this.searchReportsWord)) {
+    if (this.showSearch === false && isDefined(this.searchReportsWord)) {
       this.searchReportsWord = undefined;
       this.makeFilteredReports();
     }
@@ -1229,10 +1200,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   newReport() {
-    this.setProjectReportLink({ reportId: common.EMPTY_REPORT_ID });
+    this.setProjectReportLink({ reportId: EMPTY_REPORT_ID });
 
     this.navigateService.navigateToReport({
-      reportId: common.EMPTY_REPORT_ID
+      reportId: EMPTY_REPORT_ID
     });
   }
 
@@ -1249,21 +1220,21 @@ export class ReportsComponent implements OnInit, OnDestroy {
   setProjectReportLink(item: { reportId: string }) {
     let { reportId } = item;
 
-    if (common.isUndefined(reportId)) {
+    if (isUndefined(reportId)) {
       return;
     }
 
     let nav = this.navQuery.getValue();
     let links = this.uiQuery.getValue().projectReportLinks;
 
-    let link: common.ProjectReportLink = links.find(
+    let link: ProjectReportLink = links.find(
       l => l.projectId === nav.projectId
     );
 
     let newProjectReportLinks;
 
-    if (common.isDefined(link)) {
-      let newLink: common.ProjectReportLink = {
+    if (isDefined(link)) {
+      let newLink: ProjectReportLink = {
         projectId: nav.projectId,
         reportId: reportId,
         lastNavTs: Date.now()
@@ -1274,7 +1245,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
         ...links.filter(r => !(r.projectId === nav.projectId))
       ];
     } else {
-      let newLink: common.ProjectReportLink = {
+      let newLink: ProjectReportLink = {
         projectId: nav.projectId,
         reportId: reportId,
         lastNavTs: Date.now()

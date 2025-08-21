@@ -23,9 +23,6 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 enum ChartSaveAsEnum {
   NEW_CHART = 'NEW_CHART',
@@ -39,8 +36,8 @@ enum TileSaveAsEnum {
 
 export interface ChartSaveAsDialogData {
   apiService: ApiService;
-  chart: common.Chart;
-  model: common.Model;
+  chart: Chart;
+  model: Model;
 }
 
 @Component({
@@ -62,16 +59,16 @@ export class ChartSaveAsDialogComponent implements OnInit {
     // this.ref.close();
   }
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
   chartSaveAsEnum = ChartSaveAsEnum;
   tileSaveAsEnum = TileSaveAsEnum;
 
   spinnerName = 'chartSaveAs';
 
-  chart: common.ChartX;
+  chart: ChartX;
 
-  newChartId = common.makeId();
+  newChartId = makeId();
 
   titleForm: FormGroup = this.fb.group(
     {
@@ -99,11 +96,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
-  selectedDashboard: common.DashboardX;
+  selectedDashboard: DashboardX;
 
   selectedTileTitle: any; // string
 
-  dashboards: common.DashboardX[];
+  dashboards: DashboardX[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -134,7 +131,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.chart = this.ref.data.chart as common.ChartX;
+    this.chart = this.ref.data.chart as ChartX;
 
     setValueAndMark({
       control: this.titleForm.controls['title'],
@@ -156,7 +153,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
+    let payload: ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
@@ -169,13 +166,12 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetDashboardsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.dashboards = resp.payload.dashboards.map(x => {
               (x as any).disabled = !x.canEditOrDeleteDashboard;
               return x;
@@ -197,7 +193,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   titleValidator(group: AbstractControl): ValidationErrors | null {
-    if (common.isUndefined(this.titleForm)) {
+    if (isUndefined(this.titleForm)) {
       return null;
     }
 
@@ -205,7 +201,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     if (
       this.chartSaveAs === this.chartSaveAsEnum.TILE_OF_DASHBOARD &&
-      common.isDefined(this.selectedDashboard)
+      isDefined(this.selectedDashboard)
     ) {
       let titles = this.selectedDashboard.tiles.map(x => x.title.toUpperCase());
 
@@ -282,10 +278,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   setSelectedDashboard() {
-    if (
-      common.isUndefined(this.selectedDashboardId) ||
-      common.isUndefined(this.dashboards)
-    ) {
+    if (isUndefined(this.selectedDashboardId) || isUndefined(this.dashboards)) {
       return;
     }
 
@@ -295,10 +288,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   makePath() {
-    if (
-      common.isUndefined(this.selectedDashboardId) ||
-      common.isUndefined(this.dashboards)
-    ) {
+    if (isUndefined(this.selectedDashboardId) || isUndefined(this.dashboards)) {
       return;
     }
 
@@ -306,7 +296,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       x => x.dashboardId === this.selectedDashboardId
     );
 
-    if (common.isDefined(selectedDashboard)) {
+    if (isDefined(selectedDashboard)) {
       let parts = selectedDashboard.filePath.split('/');
 
       parts.shift();
@@ -316,11 +306,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   saveAsNewChart(item: { newTitle: string; roles: string }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let { newTitle, roles } = item;
 
-    let payload: apiToBackend.ToBackendSaveCreateChartRequestPayload = {
+    let payload: ToBackendSaveCreateChartRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -336,16 +326,15 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveCreateChart,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveCreateChartResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveCreateChartResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let newChart = resp.payload.chart;
 
-            if (common.isDefined(newChart)) {
+            if (isDefined(newChart)) {
               let charts = this.chartsQuery.getValue().charts;
 
               let newCharts = [
@@ -374,13 +363,13 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   async saveAsTile(item: { newTitle: string }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let { newTitle } = item;
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let newTile: common.TileX = {
+    let newTile: TileX = {
       mconfig: this.chart.tiles[0].mconfig,
       modelId: this.chart.tiles[0].mconfig.modelId,
       modelLabel: this.ref.data.model.label,
@@ -392,35 +381,32 @@ export class ChartSaveAsDialogComponent implements OnInit {
       queryId: this.chart.tiles[0].mconfig.queryId,
       hasAccessToModel: true,
       title: newTitle.trim(),
-      plateWidth: common.TILE_DEFAULT_PLATE_WIDTH,
-      plateHeight: common.TILE_DEFAULT_PLATE_HEIGHT,
-      plateX: common.TILE_DEFAULT_PLATE_X,
-      plateY: common.TILE_DEFAULT_PLATE_Y // recalculated on backend
+      plateWidth: TILE_DEFAULT_PLATE_WIDTH,
+      plateHeight: TILE_DEFAULT_PLATE_HEIGHT,
+      plateX: TILE_DEFAULT_PLATE_X,
+      plateY: TILE_DEFAULT_PLATE_Y // recalculated on backend
     };
 
-    let payloadModifyDashboard: apiToBackend.ToBackendSaveModifyDashboardRequestPayload =
-      {
-        projectId: this.nav.projectId,
-        isRepoProd: this.nav.isRepoProd,
-        branchId: this.nav.branchId,
-        envId: this.nav.envId,
-        toDashboardId: this.selectedDashboardId,
-        fromDashboardId: this.selectedDashboardId,
-        selectedTileTitle: this.selectedTileTitle,
-        newTile: newTile,
-        isReplaceTile: this.tileSaveAs === TileSaveAsEnum.REPLACE_EXISTING_TILE
-      };
+    let payloadModifyDashboard: ToBackendSaveModifyDashboardRequestPayload = {
+      projectId: this.nav.projectId,
+      isRepoProd: this.nav.isRepoProd,
+      branchId: this.nav.branchId,
+      envId: this.nav.envId,
+      toDashboardId: this.selectedDashboardId,
+      fromDashboardId: this.selectedDashboardId,
+      selectedTileTitle: this.selectedTileTitle,
+      newTile: newTile,
+      isReplaceTile: this.tileSaveAs === TileSaveAsEnum.REPLACE_EXISTING_TILE
+    };
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendSaveModifyDashboard,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
         payload: payloadModifyDashboard
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveModifyDashboardResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveModifyDashboardResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.navigateService.navigateToDashboard({
               dashboardId: this.selectedDashboardId
             });

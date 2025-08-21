@@ -2,16 +2,13 @@ import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { tap } from 'rxjs/operators';
 import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
-
-import uFuzzy from '@leeoniya/ufuzzy';
 import { ModelQuery } from '~front/app/queries/model.query';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { NavigateService } from '~front/app/services/navigate.service';
 
 @Component({
   standalone: false,
@@ -19,13 +16,13 @@ import { UiQuery } from '~front/app/queries/ui.query';
   templateUrl: './models-list.component.html'
 })
 export class ModelsListComponent implements OnInit, OnDestroy {
-  pageTitle = constants.MODELS_LIST_PAGE_TITLE;
+  pageTitle = MODELS_LIST_PAGE_TITLE;
 
   // groups: string[];
 
-  models: common.ModelX[];
-  modelsFilteredByWord: common.ModelX[];
-  filteredModels: common.ModelX[];
+  models: ModelX[];
+  modelsFilteredByWord: ModelX[];
+  filteredModels: ModelX[];
 
   isExplorer = false;
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
@@ -40,7 +37,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       this.models = ml.models;
 
       // let allGroups = this.vizs.map(v => v.gr);
-      // let definedGroups = allGroups.filter(y => common.isDefined(y));
+      // let definedGroups = allGroups.filter(y => isDefined(y));
       // this.groups = [...new Set(definedGroups)];
 
       this.makeFilteredModels();
@@ -86,16 +83,16 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
     let modelsA = this.models;
 
-    if (common.isDefinedAndNotEmpty(this.word)) {
+    if (isDefinedAndNotEmpty(this.word)) {
       let haystack = modelsA.map(x => `${x.label} ${x.modelId}`);
       let opts = {};
       let uf = new uFuzzy(opts);
       idxs = uf.filter(haystack, this.word);
     }
 
-    this.modelsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+    this.modelsFilteredByWord = isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): common.ModelX => modelsA[idx])
+        ? idxs.map((idx: number): ModelX => modelsA[idx])
         : []
       : modelsA;
 
@@ -117,7 +114,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     });
   }
 
-  trackByFn(index: number, item: common.ModelX) {
+  trackByFn(index: number, item: ModelX) {
     return item.modelId;
   }
 
@@ -134,9 +131,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
         .createUrlTree([], {
           relativeTo: this.route,
           queryParams: {
-            search: common.isDefinedAndNotEmpty(this.word)
-              ? this.word
-              : undefined
+            search: isDefinedAndNotEmpty(this.word) ? this.word : undefined
           }
         })
         .toString();
@@ -154,7 +149,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       .createUrlTree([], {
         relativeTo: this.route,
         queryParams: {
-          search: common.isDefinedAndNotEmpty(this.word) ? this.word : undefined
+          search: isDefinedAndNotEmpty(this.word) ? this.word : undefined
         }
       })
       .toString();
@@ -166,7 +161,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
-  goToFile(event: any, model: common.ModelX) {
+  goToFile(event: any, model: ModelX) {
     event.stopPropagation();
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
@@ -177,12 +172,12 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath })
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }
 
-  navigateToModel(item: common.ModelX) {
+  navigateToModel(item: ModelX) {
     if (item.hasAccess === false) {
       return;
     }

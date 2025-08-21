@@ -1,59 +1,57 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 export class FractionTypeItem {
   label: string;
-  value: common.FractionTypeEnum;
-  operator: common.FractionOperatorEnum;
+  value: FractionTypeEnum;
+  operator: FractionOperatorEnum;
   timeframeLevel?: number;
 }
 
 export class FractionTsMomentTypesItem {
   label: string;
-  value: common.FractionTsMomentTypeEnum;
+  value: FractionTsMomentTypeEnum;
 }
 
 export class FractionTsMixUnitItem {
   label: string;
-  value: common.FractionTsMixUnitEnum;
+  value: FractionTsMixUnitEnum;
   timeframeLevel: number;
 }
 
 export class FractionTsUnitItem {
   label: string;
-  value: common.FractionTsUnitEnum;
+  value: FractionTsUnitEnum;
   timeframeLevel: number;
 }
 
 export class FractionDayOfWeekValueItem {
   label: string;
-  value: common.FractionDayOfWeekValueEnum;
+  value: FractionDayOfWeekValueEnum;
 }
 
 export class FractionTsLastCompleteOptionItem {
   label: string;
-  value: common.FractionTsLastCompleteOptionEnum;
+  value: FractionTsLastCompleteOptionEnum;
 }
 
 export class FractionQuarterOfYearValueItem {
   label: string;
-  value: common.FractionQuarterOfYearValueEnum;
+  value: FractionQuarterOfYearValueEnum;
 }
 
 export class FractionMonthNameValueItem {
   label: string;
-  value: common.FractionMonthNameValueEnum;
+  value: FractionMonthNameValueEnum;
 }
 
 export class FractionYesnoValueItem {
   label: string;
-  value: common.FractionYesnoValueEnum;
+  value: FractionYesnoValueEnum;
 }
 
 export class FractionNumberBetweenOptionItem {
   label: string;
-  value: common.FractionNumberBetweenOptionEnum;
+  value: FractionNumberBetweenOptionEnum;
 }
 
 @Component({
@@ -62,15 +60,15 @@ export class FractionNumberBetweenOptionItem {
   templateUrl: './fraction.component.html'
 })
 export class FractionComponent {
-  fractionOperatorEnum = common.FractionOperatorEnum;
-  fieldResultEnum = common.FieldResultEnum;
+  fractionOperatorEnum = FractionOperatorEnum;
+  fieldResultEnum = FieldResultEnum;
 
-  fractionTypeStoreFraction = common.FractionTypeEnum.StoreFraction;
+  fractionTypeStoreFraction = FractionTypeEnum.StoreFraction;
 
-  controlClassSelector = common.ControlClassEnum.Selector;
-  controlClassInput = common.ControlClassEnum.Input;
-  controlClassSwitch = common.ControlClassEnum.Switch;
-  controlClassDatePicker = common.ControlClassEnum.DatePicker;
+  controlClassSelector = ControlClassEnum.Selector;
+  controlClassInput = ControlClassEnum.Input;
+  controlClassSwitch = ControlClassEnum.Switch;
+  controlClassDatePicker = ControlClassEnum.DatePicker;
 
   @Input() suggestModelDimension: string;
   @Input() structId: string;
@@ -81,14 +79,14 @@ export class FractionComponent {
 
   @Input() isMetricsPage: boolean;
   @Input() isDisabled: boolean = false;
-  @Input() fieldResult: common.FieldResultEnum | string;
+  @Input() fieldResult: FieldResultEnum | string;
   @Input() fieldTimeframe: string;
 
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   constructor() {}
 }

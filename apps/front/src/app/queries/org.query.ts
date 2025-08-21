@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { combineLatest, map } from 'rxjs';
-import { common } from '~front/barrels/common';
+import { Org } from '~common/interfaces/backend/org';
 import { BaseQuery } from './base.query';
 import { UserQuery } from './user.query';
 
-export class OrgState extends common.Org {}
+export class OrgState extends Org {}
 
 let orgState: OrgState = {
   orgId: undefined,

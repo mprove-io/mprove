@@ -15,8 +15,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface DeleteFolderDialogData {
   apiService: ApiService;
@@ -63,8 +61,8 @@ export class DeleteFolderDialogComponent implements OnInit {
     let isNavigateNewFile = false;
     let selectedFileId = this.fileQuery.getValue().fileId;
 
-    if (common.isDefined(selectedFileId)) {
-      let selectedPath = common.decodeFilePath({ filePath: selectedFileId });
+    if (isDefined(selectedFileId)) {
+      let selectedPath = decodeFilePath({ filePath: selectedFileId });
 
       let fromPath = this.ref.data.folderNodeId.split('/').slice(1).join('/');
 
@@ -76,13 +74,13 @@ export class DeleteFolderDialogComponent implements OnInit {
     let isRemoveSecondFile = false;
     let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
 
-    if (common.isDefined(secondFileNodeId)) {
+    if (isDefined(secondFileNodeId)) {
       if (secondFileNodeId.startsWith(this.ref.data.folderNodeId + '/')) {
         isRemoveSecondFile = true;
       }
     }
 
-    let payload: apiToBackend.ToBackendDeleteFolderRequestPayload = {
+    let payload: ToBackendDeleteFolderRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
@@ -93,14 +91,13 @@ export class DeleteFolderDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteFolder,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteFolderResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteFolderResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({

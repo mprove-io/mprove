@@ -5,7 +5,6 @@ import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -13,8 +12,8 @@ import { common } from '~front/barrels/common';
   templateUrl: './mini-chart-renderer.component.html'
 })
 export class MiniChartRendererComponent implements ICellRendererAngularComp {
-  rowTypeMetric = common.RowTypeEnum.Metric;
-  rowTypeFormula = common.RowTypeEnum.Formula;
+  rowTypeMetric = RowTypeEnum.Metric;
+  rowTypeFormula = RowTypeEnum.Formula;
 
   params: ICellRendererParams<DataRow>;
 
@@ -39,7 +38,7 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
 
   updateChartData() {
     if (
-      [common.RowTypeEnum.Metric, common.RowTypeEnum.Formula].indexOf(
+      [RowTypeEnum.Metric, RowTypeEnum.Formula].indexOf(
         this.params.data.rowType
       ) > -1
     ) {

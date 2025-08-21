@@ -19,9 +19,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 enum ReportSaveAsEnum {
   NEW_REPORT = 'NEW_REPORT',
@@ -30,8 +27,8 @@ enum ReportSaveAsEnum {
 
 export interface ReportSaveAsDialogData {
   apiService: ApiService;
-  reports: common.ReportX[];
-  report: common.ReportX;
+  reports: ReportX[];
+  report: ReportX;
 }
 
 @Component({
@@ -49,13 +46,13 @@ export class ReportSaveAsDialogComponent implements OnInit {
     // this.ref.close();
   }
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
   reportSaveAsEnum = ReportSaveAsEnum;
 
   spinnerName = 'reportSaveAs';
 
-  report: common.ReportX;
+  report: ReportX;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -82,7 +79,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   selectedReportId: any; // string
   selectedRepPath: string;
 
-  reports: common.ReportX[];
+  reports: ReportX[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -179,7 +176,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     let uiState = this.uiQuery.getValue();
 
-    let payload: apiToBackend.ToBackendSaveCreateReportRequestPayload = {
+    let payload: ToBackendSaveCreateReportRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -187,9 +184,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       newReportId: this.newReportId,
       fromReportId: this.fromReportId,
       title: newTitle,
-      accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
-        ? roles.split(',')
-        : [],
+      accessRoles: isDefinedAndNotEmpty(roles?.trim()) ? roles.split(',') : [],
       timezone: uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFractionBrick: uiState.timeRangeFraction.brick,
@@ -199,21 +194,20 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveCreateReport,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveCreateReportResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveCreateReportResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let newReport = resp.payload.report;
             let newReportPart = resp.payload.reportPart;
 
-            if (common.isDefined(newReport)) {
+            if (isDefined(newReport)) {
               let reports = this.reportsQuery.getValue().reports;
 
               let newReports = [
@@ -233,7 +227,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
                 this.reportQuery.update(newReport);
               }
 
-              this.spinner.hide(constants.APP_SPINNER_NAME); // route params do not change
+              this.spinner.hide(APP_SPINNER_NAME); // route params do not change
 
               this.navigateService.navigateToReport({
                 reportId: resp.payload.report.reportId
@@ -251,9 +245,9 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     let uiState = this.uiQuery.getValue();
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendSaveModifyReportRequestPayload = {
+    let payload: ToBackendSaveModifyReportRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -261,7 +255,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       modReportId: this.selectedReportId,
       fromReportId: this.fromReportId,
       title: newTitle,
-      accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
+      accessRoles: isDefinedAndNotEmpty(roles?.trim())
         ? roles.split(',').map(x => x.trim())
         : [],
       timezone: uiState.timezone,
@@ -275,17 +269,16 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveModifyReportResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveModifyReportResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let newReport = resp.payload.report;
             let newReportPart = resp.payload.reportPart;
 
-            if (common.isDefined(newReport)) {
+            if (isDefined(newReport)) {
               let reports = this.reportsQuery.getValue().reports;
 
               let newReports = [
@@ -318,7 +311,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
   selectedChange() {
     this.makePath();
-    if (common.isDefined(this.selectedReportId)) {
+    if (isDefined(this.selectedReportId)) {
       let selectedReport = this.reports.find(
         x => x.reportId === this.selectedReportId
       );
@@ -327,10 +320,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
   }
 
   makePath() {
-    if (
-      common.isUndefined(this.selectedReportId) ||
-      common.isUndefined(this.reports)
-    ) {
+    if (isUndefined(this.selectedReportId) || isUndefined(this.reports)) {
       return;
     }
 
@@ -338,7 +328,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
       x => x.reportId === this.selectedReportId
     );
 
-    if (common.isDefined(selectedReport)) {
+    if (isDefined(selectedReport)) {
       let parts = selectedReport.filePath.split('/');
 
       parts.shift();

@@ -5,7 +5,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -30,9 +29,9 @@ export class RepoConflictsComponent {
     private navigateService: NavigateService
   ) {}
 
-  goToFileLine(conflict: common.DiskFileLine) {
+  goToFileLine(conflict: DiskFileLine) {
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
+      panel: PanelEnum.Tree,
       encodedFileId: conflict.fileId,
       lineNumber: conflict.lineNumber
     });

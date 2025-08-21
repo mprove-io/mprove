@@ -6,20 +6,21 @@ import {
 } from '@codemirror/language';
 import * as languageData from '@codemirror/language-data';
 import * as shiki from 'shiki';
-import { common } from '~front/barrels/common';
-import { MALLOY_GRAMMAR } from '../constants/code-themes/grammars/malloy-grammar';
-import { MALLOY_NOTEBOOK_GRAMMAR } from '../constants/code-themes/grammars/malloy-notebook-grammar';
-import { MALLOY_SQL_GRAMMAR } from '../constants/code-themes/grammars/malloy-sql-grammar';
+import { MALLOY_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-grammar';
+import { MALLOY_NOTEBOOK_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-notebook-grammar';
+import { MALLOY_SQL_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-sql-grammar';
 import {
   LIGHT_PLUS_COLOR_TO_TAG,
   LIGHT_PLUS_CUSTOM_TAGS
-} from '../constants/code-themes/light-plus-tags';
-import { LIGHT_PLUS_LANGUAGES } from '../constants/top';
+} from '~common/constants/code-themes/light-plus-tags';
+import { LIGHT_PLUS_LANGUAGES } from '~common/constants/top-front';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
 import { UiQuery } from '../queries/ui.query';
 
-let malloyGrammar = common.makeCopy(MALLOY_GRAMMAR);
-let malloyNotebookGrammar = common.makeCopy(MALLOY_NOTEBOOK_GRAMMAR);
-let malloySqlGrammar = common.makeCopy(MALLOY_SQL_GRAMMAR);
+let malloyGrammar = makeCopy(MALLOY_GRAMMAR);
+let malloyNotebookGrammar = makeCopy(MALLOY_NOTEBOOK_GRAMMAR);
+let malloySqlGrammar = makeCopy(MALLOY_SQL_GRAMMAR);
 
 malloySqlGrammar.repository['malloysql-sql'].patterns = [
   malloySqlGrammar.repository['malloysql-sql'].patterns[0],
@@ -469,7 +470,7 @@ export class HighLightService {
         if (token.color) {
           let tagName: string = LIGHT_PLUS_COLOR_TO_TAG[token.color];
 
-          if (common.isUndefined(tagName)) {
+          if (isUndefined(tagName)) {
             console.log('UNDEF tagName');
             console.log('token.color');
             console.log(token.color);

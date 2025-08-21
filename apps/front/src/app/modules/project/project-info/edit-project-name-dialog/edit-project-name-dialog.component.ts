@@ -19,8 +19,6 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface EditProjectNameDialogData {
   apiService: ApiService;
@@ -73,7 +71,7 @@ export class EditProjectNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendSetProjectInfoRequestPayload = {
+    let payload: ToBackendSetProjectInfoRequestPayload = {
       projectId: this.ref.data.projectId,
       name: this.editProjectNameForm.value.projectName
     };
@@ -82,14 +80,13 @@ export class EditProjectNameDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSetProjectInfoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSetProjectInfoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let project = resp.payload.project;
             this.projectQuery.update(project);
             this.navQuery.updatePart({

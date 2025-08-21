@@ -18,9 +18,6 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface EditOrgOwnerDialogData {
   apiService: ApiService;
@@ -77,7 +74,7 @@ export class EditOrgOwnerDialogComponent implements OnInit {
 
     let newOwnerEmail = this.editOrgOwnerForm.value.ownerEmail;
 
-    let payload: apiToBackend.ToBackendSetOrgOwnerRequestPayload = {
+    let payload: ToBackendSetOrgOwnerRequestPayload = {
       orgId: this.ref.data.orgId,
       ownerEmail: newOwnerEmail
     };
@@ -86,24 +83,20 @@ export class EditOrgOwnerDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSetOrgOwnerResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSetOrgOwnerResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let org = resp.payload.org;
             localStorage.setItem(
-              constants.LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
+              LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
               org.name
             );
-            localStorage.setItem(
-              constants.LOCAL_STORAGE_NEW_ORG_OWNER,
-              newOwnerEmail
-            );
-            this.router.navigate([common.PATH_ORG_OWNER_CHANGED]);
+            localStorage.setItem(LOCAL_STORAGE_NEW_ORG_OWNER, newOwnerEmail);
+            this.router.navigate([PATH_ORG_OWNER_CHANGED]);
             this.orgQuery.reset();
             this.navQuery.clearOrgAndDeps();
           }

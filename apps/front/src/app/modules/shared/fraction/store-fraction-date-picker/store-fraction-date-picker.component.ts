@@ -10,8 +10,6 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { DatePicker } from '@vaadin/date-picker';
 import { COMMON_I18N } from '~front/app/constants/top';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   standalone: false,
@@ -24,14 +22,14 @@ import { interfaces } from '~front/barrels/interfaces';
 export class StoreFractionDatePickerComponent {
   @Input() metricsStartDateYYYYMMDD: string;
   @Input() metricsEndDateYYYYMMDD: string;
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
   @Input() isMetricsPage: boolean;
   @Input() isDisabled: boolean;
-  @Input() fractionControl: common.FractionControl;
+  @Input() fractionControl: FractionControl;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   @ViewChild('vDatePicker') vDatePicker: ElementRef<DatePicker>;
 
@@ -50,9 +48,9 @@ export class StoreFractionDatePickerComponent {
     let vDatePicker = this.vDatePicker?.nativeElement;
 
     if (
-      common.isDefinedAndNotEmpty(vDatePicker?.value) &&
-      common.isDefined(this.fractionControl) &&
-      common.isDefined(this.fraction)
+      isDefinedAndNotEmpty(vDatePicker?.value) &&
+      isDefined(this.fractionControl) &&
+      isDefined(this.fraction)
     ) {
       console.log('x');
       console.log(x);
@@ -62,11 +60,11 @@ export class StoreFractionDatePickerComponent {
 
       let value = vDatePicker.value;
 
-      let newControl = common.makeCopy(this.fractionControl);
+      let newControl = makeCopy(this.fractionControl);
 
       newControl.value = value;
 
-      let newFraction = common.makeCopy(this.fraction);
+      let newFraction = makeCopy(this.fraction);
 
       let controlIndex = newFraction.controls.findIndex(
         control => control.name === this.fractionControl.name

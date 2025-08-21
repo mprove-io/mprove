@@ -7,8 +7,22 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import {
+  LAST_SELECTED_DASHBOARD_ID,
+  PARAMETER_DASHBOARD_ID,
+  PATH_INFO,
+  PATH_ORG,
+  PATH_PROJECT
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendGetDashboardRequestPayload,
+  ToBackendGetDashboardResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { DashboardsQuery } from '../queries/dashboards.query';
@@ -41,7 +55,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
+    let timezoneParam: TimeSpecEnum = route.queryParams?.timezone;
 
     let uiState = this.uiQuery.getValue();
     let structState = this.structQuery.getValue();
@@ -49,7 +63,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     let timezone =
       structState.allowTimezones === false
         ? structState.defaultTimezone
-        : common.isDefined(timezoneParam)
+        : isDefined(timezoneParam)
           ? timezoneParam.split('-').join('/')
           : uiState.timezone;
 
@@ -96,11 +110,11 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersDashboardId = common.isDefined(dashboardId)
+    let parametersDashboardId = isDefined(dashboardId)
       ? dashboardId
-      : route?.params[common.PARAMETER_DASHBOARD_ID];
+      : route?.params[PARAMETER_DASHBOARD_ID];
 
-    if (parametersDashboardId === common.LAST_SELECTED_DASHBOARD_ID) {
+    if (parametersDashboardId === LAST_SELECTED_DASHBOARD_ID) {
       let dashboards = this.dashboardsQuery.getValue().dashboards;
       let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
 
@@ -108,12 +122,12 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
         link => link.projectId === nav.projectId
       );
 
-      if (common.isDefined(pLink)) {
+      if (isDefined(pLink)) {
         let pDashboard = dashboards.find(
           r => r.dashboardId === pLink.dashboardId
         );
 
-        if (common.isDefined(pDashboard)) {
+        if (isDefined(pDashboard)) {
           this.navigateService.navigateToDashboard({
             dashboardId: pDashboard.dashboardId
           });
@@ -129,7 +143,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       }
     }
 
-    let payload: apiToBackend.ToBackendGetDashboardRequestPayload = {
+    let payload: ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -140,14 +154,13 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
         payload: payload,
         showSpinner: showSpinner
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetDashboardResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetDashboardResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
@@ -158,16 +171,15 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
 
             return true;
           } else if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
-            resp.info.error.message ===
-              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.info?.status === ResponseInfoStatusEnum.Error &&
+            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               nav.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               nav.projectId,
-              common.PATH_INFO
+              PATH_INFO
             ]);
 
             return false;

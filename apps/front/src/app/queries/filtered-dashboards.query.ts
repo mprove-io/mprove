@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { BaseQuery } from './base.query';
 
 export class FilteredDashboardsState {
-  filteredDashboards: common.DashboardX[];
+  filteredDashboards: DashboardX[];
 }
 
 let filteredDashboards: FilteredDashboardsState = {

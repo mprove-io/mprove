@@ -3,8 +3,19 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Subscription, interval as observableInterval } from 'rxjs';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import {
+  PATH_LOGIN,
+  PATH_LOGIN_SUCCESS,
+  PATH_ORG,
+  PATH_PROFILE,
+  PATH_REGISTER,
+  PATH_VERIFY_EMAIL
+} from '~common/constants/top';
+import {
+  LOCAL_STORAGE_ORG_ID,
+  LOCAL_STORAGE_TOKEN
+} from '~common/constants/top-front';
+import { isDefined } from '~common/functions/is-defined';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -18,9 +29,9 @@ export class AuthService {
   authenticated() {
     let jwtHelperService = new JwtHelperService();
 
-    let token = localStorage.getItem(constants.LOCAL_STORAGE_TOKEN);
+    let token = localStorage.getItem(LOCAL_STORAGE_TOKEN);
 
-    let isAuthenticated: boolean = common.isDefined(token)
+    let isAuthenticated: boolean = isDefined(token)
       ? !jwtHelperService.isTokenExpired(token)
       : false;
 
@@ -30,25 +41,25 @@ export class AuthService {
   getTokenUserId() {
     let jwtHelperService = new JwtHelperService();
 
-    let token = localStorage.getItem(constants.LOCAL_STORAGE_TOKEN);
+    let token = localStorage.getItem(LOCAL_STORAGE_TOKEN);
 
     return jwtHelperService.decodeToken(token).userId;
   }
 
   clearLocalStorage() {
-    localStorage.removeItem(constants.LOCAL_STORAGE_TOKEN);
-    localStorage.removeItem(constants.LOCAL_STORAGE_ORG_ID);
+    localStorage.removeItem(LOCAL_STORAGE_TOKEN);
+    localStorage.removeItem(LOCAL_STORAGE_ORG_ID);
   }
 
   logout() {
     // console.log('stopWatch from AuthService');
     this.stopWatch();
     this.clearLocalStorage();
-    this.router.navigate([common.PATH_LOGIN]);
+    this.router.navigate([PATH_LOGIN]);
   }
 
   startWatch() {
-    if (common.isDefined(this.checkAuthSubscription)) {
+    if (isDefined(this.checkAuthSubscription)) {
       // console.log('restartWatch from AuthService - 2');
       this.stopWatch();
     }
@@ -63,22 +74,19 @@ export class AuthService {
       // console.log(firstPath);
 
       if (
-        [common.PATH_PROFILE, common.PATH_ORG].indexOf(firstPath) > -1 &&
+        [PATH_PROFILE, PATH_ORG].indexOf(firstPath) > -1 &&
         !this.authenticated()
       ) {
         // console.log('[WatchAuthenticationService] logout');
         this.logout();
       } else if (
         // for other tabs
-        [
-          common.PATH_LOGIN,
-          common.PATH_REGISTER,
-          common.PATH_VERIFY_EMAIL
-        ].indexOf(firstPath) > -1 &&
+        [PATH_LOGIN, PATH_REGISTER, PATH_VERIFY_EMAIL].indexOf(firstPath) >
+          -1 &&
         this.authenticated()
       ) {
         // console.log('[WatchAuthenticationService] login success');
-        this.router.navigate([common.PATH_LOGIN_SUCCESS]);
+        this.router.navigate([PATH_LOGIN_SUCCESS]);
       }
 
       // let endTime = Date.now();
@@ -87,7 +95,7 @@ export class AuthService {
   }
 
   stopWatch() {
-    if (common.isDefined(this.checkAuthSubscription)) {
+    if (isDefined(this.checkAuthSubscription)) {
       this.checkAuthSubscription?.unsubscribe();
       this.checkAuthSubscription = undefined;
     }

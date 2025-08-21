@@ -7,8 +7,23 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import {
+  EMPTY_CHART_ID,
+  LAST_SELECTED_CHART_ID,
+  PARAMETER_CHART_ID,
+  PATH_INFO,
+  PATH_ORG,
+  PATH_PROJECT
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendGetChartRequestPayload,
+  ToBackendGetChartResponse
+} from '~common/interfaces/to-backend/charts/to-backend-get-chart';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
 import { ChartsQuery } from '../queries/charts.query';
@@ -41,7 +56,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot,
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
-    let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
+    let timezoneParam: TimeSpecEnum = route.queryParams?.timezone;
 
     let uiState = this.uiQuery.getValue();
     let structState = this.structQuery.getValue();
@@ -49,7 +64,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     let timezone =
       structState.allowTimezones === false
         ? structState.defaultTimezone
-        : common.isDefined(timezoneParam)
+        : isDefined(timezoneParam)
           ? timezoneParam.split('-').join('/')
           : uiState.timezone;
 
@@ -96,16 +111,16 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersChartId = common.isDefined(chartId)
+    let parametersChartId = isDefined(chartId)
       ? chartId
-      : route?.params[common.PARAMETER_CHART_ID];
+      : route?.params[PARAMETER_CHART_ID];
 
-    if (parametersChartId === common.EMPTY_CHART_ID) {
+    if (parametersChartId === EMPTY_CHART_ID) {
       this.chartQuery.reset();
       return of(true);
     }
 
-    if (parametersChartId === common.LAST_SELECTED_CHART_ID) {
+    if (parametersChartId === LAST_SELECTED_CHART_ID) {
       let charts = this.chartsQuery.getValue().charts;
       let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
       let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
@@ -119,20 +134,20 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       );
 
       if (
-        common.isDefined(pChartLink) &&
-        pChartLink.chartId === common.EMPTY_CHART_ID &&
-        common.isDefined(pModelLink)
+        isDefined(pChartLink) &&
+        pChartLink.chartId === EMPTY_CHART_ID &&
+        isDefined(pModelLink)
       ) {
         this.navigateService.navigateToChart({
           modelId: pModelLink.modelId,
-          chartId: common.EMPTY_CHART_ID
+          chartId: EMPTY_CHART_ID
         });
 
         return of(false);
-      } else if (common.isDefined(pChartLink)) {
+      } else if (isDefined(pChartLink)) {
         let pChart = charts.find(r => r.chartId === pChartLink.chartId);
 
-        if (common.isDefined(pChart)) {
+        if (isDefined(pChart)) {
           this.navigateService.navigateToChart({
             modelId: pChart.modelId,
             chartId: pChart.chartId
@@ -149,7 +164,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       }
     }
 
-    let payload: apiToBackend.ToBackendGetChartRequestPayload = {
+    let payload: ToBackendGetChartRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -160,29 +175,27 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetChart,
         payload: payload,
         showSpinner: showSpinner
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetChartResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetChartResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.chartQuery.update(resp.payload.chart);
 
             return true;
           } else if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
-            resp.info.error.message ===
-              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.info?.status === ResponseInfoStatusEnum.Error &&
+            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               nav.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               nav.projectId,
-              common.PATH_INFO
+              PATH_INFO
             ]);
 
             return false;

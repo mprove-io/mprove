@@ -1,6 +1,19 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { common } from '~front/barrels/common';
+import {
+  PARAMETER_BRANCH_ID,
+  PARAMETER_ENV_ID,
+  PARAMETER_ORG_ID,
+  PARAMETER_PROJECT_ID,
+  PARAMETER_REPO_ID,
+  PATH_ACCOUNT,
+  PATH_INFO,
+  PATH_ORG,
+  PATH_PROFILE,
+  PATH_PROJECT,
+  PROD_REPO_ID
+} from '~common/constants/top';
+import { isDefined } from '~common/functions/is-defined';
 import { NavState } from '../queries/nav.query';
 
 export function checkNavOrgProjectRepoBranchEnv(item: {
@@ -11,38 +24,35 @@ export function checkNavOrgProjectRepoBranchEnv(item: {
 }) {
   let { nav, route, router, userId } = item;
 
-  let parametersOrgId = route.params[common.PARAMETER_ORG_ID];
-  let parametersProjectId = route.params[common.PARAMETER_PROJECT_ID];
-  let parametersRepoId = route.params[common.PARAMETER_REPO_ID];
-  let parametersBranchId = route.params[common.PARAMETER_BRANCH_ID];
-  let parametersEnvId = route.params[common.PARAMETER_ENV_ID];
+  let parametersOrgId = route.params[PARAMETER_ORG_ID];
+  let parametersProjectId = route.params[PARAMETER_PROJECT_ID];
+  let parametersRepoId = route.params[PARAMETER_REPO_ID];
+  let parametersBranchId = route.params[PARAMETER_BRANCH_ID];
+  let parametersEnvId = route.params[PARAMETER_ENV_ID];
 
-  if (common.isDefined(parametersOrgId) && nav.orgId !== parametersOrgId) {
-    router.navigate([common.PATH_PROFILE]);
+  if (isDefined(parametersOrgId) && nav.orgId !== parametersOrgId) {
+    router.navigate([PATH_PROFILE]);
     return of(false);
   }
 
-  if (
-    common.isDefined(parametersProjectId) &&
-    nav.projectId !== parametersProjectId
-  ) {
-    router.navigate([common.PATH_ORG, nav.orgId, common.PATH_ACCOUNT]);
+  if (isDefined(parametersProjectId) && nav.projectId !== parametersProjectId) {
+    router.navigate([PATH_ORG, nav.orgId, PATH_ACCOUNT]);
     return of(false);
   }
 
-  if (common.isDefined(parametersRepoId)) {
+  if (isDefined(parametersRepoId)) {
     if (
-      (nav.isRepoProd === true && parametersRepoId !== common.PROD_REPO_ID) ||
+      (nav.isRepoProd === true && parametersRepoId !== PROD_REPO_ID) ||
       (nav.isRepoProd === false && parametersRepoId !== userId) ||
       nav.branchId !== parametersBranchId ||
       nav.envId !== parametersEnvId
     ) {
       router.navigate([
-        common.PATH_ORG,
+        PATH_ORG,
         nav.orgId,
-        common.PATH_PROJECT,
+        PATH_PROJECT,
         nav.projectId,
-        common.PATH_INFO
+        PATH_INFO
       ]);
       return of(false);
     }

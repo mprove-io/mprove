@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { ReportX } from '~common/interfaces/backend/report-x';
 import { BaseQuery } from './base.query';
 
 export class FilteredReportsState {
-  filteredReports: common.ReportX[];
+  filteredReports: ReportX[];
 }
 
 let filteredReports: FilteredReportsState = {

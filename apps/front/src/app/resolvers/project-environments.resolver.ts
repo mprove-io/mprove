@@ -7,8 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetEnvsRequestPayload,
+  ToBackendGetEnvsResponse
+} from '~common/interfaces/to-backend/envs/to-backend-get-envs';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { EnvironmentsQuery } from '../queries/environments.query';
 import { MemberQuery } from '../queries/member.query';
@@ -54,27 +59,24 @@ export class ProjectEnvironmentsResolver
       projectId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetEnvsRequestPayload = {
+    let payload: ToBackendGetEnvsRequestPayload = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvs,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetEnvsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetEnvsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             let newSortedEnvironments = resp.payload.envs.sort((a, b) =>
-              a.envId !== common.PROJECT_ENV_PROD &&
-              b.envId === common.PROJECT_ENV_PROD
+              a.envId !== PROJECT_ENV_PROD && b.envId === PROJECT_ENV_PROD
                 ? 1
-                : a.envId === common.PROJECT_ENV_PROD &&
-                    b.envId !== common.PROJECT_ENV_PROD
+                : a.envId === PROJECT_ENV_PROD && b.envId !== PROJECT_ENV_PROD
                   ? -1
                   : a.envId > b.envId
                     ? 1

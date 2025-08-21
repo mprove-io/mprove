@@ -16,23 +16,20 @@ import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
-export class TileX2 extends common.TileX {
-  modelFields?: { [a: string]: common.ModelField[] };
+export class TileX2 extends TileX {
+  modelFields?: { [a: string]: ModelField[] };
   mconfigListenSwap?: { [a: string]: string[] };
 }
 
-export class DashboardX2 extends common.DashboardX {
+export class DashboardX2 extends DashboardX {
   tiles: TileX2[];
 }
 
 export interface DashboardEditListenersDialogData {
   dashboardService: DashboardService;
   apiService: ApiService;
-  dashboard: common.Dashboard;
+  dashboard: Dashboard;
 }
 
 @Component({
@@ -55,7 +52,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
   spinnerName = 'dashboardEditListen';
 
-  models: common.Model[];
+  models: Model[];
 
   dashboard: any; // DashboardX2
 
@@ -79,9 +76,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.dashboard = common.makeCopy(
-      this.ref.data.dashboard
-    ) as common.DashboardX;
+    this.dashboard = makeCopy(this.ref.data.dashboard) as DashboardX;
 
     let nav: NavState;
     this.navQuery
@@ -98,7 +93,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -111,13 +106,12 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.spinner.hide(this.spinnerName);
 
             this.models = resp.payload.models;
@@ -130,23 +124,23 @@ export class DashboardEditListenersDialogComponent implements OnInit {
               Object.keys(x.listen).forEach(modelFieldId => {
                 let dashboardFieldId = x.listen[modelFieldId];
 
-                if (common.isUndefined(swap[dashboardFieldId])) {
+                if (isUndefined(swap[dashboardFieldId])) {
                   swap[dashboardFieldId] = [modelFieldId];
                 } else {
                   swap[dashboardFieldId].push(modelFieldId);
                 }
               });
 
-              let modelFields: { [a: string]: common.ModelField[] } = {};
+              let modelFields: { [a: string]: ModelField[] } = {};
 
               let emptyField = <ModelField>{
                 id: undefined,
-                topLabel: constants.EMPTY_MCONFIG_FIELD.topLabel
+                topLabel: EMPTY_MCONFIG_FIELD.topLabel
               };
 
               (this.dashboard as DashboardX2).fields.forEach(dashField => {
                 modelFields[dashField.id] =
-                  common.isDefined(dashField.storeResult) &&
+                  isDefined(dashField.storeResult) &&
                   dashField.storeModel === model.modelId
                     ? [
                         emptyField,
@@ -156,19 +150,19 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                             model.modelId === dashField.storeModel
                         )
                       ]
-                    : common.isDefined(dashField.storeFilter) &&
+                    : isDefined(dashField.storeFilter) &&
                         dashField.storeModel === model.modelId
                       ? [
                           emptyField,
                           ...model.fields.filter(y =>
-                            y.fieldClass === common.FieldClassEnum.Filter
+                            y.fieldClass === FieldClassEnum.Filter
                               ? y.id === dashField.storeFilter
                               : false
                           )
                         ]
-                      : model.type !== common.ModelTypeEnum.Store &&
+                      : model.type !== ModelTypeEnum.Store &&
                           // model.isStoreModel === false &&
-                          common.isUndefined(dashField.storeModel)
+                          isUndefined(dashField.storeModel)
                         ? [
                             emptyField,
                             ...model.fields.filter(
@@ -177,7 +171,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                           ]
                         : [emptyField];
 
-                if (common.isUndefined(swap[dashField.id])) {
+                if (isUndefined(swap[dashField.id])) {
                   swap[dashField.id] = [undefined];
                 }
               });
@@ -279,7 +273,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
       Object.keys(x.mconfigListenSwap).forEach(dashboardFieldId => {
         x.mconfigListenSwap[dashboardFieldId]
-          .filter(y => common.isDefined(y))
+          .filter(y => isDefined(y))
           .forEach(modelFieldId => {
             newListen[modelFieldId] = dashboardFieldId;
           });
@@ -297,15 +291,15 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone
     });
   }
 
-  fieldSearchFn(term: string, modelField: common.ModelField) {
+  fieldSearchFn(term: string, modelField: ModelField) {
     let haystack = [
-      common.isDefinedAndNotEmpty(modelField.groupLabel)
+      isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
         : `${modelField.topLabel} ${modelField.label}`
     ];

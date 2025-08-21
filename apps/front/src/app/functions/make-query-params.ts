@@ -1,9 +1,10 @@
-import { common } from '~front/barrels/common';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { Fraction } from '~common/interfaces/blockml/fraction';
 
 export function makeQueryParams(item: {
   timezone: string;
-  timeSpec: common.TimeSpecEnum;
-  timeRangeFraction: common.Fraction;
+  timeSpec: TimeSpecEnum;
+  timeRangeFraction: Fraction;
 }) {
   let { timezone, timeSpec, timeRangeFraction } = item;
 

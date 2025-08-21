@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { constants } from '~common/barrels/constants';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
@@ -9,7 +8,6 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -25,7 +23,7 @@ export class NavbarComponent implements OnInit {
     })
   );
 
-  member: common.Member;
+  member: Member;
   member$ = this.memberQuery.select().pipe(
     tap(x => {
       this.member = x;
@@ -81,17 +79,16 @@ export class NavbarComponent implements OnInit {
   }
 
   checkUrls(url: string) {
-    this.isFilesRouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_FILES;
+    this.isFilesRouteActive = url.split('?')[0]?.split('/')[11] === PATH_FILES;
 
     this.isModelsRouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_MODELS;
+      url.split('?')[0]?.split('/')[11] === PATH_MODELS;
 
     this.isDashboardsRouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_DASHBOARDS;
+      url.split('?')[0]?.split('/')[11] === PATH_DASHBOARDS;
 
     this.isReportsRouteActive =
-      url.split('?')[0]?.split('/')[11] === constants.PATH_REPORTS;
+      url.split('?')[0]?.split('/')[11] === PATH_REPORTS;
 
     this.cd.detectChanges();
   }
@@ -100,11 +97,11 @@ export class NavbarComponent implements OnInit {
     if (this.isFilesRouteActive === true) {
       return;
     }
-    this.uiQuery.updatePart({ panel: common.PanelEnum.Tree });
+    this.uiQuery.updatePart({ panel: PanelEnum.Tree });
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.LAST_SELECTED_FILE_ID
+      panel: PanelEnum.Tree,
+      encodedFileId: LAST_SELECTED_FILE_ID
     });
   }
 
@@ -114,8 +111,8 @@ export class NavbarComponent implements OnInit {
     }
 
     this.navigateService.navigateToChart({
-      modelId: common.LAST_SELECTED_MODEL_ID,
-      chartId: common.LAST_SELECTED_CHART_ID
+      modelId: LAST_SELECTED_MODEL_ID,
+      chartId: LAST_SELECTED_CHART_ID
     });
   }
 
@@ -125,7 +122,7 @@ export class NavbarComponent implements OnInit {
     }
 
     this.navigateService.navigateToDashboard({
-      dashboardId: common.LAST_SELECTED_DASHBOARD_ID
+      dashboardId: LAST_SELECTED_DASHBOARD_ID
     });
   }
 
@@ -135,7 +132,7 @@ export class NavbarComponent implements OnInit {
     }
 
     this.navigateService.navigateToReport({
-      reportId: common.LAST_SELECTED_REPORT_ID,
+      reportId: LAST_SELECTED_REPORT_ID,
       skipDeselect: true
     });
   }

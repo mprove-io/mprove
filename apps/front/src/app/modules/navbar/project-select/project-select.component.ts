@@ -13,8 +13,6 @@ import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -30,9 +28,9 @@ export class ProjectSelectComponent {
     this.projectSelectElement?.close();
   }
 
-  firstOrgName = common.FIRST_ORG_NAME;
+  firstOrgName = FIRST_ORG_NAME;
 
-  projectsList: common.ProjectsItem[] = [];
+  projectsList: ProjectsItem[] = [];
   projectsListLoading = false;
   projectsListLength = 0;
 
@@ -86,20 +84,18 @@ export class ProjectSelectComponent {
   openProjectSelect() {
     this.projectsListLoading = true;
 
-    let payload: apiToBackend.ToBackendGetProjectsListRequestPayload = {
+    let payload: ToBackendGetProjectsListRequestPayload = {
       orgId: this.selectedOrgId
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProjectsList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProjectsList,
         payload: payload
       })
       .pipe(
         map(
-          (resp: apiToBackend.ToBackendGetProjectsListResponse) =>
-            resp.payload.projectsList
+          (resp: ToBackendGetProjectsListResponse) => resp.payload.projectsList
         ),
         tap(x => {
           this.projectsList = x;
@@ -126,19 +122,19 @@ export class ProjectSelectComponent {
     ).defaultBranch;
 
     let navParts = [
-      common.PATH_ORG,
+      PATH_ORG,
       this.nav.orgId,
-      common.PATH_PROJECT,
+      PATH_PROJECT,
       this.selectedProjectId,
-      common.PATH_REPO,
-      common.PROD_REPO_ID,
-      common.PATH_BRANCH,
+      PATH_REPO,
+      PROD_REPO_ID,
+      PATH_BRANCH,
       branchId,
-      common.PATH_ENV,
-      common.PROJECT_ENV_PROD,
-      common.PATH_REPORTS,
-      common.PATH_REPORT,
-      common.LAST_SELECTED_REPORT_ID
+      PATH_ENV,
+      PROJECT_ENV_PROD,
+      PATH_REPORTS,
+      PATH_REPORT,
+      LAST_SELECTED_REPORT_ID
     ];
 
     this.navigateService.navigateTo({ navParts: navParts });

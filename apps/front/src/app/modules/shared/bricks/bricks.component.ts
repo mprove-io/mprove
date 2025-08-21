@@ -2,7 +2,6 @@ import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { MALLOY_FILTER_ANY } from '~common/_index';
 import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { ModelsQuery } from '~front/app/queries/models.query';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -11,9 +10,9 @@ import { common } from '~front/barrels/common';
 })
 export class BricksComponent implements OnChanges {
   @Input()
-  extendedFilters: common.FilterX[];
+  extendedFilters: FilterX[];
 
-  proFilters: common.FilterX[] = [];
+  proFilters: FilterX[] = [];
 
   @Input()
   listen: { [a: string]: string };
@@ -36,20 +35,20 @@ export class BricksComponent implements OnChanges {
   @Input()
   metricsEndDateIncludedYYYYMMDD: string;
 
-  fractionOperatorEnum = common.FractionOperatorEnum;
-  controlClassDatePicker = common.ControlClassEnum.DatePicker;
+  fractionOperatorEnum = FractionOperatorEnum;
+  controlClassDatePicker = ControlClassEnum.DatePicker;
 
   constructor(private modelsQuery: ModelsQuery) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['extendedFilters'] && changes['extendedFilters'].currentValue) {
-      let proFilters = common.makeCopy(this.extendedFilters);
+      let proFilters = makeCopy(this.extendedFilters);
 
       // deduplicate fractions with the same parent bricks
       proFilters.forEach(x => {
         let fractionsWithAny = x.fractions.filter(
           fraction =>
-            common.isDefined(fraction.parentBrick) &&
+            isDefined(fraction.parentBrick) &&
             fraction.parentBrick === MALLOY_FILTER_ANY
         );
 
@@ -58,7 +57,7 @@ export class BricksComponent implements OnChanges {
         x.fractions
           .filter(
             fraction =>
-              common.isDefined(fraction.parentBrick) &&
+              isDefined(fraction.parentBrick) &&
               fraction.parentBrick !== MALLOY_FILTER_ANY
           )
           .forEach(fraction => {
@@ -68,7 +67,7 @@ export class BricksComponent implements OnChanges {
         let uniqueParentBricks = [...new Set(parentBricks)];
 
         // fractions with unique parent bricks (but no any value)
-        let proFractions: common.Fraction[] = [];
+        let proFractions: Fraction[] = [];
 
         uniqueParentBricks.forEach(parentBrick => {
           let proFraction = x.fractions.find(
@@ -90,7 +89,7 @@ export class BricksComponent implements OnChanges {
     }
   }
 
-  deleteFilter(filter: common.FilterX) {
+  deleteFilter(filter: FilterX) {
     this.extendedFilters = this.extendedFilters.filter(
       x => x.fieldId !== filter.fieldId
     );

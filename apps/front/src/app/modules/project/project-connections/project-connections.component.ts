@@ -7,8 +7,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -16,11 +14,11 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './project-connections.component.html'
 })
 export class ProjectConnectionsComponent implements OnInit {
-  typeBigQuery = common.ConnectionTypeEnum.BigQuery;
+  typeBigQuery = ConnectionTypeEnum.BigQuery;
 
-  pageTitle = constants.PROJECT_CONNECTIONS_PAGE_TITLE;
+  pageTitle = PROJECT_CONNECTIONS_PAGE_TITLE;
 
-  connectionTypeClickhouse = common.ConnectionTypeEnum.ClickHouse;
+  connectionTypeClickhouse = ConnectionTypeEnum.ClickHouse;
 
   projectId: string;
   projectId$ = this.navQuery.projectId$.pipe(
@@ -38,7 +36,7 @@ export class ProjectConnectionsComponent implements OnInit {
     })
   );
 
-  connections: common.Connection[] = [];
+  connections: Connection[] = [];
   connections$ = this.connectionsQuery.connections$.pipe(
     tap(x => {
       this.connections = x;
@@ -68,7 +66,7 @@ export class ProjectConnectionsComponent implements OnInit {
     });
   }
 
-  deleteConnection(connection: common.Connection) {
+  deleteConnection(connection: Connection) {
     this.myDialogService.showDeleteConnection({
       apiService: this.apiService,
       projectId: connection.projectId,
@@ -77,7 +75,7 @@ export class ProjectConnectionsComponent implements OnInit {
     });
   }
 
-  editConnection(connection: common.Connection) {
+  editConnection(connection: Connection) {
     this.myDialogService.showEditConnection({
       apiService: this.apiService,
       connection: connection

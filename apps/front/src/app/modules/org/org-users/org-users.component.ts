@@ -7,11 +7,8 @@ import { OrgQuery } from '~front/app/queries/org.query';
 import { UsersQuery } from '~front/app/queries/users.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
-class OrgUserItemExtended extends apiToBackend.OrgUsersItem {
+class OrgUserItemExtended extends OrgUsersItem {
   initials: string;
 }
 
@@ -21,10 +18,10 @@ class OrgUserItemExtended extends apiToBackend.OrgUsersItem {
   templateUrl: './org-users.component.html'
 })
 export class OrgUsersComponent implements OnInit {
-  pageTitle = constants.ORGANIZATION_USERS_PAGE_TITLE;
+  pageTitle = ORGANIZATION_USERS_PAGE_TITLE;
 
   currentPage: any = 1;
-  perPage = constants.USERS_PER_PAGE;
+  perPage = USERS_PER_PAGE;
 
   orgId: string;
   orgId$ = this.navQuery.orgId$.pipe(
@@ -73,7 +70,7 @@ export class OrgUsersComponent implements OnInit {
   }
 
   getUsers(pageNum: number) {
-    let payload: apiToBackend.ToBackendGetOrgUsersRequestPayload = {
+    let payload: ToBackendGetOrgUsersRequestPayload = {
       orgId: this.orgId,
       pageNum: pageNum,
       perPage: this.perPage
@@ -81,13 +78,12 @@ export class OrgUsersComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetOrgUsersResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.usersQuery.update({
               users: resp.payload.orgUsersList,
               total: resp.payload.total
@@ -111,20 +107,19 @@ export class OrgUsersComponent implements OnInit {
       alias: alias
     });
 
-    let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
+    let payload: ToBackendGetAvatarBigRequestPayload = {
       avatarUserId: memberId
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetAvatarBigResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.myDialogService.showPhoto({
               avatarBig: resp.payload.avatarBig,
               initials: initials

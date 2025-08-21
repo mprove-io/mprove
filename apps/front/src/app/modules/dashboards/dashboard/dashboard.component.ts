@@ -12,19 +12,30 @@ import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
 import { Subscription, fromEvent, merge } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
-import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
+import { DASHBOARD_PAGE_TITLE } from '~common/constants/page-titles';
+import {
+  RESTRICTED_USER_ALIAS,
+  TILE_DEFAULT_PLATE_HEIGHT,
+  TILE_DEFAULT_PLATE_WIDTH,
+  TILE_DEFAULT_PLATE_X,
+  TILE_DEFAULT_PLATE_Y
+} from '~common/constants/top';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
+import { isDefined } from '~common/functions/is-defined';
+import { makeId } from '~common/functions/make-id';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { TileX } from '~common/interfaces/backend/tile-x';
+import { DeleteFilterFnItem } from '~common/interfaces/front/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
-import { constants as frontConstants } from '~front/barrels/constants';
-
-import { UiQuery } from '~front/app/queries/ui.query';
 import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 class LayoutItem {
@@ -33,7 +44,7 @@ class LayoutItem {
   h: number;
   x: number;
   y: number;
-  tile: common.TileX;
+  tile: TileX;
 }
 
 @Component({
@@ -43,9 +54,9 @@ class LayoutItem {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
-  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+  restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
-  pageTitle = frontConstants.DASHBOARD_PAGE_TITLE;
+  pageTitle = DASHBOARD_PAGE_TITLE;
 
   @ViewChild('scrollable') scrollable: any;
 
@@ -60,7 +71,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
-  randomId = common.makeId();
+  randomId = makeId();
 
   scrollSpeed = 8;
 
@@ -93,9 +104,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   prevDashboardId: string;
 
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
-    filter(x => common.isDefined(x.dashboardId)),
+    filter(x => isDefined(x.dashboardId)),
     tap(x => {
       this.dashboard = x;
 
@@ -109,25 +120,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         tile =>
           <LayoutItem>{
             id: tile.title,
-            x: common.isDefined(tile.plateX)
-              ? tile.plateX
-              : common.TILE_DEFAULT_PLATE_X,
-            y: common.isDefined(tile.plateY)
-              ? tile.plateY
-              : common.TILE_DEFAULT_PLATE_Y,
-            w: common.isDefined(tile.plateWidth)
+            x: isDefined(tile.plateX) ? tile.plateX : TILE_DEFAULT_PLATE_X,
+            y: isDefined(tile.plateY) ? tile.plateY : TILE_DEFAULT_PLATE_Y,
+            w: isDefined(tile.plateWidth)
               ? tile.plateWidth
-              : common.TILE_DEFAULT_PLATE_WIDTH,
-            h: common.isDefined(tile.plateHeight)
+              : TILE_DEFAULT_PLATE_WIDTH,
+            h: isDefined(tile.plateHeight)
               ? tile.plateHeight
-              : common.TILE_DEFAULT_PLATE_HEIGHT,
+              : TILE_DEFAULT_PLATE_HEIGHT,
             tile: tile
           }
       );
 
       if (
-        common.isDefined(this.dashboard.dashboardId) &&
-        common.isDefined(this.prevDashboardId) &&
+        isDefined(this.dashboard.dashboardId) &&
+        isDefined(this.prevDashboardId) &&
         this.prevDashboardId !== this.dashboard.dashboardId
       ) {
         this.isShow = false;
@@ -197,7 +204,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.layout = [...this.layout];
 
-      if (common.isDefined(item?.setShowTrue)) {
+      if (isDefined(item?.setShowTrue)) {
         this.isShow = true;
       }
 
@@ -206,13 +213,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    if (common.isDefined(this.dashboard)) {
+    if (isDefined(this.dashboard)) {
       this.scrollSubscription = merge(
         fromEvent(this.scrollable.nativeElement, 'scroll')
       )
         .pipe(debounceTime(100))
         .subscribe((event: any) => {
-          this.randomId = common.makeId();
+          this.randomId = makeId();
           this.cd.detectChanges();
         });
     }
@@ -231,8 +238,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath })
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }
 
@@ -270,7 +277,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone
     });
@@ -290,7 +297,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone
     });
@@ -312,7 +319,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let tile = this.dashboard.tiles.find(t => t.title === tileTitle);
     tile.deletedFilterFieldIds = [filterFieldId];
 
-    if (common.isDefined(tile.listen[filterFieldId])) {
+    if (isDefined(tile.listen[filterFieldId])) {
       delete tile.listen[filterFieldId];
     }
 
@@ -320,7 +327,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone
     });

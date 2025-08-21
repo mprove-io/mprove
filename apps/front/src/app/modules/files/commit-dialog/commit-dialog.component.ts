@@ -21,9 +21,6 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CommitDialogDialogData {
@@ -31,7 +28,7 @@ export interface CommitDialogDialogData {
   projectId: string;
   isRepoProd: boolean;
   branchId: string;
-  panel: common.PanelEnum;
+  panel: PanelEnum;
   fileId: string;
 }
 
@@ -84,24 +81,23 @@ export class CommitDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendCommitRepoRequestPayload = {
+    let payload: ToBackendCommitRepoRequestPayload = {
       projectId: this.ref.data.projectId,
       isRepoProd: this.ref.data.isRepoProd,
       branchId: this.ref.data.branchId,
       commitMessage: this.commitForm.value.message
     };
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendCommitRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendCommitRepoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
 
             return true;
@@ -110,14 +106,14 @@ export class CommitDialogComponent implements OnInit {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.ref.data.fileId)
+          x === true && isDefined(this.ref.data.fileId)
             ? this.fileService.getFile({
                 fileId: this.ref.data.fileId,
                 panel: this.ref.data.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();

@@ -1,6 +1,9 @@
 import { DatePickerDate, DatePickerI18n } from '@vaadin/date-picker';
-import { common } from '~front/barrels/common';
-import { RefreshItem } from '../interfaces/refresh-item';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FileExtensionEnum } from '~common/enums/file-extension.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { MconfigField } from '~common/interfaces/backend/mconfig-field';
+import { RefreshItem } from '~common/interfaces/front/refresh-item';
 
 export const SPECIAL_ERROR = 'SPECIAL_ERROR';
 export const PASSWORD_RESET_EMAIL = 'PASSWORD_RESET_EMAIL';
@@ -20,44 +23,44 @@ export const DEFAULT_METRICS_COLUMN_NAME_WIDTH = 530;
 export const DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH = 155;
 export const DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH = 220;
 
-export const DEFAULT_TIME_SPEC = common.TimeSpecEnum.Days;
+export const DEFAULT_TIME_SPEC = TimeSpecEnum.Days;
 
-// export const DEFAULT_TIME_RANGE_FRACTION: common.Fraction = {
+// export const DEFAULT_TIME_RANGE_FRACTION: Fraction = {
 //   brick: 'last 5 days',
-//   operator: common.FractionOperatorEnum.Or,
+//   operator: FractionOperatorEnum.Or,
 //   tsLastCompleteOption:
-//     common.FractionTsLastCompleteOptionEnum.CompletePlusCurrent,
-//   tsLastUnit: common.FractionTsLastUnitEnum.Days,
+//     FractionTsLastCompleteOptionEnum.CompletePlusCurrent,
+//   tsLastUnit: FractionTsLastUnitEnum.Days,
 //   tsLastValue: 5,
-//   type: common.FractionTypeEnum.TsIsInLast
+//   type: FractionTypeEnum.TsIsInLast
 // };
 
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;
 
-export const BLOCKML_EXT_LIST: common.FileExtensionEnum[] = [
-  common.FileExtensionEnum.Store,
-  common.FileExtensionEnum.Report,
-  common.FileExtensionEnum.Dashboard,
-  common.FileExtensionEnum.Chart
+export const BLOCKML_EXT_LIST: FileExtensionEnum[] = [
+  FileExtensionEnum.Store,
+  FileExtensionEnum.Report,
+  FileExtensionEnum.Dashboard,
+  FileExtensionEnum.Chart
 ];
 
-export const RESULTS_LIST: common.FieldResultEnum[] = [
-  common.FieldResultEnum.String,
-  common.FieldResultEnum.Number,
-  common.FieldResultEnum.Boolean,
-  common.FieldResultEnum.Ts,
-  common.FieldResultEnum.Date
+export const RESULTS_LIST: FieldResultEnum[] = [
+  FieldResultEnum.String,
+  FieldResultEnum.Number,
+  FieldResultEnum.Boolean,
+  FieldResultEnum.Ts,
+  FieldResultEnum.Date
   //
-  // common.FieldResultEnum.Array,
-  // common.FieldResultEnum.Record,
-  // common.FieldResultEnum.Json,
-  // common.FieldResultEnum.SqlNative,
+  // FieldResultEnum.Array,
+  // FieldResultEnum.Record,
+  // FieldResultEnum.Json,
+  // FieldResultEnum.SqlNative,
   //
-  // common.FieldResultEnum.DayOfWeek,
-  // common.FieldResultEnum.DayOfWeekIndex,
-  // common.FieldResultEnum.MonthName,
-  // common.FieldResultEnum.QuarterOfYear,
+  // FieldResultEnum.DayOfWeek,
+  // FieldResultEnum.DayOfWeekIndex,
+  // FieldResultEnum.MonthName,
+  // FieldResultEnum.QuarterOfYear,
 ];
 
 export const APP_SPINNER_NAME = 'app';
@@ -131,7 +134,7 @@ export const FORMAT_NUMBER_EXAMPLES: {
   }
 ];
 
-export const EMPTY_MCONFIG_FIELD: common.MconfigField = {
+export const EMPTY_MCONFIG_FIELD: MconfigField = {
   id: undefined,
   hidden: undefined,
   required: undefined,

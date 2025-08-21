@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { BaseQuery } from './base.query';
 
 export class NavState {
@@ -30,7 +30,7 @@ let navState: NavState = {
   projectDefaultBranch: undefined,
   isRepoProd: undefined,
   branchId: undefined,
-  envId: common.PROJECT_ENV_PROD,
+  envId: PROJECT_ENV_PROD,
   needValidate: false,
   serverTimeDiff: undefined
 };

@@ -25,9 +25,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 export interface MergeBranchDialogData {
   apiService: ApiService;
@@ -59,11 +56,11 @@ export class MergeBranchDialogComponent implements OnInit {
 
   mergeForm: FormGroup;
 
-  branchesList: interfaces.BranchItem[] = this.ref.data.branchesList.filter(
-    (x: interfaces.BranchItem) => x.isRepoProd === false
+  branchesList: BranchItem[] = this.ref.data.branchesList.filter(
+    (x: BranchItem) => x.isRepoProd === false
   );
 
-  selectedBranchItem: interfaces.BranchItem = undefined;
+  selectedBranchItem: BranchItem = undefined;
 
   constructor(
     public ref: DialogRef<MergeBranchDialogData>,
@@ -105,7 +102,7 @@ export class MergeBranchDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendMergeRepoRequestPayload = {
+    let payload: ToBackendMergeRepoRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.currentBranchId,
       envId: this.ref.data.envId,
@@ -117,14 +114,13 @@ export class MergeBranchDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendMergeRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendMergeRepoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -139,10 +135,10 @@ export class MergeBranchDialogComponent implements OnInit {
       .subscribe();
   }
 
-  // branchChange(branchItem: interfaces.BranchItem) {
+  // branchChange(branchItem: BranchItem) {
   branchChange(branchItem: any) {
     this.selectedBranchItem = this.branchesList.find(
-      x => x.extraId === (branchItem as interfaces.BranchItem).extraId
+      x => x.extraId === (branchItem as BranchItem).extraId
     );
 
     this.cd.detectChanges();

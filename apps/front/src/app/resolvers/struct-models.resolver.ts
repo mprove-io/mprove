@@ -2,8 +2,14 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetModelsRequestPayload,
+  ToBackendGetModelsResponse
+} from '~common/interfaces/to-backend/models/to-backend-get-models';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
@@ -50,7 +56,7 @@ export class StructModelsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -59,13 +65,12 @@ export class StructModelsResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
@@ -76,16 +81,15 @@ export class StructModelsResolver implements Resolve<Observable<boolean>> {
 
             return true;
           } else if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
-            resp.info.error.message ===
-              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.info?.status === ResponseInfoStatusEnum.Error &&
+            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               nav.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               nav.projectId,
-              common.PATH_INFO
+              PATH_INFO
             ]);
 
             return false;

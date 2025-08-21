@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { QDataRow } from '~front/app/services/data.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -9,10 +8,10 @@ import { common } from '~front/barrels/common';
 })
 export class ChartSingleComponent {
   @Input()
-  mconfigFields: common.MconfigField[];
+  mconfigFields: MconfigField[];
 
   @Input()
-  yFieldColumn: common.MconfigField;
+  yFieldColumn: MconfigField;
 
   @Input()
   qData: QDataRow[];

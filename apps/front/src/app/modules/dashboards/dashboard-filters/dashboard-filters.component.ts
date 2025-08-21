@@ -1,9 +1,21 @@
 import { Component, Input } from '@angular/core';
+import { TRIPLE_UNDERSCORE } from '~common/constants/top';
+import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { getFractionTypeForAny } from '~common/functions/get-fraction-type-for-any';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DashboardService } from '~front/app/services/dashboard.service';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   standalone: false,
@@ -12,7 +24,7 @@ import { interfaces } from '~front/barrels/interfaces';
 })
 export class DashboardFiltersComponent {
   @Input()
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
 
   constructor(
     private dashboardService: DashboardService,
@@ -24,9 +36,9 @@ export class DashboardFiltersComponent {
   }
 
   fractionUpdate(
-    dashboardField: common.DashboardField,
+    dashboardField: DashboardField,
     fieldIndex: number,
-    eventFractionUpdate: interfaces.EventFractionUpdate
+    eventFractionUpdate: EventFractionUpdate
   ) {
     let fractions = dashboardField.fractions;
 
@@ -50,60 +62,58 @@ export class DashboardFiltersComponent {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
       timezone: this.uiQuery.getValue().timezone
     });
   }
 
-  addFraction(dashboardField: common.DashboardField, fieldIndex: number) {
+  addFraction(dashboardField: DashboardField, fieldIndex: number) {
     let fractions = dashboardField.fractions;
 
-    let newFraction: common.Fraction;
+    let newFraction: Fraction;
 
-    if (common.isDefined(dashboardField.storeModel)) {
+    if (isDefined(dashboardField.storeModel)) {
       let store = this.dashboard.storeModels.find(
         x => x.modelId === dashboardField.storeModel
       );
 
-      let storeFilter = common.isDefined(dashboardField.storeFilter)
-        ? (store.content as common.FileStore).fields.find(
+      let storeFilter = isDefined(dashboardField.storeFilter)
+        ? (store.content as FileStore).fields.find(
             f => f.name === dashboardField.storeFilter
           )
         : undefined;
 
-      let storeResultFirstTypeFraction = common.isDefined(
-        dashboardField.storeFilter
-      )
+      let storeResultFirstTypeFraction = isDefined(dashboardField.storeFilter)
         ? undefined
-        : (store.content as common.FileStore).results.find(
+        : (store.content as FileStore).results.find(
             r => r.result === dashboardField.storeResult
           ).fraction_types[0];
 
-      let logicGroup = common.isUndefined(storeResultFirstTypeFraction)
+      let logicGroup = isUndefined(storeResultFirstTypeFraction)
         ? undefined
-        : common.FractionLogicEnum.Or;
+        : FractionLogicEnum.Or;
 
-      let storeFractionSubTypeOptions = common.isUndefined(
+      let storeFractionSubTypeOptions = isUndefined(
         storeResultFirstTypeFraction
       )
         ? []
-        : (store.content as common.FileStore).results
+        : (store.content as FileStore).results
             .find(r => r.result === dashboardField.storeResult)
             .fraction_types.map(ft => {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.Or,
+                logicGroup: FractionLogicEnum.Or,
                 typeValue: ft.type,
-                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.AndNot,
-                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: FractionLogicEnum.AndNot,
+                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -114,37 +124,34 @@ export class DashboardFiltersComponent {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFirstTypeFraction?.meta,
-        operator: common.isUndefined(logicGroup)
+        operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
+          : logicGroup === FractionLogicEnum.Or
+            ? FractionOperatorEnum.Or
+            : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
-        type: common.FractionTypeEnum.StoreFraction,
+        type: FractionTypeEnum.StoreFraction,
         storeResult: dashboardField.storeResult,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFirstTypeFraction?.type,
-        storeFractionSubTypeLabel: common.isDefined(
-          storeResultFirstTypeFraction?.type
-        )
+        storeFractionSubTypeLabel: isDefined(storeResultFirstTypeFraction?.type)
           ? storeFractionSubTypeOptions.find(
               k => k.typeValue === storeResultFirstTypeFraction?.type
             ).label
           : storeResultFirstTypeFraction?.type,
         storeFractionLogicGroupWithSubType:
-          common.isDefined(logicGroup) &&
-          common.isDefined(storeResultFirstTypeFraction?.type)
-            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFirstTypeFraction.type}`
+          isDefined(logicGroup) && isDefined(storeResultFirstTypeFraction?.type)
+            ? `${logicGroup}${TRIPLE_UNDERSCORE}${storeResultFirstTypeFraction.type}`
             : undefined,
-        controls: common.isUndefined(storeResultFirstTypeFraction)
+        controls: isUndefined(storeResultFirstTypeFraction)
           ? storeFilter.fraction_controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -156,7 +163,7 @@ export class DashboardFiltersComponent {
               return newControl;
             })
           : storeResultFirstTypeFraction.controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -171,8 +178,8 @@ export class DashboardFiltersComponent {
     } else {
       newFraction = {
         brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(dashboardField.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(dashboardField.result)
       };
     }
 
@@ -192,20 +199,20 @@ export class DashboardFiltersComponent {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
       timezone: this.uiQuery.getValue().timezone
     });
   }
 
   deleteFraction(
-    dashboardField: common.DashboardField,
+    dashboardField: DashboardField,
     fieldIndex: number,
     fractionIndex: number
   ) {
     let fractions = dashboardField.fractions;
 
-    let newDashboardFields: common.DashboardField[];
+    let newDashboardFields: DashboardField[];
 
     if (fractions.length === 1) {
       newDashboardFields = [
@@ -241,13 +248,13 @@ export class DashboardFiltersComponent {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
       timezone: this.uiQuery.getValue().timezone
     });
   }
 
-  deleteFilter(dashboardField: common.DashboardField) {
+  deleteFilter(dashboardField: DashboardField) {
     let newDashboardFields = this.dashboard.fields.filter(
       x => x.id !== dashboardField.id
     );
@@ -267,7 +274,7 @@ export class DashboardFiltersComponent {
       isDraft: this.dashboard.draft,
       tiles: this.dashboard.tiles,
       oldDashboardId: this.dashboard.dashboardId,
-      newDashboardId: common.makeId(),
+      newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
       timezone: this.uiQuery.getValue().timezone
     });

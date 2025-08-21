@@ -19,8 +19,6 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface AddEnvironmentDialogData {
   apiService: ApiService;
@@ -72,7 +70,7 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateEnvRequestPayload = {
+    let payload: ToBackendCreateEnvRequestPayload = {
       projectId: this.dataItem.projectId,
       envId: this.addEnvironmentForm.value.envId
     };
@@ -81,14 +79,13 @@ export class AddEnvironmentDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateEnv,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateEnvResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateEnvResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
           }

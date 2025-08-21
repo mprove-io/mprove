@@ -3,13 +3,23 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { EMAIL_CONFIRMATION_PAGE_TITLE } from '~common/constants/page-titles';
+import {
+  PATH_EMAIL_CONFIRMED,
+  PATH_LOGIN_SUCCESS
+} from '~common/constants/top';
+import {
+  APP_SPINNER_NAME,
+  LOCAL_STORAGE_TOKEN
+} from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { ToBackendConfirmUserEmailResponse } from '~common/interfaces/to-backend/users/to-backend-confirm-user-email';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -17,7 +27,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './confirm-email.component.html'
 })
 export class ConfirmEmailComponent implements OnInit {
-  pageTitle = constants.EMAIL_CONFIRMATION_PAGE_TITLE;
+  pageTitle = EMAIL_CONFIRMATION_PAGE_TITLE;
 
   emailConfirmationToken: string;
 
@@ -33,7 +43,7 @@ export class ConfirmEmailComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.title.setTitle(this.pageTitle);
 
@@ -46,29 +56,28 @@ export class ConfirmEmailComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
         payload: {
           token: this.emailConfirmationToken
         }
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendConfirmUserEmailResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendConfirmUserEmailResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let user = resp.payload.user;
             let token = resp.payload.token;
 
-            if (common.isDefined(user) && common.isDefined(token)) {
+            if (isDefined(user) && isDefined(token)) {
               // first email verification
               this.myDialogService.showEmailConfirmed();
               this.userQuery.update(user);
               // console.log('stopWatch from ConfirmEmailComponent - 2');
               this.authService.stopWatch();
-              localStorage.setItem(constants.LOCAL_STORAGE_TOKEN, token);
-              this.router.navigate([common.PATH_LOGIN_SUCCESS]);
+              localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
+              this.router.navigate([PATH_LOGIN_SUCCESS]);
             } else {
               // email was verified already
-              this.router.navigate([common.PATH_EMAIL_CONFIRMED]);
+              this.router.navigate([PATH_EMAIL_CONFIRMED]);
             }
           }
         }),

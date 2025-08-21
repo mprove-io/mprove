@@ -17,9 +17,6 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 enum DashboardSaveAsEnum {
   NEW_DASHBOARD = 'NEW_DASHBOARD',
@@ -28,7 +25,7 @@ enum DashboardSaveAsEnum {
 
 export interface DashboardSaveAsDialogData {
   apiService: ApiService;
-  dashboard: common.Dashboard;
+  dashboard: Dashboard;
 }
 
 @Component({
@@ -46,15 +43,15 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     // this.ref.close();
   }
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
   dashboardSaveAsEnum = DashboardSaveAsEnum;
 
   spinnerName = 'dashboardSaveAs';
 
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
 
-  newDashboardId = common.makeId();
+  newDashboardId = makeId();
 
   saveAs: DashboardSaveAsEnum = DashboardSaveAsEnum.NEW_DASHBOARD;
 
@@ -77,7 +74,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
 
-  dashboards: common.DashboardX[];
+  dashboards: DashboardX[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -108,7 +105,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.dashboard = this.ref.data.dashboard as common.DashboardX;
+    this.dashboard = this.ref.data.dashboard as DashboardX;
 
     this.selectedDashboardId =
       this.dashboard.draft === false &&
@@ -132,7 +129,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendGetDashboardsRequestPayload = {
+    let payload: ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       isRepoProd: nav.isRepoProd,
@@ -145,13 +142,12 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetDashboardsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetDashboardsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.dashboards = resp.payload.dashboards
               .filter(d => d.draft === false)
               .map(x => {
@@ -215,11 +211,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   saveAsNewDashboard(item: { newTitle: string; roles: string }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let { newTitle, roles } = item;
 
-    let payload: apiToBackend.ToBackendSaveCreateDashboardRequestPayload = {
+    let payload: ToBackendSaveCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -229,7 +225,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       accessRoles: roles,
       dashboardTitle: newTitle,
       tilesGrid: this.dashboard.tiles.map(x => {
-        let y = common.makeCopy(x);
+        let y = makeCopy(x);
         delete y.mconfig;
         delete y.query;
         return y;
@@ -240,16 +236,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendSaveCreateDashboard,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveCreateDashboardResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveCreateDashboardResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
-            if (common.isDefined(dashboardPart)) {
+            if (isDefined(dashboardPart)) {
               let dashboards = this.dashboardsQuery.getValue().dashboards;
 
               let newDashboards = [
@@ -280,11 +274,11 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   saveAsExistingDashboard(item: { newTitle: string; roles: string }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let { newTitle, roles } = item;
 
-    let payload: apiToBackend.ToBackendSaveModifyDashboardRequestPayload = {
+    let payload: ToBackendSaveModifyDashboardRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -294,7 +288,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       accessRoles: roles,
       dashboardTitle: newTitle,
       tilesGrid: this.dashboard.tiles.map(x => {
-        let y = common.makeCopy(x);
+        let y = makeCopy(x);
         delete y.mconfig;
         delete y.query;
         return y;
@@ -305,17 +299,15 @@ export class DashboardSaveAsDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendSaveModifyDashboard,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveModifyDashboardResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveModifyDashboardResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
 
-            if (common.isDefined(dashboardPart)) {
+            if (isDefined(dashboardPart)) {
               let dashboards = this.dashboardsQuery.getValue().dashboards;
 
               let newDashboards = [
@@ -350,10 +342,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   makePathAndSetValues() {
-    if (
-      common.isUndefined(this.selectedDashboardId) ||
-      common.isUndefined(this.dashboards)
-    ) {
+    if (isUndefined(this.selectedDashboardId) || isUndefined(this.dashboards)) {
       return;
     }
 
@@ -361,7 +350,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       x => x.dashboardId === this.selectedDashboardId
     );
 
-    if (common.isDefined(selectedDashboard)) {
+    if (isDefined(selectedDashboard)) {
       let parts = selectedDashboard.filePath.split('/');
 
       parts.shift();

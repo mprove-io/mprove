@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { common } from '~front/barrels/common';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { NavQuery, NavState } from '../queries/nav.query';
 
 @Injectable({ providedIn: 'root' })
@@ -16,7 +16,7 @@ export class MconfigService {
     this.nav$.subscribe();
   }
 
-  removeField(item: { newMconfig: common.MconfigX; fieldId: string }) {
+  removeField(item: { newMconfig: MconfigX; fieldId: string }) {
     let { newMconfig, fieldId } = item;
 
     newMconfig = this.removeFieldFromSelect({ newMconfig, fieldId });
@@ -27,7 +27,7 @@ export class MconfigService {
   }
 
   private removeFieldFromSelect(item: {
-    newMconfig: common.MconfigX;
+    newMconfig: MconfigX;
     fieldId: string;
   }) {
     let { newMconfig, fieldId } = item;
@@ -43,7 +43,7 @@ export class MconfigService {
   }
 
   private removeFieldFromSortings(item: {
-    newMconfig: common.MconfigX;
+    newMconfig: MconfigX;
     fieldId: string;
   }) {
     let { newMconfig, fieldId } = item;
@@ -71,7 +71,7 @@ export class MconfigService {
     return newMconfig;
   }
 
-  removeFieldFromChart(item: { newMconfig: common.MconfigX; fieldId: string }) {
+  removeFieldFromChart(item: { newMconfig: MconfigX; fieldId: string }) {
     let { newMconfig, fieldId } = item;
 
     if (newMconfig.chart.xField === fieldId) {
@@ -109,14 +109,14 @@ export class MconfigService {
     return newMconfig;
   }
 
-  // navCreateTempMconfig(item: { newMconfig: common.MconfigX }) {
-  //   this.spinner.show(constants.APP_SPINNER_NAME);
+  // navCreateTempMconfig(item: { newMconfig: MconfigX }) {
+  //   this.spinner.show(APP_SPINNER_NAME);
 
   //   let { newMconfig } = item;
 
   //   newMconfig.queryId = this.chartQuery.getValue().tiles[0].query.queryId;
 
-  //   let payload: apiToBackend.ToBackendCreateTempMconfigRequestPayload = {
+  //   let payload: ToBackendCreateTempMconfigRequestPayload = {
   //     projectId: this.nav.projectId,
   //     isRepoProd: this.nav.isRepoProd,
   //     branchId: this.nav.branchId,
@@ -128,12 +128,12 @@ export class MconfigService {
   //   this.apiService
   //     .req({
   //       pathInfoName:
-  //         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig,
+  //         ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig,
   //       payload: payload
   //     })
   //     .pipe(
-  //       tap((resp: apiToBackend.ToBackendCreateTempMconfigResponse) => {
-  //         if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+  //       tap((resp: ToBackendCreateTempMconfigResponse) => {
+  //         if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
   //           let { mconfig } = resp.payload;
 
   //           // this.chartQuery.updatePart({ mconfig: mconfig });

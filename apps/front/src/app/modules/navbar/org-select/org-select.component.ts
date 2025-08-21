@@ -12,9 +12,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -30,9 +27,9 @@ export class OrgSelectComponent {
     this.orgSelectElement?.close();
   }
 
-  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+  restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
-  orgsList: common.OrgsItem[] = [];
+  orgsList: OrgsItem[] = [];
   orgsListLoading = false;
   orgsListLength = 0;
 
@@ -71,15 +68,11 @@ export class OrgSelectComponent {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgsList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrgsList,
         payload: {}
       })
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetOrgsListResponse) =>
-            resp.payload.orgsList
-        ),
+        map((resp: ToBackendGetOrgsListResponse) => resp.payload.orgsList),
         tap(x => {
           this.orgsList = x;
           this.orgsListLoading = false;
@@ -99,11 +92,7 @@ export class OrgSelectComponent {
   }
 
   orgChange() {
-    this.router.navigate([
-      common.PATH_ORG,
-      this.selectedOrgId,
-      common.PATH_ACCOUNT
-    ]);
+    this.router.navigate([PATH_ORG, this.selectedOrgId, PATH_ACCOUNT]);
 
     this.navQuery.updatePart({
       projectId: undefined,
@@ -111,10 +100,10 @@ export class OrgSelectComponent {
       projectDefaultBranch: undefined,
       isRepoProd: undefined,
       branchId: undefined,
-      envId: common.PROJECT_ENV_PROD,
+      envId: PROJECT_ENV_PROD,
       needValidate: false
     });
 
-    localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
+    localStorage.removeItem(LOCAL_STORAGE_PROJECT_ID);
   }
 }

@@ -9,7 +9,6 @@ import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -41,7 +40,7 @@ export class MetricHeaderComponent implements IHeaderAngularComp {
     })
   );
 
-  report: common.ReportX;
+  report: ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
       this.report = x;

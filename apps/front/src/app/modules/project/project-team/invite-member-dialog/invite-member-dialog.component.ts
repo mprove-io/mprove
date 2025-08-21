@@ -18,8 +18,6 @@ import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { TeamQuery } from '~front/app/queries/team.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface InviteMemberDialogData {
   apiService: ApiService;
@@ -71,7 +69,7 @@ export class InviteMemberDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateMemberRequestPayload = {
+    let payload: ToBackendCreateMemberRequestPayload = {
       projectId: this.ref.data.projectId,
       email: this.inviteMemberForm.value.email
     };
@@ -80,14 +78,13 @@ export class InviteMemberDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateMember,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateMember,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateMemberResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateMemberResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let member = resp.payload.member;
             let teamState = this.teamQuery.getValue();
 

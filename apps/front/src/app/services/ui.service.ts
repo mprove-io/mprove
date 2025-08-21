@@ -1,7 +1,19 @@
 import { Injectable } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
+import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboard-link';
+import { ProjectFileLink } from '~common/interfaces/backend/project-file-link';
+import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
+import { ProjectReportLink } from '~common/interfaces/backend/project-report-link';
+import { Ui } from '~common/interfaces/backend/ui';
+import {
+  ToBackendSetUserUiRequestPayload,
+  ToBackendSetUserUiResponse
+} from '~common/interfaces/to-backend/users/to-backend-set-user-ui';
 import { FileQuery } from '../queries/file.query';
 import { NavQuery } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';
@@ -18,12 +30,12 @@ export class UiService {
 
   async setUserUi(item: {
     timezone?: string;
-    modelTreeLevels?: common.ModelTreeLevelsEnum;
-    projectFileLinks?: common.ProjectFileLink[];
-    projectModelLinks?: common.ProjectModelLink[];
-    projectChartLinks?: common.ProjectChartLink[];
-    projectDashboardLinks?: common.ProjectDashboardLink[];
-    projectReportLinks?: common.ProjectReportLink[];
+    modelTreeLevels?: ModelTreeLevelsEnum;
+    projectFileLinks?: ProjectFileLink[];
+    projectModelLinks?: ProjectModelLink[];
+    projectChartLinks?: ProjectChartLink[];
+    projectDashboardLinks?: ProjectDashboardLink[];
+    projectReportLinks?: ProjectReportLink[];
   }) {
     let {
       timezone,
@@ -37,43 +49,42 @@ export class UiService {
 
     let uiState = this.uiQuery.getValue();
 
-    let ui: common.Ui = {
-      modelTreeLevels: common.isDefined(modelTreeLevels)
+    let ui: Ui = {
+      modelTreeLevels: isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,
-      timezone: common.isDefined(timezone) ? timezone : uiState.timezone,
+      timezone: isDefined(timezone) ? timezone : uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction,
-      projectFileLinks: common.isDefined(projectFileLinks)
+      projectFileLinks: isDefined(projectFileLinks)
         ? projectFileLinks
         : uiState.projectFileLinks,
-      projectModelLinks: common.isDefined(projectModelLinks)
+      projectModelLinks: isDefined(projectModelLinks)
         ? projectModelLinks
         : uiState.projectModelLinks,
-      projectChartLinks: common.isDefined(projectChartLinks)
+      projectChartLinks: isDefined(projectChartLinks)
         ? projectChartLinks
         : uiState.projectChartLinks,
-      projectDashboardLinks: common.isDefined(projectDashboardLinks)
+      projectDashboardLinks: isDefined(projectDashboardLinks)
         ? projectDashboardLinks
         : uiState.projectDashboardLinks,
-      projectReportLinks: common.isDefined(projectReportLinks)
+      projectReportLinks: isDefined(projectReportLinks)
         ? projectReportLinks
         : uiState.projectReportLinks
     };
 
-    let payload: apiToBackend.ToBackendSetUserUiRequestPayload = {
+    let payload: ToBackendSetUserUiRequestPayload = {
       ui: ui
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetUserUi,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetUserUi,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSetUserUiResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSetUserUiResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
           }
         }),
         take(1)
@@ -87,16 +98,14 @@ export class UiService {
     let projectId = this.navQuery.getValue().projectId;
     let links = this.uiQuery.getValue().projectFileLinks;
 
-    let link: common.ProjectFileLink = links.find(
-      l => l.projectId === projectId
-    );
+    let link: ProjectFileLink = links.find(l => l.projectId === projectId);
 
-    let newProjectFileLinks: common.ProjectFileLink[];
+    let newProjectFileLinks: ProjectFileLink[];
 
-    if (common.isDefined(link)) {
-      let newLink: common.ProjectFileLink = {
+    if (isDefined(link)) {
+      let newLink: ProjectFileLink = {
         projectId: projectId,
-        fileId: common.isDefined(fileId) ? fileId : link.fileId,
+        fileId: isDefined(fileId) ? fileId : link.fileId,
         lastNavTs: Date.now()
       };
 
@@ -105,7 +114,7 @@ export class UiService {
         ...links.filter(r => !(r.projectId === projectId))
       ];
     } else {
-      let newLink: common.ProjectFileLink = {
+      let newLink: ProjectFileLink = {
         projectId: projectId,
         fileId: fileId,
         lastNavTs: Date.now()

@@ -16,23 +16,20 @@ import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ReportService } from '~front/app/services/report.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
-export class RowX2 extends common.Row {
-  modelFields?: { [a: string]: common.ModelField[] };
+export class RowX2 extends Row {
+  modelFields?: { [a: string]: ModelField[] };
   mconfigListenSwap?: { [a: string]: string[] };
 }
 
-export class ReportX2 extends common.ReportX {
+export class ReportX2 extends ReportX {
   rows: RowX2[];
 }
 
 export interface ReportEditListenersDialogData {
   reportService: ReportService;
   apiService: ApiService;
-  report: common.Report;
+  report: Report;
 }
 
 @Component({
@@ -53,11 +50,11 @@ export class ReportEditListenersDialogComponent implements OnInit {
     // this.ref.close();
   }
 
-  rowTypeMetric = common.RowTypeEnum.Metric;
+  rowTypeMetric = RowTypeEnum.Metric;
 
   spinnerName = 'reportEditListen';
 
-  models: common.Model[];
+  models: Model[];
 
   report: any; // ReportX2
   reportRows: RowX2[] = [];
@@ -82,9 +79,9 @@ export class ReportEditListenersDialogComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.report = common.makeCopy(this.ref.data.report) as common.ReportX;
-    this.reportRows = this.report.rows.filter((row: common.Row) =>
-      common.isDefined(row.mconfig)
+    this.report = makeCopy(this.ref.data.report) as ReportX;
+    this.reportRows = this.report.rows.filter((row: Row) =>
+      isDefined(row.mconfig)
     );
 
     let nav: NavState;
@@ -102,7 +99,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -113,13 +110,12 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.spinner.hide(this.spinnerName);
 
             this.models = resp.payload.models;
@@ -133,27 +129,27 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
               // Object.keys(x.listen).forEach(modelFieldId => {
               x.parameters
-                .filter(p => common.isDefined(p.listen))
+                .filter(p => isDefined(p.listen))
                 .forEach(p => {
                   let reportFieldId = p.listen;
 
-                  if (common.isUndefined(swap[reportFieldId])) {
+                  if (isUndefined(swap[reportFieldId])) {
                     swap[reportFieldId] = [p.apply_to];
                   } else {
                     swap[reportFieldId].push(p.apply_to);
                   }
                 });
 
-              let modelFields: { [a: string]: common.ModelField[] } = {};
+              let modelFields: { [a: string]: ModelField[] } = {};
 
               let emptyField = <ModelField>{
                 id: undefined,
-                topLabel: constants.EMPTY_MCONFIG_FIELD.topLabel
+                topLabel: EMPTY_MCONFIG_FIELD.topLabel
               };
 
               (this.report as ReportX2).fields.forEach(reportField => {
                 modelFields[reportField.id] =
-                  common.isDefined(reportField.storeResult) &&
+                  isDefined(reportField.storeResult) &&
                   reportField.storeModel === model.modelId
                     ? [
                         emptyField,
@@ -163,19 +159,19 @@ export class ReportEditListenersDialogComponent implements OnInit {
                             model.modelId === reportField.storeModel
                         )
                       ]
-                    : common.isDefined(reportField.storeFilter) &&
+                    : isDefined(reportField.storeFilter) &&
                         reportField.storeModel === model.modelId
                       ? [
                           emptyField,
                           ...model.fields.filter(y =>
-                            y.fieldClass === common.FieldClassEnum.Filter
+                            y.fieldClass === FieldClassEnum.Filter
                               ? y.id === reportField.storeFilter
                               : false
                           )
                         ]
-                      : model.type !== common.ModelTypeEnum.Store &&
+                      : model.type !== ModelTypeEnum.Store &&
                           // model.isStoreModel === false &&
-                          common.isUndefined(reportField.storeModel)
+                          isUndefined(reportField.storeModel)
                         ? [
                             emptyField,
                             ...model.fields.filter(
@@ -184,7 +180,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
                           ]
                         : [emptyField];
 
-                if (common.isUndefined(swap[reportField.id])) {
+                if (isUndefined(swap[reportField.id])) {
                   swap[reportField.id] = [undefined];
                 }
               });
@@ -277,14 +273,14 @@ export class ReportEditListenersDialogComponent implements OnInit {
   apply() {
     this.ref.close();
 
-    let listeners: common.Listener[] = [];
+    let listeners: Listener[] = [];
 
     this.reportRows.forEach(x => {
       Object.keys(x.mconfigListenSwap).forEach(reportFieldId => {
         x.mconfigListenSwap[reportFieldId]
-          .filter(y => common.isDefined(y))
+          .filter(y => isDefined(y))
           .forEach(modelFieldId => {
-            let listener: common.Listener = {
+            let listener: Listener = {
               rowId: x.rowId,
               applyTo: modelFieldId,
               listen: reportFieldId
@@ -305,7 +301,7 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
     reportService.modifyRows({
       report: this.report,
-      changeType: common.ChangeTypeEnum.EditListeners,
+      changeType: ChangeTypeEnum.EditListeners,
       rowChange: undefined,
       rowIds: undefined,
       reportFields: this.report.fields,
@@ -314,9 +310,9 @@ export class ReportEditListenersDialogComponent implements OnInit {
     });
   }
 
-  fieldSearchFn(term: string, modelField: common.ModelField) {
+  fieldSearchFn(term: string, modelField: ModelField) {
     let haystack = [
-      common.isDefinedAndNotEmpty(modelField.groupLabel)
+      isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
         : `${modelField.topLabel} ${modelField.label}`
     ];

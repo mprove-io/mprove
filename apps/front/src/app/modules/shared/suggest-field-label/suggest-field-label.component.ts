@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -8,7 +7,7 @@ import { common } from '~front/barrels/common';
 })
 export class SuggestFieldLabelComponent {
   @Input()
-  suggestField: common.SuggestField;
+  suggestField: SuggestField;
 
   constructor() {}
 }

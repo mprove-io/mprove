@@ -20,9 +20,6 @@ import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface CreateOrgDialogData {
   apiService: ApiService;
@@ -72,11 +69,11 @@ export class CreateOrgDialogComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateOrgRequestPayload = {
+    let payload: ToBackendCreateOrgRequestPayload = {
       name: this.createOrgForm.value.orgName
     };
 
@@ -84,17 +81,16 @@ export class CreateOrgDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateOrg,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateOrgResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateOrgResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               resp.payload.org.orgId,
-              common.PATH_ACCOUNT
+              PATH_ACCOUNT
             ]);
 
             this.navQuery.updatePart({
@@ -103,11 +99,11 @@ export class CreateOrgDialogComponent implements OnInit {
               projectDefaultBranch: undefined,
               isRepoProd: true,
               branchId: undefined,
-              envId: common.PROJECT_ENV_PROD,
+              envId: PROJECT_ENV_PROD,
               needValidate: false
             });
 
-            localStorage.removeItem(constants.LOCAL_STORAGE_PROJECT_ID);
+            localStorage.removeItem(LOCAL_STORAGE_PROJECT_ID);
           }
         }),
         take(1)

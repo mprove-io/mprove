@@ -14,7 +14,30 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, from, interval, of } from 'rxjs';
 import { concatMap, delay, filter, startWith, take, tap } from 'rxjs/operators';
-import { RefreshItem } from '~front/app/interfaces/refresh-item';
+import { DASHBOARDS_PAGE_TITLE } from '~common/constants/page-titles';
+import {
+  PATH_DASHBOARDS,
+  PATH_DASHBOARDS_LIST,
+  RESTRICTED_USER_ALIAS
+} from '~common/constants/top';
+import { REFRESH_LIST } from '~common/constants/top-front';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { getTimezones } from '~common/functions/get-timezones';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { isUndefined } from '~common/functions/is-undefined';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { Member } from '~common/interfaces/backend/member';
+import { ModelX } from '~common/interfaces/backend/model-x';
+import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboard-link';
+import { Query } from '~common/interfaces/blockml/query';
+import { RefreshItem } from '~common/interfaces/front/refresh-item';
+import {
+  ToBackendRunQueriesRequestPayload,
+  ToBackendRunQueriesResponse
+} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
@@ -30,11 +53,8 @@ import { DashboardService } from '~front/app/services/dashboard.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
-export class ModelXWithTotalDashboards extends common.ModelX {
+export class ModelXWithTotalDashboards extends ModelX {
   totalDashboards: number;
 }
 
@@ -48,14 +68,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   isInitialScrollCompleted = false;
 
-  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+  restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
-  pageTitle = constants.DASHBOARDS_PAGE_TITLE;
+  pageTitle = DASHBOARDS_PAGE_TITLE;
 
   dashboardsRunButtonSpinnerName = 'dashboardsRunButtonSpinnerName';
 
-  pathDashboardsList = common.PATH_DASHBOARDS_LIST;
-  pathDashboards = common.PATH_DASHBOARDS;
+  pathDashboardsList = PATH_DASHBOARDS_LIST;
+  pathDashboards = PATH_DASHBOARDS;
 
   showDashboardsLeftPanel = true;
   showDashboardsLeftPanel$ = this.uiQuery.showDashboardsLeftPanel$.pipe(
@@ -75,7 +95,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     timezone: [undefined]
   });
 
-  timezones = common.getTimezones();
+  timezones = getTimezones();
 
   struct$ = this.structQuery.select().pipe(
     tap(x => {
@@ -103,7 +123,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  member: common.Member;
+  member: Member;
   member$ = this.memberQuery.select().pipe(
     tap(x => {
       this.member = x;
@@ -113,9 +133,9 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   filteredDraftsLength: number;
 
-  dashboards: common.DashboardX[];
-  dashboardsFilteredByWord: common.DashboardX[];
-  filteredDashboards: common.DashboardX[];
+  dashboards: DashboardX[];
+  dashboardsFilteredByWord: DashboardX[];
+  filteredDashboards: DashboardX[];
 
   dashboards$ = this.dashboardsQuery.select().pipe(
     tap(x => {
@@ -129,7 +149,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
 
   isCompleted = false;
-  lastCompletedQuery: common.Query;
+  lastCompletedQuery: Query;
 
   refreshProgress = 0;
   refreshSubscription: Subscription;
@@ -145,7 +165,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
   dashboard$ = this.dashboardQuery.select().pipe(
     tap(x => {
       this.dashboard = x;
@@ -197,7 +217,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     refresh: [undefined]
   });
 
-  refreshList: RefreshItem[] = constants.REFRESH_LIST;
+  refreshList: RefreshItem[] = REFRESH_LIST;
 
   runButtonTimerSubscription: Subscription;
 
@@ -286,18 +306,18 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let draftDashboards = this.dashboards.filter(x => x.draft === true);
     let nonDraftDashboards = this.dashboards.filter(x => x.draft === false);
 
-    if (common.isDefinedAndNotEmpty(this.word)) {
+    if (isDefinedAndNotEmpty(this.word)) {
       let haystack = nonDraftDashboards.map(x =>
-        common.isDefined(x.title) ? `${x.title}` : `${x.dashboardId}`
+        isDefined(x.title) ? `${x.title}` : `${x.dashboardId}`
       );
       let opts = {};
       let uf = new uFuzzy(opts);
       idxs = uf.filter(haystack, this.word);
     }
 
-    this.dashboardsFilteredByWord = common.isDefinedAndNotEmpty(this.word)
+    this.dashboardsFilteredByWord = isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): common.DashboardX => nonDraftDashboards[idx])
+        ? idxs.map((idx: number): DashboardX => nonDraftDashboards[idx])
         : []
       : nonDraftDashboards;
 
@@ -358,7 +378,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteDraftDashboard(event: any, dashboard: common.DashboardX) {
+  deleteDraftDashboard(event: any, dashboard: DashboardX) {
     event.stopPropagation();
 
     this.dashboardService.deleteDraftDashboards({
@@ -376,7 +396,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let uiState = this.uiQuery.getValue();
 
-    if (common.isDefined(this.dashboard.dashboardId)) {
+    if (isDefined(this.dashboard.dashboardId)) {
       this.structDashboardResolver
         .resolveRoute({
           dashboardId: this.dashboard.dashboardId,
@@ -418,21 +438,21 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   setProjectDashboardLink(item: { dashboardId: string }) {
     let { dashboardId } = item;
 
-    if (common.isUndefined(dashboardId)) {
+    if (isUndefined(dashboardId)) {
       return;
     }
 
     let nav = this.navQuery.getValue();
     let links = this.uiQuery.getValue().projectDashboardLinks;
 
-    let link: common.ProjectDashboardLink = links.find(
+    let link: ProjectDashboardLink = links.find(
       l => l.projectId === nav.projectId
     );
 
     let newProjectDashboardLinks;
 
-    if (common.isDefined(link)) {
-      let newLink: common.ProjectDashboardLink = {
+    if (isDefined(link)) {
+      let newLink: ProjectDashboardLink = {
         projectId: nav.projectId,
         dashboardId: dashboardId,
         lastNavTs: Date.now()
@@ -443,7 +463,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         ...links.filter(r => !(r.projectId === nav.projectId))
       ];
     } else {
-      let newLink: common.ProjectDashboardLink = {
+      let newLink: ProjectDashboardLink = {
         projectId: nav.projectId,
         dashboardId: dashboardId,
         lastNavTs: Date.now()
@@ -533,9 +553,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     // console.log('checkAutoRun');
 
     let newQueries = this.dashboard.tiles.filter(
-      tile =>
-        common.isDefined(tile.query) &&
-        tile.query.status === common.QueryStatusEnum.New
+      tile => isDefined(tile.query) && tile.query.status === QueryStatusEnum.New
     );
 
     if (this.isAutoRun === true && newQueries.length > 0) {
@@ -548,7 +566,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   checkRefreshSelector() {
     if (this.isAutoRun === false) {
-      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
+      if (isDefined(this.refreshForm.controls.refresh.value)) {
         this.refreshForm.controls.refresh.setValue(undefined);
       }
 
@@ -558,7 +576,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
       this.refreshChange();
     } else if (this.isAutoRun === true) {
-      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
+      if (isUndefined(this.refreshForm.controls.refresh.value)) {
         this.refreshForm.controls.refresh.setValue(0);
       }
 
@@ -580,7 +598,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.refreshId = this.dashboard?.dashboardId;
 
-    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
+    if (isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
       return;
     }
 
@@ -618,7 +636,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -629,13 +647,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { runningQueries } = resp.payload;
 
             let newDashboard = Object.assign({}, this.dashboard, {
@@ -682,25 +699,19 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   checkQueries() {
     let newQueriesLength = [
       ...this.dashboard.tiles.filter(
-        r =>
-          common.isDefined(r.query) &&
-          r.query.status === common.QueryStatusEnum.New
+        r => isDefined(r.query) && r.query.status === QueryStatusEnum.New
       )
     ].map(r => r.query).length;
 
     let runningQueriesLength = [
       ...this.dashboard.tiles.filter(
-        r =>
-          common.isDefined(r.query) &&
-          r.query.status === common.QueryStatusEnum.Running
+        r => isDefined(r.query) && r.query.status === QueryStatusEnum.Running
       )
     ].map(r => r.query).length;
 
     let completedQueries = [
       ...this.dashboard.tiles.filter(
-        r =>
-          common.isDefined(r.query) &&
-          r.query.status === common.QueryStatusEnum.Completed
+        r => isDefined(r.query) && r.query.status === QueryStatusEnum.Completed
       )
     ]
       .map(r => r.query)

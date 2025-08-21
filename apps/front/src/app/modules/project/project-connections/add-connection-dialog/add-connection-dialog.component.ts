@@ -22,8 +22,6 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface AddConnectionDialogData {
   apiService: ApiService;
@@ -59,27 +57,27 @@ export class AddConnectionDialogComponent implements OnInit {
 
   addConnectionForm: FormGroup;
 
-  envsList: common.EnvsItem[] = [];
+  envsList: EnvsItem[] = [];
   envsListLoading = false;
   envsListLength = 0;
 
   isSSL = true;
 
   connectionTypes = [
-    common.ConnectionTypeEnum.PostgreSQL,
-    common.ConnectionTypeEnum.SnowFlake,
-    common.ConnectionTypeEnum.ClickHouse,
-    common.ConnectionTypeEnum.BigQuery,
-    common.ConnectionTypeEnum.GoogleApi,
-    common.ConnectionTypeEnum.Api
+    ConnectionTypeEnum.PostgreSQL,
+    ConnectionTypeEnum.SnowFlake,
+    ConnectionTypeEnum.ClickHouse,
+    ConnectionTypeEnum.BigQuery,
+    ConnectionTypeEnum.GoogleApi,
+    ConnectionTypeEnum.Api
   ];
 
-  typePostgreSQL = common.ConnectionTypeEnum.PostgreSQL;
-  typeSnowFlake = common.ConnectionTypeEnum.SnowFlake;
-  typeClickHouse = common.ConnectionTypeEnum.ClickHouse;
-  typeBigQuery = common.ConnectionTypeEnum.BigQuery;
-  typeGoogleApi = common.ConnectionTypeEnum.GoogleApi;
-  typeApi = common.ConnectionTypeEnum.Api;
+  typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
+  typeSnowFlake = ConnectionTypeEnum.SnowFlake;
+  typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  typeBigQuery = ConnectionTypeEnum.BigQuery;
+  typeGoogleApi = ConnectionTypeEnum.GoogleApi;
+  typeApi = ConnectionTypeEnum.Api;
 
   constructor(
     public ref: DialogRef<AddConnectionDialogData>,
@@ -97,17 +95,16 @@ export class AddConnectionDialogComponent implements OnInit {
           Validators.maxLength(255)
         ]
       ],
-      envId: [common.PROJECT_ENV_PROD],
-      type: [common.ConnectionTypeEnum.PostgreSQL],
+      envId: [PROJECT_ENV_PROD],
+      type: [ConnectionTypeEnum.PostgreSQL],
       baseUrl: [
         undefined,
         [
           conditionalValidator(
             () =>
-              [
-                common.ConnectionTypeEnum.GoogleApi,
-                common.ConnectionTypeEnum.Api
-              ].indexOf(this.addConnectionForm.get('type').value) > -1,
+              [ConnectionTypeEnum.GoogleApi, ConnectionTypeEnum.Api].indexOf(
+                this.addConnectionForm.get('type').value
+              ) > -1,
             Validators.required
           )
         ]
@@ -118,8 +115,8 @@ export class AddConnectionDialogComponent implements OnInit {
           conditionalValidator(
             () =>
               [
-                common.ConnectionTypeEnum.BigQuery,
-                common.ConnectionTypeEnum.GoogleApi
+                ConnectionTypeEnum.BigQuery,
+                ConnectionTypeEnum.GoogleApi
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -131,7 +128,7 @@ export class AddConnectionDialogComponent implements OnInit {
           ValidationService.integerOrEmptyValidator,
           conditionalValidator(
             () =>
-              [common.ConnectionTypeEnum.BigQuery].indexOf(
+              [ConnectionTypeEnum.BigQuery].indexOf(
                 this.addConnectionForm.get('type').value
               ) > -1,
             Validators.required
@@ -143,7 +140,7 @@ export class AddConnectionDialogComponent implements OnInit {
         [
           conditionalValidator(
             () =>
-              [common.ConnectionTypeEnum.SnowFlake].indexOf(
+              [ConnectionTypeEnum.SnowFlake].indexOf(
                 this.addConnectionForm.get('type').value
               ) > -1,
             Validators.required
@@ -155,7 +152,7 @@ export class AddConnectionDialogComponent implements OnInit {
         [
           conditionalValidator(
             () =>
-              [common.ConnectionTypeEnum.SnowFlake].indexOf(
+              [ConnectionTypeEnum.SnowFlake].indexOf(
                 this.addConnectionForm.get('type').value
               ) > -1,
             Validators.required
@@ -168,8 +165,8 @@ export class AddConnectionDialogComponent implements OnInit {
           conditionalValidator(
             () =>
               [
-                common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse
+                ConnectionTypeEnum.PostgreSQL,
+                ConnectionTypeEnum.ClickHouse
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -181,8 +178,8 @@ export class AddConnectionDialogComponent implements OnInit {
           conditionalValidator(
             () =>
               [
-                common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse
+                ConnectionTypeEnum.PostgreSQL,
+                ConnectionTypeEnum.ClickHouse
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -194,9 +191,9 @@ export class AddConnectionDialogComponent implements OnInit {
           conditionalValidator(
             () =>
               [
-                common.ConnectionTypeEnum.PostgreSQL
+                ConnectionTypeEnum.PostgreSQL
                 // ,
-                // common.ConnectionTypeEnum.ClickHouse
+                // ConnectionTypeEnum.ClickHouse
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -208,9 +205,9 @@ export class AddConnectionDialogComponent implements OnInit {
           conditionalValidator(
             () =>
               [
-                common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse,
-                common.ConnectionTypeEnum.SnowFlake
+                ConnectionTypeEnum.PostgreSQL,
+                ConnectionTypeEnum.ClickHouse,
+                ConnectionTypeEnum.SnowFlake
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -222,9 +219,9 @@ export class AddConnectionDialogComponent implements OnInit {
           conditionalValidator(
             () =>
               [
-                common.ConnectionTypeEnum.PostgreSQL,
-                common.ConnectionTypeEnum.ClickHouse,
-                common.ConnectionTypeEnum.SnowFlake
+                ConnectionTypeEnum.PostgreSQL,
+                ConnectionTypeEnum.ClickHouse,
+                ConnectionTypeEnum.SnowFlake
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -303,7 +300,7 @@ export class AddConnectionDialogComponent implements OnInit {
   openEnvSelect() {
     this.envsListLoading = true;
 
-    let payload: apiToBackend.ToBackendGetEnvsListRequestPayload = {
+    let payload: ToBackendGetEnvsListRequestPayload = {
       projectId: this.ref.data.projectId,
       isFilter: false
     };
@@ -312,15 +309,11 @@ export class AddConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetEnvsList,
         payload: payload
       })
       .pipe(
-        map(
-          (resp: apiToBackend.ToBackendGetEnvsListResponse) =>
-            resp.payload.envsList
-        ),
+        map((resp: ToBackendGetEnvsListResponse) => resp.payload.envsList),
         tap(x => {
           this.envsList = x;
           this.envsListLoading = false;
@@ -331,51 +324,47 @@ export class AddConnectionDialogComponent implements OnInit {
       .subscribe();
   }
 
-  changeType(type: common.ConnectionTypeEnum) {
+  changeType(type: ConnectionTypeEnum) {
     if (
-      [
-        common.ConnectionTypeEnum.GoogleApi,
-        common.ConnectionTypeEnum.Api
-      ].indexOf(type) < 0
+      [ConnectionTypeEnum.GoogleApi, ConnectionTypeEnum.Api].indexOf(type) < 0
     ) {
       this.addConnectionForm.controls['baseUrl'].reset();
       this.addConnectionForm.controls['headers'].reset();
       this.addConnectionForm.controls['scopes'].reset();
     }
 
-    if ([common.ConnectionTypeEnum.GoogleApi].indexOf(type) > -1) {
+    if ([ConnectionTypeEnum.GoogleApi].indexOf(type) > -1) {
       this.addConnectionForm.controls['baseUrl'].setValue(
         'https://analyticsdata.googleapis.com'
       );
     }
 
-    if ([common.ConnectionTypeEnum.Api].indexOf(type) > -1) {
+    if ([ConnectionTypeEnum.Api].indexOf(type) > -1) {
       this.addConnectionForm.controls['baseUrl'].reset();
     }
 
     if (
-      [
-        common.ConnectionTypeEnum.BigQuery,
-        common.ConnectionTypeEnum.GoogleApi
-      ].indexOf(type) < 0
+      [ConnectionTypeEnum.BigQuery, ConnectionTypeEnum.GoogleApi].indexOf(
+        type
+      ) < 0
     ) {
       this.addConnectionForm.controls['serviceAccountCredentials'].reset();
     }
 
-    if (type !== common.ConnectionTypeEnum.BigQuery) {
+    if (type !== ConnectionTypeEnum.BigQuery) {
       this.addConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
-    if (type !== common.ConnectionTypeEnum.SnowFlake) {
+    if (type !== ConnectionTypeEnum.SnowFlake) {
       this.addConnectionForm.controls['account'].reset();
       this.addConnectionForm.controls['warehouse'].reset();
     }
 
     if (
       [
-        common.ConnectionTypeEnum.SnowFlake,
-        common.ConnectionTypeEnum.ClickHouse,
-        common.ConnectionTypeEnum.PostgreSQL
+        ConnectionTypeEnum.SnowFlake,
+        ConnectionTypeEnum.ClickHouse,
+        ConnectionTypeEnum.PostgreSQL
       ].indexOf(type) < 0
     ) {
       this.addConnectionForm.controls['username'].reset();
@@ -383,10 +372,9 @@ export class AddConnectionDialogComponent implements OnInit {
     }
 
     if (
-      [
-        common.ConnectionTypeEnum.PostgreSQL,
-        common.ConnectionTypeEnum.ClickHouse
-      ].indexOf(type) < 0
+      [ConnectionTypeEnum.PostgreSQL, ConnectionTypeEnum.ClickHouse].indexOf(
+        type
+      ) < 0
     ) {
       this.addConnectionForm.controls['host'].reset();
       this.addConnectionForm.controls['port'].reset();
@@ -407,25 +395,25 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateConnectionRequestPayload = {
+    let payload: ToBackendCreateConnectionRequestPayload = {
       projectId: this.ref.data.projectId,
       connectionId: this.addConnectionForm.value.connectionId,
       envId: this.addConnectionForm.value.envId,
       type: this.addConnectionForm.value.type,
       baseUrl: this.addConnectionForm.value.baseUrl,
-      serviceAccountCredentials: common.isDefined(
+      serviceAccountCredentials: isDefined(
         this.addConnectionForm.value.serviceAccountCredentials
       )
         ? JSON.parse(this.addConnectionForm.value.serviceAccountCredentials)
         : undefined,
       headers: this.addConnectionForm.value.headers,
       googleAuthScopes:
-        [common.ConnectionTypeEnum.GoogleApi].indexOf(
+        [ConnectionTypeEnum.GoogleApi].indexOf(
           this.addConnectionForm.get('type').value
         ) > -1
           ? this.addConnectionForm.value.scopes.map((x: any) => x.value)
           : [],
-      bigqueryQuerySizeLimitGb: common.isDefined(
+      bigqueryQuerySizeLimitGb: isDefined(
         this.addConnectionForm.value.bigqueryQuerySizeLimitGb
       )
         ? Number(this.addConnectionForm.value.bigqueryQuerySizeLimitGb)
@@ -433,7 +421,7 @@ export class AddConnectionDialogComponent implements OnInit {
       account: this.addConnectionForm.value.account,
       warehouse: this.addConnectionForm.value.warehouse,
       host: this.addConnectionForm.value.host,
-      port: common.isDefined(this.addConnectionForm.value.port)
+      port: isDefined(this.addConnectionForm.value.port)
         ? Number(this.addConnectionForm.value.port)
         : undefined,
       database: this.addConnectionForm.value.database,
@@ -446,14 +434,13 @@ export class AddConnectionDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateConnection,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateConnectionResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateConnectionResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let connection = resp.payload.connection;
 
             let connections = this.connectionsQuery.getValue();

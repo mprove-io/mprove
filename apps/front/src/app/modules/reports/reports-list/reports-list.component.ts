@@ -1,13 +1,11 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { tap } from 'rxjs/operators';
+import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
-
-import { tap } from 'rxjs/operators';
-import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 
 @Component({
   standalone: false,
@@ -31,7 +29,7 @@ export class ReportsListComponent {
     })
   );
 
-  filteredReports: common.ReportX[];
+  filteredReports: ReportX[];
   filteredReports$ = this.filteredReportsQuery.select().pipe(
     tap(x => {
       this.filteredReports = x.filteredReports.filter(d => d.draft === false);
@@ -56,7 +54,7 @@ export class ReportsListComponent {
     });
   }
 
-  trackByFn(index: number, item: common.ReportX) {
+  trackByFn(index: number, item: ReportX) {
     return item.reportId;
   }
 }

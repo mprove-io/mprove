@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -11,8 +10,8 @@ import { common } from '~front/barrels/common';
 export class NavComponent implements OnInit {
   currentRoute: string;
 
-  pathRegister = common.PATH_REGISTER;
-  pathLogin = common.PATH_LOGIN;
+  pathRegister = PATH_REGISTER;
+  pathLogin = PATH_LOGIN;
   lastUrl: string;
 
   routerEvents$ = this.router.events.pipe(
@@ -29,9 +28,9 @@ export class NavComponent implements OnInit {
   }
 
   signUp() {
-    this.router.navigate([common.PATH_REGISTER]);
+    this.router.navigate([PATH_REGISTER]);
   }
   login() {
-    this.router.navigate([common.PATH_LOGIN]);
+    this.router.navigate([PATH_LOGIN]);
   }
 }

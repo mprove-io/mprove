@@ -7,8 +7,12 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetConnectionsRequestPayload,
+  ToBackendGetConnectionsResponse
+} from '~common/interfaces/to-backend/connections/to-backend-get-connections';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { ConnectionsQuery } from '../queries/connections.query';
 import { MemberQuery } from '../queries/member.query';
@@ -54,19 +58,18 @@ export class ProjectConnectionsResolver
       projectId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
+    let payload: ToBackendGetConnectionsRequestPayload = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnections,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetConnectionsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.connectionsQuery.update({

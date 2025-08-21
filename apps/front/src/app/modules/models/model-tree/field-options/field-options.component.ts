@@ -2,7 +2,6 @@ import { TreeNode } from '@ali-hm/angular-tree-component';
 import { Component, Input } from '@angular/core';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -33,8 +32,8 @@ export class FieldOptionsComponent {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath }),
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: this.node.data.fieldLineNum
     });
   }

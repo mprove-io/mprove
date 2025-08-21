@@ -4,11 +4,17 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { SIGN_UP_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_VERIFY_EMAIL } from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendRegisterUserRequestPayload,
+  ToBackendRegisterUserResponse
+} from '~common/interfaces/to-backend/users/to-backend-register-user';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -16,7 +22,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './register.component.html'
 })
 export class RegisterComponent implements OnInit {
-  pageTitle = constants.SIGN_UP_PAGE_TITLE;
+  pageTitle = SIGN_UP_PAGE_TITLE;
 
   registerForm: FormGroup = this.fb.group({
     email: [
@@ -49,27 +55,26 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendRegisterUserRequestPayload = {
+    let payload: ToBackendRegisterUserRequestPayload = {
       email: this.registerForm.value.email,
       password: this.registerForm.value.password
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRegisterUser,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRegisterUserResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendRegisterUserResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let user = resp.payload.user;
 
             this.userQuery.update(user);
 
-            this.router.navigate([common.PATH_VERIFY_EMAIL]);
+            this.router.navigate([PATH_VERIFY_EMAIL]);
           }
         }),
         take(1)

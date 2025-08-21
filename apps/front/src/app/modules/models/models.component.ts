@@ -1,3 +1,8 @@
+import {
+  IActionMapping,
+  TreeComponent,
+  TreeNode
+} from '@ali-hm/angular-tree-component';
 import { Location } from '@angular/common';
 import {
   ChangeDetectorRef,
@@ -11,6 +16,8 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import uFuzzy from '@leeoniya/ufuzzy';
+import { NgSelectComponent } from '@ng-select/ng-select';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, from, interval, of } from 'rxjs';
 import {
@@ -23,60 +30,46 @@ import {
   tap
 } from 'rxjs/operators';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { ModelQuery, ModelState } from '~front/app/queries/model.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { DataSizeService } from '~front/app/services/data-size.service';
-import { QDataRow } from '~front/app/services/data.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { StructService } from '~front/app/services/struct.service';
-import { TimeService } from '~front/app/services/time.service';
-import { ValidationService } from '~front/app/services/validation.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import {
-  constants,
-  constants as frontConstants
-} from '~front/barrels/constants';
-
-import {
-  IActionMapping,
-  TreeComponent,
-  TreeNode
-} from '@ali-hm/angular-tree-component';
-import uFuzzy from '@leeoniya/ufuzzy';
-import { NgSelectComponent } from '@ng-select/ng-select';
 import { RefreshItem } from '~front/app/interfaces/refresh-item';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
+import { ModelQuery, ModelState } from '~front/app/queries/model.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { StructChartResolver } from '~front/app/resolvers/struct-chart.resolver';
+import { ApiService } from '~front/app/services/api.service';
 import { ChartService } from '~front/app/services/chart.service';
+import { DataSizeService } from '~front/app/services/data-size.service';
+import { QDataRow } from '~front/app/services/data.service';
 import { DataService } from '~front/app/services/data.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavigateService } from '~front/app/services/navigate.service';
+import { StructService } from '~front/app/services/struct.service';
+import { TimeService } from '~front/app/services/time.service';
 import { UiService } from '~front/app/services/ui.service';
+import { ValidationService } from '~front/app/services/validation.service';
 
 export class ChartsItemNode {
   id: string;
   isTop: boolean;
   topLabel: string;
-  chart: common.ChartX;
+  chart: ChartX;
   children: ChartsItemNode[];
 }
 
 export class QueryPartItem {
   label: string;
-  value: common.QueryPartEnum;
+  value: QueryPartEnum;
 }
 
 export class ChartTypeItem {
   label: string;
-  value: common.ChartTypeEnum;
+  value: ChartTypeEnum;
   iconPath: string;
 }
 
@@ -106,15 +99,15 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   isInitialScrollCompleted = false;
 
-  pageTitle = frontConstants.CHARTS_PAGE_TITLE;
+  pageTitle = frontCHARTS_PAGE_TITLE;
 
-  emptyChartId = common.EMPTY_CHART_ID;
+  emptyChartId = EMPTY_CHART_ID;
 
-  pathModels = common.PATH_MODELS;
-  pathChartsList = common.PATH_CHARTS_LIST;
-  pathModelsList = common.PATH_MODELS_LIST;
+  pathModels = PATH_MODELS;
+  pathChartsList = PATH_CHARTS_LIST;
+  pathModelsList = PATH_MODELS_LIST;
 
-  restrictedUserAlias = common.RESTRICTED_USER_ALIAS;
+  restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
@@ -125,28 +118,28 @@ export class ModelsComponent implements OnInit, OnDestroy {
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
-  modelTreeLevelsFlat = common.ModelTreeLevelsEnum.Flat;
-  modelTreeLevelsNested = common.ModelTreeLevelsEnum.Nested;
+  modelTreeLevelsFlat = ModelTreeLevelsEnum.Flat;
+  modelTreeLevelsNested = ModelTreeLevelsEnum.Nested;
 
-  queryStatusEnum = common.QueryStatusEnum;
-  connectionTypeEnum = common.ConnectionTypeEnum;
-  chartTypeEnum = common.ChartTypeEnum;
+  queryStatusEnum = QueryStatusEnum;
+  connectionTypeEnum = ConnectionTypeEnum;
+  chartTypeEnum = ChartTypeEnum;
 
-  queryPartEnum = common.QueryPartEnum;
+  queryPartEnum = QueryPartEnum;
 
-  modelTypeStore = common.ModelTypeEnum.Store;
-  modelTypeMalloy = common.ModelTypeEnum.Malloy;
+  modelTypeStore = ModelTypeEnum.Store;
+  modelTypeMalloy = ModelTypeEnum.Malloy;
 
-  chartTypeEnumTable = common.ChartTypeEnum.Table;
-  chartTypeEnumSingle = common.ChartTypeEnum.Single;
-  chartTypeEnumLine = common.ChartTypeEnum.Line;
-  chartTypeEnumBar = common.ChartTypeEnum.Bar;
-  chartTypeEnumScatter = common.ChartTypeEnum.Scatter;
-  chartTypeEnumPie = common.ChartTypeEnum.Pie;
+  chartTypeEnumTable = ChartTypeEnum.Table;
+  chartTypeEnumSingle = ChartTypeEnum.Single;
+  chartTypeEnumLine = ChartTypeEnum.Line;
+  chartTypeEnumBar = ChartTypeEnum.Bar;
+  chartTypeEnumScatter = ChartTypeEnum.Scatter;
+  chartTypeEnumPie = ChartTypeEnum.Pie;
 
   lastUrl: string;
 
-  modelTreeLevels = common.ModelTreeLevelsEnum.Flat;
+  modelTreeLevels = ModelTreeLevelsEnum.Flat;
   modelTreeLevels$ = this.uiQuery.modelTreeLevels$.pipe(
     tap(x => {
       this.modelTreeLevels = x;
@@ -167,9 +160,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   filteredDraftsLength = 0;
 
-  charts: common.ChartX[];
-  chartsFilteredByWord: common.ChartX[];
-  filteredCharts: common.ChartX[];
+  charts: ChartX[];
+  chartsFilteredByWord: ChartX[];
+  filteredCharts: ChartX[];
 
   filteredChartNodes: ChartsItemNode[] = [];
 
@@ -192,7 +185,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       let selectedModel = this.modelQuery.getValue();
 
       if (
-        common.isDefined(selectedModel.modelId) &&
+        isDefined(selectedModel.modelId) &&
         this.models.map(x => x.modelId).indexOf(selectedModel.modelId) < 0
       ) {
         this.modelQuery.reset();
@@ -202,8 +195,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  sortedFieldsList: common.ModelFieldY[] = [];
-  sortedNotHiddenFieldsList: common.ModelFieldY[] = [];
+  sortedFieldsList: ModelFieldY[] = [];
+  sortedNotHiddenFieldsList: ModelFieldY[] = [];
   isDisabledApplyAlreadyFiltered = false;
 
   model: ModelState;
@@ -212,34 +205,34 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.model = x;
 
       if (
-        common.isDefined(this.model.modelId) &&
-        ((this.model.type === common.ModelTypeEnum.Malloy &&
+        isDefined(this.model.modelId) &&
+        ((this.model.type === ModelTypeEnum.Malloy &&
           [
-            common.QueryPartEnum.MalloyQuery,
-            common.QueryPartEnum.MalloyCompiledQuery,
-            common.QueryPartEnum.SqlMalloy,
-            common.QueryPartEnum.YamlTile,
-            common.QueryPartEnum.MalloySource,
-            common.QueryPartEnum.JsonResults
+            QueryPartEnum.MalloyQuery,
+            QueryPartEnum.MalloyCompiledQuery,
+            QueryPartEnum.SqlMalloy,
+            QueryPartEnum.YamlTile,
+            QueryPartEnum.MalloySource,
+            QueryPartEnum.JsonResults
           ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0) ||
-          (this.model.type === common.ModelTypeEnum.Store &&
+          (this.model.type === ModelTypeEnum.Store &&
             [
-              common.QueryPartEnum.JsonStoreRequestParts,
-              common.QueryPartEnum.JavascriptStoreRequestFunction,
-              common.QueryPartEnum.YamlTile,
-              common.QueryPartEnum.YamlStore,
-              common.QueryPartEnum.JsonResults
+              QueryPartEnum.JsonStoreRequestParts,
+              QueryPartEnum.JavascriptStoreRequestFunction,
+              QueryPartEnum.YamlTile,
+              QueryPartEnum.YamlStore,
+              QueryPartEnum.JsonResults
             ].indexOf(this.queryPartForm.controls['queryPart'].value) < 0))
       ) {
         let queryPart =
-          this.model.type === common.ModelTypeEnum.Store
-            ? common.QueryPartEnum.JsonStoreRequestParts
-            : this.model.type === common.ModelTypeEnum.Malloy
-              ? common.QueryPartEnum.MalloyQuery
+          this.model.type === ModelTypeEnum.Store
+            ? QueryPartEnum.JsonStoreRequestParts
+            : this.model.type === ModelTypeEnum.Malloy
+              ? QueryPartEnum.MalloyQuery
               : undefined;
 
         if (
-          common.isDefined(queryPart) &&
+          isDefined(queryPart) &&
           this.queryPartForm.controls['queryPart'].value !== queryPart
         ) {
           this.queryPartForm.controls['queryPart'].setValue(queryPart);
@@ -249,23 +242,23 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.sortedFieldsList = this.model.fields
         .map(y =>
           Object.assign({}, y, {
-            partLabel: common.isDefined(y.groupLabel)
+            partLabel: isDefined(y.groupLabel)
               ? `${y.topLabel} ${y.groupLabel} ${y.label}`
               : `${y.topLabel} ${y.label}`
-          } as common.ModelFieldY)
+          } as ModelFieldY)
         )
         .sort((a, b) =>
-          a.fieldClass !== common.FieldClassEnum.Dimension &&
-          b.fieldClass === common.FieldClassEnum.Dimension
+          a.fieldClass !== FieldClassEnum.Dimension &&
+          b.fieldClass === FieldClassEnum.Dimension
             ? 1
-            : a.fieldClass === common.FieldClassEnum.Dimension &&
-                b.fieldClass !== common.FieldClassEnum.Dimension
+            : a.fieldClass === FieldClassEnum.Dimension &&
+                b.fieldClass !== FieldClassEnum.Dimension
               ? -1
-              : a.fieldClass !== common.FieldClassEnum.Filter &&
-                  b.fieldClass === common.FieldClassEnum.Filter
+              : a.fieldClass !== FieldClassEnum.Filter &&
+                  b.fieldClass === FieldClassEnum.Filter
                 ? 1
-                : a.fieldClass === common.FieldClassEnum.Filter &&
-                    b.fieldClass !== common.FieldClassEnum.Filter
+                : a.fieldClass === FieldClassEnum.Filter &&
+                    b.fieldClass !== FieldClassEnum.Filter
                   ? -1
                   : a.partLabel > b.partLabel
                     ? 1
@@ -319,8 +312,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   filtersIsExpanded = false;
   chartIsExpanded = true;
 
-  mconfig: common.MconfigX;
-  query: common.Query;
+  mconfig: MconfigX;
+  query: Query;
   qData: QDataRow[];
 
   refreshProgress = 0;
@@ -348,7 +341,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   prevChartId: string;
 
-  chart: common.ChartX;
+  chart: ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
@@ -361,7 +354,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         this.prevChartId = this.chart.chartId;
       }
 
-      if (common.isDefined(this.chart?.chartId)) {
+      if (isDefined(this.chart?.chartId)) {
         this.title.setTitle(
           `${this.pageTitle} - ${this.chart?.title || this.chart?.chartId}`
         );
@@ -373,9 +366,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.query = x.tiles[0].query;
 
       if (
-        common.isDefined(this.mconfig) &&
-        common.isDefined(this.mconfig.fields) &&
-        this.mconfig.mconfigId !== common.EMPTY_MCONFIG_ID
+        isDefined(this.mconfig) &&
+        isDefined(this.mconfig.fields) &&
+        this.mconfig.mconfigId !== EMPTY_MCONFIG_ID
       ) {
         this.qData =
           this.mconfig.queryId === this.query.queryId
@@ -388,7 +381,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         let checkSelectResult = getSelectValid({
           chart: this.mconfig.chart,
           mconfigFields: this.mconfig.fields,
-          isStoreModel: this.mconfig.modelType === common.ModelTypeEnum.Store
+          isStoreModel: this.mconfig.modelType === ModelTypeEnum.Store
           // isStoreModel: this.mconfig.isStoreModel
         });
 
@@ -420,12 +413,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       // let isPathEmptyChartSelected =
       //   urlSegments.length >= 15
-      //     ? urlSegments[15] === common.EMPTY_CHART_ID
+      //     ? urlSegments[15] === EMPTY_CHART_ID
       //     : false;
 
       // if (
       //   isPathEmptyChartSelected === true &&
-      //   this.chart.chartId === common.EMPTY_CHART_ID &&
+      //   this.chart.chartId === EMPTY_CHART_ID &&
       //   this.showSchema === false
       // ) {
       //   this.showSchema = true;
@@ -433,7 +426,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       this.cd.detectChanges();
 
-      if (x.draft === false && this.chart.chartId !== common.EMPTY_CHART_ID) {
+      if (x.draft === false && this.chart.chartId !== EMPTY_CHART_ID) {
         this.setProjectChartLink({ chartId: this.chart.chartId });
       }
     })
@@ -443,7 +436,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     refresh: [undefined]
   });
 
-  refreshList: RefreshItem[] = constants.REFRESH_LIST;
+  refreshList: RefreshItem[] = REFRESH_LIST;
 
   isFormat = true;
 
@@ -469,7 +462,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     timezone: [undefined]
   });
 
-  timezones = common.getTimezones();
+  timezones = getTimezones();
 
   struct$ = this.structQuery.select().pipe(
     tap(x => {
@@ -496,7 +489,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   timeDiff: number;
 
   dryId: string;
-  dryQueryEstimate: common.QueryEstimate;
+  dryQueryEstimate: QueryEstimate;
   dryDataSize: string;
 
   isSelectValid = false;
@@ -529,33 +522,33 @@ export class ModelsComponent implements OnInit, OnDestroy {
   chartTypesList: ChartTypeItem[] = [
     {
       label: 'Table',
-      value: common.ChartTypeEnum.Table,
+      value: ChartTypeEnum.Table,
       iconPath: 'assets/charts/table.svg'
     },
     //
     {
       label: 'Line',
-      value: common.ChartTypeEnum.Line,
+      value: ChartTypeEnum.Line,
       iconPath: 'assets/charts/line.svg'
     },
     {
       label: 'Bar',
-      value: common.ChartTypeEnum.Bar,
+      value: ChartTypeEnum.Bar,
       iconPath: 'assets/charts/bar_vertical.svg'
     },
     {
       label: 'Scatter',
-      value: common.ChartTypeEnum.Scatter,
+      value: ChartTypeEnum.Scatter,
       iconPath: 'assets/charts/scatter.svg'
     },
     {
       label: 'Single',
-      value: common.ChartTypeEnum.Single,
+      value: ChartTypeEnum.Single,
       iconPath: 'assets/charts/single.svg'
     },
     {
       label: 'Pie',
-      value: common.ChartTypeEnum.Pie,
+      value: ChartTypeEnum.Pie,
       iconPath: 'assets/charts/pie.svg'
     }
     //   iconPath: 'assets/charts/bubble.svg'
@@ -647,10 +640,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
-          if (this.query?.status === common.QueryStatusEnum.Running) {
+          if (this.query?.status === QueryStatusEnum.Running) {
             let nav = this.navQuery.getValue();
 
-            let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+            let payload: ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
               isRepoProd: nav.isRepoProd,
               branchId: nav.branchId,
@@ -661,14 +654,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
             return this.apiService
               .req({
-                pathInfoName:
-                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
                 payload: payload
               })
               .pipe(
-                tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
+                tap((resp: ToBackendGetQueryResponse) => {
                   if (
-                    resp.info?.status === common.ResponseInfoStatusEnum.Ok &&
+                    resp.info?.status === ResponseInfoStatusEnum.Ok &&
                     this.isQueryIdTheSameAndServerTsChanged(resp.payload.query)
                   ) {
                     let newTile = Object.assign({}, this.chart.tiles[0], {
@@ -692,7 +684,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   treeOnInitialized() {
-    if (common.isDefined(this.chart.modelId) && this.chart.draft === false) {
+    if (isDefined(this.chart.modelId) && this.chart.draft === false) {
       this.chartsTree.treeModel.getNodeById(this.chart.modelId)?.expand();
       setTimeout(() => {
         this.scrollToSelectedChart({ isSmooth: true });
@@ -718,7 +710,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.JsonStoreRequestParts
+      QueryPartEnum.JsonStoreRequestParts
     );
   }
 
@@ -727,7 +719,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.MalloyQuery
+      QueryPartEnum.MalloyQuery
     );
   }
 
@@ -736,7 +728,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.MalloyCompiledQuery
+      QueryPartEnum.MalloyCompiledQuery
     );
   }
 
@@ -744,18 +736,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.SqlMalloy
-    );
+    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.SqlMalloy);
   }
 
   setShowSqlMain() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.SqlMain
-    );
+    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.SqlMain);
   }
 
   setShowMalloySource() {
@@ -763,7 +751,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.MalloySource
+      QueryPartEnum.MalloySource
     );
   }
 
@@ -771,27 +759,21 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.YamlTile
-    );
+    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.YamlTile);
   }
 
   setShowYamlStore() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.YamlStore
-    );
+    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.YamlStore);
   }
 
   setShowYamlModel() {
     if (this.rightIsShow === false) {
       this.rightIsShow = true;
     }
-    this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.YamlModel
-    );
+    this.queryPartForm.controls['queryPart'].setValue(QueryPartEnum.YamlModel);
   }
 
   setShowJavascriptStoreRequestFunction() {
@@ -799,7 +781,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.JavascriptStoreRequestFunction
+      QueryPartEnum.JavascriptStoreRequestFunction
     );
   }
 
@@ -808,7 +790,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.rightIsShow = true;
     }
     this.queryPartForm.controls['queryPart'].setValue(
-      common.QueryPartEnum.JsonResults
+      QueryPartEnum.JsonResults
     );
   }
 
@@ -843,9 +825,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
     // console.log('checkAutoRun');
 
     if (
-      common.isDefined(this.query.queryId) &&
-      this.query.queryId !== common.EMPTY_QUERY_ID &&
-      this.query.status === common.QueryStatusEnum.New &&
+      isDefined(this.query.queryId) &&
+      this.query.queryId !== EMPTY_QUERY_ID &&
+      this.query.status === QueryStatusEnum.New &&
       this.isAutoRun === true
     ) {
       setTimeout(() => {
@@ -857,7 +839,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   checkRefreshSelector() {
     if (this.isAutoRun === false) {
-      if (common.isDefined(this.refreshForm.controls.refresh.value)) {
+      if (isDefined(this.refreshForm.controls.refresh.value)) {
         this.refreshForm.controls.refresh.setValue(undefined);
       }
 
@@ -867,7 +849,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
       this.refreshChange();
     } else if (this.isAutoRun === true) {
-      if (common.isUndefined(this.refreshForm.controls.refresh.value)) {
+      if (isUndefined(this.refreshForm.controls.refresh.value)) {
         this.refreshForm.controls.refresh.setValue(0);
       }
 
@@ -889,7 +871,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.refreshId = this.chart?.chartId;
 
-    if (common.isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
+    if (isUndefined(refreshValueSeconds) || refreshValueSeconds === 0) {
       return;
     }
 
@@ -909,7 +891,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         if (
           // this.isRunButtonPressed === false &&
           this.mconfig?.select.length > 0 &&
-          this.query?.status !== common.QueryStatusEnum.Running
+          this.query?.status !== QueryStatusEnum.Running
         ) {
           this.run();
         }
@@ -971,8 +953,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath })
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }
 
@@ -985,13 +967,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.model.type === common.ModelTypeEnum.Malloy) {
+    if (this.model.type === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Limit,
+          type: QueryOperationTypeEnum.Limit,
           timezone: newMconfig.timezone,
           limit: Number(limit.value)
         }
@@ -1017,7 +999,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let modelId = this.modelForm.controls['model'].value;
 
     // chart (empty model not available for selection)
-    this.setProjectChartLink({ chartId: common.EMPTY_CHART_ID });
+    this.setProjectChartLink({ chartId: EMPTY_CHART_ID });
 
     if (this.lastUrl === this.pathChartsList) {
       this.navigateService.navigateToChartsList({
@@ -1030,16 +1012,16 @@ export class ModelsComponent implements OnInit, OnDestroy {
     } else {
       // if (
       //   (this.lastUrl === this.pathCharts ||
-      //     this.chart.chartId === common.EMPTY_CHART_ID) &&
+      //     this.chart.chartId === EMPTY_CHART_ID) &&
       //   this.showSchema === false
       // ) {
       //   this.showSchema = true;
       // }
 
-      if (common.isDefined(modelId)) {
+      if (isDefined(modelId)) {
         this.navigateService.navigateToChart({
           modelId: modelId,
-          chartId: common.EMPTY_CHART_ID
+          chartId: EMPTY_CHART_ID
         });
       } else {
         this.navigateService.navigateToCharts();
@@ -1057,7 +1039,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let uiState = this.uiQuery.getValue();
 
-    if (common.isDefined(this.chart.chartId)) {
+    if (isDefined(this.chart.chartId)) {
       this.structChartResolver
         .resolveRoute({
           chartId: this.chart.chartId,
@@ -1091,7 +1073,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -1101,13 +1083,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { runningQueries } = resp.payload;
 
             if (this.isQueryIdTheSameAndServerTsChanged(runningQueries[0])) {
@@ -1138,9 +1119,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
   runDry() {
     let nav = this.navQuery.getValue();
 
-    this.dryId = common.makeId();
+    this.dryId = makeId();
 
-    let payload: apiToBackend.ToBackendRunQueriesDryRequestPayload = {
+    let payload: ToBackendRunQueriesDryRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -1151,14 +1132,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRunQueriesDryResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendRunQueriesDryResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { validQueryEstimates, errorQueries } = resp.payload;
 
             if (errorQueries.length > 0) {
@@ -1193,7 +1173,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendCancelQueriesRequestPayload = {
+    let payload: ToBackendCancelQueriesRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -1203,13 +1183,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCancelQueries,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCancelQueriesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCancelQueriesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { queries } = resp.payload;
             if (
               queries.length > 0 &&
@@ -1234,14 +1213,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  chartTypeChange(newChartTypeValue?: common.ChartTypeEnum) {
+  chartTypeChange(newChartTypeValue?: ChartTypeEnum) {
     (document.activeElement as HTMLElement).blur();
 
     if (this.mconfig.chart.type === newChartTypeValue) {
       return;
     }
 
-    if (common.isDefined(newChartTypeValue)) {
+    if (isDefined(newChartTypeValue)) {
       this.chartTypeForm.controls['chartType'].setValue(newChartTypeValue);
     }
 
@@ -1251,7 +1230,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let newMconfig = this.structService.makeMconfig();
     newMconfig.chart.type = newChartType;
 
-    let fields: common.ModelField[];
+    let fields: ModelField[];
     this.modelQuery.fields$
       .pipe(
         tap(x => (fields = x)),
@@ -1259,7 +1238,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    newMconfig = common.setChartFields({
+    newMconfig = setChartFields({
       oldChartType: oldChartType,
       newChartType: newChartType,
       mconfig: newMconfig,
@@ -1273,13 +1252,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
     // });
 
     // query not changed
-    if (this.model.type === common.ModelTypeEnum.Malloy) {
+    if (this.model.type === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Get,
+          type: QueryOperationTypeEnum.Get,
           timezone: newMconfig.timezone
         }
       });
@@ -1325,13 +1304,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
     // });
 
     // query not changed
-    if (this.model.type === common.ModelTypeEnum.Malloy) {
+    if (this.model.type === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Get,
+          type: QueryOperationTypeEnum.Get,
           timezone: newMconfig.timezone
         }
       });
@@ -1344,8 +1323,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isQueryIdTheSameAndServerTsChanged(respQuery: common.Query) {
-    // let query: common.Query;
+  isQueryIdTheSameAndServerTsChanged(respQuery: Query) {
+    // let query: Query;
 
     // this.chartQuery
     //   .select()
@@ -1439,9 +1418,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   toggleModelTreeLevels() {
     let newValue =
-      this.modelTreeLevels === common.ModelTreeLevelsEnum.Flat
-        ? common.ModelTreeLevelsEnum.Nested
-        : common.ModelTreeLevelsEnum.Flat;
+      this.modelTreeLevels === ModelTreeLevelsEnum.Flat
+        ? ModelTreeLevelsEnum.Nested
+        : ModelTreeLevelsEnum.Flat;
 
     this.uiQuery.updatePart({ modelTreeLevels: newValue });
     this.uiService.setUserUi({ modelTreeLevels: newValue });
@@ -1512,7 +1491,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     // this.scrollToSelectedChart();
   }
 
-  navToChart(chart: common.ChartX) {
+  navToChart(chart: ChartX) {
     this.navigateService.navigateToChart({
       modelId: chart.modelId,
       chartId: chart.chartId
@@ -1527,7 +1506,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     });
   }
 
-  deleteDraftChart(event: any, chart: common.ChartX) {
+  deleteDraftChart(event: any, chart: ChartX) {
     event.stopPropagation();
 
     this.chartService.deleteDraftCharts({
@@ -1548,38 +1527,36 @@ export class ModelsComponent implements OnInit, OnDestroy {
   makeFilteredCharts() {
     let idxs;
 
-    let draftCharts: common.ChartX[] =
-      common.isUndefined(this.model?.modelId) || this.isFilterByModel === false
+    let draftCharts: ChartX[] =
+      isUndefined(this.model?.modelId) || this.isFilterByModel === false
         ? this.charts.filter(x => x.draft === true)
-        : common.isDefined(this.model?.modelId)
+        : isDefined(this.model?.modelId)
           ? this.charts.filter(
               x => x.draft === true && x.modelId === this.model.modelId
             )
           : [];
 
     let nonDraftCharts =
-      common.isUndefined(this.model?.modelId) || this.isFilterByModel === false
+      isUndefined(this.model?.modelId) || this.isFilterByModel === false
         ? this.charts.filter(x => x.draft === false)
-        : common.isDefined(this.model?.modelId)
+        : isDefined(this.model?.modelId)
           ? this.charts.filter(
               x => x.draft === false && x.modelId === this.model.modelId
             )
           : [];
 
-    if (common.isDefinedAndNotEmpty(this.searchChartsWord)) {
+    if (isDefinedAndNotEmpty(this.searchChartsWord)) {
       let haystack = nonDraftCharts.map(x =>
-        common.isDefined(x.title) ? `${x.title}` : `${x.chartId}`
+        isDefined(x.title) ? `${x.title}` : `${x.chartId}`
       );
       let opts = {};
       let uf = new uFuzzy(opts);
       idxs = uf.filter(haystack, this.searchChartsWord);
     }
 
-    this.chartsFilteredByWord = common.isDefinedAndNotEmpty(
-      this.searchChartsWord
-    )
+    this.chartsFilteredByWord = isDefinedAndNotEmpty(this.searchChartsWord)
       ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): common.ChartX => nonDraftCharts[idx])
+        ? idxs.map((idx: number): ChartX => nonDraftCharts[idx])
         : []
       : nonDraftCharts;
 
@@ -1624,9 +1601,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let nonDraftCharts = this.charts.filter(x => x.draft === false);
 
-    if (common.isDefinedAndNotEmpty(this.searchChartsWord)) {
+    if (isDefinedAndNotEmpty(this.searchChartsWord)) {
       let haystack = nonDraftCharts.map(x =>
-        common.isDefined(x.title)
+        isDefined(x.title)
           ? `${x.modelLabel} ${x.title}`
           : `${x.modelLabel} ${x.chartId}`
       );
@@ -1635,11 +1612,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
       idxs = uf.filter(haystack, this.searchChartsWord);
     }
 
-    let chartsFilteredByWord = common.isDefinedAndNotEmpty(
-      this.searchChartsWord
-    )
+    let chartsFilteredByWord = isDefinedAndNotEmpty(this.searchChartsWord)
       ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): common.ChartX => nonDraftCharts[idx])
+        ? idxs.map((idx: number): ChartX => nonDraftCharts[idx])
         : []
       : nonDraftCharts;
 
@@ -1671,7 +1646,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           (node: any) => node.id === chart.modelId
         );
 
-        if (common.isDefined(topNode)) {
+        if (isDefined(topNode)) {
           topNode.children.push(chartsItemNode);
         } else {
           topNode = {
@@ -1697,22 +1672,22 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   newChart() {
-    if (common.isDefined(this.model.modelId)) {
+    if (isDefined(this.model.modelId)) {
       if (this.showSchema === false) {
         this.showSchema = true;
       }
 
-      this.setProjectChartLink({ chartId: common.EMPTY_CHART_ID });
+      this.setProjectChartLink({ chartId: EMPTY_CHART_ID });
 
       this.navigateService.navigateToChart({
         modelId: this.model.modelId,
-        chartId: common.EMPTY_CHART_ID
+        chartId: EMPTY_CHART_ID
       });
     }
   }
 
   createModel(modelSelect?: any) {
-    if (common.isDefined(modelSelect)) {
+    if (isDefined(modelSelect)) {
       modelSelect.close();
     }
 
@@ -1732,7 +1707,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   toggleSearch() {
     this.showSearch = !this.showSearch;
 
-    if (this.showSearch === false && common.isDefined(this.searchChartsWord)) {
+    if (this.showSearch === false && isDefined(this.searchChartsWord)) {
       this.searchChartsWord = undefined;
       this.makeFilteredCharts();
     }
@@ -1743,7 +1718,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   setProjectModelLink(item: { modelId: string }) {
     let { modelId } = item;
 
-    if (common.isUndefined(modelId)) {
+    if (isUndefined(modelId)) {
       return;
     }
 
@@ -1751,13 +1726,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let links = this.uiQuery.getValue().projectModelLinks;
 
-    let link: common.ProjectModelLink = links.find(
-      l => l.projectId === nav.projectId
-    );
+    let link: ProjectModelLink = links.find(l => l.projectId === nav.projectId);
 
     let newProjectModelLinks;
 
-    if (common.isDefined(link)) {
+    if (isDefined(link)) {
       let newLink = {
         projectId: nav.projectId,
         modelId: modelId,
@@ -1791,21 +1764,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
   setProjectChartLink(item: { chartId: string }) {
     let { chartId } = item;
 
-    if (common.isUndefined(chartId)) {
+    if (isUndefined(chartId)) {
       return;
     }
 
     let nav = this.navQuery.getValue();
     let links = this.uiQuery.getValue().projectChartLinks;
 
-    let link: common.ProjectChartLink = links.find(
-      l => l.projectId === nav.projectId
-    );
+    let link: ProjectChartLink = links.find(l => l.projectId === nav.projectId);
 
     let newProjectChartLinks;
 
-    if (common.isDefined(link)) {
-      let newLink: common.ProjectChartLink = {
+    if (isDefined(link)) {
+      let newLink: ProjectChartLink = {
         projectId: nav.projectId,
         chartId: chartId,
         lastNavTs: Date.now()
@@ -1816,7 +1787,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         ...links.filter(r => !(r.projectId === nav.projectId))
       ];
     } else {
-      let newLink: common.ProjectChartLink = {
+      let newLink: ProjectChartLink = {
         projectId: nav.projectId,
         chartId: chartId,
         lastNavTs: Date.now()
@@ -1844,7 +1815,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           `[chartId="${this.chart.chartId}"]`
         );
 
-      if (common.isDefined(selectedElement)) {
+      if (isDefined(selectedElement)) {
         selectedElement.scrollIntoView({
           behavior: isSmooth === true ? 'smooth' : 'auto',
           block: 'center'
@@ -1867,7 +1838,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.runButtonTimerSubscription?.unsubscribe();
     this.cancelButtonTimerSubscription?.unsubscribe();
 
-    if (common.isDefined(this.checkRunning$)) {
+    if (isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }
   }

@@ -6,8 +6,6 @@ import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -15,12 +13,12 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './project-info.component.html'
 })
 export class ProjectInfoComponent implements OnInit {
-  pageTitle = constants.PROJECT_INFO_PAGE_TITLE;
+  pageTitle = PROJECT_INFO_PAGE_TITLE;
 
-  remoteTypeManaged = common.ProjectRemoteTypeEnum.Managed;
-  remoteTypeGitClone = common.ProjectRemoteTypeEnum.GitClone;
+  remoteTypeManaged = ProjectRemoteTypeEnum.Managed;
+  remoteTypeGitClone = ProjectRemoteTypeEnum.GitClone;
 
-  project: common.Project;
+  project: Project;
   project$ = this.projectQuery.select().pipe(
     tap(x => {
       this.project = x;

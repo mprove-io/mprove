@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { NEW_PASSWORD_WAS_SET_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_LOGIN } from '~common/constants/top';
 
 @Component({
   standalone: false,
@@ -10,7 +10,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './new-password-was-set.component.html'
 })
 export class NewPasswordWasSetComponent implements OnInit {
-  pageTitle = constants.NEW_PASSWORD_WAS_SET_PAGE_TITLE;
+  pageTitle = NEW_PASSWORD_WAS_SET_PAGE_TITLE;
 
   constructor(
     private router: Router,
@@ -22,6 +22,6 @@ export class NewPasswordWasSetComponent implements OnInit {
   }
 
   login() {
-    this.router.navigate([common.PATH_LOGIN]);
+    this.router.navigate([PATH_LOGIN]);
   }
 }

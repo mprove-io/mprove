@@ -14,7 +14,6 @@ import { DataPoint } from '~front/app/interfaces/data-point';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
-import { common } from '~front/barrels/common';
 import { SharedModule } from '../shared.module';
 
 export interface ChartFormulaDialogData {
@@ -91,15 +90,15 @@ export class ChartFormulaDialogComponent implements OnInit {
         trigger: 'axis',
         order: 'valueDesc',
         valueFormatter: (value: any) =>
-          `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+          `${isDefined(value) ? value.toFixed(2) : 'Null'}`
       },
       xAxis: {
         type: 'time',
         axisLabel:
           [
-            common.TimeSpecEnum.Hours,
-            common.TimeSpecEnum.Minutes,
-            common.TimeSpecEnum.Timestamps
+            TimeSpecEnum.Hours,
+            TimeSpecEnum.Minutes,
+            TimeSpecEnum.Timestamps
           ].indexOf(this.uiQuery.getValue().timeSpec) > -1
             ? { fontSize: 13 }
             : {
@@ -145,7 +144,7 @@ export class ChartFormulaDialogComponent implements OnInit {
       .forEach(column => {
         let record = row.records.find(rec => rec.key === column.columnId);
 
-        if (common.isDefined(record?.value)) {
+        if (isDefined(record?.value)) {
           recordsWithValuesLength++;
         }
       });

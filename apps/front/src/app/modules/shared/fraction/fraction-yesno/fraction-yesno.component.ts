@@ -9,8 +9,6 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import {
   FractionTypeItem,
   FractionYesnoValueItem
@@ -35,37 +33,37 @@ export class FractionYesnoComponent {
     this.fractionYesnoValueSelectElement?.close();
   }
 
-  fractionOperatorEnum = common.FractionOperatorEnum;
-  fractionTypeEnum = common.FractionTypeEnum;
+  fractionOperatorEnum = FractionOperatorEnum;
+  fractionTypeEnum = FractionTypeEnum;
 
   @Input() isDisabled: boolean;
-  @Input() fraction: common.Fraction;
+  @Input() fraction: Fraction;
   @Input() fractionIndex: number;
   @Input() isFirst: boolean;
 
-  @Output() fractionUpdate = new EventEmitter<interfaces.EventFractionUpdate>();
+  @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
 
   fractionYesnoTypesList: FractionTypeItem[] = [
     {
-      operator: common.FractionOperatorEnum.Or,
+      operator: FractionOperatorEnum.Or,
       label: 'is any value',
-      value: common.FractionTypeEnum.YesnoIsAnyValue
+      value: FractionTypeEnum.YesnoIsAnyValue
     },
     {
-      operator: common.FractionOperatorEnum.Or,
+      operator: FractionOperatorEnum.Or,
       label: 'is',
-      value: common.FractionTypeEnum.YesnoIs
+      value: FractionTypeEnum.YesnoIs
     }
   ];
 
   fractionYesnoValuesList: FractionYesnoValueItem[] = [
     {
       label: 'Yes',
-      value: common.FractionYesnoValueEnum.Yes
+      value: FractionYesnoValueEnum.Yes
     },
     {
       label: 'No',
-      value: common.FractionYesnoValueEnum.No
+      value: FractionYesnoValueEnum.No
     }
   ];
 
@@ -82,10 +80,10 @@ export class FractionYesnoComponent {
     let fractionType = fractionTypeItem.value;
 
     switch (fractionType) {
-      case common.FractionTypeEnum.YesnoIsAnyValue: {
+      case FractionTypeEnum.YesnoIsAnyValue: {
         this.fraction = {
           brick: `any`,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType
         };
 
@@ -93,12 +91,12 @@ export class FractionYesnoComponent {
         break;
       }
 
-      case common.FractionTypeEnum.YesnoIs: {
-        let newYesnoValue = common.FractionYesnoValueEnum.Yes;
+      case FractionTypeEnum.YesnoIs: {
+        let newYesnoValue = FractionYesnoValueEnum.Yes;
 
         this.fraction = {
           brick: `${newYesnoValue.toLowerCase()}`,
-          operator: common.FractionOperatorEnum.Or,
+          operator: FractionOperatorEnum.Or,
           type: fractionType,
           yesnoValue: newYesnoValue
         };
@@ -117,8 +115,8 @@ export class FractionYesnoComponent {
     let fractionYesnoValue = fractionYesnoValueItem.value;
 
     this.fraction = {
-      type: common.FractionTypeEnum.YesnoIs,
-      operator: common.FractionOperatorEnum.Or,
+      type: FractionTypeEnum.YesnoIs,
+      operator: FractionOperatorEnum.Or,
       yesnoValue: fractionYesnoValue,
       brick: `${fractionYesnoValue.toLowerCase()}`
     };

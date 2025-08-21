@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanDeactivate } from '@angular/router';
 import { Observable } from 'rxjs';
-import { common } from '~front/barrels/common';
+import { isDefined } from '~common/functions/is-defined';
 
 export interface CanComponentDeactivate {
   canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
@@ -10,7 +10,7 @@ export interface CanComponentDeactivate {
 @Injectable({ providedIn: 'root' })
 export class DeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
   canDeactivate(component: CanComponentDeactivate) {
-    return common.isDefined(component?.canDeactivate)
+    return isDefined(component?.canDeactivate)
       ? component.canDeactivate()
       : true;
   }

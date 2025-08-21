@@ -6,9 +6,10 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToBackendGetUserProfileResponse } from '~common/interfaces/to-backend/users/to-backend-get-user-profile';
 import { UserQuery } from '~front/app/queries/user.query';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 import { ApiService } from '../../services/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -24,13 +25,12 @@ export class ProfileResolver implements Resolve<Observable<boolean>> {
   ): Observable<boolean> {
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetUserProfile,
         payload: {}
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetUserProfileResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetUserProfileResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let user = resp.payload.user;
             this.userQuery.update(user);
             return true;

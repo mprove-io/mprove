@@ -5,7 +5,7 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { common } from '~front/barrels/common';
+import { PATH_FILES } from '~common/constants/top';
 import { RepoStructFilesResolver } from './repo-struct-files.resolver';
 
 @Injectable({ providedIn: 'root' })
@@ -17,9 +17,8 @@ export class RepoStructResolver implements Resolve<Observable<boolean>> {
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
     let isFilesInPath =
-      routerStateSnapshot.url
-        .split('/')
-        .findIndex(el => el === common.PATH_FILES) === 11;
+      routerStateSnapshot.url.split('/').findIndex(el => el === PATH_FILES) ===
+      11;
 
     if (isFilesInPath === true) {
       return of(true);

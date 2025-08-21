@@ -4,12 +4,18 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { SET_NEW_PASSWORD_PAGE_TITLE } from '~common/constants/page-titles';
+import { PATH_NEW_PASSWORD_WAS_SET } from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendUpdateUserPasswordRequestPayload,
+  ToBackendUpdateUserPasswordResponse
+} from '~common/interfaces/to-backend/users/to-backend-update-user-password';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -17,7 +23,7 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './update-password.component.html'
 })
 export class UpdatePasswordComponent implements OnInit {
-  pageTitle = constants.SET_NEW_PASSWORD_PAGE_TITLE;
+  pageTitle = SET_NEW_PASSWORD_PAGE_TITLE;
 
   passwordResetToken: string;
 
@@ -65,23 +71,22 @@ export class UpdatePasswordComponent implements OnInit {
       return;
     }
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendUpdateUserPasswordRequestPayload = {
+    let payload: ToBackendUpdateUserPasswordRequestPayload = {
       passwordResetToken: this.passwordResetToken,
       newPassword: this.setPasswordForm.value.newPassword
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendUpdateUserPassword,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendUpdateUserPasswordResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-            this.router.navigate([common.PATH_NEW_PASSWORD_WAS_SET]);
+        tap((resp: ToBackendUpdateUserPasswordResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.router.navigate([PATH_NEW_PASSWORD_WAS_SET]);
           }
         }),
         take(1)

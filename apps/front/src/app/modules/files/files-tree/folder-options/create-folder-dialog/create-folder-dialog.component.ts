@@ -21,8 +21,6 @@ import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface CreateFolderDialogData {
   apiService: ApiService;
@@ -87,7 +85,7 @@ export class CreateFolderDialogComponent implements OnInit {
 
     let folderName = this.createFolderForm.value.folderName.toLowerCase();
 
-    let payload: apiToBackend.ToBackendCreateFolderRequestPayload = {
+    let payload: ToBackendCreateFolderRequestPayload = {
       projectId: this.ref.data.projectId,
       branchId: this.ref.data.branchId,
       envId: this.ref.data.envId,
@@ -99,14 +97,13 @@ export class CreateFolderDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateFolderResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateFolderResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({

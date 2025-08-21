@@ -1,5 +1,57 @@
 import { Routes } from '@angular/router';
-import { common } from '~front/barrels/common';
+import {
+  PARAMETER_BRANCH_ID,
+  PARAMETER_CHART_ID,
+  PARAMETER_DASHBOARD_ID,
+  PARAMETER_ENV_ID,
+  PARAMETER_FILE_ID,
+  PARAMETER_MODEL_ID,
+  PARAMETER_ORG_ID,
+  PARAMETER_PROJECT_ID,
+  PARAMETER_REPORT_ID,
+  PARAMETER_REPO_ID,
+  PATH_ACCOUNT,
+  PATH_BRANCH,
+  PATH_CHART,
+  PATH_CHARTS_LIST,
+  PATH_COMPLETE_REGISTRATION,
+  PATH_CONFIRM_EMAIL,
+  PATH_CONNECTIONS,
+  PATH_DASHBOARD,
+  PATH_DASHBOARDS,
+  PATH_DASHBOARDS_LIST,
+  PATH_EMAIL_CONFIRMED,
+  PATH_ENV,
+  PATH_ENVIRONMENTS,
+  PATH_FILE,
+  PATH_FILES,
+  PATH_FORGOT_PASSWORD,
+  PATH_INFO,
+  PATH_LOGIN,
+  PATH_LOGIN_SUCCESS,
+  PATH_MODEL,
+  PATH_MODELS,
+  PATH_MODELS_LIST,
+  PATH_NEW_PASSWORD_WAS_SET,
+  PATH_ORG,
+  PATH_ORG_DELETED,
+  PATH_ORG_OWNER_CHANGED,
+  PATH_PASSWORD_RESET_SENT,
+  PATH_PASSWORD_RESET_SENT_AUTH,
+  PATH_PROFILE,
+  PATH_PROJECT,
+  PATH_PROJECT_DELETED,
+  PATH_REGISTER,
+  PATH_REPO,
+  PATH_REPORT,
+  PATH_REPORTS,
+  PATH_REPORTS_LIST,
+  PATH_TEAM,
+  PATH_UPDATE_PASSWORD,
+  PATH_USERS,
+  PATH_USER_DELETED,
+  PATH_VERIFY_EMAIL
+} from '~common/constants/top';
 import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
 import { VerifyEmailComponent } from './modules/auth/main/02-verify-email/verify-email.component';
@@ -64,7 +116,7 @@ import { StructReportsResolver } from './resolvers/struct-reports.resolver';
 export const appRoutes: Routes = [
   {
     path: '',
-    redirectTo: common.PATH_LOGIN,
+    redirectTo: PATH_LOGIN,
     pathMatch: 'full'
   },
   {
@@ -73,47 +125,47 @@ export const appRoutes: Routes = [
     children: [
       {
         component: RegisterComponent,
-        path: common.PATH_REGISTER
+        path: PATH_REGISTER
       },
       {
         component: VerifyEmailComponent,
-        path: common.PATH_VERIFY_EMAIL
+        path: PATH_VERIFY_EMAIL
       },
       {
         component: ConfirmEmailComponent,
-        path: common.PATH_CONFIRM_EMAIL
+        path: PATH_CONFIRM_EMAIL
       },
       {
         component: EmailConfirmedComponent,
-        path: common.PATH_EMAIL_CONFIRMED
+        path: PATH_EMAIL_CONFIRMED
       },
       {
         component: CompleteRegistrationComponent,
-        path: common.PATH_COMPLETE_REGISTRATION
+        path: PATH_COMPLETE_REGISTRATION
       },
       {
         component: LoginComponent,
-        path: common.PATH_LOGIN
+        path: PATH_LOGIN
       },
       {
         component: UserDeletedComponent,
-        path: common.PATH_USER_DELETED
+        path: PATH_USER_DELETED
       },
       {
         component: ForgotPasswordComponent,
-        path: common.PATH_FORGOT_PASSWORD
+        path: PATH_FORGOT_PASSWORD
       },
       {
         component: PasswordResetSentComponent,
-        path: common.PATH_PASSWORD_RESET_SENT
+        path: PATH_PASSWORD_RESET_SENT
       },
       {
         component: UpdatePasswordComponent,
-        path: common.PATH_UPDATE_PASSWORD
+        path: PATH_UPDATE_PASSWORD
       },
       {
         component: NewPasswordWasSetComponent,
-        path: common.PATH_NEW_PASSWORD_WAS_SET
+        path: PATH_NEW_PASSWORD_WAS_SET
       }
     ]
   },
@@ -124,128 +176,122 @@ export const appRoutes: Routes = [
     children: [
       {
         component: LoginSuccessComponent,
-        path: common.PATH_LOGIN_SUCCESS
+        path: PATH_LOGIN_SUCCESS
       },
       {
         component: PasswordResetSentComponent,
-        path: common.PATH_PASSWORD_RESET_SENT_AUTH
+        path: PATH_PASSWORD_RESET_SENT_AUTH
       },
       {
         component: ProfileComponent,
-        path: common.PATH_PROFILE,
+        path: PATH_PROFILE,
         resolve: [ProfileResolver]
       },
       {
         component: OrgDeletedComponent,
-        path: common.PATH_ORG_DELETED
+        path: PATH_ORG_DELETED
       },
       {
         component: OrgOwnerChangedComponent,
-        path: common.PATH_ORG_OWNER_CHANGED
+        path: PATH_ORG_OWNER_CHANGED
       },
       {
         component: ProjectDeletedComponent,
-        path: common.PATH_PROJECT_DELETED
+        path: PATH_PROJECT_DELETED
       },
       {
-        path: common.PATH_ORG + `/:${common.PARAMETER_ORG_ID}`,
+        path: PATH_ORG + `/:${PARAMETER_ORG_ID}`,
         resolve: [OrgResolver],
         children: [
           {
             component: OrgAccountComponent,
-            path: common.PATH_ACCOUNT,
+            path: PATH_ACCOUNT,
             resolve: [OrgAccountResolver]
           },
           {
             component: OrgUsersComponent,
-            path: common.PATH_USERS,
+            path: PATH_USERS,
             resolve: [OrgUsersResolver]
           },
           {
-            path: common.PATH_PROJECT + `/:${common.PARAMETER_PROJECT_ID}`,
+            path: PATH_PROJECT + `/:${PARAMETER_PROJECT_ID}`,
             resolve: [ProjectResolver],
             children: [
               {
                 component: ProjectInfoComponent,
-                path: common.PATH_INFO,
+                path: PATH_INFO,
                 resolve: [ProjectInfoResolver]
               },
               {
                 component: ProjectConnectionsComponent,
-                path: common.PATH_CONNECTIONS,
+                path: PATH_CONNECTIONS,
                 resolve: [ProjectConnectionsResolver]
               },
               {
                 component: ProjectEnvironmentsComponent,
-                path: common.PATH_ENVIRONMENTS,
+                path: PATH_ENVIRONMENTS,
                 resolve: [ProjectEnvironmentsResolver]
               },
               {
                 component: ProjectTeamComponent,
-                path: common.PATH_TEAM,
+                path: PATH_TEAM,
                 resolve: [ProjectTeamResolver]
               },
               {
-                path: common.PATH_REPO + `/:${common.PARAMETER_REPO_ID}`,
+                path: PATH_REPO + `/:${PARAMETER_REPO_ID}`,
                 resolve: [RepoIdResolver],
                 children: [
                   {
-                    path:
-                      common.PATH_BRANCH + `/:${common.PARAMETER_BRANCH_ID}`,
+                    path: PATH_BRANCH + `/:${PARAMETER_BRANCH_ID}`,
                     children: [
                       {
-                        path: common.PATH_ENV + `/:${common.PARAMETER_ENV_ID}`,
+                        path: PATH_ENV + `/:${PARAMETER_ENV_ID}`,
                         resolve: [RepoStructResolver],
                         children: [
                           {
                             component: FilesComponent,
-                            path: common.PATH_FILES,
+                            path: PATH_FILES,
                             resolve: [RepoStructFilesResolver],
                             children: [
                               {
                                 component: FileEditorComponent,
                                 canDeactivate: [DeactivateGuard],
-                                path:
-                                  common.PATH_FILE +
-                                  `/:${common.PARAMETER_FILE_ID}`,
+                                path: PATH_FILE + `/:${PARAMETER_FILE_ID}`,
                                 resolve: [FileResolver]
                               }
                             ]
                           },
                           {
                             component: ModelsComponent,
-                            path: common.PATH_MODELS,
+                            path: PATH_MODELS,
                             resolve: [StructChartsResolver],
                             children: [
                               {
                                 component: ChartsListComponent,
-                                path: common.PATH_CHARTS_LIST
+                                path: PATH_CHARTS_LIST
                               },
                               {
                                 component: ModelsListComponent,
-                                path: common.PATH_MODELS_LIST
+                                path: PATH_MODELS_LIST
                               },
                               {
                                 component: ModelComponent,
-                                path:
-                                  common.PATH_MODEL +
-                                  `/:${common.PARAMETER_MODEL_ID}`,
+                                path: PATH_MODEL + `/:${PARAMETER_MODEL_ID}`,
                                 resolve: [StructModelResolver],
                                 children: [
                                   {
                                     component: ChartComponent,
                                     path:
-                                      common.PATH_CHART +
-                                      `/:${common.PARAMETER_CHART_ID}`,
+                                      PATH_CHART + `/:${PARAMETER_CHART_ID}`,
                                     resolve: [StructChartResolver]
                                   },
                                   {
                                     component: ChartsListComponent,
-                                    path: common.PATH_CHARTS_LIST
+                                    path: PATH_CHARTS_LIST
                                   },
                                   {
                                     component: ModelsListComponent,
-                                    path: common.PATH_MODELS_LIST
+                                    path: PATH_MODELS_LIST
                                   }
                                 ]
                               }
@@ -253,37 +299,35 @@ export const appRoutes: Routes = [
                           },
                           {
                             component: DashboardsComponent,
-                            path: common.PATH_DASHBOARDS,
+                            path: PATH_DASHBOARDS,
                             resolve: [StructDashboardsResolver],
                             children: [
                               {
                                 component: DashboardComponent,
                                 path:
-                                  common.PATH_DASHBOARD +
-                                  `/:${common.PARAMETER_DASHBOARD_ID}`,
+                                  PATH_DASHBOARD +
+                                  `/:${PARAMETER_DASHBOARD_ID}`,
                                 resolve: [StructDashboardResolver]
                               },
                               {
                                 component: DashboardsListComponent,
-                                path: common.PATH_DASHBOARDS_LIST
+                                path: PATH_DASHBOARDS_LIST
                               }
                             ]
                           },
                           {
                             component: ReportsComponent,
-                            path: common.PATH_REPORTS,
+                            path: PATH_REPORTS,
                             resolve: [StructReportsResolver],
                             children: [
                               {
                                 component: ReportComponent,
-                                path:
-                                  common.PATH_REPORT +
-                                  `/:${common.PARAMETER_REPORT_ID}`,
+                                path: PATH_REPORT + `/:${PARAMETER_REPORT_ID}`,
                                 resolve: [StructReportResolver]
                               },
                               {
                                 component: ReportsListComponent,
-                                path: common.PATH_REPORTS_LIST
+                                path: PATH_REPORTS_LIST
                               }
                             ]
                           }

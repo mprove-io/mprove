@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -7,34 +6,34 @@ import { common } from '~front/barrels/common';
   templateUrl: './field-result.component.html'
 })
 export class FieldResultComponent {
-  fieldClassDimension = common.FieldClassEnum.Dimension;
-  fieldClassMeasure = common.FieldClassEnum.Measure;
-  fieldClassCalculation = common.FieldClassEnum.Calculation;
-  fieldClassFilter = common.FieldClassEnum.Filter;
+  fieldClassDimension = FieldClassEnum.Dimension;
+  fieldClassMeasure = FieldClassEnum.Measure;
+  fieldClassCalculation = FieldClassEnum.Calculation;
+  fieldClassFilter = FieldClassEnum.Filter;
 
-  fieldResultDayOfWeek = common.FieldResultEnum.DayOfWeek;
-  fieldResultDayOfWeekIndex = common.FieldResultEnum.DayOfWeekIndex;
-  fieldResultMonthName = common.FieldResultEnum.MonthName;
-  fieldResultQuarterOfYear = common.FieldResultEnum.QuarterOfYear;
-  fieldResultTs = common.FieldResultEnum.Ts;
-  // fieldResultTimestamp = common.FieldResultEnum.Timestamp;
-  fieldResultYesno = common.FieldResultEnum.Yesno;
-  fieldResultString = common.FieldResultEnum.String;
-  fieldResultNumber = common.FieldResultEnum.Number;
-  fieldResultDate = common.FieldResultEnum.Date;
-  fieldResultBoolean = common.FieldResultEnum.Boolean;
-  fieldResultArray = common.FieldResultEnum.Array;
-  fieldResultRecord = common.FieldResultEnum.Record;
-  fieldResultJson = common.FieldResultEnum.Json;
-  fieldResultSqlNative = common.FieldResultEnum.SqlNative;
+  fieldResultDayOfWeek = FieldResultEnum.DayOfWeek;
+  fieldResultDayOfWeekIndex = FieldResultEnum.DayOfWeekIndex;
+  fieldResultMonthName = FieldResultEnum.MonthName;
+  fieldResultQuarterOfYear = FieldResultEnum.QuarterOfYear;
+  fieldResultTs = FieldResultEnum.Ts;
+  // fieldResultTimestamp = FieldResultEnum.Timestamp;
+  fieldResultYesno = FieldResultEnum.Yesno;
+  fieldResultString = FieldResultEnum.String;
+  fieldResultNumber = FieldResultEnum.Number;
+  fieldResultDate = FieldResultEnum.Date;
+  fieldResultBoolean = FieldResultEnum.Boolean;
+  fieldResultArray = FieldResultEnum.Array;
+  fieldResultRecord = FieldResultEnum.Record;
+  fieldResultJson = FieldResultEnum.Json;
+  fieldResultSqlNative = FieldResultEnum.SqlNative;
 
-  allResultValues = common.ALL_RESULT_VALUES;
-
-  @Input()
-  fieldClass: common.FieldClassEnum;
+  allResultValues = ALL_RESULT_VALUES;
 
   @Input()
-  result: common.FieldResultEnum;
+  fieldClass: FieldClassEnum;
+
+  @Input()
+  result: FieldResultEnum;
 
   @Input()
   size: number;

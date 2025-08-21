@@ -13,6 +13,8 @@ import {
   RowHeightParams,
   SelectionChangedEvent
 } from 'ag-grid-community';
+import { themeAlpine } from 'ag-grid-community';
+import { MultiRowSelectionOptions } from 'ag-grid-community/dist/types/src/entities/gridOptions';
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
 import {
@@ -26,7 +28,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ReportService } from '~front/app/services/report.service';
 import { UiService } from '~front/app/services/ui.service';
-import { common } from '~front/barrels/common';
 import { ChartHeaderComponent } from './chart-header/chart-header.component';
 import { ChartRendererComponent } from './chart-renderer/chart-renderer.component';
 import { DataRendererComponent } from './data-renderer/data-renderer.component';
@@ -38,9 +39,6 @@ import { RowIdHeaderComponent } from './row-id-header/row-id-header.component';
 import { RowIdRendererComponent } from './row-id-renderer/row-id-renderer.component';
 import { StatusHeaderComponent } from './status-header/status-header.component';
 import { StatusRendererComponent } from './status-renderer/status-renderer.component';
-
-import { themeAlpine } from 'ag-grid-community';
-import { MultiRowSelectionOptions } from 'ag-grid-community/dist/types/src/entities/gridOptions';
 
 @Component({
   standalone: false,
@@ -91,7 +89,7 @@ export class ReportComponent {
   updateColumnSizes = debounce(
     300,
     paramsColumn => {
-      if (common.isDefined(this.agGridApi)) {
+      if (isDefined(this.agGridApi)) {
         let columns = this.agGridApi.getColumns();
 
         let nameColumn = columns.find(x => x.getColId() === 'name');
@@ -104,9 +102,9 @@ export class ReportComponent {
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsNarrowWidth
               : [
-                    common.TimeSpecEnum.Timestamps,
-                    common.TimeSpecEnum.Minutes,
-                    common.TimeSpecEnum.Hours
+                    TimeSpecEnum.Timestamps,
+                    TimeSpecEnum.Minutes,
+                    TimeSpecEnum.Hours
                   ].indexOf(uiState.timeSpec) > -1
                 ? uiState.metricsTimeColumnsNarrowWidth
                 : paramsColumn.getActualWidth(),
@@ -114,9 +112,9 @@ export class ReportComponent {
             ['name', 'parameters'].indexOf(paramsColumn.colId) > -1
               ? uiState.metricsTimeColumnsWideWidth
               : [
-                    common.TimeSpecEnum.Timestamps,
-                    common.TimeSpecEnum.Minutes,
-                    common.TimeSpecEnum.Hours
+                    TimeSpecEnum.Timestamps,
+                    TimeSpecEnum.Minutes,
+                    TimeSpecEnum.Hours
                   ].indexOf(uiState.timeSpec) > -1
                 ? paramsColumn.getActualWidth()
                 : uiState.metricsTimeColumnsWideWidth
@@ -203,7 +201,7 @@ export class ReportComponent {
 
   // repSelectedRowIdsDistinct$ = this.uiQuery.repSelectedRowIdsDistinct$.pipe(
   //   tap(x => {
-  //     if (common.isDefined(this.agGridApi)) {
+  //     if (isDefined(this.agGridApi)) {
   //       let rowIdColDef = this.agGridApi.getColumn('rowId').getColDef();
 
   //       let newColDef = Object.assign({}, rowIdColDef, {
@@ -219,7 +217,7 @@ export class ReportComponent {
   //   })
   // );
 
-  report: common.ReportX;
+  report: ReportX;
   report$ = combineLatest([
     this.reportQuery.select(),
     this.uiQuery.timeColumnsNarrowWidth$,
@@ -234,7 +232,7 @@ export class ReportComponent {
         timeColumnsWideWidth,
         showMetricsParameters, // used in check update data
         showMiniCharts
-      ]: [common.ReportX, number, number, boolean, boolean]) => {
+      ]: [ReportX, number, number, boolean, boolean]) => {
         this.report = report;
 
         // console.log('---');
@@ -258,9 +256,9 @@ export class ReportComponent {
             type: 'numericColumn',
             width:
               [
-                common.TimeSpecEnum.Timestamps,
-                common.TimeSpecEnum.Minutes,
-                common.TimeSpecEnum.Hours
+                TimeSpecEnum.Timestamps,
+                TimeSpecEnum.Minutes,
+                TimeSpecEnum.Hours
               ].indexOf(uiState.timeSpec) > -1
                 ? Math.max(
                     DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
@@ -272,9 +270,9 @@ export class ReportComponent {
                   ),
             minWidth:
               [
-                common.TimeSpecEnum.Timestamps,
-                common.TimeSpecEnum.Minutes,
-                common.TimeSpecEnum.Hours
+                TimeSpecEnum.Timestamps,
+                TimeSpecEnum.Minutes,
+                TimeSpecEnum.Hours
               ].indexOf(uiState.timeSpec) > -1
                 ? 220
                 : 155,
@@ -293,12 +291,11 @@ export class ReportComponent {
               );
 
               return (
-                common.isDefined(rowRecord) &&
-                common.isDefinedAndNotEmpty(rowRecord.value)
+                isDefined(rowRecord) && isDefinedAndNotEmpty(rowRecord.value)
               );
             });
 
-            return common.isDefined(columnRow);
+            return isDefined(columnRow);
           }
         );
 
@@ -312,17 +309,16 @@ export class ReportComponent {
               );
 
               return (
-                common.isDefined(rowRecord) &&
-                common.isDefinedAndNotEmpty(rowRecord.value)
+                isDefined(rowRecord) && isDefinedAndNotEmpty(rowRecord.value)
               );
             });
 
-            return common.isDefined(columnRow);
+            return isDefined(columnRow);
           }
         );
 
         this.lastDataTimeColumnIndex =
-          common.isDefined(lastDataTimeColumnIndexReversed) &&
+          isDefined(lastDataTimeColumnIndexReversed) &&
           lastDataTimeColumnIndexReversed > -1
             ? this.timeColumns.length - 1 - lastDataTimeColumnIndexReversed
             : -1;
@@ -347,9 +343,9 @@ export class ReportComponent {
             : this.timeColumns;
 
         let runningQueriesLength = this.report.rows
-          .filter(row => common.isDefined(row.query))
+          .filter(row => isDefined(row.query))
           .map(row => row.query.status)
-          .filter(status => status === common.QueryStatusEnum.Running).length;
+          .filter(status => status === QueryStatusEnum.Running).length;
 
         this.statusColumn.type =
           runningQueriesLength > 0 ? 'running' : undefined;
@@ -372,7 +368,7 @@ export class ReportComponent {
   checkUpdateData() {
     let showMetricsParameters = this.uiQuery.getValue().showMetricsParameters;
 
-    let newData = this.report.rows.map((row: common.Row) => {
+    let newData = this.report.rows.map((row: Row) => {
       let dataRow: DataRow = Object.assign({}, row, <DataRow>{
         showMetricsParameters: showMetricsParameters
       });
@@ -382,7 +378,7 @@ export class ReportComponent {
 
         record.columnLabel = column?.label;
 
-        if (common.isDefined(record.columnLabel)) {
+        if (isDefined(record.columnLabel)) {
           (dataRow as any)[record.key * 1000] = record.value;
         }
       });
@@ -390,12 +386,12 @@ export class ReportComponent {
       return dataRow;
     });
 
-    if (common.isDefined(this.agGridApi)) {
+    if (isDefined(this.agGridApi)) {
       // console.log('this.agGridApi isDefined');
       this.agGridApi.setGridOption('rowData', newData);
       this.agGridApi.resetRowHeights();
 
-      // if (common.isUndefined(this.data)) {
+      // if (isUndefined(this.data)) {
       //   console.log('data is undefined');
       //   console.log('called setGridOption');
       //   this.agGridApi.setGridOption('rowData', newData);
@@ -437,7 +433,7 @@ export class ReportComponent {
 
       this.uiQuery.getValue().reportSelectedNodes.forEach(node => {
         let rowNode = this.agGridApi.getRowNode(node.id);
-        if (common.isDefined(rowNode)) {
+        if (isDefined(rowNode)) {
           rowNode.setSelected(true);
         }
       });
@@ -457,18 +453,18 @@ export class ReportComponent {
 
   //     let selectRows = queryParams['selectRows'];
 
-  //     let nodeIds: string[] = common.isDefined(selectRows)
+  //     let nodeIds: string[] = isDefined(selectRows)
   //       ? selectRows.split('-')
   //       : [];
 
   //     setTimeout(() => {
-  //       if (common.isUndefined(this.agGridApi)) {
+  //       if (isUndefined(this.agGridApi)) {
   //         return;
   //       }
   //       if (nodeIds.length > 0) {
   //         nodeIds.forEach(nodeId => {
   //           let rowNode = this.agGridApi.getRowNode(nodeId);
-  //           if (common.isDefined(rowNode)) {
+  //           if (isDefined(rowNode)) {
   //             // console.log('queryParams - set select node')
   //             rowNode.setSelected(true);
   //           }
@@ -594,7 +590,7 @@ export class ReportComponent {
     this.uiQuery.updatePart({ gridApi: this.agGridApi });
     this.agGridApi.deselectAll();
 
-    if (common.isDefined(this.report)) {
+    if (isDefined(this.report)) {
       this.checkUpdateData();
     }
 
@@ -602,7 +598,7 @@ export class ReportComponent {
   }
 
   onColumnResized(params: ColumnResizedEvent<DataRow>) {
-    if (common.isDefined(params.column)) {
+    if (isDefined(params.column)) {
       // console.log(params.column.getActualWidth());
 
       this.updateColumnSizes(params.column);
@@ -625,7 +621,7 @@ export class ReportComponent {
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.Move,
+      changeType: ChangeTypeEnum.Move,
       rowChange: undefined,
       rowIds: rowIds,
       reportFields: report.fields,
@@ -638,7 +634,7 @@ export class ReportComponent {
 
     let isShowParameters = params.data.showMetricsParameters === true;
 
-    if (common.isDefined(params.data.mconfig) && isShowParameters === true) {
+    if (isDefined(params.data.mconfig) && isShowParameters === true) {
       let struct = this.structQuery.getValue();
 
       let metric = struct.metrics.find(
@@ -647,27 +643,26 @@ export class ReportComponent {
 
       let timeSpec = this.reportQuery.getValue().timeSpec;
 
-      let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+      let timeSpecWord = getTimeSpecWord({ timeSpec: timeSpec });
 
-      let timeSpecDetail = common.getTimeSpecDetail({
+      let timeSpecDetail = getTimeSpecDetail({
         timeSpec: timeSpec,
         weekStart: struct.weekStart
       });
 
       let timeFieldIdSpec =
-        metric.modelType === common.ModelTypeEnum.Malloy
-          ? timeSpecDetail === common.DetailUnitEnum.Timestamps
+        metric.modelType === ModelTypeEnum.Malloy
+          ? timeSpecDetail === DetailUnitEnum.Timestamps
             ? `${metric.timeFieldId}_ts`
-            : [
-                  common.DetailUnitEnum.WeeksSunday,
-                  common.DetailUnitEnum.WeeksMonday
-                ].indexOf(timeSpecDetail) > -1
+            : [DetailUnitEnum.WeeksSunday, DetailUnitEnum.WeeksMonday].indexOf(
+                  timeSpecDetail
+                ) > -1
               ? `${metric.timeFieldId}_week`
               : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`
-          : `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+          : `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
       let extendedFilters =
-        metric.modelType === common.ModelTypeEnum.Store
+        metric.modelType === ModelTypeEnum.Store
           ? params.data.mconfig.extendedFilters
           : params.data.mconfig.extendedFilters.filter(
               filter => filter.fieldId !== timeFieldIdSpec
@@ -675,9 +670,9 @@ export class ReportComponent {
 
       if (extendedFilters.length > 0) {
         extendedFilters.forEach(x => {
-          if (common.isDefined(x.fractions)) {
+          if (isDefined(x.fractions)) {
             x.fractions.forEach(y => {
-              if (common.isDefined(y.controls)) {
+              if (isDefined(y.controls)) {
                 y.controls?.forEach(c => {
                   rowHeight = rowHeight + 25;
                 });
@@ -702,7 +697,7 @@ export class ReportComponent {
 
 // function countLines(item: { input: any; lines: number }) {
 //   let { input, lines } = item;
-//   if (common.isUndefined(input)) {
+//   if (isUndefined(input)) {
 //     lines = lines + 1;
 //   } else if (Array.isArray(input)) {
 //     //

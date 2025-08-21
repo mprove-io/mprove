@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { Member } from '~common/interfaces/backend/member';
 import { BaseQuery } from './base.query';
 
-export class MemberState extends common.Member {}
+export class MemberState extends Member {}
 
 let memberState: MemberState = {
   projectId: undefined,

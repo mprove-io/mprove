@@ -24,9 +24,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../shared.module';
 
 export interface EditChartInfoDialogData {
@@ -35,7 +32,7 @@ export interface EditChartInfoDialogData {
   isRepoProd: boolean;
   branchId: string;
   envId: string;
-  chart: common.Chart;
+  chart: Chart;
 }
 
 @Component({
@@ -51,7 +48,7 @@ export class EditChartInfoDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -111,7 +108,7 @@ export class EditChartInfoDialogComponent implements OnInit {
       this.titleForm.controls['title'].valid &&
       this.rolesForm.controls['roles'].valid
     ) {
-      this.spinner.show(constants.APP_SPINNER_NAME);
+      this.spinner.show(APP_SPINNER_NAME);
 
       this.ref.close();
 
@@ -120,7 +117,7 @@ export class EditChartInfoDialogComponent implements OnInit {
 
       let uiState = this.uiQuery.getValue();
 
-      let payload: apiToBackend.ToBackendSaveModifyChartRequestPayload = {
+      let payload: ToBackendSaveModifyChartRequestPayload = {
         projectId: this.ref.data.projectId,
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
@@ -136,18 +133,17 @@ export class EditChartInfoDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart,
           payload: payload,
           showSpinner: true
         })
         .pipe(
-          tap(async (resp: apiToBackend.ToBackendSaveModifyChartResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          tap(async (resp: ToBackendSaveModifyChartResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               let newChart = resp.payload.chart;
               let newChartPart = resp.payload.chartPart;
 
-              if (common.isDefined(newChart)) {
+              if (isDefined(newChart)) {
                 let charts = this.chartsQuery.getValue().charts;
 
                 let newCharts = [

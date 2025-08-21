@@ -18,12 +18,10 @@ import { take, tap } from 'rxjs/operators';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { TeamQuery } from '~front/app/queries/team.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface AddRoleDialogData {
   apiService: ApiService;
-  member: common.Member;
+  member: Member;
   i: number;
 }
 
@@ -71,9 +69,9 @@ export class AddRoleDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let member: common.Member = this.ref.data.member;
+    let member: Member = this.ref.data.member;
 
-    let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
+    let payload: ToBackendEditMemberRequestPayload = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -86,14 +84,13 @@ export class AddRoleDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditMember,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendEditMemberResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let teamState = this.teamQuery.getValue();
 
             teamState.members[this.ref.data.i] = resp.payload.member;

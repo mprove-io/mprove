@@ -7,9 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { USERS_PER_PAGE } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetOrgUsersRequestPayload,
+  ToBackendGetOrgUsersResponse
+} from '~common/interfaces/to-backend/org-users/to-backend-get-org-users';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UsersQuery } from '../queries/users.query';
@@ -51,21 +55,20 @@ export class OrgUsersResolver implements Resolve<Observable<boolean>> {
       orgId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetOrgUsersRequestPayload = {
+    let payload: ToBackendGetOrgUsersRequestPayload = {
       orgId: orgId,
       pageNum: 1,
-      perPage: constants.USERS_PER_PAGE
+      perPage: USERS_PER_PAGE
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetOrgUsersResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetOrgUsersResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.usersQuery.update({
               users: resp.payload.orgUsersList,
               total: resp.payload.total

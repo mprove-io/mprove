@@ -20,8 +20,6 @@ import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService, QDataRow } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({
@@ -32,13 +30,13 @@ import { ChartViewComponent } from '../chart-view/chart-view.component';
 export class DashboardTileChartComponent
   implements OnInit, OnChanges, OnDestroy
 {
-  chartTypeEnumTable = common.ChartTypeEnum.Table;
-  chartTypeEnumSingle = common.ChartTypeEnum.Single;
+  chartTypeEnumTable = ChartTypeEnum.Table;
+  chartTypeEnumSingle = ChartTypeEnum.Single;
 
-  queryStatusEnum = common.QueryStatusEnum;
-  queryStatusRunning = common.QueryStatusEnum.Running;
+  queryStatusEnum = QueryStatusEnum;
+  queryStatusRunning = QueryStatusEnum.Running;
 
-  modelTypeStore = common.ModelTypeEnum.Store;
+  modelTypeStore = ModelTypeEnum.Store;
 
   @ViewChildren('chartView') chartViewComponents: QueryList<ChartViewComponent>;
 
@@ -46,22 +44,22 @@ export class DashboardTileChartComponent
   deleteFilterFn: (item: DeleteFilterFnItem) => void;
 
   @Input()
-  tile: common.TileX;
+  tile: TileX;
 
   @Input()
   title: string;
 
   @Input()
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
 
   @Input()
   randomId: string;
 
   @Input()
-  mconfig: common.MconfigX;
+  mconfig: MconfigX;
 
   @Input()
-  query: common.Query;
+  query: Query;
 
   @Input()
   showTileParameters: boolean;
@@ -114,8 +112,8 @@ export class DashboardTileChartComponent
         concatMap(() => {
           let nav = this.navQuery.getValue();
 
-          if (this.query?.status === common.QueryStatusEnum.Running) {
-            let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+          if (this.query?.status === QueryStatusEnum.Running) {
+            let payload: ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
               branchId: nav.branchId,
               envId: nav.envId,
@@ -127,17 +125,13 @@ export class DashboardTileChartComponent
 
             return this.apiService
               .req({
-                pathInfoName:
-                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
                 payload: payload
               })
               .pipe(
-                tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                    if (
-                      resp.payload.query.status !==
-                      common.QueryStatusEnum.Running
-                    ) {
+                tap((resp: ToBackendGetQueryResponse) => {
+                  if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+                    if (resp.payload.query.status !== QueryStatusEnum.Running) {
                       this.updateQuery(resp.payload.query);
                     }
                   }
@@ -153,7 +147,7 @@ export class DashboardTileChartComponent
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
       mconfigFields: this.mconfig.fields,
-      isStoreModel: this.mconfig.modelType === common.ModelTypeEnum.Store
+      isStoreModel: this.mconfig.modelType === ModelTypeEnum.Store
       // isStoreModel: this.mconfig.isStoreModel
     });
 
@@ -165,9 +159,9 @@ export class DashboardTileChartComponent
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      changes.query?.currentValue?.status === common.QueryStatusEnum.Running &&
-      (common.isUndefined(changes.query?.previousValue?.status) ||
-        changes.query.previousValue.status !== common.QueryStatusEnum.Running)
+      changes.query?.currentValue?.status === QueryStatusEnum.Running &&
+      (isUndefined(changes.query?.previousValue?.status) ||
+        changes.query.previousValue.status !== QueryStatusEnum.Running)
     ) {
       this.showSpinner();
     }
@@ -204,10 +198,10 @@ export class DashboardTileChartComponent
     event.stopPropagation();
   }
 
-  updateQuery(query: common.Query) {
+  updateQuery(query: Query) {
     this.query = query;
 
-    if (this.query.status !== common.QueryStatusEnum.Running) {
+    if (this.query.status !== QueryStatusEnum.Running) {
       this.spinner.hide(this.tile.title);
     }
 
@@ -238,7 +232,7 @@ export class DashboardTileChartComponent
 
   ngOnDestroy() {
     // console.log('ngOnDestroyChart')
-    if (common.isDefined(this.checkRunning$)) {
+    if (isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }
   }

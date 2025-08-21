@@ -8,11 +8,8 @@ import { TeamQuery } from '~front/app/queries/team.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
-class MemberExtended extends common.Member {
+class MemberExtended extends Member {
   initials: string;
 }
 
@@ -22,10 +19,10 @@ class MemberExtended extends common.Member {
   templateUrl: './project-team.component.html'
 })
 export class ProjectTeamComponent implements OnInit {
-  pageTitle = constants.PROJECT_TEAM_PAGE_TITLE;
+  pageTitle = PROJECT_TEAM_PAGE_TITLE;
 
   currentPage: any = 1;
-  perPage = constants.MEMBERS_PER_PAGE;
+  perPage = MEMBERS_PER_PAGE;
 
   userId: string;
   userId$ = this.userQuery.userId$.pipe(
@@ -92,7 +89,7 @@ export class ProjectTeamComponent implements OnInit {
   }
 
   getMembers(pageNum: number) {
-    let payload: apiToBackend.ToBackendGetMembersRequestPayload = {
+    let payload: ToBackendGetMembersRequestPayload = {
       projectId: this.projectId,
       pageNum: pageNum,
       perPage: this.perPage
@@ -100,13 +97,12 @@ export class ProjectTeamComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetMembers,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetMembersResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetMembersResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.teamQuery.update(resp.payload);
             this.currentPage = pageNum;
           }
@@ -128,20 +124,19 @@ export class ProjectTeamComponent implements OnInit {
       alias: alias
     });
 
-    let payload: apiToBackend.ToBackendGetAvatarBigRequestPayload = {
+    let payload: ToBackendGetAvatarBigRequestPayload = {
       avatarUserId: memberId
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetAvatarBigResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetAvatarBigResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.myDialogService.showPhoto({
               avatarBig: resp.payload.avatarBig,
               initials: initials
@@ -160,7 +155,7 @@ export class ProjectTeamComponent implements OnInit {
     });
   }
 
-  removeMember(member: common.Member) {
+  removeMember(member: Member) {
     this.myDialogService.showRemoveMember({
       apiService: this.apiService,
       projectId: this.projectId,
@@ -193,8 +188,8 @@ export class ProjectTeamComponent implements OnInit {
     this.apiEditMember(m, i);
   }
 
-  apiEditMember(member: common.Member, i: number) {
-    let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
+  apiEditMember(member: Member, i: number) {
+    let payload: ToBackendEditMemberRequestPayload = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -205,14 +200,13 @@ export class ProjectTeamComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditMember,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendEditMemberResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let teamState = this.teamQuery.getValue();
             teamState.members[i] = resp.payload.member;
             this.teamQuery.update({
@@ -230,7 +224,7 @@ export class ProjectTeamComponent implements OnInit {
       .subscribe();
   }
 
-  addRole(member: common.Member, i: number) {
+  addRole(member: Member, i: number) {
     this.myDialogService.showAddRole({
       apiService: this.apiService,
       member: member,
@@ -238,11 +232,11 @@ export class ProjectTeamComponent implements OnInit {
     });
   }
 
-  removeRole(member: common.Member, i: number, n: number) {
+  removeRole(member: Member, i: number, n: number) {
     let newRoles = [...member.roles];
     newRoles.splice(n, 1);
 
-    let payload: apiToBackend.ToBackendEditMemberRequestPayload = {
+    let payload: ToBackendEditMemberRequestPayload = {
       projectId: member.projectId,
       memberId: member.memberId,
       isAdmin: member.isAdmin,
@@ -253,14 +247,13 @@ export class ProjectTeamComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditMember,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditMember,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditMemberResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendEditMemberResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let teamState = this.teamQuery.getValue();
             teamState.members[i] = resp.payload.member;
 

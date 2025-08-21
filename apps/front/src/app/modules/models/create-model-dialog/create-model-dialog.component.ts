@@ -28,9 +28,6 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CreateModelDialogData {
@@ -58,7 +55,7 @@ export class CreateModelDialogComponent implements OnInit {
 
   @ViewChild('modelName') modelNameElement: ElementRef;
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
   modelNameForm: FormGroup = this.fb.group({
     name: [undefined, [Validators.maxLength(255), Validators.required]]
@@ -68,22 +65,22 @@ export class CreateModelDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  connectionTypeEnumApi = common.ConnectionTypeEnum.Api;
-  connectionTypeEnumGoogleApi = common.ConnectionTypeEnum.GoogleApi;
+  connectionTypeEnumApi = ConnectionTypeEnum.Api;
+  connectionTypeEnumGoogleApi = ConnectionTypeEnum.GoogleApi;
 
   connectionForm: FormGroup = new FormGroup({
-    connection: new FormControl<common.Connection>(undefined, {
+    connection: new FormControl<Connection>(undefined, {
       validators: [Validators.required]
     })
   });
 
   connectionsSpinnerName = 'modelsAddConnectionSpinnerName';
 
-  connections: common.Connection[] = [];
+  connections: Connection[] = [];
   connectionsLoading = false;
   connectionsLoaded = false;
 
-  emptyPreset: common.Preset = {
+  emptyPreset: Preset = {
     presetId: undefined,
     label: 'Empty',
     path: undefined,
@@ -91,10 +88,10 @@ export class CreateModelDialogComponent implements OnInit {
   };
 
   presetForm: FormGroup = new FormGroup({
-    preset: new FormControl<common.Preset>(this.emptyPreset)
+    preset: new FormControl<Preset>(this.emptyPreset)
   });
 
-  presets: common.Preset[] = [];
+  presets: Preset[] = [];
 
   struct: StructState;
   struct$ = this.structQuery.select().pipe(
@@ -140,7 +137,7 @@ export class CreateModelDialogComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendGetConnectionsRequestPayload = {
+    let payload: ToBackendGetConnectionsRequestPayload = {
       projectId: nav.projectId,
       envId: nav.envId
     };
@@ -151,13 +148,12 @@ export class CreateModelDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetConnections,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnections,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetConnectionsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetConnectionsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.connections = resp.payload.connections;
@@ -180,22 +176,21 @@ export class CreateModelDialogComponent implements OnInit {
     this.formsError = undefined;
 
     if (
-      [
-        common.ConnectionTypeEnum.Api,
-        common.ConnectionTypeEnum.GoogleApi
-      ].indexOf(this.connectionForm.controls['connection'].value.type) < 0
+      [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
+        this.connectionForm.controls['connection'].value.type
+      ) < 0
     ) {
       this.presetForm.controls['preset'].setValue(this.emptyPreset);
     } else if (
       this.connectionForm.controls['connection'].value.type ===
-        common.ConnectionTypeEnum.GoogleApi &&
+        ConnectionTypeEnum.GoogleApi &&
       this.presetForm.controls['preset'].value?.presetId !== 'google_analytics'
     ) {
       let presetGA = this.presets.find(x => x.presetId === 'google_analytics');
       this.presetForm.controls['preset'].setValue(presetGA);
     } else if (
       this.connectionForm.controls['connection'].value.type !==
-        common.ConnectionTypeEnum.GoogleApi &&
+        ConnectionTypeEnum.GoogleApi &&
       this.presetForm.controls['preset'].value?.presetId === 'google_analytics'
     ) {
       this.presetForm.controls['preset'].setValue(this.emptyPreset);
@@ -215,7 +210,7 @@ export class CreateModelDialogComponent implements OnInit {
       return;
     }
 
-    if (common.isUndefined(this.connectionForm.controls['connection'].value)) {
+    if (isUndefined(this.connectionForm.controls['connection'].value)) {
       this.formsError = 'Connection must be selected';
       return;
     }
@@ -242,20 +237,19 @@ export class CreateModelDialogComponent implements OnInit {
   createModel(item: {
     modelName: string;
     roles: string;
-    connection: common.Connection;
-    preset: common.Preset;
+    connection: Connection;
+    preset: Preset;
   }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let { modelName, connection, preset, roles } = item;
 
     let filePart = modelName.toLowerCase().split(' ').join('_');
 
     let fileExt =
-      [
-        common.ConnectionTypeEnum.Api,
-        common.ConnectionTypeEnum.GoogleApi
-      ].indexOf(connection.type) > -1
+      [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
+        connection.type
+      ) > -1
         ? 'store'
         : 'model';
 
@@ -273,7 +267,7 @@ export class CreateModelDialogComponent implements OnInit {
 
     let parentNodeId = [struct.projectId, part].join('/');
 
-    let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
+    let payload: ToBackendCreateFileRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
@@ -284,10 +278,9 @@ export class CreateModelDialogComponent implements OnInit {
         name: modelName,
         accessRoles: roles?.split(',').map(x => x.trim()),
         presetId:
-          [
-            common.ConnectionTypeEnum.Api,
-            common.ConnectionTypeEnum.GoogleApi
-          ].indexOf(this.connectionForm.controls['connection'].value.type) > -1
+          [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
+            this.connectionForm.controls['connection'].value.type
+          ) > -1
             ? preset.presetId
             : undefined
       }
@@ -299,14 +292,13 @@ export class CreateModelDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFile,
         payload: payload,
         showSpinner: false
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateFileResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -320,20 +312,19 @@ export class CreateModelDialogComponent implements OnInit {
 
               let filePath = fIdAr.join('/');
 
-              let fileId = common.encodeFilePath({ filePath: filePath });
+              let fileId = encodeFilePath({ filePath: filePath });
 
               this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
               this.navigateService.navigateToFileLine({
-                panel: common.PanelEnum.Tree,
+                panel: PanelEnum.Tree,
                 encodedFileId: fileId
               });
             } else {
               let modelId =
-                [
-                  common.ConnectionTypeEnum.Api,
-                  common.ConnectionTypeEnum.GoogleApi
-                ].indexOf(connection.type) > -1
+                [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
+                  connection.type
+                ) > -1
                   ? `store_model_${filePart}`
                   : filePart;
 
@@ -351,7 +342,7 @@ export class CreateModelDialogComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendGetModelsRequestPayload = {
+    let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -362,13 +353,12 @@ export class CreateModelDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModels,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetModelsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
@@ -381,7 +371,7 @@ export class CreateModelDialogComponent implements OnInit {
 
             this.navigateService.navigateToChart({
               modelId: modelId,
-              chartId: common.EMPTY_CHART_ID
+              chartId: EMPTY_CHART_ID
             });
           }
         }),
@@ -390,7 +380,7 @@ export class CreateModelDialogComponent implements OnInit {
       .subscribe();
   }
 
-  connectionsSearchFn(term: string, connection: common.Connection) {
+  connectionsSearchFn(term: string, connection: Connection) {
     let haystack = [`${connection.connectionId}`];
 
     let opts = {};
@@ -400,7 +390,7 @@ export class CreateModelDialogComponent implements OnInit {
     return idxs != null && idxs.length > 0;
   }
 
-  presetsSearchFn(term: string, preset: common.Preset) {
+  presetsSearchFn(term: string, preset: Preset) {
     let haystack = [`${preset.label}`];
 
     let opts = {};

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { Model } from '~common/interfaces/blockml/model';
 import { BaseQuery } from './base.query';
 
-export class ModelState extends common.Model {}
+export class ModelState extends Model {}
 
 let modelState: ModelState = {
   structId: undefined,

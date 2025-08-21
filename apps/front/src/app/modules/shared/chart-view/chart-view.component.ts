@@ -24,8 +24,6 @@ import {
   SeriesDataElement
 } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -33,24 +31,24 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './chart-view.component.html'
 })
 export class ChartViewComponent implements OnChanges {
-  chartTypeEnum = common.ChartTypeEnum;
-  chartSchemeTypeEnum = common.ChartSchemeTypeEnum;
-  queryStatusEnum = common.QueryStatusEnum;
+  chartTypeEnum = ChartTypeEnum;
+  chartSchemeTypeEnum = ChartSchemeTypeEnum;
+  queryStatusEnum = QueryStatusEnum;
 
   eChartInitOpts: any;
   eChartOptions: EChartsOption;
 
   eChartsTypes = [
-    common.ChartTypeEnum.Line,
-    common.ChartTypeEnum.Bar,
-    common.ChartTypeEnum.Scatter,
-    common.ChartTypeEnum.Pie
+    ChartTypeEnum.Line,
+    ChartTypeEnum.Bar,
+    ChartTypeEnum.Scatter,
+    ChartTypeEnum.Pie
   ];
 
   eChartsMultiChartTypes = [
-    common.ChartTypeEnum.Line,
-    common.ChartTypeEnum.Bar,
-    common.ChartTypeEnum.Scatter
+    ChartTypeEnum.Line,
+    ChartTypeEnum.Bar,
+    ChartTypeEnum.Scatter
   ];
 
   @Input()
@@ -63,12 +61,12 @@ export class ChartViewComponent implements OnChanges {
   isAnimation: boolean;
 
   @Input()
-  modelType: common.ModelTypeEnum;
+  modelType: ModelTypeEnum;
 
   @Input()
-  mconfigFields: common.MconfigField[];
+  mconfigFields: MconfigField[];
 
-  yFieldColumn: common.MconfigField;
+  yFieldColumn: MconfigField;
 
   @Input()
   isStoreModel: boolean;
@@ -77,10 +75,10 @@ export class ChartViewComponent implements OnChanges {
   qData: QDataRow[];
 
   @Input()
-  chart: common.MconfigChart;
+  chart: MconfigChart;
 
   @Input()
-  queryStatus: common.QueryStatusEnum;
+  queryStatus: QueryStatusEnum;
 
   echartsInstance: any;
 
@@ -129,7 +127,7 @@ export class ChartViewComponent implements OnChanges {
         fontFamily: 'sans-serif'
       },
       legend:
-        this.chart.type === common.ChartTypeEnum.Pie
+        this.chart.type === ChartTypeEnum.Pie
           ? { show: false }
           : {
               top: 20,
@@ -140,14 +138,14 @@ export class ChartViewComponent implements OnChanges {
               }
             },
       tooltip:
-        this.chart.type === common.ChartTypeEnum.Line ||
-        this.chart.type === common.ChartTypeEnum.Bar
+        this.chart.type === ChartTypeEnum.Line ||
+        this.chart.type === ChartTypeEnum.Bar
           ? {
               confine: true,
               trigger: 'axis',
               order: 'valueDesc',
               valueFormatter: (value: any) =>
-                `${common.isDefined(value) ? value.toFixed(2) : 'Null'}`
+                `${isDefined(value) ? value.toFixed(2) : 'Null'}`
             }
           : {
               confine: true,
@@ -162,11 +160,9 @@ export class ChartViewComponent implements OnChanges {
     });
 
     this.isSelectValid =
-      [
-        common.ChartTypeEnum.Table,
-        common.ChartTypeEnum.Single,
-        ...this.eChartsTypes
-      ].indexOf(this.chart.type) > -1
+      [ChartTypeEnum.Table, ChartTypeEnum.Single, ...this.eChartsTypes].indexOf(
+        this.chart.type
+      ) > -1
         ? checkSelectResult.isSelectValid
         : false;
 
@@ -175,20 +171,20 @@ export class ChartViewComponent implements OnChanges {
     if (this.isSelectValid === false) {
       this.seriesData = [];
     } else {
-      let xField = common.isDefined(this.chart.xField)
+      let xField = isDefined(this.chart.xField)
         ? this.mconfigFields.find(v => v.id === this.chart.xField)
         : undefined;
 
-      // let yField = common.isDefined(this.chart.yField)
+      // let yField = isDefined(this.chart.yField)
       //   ? this.mconfigFields.find(v => v.id === this.chart.yField)
       //   : undefined;
 
-      // let sizeField = common.isDefined(this.chart.sizeField)
+      // let sizeField = isDefined(this.chart.sizeField)
       //   ? this.mconfigFields.find(v => v.id === this.chart.sizeField)
       //   : undefined;
 
       if (
-        this.chart.type === common.ChartTypeEnum.Single &&
+        this.chart.type === ChartTypeEnum.Single &&
         this.chart.yFields.length > 0
       ) {
         this.yFieldColumn = this.mconfigFields.find(
@@ -219,8 +215,8 @@ export class ChartViewComponent implements OnChanges {
 
         this.seriesData =
           this.qData?.length > 0 &&
-          common.isDefined(this.chart.xField) &&
-          common.isDefined(this.chart.yFields) &&
+          isDefined(this.chart.xField) &&
+          isDefined(this.chart.yFields) &&
           this.chart.yFields.length > 0
             ? this.dataService.makeSeriesData({
                 modelType: this.modelType,
@@ -257,71 +253,67 @@ export class ChartViewComponent implements OnChanges {
       // echarts - axes
 
       if (
-        this.chart.type === common.ChartTypeEnum.Line ||
-        this.chart.type === common.ChartTypeEnum.Bar ||
-        this.chart.type === common.ChartTypeEnum.Scatter
+        this.chart.type === ChartTypeEnum.Line ||
+        this.chart.type === ChartTypeEnum.Bar ||
+        this.chart.type === ChartTypeEnum.Scatter
       ) {
         let tsFormatter = xField.sqlName.match(/(?:___year)$/g)
           ? (value: any) =>
               frontFormatTsUnix({
-                timeSpec: common.TimeSpecEnum.Years,
+                timeSpec: TimeSpecEnum.Years,
                 unixTimeZoned: value / 1000
               })
           : xField.sqlName.match(/(?:___quarter)$/g)
             ? (value: any) =>
                 frontFormatTsUnix({
-                  timeSpec: common.TimeSpecEnum.Quarters,
+                  timeSpec: TimeSpecEnum.Quarters,
                   unixTimeZoned: value / 1000
                 })
             : xField.sqlName.match(/(?:___month)$/g)
               ? (value: any) =>
                   frontFormatTsUnix({
-                    timeSpec: common.TimeSpecEnum.Months,
+                    timeSpec: TimeSpecEnum.Months,
                     unixTimeZoned: value / 1000
                   })
               : xField.sqlName.match(/(?:___week)$/g)
                 ? (value: any) =>
                     frontFormatTsUnix({
-                      timeSpec: common.TimeSpecEnum.Weeks,
+                      timeSpec: TimeSpecEnum.Weeks,
                       unixTimeZoned: value / 1000
                     })
                 : xField.sqlName.match(/(?:___date)$/g)
                   ? (value: any) =>
                       frontFormatTsUnix({
-                        timeSpec: common.TimeSpecEnum.Days,
+                        timeSpec: TimeSpecEnum.Days,
                         unixTimeZoned: value / 1000
                       })
                   : undefined;
 
-        eChartOptions.xAxis = common.isDefined(xField.detail)
+        eChartOptions.xAxis = isDefined(xField.detail)
           ? {
               type: 'time',
               axisLabel: {
                 fontSize: 13,
                 formatter: (value: any) => {
                   let storeTimeSpec =
-                    xField.detail === common.DetailUnitEnum.Timestamps
-                      ? common.TimeSpecEnum.Timestamps
-                      : xField.detail === common.DetailUnitEnum.Minutes
-                        ? common.TimeSpecEnum.Minutes
-                        : xField.detail === common.DetailUnitEnum.Hours
-                          ? common.TimeSpecEnum.Hours
-                          : xField.detail === common.DetailUnitEnum.Days
-                            ? common.TimeSpecEnum.Days
-                            : xField.detail ===
-                                common.DetailUnitEnum.WeeksSunday
-                              ? common.TimeSpecEnum.Weeks
-                              : xField.detail ===
-                                  common.DetailUnitEnum.WeeksMonday
-                                ? common.TimeSpecEnum.Weeks
-                                : xField.detail === common.DetailUnitEnum.Months
-                                  ? common.TimeSpecEnum.Months
-                                  : xField.detail ===
-                                      common.DetailUnitEnum.Quarters
-                                    ? common.TimeSpecEnum.Quarters
-                                    : xField.detail ===
-                                        common.DetailUnitEnum.Years
-                                      ? common.TimeSpecEnum.Years
+                    xField.detail === DetailUnitEnum.Timestamps
+                      ? TimeSpecEnum.Timestamps
+                      : xField.detail === DetailUnitEnum.Minutes
+                        ? TimeSpecEnum.Minutes
+                        : xField.detail === DetailUnitEnum.Hours
+                          ? TimeSpecEnum.Hours
+                          : xField.detail === DetailUnitEnum.Days
+                            ? TimeSpecEnum.Days
+                            : xField.detail === DetailUnitEnum.WeeksSunday
+                              ? TimeSpecEnum.Weeks
+                              : xField.detail === DetailUnitEnum.WeeksMonday
+                                ? TimeSpecEnum.Weeks
+                                : xField.detail === DetailUnitEnum.Months
+                                  ? TimeSpecEnum.Months
+                                  : xField.detail === DetailUnitEnum.Quarters
+                                    ? TimeSpecEnum.Quarters
+                                    : xField.detail === DetailUnitEnum.Years
+                                      ? TimeSpecEnum.Years
                                       : undefined;
 
                   return frontFormatTsUnix({
@@ -331,7 +323,7 @@ export class ChartViewComponent implements OnChanges {
                 }
               }
             }
-          : xField.result === common.FieldResultEnum.Ts
+          : xField.result === FieldResultEnum.Ts
             ? {
                 type: 'time',
                 axisLabel: {
@@ -339,7 +331,7 @@ export class ChartViewComponent implements OnChanges {
                   formatter: tsFormatter
                 }
               }
-            : xField.result === common.FieldResultEnum.Number
+            : xField.result === FieldResultEnum.Number
               ? {
                   type: 'value',
                   scale: this.chart.xAxis.scale,
@@ -378,15 +370,15 @@ export class ChartViewComponent implements OnChanges {
             fontSize: 16
           },
           formatter:
-            this.chart.type === common.ChartTypeEnum.Pie
+            this.chart.type === ChartTypeEnum.Pie
               ? (p: any) => {
                   // console.log(p);
 
-                  let xValueFmt = common.isDefined(p.data.pXValueFmt)
+                  let xValueFmt = isDefined(p.data.pXValueFmt)
                     ? p.data.pXValueFmt
                     : 'null';
 
-                  let sValueFmt = common.isDefined(p.data.pYValueFmt)
+                  let sValueFmt = isDefined(p.data.pYValueFmt)
                     ? p.data.pYValueFmt
                     : 'null';
 
@@ -395,20 +387,20 @@ export class ChartViewComponent implements OnChanges {
               : (p: any) => {
                   // console.log(p);
 
-                  let xValueFmt = common.isDefined(p.data.pXValueFmt)
+                  let xValueFmt = isDefined(p.data.pXValueFmt)
                     ? p.data.pXValueFmt
                     : 'null';
 
-                  let sValueFmt = common.isDefined(p.data.pYValueFmt)
+                  let sValueFmt = isDefined(p.data.pYValueFmt)
                     ? p.data.pYValueFmt
                     : 'null';
 
-                  let sizeValueFmt = common.isDefined(p.data.pSizeValueFmt)
+                  let sizeValueFmt = isDefined(p.data.pSizeValueFmt)
                     ? p.data.pSizeValueFmt
                     : 'null';
 
-                  return this.chart.type === common.ChartTypeEnum.Scatter &&
-                    common.isDefined(this.chart.sizeField) &&
+                  return this.chart.type === ChartTypeEnum.Scatter &&
+                    isDefined(this.chart.sizeField) &&
                     p.name !== p.data.pSizeFieldName
                     ? `${p.name}: <strong>${sValueFmt}</strong><br/>${p.data.pSizeFieldName}: <strong>${sizeValueFmt}</strong><br/>${xValueFmt}`
                     : `${p.name}<br/><strong>${sValueFmt}</strong><br/>${xValueFmt}`;
@@ -469,7 +461,7 @@ export class ChartViewComponent implements OnChanges {
               let scatterSeriesOption: ScatterSeriesOption = {
                 type: 'scatter',
                 yAxisIndex: chartSeriesElement.yAxisIndex,
-                symbolSize: common.isDefined(this.chart.sizeField)
+                symbolSize: isDefined(this.chart.sizeField)
                   ? (data: any) => 5 + data[2] * 25
                   : 10,
                 name: seriesDataElement?.seriesName,
@@ -510,13 +502,13 @@ export class ChartViewComponent implements OnChanges {
               };
 
               let seriesOption =
-                chartSeriesElement.type === common.ChartTypeEnum.Line
+                chartSeriesElement.type === ChartTypeEnum.Line
                   ? lineSeriesOption
-                  : chartSeriesElement.type === common.ChartTypeEnum.Bar
+                  : chartSeriesElement.type === ChartTypeEnum.Bar
                     ? barSeriesOption
-                    : chartSeriesElement.type === common.ChartTypeEnum.Scatter
+                    : chartSeriesElement.type === ChartTypeEnum.Scatter
                       ? scatterSeriesOption
-                      : chartSeriesElement.type === common.ChartTypeEnum.Pie
+                      : chartSeriesElement.type === ChartTypeEnum.Pie
                         ? pieSeriesOption
                         : baseSeriesOption;
 
@@ -554,14 +546,14 @@ export class ChartViewComponent implements OnChanges {
     let struct = this.structQuery.getValue();
 
     let locale = formatLocale({
-      decimal: constants.FORMAT_NUMBER_DECIMAL,
+      decimal: FORMAT_NUMBER_DECIMAL,
       thousands: struct.thousandsSeparator,
-      grouping: constants.FORMAT_NUMBER_GROUPING,
+      grouping: FORMAT_NUMBER_GROUPING,
       currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
     });
 
     //
-    if (common.isDefined(value.value)) {
+    if (isDefined(value.value)) {
       value = value.value;
     }
 
@@ -569,7 +561,7 @@ export class ChartViewComponent implements OnChanges {
       value = value.split(',').join('');
     }
 
-    if (isNaN(value) === false && common.isDefined(formatNumber)) {
+    if (isNaN(value) === false && isDefined(formatNumber)) {
       value = locale.format(formatNumber)(Number(value));
     }
 
@@ -586,14 +578,14 @@ export class ChartViewComponent implements OnChanges {
     // });
 
     // let locale = formatLocale({
-    //   decimal: constants.FORMAT_NUMBER_DECIMAL,
+    //   decimal: FORMAT_NUMBER_DECIMAL,
     //   thousands: struct.thousandsSeparator,
-    //   grouping: constants.FORMAT_NUMBER_GROUPING,
+    //   grouping: FORMAT_NUMBER_GROUPING,
     //   currency: [field.currencyPrefix, field.currencySuffix]
     // });
 
     //
-    if (common.isDefined(value.label)) {
+    if (isDefined(value.label)) {
       let num = value.label.split(',').join('');
       if (isNaN(num) === false) {
         value = num;
@@ -606,7 +598,7 @@ export class ChartViewComponent implements OnChanges {
     //   value = value.split(',').join('');
     // }
 
-    // if (isNaN(value) === false && common.isDefined(formatNumber)) {
+    // if (isNaN(value) === false && isDefined(formatNumber)) {
     //   value = locale.format(formatNumber)(Number(value));
     // }
 
@@ -622,14 +614,14 @@ export class ChartViewComponent implements OnChanges {
   //   );
 
   //   let locale = formatLocale({
-  //     decimal: constants.FORMAT_NUMBER_DECIMAL,
+  //     decimal: FORMAT_NUMBER_DECIMAL,
   //     thousands: struct.thousandsSeparator,
-  //     grouping: constants.FORMAT_NUMBER_GROUPING,
+  //     grouping: FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });
 
   //   // ngx-charts-number-card passes data instead of value
-  //   if (common.isDefined(value.value)) {
+  //   if (isDefined(value.value)) {
   //     value = value.value;
   //   }
 
@@ -637,7 +629,7 @@ export class ChartViewComponent implements OnChanges {
   //     value = value.split(',').join('');
   //   }
 
-  //   if (isNaN(value) === false && common.isDefined(formatNumber)) {
+  //   if (isNaN(value) === false && isDefined(formatNumber)) {
   //     value = locale.format(formatNumber)(Number(value));
   //   }
 
@@ -652,9 +644,9 @@ export class ChartViewComponent implements OnChanges {
   //     });
 
   //   let locale = formatLocale({
-  //     decimal: constants.FORMAT_NUMBER_DECIMAL,
+  //     decimal: FORMAT_NUMBER_DECIMAL,
   //     thousands: struct.thousandsSeparator,
-  //     grouping: constants.FORMAT_NUMBER_GROUPING,
+  //     grouping: FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });
 
@@ -663,7 +655,7 @@ export class ChartViewComponent implements OnChanges {
   //     value = value.split(',').join('');
   //   }
 
-  //   if (isNaN(value) === false && common.isDefined(formatNumber)) {
+  //   if (isNaN(value) === false && isDefined(formatNumber)) {
   //     value = locale.format(formatNumber)(Number(value));
   //   }
 
@@ -680,18 +672,18 @@ export class ChartViewComponent implements OnChanges {
     let struct = this.structQuery.getValue();
 
     let locale = formatLocale({
-      decimal: constants.FORMAT_NUMBER_DECIMAL,
+      decimal: FORMAT_NUMBER_DECIMAL,
       thousands: struct.thousandsSeparator,
-      grouping: constants.FORMAT_NUMBER_GROUPING,
+      grouping: FORMAT_NUMBER_GROUPING,
       currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
     });
 
     // ngx charts horizontal passes data instead of value
-    if (common.isDefined(value.value)) {
+    if (isDefined(value.value)) {
       value = value.value;
     }
 
-    if (isNaN(value) === false && common.isDefined(formatNumber)) {
+    if (isNaN(value) === false && isDefined(formatNumber)) {
       value = locale.format(formatNumber)(Number(value));
     }
 
@@ -706,17 +698,17 @@ export class ChartViewComponent implements OnChanges {
   //     });
 
   //   let locale = formatLocale({
-  //     decimal: constants.FORMAT_NUMBER_DECIMAL,
+  //     decimal: FORMAT_NUMBER_DECIMAL,
   //     thousands: struct.thousandsSeparator,
-  //     grouping: constants.FORMAT_NUMBER_GROUPING,
+  //     grouping: FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });
 
-  //   if (common.isDefined(value.value)) {
+  //   if (isDefined(value.value)) {
   //     value = value.value;
   //   }
 
-  //   if (isNaN(value) === false && common.isDefined(formatNumber)) {
+  //   if (isNaN(value) === false && isDefined(formatNumber)) {
   //     value = locale.format(formatNumber)(Number(value));
   //   }
 
@@ -728,8 +720,8 @@ export class ChartViewComponent implements OnChanges {
 //
 //
 
-// timeline = common.CHART_DEFAULT_TIMELINE;
-// rangeFillOpacity = common.CHART_DEFAULT_RANGE_FILL_OPACITY;
+// timeline = CHART_DEFAULT_TIMELINE;
+// rangeFillOpacity = CHART_DEFAULT_RANGE_FILL_OPACITY;
 // legendForHeatMap = false;
 
 // labelFormattingFn = this.labelFormatting.bind(this);

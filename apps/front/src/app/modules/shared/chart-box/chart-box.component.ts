@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import equal from 'fast-deep-equal';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -38,7 +37,7 @@ export class ChartBoxComponent implements OnChanges {
     // console.log(changes);
 
     if (
-      common.isDefined(changes.chartInstanceId) &&
+      isDefined(changes.chartInstanceId) &&
       changes.chartInstanceId.currentValue !==
         changes.chartInstanceId.previousValue
     ) {
@@ -47,7 +46,7 @@ export class ChartBoxComponent implements OnChanges {
     }
 
     if (
-      common.isDefined(changes.eChartInitOpts) &&
+      isDefined(changes.eChartInitOpts) &&
       equal(
         JSON.stringify(changes.eChartInitOpts.currentValue),
         JSON.stringify(changes.eChartInitOpts.previousValue)
@@ -65,7 +64,7 @@ export class ChartBoxComponent implements OnChanges {
     }
 
     if (
-      common.isDefined(changes.eChartOptions) &&
+      isDefined(changes.eChartOptions) &&
       equal(
         JSON.stringify(changes.eChartOptions.currentValue),
         JSON.stringify(changes.eChartOptions.previousValue)
@@ -82,7 +81,7 @@ export class ChartBoxComponent implements OnChanges {
       this.localOptions = changes.eChartOptions.currentValue;
     }
 
-    // if (common.isDefined(this.echartsInstance)) {
+    // if (isDefined(this.echartsInstance)) {
     //   this.echartsInstance.setOption(this.eChartOptions);
     // } else {
     //   this.localInitOpts = this.eChartInitOpts;

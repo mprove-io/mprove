@@ -1,14 +1,11 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
+import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
-
-import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
 
 @Component({
   standalone: false,
@@ -16,7 +13,7 @@ import { FilteredChartsQuery } from '~front/app/queries/filtered-charts.query';
   templateUrl: './charts-list.component.html'
 })
 export class ChartsListComponent {
-  pageTitle = constants.CHARTS_LIST_PAGE_TITLE;
+  pageTitle = CHARTS_LIST_PAGE_TITLE;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -34,7 +31,7 @@ export class ChartsListComponent {
     })
   );
 
-  filteredCharts: common.ChartX[];
+  filteredCharts: ChartX[];
   filteredCharts$ = this.filteredChartsQuery.select().pipe(
     tap(x => {
       this.filteredCharts = x.filteredCharts.filter(d => d.draft === false);
@@ -62,7 +59,7 @@ export class ChartsListComponent {
     this.showModelId = false;
   }
 
-  navigateToChart(chartItem: common.ChartX) {
+  navigateToChart(chartItem: ChartX) {
     // this.navigateService.navigateMconfigQuery({
     //   modelId: chartItem.modelId,
     //   mconfigId: chartItem.tiles[0].mconfigId,
@@ -78,22 +75,22 @@ export class ChartsListComponent {
   //   event.stopPropagation();
   // }
 
-  // goToChartFile(event: MouseEvent, item: common.ChartX) {
+  // goToChartFile(event: MouseEvent, item: ChartX) {
   //   event.stopPropagation();
 
   //   let fileIdAr = item.filePath.split('/');
   //   fileIdAr.shift();
 
   //   this.navigateService.navigateToFileLine({
-  //     panel: common.PanelEnum.Tree,
+  //     panel: PanelEnum.Tree,
   //     encodedFileId:
   //   });
   // }
 
-  // async editChartInfo(event: MouseEvent, item: common.ChartX) {
+  // async editChartInfo(event: MouseEvent, item: ChartX) {
   //   event.stopPropagation();
 
-  //   let payloadGetMconfig: apiToBackend.ToBackendGetMconfigRequestPayload = {
+  //   let payloadGetMconfig: ToBackendGetMconfigRequestPayload = {
   //     projectId: this.nav.projectId,
   //     branchId: this.nav.branchId,
   //     envId: this.nav.envId,
@@ -101,22 +98,22 @@ export class ChartsListComponent {
   //     mconfigId: item.tiles[0].mconfigId
   //   };
 
-  //   let mconfig: common.MconfigX = await this.apiService
+  //   let mconfig: MconfigX = await this.apiService
   //     .req({
   //       pathInfoName:
-  //         apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
+  //         ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
   //       payload: payloadGetMconfig
   //     })
   //     .pipe(
-  //       map((resp: apiToBackend.ToBackendGetMconfigResponse) => {
-  //         if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+  //       map((resp: ToBackendGetMconfigResponse) => {
+  //         if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
   //           return resp.payload.mconfig;
   //         }
   //       })
   //     )
   //     .toPromise();
 
-  //   if (common.isUndefined(mconfig)) {
+  //   if (isUndefined(mconfig)) {
   //     return;
   //   }
 
@@ -131,7 +128,7 @@ export class ChartsListComponent {
   //   });
   // }
 
-  // deleteChart(event: MouseEvent, item: common.ChartX) {
+  // deleteChart(event: MouseEvent, item: ChartX) {
   //   event.stopPropagation();
 
   //   this.myDialogService.showDeleteChart({
@@ -144,7 +141,7 @@ export class ChartsListComponent {
   //   });
   // }
 
-  trackByFn(index: number, item: common.ChartX) {
+  trackByFn(index: number, item: ChartX) {
     return item.chartId;
   }
 }

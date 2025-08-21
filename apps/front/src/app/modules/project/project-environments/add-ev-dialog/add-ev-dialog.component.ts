@@ -18,8 +18,6 @@ import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface AddEvDialogData {
   apiService: ApiService;
@@ -78,27 +76,24 @@ export class AddEvDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateEnvVarRequestPayload = {
+    let payload: ToBackendCreateEnvVarRequestPayload = {
       projectId: this.dataItem.projectId,
       envId: this.dataItem.envId,
       evId: this.addEvForm.value.evId,
-      val: common.isDefined(this.addEvForm.value.val)
-        ? this.addEvForm.value.val
-        : ''
+      val: isDefined(this.addEvForm.value.val) ? this.addEvForm.value.val : ''
     };
 
     let apiService: ApiService = this.dataItem.apiService;
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateEnvVar,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateEnvVarResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateEnvVarResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
           }

@@ -7,9 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { MEMBERS_PER_PAGE } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetMembersRequestPayload,
+  ToBackendGetMembersResponse
+} from '~common/interfaces/to-backend/members/to-backend-get-members';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -53,21 +57,20 @@ export class ProjectTeamResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetMembersRequestPayload = {
+    let payload: ToBackendGetMembersRequestPayload = {
       projectId: projectId,
       pageNum: 1,
-      perPage: constants.MEMBERS_PER_PAGE
+      perPage: MEMBERS_PER_PAGE
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetMembers,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetMembers,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetMembersResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetMembersResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.teamQuery.update(resp.payload);

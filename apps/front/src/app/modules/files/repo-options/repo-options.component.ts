@@ -11,9 +11,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -24,7 +21,7 @@ export class RepoOptionsComponent {
   @Input()
   node: TreeNode;
 
-  repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
+  repoStatusNeedCommit = RepoStatusEnum.NeedCommit;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -45,7 +42,7 @@ export class RepoOptionsComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  panel = common.PanelEnum.Tree;
+  panel = PanelEnum.Tree;
   panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
 
   repo: RepoState;
@@ -72,25 +69,24 @@ export class RepoOptionsComponent {
   revertToLastCommit(event?: MouseEvent) {
     event.stopPropagation();
 
-    let payload: apiToBackend.ToBackendRevertRepoToLastCommitRequestPayload = {
+    let payload: ToBackendRevertRepoToLastCommitRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId
     };
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendRevertRepoToLastCommit,
+          ToBackendRequestInfoNameEnum.ToBackendRevertRepoToLastCommit,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendRevertRepoToLastCommitResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendRevertRepoToLastCommitResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -103,14 +99,14 @@ export class RepoOptionsComponent {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -119,24 +115,23 @@ export class RepoOptionsComponent {
   revertToRemote(event?: MouseEvent) {
     event.stopPropagation();
 
-    let payload: apiToBackend.ToBackendRevertRepoToRemoteRequestPayload = {
+    let payload: ToBackendRevertRepoToRemoteRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId
     };
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRevertRepoToRemote,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendRevertRepoToRemoteResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendRevertRepoToRemoteResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -149,14 +144,14 @@ export class RepoOptionsComponent {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -165,7 +160,7 @@ export class RepoOptionsComponent {
   gitFetch(event?: MouseEvent) {
     event.stopPropagation();
 
-    let payload: apiToBackend.ToBackendGetRepoRequestPayload = {
+    let payload: ToBackendGetRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -173,17 +168,16 @@ export class RepoOptionsComponent {
       isFetch: true
     };
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetRepoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -196,14 +190,14 @@ export class RepoOptionsComponent {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -212,9 +206,9 @@ export class RepoOptionsComponent {
   pullFromRemote(event?: MouseEvent) {
     event.stopPropagation();
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
+    let payload: ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -223,13 +217,12 @@ export class RepoOptionsComponent {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPullRepo,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendPullRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendPullRepoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -242,14 +235,14 @@ export class RepoOptionsComponent {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
@@ -258,9 +251,9 @@ export class RepoOptionsComponent {
   validate(event?: MouseEvent) {
     event.stopPropagation();
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
-    let payload: apiToBackend.ToBackendValidateFilesRequestPayload = {
+    let payload: ToBackendValidateFilesRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -269,13 +262,12 @@ export class RepoOptionsComponent {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendValidateFilesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendValidateFilesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -288,14 +280,14 @@ export class RepoOptionsComponent {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();

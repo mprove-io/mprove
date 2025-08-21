@@ -1,18 +1,19 @@
 import { Injectable } from '@angular/core';
-import { common } from '~front/barrels/common';
+import { MconfigField } from '~common/interfaces/backend/mconfig-field';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 
 @Injectable({ providedIn: 'root' })
 export class FormatNumberService {
   constructor() {}
 
   getFormatNumberDataLabel(item: {
-    chart: common.MconfigChart;
-    mconfigFields: common.MconfigField[];
+    chart: MconfigChart;
+    mconfigFields: MconfigField[];
   }) {
     let { chart, mconfigFields } = item;
 
     let field =
-      // common.isDefined(chart.yField)
+      // isDefined(chart.yField)
       //   ? mconfigFields.find(f => f.id === chart.yField)
       //   :
       mconfigFields.filter(f => chart.yFields.indexOf(f.id) > -1)[0];
@@ -25,15 +26,15 @@ export class FormatNumberService {
   }
 
   // getFormatNumberValue(item: {
-  //   chart: common.MconfigChart;
-  //   mconfigFields: common.MconfigField[];
+  //   chart: MconfigChart;
+  //   mconfigFields: MconfigField[];
   // }) {
   //   let { chart, mconfigFields } = item;
 
   //   let field = mconfigFields.find(f => f.id === chart.yField);
 
   //   let formatNumber =
-  //     // common.isDefined(chart.formatNumberValue)
+  //     // isDefined(chart.formatNumberValue)
   //     //   ? chart.formatNumberValue
   //     //   :
   //     field?.formatNumber;
@@ -42,8 +43,8 @@ export class FormatNumberService {
   // }
 
   // getFormatNumberAxisTick(item: {
-  //   chart: common.MconfigChart;
-  //   mconfigFields: common.MconfigField[];
+  //   chart: MconfigChart;
+  //   mconfigFields: MconfigField[];
   // }) {
   //   let { chart, mconfigFields } = item;
 
@@ -57,13 +58,13 @@ export class FormatNumberService {
   // }
 
   getFormatNumberYAxisTick(item: {
-    chart: common.MconfigChart;
-    mconfigFields: common.MconfigField[];
+    chart: MconfigChart;
+    mconfigFields: MconfigField[];
   }) {
     let { chart, mconfigFields } = item;
 
     let field =
-      // common.isDefined(chart.yField)
+      // isDefined(chart.yField)
       //   ? mconfigFields.find(f => f.id === chart.yField)
       //   :
       mconfigFields.filter(f => chart.yFields.indexOf(f.id) > -1)[0];
@@ -76,8 +77,8 @@ export class FormatNumberService {
   }
 
   // getFormatNumberXAxisTick(item: {
-  //   chart: common.MconfigChart;
-  //   mconfigFields: common.MconfigField[];
+  //   chart: MconfigChart;
+  //   mconfigFields: MconfigField[];
   // }) {
   //   let { chart, mconfigFields } = item;
 

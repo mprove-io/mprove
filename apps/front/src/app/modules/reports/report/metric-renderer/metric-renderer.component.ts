@@ -10,7 +10,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -20,15 +19,15 @@ import { common } from '~front/barrels/common';
 export class MetricRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
-  rowTypeHeader = common.RowTypeEnum.Header;
-  rowTypeMetric = common.RowTypeEnum.Metric;
-  rowTypeFormula = common.RowTypeEnum.Formula;
+  rowTypeHeader = RowTypeEnum.Header;
+  rowTypeMetric = RowTypeEnum.Metric;
+  rowTypeFormula = RowTypeEnum.Formula;
 
-  metric: common.ModelMetric;
+  metric: ModelMetric;
 
-  metricTypeModel = common.MetricTypeEnum.Model;
+  metricTypeModel = MetricTypeEnum.Model;
 
-  parametersFilters: common.FilterX[] = [];
+  parametersFilters: FilterX[] = [];
 
   showParameters = false;
 
@@ -70,37 +69,37 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
 
   update(params: ICellRendererParams<DataRow>) {
     this.params = params;
-    if (this.params.data.rowType === common.RowTypeEnum.Metric) {
+    if (this.params.data.rowType === RowTypeEnum.Metric) {
       let struct = this.structQuery.getValue();
 
       this.metric = struct.metrics.find(
         y => y.metricId === this.params.data.metricId
       );
 
-      if (this.metric.type === common.MetricTypeEnum.Model) {
+      if (this.metric.type === MetricTypeEnum.Model) {
         let timeSpec = this.reportQuery.getValue().timeSpec;
 
-        let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+        let timeSpecWord = getTimeSpecWord({ timeSpec: timeSpec });
 
-        let timeSpecDetail = common.getTimeSpecDetail({
+        let timeSpecDetail = getTimeSpecDetail({
           timeSpec: timeSpec,
           weekStart: struct.weekStart
         });
 
         let timeFieldIdSpec =
-          this.metric.modelType === common.ModelTypeEnum.Malloy
-            ? timeSpecDetail === common.DetailUnitEnum.Timestamps
+          this.metric.modelType === ModelTypeEnum.Malloy
+            ? timeSpecDetail === DetailUnitEnum.Timestamps
               ? `${this.metric.timeFieldId}_ts`
               : [
-                    common.DetailUnitEnum.WeeksSunday,
-                    common.DetailUnitEnum.WeeksMonday
+                    DetailUnitEnum.WeeksSunday,
+                    DetailUnitEnum.WeeksMonday
                   ].indexOf(timeSpecDetail) > -1
                 ? `${this.metric.timeFieldId}_week`
                 : `${this.metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`
-            : `${this.metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${timeSpecWord}`;
+            : `${this.metric.timeFieldId}${TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
         this.parametersFilters =
-          this.metric.modelType === common.ModelTypeEnum.Store
+          this.metric.modelType === ModelTypeEnum.Store
             ? this.params.data.mconfig.extendedFilters
             : this.params.data.mconfig.extendedFilters.filter(
                 filter => filter.fieldId !== timeFieldIdSpec
@@ -109,7 +108,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         let listen: { [a: string]: string } = {};
 
         this.params.data.parameters.forEach(x => {
-          if (common.isDefined(x.listen)) {
+          if (isDefined(x.listen)) {
             listen[x.apply_to] = x.listen;
           }
         });
@@ -123,7 +122,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
 
   showDialog(event?: MouseEvent) {
     if (
-      [common.RowTypeEnum.Header, common.RowTypeEnum.Empty].indexOf(
+      [RowTypeEnum.Header, RowTypeEnum.Empty].indexOf(
         this.params.data.rowType
       ) < 0
     ) {
@@ -133,7 +132,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
     // console.log('this.params.data');
     // console.log(this.params.data);
 
-    if (this.params.data.rowType === common.RowTypeEnum.Metric) {
+    if (this.params.data.rowType === RowTypeEnum.Metric) {
       let qData =
         this.params.data.mconfig.queryId === this.params.data.query.queryId
           ? this.dataService.makeQData({
@@ -145,8 +144,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
       let selectValidResult = getSelectValid({
         chart: this.params.data.mconfig.chart,
         mconfigFields: this.params.data.mconfig.fields,
-        isStoreModel:
-          this.params.data.mconfig.modelType === common.ModelTypeEnum.Store
+        isStoreModel: this.params.data.mconfig.modelType === ModelTypeEnum.Store
         // isStoreModel: this.params.data.mconfig.isStoreModel
       });
 
@@ -156,14 +154,14 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         query: this.params.data.query,
         qData: qData,
         canAccessModel: this.params.data.hasAccessToModel,
-        showNav: this.params.data.rowType === common.RowTypeEnum.Metric,
+        showNav: this.params.data.rowType === RowTypeEnum.Metric,
         isSelectValid: selectValidResult.isSelectValid,
         dashboardId: undefined,
         chartId: undefined,
         metricId: this.params.data.metricId,
         isToDuplicateQuery: true
       });
-    } else if (this.params.data.rowType === common.RowTypeEnum.Formula) {
+    } else if (this.params.data.rowType === RowTypeEnum.Formula) {
       let chartPointsData = this.uiQuery.getValue().chartPointsData;
 
       this.myDialogService.showChartFormula({

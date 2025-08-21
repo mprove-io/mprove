@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { Env } from '~common/interfaces/backend/env';
 import { BaseQuery } from './base.query';
 
 export class EnvironmentsState {
-  environments: common.Env[];
+  environments: Env[];
 }
 let environmentsState: EnvironmentsState = {
   environments: []

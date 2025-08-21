@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -14,7 +16,7 @@ import { common } from '~front/barrels/common';
 })
 export class DashboardOptionsComponent {
   @Input()
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
 
   @Input()
   isHoverM: boolean;
@@ -47,12 +49,12 @@ export class DashboardOptionsComponent {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath })
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }
 
-  async editDashboardInfo(event: MouseEvent, item: common.DashboardX) {
+  async editDashboardInfo(event: MouseEvent, item: DashboardX) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();

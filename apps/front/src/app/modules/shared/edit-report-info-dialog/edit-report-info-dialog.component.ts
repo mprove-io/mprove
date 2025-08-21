@@ -22,9 +22,6 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../shared.module';
 
 export interface EditReportInfoDialogData {
@@ -33,7 +30,7 @@ export interface EditReportInfoDialogData {
   isRepoProd: boolean;
   branchId: string;
   envId: string;
-  report: common.Report;
+  report: Report;
 }
 
 @Component({
@@ -49,7 +46,7 @@ export class EditReportInfoDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
@@ -107,7 +104,7 @@ export class EditReportInfoDialogComponent implements OnInit {
       this.titleForm.controls['title'].valid &&
       this.rolesForm.controls['roles'].valid
     ) {
-      this.spinner.show(constants.APP_SPINNER_NAME);
+      this.spinner.show(APP_SPINNER_NAME);
 
       this.ref.close();
 
@@ -116,7 +113,7 @@ export class EditReportInfoDialogComponent implements OnInit {
       let newTitle: string = this.titleForm.controls['title'].value;
       let roles: string = this.rolesForm.controls['roles'].value;
 
-      let payload: apiToBackend.ToBackendSaveModifyReportRequestPayload = {
+      let payload: ToBackendSaveModifyReportRequestPayload = {
         projectId: this.ref.data.projectId,
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
@@ -124,7 +121,7 @@ export class EditReportInfoDialogComponent implements OnInit {
         fromReportId: this.ref.data.report.reportId,
         modReportId: this.ref.data.report.reportId,
         title: newTitle.trim(),
-        accessRoles: common.isDefinedAndNotEmpty(roles?.trim())
+        accessRoles: isDefinedAndNotEmpty(roles?.trim())
           ? roles.split(',').map(x => x.trim())
           : [],
         timezone: uiState.timezone,
@@ -138,18 +135,17 @@ export class EditReportInfoDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport,
           payload: payload,
           showSpinner: true
         })
         .pipe(
-          tap(async (resp: apiToBackend.ToBackendSaveModifyReportResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          tap(async (resp: ToBackendSaveModifyReportResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               let newReport = resp.payload.report;
               let newReportPart = resp.payload.reportPart;
 
-              if (common.isDefined(newReport)) {
+              if (isDefined(newReport)) {
                 let reports = this.reportsQuery.getValue().reports;
 
                 let newReports = [

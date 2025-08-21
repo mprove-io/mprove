@@ -17,15 +17,23 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { MPROVE_USERS_FOLDER } from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { makeId } from '~common/functions/make-id';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import {
+  ToBackendSaveCreateDashboardRequestPayload,
+  ToBackendSaveCreateDashboardResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-save-create-dashboard';
 import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CreateDashboardDialogData {
@@ -47,9 +55,9 @@ export class CreateDashboardDialogComponent implements OnInit {
 
   @ViewChild('dashboardTitle') dashboardTitleElement: ElementRef;
 
-  usersFolder = common.MPROVE_USERS_FOLDER;
+  usersFolder = MPROVE_USERS_FOLDER;
 
-  dashboard: common.DashboardX;
+  dashboard: DashboardX;
 
   titleForm: FormGroup = this.fb.group({
     title: [undefined, [Validators.maxLength(255)]]
@@ -59,7 +67,7 @@ export class CreateDashboardDialogComponent implements OnInit {
     roles: [undefined, [Validators.maxLength(255)]]
   });
 
-  newDashboardId = common.makeId();
+  newDashboardId = makeId();
 
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
@@ -127,11 +135,11 @@ export class CreateDashboardDialogComponent implements OnInit {
   }
 
   createDashboard(item: { newTitle: string; roles: string }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let { newTitle, roles } = item;
 
-    let payload: apiToBackend.ToBackendSaveCreateDashboardRequestPayload = {
+    let payload: ToBackendSaveCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -145,16 +153,14 @@ export class CreateDashboardDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendSaveCreateDashboard,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveCreateDashboard,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveCreateDashboardResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveCreateDashboardResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
-            if (common.isDefined(dashboardPart)) {
+            if (isDefined(dashboardPart)) {
               let dashboards = this.dashboardsQuery.getValue().dashboards;
 
               let newDashboards = [
@@ -175,7 +181,7 @@ export class CreateDashboardDialogComponent implements OnInit {
                 dashboardId: this.newDashboardId
               });
             } else {
-              this.spinner.hide(constants.APP_SPINNER_NAME);
+              this.spinner.hide(APP_SPINNER_NAME);
             }
           }
         }),

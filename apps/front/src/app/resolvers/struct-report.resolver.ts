@@ -3,8 +3,24 @@ import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import equal from 'fast-deep-equal';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import {
+  EMPTY_REPORT_ID,
+  LAST_SELECTED_REPORT_ID,
+  PARAMETER_REPORT_ID,
+  PATH_INFO,
+  PATH_ORG,
+  PATH_PROJECT
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import {
+  ToBackendGetReportRequestPayload,
+  ToBackendGetReportResponse
+} from '~common/interfaces/to-backend/reports/to-backend-get-report';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -32,9 +48,9 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
   ) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
-    let timezoneParam: common.TimeSpecEnum = route.queryParams?.timezone;
-    let timeSpecParam: common.TimeSpecEnum = route.queryParams?.timeSpec;
-    let timeRangeParam: common.TimeSpecEnum = route.queryParams?.timeRange;
+    let timezoneParam: TimeSpecEnum = route.queryParams?.timezone;
+    let timeSpecParam: TimeSpecEnum = route.queryParams?.timeSpec;
+    let timeRangeParam: TimeSpecEnum = route.queryParams?.timeRange;
 
     let uiState = this.uiQuery.getValue();
     let structState = this.structQuery.getValue();
@@ -42,7 +58,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
     let timezone =
       structState.allowTimezones === false
         ? structState.defaultTimezone
-        : common.isDefined(timezoneParam)
+        : isDefined(timezoneParam)
           ? timezoneParam.split('-').join('/')
           : uiState.timezone;
 
@@ -50,10 +66,8 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       route: route,
       showSpinner: false,
       timezone: timezone,
-      timeSpec: common.isDefined(timeSpecParam)
-        ? timeSpecParam
-        : uiState.timeSpec,
-      timeRangeFractionBrick: common.isDefined(timeRangeParam)
+      timeSpec: isDefined(timeSpecParam) ? timeSpecParam : uiState.timeSpec,
+      timeRangeFractionBrick: isDefined(timeRangeParam)
         ? timeRangeParam
         : // .split('-')
           // .join('/')
@@ -68,7 +82,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
   resolveRoute(item: {
     route: ActivatedRouteSnapshot;
     showSpinner: boolean;
-    timeSpec: common.TimeSpecEnum;
+    timeSpec: TimeSpecEnum;
     timezone: string;
     timeRangeFractionBrick: string;
   }): Observable<boolean> {
@@ -83,7 +97,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         nav = x;
       });
 
-    let report: common.ReportX;
+    let report: ReportX;
     this.reportQuery
       .select()
       .pipe(
@@ -109,9 +123,9 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersReportId = route.params[common.PARAMETER_REPORT_ID];
+    let parametersReportId = route.params[PARAMETER_REPORT_ID];
 
-    if (parametersReportId === common.LAST_SELECTED_REPORT_ID) {
+    if (parametersReportId === LAST_SELECTED_REPORT_ID) {
       let reports = this.reportsQuery.getValue().reports;
       let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
 
@@ -119,19 +133,16 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
         link => link.projectId === nav.projectId
       );
 
-      if (
-        common.isDefined(pLink) &&
-        pLink.reportId === common.EMPTY_REPORT_ID
-      ) {
+      if (isDefined(pLink) && pLink.reportId === EMPTY_REPORT_ID) {
         this.navigateService.navigateToReport({
-          reportId: common.EMPTY_REPORT_ID
+          reportId: EMPTY_REPORT_ID
         });
 
         return of(false);
-      } else if (common.isDefined(pLink)) {
+      } else if (isDefined(pLink)) {
         let pReport = reports.find(r => r.reportId === pLink.reportId);
 
-        if (common.isDefined(pReport)) {
+        if (isDefined(pReport)) {
           this.navigateService.navigateToReport({
             reportId: pReport.reportId
           });
@@ -147,7 +158,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       }
     }
 
-    let payload: apiToBackend.ToBackendGetReportRequestPayload = {
+    let payload: ToBackendGetReportRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -160,14 +171,13 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetReport,
         payload: payload,
         showSpinner: showSpinner
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetReportResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetReportResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
@@ -196,16 +206,15 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
             return true;
           } else if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
-            resp.info.error.message ===
-              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.info?.status === ResponseInfoStatusEnum.Error &&
+            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               nav.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               nav.projectId,
-              common.PATH_INFO
+              PATH_INFO
             ]);
 
             return false;

@@ -1,9 +1,25 @@
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { EMPTY_CHART_ID } from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { QueryOperation } from '~common/interfaces/backend/query-operation';
+import {
+  ToBackendCreateDraftChartRequestPayload,
+  ToBackendCreateDraftChartResponse
+} from '~common/interfaces/to-backend/charts/to-backend-create-draft-chart';
+import {
+  ToBackendDeleteDraftChartsRequestPayload,
+  ToBackendDeleteDraftChartsResponse
+} from '~common/interfaces/to-backend/charts/to-backend-delete-draft-charts';
+import {
+  ToBackendEditDraftChartRequestPayload,
+  ToBackendEditDraftChartResponse
+} from '~common/interfaces/to-backend/charts/to-backend-edit-draft-chart';
 import { ChartQuery } from '../queries/chart.query';
 import { ChartsQuery } from '../queries/charts.query';
 import { ModelQuery } from '../queries/model.query';
@@ -34,12 +50,12 @@ export class ChartService {
 
   editChart(item: {
     isDraft: boolean;
-    mconfig: common.MconfigX;
+    mconfig: MconfigX;
     isKeepQueryId?: boolean;
     chartId: string;
     cellMetricsStartDateMs?: number;
     cellMetricsEndDateMs?: number;
-    queryOperation?: common.QueryOperation;
+    queryOperation?: QueryOperation;
   }) {
     let {
       isDraft,
@@ -69,13 +85,13 @@ export class ChartService {
   }
 
   navCreateDraftChart(item: {
-    mconfig: common.MconfigX;
+    mconfig: MconfigX;
     isKeepQueryId: boolean;
     cellMetricsStartDateMs: number;
     cellMetricsEndDateMs: number;
-    queryOperation: common.QueryOperation;
+    queryOperation: QueryOperation;
   }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let {
       mconfig,
@@ -85,7 +101,7 @@ export class ChartService {
       queryOperation
     } = item;
 
-    let payload: apiToBackend.ToBackendCreateDraftChartRequestPayload = {
+    let payload: ToBackendCreateDraftChartRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -99,13 +115,12 @@ export class ChartService {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateDraftChart,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateDraftChartResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateDraftChartResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let chart = resp.payload.chart;
 
             let charts = this.chartsQuery.getValue().charts;
@@ -126,14 +141,14 @@ export class ChartService {
 
   editDraftChart(item: {
     chartId: string;
-    mconfig: common.MconfigX;
-    queryOperation: common.QueryOperation;
+    mconfig: MconfigX;
+    queryOperation: QueryOperation;
   }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let { chartId, mconfig, queryOperation } = item;
 
-    let payload: apiToBackend.ToBackendEditDraftChartRequestPayload = {
+    let payload: ToBackendEditDraftChartRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -145,15 +160,14 @@ export class ChartService {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftChart,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditDraftChart,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditDraftChartResponse) => {
-          this.spinner.hide(constants.APP_SPINNER_NAME);
+        tap((resp: ToBackendEditDraftChartResponse) => {
+          this.spinner.hide(APP_SPINNER_NAME);
 
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.chartQuery.update(resp.payload.chart);
           }
         }),
@@ -165,7 +179,7 @@ export class ChartService {
   deleteDraftCharts(item: { chartIds: string[] }) {
     let { chartIds } = item;
 
-    let payload: apiToBackend.ToBackendDeleteDraftChartsRequestPayload = {
+    let payload: ToBackendDeleteDraftChartsRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -175,14 +189,13 @@ export class ChartService {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteDraftCharts,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteDraftChartsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteDraftChartsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let charts = this.chartsQuery.getValue().charts;
 
             this.chartsQuery.update({
@@ -194,10 +207,10 @@ export class ChartService {
             if (chartIds.indexOf(chart.chartId) > -1) {
               let model = this.modelQuery.getValue();
 
-              if (common.isDefined(model.modelId)) {
+              if (isDefined(model.modelId)) {
                 this.navigateService.navigateToChart({
                   modelId: model.modelId,
-                  chartId: common.EMPTY_CHART_ID
+                  chartId: EMPTY_CHART_ID
                 });
               } else {
                 this.navigateService.navigateToCharts();

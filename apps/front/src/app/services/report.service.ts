@@ -1,9 +1,28 @@
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { Listener } from '~common/interfaces/blockml/listener';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { ReportField } from '~common/interfaces/blockml/report-field';
+import { RowChange } from '~common/interfaces/blockml/row-change';
+import {
+  ToBackendCreateDraftReportRequestPayload,
+  ToBackendCreateDraftReportResponse
+} from '~common/interfaces/to-backend/reports/to-backend-create-draft-report';
+import {
+  ToBackendDeleteDraftReportsRequestPayload,
+  ToBackendDeleteDraftReportsResponse
+} from '~common/interfaces/to-backend/reports/to-backend-delete-draft-reports';
+import {
+  ToBackendEditDraftReportRequestPayload,
+  ToBackendEditDraftReportResponse
+} from '~common/interfaces/to-backend/reports/to-backend-edit-draft-report';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';
@@ -37,13 +56,13 @@ export class ReportService {
   }
 
   modifyRows(item: {
-    report: common.ReportX;
-    changeType: common.ChangeTypeEnum;
-    rowChange: common.RowChange;
+    report: ReportX;
+    changeType: ChangeTypeEnum;
+    rowChange: RowChange;
     rowIds: string[];
-    reportFields: common.ReportField[];
-    listeners?: common.Listener[];
-    chart: common.MconfigChart;
+    reportFields: ReportField[];
+    listeners?: Listener[];
+    chart: MconfigChart;
   }) {
     let {
       report,
@@ -55,7 +74,7 @@ export class ReportService {
       chart
     } = item;
 
-    let newChart = common.isDefined(chart) ? chart : report.chart;
+    let newChart = isDefined(chart) ? chart : report.chart;
 
     if (report.draft === true) {
       this.editDraftReport({
@@ -81,15 +100,15 @@ export class ReportService {
   }
 
   navCreateDraftReport(item: {
-    changeType: common.ChangeTypeEnum;
-    rowChange: common.RowChange;
+    changeType: ChangeTypeEnum;
+    rowChange: RowChange;
     rowIds: string[];
     fromReportId: string;
-    fields: common.ReportField[];
-    listeners: common.Listener[];
-    chart: common.MconfigChart;
+    fields: ReportField[];
+    listeners: Listener[];
+    chart: MconfigChart;
   }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let {
       rowChange,
@@ -103,7 +122,7 @@ export class ReportService {
 
     let uiState = this.uiQuery.getValue();
 
-    let payload: apiToBackend.ToBackendCreateDraftReportRequestPayload = {
+    let payload: ToBackendCreateDraftReportRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -122,13 +141,12 @@ export class ReportService {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateDraftReport,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateDraftReportResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateDraftReportResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let report = resp.payload.report;
 
             let reports = this.reportsQuery.getValue().reports;
@@ -147,20 +165,20 @@ export class ReportService {
   }
 
   editDraftReport(item: {
-    changeType: common.ChangeTypeEnum;
-    rowChange: common.RowChange;
+    changeType: ChangeTypeEnum;
+    rowChange: RowChange;
     rowIds: string[];
     reportId: string;
-    fields: common.ReportField[];
-    listeners: common.Listener[];
-    chart: common.MconfigChart;
+    fields: ReportField[];
+    listeners: Listener[];
+    chart: MconfigChart;
   }) {
     let { rowChange, rowIds, reportId, changeType, fields, listeners, chart } =
       item;
 
     let uiState = this.uiQuery.getValue();
 
-    let payload: apiToBackend.ToBackendEditDraftReportRequestPayload = {
+    let payload: ToBackendEditDraftReportRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -179,14 +197,13 @@ export class ReportService {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftReport,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditDraftReport,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditDraftReportResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendEditDraftReportResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
@@ -209,7 +226,7 @@ export class ReportService {
 
     let report = this.reportQuery.getValue();
 
-    let payload: apiToBackend.ToBackendDeleteDraftReportsRequestPayload = {
+    let payload: ToBackendDeleteDraftReportsRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -219,14 +236,13 @@ export class ReportService {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteDraftReports,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteDraftReportsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteDraftReportsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let reports = this.reportsQuery.getValue().reports;
 
             let newReports = [...reports];

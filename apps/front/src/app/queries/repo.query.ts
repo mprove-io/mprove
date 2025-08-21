@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { Repo } from '~common/interfaces/disk/repo';
 import { BaseQuery } from './base.query';
 
-export class RepoState extends common.Repo {}
+export class RepoState extends Repo {}
 
 let repoState: RepoState = {
   orgId: undefined,

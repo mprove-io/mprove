@@ -7,7 +7,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { ChartService } from '~front/app/services/chart.service';
 import { DataService } from '~front/app/services/data.service';
 import { TimeService } from '~front/app/services/time.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -17,7 +16,7 @@ import { common } from '~front/barrels/common';
 export class DataRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
-  rowTypeMetric = common.RowTypeEnum.Metric;
+  rowTypeMetric = RowTypeEnum.Metric;
   formattedValue: string;
   isError = false;
 
@@ -37,16 +36,16 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       x => x.key === Number(params.colDef.field)
     );
 
-    this.isError = common.isDefined(rowDataRecord?.error);
+    this.isError = isDefined(rowDataRecord?.error);
 
     let struct = this.structQuery.getValue();
 
     this.formattedValue =
-      this.isError === false && common.isDefined(params.value)
+      this.isError === false && isDefined(params.value)
         ? this.dataService.formatValue({
             value: params.value,
             formatNumber: params.data.formatNumber,
-            fieldResult: common.FieldResultEnum.Number,
+            fieldResult: FieldResultEnum.Number,
             currencyPrefix: params.data.currencyPrefix,
             currencySuffix: params.data.currencySuffix,
             thousandsSeparator: struct.thousandsSeparator
@@ -60,11 +59,10 @@ export class DataRendererComponent implements ICellRendererAngularComp {
     event.stopPropagation();
 
     if (
-      common.isDefined(this.params.data.mconfig) &&
-      this.params.data.rowType === common.RowTypeEnum.Metric
+      isDefined(this.params.data.mconfig) &&
+      this.params.data.rowType === RowTypeEnum.Metric
     ) {
-      let isStore =
-        this.params.data.mconfig.modelType === common.ModelTypeEnum.Store;
+      let isStore = this.params.data.mconfig.modelType === ModelTypeEnum.Store;
       // let isStore = this.params.data.mconfig.isStoreModel;
 
       // console.log('isStore');
@@ -86,7 +84,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
       let timeRangeFraction;
 
-      let timeSpecWord = common.getTimeSpecWord({ timeSpec: timeSpec });
+      let timeSpecWord = getTimeSpecWord({ timeSpec: timeSpec });
 
       let { date, dateStr, timeStr, dateUtcMs } =
         this.timeService.getDateTimeStrFromEpochMs({
@@ -102,7 +100,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       let dateToStr;
       let timeToStr;
 
-      if (timeSpecWord === common.TimeframeEnum.Year) {
+      if (timeSpecWord === TimeframeEnum.Year) {
         let nextYear = date.getUTCFullYear() + 1;
         let nextYearDate = new Date(nextYear, 0, 1, 0, 0, 0, 0);
 
@@ -115,7 +113,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = yearTo.dateStr;
         timeToStr = yearTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Quarter) {
+      } else if (timeSpecWord === TimeframeEnum.Quarter) {
         let qMonth = date.getUTCMonth(); // Months are 0-11
 
         let nextQuarterMonth = (Math.floor(qMonth / 3) * 3 + 3) % 12;
@@ -144,7 +142,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = quarterTo.dateStr;
         timeToStr = quarterTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Month) {
+      } else if (timeSpecWord === TimeframeEnum.Month) {
         let month = date.getUTCMonth(); // Months are zero-based (0-11)
 
         let nextMonth = month === 11 ? 0 : month + 1;
@@ -164,7 +162,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = monthTo.dateStr;
         timeToStr = monthTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Week) {
+      } else if (timeSpecWord === TimeframeEnum.Week) {
         cellMetricsEndDateMs = cellMetricsStartDateMs + 7 * 24 * 60 * 60 * 1000;
 
         let weekTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -173,7 +171,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = weekTo.dateStr;
         timeToStr = weekTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Date) {
+      } else if (timeSpecWord === TimeframeEnum.Date) {
         cellMetricsEndDateMs = cellMetricsStartDateMs + 24 * 60 * 60 * 1000;
 
         let dayTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -182,7 +180,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = dayTo.dateStr;
         timeToStr = dayTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Hour) {
+      } else if (timeSpecWord === TimeframeEnum.Hour) {
         let tsNextHour = tsMs + 60 * 60 * 1000;
 
         let hourTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -191,7 +189,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
         dateToStr = hourTo.dateStr;
         timeToStr = hourTo.timeStr;
-      } else if (timeSpecWord === common.TimeframeEnum.Minute) {
+      } else if (timeSpecWord === TimeframeEnum.Minute) {
         let tsNextMinute = tsMs + 60 * 1000;
 
         let minuteTo = this.timeService.getDateTimeStrFromEpochMs({
@@ -214,21 +212,19 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       let minuteStr = this.timeService.getMinuteStr({
         dateValue: dateStr,
         timeValue: timeStr,
-        dateSeparator:
-          metric.modelType === common.ModelTypeEnum.Malloy ? '-' : '/'
+        dateSeparator: metric.modelType === ModelTypeEnum.Malloy ? '-' : '/'
       });
 
       let minuteToStr = this.timeService.getMinuteStr({
         dateValue: dateToStr,
         timeValue: timeToStr,
-        dateSeparator:
-          metric.modelType === common.ModelTypeEnum.Malloy ? '-' : '/'
+        dateSeparator: metric.modelType === ModelTypeEnum.Malloy ? '-' : '/'
       });
 
       timeRangeFraction = {
         brick: `on ${minuteStr} to ${minuteToStr}`,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.FractionTypeEnum.TsIsBetween,
+        operator: FractionOperatorEnum.Or,
+        type: FractionTypeEnum.TsIsBetween,
         tsDateYear: Number(dateStr.split('-')[0]),
         tsDateMonth: Number(dateStr.split('-')[1].replace(/^0+/, '')),
         tsDateDay: Number(dateStr.split('-')[2].replace(/^0+/, '')),
@@ -241,27 +237,27 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         tsDateToMinute: Number(timeToStr.split(':')[1].replace(/^0+/, ''))
       };
 
-      let newMconfigId = common.makeId();
-      let newQueryId = common.makeId();
+      let newMconfigId = makeId();
+      let newQueryId = makeId();
 
-      let mconfigCopy = common.makeCopy(this.params.data.mconfig);
+      let mconfigCopy = makeCopy(this.params.data.mconfig);
 
-      let newMconfig = Object.assign(mconfigCopy, <common.MconfigX>{
+      let newMconfig = Object.assign(mconfigCopy, <MconfigX>{
         mconfigId: newMconfigId,
         queryId: newQueryId,
         temp: true,
         serverTs: 1
       });
 
-      newMconfig.chart.type = common.ChartTypeEnum.Table;
+      newMconfig.chart.type = ChartTypeEnum.Table;
 
       let newFilters = [...newMconfig.filters];
 
       if (isStore === false) {
         let newFraction = timeRangeFraction;
 
-        let newFilter: common.Filter = {
-          fieldId: `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`,
+        let newFilter: Filter = {
+          fieldId: `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`,
           fractions: [newFraction]
         };
 
@@ -273,15 +269,15 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       );
 
       if (
-        common.isDefined(cellMetricsStartDateMs) &&
-        common.isDefined(cellMetricsEndDateMs) &&
+        isDefined(cellMetricsStartDateMs) &&
+        isDefined(cellMetricsEndDateMs) &&
         isDateRangeIncludesRightSide === true &&
         cellMetricsEndDateMs - cellMetricsStartDateMs >= 24 * 60 * 60 * 1000
       ) {
         cellMetricsEndDateMs = cellMetricsEndDateMs - 24 * 60 * 60 * 1000;
       }
 
-      if (common.isUndefined(cellMetricsEndDateMs)) {
+      if (isUndefined(cellMetricsEndDateMs)) {
         cellMetricsEndDateMs = undefined;
       }
 

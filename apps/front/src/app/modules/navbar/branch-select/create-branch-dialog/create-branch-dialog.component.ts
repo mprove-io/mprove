@@ -23,10 +23,6 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
 
 export interface CreateBranchDialogData {
   apiService: ApiService;
@@ -74,16 +70,16 @@ export class CreateBranchDialogComponent implements OnInit {
       this.isTargetProd = this.nav.isRepoProd;
 
       this.branchesList = common
-        .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+        .makeCopy<BranchItem[]>(this.ref.data.branchesList)
         .filter(y => y.isRepoProd === this.isTargetProd);
 
       this.cd.detectChanges();
     })
   );
 
-  branchesList: interfaces.BranchItem[] = [];
+  branchesList: BranchItem[] = [];
   //  = common
-  //   .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+  //   .makeCopy<BranchItem[]>(this.ref.data.branchesList)
   //   .filter(y => y.isRepoProd === this.nav.isRepoProd);
   // .map(x => {
   //   if (x.isRepoProd === true) {
@@ -94,7 +90,7 @@ export class CreateBranchDialogComponent implements OnInit {
   //   return x;
   // });
 
-  selectedBranchItem: interfaces.BranchItem = this.ref.data.selectedBranchItem;
+  selectedBranchItem: BranchItem = this.ref.data.selectedBranchItem;
   selectedBranchExtraId: string = this.ref.data.selectedBranchExtraId;
 
   isTargetProd = false;
@@ -126,7 +122,7 @@ export class CreateBranchDialogComponent implements OnInit {
     this.isTargetProd = true;
 
     this.branchesList = common
-      .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+      .makeCopy<BranchItem[]>(this.ref.data.branchesList)
       .filter(y => y.isRepoProd === this.isTargetProd);
 
     this.selectedBranchItem = this.branchesList[0];
@@ -139,7 +135,7 @@ export class CreateBranchDialogComponent implements OnInit {
     this.isTargetProd = false;
 
     this.branchesList = common
-      .makeCopy<interfaces.BranchItem[]>(this.ref.data.branchesList)
+      .makeCopy<BranchItem[]>(this.ref.data.branchesList)
       .filter(y => y.isRepoProd === this.isTargetProd);
 
     this.selectedBranchItem = this.branchesList[0];
@@ -157,11 +153,11 @@ export class CreateBranchDialogComponent implements OnInit {
 
     this.ref.data.hideBranchSelectFn();
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendCreateBranchRequestPayload = {
+    let payload: ToBackendCreateBranchRequestPayload = {
       projectId: this.ref.data.projectId,
       newBranchId: this.createBranchForm.value.branchId,
       fromBranchId: this.selectedBranchItem.branchId,
@@ -172,13 +168,12 @@ export class CreateBranchDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateBranch,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateBranchResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateBranchResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let userId;
             this.userQuery.userId$
               .pipe(
@@ -187,21 +182,20 @@ export class CreateBranchDialogComponent implements OnInit {
               )
               .subscribe();
 
-            let repoId =
-              this.isTargetProd === true ? common.PROD_REPO_ID : userId;
+            let repoId = this.isTargetProd === true ? PROD_REPO_ID : userId;
 
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               this.ref.data.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               this.ref.data.projectId,
-              common.PATH_REPO,
+              PATH_REPO,
               repoId,
-              common.PATH_BRANCH,
+              PATH_BRANCH,
               this.createBranchForm.value.branchId,
-              common.PATH_ENV,
+              PATH_ENV,
               this.nav.envId,
-              common.PATH_FILES
+              PATH_FILES
             ]);
           }
         }),
@@ -210,10 +204,10 @@ export class CreateBranchDialogComponent implements OnInit {
       .subscribe();
   }
 
-  // branchChange(branchItem: interfaces.BranchItem) {
+  // branchChange(branchItem: BranchItem) {
   branchChange(branchItem: any) {
     this.selectedBranchItem = this.branchesList.find(
-      x => x.extraId === (branchItem as interfaces.BranchItem).extraId
+      x => x.extraId === (branchItem as BranchItem).extraId
     );
 
     this.cd.detectChanges();

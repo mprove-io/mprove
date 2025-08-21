@@ -4,7 +4,6 @@ import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -13,7 +12,7 @@ import { common } from '~front/barrels/common';
 })
 export class ChartOptionsComponent {
   @Input()
-  chart: common.ChartX;
+  chart: ChartX;
 
   @Input()
   isHoverM: boolean;
@@ -41,12 +40,12 @@ export class ChartOptionsComponent {
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath })
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }
 
-  async editChartInfo(event: MouseEvent, item: common.ChartX) {
+  async editChartInfo(event: MouseEvent, item: ChartX) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
@@ -61,7 +60,7 @@ export class ChartOptionsComponent {
     });
   }
 
-  deleteChart(event: MouseEvent, item: common.ChartX) {
+  deleteChart(event: MouseEvent, item: ChartX) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();

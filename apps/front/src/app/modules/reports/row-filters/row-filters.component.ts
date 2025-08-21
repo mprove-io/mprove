@@ -7,8 +7,6 @@ import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { ReportService } from '~front/app/services/report.service';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 import { FilterX2 } from '../row/row.component';
 
 @Component({
@@ -21,13 +19,13 @@ export class RowFiltersComponent {
   reportSelectedNode: IRowNode<DataRow>;
 
   @Input()
-  mconfig: common.MconfigX;
+  mconfig: MconfigX;
 
   @Input()
   parametersFilters: FilterX2[];
 
   @Input()
-  report: common.ReportX;
+  report: ReportX;
 
   constructor(
     private fb: FormBuilder,
@@ -39,8 +37,8 @@ export class RowFiltersComponent {
   ) {}
 
   fractionUpdate(
-    filterExtended: common.FilterX,
-    eventFractionUpdate: interfaces.EventFractionUpdate
+    filterExtended: FilterX,
+    eventFractionUpdate: EventFractionUpdate
   ) {
     // console.log('this.reportSelectedNode.data.parameters');
     // console.log(this.reportSelectedNode.data.parameters);
@@ -72,7 +70,7 @@ export class RowFiltersComponent {
       //     : undefined,
       fractions: newFractions
       // fractions: isStore === true ? newFractions : undefined
-    } as common.Parameter);
+    } as Parameter);
 
     newParameters = [
       ...newParameters.slice(0, parametersIndex),
@@ -85,14 +83,14 @@ export class RowFiltersComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -100,7 +98,7 @@ export class RowFiltersComponent {
     });
   }
 
-  addFraction(filterExtended: common.FilterX) {
+  addFraction(filterExtended: FilterX) {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
@@ -109,36 +107,35 @@ export class RowFiltersComponent {
 
     let fractions = filterExtended.fractions;
 
-    let newFraction: common.Fraction;
+    let newFraction: Fraction;
 
     let metric = this.structQuery
       .getValue()
       .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
-    if (metric.modelType === common.ModelTypeEnum.Store) {
+    if (metric.modelType === ModelTypeEnum.Store) {
       let store = this.modelsQuery
         .getValue()
-        .models.find(m => m.modelId === metric.modelId)
-        .content as common.FileStore;
+        .models.find(m => m.modelId === metric.modelId).content as FileStore;
 
       let field = filterExtended.field;
 
       let storeFilter =
-        field.fieldClass === common.FieldClassEnum.Filter
+        field.fieldClass === FieldClassEnum.Filter
           ? store.fields.find(f => f.name === field.id)
           : undefined;
 
       let storeResultFirstTypeFraction =
-        field.fieldClass === common.FieldClassEnum.Filter
+        field.fieldClass === FieldClassEnum.Filter
           ? undefined
           : store.results.find(r => r.result === field.result)
               .fraction_types[0];
 
-      let logicGroup = common.isUndefined(storeResultFirstTypeFraction)
+      let logicGroup = isUndefined(storeResultFirstTypeFraction)
         ? undefined
-        : common.FractionLogicEnum.Or;
+        : FractionLogicEnum.Or;
 
-      let storeFractionSubTypeOptions = common.isUndefined(
+      let storeFractionSubTypeOptions = isUndefined(
         storeResultFirstTypeFraction
       )
         ? []
@@ -147,17 +144,17 @@ export class RowFiltersComponent {
             .fraction_types.map(ft => {
               let options = [];
 
-              let optionOr: common.FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.Or,
+              let optionOr: FractionSubTypeOption = {
+                logicGroup: FractionLogicEnum.Or,
                 typeValue: ft.type,
-                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
-              let optionAndNot: common.FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.AndNot,
-                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+              let optionAndNot: FractionSubTypeOption = {
+                logicGroup: FractionLogicEnum.AndNot,
+                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -168,37 +165,34 @@ export class RowFiltersComponent {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFirstTypeFraction?.meta,
-        operator: common.isUndefined(logicGroup)
+        operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
+          : logicGroup === FractionLogicEnum.Or
+            ? FractionOperatorEnum.Or
+            : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
-        type: common.FractionTypeEnum.StoreFraction,
+        type: FractionTypeEnum.StoreFraction,
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFirstTypeFraction?.type,
-        storeFractionSubTypeLabel: common.isDefined(
-          storeResultFirstTypeFraction?.type
-        )
+        storeFractionSubTypeLabel: isDefined(storeResultFirstTypeFraction?.type)
           ? storeFractionSubTypeOptions.find(
               k => k.typeValue === storeResultFirstTypeFraction?.type
             ).label
           : storeResultFirstTypeFraction?.type,
         storeFractionLogicGroupWithSubType:
-          common.isDefined(logicGroup) &&
-          common.isDefined(storeResultFirstTypeFraction?.type)
-            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFirstTypeFraction.type}`
+          isDefined(logicGroup) && isDefined(storeResultFirstTypeFraction?.type)
+            ? `${logicGroup}${TRIPLE_UNDERSCORE}${storeResultFirstTypeFraction.type}`
             : undefined,
-        controls: common.isUndefined(storeResultFirstTypeFraction)
+        controls: isUndefined(storeResultFirstTypeFraction)
           ? storeFilter.fraction_controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -210,7 +204,7 @@ export class RowFiltersComponent {
               return newControl;
             })
           : storeResultFirstTypeFraction.controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -222,18 +216,18 @@ export class RowFiltersComponent {
               return newControl;
             })
       };
-    } else if (metric.modelType === common.ModelTypeEnum.Malloy) {
+    } else if (metric.modelType === ModelTypeEnum.Malloy) {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(filterExtended.field.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(filterExtended.field.result)
       };
     } else {
       newFraction = {
         brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(filterExtended.field.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(filterExtended.field.result)
       };
     }
 
@@ -245,7 +239,7 @@ export class RowFiltersComponent {
       //     ? newFractions.map(fraction => fraction.brick)
       //     : undefined,
       fractions: newFractions
-    } as common.Parameter);
+    } as Parameter);
 
     newParameters = [
       ...newParameters.slice(0, parametersIndex),
@@ -255,14 +249,14 @@ export class RowFiltersComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -270,7 +264,7 @@ export class RowFiltersComponent {
     });
   }
 
-  deleteFraction(filterExtended: common.FilterX, fractionIndex: number) {
+  deleteFraction(filterExtended: FilterX, fractionIndex: number) {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
@@ -304,7 +298,7 @@ export class RowFiltersComponent {
         //     ? newFractions.map(fraction => fraction.brick)
         //     : undefined,
         fractions: newFractions
-      } as common.Parameter);
+      } as Parameter);
 
       newParameters = [
         ...newParameters.slice(0, parametersIndex),
@@ -315,14 +309,14 @@ export class RowFiltersComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -330,7 +324,7 @@ export class RowFiltersComponent {
     });
   }
 
-  deleteFilter(filterExtended: common.FilterX) {
+  deleteFilter(filterExtended: FilterX) {
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
@@ -344,14 +338,14 @@ export class RowFiltersComponent {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,

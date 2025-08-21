@@ -19,8 +19,6 @@ import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface EditOrgNameDialogData {
   apiService: ApiService;
@@ -73,7 +71,7 @@ export class EditOrgNameDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendSetOrgInfoRequestPayload = {
+    let payload: ToBackendSetOrgInfoRequestPayload = {
       orgId: this.ref.data.orgId,
       name: this.editOrgNameForm.value.orgName
     };
@@ -82,14 +80,13 @@ export class EditOrgNameDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetOrgInfo,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSetOrgInfoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSetOrgInfoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let org = resp.payload.org;
             this.orgQuery.update(org);
             this.navQuery.updatePart({

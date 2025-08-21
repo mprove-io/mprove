@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable, Injector, NgZone } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
-import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
+import { SPECIAL_ERROR } from '~common/constants/top-front';
+import { ErrorData } from '~common/interfaces/front/error-data';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 
 @Injectable()
@@ -16,9 +16,9 @@ export class ErrorHandlerService extends ErrorHandler {
   handleError(e: any): void {
     let dialogService = this.injector.get(DialogService);
 
-    if (e.message !== constants.SPECIAL_ERROR) {
+    if (e.message !== SPECIAL_ERROR) {
       this.ngZone.run(() => {
-        let errorData: interfaces.ErrorData = {
+        let errorData: ErrorData = {
           message: e.message || e,
           skipLogToConsole: true
         };

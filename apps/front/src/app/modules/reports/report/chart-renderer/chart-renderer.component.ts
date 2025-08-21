@@ -5,7 +5,6 @@ import { MconfigChartSeries } from '~common/_index';
 import { DataRow } from '~front/app/interfaces/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportService } from '~front/app/services/report.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -15,10 +14,10 @@ import { common } from '~front/barrels/common';
 export class ChartRendererComponent implements ICellRendererAngularComp {
   params: ICellRendererParams<DataRow>;
 
-  rowTypeMetric = common.RowTypeEnum.Metric;
-  rowTypeFormula = common.RowTypeEnum.Formula;
-  rowTypeHeader = common.RowTypeEnum.Header;
-  rowTypeEmpty = common.RowTypeEnum.Empty;
+  rowTypeMetric = RowTypeEnum.Metric;
+  rowTypeFormula = RowTypeEnum.Formula;
+  rowTypeHeader = RowTypeEnum.Header;
+  rowTypeEmpty = RowTypeEnum.Empty;
 
   constructor(
     private reportQuery: ReportQuery,
@@ -43,12 +42,10 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
 
       let report = this.reportQuery.getValue();
 
-      let newChart = common.makeCopy(report.chart);
+      let newChart = makeCopy(report.chart);
 
       if (newShowChart === true) {
-        let newSeries: MconfigChartSeries = common.makeCopy(
-          common.DEFAULT_CHART_SERIES_LINE
-        );
+        let newSeries: MconfigChartSeries = makeCopy(DEFAULT_CHART_SERIES_LINE);
         newSeries.dataRowId = this.params.data.rowId;
         newChart.series.push(newSeries);
       }
@@ -58,7 +55,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
       //   );
       // }
 
-      let rowChange: common.RowChange = {
+      let rowChange: RowChange = {
         rowId: this.params.data.rowId,
         formula: this.params.data.formula,
         parameters: this.params.data.parameters,
@@ -68,7 +65,7 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
 
       this.reportService.modifyRows({
         report: report,
-        changeType: common.ChangeTypeEnum.EditInfo,
+        changeType: ChangeTypeEnum.EditInfo,
         rowChange: rowChange,
         rowIds: undefined,
         reportFields: report.fields,

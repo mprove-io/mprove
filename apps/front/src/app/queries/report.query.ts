@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { EMPTY_REPORT_ID } from '~common/constants/top';
+import { makeCopy } from '~common/functions/make-copy';
+import { ReportX } from '~common/interfaces/backend/report-x';
 import { BaseQuery } from './base.query';
 
-export class ReportState extends common.ReportX {}
+export class ReportState extends ReportX {}
 
 export const emptyReport: ReportState = {
   projectId: undefined,
   structId: undefined,
-  reportId: common.EMPTY_REPORT_ID,
+  reportId: EMPTY_REPORT_ID,
   draft: false,
   creatorId: undefined,
   filePath: undefined,
@@ -30,7 +33,7 @@ export const emptyReport: ReportState = {
   timeColumnsLimit: undefined,
   isTimeColumnsLimitExceeded: false,
   rows: [],
-  chart: common.makeCopy(common.DEFAULT_CHART),
+  chart: makeCopy(DEFAULT_CHART),
   columns: [],
   draftCreatedTs: undefined,
   serverTs: undefined,

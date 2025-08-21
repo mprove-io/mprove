@@ -7,8 +7,24 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import {
+  LAST_SELECTED_CHART_ID,
+  LAST_SELECTED_MODEL_ID,
+  PARAMETER_MODEL_ID,
+  PATH_CHARTS_LIST,
+  PATH_INFO,
+  PATH_MODELS_LIST,
+  PATH_ORG,
+  PATH_PROJECT
+} from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendGetModelRequestPayload,
+  ToBackendGetModelResponse
+} from '~common/interfaces/to-backend/models/to-backend-get-model';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelQuery } from '../queries/model.query';
@@ -62,11 +78,11 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let parametersModelId = route.params[common.PARAMETER_MODEL_ID];
+    let parametersModelId = route.params[PARAMETER_MODEL_ID];
 
     let urlParts = routerStateSnapshot.url.split('/');
 
-    if (parametersModelId === common.LAST_SELECTED_MODEL_ID) {
+    if (parametersModelId === LAST_SELECTED_MODEL_ID) {
       let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
       let models = this.modelsQuery.getValue().models;
 
@@ -74,21 +90,21 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
         link => link.projectId === nav.projectId
       );
 
-      if (common.isDefined(pLink)) {
+      if (isDefined(pLink)) {
         let pModel = models.find(r => r.modelId === pLink.modelId);
 
-        if (urlParts[14] === common.PATH_CHARTS_LIST) {
+        if (urlParts[14] === PATH_CHARTS_LIST) {
           this.navigateService.navigateToChartsList({
             modelId: pModel?.modelId
           });
-        } else if (urlParts[14] === common.PATH_MODELS_LIST) {
+        } else if (urlParts[14] === PATH_MODELS_LIST) {
           this.navigateService.navigateToModelsList({
             modelId: pModel?.modelId
           });
-        } else if (common.isDefined(pModel)) {
+        } else if (isDefined(pModel)) {
           this.navigateService.navigateToChart({
             modelId: pModel.modelId,
-            chartId: common.LAST_SELECTED_CHART_ID
+            chartId: LAST_SELECTED_CHART_ID
           });
         } else {
           this.navigateService.navigateToCharts();
@@ -102,7 +118,7 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
       }
     }
 
-    let payload: apiToBackend.ToBackendGetModelRequestPayload = {
+    let payload: ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -112,13 +128,12 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetModelResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetModelResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.structQuery.update(resp.payload.struct);
@@ -129,16 +144,15 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
 
             return true;
           } else if (
-            resp.info?.status === common.ResponseInfoStatusEnum.Error &&
-            resp.info.error.message ===
-              common.ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+            resp.info?.status === ResponseInfoStatusEnum.Error &&
+            resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
           ) {
             this.router.navigate([
-              common.PATH_ORG,
+              PATH_ORG,
               nav.orgId,
-              common.PATH_PROJECT,
+              PATH_PROJECT,
               nav.projectId,
-              common.PATH_INFO
+              PATH_INFO
             ]);
 
             return false;

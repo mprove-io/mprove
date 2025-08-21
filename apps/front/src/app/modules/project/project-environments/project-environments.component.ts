@@ -9,9 +9,6 @@ import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -19,9 +16,9 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './project-environments.component.html'
 })
 export class ProjectEnvironmentsComponent implements OnInit {
-  pageTitle = constants.PROJECT_ENVIRONMENTS_PAGE_TITLE;
+  pageTitle = PROJECT_ENVIRONMENTS_PAGE_TITLE;
 
-  envProd = common.PROJECT_ENV_PROD;
+  envProd = PROJECT_ENV_PROD;
 
   isShowValues: boolean;
 
@@ -49,15 +46,13 @@ export class ProjectEnvironmentsComponent implements OnInit {
     })
   );
 
-  environments: common.Env[] = [];
+  environments: Env[] = [];
   environments$ = this.environmentsQuery.environments$.pipe(
     tap(x => {
       this.environments = x.sort((a, b) =>
-        b.envId === common.PROJECT_ENV_PROD &&
-        a.envId !== common.PROJECT_ENV_PROD
+        b.envId === PROJECT_ENV_PROD && a.envId !== PROJECT_ENV_PROD
           ? 1
-          : a.envId === common.PROJECT_ENV_PROD &&
-              b.envId !== common.PROJECT_ENV_PROD
+          : a.envId === PROJECT_ENV_PROD && b.envId !== PROJECT_ENV_PROD
             ? -1
             : a.envId > b.envId
               ? 1
@@ -97,26 +92,26 @@ export class ProjectEnvironmentsComponent implements OnInit {
     });
   }
 
-  navToVariables(environment: common.Env) {
+  navToVariables(environment: Env) {
     this.router.navigate([
-      common.PATH_ORG,
+      PATH_ORG,
       this.nav.orgId,
-      common.PATH_PROJECT,
+      PATH_PROJECT,
       this.nav.projectId,
-      common.PATH_ENV_VARIABLES,
+      PATH_ENV_VARIABLES,
       environment.envId
     ]);
   }
 
-  addUser(env: common.Env) {
+  addUser(env: Env) {
     this.myDialogService.showAddEnvUser({
       apiService: this.apiService,
       env: env
     });
   }
 
-  removeUser(env: common.Env, envUser: common.EnvUser) {
-    let payload: apiToBackend.ToBackendDeleteEnvUserRequestPayload = {
+  removeUser(env: Env, envUser: EnvUser) {
+    let payload: ToBackendDeleteEnvUserRequestPayload = {
       projectId: env.projectId,
       envId: env.envId,
       envUserId: envUser.userId
@@ -124,14 +119,13 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteEnvUser,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteEnvUserResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteEnvUserResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
 
@@ -151,8 +145,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .subscribe();
   }
 
-  isFallbackConnectionsChange(env: common.Env) {
-    let payload: apiToBackend.ToBackendEditEnvFallbacksRequestPayload = {
+  isFallbackConnectionsChange(env: Env) {
+    let payload: ToBackendEditEnvFallbacksRequestPayload = {
       projectId: env.projectId,
       envId: env.envId,
       isFallbackToProdConnections: !env.isFallbackToProdConnections,
@@ -161,14 +155,13 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditEnvFallbacksResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendEditEnvFallbacksResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
           }
@@ -178,8 +171,8 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .subscribe();
   }
 
-  isFallbackEnvVarsChange(env: common.Env) {
-    let payload: apiToBackend.ToBackendEditEnvFallbacksRequestPayload = {
+  isFallbackEnvVarsChange(env: Env) {
+    let payload: ToBackendEditEnvFallbacksRequestPayload = {
       projectId: env.projectId,
       envId: env.envId,
       isFallbackToProdConnections: env.isFallbackToProdConnections,
@@ -188,14 +181,13 @@ export class ProjectEnvironmentsComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditEnvFallbacks,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditEnvFallbacksResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendEditEnvFallbacksResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
             this.environmentsQuery.update({ environments: resp.payload.envs });
           }
@@ -205,7 +197,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
       .subscribe();
   }
 
-  addVar(env: common.Env) {
+  addVar(env: Env) {
     this.myDialogService.showAddEv({
       apiService: this.apiService,
       projectId: this.nav.projectId,
@@ -213,7 +205,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     });
   }
 
-  editVar(env: common.Env, ev: common.Ev) {
+  editVar(env: Env, ev: Ev) {
     this.myDialogService.showEditEv({
       apiService: this.apiService,
       env: env,
@@ -221,7 +213,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     });
   }
 
-  removeVar(env: common.Env, ev: common.Ev) {
+  removeVar(env: Env, ev: Ev) {
     this.myDialogService.showDeleteEv({
       apiService: this.apiService,
       env: env,
@@ -229,7 +221,7 @@ export class ProjectEnvironmentsComponent implements OnInit {
     });
   }
 
-  deleteEnvironment(environment: common.Env) {
+  deleteEnvironment(environment: Env) {
     this.myDialogService.showDeleteEnvironment({
       apiService: this.apiService,
       projectId: environment.projectId,

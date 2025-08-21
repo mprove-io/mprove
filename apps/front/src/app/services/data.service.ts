@@ -3,12 +3,30 @@ import { FieldBase } from '@malloydata/malloy/dist/model';
 import { formatLocale } from 'd3-format';
 import { SeriesOption } from 'echarts';
 import { format } from 'ssf';
-import { NO_FIELDS_SELECTED, capitalizeFirstLetter } from '~common/_index';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { NO_FIELDS_SELECTED } from '~common/constants/top';
+import {
+  FORMAT_NUMBER_DECIMAL,
+  FORMAT_NUMBER_GROUPING
+} from '~common/constants/top-front';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
+import { ParameterEnum } from '~common/enums/docs/parameter.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { isUndefined } from '~common/functions/is-undefined';
+import { MconfigField } from '~common/interfaces/backend/mconfig-field';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
+import { Query } from '~common/interfaces/blockml/query';
+import { DataPoint } from '~common/interfaces/front/data-point';
+import { DataRow } from '~common/interfaces/front/data-row';
 import { frontFormatTsUnix } from '../functions/front-format-ts-unix';
-import { DataPoint } from '../interfaces/data-point';
-import { DataRow } from '../interfaces/data-row';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 
@@ -72,8 +90,8 @@ export class DataService {
   }
 
   private convertToNumberOrNull(x: any) {
-    let xNum = common.isDefined(x) ? Number(x) : null;
-    let y = common.isDefined(xNum) && this.isNumberString(xNum) ? xNum : null;
+    let xNum = isDefined(x) ? Number(x) : null;
+    let y = isDefined(xNum) && this.isNumberString(xNum) ? xNum : null;
     return y;
   }
 
@@ -182,7 +200,7 @@ export class DataService {
   formatValue(item: {
     value: any;
     formatNumber: string;
-    fieldResult: common.FieldResultEnum;
+    fieldResult: FieldResultEnum;
     currencyPrefix: string;
     currencySuffix: string;
     thousandsSeparator: string;
@@ -197,14 +215,14 @@ export class DataService {
     } = item;
 
     if (
-      fieldResult === common.FieldResultEnum.Number &&
+      fieldResult === FieldResultEnum.Number &&
       this.isNumberString(value) &&
-      common.isDefined(formatNumber)
+      isDefined(formatNumber)
     ) {
       let locale = formatLocale({
-        decimal: constants.FORMAT_NUMBER_DECIMAL,
+        decimal: FORMAT_NUMBER_DECIMAL,
         thousands: thousandsSeparator,
-        grouping: constants.FORMAT_NUMBER_GROUPING,
+        grouping: FORMAT_NUMBER_GROUPING,
         currency: [currencyPrefix ?? '', currencySuffix ?? '']
       });
 
@@ -215,11 +233,11 @@ export class DataService {
   }
 
   makeQData(item: {
-    // mconfigFields: common.MconfigField[];
+    // mconfigFields: MconfigField[];
 
-    query: common.Query;
-    mconfig: common.MconfigX;
-    // modelType: common.ModelTypeEnum;
+    query: Query;
+    mconfig: MconfigX;
+    // modelType: ModelTypeEnum;
     // compiledQuery: CompiledQuery;
   }) {
     let { query, mconfig } = item;
@@ -243,7 +261,7 @@ export class DataService {
 
     let data: SourceDataRow[] = query.data;
 
-    let isStore = common.isUndefined(query.sql);
+    let isStore = isUndefined(query.sql);
 
     // console.log('data');
     // console.log(data);
@@ -251,7 +269,7 @@ export class DataService {
     // console.log('columns');
     // console.log(mconfigFields);
 
-    if (common.isUndefined(data)) {
+    if (isUndefined(data)) {
       return [];
     }
 
@@ -278,7 +296,7 @@ export class DataService {
       // console.log(row);
 
       let dataRow: SourceDataRow =
-        mconfig.modelType === common.ModelTypeEnum.Malloy
+        mconfig.modelType === ModelTypeEnum.Malloy
           ? (row['row' as any] as unknown as SourceDataRow)
           : row;
 
@@ -296,7 +314,7 @@ export class DataService {
           // console.log('mconfig.modelType');
           // console.log(mconfig.modelType);
 
-          if (mconfig.modelType === common.ModelTypeEnum.Malloy) {
+          if (mconfig.modelType === ModelTypeEnum.Malloy) {
             let compiledQueryField =
               mconfig.compiledQuery.structs[0].fields.find(
                 x => x.name === key
@@ -316,7 +334,7 @@ export class DataService {
                   ? drillExpression.path.join('.') + '.' + drillExpression.name
                   : drillExpression.name
                 : undefined;
-          } else if (mconfig.modelType === common.ModelTypeEnum.Store) {
+          } else if (mconfig.modelType === ModelTypeEnum.Store) {
             fieldId = key.toLowerCase();
           }
 
@@ -330,7 +348,7 @@ export class DataService {
           // console.log('field');
           // console.log(field);
 
-          if (mconfig.modelType === common.ModelTypeEnum.Store) {
+          if (mconfig.modelType === ModelTypeEnum.Store) {
             sqlName = field.sqlName;
           }
 
@@ -339,15 +357,15 @@ export class DataService {
 
           let tsValue: number;
 
-          if (common.isDefined(field.detail)) {
+          if (isDefined(field.detail)) {
             tsValue = dataRow[field.id] as unknown as number;
-          } else if (field.result === common.FieldResultEnum.Ts) {
+          } else if (field.result === FieldResultEnum.Ts) {
             let tsValueFn =
-              mconfig.modelType === common.ModelTypeEnum.Malloy
+              mconfig.modelType === ModelTypeEnum.Malloy
                 ? this.getDateFromT
                 : this.getTsValueFn(sqlName);
 
-            tsValue = common.isDefined(tsValueFn)
+            tsValue = isDefined(tsValueFn)
               ? tsValueFn(value).getTime()
               : undefined;
           }
@@ -355,24 +373,24 @@ export class DataService {
           let storeTimeSpec =
             isStore === false
               ? undefined
-              : field.detail === common.DetailUnitEnum.Timestamps
-                ? common.TimeSpecEnum.Timestamps
-                : field.detail === common.DetailUnitEnum.Minutes
-                  ? common.TimeSpecEnum.Minutes
-                  : field.detail === common.DetailUnitEnum.Hours
-                    ? common.TimeSpecEnum.Hours
-                    : field.detail === common.DetailUnitEnum.Days
-                      ? common.TimeSpecEnum.Days
-                      : field.detail === common.DetailUnitEnum.WeeksSunday
-                        ? common.TimeSpecEnum.Weeks
-                        : field.detail === common.DetailUnitEnum.WeeksMonday
-                          ? common.TimeSpecEnum.Weeks
-                          : field.detail === common.DetailUnitEnum.Months
-                            ? common.TimeSpecEnum.Months
-                            : field.detail === common.DetailUnitEnum.Quarters
-                              ? common.TimeSpecEnum.Quarters
-                              : field.detail === common.DetailUnitEnum.Years
-                                ? common.TimeSpecEnum.Years
+              : field.detail === DetailUnitEnum.Timestamps
+                ? TimeSpecEnum.Timestamps
+                : field.detail === DetailUnitEnum.Minutes
+                  ? TimeSpecEnum.Minutes
+                  : field.detail === DetailUnitEnum.Hours
+                    ? TimeSpecEnum.Hours
+                    : field.detail === DetailUnitEnum.Days
+                      ? TimeSpecEnum.Days
+                      : field.detail === DetailUnitEnum.WeeksSunday
+                        ? TimeSpecEnum.Weeks
+                        : field.detail === DetailUnitEnum.WeeksMonday
+                          ? TimeSpecEnum.Weeks
+                          : field.detail === DetailUnitEnum.Months
+                            ? TimeSpecEnum.Months
+                            : field.detail === DetailUnitEnum.Quarters
+                              ? TimeSpecEnum.Quarters
+                              : field.detail === DetailUnitEnum.Years
+                                ? TimeSpecEnum.Years
                                 : undefined;
 
           let malloyNumberTag = field.malloyTags?.find(
@@ -390,7 +408,7 @@ export class DataService {
                 ? '€'
                 : malloyCurrencyTag?.value === 'pound'
                   ? '£'
-                  : common.isDefined(malloyCurrencyTag)
+                  : isDefined(malloyCurrencyTag)
                     ? '$'
                     : '';
 
@@ -412,7 +430,7 @@ export class DataService {
               : 'seconds';
 
           let thousandsSeparatorTag = field.mproveTags?.find(
-            tag => tag.key === common.ParameterEnum.ThousandsSeparator
+            tag => tag.key === ParameterEnum.ThousandsSeparator
           );
 
           let thousandsSeparator =
@@ -430,14 +448,14 @@ export class DataService {
           let cell: QCell = {
             name: key.toLowerCase(),
             value:
-              isStore === true && common.isDefined(storeTimeSpec)
+              isStore === true && isDefined(storeTimeSpec)
                 ? ((Number(value) * 1000) as unknown as string)
-                : common.isDefined(value)
+                : isDefined(value)
                   ? value
                   : 'NULL',
-            valueFmt: common.isUndefined(value)
+            valueFmt: isUndefined(value)
               ? 'NULL'
-              : common.isDefined(tsValue)
+              : isDefined(tsValue)
                 ? frontFormatTsUnix({
                     timeSpec:
                       isStore === true
@@ -446,9 +464,9 @@ export class DataService {
                     unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
                   })
                 : // duration
-                  field.result === common.FieldResultEnum.Number &&
-                    mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                    common.isDefined(malloyDurationTag)
+                  field.result === FieldResultEnum.Number &&
+                    mconfig.modelType === ModelTypeEnum.Malloy &&
+                    isDefined(malloyDurationTag)
                   ? (this.getText({
                       value: Number(value),
                       options: {
@@ -465,9 +483,9 @@ export class DataService {
                       .split(',')
                       .join(thousandsSeparator))
                   : // field.formatNumber
-                    field.result === common.FieldResultEnum.Number &&
-                      mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                      common.isDefined(field?.formatNumber)
+                    field.result === FieldResultEnum.Number &&
+                      mconfig.modelType === ModelTypeEnum.Malloy &&
+                      isDefined(field?.formatNumber)
                     ? this.formatValue({
                         value: value,
                         formatNumber: field?.formatNumber,
@@ -479,27 +497,27 @@ export class DataService {
                         thousandsSeparator: thousandsSeparator
                       })
                     : // malloy percent
-                      field.result === common.FieldResultEnum.Number &&
-                        mconfig.modelType === common.ModelTypeEnum.Malloy &&
+                      field.result === FieldResultEnum.Number &&
+                        mconfig.modelType === ModelTypeEnum.Malloy &&
                         field.malloyTags
                           .map(tag => tag.key)
                           .indexOf('percent') > -1
                       ? format(`#${thousandsSeparator}##0.00%`, value)
                       : // malloy currency
-                        field.result === common.FieldResultEnum.Number &&
-                          mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                          common.isDefined(malloyCurrencyTag)
+                        field.result === FieldResultEnum.Number &&
+                          mconfig.modelType === ModelTypeEnum.Malloy &&
+                          isDefined(malloyCurrencyTag)
                         ? format(
                             `${malloyCurrencySymbol}#${thousandsSeparator}##0.00`,
                             value
                           )
                         : // malloy number
-                          field.result === common.FieldResultEnum.Number &&
-                            mconfig.modelType === common.ModelTypeEnum.Malloy &&
-                            common.isDefined(malloyNumberTag)
+                          field.result === FieldResultEnum.Number &&
+                            mconfig.modelType === ModelTypeEnum.Malloy &&
+                            isDefined(malloyNumberTag)
                           ? format(malloyNumberTag.value, value)
-                          : field.result === common.FieldResultEnum.Number &&
-                              common.isDefinedAndNotEmpty(struct.formatNumber)
+                          : field.result === FieldResultEnum.Number &&
+                              isDefinedAndNotEmpty(struct.formatNumber)
                             ? // struct.formatNumber
                               this.formatValue({
                                 value: value,
@@ -509,7 +527,7 @@ export class DataService {
                                 currencySuffix: field?.currencySuffix,
                                 thousandsSeparator: thousandsSeparator
                               })
-                            : field.result === common.FieldResultEnum.Number
+                            : field.result === FieldResultEnum.Number
                               ? // no formatNumber
                                 Number(value)
                                   .toLocaleString()
@@ -539,14 +557,14 @@ export class DataService {
   }
 
   makeSeriesData(item: {
-    modelType: common.ModelTypeEnum;
-    selectFields: common.MconfigField[];
+    modelType: ModelTypeEnum;
+    selectFields: MconfigField[];
     data: QDataRow[];
     multiFieldId: string;
     xFieldId: string;
     sizeFieldId: string;
     yFieldsIds: string[];
-    chartType: common.ChartTypeEnum;
+    chartType: ChartTypeEnum;
   }) {
     let {
       modelType,
@@ -570,7 +588,7 @@ export class DataService {
       return [];
     }
 
-    let yFields: common.MconfigField[] = [];
+    let yFields: MconfigField[] = [];
 
     yFieldsIds.forEach(yFieldId => {
       let yField = selectFields.find(f => f.id === yFieldId);
@@ -582,7 +600,7 @@ export class DataService {
       yFields.push(yField);
     });
 
-    let multiField = common.isDefined(multiFieldId)
+    let multiField = isDefined(multiFieldId)
       ? selectFields.find(f => f.id === multiFieldId)
       : undefined;
 
@@ -590,7 +608,7 @@ export class DataService {
       return [];
     }
 
-    let sizeField = common.isDefined(sizeFieldId)
+    let sizeField = isDefined(sizeFieldId)
       ? selectFields.find(f => f.id === sizeFieldId)
       : undefined;
 
@@ -604,10 +622,10 @@ export class DataService {
 
     let sizeFieldLabel: string;
 
-    if (common.isDefined(sizeField)) {
+    if (isDefined(sizeField)) {
       sizeFieldLabel =
         sizeField.topLabel +
-        (common.isDefined(sizeField.groupLabel)
+        (isDefined(sizeField.groupLabel)
           ? ` ${capitalizeFirstLetter(sizeField.groupLabel)}`
           : '') +
         ` ${capitalizeFirstLetter(sizeField.label)}`;
@@ -618,7 +636,7 @@ export class DataService {
             ? Number(x[sizeField.id].value)
             : undefined
         )
-        .filter(x => common.isDefined(x));
+        .filter(x => isDefined(x));
 
       if (sizeValues.length > 0) {
         sizeMin = Math.min(...sizeValues);
@@ -640,7 +658,7 @@ export class DataService {
 
         let yLabel =
           yField.topLabel +
-          (common.isDefined(yField.groupLabel)
+          (isDefined(yField.groupLabel)
             ? ` ${capitalizeFirstLetter(yField.groupLabel)}`
             : '') +
           ` ${capitalizeFirstLetter(yField.label)}`;
@@ -663,7 +681,7 @@ export class DataService {
           y => y.yKeyId === yKeyId
         );
 
-        if (common.isUndefined(ySeriesElement)) {
+        if (isUndefined(ySeriesElement)) {
           ySeriesElement = {
             yKeyId: yKeyId,
             yFieldId: yField.id,
@@ -676,40 +694,40 @@ export class DataService {
         // x null check
         if (row[xField.id]) {
           let tsValueFn =
-            modelType === common.ModelTypeEnum.Malloy
+            modelType === ModelTypeEnum.Malloy
               ? this.getDateFromT
               : this.getTsValueFn(xField.sqlName);
 
           let xV =
-            xField.result === common.FieldResultEnum.Ts
-              ? common.isDefined(tsValueFn)
+            xField.result === FieldResultEnum.Ts
+              ? isDefined(tsValueFn)
                 ? tsValueFn(row[xField.id].value).getTime()
                 : row[xField.id].value
               : row[xField.id].value;
 
-          if (common.isDefined(xV)) {
+          if (isDefined(xV)) {
             let seriesPoint: SeriesPoint = {
-              xValue: common.isUndefined(xV)
+              xValue: isUndefined(xV)
                 ? 'NULL'
-                : xField.result === common.FieldResultEnum.Number
+                : xField.result === FieldResultEnum.Number
                   ? this.convertToNumberOrNull(xV)
                   : xV,
               xValueFmt: row[xField.id].valueFmt,
               yValue: this.convertToNumberOrNull(row[yField.id].value),
               yValueFmt: row[yField.id].valueFmt,
               sizeValueMod:
-                common.isDefined(sizeField?.id) &&
+                isDefined(sizeField?.id) &&
                 this.isNumberString(row[sizeField.id].value)
                   ? (Number(row[sizeField.id].value) + addNorm) /
                     (sizeMax + sizeMin)
                   : 1,
               sizeValue:
-                common.isDefined(sizeField?.id) &&
+                isDefined(sizeField?.id) &&
                 this.isNumberString(row[sizeField.id].value)
                   ? Number(row[sizeField.id].value)
                   : undefined,
               sizeValueFmt:
-                common.isDefined(sizeField?.id) &&
+                isDefined(sizeField?.id) &&
                 this.isNumberString(row[sizeField.id].value)
                   ? row[sizeField.id].valueFmt
                   : undefined,
@@ -726,7 +744,7 @@ export class DataService {
     // console.log(ySeries);
 
     let sortedDaysOfWeek =
-      struct.weekStart === common.ProjectWeekStartEnum.Monday
+      struct.weekStart === ProjectWeekStartEnum.Monday
         ? [
             'Monday',
             'Tuesday',
@@ -769,23 +787,23 @@ export class DataService {
         seriesId: ySeriesElement.yFieldId,
         seriesSizeName: sizeField?.label,
         seriesPoints:
-          chartType !== common.ChartTypeEnum.Scatter &&
-          (xField?.result === common.FieldResultEnum.Ts ||
-            xField?.result === common.FieldResultEnum.Number ||
-            xField?.result === common.FieldResultEnum.DayOfWeek ||
-            xField?.result === common.FieldResultEnum.DayOfWeekIndex ||
-            xField?.result === common.FieldResultEnum.MonthName ||
-            xField?.result === common.FieldResultEnum.QuarterOfYear)
+          chartType !== ChartTypeEnum.Scatter &&
+          (xField?.result === FieldResultEnum.Ts ||
+            xField?.result === FieldResultEnum.Number ||
+            xField?.result === FieldResultEnum.DayOfWeek ||
+            xField?.result === FieldResultEnum.DayOfWeekIndex ||
+            xField?.result === FieldResultEnum.MonthName ||
+            xField?.result === FieldResultEnum.QuarterOfYear)
             ? ySeriesElement.points.sort((a: SeriesPoint, b: SeriesPoint) =>
-                xField?.result === common.FieldResultEnum.Number ||
-                xField?.result === common.FieldResultEnum.DayOfWeekIndex ||
-                xField?.result === common.FieldResultEnum.Ts
+                xField?.result === FieldResultEnum.Number ||
+                xField?.result === FieldResultEnum.DayOfWeekIndex ||
+                xField?.result === FieldResultEnum.Ts
                   ? Number(a.xValue) > Number(b.xValue)
                     ? 1
                     : Number(b.xValue) > Number(a.xValue)
                       ? -1
                       : 0
-                  : xField?.result === common.FieldResultEnum.DayOfWeek
+                  : xField?.result === FieldResultEnum.DayOfWeek
                     ? sortedDaysOfWeek.indexOf(a.xValue as string) >
                       sortedDaysOfWeek.indexOf(b.xValue as string)
                       ? 1
@@ -793,7 +811,7 @@ export class DataService {
                           sortedDaysOfWeek.indexOf(a.xValue as string)
                         ? -1
                         : 0
-                    : xField?.result === common.FieldResultEnum.MonthName
+                    : xField?.result === FieldResultEnum.MonthName
                       ? sortedMonthNames.indexOf(a.xValue as string) >
                         sortedMonthNames.indexOf(b.xValue as string)
                         ? 1
@@ -801,7 +819,7 @@ export class DataService {
                             sortedMonthNames.indexOf(a.xValue as string)
                           ? -1
                           : 0
-                      : xField?.result === common.FieldResultEnum.QuarterOfYear
+                      : xField?.result === FieldResultEnum.QuarterOfYear
                         ? sortedQuartersOfYear.indexOf(a.xValue as string) >
                           sortedQuartersOfYear.indexOf(b.xValue as string)
                           ? 1
@@ -874,32 +892,32 @@ export class DataService {
 
   getTimeSpecByFieldSqlName(fieldSqlName: string) {
     return fieldSqlName.match(/(?:___year)$/g)
-      ? common.TimeSpecEnum.Years
+      ? TimeSpecEnum.Years
       : fieldSqlName.match(/(?:___quarter)$/g)
-        ? common.TimeSpecEnum.Quarters
+        ? TimeSpecEnum.Quarters
         : fieldSqlName.match(/(?:___month)$/g)
-          ? common.TimeSpecEnum.Months
+          ? TimeSpecEnum.Months
           : fieldSqlName.match(/(?:___week)$/g)
-            ? common.TimeSpecEnum.Weeks
+            ? TimeSpecEnum.Weeks
             : fieldSqlName.match(/(?:___date)$/g)
-              ? common.TimeSpecEnum.Days
+              ? TimeSpecEnum.Days
               : fieldSqlName.match(/(?:___hour)$/g)
-                ? common.TimeSpecEnum.Hours
+                ? TimeSpecEnum.Hours
                 : fieldSqlName.match(/(?:___hour2)$/g)
-                  ? common.TimeSpecEnum.Hours
+                  ? TimeSpecEnum.Hours
                   : fieldSqlName.match(/(?:___hour3)$/g)
-                    ? common.TimeSpecEnum.Hours
+                    ? TimeSpecEnum.Hours
                     : fieldSqlName.match(/(?:___hour4)$/g)
-                      ? common.TimeSpecEnum.Hours
+                      ? TimeSpecEnum.Hours
                       : fieldSqlName.match(/(?:___hour6)$/g)
-                        ? common.TimeSpecEnum.Hours
+                        ? TimeSpecEnum.Hours
                         : fieldSqlName.match(/(?:___hour8)$/g)
-                          ? common.TimeSpecEnum.Hours
+                          ? TimeSpecEnum.Hours
                           : fieldSqlName.match(/(?:___hour12)$/g)
-                            ? common.TimeSpecEnum.Hours
+                            ? TimeSpecEnum.Hours
                             : fieldSqlName.match(/(?:___ts)$/g)
-                              ? common.TimeSpecEnum.Timestamps
-                              : common.TimeSpecEnum.Minutes;
+                              ? TimeSpecEnum.Timestamps
+                              : TimeSpecEnum.Minutes;
   }
 
   private getDateFromDate(rValue: string) {
@@ -909,7 +927,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -929,7 +947,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -954,7 +972,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -980,7 +998,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -1007,7 +1025,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -1027,7 +1045,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -1047,7 +1065,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -1077,13 +1095,13 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
     let [full, year, month, day, hour, minute, second, ms] = r;
 
-    let date = common.isDefinedAndNotEmpty(ms)
+    let date = isDefinedAndNotEmpty(ms)
       ? new Date(
           Date.UTC(
             parseInt(year, 10),
@@ -1116,7 +1134,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -1136,7 +1154,7 @@ export class DataService {
 
     let r = regEx.exec(data);
 
-    if (common.isUndefined(r)) {
+    if (isUndefined(r)) {
       return null;
     }
 
@@ -1157,7 +1175,7 @@ export class DataService {
 
     let name;
 
-    if (row.rowType !== common.RowTypeEnum.Metric) {
+    if (row.rowType !== RowTypeEnum.Metric) {
       name = row.name;
     } else {
       name = partLabel;
@@ -1178,7 +1196,7 @@ export class DataService {
     isMiniChart?: boolean;
     row: DataRow;
     dataPoints: DataPoint[];
-    chartSeriesElement: common.MconfigChartSeries;
+    chartSeriesElement: MconfigChartSeries;
     showMetricsModelName: boolean;
     showMetricsTimeFieldName: boolean;
   }) {
@@ -1231,7 +1249,7 @@ export class DataService {
       };
     } else {
       seriesOption = {
-        type: common.isDefined(chartSeriesElement?.type)
+        type: isDefined(chartSeriesElement?.type)
           ? (chartSeriesElement.type as any)
           : 'line',
         symbol: 'circle',
@@ -1269,11 +1287,11 @@ export class DataService {
               unixTimeZoned: p.data.value[0] / 1000
             });
 
-            let formattedValue = common.isDefined(p.data.value[1])
+            let formattedValue = isDefined(p.data.value[1])
               ? this.formatValue({
                   value: Number(p.data.value[1]),
                   formatNumber: row.formatNumber,
-                  fieldResult: common.FieldResultEnum.Number,
+                  fieldResult: FieldResultEnum.Number,
                   currencyPrefix: row.currencyPrefix,
                   currencySuffix: row.currencySuffix,
                   thousandsSeparator: struct.thousandsSeparator

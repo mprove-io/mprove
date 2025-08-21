@@ -12,12 +12,10 @@ import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface DeleteChartDialogData {
   apiService: ApiService;
-  chart: common.Chart;
+  chart: Chart;
   projectId: string;
   branchId: string;
   envId: string;
@@ -56,10 +54,10 @@ export class DeleteChartDialogComponent implements OnInit {
 
     let { projectId, branchId, isRepoProd } = this.ref.data;
 
-    let chart: common.Chart = this.ref.data.chart;
+    let chart: Chart = this.ref.data.chart;
     let apiService: ApiService = this.ref.data.apiService;
 
-    let payload: apiToBackend.ToBackendDeleteChartRequestPayload = {
+    let payload: ToBackendDeleteChartRequestPayload = {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
@@ -69,14 +67,13 @@ export class DeleteChartDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteChart,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteChart,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteChartResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteChartResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let charts = this.chartsQuery.getValue().charts;
 
             this.chartsQuery.update({

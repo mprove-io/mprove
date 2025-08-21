@@ -1,13 +1,23 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import {
+  EMPTY_CHART_ID,
+  EMPTY_MCONFIG_ID,
+  EMPTY_QUERY_ID
+} from '~common/constants/top';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { ChartX } from '~common/interfaces/backend/chart-x';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { TileX } from '~common/interfaces/backend/tile-x';
+import { Query } from '~common/interfaces/blockml/query';
 import { BaseQuery } from './base.query';
 
-export class ChartState extends common.ChartX {}
+export class ChartState extends ChartX {}
 
-export const emptyMconfig: common.MconfigX = {
+export const emptyMconfig: MconfigX = {
   structId: undefined,
-  mconfigId: common.EMPTY_MCONFIG_ID,
+  mconfigId: EMPTY_MCONFIG_ID,
   queryId: undefined,
   modelId: undefined,
   modelType: undefined,
@@ -34,17 +44,17 @@ export const emptyMconfig: common.MconfigX = {
   serverTs: 1
 };
 
-export const emptyQuery: common.Query = {
+export const emptyQuery: Query = {
   projectId: undefined,
   envId: undefined,
   connectionId: undefined,
   connectionType: undefined,
-  queryId: common.EMPTY_QUERY_ID,
+  queryId: EMPTY_QUERY_ID,
   sql: undefined,
   apiMethod: undefined,
   apiUrl: undefined,
   apiBody: undefined,
-  status: common.QueryStatusEnum.New,
+  status: QueryStatusEnum.New,
   data: [],
   lastRunBy: undefined,
   lastRunTs: 1,
@@ -60,7 +70,7 @@ export const emptyQuery: common.Query = {
   serverTs: 1
 };
 
-let emptyTile: common.TileX = {
+let emptyTile: TileX = {
   modelId: undefined,
   modelLabel: undefined,
   modelFilePath: undefined,
@@ -82,11 +92,11 @@ let emptyTile: common.TileX = {
 
 export const emptyChart: ChartState = {
   structId: undefined,
-  chartId: common.EMPTY_CHART_ID,
+  chartId: EMPTY_CHART_ID,
   draft: false,
   creatorId: undefined,
   title: emptyTile.title,
-  chartType: common.ChartTypeEnum.Table,
+  chartType: ChartTypeEnum.Table,
   modelId: undefined,
   modelLabel: undefined,
   filePath: undefined,

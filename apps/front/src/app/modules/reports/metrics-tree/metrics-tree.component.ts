@@ -17,7 +17,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ReportService } from '~front/app/services/report.service';
-import { common } from '~front/barrels/common';
 
 export class MetricNode {
   id: string;
@@ -27,9 +26,9 @@ export class MetricNode {
   partFieldLabel: string;
   timeLabel: string;
   isField: boolean;
-  fieldResult: common.FieldResultEnum;
+  fieldResult: FieldResultEnum;
   isSelected: boolean;
-  metric: common.ModelMetric;
+  metric: ModelMetric;
   children: MetricNode[];
 }
 
@@ -39,16 +38,16 @@ export class MetricNode {
   templateUrl: './metrics-tree.component.html'
 })
 export class MetricsTreeComponent implements AfterViewInit {
-  nodeClassMeasure = common.FieldClassEnum.Measure;
+  nodeClassMeasure = FieldClassEnum.Measure;
 
-  metrics: common.ModelMetric[];
+  metrics: ModelMetric[];
 
   metricNodes: MetricNode[] = [];
   metricNodes$ = combineLatest([
     this.structQuery.metrics$,
     this.uiQuery.searchMetricsWord$
   ]).pipe(
-    tap(([metrics, searchMetricsWord]: [common.ModelMetric[], string]) => {
+    tap(([metrics, searchMetricsWord]: [ModelMetric[], string]) => {
       this.metrics = metrics;
 
       this.makeMetricNodes({ searchMetricsWord: searchMetricsWord });
@@ -56,7 +55,7 @@ export class MetricsTreeComponent implements AfterViewInit {
     })
   );
 
-  // mconfig: common.MconfigX;
+  // mconfig: MconfigX;
   // mconfig$ = this.mqQuery.mconfig$.pipe(
   //   tap(x => {
   //     this.mconfig = x;
@@ -131,7 +130,7 @@ export class MetricsTreeComponent implements AfterViewInit {
         (node: any) => node.id === topNodeId
       );
 
-      if (common.isDefined(topNode)) {
+      if (isDefined(topNode)) {
         topNode.children.push(metricNode);
       } else {
         topNode = {
@@ -152,8 +151,8 @@ export class MetricsTreeComponent implements AfterViewInit {
       }
     });
 
-    if (common.isDefinedAndNotEmpty(searchMetricsWord)) {
-      let filteredMetricNodes: MetricNode[] = common.makeCopy(metricNodes);
+    if (isDefinedAndNotEmpty(searchMetricsWord)) {
+      let filteredMetricNodes: MetricNode[] = makeCopy(metricNodes);
 
       filteredMetricNodes = filteredMetricNodes.filter(aNode => {
         if (aNode.children?.length > 0) {
@@ -198,7 +197,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   }
 
   nodeOnClick(node: TreeNode) {
-    if (node.data.nodeClass === common.FieldClassEnum.Filter) {
+    if (node.data.nodeClass === FieldClassEnum.Filter) {
       return;
     }
     node.toggleActivated();
@@ -216,19 +215,19 @@ export class MetricsTreeComponent implements AfterViewInit {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId:
         reportSelectedNodes.length === 1
           ? reportSelectedNodes[0].data.rowId
           : undefined,
-      rowType: common.RowTypeEnum.Metric,
+      rowType: RowTypeEnum.Metric,
       metricId: node.data.metric.metricId,
       showChart: false
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.AddMetric,
+      changeType: ChangeTypeEnum.AddMetric,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -251,8 +250,8 @@ export class MetricsTreeComponent implements AfterViewInit {
     let filePath = fileIdAr.join('/');
 
     this.navigateService.navigateToFileLine({
-      panel: common.PanelEnum.Tree,
-      encodedFileId: common.encodeFilePath({ filePath: filePath }),
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: fieldLineNumber
     });
   }

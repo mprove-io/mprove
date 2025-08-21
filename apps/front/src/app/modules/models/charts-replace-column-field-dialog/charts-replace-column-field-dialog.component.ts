@@ -7,23 +7,21 @@ import {
   OnInit
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ApiService } from '~front/app/services/api.service';
-import { common } from '~front/barrels/common';
-import { SharedModule } from '../../shared/shared.module';
-
-import uFuzzy from '@leeoniya/ufuzzy';
-import { TippyDirective } from '@ngneat/helipopper';
 import { ChartService } from '~front/app/services/chart.service';
 import { StructService } from '~front/app/services/struct.service';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface ChartsReplaceColumnFieldDialogData {
   apiService: ApiService;
-  chart: common.ChartX;
-  fields: common.ModelField[];
-  currentField: common.ModelField;
+  chart: ChartX;
+  fields: ModelField[];
+  currentField: ModelField;
 }
 
 @Component({
@@ -46,10 +44,10 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  chart: common.ChartX;
-  currentField: common.ModelField;
-  fields: common.ModelField[];
-  matchFields: common.ModelFieldY[];
+  chart: ChartX;
+  currentField: ModelField;
+  fields: ModelField[];
+  matchFields: ModelFieldY[];
 
   addFieldForm: FormGroup;
 
@@ -76,18 +74,18 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
     this.matchFields = this.fields
       .filter(x =>
         x.hidden === false &&
-        x.fieldClass !== common.FieldClassEnum.Filter &&
-        this.currentField.fieldClass === common.FieldClassEnum.Dimension
-          ? x.fieldClass === common.FieldClassEnum.Dimension
-          : x.fieldClass === common.FieldClassEnum.Measure ||
-            x.fieldClass === common.FieldClassEnum.Calculation
+        x.fieldClass !== FieldClassEnum.Filter &&
+        this.currentField.fieldClass === FieldClassEnum.Dimension
+          ? x.fieldClass === FieldClassEnum.Dimension
+          : x.fieldClass === FieldClassEnum.Measure ||
+            x.fieldClass === FieldClassEnum.Calculation
       )
       .map(y =>
         Object.assign({}, y, {
-          partLabel: common.isDefined(y.groupLabel)
+          partLabel: isDefined(y.groupLabel)
             ? `${y.topLabel} ${y.groupLabel} ${y.label}`
             : `${y.topLabel} ${y.label}`
-        } as common.ModelFieldY)
+        } as ModelFieldY)
       )
       .sort((a, b) =>
         a.partLabel > b.partLabel ? 1 : b.partLabel > a.partLabel ? -1 : 0
@@ -104,7 +102,7 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
   }
 
   save() {
-    if (common.isUndefined(this.newColumnFieldId)) {
+    if (isUndefined(this.newColumnFieldId)) {
       return;
     }
 
@@ -112,13 +110,13 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: this.chart.draft,
         chartId: this.chart.chartId,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Replace,
+          type: QueryOperationTypeEnum.Replace,
           fieldId: this.currentField.id,
           replaceWithFieldId: this.newColumnFieldId,
           timezone: newMconfig.timezone
@@ -145,19 +143,19 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
       newMconfig.sorts =
         newMconfig.sortings.length > 0 ? newSorts.join(', ') : null;
 
-      newMconfig = common.setChartTitleOnSelectChange({
+      newMconfig = setChartTitleOnSelectChange({
         mconfig: newMconfig,
         fields: this.fields
       });
 
-      newMconfig = common.replaceChartField({
+      newMconfig = replaceChartField({
         mconfig: newMconfig,
         currentFieldId: this.currentField.id,
         newColumnFieldId: this.newColumnFieldId,
         newFieldResult: newField.result
       });
 
-      newMconfig = common.setChartFields({
+      newMconfig = setChartFields({
         mconfig: newMconfig,
         fields: this.fields
       });
@@ -172,9 +170,9 @@ export class ChartsReplaceColumnFieldDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  searchFn(term: string, modelField: common.ModelField) {
+  searchFn(term: string, modelField: ModelField) {
     let haystack = [
-      common.isDefinedAndNotEmpty(modelField.groupLabel)
+      isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
         : `${modelField.topLabel} ${modelField.label}`
     ];

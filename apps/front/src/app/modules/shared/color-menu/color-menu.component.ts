@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { common } from '~front/barrels/common';
 
 export class RgbaColor {
   r: number;
@@ -37,15 +36,15 @@ export class ColorMenuComponent implements OnInit {
     // console.log('this.color');
     // console.log(this.color);
 
-    if (common.isDefined(this.color)) {
-      if (this.color.match(common.MyRegex.CAPTURE_RGB_SPLIT_G())) {
-        let rgbR = common.MyRegex.CAPTURE_RGB_SPLIT_G().exec(this.color);
+    if (isDefined(this.color)) {
+      if (this.color.match(MyRegex.CAPTURE_RGB_SPLIT_G())) {
+        let rgbR = MyRegex.CAPTURE_RGB_SPLIT_G().exec(this.color);
 
         r = Number(rgbR[2]);
         g = Number(rgbR[3]);
         b = Number(rgbR[4]);
-      } else if (this.color.match(common.MyRegex.CAPTURE_RGBA_SPLIT_G())) {
-        let rgbaR = common.MyRegex.CAPTURE_RGBA_SPLIT_G().exec(this.color);
+      } else if (this.color.match(MyRegex.CAPTURE_RGBA_SPLIT_G())) {
+        let rgbaR = MyRegex.CAPTURE_RGBA_SPLIT_G().exec(this.color);
 
         r = Number(rgbaR[2]);
         g = Number(rgbaR[3]);

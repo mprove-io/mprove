@@ -15,7 +15,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ReportService } from '~front/app/services/report.service';
-import { common } from '~front/barrels/common';
 
 export interface ReportAddRowDialogData {
   apiService: ApiService;
@@ -36,9 +35,9 @@ export class ReportAddRowDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  rowTypeEnum = common.RowTypeEnum;
+  rowTypeEnum = RowTypeEnum;
 
-  rowType: common.RowTypeEnum = common.RowTypeEnum.Metric;
+  rowType: RowTypeEnum = RowTypeEnum.Metric;
 
   newNameForm: FormGroup = this.fb.group({
     name: [undefined, [Validators.required]]
@@ -48,7 +47,7 @@ export class ReportAddRowDialogComponent implements OnInit {
     formula: [undefined, [Validators.required]]
   });
 
-  metrics: common.ModelMetric[];
+  metrics: ModelMetric[];
   metrics$ = this.structQuery.select().pipe(
     tap(x => {
       this.metrics = x.metrics;
@@ -75,15 +74,15 @@ export class ReportAddRowDialogComponent implements OnInit {
   }
 
   emptyOnClick() {
-    this.rowType = common.RowTypeEnum.Empty;
+    this.rowType = RowTypeEnum.Empty;
   }
 
   metricOnClick() {
-    this.rowType = common.RowTypeEnum.Metric;
+    this.rowType = RowTypeEnum.Metric;
   }
 
   formulaOnClick() {
-    this.rowType = common.RowTypeEnum.Formula;
+    this.rowType = RowTypeEnum.Formula;
 
     this.newNameForm.controls['name'].setValue(undefined);
     this.newNameForm.controls['name'].markAsUntouched();
@@ -93,7 +92,7 @@ export class ReportAddRowDialogComponent implements OnInit {
   }
 
   headerOnClick() {
-    this.rowType = common.RowTypeEnum.Header;
+    this.rowType = RowTypeEnum.Header;
 
     this.newNameForm.controls['name'].setValue(undefined);
     this.newNameForm.controls['name'].markAsUntouched();
@@ -104,13 +103,13 @@ export class ReportAddRowDialogComponent implements OnInit {
   }
 
   save() {
-    if (this.rowType === common.RowTypeEnum.Header) {
+    if (this.rowType === RowTypeEnum.Header) {
       this.newNameForm.controls['name'].markAsTouched();
 
       if (this.newNameForm.valid === false) {
         return;
       }
-    } else if (this.rowType === common.RowTypeEnum.Formula) {
+    } else if (this.rowType === RowTypeEnum.Formula) {
       this.newNameForm.controls['name'].markAsTouched();
       this.newFormulaForm.controls['formula'].markAsTouched();
 
@@ -120,8 +119,8 @@ export class ReportAddRowDialogComponent implements OnInit {
       ) {
         return;
       }
-    } else if (this.rowType === common.RowTypeEnum.Metric) {
-      if (common.isUndefined(this.newMetricId)) {
+    } else if (this.rowType === RowTypeEnum.Metric) {
+      if (isUndefined(this.newMetricId)) {
         return;
       }
     }
@@ -135,31 +134,31 @@ export class ReportAddRowDialogComponent implements OnInit {
         ? reportSelectedNodes[0].data.rowId
         : undefined;
 
-    let rowChange: common.RowChange =
-      this.rowType === common.RowTypeEnum.Metric
+    let rowChange: RowChange =
+      this.rowType === RowTypeEnum.Metric
         ? {
             rowId: rowId,
             metricId: this.newMetricId,
-            rowType: common.RowTypeEnum.Metric,
+            rowType: RowTypeEnum.Metric,
             showChart: false
           }
-        : this.rowType === common.RowTypeEnum.Formula
+        : this.rowType === RowTypeEnum.Formula
           ? {
               rowId: rowId,
               name: this.newNameForm.controls['name'].value,
               formula: this.newFormulaForm.controls['formula'].value,
               showChart: false
             }
-          : this.rowType === common.RowTypeEnum.Header
+          : this.rowType === RowTypeEnum.Header
             ? {
                 rowId: rowId,
                 name: this.newNameForm.controls['name'].value,
                 showChart: false
               }
-            : this.rowType === common.RowTypeEnum.Empty
+            : this.rowType === RowTypeEnum.Empty
               ? {
                   rowId: rowId,
-                  rowType: common.RowTypeEnum.Empty,
+                  rowType: RowTypeEnum.Empty,
                   showChart: false
                 }
               : undefined;
@@ -167,14 +166,14 @@ export class ReportAddRowDialogComponent implements OnInit {
     this.reportService.modifyRows({
       report: report,
       changeType:
-        this.rowType === common.RowTypeEnum.Metric
-          ? common.ChangeTypeEnum.AddMetric
-          : this.rowType === common.RowTypeEnum.Formula
-            ? common.ChangeTypeEnum.AddFormula
-            : this.rowType === common.RowTypeEnum.Header
-              ? common.ChangeTypeEnum.AddHeader
-              : this.rowType === common.RowTypeEnum.Empty
-                ? common.ChangeTypeEnum.AddEmpty
+        this.rowType === RowTypeEnum.Metric
+          ? ChangeTypeEnum.AddMetric
+          : this.rowType === RowTypeEnum.Formula
+            ? ChangeTypeEnum.AddFormula
+            : this.rowType === RowTypeEnum.Header
+              ? ChangeTypeEnum.AddHeader
+              : this.rowType === RowTypeEnum.Empty
+                ? ChangeTypeEnum.AddEmpty
                 : undefined,
       rowChange: rowChange,
       rowIds: undefined,
@@ -189,7 +188,7 @@ export class ReportAddRowDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  newMetricSearchFn(term: string, metric: common.ModelMetric) {
+  newMetricSearchFn(term: string, metric: ModelMetric) {
     let haystack = [
       `${metric.topLabel} ${metric.partNodeLabel} ${metric.partFieldLabel} by ${metric.timeNodeLabel} ${metric.timeFieldLabel}`
     ];

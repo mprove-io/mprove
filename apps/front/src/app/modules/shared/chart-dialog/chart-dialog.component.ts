@@ -24,16 +24,13 @@ import { ApiService } from '~front/app/services/api.service';
 import { ChartService } from '~front/app/services/chart.service';
 import { DataService, QDataRow } from '~front/app/services/data.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { SharedModule } from '../shared.module';
 
 export interface ChartDialogData {
   apiService: ApiService;
   isSelectValid: boolean;
-  mconfig: common.MconfigX;
-  query: common.Query;
+  mconfig: MconfigX;
+  query: Query;
   qData: QDataRow[];
   canAccessModel: boolean;
   showNav: boolean;
@@ -66,28 +63,28 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.ref.close();
   }
 
-  queryStatusRunning = common.QueryStatusEnum.Running;
-  queryStatusCompleted = common.QueryStatusEnum.Completed;
+  queryStatusRunning = QueryStatusEnum.Running;
+  queryStatusCompleted = QueryStatusEnum.Completed;
 
-  modelTypeStore = common.ModelTypeEnum.Store;
+  modelTypeStore = ModelTypeEnum.Store;
 
   title: string;
 
   groupByFieldForm: FormGroup;
 
-  dimensionsPlusEmpty: common.ModelFieldY[] = [];
+  dimensionsPlusEmpty: ModelFieldY[] = [];
   fieldsListLoading = false;
-  model: common.Model;
+  model: Model;
 
   chartDialogRunButtonSpinnerName = 'chartDialogRunButtonSpinnerName';
 
   isShowInit = true;
   isRunButtonPressed = false;
 
-  chartTypeEnumTable = common.ChartTypeEnum.Table;
-  chartTypeEnumLine = common.ChartTypeEnum.Line;
-  chartTypeEnumScatter = common.ChartTypeEnum.Scatter;
-  chartTypeEnumBar = common.ChartTypeEnum.Bar;
+  chartTypeEnumTable = ChartTypeEnum.Table;
+  chartTypeEnumLine = ChartTypeEnum.Line;
+  chartTypeEnumScatter = ChartTypeEnum.Scatter;
+  chartTypeEnumBar = ChartTypeEnum.Bar;
 
   isData = true;
   isFormat = true;
@@ -97,9 +94,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
   canAccessModel: boolean;
   qData: QDataRow[];
-  query: common.Query;
-  mconfig: common.MconfigX;
-  emptyGroupMconfig: common.MconfigX;
+  query: Query;
+  mconfig: MconfigX;
+  emptyGroupMconfig: MconfigX;
   isSelectValid = false;
 
   isExplorer = false;
@@ -129,7 +126,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     // console.log('ngOnDestroyChartDialog');
     this.runButtonTimerSubscription?.unsubscribe();
 
-    if (common.isDefined(this.checkRunning$)) {
+    if (isDefined(this.checkRunning$)) {
       this.checkRunning$?.unsubscribe();
     }
   }
@@ -150,50 +147,46 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     if (this.ref.data.isToDuplicateQuery === true) {
       let oldMconfigId = this.ref.data.mconfig.mconfigId;
 
-      let payload: apiToBackend.ToBackendDuplicateMconfigAndQueryRequestPayload =
-        {
-          projectId: nav.projectId,
-          isRepoProd: nav.isRepoProd,
-          branchId: nav.branchId,
-          envId: nav.envId,
-          oldMconfigId: oldMconfigId
-        };
+      let payload: ToBackendDuplicateMconfigAndQueryRequestPayload = {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId,
+        oldMconfigId: oldMconfigId
+      };
 
       let apiService = this.ref.data.apiService;
 
       apiService
         .req({
           pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum
-              .ToBackendDuplicateMconfigAndQuery,
+            ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery,
           payload: payload,
           showSpinner: true
         })
         .pipe(
-          tap(
-            (resp: apiToBackend.ToBackendDuplicateMconfigAndQueryResponse) => {
-              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                let { mconfig, query } = resp.payload;
+          tap((resp: ToBackendDuplicateMconfigAndQueryResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+              let { mconfig, query } = resp.payload;
 
-                this.mconfig = mconfig;
-                this.emptyGroupMconfig = common.makeCopy(mconfig);
-                this.query = query;
+              this.mconfig = mconfig;
+              this.emptyGroupMconfig = makeCopy(mconfig);
+              this.query = query;
 
-                this.qData =
-                  this.mconfig.queryId === this.query.queryId
-                    ? this.dataService.makeQData({
-                        query: this.query,
-                        mconfig: this.mconfig
-                      })
-                    : [];
-              }
-
-              this.isShowInit = false;
-              this.cd.detectChanges();
-
-              this.startCheckRunning();
+              this.qData =
+                this.mconfig.queryId === this.query.queryId
+                  ? this.dataService.makeQData({
+                      query: this.query,
+                      mconfig: this.mconfig
+                    })
+                  : [];
             }
-          ),
+
+            this.isShowInit = false;
+            this.cd.detectChanges();
+
+            this.startCheckRunning();
+          }),
           take(1)
         )
         .subscribe();
@@ -218,8 +211,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         concatMap(() => {
           let nav = this.navQuery.getValue();
 
-          if (this.query?.status === common.QueryStatusEnum.Running) {
-            let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+          if (this.query?.status === QueryStatusEnum.Running) {
+            let payload: ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
               branchId: nav.branchId,
               envId: nav.envId,
@@ -234,13 +227,12 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
             return apiService
               .req({
-                pathInfoName:
-                  apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+                pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
                 payload: payload
               })
               .pipe(
-                tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-                  if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+                tap((resp: ToBackendGetQueryResponse) => {
+                  if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
                     this.query = resp.payload.query;
 
                     this.qData =
@@ -254,9 +246,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                     this.cd.detectChanges();
 
                     // if (
-                    //   common.isDefined(this.ref.data.updateQueryFn) &&
+                    //   isDefined(this.ref.data.updateQueryFn) &&
                     //   resp.payload.query.status !==
-                    //     common.QueryStatusEnum.Running
+                    //     QueryStatusEnum.Running
                     // ) {
                     //   this.ref.data.updateQueryFn(resp.payload.query);
                     // }
@@ -286,26 +278,26 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     this.ref.close();
 
-    let newMconfigId = common.makeId();
-    // let newQueryId = common.makeId();
+    let newMconfigId = makeId();
+    // let newQueryId = makeId();
 
-    let mconfigCopy = common.makeCopy(this.mconfig);
+    let mconfigCopy = makeCopy(this.mconfig);
 
-    let newMconfig = Object.assign(mconfigCopy, <common.MconfigX>{
+    let newMconfig = Object.assign(mconfigCopy, <MconfigX>{
       mconfigId: newMconfigId,
       queryId: this.query.queryId,
       temp: true,
       serverTs: 1
     });
 
-    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
         isKeepQueryId: true,
         isDraft: false,
         chartId: undefined,
         queryOperation: {
-          type: common.QueryOperationTypeEnum.Get,
+          type: QueryOperationTypeEnum.Get,
           timezone: newMconfig.timezone
         }
       });
@@ -339,7 +331,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       )
       .subscribe();
 
-    let payload: apiToBackend.ToBackendRunQueriesRequestPayload = {
+    let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -352,13 +344,12 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendRunQueries,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendRunQueriesResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendRunQueriesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { runningQueries } = resp.payload;
 
             this.query = Object.assign(runningQueries[0], {
@@ -381,7 +372,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     this.navigateService.navigateToChart({
       modelId: modelId,
-      chartId: common.EMPTY_CHART_ID
+      chartId: EMPTY_CHART_ID
     });
   }
 
@@ -413,7 +404,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       .metrics.find(y => y.metricId === this.ref.data.metricId);
 
     let restrictedFilterFieldIds =
-      metric.modelType === common.ModelTypeEnum.Malloy
+      metric.modelType === ModelTypeEnum.Malloy
         ? [
             `${metric.timeFieldId}_year`,
             `${metric.timeFieldId}_quarter`,
@@ -426,19 +417,19 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
             `${metric.timeFieldId}_ts`
           ]
         : [
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Year}`,
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Quarter}`,
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Month}`,
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Week}`,
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Date}`,
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Hour}`,
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Minute}`,
-            `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Year}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Quarter}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Month}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Week}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Date}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Hour}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Minute}`,
+            `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`
           ];
 
     this.fieldsListLoading = true;
 
-    let payload: apiToBackend.ToBackendGetModelRequestPayload = {
+    let payload: ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -448,38 +439,33 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     let apiService = this.ref.data.apiService;
 
-    let emptyField = Object.assign(
-      {},
-      common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
-      {
-        partLabel: 'Empty'
-      } as common.ModelFieldY
-    );
+    let emptyField = Object.assign({}, makeCopy(EMPTY_MCONFIG_FIELD), {
+      partLabel: 'Empty'
+    } as ModelFieldY);
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetModelResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetModelResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.dimensionsPlusEmpty = [
               emptyField,
               ...resp.payload.model.fields
                 .filter(
                   x =>
-                    x.result !== common.FieldResultEnum.Ts &&
-                    x.fieldClass === common.FieldClassEnum.Dimension &&
+                    x.result !== FieldResultEnum.Ts &&
+                    x.fieldClass === FieldClassEnum.Dimension &&
                     restrictedFilterFieldIds.indexOf(x.id) < 0
                 )
                 .map(x =>
                   Object.assign({}, x, {
-                    partLabel: common.isDefined(x.groupLabel)
+                    partLabel: isDefined(x.groupLabel)
                       ? `${x.topLabel} ${x.groupLabel} ${x.label}`
                       : `${x.topLabel} ${x.label}`
-                  } as common.ModelFieldY)
+                  } as ModelFieldY)
                 )
                 .sort((a, b) =>
                   a.partLabel > b.partLabel
@@ -512,24 +498,24 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     let groupByFieldId = this.groupByFieldForm.controls['groupByField'].value;
 
-    if (common.isDefined(groupByFieldId)) {
-      let newMconfigId = common.makeId();
-      let newQueryId = common.makeId();
+    if (isDefined(groupByFieldId)) {
+      let newMconfigId = makeId();
+      let newQueryId = makeId();
 
-      let mconfigCopy = common.makeCopy(this.emptyGroupMconfig);
+      let mconfigCopy = makeCopy(this.emptyGroupMconfig);
 
-      let newMconfig = Object.assign(mconfigCopy, <common.MconfigX>{
+      let newMconfig = Object.assign(mconfigCopy, <MconfigX>{
         mconfigId: newMconfigId,
         queryId: newQueryId,
         temp: true,
         serverTs: 1
       });
 
-      let queryOperation: common.QueryOperation;
+      let queryOperation: QueryOperation;
 
-      if (metric.modelType === common.ModelTypeEnum.Malloy) {
+      if (metric.modelType === ModelTypeEnum.Malloy) {
         let { queryOperationType, sortFieldId, desc } =
-          common.sortFieldsOnSelectChange({
+          sortFieldsOnSelectChange({
             mconfig: newMconfig,
             selectFieldId: groupByFieldId,
             modelFields: this.model.fields,
@@ -546,73 +532,69 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       } else {
         newMconfig.select = [...newMconfig.select, groupByFieldId];
 
-        newMconfig = common.setChartTitleOnSelectChange({
+        newMconfig = setChartTitleOnSelectChange({
           mconfig: newMconfig,
           fields: this.model.fields
         });
 
-        newMconfig = common.setChartFields({
+        newMconfig = setChartFields({
           mconfig: newMconfig,
           fields: this.model.fields
         });
 
-        newMconfig = common.sortChartFieldsOnSelectChange({
+        newMconfig = sortChartFieldsOnSelectChange({
           mconfig: newMconfig,
           fields: this.model.fields
         });
       }
 
-      let payload: apiToBackend.ToBackendCreateTempMconfigAndQueryRequestPayload =
-        {
-          projectId: nav.projectId,
-          isRepoProd: nav.isRepoProd,
-          branchId: nav.branchId,
-          envId: nav.envId,
-          mconfig: newMconfig,
-          queryOperations: [queryOperation],
-          cellMetricsStartDateMs: undefined,
-          cellMetricsEndDateMs: undefined
-        };
+      let payload: ToBackendCreateTempMconfigAndQueryRequestPayload = {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId,
+        mconfig: newMconfig,
+        queryOperations: [queryOperation],
+        cellMetricsStartDateMs: undefined,
+        cellMetricsEndDateMs: undefined
+      };
 
       let apiService = this.ref.data.apiService;
 
       apiService
         .req({
           pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum
-              .ToBackendCreateTempMconfigAndQuery,
+            ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery,
           payload: payload
         })
         .pipe(
-          tap(
-            (resp: apiToBackend.ToBackendCreateTempMconfigAndQueryResponse) => {
-              if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
-                let { mconfig, query } = resp.payload;
+          tap((resp: ToBackendCreateTempMconfigAndQueryResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+              let { mconfig, query } = resp.payload;
 
-                this.mconfig = mconfig;
-                this.query = query;
+              this.mconfig = mconfig;
+              this.query = query;
 
-                this.qData =
-                  this.mconfig.queryId === this.query.queryId
-                    ? this.dataService.makeQData({
-                        query: this.query,
-                        mconfig: this.mconfig
-                      })
-                    : [];
+              this.qData =
+                this.mconfig.queryId === this.query.queryId
+                  ? this.dataService.makeQData({
+                      query: this.query,
+                      mconfig: this.mconfig
+                    })
+                  : [];
 
-                if (this.query.status !== common.QueryStatusEnum.Completed) {
-                  this.run();
-                }
+              if (this.query.status !== QueryStatusEnum.Completed) {
+                this.run();
               }
             }
-          ),
+          }),
           take(1)
         )
         .subscribe();
     } else {
-      let newMconfig = common.makeCopy(this.emptyGroupMconfig);
+      let newMconfig = makeCopy(this.emptyGroupMconfig);
 
-      let payload: apiToBackend.ToBackendGetQueryRequestPayload = {
+      let payload: ToBackendGetQueryRequestPayload = {
         projectId: nav.projectId,
         branchId: nav.branchId,
         envId: nav.envId,
@@ -627,13 +609,12 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
       apiService
         .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
           payload: payload
         })
         .pipe(
-          tap((resp: apiToBackend.ToBackendGetQueryResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          tap((resp: ToBackendGetQueryResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               this.mconfig = newMconfig;
               this.query = resp.payload.query;
 
@@ -654,9 +635,9 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  filterMetricBySearchFn(term: string, modelFieldY: common.ModelFieldY) {
+  filterMetricBySearchFn(term: string, modelFieldY: ModelFieldY) {
     let haystack = [
-      common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
+      isDefinedAndNotEmpty(modelFieldY.groupLabel)
         ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
         : `${modelFieldY.topLabel} ${modelFieldY.label}`
     ];

@@ -1,9 +1,22 @@
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeCopy } from '~common/functions/make-copy';
+import { TileX } from '~common/interfaces/backend/tile-x';
+import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
+import { ToBackendDeleteDraftChartsResponse } from '~common/interfaces/to-backend/charts/to-backend-delete-draft-charts';
+import {
+  ToBackendCreateDraftDashboardRequestPayload,
+  ToBackendCreateDraftDashboardResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
+import { ToBackendDeleteDraftDashboardsRequestPayload } from '~common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
+import {
+  ToBackendEditDraftDashboardRequestPayload,
+  ToBackendEditDraftDashboardResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-edit-draft-dashboard';
 import { DashboardQuery } from '../queries/dashboard.query';
 import { DashboardsQuery } from '../queries/dashboards.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -32,10 +45,10 @@ export class DashboardService {
 
   editDashboard(item: {
     isDraft: boolean;
-    tiles: common.TileX[];
+    tiles: TileX[];
     oldDashboardId: string;
     newDashboardId: string;
-    newDashboardFields: common.DashboardField[];
+    newDashboardFields: DashboardField[];
     timezone: string;
   }) {
     let {
@@ -67,13 +80,13 @@ export class DashboardService {
   }
 
   navCreateDraftDashboard(item: {
-    tiles: common.TileX[];
+    tiles: TileX[];
     oldDashboardId: string;
     newDashboardId: string;
-    newDashboardFields: common.DashboardField[];
+    newDashboardFields: DashboardField[];
     timezone: string;
   }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let {
       tiles,
@@ -83,16 +96,16 @@ export class DashboardService {
       timezone
     } = item;
 
-    let newTiles: common.TileX[] = [];
+    let newTiles: TileX[] = [];
 
     tiles.forEach(x => {
-      let y: any = common.makeCopy(x);
+      let y: any = makeCopy(x);
       delete y.query;
       delete y.mconfig;
       newTiles.push(y);
     });
 
-    let payload: apiToBackend.ToBackendCreateDraftDashboardRequestPayload = {
+    let payload: ToBackendCreateDraftDashboardRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -107,13 +120,12 @@ export class DashboardService {
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendCreateDraftDashboard,
+          ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendCreateDraftDashboardResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendCreateDraftDashboardResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
 
             let dashboards = this.dashboardsQuery.getValue().dashboards;
@@ -132,13 +144,13 @@ export class DashboardService {
   }
 
   editDraftDashboard(item: {
-    tiles: common.TileX[];
+    tiles: TileX[];
     oldDashboardId: string;
     newDashboardId: string;
-    newDashboardFields: common.DashboardField[];
+    newDashboardFields: DashboardField[];
     timezone: string;
   }) {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     let {
       tiles,
@@ -148,16 +160,16 @@ export class DashboardService {
       timezone
     } = item;
 
-    let newTiles: common.TileX[] = [];
+    let newTiles: TileX[] = [];
 
     tiles.forEach(x => {
-      let y: any = common.makeCopy(x);
+      let y: any = makeCopy(x);
       delete y.query;
       delete y.mconfig;
       newTiles.push(y);
     });
 
-    let payload: apiToBackend.ToBackendEditDraftDashboardRequestPayload = {
+    let payload: ToBackendEditDraftDashboardRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -171,15 +183,14 @@ export class DashboardService {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendEditDraftDashboard,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendEditDraftDashboardResponse) => {
-          this.spinner.hide(constants.APP_SPINNER_NAME);
+        tap((resp: ToBackendEditDraftDashboardResponse) => {
+          this.spinner.hide(APP_SPINNER_NAME);
 
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.dashboardQuery.update(resp.payload.dashboard);
           }
         }),
@@ -191,7 +202,7 @@ export class DashboardService {
   deleteDraftDashboards(item: { dashboardIds: string[] }) {
     let { dashboardIds } = item;
 
-    let payload: apiToBackend.ToBackendDeleteDraftDashboardsRequestPayload = {
+    let payload: ToBackendDeleteDraftDashboardsRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -202,14 +213,13 @@ export class DashboardService {
     this.apiService
       .req({
         pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum
-            .ToBackendDeleteDraftDashboards,
+          ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteDraftChartsResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteDraftChartsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboards = this.dashboardsQuery.getValue().dashboards;
 
             this.dashboardsQuery.update({

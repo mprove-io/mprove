@@ -20,9 +20,6 @@ import { ApiService } from '~front/app/services/api.service';
 import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { interfaces } from '~front/barrels/interfaces';
 
 @Component({
   standalone: false,
@@ -39,9 +36,9 @@ export class BranchSelectComponent {
   }
 
   defaultBranch: string;
-  prodRepoID = common.PROD_REPO_ID;
+  prodRepoID = PROD_REPO_ID;
 
-  repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
+  repoStatusNeedCommit = RepoStatusEnum.NeedCommit;
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
@@ -59,13 +56,13 @@ export class BranchSelectComponent {
     })
   );
 
-  branchesList: interfaces.BranchItem[] = [];
+  branchesList: BranchItem[] = [];
   branchesListLoading = false;
   branchesListLength = 0;
 
   selectedOrgId: string;
   selectedProjectId: string;
-  selectedBranchItem: interfaces.BranchItem;
+  selectedBranchItem: BranchItem;
   selectedBranchExtraId: string;
 
   nav: NavState;
@@ -88,8 +85,7 @@ export class BranchSelectComponent {
       this.selectedProjectId = this.nav.projectId;
 
       this.selectedBranchItem =
-        common.isDefined(this.nav.projectId) &&
-        common.isDefined(this.nav.branchId)
+        isDefined(this.nav.projectId) && isDefined(this.nav.branchId)
           ? this.makeBranchItem({
               branchId: this.nav.branchId,
               isRepoProd: this.nav.isRepoProd,
@@ -100,7 +96,7 @@ export class BranchSelectComponent {
 
       this.selectedBranchExtraId = this.selectedBranchItem?.extraId;
 
-      this.branchesList = common.isDefined(this.selectedBranchItem)
+      this.branchesList = isDefined(this.selectedBranchItem)
         ? [this.selectedBranchItem]
         : [];
 
@@ -167,19 +163,18 @@ export class BranchSelectComponent {
 
     this.branchesListLoading = true;
 
-    let payload: apiToBackend.ToBackendGetBranchesListRequestPayload = {
+    let payload: ToBackendGetBranchesListRequestPayload = {
       projectId: this.selectedProjectId
     };
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetBranchesListResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetBranchesListResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.branchesList = resp.payload.branchesList.map(y =>
@@ -310,27 +305,27 @@ export class BranchSelectComponent {
       .subscribe();
 
     let repoId =
-      newSelectedBranchItem.isRepoProd === true ? common.PROD_REPO_ID : userId;
+      newSelectedBranchItem.isRepoProd === true ? PROD_REPO_ID : userId;
 
     let urlParts = this.router.url.split('/');
 
     let navArray = checkNavMain({
       urlParts: urlParts,
       navArray: [
-        common.PATH_ORG,
+        PATH_ORG,
         this.selectedOrgId,
-        common.PATH_PROJECT,
+        PATH_PROJECT,
         this.selectedProjectId,
-        common.PATH_REPO,
+        PATH_REPO,
         repoId,
-        common.PATH_BRANCH,
+        PATH_BRANCH,
         newSelectedBranchItem.branchId,
-        common.PATH_ENV,
+        PATH_ENV,
         this.nav.envId
       ]
     });
 
-    if (urlParts[11] === common.PATH_REPORTS) {
+    if (urlParts[11] === PATH_REPORTS) {
       let uiState = this.uiQuery.getValue();
       uiState.gridApi?.deselectAll();
     }
@@ -356,7 +351,7 @@ export class BranchSelectComponent {
       alias: item.alias
     });
 
-    let branchItem: interfaces.BranchItem = {
+    let branchItem: BranchItem = {
       branchId: item.branchId,
       isRepoProd: item.isRepoProd,
       extraId: extraId,

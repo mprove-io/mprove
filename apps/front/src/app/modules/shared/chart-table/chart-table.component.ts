@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { QDataRow } from '~front/app/services/data.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -8,11 +7,11 @@ import { common } from '~front/barrels/common';
   templateUrl: './chart-table.component.html'
 })
 export class ChartTableComponent {
-  fieldClassDimension = common.FieldClassEnum.Dimension;
-  fieldClassMeasure = common.FieldClassEnum.Measure;
-  fieldClassCalculation = common.FieldClassEnum.Calculation;
+  fieldClassDimension = FieldClassEnum.Dimension;
+  fieldClassMeasure = FieldClassEnum.Measure;
+  fieldClassCalculation = FieldClassEnum.Calculation;
 
-  fieldResultNumber = common.FieldResultEnum.Number;
+  fieldResultNumber = FieldResultEnum.Number;
 
   @Input()
   isTableHeaderWide: boolean;
@@ -21,7 +20,7 @@ export class ChartTableComponent {
   isFormat: boolean;
 
   @Input()
-  mconfigFields: common.MconfigField[];
+  mconfigFields: MconfigField[];
 
   @Input()
   hideColumns: string[];

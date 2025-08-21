@@ -7,22 +7,20 @@ import {
   OnInit
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ApiService } from '~front/app/services/api.service';
-import { common } from '~front/barrels/common';
-import { SharedModule } from '../../shared/shared.module';
-
-import uFuzzy from '@leeoniya/ufuzzy';
-import { TippyDirective } from '@ngneat/helipopper';
 import { ChartService } from '~front/app/services/chart.service';
 import { StructService } from '~front/app/services/struct.service';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface ChartsAddColumnFieldDialogData {
   apiService: ApiService;
-  chart: common.ChartX;
-  fields: common.ModelFieldY[];
+  chart: ChartX;
+  fields: ModelFieldY[];
 }
 
 @Component({
@@ -45,9 +43,9 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  chart: common.ChartX;
-  fields: common.ModelFieldY[];
-  matchFields: common.ModelField[];
+  chart: ChartX;
+  fields: ModelFieldY[];
+  matchFields: ModelField[];
 
   addFieldForm: FormGroup;
 
@@ -72,15 +70,13 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
     this.fields = this.ref.data.fields;
 
     this.matchFields = this.fields
-      .filter(
-        x => x.hidden === false && x.fieldClass !== common.FieldClassEnum.Filter
-      )
+      .filter(x => x.hidden === false && x.fieldClass !== FieldClassEnum.Filter)
       .sort((a, b) =>
-        a.fieldClass !== common.FieldClassEnum.Dimension &&
-        b.fieldClass === common.FieldClassEnum.Dimension
+        a.fieldClass !== FieldClassEnum.Dimension &&
+        b.fieldClass === FieldClassEnum.Dimension
           ? -1
-          : a.fieldClass === common.FieldClassEnum.Dimension &&
-              b.fieldClass !== common.FieldClassEnum.Dimension
+          : a.fieldClass === FieldClassEnum.Dimension &&
+              b.fieldClass !== FieldClassEnum.Dimension
             ? 1
             : 0
       );
@@ -94,20 +90,19 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
   }
 
   save() {
-    if (common.isUndefined(this.newColumnFieldId)) {
+    if (isUndefined(this.newColumnFieldId)) {
       return;
     }
 
     let newMconfig = this.structService.makeMconfig();
 
-    if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
-      let { queryOperationType, sortFieldId, desc } =
-        common.sortFieldsOnSelectChange({
-          mconfig: newMconfig,
-          selectFieldId: this.newColumnFieldId,
-          modelFields: this.fields,
-          mconfigFields: newMconfig.fields
-        });
+    if (newMconfig.modelType === ModelTypeEnum.Malloy) {
+      let { queryOperationType, sortFieldId, desc } = sortFieldsOnSelectChange({
+        mconfig: newMconfig,
+        selectFieldId: this.newColumnFieldId,
+        modelFields: this.fields,
+        mconfigFields: newMconfig.fields
+      });
 
       this.chartService.editChart({
         mconfig: newMconfig,
@@ -124,17 +119,17 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
     } else {
       newMconfig.select = [...newMconfig.select, this.newColumnFieldId];
 
-      newMconfig = common.setChartTitleOnSelectChange({
+      newMconfig = setChartTitleOnSelectChange({
         mconfig: newMconfig,
         fields: this.fields
       });
 
-      newMconfig = common.setChartFields({
+      newMconfig = setChartFields({
         mconfig: newMconfig,
         fields: this.fields
       });
 
-      newMconfig = common.sortChartFieldsOnSelectChange({
+      newMconfig = sortChartFieldsOnSelectChange({
         mconfig: newMconfig,
         fields: this.fields
       });
@@ -149,9 +144,9 @@ export class ChartsAddColumnFieldDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  searchFn(term: string, modelField: common.ModelField) {
+  searchFn(term: string, modelField: ModelField) {
     let haystack = [
-      common.isDefinedAndNotEmpty(modelField.groupLabel)
+      isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
         : `${modelField.topLabel} ${modelField.label}`
     ];

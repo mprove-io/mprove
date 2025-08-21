@@ -7,16 +7,12 @@ import {
   OnInit
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
-import { NgxSpinnerModule } from 'ngx-spinner';
-import { ApiService } from '~front/app/services/api.service';
-import { common } from '~front/barrels/common';
-import { SharedModule } from '../../shared/shared.module';
-
-import uFuzzy from '@leeoniya/ufuzzy';
 import { TippyDirective } from '@ngneat/helipopper';
 import { IRowNode } from 'ag-grid-community';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { take, tap } from 'rxjs';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
@@ -24,8 +20,9 @@ import { DataRow } from '~front/app/interfaces/data-row';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
+import { ApiService } from '~front/app/services/api.service';
 import { ReportService } from '~front/app/services/report.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
+import { SharedModule } from '../../shared/shared.module';
 
 export interface RowAddFilterDialogData {
   apiService: ApiService;
@@ -53,9 +50,9 @@ export class RowAddFilterDialogComponent implements OnInit {
   }
 
   modelLoading = false;
-  model: common.Model;
+  model: Model;
 
-  sortedFieldsY: common.ModelFieldY[];
+  sortedFieldsY: ModelFieldY[];
 
   addFilterForm: FormGroup;
 
@@ -92,7 +89,7 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let payload: apiToBackend.ToBackendGetModelRequestPayload = {
+    let payload: ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
@@ -102,15 +99,14 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetModel,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModel,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendGetModelResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendGetModelResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let restrictedFilterFieldIds =
-              metric.modelType === common.ModelTypeEnum.Malloy
+              metric.modelType === ModelTypeEnum.Malloy
                 ? [
                     `${metric.timeFieldId}_year`,
                     `${metric.timeFieldId}_quarter`,
@@ -123,41 +119,41 @@ export class RowAddFilterDialogComponent implements OnInit {
                     `${metric.timeFieldId}_ts`
                   ]
                 : [
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Year}`,
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Quarter}`,
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Month}`,
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Week}`,
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Date}`,
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Hour}`,
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Minute}`,
-                    `${metric.timeFieldId}${common.TRIPLE_UNDERSCORE}${common.TimeframeEnum.Time}`
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Year}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Quarter}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Month}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Week}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Date}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Hour}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Minute}`,
+                    `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`
                   ];
 
             this.sortedFieldsY = resp.payload.model.fields
               .filter(
-                (x: common.ModelField) =>
+                (x: ModelField) =>
                   x.hidden === false &&
                   restrictedFilterFieldIds.indexOf(x.id) < 0
               )
-              .map((x: common.ModelField) =>
+              .map((x: ModelField) =>
                 Object.assign({}, x, {
-                  partLabel: common.isDefined(x.groupLabel)
+                  partLabel: isDefined(x.groupLabel)
                     ? `${x.topLabel} ${x.groupLabel} ${x.label}`
                     : `${x.topLabel} ${x.label}`
-                } as common.ModelFieldY)
+                } as ModelFieldY)
               )
-              .sort((a: common.ModelFieldY, b: common.ModelFieldY) =>
-                a.fieldClass !== common.FieldClassEnum.Dimension &&
-                b.fieldClass === common.FieldClassEnum.Dimension
+              .sort((a: ModelFieldY, b: ModelFieldY) =>
+                a.fieldClass !== FieldClassEnum.Dimension &&
+                b.fieldClass === FieldClassEnum.Dimension
                   ? 1
-                  : a.fieldClass === common.FieldClassEnum.Dimension &&
-                      b.fieldClass !== common.FieldClassEnum.Dimension
+                  : a.fieldClass === FieldClassEnum.Dimension &&
+                      b.fieldClass !== FieldClassEnum.Dimension
                     ? -1
-                    : a.fieldClass !== common.FieldClassEnum.Filter &&
-                        b.fieldClass === common.FieldClassEnum.Filter
+                    : a.fieldClass !== FieldClassEnum.Filter &&
+                        b.fieldClass === FieldClassEnum.Filter
                       ? 1
-                      : a.fieldClass === common.FieldClassEnum.Filter &&
-                          b.fieldClass !== common.FieldClassEnum.Filter
+                      : a.fieldClass === FieldClassEnum.Filter &&
+                          b.fieldClass !== FieldClassEnum.Filter
                         ? -1
                         : a.partLabel > b.partLabel
                           ? 1
@@ -187,11 +183,11 @@ export class RowAddFilterDialogComponent implements OnInit {
   }
 
   save() {
-    if (common.isUndefined(this.newFieldId)) {
+    if (isUndefined(this.newFieldId)) {
       return;
     }
 
-    let newParameters = common.isDefined(
+    let newParameters = isDefined(
       this.ref.data.reportSelectedNode.data.parameters
     )
       ? [...this.ref.data.reportSelectedNode.data.parameters]
@@ -199,45 +195,45 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     let field = this.model.fields.find(x => x.id === this.newFieldId);
 
-    let newFraction: common.Fraction;
+    let newFraction: Fraction;
 
-    if (this.model.type === common.ModelTypeEnum.Store) {
+    if (this.model.type === ModelTypeEnum.Store) {
       let storeFilter =
-        field.fieldClass === common.FieldClassEnum.Filter
-          ? (this.model.content as common.FileStore).fields.find(
+        field.fieldClass === FieldClassEnum.Filter
+          ? (this.model.content as FileStore).fields.find(
               f => f.name === field.id
             )
           : undefined;
 
       let storeResultFraction =
-        field.fieldClass === common.FieldClassEnum.Filter
+        field.fieldClass === FieldClassEnum.Filter
           ? undefined
-          : (this.model.content as common.FileStore).results.find(
+          : (this.model.content as FileStore).results.find(
               r => r.result === field.result
             ).fraction_types[0];
 
-      let logicGroup = common.isUndefined(storeResultFraction)
+      let logicGroup = isUndefined(storeResultFraction)
         ? undefined
-        : common.FractionLogicEnum.Or;
+        : FractionLogicEnum.Or;
 
-      let storeFractionSubTypeOptions = common.isUndefined(storeResultFraction)
+      let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
-        : (this.model.content as common.FileStore).results
+        : (this.model.content as FileStore).results
             .find(r => r.result === field.result)
             .fraction_types.map(ft => {
               let options = [];
 
               let optionOr: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.Or,
+                logicGroup: FractionLogicEnum.Or,
                 typeValue: ft.type,
-                value: `${common.FractionLogicEnum.Or}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                value: `${FractionLogicEnum.Or}${TRIPLE_UNDERSCORE}${ft.type}`,
                 label: ft.label
               };
               options.push(optionOr);
 
               let optionAndNot: FractionSubTypeOption = {
-                logicGroup: common.FractionLogicEnum.AndNot,
-                value: `${common.FractionLogicEnum.AndNot}${common.TRIPLE_UNDERSCORE}${ft.type}`,
+                logicGroup: FractionLogicEnum.AndNot,
+                value: `${FractionLogicEnum.AndNot}${TRIPLE_UNDERSCORE}${ft.type}`,
                 typeValue: ft.type,
                 label: ft.label
               };
@@ -248,35 +244,34 @@ export class RowAddFilterDialogComponent implements OnInit {
             .flat()
             .sort((a, b) => {
               if (a.logicGroup === b.logicGroup) return 0;
-              return a.logicGroup === common.FractionLogicEnum.Or ? -1 : 1;
+              return a.logicGroup === FractionLogicEnum.Or ? -1 : 1;
             });
 
       newFraction = {
         meta: storeResultFraction?.meta,
-        operator: common.isUndefined(logicGroup)
+        operator: isUndefined(logicGroup)
           ? undefined
-          : logicGroup === common.FractionLogicEnum.Or
-            ? common.FractionOperatorEnum.Or
-            : common.FractionOperatorEnum.And,
+          : logicGroup === FractionLogicEnum.Or
+            ? FractionOperatorEnum.Or
+            : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
-        type: common.FractionTypeEnum.StoreFraction,
+        type: FractionTypeEnum.StoreFraction,
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
         storeFractionSubType: storeResultFraction?.type,
-        storeFractionSubTypeLabel: common.isDefined(storeResultFraction?.type)
+        storeFractionSubTypeLabel: isDefined(storeResultFraction?.type)
           ? storeFractionSubTypeOptions.find(
               k => k.typeValue === storeResultFraction?.type
             ).label
           : storeResultFraction?.type,
         storeFractionLogicGroupWithSubType:
-          common.isDefined(logicGroup) &&
-          common.isDefined(storeResultFraction?.type)
-            ? `${logicGroup}${common.TRIPLE_UNDERSCORE}${storeResultFraction.type}`
+          isDefined(logicGroup) && isDefined(storeResultFraction?.type)
+            ? `${logicGroup}${TRIPLE_UNDERSCORE}${storeResultFraction.type}`
             : undefined,
-        controls: common.isUndefined(storeResultFraction)
+        controls: isUndefined(storeResultFraction)
           ? storeFilter.fraction_controls.map(control => {
-              let newControl: common.FractionControl = {
+              let newControl: FractionControl = {
                 options: control.options,
                 value: control.value,
                 label: control.label,
@@ -287,10 +282,10 @@ export class RowAddFilterDialogComponent implements OnInit {
               };
               return newControl;
             })
-          : (this.model.content as common.FileStore).results
+          : (this.model.content as FileStore).results
               .find(r => r.result === field.result)
               .fraction_types[0].controls.map(control => {
-                let newControl: common.FractionControl = {
+                let newControl: FractionControl = {
                   options: control.options,
                   value: control.value,
                   label: control.label,
@@ -302,22 +297,22 @@ export class RowAddFilterDialogComponent implements OnInit {
                 return newControl;
               })
       };
-    } else if (this.model.type === common.ModelTypeEnum.Malloy) {
+    } else if (this.model.type === ModelTypeEnum.Malloy) {
       newFraction = {
         brick: MALLOY_FILTER_ANY,
         parentBrick: MALLOY_FILTER_ANY,
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(field.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(field.result)
       };
     } else {
       newFraction = {
         brick: 'any',
-        operator: common.FractionOperatorEnum.Or,
-        type: common.getFractionTypeForAny(field.result)
+        operator: FractionOperatorEnum.Or,
+        type: getFractionTypeForAny(field.result)
       };
     }
 
-    let newParameter: common.Parameter = {
+    let newParameter: Parameter = {
       apply_to: field.id,
       fractions: [newFraction],
       listen: undefined
@@ -327,14 +322,14 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     let report = this.reportQuery.getValue();
 
-    let rowChange: common.RowChange = {
+    let rowChange: RowChange = {
       rowId: this.ref.data.reportSelectedNode.data.rowId,
       parameters: newParameters
     };
 
     this.reportService.modifyRows({
       report: report,
-      changeType: common.ChangeTypeEnum.EditParameters,
+      changeType: ChangeTypeEnum.EditParameters,
       rowChange: rowChange,
       rowIds: undefined,
       reportFields: report.fields,
@@ -344,15 +339,15 @@ export class RowAddFilterDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  searchFn(term: string, modelField: common.ModelField) {
+  searchFn(term: string, modelField: ModelField) {
     // let haystack = [
-    //   common.isDefinedAndNotEmpty(modelFieldY.groupLabel)
+    //   isDefinedAndNotEmpty(modelFieldY.groupLabel)
     //     ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
     //     : `${modelFieldY.topLabel} ${modelFieldY.label}`
     // ];
 
     let haystack = [
-      common.isDefinedAndNotEmpty(modelField.groupLabel)
+      isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
         : `${modelField.topLabel} ${modelField.label}`
     ];

@@ -23,8 +23,6 @@ import { StructQuery } from '~front/app/queries/struct.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
 
 export interface NewFileDialogData {
   apiService: ApiService;
@@ -122,7 +120,7 @@ export class NewFileDialogComponent implements OnInit {
     let parentNodeId = struct.projectId;
 
     if (this.isFolder === true) {
-      let payload: apiToBackend.ToBackendCreateFolderRequestPayload = {
+      let payload: ToBackendCreateFolderRequestPayload = {
         projectId: this.ref.data.projectId,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
@@ -132,14 +130,13 @@ export class NewFileDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFolder,
           payload: payload,
           showSpinner: true
         })
         .pipe(
-          tap((resp: apiToBackend.ToBackendCreateFolderResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          tap((resp: ToBackendCreateFolderResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               this.repoQuery.update(resp.payload.repo);
               this.structQuery.update(resp.payload.struct);
               this.navQuery.updatePart({
@@ -151,7 +148,7 @@ export class NewFileDialogComponent implements OnInit {
         )
         .subscribe();
     } else {
-      let payload: apiToBackend.ToBackendCreateFileRequestPayload = {
+      let payload: ToBackendCreateFileRequestPayload = {
         projectId: this.ref.data.projectId,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
@@ -161,14 +158,13 @@ export class NewFileDialogComponent implements OnInit {
 
       apiService
         .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendCreateFile,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateFile,
           payload: payload,
           showSpinner: true
         })
         .pipe(
-          tap((resp: apiToBackend.ToBackendCreateFileResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          tap((resp: ToBackendCreateFileResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               this.repoQuery.update(resp.payload.repo);
               this.structQuery.update(resp.payload.struct);
               this.navQuery.updatePart({
@@ -181,10 +177,10 @@ export class NewFileDialogComponent implements OnInit {
 
               let filePath = fIdAr.join('/');
 
-              let fileId = common.encodeFilePath({ filePath: filePath });
+              let fileId = encodeFilePath({ filePath: filePath });
 
               this.navigateService.navigateToFileLine({
-                panel: common.PanelEnum.Tree,
+                panel: PanelEnum.Tree,
                 encodedFileId: fileId
               });
             }

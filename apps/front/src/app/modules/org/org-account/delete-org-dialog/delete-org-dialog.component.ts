@@ -12,9 +12,6 @@ import { take, tap } from 'rxjs/operators';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { ApiService } from '~front/app/services/api.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 export interface DeleteOrgDialogData {
   apiService: ApiService;
@@ -50,11 +47,11 @@ export class DeleteOrgDialogComponent implements OnInit {
   }
 
   delete() {
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.ref.close();
 
-    let payload: apiToBackend.ToBackendDeleteOrgRequestPayload = {
+    let payload: ToBackendDeleteOrgRequestPayload = {
       orgId: this.ref.data.orgId
     };
 
@@ -62,18 +59,17 @@ export class DeleteOrgDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteOrg,
         payload: payload
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendDeleteOrgResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendDeleteOrgResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             localStorage.setItem(
-              constants.LOCAL_STORAGE_DELETED_ORG_NAME,
+              LOCAL_STORAGE_DELETED_ORG_NAME,
               this.ref.data.orgName
             );
-            this.router.navigate([common.PATH_ORG_DELETED]);
+            this.router.navigate([PATH_ORG_DELETED]);
             this.navQuery.clearOrgAndDeps();
             this.orgQuery.reset();
           }

@@ -5,8 +5,8 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
+import { PATH_LOGIN } from '~common/constants/top';
 import { AuthService } from '~front/app/services/auth.service';
-import { common } from '~front/barrels/common';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -22,7 +22,7 @@ export class AuthGuard implements CanActivate {
     if (this.auth.authenticated()) {
       return true;
     } else {
-      this.router.navigate([common.PATH_LOGIN]);
+      this.router.navigate([PATH_LOGIN]);
       return false;
     }
   }

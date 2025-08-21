@@ -19,12 +19,9 @@ import { FormatNumberService } from '~front/app/services/format-number.service';
 import { ReportService } from '~front/app/services/report.service';
 import { StructService } from '~front/app/services/struct.service';
 import { ValidationService } from '~front/app/services/validation.service';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
-import { interfaces } from '~front/barrels/interfaces';
 
-export class ChartSeriesWithField extends common.MconfigChartSeries {
-  field: common.MconfigField;
+export class ChartSeriesWithField extends MconfigChartSeries {
+  field: MconfigField;
   isMetric: boolean;
   showMetricsModelName: boolean;
   showMetricsTimeFieldName: boolean;
@@ -63,23 +60,23 @@ export class ChartEditorComponent implements OnChanges {
     this.sizeFieldSelectElement?.close();
   }
 
-  chartTypeEnum = common.ChartTypeEnum;
-  chartTypeEnumTable = common.ChartTypeEnum.Table;
-  chartTypeEnumSingle = common.ChartTypeEnum.Single;
+  chartTypeEnum = ChartTypeEnum;
+  chartTypeEnumTable = ChartTypeEnum.Table;
+  chartTypeEnumSingle = ChartTypeEnum.Single;
 
-  fieldResultEnum = common.FieldResultEnum;
+  fieldResultEnum = FieldResultEnum;
 
-  empty = constants.EMPTY_MCONFIG_FIELD.topLabel;
+  empty = EMPTY_MCONFIG_FIELD.topLabel;
 
-  uiChartTypes = common.UI_CHART_TYPES;
+  uiChartTypes = UI_CHART_TYPES;
 
-  formatNumberExamples: any[] = constants.FORMAT_NUMBER_EXAMPLES.map(x => {
+  formatNumberExamples: any[] = FORMAT_NUMBER_EXAMPLES.map(x => {
     let struct = this.structQuery.getValue();
 
     x.output = this.dataService.formatValue({
       value: x.input,
       formatNumber: x.id,
-      fieldResult: common.FieldResultEnum.Number,
+      fieldResult: FieldResultEnum.Number,
       currencyPrefix: struct.currencyPrefix,
       currencySuffix: struct.currencySuffix,
       thousandsSeparator: struct.thousandsSeparator
@@ -89,13 +86,13 @@ export class ChartEditorComponent implements OnChanges {
   });
 
   @Input()
-  chart: common.MconfigChart;
+  chart: MconfigChart;
 
   @Input()
   queryId?: string;
 
   @Input()
-  mconfigFields?: common.MconfigField[];
+  mconfigFields?: MconfigField[];
 
   @Input()
   seriesParts?: SeriesPart[];
@@ -104,24 +101,24 @@ export class ChartEditorComponent implements OnChanges {
   isReport: boolean;
 
   @Input()
-  report: common.ReportX;
+  report: ReportX;
 
-  dimensionsMeasuresCalculations: common.MconfigField[];
+  dimensionsMeasuresCalculations: MconfigField[];
 
-  numbersDimensionsMeasuresCalculationsPlusEmpty: common.MconfigField[];
-  numbersDimensionsMeasuresCalculations: common.MconfigField[];
+  numbersDimensionsMeasuresCalculationsPlusEmpty: MconfigField[];
+  numbersDimensionsMeasuresCalculations: MconfigField[];
 
-  dimensions: common.MconfigField[];
-  dimensionsPlusEmpty: common.MconfigField[];
+  dimensions: MconfigField[];
+  dimensionsPlusEmpty: MconfigField[];
 
-  numbersMeasuresAndCalculations: common.MconfigField[];
-  numbersMeasuresAndCalculationsPlusEmpty: common.MconfigField[];
+  numbersMeasuresAndCalculations: MconfigField[];
+  numbersMeasuresAndCalculationsPlusEmpty: MconfigField[];
 
-  numbersYFields: common.MconfigField[];
+  numbersYFields: MconfigField[];
 
   chartSeriesWithField: ChartSeriesWithField[];
 
-  xFieldResult: common.FieldResultEnum;
+  xFieldResult: FieldResultEnum;
 
   xFieldForm: FormGroup = this.fb.group({
     xField: [undefined]
@@ -177,10 +174,7 @@ export class ChartEditorComponent implements OnChanges {
     // console.log('this.chart');
     // console.log(this.chart);
 
-    if (
-      common.isUndefined(this.xAxisIsExpanded) &&
-      common.isDefined(this.isReport)
-    ) {
+    if (isUndefined(this.xAxisIsExpanded) && isDefined(this.isReport)) {
       this.xAxisIsExpanded = this.isReport === false;
     }
 
@@ -194,50 +188,50 @@ export class ChartEditorComponent implements OnChanges {
       this.dimensionsMeasuresCalculations = this.mconfigFields.filter(
         x =>
           [
-            common.FieldClassEnum.Dimension,
-            common.FieldClassEnum.Measure,
-            common.FieldClassEnum.Calculation
+            FieldClassEnum.Dimension,
+            FieldClassEnum.Measure,
+            FieldClassEnum.Calculation
           ].indexOf(x.fieldClass) > -1
       );
 
       this.numbersDimensionsMeasuresCalculations = this.mconfigFields.filter(
         x =>
-          x.result === common.FieldResultEnum.Number &&
+          x.result === FieldResultEnum.Number &&
           [
-            common.FieldClassEnum.Dimension,
-            common.FieldClassEnum.Measure,
-            common.FieldClassEnum.Calculation
+            FieldClassEnum.Dimension,
+            FieldClassEnum.Measure,
+            FieldClassEnum.Calculation
           ].indexOf(x.fieldClass) > -1
       );
 
       this.numbersDimensionsMeasuresCalculationsPlusEmpty = [
-        common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
+        makeCopy(EMPTY_MCONFIG_FIELD),
         ...this.numbersDimensionsMeasuresCalculations
       ];
 
       this.dimensions = this.mconfigFields.filter(
-        x => x.fieldClass === common.FieldClassEnum.Dimension
+        x => x.fieldClass === FieldClassEnum.Dimension
       );
 
       this.dimensionsPlusEmpty = [
-        common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
+        makeCopy(EMPTY_MCONFIG_FIELD),
         ...this.dimensions
       ];
 
       this.numbersMeasuresAndCalculations = this.mconfigFields.filter(
         x =>
-          x.result === common.FieldResultEnum.Number &&
-          (x.fieldClass === common.FieldClassEnum.Measure ||
-            x.fieldClass === common.FieldClassEnum.Calculation)
+          x.result === FieldResultEnum.Number &&
+          (x.fieldClass === FieldClassEnum.Measure ||
+            x.fieldClass === FieldClassEnum.Calculation)
       );
 
       this.numbersMeasuresAndCalculationsPlusEmpty = [
-        common.makeCopy(constants.EMPTY_MCONFIG_FIELD),
+        makeCopy(EMPTY_MCONFIG_FIELD),
         ...this.numbersMeasuresAndCalculations
       ];
 
       this.numbersYFields =
-        this.chart.type === common.ChartTypeEnum.Scatter
+        this.chart.type === ChartTypeEnum.Scatter
           ? this.numbersDimensionsMeasuresCalculations
           : this.numbersMeasuresAndCalculations;
 
@@ -266,7 +260,7 @@ export class ChartEditorComponent implements OnChanges {
         value: this.chart.pageSize
       });
 
-      let seriesCopy = common.makeCopy(this.chart.series);
+      let seriesCopy = makeCopy(this.chart.series);
 
       this.chartSeriesWithField = seriesCopy
         .map(x => {
@@ -285,14 +279,14 @@ export class ChartEditorComponent implements OnChanges {
       // console.log('this.chart.series');
       // console.log(this.chart.series);
 
-      let seriesCopy = common.makeCopy(this.chart.series);
+      let seriesCopy = makeCopy(this.chart.series);
 
       this.chartSeriesWithField = seriesCopy
         .map(x => {
           let seriesPart = this.seriesParts.find(
             sp => sp.seriesRowId === x.dataRowId
           );
-          if (common.isDefined(seriesPart)) {
+          if (isDefined(seriesPart)) {
             (x as ChartSeriesWithField).seriesName = seriesPart.seriesName;
             (x as ChartSeriesWithField).seriesRowName =
               seriesPart.seriesRowName;
@@ -317,7 +311,7 @@ export class ChartEditorComponent implements OnChanges {
           a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
         );
 
-      // this.chartSeriesWithField = common.makeCopy(
+      // this.chartSeriesWithField = makeCopy(
       //   this.chart.series as ChartSeriesWithField[]
       // );
     }
@@ -328,10 +322,10 @@ export class ChartEditorComponent implements OnChanges {
   getIsValid() {
     let isChartValid = false;
 
-    if (this.chart.type === common.ChartTypeEnum.Table) {
+    if (this.chart.type === ChartTypeEnum.Table) {
       isChartValid = this.pageSizeForm.controls['pageSize'].valid;
     }
-    // else if (this.chart.type === common.ChartTypeEnum.BarVertical) {
+    // else if (this.chart.type === ChartTypeEnum.BarVertical) {
     //   isChartValid =
     //     (this.chart.legend === false ||
     //       this.legendTitleForm.controls['legendTitle'].valid) &&
@@ -355,7 +349,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   chartEditorUpdateChart(item: {
-    chartPart: common.MconfigChart;
+    chartPart: MconfigChart;
     isCheck: boolean;
   }) {
     let { chartPart, isCheck } = item;
@@ -380,13 +374,13 @@ export class ChartEditorComponent implements OnChanges {
 
       if (isCheck === false || isCheckPass === true) {
         // query not changed
-        if (newMconfig.modelType === common.ModelTypeEnum.Malloy) {
+        if (newMconfig.modelType === ModelTypeEnum.Malloy) {
           this.chartService.editChart({
             mconfig: newMconfig,
             isDraft: this.chartQuery.getValue().draft,
             chartId: this.chartQuery.getValue().chartId,
             queryOperation: {
-              type: common.QueryOperationTypeEnum.Get,
+              type: QueryOperationTypeEnum.Get,
               timezone: newMconfig.timezone
             }
           });
@@ -408,7 +402,7 @@ export class ChartEditorComponent implements OnChanges {
 
           this.reportService.modifyRows({
             report: this.report,
-            changeType: common.ChangeTypeEnum.EditChart,
+            changeType: ChangeTypeEnum.EditChart,
             rowChange: undefined,
             rowIds: undefined,
             reportFields: this.report.fields,
@@ -418,7 +412,7 @@ export class ChartEditorComponent implements OnChanges {
       } else {
         this.reportService.modifyRows({
           report: this.report,
-          changeType: common.ChangeTypeEnum.EditChart,
+          changeType: ChangeTypeEnum.EditChart,
           rowChange: undefined,
           rowIds: undefined,
           reportFields: this.report.fields,
@@ -431,12 +425,9 @@ export class ChartEditorComponent implements OnChanges {
   pageSizeBlur() {
     let value = this.pageSizeForm.controls['pageSize'].value;
 
-    let pageSize = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+    let pageSize = isUndefinedOrEmpty(value) ? undefined : Number(value);
 
-    if (
-      common.isUndefined(pageSize) &&
-      common.isUndefined(this.chart.pageSize)
-    ) {
+    if (isUndefined(pageSize) && isUndefined(this.chart.pageSize)) {
       return;
     }
 
@@ -444,7 +435,7 @@ export class ChartEditorComponent implements OnChanges {
       return;
     }
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       pageSize: pageSize
     };
 
@@ -458,7 +449,7 @@ export class ChartEditorComponent implements OnChanges {
   hideColumnsOnClick(id: string) {
     let index = this.chart.hideColumns.findIndex(x => x === id);
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       hideColumns:
         index > -1
           ? [
@@ -474,13 +465,13 @@ export class ChartEditorComponent implements OnChanges {
   xFieldChange() {
     let xField = this.xFieldForm.controls['xField'].value;
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       xField: xField
     };
 
     if (
-      common.UI_CHART_TYPES.multiField.indexOf(this.chart.type) > -1 &&
-      common.UI_CHART_TYPES.nullableMultiField.indexOf(this.chart.type) < 0
+      UI_CHART_TYPES.multiField.indexOf(this.chart.type) > -1 &&
+      UI_CHART_TYPES.nullableMultiField.indexOf(this.chart.type) < 0
     ) {
       let newMultiFieldValue = this.dimensions.filter(x => x.id !== xField)[0]
         .id;
@@ -503,7 +494,7 @@ export class ChartEditorComponent implements OnChanges {
   yFieldsOnClick(id: string) {
     let index = this.chart.yFields.findIndex(x => x === id);
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       yFields:
         index > -1
           ? [
@@ -519,7 +510,7 @@ export class ChartEditorComponent implements OnChanges {
   yFieldChange() {
     let yField = this.yFieldForm.controls['yField'].value;
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       yFields: [yField]
     };
 
@@ -529,7 +520,7 @@ export class ChartEditorComponent implements OnChanges {
   sizeFieldChange() {
     let sizeField = this.sizeFieldForm.controls['sizeField'].value;
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       sizeField: sizeField
     };
 
@@ -539,11 +530,11 @@ export class ChartEditorComponent implements OnChanges {
   multiFieldChange() {
     let multiField = this.multiFieldForm.controls['multiField'].value;
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       multiField: multiField
     };
 
-    if (common.UI_CHART_TYPES.nullableMultiField.indexOf(this.chart.type) < 0) {
+    if (UI_CHART_TYPES.nullableMultiField.indexOf(this.chart.type) < 0) {
       let newXFieldValue = this.dimensions.filter(x => x.id !== multiField)[0]
         .id;
 
@@ -559,19 +550,17 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   toggleFormat() {
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       format: !this.chart.format
     };
 
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
-  chartToggleSeries(eventToggleSeries: interfaces.EventChartToggleSeries) {
+  chartToggleSeries(eventToggleSeries: EventChartToggleSeries) {
     let { seriesDataField, seriesDataRowId } = eventToggleSeries;
 
-    let id = common.isDefined(seriesDataField)
-      ? seriesDataField
-      : seriesDataRowId;
+    let id = isDefined(seriesDataField) ? seriesDataField : seriesDataRowId;
 
     if (this.seriesToggleExpandList.indexOf(id) > -1) {
       this.seriesToggleExpandList = this.seriesToggleExpandList.filter(
@@ -582,10 +571,8 @@ export class ChartEditorComponent implements OnChanges {
     }
   }
 
-  chartSeriesElementUpdate(
-    eventSeriesUpdate: interfaces.EventChartSeriesElementUpdate
-  ) {
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+  chartSeriesElementUpdate(eventSeriesUpdate: EventChartSeriesElementUpdate) {
+    let newChart: MconfigChart = <MconfigChart>{
       series: this.chart.series.map(s => {
         let newSeriesElement =
           (this.isReport === true &&
@@ -611,7 +598,7 @@ export class ChartEditorComponent implements OnChanges {
   }
 
   toggleXAxisScale() {
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       xAxis: {
         scale: !this.chart.xAxis.scale
       }
@@ -627,21 +614,21 @@ export class ChartEditorComponent implements OnChanges {
   addYAxis() {
     this.yAxisIsExpanded = true;
 
-    let newYAxis = common.makeCopy(common.DEFAULT_CHART_Y_AXIS);
+    let newYAxis = makeCopy(DEFAULT_CHART_Y_AXIS);
 
-    // let newYAxis = Object.assign({}, common.DEFAULT_CHART_Y_AXIS, {
+    // let newYAxis = Object.assign({}, DEFAULT_CHART_Y_AXIS, {
     //   axisLine: { onZero: false },
     //   offset: 50
     // });
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       yAxis: [...this.chart.yAxis, newYAxis]
     };
 
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
-  chartToggleYAxisElement(event: interfaces.EventChartToggleYAxisElement) {
+  chartToggleYAxisElement(event: EventChartToggleYAxisElement) {
     let { yAxisIndex } = event;
 
     if (this.yAxisToggleExpandList.indexOf(yAxisIndex) > -1) {
@@ -653,10 +640,10 @@ export class ChartEditorComponent implements OnChanges {
     }
   }
 
-  chartDeleteYAxisElement(event: interfaces.EventChartDeleteYAxisElement) {
+  chartDeleteYAxisElement(event: EventChartDeleteYAxisElement) {
     let { yAxisIndex } = event;
 
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+    let newChart: MconfigChart = <MconfigChart>{
       yAxis: this.chart.yAxis.filter((x, i) => i !== yAxisIndex)
     };
 
@@ -665,8 +652,8 @@ export class ChartEditorComponent implements OnChanges {
     this.chartEditorUpdateChart({ chartPart: newChart, isCheck: false });
   }
 
-  chartYAxisElementUpdate(event: interfaces.EventChartYAxisElementUpdate) {
-    let newChart: common.MconfigChart = <common.MconfigChart>{
+  chartYAxisElementUpdate(event: EventChartYAxisElementUpdate) {
+    let newChart: MconfigChart = <MconfigChart>{
       yAxis: this.chart.yAxis.map((y, i) => {
         let newYAxisElement =
           event.yAxisIndex === i ? Object.assign({}, y, event.yAxisPart) : y;
@@ -850,11 +837,11 @@ export class ChartEditorComponent implements OnChanges {
 // schemeTypesList: SchemeTypeItem[] = [
 //   {
 //     label: 'Ordinal',
-//     value: common.ChartSchemeTypeEnum.Ordinal
+//     value: ChartSchemeTypeEnum.Ordinal
 //   },
 //   {
 //     label: 'Linear',
-//     value: common.ChartSchemeTypeEnum.Linear
+//     value: ChartSchemeTypeEnum.Linear
 //   }
 // ];
 
@@ -1086,13 +1073,13 @@ export class ChartEditorComponent implements OnChanges {
 // angleSpanBlur() {
 //   let value = this.angleSpanForm.controls['angleSpan'].value;
 
-//   let angleSpan = common.isUndefinedOrEmpty(value)
+//   let angleSpan = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(angleSpan) &&
-//     common.isUndefined(this.chart.angleSpan)
+//     isUndefined(angleSpan) &&
+//     isUndefined(this.chart.angleSpan)
 //   ) {
 //     return;
 //   }
@@ -1109,13 +1096,13 @@ export class ChartEditorComponent implements OnChanges {
 // startAngleBlur() {
 //   let value = this.startAngleForm.controls['startAngle'].value;
 
-//   let startAngle = common.isUndefinedOrEmpty(value)
+//   let startAngle = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(startAngle) &&
-//     common.isUndefined(this.chart.startAngle)
+//     isUndefined(startAngle) &&
+//     isUndefined(this.chart.startAngle)
 //   ) {
 //     return;
 //   }
@@ -1132,11 +1119,11 @@ export class ChartEditorComponent implements OnChanges {
 // arcWidthBlur() {
 //   let value = this.arcWidthForm.controls['arcWidth'].value;
 
-//   let arcWidth = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+//   let arcWidth = isUndefinedOrEmpty(value) ? undefined : Number(value);
 
 //   if (
-//     common.isUndefined(arcWidth) &&
-//     common.isUndefined(this.chart.arcWidth)
+//     isUndefined(arcWidth) &&
+//     isUndefined(this.chart.arcWidth)
 //   ) {
 //     return;
 //   }
@@ -1153,9 +1140,9 @@ export class ChartEditorComponent implements OnChanges {
 // minBlur() {
 //   let value = this.minForm.controls['min'].value;
 
-//   let min = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+//   let min = isUndefinedOrEmpty(value) ? undefined : Number(value);
 
-//   if (common.isUndefined(min) && common.isUndefined(this.chart.min)) {
+//   if (isUndefined(min) && isUndefined(this.chart.min)) {
 //     return;
 //   }
 
@@ -1171,9 +1158,9 @@ export class ChartEditorComponent implements OnChanges {
 // maxBlur() {
 //   let value = this.maxForm.controls['max'].value;
 
-//   let max = common.isUndefinedOrEmpty(value) ? undefined : Number(value);
+//   let max = isUndefinedOrEmpty(value) ? undefined : Number(value);
 
-//   if (common.isUndefined(max) && common.isUndefined(this.chart.max)) {
+//   if (isUndefined(max) && isUndefined(this.chart.max)) {
 //     return;
 //   }
 
@@ -1189,13 +1176,13 @@ export class ChartEditorComponent implements OnChanges {
 // xScaleMaxBlur() {
 //   let value = this.xScaleMaxForm.controls['xScaleMax'].value;
 
-//   let xScaleMax = common.isUndefinedOrEmpty(value)
+//   let xScaleMax = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(xScaleMax) &&
-//     common.isUndefined(this.chart.xScaleMax)
+//     isUndefined(xScaleMax) &&
+//     isUndefined(this.chart.xScaleMax)
 //   ) {
 //     return;
 //   }
@@ -1212,13 +1199,13 @@ export class ChartEditorComponent implements OnChanges {
 // yScaleMinBlur() {
 //   let value = this.yScaleMinForm.controls['yScaleMin'].value;
 
-//   let yScaleMin = common.isUndefinedOrEmpty(value)
+//   let yScaleMin = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(yScaleMin) &&
-//     common.isUndefined(this.chart.yScaleMin)
+//     isUndefined(yScaleMin) &&
+//     isUndefined(this.chart.yScaleMin)
 //   ) {
 //     return;
 //   }
@@ -1235,13 +1222,13 @@ export class ChartEditorComponent implements OnChanges {
 // yScaleMaxBlur() {
 //   let value = this.yScaleMaxForm.controls['yScaleMax'].value;
 
-//   let yScaleMax = common.isUndefinedOrEmpty(value)
+//   let yScaleMax = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(yScaleMax) &&
-//     common.isUndefined(this.chart.yScaleMax)
+//     isUndefined(yScaleMax) &&
+//     isUndefined(this.chart.yScaleMax)
 //   ) {
 //     return;
 //   }
@@ -1258,13 +1245,13 @@ export class ChartEditorComponent implements OnChanges {
 // barPaddingBlur() {
 //   let value = this.barPaddingForm.controls['barPadding'].value;
 
-//   let barPadding = common.isUndefinedOrEmpty(value)
+//   let barPadding = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(barPadding) &&
-//     common.isUndefined(this.chart.barPadding)
+//     isUndefined(barPadding) &&
+//     isUndefined(this.chart.barPadding)
 //   ) {
 //     return;
 //   }
@@ -1281,13 +1268,13 @@ export class ChartEditorComponent implements OnChanges {
 // bigSegmentsBlur() {
 //   let value = this.bigSegmentsForm.controls['bigSegments'].value;
 
-//   let bigSegments = common.isUndefinedOrEmpty(value)
+//   let bigSegments = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(bigSegments) &&
-//     common.isUndefined(this.chart.bigSegments)
+//     isUndefined(bigSegments) &&
+//     isUndefined(this.chart.bigSegments)
 //   ) {
 //     return;
 //   }
@@ -1304,13 +1291,13 @@ export class ChartEditorComponent implements OnChanges {
 // smallSegmentsBlur() {
 //   let value = this.smallSegmentsForm.controls['smallSegments'].value;
 
-//   let smallSegments = common.isUndefinedOrEmpty(value)
+//   let smallSegments = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(smallSegments) &&
-//     common.isUndefined(this.chart.smallSegments)
+//     isUndefined(smallSegments) &&
+//     isUndefined(this.chart.smallSegments)
 //   ) {
 //     return;
 //   }
@@ -1327,13 +1314,13 @@ export class ChartEditorComponent implements OnChanges {
 // groupPaddingBlur() {
 //   let value = this.groupPaddingForm.controls['groupPadding'].value;
 
-//   let groupPadding = common.isUndefinedOrEmpty(value)
+//   let groupPadding = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(groupPadding) &&
-//     common.isUndefined(this.chart.groupPadding)
+//     isUndefined(groupPadding) &&
+//     isUndefined(this.chart.groupPadding)
 //   ) {
 //     return;
 //   }
@@ -1350,13 +1337,13 @@ export class ChartEditorComponent implements OnChanges {
 // innerPaddingBlur() {
 //   let value = this.innerPaddingForm.controls['innerPadding'].value;
 
-//   let innerPadding = common.isUndefinedOrEmpty(value)
+//   let innerPadding = isUndefinedOrEmpty(value)
 //     ? undefined
 //     : Number(value);
 
 //   if (
-//     common.isUndefined(innerPadding) &&
-//     common.isUndefined(this.chart.innerPadding)
+//     isUndefined(innerPadding) &&
+//     isUndefined(this.chart.innerPadding)
 //   ) {
 //     return;
 //   }
@@ -1408,14 +1395,14 @@ export class ChartEditorComponent implements OnChanges {
 // colorSchemeChange() {
 //   let colorScheme = this.colorSchemeForm.controls['colorScheme'].value;
 
-//   let newSchemeTypeValue: common.ChartSchemeTypeEnum =
+//   let newSchemeTypeValue: ChartSchemeTypeEnum =
 //     [
-//       common.ChartColorSchemeEnum.Solar,
-//       common.ChartColorSchemeEnum.Air,
-//       common.ChartColorSchemeEnum.Aqua
+//       ChartColorSchemeEnum.Solar,
+//       ChartColorSchemeEnum.Air,
+//       ChartColorSchemeEnum.Aqua
 //     ].indexOf(colorScheme) > -1
-//       ? common.ChartSchemeTypeEnum.Linear
-//       : common.ChartSchemeTypeEnum.Ordinal;
+//       ? ChartSchemeTypeEnum.Linear
+//       : ChartSchemeTypeEnum.Ordinal;
 
 //   setValueAndMark({
 //     control: this.schemeTypeForm.controls['schemeType'],

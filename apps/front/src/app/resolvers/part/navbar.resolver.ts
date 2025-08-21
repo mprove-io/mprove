@@ -7,15 +7,24 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
+import { PATH_REPO, PATH_VERIFY_EMAIL } from '~common/constants/top';
+import {
+  LOCAL_STORAGE_ORG_ID,
+  LOCAL_STORAGE_PROJECT_ID
+} from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import {
+  ToBackendGetNavRequestPayload,
+  ToBackendGetNavResponse
+} from '~common/interfaces/to-backend/nav/to-backend-get-nav';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { AuthService } from '~front/app/services/auth.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 import { UserQuery } from '../../queries/user.query';
 import { ApiService } from '../../services/api.service';
 
@@ -48,9 +57,8 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     }
 
     let isRepoInPath =
-      routerStateSnapshot.url
-        .split('/')
-        .findIndex(el => el === common.PATH_REPO) === 5;
+      routerStateSnapshot.url.split('/').findIndex(el => el === PATH_REPO) ===
+      5;
 
     // console.log('stopWatch from NavBarResolver');
     this.authService.stopWatch();
@@ -68,35 +76,32 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
     if (
       this.tokenUserId === undefined
       // ||
-      // (common.isDefined(this.userUserId) &&
+      // (isDefined(this.userUserId) &&
       //   this.userUserId !== this.tokenUserId)
     ) {
       this.authService.logout();
       return of(false);
     }
 
-    if (
-      common.isDefined(this.userUserId) &&
-      this.userIsEmailVerified !== true
-    ) {
-      this.router.navigate([common.PATH_VERIFY_EMAIL]);
+    if (isDefined(this.userUserId) && this.userIsEmailVerified !== true) {
+      this.router.navigate([PATH_VERIFY_EMAIL]);
       return of(false);
     }
 
-    let payload: apiToBackend.ToBackendGetNavRequestPayload = {
-      orgId: localStorage.getItem(constants.LOCAL_STORAGE_ORG_ID),
-      projectId: localStorage.getItem(constants.LOCAL_STORAGE_PROJECT_ID),
+    let payload: ToBackendGetNavRequestPayload = {
+      orgId: localStorage.getItem(LOCAL_STORAGE_ORG_ID),
+      projectId: localStorage.getItem(LOCAL_STORAGE_PROJECT_ID),
       getRepo: isRepoInPath === false
     };
 
     return this.apiService
       .req({
-        pathInfoName: apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetNav,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetNav,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetNavResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetNavResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let {
               avatarSmall,
               avatarBig,
@@ -137,13 +142,13 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
             this.userQuery.update(user);
             this.uiQuery.updatePart({ ...resp.payload.user.ui });
 
-            if (common.isDefined(userMember)) {
+            if (isDefined(userMember)) {
               this.memberQuery.update(resp.payload.userMember);
             }
-            if (common.isDefined(struct)) {
+            if (isDefined(struct)) {
               this.structQuery.update(resp.payload.struct);
             }
-            if (common.isDefined(repo)) {
+            if (isDefined(repo)) {
               this.repoQuery.update(resp.payload.repo);
             }
 
@@ -152,7 +157,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               this.authService.startWatch();
               return true;
             } else {
-              this.router.navigate([common.PATH_VERIFY_EMAIL]);
+              this.router.navigate([PATH_VERIFY_EMAIL]);
               return false;
             }
           } else {

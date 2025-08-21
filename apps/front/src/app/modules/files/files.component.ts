@@ -16,9 +16,6 @@ import { FileService } from '~front/app/services/file.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { UiService } from '~front/app/services/ui.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 @Component({
   standalone: false,
@@ -26,16 +23,16 @@ import { constants } from '~front/barrels/constants';
   templateUrl: './files.component.html'
 })
 export class FilesComponent implements OnInit {
-  pageTitle = constants.FILES_PAGE_TITLE;
+  pageTitle = FILES_PAGE_TITLE;
 
-  panelTree = common.PanelEnum.Tree;
-  panelChangesToCommit = common.PanelEnum.ChangesToCommit;
-  panelChangesToPush = common.PanelEnum.ChangesToPush;
+  panelTree = PanelEnum.Tree;
+  panelChangesToCommit = PanelEnum.ChangesToCommit;
+  panelChangesToPush = PanelEnum.ChangesToPush;
 
-  repoStatusNeedCommit = common.RepoStatusEnum.NeedCommit;
-  repoStatusNeedPull = common.RepoStatusEnum.NeedPull;
-  repoStatusNeedPush = common.RepoStatusEnum.NeedPush;
-  repoStatusOk = common.RepoStatusEnum.Ok;
+  repoStatusNeedCommit = RepoStatusEnum.NeedCommit;
+  repoStatusNeedPull = RepoStatusEnum.NeedPull;
+  repoStatusNeedPush = RepoStatusEnum.NeedPush;
+  repoStatusOk = RepoStatusEnum.Ok;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -72,7 +69,7 @@ export class FilesComponent implements OnInit {
     })
   );
 
-  pathFiles = common.PATH_FILES;
+  pathFiles = PATH_FILES;
 
   lastUrl: string;
 
@@ -88,7 +85,7 @@ export class FilesComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  panel = common.PanelEnum.Tree;
+  panel = PanelEnum.Tree;
   panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
 
   isEditor: boolean;
@@ -140,7 +137,7 @@ export class FilesComponent implements OnInit {
     this.lastUrl = ar[ar.length - 1];
   }
 
-  setPanel(x: common.PanelEnum) {
+  setPanel(x: PanelEnum) {
     if (this.needSave === true) {
       return;
     }
@@ -149,8 +146,8 @@ export class FilesComponent implements OnInit {
       return;
     }
 
-    if (x === common.PanelEnum.Tree) {
-      let fileIds = common.getFileIds({ nodes: this.repo.nodes });
+    if (x === PanelEnum.Tree) {
+      let fileIds = getFileIds({ nodes: this.repo.nodes });
 
       let projectFileLinks = this.uiQuery.getValue().projectFileLinks;
 
@@ -158,14 +155,14 @@ export class FilesComponent implements OnInit {
         link => link.projectId === this.nav.projectId
       );
 
-      if (common.isUndefined(pLink)) {
+      if (isUndefined(pLink)) {
         this.navigateService.navigateToFiles();
       } else {
         let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
 
-        if (common.isDefined(pFileId)) {
+        if (isDefined(pFileId)) {
           this.navigateService.navigateToFileLine({
-            panel: common.PanelEnum.Tree,
+            panel: PanelEnum.Tree,
             encodedFileId: pFileId
           });
         } else {
@@ -200,24 +197,23 @@ export class FilesComponent implements OnInit {
   }
 
   push() {
-    let payload: apiToBackend.ToBackendPushRepoRequestPayload = {
+    let payload: ToBackendPushRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId
     };
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPushRepo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPushRepo,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendPushRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendPushRepoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -230,38 +226,37 @@ export class FilesComponent implements OnInit {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
   }
 
   pull() {
-    let payload: apiToBackend.ToBackendPullRepoRequestPayload = {
+    let payload: ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
       envId: this.nav.envId
     };
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendPullRepo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPullRepo,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendPullRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendPullRepoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -274,21 +269,21 @@ export class FilesComponent implements OnInit {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();
   }
 
   refresh() {
-    let payload: apiToBackend.ToBackendGetRepoRequestPayload = {
+    let payload: ToBackendGetRepoRequestPayload = {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
@@ -296,17 +291,16 @@ export class FilesComponent implements OnInit {
       isFetch: true
     };
 
-    this.spinner.show(constants.APP_SPINNER_NAME);
+    this.spinner.show(APP_SPINNER_NAME);
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetRepo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetRepoResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetRepoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -319,14 +313,14 @@ export class FilesComponent implements OnInit {
           }
         }),
         switchMap(x =>
-          x === true && common.isDefined(this.file.fileId)
+          x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
                 panel: this.panel
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(constants.APP_SPINNER_NAME)),
+        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
         take(1)
       )
       .subscribe();

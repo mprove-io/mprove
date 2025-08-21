@@ -22,7 +22,6 @@ import {
   HighLightService,
   PlaceNameEnum
 } from '~front/app/services/highlight.service';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -31,7 +30,7 @@ import { common } from '~front/barrels/common';
 })
 export class QueryInfoViewerComponent implements OnChanges {
   @Input()
-  queryPart: common.QueryPartEnum;
+  queryPart: QueryPartEnum;
 
   @Input()
   modelFileText: string;
@@ -50,7 +49,7 @@ export class QueryInfoViewerComponent implements OnChanges {
 
   content: string;
 
-  chart: common.ChartX;
+  chart: ChartX;
   chart$ = this.chartQuery.select().pipe(
     tap(x => {
       this.chart = x;
@@ -85,7 +84,7 @@ export class QueryInfoViewerComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
-      common.isDefined(changes.queryPart) &&
+      isDefined(changes.queryPart) &&
       changes.queryPart.currentValue !== changes.queryPart.previousValue
     ) {
       this.queryPart = changes.queryPart.currentValue;
@@ -119,30 +118,26 @@ export class QueryInfoViewerComponent implements OnChanges {
   }
 
   checkContent() {
-    if (
-      common.isUndefined(this.chart) ||
-      this.isEditorOptionsInitComplete === false
-    ) {
+    if (isUndefined(this.chart) || this.isEditorOptionsInitComplete === false) {
       return;
     }
 
     this.lang =
-      this.queryPart === common.QueryPartEnum.SqlMalloy ||
-      this.queryPart === common.QueryPartEnum.SqlMain
+      this.queryPart === QueryPartEnum.SqlMalloy ||
+      this.queryPart === QueryPartEnum.SqlMain
         ? 'SQL'
-        : this.queryPart === common.QueryPartEnum.MalloyCompiledQuery ||
-            this.queryPart === common.QueryPartEnum.JsonStoreRequestParts ||
-            this.queryPart === common.QueryPartEnum.JsonResults
+        : this.queryPart === QueryPartEnum.MalloyCompiledQuery ||
+            this.queryPart === QueryPartEnum.JsonStoreRequestParts ||
+            this.queryPart === QueryPartEnum.JsonResults
           ? 'JSON'
-          : this.queryPart === common.QueryPartEnum.MalloyQuery ||
-              this.queryPart === common.QueryPartEnum.MalloySource
+          : this.queryPart === QueryPartEnum.MalloyQuery ||
+              this.queryPart === QueryPartEnum.MalloySource
             ? 'Malloy'
-            : this.queryPart ===
-                common.QueryPartEnum.JavascriptStoreRequestFunction
+            : this.queryPart === QueryPartEnum.JavascriptStoreRequestFunction
               ? 'JavaScript'
-              : this.queryPart === common.QueryPartEnum.YamlTile ||
-                  this.queryPart === common.QueryPartEnum.YamlStore ||
-                  this.queryPart === common.QueryPartEnum.YamlModel
+              : this.queryPart === QueryPartEnum.YamlTile ||
+                  this.queryPart === QueryPartEnum.YamlStore ||
+                  this.queryPart === QueryPartEnum.YamlModel
                 ? 'YAML'
                 : undefined;
 
@@ -151,36 +146,32 @@ export class QueryInfoViewerComponent implements OnChanges {
         ? LIGHT_PLUS_THEME_EXTRA_SINGLE_READ
         : VS_LIGHT_THEME_EXTRA_SINGLE_READ;
 
-    if (this.queryPart === common.QueryPartEnum.MalloyQuery) {
+    if (this.queryPart === QueryPartEnum.MalloyQuery) {
       this.content = this.chart.tiles[0].mconfig.malloyQuery;
-    } else if (this.queryPart === common.QueryPartEnum.MalloyCompiledQuery) {
+    } else if (this.queryPart === QueryPartEnum.MalloyCompiledQuery) {
       let parsed = this.chart.tiles[0].mconfig.compiledQuery;
       delete parsed.sql;
 
-      this.content = common.isDefined(parsed)
-        ? JSON.stringify(parsed, null, 2)
-        : '';
-    } else if (this.queryPart === common.QueryPartEnum.JsonResults) {
+      this.content = isDefined(parsed) ? JSON.stringify(parsed, null, 2) : '';
+    } else if (this.queryPart === QueryPartEnum.JsonResults) {
       let parsed = this.chart.tiles[0].query.data;
 
-      this.content = common.isDefined(parsed)
-        ? JSON.stringify(parsed, null, 2)
-        : '';
+      this.content = isDefined(parsed) ? JSON.stringify(parsed, null, 2) : '';
     } else if (
-      this.queryPart === common.QueryPartEnum.SqlMalloy ||
-      this.queryPart === common.QueryPartEnum.SqlMain
+      this.queryPart === QueryPartEnum.SqlMalloy ||
+      this.queryPart === QueryPartEnum.SqlMain
     ) {
       this.content = this.chart.tiles[0].query.sql;
     } else if (
-      this.queryPart === common.QueryPartEnum.JavascriptStoreRequestFunction
+      this.queryPart === QueryPartEnum.JavascriptStoreRequestFunction
     ) {
       this.content = `// Function to make Request urlPath and body
 ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
-    } else if (this.queryPart === common.QueryPartEnum.JsonStoreRequestParts) {
+    } else if (this.queryPart === QueryPartEnum.JsonStoreRequestParts) {
       try {
         let jsonParts = this.chart.tiles[0].mconfig.storePart?.reqJsonParts;
 
-        if (common.isDefined(jsonParts)) {
+        if (isDefined(jsonParts)) {
           let parsed = JSON.parse(jsonParts);
           this.content = JSON.stringify(parsed, null, 2);
         } else {
@@ -189,19 +180,19 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
       } catch (error: any) {
         this.content = 'Invalid JSON: ' + error.message;
       }
-    } else if (this.queryPart === common.QueryPartEnum.YamlTile) {
-      let filePartTile: common.FilePartTile = common.prepareTile({
+    } else if (this.queryPart === QueryPartEnum.YamlTile) {
+      let filePartTile: FilePartTile = prepareTile({
         isForDashboard: false,
         mconfig: this.chart.tiles[0].mconfig
         // malloyQueryId: undefined
       });
 
-      this.content = common.toYaml({ tiles: [filePartTile] });
+      this.content = toYaml({ tiles: [filePartTile] });
     } else if (
       [
-        common.QueryPartEnum.MalloySource,
-        common.QueryPartEnum.YamlStore,
-        common.QueryPartEnum.YamlModel
+        QueryPartEnum.MalloySource,
+        QueryPartEnum.YamlStore,
+        QueryPartEnum.YamlModel
       ].indexOf(this.queryPart) > -1
     ) {
       this.content = this.modelFileText;

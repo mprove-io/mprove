@@ -50,9 +50,6 @@ import {
   PlaceNameEnum
 } from '~front/app/services/highlight.service';
 import { NavigateService } from '~front/app/services/navigate.service';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
-import { constants } from '~front/barrels/constants';
 
 interface HistoryEntry {
   fullDocContent: string;
@@ -68,7 +65,7 @@ interface HistoryEntry {
 export class FileEditorComponent implements OnDestroy, AfterViewInit {
   isEditorOptionsInitComplete = false;
 
-  panelTree = common.PanelEnum.Tree;
+  panelTree = PanelEnum.Tree;
 
   @ViewChild('codeEditor', { static: false })
   codeEditorRef: CodeEditor;
@@ -307,13 +304,13 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  panel: common.PanelEnum;
+  panel: PanelEnum;
   panel$ = this.uiQuery.panel$.pipe(
     tap(x => {
       this.panel = x;
       this.cd.detectChanges();
 
-      if (this.panel === common.PanelEnum.Tree) {
+      if (this.panel === PanelEnum.Tree) {
         // console.log('panel$ cleanupSyncScroll');
         this.cleanupSyncScroll();
       }
@@ -343,7 +340,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       });
 
       let editorV =
-        this.panel === common.PanelEnum.Tree
+        this.panel === PanelEnum.Tree
           ? this.codeEditorRef.view
           : this.diffEditorRef.mergeView.b;
 
@@ -401,7 +398,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         shikiTheme: 'light-plus-extended'
       });
 
-      if (this.panel !== common.PanelEnum.Tree) {
+      if (this.panel !== PanelEnum.Tree) {
         this.highLightService.updateDocText({
           placeName: PlaceNameEnum.Original,
           docText: x.originalContent,
@@ -423,9 +420,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       };
 
       if (
-        (this.panel === common.PanelEnum.ChangesToCommit ||
-          this.panel === common.PanelEnum.ChangesToPush) &&
-        common.isDefined(this.file.fileId)
+        (this.panel === PanelEnum.ChangesToCommit ||
+          this.panel === PanelEnum.ChangesToPush) &&
+        isDefined(this.file.fileId)
       ) {
         // console.log('file$ setupDiffEditorSyncScroll');
         this.setupDiffEditorSyncScroll();
@@ -474,7 +471,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     })
   );
 
-  member: common.Member;
+  member: Member;
   member$ = this.memberQuery.select().pipe(
     tap(x => {
       this.member = x;
@@ -602,7 +599,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       .errors.map(e =>
         e.lines
           .map(l =>
-            common.encodeFilePath({
+            encodeFilePath({
               filePath: l.fileId.split('/').slice(1).join('/')
             })
           )
@@ -610,14 +607,14 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       )
       .flat();
 
-    this.isSelectedFileValid = common.isUndefined(this.file.fileId)
+    this.isSelectedFileValid = isUndefined(this.file.fileId)
       ? true
       : errorFileIds.indexOf(this.file.fileId) < 0;
   }
 
   async setLanguage() {
     if (
-      common.isUndefined(this.file?.name) ||
+      isUndefined(this.file?.name) ||
       this.isEditorOptionsInitComplete === false
     ) {
       return;
@@ -629,7 +626,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     this.struct = this.structQuery.getValue();
 
     let mdir = this.struct.mproveDirValue;
-    if (common.isDefined(this.struct.mproveDirValue)) {
+    if (isDefined(this.struct.mproveDirValue)) {
       if (mdir.substring(0, 1) === '.') {
         mdir = mdir.substring(1);
       }
@@ -647,9 +644,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     let language: any;
     let originalLanguage: any;
 
-    if (
-      constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0
-    ) {
+    if (BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0) {
       this.lang = 'YAML';
       language = this.languages.find((x: any) => x.name === this.lang);
       originalLanguage = this.originalLanguages.find(
@@ -689,7 +684,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     let originalExtensions = [...this.diffOriginalExtensions, themeDIff];
     let modifiedExtensions = [...this.diffModifiedExtensions, themeDIff];
 
-    if (common.isDefined(language)) {
+    if (isDefined(language)) {
       let loadedLanguage = await language.load(); // language.support
       let originalLoadedLanguage = await originalLanguage.load();
 
@@ -704,12 +699,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     this.originalExtensions = originalExtensions;
 
     if (
-      this.file.fileId === common.MPROVE_CONFIG_FILENAME ||
-      ((this.struct.mproveDirValue === common.MPROVE_CONFIG_DIR_DOT_SLASH ||
-        (common.isDefined(mdir) &&
+      this.file.fileId === MPROVE_CONFIG_FILENAME ||
+      ((this.struct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH ||
+        (isDefined(mdir) &&
           this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
-        constants.BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >=
-          0)
+        BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0)
     ) {
       this.showGoTo = true;
 
@@ -727,7 +721,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   removeMarkers() {
-    if (this.panel !== common.PanelEnum.Tree) {
+    if (this.panel !== PanelEnum.Tree) {
       return;
     }
 
@@ -736,7 +730,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   refreshMarkers() {
-    if (this.panel !== common.PanelEnum.Tree) {
+    if (this.panel !== PanelEnum.Tree) {
       return;
     }
 
@@ -794,7 +788,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
             let filePath = lineFileIdAr.join('/');
 
-            let fileId = common.encodeFilePath({ filePath: filePath });
+            let fileId = encodeFilePath({ filePath: filePath });
             return fileId === this.file.fileId;
           })
           .map(eLine => {
@@ -857,11 +851,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   save() {
     let fileNodeId =
-      this.nav.projectId +
-      '/' +
-      common.decodeFilePath({ filePath: this.file.fileId });
+      this.nav.projectId + '/' + decodeFilePath({ filePath: this.file.fileId });
 
-    let payload: apiToBackend.ToBackendSaveFileRequestPayload = {
+    let payload: ToBackendSaveFileRequestPayload = {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
@@ -871,14 +863,13 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
     this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendSaveFile,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSaveFile,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: apiToBackend.ToBackendSaveFileResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        tap((resp: ToBackendSaveFileResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.repoQuery.update(resp.payload.repo);
             this.structQuery.update(resp.payload.struct);
             this.navQuery.updatePart({
@@ -892,11 +883,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
             this.uiQuery.updatePart({
               needSave: false,
-              panel: common.PanelEnum.Tree
+              panel: PanelEnum.Tree
             });
 
             this.navigateService.navigateToFileLine({
-              panel: common.PanelEnum.Tree,
+              panel: PanelEnum.Tree,
               encodedFileId: this.file.fileId
             });
 
@@ -935,9 +926,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       let editorView = this.codeEditorRef?.view;
 
       if (
-        common.isDefinedAndNotEmpty(this.content) &&
-        common.isDefined(this.line) &&
-        common.isDefined(editorView)
+        isDefinedAndNotEmpty(this.content) &&
+        isDefined(this.line) &&
+        isDefined(editorView)
       ) {
         let lineNumber = this.line;
 
@@ -977,21 +968,21 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     let id = ar.join('.');
     let dotExt = `.${ext}`;
 
-    if (dotExt === common.FileExtensionEnum.Store) {
+    if (dotExt === FileExtensionEnum.Store) {
       this.navigateService.navigateToChart({
         modelId: id,
-        chartId: common.EMPTY_CHART_ID
+        chartId: EMPTY_CHART_ID
       });
-    } else if (dotExt === common.FileExtensionEnum.Report) {
+    } else if (dotExt === FileExtensionEnum.Report) {
       this.navigateService.navigateToReport({ reportId: id });
-    } else if (dotExt === common.FileExtensionEnum.Dashboard) {
+    } else if (dotExt === FileExtensionEnum.Dashboard) {
       this.navigateService.navigateToDashboard({
         dashboardId: id
       });
-    } else if (dotExt === common.FileExtensionEnum.Chart) {
+    } else if (dotExt === FileExtensionEnum.Chart) {
       let nav = this.navQuery.getValue();
 
-      let payload: apiToBackend.ToBackendGetChartRequestPayload = {
+      let payload: ToBackendGetChartRequestPayload = {
         projectId: nav.projectId,
         isRepoProd: nav.isRepoProd,
         branchId: nav.branchId,
@@ -1000,29 +991,28 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         timezone: uiState.timezone
       };
 
-      this.spinner.show(constants.APP_SPINNER_NAME);
+      this.spinner.show(APP_SPINNER_NAME);
 
       this.apiService
         .req({
-          pathInfoName:
-            apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetChart,
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetChart,
           payload: payload
         })
         .pipe(
-          map((resp: apiToBackend.ToBackendGetChartResponse) => {
-            if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+          map((resp: ToBackendGetChartResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               this.memberQuery.update(resp.payload.userMember);
 
-              if (common.isDefined(resp.payload.chart)) {
+              if (isDefined(resp.payload.chart)) {
                 this.navigateService.navigateToChart({
                   modelId: resp.payload.chart.modelId,
                   chartId: id
                 });
               } else {
-                this.spinner.hide(constants.APP_SPINNER_NAME);
+                this.spinner.hide(APP_SPINNER_NAME);
               }
             } else {
-              this.spinner.hide(constants.APP_SPINNER_NAME);
+              this.spinner.hide(APP_SPINNER_NAME);
             }
           }),
           take(1)

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { common } from '~front/barrels/common';
+import { ChartX } from '~common/interfaces/backend/chart-x';
 import { BaseQuery } from './base.query';
 
 export class ChartsState {
-  charts: common.ChartX[];
+  charts: ChartX[];
 }
 
 let chartsState: ChartsState = {

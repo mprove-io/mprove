@@ -5,7 +5,6 @@ import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
-import { common } from '~front/barrels/common';
 
 @Component({
   standalone: false,
@@ -13,10 +12,10 @@ import { common } from '~front/barrels/common';
   templateUrl: './org-menu.component.html'
 })
 export class OrgMenuComponent implements OnInit {
-  firstOrgName = common.FIRST_ORG_NAME;
+  firstOrgName = FIRST_ORG_NAME;
 
-  pathAccount = common.PATH_ACCOUNT;
-  pathUsers = common.PATH_USERS;
+  pathAccount = PATH_ACCOUNT;
+  pathUsers = PATH_USERS;
 
   lastUrl: string;
 
@@ -61,14 +60,10 @@ export class OrgMenuComponent implements OnInit {
   }
 
   navigateAccount() {
-    this.router.navigate([
-      common.PATH_ORG,
-      this.nav.orgId,
-      common.PATH_ACCOUNT
-    ]);
+    this.router.navigate([PATH_ORG, this.nav.orgId, PATH_ACCOUNT]);
   }
 
   navigateUsers() {
-    this.router.navigate([common.PATH_ORG, this.nav.orgId, common.PATH_USERS]);
+    this.router.navigate([PATH_ORG, this.nav.orgId, PATH_USERS]);
   }
 }

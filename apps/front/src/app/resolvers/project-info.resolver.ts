@@ -7,8 +7,12 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { apiToBackend } from '~front/barrels/api-to-backend';
-import { common } from '~front/barrels/common';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetProjectRequestPayload,
+  ToBackendGetProjectResponse
+} from '~common/interfaces/to-backend/projects/to-backend-get-project';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -52,19 +56,18 @@ export class ProjectInfoResolver implements Resolve<Observable<boolean>> {
       projectId = x;
     });
 
-    let payload: apiToBackend.ToBackendGetProjectRequestPayload = {
+    let payload: ToBackendGetProjectRequestPayload = {
       projectId: projectId
     };
 
     return this.apiService
       .req({
-        pathInfoName:
-          apiToBackend.ToBackendRequestInfoNameEnum.ToBackendGetProject,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
         payload: payload
       })
       .pipe(
-        map((resp: apiToBackend.ToBackendGetProjectResponse) => {
-          if (resp.info?.status === common.ResponseInfoStatusEnum.Ok) {
+        map((resp: ToBackendGetProjectResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
 
             this.projectQuery.update(resp.payload.project);
