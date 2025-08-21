@@ -12,8 +12,23 @@ import {
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription, interval, of } from 'rxjs';
 import { concatMap, tap } from 'rxjs/operators';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { TileX } from '~common/interfaces/backend/tile-x';
+import { Query } from '~common/interfaces/blockml/query';
+import { DeleteFilterFnItem } from '~common/interfaces/front/delete-filter-fn-item';
+import {
+  ToBackendGetQueryRequestPayload,
+  ToBackendGetQueryResponse
+} from '~common/interfaces/to-backend/queries/to-backend-get-query';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { DeleteFilterFnItem } from '~front/app/interfaces/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

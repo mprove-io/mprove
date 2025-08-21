@@ -7,6 +7,10 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { isDefined } from '~common/functions/is-defined';
+import { transformErrorMessage } from '~common/functions/transform-error-message';
+import { ErrorData } from '~common/interfaces/front/error-data';
 
 @Component({
   selector: 'm-error-dialog',

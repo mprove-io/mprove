@@ -15,6 +15,16 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { Connection } from '~common/interfaces/backend/connection';
+import {
+  ToBackendEditConnectionRequestPayload,
+  ToBackendEditConnectionResponse
+} from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
 import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';

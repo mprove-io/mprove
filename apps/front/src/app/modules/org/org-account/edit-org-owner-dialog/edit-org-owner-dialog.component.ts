@@ -14,6 +14,17 @@ import {
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { PATH_ORG_OWNER_CHANGED } from '~common/constants/top';
+import {
+  LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
+  LOCAL_STORAGE_NEW_ORG_OWNER
+} from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendSetOrgOwnerRequestPayload,
+  ToBackendSetOrgOwnerResponse
+} from '~common/interfaces/to-backend/orgs/to-backend-set-org-owner';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';

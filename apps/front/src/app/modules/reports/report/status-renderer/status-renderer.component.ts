@@ -2,7 +2,14 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { DataRow } from '~front/app/interfaces/data-row';
+import { SOME_ROWS_HAVE_FORMULA_ERRORS } from '~common/constants/top';
+import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { getTimeSpecDetail } from '~common/functions/get-timespec-detail';
+import { makeId } from '~common/functions/make-id';
+import { DataRow } from '~common/interfaces/front/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 

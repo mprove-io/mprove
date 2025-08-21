@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 
 @Component({
   standalone: false,

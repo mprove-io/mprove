@@ -22,12 +22,44 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { MALLOY_FILTER_ANY, TRIPLE_UNDERSCORE } from '~common/constants/top';
+import { EMPTY_MCONFIG_FIELD, RESULTS_LIST } from '~common/constants/top-front';
+import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { StoreFilterForEnum } from '~common/enums/store-filter-for.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { getFractionTypeForAny } from '~common/functions/get-fraction-type-for-any';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { SuggestField } from '~common/interfaces/backend/suggest-field';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { FractionControl } from '~common/interfaces/blockml/fraction-control';
+import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { Model } from '~common/interfaces/blockml/model';
+import { ReportField } from '~common/interfaces/blockml/report-field';
+import { SelectItem } from '~common/interfaces/front/select-item';
 import {
-  FractionSubTypeOption,
-  MALLOY_FILTER_ANY,
-  SuggestField
-} from '~common/_index';
-import { SelectItem } from '~front/app/interfaces/select-item';
+  ToBackendGetModelRequestPayload,
+  ToBackendGetModelResponse
+} from '~common/interfaces/to-backend/models/to-backend-get-model';
+import {
+  ToBackendGetModelsRequestPayload,
+  ToBackendGetModelsResponse
+} from '~common/interfaces/to-backend/models/to-backend-get-models';
+import {
+  ToBackendGetSuggestFieldsRequestPayload,
+  ToBackendGetSuggestFieldsResponse
+} from '~common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
+import { MyRegex } from '~common/models/my-regex';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { ApiService } from '~front/app/services/api.service';

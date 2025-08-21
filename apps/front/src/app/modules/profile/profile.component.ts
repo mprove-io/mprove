@@ -3,6 +3,18 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { PROFILE_PAGE_TITLE } from '~common/constants/page-titles';
+import {
+  PATH_PASSWORD_RESET_SENT_AUTH,
+  RESTRICTED_USER_ALIAS
+} from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendResetUserPasswordRequestPayload,
+  ToBackendResetUserPasswordResponse
+} from '~common/interfaces/to-backend/users/to-backend-reset-user-password';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';

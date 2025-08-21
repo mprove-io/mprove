@@ -1,6 +1,19 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
+import {
+  LAST_SELECTED_CHART_ID,
+  LAST_SELECTED_DASHBOARD_ID,
+  LAST_SELECTED_FILE_ID,
+  LAST_SELECTED_MODEL_ID,
+  LAST_SELECTED_REPORT_ID,
+  PATH_DASHBOARDS,
+  PATH_FILES,
+  PATH_MODELS,
+  PATH_REPORTS
+} from '~common/constants/top';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { Member } from '~common/interfaces/backend/member';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';

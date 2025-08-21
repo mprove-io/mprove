@@ -9,6 +9,11 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { PATH_USER_DELETED } from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToBackendDeleteUserResponse } from '~common/interfaces/to-backend/users/to-backend-delete-user';
 import { ApiService } from '~front/app/services/api.service';
 
 export interface DeleteUserDialogData {

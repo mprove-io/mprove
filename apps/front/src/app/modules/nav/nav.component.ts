@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
+import { PATH_LOGIN, PATH_REGISTER } from '~common/constants/top';
 
 @Component({
   standalone: false,

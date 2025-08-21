@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { isDefined } from '~common/functions/is-defined';
+import { MyRegex } from '~common/models/my-regex';
 
 export class RgbaColor {
   r: number;

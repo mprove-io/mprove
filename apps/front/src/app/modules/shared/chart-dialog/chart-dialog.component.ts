@@ -17,6 +17,50 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { Subscription, from, interval, of } from 'rxjs';
 import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
+import { EMPTY_CHART_ID, TRIPLE_UNDERSCORE } from '~common/constants/top';
+import { EMPTY_MCONFIG_FIELD } from '~common/constants/top-front';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { TimeframeEnum } from '~common/enums/timeframe.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
+import { setChartFields } from '~common/functions/set-chart-fields';
+import { setChartTitleOnSelectChange } from '~common/functions/set-chart-title-on-select-change';
+import { sortChartFieldsOnSelectChange } from '~common/functions/sort-chart-fields-on-select-change';
+import { sortFieldsOnSelectChange } from '~common/functions/sort-fields-on-select-change';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { QueryOperation } from '~common/interfaces/backend/query-operation';
+import { Model } from '~common/interfaces/blockml/model';
+import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
+import { Query } from '~common/interfaces/blockml/query';
+import {
+  ToBackendCreateTempMconfigAndQueryRequestPayload,
+  ToBackendCreateTempMconfigAndQueryResponse
+} from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
+import {
+  ToBackendDuplicateMconfigAndQueryRequestPayload,
+  ToBackendDuplicateMconfigAndQueryResponse
+} from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+import {
+  ToBackendGetModelRequestPayload,
+  ToBackendGetModelResponse
+} from '~common/interfaces/to-backend/models/to-backend-get-model';
+import {
+  ToBackendGetQueryRequestPayload,
+  ToBackendGetQueryResponse
+} from '~common/interfaces/to-backend/queries/to-backend-get-query';
+import {
+  ToBackendRunQueriesRequestPayload,
+  ToBackendRunQueriesResponse
+} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';

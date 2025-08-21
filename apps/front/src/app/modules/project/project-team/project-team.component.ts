@@ -1,6 +1,23 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { take, tap } from 'rxjs/operators';
+import { PROJECT_TEAM_PAGE_TITLE } from '~common/constants/page-titles';
+import { MEMBERS_PER_PAGE } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { Member } from '~common/interfaces/backend/member';
+import {
+  ToBackendGetAvatarBigRequestPayload,
+  ToBackendGetAvatarBigResponse
+} from '~common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
+import {
+  ToBackendEditMemberRequestPayload,
+  ToBackendEditMemberResponse
+} from '~common/interfaces/to-backend/members/to-backend-edit-member';
+import {
+  ToBackendGetMembersRequestPayload,
+  ToBackendGetMembersResponse
+} from '~common/interfaces/to-backend/members/to-backend-get-members';
 import { makeInitials } from '~front/app/functions/make-initials';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';

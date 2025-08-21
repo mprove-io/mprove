@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { Column, GridApi, IRowNode } from 'ag-grid-community';
+import { GridApi, IRowNode } from 'ag-grid-community';
 import {
   DEFAULT_METRICS_COLUMN_NAME_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
@@ -14,6 +14,7 @@ import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboa
 import { ProjectFileLink } from '~common/interfaces/backend/project-file-link';
 import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
 import { ProjectReportLink } from '~common/interfaces/backend/project-report-link';
+import { Column } from '~common/interfaces/blockml/column';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { ChartPointsData } from '~common/interfaces/front/chart-points-data';
 import { DataRow } from '~common/interfaces/front/data-row';

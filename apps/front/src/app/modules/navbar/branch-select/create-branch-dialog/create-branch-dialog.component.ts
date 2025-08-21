@@ -18,7 +18,24 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { BranchItem } from '~front/app/interfaces/branch-item';
+import {
+  PATH_BRANCH,
+  PATH_ENV,
+  PATH_FILES,
+  PATH_ORG,
+  PATH_PROJECT,
+  PATH_REPO,
+  PROD_REPO_ID
+} from '~common/constants/top';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { makeCopy } from '~common/functions/make-copy';
+import { BranchItem } from '~common/interfaces/front/branch-item';
+import {
+  ToBackendCreateBranchRequestPayload,
+  ToBackendCreateBranchResponse
+} from '~common/interfaces/to-backend/branches/to-backend-create-branch';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';
@@ -69,9 +86,9 @@ export class CreateBranchDialogComponent implements OnInit {
 
       this.isTargetProd = this.nav.isRepoProd;
 
-      this.branchesList = common
-        .makeCopy<BranchItem[]>(this.ref.data.branchesList)
-        .filter(y => y.isRepoProd === this.isTargetProd);
+      this.branchesList = makeCopy<BranchItem[]>(
+        this.ref.data.branchesList
+      ).filter(y => y.isRepoProd === this.isTargetProd);
 
       this.cd.detectChanges();
     })
@@ -121,9 +138,9 @@ export class CreateBranchDialogComponent implements OnInit {
   prodOnClick() {
     this.isTargetProd = true;
 
-    this.branchesList = common
-      .makeCopy<BranchItem[]>(this.ref.data.branchesList)
-      .filter(y => y.isRepoProd === this.isTargetProd);
+    this.branchesList = makeCopy<BranchItem[]>(
+      this.ref.data.branchesList
+    ).filter(y => y.isRepoProd === this.isTargetProd);
 
     this.selectedBranchItem = this.branchesList[0];
     this.selectedBranchExtraId = this.selectedBranchItem.extraId;
@@ -134,9 +151,9 @@ export class CreateBranchDialogComponent implements OnInit {
   devOnClick() {
     this.isTargetProd = false;
 
-    this.branchesList = common
-      .makeCopy<BranchItem[]>(this.ref.data.branchesList)
-      .filter(y => y.isRepoProd === this.isTargetProd);
+    this.branchesList = makeCopy<BranchItem[]>(
+      this.ref.data.branchesList
+    ).filter(y => y.isRepoProd === this.isTargetProd);
 
     this.selectedBranchItem = this.branchesList[0];
     this.selectedBranchExtraId = this.selectedBranchItem.extraId;

@@ -9,6 +9,11 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { FractionYesnoValueEnum } from '~common/enums/fraction/fraction-yesno-value.enum';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 import {
   FractionTypeItem,
   FractionYesnoValueItem

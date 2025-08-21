@@ -8,9 +8,34 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { setChartSeries } from '~common/_index';
+import { DEFAULT_CHART_Y_AXIS } from '~common/constants/mconfig-chart';
+import {
+  EMPTY_MCONFIG_FIELD,
+  FORMAT_NUMBER_EXAMPLES
+} from '~common/constants/top-front';
+import { UI_CHART_TYPES } from '~common/constants/ui-chart-types';
+import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
+import { makeCopy } from '~common/functions/make-copy';
+import { setChartSeries } from '~common/functions/set-chart-series';
+import { MconfigField } from '~common/interfaces/backend/mconfig-field';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
+import { EventChartDeleteYAxisElement } from '~common/interfaces/front/event-chart-delete-y-axis-element';
+import { EventChartSeriesElementUpdate } from '~common/interfaces/front/event-chart-series-element-update';
+import { EventChartToggleSeries } from '~common/interfaces/front/event-chart-toggle-series';
+import { EventChartToggleYAxisElement } from '~common/interfaces/front/event-chart-toggle-y-axis-element';
+import { EventChartYAxisElementUpdate } from '~common/interfaces/front/event-chart-y-axis-element-update';
+import { SeriesPart } from '~common/interfaces/front/series-part';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { SeriesPart } from '~front/app/interfaces/series-part';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { ChartService } from '~front/app/services/chart.service';

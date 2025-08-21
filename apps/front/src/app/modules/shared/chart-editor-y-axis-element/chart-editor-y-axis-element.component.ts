@@ -6,7 +6,12 @@ import {
   Output
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MconfigChartYAxis } from '~common/_index';
+import { UI_CHART_TYPES } from '~common/constants/ui-chart-types';
+import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { MconfigChartYAxis } from '~common/interfaces/blockml/mconfig-chart-y-axis';
+import { EventChartDeleteYAxisElement } from '~common/interfaces/front/event-chart-delete-y-axis-element';
+import { EventChartToggleYAxisElement } from '~common/interfaces/front/event-chart-toggle-y-axis-element';
+import { EventChartYAxisElementUpdate } from '~common/interfaces/front/event-chart-y-axis-element-update';
 
 @Component({
   standalone: false,

@@ -17,7 +17,13 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { BranchItem } from '~front/app/interfaces/branch-item';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { BranchItem } from '~common/interfaces/front/branch-item';
+import {
+  ToBackendMergeRepoRequestPayload,
+  ToBackendMergeRepoResponse
+} from '~common/interfaces/to-backend/repos/to-backend-merge-repo';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';

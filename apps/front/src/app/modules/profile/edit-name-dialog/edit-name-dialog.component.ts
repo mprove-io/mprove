@@ -13,6 +13,12 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendSetUserNameRequestPayload,
+  ToBackendSetUserNameResponse
+} from '~common/interfaces/to-backend/users/to-backend-set-user-name';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { SharedModule } from '../../shared/shared.module';

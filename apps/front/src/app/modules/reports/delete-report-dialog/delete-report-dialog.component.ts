@@ -9,6 +9,14 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { APP_SPINNER_NAME } from '~common/constants/top-front';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import {
+  ToBackendDeleteReportRequestPayload,
+  ToBackendDeleteReportResponse
+} from '~common/interfaces/to-backend/reports/to-backend-delete-report';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportsQuery } from '~front/app/queries/reports.query';
 import { ApiService } from '~front/app/services/api.service';

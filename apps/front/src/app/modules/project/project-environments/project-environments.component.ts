@@ -2,7 +2,26 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
-import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { PROJECT_ENVIRONMENTS_PAGE_TITLE } from '~common/constants/page-titles';
+import {
+  PATH_ENV_VARIABLES,
+  PATH_ORG,
+  PATH_PROJECT,
+  PROJECT_ENV_PROD
+} from '~common/constants/top';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { Env } from '~common/interfaces/backend/env';
+import { EnvUser } from '~common/interfaces/backend/env-user';
+import { Ev } from '~common/interfaces/backend/ev';
+import {
+  ToBackendDeleteEnvUserRequestPayload,
+  ToBackendDeleteEnvUserResponse
+} from '~common/interfaces/to-backend/envs/to-backend-delete-env-user';
+import {
+  ToBackendEditEnvFallbacksRequestPayload,
+  ToBackendEditEnvFallbacksResponse
+} from '~common/interfaces/to-backend/envs/to-backend-edit-env-fallbacks';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

@@ -17,12 +17,24 @@ import { themeAlpine } from 'ag-grid-community';
 import { MultiRowSelectionOptions } from 'ag-grid-community/dist/types/src/entities/gridOptions';
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
+import { TRIPLE_UNDERSCORE } from '~common/constants/top';
 import {
   DEFAULT_METRICS_COLUMN_NAME_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
-} from '~front/app/constants/top';
-import { DataRow } from '~front/app/interfaces/data-row';
+} from '~common/constants/top-front';
+import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { getTimeSpecDetail } from '~common/functions/get-timespec-detail';
+import { getTimeSpecWord } from '~common/functions/get-timespec-word';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { Row } from '~common/interfaces/blockml/row';
+import { DataRow } from '~common/interfaces/front/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';

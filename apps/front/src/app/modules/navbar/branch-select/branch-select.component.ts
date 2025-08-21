@@ -7,6 +7,24 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, take, tap } from 'rxjs/operators';
+import {
+  PATH_BRANCH,
+  PATH_ENV,
+  PATH_ORG,
+  PATH_PROJECT,
+  PATH_REPO,
+  PATH_REPORTS,
+  PROD_REPO_ID
+} from '~common/constants/top';
+import { RepoStatusEnum } from '~common/enums/repo-status.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { BranchItem } from '~common/interfaces/front/branch-item';
+import {
+  ToBackendGetBranchesListRequestPayload,
+  ToBackendGetBranchesListResponse
+} from '~common/interfaces/to-backend/branches/to-backend-get-branches-list';
 import { checkNavMain } from '~front/app/functions/check-nav-main';
 import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
 import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';

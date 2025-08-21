@@ -1,4 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { isUndefined } from '~common/functions/is-undefined';
 
 @Pipe({ standalone: false, name: 'result' })
 export class ResultPipe implements PipeTransform {

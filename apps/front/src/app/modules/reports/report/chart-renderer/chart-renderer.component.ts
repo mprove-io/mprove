@@ -1,8 +1,13 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { MconfigChartSeries } from '~common/_index';
-import { DataRow } from '~front/app/interfaces/data-row';
+import { DEFAULT_CHART_SERIES_LINE } from '~common/constants/mconfig-chart';
+import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { makeCopy } from '~common/functions/make-copy';
+import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
+import { RowChange } from '~common/interfaces/blockml/row-change';
+import { DataRow } from '~common/interfaces/front/data-row';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportService } from '~front/app/services/report.service';
 

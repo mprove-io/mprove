@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { isDefined } from '~common/functions/is-defined';
 
 @Pipe({ standalone: false, name: 'capitalize' })
 export class CapitalizePipe implements PipeTransform {

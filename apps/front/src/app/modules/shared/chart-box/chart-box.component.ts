@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import equal from 'fast-deep-equal';
+import { isDefined } from '~common/functions/is-defined';
 
 @Component({
   standalone: false,

@@ -9,6 +9,17 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
+import { TRIPLE_UNDERSCORE } from '~common/constants/top';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { FractionControl } from '~common/interfaces/blockml/fraction-control';
+import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
+import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 
 @Component({
   standalone: false,

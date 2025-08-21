@@ -26,14 +26,47 @@ import {
   take,
   tap
 } from 'rxjs';
-import { MALLOY_FILTER_ANY } from '~common/_index';
+import { REPORTS_PAGE_TITLE } from '~common/constants/page-titles';
+import {
+  EMPTY_REPORT_ID,
+  MALLOY_FILTER_ANY,
+  PATH_REPORTS,
+  PATH_REPORTS_LIST
+} from '~common/constants/top';
+import { REFRESH_LIST } from '~common/constants/top-front';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTsLastCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-last-complete-option.enum';
+import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { getTimezones } from '~common/functions/get-timezones';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { isUndefined } from '~common/functions/is-undefined';
+import { makeCopy } from '~common/functions/make-copy';
+import { ProjectReportLink } from '~common/interfaces/backend/project-report-link';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { Fraction } from '~common/interfaces/blockml/fraction';
+import { Query } from '~common/interfaces/blockml/query';
+import { DataPoint } from '~common/interfaces/front/data-point';
+import { DataRow } from '~common/interfaces/front/data-row';
+import { RefreshItem } from '~common/interfaces/front/refresh-item';
+import { SeriesPart } from '~common/interfaces/front/series-part';
+import {
+  ToBackendRunQueriesRequestPayload,
+  ToBackendRunQueriesResponse
+} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
+import {
+  ToBackendGetReportRequestPayload,
+  ToBackendGetReportResponse
+} from '~common/interfaces/to-backend/reports/to-backend-get-report';
 import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
 import { makeQueryParams } from '~front/app/functions/make-query-params';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { DataPoint } from '~front/app/interfaces/data-point';
-import { DataRow } from '~front/app/interfaces/data-row';
-import { RefreshItem } from '~front/app/interfaces/refresh-item';
-import { SeriesPart } from '~front/app/interfaces/series-part';
 import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -72,7 +105,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   isInitialScrollCompleted = false;
 
-  pageTitle = frontREPORTS_PAGE_TITLE;
+  pageTitle = REPORTS_PAGE_TITLE;
 
   pathReports = PATH_REPORTS;
   pathReportsList = PATH_REPORTS_LIST;

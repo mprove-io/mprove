@@ -1,4 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { ALL_RESULT_VALUES } from '~common/constants/top';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 
 @Component({
   standalone: false,

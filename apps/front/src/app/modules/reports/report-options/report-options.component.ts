@@ -1,4 +1,7 @@
 import { Component, Input } from '@angular/core';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
+import { ReportX } from '~common/interfaces/backend/report-x';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { UiQuery } from '~front/app/queries/ui.query';

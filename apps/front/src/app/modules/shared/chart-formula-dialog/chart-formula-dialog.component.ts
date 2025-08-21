@@ -8,10 +8,12 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { ChartPointsData } from '~common/interfaces/front/chart-points-data';
+import { DataPoint } from '~common/interfaces/front/data-point';
+import { DataRow } from '~common/interfaces/front/data-row';
 import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
-import { ChartPointsData } from '~front/app/interfaces/chart-points-data';
-import { DataPoint } from '~front/app/interfaces/data-point';
-import { DataRow } from '~front/app/interfaces/data-row';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DataService } from '~front/app/services/data.service';
 import { SharedModule } from '../shared.module';

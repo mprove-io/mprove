@@ -12,6 +12,17 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { PanelEnum } from '~common/enums/panel.enum';
+import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { encodeFilePath } from '~common/functions/encode-file-path';
+import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { makeCopy } from '~common/functions/make-copy';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { RowChange } from '~common/interfaces/blockml/row-change';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
