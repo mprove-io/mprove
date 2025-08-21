@@ -35,9 +35,6 @@ export interface FilePartTile {
   data?: FileChartData;
   data_line_num?: number;
 
-  // axis?: FileChartAxis;
-  // axis_line_num?: number;
-
   options?: FileChartOptions;
   options_line_num?: number;
 
