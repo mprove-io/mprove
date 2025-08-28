@@ -225,18 +225,18 @@ query: c2 is c1_order_items -> {
     -- users.state ~ f``,
     
     -- users.state ~ f`a%z`,       -- operator: '~', escaped_values: [ 'a%z' ]
-    -- users.state ~ f`b`,         -- operator: '=', values: [ 'b' ]
-    -- users.state ~ f`%c%`,       -- operator: 'contains', values: [ 'c' ]
-    -- users.state ~ f`s%`,        -- operator: 'starts', values: [ 's' ]
-    -- users.state ~ f`%e`,        -- operator: 'ends', values: [ 'e' ]
+    -- users.state ~ f`FOO`,         -- operator: '=', values: [ 'FOO' ]
+    -- users.state ~ f`%FOO%`,       -- operator: 'contains', values: [ 'FOO' ]
+    -- users.state ~ f`FOO%`,        -- operator: 'starts', values: [ 'FOO' ]
+    -- users.state ~ f`%FOO`,        -- operator: 'ends', values: [ 'FOO' ]
     -- users.state ~ f`null`,      -- operator: 'null'
     -- users.state ~ f`empty`,     -- operator: 'empty'
     
     -- users.state ~ f`-a%z`,      -- operator: '~', escaped_values: [ 'a%z' ], not: true
-    -- users.state ~ f`-b`,        -- operator: '=', values: [ 'b' ], not: true
-    -- users.state ~ f`-%c%`,      -- operator: 'contains', values: [ 'c' ], not: true
-    -- users.state ~ f`-s%`,       -- operator: 'starts', values: [ 's' ], not: true
-    -- users.state ~ f`-%e`,       -- operator: 'ends', values: [ 'e' ], not: true
+    -- users.state ~ f`-FOO`,        -- operator: '=', values: [ 'FOO' ], not: true
+    -- users.state ~ f`-%FOO%`,      -- operator: 'contains', values: [ 'FOO' ], not: true
+    -- users.state ~ f`-FOO%`,       -- operator: 'starts', values: [ 'FOO' ], not: true
+    -- users.state ~ f`-%FOO`,       -- operator: 'ends', values: [ 'FOO' ], not: true
     -- users.state ~ f`-null`,     -- operator: 'null', not: true
     -- users.state ~ f`-empty`,    -- operator: 'empty', not: true
     
