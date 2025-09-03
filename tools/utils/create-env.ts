@@ -1,3 +1,34 @@
+import { randomBytes } from 'crypto';
+import { existsSync } from 'fs';
+import * as fs from 'fs/promises';
+
+function makeRandomString(length: number): string {
+  return randomBytes(length).toString('hex').slice(0, length);
+}
+
+async function createEnvFile(): Promise<void> {
+  let filePath = process.argv[2] || '.env.template';
+
+  if (existsSync(filePath)) {
+    console.error(`Error: ${filePath} file already exists!`);
+    process.exit(1);
+  }
+
+  let dbPgUserPass = makeRandomString(32);
+  let dbPgPostgresPass = makeRandomString(32);
+
+  let dwhPostgresPass = makeRandomString(32);
+  let dwhMysqlRootPass = makeRandomString(32);
+  let dwhClickHousePass = makeRandomString(32);
+
+  let redisPass = makeRandomString(32);
+  let rabbitPass = makeRandomString(32);
+  let rabbitCookie = makeRandomString(32);
+
+  let jwtSecret = makeRandomString(32);
+  let userPass = makeRandomString(9);
+
+  let content = `
 ENV_FILE_PATH=.env
 ENV_FILE_SOURCE_PATH=.env
 ENV_FILE_TARGET_PATH=/usr/src/app/.env
@@ -15,21 +46,21 @@ COMPOSE_HTTP_TIMEOUT=180
 NODE_ENV=production
 
 COMPOSE_DB_MYSQL_DATABASE=mprovedb
-COMPOSE_DB_MYSQL_ROOT_PASSWORD=mysqlpass
+COMPOSE_DB_MYSQL_ROOT_PASSWORD=${dwhMysqlRootPass}
 COMPOSE_DB_MYSQL_VOLUME_SOURCE_PATH=mprove_data/dwh-mysql
 
 COMPOSE_DB_PG_POSTGRESQL_DATABASE=mprove_main
 COMPOSE_DB_PG_POSTGRESQL_USERNAME=mprove_user
-COMPOSE_DB_PG_POSTGRESQL_PASSWORD=dbuserpass
-COMPOSE_DB_PG_POSTGRESQL_POSTGRES_PASSWORD=dbpostgrespass
+COMPOSE_DB_PG_POSTGRESQL_PASSWORD=${dbPgUserPass}
+COMPOSE_DB_PG_POSTGRESQL_POSTGRES_PASSWORD=${dbPgPostgresPass}
 COMPOSE_DB_PG_VOLUME_SOURCE_PATH=mprove_data/db-main
 
-COMPOSE_REDIS_PASSWORD=redispass
+COMPOSE_REDIS_PASSWORD=${redisPass}
 COMPOSE_REDIS_VOLUME_SOURCE_PATH=mprove_data/redis
 
 COMPOSE_RABBITMQ_DEFAULT_USER=rabbituser
-COMPOSE_RABBITMQ_DEFAULT_PASS=rabbitpass
-COMPOSE_RABBITMQ_ERLANG_COOKIE=rabbitcookie
+COMPOSE_RABBITMQ_DEFAULT_PASS=${rabbitPass}
+COMPOSE_RABBITMQ_ERLANG_COOKIE=${rabbitCookie}
 
 # set the path to a valid JSON file containing the BigQuery project service credentials
 # to ensure that the demo project's BigQuery connection works
@@ -47,11 +78,11 @@ COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH=mprove_data/organizations
 COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH=/usr/src/app/mprove_data/organizations
 
 COMPOSE_DWH_POSTGRES_PGDATA=/var/lib/postgresql/data/pgdata
-COMPOSE_DWH_POSTGRES_PASSWORD=postgrespass
+COMPOSE_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
 COMPOSE_DWH_POSTGRES_VOLUME_SOURCE_PATH=mprove_data/dwh-postgres
 
 COMPOSE_DWH_CLICKHOUSE_USER=c_user
-COMPOSE_DWH_CLICKHOUSE_PASSWORD=clickhousepass
+COMPOSE_DWH_CLICKHOUSE_PASSWORD=${dwhClickHousePass}
 COMPOSE_DWH_CLICKHOUSE_DB=c_db
 COMPOSE_DWH_CLICKHOUSE_VOLUME_SOURCE_PATH=mprove_data/dwh-clickhouse
 COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH=mprove_data/dwh-clickhouse-logs
@@ -63,25 +94,25 @@ COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH=dist/apps/blockml
 
 BACKEND_ENV=PROD
 BACKEND_MYSQL_DATABASE=mprovedb
-BACKEND_MYSQL_PASSWORD=mysqlpass
+BACKEND_MYSQL_PASSWORD=${dwhMysqlRootPass}
 BACKEND_MYSQL_HOST=db
 BACKEND_MYSQL_PORT=3306
 BACKEND_MYSQL_USERNAME=root
 BACKEND_REDIS_HOST=localhost
-BACKEND_REDIS_PASSWORD=redispass
+BACKEND_REDIS_PASSWORD=${redisPass}
 BACKEND_RABBIT_PROTOCOL=amqp
 BACKEND_RABBIT_USER=rabbituser
-BACKEND_RABBIT_PASS=rabbitpass
+BACKEND_RABBIT_PASS=${rabbitPass}
 BACKEND_RABBIT_HOST=rabbit
 BACKEND_RABBIT_PORT=5672
 BACKEND_IS_SCHEDULER=FALSE
-BACKEND_JWT_SECRET=jwtsecret
+BACKEND_JWT_SECRET=${jwtSecret}
 BACKEND_SPECIAL_KEY=
 BACKEND_ALLOW_TEST_ROUTES=FALSE
 # set your email that will be used for Mprove Login
 BACKEND_FIRST_USER_EMAIL=user@example.com
 # set password that will be used for Mprove Login
-BACKEND_FIRST_USER_PASSWORD=userpass
+BACKEND_FIRST_USER_PASSWORD=${userPass}
 BACKEND_FIRST_ORG_ID=AWNCAHWLFQTQJYCH3ZSE
 BACKEND_FIRST_PROJECT_ID=DXYE72ODCP5LWPWH2EXQ
 BACKEND_FIRST_PROJECT_NAME=p1
@@ -91,8 +122,8 @@ BACKEND_FIRST_PROJECT_PRIVATE_KEY_PATH=secrets/first-project-remote-private-key.
 BACKEND_FIRST_PROJECT_PUBLIC_KEY_PATH=secrets/first-project-remote-public-key.pem
 BACKEND_FIRST_PROJECT_SEED_CONNECTIONS=TRUE
 BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST=dwh-postgres
-BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD=postgrespass
-BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD=clickhousepass
+BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
+BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD=${dwhClickHousePass}
 BACKEND_FIRST_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH=secrets/first-project-bigquery-credentials.json
 BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_ACCOUNT=
 BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_WAREHOUSE=
@@ -115,7 +146,7 @@ BACKEND_SMTP_HOST=
 BACKEND_SMTP_AUTH_USER=
 # set smtp auth password
 BACKEND_SMTP_AUTH_PASSWORD=
-BACKEND_POSTGRES_DATABASE_URL=postgres://mprove_user:dbuserpass@db:5435/mprove_main
+BACKEND_POSTGRES_DATABASE_URL=postgres://mprove_user:${dbPgUserPass}@db:5435/mprove_main
 BACKEND_IS_POSTGRES_TLS=FALSE
 BACKEND_LOG_DRIZZLE_POSTGRES=FALSE
 BACKEND_LOG_IS_JSON=FALSE
@@ -125,14 +156,14 @@ BACKEND_LOG_RESPONSE_OK=FALSE
 BLOCKML_ENV=PROD
 BLOCKML_RABBIT_PROTOCOL=amqp
 BLOCKML_RABBIT_USER=rabbituser
-BLOCKML_RABBIT_PASS=rabbitpass
+BLOCKML_RABBIT_PASS=${rabbitPass}
 BLOCKML_RABBIT_HOST=rabbit
 BLOCKML_RABBIT_PORT=5672
 BLOCKML_DATA=
 BLOCKML_TESTS_DWH_POSTGRES_HOST=
 BLOCKML_TESTS_DWH_POSTGRES_PORT=
 BLOCKML_TESTS_DWH_POSTGRES_USERNAME=
-BLOCKML_TESTS_DWH_POSTGRES_PASSWORD=
+BLOCKML_TESTS_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
 BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME=
 BLOCKML_LOG_IO=FALSE
 BLOCKML_LOG_FUNC=ALL
@@ -150,7 +181,7 @@ DISK_ENV=PROD
 DISK_ORGANIZATIONS_PATH=mprove_data/organizations
 DISK_RABBIT_PROTOCOL=amqp
 DISK_RABBIT_USER=rabbituser
-DISK_RABBIT_PASS=rabbitpass
+DISK_RABBIT_PASS=${rabbitPass}
 DISK_RABBIT_HOST=rabbit
 DISK_RABBIT_PORT=5672
 DISK_LOG_IS_JSON=FALSE
@@ -168,4 +199,19 @@ MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp5
 MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp5
 MPROVE_CLI_TEST_PRIVATE_KEY_PATH=secrets/first-project-remote-private-key.pem
 MPROVE_CLI_TEST_PUBLIC_KEY_PATH=secrets/first-project-remote-public-key.pem
-MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD=
+MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
+`.trim();
+
+  try {
+    await fs.writeFile(filePath, content, 'utf8');
+    console.log(`file "${filePath}" created successfully!`);
+  } catch (e) {
+    console.error(`Error creating ${filePath} file:`, e);
+    process.exit(1);
+  }
+}
+
+createEnvFile().catch(e => {
+  console.error('Unexpected error:', e);
+  process.exit(1);
+});
