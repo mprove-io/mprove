@@ -17,6 +17,7 @@ secrets/
 tmp/
 tools/data/
 *.env
+*.env.template
 .envrc
 
 # System Files

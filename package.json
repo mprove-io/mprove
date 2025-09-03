@@ -28,6 +28,7 @@
     "bfm": "biome check --write",
     "pfm": "prettier \"**/*.{html,scss,json,jsonc,md}\" --write --config .prettierrc.js",
     "circular": "madge --circular apps libs",
+    "create-env": "ts-node ./tools/utils/create-env",
     "pj": "yarn pjc && yarn pjd",
     "pjc": "ts-node ./tools/utils/prepare-package-json-for-cli",
     "pjd": "ts-node ./tools/utils/prepare-package-json-for-docker",
