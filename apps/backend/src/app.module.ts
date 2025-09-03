@@ -26,6 +26,7 @@ import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
@@ -530,7 +531,20 @@ export class AppModule implements OnModuleInit {
               gitUrl: firstProjectRemoteGitUrl,
               privateKey: privateKey,
               publicKey: publicKey,
-              evs: [ev1]
+              evs: [ev1],
+              connections: connections.map(
+                x =>
+                  <ProjectConnection>{
+                    connectionId: x.connectionId,
+                    type: x.type,
+                    googleCloudProject: x.googleCloudProject,
+                    host: x.host,
+                    port: x.port,
+                    username: x.username,
+                    password: x.password,
+                    databaseName: x.database
+                  }
+              )
             });
           }
         }

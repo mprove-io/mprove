@@ -17,6 +17,7 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import {
   ToDiskCreateProjectRequest,
   ToDiskCreateProjectResponse
@@ -69,6 +70,7 @@ export class ProjectsService {
     privateKey?: string;
     publicKey?: string;
     evs: Ev[];
+    connections: ProjectConnection[];
   }) {
     let {
       orgId,
@@ -81,7 +83,8 @@ export class ProjectsService {
       gitUrl,
       privateKey,
       publicKey,
-      evs
+      evs,
+      connections
     } = item;
 
     let toDiskCreateProjectRequest: ToDiskCreateProjectRequest = {
@@ -180,7 +183,8 @@ export class ProjectsService {
       mproveDir: diskResponse.payload.mproveDir,
       envId: PROJECT_ENV_PROD,
       overrideTimezone: undefined,
-      evs: evs
+      evs: evs,
+      connections: connections
     });
 
     await this.blockmlService.rebuildStruct({
@@ -191,7 +195,8 @@ export class ProjectsService {
       mproveDir: diskResponse.payload.mproveDir,
       envId: PROJECT_ENV_PROD,
       overrideTimezone: undefined,
-      evs: evs
+      evs: evs,
+      connections: connections
     });
 
     await retry(
