@@ -7,7 +7,7 @@ function makeRandomString(length: number): string {
 }
 
 async function createEnvFile(): Promise<void> {
-  let filePath = process.argv[2] || '.env.template';
+  let filePath = process.argv[2] || '.env';
 
   if (existsSync(filePath)) {
     console.error(`Error: ${filePath} file already exists!`);
@@ -26,16 +26,19 @@ async function createEnvFile(): Promise<void> {
   let rabbitCookie = makeRandomString(32);
 
   let jwtSecret = makeRandomString(32);
+  let specialKey = makeRandomString(32);
+
   let userPass = makeRandomString(9);
+  let userEmail = 'user@example.com';
 
   let content = `
 ENV_FILE_PATH=.env
 ENV_FILE_SOURCE_PATH=.env
 ENV_FILE_TARGET_PATH=/usr/src/app/.env
 
-# set release tag from https://github.com/mprove-io/mprove/releases
-MPROVE_RELEASE_TAG=8.3.1
-MPROVE_DWH_POSTGRES_TAG=8.3.1
+# set most recent release tag from https://github.com/mprove-io/mprove/releases
+MPROVE_RELEASE_TAG=9.0.85
+MPROVE_DWH_POSTGRES_TAG=9.0.85
 
 REDIS_RELEASE_TAG=7.2.4
 RABBIT_RELEASE_TAG=3.10.6-management
@@ -62,9 +65,6 @@ COMPOSE_RABBITMQ_DEFAULT_USER=rabbituser
 COMPOSE_RABBITMQ_DEFAULT_PASS=${rabbitPass}
 COMPOSE_RABBITMQ_ERLANG_COOKIE=${rabbitCookie}
 
-# set the path to a valid JSON file containing the BigQuery project service credentials
-# to ensure that the demo project's BigQuery connection works
-# or set the path to a JSON file containing "{}" (then the demo project's BigQuery connection will NOT work)
 COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_SOURCE_PATH=secrets/first-project-bigquery-credentials.json
 COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_PATH=/usr/src/app/secrets/first-project-bigquery-credentials.json
 
@@ -87,7 +87,7 @@ COMPOSE_DWH_CLICKHOUSE_DB=c_db
 COMPOSE_DWH_CLICKHOUSE_VOLUME_SOURCE_PATH=mprove_data/dwh-clickhouse
 COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH=mprove_data/dwh-clickhouse-logs
 
-# dist paths are for docker compose debug config
+# dist paths are for docker compose debug config only
 COMPOSE_DIST_APPS_DISK_SOURCE_PATH=dist/apps/disk
 COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH=dist/apps/backend
 COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH=dist/apps/blockml
@@ -107,10 +107,10 @@ BACKEND_RABBIT_HOST=rabbit
 BACKEND_RABBIT_PORT=5672
 BACKEND_IS_SCHEDULER=FALSE
 BACKEND_JWT_SECRET=${jwtSecret}
-BACKEND_SPECIAL_KEY=
+BACKEND_SPECIAL_KEY=${specialKey}
 BACKEND_ALLOW_TEST_ROUTES=FALSE
-# set your email that will be used for Mprove Login
-BACKEND_FIRST_USER_EMAIL=user@example.com
+# set email that will be used for Mprove Login
+BACKEND_FIRST_USER_EMAIL=${userEmail}
 # set password that will be used for Mprove Login
 BACKEND_FIRST_USER_PASSWORD=${userPass}
 BACKEND_FIRST_ORG_ID=AWNCAHWLFQTQJYCH3ZSE
@@ -133,20 +133,15 @@ BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS=FALSE
 BACKEND_REGISTER_ONLY_INVITED_USERS=TRUE
 # BACKEND_HOST_URL is used for links in transactional emails
 BACKEND_HOST_URL=http://localhost:3003
-# set name to send transactional emails from
 BACKEND_SEND_EMAIL_FROM_NAME=Example
-# set email no-reply address
 BACKEND_SEND_EMAIL_FROM_ADDRESS=no-reply@example.com
 BACKEND_EMAIL_TRANSPORT=SMTP
 BACKEND_SMTP_PORT=465
 BACKEND_SMTP_SECURE=TRUE
-# set smtp host
 BACKEND_SMTP_HOST=
-# set smtp auth user
 BACKEND_SMTP_AUTH_USER=
-# set smtp auth password
 BACKEND_SMTP_AUTH_PASSWORD=
-BACKEND_POSTGRES_DATABASE_URL=postgres://mprove_user:${dbPgUserPass}@db:5435/mprove_main
+BACKEND_POSTGRES_DATABASE_URL=postgres://mprove_user:${dbPgUserPass}@db:5432/mprove_main
 BACKEND_IS_POSTGRES_TLS=FALSE
 BACKEND_LOG_DRIZZLE_POSTGRES=FALSE
 BACKEND_LOG_IS_JSON=FALSE
@@ -159,12 +154,12 @@ BLOCKML_RABBIT_USER=rabbituser
 BLOCKML_RABBIT_PASS=${rabbitPass}
 BLOCKML_RABBIT_HOST=rabbit
 BLOCKML_RABBIT_PORT=5672
-BLOCKML_DATA=
-BLOCKML_TESTS_DWH_POSTGRES_HOST=
-BLOCKML_TESTS_DWH_POSTGRES_PORT=
-BLOCKML_TESTS_DWH_POSTGRES_USERNAME=
+BLOCKML_DATA=/mprove/mprove_data/blockml-data
+BLOCKML_TESTS_DWH_POSTGRES_HOST=dwh-postgres
+BLOCKML_TESTS_DWH_POSTGRES_PORT=5436
+BLOCKML_TESTS_DWH_POSTGRES_USERNAME=postgres
 BLOCKML_TESTS_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
-BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME=
+BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME=p_db
 BLOCKML_LOG_IO=FALSE
 BLOCKML_LOG_FUNC=ALL
 BLOCKML_COPY_LOGS_TO_MODELS=FALSE
@@ -189,14 +184,14 @@ DISK_LOG_RESPONSE_ERROR=FALSE
 DISK_LOG_RESPONSE_OK=FALSE
 
 MPROVE_CLI_HOST=http://localhost:3000
-MPROVE_CLI_EMAIL=
-MPROVE_CLI_PASSWORD=
+MPROVE_CLI_EMAIL=${userEmail}
+MPROVE_CLI_PASSWORD=${userPass}
 MPROVE_CLI_PROJECT_ID=DXYE72ODCP5LWPWH2EXQ
 MPROVE_CLI_TEST_REPOS_PATH=/mprove/mprove_data/mcli-repos
-MPROVE_CLI_TEST_REMOTE_GIT_URL=
-MPROVE_CLI_TEST_DESTINATION_URL=/mprove/mprove_data/mcli-repos/mp5
-MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp5
-MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp5
+MPROVE_CLI_TEST_REMOTE_GIT_URL=https://github.com/mprove-io/mp6.git
+MPROVE_CLI_TEST_DESTINATION_URL=/mprove/mprove_data/mcli-repos/mp6
+MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
+MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
 MPROVE_CLI_TEST_PRIVATE_KEY_PATH=secrets/first-project-remote-private-key.pem
 MPROVE_CLI_TEST_PUBLIC_KEY_PATH=secrets/first-project-remote-public-key.pem
 MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}

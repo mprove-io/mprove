@@ -14,25 +14,34 @@ Check [Mprove Helm Charts](https://github.com/mprove-io/mprove-helm-charts) for 
 
 ## Local deploy using docker-compose (MacOS / Windows WSL / Linux / devcontainer)
 
-- Clone github repo to local `mprove` folder
+- Clone github repo to local `mprove` directory
 
 ```
 git clone https://github.com/mprove-io/mprove.git
 ```
 
-- Create `mprove_data` with subfolders outside of `mprove` repo folder:
+- Change directory to `mprove`
 
 ```
-mkdir -p ~/mprove_data/db-main \
-  ~/mprove_data/organizations \
-  ~/mprove_data/dwh-mysql \
-  ~/mprove_data/dwh-postgres \
-  ~/mprove_data/dwh-clickhouse \
-  ~/mprove_data/dwh-clickhouse-logs \
-  ~/mprove_data/blockml-logs
+cd mprove
 ```
 
-- Create secrets folder and files
+- Create `mprove_data` with subfolders:
+
+```
+mkdir -p mprove_data/blockml-data \
+  mprove_data/blockml-logs \
+  mprove_data/db-main \
+  mprove_data/dwh-clickhouse \
+  mprove_data/dwh-clickhouse-logs \
+  mprove_data/dwh-mysql \
+  mprove_data/dwh-postgres \
+  mprove_data/mcli-repos \
+  mprove_data/organizations \
+  mprove_data/redis
+```
+
+- Create secrets directory and files
 
 ```
 mkdir secrets \
@@ -41,13 +50,13 @@ mkdir secrets \
   && echo '' > secrets/first-project-remote-public-key.pem
 ```
 
-- Copy `mprove/.env.example` file to `mprove/.env` file
+- Run script to create ".env" file with generated values
 
 ```
-cp .env.example .env
+yarn create-env
 ```
 
-- Modify `mprove/.env` variables
+- Modify `mprove/.env` (optional). See first user credentials in BACKEND_FIRST_USER_EMAIL and BACKEND_FIRST_USER_PASSWORD.
 
 - Pull docker images
 
