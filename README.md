@@ -6,21 +6,21 @@ Mprove - All Metrics in One Place.
 
 Mprove is a Business Intelligence tool powered by [Malloy](https://www.malloydata.dev/)
 
-## Local deploy using docker-compose (MacOS / Windows WSL / Linux / devcontainer)
+## Local Deploy using docker-compose (MacOS / Windows WSL / Linux / devcontainer)
 
-- Clone github repo to local `mprove` directory
+### 1. Clone github repo to local `mprove` directory
 
 ```
 git clone https://github.com/mprove-io/mprove.git
 ```
 
-- Change directory to `mprove`
+### 2. Change directory to `mprove`
 
 ```
 cd mprove
 ```
 
-- Create `mprove_data` directory:
+### 3. Create `mprove_data` directory with subdirectories:
 
 ```
 mkdir -p mprove_data/blockml-data \
@@ -35,7 +35,15 @@ mkdir -p mprove_data/blockml-data \
   mprove_data/redis
 ```
 
-- Create `secrets` directory and files:
+### 4. Clean `mprove_data` directory
+
+This command deletes content of `mprove_data` subdirectories
+
+```
+yarn clean:mprove_data
+```
+
+### 5. Create `secrets` directory and files
 
 ```
 mkdir secrets \
@@ -44,21 +52,57 @@ mkdir secrets \
   && echo '' > secrets/first-project-remote-public-key.pem
 ```
 
-- Run script to create ".env" file with generated values
+### 6. Run script to create ".env" file with generated values
 
 ```
 yarn create-env
 ```
 
-- Modify `mprove/.env`. Set your email address in `BACKEND_FIRST_USER_EMAIL` environment variable.
+### 7. Modify `mprove/.env`
 
-- Pull and run docker images
+Set most recent Mprove release tag from https://github.com/mprove-io/mprove/releases
+
+```
+MPROVE_RELEASE_TAG=
+MPROVE_DWH_POSTGRES_TAG=
+```
+
+Set your real email address. You may need it later to receive transactional emails (for example, to change your password).
+
+```
+BACKEND_FIRST_USER_EMAIL=
+```
+
+Change your initial password if necessary. Later changes can only be done through web interface (by sending an email).
+
+```
+BACKEND_FIRST_USER_PASSWORD=
+```
+
+Set SMTP parameters to be able to send transactional emails (required if you need to add more users or to change user passwords in future).
+
+```
+BACKEND_SMTP_HOST=
+BACKEND_SMTP_AUTH_USER=
+BACKEND_SMTP_AUTH_PASSWORD=
+```
+
+### 8. Run docker images
 
 ```
 docker-compose up --pull db dwh-postgres rabbit redis backend blockml disk front
 ```
 
-- Open `http://localhost:3003` in Chrome and login using first user credentials from `.env` file (`BACKEND_FIRST_USER_EMAIL` and `BACKEND_FIRST_USER_PASSWORD`)
+### 9. Login
+
+Open `http://localhost:3003` in Chrome
+
+Login using values from `.env` file environment variables:
+
+- `BACKEND_FIRST_USER_EMAIL`
+- `BACKEND_FIRST_USER_PASSWORD`
+
+Continue with [Quickstart Docs](https://docs.mprove.io/docs/quickstart)
 
 ## License
 
