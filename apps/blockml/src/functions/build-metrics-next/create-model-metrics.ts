@@ -78,7 +78,8 @@ export function createModelMetrics(
       store.fields
         .filter(storeField => storeField.fieldClass === FieldClassEnum.Measure)
         .forEach(storeField => {
-          let topLabel = `Store Model - ${store.label}`;
+          // let topLabel = `Store - ${store.label}`;
+          let topLabel = `${store.label}`;
 
           // let partId = `${storeField.name}`;
 

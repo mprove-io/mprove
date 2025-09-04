@@ -495,9 +495,10 @@ export function wrapModels(item: {
           ? accessRolesTag.value.split(',').map(x => x.trim())
           : (x.access_roles ?? []),
       label:
-        x.fileExt === FileExtensionEnum.Store
-          ? `Store Model - ${x.label}`
-          : x.label,
+        // x.fileExt === FileExtensionEnum.Store
+        //   ? `Store - ${x.label}`
+        //   :
+        x.label,
       description: (x as FileStore).description,
       gr: undefined,
       hidden: false,

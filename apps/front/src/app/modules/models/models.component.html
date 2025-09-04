@@ -343,14 +343,14 @@
             class="text-s1 flex h-[92px] w-full flex-shrink-0 flex-row items-center pb-6 pt-6"
           >
             <div
-              class="flex h-11 select-none flex-row items-center pl-6 pr-3 text-lg font-semibold"
+              class="flex h-11 select-none flex-row items-center pl-6 text-lg font-semibold"
             >
               <div class="flex flex-row items-center">
                 <div> MODEL </div>
               </div>
             </div>
 
-            <div class="ml-4 mr-9 flex w-2 flex-1 items-center">
+            <div class="ml-6 flex w-2 flex-1 items-center">
               <form class="w-full" [formGroup]="modelForm">
                 <ng-select
                   #modelsModelSelect
@@ -379,82 +379,13 @@
                   <ng-template ng-option-tmp let-item="item">
                     <div class="truncate">{{ item.label }}</div>
                   </ng-template>
-
-                  <!-- <ng-template ng-footer-tmp>
-                    <ng-template #templateModelSelectNewModel>
-                      <div *ngIf="isEditor === false"
-                        >Models can be created by project members with
-                        FilesEditor role</div
-                      >
-
-                      <div *ngIf="isEditor === true && nav?.isRepoProd === true"
-                        >To create a new model, switch the branch from the
-                        Production repo to the Dev repo</div
-                      >
-                    </ng-template>
-
-                    <div
-                      [tp]="templateModelSelectNewModel"
-                      [tpIsEnabled]="
-                        isEditor === false || nav?.isRepoProd === true
-                      "
-                    >
-                      <button
-                        data-cy="modelSelectCreateModelButton"
-                        class="w-full rounded py-3 text-base focus:outline-none"
-                        [ngClass]="{
-                          'text-m600 hover:bg-m50':
-                            isEditor === true && nav?.isRepoProd === false,
-                          'text-s400 cursor-default':
-                            isEditor === false || nav?.isRepoProd === true
-                        }"
-                        (click)="createModel(modelsModelSelect)"
-                        [disabled]="
-                          isEditor === false || nav?.isRepoProd === true
-                        "
-                        >New Model</button
-                      >
-                    </div>
-                  </ng-template> -->
                 </ng-select>
               </form>
-            </div>
-          </div>
-
-          <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
-            <div class="flex flex-row"></div>
-            <div class="flex flex-row"></div>
-          </div>
-
-          <div
-            class="text-s1 mb-4 mt-4 flex h-11 w-full flex-shrink-0 flex-row items-center"
-          >
-            <!-- <div
-              class="hover:bg-m200 text-s500 ml-6 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
-              (click)="toggleSearch()"
-            >
-              <m-mag-glass-icon
-                [isFilled]="showSearch === true"
-                class="mb-1 flex h-6 w-6 flex-shrink-0"
-              ></m-mag-glass-icon>
-            </div> -->
-
-            <div class="ml-6 flex h-9 w-9 flex-shrink-0">
-              <button
-                class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
-                (click)="toggleModelTreeLevels()"
-              >
-                <div class="flex h-6 w-6">
-                  <m-tree-icon
-                    [isFlat]="modelTreeLevels === modelTreeLevelsFlat"
-                  ></m-tree-icon>
-                </div>
-              </button>
             </div>
 
             <div
               (click)="setShowSchema()"
-              class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-0 text-lg"
+              class="ml-4 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
             >
               <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
@@ -470,7 +401,7 @@
 
             <div
               (click)="setShowCharts()"
-              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center text-lg"
+              class="ml-2 mr-9 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
             >
               <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
@@ -502,7 +433,7 @@
                 autocomplete="off"
                 data-cy="chartsSearchInput"
                 class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
-                placeholder="Search Schema Fields"
+                placeholder="Search Fields"
                 [ngClass]="{
                   'bg-p200': !!searchSchemaWord
                 }"
@@ -521,6 +452,21 @@
                   }"
                   (click)="resetSchemaSearch()"
                 ></m-delete-icon>
+              </div>
+
+              <div class="flex flex-grow"></div>
+
+              <div class="ml-4 mr-9 flex h-9 w-9 flex-shrink-0">
+                <button
+                  class="text-s500 hover:bg-m200 flex h-9 w-9 flex-shrink-0 cursor-pointer select-none flex-row items-center justify-center rounded"
+                  (click)="toggleModelTreeLevels()"
+                >
+                  <div class="flex h-6 w-6">
+                    <m-tree-icon
+                      [isFlat]="modelTreeLevels === modelTreeLevelsFlat"
+                    ></m-tree-icon>
+                  </div>
+                </button>
               </div>
             </div>
 
