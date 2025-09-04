@@ -165,7 +165,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
-  // isFilterByModel = false;
   showSearch = true;
 
   isRunButtonPressed = false;
@@ -847,10 +846,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     );
   }
 
-  setShowCharts(
-    // item: { isFilterByModel: boolean }
-  ) {
-    // this.isFilterByModel = item.isFilterByModel;
+  setShowCharts() {
     this.makeFilteredCharts();
 
     if (this.showSchema === true) {
@@ -1582,25 +1578,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
   makeFilteredCharts() {
     let idxs;
 
-    let draftCharts: ChartX[] =
-      // isUndefined(this.model?.modelId) || this.isFilterByModel === false
-      //   ?
-      this.charts.filter(x => x.draft === true);
-    // : isDefined(this.model?.modelId)
-    //   ? this.charts.filter(
-    //       x => x.draft === true && x.modelId === this.model.modelId
-    //     )
-    //   : []
+    let draftCharts: ChartX[] = this.charts.filter(x => x.draft === true);
 
-    let nonDraftCharts =
-      // isUndefined(this.model?.modelId) || this.isFilterByModel === false
-      //   ?
-      this.charts.filter(x => x.draft === false);
-    // : isDefined(this.model?.modelId)
-    //   ? this.charts.filter(
-    //       x => x.draft === false && x.modelId === this.model.modelId
-    //     )
-    //   : []
+    let nonDraftCharts = this.charts.filter(x => x.draft === false);
 
     if (isDefinedAndNotEmpty(this.searchChartsWord)) {
       let haystack = nonDraftCharts.map(x =>
@@ -1752,14 +1732,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       apiService: this.apiService
     });
   }
-
-  // toggleFilterByModel() {
-  //   this.isFilterByModel = !this.isFilterByModel;
-  //   this.makeFilteredCharts();
-
-  //   this.cd.detectChanges();
-  //   // this.scrollToSelectedChart();
-  // }
 
   toggleSearch() {
     this.showSearch = !this.showSearch;
