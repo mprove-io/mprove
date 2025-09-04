@@ -19,15 +19,6 @@ export class BlockmlConfig {
   @IsString()
   logsPath?: string;
 
-  @IsEnum(BoolEnum)
-  isSingle?: BoolEnum;
-
-  @IsEnum(BoolEnum)
-  isMain?: BoolEnum;
-
-  @IsEnum(BoolEnum)
-  isWorker?: BoolEnum;
-
   @IsInt()
   concurrencyLimit?: number;
 

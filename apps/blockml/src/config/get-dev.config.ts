@@ -28,13 +28,6 @@ export function getDevConfig(envFilePath: any) {
     logsPath: <BoolEnum>(
       (process.env.BLOCKML_LOGS_PATH || envFile.BLOCKML_LOGS_PATH)
     ),
-    isSingle: <BoolEnum>(
-      (process.env.BLOCKML_IS_SINGLE || envFile.BLOCKML_IS_SINGLE)
-    ),
-    isMain: <BoolEnum>(process.env.BLOCKML_IS_MAIN || envFile.BLOCKML_IS_MAIN),
-    isWorker: <BoolEnum>(
-      (process.env.BLOCKML_IS_WORKER || envFile.BLOCKML_IS_WORKER)
-    ),
     concurrencyLimit: Number(
       isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
         ? process.env.BLOCKML_CONCURRENCY_LIMIT

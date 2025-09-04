@@ -95,10 +95,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "tools/deploy/base-dev",
-        "commands": [
-          "docker-compose up --detach --build backend-scheduler",
-          "docker-compose up --detach --build backend"
-        ],
+        "commands": ["docker-compose up --detach --build backend"],
         "parallel": false
       }
     },

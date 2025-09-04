@@ -103,10 +103,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "tools/deploy/base-dev",
-        "commands": [
-          "docker-compose up --detach --build blockml-main",
-          "docker-compose up --detach --build blockml-worker"
-        ],
+        "commands": ["docker-compose up --detach --build blockml"],
         "parallel": false
       }
     },
@@ -114,7 +111,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "./",
-        "commands": ["docker-compose build blockml-main"],
+        "commands": ["docker-compose build blockml"],
         "parallel": false
       }
     }

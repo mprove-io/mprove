@@ -2,15 +2,9 @@
 
 [Website](https://mprove.io) | [Docs](https://docs.mprove.io)
 
-Mprove - Self-service Business Intelligence with Version Control.
+Mprove - All Metrics in One Place.
 
-Check [Mprove Demo p1](https://github.com/mprove-io/mprove-demo-p1) for example project repository.
-
-Inspired by :heart: [Looker](https://looker.com/).
-
-## Deploy to a Kubernetes cluster using Helm Chart
-
-Check [Mprove Helm Charts](https://github.com/mprove-io/mprove-helm-charts) for instructions.
+Mprove is a Business Intelligence tool powered by [Malloy](https://www.malloydata.dev/)
 
 ## Local deploy using docker-compose (MacOS / Windows WSL / Linux / devcontainer)
 
@@ -26,7 +20,7 @@ git clone https://github.com/mprove-io/mprove.git
 cd mprove
 ```
 
-- Create `mprove_data` with subfolders:
+- Create `mprove_data` directory:
 
 ```
 mkdir -p mprove_data/blockml-data \
@@ -41,7 +35,7 @@ mkdir -p mprove_data/blockml-data \
   mprove_data/redis
 ```
 
-- Create secrets directory and files
+- Create `secrets` directory and files:
 
 ```
 mkdir secrets \
@@ -56,25 +50,15 @@ mkdir secrets \
 yarn create-env
 ```
 
-- Modify `mprove/.env` (optional). See first user credentials in BACKEND_FIRST_USER_EMAIL and BACKEND_FIRST_USER_PASSWORD.
+- Modify `mprove/.env`. Set your email address in `BACKEND_FIRST_USER_EMAIL` environment variable.
 
-- Pull docker images
-
-```
-docker-compose pull db dwh-postgres dwh-clickhouse rabbit backend blockml-single disk front
-```
-
-- Run docker images
+- Pull and run docker images
 
 ```
-docker-compose up db dwh-postgres dwh-clickhouse rabbit backend backend-scheduler blockml-single disk front
+docker-compose up --pull db dwh-postgres rabbit redis backend blockml disk front
 ```
 
-- Open chrome tab and login using first user credentials
-
-```
-http://localhost:3003
-```
+- Open `http://localhost:3003` in Chrome and login using first user credentials from `.env` file (`BACKEND_FIRST_USER_EMAIL` and `BACKEND_FIRST_USER_PASSWORD`)
 
 ## License
 

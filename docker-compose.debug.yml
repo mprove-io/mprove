@@ -8,16 +8,16 @@ services:
         source: $COMPOSE_DIST_APPS_DISK_SOURCE_PATH
         target: /usr/src/app/dist/apps/disk
 
-  backend-combo:
+  blockml:
     ports:
-      - 9237:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
+      - 9231:9229
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:blockml'
     volumes:
       - type: bind
-        source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
-        target: /usr/src/app/dist/apps/backend
+        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
+        target: /usr/src/app/dist/apps/blockml
 
-  backend-scheduler:
+  backend:
     ports:
       - 9232:9229
     command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
@@ -25,51 +25,6 @@ services:
       - type: bind
         source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
         target: /usr/src/app/dist/apps/backend
-
-  backend:
-    ports:
-      - 9231:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
-    volumes:
-      - type: bind
-        source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
-        target: /usr/src/app/dist/apps/backend
-
-  blockml-single:
-    ports:
-      - 9233:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:blockml'
-    volumes:
-      - type: bind
-        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
-        target: /usr/src/app/dist/apps/blockml
-
-  blockml-main:
-    ports:
-      - 9234:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:blockml'
-    volumes:
-      - type: bind
-        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
-        target: /usr/src/app/dist/apps/blockml
-
-  blockml-worker:
-    ports:
-      - 9235:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:blockml'
-    volumes:
-      - type: bind
-        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
-        target: /usr/src/app/dist/apps/blockml
-
-  blockml-main-worker:
-    ports:
-      - 9236:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:blockml'
-    volumes:
-      - type: bind
-        source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
-        target: /usr/src/app/dist/apps/blockml        
 
   mcli:
     command: sh -c 'yarn ava:mcli'        

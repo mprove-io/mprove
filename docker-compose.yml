@@ -54,63 +54,20 @@ services:
         source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
         target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
 
-  backend-combo:
+  blockml:
     build:
       context: ./
-      dockerfile: tools/docker/backend.Dockerfile
-    image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
+      dockerfile: tools/docker/blockml.Dockerfile
+    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
-    environment:
-      BACKEND_IS_SCHEDULER: 'TRUE'
-      BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST: dwh-postgres
-    ports:
-      - 3000:3000
     depends_on:
-      - db
       - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'     
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
         target: $ENV_FILE_TARGET_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_SOURCE_PATH
-        target: $COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_SOURCE_PATH
-        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
-        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_PATH
-
-  backend-scheduler:
-    build:
-      context: ./
-      dockerfile: tools/docker/backend.Dockerfile
-    image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    environment:
-      BACKEND_IS_SCHEDULER: 'TRUE'
-      BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST: dwh-postgres
-    depends_on:
-      - db
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'     
-    volumes:
-      - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_SOURCE_PATH
-        target: $COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_SOURCE_PATH
-        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
-        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_PATH
 
   backend:
     build:
@@ -120,14 +77,13 @@ services:
     env_file:
       - $ENV_FILE_PATH
     environment:
-      BACKEND_IS_SCHEDULER: 'FALSE'
-      BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST: dwh-postgres
+      BACKEND_IS_SCHEDULER: 'TRUE'
     ports:
       - 3000:3000
     depends_on:
       - db
       - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'     
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -135,82 +91,12 @@ services:
       - type: bind
         source: $COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_SOURCE_PATH
         target: $COMPOSE_BACKEND_FIRST_PROJECT_BIGQUERY_CREDENTIALS_PATH
-
-  blockml-single:
-    build:
-      context: ./
-      dockerfile: tools/docker/blockml.Dockerfile
-    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    environment:
-      BLOCKML_IS_SINGLE: 'TRUE'
-      BLOCKML_IS_MAIN: 'FALSE'
-      BLOCKML_IS_WORKER: 'FALSE'
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'
-    volumes:
       - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
-
-  blockml-main:
-    build:
-      context: ./
-      dockerfile: tools/docker/blockml.Dockerfile
-    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    environment:
-      BLOCKML_IS_SINGLE: 'FALSE'
-      BLOCKML_IS_MAIN: 'TRUE'
-      BLOCKML_IS_WORKER: 'FALSE'
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'      
-    volumes:
+        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_SOURCE_PATH
+        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PRIVATE_KEY_PATH
       - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
-
-  blockml-worker:
-    build:
-      context: ./
-      dockerfile: tools/docker/blockml.Dockerfile
-    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    environment:
-      BLOCKML_IS_SINGLE: 'FALSE'
-      BLOCKML_IS_MAIN: 'FALSE'
-      BLOCKML_IS_WORKER: 'TRUE'
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'      
-    volumes:
-      - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
-
-  blockml-main-worker:
-    build:
-      context: ./
-      dockerfile: tools/docker/blockml.Dockerfile
-    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    environment:
-      BLOCKML_IS_SINGLE: 'FALSE'
-      BLOCKML_IS_MAIN: 'TRUE'
-      BLOCKML_IS_WORKER: 'TRUE'
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'      
-    volumes:
-      - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH        
+        source: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
+        target: $COMPOSE_BACKEND_FIRST_PROJECT_REMOTE_PUBLIC_KEY_PATH
 
   front:
     build:
