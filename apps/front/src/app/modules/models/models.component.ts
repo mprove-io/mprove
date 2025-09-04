@@ -165,7 +165,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
-  isFilterByModel = false;
+  // isFilterByModel = false;
   showSearch = true;
 
   isRunButtonPressed = false;
@@ -847,8 +847,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     );
   }
 
-  setShowCharts(item: { isFilterByModel: boolean }) {
-    this.isFilterByModel = item.isFilterByModel;
+  setShowCharts(
+    // item: { isFilterByModel: boolean }
+  ) {
+    // this.isFilterByModel = item.isFilterByModel;
     this.makeFilteredCharts();
 
     if (this.showSchema === true) {
@@ -858,11 +860,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.cd.detectChanges();
 
-    if (this.isFilterByModel === true) {
-      setTimeout(() => {
-        this.scrollToSelectedChart({ isSmooth: true });
-      });
-    }
+    // if (this.isFilterByModel === true) {
+    //   setTimeout(() => {
+    //     this.scrollToSelectedChart({ isSmooth: true });
+    //   });
+    // }
   }
 
   toggleAutoRun() {
@@ -1581,22 +1583,24 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let idxs;
 
     let draftCharts: ChartX[] =
-      isUndefined(this.model?.modelId) || this.isFilterByModel === false
-        ? this.charts.filter(x => x.draft === true)
-        : isDefined(this.model?.modelId)
-          ? this.charts.filter(
-              x => x.draft === true && x.modelId === this.model.modelId
-            )
-          : [];
+      // isUndefined(this.model?.modelId) || this.isFilterByModel === false
+      //   ?
+      this.charts.filter(x => x.draft === true);
+    // : isDefined(this.model?.modelId)
+    //   ? this.charts.filter(
+    //       x => x.draft === true && x.modelId === this.model.modelId
+    //     )
+    //   : []
 
     let nonDraftCharts =
-      isUndefined(this.model?.modelId) || this.isFilterByModel === false
-        ? this.charts.filter(x => x.draft === false)
-        : isDefined(this.model?.modelId)
-          ? this.charts.filter(
-              x => x.draft === false && x.modelId === this.model.modelId
-            )
-          : [];
+      // isUndefined(this.model?.modelId) || this.isFilterByModel === false
+      //   ?
+      this.charts.filter(x => x.draft === false);
+    // : isDefined(this.model?.modelId)
+    //   ? this.charts.filter(
+    //       x => x.draft === false && x.modelId === this.model.modelId
+    //     )
+    //   : []
 
     if (isDefinedAndNotEmpty(this.searchChartsWord)) {
       let haystack = nonDraftCharts.map(x =>

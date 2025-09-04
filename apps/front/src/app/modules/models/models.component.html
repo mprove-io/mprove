@@ -454,7 +454,7 @@
 
             <div
               (click)="setShowSchema()"
-              class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center pl-0 pr-0 text-lg"
+              class="ml-3 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-50 pl-0 pr-0 text-lg"
             >
               <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
@@ -469,52 +469,20 @@
             </div>
 
             <div
-              (click)="setShowCharts({ isFilterByModel: true })"
-              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 text-lg"
+              (click)="setShowCharts()"
+              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center bg-yellow-50 text-lg"
             >
-              <div class="flex w-[160px] flex-row items-center justify-center">
+              <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
-                    'text-s400':
-                      showSchema === true || isFilterByModel === false,
-                    'font-semibold':
-                      showSchema === false && isFilterByModel === true
+                    'text-s400': showSchema === true,
+                    'font-semibold': showSchema === false
                   }"
                 >
-                  MODEL CHARTS
+                  CHARTS
                 </div>
               </div>
             </div>
-
-            <div
-              (click)="setShowCharts({ isFilterByModel: false })"
-              class="ml-2 flex h-11 cursor-pointer select-none flex-row items-center pl-2 text-lg"
-            >
-              <div class="flex w-[125px] flex-row items-center justify-center">
-                <div
-                  [ngClass]="{
-                    'text-s400':
-                      showSchema === true || isFilterByModel === true,
-                    'font-semibold':
-                      showSchema === false && isFilterByModel === false
-                  }"
-                >
-                  ALL CHARTS
-                </div>
-              </div>
-            </div>
-
-            <!-- <div
-              *ngIf="showSchema === false"
-              class="hover:bg-m200 text-s500 ml-3 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
-              (click)="toggleFilterByModel()"
-              tp="Show selected model charts or all charts"
-            >
-              <m-filter-icon
-                class="mb-1 flex h-6 w-6 flex-shrink-0"
-                [isFilled]="isFilterByModel === true"
-              ></m-filter-icon>
-            </div> -->
           </div>
 
           <div class="flex flex-1 flex-col" *ngIf="showSchema === true">
@@ -587,11 +555,7 @@
                 autocomplete="off"
                 data-cy="chartsSearchInput"
                 class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
-                [placeholder]="
-                  isFilterByModel === true
-                    ? 'Search Model Charts'
-                    : 'Search All Charts'
-                "
+                [placeholder]="'Search Charts'"
                 [ngClass]="{
                   'bg-p200': !!searchChartsWord
                 }"
@@ -680,24 +644,7 @@
                   Saved Charts
                 </div>
 
-                <div *ngIf="isFilterByModel === true">
-                  <div
-                    *ngFor="
-                      let c of filteredCharts | slice: filteredDraftsLength;
-                      let i = index
-                    "
-                  >
-                    <ng-container
-                      *ngTemplateOutlet="
-                        chartsItem;
-                        context: { i: i, c: c, isDraft: false }
-                      "
-                    ></ng-container>
-                  </div>
-                </div>
-
                 <tree-root
-                  *ngIf="isFilterByModel === false"
                   class="h-2 w-full"
                   #chartsTree
                   [nodes]="filteredChartNodes"
@@ -756,7 +703,7 @@
                   </ng-template>
                 </tree-root>
 
-                <div class="mb-5" *ngIf="isFilterByModel === false"></div>
+                <div class="mb-5"></div>
 
                 <ng-template
                   #chartsItem
