@@ -42,7 +42,7 @@
               >
                 <button
                   data-cy="orgAccountDeleteOrgButton"
-                  class="rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
+                  class="select-none rounded border px-5 py-3 text-base font-medium shadow-sm focus:outline-none"
                   [ngClass]="{
                     'text-s400 cursor-default': isOrgOwner === false,
                     'border-r1 text-r1': isOrgOwner === true
@@ -62,7 +62,7 @@
                 >
                   <button
                     data-cy="orgAccountEditNameButton"
-                    class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'border-s400 text-s500 hover:bg-s100':
                         isOrgOwner === true,
@@ -83,7 +83,7 @@
                 >
                   <button
                     data-cy="orgAccountEditOwnerButton"
-                    class="rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
                     [ngClass]="{
                       'border-s400 text-s500 hover:bg-s100':
                         isOrgOwner === true,
