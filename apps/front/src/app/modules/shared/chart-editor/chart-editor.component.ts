@@ -6,7 +6,7 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DEFAULT_CHART_Y_AXIS } from '~common/constants/mconfig-chart';
 import {
@@ -22,7 +22,6 @@ import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
 import { makeCopy } from '~common/functions/make-copy';
 import { setChartSeries } from '~common/functions/set-chart-series';
 import { MconfigField } from '~common/interfaces/backend/mconfig-field';
@@ -43,7 +42,6 @@ import { DataService } from '~front/app/services/data.service';
 import { FormatNumberService } from '~front/app/services/format-number.service';
 import { ReportService } from '~front/app/services/report.service';
 import { StructService } from '~front/app/services/struct.service';
-import { ValidationService } from '~front/app/services/validation.service';
 
 export class ChartSeriesWithField extends MconfigChartSeries {
   field: MconfigField;
@@ -161,18 +159,6 @@ export class ChartEditorComponent implements OnChanges {
     multiField: [undefined]
   });
 
-  pageSizeForm: FormGroup = this.fb.group({
-    pageSize: [
-      undefined,
-      [
-        Validators.required,
-        ValidationService.integerOrEmptyValidator,
-        Validators.min(1),
-        Validators.maxLength(255)
-      ]
-    ]
-  });
-
   chartOptionsIsExpanded = false;
   xAxisIsExpanded: boolean; // initial set in ngOnChanges
   yAxisIsExpanded = true;
@@ -280,11 +266,6 @@ export class ChartEditorComponent implements OnChanges {
         value: this.chart.multiField
       });
 
-      setValueAndMark({
-        control: this.pageSizeForm.controls['pageSize'],
-        value: this.chart.pageSize
-      });
-
       let seriesCopy = makeCopy(this.chart.series);
 
       this.chartSeriesWithField = seriesCopy
@@ -347,10 +328,7 @@ export class ChartEditorComponent implements OnChanges {
   getIsValid() {
     let isChartValid = false;
 
-    if (this.chart.type === ChartTypeEnum.Table) {
-      isChartValid = this.pageSizeForm.controls['pageSize'].valid;
-    }
-    // else if (this.chart.type === ChartTypeEnum.BarVertical) {
+    // if (this.chart.type === ChartTypeEnum.BarVertical) {
     //   isChartValid =
     //     (this.chart.legend === false ||
     //       this.legendTitleForm.controls['legendTitle'].valid) &&
@@ -366,9 +344,9 @@ export class ChartEditorComponent implements OnChanges {
     //       .valid &&
     //     this.formatNumberYAxisTickForm.controls['formatNumberYAxisTick'].valid;
     // }
-    else {
-      isChartValid = true;
-    }
+    // else {
+    isChartValid = true;
+    // }
 
     return isChartValid;
   }
@@ -445,26 +423,6 @@ export class ChartEditorComponent implements OnChanges {
         });
       }
     }
-  }
-
-  pageSizeBlur() {
-    let value = this.pageSizeForm.controls['pageSize'].value;
-
-    let pageSize = isUndefinedOrEmpty(value) ? undefined : Number(value);
-
-    if (isUndefined(pageSize) && isUndefined(this.chart.pageSize)) {
-      return;
-    }
-
-    if (pageSize === this.chart.pageSize) {
-      return;
-    }
-
-    let newChart: MconfigChart = <MconfigChart>{
-      pageSize: pageSize
-    };
-
-    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
   }
 
   hideColumnsIsChecked(id: string) {

@@ -26,13 +26,6 @@ export function toFileChartOptions(item: {
       isDefined(chart.format)
         ? (chart.format as unknown as string)
         : undefined;
-
-    options.page_size =
-      UI_CHART_TYPES.pageSize.indexOf(chart.type) > -1 &&
-      chart.pageSize !== DEFAULT_CHART.pageSize &&
-      isDefined(chart.pageSize)
-        ? (chart.pageSize as unknown as string)
-        : undefined;
   }
 
   // series

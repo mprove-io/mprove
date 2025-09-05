@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
-  IsInt,
   // IsNumber,
   IsOptional,
   IsString,
@@ -51,10 +50,6 @@ export class MconfigChart {
   @IsOptional()
   @IsBoolean()
   format?: boolean;
-
-  @IsOptional()
-  @IsInt()
-  pageSize?: number;
 
   @ValidateNested()
   @Type(() => MconfigChartXAxis)

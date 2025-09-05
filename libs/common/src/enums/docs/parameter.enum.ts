@@ -126,7 +126,6 @@ export enum ParameterEnum {
   MultiField = 'multi_field',
   // chart options
   Format = 'format',
-  PageSize = 'page_size',
   XAxis = 'x_axis',
   YAxis = 'y_axis',
   Series = 'series',

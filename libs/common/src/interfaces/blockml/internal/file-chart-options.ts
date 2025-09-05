@@ -8,9 +8,6 @@ export interface FileChartOptions {
   format?: string; // boolean
   format_line_num?: number;
 
-  page_size?: string; // number
-  page_size_line_num?: number;
-
   x_axis?: FileChartOptionsXAxisElement;
   x_axis_line_num?: number;
 

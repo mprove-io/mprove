@@ -43,7 +43,6 @@ export function checkChartOptionsParameters<T extends drcType>(
           if (
             [
               ParameterEnum.Format.toString(),
-              ParameterEnum.PageSize.toString(),
               ParameterEnum.XAxis.toString(),
               ParameterEnum.YAxis.toString(),
               ParameterEnum.Series.toString()
@@ -144,7 +143,6 @@ export function checkChartOptionsParameters<T extends drcType>(
           }
 
           if (
-            [ParameterEnum.PageSize.toString()].indexOf(parameter) > -1 &&
             !(tile.options[parameter as keyof FileChartOptions] as any).match(
               MyRegex.CAPTURE_DIGITS_START_TO_END_G()
             )

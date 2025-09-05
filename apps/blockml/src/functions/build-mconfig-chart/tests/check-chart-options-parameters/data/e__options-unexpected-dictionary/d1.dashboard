@@ -6,5 +6,5 @@ tiles:
   - mea1
   type: table
   options:
-    page_size:         
+    format:         
       ab: cd

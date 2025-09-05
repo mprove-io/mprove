@@ -20,7 +20,6 @@ export const UI_CHART_TYPES = {
   // options
   //
   format: [ChartTypeEnum.Table],
-  pageSize: [ChartTypeEnum.Table],
   xAxisGroup: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter],
   xAxis: {
     scale: [ChartTypeEnum.Line, ChartTypeEnum.Bar, ChartTypeEnum.Scatter]

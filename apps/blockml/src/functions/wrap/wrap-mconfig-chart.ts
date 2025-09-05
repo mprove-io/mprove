@@ -102,9 +102,6 @@ export function wrapMconfigChart(item: {
     format: isDefined(options?.format)
       ? toBooleanFromLowercaseString(options?.format)
       : DEFAULT_CHART.format,
-    pageSize: isDefined(options?.page_size)
-      ? Number(options.page_size)
-      : DEFAULT_CHART.pageSize,
     xAxis: xAxis,
     yAxis: yAxis,
     series: series

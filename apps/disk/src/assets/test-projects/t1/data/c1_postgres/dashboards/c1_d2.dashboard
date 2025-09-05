@@ -16,8 +16,6 @@ tiles:
   - apply_to: products.brand
     listen: product_brand
   type: table
-  options:
-    page_size: 500
   plate:
     plate_width: 12
     plate_height: 10

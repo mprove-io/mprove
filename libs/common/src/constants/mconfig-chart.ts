@@ -52,7 +52,6 @@ export const DEFAULT_CHART: MconfigChart = {
   multiField: null,
 
   format: true,
-  pageSize: 5,
 
   xAxis: DEFAULT_CHART_X_AXIS,
 

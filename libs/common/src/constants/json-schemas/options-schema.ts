@@ -10,9 +10,6 @@ export const OPTIONS_SCHEMA: JSONSchema7 = {
     format: {
       type: 'boolean'
     },
-    page_size: {
-      type: 'integer'
-    },
     x_axis: {
       type: 'object',
       additionalProperties: false,

@@ -31,8 +31,5 @@ export class ChartTableComponent {
   @Input()
   qData: QDataRow[];
 
-  @Input()
-  pageSize: number;
-
   constructor() {}
 }

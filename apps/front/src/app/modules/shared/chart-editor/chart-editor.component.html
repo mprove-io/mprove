@@ -32,36 +32,6 @@
   </div>
 
   <div
-    *ngIf="isReport === false && uiChartTypes.pageSize.indexOf(chart.type) > -1"
-    class="ml-2 flex flex-row items-start"
-  >
-    <div class="flex flex-col">
-      <div class="text-s1 flex h-9 select-none items-center text-base"
-        >Page Size (visible rows)</div
-      >
-    </div>
-
-    <div [formGroup]="pageSizeForm" class="ml-5 flex flex-col items-start">
-      <input
-        autocomplete="off"
-        spellcheck="false"
-        data-cy="chartEditorPageSizeInput"
-        class="form-input border-s3 focus:border-m600 h-9 w-32 rounded"
-        [ngClass]="{
-          'border-r600':
-            pageSizeForm.controls['pageSize'].invalid &&
-            pageSizeForm.controls['pageSize'].touched
-        }"
-        formControlName="pageSize"
-        (blur)="pageSizeBlur()"
-      />
-      <m-validation
-        [control]="pageSizeForm.controls['pageSize']"
-      ></m-validation>
-    </div>
-  </div>
-
-  <div
     *ngIf="
       isReport === false && uiChartTypes.hideColumns.indexOf(chart.type) > -1
     "

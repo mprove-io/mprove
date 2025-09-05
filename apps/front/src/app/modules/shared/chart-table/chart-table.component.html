@@ -43,7 +43,7 @@
 
   <tbody>
     <ng-container *ngFor="let row of qData; let i = index">
-      <tr data-cy="chartTableRow" *ngIf="i < pageSize">
+      <tr data-cy="chartTableRow">
         <td
           data-cy="chartTableCell"
           *ngFor="let column of mconfigFields | hideColumns: hideColumns"
