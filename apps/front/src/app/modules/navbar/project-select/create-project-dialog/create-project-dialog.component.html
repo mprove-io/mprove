@@ -14,7 +14,7 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="createProjectDialogProjectNameInput"
-      class="form-input border-s3 focus:border-m600 mt-9 rounded"
+      class="form-input border-s3 focus:border-m600 mt-9 select-none rounded"
       [ngClass]="{
         'border-r600':
           createProjectForm.controls['projectName'].invalid &&
@@ -80,7 +80,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="createProjectDialogGitUrlInput"
-        class="form-input border-s3 focus:border-m600 mt-9 w-full rounded"
+        class="form-input border-s3 focus:border-m600 mt-9 w-full select-none rounded"
         [ngClass]="{
           'border-r600':
             createProjectForm.controls['projectGitUrl'].invalid &&
@@ -97,7 +97,7 @@
         >Add this <span class="font-semibold">Deploy Key</span> to your git
         provider and enable <span class="font-semibold">Write Access</span>
       </div>
-      <div class="text-s2 text-left text-lg"
+      <div class="text-s2 select-none text-left text-lg"
         >(for github.com use Github Repository Settings Page)</div
       >
 
