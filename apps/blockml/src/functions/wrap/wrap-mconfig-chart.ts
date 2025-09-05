@@ -95,7 +95,7 @@ export function wrapMconfigChart(item: {
     // data
     xField: data?.x_field,
     yFields: data?.y_fields || [],
-    hideColumns: data?.hide_columns || [],
+    // hideColumns: data?.hide_columns || [],
     multiField: data?.multi_field,
 
     // options

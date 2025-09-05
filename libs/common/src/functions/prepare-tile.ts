@@ -149,12 +149,12 @@ export function prepareTile(item: {
       chart.yFields.length > 0
         ? chart.yFields
         : undefined,
-    hide_columns:
-      UI_CHART_TYPES.hideColumns.indexOf(chart.type) > -1 &&
-      isDefined(chart.hideColumns) &&
-      chart.hideColumns.length > 0
-        ? chart.hideColumns
-        : undefined,
+    // hide_columns:
+    //   UI_CHART_TYPES.hideColumns.indexOf(chart.type) > -1 &&
+    //   isDefined(chart.hideColumns) &&
+    //   chart.hideColumns.length > 0
+    //     ? chart.hideColumns
+    //     : undefined,
     multi_field:
       UI_CHART_TYPES.multiField.indexOf(chart.type) > -1 &&
       isDefined(chart.multiField)

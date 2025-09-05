@@ -27,8 +27,8 @@ export function makeMconfigFields(item: {
     let field = modelFields.find(f => f.id === fieldId);
     let f: MconfigField = Object.assign({}, field, <MconfigField>{
       sorting: sortings.find(x => x.fieldId === fieldId),
-      sortingNumber: sortings.findIndex(s => s.fieldId === fieldId),
-      isHideColumn: chart?.hideColumns.indexOf(field.id) > -1
+      sortingNumber: sortings.findIndex(s => s.fieldId === fieldId)
+      // isHideColumn: chart?.hideColumns.indexOf(field.id) > -1
     });
 
     if (field.fieldClass === FieldClassEnum.Dimension) {

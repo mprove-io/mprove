@@ -25,8 +25,8 @@ export class ChartTableComponent {
   @Input()
   mconfigFields: MconfigField[];
 
-  @Input()
-  hideColumns: string[];
+  // @Input()
+  // hideColumns: string[];
 
   @Input()
   qData: QDataRow[];

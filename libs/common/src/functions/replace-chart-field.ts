@@ -37,13 +37,13 @@ export function replaceChartField<T extends Mconfig>(item: {
     }
   }
 
-  if (isDefined(mconfig.chart.hideColumns)) {
-    let hideColumnsIndex = mconfig.chart.hideColumns.indexOf(currentFieldId);
+  // if (isDefined(mconfig.chart.hideColumns)) {
+  //   let hideColumnsIndex = mconfig.chart.hideColumns.indexOf(currentFieldId);
 
-    if (hideColumnsIndex > -1) {
-      mconfig.chart.hideColumns.splice(hideColumnsIndex, 1, newColumnFieldId);
-    }
-  }
+  //   if (hideColumnsIndex > -1) {
+  //     mconfig.chart.hideColumns.splice(hideColumnsIndex, 1, newColumnFieldId);
+  //   }
+  // }
 
   if (isDefined(mconfig.chart.series)) {
     let se = mconfig.chart.series.find(x => x.dataField === currentFieldId);

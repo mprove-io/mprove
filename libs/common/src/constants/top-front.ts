@@ -155,8 +155,8 @@ export const EMPTY_MCONFIG_FIELD: MconfigField = {
   currencyPrefix: undefined,
   currencySuffix: undefined,
   sorting: undefined,
-  sortingNumber: undefined,
-  isHideColumn: undefined
+  sortingNumber: undefined
+  // isHideColumn: undefined
 };
 
 export const COMMON_I18N: DatePickerI18n = {

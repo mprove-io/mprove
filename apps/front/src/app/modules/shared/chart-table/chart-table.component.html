@@ -11,14 +11,10 @@
             column.fieldClass === fieldClassMeasure ||
             column.fieldClass === fieldClassCalculation
         }"
-        *ngFor="
-          let column of mconfigFields | hideColumns: hideColumns;
-          let columnIndex = index
-        "
+        *ngFor="let column of mconfigFields; let columnIndex = index"
       >
         <div
           class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
-          *ngIf="column.isHideColumn === false"
         >
           <div class="flex select-none flex-col items-start justify-center">
             <div class="truncate text-sm font-normal">{{
@@ -46,7 +42,7 @@
       <tr data-cy="chartTableRow">
         <td
           data-cy="chartTableCell"
-          *ngFor="let column of mconfigFields | hideColumns: hideColumns"
+          *ngFor="let column of mconfigFields"
           class="max-w-[350px] truncate px-5"
           [ngClass]="{
             'min-w-[200px]': isTableHeaderWide === false,

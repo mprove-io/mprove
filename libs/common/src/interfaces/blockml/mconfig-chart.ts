@@ -35,9 +35,9 @@ export class MconfigChart {
   @IsString({ each: true })
   yFields?: string[];
 
-  @IsOptional()
-  @IsString({ each: true })
-  hideColumns?: string[];
+  // @IsOptional()
+  // @IsString({ each: true })
+  // hideColumns?: string[];
 
   @IsOptional()
   @IsString()

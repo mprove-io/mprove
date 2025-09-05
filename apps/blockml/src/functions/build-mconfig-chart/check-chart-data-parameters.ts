@@ -350,45 +350,45 @@ export function checkChartDataParameters<T extends dcType>(
         });
       }
 
-      if (isDefined(tile.data.hide_columns)) {
-        if (!Array.isArray(tile.data.hide_columns)) {
-          item.errors.push(
-            new BmError({
-              title: ErTitleEnum.TILE_DATA_HIDE_COLUMNS_MUST_BE_A_LIST,
-              message: `parameter "${ParameterEnum.HideColumns}" must be a list`,
-              lines: [
-                {
-                  line: tile.data.hide_columns_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
+      // if (isDefined(tile.data.hide_columns)) {
+      //   if (!Array.isArray(tile.data.hide_columns)) {
+      //     item.errors.push(
+      //       new BmError({
+      //         title: ErTitleEnum.TILE_DATA_HIDE_COLUMNS_MUST_BE_A_LIST,
+      //         message: `parameter "${ParameterEnum.HideColumns}" must be a list`,
+      //         lines: [
+      //           {
+      //             line: tile.data.hide_columns_line_num,
+      //             name: x.fileName,
+      //             path: x.filePath
+      //           }
+      //         ]
+      //       })
+      //     );
+      //     return;
+      //   }
 
-        tile.data.hide_columns.forEach(element => {
-          if (tile.select.indexOf(element) < 0) {
-            item.errors.push(
-              new BmError({
-                title: ErTitleEnum.TILE_DATA_WRONG_HIDE_COLUMNS_ELEMENT,
-                message:
-                  `found element "${element}" that is not ` +
-                  `listed in "${ParameterEnum.Select}"`,
-                lines: [
-                  {
-                    line: tile.data.hide_columns_line_num,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
-        });
-      }
+      //   tile.data.hide_columns.forEach(element => {
+      //     if (tile.select.indexOf(element) < 0) {
+      //       item.errors.push(
+      //         new BmError({
+      //           title: ErTitleEnum.TILE_DATA_WRONG_HIDE_COLUMNS_ELEMENT,
+      //           message:
+      //             `found element "${element}" that is not ` +
+      //             `listed in "${ParameterEnum.Select}"`,
+      //           lines: [
+      //             {
+      //               line: tile.data.hide_columns_line_num,
+      //               name: x.fileName,
+      //               path: x.filePath
+      //             }
+      //           ]
+      //         })
+      //       );
+      //       return;
+      //     }
+      //   });
+      // }
     });
 
     if (errorsOnStart === item.errors.length) {

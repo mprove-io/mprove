@@ -119,7 +119,7 @@ export enum ParameterEnum {
   Options = 'options',
   Plate = 'plate',
   // chart data
-  HideColumns = 'hide_columns',
+  // HideColumns = 'hide_columns',
   XField = 'x_field',
   YFields = 'y_fields',
   SizeField = 'size_field',

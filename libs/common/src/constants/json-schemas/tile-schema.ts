@@ -114,12 +114,12 @@ export const TILE_SCHEMA: JSONSchema7 = {
       type: 'object',
       additionalProperties: false,
       properties: {
-        hide_columns: {
-          type: 'array',
-          items: {
-            type: 'string'
-          }
-        },
+        // hide_columns: {
+        //   type: 'array',
+        //   items: {
+        //     type: 'string'
+        //   }
+        // },
         x_field: {
           type: 'string'
         },

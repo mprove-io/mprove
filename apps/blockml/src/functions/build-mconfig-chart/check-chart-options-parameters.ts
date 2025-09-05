@@ -141,32 +141,6 @@ export function checkChartOptionsParameters<T extends drcType>(
             );
             return;
           }
-
-          if (
-            !(tile.options[parameter as keyof FileChartOptions] as any).match(
-              MyRegex.CAPTURE_DIGITS_START_TO_END_G()
-            )
-          ) {
-            item.errors.push(
-              new BmError({
-                title: ErTitleEnum.OPTIONS_PARAMETER_MUST_BE_A_POSITIVE_INTEGER,
-                message:
-                  `"${
-                    tile.options[parameter as keyof FileChartOptions] as any
-                  }" is not valid ` + `"${parameter}" value`,
-                lines: [
-                  {
-                    line: tile.options[
-                      (parameter + LINE_NUM) as keyof FileChartOptions
-                    ] as number,
-                    name: x.fileName,
-                    path: x.filePath
-                  }
-                ]
-              })
-            );
-            return;
-          }
         });
     });
 

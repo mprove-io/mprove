@@ -425,25 +425,25 @@ export class ChartEditorComponent implements OnChanges {
     }
   }
 
-  hideColumnsIsChecked(id: string) {
-    return this.chart.hideColumns.findIndex(x => x === id) > -1;
-  }
+  // hideColumnsIsChecked(id: string) {
+  //   return this.chart.hideColumns.findIndex(x => x === id) > -1;
+  // }
 
-  hideColumnsOnClick(id: string) {
-    let index = this.chart.hideColumns.findIndex(x => x === id);
+  // hideColumnsOnClick(id: string) {
+  //   let index = this.chart.hideColumns.findIndex(x => x === id);
 
-    let newChart: MconfigChart = <MconfigChart>{
-      hideColumns:
-        index > -1
-          ? [
-              ...this.chart.hideColumns.slice(0, index),
-              ...this.chart.hideColumns.slice(index + 1)
-            ]
-          : [...this.chart.hideColumns, id]
-    };
+  //   let newChart: MconfigChart = <MconfigChart>{
+  //     hideColumns:
+  //       index > -1
+  //         ? [
+  //             ...this.chart.hideColumns.slice(0, index),
+  //             ...this.chart.hideColumns.slice(index + 1)
+  //           ]
+  //         : [...this.chart.hideColumns, id]
+  //   };
 
-    this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
-  }
+  //   this.chartEditorUpdateChart({ chartPart: newChart, isCheck: true });
+  // }
 
   xFieldChange() {
     let xField = this.xFieldForm.controls['xField'].value;

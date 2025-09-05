@@ -93,18 +93,18 @@ export class MconfigService {
       }
     }
 
-    if (newMconfig.chart.hideColumns.length > 0) {
-      let index = newMconfig.chart.hideColumns.findIndex(
-        hId => hId === fieldId
-      );
+    // if (newMconfig.chart.hideColumns.length > 0) {
+    //   let index = newMconfig.chart.hideColumns.findIndex(
+    //     hId => hId === fieldId
+    //   );
 
-      if (index > -1) {
-        newMconfig.chart.hideColumns = [
-          ...newMconfig.chart.hideColumns.slice(0, index),
-          ...newMconfig.chart.hideColumns.slice(index + 1)
-        ];
-      }
-    }
+    //   if (index > -1) {
+    //     newMconfig.chart.hideColumns = [
+    //       ...newMconfig.chart.hideColumns.slice(0, index),
+    //       ...newMconfig.chart.hideColumns.slice(index + 1)
+    //     ];
+    //   }
+    // }
 
     return newMconfig;
   }
