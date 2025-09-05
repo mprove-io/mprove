@@ -47,7 +47,7 @@
       *ngIf="nav?.isRepoProd === true"
       class="mr-6 flex flex-col font-semibold"
     >
-      <div class="text-s400 flex text-lg">
+      <div class="text-s400 flex select-none text-lg">
         To make changes, select the dev repo branch
       </div>
     </div>
@@ -61,7 +61,7 @@
       <button
         type="button"
         data-cy="fileEditorSaveButton"
-        class="text-m0 h-11 rounded px-5 py-2 text-base font-medium focus:outline-none"
+        class="text-m0 h-11 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
         [ngClass]="{
           'bg-s400 cursor-default': !needSave,
           'bg-m600': needSave
@@ -87,7 +87,7 @@
         *ngIf="nav?.isRepoProd === false"
         type="button"
         data-cy="fileEditorCancelButton"
-        class="flex h-11 flex-shrink-0 rounded border px-5 py-2 text-base font-medium focus:outline-none"
+        class="flex h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-base font-medium focus:outline-none"
         [ngClass]="{
           'border-s400 text-s400 cursor-default': !needSave,
           'border-m600 text-m600': needSave

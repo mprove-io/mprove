@@ -1,28 +1,34 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
   <div class="mx-6 mb-6 mt-8 flex h-2 flex-grow flex-col">
     <div class="flex h-11 items-center">
-      <div data-cy="profileTitle" class="text-s1 text-2xl font-semibold">{{
-        pageTitle
-      }}</div>
+      <div
+        data-cy="profileTitle"
+        class="text-s1 select-none text-2xl font-semibold"
+        >{{ pageTitle }}</div
+      >
     </div>
     <div class="bg-m0 mt-6 h-2 flex-1 rounded shadow">
       <div class="h-full w-full overflow-auto">
         <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
           <div class="ml-32 mt-16 flex flex-row">
             <div class="flex flex-col text-base">
-              <div class="flex h-24 items-center justify-end font-semibold"
+              <div
+                class="flex h-24 select-none items-center justify-end font-semibold"
                 >Profile Photo</div
               >
-              <div class="flex h-16 items-center justify-end font-semibold"
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >Name</div
               >
               <!-- <div class="flex h-16 items-center justify-end font-semibold"
               >Default Time Zone</div
             > -->
-              <div class="flex h-16 items-center justify-end font-semibold"
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >Email</div
               >
-              <div class="flex h-16 items-center justify-end font-semibold"
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >Alias</div
               >
               <div class="flex items-center justify-end font-semibold"></div>

@@ -1,4 +1,7 @@
-<div class="divide-s300 mt-1 flex flex-col divide-y pr-5" *ngIf="!!mconfig">
+<div
+  class="divide-s300 mt-1 flex select-none flex-col divide-y pr-5"
+  *ngIf="!!mconfig"
+>
   <div
     *ngFor="let filter of parametersFilters; let filterIndex = index"
     class="flex flex-row items-start justify-start"

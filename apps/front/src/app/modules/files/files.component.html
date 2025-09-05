@@ -9,7 +9,9 @@
             >{{ pageTitle }}
           </div>
 
-          <div class="ml-10 flex flex-1 flex-row items-center justify-between">
+          <div
+            class="ml-10 flex flex-1 select-none flex-row items-center justify-between"
+          >
             <div
               class="flex cursor-pointer flex-row items-center"
               tp="Need to Save changes"
@@ -204,7 +206,7 @@
 
           <div
             *ngIf="nav?.isRepoProd === false"
-            class="text-s500 mr-5 flex h-11 flex-row items-center text-lg font-semibold"
+            class="text-s500 mr-5 flex h-11 select-none flex-row items-center text-lg font-semibold"
           >
             dev-{{ user.alias }} - {{ nav.branchId }}
           </div>
@@ -246,7 +248,7 @@
             <button
               type="button"
               data-cy="filesCommitButton"
-              class="text-m0 ml-3 h-11 rounded px-5 py-2 text-base font-medium focus:outline-none"
+              class="text-m0 ml-3 h-11 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
               [ngClass]="{
                 'bg-s400 cursor-default':
                   repo.repoStatus !== repoStatusNeedCommit || needSave === true,
@@ -327,7 +329,7 @@
             <button
               type="button"
               data-cy="filesPushButton"
-              class="text-m0 ml-3 h-11 rounded px-5 py-2 text-base font-medium focus:outline-none"
+              class="text-m0 ml-3 h-11 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
               [ngClass]="{
                 'bg-m600':
                   needSave === false &&
@@ -403,7 +405,7 @@
             </div>
 
             <div
-              class="flex h-full w-full items-center justify-center text-xl"
+              class="flex h-full w-full select-none items-center justify-center text-xl"
               *ngIf="lastUrl === pathFiles || !file?.fileId"
               >Select File</div
             >

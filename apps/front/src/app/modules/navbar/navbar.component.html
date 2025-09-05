@@ -55,7 +55,8 @@
                       <m-exclamation-icon></m-exclamation-icon>
                     </div>
 
-                    <div class="flex w-[60px] items-center justify-center"
+                    <div
+                      class="flex w-[60px] select-none items-center justify-center"
                       >Files</div
                     >
                   </div>
@@ -71,7 +72,7 @@
             class="flex flex-row items-center space-x-5"
           >
             <button
-              class="text-s1 ml-5 flex h-10 w-[80px] items-center justify-center text-left text-base focus:outline-none"
+              class="text-s1 ml-5 flex h-10 w-[80px] select-none items-center justify-center text-left text-base focus:outline-none"
               [ngClass]="{
                 'text-s400 cursor-default':
                   !nav || !nav.projectId || needSave === true,
@@ -83,7 +84,7 @@
             >
 
             <button
-              class="text-s1 flex h-10 w-[90px] items-center justify-center text-left text-base focus:outline-none"
+              class="text-s1 flex h-10 w-[90px] select-none items-center justify-center text-left text-base focus:outline-none"
               [ngClass]="{
                 'text-s400 cursor-default':
                   !nav || !nav.projectId || needSave === true,
@@ -95,7 +96,7 @@
             >
 
             <button
-              class="text-s1 flex h-10 w-[120px] items-center justify-center text-left text-base focus:outline-none"
+              class="text-s1 flex h-10 w-[120px] select-none items-center justify-center text-left text-base focus:outline-none"
               [ngClass]="{
                 'text-s400 cursor-default':
                   !nav || !nav.projectId || needSave === true,

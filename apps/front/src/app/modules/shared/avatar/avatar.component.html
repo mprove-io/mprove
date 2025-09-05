@@ -1,8 +1,12 @@
-<img *ngIf="avatar" class="rounded-full" [src]="avatar" />
-<div *ngIf="!avatar && alias !== restrictedUserAlias">{{ initials }}</div>
+<img *ngIf="!!avatar" class="select-none rounded-full" [src]="avatar" />
+
+<div *ngIf="!avatar && alias !== restrictedUserAlias" class="select-none">{{
+  initials
+}}</div>
+
 <div
   *ngIf="!avatar && alias === restrictedUserAlias"
-  class="flex flex-row items-center justify-center"
+  class="flex select-none flex-row items-center justify-center"
 >
   <m-user-icon></m-user-icon>
 </div>

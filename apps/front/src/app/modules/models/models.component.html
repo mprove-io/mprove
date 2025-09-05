@@ -209,7 +209,7 @@
                     #refreshSelect
                     [fixNgSelectBottom]="refreshSelect"
                     data-cy="refreshSelect"
-                    class="popup-55 w-[100px]"
+                    class="popup-55 w-[100px] select-none"
                     [items]="refreshList"
                     [clearable]="false"
                     [searchable]="false"
@@ -259,7 +259,7 @@
                 <button
                   type="button"
                   data-cy="modelRunButton"
-                  class="text-m0 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
+                  class="text-m0 flex h-12 w-24 select-none items-center justify-center rounded text-base font-medium focus:outline-none"
                   [ngClass]="{
                     'bg-m600': mconfig?.select.length > 0,
                     'cursor-default':
@@ -356,7 +356,7 @@
                   #modelsModelSelect
                   [fixNgSelectBottom]="modelsModelSelect"
                   data-cy="modelsModelSelect"
-                  class="model-select w-full text-base"
+                  class="model-select w-full select-none text-base"
                   [items]="models"
                   [clearable]="false"
                   [searchable]="true"
@@ -432,7 +432,7 @@
                 spellcheck="false"
                 autocomplete="off"
                 data-cy="chartsSearchInput"
-                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
                 placeholder="Search Fields"
                 [ngClass]="{
                   'bg-p200': !!searchSchemaWord
@@ -500,7 +500,7 @@
                 spellcheck="false"
                 autocomplete="off"
                 data-cy="chartsSearchInput"
-                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+                class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
                 [placeholder]="'Search Charts'"
                 [ngClass]="{
                   'bg-p200': !!searchChartsWord
@@ -526,7 +526,7 @@
 
               <button
                 *ngIf="showSchema === false && filteredDraftsLength > 0"
-                class="ml-5 mr-10 flex flex-shrink-0 flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                class="ml-5 mr-10 flex flex-shrink-0 select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
                 [ngClass]="{
                   'border-s400 text-s500 hover:bg-s100':
                     filteredDraftsLength > 0,
@@ -568,7 +568,7 @@
                 >
                   <div
                     *ngIf="filteredDraftsLength > 0 && i === 0"
-                    class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                    class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                   >
                     Drafts
                   </div>
@@ -585,13 +585,13 @@
                   *ngIf="
                     (filteredCharts | slice: filteredDraftsLength).length > 0
                   "
-                  class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                  class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                 >
                   Saved Charts
                 </div>
 
                 <tree-root
-                  class="h-2 w-full"
+                  class="h-2 w-full select-none"
                   #chartsTree
                   [nodes]="filteredChartNodes"
                   [options]="treeOptions"
@@ -723,7 +723,7 @@
                     </div>
 
                     <div
-                      class="ml-3 mt-[2px] truncate"
+                      class="ml-3 mt-[2px] select-none truncate"
                       [ngClass]="{
                         'text-m600 font-semibold': c.chartId === chart?.chartId,
                         'text-s1': c.chartId !== chart?.chartId
@@ -878,7 +878,7 @@
                   <button
                     type="button"
                     data-cy="chartSaveAsButton"
-                    class="w-28 flex-shrink-0 rounded border py-2 text-base font-medium focus:outline-none"
+                    class="w-28 flex-shrink-0 select-none rounded border py-2 text-base font-medium focus:outline-none"
                     [ngClass]="{
                       'border-s300 text-s400 cursor-default':
                         isSelectValid === false ||
@@ -934,7 +934,7 @@
                     autocomplete="off"
                     spellcheck="false"
                     data-cy="modelChartTitleInput"
-                    class="form-input border-s3 focus:border-m600 text-s500 h-10 w-full rounded font-semibold"
+                    class="form-input border-s3 focus:border-m600 text-s500 h-10 w-full select-none rounded font-semibold"
                     [ngClass]="{
                       'border-r600':
                         chartTitleForm.controls['chartTitle'].invalid &&
@@ -1016,7 +1016,7 @@
                       #chartTypeSelect
                       [fixNgSelectBottom]="chartTypeSelect"
                       data-cy="mainChartTypeSelect"
-                      class="main-chart-type-select w-[220px] text-base focus:outline-none"
+                      class="main-chart-type-select w-[220px] select-none text-base focus:outline-none"
                       [items]="chartTypesList"
                       [clearable]="false"
                       [searchable]="false"
@@ -1310,7 +1310,7 @@
                         #modelTimezoneSelect
                         [fixNgSelectBottom]="modelTimezoneSelect"
                         data-cy="modelTimezoneSelect"
-                        class="w-full text-base"
+                        class="w-full select-none text-base"
                         [items]="timezones"
                         [clearable]="false"
                         [searchable]="true"

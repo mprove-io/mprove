@@ -13,22 +13,25 @@
         <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
           <div class="ml-32 mt-16 flex flex-row">
             <div class="flex flex-col text-base">
-              <div class="flex h-16 items-center justify-end font-semibold"
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >Project Name</div
               >
-              <div class="flex h-16 items-center justify-end font-semibold"
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >Remote Repo Type</div
               >
-              <div class="flex h-16 items-center justify-end font-semibold"
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >Remote Repo Default Branch</div
               >
               <div
                 *ngIf="project?.remoteType === remoteTypeGitClone"
-                class="flex h-16 items-center justify-end font-semibold"
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >Remote Repo Git Url</div
               >
               <div
-                class="flex h-16 items-center justify-end font-semibold"
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 *ngIf="project?.remoteType === remoteTypeGitClone"
                 >Remote Repo Deploy Public Key</div
               >

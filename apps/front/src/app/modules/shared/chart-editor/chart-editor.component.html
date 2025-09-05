@@ -108,7 +108,7 @@
         #xFieldSelect
         [fixNgSelectBottom]="xFieldSelect"
         data-cy="xFieldSelect"
-        class="text-base"
+        class="select-none text-base"
         [items]="
           chart.type === chartTypeEnum.Scatter
             ? dimensionsMeasuresCalculations
@@ -177,7 +177,7 @@
         #sizeFieldSelect
         [fixNgSelectBottom]="sizeFieldSelect"
         data-cy="sizeFieldSelect"
-        class="text-base"
+        class="select-none text-base"
         [items]="numbersDimensionsMeasuresCalculationsPlusEmpty"
         [clearable]="false"
         [searchable]="false"
@@ -253,7 +253,7 @@
         #multiFieldSelect
         [fixNgSelectBottom]="multiFieldSelect"
         data-cy="multiFieldSelect"
-        class="text-base"
+        class="select-none text-base"
         [items]="
           uiChartTypes.nullableMultiField.indexOf(chart.type) > -1
             ? dimensionsPlusEmpty
@@ -333,7 +333,7 @@
         #yFieldSelect
         [fixNgSelectBottom]="yFieldSelect"
         data-cy="yFieldSelect"
-        class="text-base"
+        class="select-none text-base"
         [items]="numbersMeasuresAndCalculations"
         [clearable]="false"
         [searchable]="false"
@@ -588,7 +588,7 @@
         #colorSchemeSelect
         [fixNgSelectBottom]="colorSchemeSelect"
         data-cy="colorSchemeSelect"
-        class="text-base"
+        class="text-base select-none"
         [items]="colorSchemesList"
         [clearable]="false"
         [searchable]="false"
@@ -630,7 +630,7 @@
         #schemeTypeSelect
         [fixNgSelectBottom]="schemeTypeSelect"
         data-cy="schemeTypeSelect"
-        class="text-base"
+        class="text-base select-none"
         [items]="schemeTypesList"
         [clearable]="false"
         [searchable]="false"
@@ -670,7 +670,7 @@
         #interpolationSelect
         [fixNgSelectBottom]="interpolationSelect"
         data-cy="interpolationSelect"
-        class="text-base"
+        class="text-base select-none"
         [items]="interpolationsList"
         [clearable]="false"
         [searchable]="false"
@@ -1666,7 +1666,7 @@
         #formatNumberDataLabelSelect  
         [fixNgSelectBottom]="formatNumberDataLabelSelect"
         data-cy="formatNumberDataLabelSelect"
-        class="w-full text-base"
+        class="w-full text-base select-none"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
@@ -1737,7 +1737,7 @@
         #formatNumberValueSelect
         [fixNgSelectBottom]="formatNumberValueSelect"
         data-cy="formatNumberValueSelect"
-        class="w-full text-base"
+        class="w-full text-base select-none"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
@@ -1807,7 +1807,7 @@
         #formatNumberAxisTickSelect
         [fixNgSelectBottom]="formatNumberAxisTickSelect"
         data-cy="formatNumberAxisTickSelect"
-        class="w-full text-base"
+        class="w-full text-base select-none"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
@@ -1879,7 +1879,7 @@
         #formatNumberXAxisTickSelect
         [fixNgSelectBottom]="formatNumberXAxisTickSelect"
         data-cy="formatNumberXAxisTickSelect"
-        class="w-full text-base"
+        class="w-full text-base select-none"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"
@@ -1950,7 +1950,7 @@
         [fixNgSelectBottom]="formatNumberYAxisTickSelect"
         #formatNumberYAxisTickSelect
         data-cy="formatNumberYAxisTickSelect"
-        class="w-full text-base"
+        class="w-full text-base select-none"
         [items]="formatNumberExamples"
         [clearable]="false"
         [searchable]="false"

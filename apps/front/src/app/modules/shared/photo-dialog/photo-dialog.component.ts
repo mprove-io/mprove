@@ -6,6 +6,7 @@ import {
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { SharedModule } from '../shared.module';
 
 export interface PhotoDialogData {
   avatarBig: string;
@@ -17,7 +18,7 @@ export interface PhotoDialogData {
   templateUrl: './photo-dialog.component.html',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule]
+  imports: [CommonModule, SharedModule]
 })
 export class PhotoDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')

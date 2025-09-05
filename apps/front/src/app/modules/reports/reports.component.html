@@ -302,7 +302,7 @@
                     #refreshSelect
                     [fixNgSelectBottom]="refreshSelect"
                     data-cy="refreshSelect"
-                    class="popup-55 w-[100px]"
+                    class="popup-55 w-[100px] select-none"
                     [items]="refreshList"
                     [clearable]="false"
                     [searchable]="false"
@@ -346,7 +346,7 @@
               <button
                 type="button"
                 data-cy="metricsRunButton"
-                class="text-m0 ml-6 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
+                class="text-m0 ml-6 mr-9 flex h-12 w-24 select-none items-center justify-center rounded text-base font-medium focus:outline-none"
                 [ngClass]="{
                   'bg-m600':
                     notEmptySelectQueriesLength > 0 &&
@@ -470,7 +470,7 @@
                     spellcheck="false"
                     autocomplete="off"
                     data-cy="reportsSearchReportsInput"
-                    class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+                    class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
                     placeholder="Search Reports"
                     [ngClass]="{
                       'bg-p200': !!searchReportsWord
@@ -495,7 +495,7 @@
 
                   <button
                     *ngIf="filteredDraftsLength > 0"
-                    class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                    class="ml-3 mr-10 flex select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
                     [ngClass]="{
                       'border-s400 text-s500 hover:bg-s100':
                         filteredDraftsLength > 0,
@@ -539,14 +539,14 @@
                       >
                         <div
                           *ngIf="filteredDraftsLength > 0 && i === 0"
-                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                         >
                           Drafts
                         </div>
 
                         <div
                           *ngIf="i === filteredDraftsLength"
-                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                         >
                           Saved Reports
                         </div>
@@ -573,7 +573,7 @@
                           </div>
 
                           <div
-                            class="ml-1 truncate"
+                            class="ml-1 select-none truncate"
                             [ngClass]="{
                               'text-m600 font-semibold':
                                 r.reportId === report.reportId,
@@ -701,7 +701,7 @@
                       #metricsTimezoneSelect
                       [fixNgSelectBottom]="metricsTimezoneSelect"
                       data-cy="metricsTimezoneSelect"
-                      class="w-full text-base"
+                      class="w-full select-none text-base"
                       [items]="timezones"
                       [clearable]="false"
                       [searchable]="true"

@@ -124,7 +124,7 @@
               <button
                 type="button"
                 data-cy="dashboardAddTileButton"
-                class="flex-shrink-0 rounded border px-5 py-2 text-base font-medium focus:outline-none"
+                class="flex-shrink-0 select-none rounded border px-5 py-2 text-base font-medium focus:outline-none"
                 [ngClass]="{
                   'border-s400 text-s500 hover:bg-m0':
                     isExplorer === true &&
@@ -160,7 +160,7 @@
               <button
                 type="button"
                 data-cy="dashboardEditListenButton"
-                class="flex h-11 flex-row items-center rounded border px-4 py-2 text-base font-medium focus:outline-none"
+                class="flex h-11 select-none flex-row items-center rounded border px-4 py-2 text-base font-medium focus:outline-none"
                 (click)="editListeners()"
                 [ngClass]="{
                   'border-s400 text-s500 hover:bg-m0':
@@ -219,7 +219,7 @@
                 ></m-query-status>
               </div>
 
-              <div class="flex flex-shrink-0 flex-row items-center">
+              <div class="flex flex-shrink-0 select-none flex-row items-center">
                 <!-- <ng-template #templateDashboardSaveAs>
                 <div *ngIf="isExplorer === false">Explorer role required</div>
 
@@ -297,7 +297,7 @@
                       #refreshSelect
                       [fixNgSelectBottom]="refreshSelect"
                       data-cy="refreshSelect"
-                      class="popup-55 w-[100px]"
+                      class="popup-55 w-[100px] select-none"
                       [items]="refreshList"
                       [clearable]="false"
                       [searchable]="false"
@@ -341,7 +341,7 @@
                 <button
                   type="button"
                   data-cy="dashboardRunButton"
-                  class="text-m0 ml-6 mr-9 flex h-12 w-24 items-center justify-center rounded text-base font-medium focus:outline-none"
+                  class="text-m0 ml-6 mr-9 flex h-12 w-24 select-none items-center justify-center rounded text-base font-medium focus:outline-none"
                   [ngClass]="{
                     'bg-m600': dashboard.tiles.length > 0,
                     'cursor-default':
@@ -394,7 +394,7 @@
                       spellcheck="false"
                       autocomplete="off"
                       data-cy="dashboardsSearchInput"
-                      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] rounded"
+                      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
                       placeholder="Search Dashboards"
                       [ngClass]="{
                         'bg-p200': !!word
@@ -418,7 +418,7 @@
 
                     <button
                       *ngIf="filteredDraftsLength > 0"
-                      class="ml-3 mr-10 flex flex-row items-center rounded border px-4 py-2 focus:outline-none"
+                      class="ml-3 mr-10 flex select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
                       [ngClass]="{
                         'border-s400 text-s500 hover:bg-s100':
                           filteredDraftsLength > 0,
@@ -458,14 +458,14 @@
                       >
                         <div
                           *ngIf="filteredDraftsLength > 0 && i === 0"
-                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                         >
                           Drafts
                         </div>
 
                         <div
                           *ngIf="i === filteredDraftsLength"
-                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex flex-row justify-start font-semibold"
+                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                         >
                           Saved Dashboards
                         </div>
@@ -492,7 +492,7 @@
                           </div>
 
                           <div
-                            class="ml-1 truncate"
+                            class="ml-1 select-none truncate"
                             [ngClass]="{
                               'text-m600 font-semibold':
                                 d.dashboardId === dashboard?.dashboardId,
@@ -570,7 +570,7 @@
                           #metricsTimezoneSelect
                           [fixNgSelectBottom]="metricsTimezoneSelect"
                           data-cy="metricsTimezoneSelect"
-                          class="w-full text-base"
+                          class="w-full select-none text-base"
                           [items]="timezones"
                           [clearable]="false"
                           [searchable]="true"

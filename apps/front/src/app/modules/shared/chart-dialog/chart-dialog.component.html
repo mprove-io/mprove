@@ -9,7 +9,7 @@
     <div class="flex w-1/4 flex-1 flex-row items-center justify-start"> </div>
 
     <div
-      class="text-s1 mx-5 line-clamp-2 flex h-14 max-w-prose flex-shrink-0 flex-grow flex-row flex-wrap justify-center text-center font-semibold"
+      class="text-s1 mx-5 line-clamp-2 flex h-14 max-w-prose flex-shrink-0 flex-grow select-none flex-row flex-wrap justify-center text-center font-semibold"
       >{{ title }}
     </div>
 
@@ -136,7 +136,7 @@
 
       <button
         data-cy="chartDialogRunButton"
-        class="text-m0 ml-5 flex h-12 w-24 flex-shrink-0 items-center justify-center rounded text-base font-medium focus:outline-none"
+        class="text-m0 ml-5 flex h-12 w-24 flex-shrink-0 select-none items-center justify-center rounded text-base font-medium focus:outline-none"
         [ngClass]="{
           'bg-s400 cursor-default':
             isRunButtonPressed === true || query?.status === queryStatusRunning,
@@ -181,7 +181,7 @@
       >
         <button
           data-cy="chartDialogExploreButton"
-          class="text-m0 h-12 rounded px-6 text-base font-medium focus:outline-none"
+          class="text-m0 h-12 select-none rounded px-6 text-base font-medium focus:outline-none"
           [ngClass]="{
             'bg-m600 cursor-pointer':
               isExplorer === true && canAccessModel === true,
@@ -304,7 +304,9 @@
       ></ui-switch>
     </div>
 
-    <div class="text-s400 ml-10 text-base font-semibold">Model:</div>
+    <div class="text-s400 ml-10 select-none text-base font-semibold"
+      >Model:</div
+    >
 
     <ng-template #templateChartDialogModel>
       <div *ngIf="isExplorer === false">Explorer role required</div>
@@ -318,7 +320,7 @@
     >
       <div
         (click)="goToModel(mconfig.modelId, canAccessModel)"
-        class="text-base font-semibold focus:outline-none"
+        class="select-none text-base font-semibold focus:outline-none"
         [ngClass]="{
           'hover:text-m500 cursor-pointer': canAccessModel === true,
           'cursor-default': canAccessModel === false
@@ -332,9 +334,11 @@
       ></m-lock-closed-icon>
     </div>
 
-    <div class="text-s400 ml-10 text-base font-semibold">Timezone:</div>
+    <div class="text-s400 ml-10 select-none text-base font-semibold"
+      >Timezone:</div
+    >
 
-    <div class="text-s400 ml-2 text-base focus:outline-none">{{
+    <div class="text-s400 ml-2 select-none text-base focus:outline-none">{{
       mconfig?.timezone | capitalize
     }}</div>
   </div>
