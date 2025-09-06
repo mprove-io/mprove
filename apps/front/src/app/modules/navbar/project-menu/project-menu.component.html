@@ -28,7 +28,7 @@
       > -->
 
       <button
-        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathInfo
         }"
@@ -47,7 +47,9 @@
           [ngClass]="{
             'font-semibold': lastUrl === pathTeam,
             'text-s400': nav.orgName === firstOrgName && isAdmin === false,
-            'border-s3': !(nav.orgName === firstOrgName && isAdmin === false)
+            'border-s3 cursor-pointer': !(
+              nav.orgName === firstOrgName && isAdmin === false
+            )
           }"
           [disabled]="
             lastUrl === pathTeam ||
@@ -68,7 +70,7 @@
           [ngClass]="{
             'font-semibold': lastUrl === pathConnections,
             'text-s400': isAdmin === false && isEditor === false,
-            'border-s3': isAdmin === true || isEditor === true
+            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
           }"
           [disabled]="
             lastUrl === pathConnections ||
@@ -89,7 +91,7 @@
           [ngClass]="{
             'font-semibold': lastUrl === pathEnvironments,
             'text-s400': isAdmin === false && isEditor === false,
-            'border-s3': isAdmin === true || isEditor === true
+            'border-s3 cursor-pointer': isAdmin === true || isEditor === true
           }"
           [disabled]="
             lastUrl === pathEnvironments ||

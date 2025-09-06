@@ -28,7 +28,7 @@
       > -->
 
       <button
-        class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 block w-full cursor-pointer px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathAccount
         }"
@@ -47,7 +47,7 @@
           [ngClass]="{
             'font-semibold': lastUrl === pathUsers,
             'text-s400': user.userId !== nav.orgOwnerId,
-            'border-s3': user.userId === nav.orgOwnerId
+            'border-s3 cursor-pointer': user.userId === nav.orgOwnerId
           }"
           [disabled]="lastUrl === pathUsers || user.userId !== nav.orgOwnerId"
           (click)="t1.hide(); navigateUsers()"

@@ -26,7 +26,7 @@
       >
 
       <button
-        class="text-s1 hover:bg-m50 block w-full select-none px-4 py-2 text-left text-base focus:outline-none"
+        class="text-s1 hover:bg-m50 block w-full cursor-pointer select-none px-4 py-2 text-left text-base focus:outline-none"
         [ngClass]="{
           'font-semibold': lastUrl === pathProfile
         }"
@@ -53,13 +53,9 @@
         >Docs</a
       >
 
-      <!-- <div class="text-s400 block select-none px-4 py-2 text-sm font-bold"
-        >Version</div
-      > -->
-
       <div
-        class="text-s1 mb-3 block select-none px-4 py-2 text-base font-semibold"
-        >Mprove: {{ mproveVersion }}</div
+        class="text-s400 mb-2 block select-none px-4 py-2 text-base font-semibold"
+        >Version: {{ mproveVersion }}</div
       >
     </div>
   </ng-template>
