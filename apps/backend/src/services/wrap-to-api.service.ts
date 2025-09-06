@@ -520,6 +520,7 @@ export class WrapToApiService {
       projectId: struct.projectId,
       structId: struct.structId,
       mproveDirValue: struct.mproveDirValue,
+      mproveVersion: struct.mproveVersion,
       weekStart: struct.weekStart,
       allowTimezones: struct.allowTimezones,
       caseSensitiveStringFilters: struct.caseSensitiveStringFilters,

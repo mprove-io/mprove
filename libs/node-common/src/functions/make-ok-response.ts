@@ -9,6 +9,7 @@ export function makeOkResponse(item: {
   payload: any;
   path: any;
   method: any;
+  mproveVersion?: string;
   duration: number;
   skipLog?: boolean;
   logResponseOk: boolean;
@@ -20,6 +21,7 @@ export function makeOkResponse(item: {
     payload,
     path,
     method,
+    mproveVersion,
     duration,
     skipLog,
     logResponseOk,
@@ -31,6 +33,7 @@ export function makeOkResponse(item: {
     info: {
       path: path,
       method: method,
+      mproveVersion: mproveVersion,
       duration: duration,
       traceId: body.info?.traceId,
       status: ResponseInfoStatusEnum.Ok

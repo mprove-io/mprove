@@ -1,0 +1,1 @@
+ALTER TABLE "structs" ADD COLUMN "mprove_version" varchar;

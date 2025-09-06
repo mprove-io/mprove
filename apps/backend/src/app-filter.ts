@@ -55,6 +55,8 @@ export class AppFilter implements ExceptionFilter {
         body: req,
         path: request.url,
         method: request.method,
+        mproveVersion:
+          this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
         duration: Date.now() - request.start_ts,
         skipLog: true,
         cs: this.cs,

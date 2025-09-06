@@ -13,6 +13,10 @@ export class ResponseInfo {
 
   @IsOptional()
   @IsString()
+  mproveVersion?: string;
+
+  @IsOptional()
+  @IsString()
   duration?: number;
 
   @IsEnum(ResponseInfoStatusEnum)

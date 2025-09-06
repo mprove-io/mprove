@@ -9,6 +9,7 @@ let structState: StructState = {
   projectId: undefined,
   structId: undefined,
   mproveDirValue: undefined,
+  mproveVersion: undefined,
   weekStart: undefined,
   allowTimezones: false,
   caseSensitiveStringFilters: false,

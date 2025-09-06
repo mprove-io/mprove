@@ -9,18 +9,30 @@ export function makeOkResponseBackend(item: {
   payload: any;
   path: any;
   method: any;
+  mproveVersion: string;
   duration: number;
   skipLog?: boolean;
   cs: ConfigService<BackendConfig>;
   logger: Logger;
 }) {
-  let { payload, body, path, method, duration, skipLog, cs, logger } = item;
+  let {
+    payload,
+    body,
+    path,
+    method,
+    mproveVersion,
+    duration,
+    skipLog,
+    cs,
+    logger
+  } = item;
 
   return makeOkResponse({
     body: body,
     payload: payload,
     path: path,
     method: method,
+    mproveVersion: mproveVersion,
     duration: duration,
     skipLog: skipLog,
     logResponseOk: enumToBoolean(

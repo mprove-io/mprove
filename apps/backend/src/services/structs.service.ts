@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray, sql } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
@@ -25,7 +27,10 @@ import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class StructsService {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(
+    private cs: ConfigService<BackendConfig>,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   async getStructCheckExists(item: {
     structId: string;
@@ -39,6 +44,8 @@ export class StructsService {
       structId: structId,
       projectId: projectId,
       mproveDirValue: './data',
+      mproveVersion:
+        this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
       weekStart: ProjectWeekStartEnum.Monday,
       allowTimezones: true,
       caseSensitiveStringFilters: false,
@@ -72,6 +79,7 @@ export class StructsService {
             structId: structsTable.structId,
             projectId: structsTable.projectId,
             mproveDirValue: structsTable.mproveDirValue,
+            mproveVersion: structsTable.mproveVersion,
             caseSensitiveStringFilters: structsTable.caseSensitiveStringFilters,
             simplifySafeAggregates: structsTable.simplifySafeAggregates,
             weekStart: structsTable.weekStart,

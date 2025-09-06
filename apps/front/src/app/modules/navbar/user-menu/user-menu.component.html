@@ -20,7 +20,8 @@
 
   <ng-template #templateUserOptions>
     <div class="border-s4 bg-m0 w-56 rounded-md border-2 shadow-xl">
-      <div class="text-s400 mt-2 block select-none px-4 py-2 text-sm font-bold"
+      <div
+        class="text-s400 mt-2 block select-none px-4 py-2 text-base font-semibold"
         >User</div
       >
 
@@ -40,7 +41,7 @@
         >LogOut</button
       >
 
-      <div class="text-s400 block select-none px-4 py-2 text-sm font-bold"
+      <div class="text-s400 block select-none px-4 py-2 text-base font-semibold"
         >Resources</div
       >
 
@@ -51,9 +52,19 @@
         (click)="t1.hide()"
         >Docs</a
       >
+
+      <!-- <div class="text-s400 block select-none px-4 py-2 text-sm font-bold"
+        >Version</div
+      > -->
+
+      <div
+        class="text-s1 mb-3 block select-none px-4 py-2 text-base font-semibold"
+        >Mprove: {{ mproveVersion }}</div
+      >
     </div>
   </ng-template>
 </div>
 
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
+<div *ngIf="mproveVersion$ | async"></div>

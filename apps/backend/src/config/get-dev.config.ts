@@ -15,6 +15,10 @@ export function getDevConfig(envFilePath: any) {
   }
 
   let devConfig: BackendConfig = {
+    mproveReleaseTag: <BackendEnvEnum>(
+      (process.env.MPROVE_RELEASE_TAG || envFile.MPROVE_RELEASE_TAG)
+    ),
+
     backendEnv: <BackendEnvEnum>(
       (process.env.BACKEND_ENV || envFile.BACKEND_ENV)
     ),

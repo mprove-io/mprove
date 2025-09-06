@@ -120,6 +120,8 @@ export class AppInterceptor implements NestInterceptor {
           body: req,
           path: request.url,
           method: request.method,
+          mproveVersion:
+            this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
           duration: Date.now() - request.start_ts,
           skipLog: true,
           cs: this.cs,
@@ -148,6 +150,10 @@ export class AppInterceptor implements NestInterceptor {
               payload: payload,
               path: request.url,
               method: request.method,
+              mproveVersion:
+                this.cs.get<BackendConfig['mproveReleaseTag']>(
+                  'mproveReleaseTag'
+                ),
               duration: Date.now() - request.start_ts,
               body: req,
               skipLog: true,

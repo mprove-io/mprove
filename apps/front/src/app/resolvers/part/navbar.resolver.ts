@@ -135,6 +135,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
               branchId,
               envId,
               needValidate,
+              mproveVersion: resp.info.mproveVersion,
               serverTimeDiff: Date.now() - serverNowTs
             };
 

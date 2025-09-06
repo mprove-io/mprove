@@ -8,6 +8,9 @@ export class BackendConfig {
   @IsEnum(BackendEnvEnum)
   backendEnv?: BackendEnvEnum;
 
+  @IsString()
+  mproveReleaseTag?: string;
+
   @IsEnum(BoolEnum)
   isScheduler?: BoolEnum;
 

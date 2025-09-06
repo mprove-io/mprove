@@ -20,6 +20,9 @@ export class Struct {
   mproveDirValue: string;
 
   @IsString()
+  mproveVersion: string;
+
+  @IsString()
   structId: string;
 
   @IsEnum(ProjectWeekStartEnum)

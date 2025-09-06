@@ -9,18 +9,21 @@ export function makeErrorResponseBackend(item: {
   e: any;
   path: any;
   method: any;
+  mproveVersion: string;
   duration: number;
   skipLog?: boolean;
   cs: ConfigService<BackendConfig>;
   logger: Logger;
 }) {
-  let { e, body, cs, path, method, duration, skipLog, logger } = item;
+  let { e, body, cs, path, method, mproveVersion, duration, skipLog, logger } =
+    item;
 
   return makeErrorResponse({
     body: body,
     e: e,
     path: path,
     method: method,
+    mproveVersion: mproveVersion,
     duration: duration,
     skipLog: skipLog,
     logResponseError: enumToBoolean(

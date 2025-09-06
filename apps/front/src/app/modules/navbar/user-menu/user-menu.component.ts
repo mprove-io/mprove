@@ -27,6 +27,11 @@ export class UserMenuComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  mproveVersion: string = undefined;
+  mproveVersion$ = this.navQuery.mproveVersion$.pipe(
+    tap(x => (this.mproveVersion = x))
+  );
+
   constructor(
     private authService: AuthService,
     private router: Router,

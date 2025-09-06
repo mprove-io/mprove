@@ -10,6 +10,7 @@ export function makeErrorResponse(item: {
   e: any;
   path: any;
   method: any;
+  mproveVersion?: string;
   duration: number;
   skipLog?: boolean;
   logResponseError: boolean;
@@ -21,6 +22,7 @@ export function makeErrorResponse(item: {
     e,
     path,
     method,
+    mproveVersion,
     duration,
     skipLog,
     logResponseError,
@@ -32,6 +34,7 @@ export function makeErrorResponse(item: {
     info: {
       path: path,
       method: method,
+      mproveVersion: mproveVersion,
       duration: duration,
       traceId: body.info?.traceId,
       status: ResponseInfoStatusEnum.Error,

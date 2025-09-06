@@ -16,6 +16,7 @@ export class NavState {
   branchId: string;
   envId: string;
   needValidate: boolean;
+  mproveVersion: string;
   serverTimeDiff: number;
 }
 
@@ -32,6 +33,7 @@ let navState: NavState = {
   branchId: undefined,
   envId: PROJECT_ENV_PROD,
   needValidate: false,
+  mproveVersion: undefined,
   serverTimeDiff: undefined
 };
 
@@ -59,6 +61,7 @@ export class NavQuery extends BaseQuery<NavState> {
   orgId$ = this.store.pipe(select(state => state.orgId));
   isRepoProd$ = this.store.pipe(select(state => state.isRepoProd));
   branchId$ = this.store.pipe(select(state => state.branchId));
+  mproveVersion$ = this.store.pipe(select(state => state.mproveVersion));
 
   constructor() {
     super(createStore({ name: 'nav' }, withProps<NavState>(navState)));

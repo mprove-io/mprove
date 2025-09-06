@@ -131,6 +131,8 @@ export class BlockmlService {
       projectId: projectId,
       structId: structId,
       mproveDirValue: rs.mproveDirValue,
+      mproveVersion:
+        this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
       weekStart: rs.weekStart,
       allowTimezones: rs.allowTimezones,
       caseSensitiveStringFilters: rs.caseSensitiveStringFilters,
