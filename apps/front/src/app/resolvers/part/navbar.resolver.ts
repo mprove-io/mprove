@@ -61,7 +61,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       5;
 
     // console.log('stopWatch from NavBarResolver');
-    this.authService.stopWatch();
+    // this.authService.stopWatch();
 
     this.userQuery
       .select()
@@ -154,7 +154,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
             if (user.isEmailVerified === true) {
               // console.log('startWatch from NavBarResolver');
-              this.authService.startWatch();
+              // this.authService.startWatch();
               return true;
             } else {
               this.router.navigate([PATH_VERIFY_EMAIL]);

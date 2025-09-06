@@ -70,7 +70,7 @@ export class CompleteRegistrationComponent implements OnInit {
 
     this.authService.clearLocalStorage();
     // console.log('stopWatch from CompleteRegistrationComponent');
-    this.authService.stopWatch();
+    // this.authService.stopWatch();
 
     this.emailConfirmationToken =
       this.route.snapshot.queryParamMap.get('token');
@@ -111,7 +111,7 @@ export class CompleteRegistrationComponent implements OnInit {
               this.myDialogService.showEmailConfirmed();
               this.userQuery.update(user);
               // console.log('stopWatch from CompleteRegistrationComponent - 2');
-              this.authService.stopWatch();
+              // this.authService.stopWatch();
               localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
               this.router.navigate([PATH_LOGIN_SUCCESS]);
             }

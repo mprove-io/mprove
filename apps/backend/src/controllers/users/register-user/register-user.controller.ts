@@ -61,7 +61,7 @@ export class RegisterUserController {
     });
 
     if (isDefined(user)) {
-      if (isDefined(user.hash)) {
+      if (isDefined(user.hash) && user.isEmailVerified === true) {
         throw new ServerError({
           message: ErEnum.BACKEND_USER_ALREADY_REGISTERED
         });

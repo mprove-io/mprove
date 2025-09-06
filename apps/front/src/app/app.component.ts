@@ -126,7 +126,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // console.log('startWatch from AppComponent');
-    this.authService.startWatch();
+    // console.log('authService.runCheck() from AppComponent');
+    this.authService.runCheck();
   }
 }

@@ -46,7 +46,7 @@ export class LoginSuccessComponent implements OnInit {
     // this.spinner.show(this.spinnerName);
 
     // console.log('startWatch from LoginSuccessComponent');
-    this.authService.startWatch();
+    // this.authService.startWatch();
 
     let userId: string;
     this.userQuery
