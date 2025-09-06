@@ -59,7 +59,9 @@ export class AuthService {
   }
 
   runCheck() {
-    let pathArray = this.location.path().split('/');
+    let locationPath = this.location.path();
+    let pathArray = locationPath.split('/');
+
     let firstPath = pathArray[1];
     firstPath = firstPath.split('?')[0];
 

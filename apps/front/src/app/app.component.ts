@@ -126,7 +126,9 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // console.log('authService.runCheck() from AppComponent');
-    this.authService.runCheck();
+    setTimeout(() => {
+      // console.log('authService.runCheck() from AppComponent');
+      this.authService.runCheck();
+    }, 0); // setTimeout is for runCheck's this.location.path to have '/'
   }
 }
