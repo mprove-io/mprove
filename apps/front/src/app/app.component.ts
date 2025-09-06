@@ -16,7 +16,6 @@ import {
   PATH_EMAIL_CONFIRMED,
   PATH_FORGOT_PASSWORD,
   PATH_LOGIN,
-  PATH_LOGIN_SUCCESS,
   PATH_NEW_PASSWORD_WAS_SET,
   PATH_PASSWORD_RESET_SENT,
   PATH_REGISTER,
@@ -64,7 +63,6 @@ export class AppComponent implements OnInit {
             urlPartArray.indexOf(PATH_FORGOT_PASSWORD) !== 1 &&
             urlPartArray.indexOf(PATH_PASSWORD_RESET_SENT) !== 1 &&
             urlPartArray.indexOf(PATH_UPDATE_PASSWORD) !== 1 &&
-            urlPartArray.indexOf(PATH_LOGIN_SUCCESS) !== 1 &&
             urlPartArray.indexOf(PATH_NEW_PASSWORD_WAS_SET) !== 1
 
             // urlPartArray.indexOf(PATH_PASSWORD_RESET_SENT_AUTH) !== 1 &&

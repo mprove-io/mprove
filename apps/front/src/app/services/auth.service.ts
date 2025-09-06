@@ -71,7 +71,6 @@ export class AuthService {
     ) {
       this.logout();
     } else if (
-      // for other tabs
       [PATH_LOGIN, PATH_REGISTER, PATH_VERIFY_EMAIL].indexOf(firstPath) > -1 &&
       this.authenticated() === true
     ) {
