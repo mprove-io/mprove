@@ -10,11 +10,10 @@ export function makeErrorResponseDisk(item: {
   path: any;
   method: any;
   duration: number;
-  skipLog?: boolean;
   cs: ConfigService<DiskConfig>;
   logger: Logger;
 }) {
-  let { e, body, cs, path, method, duration, skipLog, logger } = item;
+  let { e, body, cs, path, method, duration, logger } = item;
 
   return makeErrorResponse({
     body: body,
@@ -22,7 +21,7 @@ export function makeErrorResponseDisk(item: {
     path: path,
     method: method,
     duration: duration,
-    skipLog: skipLog,
+    isBackend: false,
     logResponseError: enumToBoolean(
       cs.get<DiskConfig['diskLogResponseError']>('diskLogResponseError')
     ),

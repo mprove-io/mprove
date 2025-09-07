@@ -11,7 +11,7 @@ export function makeOkResponse(item: {
   method: any;
   mproveVersion?: string;
   duration: number;
-  skipLog?: boolean;
+  isBackend: boolean;
   logResponseOk: boolean;
   logIsJson: boolean;
   logger: Logger;
@@ -23,7 +23,7 @@ export function makeOkResponse(item: {
     method,
     mproveVersion,
     duration,
-    skipLog,
+    isBackend,
     logResponseOk,
     logIsJson,
     logger
@@ -41,7 +41,7 @@ export function makeOkResponse(item: {
     payload: payload
   };
 
-  if (logResponseOk === true && skipLog !== true) {
+  if (logResponseOk === true && isBackend === false) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };

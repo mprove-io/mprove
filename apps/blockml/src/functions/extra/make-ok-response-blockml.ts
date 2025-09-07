@@ -10,11 +10,10 @@ export function makeOkResponseBlockml(item: {
   path: any;
   method: any;
   duration: number;
-  skipLog?: boolean;
   cs: ConfigService<BlockmlConfig>;
   logger: Logger;
 }) {
-  let { payload, body, path, method, duration, skipLog, cs, logger } = item;
+  let { payload, body, path, method, duration, cs, logger } = item;
 
   return makeOkResponse({
     body: body,
@@ -22,7 +21,7 @@ export function makeOkResponseBlockml(item: {
     path: path,
     method: method,
     duration: duration,
-    skipLog: skipLog,
+    isBackend: false,
     logResponseOk: enumToBoolean(
       cs.get<BlockmlConfig['blockmlLogResponseOk']>('blockmlLogResponseOk')
     ),

@@ -1,6 +1,8 @@
 import { Logger } from '@nestjs/common';
+import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
+import { isDefined } from '~common/functions/is-defined';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { logToConsole } from './log-to-console';
 import { wrapError } from './wrap-error';
@@ -12,7 +14,7 @@ export function makeErrorResponse(item: {
   method: any;
   mproveVersion?: string;
   duration: number;
-  skipLog?: boolean;
+  isBackend: boolean;
   logResponseError: boolean;
   logIsJson: boolean;
   logger: Logger;
@@ -24,11 +26,13 @@ export function makeErrorResponse(item: {
     method,
     mproveVersion,
     duration,
-    skipLog,
+    isBackend,
     logResponseError,
     logIsJson,
     logger
   } = item;
+
+  let wError = wrapError(e);
 
   let response: MyResponse = {
     info: {
@@ -38,12 +42,38 @@ export function makeErrorResponse(item: {
       duration: duration,
       traceId: body.info?.traceId,
       status: ResponseInfoStatusEnum.Error,
-      error: wrapError(e)
+      error:
+        isBackend === false
+          ? wError
+          : {
+              name: undefined,
+              message:
+                Object.values(ErEnum).includes(wError.message) === true
+                  ? wError.message
+                  : ErEnum.INTERNAL_ERROR,
+              originalError: isDefined(wError.originalError)
+                ? {
+                    message:
+                      Object.values(ErEnum).includes(
+                        wError.originalError.message
+                      ) === true
+                        ? wError.originalError.message
+                        : ErEnum.INTERNAL_ERROR,
+                    data: isDefined(wError.originalError.data)
+                      ? {
+                          currentBranch:
+                            wError.originalError.data.currentBranch,
+                          encodedFileId: wError.originalError.data.encodedFileId
+                        }
+                      : undefined
+                  }
+                : undefined
+            }
     },
     payload: {}
   };
 
-  if (logResponseError === true && skipLog !== true) {
+  if (logResponseError === true && isBackend === false) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };
@@ -55,5 +85,5 @@ export function makeErrorResponse(item: {
     });
   }
 
-  return response;
+  return { resp: response, wrappedError: wError };
 }

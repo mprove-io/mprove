@@ -11,12 +11,10 @@ export function makeErrorResponseBackend(item: {
   method: any;
   mproveVersion: string;
   duration: number;
-  skipLog?: boolean;
   cs: ConfigService<BackendConfig>;
   logger: Logger;
 }) {
-  let { e, body, cs, path, method, mproveVersion, duration, skipLog, logger } =
-    item;
+  let { e, body, cs, path, method, mproveVersion, duration, logger } = item;
 
   return makeErrorResponse({
     body: body,
@@ -25,7 +23,7 @@ export function makeErrorResponseBackend(item: {
     method: method,
     mproveVersion: mproveVersion,
     duration: duration,
-    skipLog: skipLog,
+    isBackend: true,
     logResponseError: enumToBoolean(
       cs.get<BackendConfig['backendLogResponseError']>(
         'backendLogResponseError'

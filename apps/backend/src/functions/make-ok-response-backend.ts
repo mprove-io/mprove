@@ -11,21 +11,11 @@ export function makeOkResponseBackend(item: {
   method: any;
   mproveVersion: string;
   duration: number;
-  skipLog?: boolean;
   cs: ConfigService<BackendConfig>;
   logger: Logger;
 }) {
-  let {
-    payload,
-    body,
-    path,
-    method,
-    mproveVersion,
-    duration,
-    skipLog,
-    cs,
-    logger
-  } = item;
+  let { payload, body, path, method, mproveVersion, duration, cs, logger } =
+    item;
 
   return makeOkResponse({
     body: body,
@@ -34,7 +24,7 @@ export function makeOkResponseBackend(item: {
     method: method,
     mproveVersion: mproveVersion,
     duration: duration,
-    skipLog: skipLog,
+    isBackend: true,
     logResponseOk: enumToBoolean(
       cs.get<BackendConfig['backendLogResponseOk']>('backendLogResponseOk')
     ),

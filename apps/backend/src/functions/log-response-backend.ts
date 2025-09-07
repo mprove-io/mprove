@@ -5,16 +5,19 @@ import { BoolEnum } from '~common/enums/bool.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
+import { isDefined } from '~common/functions/is-defined';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { logToConsole } from '~node-common/functions/log-to-console';
+import { WrappedError } from '~node-common/functions/wrap-error';
 
 export function logResponseBackend(item: {
+  wrappedError?: WrappedError;
   response: MyResponse;
   logLevel: LogLevelEnum;
   cs: ConfigService;
   logger: Logger;
 }) {
-  let { response, logLevel, cs, logger } = item;
+  let { response, wrappedError, logLevel, cs, logger } = item;
 
   let isLogOk =
     cs.get<BackendConfig['backendLogResponseOk']>('backendLogResponseOk') ===
@@ -30,6 +33,11 @@ export function logResponseBackend(item: {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };
+
+    if (isDefined(wrappedError)) {
+      (log as any).wrappedError = wrappedError;
+    }
+
     logToConsole({
       log: log,
       logIsJson: enumToBoolean(

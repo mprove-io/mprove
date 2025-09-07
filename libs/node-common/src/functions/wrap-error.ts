@@ -1,8 +1,20 @@
 import { ErrorStoryEnum } from '~common/enums/error-story.enum';
 import { ServerError } from '~common/models/server-error';
 
+export interface WrappedError {
+  story: ErrorStoryEnum;
+  name: any;
+  message: any;
+  at: any;
+  data: any;
+  stackArray: any;
+  originalError: any;
+  originalErrorStack: any;
+  e: any;
+}
+
 export function wrapError(e: any) {
-  let wrappedError = {
+  let wrappedError: WrappedError = {
     story:
       e instanceof ServerError
         ? ErrorStoryEnum.DefinedError

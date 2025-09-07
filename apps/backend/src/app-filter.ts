@@ -50,7 +50,7 @@ export class AppFilter implements ExceptionFilter {
 
       let req: ToBackendRequest = request.body;
 
-      let resp = makeErrorResponseBackend({
+      let { resp, wrappedError } = makeErrorResponseBackend({
         e: e,
         body: req,
         path: request.url,
@@ -58,7 +58,6 @@ export class AppFilter implements ExceptionFilter {
         mproveVersion:
           this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
         duration: Date.now() - request.start_ts,
-        skipLog: true,
         cs: this.cs,
         logger: this.logger
       });
@@ -100,6 +99,7 @@ export class AppFilter implements ExceptionFilter {
 
       logResponseBackend({
         response: resp,
+        wrappedError: wrappedError,
         logLevel: LogLevelEnum.Info,
         cs: this.cs,
         logger: this.logger

@@ -25,6 +25,7 @@ import { RedisService } from './services/redis.service';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
+import { WrappedError } from '~node-common/functions/wrap-error';
 import { UserEnt } from './drizzle/postgres/schema/users';
 
 let retry = require('async-retry');
@@ -77,6 +78,7 @@ export class AppInterceptor implements NestInterceptor {
       });
     }
 
+    let wrappedError: WrappedError;
     let respX;
 
     if (isDefined(idemp) && isUndefined(idemp.resp)) {
@@ -115,7 +117,7 @@ export class AppInterceptor implements NestInterceptor {
           originalError: e
         });
 
-        respX = makeErrorResponseBackend({
+        let resultX = makeErrorResponseBackend({
           e: err,
           body: req,
           path: request.url,
@@ -123,10 +125,12 @@ export class AppInterceptor implements NestInterceptor {
           mproveVersion:
             this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
           duration: Date.now() - request.start_ts,
-          skipLog: true,
           cs: this.cs,
           logger: this.logger
         });
+
+        respX = resultX.resp;
+        wrappedError = resultX.wrappedError;
 
         let idempA: Idemp = {
           idempotencyKey: iKey,
@@ -156,7 +160,6 @@ export class AppInterceptor implements NestInterceptor {
                 ),
               duration: Date.now() - request.start_ts,
               body: req,
-              skipLog: true,
               cs: this.cs,
               logger: this.logger
             });
@@ -205,14 +208,15 @@ export class AppInterceptor implements NestInterceptor {
               })
             )
           )
-        : of(respX).pipe(
+        : of({ respX: respX, wrappedError: wrappedError }).pipe(
             map(x => {
-              x.info.duration = Date.now() - request.start_ts; // update
-              return x;
+              x.respX.info.duration = Date.now() - request.start_ts; // update
+              return x.respX;
             }),
-            tap(x =>
+            tap(y =>
               logResponseBackend({
-                response: x,
+                response: y,
+                wrappedError: wrappedError,
                 logLevel: LogLevelEnum.Info,
                 cs: this.cs,
                 logger: this.logger
