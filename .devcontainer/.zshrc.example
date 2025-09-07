@@ -4,6 +4,13 @@ autoload -Uz compinit && compinit -i
 
 export PATH="./node_modules/.bin:$PATH"
 
+# History settings
+HISTSIZE=10000
+SAVEHIST=10000
+HISTFILE=~/.zsh_history
+# setopt HIST_IGNORE_DUPS  # Ignore duplicate commands in history
+# setopt SHARE_HISTORY     # Share history across sessions
+
 ZSH_THEME="robbyrussell"
 
 plugins=(

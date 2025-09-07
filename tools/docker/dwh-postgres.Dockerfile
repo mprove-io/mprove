@@ -1,4 +1,4 @@
-FROM postgres:13.5
+FROM postgres:17.6
 
 VOLUME /tmp
 COPY tools/data/mprove-demo-p_db.dump /tmp/mprove-demo-p_db.dump

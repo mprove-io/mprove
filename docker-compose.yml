@@ -144,7 +144,7 @@ services:
     build:
       context: ./
       dockerfile: tools/docker/dwh-clickhouse.Dockerfile
-    image: ghcr.io/mprove-io/mprove-dwh-clickhouse:$MPROVE_RELEASE_TAG
+    image: ghcr.io/mprove-io/mprove-dwh-clickhouse:$MPROVE_DWH_CLICKHOUSE_TAG
     environment:
       - CLICKHOUSE_USER=$COMPOSE_DWH_CLICKHOUSE_USER
       - CLICKHOUSE_PASSWORD=$COMPOSE_DWH_CLICKHOUSE_PASSWORD

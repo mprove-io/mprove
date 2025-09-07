@@ -37,8 +37,9 @@ ENV_FILE_SOURCE_PATH=.env
 ENV_FILE_TARGET_PATH=/usr/src/app/.env
 
 # set most recent release tag from https://github.com/mprove-io/mprove/releases
-MPROVE_RELEASE_TAG=9.0.85
-MPROVE_DWH_POSTGRES_TAG=9.0.85
+MPROVE_RELEASE_TAG=9.0.87
+MPROVE_DWH_POSTGRES_TAG=9.0.87
+MPROVE_DWH_CLICKHOUSE_TAG=9.0.87
 
 REDIS_RELEASE_TAG=7.2.4
 RABBIT_RELEASE_TAG=3.10.6-management
