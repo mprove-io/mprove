@@ -35,7 +35,7 @@ test('1', async t => {
           {
             email: email,
             password: password,
-            isEmailVerified: false,
+            isEmailVerified: true,
             passwordResetToken: makeId(),
             emailVerificationToken: makeId()
           }
