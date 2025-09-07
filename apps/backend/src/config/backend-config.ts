@@ -18,6 +18,9 @@ export class BackendConfig {
   firstProjectDwhBigqueryCredentialsPath?: string;
 
   @IsString()
+  firstProjectGoogleApiCredentialsPath?: string;
+
+  @IsString()
   jwtSecret?: string;
 
   @IsString()

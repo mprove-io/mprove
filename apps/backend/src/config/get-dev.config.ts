@@ -31,6 +31,10 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH ||
       envFile.BACKEND_FIRST_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH,
 
+    firstProjectGoogleApiCredentialsPath:
+      process.env.BACKEND_FIRST_PROJECT_GOOGLE_API_CREDENTIALS_PATH ||
+      envFile.BACKEND_FIRST_PROJECT_GOOGLE_API_CREDENTIALS_PATH,
+
     jwtSecret: process.env.BACKEND_JWT_SECRET || envFile.BACKEND_JWT_SECRET,
 
     specialKey: process.env.BACKEND_SPECIAL_KEY || envFile.BACKEND_SPECIAL_KEY,

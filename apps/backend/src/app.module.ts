@@ -315,7 +315,14 @@ export class AppModule implements OnModuleInit {
                 )
               });
 
-            if (isUndefined(c1connection)) {
+            let firstProjectDwhPostgresPassword = this.cs.get<
+              BackendConfig['firstProjectDwhPostgresPassword']
+            >('firstProjectDwhPostgresPassword');
+
+            if (
+              isUndefined(c1connection) &&
+              isDefinedAndNotEmpty(firstProjectDwhPostgresPassword)
+            ) {
               let c1 = this.makerService.makeConnection({
                 projectId: firstProjectId,
                 envId: PROJECT_ENV_PROD,
@@ -330,13 +337,11 @@ export class AppModule implements OnModuleInit {
                 port: 5436,
                 database: 'p_db',
                 username: 'postgres',
-                password: this.cs.get<
-                  BackendConfig['firstProjectDwhPostgresPassword']
-                >('firstProjectDwhPostgresPassword'),
+                password: firstProjectDwhPostgresPassword,
                 account: undefined,
                 warehouse: undefined,
                 serviceAccountCredentials: undefined,
-                bigqueryQuerySizeLimitGb: 1,
+                bigqueryQuerySizeLimitGb: undefined,
                 isSSL: false
               });
 
@@ -352,7 +357,14 @@ export class AppModule implements OnModuleInit {
                 )
               });
 
-            if (isUndefined(c2connection)) {
+            let firstProjectDwhClickhousePassword = this.cs.get<
+              BackendConfig['firstProjectDwhClickhousePassword']
+            >('firstProjectDwhClickhousePassword');
+
+            if (
+              isUndefined(c2connection) &&
+              isDefinedAndNotEmpty(firstProjectDwhClickhousePassword)
+            ) {
               let c2 = this.makerService.makeConnection({
                 projectId: firstProjectId,
                 envId: PROJECT_ENV_PROD,
@@ -364,14 +376,12 @@ export class AppModule implements OnModuleInit {
                 host: 'dwh-clickhouse',
                 port: 8123,
                 username: 'c_user',
-                password: this.cs.get<
-                  BackendConfig['firstProjectDwhClickhousePassword']
-                >('firstProjectDwhClickhousePassword'),
+                password: firstProjectDwhClickhousePassword,
                 database: undefined,
                 account: undefined,
                 warehouse: undefined,
                 serviceAccountCredentials: undefined,
-                bigqueryQuerySizeLimitGb: 1,
+                bigqueryQuerySizeLimitGb: undefined,
                 isSSL: false
               });
 
@@ -387,11 +397,14 @@ export class AppModule implements OnModuleInit {
                 )
               });
 
-            if (isUndefined(c3connection)) {
-              let firstProjectDwhBigqueryCredentialsPath = this.cs.get<
-                BackendConfig['firstProjectDwhBigqueryCredentialsPath']
-              >('firstProjectDwhBigqueryCredentialsPath');
+            let firstProjectDwhBigqueryCredentialsPath = this.cs.get<
+              BackendConfig['firstProjectDwhBigqueryCredentialsPath']
+            >('firstProjectDwhBigqueryCredentialsPath');
 
+            if (
+              isUndefined(c3connection) &&
+              isDefinedAndNotEmpty(firstProjectDwhBigqueryCredentialsPath)
+            ) {
               let bigqueryTestCredentials = JSON.parse(
                 fse
                   .readFileSync(firstProjectDwhBigqueryCredentialsPath)
@@ -430,7 +443,14 @@ export class AppModule implements OnModuleInit {
                 )
               });
 
-            if (isUndefined(c4connection)) {
+            let firstProjectDwhSnowflakeAccount = this.cs.get<
+              BackendConfig['firstProjectDwhSnowflakeAccount']
+            >('firstProjectDwhSnowflakeAccount');
+
+            if (
+              isUndefined(c4connection) &&
+              isDefinedAndNotEmpty(firstProjectDwhSnowflakeAccount)
+            ) {
               let c4 = this.makerService.makeConnection({
                 projectId: firstProjectId,
                 envId: PROJECT_ENV_PROD,
@@ -442,24 +462,70 @@ export class AppModule implements OnModuleInit {
                 host: undefined,
                 port: undefined,
                 database: undefined,
+                account: firstProjectDwhSnowflakeAccount,
                 username: this.cs.get<
                   BackendConfig['firstProjectDwhSnowflakeUsername']
                 >('firstProjectDwhSnowflakeUsername'),
                 password: this.cs.get<
                   BackendConfig['firstProjectDwhSnowflakePassword']
                 >('firstProjectDwhSnowflakePassword'),
-                account: this.cs.get<
-                  BackendConfig['firstProjectDwhSnowflakeAccount']
-                >('firstProjectDwhSnowflakeAccount'),
                 warehouse: this.cs.get<
                   BackendConfig['firstProjectDwhSnowflakeWarehouse']
                 >('firstProjectDwhSnowflakeWarehouse'),
                 serviceAccountCredentials: undefined,
-                bigqueryQuerySizeLimitGb: 1,
+                bigqueryQuerySizeLimitGb: undefined,
                 isSSL: true
               });
 
               connections.push(c4);
+            }
+
+            let c7connection =
+              await this.db.drizzle.query.connectionsTable.findFirst({
+                where: and(
+                  eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                  eq(connectionsTable.connectionId, 'c7_google')
+                )
+              });
+
+            let firstProjectGoogleApiCredentialsPath = this.cs.get<
+              BackendConfig['firstProjectGoogleApiCredentialsPath']
+            >('firstProjectGoogleApiCredentialsPath');
+
+            if (
+              isUndefined(c7connection) &&
+              isDefinedAndNotEmpty(firstProjectGoogleApiCredentialsPath)
+            ) {
+              let googleApiTestCredentials = JSON.parse(
+                fse
+                  .readFileSync(firstProjectGoogleApiCredentialsPath)
+                  .toString()
+              );
+
+              let c7 = this.makerService.makeConnection({
+                projectId: firstProjectId,
+                envId: PROJECT_ENV_PROD,
+                connectionId: 'c7_google',
+                type: ConnectionTypeEnum.GoogleApi,
+                baseUrl: 'https://analyticsdata.googleapis.com',
+                headers: [],
+                googleAuthScopes: [
+                  'https://www.googleapis.com/auth/analytics.readonly'
+                ],
+                host: undefined,
+                port: undefined,
+                database: undefined,
+                username: undefined,
+                password: undefined,
+                account: undefined,
+                warehouse: undefined,
+                serviceAccountCredentials: googleApiTestCredentials,
+                bigqueryQuerySizeLimitGb: undefined,
+                isSSL: true
+              });
+
+              connections.push(c7);
             }
           }
 
