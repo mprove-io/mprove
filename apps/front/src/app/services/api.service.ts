@@ -159,7 +159,7 @@ export class ApiService {
 
     let errorData: ErrorData = {
       reqUrl: req.url,
-      reqHeaders: req.headers,
+      // reqHeaders: req.headers,
       reqBody: req.body,
       response: res,
       message:
