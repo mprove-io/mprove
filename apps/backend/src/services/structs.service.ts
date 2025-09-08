@@ -46,7 +46,7 @@ export class StructsService {
       mproveDirValue: './data',
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
-      weekStart: ProjectWeekStartEnum.Monday,
+      weekStart: ProjectWeekStartEnum.Sunday,
       allowTimezones: true,
       caseSensitiveStringFilters: false,
       simplifySafeAggregates: true,
