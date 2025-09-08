@@ -1,70 +1,102 @@
+import { Tag, TagInterface } from '@malloydata/malloy-tag';
+import { KeyTagPair } from '~common/interfaces/blockml/key-tag-pair';
 import { KeyValuePair } from '~common/interfaces/blockml/key-value-pair';
+import { isDefined } from './is-defined';
+import { isUndefined } from './is-undefined';
 
 interface ParseResult {
   malloyTags: KeyValuePair[];
   mproveTags: KeyValuePair[];
 }
 
-export function parseTags(item: { inputs: string[] }): ParseResult {
+export function parseTags(item: {
+  inputs: string[];
+}): ParseResult {
   let { inputs } = item;
 
-  let mproveTags: KeyValuePair[] = [];
   let mproveFlags: string[] = [];
-  let malloyTags: KeyValuePair[] = [];
+  let mproveSimpleTags: KeyValuePair[] = [];
+  let mproveComplexTags: KeyTagPair[] = [];
+
   let malloyFlags: string[] = [];
+  let malloySimpleTags: KeyValuePair[] = [];
+  let malloyComplexTags: KeyTagPair[] = [];
 
-  let tokenRegex = /(\w+)=("([^"]*)"|\S+)|(\w+)/g;
+  let tagTypes = [
+    {
+      prefix: '#(mprove) ',
+      simpleTags: mproveSimpleTags,
+      complexTags: mproveComplexTags,
+      flags: mproveFlags
+    },
+    {
+      prefix: '# ',
+      simpleTags: malloySimpleTags,
+      complexTags: malloyComplexTags,
+      flags: malloyFlags
+    }
+  ];
 
-  let processMatches = (
-    content: string,
-    targetTags: KeyValuePair[],
-    targetFlags: string[]
-  ) => {
-    let matches = content.matchAll(tokenRegex);
-    for (let match of matches) {
-      if (match[1]) {
-        let key = match[1];
-        let value = match[3] !== undefined ? match[3] : match[2];
-        targetTags.push({ key, value });
-      } else if (match[4]) {
-        targetFlags.push(match[4]);
+  tagTypes.forEach(x => {
+    let lines = inputs.filter(l => l.startsWith(x.prefix));
+
+    if (lines.length > 0) {
+      // console.log('lines');
+      // console.log(lines);
+
+      let t1: Tag = Tag.fromTagLines(lines).tag;
+
+      // console.log('t');
+      // console.log(t1);
+
+      if (isDefined(t1?.properties)) {
+        Object.keys(t1.properties).forEach(key1 => {
+          let t2: TagInterface = t1.properties[key1];
+          if (isUndefined(t2.properties) && isUndefined(t2.eq)) {
+            x.flags.push(key1);
+          } else if (isUndefined(t2.properties) && typeof t2.eq === 'string') {
+            x.simpleTags.push({
+              key: key1,
+              value: t2.eq
+            });
+          } else {
+            x.complexTags.push({ key: key1, tagInterface: t2 });
+          }
+        });
       }
     }
-  };
-
-  inputs.forEach(input => {
-    // input = input.replace(/\s+/g, ' ').trim();
-
-    let tagTypes = [
-      { regex: /#\(mprove\)\s/, tags: mproveTags, flags: mproveFlags },
-      { regex: /#\s/, tags: malloyTags, flags: malloyFlags }
-    ];
-
-    tagTypes.forEach(x => {
-      let match = input.match(x.regex);
-      if (match) {
-        let content = input.slice(match.index + match[0].length).trim();
-        processMatches(content, x.tags, x.flags);
-      }
-    });
   });
 
   mproveFlags.forEach(mproveFlag =>
-    mproveTags.push({ key: mproveFlag, value: undefined })
+    mproveSimpleTags.push({ key: mproveFlag, value: undefined })
   );
 
   malloyFlags.forEach(malloyFlag =>
-    malloyTags.push({ key: malloyFlag, value: undefined })
+    malloySimpleTags.push({ key: malloyFlag, value: undefined })
   );
 
-  // console.log('mproveTags');
-  // console.log(mproveTags);
+  // if (mproveSimpleTags.length > 0) {
+  //   console.log('mproveSimpleTags');
+  //   console.log(mproveSimpleTags);
+  // }
 
-  // console.log('malloyTags');
-  // console.log(malloyTags);
+  // if (malloySimpleTags.length > 0) {
+  //   console.log('malloySimpleTags');
+  //   console.log(malloySimpleTags);
+  // }
+
+  // if (mproveComplexTags.length > 0) {
+  //   console.log('mproveComplexTags');
+  //   console.log(mproveComplexTags);
+  // }
+
+  // if (malloyComplexTags.length > 0) {
+  //   console.log('malloyComplexTags');
+  //   console.log(malloyComplexTags);
+  // }
 
   return {
-    mproveTags,
-    malloyTags
+    mproveTags: mproveSimpleTags,
+    malloyTags: malloySimpleTags
   };
 }
