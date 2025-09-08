@@ -51,6 +51,10 @@ export function makeErrorResponse(item: {
                 Object.values(ErEnum).includes(wError.message) === true
                   ? wError.message
                   : ErEnum.INTERNAL_ERROR,
+              data:
+                wError.message === ErEnum.BACKEND_WRONG_REQUEST_PARAMS
+                  ? wError.data
+                  : undefined,
               originalError: isDefined(wError.originalError)
                 ? {
                     message:
@@ -59,13 +63,21 @@ export function makeErrorResponse(item: {
                       ) === true
                         ? wError.originalError.message
                         : ErEnum.INTERNAL_ERROR,
-                    data: isDefined(wError.originalError.data)
-                      ? {
-                          currentBranch:
-                            wError.originalError.data.currentBranch,
-                          encodedFileId: wError.originalError.data.encodedFileId
-                        }
-                      : undefined
+                    data:
+                      [
+                        ErEnum.DISK_WRONG_REQUEST_PARAMS,
+                        ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
+                      ].indexOf(wError.originalError.message) > -1
+                        ? wError.originalError.data
+                        : isDefined(wError.originalError.data?.currentBranch) ||
+                            isDefined(wError.originalError.data?.encodedFileId)
+                          ? {
+                              currentBranch:
+                                wError.originalError.data.currentBranch,
+                              encodedFileId:
+                                wError.originalError.data.encodedFileId
+                            }
+                          : undefined
                   }
                 : undefined
             }
