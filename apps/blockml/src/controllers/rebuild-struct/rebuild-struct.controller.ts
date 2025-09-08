@@ -30,7 +30,7 @@ export class RebuildStructController {
         logger: this.logger
       });
     } catch (e) {
-      return makeErrorResponseBlockml({
+      let { resp, wrappedError } = makeErrorResponseBlockml({
         body: body,
         e,
         path: request.url,
@@ -39,6 +39,8 @@ export class RebuildStructController {
         cs: this.cs,
         logger: this.logger
       });
+
+      return resp;
     }
   }
 }

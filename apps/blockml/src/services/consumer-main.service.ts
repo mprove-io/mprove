@@ -39,7 +39,7 @@ export class ConsumerMainService {
         logger: this.logger
       });
     } catch (e) {
-      return makeErrorResponseBlockml({
+      let { resp, wrappedError } = makeErrorResponseBlockml({
         e: e,
         body: request,
         path: pathRebuildStruct,
@@ -48,6 +48,8 @@ export class ConsumerMainService {
         cs: this.cs,
         logger: this.logger
       });
+
+      return resp;
     }
   }
 }

@@ -30,7 +30,7 @@ export class CreateDevRepoController {
         logger: this.logger
       });
     } catch (e) {
-      return makeErrorResponseDisk({
+      let { resp, wrappedError } = makeErrorResponseDisk({
         body: body,
         e: e,
         path: request.url,
@@ -39,6 +39,8 @@ export class CreateDevRepoController {
         cs: this.cs,
         logger: this.logger
       });
+
+      return resp;
     }
   }
 }

@@ -96,7 +96,7 @@ export class MessageService {
         logger: this.logger
       });
     } catch (e) {
-      return makeErrorResponseDisk({
+      let { resp, wrappedError } = makeErrorResponseDisk({
         e: e,
         body: request,
         path: request.info.name,
@@ -105,6 +105,8 @@ export class MessageService {
         cs: this.cs,
         logger: this.logger
       });
+
+      return resp;
     }
   }
 
