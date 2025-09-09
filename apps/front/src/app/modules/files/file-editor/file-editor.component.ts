@@ -960,9 +960,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         let lines = this.content.split('\n');
 
         if (lineNumber < 1 || lineNumber > lines.length) {
-          console.warn(
-            `Invalid line number: ${lineNumber}. Must be between 1 and ${lines.length}.`
-          );
+          // console.warn(
+          //   `Invalid line number: ${lineNumber}. Must be between 1 and ${lines.length}.`
+          // );
           return;
         }
 

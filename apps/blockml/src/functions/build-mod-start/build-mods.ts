@@ -50,7 +50,39 @@ export async function buildMods(
 
   let runtime = new MalloyRuntime({
     urlReader: {
-      readURL: async (url: URL) => await fse.readFile(url, 'utf8')
+      readURL: async (url: URL) => {
+        // console.log('url');
+        // console.log(url);
+
+        // console.log('projectId');
+        // console.log(projectId);
+
+        if (
+          url.protocol.toLowerCase().startsWith('file') === true &&
+          (url.pathname.includes('/mprove_data/blockml-data/') === false ||
+            (isDefined(projectId) &&
+              url.pathname.includes(projectId) === false))
+        ) {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.WRONG_IMPORT_PATH_FOR_MALLOY_FILE,
+              message:
+                'One or more of ".malloy" files has an import with too many "../" segments or with an absolute path (not supported by Mprove)',
+              lines: [
+                {
+                  line: 0,
+                  name: '*.malloy',
+                  path: ''
+                }
+              ]
+            })
+          );
+
+          return null;
+        }
+
+        return await fse.readFile(url, 'utf8');
+      }
     },
     connections: {
       lookupConnection: async function (name: string) {

@@ -16,6 +16,7 @@ import { PanelEnum } from '~common/enums/panel.enum';
 import { decodeFilePath } from '~common/functions/decode-file-path';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { BmlError } from '~common/interfaces/blockml/bml-error';
@@ -291,18 +292,20 @@ export class BlockmlErrorsComponent implements OnDestroy {
   }
 
   goToFileLine(line: DiskFileLine) {
-    let lineFileIdAr = line.fileId.split('/');
-    lineFileIdAr.shift();
+    if (isDefinedAndNotEmpty(line.fileId)) {
+      let lineFileIdAr = line.fileId.split('/');
+      lineFileIdAr.shift();
 
-    let filePath = lineFileIdAr.join('/');
+      let filePath = lineFileIdAr.join('/');
 
-    let fileId = encodeFilePath({ filePath: filePath });
+      let fileId = encodeFilePath({ filePath: filePath });
 
-    this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
-      encodedFileId: fileId,
-      lineNumber: line.lineNumber
-    });
+      this.navigateService.navigateToFileLine({
+        panel: PanelEnum.Tree,
+        encodedFileId: fileId,
+        lineNumber: line.lineNumber
+      });
+    }
   }
 
   ngOnDestroy() {

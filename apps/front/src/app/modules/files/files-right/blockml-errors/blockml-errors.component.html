@@ -57,22 +57,28 @@
 
                   <div
                     *ngIf="node.data.isError === true"
-                    class="mb-3 mt-3 flex flex-1 flex-col"
+                    class="mb-3 mt-3 flex min-w-[2px] flex-1 flex-col"
                   >
                     <div class="text-r1 flex w-full text-base">{{
                       node.data.title
                     }}</div>
 
-                    <div class="text-s500 mb-1 mt-2 flex w-full text-base">{{
+                    <div class="text-s500 mb-1 mt-2 break-words text-base">{{
                       node.data.message | capitalize
                     }}</div>
 
                     <div
                       *ngFor="let line of node.data.lines"
-                      class="hover:bg-m50 flex py-2 pl-5 text-base hover:cursor-pointer"
+                      class="hover:bg-m50 flex pl-5 text-base hover:cursor-pointer"
+                      [ngClass]="{
+                        'py-2': line.fileId !== ''
+                      }"
                       (click)="goToFileLine(line)"
                     >
-                      <div class="flex w-full flex-row">
+                      <div
+                        class="flex w-full flex-row"
+                        *ngIf="line.fileId !== ''"
+                      >
                         <div
                           class="flex font-semibold"
                           *ngIf="line.fileId === node.parent?.data.id"
