@@ -1,5 +1,5 @@
 <div
-  class="mb-5 mr-9 flex h-11 w-full flex-row items-center"
+  class="mb-5 flex h-11 w-full flex-row items-center"
   *ngIf="reportSelectedNodes.length > 1"
 >
   <div class="text-lg"> Multiple rows selected </div>
@@ -15,10 +15,7 @@
   </button>
 </div>
 
-<div
-  class="mb-5 mr-9 flex h-full w-full flex-col space-y-7"
-  *ngIf="!!reportSelectedNode"
->
+<div class="mb-5 flex h-full w-full flex-col" *ngIf="!!reportSelectedNode">
   <div class="flex flex-row items-start">
     <div class="flex h-11 flex-row items-center text-lg">
       <div class="text-s1 flex select-none items-center font-semibold">Row</div>
@@ -71,13 +68,13 @@
     </div>
   </div>
 
-  <div class="divide-s300 ml-[20px] mr-[20px] divide-y">
+  <div class="divide-s300 ml-[20px] mr-[20px] mt-7 divide-y">
     <div></div>
     <div></div>
   </div>
 
   <div
-    class="flex flex-col"
+    class="mt-7 flex flex-col"
     *ngIf="
       isShowFormatOptions === true &&
       (reportSelectedNode.data.rowType === rowTypeFormula ||
@@ -217,7 +214,7 @@
       reportSelectedNode.data.rowType !== rowTypeEmpty &&
       reportSelectedNode.data.rowType !== rowTypeMetric
     "
-    class="flex h-11 max-w-[600px] flex-row items-center space-x-5"
+    class="mt-7 flex h-11 max-w-[600px] flex-row items-center space-x-5"
   >
     <div
       class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
@@ -251,7 +248,7 @@
 
   <div
     *ngIf="reportSelectedNode.data.rowType === rowTypeFormula"
-    class="flex flex-1 flex-row items-start space-x-5"
+    class="mt-7 flex flex-1 flex-row items-start space-x-5"
   >
     <div
       class="text-s1 mt-3 flex w-[110px] flex-shrink-0 select-none items-center font-semibold"
@@ -279,7 +276,7 @@
   </div>
 
   <div
-    class="flex min-h-[44px] flex-grow flex-row overflow-y-auto"
+    class="flex min-h-[44px] w-full flex-grow flex-row overflow-y-auto pt-7"
     *ngIf="reportSelectedNode.data.rowType === rowTypeMetric"
   >
     <div
@@ -314,6 +311,11 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="divide-s300 ml-[20px] mr-[20px] divide-y">
+    <div></div>
+    <div></div>
   </div>
 </div>
 
