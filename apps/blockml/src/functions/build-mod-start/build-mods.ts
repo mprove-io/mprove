@@ -153,36 +153,52 @@ export async function buildMods(
     let wrapResult = wrapResults[index];
 
     if (isDefined(wrapResult.error)) {
-      console.log('x.fileName');
-      console.log(x.fileName);
+      // console.log('x.filePath');
+      // console.log(x.filePath);
 
-      console.log('x.filePath');
-      console.log(x.filePath);
+      // console.log('wrapResult.error');
+      // console.log(wrapResult.error);
 
-      // DXYE72ODCP5LWPWH2EXQ/data/c1_postgres/models/c1_order_items.malloy
-
-      console.log('wrapResult.error');
-      console.log(wrapResult.error);
-
-      console.log('wrapResult.error.problems[0].at');
-      console.log(wrapResult.error.problems[0].at);
-
-      // {
-      //   url: 'file:///mprove/mprove_data/blockml-data/1757396037512-GXTALX3WVY8DEQPPTWAU/DXYE72ODCP5LWPWH2EXQ/data/c1_postgres/models/c1_order_items.malloy',
-      //   range: { start: { line: 3, character: 7 }, end: { line: 3, character: 57 } }
-      // }
+      // console.log('wrapResult.error.problems[0].at');
+      // console.log(wrapResult.error.problems[0].at);
 
       item.errors.push(
         new BmError({
           title: ErTitleEnum.FAILED_TO_COMPILE_MALLOY,
           message: wrapResult.errorStr,
-          lines: [
-            {
-              line: 0,
-              name: x.fileName,
-              path: x.filePath
-            }
-          ]
+          lines: isDefined(wrapResult.error.problems)
+            ? wrapResult.error.problems
+                .filter(
+                  (y: any) =>
+                    isDefined(y.at?.url) && isDefined(y.at?.range?.start?.line)
+                )
+                .map((y: any) => {
+                  let blockmlDataPath =
+                    cs.get<BlockmlConfig['blockmlData']>('blockmlData');
+
+                  blockmlDataPath = blockmlDataPath.endsWith('/')
+                    ? blockmlDataPath.slice(0, -1)
+                    : blockmlDataPath;
+
+                  let part = y.at.url.split(blockmlDataPath)[1];
+
+                  let partArray = part.split('/');
+
+                  partArray.shift();
+                  partArray.shift();
+
+                  let filPath = partArray.join('/');
+                  let fileName = `${partArray[partArray.length - 1]} <-- ${x.fileName}`;
+
+                  let line = {
+                    line: (y.at.range.start.line as number) + 1,
+                    name: fileName,
+                    path: filPath
+                  };
+
+                  return line;
+                })
+            : []
         })
       );
       return;
