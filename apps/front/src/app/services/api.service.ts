@@ -160,7 +160,13 @@ export class ApiService {
     let errorData: ErrorData = {
       reqUrl: req.url,
       // reqHeaders: req.headers,
-      reqBody: req.body,
+      reqBody: isDefined(req.body?.payload?.password)
+        ? Object.assign({}, req.body, {
+            payload: Object.assign({}, req.body.payload, {
+              password: undefined
+            })
+          })
+        : req.body,
       response: res,
       message:
         res.status !== 201
