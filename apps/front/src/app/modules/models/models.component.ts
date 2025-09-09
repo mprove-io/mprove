@@ -1634,6 +1634,20 @@ export class ModelsComponent implements OnInit, OnDestroy {
   makeChartsItemNodes() {
     let chartsItemNodes: ChartsItemNode[] = [];
 
+    let models = this.modelsQuery.getValue().models;
+
+    models.forEach(model => {
+      let topNode: ChartsItemNode = {
+        id: model.modelId,
+        isTop: true,
+        topLabel: model.label,
+        chart: undefined,
+        children: []
+      };
+
+      chartsItemNodes.push(topNode);
+    });
+
     let idxs;
 
     let nonDraftCharts = this.charts.filter(x => x.draft === false);

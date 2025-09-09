@@ -602,13 +602,29 @@
                     <div
                       *ngIf="node.data.isTop === true"
                       data-cy="chartsTreeItem"
-                      class="flex h-11 w-full cursor-pointer select-none flex-row rounded px-5 pr-5"
+                      class="flex h-11 w-full select-none flex-row rounded px-5 pr-5"
+                      [ngClass]="{
+                        'cursor-pointer':
+                          node.data.isTop === false || node.hasChildren === true
+                      }"
                       (click)="chartsItemModelNodeOnClick(node)"
+                      tp="This model has no saved charts"
+                      [tpIsEnabled]="
+                        node.data.isTop === true && node.hasChildren === false
+                      "
                     >
                       <div class="relative flex w-full flex-row items-center">
                         <div class="flex min-w-[2px] flex-row items-center">
                           <div class="flex flex-row items-center space-x-1">
                             <div class="flex items-center">
+                              <div
+                                class="w-6"
+                                *ngIf="
+                                  node.data.isTop === true &&
+                                  node.hasChildren === false
+                                "
+                              ></div>
+
                               <m-chevron-right-icon
                                 *ngIf="!node.isExpanded && node.hasChildren"
                               ></m-chevron-right-icon>
