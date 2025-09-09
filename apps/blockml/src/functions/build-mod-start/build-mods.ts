@@ -59,7 +59,32 @@ export async function buildMods(
 
         if (
           url.protocol.toLowerCase().startsWith('file') === true &&
-          (url.pathname.includes('/mprove_data/blockml-data/') === false ||
+          url.pathname.endsWith('.malloy') === false
+        ) {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.IMPORT_FROM_NON_MALLOY_FILE,
+              message:
+                'One or more of ".malloy" files has an import from non-malloy file (not supported by Mprove)',
+              lines: [
+                {
+                  line: 0,
+                  name: '*.malloy',
+                  path: ''
+                }
+              ]
+            })
+          );
+
+          return null;
+        }
+
+        let blockmlDataPath =
+          cs.get<BlockmlConfig['blockmlData']>('blockmlData');
+
+        if (
+          url.protocol.toLowerCase().startsWith('file') === true &&
+          (url.pathname.includes(blockmlDataPath) === false ||
             (isDefined(projectId) &&
               url.pathname.includes(projectId) === false))
         ) {
@@ -128,14 +153,29 @@ export async function buildMods(
     let wrapResult = wrapResults[index];
 
     if (isDefined(wrapResult.error)) {
-      let blockmlDataPath = cs.get<BlockmlConfig['blockmlData']>('blockmlData');
+      console.log('x.fileName');
+      console.log(x.fileName);
+
+      console.log('x.filePath');
+      console.log(x.filePath);
+
+      // DXYE72ODCP5LWPWH2EXQ/data/c1_postgres/models/c1_order_items.malloy
+
+      console.log('wrapResult.error');
+      console.log(wrapResult.error);
+
+      console.log('wrapResult.error.problems[0].at');
+      console.log(wrapResult.error.problems[0].at);
+
+      // {
+      //   url: 'file:///mprove/mprove_data/blockml-data/1757396037512-GXTALX3WVY8DEQPPTWAU/DXYE72ODCP5LWPWH2EXQ/data/c1_postgres/models/c1_order_items.malloy',
+      //   range: { start: { line: 3, character: 7 }, end: { line: 3, character: 57 } }
+      // }
 
       item.errors.push(
         new BmError({
           title: ErTitleEnum.FAILED_TO_COMPILE_MALLOY,
-          message: wrapResult.errorStr.includes(blockmlDataPath) // TODO: check logic
-            ? wrapResult.errorStr
-            : 'To see error message, use Malloy vscode extension',
+          message: wrapResult.errorStr,
           lines: [
             {
               line: 0,
@@ -145,10 +185,6 @@ export async function buildMods(
           ]
         })
       );
-
-      // console.log('MOD_COMPILATION_FAILED'); // TODO: remove
-      // console.log(wrapResult.error); // TODO: remove
-
       return;
     }
 
