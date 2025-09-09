@@ -112,6 +112,7 @@ import { WrenchIconComponent } from './icons/wrench-icon/wrench-icon.component';
 import { LogoComponent } from './logo/logo.component';
 import { MainTableComponent } from './main-table/main-table.component';
 import { MetricFieldLabelComponent } from './metric-field-label/metric-field-label.component';
+import { CapitalizeDowPipe } from './pipes/capitalize-dow.pipe';
 import { CapitalizeWordsPipe } from './pipes/capitalize-words.pipe';
 import { CapitalizePipe } from './pipes/capitalize.pipe';
 import { FixNgSelectDirective } from './pipes/fix-ng-select.directive';
@@ -135,6 +136,7 @@ let pipesArray = [
   GoFromFileExtPipe,
   CapitalizePipe,
   CapitalizeWordsPipe,
+  CapitalizeDowPipe,
   MproveDirPipe,
   HideColumnsPipe,
   ResultPipe,

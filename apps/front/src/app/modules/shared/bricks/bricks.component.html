@@ -92,8 +92,9 @@
                 class="flex max-w-[450px] flex-shrink-0 pr-5"
                 >{{
                   (fraction.parentBrick === 'f``'
-                    ? fraction.parentBrick
+                    ? 'any value'
                     : fraction.parentBrick?.slice(2, -1)) ?? fraction.brick
+                    | capitalizeDow
                 }}</div
               >
 
