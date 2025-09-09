@@ -325,33 +325,29 @@ export function wrapModels(item: {
           }
         });
 
-        let sortedFilters = filters;
-        // .sort((a, b) => {
-        //   let labelA = a.label.toUpperCase();
-        //   let labelB = b.label.toUpperCase();
-        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        // });
+        let sortedFilters = filters.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
-        let sortedDimensions = dimensions;
-        // .sort((a, b) => {
-        //   let labelA = a.label.toUpperCase();
-        //   let labelB = b.label.toUpperCase();
-        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        // });
+        let sortedDimensions = dimensions.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
-        let sortedMeasures = measures;
-        // .sort((a, b) => {
-        //   let labelA = a.label.toUpperCase();
-        //   let labelB = b.label.toUpperCase();
-        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        // });
+        let sortedMeasures = measures.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
-        let sortedCalculations = calculations;
-        // .sort((a, b) => {
-        //   let labelA = a.label.toUpperCase();
-        //   let labelB = b.label.toUpperCase();
-        //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-        // });
+        let sortedCalculations = calculations.sort((a, b) => {
+          let labelA = a.label.toUpperCase();
+          let labelB = b.label.toUpperCase();
+          return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
+        });
 
         let sortedChildren: ModelNode[] = [];
 
@@ -459,13 +455,7 @@ export function wrapModels(item: {
     });
 
     let sortedNodes = nodes;
-    // .sort((a, b) => {
-    //   let labelA = a.label.toUpperCase();
-    //   let labelB = b.label.toUpperCase();
-    //   return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
-    // });
 
-    // if (sortedNodes.length > 0) {
     if (isDefined(malloyModelDef)) {
       malloyModelDef.references = []; // TODO: clarify
     }
