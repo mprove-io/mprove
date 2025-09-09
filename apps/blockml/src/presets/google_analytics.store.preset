@@ -422,23 +422,13 @@ fields:
 
 # Time Dimensions
 
-- dimension: year # "2025"
-  label: 'Year'
+- dimension: date # "20250127"
   result: string
   time_group: event_created_at
-  detail: years
-  description: 'The four-digit year of the event. For example, 2020 or 2024'
+  detail: days
+  description: 'The date of the event, formatted as YYYYMMDD'
   meta:
-    name: year
-
-- dimension: year_month # "202501"
-  label: 'Month'
-  result: string
-  time_group: event_created_at
-  detail: months
-  description: 'The combined values of year and month. Example values include 202212 or 202301'
-  meta:
-    name: yearMonth
+    name: date
 
 - dimension: iso_year_iso_week # "202504"
   label: 'Week Monday'
@@ -458,13 +448,23 @@ fields:
   meta:
     name: yearWeek
 
-- dimension: date # "20250127"
+- dimension: year_month # "202501"
+  label: 'Month'
   result: string
   time_group: event_created_at
-  detail: days
-  description: 'The date of the event, formatted as YYYYMMDD'
+  detail: months
+  description: 'The combined values of year and month. Example values include 202212 or 202301'
   meta:
-    name: date
+    name: yearMonth
+
+- dimension: year # "2025"
+  label: 'Year'
+  result: string
+  time_group: event_created_at
+  detail: years
+  description: 'The four-digit year of the event. For example, 2020 or 2024'
+  meta:
+    name: year
 
 - dimension: date_hour # "2025012722"
   label: 'Hour'
