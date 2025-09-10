@@ -261,7 +261,7 @@ export class ApiService {
         errorData.description = `Check model access rules`;
         errorData.buttonText = 'Ok, go to charts';
         errorData.onClickFnBindThis = (() => {
-          this.navigateService.navigateToCharts();
+          this.navigateService.navigateToModels();
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
@@ -306,7 +306,7 @@ export class ApiService {
           } else if (
             [ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
           ) {
-            this.navigateService.navigateToCharts();
+            this.navigateService.navigateToModels();
           } else if (
             [ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
@@ -316,7 +316,7 @@ export class ApiService {
           } else if (
             [ErEnum.BACKEND_CHART_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
           ) {
-            this.navigateService.navigateToCharts();
+            this.navigateService.navigateToModels();
           } else if (
             [
               ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
@@ -331,10 +331,10 @@ export class ApiService {
                 chartId: EMPTY_CHART_ID
               });
             } else {
-              this.navigateService.navigateToCharts();
+              this.navigateService.navigateToModels();
             }
           } else {
-            this.navigateService.navigateToCharts();
+            this.navigateService.navigateToModels();
           }
         }).bind(this);
 

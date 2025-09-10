@@ -90,7 +90,7 @@ export class DeleteChartDialogComponent implements OnInit {
             let currentChart = this.chartQuery.getValue();
 
             if (currentChart.chartId === chart.chartId) {
-              this.navigateService.navigateToCharts();
+              this.navigateService.navigateToModels();
             }
           }
         }),

@@ -107,12 +107,12 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
             chartId: LAST_SELECTED_CHART_ID
           });
         } else {
-          this.navigateService.navigateToCharts();
+          this.navigateService.navigateToModels();
         }
 
         return of(false);
       } else {
-        this.navigateService.navigateToCharts();
+        this.navigateService.navigateToModels();
 
         return of(false);
       }

@@ -127,7 +127,7 @@ export class NavigateService {
     });
   }
 
-  navigateToCharts() {
+  navigateToModels() {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
     this.router.navigate([

@@ -153,12 +153,12 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
             chartId: pChart.chartId
           });
         } else {
-          this.navigateService.navigateToCharts();
+          this.navigateService.navigateToModels();
         }
 
         return of(false);
       } else {
-        this.navigateService.navigateToCharts();
+        this.navigateService.navigateToModels();
 
         return of(false);
       }

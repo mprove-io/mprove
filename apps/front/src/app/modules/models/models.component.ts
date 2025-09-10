@@ -1075,7 +1075,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           chartId: EMPTY_CHART_ID
         });
       } else {
-        this.navigateService.navigateToCharts();
+        this.navigateService.navigateToModels();
       }
     }
   }

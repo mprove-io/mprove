@@ -213,7 +213,7 @@ export class ChartService {
                   chartId: EMPTY_CHART_ID
                 });
               } else {
-                this.navigateService.navigateToCharts();
+                this.navigateService.navigateToModels();
               }
             }
           }
