@@ -3,7 +3,6 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { TRIPLE_UNDERSCORE } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
@@ -53,17 +52,12 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
     this.isError = isDefined(rowDataRecord?.error);
 
-    let struct = this.structQuery.getValue();
-
     this.formattedValue =
       this.isError === false && isDefined(params.value)
-        ? this.dataService.d3FormatValue({
+        ? this.dataService.formatValue({
             value: params.value,
-            formatNumber: params.data.formatNumber,
-            fieldResult: FieldResultEnum.Number,
-            currencyPrefix: params.data.currencyPrefix,
-            currencySuffix: params.data.currencySuffix,
-            thousandsSeparator: struct.thousandsSeparator
+            modelType: params.data.mconfig.modelType,
+            field: params.data.mconfig.fields[1]
           })
         : this.isError === true
           ? rowDataRecord.error
