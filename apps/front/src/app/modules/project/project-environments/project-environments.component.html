@@ -43,13 +43,15 @@
                     <div>to Env Prod</div>
                   </div>
                 </th>
-                <th class="select-none text-center">
+
+                <!-- <th class="select-none text-center">
                   <div class="flex flex-col">
                     <div>Variables Fallback</div>
                     <div>to Env Prod</div>
                   </div>
-                </th>
-                <th class="select-none pl-[60px] text-left">
+                </th> -->
+
+                <!-- <th class="select-none pl-[60px] text-left">
                   <div class="mb-2 flex flex-row items-center">
                     <div>Environment Variables</div>
 
@@ -64,11 +66,12 @@
                             isAdmin === false
                         }"
                         (click)="toggleShowValues()"
+                        [disabled]="isAdmin === false"
                         >{{ isShowValues ? 'Hide values' : 'Show values' }}
                       </button>
                     </div>
                   </div>
-                </th>
+                </th> -->
                 <th class="select-none"></th>
               </tr>
             </thead>
@@ -246,7 +249,7 @@
                   </div>
                 </td>
 
-                <td class="w-[180px]">
+                <!-- <td class="w-[180px]">
                   <div class="flex justify-center">
                     <div tp="This env is prod">
                       <div *ngIf="environment.envId === envProd">—</div>
@@ -278,9 +281,9 @@
                       </button>
                     </div>
                   </div>
-                </td>
+                </td> -->
 
-                <td>
+                <!-- <td>
                   <div class="my-3 flex flex-col">
                     <div class="flex flex-row items-center pl-[60px]">
                       <div
@@ -396,7 +399,7 @@
                       </div>
                     </div>
                   </div>
-                </td>
+                </td> -->
               </tr>
             </tbody>
           </table>
