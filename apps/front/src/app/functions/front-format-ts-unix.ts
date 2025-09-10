@@ -20,6 +20,12 @@ export function frontFormatTsUnix(item: {
 
   let date = dayjs.unix(unixTimeZoned).utc();
 
+  // console.log('timeSpec');
+  // console.log(timeSpec);
+
+  // console.log('unixTimeZoned');
+  // console.log(unixTimeZoned);
+
   return timeSpec === TimeSpecEnum.Years
     ? date.format('YYYY') // format(date, 'yyyy')
     : timeSpec === TimeSpecEnum.Quarters
@@ -34,7 +40,9 @@ export function frontFormatTsUnix(item: {
               ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
               : timeSpec === TimeSpecEnum.Minutes
                 ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
-                : timeSpec === TimeSpecEnum.Timestamps // not *_ts
-                  ? date.format('HH:mm:ss.SSS DD MMM YYYY') //
-                  : `${unixTimeZoned}`;
+                : timeSpec === TimeSpecEnum.Seconds
+                  ? date.format('HH:mm:ss DD MMM YYYY') //
+                  : timeSpec === TimeSpecEnum.Timestamps // not *_ts
+                    ? date.format('HH:mm:ss.SSS DD MMM YYYY') //
+                    : `${unixTimeZoned}`;
 }

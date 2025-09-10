@@ -482,6 +482,9 @@ export class DataService {
                                 ? TimeSpecEnum.Years
                                 : undefined;
 
+          // console.log('field');
+          // console.log(field);
+
           let cell: QCell = {
             name: key.toLowerCase(),
             value:
@@ -497,7 +500,9 @@ export class DataService {
                     timeSpec:
                       isStore === true
                         ? storeTimeSpec
-                        : this.getTimeSpecByFieldSqlName(sqlName),
+                        : this.getTimeSpecByMalloyTimeframe({
+                            timeframe: field.timeframe
+                          }),
                     unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
                   })
                 : this.formatValue({
@@ -881,6 +886,32 @@ export class DataService {
                             : fieldSqlName.match(/(?:___ts)$/g)
                               ? TimeSpecEnum.Timestamps
                               : TimeSpecEnum.Minutes;
+  }
+
+  getTimeSpecByMalloyTimeframe(item: {
+    timeframe: string;
+  }) {
+    let { timeframe } = item;
+
+    // export type TimestampTimeframe = 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';
+
+    return timeframe === 'year'
+      ? TimeSpecEnum.Years
+      : timeframe === 'quarter'
+        ? TimeSpecEnum.Quarters
+        : timeframe === 'month'
+          ? TimeSpecEnum.Months
+          : timeframe === 'week'
+            ? TimeSpecEnum.Weeks
+            : timeframe === 'day'
+              ? TimeSpecEnum.Days
+              : timeframe === 'hour'
+                ? TimeSpecEnum.Hours
+                : timeframe === 'minute'
+                  ? TimeSpecEnum.Minutes
+                  : timeframe === 'second'
+                    ? TimeSpecEnum.Seconds
+                    : TimeSpecEnum.Timestamps;
   }
 
   private getDateFromDate(rValue: string) {
