@@ -633,12 +633,12 @@ export class DataService {
 
         if (multiField?.id) {
           if (yFields.length > 1) {
-            yKeyId = row[multiField.id].value
-              ? row[multiField.id].value + ' ' + yLabel
+            yKeyId = row[multiField.id].valueFmt
+              ? row[multiField.id].valueFmt + ' ' + yLabel
               : 'NULL' + ' ' + yLabel;
           } else {
-            yKeyId = row[multiField.id].value
-              ? row[multiField.id].value
+            yKeyId = row[multiField.id].valueFmt
+              ? row[multiField.id].valueFmt
               : 'NULL';
           }
         } else {
