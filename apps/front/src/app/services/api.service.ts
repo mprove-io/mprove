@@ -9,8 +9,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { EMPTY, Observable, TimeoutError, combineLatest, timer } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 import {
-  EMPTY_CHART_ID,
+  LAST_SELECTED_CHART_ID,
   LAST_SELECTED_FILE_ID,
+  LAST_SELECTED_MODEL_ID,
   PATH_BRANCH,
   PATH_ENV,
   PATH_FILE,
@@ -274,7 +275,11 @@ export class ApiService {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              this.navigateService.navigateToModels();
+              // this.navigateService.navigateToModels();
+              this.navigateService.navigateToChart({
+                modelId: LAST_SELECTED_MODEL_ID,
+                chartId: LAST_SELECTED_CHART_ID
+              });
             });
         }).bind(this);
 
@@ -329,7 +334,11 @@ export class ApiService {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                this.navigateService.navigateToModels();
+                // this.navigateService.navigateToModels();
+                this.navigateService.navigateToChart({
+                  modelId: LAST_SELECTED_MODEL_ID,
+                  chartId: LAST_SELECTED_CHART_ID
+                });
               });
           } else if (
             [ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
@@ -347,7 +356,11 @@ export class ApiService {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                this.navigateService.navigateToModels();
+                // this.navigateService.navigateToModels();
+                this.navigateService.navigateToChart({
+                  modelId: LAST_SELECTED_MODEL_ID,
+                  chartId: LAST_SELECTED_CHART_ID
+                });
               });
           } else if (
             [
@@ -361,23 +374,35 @@ export class ApiService {
               this.router
                 .navigateByUrl(orgProjectPath, { skipLocationChange: true })
                 .then(() => {
+                  // this.navigateService.navigateToChart({
+                  //   modelId: model.modelId,
+                  //   chartId: EMPTY_CHART_ID
+                  // });
                   this.navigateService.navigateToChart({
-                    modelId: model.modelId,
-                    chartId: EMPTY_CHART_ID
+                    modelId: LAST_SELECTED_MODEL_ID,
+                    chartId: LAST_SELECTED_CHART_ID
                   });
                 });
             } else {
               this.router
                 .navigateByUrl(orgProjectPath, { skipLocationChange: true })
                 .then(() => {
-                  this.navigateService.navigateToModels();
+                  // this.navigateService.navigateToModels();
+                  this.navigateService.navigateToChart({
+                    modelId: LAST_SELECTED_MODEL_ID,
+                    chartId: LAST_SELECTED_CHART_ID
+                  });
                 });
             }
           } else {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                this.navigateService.navigateToModels();
+                // this.navigateService.navigateToModels();
+                this.navigateService.navigateToChart({
+                  modelId: LAST_SELECTED_MODEL_ID,
+                  chartId: LAST_SELECTED_CHART_ID
+                });
               });
           }
         }).bind(this);
