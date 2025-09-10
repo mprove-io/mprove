@@ -236,6 +236,7 @@ export class DataService {
     value: any;
     modelType: ModelTypeEnum;
     field: MconfigField;
+    fieldResult: FieldResultEnum;
     rowFormatNumber?: string;
     rowCurrencyPrefix?: string;
     rowCurrencySuffix?: string;
@@ -244,6 +245,7 @@ export class DataService {
       value,
       modelType,
       field,
+      fieldResult,
       rowFormatNumber,
       rowCurrencyPrefix,
       rowCurrencySuffix
@@ -251,17 +253,15 @@ export class DataService {
 
     let struct = this.structQuery.getValue();
 
-    let fieldResult = field?.result;
-
     let fieldFormatNumber = isDefinedAndNotEmpty(rowFormatNumber)
       ? rowFormatNumber
       : field?.formatNumber;
 
-    let fieldCurrencyPrefix = isDefinedAndNotEmpty(rowCurrencyPrefix)
+    let fieldCurrencyPrefix = isDefined(rowCurrencyPrefix)
       ? rowCurrencyPrefix
       : field?.currencyPrefix;
 
-    let fieldCurrencySuffix = isDefinedAndNotEmpty(rowCurrencySuffix)
+    let fieldCurrencySuffix = isDefined(rowCurrencySuffix)
       ? rowCurrencySuffix
       : field?.currencySuffix;
 
@@ -303,7 +303,7 @@ export class DataService {
         ? fieldMalloyDurationTag.value
         : 'seconds';
 
-    let fieldThousandsSeparatorTag = field.mproveTags?.find(
+    let fieldThousandsSeparatorTag = field?.mproveTags?.find(
       tag => tag.key === ParameterEnum.ThousandsSeparator
     );
 
@@ -528,7 +528,8 @@ export class DataService {
                 : this.formatValue({
                     value: value,
                     modelType: mconfig.modelType,
-                    field: field
+                    field: field,
+                    fieldResult: field?.result
                   })
           };
 

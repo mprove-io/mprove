@@ -3,6 +3,7 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 import { TRIPLE_UNDERSCORE } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
@@ -56,8 +57,9 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       this.isError === false && isDefined(params.value)
         ? this.dataService.formatValue({
             value: params.value,
-            modelType: params.data.mconfig.modelType,
-            field: params.data.mconfig.fields[1],
+            modelType: params.data.mconfig?.modelType,
+            field: params.data.mconfig?.fields[1],
+            fieldResult: FieldResultEnum.Number,
             rowFormatNumber: params.data.formatNumber,
             rowCurrencyPrefix: params.data.currencyPrefix,
             rowCurrencySuffix: params.data.currencySuffix

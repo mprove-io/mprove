@@ -115,9 +115,9 @@ export class RowComponent {
           ? this.reportSelectedNodes[0]
           : undefined;
 
-      if (isDefined(this.reportSelectedNode)) {
-        let struct = this.structQuery.getValue();
+      let struct = this.structQuery.getValue();
 
+      if (isDefined(this.reportSelectedNode)) {
         this.formatNumberExamples = FORMAT_NUMBER_EXAMPLES.map(example => {
           example.output =
             example.id === EMPTY_FORMAT_NUMBER
@@ -126,8 +126,12 @@ export class RowComponent {
                   value: example.input,
                   formatNumber: example.id,
                   fieldResult: FieldResultEnum.Number,
-                  currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
-                  currencySuffix: this.reportSelectedNode.data.currencySuffix,
+                  currencyPrefix:
+                    this.reportSelectedNode.data.currencyPrefix ??
+                    struct.currencyPrefix,
+                  currencySuffix:
+                    this.reportSelectedNode.data.currencySuffix ??
+                    struct.currencySuffix,
                   thousandsSeparator: struct.thousandsSeparator
                 });
 
@@ -209,12 +213,16 @@ export class RowComponent {
 
           setValueAndMark({
             control: this.currencyPrefixForm.controls['currencyPrefix'],
-            value: this.reportSelectedNode.data.currencyPrefix
+            value:
+              this.reportSelectedNode.data.currencyPrefix ??
+              struct.currencyPrefix
           });
 
           setValueAndMark({
             control: this.currencySuffixForm.controls['currencySuffix'],
-            value: this.reportSelectedNode.data.currencySuffix
+            value:
+              this.reportSelectedNode.data.currencySuffix ??
+              struct.currencySuffix
           });
         }
       }

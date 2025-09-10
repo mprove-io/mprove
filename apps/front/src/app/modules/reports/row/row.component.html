@@ -130,7 +130,7 @@
             <input
               autocomplete="off"
               data-cy="formatNumberInput"
-              class="form-input border-s3 focus:border-m600 w-[200px] resize-none rounded"
+              class="form-input border-s3 focus:border-m600 w-[150px] resize-none rounded"
               [ngClass]="{
                 'border-r600':
                   formatNumberForm.controls['formatNumber'].invalid &&
@@ -148,7 +148,13 @@
         </form>
       </div>
 
-      <div class="flex h-11 flex-row items-center space-x-5">
+      <div
+        class="flex h-11 flex-row items-center space-x-5"
+        *ngIf="
+          !!formatNumberForm.controls['formatNumber'].value &&
+          formatNumberForm.controls['formatNumber'].value?.indexOf('$') > -1
+        "
+      >
         <div
           class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
           >Currency Prefix</div
@@ -175,7 +181,13 @@
         </div>
       </div>
 
-      <div class="flex h-11 flex-row items-center space-x-5">
+      <div
+        class="flex h-11 flex-row items-center space-x-5"
+        *ngIf="
+          !!formatNumberForm.controls['formatNumber'].value &&
+          formatNumberForm.controls['formatNumber'].value?.indexOf('$') > -1
+        "
+      >
         <div
           class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
           >Currency Suffix</div
@@ -214,7 +226,7 @@
       reportSelectedNode.data.rowType !== rowTypeEmpty &&
       reportSelectedNode.data.rowType !== rowTypeMetric
     "
-    class="mt-7 flex h-11 max-w-[600px] flex-row items-center space-x-5"
+    class="mt-7 flex h-11 flex-row items-center space-x-5"
   >
     <div
       class="text-s1 flex flex-shrink-0 select-none items-center font-semibold"
@@ -225,7 +237,10 @@
       >Name</div
     >
 
-    <div [formGroup]="nameForm" class="relative flex w-full">
+    <div
+      [formGroup]="nameForm"
+      class="relative flex w-full max-w-[550px] flex-1"
+    >
       <input
         autocomplete="off"
         data-cy="nameInput"
@@ -255,7 +270,7 @@
       >Formula SQL</div
     >
 
-    <div [formGroup]="formulaForm" class="relative flex max-w-[750px] flex-1">
+    <div [formGroup]="formulaForm" class="relative flex max-w-[550px] flex-1">
       <textarea
         data-cy="formulaInput"
         class="form-input border-s3 focus:border-m600 placeholder-s400 max-h-[150px] min-h-[95px] w-full min-w-[300px] resize-y rounded font-mono"
