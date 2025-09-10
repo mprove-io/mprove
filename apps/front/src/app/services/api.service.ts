@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { EMPTY, Observable, TimeoutError, combineLatest, timer } from 'rxjs';
-import { catchError, finalize, map, take, tap } from 'rxjs/operators';
+import { catchError, finalize, map, take } from 'rxjs/operators';
 import {
   EMPTY_CHART_ID,
   LAST_SELECTED_FILE_ID,
@@ -157,6 +157,12 @@ export class ApiService {
   }) {
     let { res, req, pathInfoName } = item;
 
+    let nav = this.navQuery.getValue();
+    let userId = this.userQuery.getValue().userId;
+    let repoId = nav.isRepoProd === true ? PROD_REPO_ID : userId;
+
+    let orgProjectPath = `/${PATH_ORG}/${nav.orgId}/${PATH_PROJECT}/${nav.projectId}/${PATH_REPO}/${repoId}`;
+
     let errorData: ErrorData = {
       reqUrl: req.url,
       // reqHeaders: req.headers,
@@ -251,7 +257,11 @@ export class ApiService {
         errorData.description = `Check dashboard access rules`;
         errorData.buttonText = 'Ok, go to dashboards';
         errorData.onClickFnBindThis = (() => {
-          this.navigateService.navigateToDashboards();
+          this.router
+            .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+            .then(() => {
+              this.navigateService.navigateToDashboards();
+            });
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
@@ -261,7 +271,11 @@ export class ApiService {
         errorData.description = `Check model access rules`;
         errorData.buttonText = 'Ok, go to charts';
         errorData.onClickFnBindThis = (() => {
-          this.navigateService.navigateToModels();
+          this.router
+            .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+            .then(() => {
+              this.navigateService.navigateToModels();
+            });
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
@@ -293,30 +307,48 @@ export class ApiService {
               uiState.gridApi.deselectAll();
             }
 
-            this.resolveReportsRoute({
-              showSpinner: true
-            })
-              .pipe(
-                tap(x => {
-                  this.navigateService.navigateToReports();
-                }),
-                take(1)
-              )
-              .subscribe();
+            // this.resolveReportsRoute({
+            //   showSpinner: true
+            // })
+            //   .pipe(
+            //     tap(x => {
+            //       this.navigateService.navigateToReports();
+            //     }),
+            //     take(1)
+            //   )
+            //   .subscribe();
+
+            this.router
+              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+              .then(() => {
+                this.navigateService.navigateToReports();
+              });
           } else if (
             [ErEnum.BACKEND_MODEL_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
           ) {
-            this.navigateService.navigateToModels();
+            this.router
+              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+              .then(() => {
+                this.navigateService.navigateToModels();
+              });
           } else if (
             [ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
               infoErrorMessage
             ) > -1
           ) {
-            this.navigateService.navigateToDashboards();
+            this.router
+              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+              .then(() => {
+                this.navigateService.navigateToDashboards();
+              });
           } else if (
             [ErEnum.BACKEND_CHART_DOES_NOT_EXIST].indexOf(infoErrorMessage) > -1
           ) {
-            this.navigateService.navigateToModels();
+            this.router
+              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+              .then(() => {
+                this.navigateService.navigateToModels();
+              });
           } else if (
             [
               ErEnum.BACKEND_MCONFIG_DOES_NOT_EXIST,
@@ -326,15 +358,27 @@ export class ApiService {
             let model = this.modelQuery.getValue();
 
             if (isDefined(model.modelId)) {
-              this.navigateService.navigateToChart({
-                modelId: model.modelId,
-                chartId: EMPTY_CHART_ID
-              });
+              this.router
+                .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+                .then(() => {
+                  this.navigateService.navigateToChart({
+                    modelId: model.modelId,
+                    chartId: EMPTY_CHART_ID
+                  });
+                });
             } else {
-              this.navigateService.navigateToModels();
+              this.router
+                .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+                .then(() => {
+                  this.navigateService.navigateToModels();
+                });
             }
           } else {
-            this.navigateService.navigateToModels();
+            this.router
+              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+              .then(() => {
+                this.navigateService.navigateToModels();
+              });
           }
         }).bind(this);
 
@@ -367,10 +411,15 @@ export class ApiService {
         errorData.description = `The changes were saved to the file, but it failed the validation. It's probably a bug.`;
         errorData.buttonText = 'Ok, go to file';
         errorData.onClickFnBindThis = (() => {
-          this.navigateService.navigateToFileLine({
-            panel: PanelEnum.Tree,
-            encodedFileId: errorData.response.body.info.error.data.encodedFileId
-          });
+          this.router
+            .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+            .then(() => {
+              this.navigateService.navigateToFileLine({
+                panel: PanelEnum.Tree,
+                encodedFileId:
+                  errorData.response.body.info.error.data.encodedFileId
+              });
+            });
         }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
