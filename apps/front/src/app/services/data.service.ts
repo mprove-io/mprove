@@ -197,7 +197,7 @@ export class DataService {
     );
   }
 
-  formatValue(item: {
+  d3FormatValue(item: {
     value: any;
     formatNumber: string;
     fieldResult: FieldResultEnum;
@@ -232,17 +232,136 @@ export class DataService {
     }
   }
 
-  makeQData(item: {
-    // mconfigFields: MconfigField[];
-
-    query: Query;
-    mconfig: MconfigX;
-    // modelType: ModelTypeEnum;
-    // compiledQuery: CompiledQuery;
+  formatValue(item: {
+    value: any;
+    modelType: ModelTypeEnum;
+    field: MconfigField;
   }) {
-    let { query, mconfig } = item;
+    let { value, modelType, field } = item;
 
     let struct = this.structQuery.getValue();
+
+    let fieldResult = field?.result;
+    let fieldFormatNumber = field?.formatNumber;
+    let fieldCurrencyPrefix = field?.currencyPrefix;
+    let fieldCurrencySuffix = field?.currencySuffix;
+
+    let fieldMalloyTags = field?.malloyTags || [];
+
+    let fieldMalloyNumberTag = fieldMalloyTags.find(
+      tag => tag.key === 'number'
+    );
+
+    let fieldMalloyCurrencyTag = fieldMalloyTags.find(
+      tag => tag.key === 'currency'
+    );
+
+    let fieldMalloyCurrencySymbol =
+      fieldMalloyCurrencyTag?.value === 'usd'
+        ? '$'
+        : fieldMalloyCurrencyTag?.value === 'euro'
+          ? '€'
+          : fieldMalloyCurrencyTag?.value === 'pound'
+            ? '£'
+            : isDefined(fieldMalloyCurrencyTag)
+              ? '$'
+              : '';
+
+    let fieldMalloyDurationTag = fieldMalloyTags.find(
+      tag => tag.key === 'duration'
+    );
+
+    let fieldMalloyDurationUnit =
+      [
+        'nanoseconds',
+        'microseconds',
+        'milliseconds',
+        'seconds',
+        'minutes',
+        'hours',
+        'days'
+      ].indexOf(fieldMalloyDurationTag?.value) > -1
+        ? fieldMalloyDurationTag.value
+        : 'seconds';
+
+    let fieldThousandsSeparatorTag = field.mproveTags?.find(
+      tag => tag.key === ParameterEnum.ThousandsSeparator
+    );
+
+    let thousandsSeparator =
+      fieldThousandsSeparatorTag?.value ?? struct.thousandsSeparator;
+
+    let formattedValue =
+      // malloy duration
+      fieldResult === FieldResultEnum.Number &&
+      modelType === ModelTypeEnum.Malloy &&
+      isDefined(fieldMalloyDurationTag)
+        ? (this.getText({
+            value: Number(value),
+            options: {
+              durationUnit: fieldMalloyDurationUnit
+            },
+            terse: fieldMalloyTags.map(tag => tag.key).indexOf('terse') > -1,
+            numFormat: fieldMalloyNumberTag?.value, // if null - add ?? "#,##0,",
+            thousandsSeparator: thousandsSeparator
+          }) ??
+          Number(value).toLocaleString().split(',').join(thousandsSeparator))
+        : // field.formatNumber
+          fieldResult === FieldResultEnum.Number && isDefined(fieldFormatNumber)
+          ? this.d3FormatValue({
+              value: value,
+              formatNumber: fieldFormatNumber,
+              fieldResult: fieldResult,
+              currencyPrefix: fieldCurrencyPrefix ?? struct.currencyPrefix,
+              currencySuffix: fieldCurrencySuffix ?? struct.currencySuffix,
+              thousandsSeparator: thousandsSeparator
+            })
+          : // malloy percent
+            fieldResult === FieldResultEnum.Number &&
+              modelType === ModelTypeEnum.Malloy &&
+              fieldMalloyTags.map(tag => tag.key).indexOf('percent') > -1
+            ? format(`#${thousandsSeparator}##0.00%`, value)
+            : // malloy currency
+              fieldResult === FieldResultEnum.Number &&
+                modelType === ModelTypeEnum.Malloy &&
+                isDefined(fieldMalloyCurrencyTag)
+              ? format(
+                  `${fieldMalloyCurrencySymbol}#${thousandsSeparator}##0.00`,
+                  value
+                )
+              : // malloy number
+                fieldResult === FieldResultEnum.Number &&
+                  modelType === ModelTypeEnum.Malloy &&
+                  isDefined(fieldMalloyNumberTag)
+                ? format(fieldMalloyNumberTag.value, value)
+                : fieldResult === FieldResultEnum.Number &&
+                    isDefinedAndNotEmpty(struct.formatNumber)
+                  ? // struct.formatNumber
+                    this.d3FormatValue({
+                      value: value,
+                      formatNumber: struct.formatNumber,
+                      fieldResult: fieldResult,
+                      currencyPrefix: fieldCurrencyPrefix,
+                      currencySuffix: fieldCurrencySuffix,
+                      thousandsSeparator: thousandsSeparator
+                    })
+                  : fieldResult === FieldResultEnum.Number
+                    ? // no formatNumber
+                      Number(value)
+                        .toLocaleString()
+                        .split(',')
+                        .join(thousandsSeparator)
+                    : // fallback
+                      value;
+
+    return formattedValue;
+  }
+
+  makeQData(item: {
+    query: Query;
+    mconfig: MconfigX;
+  }) {
+    let { query, mconfig } = item;
 
     // ---mconfigField
     // description: "The date of the event, formatted as YYYYMMDD"
@@ -263,20 +382,11 @@ export class DataService {
 
     let isStore = isUndefined(query.sql);
 
-    // console.log('data');
-    // console.log(data);
-
-    // console.log('columns');
-    // console.log(mconfigFields);
-
     if (isUndefined(data)) {
       return [];
     }
 
     let qData: QDataRow[] = [];
-
-    // console.log('dataService data');
-    // console.log(data);
 
     if (mconfig.select.length === 0) {
       console.log('dataService mconfig.compiledQuery');
@@ -292,9 +402,6 @@ export class DataService {
     data.forEach((row: SourceDataRow) => {
       let r: QDataRow = {};
 
-      // console.log('row');
-      // console.log(row);
-
       let dataRow: SourceDataRow =
         mconfig.modelType === ModelTypeEnum.Malloy
           ? (row['row' as any] as unknown as SourceDataRow)
@@ -305,23 +412,14 @@ export class DataService {
         .forEach(key => {
           let value = dataRow[key];
 
-          // console.log('key');
-          // console.log(key);
-
           let fieldId: string;
           let sqlName: string;
-
-          // console.log('mconfig.modelType');
-          // console.log(mconfig.modelType);
 
           if (mconfig.modelType === ModelTypeEnum.Malloy) {
             let compiledQueryField =
               mconfig.compiledQuery.structs[0].fields.find(
                 x => x.name === key
               ) as FieldBase;
-
-            // console.log('compiledQueryField');
-            // console.log(compiledQueryField);
 
             sqlName = compiledQueryField.name;
 
@@ -338,22 +436,13 @@ export class DataService {
             fieldId = key.toLowerCase();
           }
 
-          // console.log('fieldId');
-          // console.log(fieldId);
-
           let field = mconfig.fields.find(x => {
             return x.id === fieldId;
           });
 
-          // console.log('field');
-          // console.log(field);
-
           if (mconfig.modelType === ModelTypeEnum.Store) {
             sqlName = field.sqlName;
           }
-
-          // console.log('sqlName');
-          // console.log(sqlName);
 
           let tsValue: number;
 
@@ -393,58 +482,6 @@ export class DataService {
                                 ? TimeSpecEnum.Years
                                 : undefined;
 
-          let malloyNumberTag = field.malloyTags?.find(
-            tag => tag.key === 'number'
-          );
-
-          let malloyCurrencyTag = field.malloyTags?.find(
-            tag => tag.key === 'currency'
-          );
-
-          let malloyCurrencySymbol =
-            malloyCurrencyTag?.value === 'usd'
-              ? '$'
-              : malloyCurrencyTag?.value === 'euro'
-                ? '€'
-                : malloyCurrencyTag?.value === 'pound'
-                  ? '£'
-                  : isDefined(malloyCurrencyTag)
-                    ? '$'
-                    : '';
-
-          let malloyDurationTag = field.malloyTags?.find(
-            tag => tag.key === 'duration'
-          );
-
-          let malloyDurationUnit =
-            [
-              'nanoseconds',
-              'microseconds',
-              'milliseconds',
-              'seconds',
-              'minutes',
-              'hours',
-              'days'
-            ].indexOf(malloyDurationTag?.value) > -1
-              ? malloyDurationTag.value
-              : 'seconds';
-
-          let thousandsSeparatorTag = field.mproveTags?.find(
-            tag => tag.key === ParameterEnum.ThousandsSeparator
-          );
-
-          let thousandsSeparator =
-            thousandsSeparatorTag?.value ?? struct.thousandsSeparator;
-
-          // console.log('field');
-          // console.log(field);
-
-          // console.log('struct.formatNumber');
-          // console.log(struct.formatNumber);
-
-          // console.log('field.formatNumber');
-          // console.log(field.formatNumber);
-
           let cell: QCell = {
             name: key.toLowerCase(),
             value:
@@ -463,85 +500,11 @@ export class DataService {
                         : this.getTimeSpecByFieldSqlName(sqlName),
                     unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
                   })
-                : // duration
-                  field.result === FieldResultEnum.Number &&
-                    mconfig.modelType === ModelTypeEnum.Malloy &&
-                    isDefined(malloyDurationTag)
-                  ? (this.getText({
-                      value: Number(value),
-                      options: {
-                        durationUnit: malloyDurationUnit
-                      },
-                      terse:
-                        field.malloyTags.map(tag => tag.key).indexOf('terse') >
-                        -1,
-                      numFormat: malloyNumberTag?.value, // if null - add ?? "#,##0,",
-                      thousandsSeparator: thousandsSeparator
-                    }) ??
-                    Number(value)
-                      .toLocaleString()
-                      .split(',')
-                      .join(thousandsSeparator))
-                  : // field.formatNumber
-                    field.result === FieldResultEnum.Number &&
-                      mconfig.modelType === ModelTypeEnum.Malloy &&
-                      isDefined(field?.formatNumber)
-                    ? this.formatValue({
-                        value: value,
-                        formatNumber: field?.formatNumber,
-                        fieldResult: field?.result,
-                        currencyPrefix:
-                          field?.currencyPrefix ?? struct.currencyPrefix,
-                        currencySuffix:
-                          field?.currencySuffix ?? struct.currencySuffix,
-                        thousandsSeparator: thousandsSeparator
-                      })
-                    : // malloy percent
-                      field.result === FieldResultEnum.Number &&
-                        mconfig.modelType === ModelTypeEnum.Malloy &&
-                        field.malloyTags
-                          .map(tag => tag.key)
-                          .indexOf('percent') > -1
-                      ? format(`#${thousandsSeparator}##0.00%`, value)
-                      : // malloy currency
-                        field.result === FieldResultEnum.Number &&
-                          mconfig.modelType === ModelTypeEnum.Malloy &&
-                          isDefined(malloyCurrencyTag)
-                        ? format(
-                            `${malloyCurrencySymbol}#${thousandsSeparator}##0.00`,
-                            value
-                          )
-                        : // malloy number
-                          field.result === FieldResultEnum.Number &&
-                            mconfig.modelType === ModelTypeEnum.Malloy &&
-                            isDefined(malloyNumberTag)
-                          ? format(malloyNumberTag.value, value)
-                          : field.result === FieldResultEnum.Number &&
-                              isDefinedAndNotEmpty(struct.formatNumber)
-                            ? // struct.formatNumber
-                              this.formatValue({
-                                value: value,
-                                formatNumber: field?.formatNumber,
-                                fieldResult: field?.result,
-                                currencyPrefix: field?.currencyPrefix,
-                                currencySuffix: field?.currencySuffix,
-                                thousandsSeparator: thousandsSeparator
-                              })
-                            : field.result === FieldResultEnum.Number
-                              ? // no formatNumber
-                                Number(value)
-                                  .toLocaleString()
-                                  .split(',')
-                                  .join(thousandsSeparator)
-                              : // fallback
-                                this.formatValue({
-                                  value: value,
-                                  formatNumber: field?.formatNumber,
-                                  fieldResult: field?.result,
-                                  currencyPrefix: field?.currencyPrefix,
-                                  currencySuffix: field?.currencySuffix,
-                                  thousandsSeparator: thousandsSeparator
-                                })
+                : this.formatValue({
+                    value: value,
+                    modelType: mconfig.modelType,
+                    field: field
+                  })
           };
 
           r[fieldId] = cell;
@@ -1288,7 +1251,7 @@ export class DataService {
             });
 
             let formattedValue = isDefined(p.data.value[1])
-              ? this.formatValue({
+              ? this.d3FormatValue({
                   value: Number(p.data.value[1]),
                   formatNumber: row.formatNumber,
                   fieldResult: FieldResultEnum.Number,

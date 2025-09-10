@@ -96,7 +96,7 @@ export class ChartEditorComponent implements OnChanges {
   formatNumberExamples: any[] = FORMAT_NUMBER_EXAMPLES.map(x => {
     let struct = this.structQuery.getValue();
 
-    x.output = this.dataService.formatValue({
+    x.output = this.dataService.d3FormatValue({
       value: x.input,
       formatNumber: x.id,
       fieldResult: FieldResultEnum.Number,

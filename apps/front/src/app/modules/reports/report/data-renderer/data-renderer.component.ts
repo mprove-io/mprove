@@ -57,7 +57,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
 
     this.formattedValue =
       this.isError === false && isDefined(params.value)
-        ? this.dataService.formatValue({
+        ? this.dataService.d3FormatValue({
             value: params.value,
             formatNumber: params.data.formatNumber,
             fieldResult: FieldResultEnum.Number,

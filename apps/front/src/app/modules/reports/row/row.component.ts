@@ -116,7 +116,7 @@ export class RowComponent {
         let struct = this.structQuery.getValue();
 
         this.formatNumberExamples = FORMAT_NUMBER_EXAMPLES.map(example => {
-          example.output = this.dataService.formatValue({
+          example.output = this.dataService.d3FormatValue({
             value: example.input,
             formatNumber: example.id,
             fieldResult: FieldResultEnum.Number,
