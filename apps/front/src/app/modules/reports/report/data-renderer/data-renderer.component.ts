@@ -57,7 +57,10 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         ? this.dataService.formatValue({
             value: params.value,
             modelType: params.data.mconfig.modelType,
-            field: params.data.mconfig.fields[1]
+            field: params.data.mconfig.fields[1],
+            rowFormatNumber: params.data.formatNumber,
+            rowCurrencyPrefix: params.data.currencyPrefix,
+            rowCurrencySuffix: params.data.currencySuffix
           })
         : this.isError === true
           ? rowDataRecord.error

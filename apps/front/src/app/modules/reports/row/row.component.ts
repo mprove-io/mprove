@@ -8,7 +8,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs/operators';
-import { FORMAT_NUMBER_EXAMPLES } from '~common/constants/top-front';
+import {
+  EMPTY_FORMAT_NUMBER,
+  FORMAT_NUMBER_EXAMPLES
+} from '~common/constants/top-front';
 import { ChangeTypeEnum } from '~common/enums/change-type.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
@@ -116,14 +119,17 @@ export class RowComponent {
         let struct = this.structQuery.getValue();
 
         this.formatNumberExamples = FORMAT_NUMBER_EXAMPLES.map(example => {
-          example.output = this.dataService.d3FormatValue({
-            value: example.input,
-            formatNumber: example.id,
-            fieldResult: FieldResultEnum.Number,
-            currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
-            currencySuffix: this.reportSelectedNode.data.currencySuffix,
-            thousandsSeparator: struct.thousandsSeparator
-          });
+          example.output =
+            example.id === EMPTY_FORMAT_NUMBER
+              ? 'Empty'
+              : this.dataService.d3FormatValue({
+                  value: example.input,
+                  formatNumber: example.id,
+                  fieldResult: FieldResultEnum.Number,
+                  currencyPrefix: this.reportSelectedNode.data.currencyPrefix,
+                  currencySuffix: this.reportSelectedNode.data.currencySuffix,
+                  thousandsSeparator: struct.thousandsSeparator
+                });
 
           return example;
         });

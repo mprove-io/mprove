@@ -65,6 +65,7 @@ export const RESULTS_LIST: FieldResultEnum[] = [
 
 export const APP_SPINNER_NAME = 'app';
 
+export const EMPTY_FORMAT_NUMBER = '';
 export const FORMAT_NUMBER_DECIMAL = '.';
 export const FORMAT_NUMBER_GROUPING = [3];
 export const FORMAT_NUMBER_EXAMPLES: {
@@ -72,6 +73,11 @@ export const FORMAT_NUMBER_EXAMPLES: {
   input: number;
   output: string;
 }[] = [
+  {
+    id: EMPTY_FORMAT_NUMBER,
+    input: undefined,
+    output: undefined
+  },
   {
     id: ',.0f',
     input: 1000.12345,

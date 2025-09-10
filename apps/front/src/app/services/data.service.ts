@@ -236,15 +236,34 @@ export class DataService {
     value: any;
     modelType: ModelTypeEnum;
     field: MconfigField;
+    rowFormatNumber?: string;
+    rowCurrencyPrefix?: string;
+    rowCurrencySuffix?: string;
   }) {
-    let { value, modelType, field } = item;
+    let {
+      value,
+      modelType,
+      field,
+      rowFormatNumber,
+      rowCurrencyPrefix,
+      rowCurrencySuffix
+    } = item;
 
     let struct = this.structQuery.getValue();
 
     let fieldResult = field?.result;
-    let fieldFormatNumber = field?.formatNumber;
-    let fieldCurrencyPrefix = field?.currencyPrefix;
-    let fieldCurrencySuffix = field?.currencySuffix;
+
+    let fieldFormatNumber = isDefinedAndNotEmpty(rowFormatNumber)
+      ? rowFormatNumber
+      : field?.formatNumber;
+
+    let fieldCurrencyPrefix = isDefinedAndNotEmpty(rowCurrencyPrefix)
+      ? rowCurrencyPrefix
+      : field?.currencyPrefix;
+
+    let fieldCurrencySuffix = isDefinedAndNotEmpty(rowCurrencySuffix)
+      ? rowCurrencySuffix
+      : field?.currencySuffix;
 
     let fieldMalloyTags = field?.malloyTags || [];
 
@@ -307,7 +326,8 @@ export class DataService {
           }) ??
           Number(value).toLocaleString().split(',').join(thousandsSeparator))
         : // field.formatNumber
-          fieldResult === FieldResultEnum.Number && isDefined(fieldFormatNumber)
+          fieldResult === FieldResultEnum.Number &&
+            isDefinedAndNotEmpty(fieldFormatNumber)
           ? this.d3FormatValue({
               value: value,
               formatNumber: fieldFormatNumber,
