@@ -90,6 +90,7 @@ export class BlockmlService {
             connectionId: x.connectionId,
             type: x.type,
             googleCloudProject: x.googleCloudProject,
+            serviceAccountCredentials: x.serviceAccountCredentials,
             host: x.host,
             port: x.port,
             username: x.username,

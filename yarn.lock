@@ -3224,6 +3224,23 @@
     stream-events "^1.0.5"
     uuid "^8.0.0"
 
+"@google-cloud/bigquery@^7.3.0":
+  version "7.9.4"
+  resolved "https://registry.yarnpkg.com/@google-cloud/bigquery/-/bigquery-7.9.4.tgz#df31e5bf5721f0c560db19bb6cb700ac146733e7"
+  integrity sha512-C7jeI+9lnCDYK3cRDujcBsPgiwshWKn/f0BiaJmClplfyosCLfWE83iGQ0eKH113UZzjR9c9q7aZQg0nU388sw==
+  dependencies:
+    "@google-cloud/common" "^5.0.0"
+    "@google-cloud/paginator" "^5.0.2"
+    "@google-cloud/precise-date" "^4.0.0"
+    "@google-cloud/promisify" "4.0.0"
+    arrify "^2.0.1"
+    big.js "^6.0.0"
+    duplexify "^4.0.0"
+    extend "^3.0.2"
+    is "^3.3.0"
+    stream-events "^1.0.5"
+    uuid "^9.0.0"
+
 "@google-cloud/common@^3.9.0":
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-3.10.0.tgz#454d1155bb512109cd83c6183aabbd39f9aabda7"
@@ -3239,6 +3256,21 @@
     retry-request "^4.2.2"
     teeny-request "^7.0.0"
 
+"@google-cloud/common@^5.0.0", "@google-cloud/common@^5.0.1":
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-5.0.2.tgz#423ad94b125d44263cbed2b5eb1ce1d4d53dc038"
+  integrity sha512-V7bmBKYQyu0eVG2BFejuUjlBt+zrya6vtsKdY+JxMM/dNntPF41vZ9+LhOshEUH01zOHEqBSvI7Dad7ZS6aUeA==
+  dependencies:
+    "@google-cloud/projectify" "^4.0.0"
+    "@google-cloud/promisify" "^4.0.0"
+    arrify "^2.0.1"
+    duplexify "^4.1.1"
+    extend "^3.0.2"
+    google-auth-library "^9.0.0"
+    html-entities "^2.5.2"
+    retry-request "^7.0.0"
+    teeny-request "^9.0.0"
+
 "@google-cloud/paginator@^3.0.0":
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/@google-cloud/paginator/-/paginator-3.0.7.tgz#fb6f8e24ec841f99defaebf62c75c2e744dd419b"
@@ -3247,13 +3279,18 @@
     arrify "^2.0.0"
     extend "^3.0.2"
 
-"@google-cloud/paginator@^5.0.0":
+"@google-cloud/paginator@^5.0.0", "@google-cloud/paginator@^5.0.2":
   version "5.0.2"
   resolved "https://registry.yarnpkg.com/@google-cloud/paginator/-/paginator-5.0.2.tgz#86ad773266ce9f3b82955a8f75e22cd012ccc889"
   integrity sha512-DJS3s0OVH4zFDB1PzjxAsHqJT6sKVbRwwML0ZBP9PbU7Yebtu/7SWMRzvO2J3nUi9pRNITCfu4LJeooM2w4pjg==
   dependencies:
     arrify "^2.0.0"
     extend "^3.0.2"
+
+"@google-cloud/precise-date@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/precise-date/-/precise-date-4.0.0.tgz#e179893a3ad628b17a6fabdfcc9d468753aac11a"
+  integrity sha512-1TUx3KdaU3cN7nfCdNf+UVqA/PSX29Cjcox3fZZBtINlRrXVTmUkQnCKv2MbBUbCopbK4olAT1IHl76uZyCiVA==
 
 "@google-cloud/projectify@^2.0.0":
   version "2.1.1"
@@ -3265,7 +3302,7 @@
   resolved "https://registry.yarnpkg.com/@google-cloud/projectify/-/projectify-4.0.0.tgz#d600e0433daf51b88c1fa95ac7f02e38e80a07be"
   integrity sha512-MmaX6HeSvyPbWGwFq7mXdo0uQZLGBYCwziiLIGq5JVX+/bdI3SAq6bP98trV5eTWfLuvsMcIC1YJOF2vfteLFA==
 
-"@google-cloud/promisify@<4.1.0":
+"@google-cloud/promisify@4.0.0", "@google-cloud/promisify@<4.1.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@google-cloud/promisify/-/promisify-4.0.0.tgz#a906e533ebdd0f754dca2509933334ce58b8c8b1"
   integrity sha512-Orxzlfb9c67A15cq2JQEyVc7wEsmFBmHjZWZYQMUyJ1qivXyMwdyNOs9odi79hze+2zqdTtu1E19IM/FtqZ10g==
@@ -3274,6 +3311,11 @@
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/@google-cloud/promisify/-/promisify-2.0.4.tgz#9d8705ecb2baa41b6b2673f3a8e9b7b7e1abc52a"
   integrity sha512-j8yRSSqswWi1QqUGKVEKOG03Q7qOoZP6/h2zN2YO+F5h2+DHU0bSrHCK9Y7lo2DI9fBd8qGAw795sf+3Jva4yA==
+
+"@google-cloud/promisify@^4.0.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/promisify/-/promisify-4.1.0.tgz#df8b060f0121c6462233f5420738dcda09c6df4a"
+  integrity sha512-G/FQx5cE/+DqBbOpA5jKsegGwdPniU6PuIEMt+qxWgFxvxuFOzVmp6zYchtYuwAWV5/8Dgs0yAmjvNZv3uXLQg==
 
 "@google-cloud/storage@^7.7.0":
   version "7.16.0"
@@ -3778,6 +3820,17 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@lukeed/csprng/-/csprng-1.1.0.tgz#1e3e4bd05c1cc7a0b2ddbd8a03f39f6e4b5e6cfe"
   integrity sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==
+
+"@malloydata/db-bigquery@0.0.309":
+  version "0.0.309"
+  resolved "https://registry.yarnpkg.com/@malloydata/db-bigquery/-/db-bigquery-0.0.309.tgz#a52647c757d84a84ae9f91253f43f2503d37039a"
+  integrity sha512-NhvczFcJF8jDI9e1UarUGNzAMKOjVwtTW0vLnP46eHb6pGzKgQsr5ZjOBW5tYAnDuIU8yH3007Eb7vALjIrUFg==
+  dependencies:
+    "@google-cloud/bigquery" "^7.3.0"
+    "@google-cloud/common" "^5.0.1"
+    "@google-cloud/paginator" "^5.0.0"
+    "@malloydata/malloy" "0.0.309"
+    gaxios "^4.2.0"
 
 "@malloydata/db-postgres@0.0.309":
   version "0.0.309"
@@ -11496,7 +11549,7 @@ gauge@^3.0.0:
     strip-ansi "^6.0.1"
     wide-align "^1.1.2"
 
-gaxios@^4.0.0:
+gaxios@^4.0.0, gaxios@^4.2.0:
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/gaxios/-/gaxios-4.3.3.tgz#d44bdefe52d34b6435cc41214fdb160b64abfc22"
   integrity sha512-gSaYYIO1Y3wUtdfHmjDUZ8LWaxJQpiavzbF5Kq53akSzvmVg0RfyOcFDbO1KJ/KCGRFz2qG+lS81F0nkr7cRJA==
@@ -11797,7 +11850,7 @@ gonzales-pe@^4.2.3, gonzales-pe@^4.3.0:
   dependencies:
     minimist "^1.2.5"
 
-google-auth-library@9.15.1, google-auth-library@^9.6.3:
+google-auth-library@9.15.1, google-auth-library@^9.0.0, google-auth-library@^9.6.3:
   version "9.15.1"
   resolved "https://registry.yarnpkg.com/google-auth-library/-/google-auth-library-9.15.1.tgz#0c5d84ed1890b2375f1cd74f03ac7b806b392928"
   integrity sha512-Jb6Z0+nvECVz+2lzSMt9u98UsoakXxA2HGHMCxh+so3n90XgYWkq5dur19JAJV7ONiJY22yBTyJB1TSkvPq9Ng==

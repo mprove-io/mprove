@@ -1,4 +1,3 @@
-import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
 import asyncPool from 'tiny-async-pool';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
@@ -22,6 +21,7 @@ import { Model } from '~common/interfaces/blockml/model';
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { dcType } from '~common/types/dc-type';
 import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
+import { MalloyConnection } from '~node-common/functions/make-malloy-connections';
 import { makeMalloyQuery } from '~node-common/functions/make-malloy-query';
 import { log } from '../extra/log';
 
@@ -40,7 +40,7 @@ export async function fetchSql<T extends dcType>(
     entities: T[];
     mods: FileMod[];
     apiModels: Model[];
-    malloyConnections: PostgresConnection[];
+    malloyConnections: MalloyConnection[];
     projectConnections: ProjectConnection[];
     malloyFiles: BmlFile[];
     weekStart: ProjectWeekStartEnum;

@@ -104,6 +104,7 @@
     "@katoid/angular-grid-layout": "3.0.2",
     "@leeoniya/ufuzzy": "1.0.18",
     "@malloydata/db-postgres": "0.0.309",
+    "@malloydata/db-bigquery": "0.0.309",
     "@malloydata/malloy": "0.0.309",
     "@malloydata/malloy-query-builder": "0.0.309",
     "@malloydata/render": "0.0.309",

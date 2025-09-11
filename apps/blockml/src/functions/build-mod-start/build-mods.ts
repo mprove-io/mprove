@@ -1,4 +1,3 @@
-import { PostgresConnection } from '@malloydata/db-postgres';
 import {
   Model as MalloyModel,
   ModelDef as MalloyModelDef,
@@ -25,6 +24,7 @@ import { ProjectConnection } from '~common/interfaces/blockml/project-connection
 import { WrapResult } from '~common/interfaces/wrap-result';
 import { errorToWrapResult } from '~node-common/functions/error-to-wrap-result';
 import { getWrapResult } from '~node-common/functions/get-wrap-result';
+import { MalloyConnection } from '~node-common/functions/make-malloy-connections';
 import { log } from '../extra/log';
 
 let func = FuncEnum.BuildMods;
@@ -32,7 +32,7 @@ let func = FuncEnum.BuildMods;
 export async function buildMods(
   item: {
     mods: FileMod[];
-    malloyConnections: PostgresConnection[];
+    malloyConnections: MalloyConnection[];
     connections: ProjectConnection[];
     tempDir: string;
     projectId: string;
@@ -188,7 +188,10 @@ export async function buildMods(
                   partArray.shift();
 
                   let filPath = partArray.join('/');
-                  let fileName = `${partArray[partArray.length - 1]} <-- ${x.fileName}`;
+                  let fileName =
+                    partArray[partArray.length - 1] === x.fileName
+                      ? x.fileName
+                      : `${partArray[partArray.length - 1]} <-- ${x.fileName}`;
 
                   let line = {
                     line: (y.at.range.start.line as number) + 1,

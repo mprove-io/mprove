@@ -12,6 +12,9 @@ export class ProjectConnection {
   @IsString()
   googleCloudProject?: string;
 
+  @IsOptional()
+  serviceAccountCredentials?: any;
+
   host?: string;
   port?: number;
   username?: string;

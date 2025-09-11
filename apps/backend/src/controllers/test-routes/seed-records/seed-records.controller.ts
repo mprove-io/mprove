@@ -294,6 +294,7 @@ export class SeedRecordsController {
                   connectionId: c.connectionId,
                   type: c.type,
                   googleCloudProject: c.googleCloudProject,
+                  serviceAccountCredentials: c.serviceAccountCredentials,
                   host: c.host,
                   port: c.port,
                   username: c.username,

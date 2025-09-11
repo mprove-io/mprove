@@ -1,5 +1,4 @@
 import * as path from 'path';
-import { PostgresConnection } from '@malloydata/db-postgres';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fse from 'fs-extra';
@@ -69,7 +68,10 @@ import {
 import { MyRegex } from '~common/models/my-regex';
 import { ServerError } from '~common/models/server-error';
 import { getMproveDir } from '~node-common/functions/get-mprove-dir';
-import { makeMalloyConnections } from '~node-common/functions/make-malloy-connections';
+import {
+  MalloyConnection,
+  makeMalloyConnections
+} from '~node-common/functions/make-malloy-connections';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 interface RebuildStructPrep {
@@ -414,7 +416,7 @@ export class RebuildStructService {
 
     // await fse.writeFile(mainPath, mainContent);
 
-    let malloyConnections: PostgresConnection[] = makeMalloyConnections({
+    let malloyConnections: MalloyConnection[] = makeMalloyConnections({
       connections: item.connections
     });
 

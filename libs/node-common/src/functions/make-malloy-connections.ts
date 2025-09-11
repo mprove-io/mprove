@@ -1,15 +1,30 @@
+import { BigQueryConnection } from '@malloydata/db-bigquery';
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
+export type MalloyConnection = PostgresConnection | BigQueryConnection;
+
 export function makeMalloyConnections(item: {
   connections: ProjectConnection[];
 }) {
-  let malloyConnections: PostgresConnection[] = [];
+  let malloyConnections: MalloyConnection[] = [];
 
   item.connections.forEach(c => {
     // TODO: more connection types
+
+    // node_modules/@malloydata/db-bigquery/dist/bigquery_connection.d.ts
+    //   interface BigQueryConnectionConfiguration {
+    //     /** This ID is used for Bigquery Table Normalization */
+    //     projectId?: string;
+    //     serviceAccountKeyPath?: string;
+    //     location?: string;
+    //     maximumBytesBilled?: string;
+    //     timeoutMs?: string;
+    //     billingProjectId?: string;
+    //     credentials?: CredentialBody;
+    // }
 
     let mConnection =
       c.type === ConnectionTypeEnum.PostgreSQL
@@ -20,7 +35,12 @@ export function makeMalloyConnections(item: {
             password: c.password,
             databaseName: c.databaseName
           })
-        : undefined;
+        : c.type === ConnectionTypeEnum.BigQuery
+          ? new BigQueryConnection(c.connectionId, () => ({}), {
+              credentials: c.serviceAccountCredentials,
+              projectId: c.googleCloudProject
+            })
+          : undefined;
 
     if (isDefined(mConnection)) {
       malloyConnections.push(mConnection);

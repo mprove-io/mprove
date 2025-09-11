@@ -1,4 +1,3 @@
-import { PostgresConnection } from '@malloydata/db-postgres';
 import {
   Runtime as MalloyRuntime,
   ModelMaterializer,
@@ -44,6 +43,7 @@ import { ProjectConnection } from '~common/interfaces/blockml/project-connection
 import { Query } from '~common/interfaces/blockml/query';
 import { Sorting } from '~common/interfaces/blockml/sorting';
 import { getBlankMconfigAndQuery } from './get-blank-mconfig-and-query';
+import { MalloyConnection } from './make-malloy-connections';
 import { makeQueryId } from './make-query-id';
 import { processMalloyWhereOrHaving } from './process-malloy-where-or-having';
 
@@ -54,7 +54,7 @@ export async function makeMalloyQuery(item: {
   model: Model;
   mconfig: Mconfig;
   queryOperations: QueryOperation[];
-  malloyConnections: PostgresConnection[];
+  malloyConnections: MalloyConnection[];
   projectConnection: ProjectConnection;
 }) {
   let {

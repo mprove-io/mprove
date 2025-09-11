@@ -1,4 +1,3 @@
-import { PostgresConnection } from '@malloydata/db-postgres';
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
@@ -10,6 +9,7 @@ import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Model } from '~common/interfaces/blockml/model';
 import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { dcType } from '~common/types/dc-type';
+import { MalloyConnection } from '~node-common/functions/make-malloy-connections';
 import { checkLimit } from './check-limit';
 import { checkSelectElements } from './check-select-elements';
 import { checkSorts } from './check-sorts';
@@ -28,7 +28,7 @@ export async function buildTile<T extends dcType>(
     stores: FileStore[];
     mods: FileMod[];
     apiModels: Model[];
-    malloyConnections: PostgresConnection[];
+    malloyConnections: MalloyConnection[];
     projectConnections: ProjectConnection[];
     malloyFiles: BmlFile[];
     weekStart: ProjectWeekStartEnum;
