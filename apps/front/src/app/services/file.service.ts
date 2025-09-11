@@ -17,6 +17,7 @@ import { StructQuery } from '../queries/struct.query';
 import { UiQuery, UiState } from '../queries/ui.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';
+// import { encodeFilePath } from '~common/functions/encode-file-path';
 
 @Injectable({ providedIn: 'root' })
 export class FileService {
@@ -123,5 +124,29 @@ export class FileService {
           }
         })
       );
+  }
+
+  refreshSecondFile() {
+    let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
+
+    // let repoNodes = this.repoQuery.getValue().nodes;
+    // let fileIds = getFileIds({ nodes: repoNodes });
+
+    // let secondFilePathAr = secondFileNodeId.split('/');
+    // secondFilePathAr.shift();
+
+    // let secondFilePathEncoded = encodeFilePath({
+    //   filePath: secondFilePathAr.join('/')
+    // });
+
+    // if (fileIds.indexOf(secondFilePathEncoded) < 0) {
+    //   this.uiQuery.updatePart({ secondFileNodeId: undefined });
+    // }
+
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
+    setTimeout(() => {
+      this.uiQuery.updatePart({ secondFileNodeId: secondFileNodeId });
+    }, 0);
   }
 }

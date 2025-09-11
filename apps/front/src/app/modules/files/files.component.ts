@@ -255,7 +255,10 @@ export class FilesComponent implements OnInit {
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
+        tap(x => {
+          this.spinner.hide(APP_SPINNER_NAME);
+          this.fileService.refreshSecondFile();
+        }),
         take(1)
       )
       .subscribe();
@@ -298,7 +301,10 @@ export class FilesComponent implements OnInit {
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
+        tap(x => {
+          this.spinner.hide(APP_SPINNER_NAME);
+          this.fileService.refreshSecondFile();
+        }),
         take(1)
       )
       .subscribe();
@@ -342,7 +348,10 @@ export class FilesComponent implements OnInit {
               })
             : of([])
         ),
-        tap(x => this.spinner.hide(APP_SPINNER_NAME)),
+        tap(x => {
+          this.spinner.hide(APP_SPINNER_NAME);
+          this.fileService.refreshSecondFile();
+        }),
         take(1)
       )
       .subscribe();

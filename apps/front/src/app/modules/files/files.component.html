@@ -414,6 +414,11 @@
 
         <m-files-right
           *ngIf="panel === panelTree"
+          class="flex w-[37%]"
+        ></m-files-right>
+
+        <!-- <m-files-right
+          *ngIf="panel === panelTree"
           class="flex"
           [ngClass]="{
             'w-[37%]':
@@ -429,7 +434,7 @@
               struct?.errors?.length !== 0 ||
               !secondFileNodeId
           }"
-        ></m-files-right>
+        ></m-files-right> -->
       </div>
     </div>
   </div>

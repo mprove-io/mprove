@@ -70,6 +70,7 @@ import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';
 import { ConfirmService } from '~front/app/services/confirm.service';
+import { FileService } from '~front/app/services/file.service';
 import {
   HighLightService,
   PlaceNameEnum
@@ -523,6 +524,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     private structQuery: StructQuery,
     private uiQuery: UiQuery,
     private navQuery: NavQuery,
+    private fileService: FileService,
     private repoQuery: RepoQuery,
     private memberQuery: MemberQuery,
     private spinner: NgxSpinnerService,
@@ -915,6 +917,21 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
               panel: PanelEnum.Tree,
               encodedFileId: this.file.fileId
             });
+
+            let secondFileNodeId = this.uiQuery.getValue().secondFileNodeId;
+
+            if (isDefined(secondFileNodeId)) {
+              let secondFilePathAr = secondFileNodeId.split('/');
+              secondFilePathAr.shift();
+
+              let secondFileEncodedFileId = encodeFilePath({
+                filePath: secondFilePathAr.join('/')
+              });
+
+              if (this.file.fileId === secondFileEncodedFileId) {
+                this.fileService.refreshSecondFile();
+              }
+            }
 
             this.cd.detectChanges();
           }
