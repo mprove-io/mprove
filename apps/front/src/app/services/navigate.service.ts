@@ -121,10 +121,18 @@ export class NavigateService {
 
     this.router.navigate(ar, {
       queryParams: {
-        panel: panel,
-        line: lineNumber
+        panel: panel
       }
     });
+
+    setTimeout(() => {
+      this.router.navigate(ar, {
+        queryParams: {
+          panel: panel,
+          line: lineNumber
+        }
+      });
+    }, 0);
   }
 
   navigateToModels() {
