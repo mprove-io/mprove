@@ -50,6 +50,7 @@ export function makeMalloyConnections(item: {
                 connOptions: {
                   account: c.account,
                   warehouse: c.warehouse,
+                  database: c.database,
                   username: c.username,
                   password: c.password
                   //  database?: string | undefined;

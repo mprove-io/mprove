@@ -350,30 +350,6 @@
           ></m-validation>
         </div>
       </div>
-
-      <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
-
-        <div class="flex flex-col">
-          <input
-            autocomplete="off"
-            *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
-            spellcheck="false"
-            data-cy="editConnectionDialogDatabaseInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['database'].invalid &&
-                editConnectionForm.controls['database'].touched
-            }"
-            formControlName="database"
-          />
-          <m-validation
-            *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
-            [control]="editConnectionForm.controls['database']"
-          ></m-validation>
-        </div>
-      </div>
     </div>
 
     <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
@@ -419,6 +395,38 @@
           />
           <m-validation
             [control]="editConnectionForm.controls['warehouse']"
+          ></m-validation>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        editConnectionForm.controls['type'].value === typePostgreSQL ||
+        editConnectionForm.controls['type'].value === typeClickHouse ||
+        editConnectionForm.controls['type'].value === typeSnowFlake
+      "
+    >
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
+            spellcheck="false"
+            data-cy="editConnectionDialogDatabaseInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editConnectionForm.controls['database'].invalid &&
+                editConnectionForm.controls['database'].touched
+            }"
+            formControlName="database"
+          />
+          <m-validation
+            *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
+            [control]="editConnectionForm.controls['database']"
           ></m-validation>
         </div>
       </div>

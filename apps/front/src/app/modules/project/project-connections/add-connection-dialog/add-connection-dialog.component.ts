@@ -208,6 +208,8 @@ export class AddConnectionDialogComponent implements OnInit {
                 ConnectionTypeEnum.PostgreSQL
                 // ,
                 // ConnectionTypeEnum.ClickHouse
+                // ,
+                // ConnectionTypeEnum.SnowFlake
               ].indexOf(this.addConnectionForm.get('type').value) > -1,
             Validators.required
           )
@@ -386,9 +388,11 @@ export class AddConnectionDialogComponent implements OnInit {
     }
 
     if (
-      [ConnectionTypeEnum.PostgreSQL, ConnectionTypeEnum.ClickHouse].indexOf(
-        type
-      ) < 0
+      [
+        ConnectionTypeEnum.PostgreSQL,
+        ConnectionTypeEnum.ClickHouse,
+        ConnectionTypeEnum.SnowFlake
+      ].indexOf(type) < 0
     ) {
       this.addConnectionForm.controls['host'].reset();
       this.addConnectionForm.controls['port'].reset();

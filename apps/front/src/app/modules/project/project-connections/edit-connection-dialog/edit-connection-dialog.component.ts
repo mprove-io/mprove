@@ -179,6 +179,8 @@ export class EditConnectionDialogComponent implements OnInit {
                 ConnectionTypeEnum.PostgreSQL
                 // ,
                 // ConnectionTypeEnum.ClickHouse
+                // ,
+                // ConnectionTypeEnum.SnowFlake
               ].indexOf(this.editConnectionForm.get('type').value) > -1,
             Validators.required
           )
