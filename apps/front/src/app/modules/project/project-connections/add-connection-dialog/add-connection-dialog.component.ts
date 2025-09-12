@@ -80,8 +80,9 @@ export class AddConnectionDialogComponent implements OnInit {
   connectionTypes = [
     ConnectionTypeEnum.PostgreSQL,
     ConnectionTypeEnum.SnowFlake,
-    ConnectionTypeEnum.ClickHouse,
     ConnectionTypeEnum.BigQuery,
+    ConnectionTypeEnum.MotherDuck,
+    ConnectionTypeEnum.ClickHouse,
     ConnectionTypeEnum.GoogleApi,
     ConnectionTypeEnum.Api
   ];
