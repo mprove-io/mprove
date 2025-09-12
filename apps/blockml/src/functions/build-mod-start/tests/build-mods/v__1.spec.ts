@@ -57,9 +57,9 @@ test('1', async t => {
       password: cs.get<BlockmlConfig['blockmlTestsDwhPostgresPassword']>(
         'blockmlTestsDwhPostgresPassword'
       ),
-      databaseName: cs.get<
-        BlockmlConfig['blockmlTestsDwhPostgresDatabaseName']
-      >('blockmlTestsDwhPostgresDatabaseName')
+      database: cs.get<BlockmlConfig['blockmlTestsDwhPostgresDatabaseName']>(
+        'blockmlTestsDwhPostgresDatabaseName'
+      )
     };
 
     await structService.rebuildStruct({

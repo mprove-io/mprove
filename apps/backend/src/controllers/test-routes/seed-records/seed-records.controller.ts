@@ -47,7 +47,6 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isDefined } from '~common/functions/is-defined';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import {
   ToBackendSeedRecordsRequest,
   ToBackendSeedRecordsRequestPayloadMembersItem,
@@ -288,20 +287,7 @@ export class SeedRecordsController {
                 y.projectId === newProject.projectId &&
                 y.envId === prodEnv.envId
             )
-            .map(
-              c =>
-                <ProjectConnection>{
-                  connectionId: c.connectionId,
-                  type: c.type,
-                  googleCloudProject: c.googleCloudProject,
-                  serviceAccountCredentials: c.serviceAccountCredentials,
-                  host: c.host,
-                  port: c.port,
-                  username: c.username,
-                  password: c.password,
-                  databaseName: c.database
-                }
-            );
+            .map(c => this.wrapToApiService.wrapToApiProjectConnection(c));
 
           let {
             struct: devStruct,

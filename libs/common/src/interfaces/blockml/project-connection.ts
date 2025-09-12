@@ -1,23 +1,11 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { IsOptional, IsString } from 'class-validator';
+import { Connection } from '../backend/connection';
 
-export class ProjectConnection {
-  @IsString()
-  connectionId: string;
-
-  @IsEnum(ConnectionTypeEnum)
-  type: ConnectionTypeEnum;
-
-  @IsOptional()
-  @IsString()
-  googleCloudProject?: string;
-
+export class ProjectConnection extends Connection {
   @IsOptional()
   serviceAccountCredentials?: any;
 
-  host?: string;
-  port?: number;
-  username?: string;
+  @IsOptional()
+  @IsString()
   password?: string;
-  databaseName?: string;
 }

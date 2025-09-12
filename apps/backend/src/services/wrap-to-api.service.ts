@@ -49,24 +49,19 @@ import { User } from '~common/interfaces/backend/user';
 import { Column } from '~common/interfaces/blockml/column';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { ModelField } from '~common/interfaces/blockml/model-field';
+import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { Query } from '~common/interfaces/blockml/query';
 
 @Injectable()
 export class WrapToApiService {
   constructor() {}
 
-  // wrapToApiApi(item: { api: ApiEnt }): Api {
-  //   let { api } = item;
-
-  //   return {
-  //     structId: api.structId,
-  //     apiId: api.apiId,
-  //     filePath: api.filePath,
-  //     label: api.label,
-  //     steps: api.steps,
-  //     serverTs: Number(api.serverTs)
-  //   };
-  // }
+  wrapToApiProjectConnection(x: ConnectionEnt): ProjectConnection {
+    return Object.assign({}, this.wrapToApiConnection(x), <ProjectConnection>{
+      serviceAccountCredentials: x.serviceAccountCredentials,
+      password: x.password
+    });
+  }
 
   wrapToApiConnection(x: ConnectionEnt): Connection {
     return {

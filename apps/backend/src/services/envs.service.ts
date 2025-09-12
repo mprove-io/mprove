@@ -159,19 +159,8 @@ export class EnvsService {
       });
 
     let connectionsWithFallback: ProjectConnection[] =
-      connectionsEntsWithFallback.map(
-        x =>
-          <ProjectConnection>{
-            connectionId: x.connectionId,
-            type: x.type,
-            googleCloudProject: x.googleCloudProject,
-            serviceAccountCredentials: x.serviceAccountCredentials,
-            host: x.host,
-            port: x.port,
-            username: x.username,
-            password: x.password,
-            databaseName: x.database
-          }
+      connectionsEntsWithFallback.map(x =>
+        this.wrapToApiService.wrapToApiProjectConnection(x)
       );
 
     return {

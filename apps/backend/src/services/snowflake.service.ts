@@ -39,10 +39,8 @@ export class SnowFlakeService {
       warehouse: connection.warehouse,
       username: connection.username,
       password: connection.password
-      // database: '',
       //  database?: string | undefined;
       //  schema?: string | undefined;
-      //  warehouse?: string | undefined;
       //  role?: string | undefined;
       //  clientSessionKeepAlive?: boolean | undefined;
       //  clientSessionKeepAliveHeartbeatFrequency?: number | undefined;

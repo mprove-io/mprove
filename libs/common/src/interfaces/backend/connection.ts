@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsEnum,
   IsInt,
+  IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
@@ -10,58 +11,76 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ConnectionHeader } from './connection-header';
 
 export class Connection {
+  @IsOptional()
   @IsString()
-  projectId: string;
+  projectId?: string;
 
+  @IsOptional()
   @IsString()
-  connectionId: string;
+  connectionId?: string;
 
+  @IsOptional()
   @IsString()
-  envId: string;
+  envId?: string;
 
+  @IsOptional()
   @IsEnum(ConnectionTypeEnum)
-  type: ConnectionTypeEnum;
+  type?: ConnectionTypeEnum;
 
+  @IsOptional()
   @IsString()
-  googleCloudProject: string;
+  googleCloudProject?: string;
 
+  @IsOptional()
   @IsString()
-  googleCloudClientEmail: string;
+  googleCloudClientEmail?: string;
 
+  @IsOptional()
   @IsInt()
-  bigqueryQuerySizeLimitGb: number;
+  bigqueryQuerySizeLimitGb?: number;
 
+  @IsOptional()
   @IsString()
-  account: string;
+  account?: string;
 
+  @IsOptional()
   @IsString()
-  warehouse: string;
+  warehouse?: string;
 
+  @IsOptional()
   @IsString()
-  baseUrl: string;
+  baseUrl?: string;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => ConnectionHeader)
-  headers: ConnectionHeader[];
+  headers?: ConnectionHeader[];
 
+  @IsOptional()
   @IsString({ each: true })
   googleAuthScopes?: string[];
 
+  @IsOptional()
   @IsString()
-  host: string;
+  host?: string;
 
+  @IsOptional()
   @IsInt()
-  port: number;
+  port?: number;
 
+  @IsOptional()
   @IsString()
-  database: string;
+  database?: string;
 
+  @IsOptional()
   @IsString()
-  username: string;
+  username?: string;
 
+  @IsOptional()
   @IsBoolean()
-  isSSL: boolean;
+  isSSL?: boolean;
 
+  @IsOptional()
   @IsInt()
-  serverTs: number;
+  serverTs?: number;
 }
