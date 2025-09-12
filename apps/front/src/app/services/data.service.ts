@@ -9,6 +9,7 @@ import {
   FORMAT_NUMBER_GROUPING
 } from '~common/constants/top-front';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
@@ -424,7 +425,9 @@ export class DataService {
 
       let dataRow: SourceDataRow =
         mconfig.modelType === ModelTypeEnum.Malloy
-          ? (row['row' as any] as unknown as SourceDataRow)
+          ? query.connectionType === ConnectionTypeEnum.PostgreSQL
+            ? (row['row' as any] as unknown as SourceDataRow)
+            : row
           : row;
 
       Object.keys(dataRow)
