@@ -135,6 +135,7 @@ export class MakerService {
     account: string;
     warehouse: string;
     serviceAccountCredentials: any;
+    motherduckToken: string;
     bigqueryQuerySizeLimitGb: number;
     isSSL: boolean;
   }) {
@@ -155,6 +156,7 @@ export class MakerService {
       account,
       warehouse,
       serviceAccountCredentials,
+      motherduckToken,
       bigqueryQuerySizeLimitGb
     } = item;
 
@@ -172,6 +174,7 @@ export class MakerService {
       headers: headers,
       googleAuthScopes: googleAuthScopes,
       serviceAccountCredentials: serviceAccountCredentials,
+      motherduckToken: motherduckToken,
       googleCloudProject: serviceAccountCredentials?.project_id,
       googleCloudClientEmail: serviceAccountCredentials?.client_email,
       googleAccessToken: undefined,

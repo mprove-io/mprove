@@ -55,6 +55,7 @@ export class CreateConnectionController {
       type,
       isSSL,
       baseUrl,
+      motherduckToken,
       serviceAccountCredentials,
       headers,
       googleAuthScopes,
@@ -109,6 +110,7 @@ export class CreateConnectionController {
       database: database,
       username: username,
       password: password,
+      motherduckToken: motherduckToken,
       serviceAccountCredentials: serviceAccountCredentials,
       bigqueryQuerySizeLimitGb: bigqueryQuerySizeLimitGb,
       isSSL: isSSL

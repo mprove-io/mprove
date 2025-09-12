@@ -111,6 +111,10 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD ||
       envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD,
 
+    firstProjectDwhMotherDuckToken:
+      process.env.BACKEND_FIRST_PROJECT_DWH_MOTHERDUCK_TOKEN ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_MOTHERDUCK_TOKEN,
+
     allowUsersToCreateOrganizations: <BoolEnum>(
       (process.env.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS ||
         envFile.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS)

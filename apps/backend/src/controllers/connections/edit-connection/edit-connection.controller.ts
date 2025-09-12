@@ -47,6 +47,7 @@ export class EditConnectionController {
       connectionId,
       isSSL,
       baseUrl,
+      motherduckToken,
       serviceAccountCredentials,
       headers,
       googleAuthScopes,
@@ -86,6 +87,7 @@ export class EditConnectionController {
     connection.database = database;
     connection.username = username;
     connection.password = password;
+    connection.motherduckToken = motherduckToken;
     connection.serviceAccountCredentials = serviceAccountCredentials;
     connection.googleCloudProject = serviceAccountCredentials?.project_id;
     connection.googleCloudClientEmail = serviceAccountCredentials?.client_email;

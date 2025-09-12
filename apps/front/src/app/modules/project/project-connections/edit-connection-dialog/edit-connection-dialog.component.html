@@ -404,6 +404,7 @@
       *ngIf="
         editConnectionForm.controls['type'].value === typePostgreSQL ||
         editConnectionForm.controls['type'].value === typeClickHouse ||
+        editConnectionForm.controls['type'].value === typeMotherDuck ||
         editConnectionForm.controls['type'].value === typeSnowFlake
       "
     >
@@ -424,7 +425,8 @@
             }"
             formControlName="database"
             [placeholder]="
-              editConnectionForm.controls['type'].value === typeSnowFlake
+              editConnectionForm.controls['type'].value === typeSnowFlake ||
+              editConnectionForm.controls['type'].value === typeMotherDuck
                 ? 'Optional'
                 : ''
             "
@@ -485,6 +487,32 @@
           />
           <m-validation
             [control]="editConnectionForm.controls['password']"
+          ></m-validation>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="editConnectionForm.controls['type'].value === typeMotherDuck">
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+          >MotherDuck Token</div
+        >
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogMotherduckInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editConnectionForm.controls['motherduckToken'].invalid &&
+                editConnectionForm.controls['motherduckToken'].touched
+            }"
+            formControlName="motherduckToken"
+          />
+          <m-validation
+            [control]="editConnectionForm.controls['motherduckToken']"
           ></m-validation>
         </div>
       </div>

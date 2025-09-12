@@ -204,6 +204,7 @@ export class SeedRecordsController {
           password: x.password,
           account: x.account,
           warehouse: x.warehouse,
+          motherduckToken: x.motherduckToken,
           serviceAccountCredentials: x.serviceAccountCredentials,
           bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,
           isSSL: x.isSSL

@@ -7,5 +7,9 @@ export class ProjectConnection extends Connection {
 
   @IsOptional()
   @IsString()
+  motherduckToken?: string;
+
+  @IsOptional()
+  @IsString()
   password?: string;
 }

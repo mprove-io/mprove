@@ -59,6 +59,7 @@ export class WrapToApiService {
   wrapToApiProjectConnection(x: ConnectionEnt): ProjectConnection {
     return Object.assign({}, this.wrapToApiConnection(x), <ProjectConnection>{
       serviceAccountCredentials: x.serviceAccountCredentials,
+      motherduckToken: x.motherduckToken,
       password: x.password
     });
   }

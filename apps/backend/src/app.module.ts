@@ -341,6 +341,7 @@ export class AppModule implements OnModuleInit {
                 password: firstProjectDwhPostgresPassword,
                 account: undefined,
                 warehouse: undefined,
+                motherduckToken: undefined,
                 serviceAccountCredentials: undefined,
                 bigqueryQuerySizeLimitGb: undefined,
                 isSSL: false
@@ -381,6 +382,7 @@ export class AppModule implements OnModuleInit {
                 database: undefined,
                 account: undefined,
                 warehouse: undefined,
+                motherduckToken: undefined,
                 serviceAccountCredentials: undefined,
                 bigqueryQuerySizeLimitGb: undefined,
                 isSSL: false
@@ -427,6 +429,7 @@ export class AppModule implements OnModuleInit {
                 password: undefined,
                 account: undefined,
                 warehouse: undefined,
+                motherduckToken: undefined,
                 serviceAccountCredentials: bigqueryTestCredentials,
                 bigqueryQuerySizeLimitGb: 1,
                 isSSL: true
@@ -473,12 +476,54 @@ export class AppModule implements OnModuleInit {
                 warehouse: this.cs.get<
                   BackendConfig['firstProjectDwhSnowflakeWarehouse']
                 >('firstProjectDwhSnowflakeWarehouse'),
+                motherduckToken: undefined,
                 serviceAccountCredentials: undefined,
                 bigqueryQuerySizeLimitGb: undefined,
                 isSSL: true
               });
 
               connections.push(c4);
+            }
+
+            let c5connection =
+              await this.db.drizzle.query.connectionsTable.findFirst({
+                where: and(
+                  eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                  eq(connectionsTable.connectionId, 'c5_duckdb')
+                )
+              });
+
+            let firstProjectDwhMotherDuckToken = this.cs.get<
+              BackendConfig['firstProjectDwhMotherDuckToken']
+            >('firstProjectDwhMotherDuckToken');
+
+            if (
+              isUndefined(c5connection) &&
+              isDefinedAndNotEmpty(firstProjectDwhMotherDuckToken)
+            ) {
+              let c5 = this.makerService.makeConnection({
+                projectId: firstProjectId,
+                envId: PROJECT_ENV_PROD,
+                connectionId: 'c5_duckdb',
+                type: ConnectionTypeEnum.MotherDuck,
+                baseUrl: undefined,
+                headers: undefined,
+                googleAuthScopes: undefined,
+                host: undefined,
+                port: undefined,
+                username: undefined,
+                password: undefined,
+                database: undefined,
+                account: undefined,
+                warehouse: undefined,
+                serviceAccountCredentials: undefined,
+                motherduckToken: firstProjectDwhMotherDuckToken,
+                bigqueryQuerySizeLimitGb: undefined,
+                isSSL: true
+              });
+
+              connections.push(c5);
             }
 
             let c7connection =
@@ -521,6 +566,7 @@ export class AppModule implements OnModuleInit {
                 password: undefined,
                 account: undefined,
                 warehouse: undefined,
+                motherduckToken: undefined,
                 serviceAccountCredentials: googleApiTestCredentials,
                 bigqueryQuerySizeLimitGb: undefined,
                 isSSL: true

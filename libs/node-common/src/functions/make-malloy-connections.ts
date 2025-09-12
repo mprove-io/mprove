@@ -1,6 +1,6 @@
 import { BigQueryConnection } from '@malloydata/db-bigquery';
+import { DuckDBConnection } from '@malloydata/db-duckdb';
 import { PostgresConnection } from '@malloydata/db-postgres';
-// import { SnowflakeConnection } from '@malloydata/db-snowflake';
 import { SnowflakeConnection } from '@malloydata/db-snowflake';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -9,7 +9,8 @@ import { ProjectConnection } from '~common/interfaces/blockml/project-connection
 export type MalloyConnection =
   | PostgresConnection
   | BigQueryConnection
-  | SnowflakeConnection;
+  | SnowflakeConnection
+  | DuckDBConnection;
 
 export function makeMalloyConnections(item: {
   connections: ProjectConnection[];
@@ -53,7 +54,6 @@ export function makeMalloyConnections(item: {
                   database: c.database,
                   username: c.username,
                   password: c.password
-                  //  database?: string | undefined;
                   //  schema?: string | undefined;
                   //  role?: string | undefined;
                   //  clientSessionKeepAlive?: boolean | undefined;
@@ -67,7 +67,18 @@ export function makeMalloyConnections(item: {
                   //  privateKeyPass?: string;
                 }
               })
-            : undefined;
+            : c.type === ConnectionTypeEnum.MotherDuck
+              ? new DuckDBConnection({
+                  name: c.connectionId,
+                  databasePath: isDefined(c.database)
+                    ? `md:${c.database}`
+                    : `md:`,
+                  motherDuckToken: c.motherduckToken
+                  // additionalExtensions?: string[];
+                  // workingDirectory?: string;
+                  // readOnly?: boolean;
+                })
+              : undefined;
 
     if (isDefined(mConnection)) {
       malloyConnections.push(mConnection);

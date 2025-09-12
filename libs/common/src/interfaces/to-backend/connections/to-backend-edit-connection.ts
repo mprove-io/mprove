@@ -26,6 +26,10 @@ export class ToBackendEditConnectionRequestPayload {
   baseUrl?: string;
 
   @IsOptional()
+  @IsString()
+  motherduckToken?: string;
+
+  @IsOptional()
   serviceAccountCredentials?: any;
 
   @IsOptional()

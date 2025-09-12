@@ -67,6 +67,7 @@ export class EditConnectionDialogComponent implements OnInit {
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
   typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
@@ -214,6 +215,18 @@ export class EditConnectionDialogComponent implements OnInit {
           )
         ]
       ],
+      motherduckToken: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              [ConnectionTypeEnum.MotherDuck].indexOf(
+                this.editConnectionForm.get('type').value
+              ) > -1,
+            Validators.required
+          )
+        ]
+      ],
       scopes: this.fb.array(
         isUndefined(this.dataItem.connection.googleAuthScopes)
           ? []
@@ -252,6 +265,7 @@ export class EditConnectionDialogComponent implements OnInit {
       this.editConnectionForm.get('database').updateValueAndValidity();
       this.editConnectionForm.get('username').updateValueAndValidity();
       this.editConnectionForm.get('password').updateValueAndValidity();
+      this.editConnectionForm.get('motherduckToken').updateValueAndValidity();
     });
 
     setTimeout(() => {
@@ -339,6 +353,7 @@ export class EditConnectionDialogComponent implements OnInit {
       database: this.editConnectionForm.value.database,
       username: this.editConnectionForm.value.username,
       password: this.editConnectionForm.value.password,
+      motherduckToken: this.editConnectionForm.value.motherduckToken,
       isSSL: this.isSSL
     };
 

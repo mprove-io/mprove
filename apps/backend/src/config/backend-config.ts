@@ -80,6 +80,9 @@ export class BackendConfig {
   @IsString()
   firstProjectDwhSnowflakePassword?: string;
 
+  @IsString()
+  firstProjectDwhMotherDuckToken?: string;
+
   @IsEnum(BoolEnum)
   allowUsersToCreateOrganizations?: BoolEnum;
 

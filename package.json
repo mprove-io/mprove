@@ -106,6 +106,7 @@
     "@malloydata/db-postgres": "0.0.309",
     "@malloydata/db-bigquery": "0.0.309",
     "@malloydata/db-snowflake": "0.0.309",
+    "@malloydata/db-duckdb": "0.0.309",
     "@malloydata/malloy": "0.0.309",
     "@malloydata/malloy-query-builder": "0.0.309",
     "@malloydata/render": "0.0.309",

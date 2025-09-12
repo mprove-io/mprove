@@ -31,6 +31,10 @@ export class ToBackendCreateConnectionRequestPayload {
   baseUrl?: string;
 
   @IsOptional()
+  @IsString()
+  motherduckToken?: string;
+
+  @IsOptional()
   serviceAccountCredentials?: any;
 
   @IsOptional()

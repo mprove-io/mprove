@@ -89,6 +89,7 @@ export class AddConnectionDialogComponent implements OnInit {
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
@@ -243,6 +244,18 @@ export class AddConnectionDialogComponent implements OnInit {
           )
         ]
       ],
+      motherduckToken: [
+        undefined,
+        [
+          conditionalValidator(
+            () =>
+              [ConnectionTypeEnum.MotherDuck].indexOf(
+                this.addConnectionForm.get('type').value
+              ) > -1,
+            Validators.required
+          )
+        ]
+      ],
       scopes: this.fb.array([
         this.fb.group({
           value: 'https://www.googleapis.com/auth/analytics.readonly'
@@ -270,6 +283,7 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addConnectionForm.get('database').updateValueAndValidity();
       this.addConnectionForm.get('username').updateValueAndValidity();
       this.addConnectionForm.get('password').updateValueAndValidity();
+      this.addConnectionForm.get('motherduckToken').updateValueAndValidity();
     });
 
     setTimeout(() => {
@@ -387,10 +401,15 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addConnectionForm.controls['password'].reset();
     }
 
+    if ([ConnectionTypeEnum.MotherDuck].indexOf(type) < 0) {
+      this.addConnectionForm.controls['motherduckToken'].reset();
+    }
+
     if (
       [
         ConnectionTypeEnum.PostgreSQL,
         ConnectionTypeEnum.ClickHouse,
+        ConnectionTypeEnum.MotherDuck,
         ConnectionTypeEnum.SnowFlake
       ].indexOf(type) < 0
     ) {
@@ -445,6 +464,7 @@ export class AddConnectionDialogComponent implements OnInit {
       database: this.addConnectionForm.value.database,
       username: this.addConnectionForm.value.username,
       password: this.addConnectionForm.value.password,
+      motherduckToken: this.addConnectionForm.value.motherduckToken,
       isSSL: this.isSSL
     };
 
