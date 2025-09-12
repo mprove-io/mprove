@@ -489,6 +489,11 @@
                 addConnectionForm.controls['database'].touched
             }"
             formControlName="database"
+            [placeholder]="
+              addConnectionForm.controls['type'].value === typeSnowFlake
+                ? 'Optional'
+                : ''
+            "
           />
           <m-validation
             *ngIf="addConnectionForm.controls['type'].value !== typeClickHouse"
