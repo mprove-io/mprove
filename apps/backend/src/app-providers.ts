@@ -13,6 +13,7 @@ import { ClickHouseService } from './services/clickhouse.service';
 import { ConnectionsService } from './services/connections.service';
 import { DashboardsService } from './services/dashboards.service';
 import { DocService } from './services/doc.service';
+import { DuckDbService } from './services/duckdb.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
 import { HashService } from './services/hash.service';
@@ -59,6 +60,7 @@ export const appProviders = [
   MconfigsService,
   MalloyService,
   PgService,
+  DuckDbService,
   ClickHouseService,
   BigQueryService,
   SnowFlakeService,

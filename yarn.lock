@@ -3125,6 +3125,49 @@
   dependencies:
     apache-arrow "^17.0.0"
 
+"@duckdb/node-api@1.3.1-alpha.23":
+  version "1.3.1-alpha.23"
+  resolved "https://registry.yarnpkg.com/@duckdb/node-api/-/node-api-1.3.1-alpha.23.tgz#125b888ca79044db5617b640ce761562dfc8f30d"
+  integrity sha512-D2dug8GMCC/PNkrB37gik0Wm74J3/JFQxIrEk7c02nK74BmLrZsxTRG5cLc6fqJuqj+AZ31jjgWroUtAaHSN/A==
+  dependencies:
+    "@duckdb/node-bindings" "1.3.1-alpha.23"
+
+"@duckdb/node-bindings-darwin-arm64@1.3.1-alpha.23":
+  version "1.3.1-alpha.23"
+  resolved "https://registry.yarnpkg.com/@duckdb/node-bindings-darwin-arm64/-/node-bindings-darwin-arm64-1.3.1-alpha.23.tgz#cc15a04202c6869f0b4b4bbd7fbd60b6a7bf1f63"
+  integrity sha512-4UbDqkp+vOACjkOp6kQiTtrkzZw9CFb1GIEcDLZ+iySka0fz5sNNldJUNPuCbWm0Racu17OBzoSXQqF5Q0KUmQ==
+
+"@duckdb/node-bindings-darwin-x64@1.3.1-alpha.23":
+  version "1.3.1-alpha.23"
+  resolved "https://registry.yarnpkg.com/@duckdb/node-bindings-darwin-x64/-/node-bindings-darwin-x64-1.3.1-alpha.23.tgz#175f86f12dfe8fad2c2dd84650d4c91b739a1c3d"
+  integrity sha512-qdBsiFR5dPswAwDiCqE227cP18618uKX5E3U5qEk0bsb9C8f+I+k3aHl8nLjE0vXOCxBUeI6xr3U9KskjyixpA==
+
+"@duckdb/node-bindings-linux-arm64@1.3.1-alpha.23":
+  version "1.3.1-alpha.23"
+  resolved "https://registry.yarnpkg.com/@duckdb/node-bindings-linux-arm64/-/node-bindings-linux-arm64-1.3.1-alpha.23.tgz#dc9ca8588195d303e51a2bb91a35d4f431960673"
+  integrity sha512-kqWaYd6AkpLkJbIPd4UqujQE2G/QCriLIgFkpUgWVqP3yyCL/Oq+5oRvRSdUsuFJQqHztj8L3ZOy76xd5q12Ww==
+
+"@duckdb/node-bindings-linux-x64@1.3.1-alpha.23":
+  version "1.3.1-alpha.23"
+  resolved "https://registry.yarnpkg.com/@duckdb/node-bindings-linux-x64/-/node-bindings-linux-x64-1.3.1-alpha.23.tgz#903ca635d8ef2e15ac301de11a0d0ead2c9e3f96"
+  integrity sha512-lANN+JYoBTqyOF0dGPiXz8r9+GGs6mm5nwB08boWYpQCjdoG2gFpK6XvT56HO+t01wbKIngDNrdThjqdZW9+Aw==
+
+"@duckdb/node-bindings-win32-x64@1.3.1-alpha.23":
+  version "1.3.1-alpha.23"
+  resolved "https://registry.yarnpkg.com/@duckdb/node-bindings-win32-x64/-/node-bindings-win32-x64-1.3.1-alpha.23.tgz#f679b641015f6357949ac9a8141af238a337a2b2"
+  integrity sha512-bYBLYPAIs4KTSnTtqsRnjBH1Hgu9QVa3Yxio4TYktneRG7rHeX89nKcfszLLIkSUt6xhRNwYoeSh/HbXmx46fA==
+
+"@duckdb/node-bindings@1.3.1-alpha.23":
+  version "1.3.1-alpha.23"
+  resolved "https://registry.yarnpkg.com/@duckdb/node-bindings/-/node-bindings-1.3.1-alpha.23.tgz#bc8f060091d58ec15a4588757129cce5075a5d62"
+  integrity sha512-uVFuy0bfV/XHRtMKZMDjaONbZplGXBOep20DZqA8BbWwWBnc37XMZoXZcykLRXdMVvzUll13mwfL1InDa9k1gw==
+  optionalDependencies:
+    "@duckdb/node-bindings-darwin-arm64" "1.3.1-alpha.23"
+    "@duckdb/node-bindings-darwin-x64" "1.3.1-alpha.23"
+    "@duckdb/node-bindings-linux-arm64" "1.3.1-alpha.23"
+    "@duckdb/node-bindings-linux-x64" "1.3.1-alpha.23"
+    "@duckdb/node-bindings-win32-x64" "1.3.1-alpha.23"
+
 "@emnapi/core@^1.1.0":
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/@emnapi/core/-/core-1.4.3.tgz#9ac52d2d5aea958f67e52c40a065f51de59b77d6"

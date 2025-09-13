@@ -27,6 +27,7 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { ClickHouseService } from '~backend/services/clickhouse.service';
 import { ConnectionsService } from '~backend/services/connections.service';
+import { DuckDbService } from '~backend/services/duckdb.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { PgService } from '~backend/services/pg.service';
@@ -63,6 +64,7 @@ export class RunQueriesController {
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private pgService: PgService,
+    private duckdbService: DuckDbService,
     private storeService: StoreService,
     private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
@@ -293,6 +295,14 @@ export class RunQueriesController {
               querySql: query.sql,
               projectId: projectId
             });
+          } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+            await this.duckdbService.runQuery({
+              connection: connection,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
+              querySql: query.sql,
+              projectId: projectId
+            });
           } else if (
             [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
               connection.type
@@ -448,6 +458,26 @@ export class RunQueriesController {
                 logToConsoleBackend({
                   log: new ServerError({
                     message: ErEnum.BACKEND_RUN_QUERY_POSTGRES_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
+          } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+            this.duckdbService
+              .runQuery({
+                connection: connection,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
+                querySql: query.sql,
+                projectId: projectId
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_DUCKDB_ERROR,
                     originalError: e
                   }),
                   logLevel: LogLevelEnum.Error,
