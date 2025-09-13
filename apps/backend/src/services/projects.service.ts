@@ -17,7 +17,7 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import {
   ToDiskCreateProjectRequest,
   ToDiskCreateProjectResponse

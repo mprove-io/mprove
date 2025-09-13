@@ -9,6 +9,7 @@ import {
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Ev } from '~common/interfaces/backend/ev';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { BmlError } from '~common/interfaces/blockml/bml-error';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { Chart } from '~common/interfaces/blockml/chart';
@@ -17,7 +18,6 @@ import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { Preset } from '~common/interfaces/blockml/preset';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { Query } from '~common/interfaces/blockml/query';
 import { Report } from '~common/interfaces/blockml/report';
 import { MyResponse } from '~common/interfaces/to/my-response';

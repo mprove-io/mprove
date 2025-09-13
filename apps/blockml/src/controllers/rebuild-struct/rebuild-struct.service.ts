@@ -50,6 +50,7 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { Ev } from '~common/interfaces/backend/ev';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
 import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
@@ -60,7 +61,6 @@ import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { Preset } from '~common/interfaces/blockml/preset';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponsePayload

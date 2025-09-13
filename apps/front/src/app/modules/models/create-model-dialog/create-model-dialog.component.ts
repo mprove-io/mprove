@@ -27,7 +27,7 @@ import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
-import { Connection } from '~common/interfaces/backend/connection';
+import { ProjectConnection } from '~common/interfaces/backend/connection';
 import { Preset } from '~common/interfaces/blockml/preset';
 import {
   ToBackendGetConnectionsRequestPayload,
@@ -90,14 +90,14 @@ export class CreateModelDialogComponent implements OnInit {
   connectionTypeEnumGoogleApi = ConnectionTypeEnum.GoogleApi;
 
   connectionForm: FormGroup = new FormGroup({
-    connection: new FormControl<Connection>(undefined, {
+    connection: new FormControl<ProjectConnection>(undefined, {
       validators: [Validators.required]
     })
   });
 
   connectionsSpinnerName = 'modelsAddConnectionSpinnerName';
 
-  connections: Connection[] = [];
+  connections: ProjectConnection[] = [];
   connectionsLoading = false;
   connectionsLoaded = false;
 
@@ -258,7 +258,7 @@ export class CreateModelDialogComponent implements OnInit {
   createModel(item: {
     modelName: string;
     roles: string;
-    connection: Connection;
+    connection: ProjectConnection;
     preset: Preset;
   }) {
     this.spinner.show(APP_SPINNER_NAME);
@@ -401,7 +401,7 @@ export class CreateModelDialogComponent implements OnInit {
       .subscribe();
   }
 
-  connectionsSearchFn(term: string, connection: Connection) {
+  connectionsSearchFn(term: string, connection: ProjectConnection) {
     let haystack = [`${connection.connectionId}`];
 
     let opts = {};

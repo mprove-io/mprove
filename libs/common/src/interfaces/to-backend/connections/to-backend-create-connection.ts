@@ -8,8 +8,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { Connection } from '~common/interfaces/backend/connection';
-import { ConnectionHeader } from '~common/interfaces/backend/connection-header';
+import { ProjectConnection } from '~common/interfaces/backend/connection';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -91,8 +90,8 @@ export class ToBackendCreateConnectionRequest extends ToBackendRequest {
 
 export class ToBackendCreateConnectionResponsePayload {
   @ValidateNested()
-  @Type(() => Connection)
-  connection: Connection;
+  @Type(() => ProjectConnection)
+  connection: ProjectConnection;
 }
 
 export class ToBackendCreateConnectionResponse extends MyResponse {

@@ -10,7 +10,6 @@ import {
 } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ConnectionHeader } from '~common/interfaces/backend/connection-header';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';

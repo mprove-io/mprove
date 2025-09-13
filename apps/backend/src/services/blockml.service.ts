@@ -13,7 +13,7 @@ import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-reques
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Ev } from '~common/interfaces/backend/ev';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import {
   ToBlockmlRebuildStructRequest,

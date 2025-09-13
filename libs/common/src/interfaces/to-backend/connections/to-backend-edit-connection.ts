@@ -6,8 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { Connection } from '~common/interfaces/backend/connection';
-import { ConnectionHeader } from '~common/interfaces/backend/connection-header';
+import { ProjectConnection } from '~common/interfaces/backend/connection';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -86,8 +85,8 @@ export class ToBackendEditConnectionRequest extends ToBackendRequest {
 
 export class ToBackendEditConnectionResponsePayload {
   @ValidateNested()
-  @Type(() => Connection)
-  connection: Connection;
+  @Type(() => ProjectConnection)
+  connection: ProjectConnection;
 }
 
 export class ToBackendEditConnectionResponse extends MyResponse {

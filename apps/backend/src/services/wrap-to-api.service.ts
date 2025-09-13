@@ -29,8 +29,6 @@ import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { makeCopy } from '~common/functions/make-copy';
 import { ChartX } from '~common/interfaces/backend/chart-x';
-import { Connection } from '~common/interfaces/backend/connection';
-import { ConnectionHeader } from '~common/interfaces/backend/connection-header';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Env } from '~common/interfaces/backend/env';
 import { EnvUser } from '~common/interfaces/backend/env-user';
@@ -42,6 +40,7 @@ import { ModelX } from '~common/interfaces/backend/model-x';
 import { Org } from '~common/interfaces/backend/org';
 import { OrgsItem } from '~common/interfaces/backend/orgs-item';
 import { Project } from '~common/interfaces/backend/project';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import { ReportX } from '~common/interfaces/backend/report-x';
 import { Struct } from '~common/interfaces/backend/struct';
@@ -49,7 +48,6 @@ import { User } from '~common/interfaces/backend/user';
 import { Column } from '~common/interfaces/blockml/column';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { ModelField } from '~common/interfaces/blockml/model-field';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { Query } from '~common/interfaces/blockml/query';
 
 @Injectable()
@@ -64,7 +62,7 @@ export class WrapToApiService {
     });
   }
 
-  wrapToApiConnection(x: ConnectionEnt): Connection {
+  wrapToApiConnection(x: ConnectionEnt): ProjectConnection {
     return {
       projectId: x.projectId,
       connectionId: x.connectionId,

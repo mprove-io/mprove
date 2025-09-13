@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { PROJECT_CONNECTIONS_PAGE_TITLE } from '~common/constants/page-titles';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { Connection } from '~common/interfaces/backend/connection';
+import { ProjectConnection } from '~common/interfaces/backend/connection';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
@@ -39,7 +39,7 @@ export class ProjectConnectionsComponent implements OnInit {
     })
   );
 
-  connections: Connection[] = [];
+  connections: ProjectConnection[] = [];
   connections$ = this.connectionsQuery.connections$.pipe(
     tap(x => {
       this.connections = x;
@@ -69,7 +69,7 @@ export class ProjectConnectionsComponent implements OnInit {
     });
   }
 
-  deleteConnection(connection: Connection) {
+  deleteConnection(connection: ProjectConnection) {
     this.myDialogService.showDeleteConnection({
       apiService: this.apiService,
       projectId: connection.projectId,
@@ -78,7 +78,7 @@ export class ProjectConnectionsComponent implements OnInit {
     });
   }
 
-  editConnection(connection: Connection) {
+  editConnection(connection: ProjectConnection) {
     this.myDialogService.showEditConnection({
       apiService: this.apiService,
       connection: connection

@@ -12,8 +12,8 @@ import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
 let caller = CallerEnum.BuildModStart;
 let func = FuncEnum.BuildMods;

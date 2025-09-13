@@ -11,7 +11,7 @@ import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
 import { WrapToApiService } from './wrap-to-api.service';
 

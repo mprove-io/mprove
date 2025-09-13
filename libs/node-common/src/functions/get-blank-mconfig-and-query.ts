@@ -2,9 +2,9 @@ import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 import { Query } from '~common/interfaces/blockml/query';
 import { makeQueryId } from './make-query-id';
 

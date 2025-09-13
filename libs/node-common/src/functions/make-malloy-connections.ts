@@ -4,7 +4,7 @@ import { PostgresConnection } from '@malloydata/db-postgres';
 import { SnowflakeConnection } from '@malloydata/db-snowflake';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 
 export type MalloyConnection =
   | PostgresConnection
@@ -35,25 +35,25 @@ export function makeMalloyConnections(item: {
     let mConnection =
       c.type === ConnectionTypeEnum.PostgreSQL
         ? new PostgresConnection(c.connectionId, () => ({}), {
-            host: c.host,
-            port: c.port,
-            username: c.username,
-            password: c.password,
-            databaseName: c.database
+            host: c.postgresOptions.host,
+            port: c.postgresOptions.port,
+            username: c.postgresOptions.username,
+            password: c.postgresOptions.password,
+            databaseName: c.postgresOptions.database
           })
         : c.type === ConnectionTypeEnum.BigQuery
           ? new BigQueryConnection(c.connectionId, () => ({}), {
-              credentials: c.serviceAccountCredentials,
-              projectId: c.googleCloudProject
+              credentials: c.bigqueryOptions.serviceAccountCredentials,
+              projectId: c.bigqueryOptions.googleCloudProject
             })
           : c.type === ConnectionTypeEnum.SnowFlake
             ? new SnowflakeConnection(c.connectionId, {
                 connOptions: {
-                  account: c.account,
-                  warehouse: c.warehouse,
-                  database: c.database,
-                  username: c.username,
-                  password: c.password
+                  account: c.snowflakeOptions.account,
+                  warehouse: c.snowflakeOptions.warehouse,
+                  database: c.snowflakeOptions.database,
+                  username: c.snowflakeOptions.username,
+                  password: c.snowflakeOptions.password
                   //  schema?: string | undefined;
                   //  role?: string | undefined;
                   //  clientSessionKeepAlive?: boolean | undefined;
@@ -70,10 +70,10 @@ export function makeMalloyConnections(item: {
             : c.type === ConnectionTypeEnum.MotherDuck
               ? new DuckDBConnection({
                   name: c.connectionId,
-                  databasePath: isDefined(c.database)
-                    ? `md:${c.database}`
+                  databasePath: isDefined(c.motherduckOptions.database)
+                    ? `md:${c.motherduckOptions.database}`
                     : `md:`,
-                  motherDuckToken: c.motherduckToken
+                  motherDuckToken: c.motherduckOptions.motherduckToken
                   // additionalExtensions?: string[];
                   // workingDirectory?: string;
                   // readOnly?: boolean;

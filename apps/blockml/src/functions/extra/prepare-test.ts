@@ -13,7 +13,7 @@ import { BoolEnum } from '~common/enums/bool.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { getLoggerOptions } from '~node-common/functions/get-logger-options';
 
 export async function prepareTest(

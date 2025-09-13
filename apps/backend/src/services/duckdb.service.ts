@@ -35,13 +35,20 @@ export class DuckDbService {
   }) {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
-    let instance = await DuckDBInstance.create(
-      `md:${connection.database}?attach_mode=single&saas_mode=true`,
-      {
-        motherduck_token: connection.motherduckToken,
-        access_mode: 'READ_ONLY'
-      }
-    );
+    let dbPath =
+      connection.motherduckOptions.attachModeSingle === true
+        ? `md:${connection.motherduckOptions.database}?attach_mode=single&saas_mode=true`
+        : `md:${connection.motherduckOptions.database}?saas_mode=true`;
+
+    let opts: Record<string, string> = {
+      motherduck_token: connection.motherduckOptions.motherduckToken
+    };
+
+    if (connection.motherduckOptions.accessModeReadOnly === true) {
+      opts.access_mode = 'READ_ONLY';
+    }
+
+    let instance = await DuckDBInstance.create(dbPath, opts);
 
     let dc: DuckDBConnection = await instance.connect();
 

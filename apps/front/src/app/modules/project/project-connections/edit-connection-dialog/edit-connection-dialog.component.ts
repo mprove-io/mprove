@@ -20,7 +20,7 @@ import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { Connection } from '~common/interfaces/backend/connection';
+import { ProjectConnection } from '~common/interfaces/backend/connection';
 import {
   ToBackendEditConnectionRequestPayload,
   ToBackendEditConnectionResponse
@@ -33,7 +33,7 @@ import { ValidationService } from '~front/app/services/validation.service';
 
 export interface EditConnectionDialogData {
   apiService: ApiService;
-  connection: Connection;
+  connection: ProjectConnection;
 }
 
 @Component({

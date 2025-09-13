@@ -11,8 +11,8 @@ import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
 
 let caller = CallerEnum.BuildDashboard;
 let func = FuncEnum.CheckDashboardTilesExist;

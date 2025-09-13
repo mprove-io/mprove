@@ -5,7 +5,7 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ProjectConnection } from '~common/interfaces/blockml/project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 
 let caller = CallerEnum.RebuildStruct;
 let func = FuncEnum.LogStruct;
