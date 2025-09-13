@@ -39,12 +39,7 @@ export class DuckDbService {
       `md:${connection.database}?attach_mode=single&saas_mode=true`,
       {
         motherduck_token: connection.motherduckToken,
-        // session_hint: ...,
         access_mode: 'READ_ONLY'
-        // threads: '10',
-        // memory_limit: '2GB',
-        // max_temp_directory_size: '4GB',
-        // motherduck_dbinstance_inactivity_ttl: '1h',
       }
     );
 
