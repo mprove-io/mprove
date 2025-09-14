@@ -51,15 +51,18 @@ test('1', async t => {
       projectId: projectId,
       connectionId: 'c1_postgres',
       type: ConnectionTypeEnum.PostgreSQL,
-      host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
-        'firstProjectDwhPostgresHost'
-      ),
-      port: 5436,
-      username: 'postgres',
-      password: prepTest.cs.get<
-        BackendConfig['firstProjectDwhPostgresPassword']
-      >('firstProjectDwhPostgresPassword'),
-      database: 'p_db'
+      postgresOptions: {
+        host: prepTest.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
+          'firstProjectDwhPostgresHost'
+        ),
+        port: 5436,
+        username: 'postgres',
+        password: prepTest.cs.get<
+          BackendConfig['firstProjectDwhPostgresPassword']
+        >('firstProjectDwhPostgresPassword'),
+        database: 'p_db',
+        isSSL: false
+      }
     };
 
     let prepareSeedResult = await prepareSeed({

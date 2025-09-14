@@ -3,7 +3,11 @@ import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 import { sendToBackend } from '~backend/functions/send-to-backend';
 import { Prep } from '~backend/interfaces/prep';
-import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/constants/top';
+import {
+  BRANCH_MAIN,
+  EMPTY_STORE_GOOGLE_API_OPTIONS,
+  PROJECT_ENV_PROD
+} from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
@@ -85,7 +89,8 @@ test('1', async t => {
             projectId: projectId,
             connectionId: 'c7',
             envId: PROJECT_ENV_PROD,
-            type: ConnectionTypeEnum.GoogleApi
+            type: ConnectionTypeEnum.GoogleApi,
+            storeGoogleApiOptions: EMPTY_STORE_GOOGLE_API_OPTIONS
           }
         ]
       },
