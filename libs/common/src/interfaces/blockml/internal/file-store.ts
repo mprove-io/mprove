@@ -1,4 +1,4 @@
-import { ProjectConnection } from '../project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
 import { FileStoreBuildMetric } from './file-store-build-metric';

@@ -1,6 +1,6 @@
 import { Model as MalloyModel } from '@malloydata/malloy';
 import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
-import { ProjectConnection } from '../project-connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { FileBasic } from './file-basic';
 
 export interface FileMod extends FileBasic {

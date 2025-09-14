@@ -208,8 +208,6 @@ export const METHOD_RABBIT = 'RABBIT';
 
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 
-export const HEADER_VALUE_IS_HIDDEN = 'value is hidden';
-
 export const FIELD_TYPE_VALUES = [
   FieldTypeEnum.CountDistinct,
   FieldTypeEnum.Sum,

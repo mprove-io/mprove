@@ -470,14 +470,20 @@ ${inputSub}
 
       let headers: any = {};
 
-      connection.headers.forEach(header => {
-        headers[header.key] = header.value;
-      });
-
       let response;
 
-      if (connection.type === ConnectionTypeEnum.GoogleApi) {
-        headers['Authorization'] = `Bearer ${connection.googleAccessToken}`;
+      if (connection.type === ConnectionTypeEnum.Api) {
+        connection.storeApiOptions.headers.forEach(header => {
+          headers[header.key] = header.value;
+        });
+      } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
+        connection.storeGoogleApiOptions.headers.forEach(header => {
+          headers[header.key] = header.value;
+        });
+
+        headers['Authorization'] =
+          `Bearer ${connection.storeGoogleApiOptions.googleAccessToken}`;
+
         headers['Content-Type'] = 'application/json';
       }
 

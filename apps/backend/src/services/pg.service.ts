@@ -32,13 +32,13 @@ export class PgService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let cn: pg.IConnectionParameters<pg.IClient> = {
-      host: connection.host,
-      port: connection.port,
-      database: connection.database,
-      user: connection.username,
-      password: connection.password,
+      host: connection.postgresOptions.host,
+      port: connection.postgresOptions.port,
+      database: connection.postgresOptions.database,
+      user: connection.postgresOptions.username,
+      password: connection.postgresOptions.password,
       ssl:
-        connection.isSsl === true
+        connection.postgresOptions.isSSL === true
           ? {
               rejectUnauthorized: false
             }

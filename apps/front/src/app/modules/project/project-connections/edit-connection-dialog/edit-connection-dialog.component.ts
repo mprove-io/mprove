@@ -25,7 +25,6 @@ import {
   ToBackendEditConnectionRequestPayload,
   ToBackendEditConnectionResponse
 } from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
-import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -52,7 +51,6 @@ export class EditConnectionDialogComponent implements OnInit {
   dataItem: EditConnectionDialogData = this.ref.data;
 
   editForm: FormGroup;
-  editConnectionForm: FormGroup;
 
   editBigqueryForm: FormGroup;
   editClickhouseForm: FormGroup;
@@ -62,14 +60,11 @@ export class EditConnectionDialogComponent implements OnInit {
   editApiForm: FormGroup;
   editGoogleApiForm: FormGroup;
 
-  isSSL = true;
   isClickhouseSSL = true;
+  isPostgresSSL = true;
 
   isMotherduckAttachModeSingle = true;
   isMotherduckAccessModeReadOnly = true;
-
-  // connectionId: string;
-  // connectionType: ConnectionTypeEnum;
 
   connectionTypes = [
     ConnectionTypeEnum.PostgreSQL,
@@ -95,7 +90,11 @@ export class EditConnectionDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this.isSSL = this.dataItem.connection.isSSL === true ? true : false;
+    this.isClickhouseSSL =
+      this.dataItem.connection.clickhouseOptions.isSSL === true ? true : false;
+
+    this.isPostgresSSL =
+      this.dataItem.connection.postgresOptions.isSSL === true ? true : false;
 
     this.editForm = this.fb.group({
       connectionId: [this.dataItem.connection.connectionId],
@@ -103,7 +102,10 @@ export class EditConnectionDialogComponent implements OnInit {
     });
 
     this.editBigqueryForm = this.fb.group({
-      serviceAccountCredentials: [undefined, [Validators.required]],
+      serviceAccountCredentials: [
+        this.dataItem.connection.bigqueryOptions?.serviceAccountCredentials,
+        [Validators.required]
+      ],
       bigqueryQuerySizeLimitGb: [
         this.dataItem.connection.bigqueryOptions?.bigqueryQuerySizeLimitGb,
         [ValidationService.integerOrEmptyValidator, Validators.required]
@@ -112,217 +114,155 @@ export class EditConnectionDialogComponent implements OnInit {
 
     this.editClickhouseForm = this.fb.group({
       host: [
-        this.dataItem.connection.clickhouseOptions.host,
+        this.dataItem.connection.clickhouseOptions?.host,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.clickhouseOptions.port,
+        this.dataItem.connection.clickhouseOptions?.port,
         [Validators.required]
       ],
       username: [
-        this.dataItem.connection.clickhouseOptions.username,
+        this.dataItem.connection.clickhouseOptions?.username,
         [Validators.required]
       ],
-      password: [undefined, [Validators.required]]
-    });
-
-    this.editMotherduckForm = this.fb.group({
-      motherduckToken: [undefined, [Validators.required]],
-      database: [
-        this.dataItem.connection.motherduckOptions.database,
+      password: [
+        this.dataItem.connection.clickhouseOptions?.password,
         [Validators.required]
       ]
     });
 
-    //
-    //
-    //
-
-    this.editConnectionForm = this.fb.group({
-      connectionId: [this.dataItem.connection.connectionId],
-      type: [this.dataItem.connection.type],
-      baseUrl: [
-        this.dataItem.connection.baseUrl,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.GoogleApi, ConnectionTypeEnum.Api].indexOf(
-                this.editConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      serviceAccountCredentials: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.BigQuery,
-                ConnectionTypeEnum.GoogleApi
-              ].indexOf(this.editConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      bigqueryQuerySizeLimitGb: [
-        this.dataItem.connection.bigqueryQuerySizeLimitGb,
-        [
-          ValidationService.integerOrEmptyValidator,
-          conditionalValidator(
-            () =>
-              this.editConnectionForm.get('type').value ===
-              ConnectionTypeEnum.BigQuery,
-            Validators.required
-          )
-        ]
-      ],
-      account: [
-        this.dataItem.connection.account,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.SnowFlake].indexOf(
-                this.editConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      warehouse: [
-        this.dataItem.connection.warehouse,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.SnowFlake].indexOf(
-                this.editConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      host: [
-        this.dataItem.connection.host,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse
-              ].indexOf(this.editConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      port: [
-        this.dataItem.connection.port,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse
-              ].indexOf(this.editConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
+    this.editMotherduckForm = this.fb.group({
+      motherduckToken: [
+        this.dataItem.connection.motherduckOptions?.motherduckToken,
+        [Validators.required]
       ],
       database: [
-        this.dataItem.connection.database,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL
-                // ,
-                // ConnectionTypeEnum.ClickHouse
-                // ,
-                // ConnectionTypeEnum.SnowFlake
-              ].indexOf(this.editConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
+        this.dataItem.connection.motherduckOptions?.database,
+        [Validators.required]
+      ]
+    });
+
+    this.editPostgresForm = this.fb.group({
+      host: [
+        this.dataItem.connection.postgresOptions?.host,
+        [Validators.required]
+      ],
+      port: [
+        this.dataItem.connection.postgresOptions?.port,
+        [Validators.required]
+      ],
+      database: [
+        this.dataItem.connection.postgresOptions?.database,
+        [Validators.required]
       ],
       username: [
-        this.dataItem.connection.username,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse,
-                ConnectionTypeEnum.SnowFlake
-              ].indexOf(this.editConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
+        this.dataItem.connection.postgresOptions?.username,
+        [Validators.required]
       ],
       password: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse,
-                ConnectionTypeEnum.SnowFlake
-              ].indexOf(this.editConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
+        this.dataItem.connection.postgresOptions?.password,
+        [Validators.required]
+      ]
+    });
+
+    this.editSnowflakeForm = this.fb.group({
+      account: [
+        this.dataItem.connection.snowflakeOptions?.account,
+        [Validators.required]
       ],
-      motherduckToken: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.MotherDuck].indexOf(
-                this.editConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
+      warehouse: [
+        this.dataItem.connection.snowflakeOptions?.warehouse,
+        [Validators.required]
       ],
-      scopes: this.fb.array(
-        isUndefined(this.dataItem.connection.googleAuthScopes)
-          ? []
-          : this.dataItem.connection.googleAuthScopes.map(scope => {
-              let newScope = {
-                value: scope
-              };
-              return this.fb.group(newScope);
-            })
-      ),
+      database: [
+        this.dataItem.connection.snowflakeOptions?.database,
+        [Validators.required]
+      ],
+      username: [
+        this.dataItem.connection.snowflakeOptions?.username,
+        [Validators.required]
+      ],
+      password: [
+        this.dataItem.connection.snowflakeOptions?.password,
+        [Validators.required]
+      ]
+    });
+
+    this.editApiForm = this.fb.group({
+      baseUrl: [
+        this.dataItem.connection.storeApiOptions?.baseUrl,
+        [Validators.required]
+      ],
       headers: this.fb.array(
-        isUndefined(this.dataItem.connection.headers)
+        isUndefined(this.dataItem.connection.storeApiOptions?.headers)
           ? []
-          : this.dataItem.connection.headers.map(header => {
+          : this.dataItem.connection.storeApiOptions?.headers.map(header => {
               let newHeader = {
                 key: header.key,
-                value: '' // backend returns HEADER_VALUE_IS_HIDDEN
+                value: header.value ?? ''
               };
               return this.fb.group(newHeader);
             })
       )
     });
 
-    this.editConnectionForm.get('type').valueChanges.subscribe(value => {
-      this.editConnectionForm.get('baseUrl').updateValueAndValidity();
-      this.editConnectionForm
-        .get('serviceAccountCredentials')
-        .updateValueAndValidity();
-      this.editConnectionForm
-        .get('bigqueryQuerySizeLimitGb')
-        .updateValueAndValidity();
-      this.editConnectionForm.get('account').updateValueAndValidity();
-      this.editConnectionForm.get('warehouse').updateValueAndValidity();
-      this.editConnectionForm.get('host').updateValueAndValidity();
-      this.editConnectionForm.get('port').updateValueAndValidity();
-      this.editConnectionForm.get('database').updateValueAndValidity();
-      this.editConnectionForm.get('username').updateValueAndValidity();
-      this.editConnectionForm.get('password').updateValueAndValidity();
-      this.editConnectionForm.get('motherduckToken').updateValueAndValidity();
+    this.editGoogleApiForm = this.fb.group({
+      serviceAccountCredentials: [
+        this.dataItem.connection.storeGoogleApiOptions
+          .serviceAccountCredentials,
+        [Validators.required]
+      ],
+      baseUrl: [
+        this.dataItem.connection.storeGoogleApiOptions?.baseUrl,
+        [Validators.required]
+      ],
+      headers: this.fb.array(
+        isUndefined(this.dataItem.connection.storeGoogleApiOptions?.headers)
+          ? []
+          : this.dataItem.connection.storeGoogleApiOptions?.headers.map(
+              header => {
+                let newHeader = {
+                  key: header.key,
+                  value: header.value ?? ''
+                };
+                return this.fb.group(newHeader);
+              }
+            )
+      ),
+      scopes: this.fb.array(
+        isUndefined(
+          this.dataItem.connection.storeGoogleApiOptions?.googleAuthScopes
+        )
+          ? []
+          : this.dataItem.connection.storeGoogleApiOptions?.googleAuthScopes.map(
+              scope => {
+                let newScope = {
+                  value: scope
+                };
+                return this.fb.group(newScope);
+              }
+            )
+      )
+    });
+
+    this.editForm.get('type').valueChanges.subscribe(value => {
+      console.log('editForm valueChanges');
+
+      // this.editConnectionForm.get('baseUrl').updateValueAndValidity();
+      // this.editConnectionForm
+      //   .get('serviceAccountCredentials')
+      //   .updateValueAndValidity();
+      // this.editConnectionForm
+      //   .get('bigqueryQuerySizeLimitGb')
+      //   .updateValueAndValidity();
+      // this.editConnectionForm.get('account').updateValueAndValidity();
+      // this.editConnectionForm.get('warehouse').updateValueAndValidity();
+      // this.editConnectionForm.get('host').updateValueAndValidity();
+      // this.editConnectionForm.get('port').updateValueAndValidity();
+      // this.editConnectionForm.get('database').updateValueAndValidity();
+      // this.editConnectionForm.get('username').updateValueAndValidity();
+      // this.editConnectionForm.get('password').updateValueAndValidity();
+      // this.editConnectionForm.get('motherduckToken').updateValueAndValidity();
     });
 
     setTimeout(() => {
@@ -330,20 +270,10 @@ export class EditConnectionDialogComponent implements OnInit {
     }, 0);
   }
 
-  getHeaders(): FormArray {
-    return this.editConnectionForm.controls['headers'] as FormArray;
-  }
+  // scopes
 
   getScopes(): FormArray {
-    return this.editConnectionForm.controls['scopes'] as FormArray;
-  }
-
-  addHeader() {
-    let headerGroup = this.fb.group({
-      key: [''],
-      value: ['']
-    });
-    this.getHeaders().push(headerGroup);
+    return this.editGoogleApiForm.controls['scopes'] as FormArray;
   }
 
   addScope() {
@@ -353,75 +283,140 @@ export class EditConnectionDialogComponent implements OnInit {
     this.getScopes().push(scopeGroup);
   }
 
-  removeHeader(index: number) {
-    this.getHeaders().removeAt(index);
-  }
-
   removeScope(index: number) {
     this.getScopes().removeAt(index);
   }
 
-  showLog() {
-    console.log(this.editConnectionForm.get('headers').value);
-    console.log(this.editConnectionForm.get('scopes').value);
+  // googleApi
+
+  googleApiGetHeaders(): FormArray {
+    return this.editGoogleApiForm.controls['headers'] as FormArray;
   }
 
-  toggleSSL() {
-    this.isSSL = !this.isSSL;
+  googleApiAddHeader() {
+    let headerGroup = this.fb.group({
+      key: [''],
+      value: ['']
+    });
+    this.googleApiGetHeaders().push(headerGroup);
+  }
+
+  googleApiRemoveHeader(index: number) {
+    this.googleApiGetHeaders().removeAt(index);
+  }
+
+  // api
+
+  apiGetHeaders(): FormArray {
+    return this.editApiForm.controls['headers'] as FormArray;
+  }
+
+  apiAddHeader() {
+    let headerGroup = this.fb.group({
+      key: [''],
+      value: ['']
+    });
+    this.apiGetHeaders().push(headerGroup);
+  }
+
+  apiRemoveHeader(index: number) {
+    this.apiGetHeaders().removeAt(index);
+  }
+
+  // showLog() {
+  //   console.log(this.editConnectionForm.get('headers').value);
+  //   console.log(this.editConnectionForm.get('scopes').value);
+  // }
+
+  // toggleSSL() {
+  //   this.isSSL = !this.isSSL;
+  // }
+
+  toggleClickhouseSSL() {
+    this.isClickhouseSSL = !this.isClickhouseSSL;
+  }
+
+  togglePostgresSSL() {
+    this.isPostgresSSL = !this.isPostgresSSL;
   }
 
   save() {
-    this.editConnectionForm.markAllAsTouched();
+    this.editForm.markAllAsTouched();
 
-    if (!this.editConnectionForm.valid) {
+    this.editBigqueryForm.markAllAsTouched();
+    this.editClickhouseForm.markAllAsTouched();
+    this.editMotherduckForm.markAllAsTouched();
+    this.editPostgresForm.markAllAsTouched();
+    this.editSnowflakeForm.markAllAsTouched();
+    this.editApiForm.markAllAsTouched();
+    this.editGoogleApiForm.markAllAsTouched();
+
+    let cType: ConnectionTypeEnum = this.editForm.value.type;
+
+    if (
+      (cType === ConnectionTypeEnum.BigQuery && !this.editBigqueryForm.valid) ||
+      (cType === ConnectionTypeEnum.ClickHouse &&
+        !this.editClickhouseForm.valid) ||
+      (cType === ConnectionTypeEnum.MotherDuck &&
+        !this.editMotherduckForm.valid) ||
+      (cType === ConnectionTypeEnum.PostgreSQL &&
+        !this.editPostgresForm.valid) ||
+      (cType === ConnectionTypeEnum.SnowFlake &&
+        !this.editSnowflakeForm.valid) ||
+      (cType === ConnectionTypeEnum.Api && !this.editApiForm.valid) ||
+      (cType === ConnectionTypeEnum.GoogleApi && !this.editGoogleApiForm.valid)
+    ) {
       return;
     }
 
     this.ref.close();
 
-    let cType = this.editConnectionForm.value.type;
-
-    let saCredentials = isDefined(
-      this.editConnectionForm.value.serviceAccountCredentials
+    let bigqueryCredentials = isDefined(
+      this.editBigqueryForm.value.serviceAccountCredentials
     )
-      ? JSON.parse(this.editConnectionForm.value.serviceAccountCredentials)
+      ? JSON.parse(this.editBigqueryForm.value.serviceAccountCredentials)
+      : undefined;
+
+    let googleApiCredentials = isDefined(
+      this.editGoogleApiForm.value.serviceAccountCredentials
+    )
+      ? JSON.parse(this.editGoogleApiForm.value.serviceAccountCredentials)
       : undefined;
 
     let payload: ToBackendEditConnectionRequestPayload = {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
-      connectionId: this.editConnectionForm.value.connectionId,
-
+      connectionId: this.editForm.value.connectionId,
       bigqueryOptions:
         cType === ConnectionTypeEnum.BigQuery
           ? {
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
-              serviceAccountCredentials: saCredentials,
+              serviceAccountCredentials: bigqueryCredentials,
               bigqueryQuerySizeLimitGb: isDefined(
-                this.editConnectionForm.value.bigqueryQuerySizeLimitGb
+                this.editBigqueryForm.value.bigqueryQuerySizeLimitGb
               )
-                ? Number(this.editConnectionForm.value.bigqueryQuerySizeLimitGb)
+                ? Number(this.editBigqueryForm.value.bigqueryQuerySizeLimitGb)
                 : undefined
             }
           : undefined,
       clickhouseOptions:
         cType === ConnectionTypeEnum.ClickHouse
           ? {
-              host: this.editConnectionForm.value.host,
-              port: isDefined(this.editConnectionForm.value.port)
-                ? Number(this.editConnectionForm.value.port)
+              host: this.editClickhouseForm.value.host,
+              port: isDefined(this.editClickhouseForm.value.port)
+                ? Number(this.editClickhouseForm.value.port)
                 : undefined,
-              username: this.editConnectionForm.value.username,
-              password: this.editConnectionForm.value.password,
-              isSSL: this.isSSL
+              username: this.editClickhouseForm.value.username,
+              password: this.editClickhouseForm.value.password,
+              isSSL: this.isClickhouseSSL
             }
           : undefined,
       motherduckOptions:
         cType === ConnectionTypeEnum.MotherDuck
           ? {
-              motherduckToken: this.editConnectionForm.value.motherduckToken,
-              database: this.editConnectionForm.value.database,
+              motherduckToken: this.editMotherduckForm.value.motherduckToken,
+              database: this.editMotherduckForm.value.database,
               attachModeSingle: true, // TODO: attachModeSingle
               accessModeReadOnly: true // TODO: accessModeReadOnly
             }
@@ -429,31 +424,31 @@ export class EditConnectionDialogComponent implements OnInit {
       postgresOptions:
         cType === ConnectionTypeEnum.PostgreSQL
           ? {
-              host: this.editConnectionForm.value.host,
-              port: isDefined(this.editConnectionForm.value.port)
-                ? Number(this.editConnectionForm.value.port)
+              host: this.editPostgresForm.value.host,
+              port: isDefined(this.editPostgresForm.value.port)
+                ? Number(this.editPostgresForm.value.port)
                 : undefined,
-              database: this.editConnectionForm.value.database,
-              username: this.editConnectionForm.value.username,
-              password: this.editConnectionForm.value.password,
-              isSSL: this.isSSL
+              database: this.editPostgresForm.value.database,
+              username: this.editPostgresForm.value.username,
+              password: this.editPostgresForm.value.password,
+              isSSL: this.isPostgresSSL
             }
           : undefined,
       snowflakeOptions:
         cType === ConnectionTypeEnum.SnowFlake
           ? {
-              account: this.editConnectionForm.value.account,
-              warehouse: this.editConnectionForm.value.warehouse,
-              database: this.editConnectionForm.value.database,
-              username: this.editConnectionForm.value.username,
-              password: this.editConnectionForm.value.password
+              account: this.editSnowflakeForm.value.account,
+              warehouse: this.editSnowflakeForm.value.warehouse,
+              database: this.editSnowflakeForm.value.database,
+              username: this.editSnowflakeForm.value.username,
+              password: this.editSnowflakeForm.value.password
             }
           : undefined,
       storeApiOptions:
         cType === ConnectionTypeEnum.Api
           ? {
-              baseUrl: this.editConnectionForm.value.baseUrl,
-              headers: this.editConnectionForm.value.headers
+              baseUrl: this.editApiForm.value.baseUrl,
+              headers: this.editApiForm.value.headers
             }
           : undefined,
       storeGoogleApiOptions:
@@ -462,16 +457,14 @@ export class EditConnectionDialogComponent implements OnInit {
               googleAccessToken: undefined,
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
-              serviceAccountCredentials: saCredentials,
-              baseUrl: this.editConnectionForm.value.baseUrl,
-              headers: this.editConnectionForm.value.headers,
+              serviceAccountCredentials: googleApiCredentials,
+              baseUrl: this.editGoogleApiForm.value.baseUrl,
+              headers: this.editGoogleApiForm.value.headers,
               googleAuthScopes:
                 [ConnectionTypeEnum.GoogleApi].indexOf(
-                  this.editConnectionForm.get('type').value
+                  this.editGoogleApiForm.get('type').value
                 ) > -1
-                  ? this.editConnectionForm.value.scopes.map(
-                      (x: any) => x.value
-                    )
+                  ? this.editGoogleApiForm.value.scopes.map((x: any) => x.value)
                   : []
             }
           : undefined

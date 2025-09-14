@@ -43,23 +43,26 @@ test('1', async t => {
     let c1: ProjectConnection = {
       connectionId: 'c1_postgres',
       type: ConnectionTypeEnum.PostgreSQL,
-      host: cs.get<BlockmlConfig['blockmlTestsDwhPostgresHost']>(
-        'blockmlTestsDwhPostgresHost'
-      ),
-      port: Number(
-        cs.get<BlockmlConfig['blockmlTestsDwhPostgresPort']>(
-          'blockmlTestsDwhPostgresPort'
-        )
-      ),
-      username: cs.get<BlockmlConfig['blockmlTestsDwhPostgresUsername']>(
-        'blockmlTestsDwhPostgresUsername'
-      ),
-      password: cs.get<BlockmlConfig['blockmlTestsDwhPostgresPassword']>(
-        'blockmlTestsDwhPostgresPassword'
-      ),
-      database: cs.get<BlockmlConfig['blockmlTestsDwhPostgresDatabaseName']>(
-        'blockmlTestsDwhPostgresDatabaseName'
-      )
+      postgresOptions: {
+        host: cs.get<BlockmlConfig['blockmlTestsDwhPostgresHost']>(
+          'blockmlTestsDwhPostgresHost'
+        ),
+        port: Number(
+          cs.get<BlockmlConfig['blockmlTestsDwhPostgresPort']>(
+            'blockmlTestsDwhPostgresPort'
+          )
+        ),
+        username: cs.get<BlockmlConfig['blockmlTestsDwhPostgresUsername']>(
+          'blockmlTestsDwhPostgresUsername'
+        ),
+        password: cs.get<BlockmlConfig['blockmlTestsDwhPostgresPassword']>(
+          'blockmlTestsDwhPostgresPassword'
+        ),
+        database: cs.get<BlockmlConfig['blockmlTestsDwhPostgresDatabaseName']>(
+          'blockmlTestsDwhPostgresDatabaseName'
+        ),
+        isSSL: false
+      }
     };
 
     await structService.rebuildStruct({

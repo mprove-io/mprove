@@ -5,11 +5,7 @@
     >Edit Connection</div
   >
 
-  <form
-    class="flex w-80 flex-col text-base"
-    [formGroup]="editConnectionForm"
-    (ngSubmit)="save()"
-  >
+  <div class="flex w-80 flex-col text-base">
     <div class="mt-9 flex flex-row">
       <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Name</div>
       <div>
@@ -31,13 +27,7 @@
       </div>
     </div>
 
-    <div
-      *ngIf="
-        [typeBigQuery, typeGoogleApi].indexOf(
-          editConnectionForm.controls['type'].value
-        ) > -1
-      "
-    >
+    <form class="flex w-80 flex-col text-base" [formGroup]="editBigqueryForm">
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
           >Service Account Credentials</div
@@ -46,215 +36,23 @@
         <div class="flex flex-col">
           <textarea
             rows="7"
-            data-cy="editConnectionDialogServiceAccountCredentialsInput"
+            data-cy="editConnectionDialogBigqueryServiceAccountCredentialsInput"
             class="form-input border-s3 focus:border-m600 w-[400px] resize-none whitespace-nowrap rounded font-mono"
             [ngClass]="{
               'border-r600':
-                editConnectionForm.controls['serviceAccountCredentials']
+                editBigqueryForm.controls['serviceAccountCredentials']
                   .invalid &&
-                editConnectionForm.controls['serviceAccountCredentials'].touched
+                editBigqueryForm.controls['serviceAccountCredentials'].touched
             }"
             formControlName="serviceAccountCredentials"
-            placeholder="JSON BigQuery Credentials"
+            placeholder="JSON"
           ></textarea>
           <m-validation
-            [control]="editConnectionForm.controls['serviceAccountCredentials']"
+            [control]="editBigqueryForm.controls['serviceAccountCredentials']"
           ></m-validation>
         </div>
       </div>
-    </div>
 
-    <div
-      *ngIf="
-        [typeApi, typeGoogleApi].indexOf(
-          editConnectionForm.controls['type'].value
-        ) > -1
-      "
-    >
-      <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Base URL</div>
-
-        <div class="flex flex-col">
-          <input
-            *ngIf="
-              [typeApi].indexOf(editConnectionForm.controls['type'].value) > -1
-            "
-            autocomplete="off"
-            spellcheck="false"
-            data-cy="editConnectionDialogBaseUrlGoogleApiInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['baseUrl'].invalid &&
-                editConnectionForm.controls['baseUrl'].touched
-            }"
-            formControlName="baseUrl"
-            placeholder="https://example.com"
-          />
-
-          <input
-            *ngIf="
-              [typeGoogleApi].indexOf(
-                editConnectionForm.controls['type'].value
-              ) > -1
-            "
-            autocomplete="off"
-            spellcheck="false"
-            data-cy="editConnectionDialogBaseUrlApiInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['baseUrl'].invalid &&
-                editConnectionForm.controls['baseUrl'].touched
-            }"
-            formControlName="baseUrl"
-            placeholder="https://analyticsdata.googleapis.com"
-          />
-          <m-validation
-            [control]="editConnectionForm.controls['baseUrl']"
-          ></m-validation>
-        </div>
-      </div>
-    </div>
-
-    <div
-      *ngIf="
-        [typeGoogleApi].indexOf(editConnectionForm.controls['type'].value) > -1
-      "
-    >
-      <div class="mb-6 flex flex-row items-center">
-        <div class="flex w-[200px] flex-shrink-0 font-semibold">Scopes</div>
-      </div>
-
-      <div formArrayName="scopes">
-        <div class="flex flex-col">
-          <div *ngFor="let scopes of getScopes().controls; let i = index">
-            <div
-              [formGroupName]="i"
-              class="mb-6 flex w-[700px] flex-row items-center"
-            >
-              <button
-                class="text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                (click)="removeScope(i)"
-              >
-                <m-trash-icon></m-trash-icon>
-              </button>
-
-              <div class="ml-5 select-none">Scope</div>
-
-              <input
-                class="form-input border-s3 focus:border-m600 ml-5 w-full rounded"
-                autocomplete="off"
-                spellcheck="false"
-                data-cy="editConnectionScope"
-                formControlName="value"
-                placeholder="https://www.googleapis.com/auth/analytics.readonly"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        data-cy="editConnectionDialogAddScopeButton"
-        class="border-s400 text-s500 hover:bg-s100 h-11 flex-shrink-0 rounded border px-4 text-base leading-3 shadow-sm focus:outline-none"
-        (click)="addScope()"
-        >Add Scope</button
-      >
-    </div>
-
-    <div
-      *ngIf="
-        [typeApi, typeGoogleApi].indexOf(
-          editConnectionForm.controls['type'].value
-        ) > -1
-      "
-    >
-      <div
-        class="mb-6 flex flex-row items-center"
-        [ngClass]="{
-          'mt-6':
-            [typeGoogleApi].indexOf(editConnectionForm.controls['type'].value) >
-            -1
-        }"
-      >
-        <div class="flex w-[200px] flex-shrink-0 font-semibold">Headers</div>
-
-        <!-- <button
-        type="button"
-        data-cy="editConnectionDialogAddHeaderButton"
-        class="ml-5 h-11 flex-shrink-0 select-none rounded border border-s400 px-4 py-2 text-base font-medium text-s500 hover:bg-m0 focus:outline-none"
-        (click)="showLog()"
-        >Log</button
-      > -->
-      </div>
-
-      <div
-        *ngIf="
-          [typeGoogleApi].indexOf(editConnectionForm.controls['type'].value) >
-          -1
-        "
-        class="text-s400 mb-6 w-[628px]"
-        >For this connection type, the Authorization (Bearer token) and
-        Content-Type (application/json) headers will be automatically added. The
-        Authorization Bearer token will be obtained using the Service Account
-        Credentials.
-      </div>
-
-      <div formArrayName="headers">
-        <div class="flex flex-col">
-          <div *ngFor="let header of getHeaders().controls; let i = index">
-            <div
-              [formGroupName]="i"
-              class="mb-6 flex w-[700px] flex-row items-center"
-            >
-              <button
-                class="text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                (click)="removeHeader(i)"
-              >
-                <m-trash-icon></m-trash-icon>
-              </button>
-
-              <div class="ml-5 select-none">Key</div>
-
-              <input
-                class="form-input border-s3 focus:border-m600 ml-5 w-[160px] rounded"
-                autocomplete="off"
-                spellcheck="false"
-                data-cy="editConnectionHeaderKeyInput"
-                formControlName="key"
-              />
-
-              <div class="ml-5 select-none">Value</div>
-
-              <input
-                class="form-input border-s3 focus:border-m600 ml-5 w-full rounded"
-                autocomplete="off"
-                spellcheck="false"
-                data-cy="editConnectionHeaderKeyInput"
-                formControlName="value"
-                placeholder="Will be empty after Save if not set"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="button"
-        data-cy="editConnectionDialogAddHeaderButton"
-        class="border-s400 text-s500 hover:bg-s100 h-11 flex-shrink-0 rounded border px-4 text-base leading-3 shadow-sm focus:outline-none"
-        (click)="addHeader()"
-        >Add Header</button
-      >
-    </div>
-
-    <div
-      *ngIf="
-        [typeBigQuery].indexOf(editConnectionForm.controls['type'].value) > -1
-      "
-    >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
           >Query Size Limit, gb</div
@@ -268,184 +66,83 @@
             class="form-input border-s3 focus:border-m600 w-80 rounded"
             [ngClass]="{
               'border-r600':
-                editConnectionForm.controls['bigqueryQuerySizeLimitGb']
-                  .invalid &&
-                editConnectionForm.controls['bigqueryQuerySizeLimitGb'].touched
+                editBigqueryForm.controls['bigqueryQuerySizeLimitGb'].invalid &&
+                editBigqueryForm.controls['bigqueryQuerySizeLimitGb'].touched
             }"
             formControlName="bigqueryQuerySizeLimitGb"
             placeholder="Query Size Limit, gb (default: 1)"
           />
           <m-validation
-            [control]="editConnectionForm.controls['bigqueryQuerySizeLimitGb']"
+            [control]="editBigqueryForm.controls['bigqueryQuerySizeLimitGb']"
           ></m-validation>
         </div>
       </div>
-    </div>
+    </form>
 
-    <div
-      *ngIf="
-        editConnectionForm.controls['type'].value === typePostgreSQL ||
-        editConnectionForm.controls['type'].value === typeClickHouse
-      "
-    >
-      <div class="mb-6 flex flex-row items-center">
-        <div class="w-[200px] flex-shrink-0 font-semibold">{{
-          editConnectionForm.controls['type'].value === typeClickHouse
-            ? 'HTTPS'
-            : editConnectionForm.controls['type'].value === typePostgreSQL
-              ? 'SSL'
-              : ''
-        }}</div>
+    <form class="flex w-80 flex-col text-base" [formGroup]="editClickhouseForm">
+      <div>
+        <div class="mb-6 flex flex-row items-center">
+          <div class="w-[200px] flex-shrink-0 font-semibold">HTTPS</div>
 
-        <div class="flex flex-col">
-          <div
-            class="flex max-w-min cursor-pointer flex-row items-center"
-            (click)="toggleSSL()"
-          >
-            <ui-switch class="" [checked]="isSSL" color="#64BD63"></ui-switch>
+          <div class="flex flex-col">
+            <div
+              class="flex max-w-min cursor-pointer flex-row items-center"
+              (click)="toggleClickhouseSSL()"
+            >
+              <ui-switch
+                class=""
+                [checked]="isClickhouseSSL"
+                color="#64BD63"
+              ></ui-switch>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="editConnectionDialogClickhouseHostInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  editClickhouseForm.controls['host'].invalid &&
+                  editClickhouseForm.controls['host'].touched
+              }"
+              formControlName="host"
+            />
+            <m-validation
+              [control]="editClickhouseForm.controls['host']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="editConnectionDialogClickhousePortInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  editClickhouseForm.controls['port'].invalid &&
+                  editClickhouseForm.controls['port'].touched
+              }"
+              formControlName="port"
+            />
+            <m-validation
+              [control]="editClickhouseForm.controls['port']"
+            ></m-validation>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
-
-        <div class="flex flex-col">
-          <input
-            autocomplete="off"
-            spellcheck="false"
-            data-cy="editConnectionDialogHostInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['host'].invalid &&
-                editConnectionForm.controls['host'].touched
-            }"
-            formControlName="host"
-          />
-          <m-validation
-            [control]="editConnectionForm.controls['host']"
-          ></m-validation>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
-
-        <div class="flex flex-col">
-          <input
-            autocomplete="off"
-            spellcheck="false"
-            data-cy="editConnectionDialogPortInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['port'].invalid &&
-                editConnectionForm.controls['port'].touched
-            }"
-            formControlName="port"
-          />
-          <m-validation
-            [control]="editConnectionForm.controls['port']"
-          ></m-validation>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
-      <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Account</div>
-
-        <div class="flex flex-col">
-          <input
-            autocomplete="off"
-            spellcheck="false"
-            data-cy="editConnectionDialogAccountInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['account'].invalid &&
-                editConnectionForm.controls['account'].touched
-            }"
-            formControlName="account"
-          />
-          <m-validation
-            [control]="editConnectionForm.controls['account']"
-          ></m-validation>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="editConnectionForm.controls['type'].value === typeSnowFlake">
-      <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Warehouse</div>
-
-        <div class="flex flex-col">
-          <input
-            autocomplete="off"
-            spellcheck="false"
-            data-cy="editConnectionDialogWarehouseInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['warehouse'].invalid &&
-                editConnectionForm.controls['warehouse'].touched
-            }"
-            formControlName="warehouse"
-          />
-          <m-validation
-            [control]="editConnectionForm.controls['warehouse']"
-          ></m-validation>
-        </div>
-      </div>
-    </div>
-
-    <div
-      *ngIf="
-        editConnectionForm.controls['type'].value === typePostgreSQL ||
-        editConnectionForm.controls['type'].value === typeClickHouse ||
-        editConnectionForm.controls['type'].value === typeMotherDuck ||
-        editConnectionForm.controls['type'].value === typeSnowFlake
-      "
-    >
-      <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
-
-        <div class="flex flex-col">
-          <input
-            autocomplete="off"
-            *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
-            spellcheck="false"
-            data-cy="editConnectionDialogDatabaseInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                editConnectionForm.controls['database'].invalid &&
-                editConnectionForm.controls['database'].touched
-            }"
-            formControlName="database"
-            [placeholder]="
-              editConnectionForm.controls['type'].value === typeSnowFlake ||
-              editConnectionForm.controls['type'].value === typeMotherDuck
-                ? 'Optional'
-                : ''
-            "
-          />
-          <m-validation
-            *ngIf="editConnectionForm.controls['type'].value !== typeClickHouse"
-            [control]="editConnectionForm.controls['database']"
-          ></m-validation>
-        </div>
-      </div>
-    </div>
-
-    <div
-      *ngIf="
-        editConnectionForm.controls['type'].value === typeSnowFlake ||
-        editConnectionForm.controls['type'].value === typeClickHouse ||
-        editConnectionForm.controls['type'].value === typePostgreSQL
-      "
-    >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">User</div>
 
@@ -453,17 +150,17 @@
           <input
             autocomplete="off"
             spellcheck="false"
-            data-cy="editConnectionDialogUserInput"
+            data-cy="editConnectionDialogClickhouseUserInput"
             class="form-input border-s3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-r600':
-                editConnectionForm.controls['username'].invalid &&
-                editConnectionForm.controls['username'].touched
+                editClickhouseForm.controls['username'].invalid &&
+                editClickhouseForm.controls['username'].touched
             }"
             formControlName="username"
           />
           <m-validation
-            [control]="editConnectionForm.controls['username']"
+            [control]="editClickhouseForm.controls['username']"
           ></m-validation>
         </div>
       </div>
@@ -475,24 +172,47 @@
           <input
             autocomplete="off"
             spellcheck="false"
-            data-cy="editConnectionDialogPasswordInput"
+            data-cy="editConnectionDialogClickhousePasswordInput"
             class="form-input border-s3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-r600':
-                editConnectionForm.controls['password'].invalid &&
-                editConnectionForm.controls['password'].touched
+                editClickhouseForm.controls['password'].invalid &&
+                editClickhouseForm.controls['password'].touched
             }"
             formControlName="password"
             type="password"
           />
           <m-validation
-            [control]="editConnectionForm.controls['password']"
+            [control]="editClickhouseForm.controls['password']"
           ></m-validation>
         </div>
       </div>
-    </div>
+    </form>
 
-    <div *ngIf="editConnectionForm.controls['type'].value === typeMotherDuck">
+    <form class="flex w-80 flex-col text-base" [formGroup]="editMotherduckForm">
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogMotherduckDatabaseInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editMotherduckForm.controls['database'].invalid &&
+                editMotherduckForm.controls['database'].touched
+            }"
+            formControlName="database"
+            placeholder="Optional"
+          />
+          <m-validation
+            [control]="editMotherduckForm.controls['database']"
+          ></m-validation>
+        </div>
+      </div>
+
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
           >MotherDuck Token</div
@@ -502,27 +222,512 @@
           <input
             autocomplete="off"
             spellcheck="false"
-            data-cy="editConnectionDialogMotherduckInput"
+            data-cy="editConnectionDialogMotherduckTokenInput"
             class="form-input border-s3 focus:border-m600 w-[400px] rounded"
             [ngClass]="{
               'border-r600':
-                editConnectionForm.controls['motherduckToken'].invalid &&
-                editConnectionForm.controls['motherduckToken'].touched
+                editMotherduckForm.controls['motherduckToken'].invalid &&
+                editMotherduckForm.controls['motherduckToken'].touched
             }"
             formControlName="motherduckToken"
           />
           <m-validation
-            [control]="editConnectionForm.controls['motherduckToken']"
+            [control]="editMotherduckForm.controls['motherduckToken']"
           ></m-validation>
         </div>
       </div>
-    </div>
+    </form>
+
+    <form class="flex w-80 flex-col text-base" [formGroup]="editPostgresForm">
+      <div>
+        <div class="mb-6 flex flex-row items-center">
+          <div class="w-[200px] flex-shrink-0 font-semibold">SSL</div>
+
+          <div class="flex flex-col">
+            <div
+              class="flex max-w-min cursor-pointer flex-row items-center"
+              (click)="togglePostgresSSL()"
+            >
+              <ui-switch
+                class=""
+                [checked]="isPostgresSSL"
+                color="#64BD63"
+              ></ui-switch>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="editConnectionDialogPostgresHostInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  editPostgresForm.controls['host'].invalid &&
+                  editPostgresForm.controls['host'].touched
+              }"
+              formControlName="host"
+            />
+            <m-validation
+              [control]="editPostgresForm.controls['host']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="editConnectionDialogPostgresPortInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  editPostgresForm.controls['port'].invalid &&
+                  editPostgresForm.controls['port'].touched
+              }"
+              formControlName="port"
+            />
+            <m-validation
+              [control]="editPostgresForm.controls['port']"
+            ></m-validation>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogPostgresDatabaseInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editPostgresForm.controls['database'].invalid &&
+                editPostgresForm.controls['database'].touched
+            }"
+            formControlName="database"
+          />
+          <m-validation
+            [control]="editPostgresForm.controls['database']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">User</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogPostgresUserInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editPostgresForm.controls['username'].invalid &&
+                editPostgresForm.controls['username'].touched
+            }"
+            formControlName="username"
+          />
+          <m-validation
+            [control]="editPostgresForm.controls['username']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Password</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogPostgresPasswordInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editPostgresForm.controls['password'].invalid &&
+                editPostgresForm.controls['password'].touched
+            }"
+            formControlName="password"
+            type="password"
+          />
+          <m-validation
+            [control]="editPostgresForm.controls['password']"
+          ></m-validation>
+        </div>
+      </div>
+    </form>
+
+    <form class="flex w-80 flex-col text-base" [formGroup]="editSnowflakeForm">
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Account</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogSnowflakeAccountInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editSnowflakeForm.controls['account'].invalid &&
+                editSnowflakeForm.controls['account'].touched
+            }"
+            formControlName="account"
+          />
+          <m-validation
+            [control]="editSnowflakeForm.controls['account']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Warehouse</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogSnowflakeWarehouseInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editSnowflakeForm.controls['warehouse'].invalid &&
+                editSnowflakeForm.controls['warehouse'].touched
+            }"
+            formControlName="warehouse"
+          />
+          <m-validation
+            [control]="editSnowflakeForm.controls['warehouse']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogSnowflakeDatabaseInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editSnowflakeForm.controls['database'].invalid &&
+                editSnowflakeForm.controls['database'].touched
+            }"
+            formControlName="database"
+            placeholder="Optional"
+          />
+          <m-validation
+            [control]="editSnowflakeForm.controls['database']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">User</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogSnowflakeUserInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editSnowflakeForm.controls['username'].invalid &&
+                editSnowflakeForm.controls['username'].touched
+            }"
+            formControlName="username"
+          />
+          <m-validation
+            [control]="editSnowflakeForm.controls['username']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Password</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogSnowflakePasswordInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editSnowflakeForm.controls['password'].invalid &&
+                editSnowflakeForm.controls['password'].touched
+            }"
+            formControlName="password"
+            type="password"
+          />
+          <m-validation
+            [control]="editSnowflakeForm.controls['password']"
+          ></m-validation>
+        </div>
+      </div>
+    </form>
+
+    <form class="flex w-80 flex-col text-base" [formGroup]="editApiForm">
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Base URL</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogApiBaseUrlInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editApiForm.controls['baseUrl'].invalid &&
+                editApiForm.controls['baseUrl'].touched
+            }"
+            formControlName="baseUrl"
+            placeholder="https://example.com"
+          />
+
+          <m-validation
+            [control]="editApiForm.controls['baseUrl']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div>
+        <div class="mb-6 flex flex-row items-center">
+          <div class="flex w-[200px] flex-shrink-0 font-semibold">Headers</div>
+        </div>
+
+        <div formArrayName="headers">
+          <div class="flex flex-col">
+            <div *ngFor="let header of apiGetHeaders().controls; let i = index">
+              <div
+                [formGroupName]="i"
+                class="mb-6 flex w-[700px] flex-row items-center"
+              >
+                <button
+                  class="text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  (click)="apiRemoveHeader(i)"
+                >
+                  <m-trash-icon></m-trash-icon>
+                </button>
+
+                <div class="ml-5 select-none">Key</div>
+
+                <input
+                  class="form-input border-s3 focus:border-m600 ml-5 w-[160px] rounded"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-cy="editConnectionApiHeaderKeyInput"
+                  formControlName="key"
+                />
+
+                <div class="ml-5 select-none">Value</div>
+
+                <input
+                  class="form-input border-s3 focus:border-m600 ml-5 w-full rounded"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-cy="editConnectionApiHeaderValueInput"
+                  formControlName="value"
+                  placeholder="Will be empty after Save if not set"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          data-cy="editConnectionDialogApiAddHeaderButton"
+          class="border-s400 text-s500 hover:bg-s100 h-11 flex-shrink-0 rounded border px-4 text-base leading-3 shadow-sm focus:outline-none"
+          (click)="apiAddHeader()"
+          >Add Header</button
+        >
+      </div>
+    </form>
+
+    <form class="flex w-80 flex-col text-base" [formGroup]="editGoogleApiForm">
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+          >Service Account Credentials</div
+        >
+
+        <div class="flex flex-col">
+          <textarea
+            rows="7"
+            data-cy="editConnectionDialogGoogleApiServiceAccountCredentialsInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] resize-none whitespace-nowrap rounded font-mono"
+            [ngClass]="{
+              'border-r600':
+                editGoogleApiForm.controls['serviceAccountCredentials']
+                  .invalid &&
+                editGoogleApiForm.controls['serviceAccountCredentials'].touched
+            }"
+            formControlName="serviceAccountCredentials"
+            placeholder="JSON"
+          ></textarea>
+
+          <m-validation
+            [control]="editGoogleApiForm.controls['serviceAccountCredentials']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Base URL</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogGoogleApiBaseUrlInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editGoogleApiForm.controls['baseUrl'].invalid &&
+                editGoogleApiForm.controls['baseUrl'].touched
+            }"
+            formControlName="baseUrl"
+            placeholder="https://analyticsdata.googleapis.com"
+          />
+
+          <m-validation
+            [control]="editGoogleApiForm.controls['baseUrl']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div>
+        <div class="mb-6 flex flex-row items-center">
+          <div class="flex w-[200px] flex-shrink-0 font-semibold">Scopes</div>
+        </div>
+
+        <div formArrayName="scopes">
+          <div class="flex flex-col">
+            <div *ngFor="let scopes of getScopes().controls; let i = index">
+              <div
+                [formGroupName]="i"
+                class="mb-6 flex w-[700px] flex-row items-center"
+              >
+                <button
+                  class="text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  (click)="removeScope(i)"
+                >
+                  <m-trash-icon></m-trash-icon>
+                </button>
+
+                <div class="ml-5 select-none">Scope</div>
+
+                <input
+                  class="form-input border-s3 focus:border-m600 ml-5 w-full rounded"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-cy="editConnectionDialogGoogleApiScope"
+                  formControlName="value"
+                  placeholder="https://www.googleapis.com/auth/analytics.readonly"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          data-cy="editConnectionDialogGoogleApiAddScopeButton"
+          class="border-s400 text-s500 hover:bg-s100 h-11 flex-shrink-0 rounded border px-4 text-base leading-3 shadow-sm focus:outline-none"
+          (click)="addScope()"
+          >Add Scope</button
+        >
+      </div>
+
+      <div>
+        <div class="mb-6 mt-6 flex flex-row items-center">
+          <div class="flex w-[200px] flex-shrink-0 font-semibold">Headers</div>
+        </div>
+
+        <div class="text-s400 mb-6 w-[628px]"
+          >For this connection type, the Authorization (Bearer token) and
+          Content-Type (application/json) headers will be automatically added.
+          The Authorization Bearer token will be obtained using the Service
+          Account Credentials.
+        </div>
+
+        <div formArrayName="headers">
+          <div class="flex flex-col">
+            <div
+              *ngFor="
+                let header of googleApiGetHeaders().controls;
+                let i = index
+              "
+            >
+              <div
+                [formGroupName]="i"
+                class="mb-6 flex w-[700px] flex-row items-center"
+              >
+                <button
+                  class="text-s500 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  (click)="googleApiRemoveHeader(i)"
+                >
+                  <m-trash-icon></m-trash-icon>
+                </button>
+
+                <div class="ml-5 select-none">Key</div>
+
+                <input
+                  class="form-input border-s3 focus:border-m600 ml-5 w-[160px] rounded"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-cy="editConnectionDialogGoogleApiHeaderKeyInput"
+                  formControlName="key"
+                />
+
+                <div class="ml-5 select-none">Value</div>
+
+                <input
+                  class="form-input border-s3 focus:border-m600 ml-5 w-full rounded"
+                  autocomplete="off"
+                  spellcheck="false"
+                  data-cy="editConnectionDialogGoogleApiHeaderValueInput"
+                  formControlName="value"
+                  placeholder="Will be empty after Save if not set"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          data-cy="editConnectionDialogGoogleApiAddHeaderButton"
+          class="border-s400 text-s500 hover:bg-s100 h-11 flex-shrink-0 rounded border px-4 text-base leading-3 shadow-sm focus:outline-none"
+          (click)="googleApiAddHeader()"
+          >Add Header</button
+        >
+      </div>
+    </form>
 
     <div class="mt-9">
       <button
         data-cy="editConnectionDialogSaveButton"
         class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
-        type="submit"
+        (click)="save()"
         >Save</button
       >
 
@@ -534,5 +739,5 @@
         >Cancel</button
       >
     </div>
-  </form>
+  </div>
 </div>

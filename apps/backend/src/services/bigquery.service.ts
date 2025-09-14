@@ -19,8 +19,8 @@ export class BigQueryService {
     let { query, userId, connection } = item;
 
     let bigquery = new BigQuery({
-      credentials: connection.serviceAccountCredentials,
-      projectId: connection.googleCloudProject
+      credentials: connection.bigqueryOptions.serviceAccountCredentials,
+      projectId: connection.bigqueryOptions.googleCloudProject
     });
 
     query.lastRunBy = userId;
@@ -30,7 +30,7 @@ export class BigQueryService {
     query.bigqueryConsecutiveErrorsGetResults = 0;
 
     let maximumBytesBilled =
-      connection.bigqueryQuerySizeLimitGb * 1024 * 1024 * 1024;
+      connection.bigqueryOptions.bigqueryQuerySizeLimitGb * 1024 * 1024 * 1024;
 
     let createQueryJobItem = await bigquery
       .createQueryJob({
@@ -68,8 +68,8 @@ export class BigQueryService {
     let errorQuery: QueryEnt;
 
     let bigquery = new BigQuery({
-      credentials: connection.serviceAccountCredentials,
-      projectId: connection.googleCloudProject
+      credentials: connection.bigqueryOptions.serviceAccountCredentials,
+      projectId: connection.bigqueryOptions.googleCloudProject
     });
 
     let createQueryJobItem = await bigquery

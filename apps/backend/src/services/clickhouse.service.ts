@@ -36,13 +36,13 @@ export class ClickHouseService {
 
     let options: ClickHouseClientOptions = {
       protocol:
-        connection.isSsl === true
+        connection.clickhouseOptions.isSSL === true
           ? ClickHouseConnectionProtocol.HTTPS
           : ClickHouseConnectionProtocol.HTTP,
-      host: connection.host,
-      port: connection.port,
-      username: connection.username,
-      password: connection.password
+      host: connection.clickhouseOptions.host,
+      port: connection.clickhouseOptions.port,
+      username: connection.clickhouseOptions.username,
+      password: connection.clickhouseOptions.password
     };
 
     let clickhouse = new ClickHouseClient(options);

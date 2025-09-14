@@ -170,14 +170,19 @@ export class RunQueriesController {
         // let tsStart = Date.now();
 
         let authClient = new JWT({
-          email: (connection.serviceAccountCredentials as any).client_email,
-          key: (connection.serviceAccountCredentials as any).private_key,
-          scopes: connection.googleAuthScopes
+          email: (
+            connection.storeGoogleApiOptions.serviceAccountCredentials as any
+          ).client_email,
+          key: (
+            connection.storeGoogleApiOptions.serviceAccountCredentials as any
+          ).private_key,
+          scopes: connection.storeGoogleApiOptions.googleAuthScopes
         });
 
         let tokens = await authClient.authorize();
 
-        connection.googleAccessToken = tokens.access_token;
+        connection.storeGoogleApiOptions.googleAccessToken =
+          tokens.access_token;
 
         // console.log(Date.now() - tsStart);
         // console.log('googleApiConnections end');

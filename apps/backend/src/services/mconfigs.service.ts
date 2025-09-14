@@ -8,6 +8,7 @@ import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
 import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
@@ -139,8 +140,15 @@ export class MconfigsService {
         ? errorMessage
         : (JSON.parse(processedRequest.result) as any).urlPath;
 
+    let connectionBaseUrl =
+      connection.type === ConnectionTypeEnum.Api
+        ? connection.storeApiOptions.baseUrl
+        : connection.type === ConnectionTypeEnum.GoogleApi
+          ? connection.storeGoogleApiOptions.baseUrl
+          : '';
+
     let apiUrl =
-      isError === true ? errorMessage : connection.baseUrl + apiUrlPath;
+      isError === true ? errorMessage : connectionBaseUrl + apiUrlPath;
 
     let apiBody =
       isError === true

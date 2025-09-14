@@ -35,11 +35,11 @@ export class SnowFlakeService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let options: snowflake.ConnectionOptions = {
-      account: connection.account,
-      warehouse: connection.warehouse,
-      database: connection.database,
-      username: connection.username,
-      password: connection.password
+      account: connection.snowflakeOptions.account,
+      warehouse: connection.snowflakeOptions.warehouse,
+      database: connection.snowflakeOptions.database,
+      username: connection.snowflakeOptions.username,
+      password: connection.snowflakeOptions.password
       //  schema?: string | undefined;
       //  role?: string | undefined;
       //  clientSessionKeepAlive?: boolean | undefined;

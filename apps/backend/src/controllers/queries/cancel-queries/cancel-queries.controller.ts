@@ -155,8 +155,8 @@ export class CancelQueriesController {
 
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           let bigquery = new BigQuery({
-            projectId: connection.googleCloudProject,
-            credentials: connection.serviceAccountCredentials
+            projectId: connection.bigqueryOptions.googleCloudProject,
+            credentials: connection.bigqueryOptions.serviceAccountCredentials
           });
 
           let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);

@@ -18,10 +18,7 @@ import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
 import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
 import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
-import {
-  HEADER_VALUE_IS_HIDDEN,
-  MPROVE_USERS_FOLDER
-} from '~common/constants/top';
+import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
@@ -136,10 +133,7 @@ export class WrapToApiService {
             baseUrl: storeApiOptions.baseUrl,
             headers: storeApiOptions.headers?.map(header => ({
               key: header.key,
-              value:
-                isIncludePasswords === true
-                  ? (header.value ?? '')
-                  : HEADER_VALUE_IS_HIDDEN
+              value: isIncludePasswords === true ? (header.value ?? '') : ''
             }))
           }
         : undefined,
@@ -148,10 +142,7 @@ export class WrapToApiService {
             baseUrl: storeGoogleApiOptions.baseUrl,
             headers: storeGoogleApiOptions.headers?.map(header => ({
               key: header.key,
-              value:
-                isIncludePasswords === true
-                  ? (header.value ?? '')
-                  : HEADER_VALUE_IS_HIDDEN
+              value: isIncludePasswords === true ? (header.value ?? '') : ''
             })),
             googleAuthScopes: storeGoogleApiOptions.googleAuthScopes,
             serviceAccountCredentials:
