@@ -53,20 +53,13 @@ export class CreateConnectionController {
       envId,
       connectionId,
       type,
-      isSSL,
-      baseUrl,
-      motherduckToken,
-      serviceAccountCredentials,
-      headers,
-      googleAuthScopes,
-      bigqueryQuerySizeLimitGb,
-      account,
-      warehouse,
-      host,
-      port,
-      database,
-      username,
-      password
+      bigqueryOptions,
+      clickhouseOptions,
+      motherduckOptions,
+      postgresOptions,
+      snowflakeOptions,
+      storeApiOptions,
+      storeGoogleApiOptions
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -100,20 +93,13 @@ export class CreateConnectionController {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      baseUrl: baseUrl,
-      headers: headers,
-      googleAuthScopes: googleAuthScopes,
-      account: account,
-      warehouse: warehouse,
-      host: host,
-      port: port,
-      database: database,
-      username: username,
-      password: password,
-      motherduckToken: motherduckToken,
-      serviceAccountCredentials: serviceAccountCredentials,
-      bigqueryQuerySizeLimitGb: bigqueryQuerySizeLimitGb,
-      isSSL: isSSL
+      bigqueryOptions: bigqueryOptions,
+      clickhouseOptions: clickhouseOptions,
+      motherduckOptions: motherduckOptions,
+      postgresOptions: postgresOptions,
+      snowflakeOptions: snowflakeOptions,
+      storeApiOptions: storeApiOptions,
+      storeGoogleApiOptions: storeGoogleApiOptions
     });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -145,7 +131,10 @@ export class CreateConnectionController {
     );
 
     let payload: ToBackendCreateConnectionResponsePayload = {
-      connection: this.wrapToApiService.wrapToApiConnection(newConnection)
+      connection: this.wrapToApiService.wrapToApiConnection({
+        connection: newConnection,
+        isIncludePasswords: false
+      })
     };
 
     return payload;

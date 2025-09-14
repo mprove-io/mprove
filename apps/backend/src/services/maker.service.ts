@@ -9,6 +9,13 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
+import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
+import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
+import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
+import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
+import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
+import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { ReportField } from '~common/interfaces/blockml/report-field';
@@ -123,41 +130,48 @@ export class MakerService {
     connectionId: string;
     envId: string;
     type: ConnectionTypeEnum;
-    baseUrl: string;
-    headers: ConnectionHeader[];
-    googleAuthScopes: string[];
-    host: string;
-    port: number;
-    database: string;
-    username: string;
-    password: string;
-    account: string;
-    warehouse: string;
-    serviceAccountCredentials: any;
-    motherduckToken: string;
-    bigqueryQuerySizeLimitGb: number;
-    isSSL: boolean;
+    bigqueryOptions?: ConnectionBigqueryOptions;
+    clickhouseOptions?: ConnectionClickhouseOptions;
+    motherduckOptions?: ConnectionMotherduckOptions;
+    postgresOptions?: ConnectionPostgresOptions;
+    snowflakeOptions?: ConnectionSnowflakeOptions;
+    storeApiOptions?: ConnectionStoreApiOptions;
+    storeGoogleApiOptions?: ConnectionStoreGoogleApiOptions;
   }) {
     let {
       projectId,
       connectionId,
       envId,
       type,
-      isSSL,
-      baseUrl,
-      headers,
-      googleAuthScopes,
-      host,
-      port,
-      database,
-      username,
-      password,
-      account,
-      warehouse,
-      serviceAccountCredentials,
-      motherduckToken,
-      bigqueryQuerySizeLimitGb
+      bigqueryOptions,
+      clickhouseOptions,
+      motherduckOptions,
+      postgresOptions,
+      snowflakeOptions,
+      storeApiOptions,
+      storeGoogleApiOptions
     } = item;
+
+    if (isDefined(storeGoogleApiOptions)) {
+      storeGoogleApiOptions.googleCloudProject =
+        storeGoogleApiOptions.serviceAccountCredentials?.project_id;
+
+      storeGoogleApiOptions.googleCloudClientEmail =
+        storeGoogleApiOptions.serviceAccountCredentials?.client_email;
+    }
+
+    if (isDefined(bigqueryOptions)) {
+      bigqueryOptions.googleCloudProject =
+        bigqueryOptions.serviceAccountCredentials?.project_id;
+
+      bigqueryOptions.googleCloudClientEmail =
+        bigqueryOptions.serviceAccountCredentials?.client_email;
+
+      let slimit = bigqueryOptions.bigqueryQuerySizeLimitGb;
+
+      bigqueryOptions.bigqueryQuerySizeLimitGb =
+        isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
+    }
 
     let connection: ConnectionEnt = {
       connectionFullId: this.hashService.makeConnectionFullId({
@@ -169,26 +183,13 @@ export class MakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      baseUrl: baseUrl,
-      headers: headers,
-      googleAuthScopes: googleAuthScopes,
-      serviceAccountCredentials: serviceAccountCredentials,
-      motherduckToken: motherduckToken,
-      googleCloudProject: serviceAccountCredentials?.project_id,
-      googleCloudClientEmail: serviceAccountCredentials?.client_email,
-      googleAccessToken: undefined,
-      bigqueryQuerySizeLimitGb:
-        isDefined(bigqueryQuerySizeLimitGb) && bigqueryQuerySizeLimitGb > 0
-          ? bigqueryQuerySizeLimitGb
-          : DEFAULT_QUERY_SIZE_LIMIT,
-      account: account,
-      warehouse: warehouse,
-      host: host,
-      port: port,
-      database: database,
-      username: username,
-      password: password,
-      isSsl: isSSL,
+      bigqueryOptions: bigqueryOptions,
+      clickhouseOptions: clickhouseOptions,
+      motherduckOptions: motherduckOptions,
+      postgresOptions: postgresOptions,
+      snowflakeOptions: snowflakeOptions,
+      storeApiOptions: storeApiOptions,
+      storeGoogleApiOptions: storeGoogleApiOptions,
       serverTs: undefined
     };
 

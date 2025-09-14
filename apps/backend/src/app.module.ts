@@ -329,22 +329,16 @@ export class AppModule implements OnModuleInit {
                 envId: PROJECT_ENV_PROD,
                 connectionId: 'c1_postgres',
                 type: ConnectionTypeEnum.PostgreSQL,
-                baseUrl: undefined,
-                headers: undefined,
-                googleAuthScopes: undefined,
-                host: this.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
-                  'firstProjectDwhPostgresHost'
-                ),
-                port: 5436,
-                database: 'p_db',
-                username: 'postgres',
-                password: firstProjectDwhPostgresPassword,
-                account: undefined,
-                warehouse: undefined,
-                motherduckToken: undefined,
-                serviceAccountCredentials: undefined,
-                bigqueryQuerySizeLimitGb: undefined,
-                isSSL: false
+                postgresOptions: {
+                  host: this.cs.get<
+                    BackendConfig['firstProjectDwhPostgresHost']
+                  >('firstProjectDwhPostgresHost'),
+                  port: 5436,
+                  database: 'p_db',
+                  username: 'postgres',
+                  password: firstProjectDwhPostgresPassword,
+                  isSSL: false
+                }
               });
 
               connections.push(c1);
@@ -372,20 +366,13 @@ export class AppModule implements OnModuleInit {
                 envId: PROJECT_ENV_PROD,
                 connectionId: 'c2_clickhouse',
                 type: ConnectionTypeEnum.ClickHouse,
-                baseUrl: undefined,
-                headers: undefined,
-                googleAuthScopes: undefined,
-                host: 'dwh-clickhouse',
-                port: 8123,
-                username: 'c_user',
-                password: firstProjectDwhClickhousePassword,
-                database: undefined,
-                account: undefined,
-                warehouse: undefined,
-                motherduckToken: undefined,
-                serviceAccountCredentials: undefined,
-                bigqueryQuerySizeLimitGb: undefined,
-                isSSL: false
+                clickhouseOptions: {
+                  host: 'dwh-clickhouse',
+                  port: 8123,
+                  username: 'c_user',
+                  password: firstProjectDwhClickhousePassword,
+                  isSSL: false
+                }
               });
 
               connections.push(c2);
@@ -419,20 +406,12 @@ export class AppModule implements OnModuleInit {
                 envId: PROJECT_ENV_PROD,
                 connectionId: 'c3_bigquery',
                 type: ConnectionTypeEnum.BigQuery,
-                baseUrl: undefined,
-                headers: undefined,
-                googleAuthScopes: undefined,
-                host: undefined,
-                port: undefined,
-                database: undefined,
-                username: undefined,
-                password: undefined,
-                account: undefined,
-                warehouse: undefined,
-                motherduckToken: undefined,
-                serviceAccountCredentials: bigqueryTestCredentials,
-                bigqueryQuerySizeLimitGb: 1,
-                isSSL: true
+                bigqueryOptions: {
+                  serviceAccountCredentials: bigqueryTestCredentials,
+                  googleCloudProject: bigqueryTestCredentials?.project_id,
+                  googleCloudClientEmail: bigqueryTestCredentials?.client_email,
+                  bigqueryQuerySizeLimitGb: 1
+                }
               });
 
               connections.push(c3);
@@ -460,26 +439,19 @@ export class AppModule implements OnModuleInit {
                 envId: PROJECT_ENV_PROD,
                 connectionId: 'c4_snowflake',
                 type: ConnectionTypeEnum.SnowFlake,
-                baseUrl: undefined,
-                headers: undefined,
-                googleAuthScopes: undefined,
-                host: undefined,
-                port: undefined,
-                database: undefined,
-                account: firstProjectDwhSnowflakeAccount,
-                username: this.cs.get<
-                  BackendConfig['firstProjectDwhSnowflakeUsername']
-                >('firstProjectDwhSnowflakeUsername'),
-                password: this.cs.get<
-                  BackendConfig['firstProjectDwhSnowflakePassword']
-                >('firstProjectDwhSnowflakePassword'),
-                warehouse: this.cs.get<
-                  BackendConfig['firstProjectDwhSnowflakeWarehouse']
-                >('firstProjectDwhSnowflakeWarehouse'),
-                motherduckToken: undefined,
-                serviceAccountCredentials: undefined,
-                bigqueryQuerySizeLimitGb: undefined,
-                isSSL: true
+                snowflakeOptions: {
+                  account: firstProjectDwhSnowflakeAccount,
+                  warehouse: this.cs.get<
+                    BackendConfig['firstProjectDwhSnowflakeWarehouse']
+                  >('firstProjectDwhSnowflakeWarehouse'),
+                  database: undefined,
+                  username: this.cs.get<
+                    BackendConfig['firstProjectDwhSnowflakeUsername']
+                  >('firstProjectDwhSnowflakeUsername'),
+                  password: this.cs.get<
+                    BackendConfig['firstProjectDwhSnowflakePassword']
+                  >('firstProjectDwhSnowflakePassword')
+                }
               });
 
               connections.push(c4);
@@ -507,20 +479,12 @@ export class AppModule implements OnModuleInit {
                 envId: PROJECT_ENV_PROD,
                 connectionId: 'c5_duckdb',
                 type: ConnectionTypeEnum.MotherDuck,
-                baseUrl: undefined,
-                headers: undefined,
-                googleAuthScopes: undefined,
-                host: undefined,
-                port: undefined,
-                username: undefined,
-                password: undefined,
-                database: undefined,
-                account: undefined,
-                warehouse: undefined,
-                serviceAccountCredentials: undefined,
-                motherduckToken: firstProjectDwhMotherDuckToken,
-                bigqueryQuerySizeLimitGb: undefined,
-                isSSL: true
+                motherduckOptions: {
+                  motherduckToken: firstProjectDwhMotherDuckToken,
+                  database: 'db1',
+                  attachModeSingle: true,
+                  accessModeReadOnly: true
+                }
               });
 
               connections.push(c5);
@@ -554,22 +518,18 @@ export class AppModule implements OnModuleInit {
                 envId: PROJECT_ENV_PROD,
                 connectionId: 'c7_google',
                 type: ConnectionTypeEnum.GoogleApi,
-                baseUrl: 'https://analyticsdata.googleapis.com',
-                headers: [],
-                googleAuthScopes: [
-                  'https://www.googleapis.com/auth/analytics.readonly'
-                ],
-                host: undefined,
-                port: undefined,
-                database: undefined,
-                username: undefined,
-                password: undefined,
-                account: undefined,
-                warehouse: undefined,
-                motherduckToken: undefined,
-                serviceAccountCredentials: googleApiTestCredentials,
-                bigqueryQuerySizeLimitGb: undefined,
-                isSSL: true
+                storeGoogleApiOptions: {
+                  baseUrl: 'https://analyticsdata.googleapis.com',
+                  headers: [],
+                  googleAuthScopes: [
+                    'https://www.googleapis.com/auth/analytics.readonly'
+                  ],
+                  serviceAccountCredentials: googleApiTestCredentials,
+                  googleCloudProject: googleApiTestCredentials?.project_id,
+                  googleCloudClientEmail:
+                    googleApiTestCredentials?.client_email,
+                  googleAccessToken: undefined
+                }
               });
 
               connections.push(c7);
@@ -646,7 +606,10 @@ export class AppModule implements OnModuleInit {
               publicKey: publicKey,
               evs: [ev1],
               connections: connections.map(x =>
-                this.wrapToApiService.wrapToApiProjectConnection(x)
+                this.wrapToApiService.wrapToApiConnection({
+                  connection: x,
+                  isIncludePasswords: true
+                })
               )
             });
           }

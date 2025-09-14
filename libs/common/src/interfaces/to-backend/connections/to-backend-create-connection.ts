@@ -1,14 +1,14 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ProjectConnection } from '~common/interfaces/backend/connection';
+import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
+import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
+import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
+import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
+import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
+import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
+import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -26,60 +26,39 @@ export class ToBackendCreateConnectionRequestPayload {
   type: ConnectionTypeEnum;
 
   @IsOptional()
-  @IsString()
-  baseUrl?: string;
-
-  @IsOptional()
-  @IsString()
-  motherduckToken?: string;
-
-  @IsOptional()
-  serviceAccountCredentials?: any;
+  @ValidateNested()
+  @Type(() => ConnectionBigqueryOptions)
+  bigqueryOptions?: ConnectionBigqueryOptions;
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionHeader)
-  headers?: ConnectionHeader[];
+  @Type(() => ConnectionClickhouseOptions)
+  clickhouseOptions?: ConnectionClickhouseOptions;
 
   @IsOptional()
-  @IsString({ each: true })
-  googleAuthScopes?: string[];
+  @ValidateNested()
+  @Type(() => ConnectionMotherduckOptions)
+  motherduckOptions?: ConnectionMotherduckOptions;
 
   @IsOptional()
-  @IsInt()
-  bigqueryQuerySizeLimitGb?: number;
+  @ValidateNested()
+  @Type(() => ConnectionPostgresOptions)
+  postgresOptions?: ConnectionPostgresOptions;
 
   @IsOptional()
-  @IsString()
-  account?: string;
+  @ValidateNested()
+  @Type(() => ConnectionSnowflakeOptions)
+  snowflakeOptions?: ConnectionSnowflakeOptions;
 
   @IsOptional()
-  @IsString()
-  warehouse?: string;
+  @ValidateNested()
+  @Type(() => ConnectionStoreApiOptions)
+  storeApiOptions?: ConnectionStoreApiOptions;
 
   @IsOptional()
-  @IsString()
-  host?: string;
-
-  @IsOptional()
-  @IsInt()
-  port?: number;
-
-  @IsOptional()
-  @IsString()
-  database?: string;
-
-  @IsOptional()
-  @IsString()
-  username?: string;
-
-  @IsOptional()
-  @IsString()
-  password?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isSSL?: boolean;
+  @ValidateNested()
+  @Type(() => ConnectionStoreGoogleApiOptions)
+  storeGoogleApiOptions?: ConnectionStoreGoogleApiOptions;
 }
 
 export class ToBackendCreateConnectionRequest extends ToBackendRequest {

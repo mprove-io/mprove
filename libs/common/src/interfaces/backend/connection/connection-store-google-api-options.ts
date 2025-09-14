@@ -13,6 +13,11 @@ export class ConnectionStoreGoogleApiOptions {
   baseUrl: string;
 
   @IsOptional()
+  @ValidateNested()
+  @IsString({ each: true })
+  googleAuthScopes?: string[];
+
+  @IsOptional()
   serviceAccountCredentials: any;
 
   @IsOptional()
@@ -26,9 +31,4 @@ export class ConnectionStoreGoogleApiOptions {
   @IsOptional()
   @IsString()
   googleAccessToken: string;
-
-  @IsOptional()
-  @ValidateNested()
-  @IsString({ each: true })
-  googleAuthScopes?: string[];
 }

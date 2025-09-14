@@ -20,7 +20,7 @@ import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ProjectConnection } from '~common/interfaces/backend/connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import {
   ToBackendEditConnectionRequestPayload,
   ToBackendEditConnectionResponse
@@ -51,14 +51,30 @@ export class EditConnectionDialogComponent implements OnInit {
 
   dataItem: EditConnectionDialogData = this.ref.data;
 
+  editForm: FormGroup;
   editConnectionForm: FormGroup;
 
+  editBigqueryForm: FormGroup;
+  editClickhouseForm: FormGroup;
+  editMotherduckForm: FormGroup;
+  editPostgresForm: FormGroup;
+  editSnowflakeForm: FormGroup;
+  editApiForm: FormGroup;
+  editGoogleApiForm: FormGroup;
+
   isSSL = true;
+  isClickhouseSSL = true;
+
+  isMotherduckAttachModeSingle = true;
+  isMotherduckAccessModeReadOnly = true;
+
+  // connectionId: string;
+  // connectionType: ConnectionTypeEnum;
 
   connectionTypes = [
     ConnectionTypeEnum.PostgreSQL,
     ConnectionTypeEnum.SnowFlake,
-    ConnectionTypeEnum.ClickHouse,
+    ConnectionTypeEnum.ClickHouse, // TODO: hide clickhouse
     ConnectionTypeEnum.BigQuery,
     ConnectionTypeEnum.GoogleApi,
     ConnectionTypeEnum.Api
@@ -79,7 +95,48 @@ export class EditConnectionDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.isSSL = this.dataItem.connection.isSSL === true ? true : false;
+    // this.isSSL = this.dataItem.connection.isSSL === true ? true : false;
+
+    this.editForm = this.fb.group({
+      connectionId: [this.dataItem.connection.connectionId],
+      type: [this.dataItem.connection.type]
+    });
+
+    this.editBigqueryForm = this.fb.group({
+      serviceAccountCredentials: [undefined, [Validators.required]],
+      bigqueryQuerySizeLimitGb: [
+        this.dataItem.connection.bigqueryOptions?.bigqueryQuerySizeLimitGb,
+        [ValidationService.integerOrEmptyValidator, Validators.required]
+      ]
+    });
+
+    this.editClickhouseForm = this.fb.group({
+      host: [
+        this.dataItem.connection.clickhouseOptions.host,
+        [Validators.required]
+      ],
+      port: [
+        this.dataItem.connection.clickhouseOptions.port,
+        [Validators.required]
+      ],
+      username: [
+        this.dataItem.connection.clickhouseOptions.username,
+        [Validators.required]
+      ],
+      password: [undefined, [Validators.required]]
+    });
+
+    this.editMotherduckForm = this.fb.group({
+      motherduckToken: [undefined, [Validators.required]],
+      database: [
+        this.dataItem.connection.motherduckOptions.database,
+        [Validators.required]
+      ]
+    });
+
+    //
+    //
+    //
 
     this.editConnectionForm = this.fb.group({
       connectionId: [this.dataItem.connection.connectionId],
@@ -322,39 +379,102 @@ export class EditConnectionDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let cType = this.editConnectionForm.value.type;
+
+    let saCredentials = isDefined(
+      this.editConnectionForm.value.serviceAccountCredentials
+    )
+      ? JSON.parse(this.editConnectionForm.value.serviceAccountCredentials)
+      : undefined;
+
     let payload: ToBackendEditConnectionRequestPayload = {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
       connectionId: this.editConnectionForm.value.connectionId,
-      baseUrl: this.editConnectionForm.value.baseUrl,
-      serviceAccountCredentials: isDefined(
-        this.editConnectionForm.value.serviceAccountCredentials
-      )
-        ? JSON.parse(this.editConnectionForm.value.serviceAccountCredentials)
-        : undefined,
-      headers: this.editConnectionForm.value.headers,
-      googleAuthScopes:
-        [ConnectionTypeEnum.GoogleApi].indexOf(
-          this.editConnectionForm.get('type').value
-        ) > -1
-          ? this.editConnectionForm.value.scopes.map((x: any) => x.value)
-          : [],
-      bigqueryQuerySizeLimitGb: isDefined(
-        this.editConnectionForm.value.bigqueryQuerySizeLimitGb
-      )
-        ? Number(this.editConnectionForm.value.bigqueryQuerySizeLimitGb)
-        : undefined,
-      account: this.editConnectionForm.value.account,
-      warehouse: this.editConnectionForm.value.warehouse,
-      host: this.editConnectionForm.value.host,
-      port: isDefined(this.editConnectionForm.value.port)
-        ? Number(this.editConnectionForm.value.port)
-        : undefined,
-      database: this.editConnectionForm.value.database,
-      username: this.editConnectionForm.value.username,
-      password: this.editConnectionForm.value.password,
-      motherduckToken: this.editConnectionForm.value.motherduckToken,
-      isSSL: this.isSSL
+
+      bigqueryOptions:
+        cType === ConnectionTypeEnum.BigQuery
+          ? {
+              googleCloudProject: undefined,
+              googleCloudClientEmail: undefined,
+              serviceAccountCredentials: saCredentials,
+              bigqueryQuerySizeLimitGb: isDefined(
+                this.editConnectionForm.value.bigqueryQuerySizeLimitGb
+              )
+                ? Number(this.editConnectionForm.value.bigqueryQuerySizeLimitGb)
+                : undefined
+            }
+          : undefined,
+      clickhouseOptions:
+        cType === ConnectionTypeEnum.ClickHouse
+          ? {
+              host: this.editConnectionForm.value.host,
+              port: isDefined(this.editConnectionForm.value.port)
+                ? Number(this.editConnectionForm.value.port)
+                : undefined,
+              username: this.editConnectionForm.value.username,
+              password: this.editConnectionForm.value.password,
+              isSSL: this.isSSL
+            }
+          : undefined,
+      motherduckOptions:
+        cType === ConnectionTypeEnum.MotherDuck
+          ? {
+              motherduckToken: this.editConnectionForm.value.motherduckToken,
+              database: this.editConnectionForm.value.database,
+              attachModeSingle: true, // TODO: attachModeSingle
+              accessModeReadOnly: true // TODO: accessModeReadOnly
+            }
+          : undefined,
+      postgresOptions:
+        cType === ConnectionTypeEnum.PostgreSQL
+          ? {
+              host: this.editConnectionForm.value.host,
+              port: isDefined(this.editConnectionForm.value.port)
+                ? Number(this.editConnectionForm.value.port)
+                : undefined,
+              database: this.editConnectionForm.value.database,
+              username: this.editConnectionForm.value.username,
+              password: this.editConnectionForm.value.password,
+              isSSL: this.isSSL
+            }
+          : undefined,
+      snowflakeOptions:
+        cType === ConnectionTypeEnum.SnowFlake
+          ? {
+              account: this.editConnectionForm.value.account,
+              warehouse: this.editConnectionForm.value.warehouse,
+              database: this.editConnectionForm.value.database,
+              username: this.editConnectionForm.value.username,
+              password: this.editConnectionForm.value.password
+            }
+          : undefined,
+      storeApiOptions:
+        cType === ConnectionTypeEnum.Api
+          ? {
+              baseUrl: this.editConnectionForm.value.baseUrl,
+              headers: this.editConnectionForm.value.headers
+            }
+          : undefined,
+      storeGoogleApiOptions:
+        cType === ConnectionTypeEnum.GoogleApi
+          ? {
+              googleAccessToken: undefined,
+              googleCloudProject: undefined,
+              googleCloudClientEmail: undefined,
+              serviceAccountCredentials: saCredentials,
+              baseUrl: this.editConnectionForm.value.baseUrl,
+              headers: this.editConnectionForm.value.headers,
+              googleAuthScopes:
+                [ConnectionTypeEnum.GoogleApi].indexOf(
+                  this.editConnectionForm.get('type').value
+                ) > -1
+                  ? this.editConnectionForm.value.scopes.map(
+                      (x: any) => x.value
+                    )
+                  : []
+            }
+          : undefined
     };
 
     let apiService: ApiService = this.dataItem.apiService;

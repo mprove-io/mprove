@@ -87,7 +87,10 @@ export class BlockmlService {
         });
 
       connectionsWithFallback = connectionsEnts.map(x =>
-        this.wrapToApiService.wrapToApiProjectConnection(x)
+        this.wrapToApiService.wrapToApiConnection({
+          connection: x,
+          isIncludePasswords: true
+        })
       );
     }
 

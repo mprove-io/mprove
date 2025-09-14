@@ -27,7 +27,7 @@ import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ProjectConnection } from '~common/interfaces/backend/connection';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { Preset } from '~common/interfaces/blockml/preset';
 import {
   ToBackendGetConnectionsRequestPayload,

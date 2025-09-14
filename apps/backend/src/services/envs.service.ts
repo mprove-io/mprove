@@ -160,7 +160,10 @@ export class EnvsService {
 
     let connectionsWithFallback: ProjectConnection[] =
       connectionsEntsWithFallback.map(x =>
-        this.wrapToApiService.wrapToApiProjectConnection(x)
+        this.wrapToApiService.wrapToApiConnection({
+          connection: x,
+          isIncludePasswords: true
+        })
       );
 
     return {

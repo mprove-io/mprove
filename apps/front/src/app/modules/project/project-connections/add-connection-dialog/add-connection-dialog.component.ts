@@ -433,40 +433,100 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let cType = this.addConnectionForm.value.type;
+
+    let saCredentials = isDefined(
+      this.addConnectionForm.value.serviceAccountCredentials
+    )
+      ? JSON.parse(this.addConnectionForm.value.serviceAccountCredentials)
+      : undefined;
+
     let payload: ToBackendCreateConnectionRequestPayload = {
       projectId: this.ref.data.projectId,
       connectionId: this.addConnectionForm.value.connectionId,
       envId: this.addConnectionForm.value.envId,
       type: this.addConnectionForm.value.type,
-      baseUrl: this.addConnectionForm.value.baseUrl,
-      serviceAccountCredentials: isDefined(
-        this.addConnectionForm.value.serviceAccountCredentials
-      )
-        ? JSON.parse(this.addConnectionForm.value.serviceAccountCredentials)
-        : undefined,
-      headers: this.addConnectionForm.value.headers,
-      googleAuthScopes:
-        [ConnectionTypeEnum.GoogleApi].indexOf(
-          this.addConnectionForm.get('type').value
-        ) > -1
-          ? this.addConnectionForm.value.scopes.map((x: any) => x.value)
-          : [],
-      bigqueryQuerySizeLimitGb: isDefined(
-        this.addConnectionForm.value.bigqueryQuerySizeLimitGb
-      )
-        ? Number(this.addConnectionForm.value.bigqueryQuerySizeLimitGb)
-        : undefined,
-      account: this.addConnectionForm.value.account,
-      warehouse: this.addConnectionForm.value.warehouse,
-      host: this.addConnectionForm.value.host,
-      port: isDefined(this.addConnectionForm.value.port)
-        ? Number(this.addConnectionForm.value.port)
-        : undefined,
-      database: this.addConnectionForm.value.database,
-      username: this.addConnectionForm.value.username,
-      password: this.addConnectionForm.value.password,
-      motherduckToken: this.addConnectionForm.value.motherduckToken,
-      isSSL: this.isSSL
+      bigqueryOptions:
+        cType === ConnectionTypeEnum.BigQuery
+          ? {
+              googleCloudProject: undefined,
+              googleCloudClientEmail: undefined,
+              serviceAccountCredentials: saCredentials,
+              bigqueryQuerySizeLimitGb: isDefined(
+                this.addConnectionForm.value.bigqueryQuerySizeLimitGb
+              )
+                ? Number(this.addConnectionForm.value.bigqueryQuerySizeLimitGb)
+                : undefined
+            }
+          : undefined,
+      clickhouseOptions:
+        cType === ConnectionTypeEnum.ClickHouse
+          ? {
+              host: this.addConnectionForm.value.host,
+              port: isDefined(this.addConnectionForm.value.port)
+                ? Number(this.addConnectionForm.value.port)
+                : undefined,
+              username: this.addConnectionForm.value.username,
+              password: this.addConnectionForm.value.password,
+              isSSL: this.isSSL
+            }
+          : undefined,
+      motherduckOptions:
+        cType === ConnectionTypeEnum.MotherDuck
+          ? {
+              motherduckToken: this.addConnectionForm.value.motherduckToken,
+              database: this.addConnectionForm.value.database,
+              attachModeSingle: true, // TODO: attachModeSingle
+              accessModeReadOnly: true // TODO: accessModeReadOnly
+            }
+          : undefined,
+      postgresOptions:
+        cType === ConnectionTypeEnum.PostgreSQL
+          ? {
+              host: this.addConnectionForm.value.host,
+              port: isDefined(this.addConnectionForm.value.port)
+                ? Number(this.addConnectionForm.value.port)
+                : undefined,
+              database: this.addConnectionForm.value.database,
+              username: this.addConnectionForm.value.username,
+              password: this.addConnectionForm.value.password,
+              isSSL: this.isSSL
+            }
+          : undefined,
+      snowflakeOptions:
+        cType === ConnectionTypeEnum.SnowFlake
+          ? {
+              account: this.addConnectionForm.value.account,
+              warehouse: this.addConnectionForm.value.warehouse,
+              database: this.addConnectionForm.value.database,
+              username: this.addConnectionForm.value.username,
+              password: this.addConnectionForm.value.password
+            }
+          : undefined,
+      storeApiOptions:
+        cType === ConnectionTypeEnum.Api
+          ? {
+              baseUrl: this.addConnectionForm.value.baseUrl,
+              headers: this.addConnectionForm.value.headers
+            }
+          : undefined,
+      storeGoogleApiOptions:
+        cType === ConnectionTypeEnum.GoogleApi
+          ? {
+              googleAccessToken: undefined,
+              googleCloudProject: undefined,
+              googleCloudClientEmail: undefined,
+              serviceAccountCredentials: saCredentials,
+              baseUrl: this.addConnectionForm.value.baseUrl,
+              headers: this.addConnectionForm.value.headers,
+              googleAuthScopes:
+                [ConnectionTypeEnum.GoogleApi].indexOf(
+                  this.addConnectionForm.get('type').value
+                ) > -1
+                  ? this.addConnectionForm.value.scopes.map((x: any) => x.value)
+                  : []
+            }
+          : undefined
     };
 
     let apiService: ApiService = this.ref.data.apiService;

@@ -1,16 +1,20 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
-  boolean,
   index,
-  integer,
   json,
   pgTable,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection-motherduck-options';
+import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
+import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
+import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
+import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
+import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
+import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
+import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
 
 export const connectionsTable = pgTable(
   'connections',
@@ -22,24 +26,21 @@ export const connectionsTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
     type: varchar('type').$type<ConnectionTypeEnum>().notNull(),
+    bigqueryOptions:
+      json('bigquery_options').$type<ConnectionBigqueryOptions>(),
+    clickhouseOptions:
+      json('clickhouse_options').$type<ConnectionClickhouseOptions>(),
     motherduckOptions:
       json('motherduck_options').$type<ConnectionMotherduckOptions>(),
-    baseUrl: varchar('base_url'),
-    headers: json('headers').$type<ConnectionHeader[]>(),
-    googleAuthScopes: json('google_auth_scopes').$type<string[]>(),
-    serviceAccountCredentials: json('service_account_credentials'),
-    googleCloudProject: varchar('google_cloud_project'),
-    googleCloudClientEmail: varchar('google_cloud_client_email'),
-    googleAccessToken: varchar('google_access_token'),
-    bigqueryQuerySizeLimitGb: integer('bigquery_query_size_limit_gb'),
-    account: varchar('account'),
-    warehouse: varchar('warehouse'),
-    host: varchar('host'),
-    port: integer('port'),
-    database: varchar('database'),
-    username: varchar('username'),
-    password: varchar('password'),
-    isSsl: boolean('is_ssl'),
+    postgresOptions:
+      json('postgres_options').$type<ConnectionPostgresOptions>(),
+    snowflakeOptions:
+      json('snowflake_options').$type<ConnectionSnowflakeOptions>(),
+    storeApiOptions:
+      json('store_api_options').$type<ConnectionStoreApiOptions>(),
+    storeGoogleApiOptions: json(
+      'store_google_api_options'
+    ).$type<ConnectionStoreGoogleApiOptions>(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

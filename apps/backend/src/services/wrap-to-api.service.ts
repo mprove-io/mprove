@@ -26,7 +26,6 @@ import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { makeCopy } from '~common/functions/make-copy';
 import { ChartX } from '~common/interfaces/backend/chart-x';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
@@ -54,42 +53,118 @@ import { Query } from '~common/interfaces/blockml/query';
 export class WrapToApiService {
   constructor() {}
 
-  wrapToApiProjectConnection(x: ConnectionEnt): ProjectConnection {
-    return Object.assign({}, this.wrapToApiConnection(x), <ProjectConnection>{
-      serviceAccountCredentials: x.serviceAccountCredentials,
-      motherduckToken: x.motherduckToken,
-      password: x.password
-    });
-  }
+  wrapToApiConnection(item: {
+    connection: ConnectionEnt;
+    isIncludePasswords: boolean;
+  }): ProjectConnection {
+    let { connection, isIncludePasswords } = item;
 
-  wrapToApiConnection(x: ConnectionEnt): ProjectConnection {
+    let bigqueryOptions = connection.bigqueryOptions;
+    let clickhouseOptions = connection.clickhouseOptions;
+    let motherduckOptions = connection.motherduckOptions;
+    let postgresOptions = connection.postgresOptions;
+    let snowflakeOptions = connection.snowflakeOptions;
+    let storeApiOptions = connection.storeApiOptions;
+    let storeGoogleApiOptions = connection.storeGoogleApiOptions;
+
     return {
-      projectId: x.projectId,
-      connectionId: x.connectionId,
-      envId: x.envId,
-      type: x.type,
-      baseUrl: x.baseUrl,
-      headers: x.headers?.map(header => {
-        let newHeader: ConnectionHeader = {
-          key: header.key,
-          value: isDefinedAndNotEmpty(header.value)
-            ? HEADER_VALUE_IS_HIDDEN
-            : ''
-        };
-        return newHeader;
-      }),
-      googleAuthScopes: x.googleAuthScopes,
-      googleCloudProject: x.googleCloudProject,
-      googleCloudClientEmail: x.googleCloudClientEmail,
-      bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,
-      account: x.account,
-      warehouse: x.warehouse,
-      host: x.host,
-      port: x.port,
-      database: x.database,
-      username: x.username,
-      isSSL: x.isSsl,
-      serverTs: x.serverTs
+      projectId: connection.projectId,
+      connectionId: connection.connectionId,
+      envId: connection.envId,
+      type: connection.type,
+      bigqueryOptions: isDefined(bigqueryOptions)
+        ? {
+            serviceAccountCredentials:
+              isIncludePasswords === true
+                ? bigqueryOptions.serviceAccountCredentials
+                : undefined,
+            googleCloudProject: bigqueryOptions.googleCloudProject,
+            googleCloudClientEmail: bigqueryOptions.googleCloudClientEmail,
+            bigqueryQuerySizeLimitGb: bigqueryOptions.bigqueryQuerySizeLimitGb
+          }
+        : undefined,
+      clickhouseOptions: isDefined(clickhouseOptions)
+        ? {
+            host: clickhouseOptions.host,
+            port: clickhouseOptions.port,
+            username: clickhouseOptions.username,
+            password:
+              isIncludePasswords === true
+                ? clickhouseOptions.password
+                : undefined,
+            isSSL: clickhouseOptions.isSSL
+          }
+        : undefined,
+      motherduckOptions: isDefined(motherduckOptions)
+        ? {
+            motherduckToken:
+              isIncludePasswords === true
+                ? motherduckOptions.motherduckToken
+                : undefined,
+            database: motherduckOptions.database,
+            attachModeSingle: motherduckOptions.attachModeSingle,
+            accessModeReadOnly: motherduckOptions.accessModeReadOnly
+          }
+        : undefined,
+      postgresOptions: isDefined(postgresOptions)
+        ? {
+            host: postgresOptions.host,
+            port: postgresOptions.port,
+            database: postgresOptions.database,
+            username: postgresOptions.username,
+            password:
+              isIncludePasswords === true
+                ? postgresOptions.password
+                : undefined,
+            isSSL: postgresOptions.isSSL
+          }
+        : undefined,
+      snowflakeOptions: isDefined(snowflakeOptions)
+        ? {
+            account: snowflakeOptions.account,
+            warehouse: snowflakeOptions.warehouse,
+            database: snowflakeOptions.database,
+            username: snowflakeOptions.username,
+            password:
+              isIncludePasswords === true
+                ? snowflakeOptions.password
+                : undefined
+          }
+        : undefined,
+      storeApiOptions: isDefined(storeApiOptions)
+        ? {
+            baseUrl: storeApiOptions.baseUrl,
+            headers: storeApiOptions.headers?.map(header => ({
+              key: header.key,
+              value:
+                isIncludePasswords === true
+                  ? (header.value ?? '')
+                  : HEADER_VALUE_IS_HIDDEN
+            }))
+          }
+        : undefined,
+      storeGoogleApiOptions: isDefined(storeGoogleApiOptions)
+        ? {
+            baseUrl: storeGoogleApiOptions.baseUrl,
+            headers: storeGoogleApiOptions.headers?.map(header => ({
+              key: header.key,
+              value:
+                isIncludePasswords === true
+                  ? (header.value ?? '')
+                  : HEADER_VALUE_IS_HIDDEN
+            })),
+            googleAuthScopes: storeGoogleApiOptions.googleAuthScopes,
+            serviceAccountCredentials:
+              isIncludePasswords === true
+                ? storeGoogleApiOptions.serviceAccountCredentials
+                : undefined,
+            googleCloudProject: storeGoogleApiOptions.googleCloudProject,
+            googleCloudClientEmail:
+              storeGoogleApiOptions.googleCloudClientEmail,
+            googleAccessToken: storeGoogleApiOptions.googleAccessToken
+          }
+        : undefined,
+      serverTs: connection.serverTs
     };
   }
 

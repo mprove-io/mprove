@@ -194,20 +194,13 @@ export class SeedRecordsController {
           envId: x.envId,
           connectionId: x.connectionId,
           type: x.type,
-          baseUrl: x.baseUrl,
-          headers: x.headers,
-          googleAuthScopes: x.googleAuthScopes,
-          host: x.host,
-          port: x.port,
-          database: x.database,
-          username: x.username,
-          password: x.password,
-          account: x.account,
-          warehouse: x.warehouse,
-          motherduckToken: x.motherduckToken,
-          serviceAccountCredentials: x.serviceAccountCredentials,
-          bigqueryQuerySizeLimitGb: x.bigqueryQuerySizeLimitGb,
-          isSSL: x.isSSL
+          bigqueryOptions: x.bigqueryOptions,
+          clickhouseOptions: x.clickhouseOptions,
+          motherduckOptions: x.motherduckOptions,
+          postgresOptions: x.postgresOptions,
+          snowflakeOptions: x.snowflakeOptions,
+          storeApiOptions: x.storeApiOptions,
+          storeGoogleApiOptions: x.storeGoogleApiOptions
         });
 
         connections.push(newConnection);
@@ -288,7 +281,12 @@ export class SeedRecordsController {
                 y.projectId === newProject.projectId &&
                 y.envId === prodEnv.envId
             )
-            .map(c => this.wrapToApiService.wrapToApiProjectConnection(c));
+            .map(c =>
+              this.wrapToApiService.wrapToApiConnection({
+                connection: c,
+                isIncludePasswords: true
+              })
+            );
 
           let {
             struct: devStruct,

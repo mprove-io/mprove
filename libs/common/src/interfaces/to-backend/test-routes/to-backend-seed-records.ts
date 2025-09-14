@@ -2,7 +2,6 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
-  IsInt,
   IsNumber,
   IsOptional,
   IsString,
@@ -10,6 +9,13 @@ import {
 } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
+import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
+import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
+import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
+import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
+import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
+import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
@@ -137,61 +143,39 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   type: ConnectionTypeEnum;
 
   @IsOptional()
-  @IsString()
-  baseUrl?: string;
-
-  @IsOptional()
-  @IsString()
-  motherduckToken?: string;
-
-  @IsOptional()
-  serviceAccountCredentials?: any;
+  @ValidateNested()
+  @Type(() => ConnectionBigqueryOptions)
+  bigqueryOptions?: ConnectionBigqueryOptions;
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionHeader)
-  headers?: ConnectionHeader[];
+  @Type(() => ConnectionClickhouseOptions)
+  clickhouseOptions?: ConnectionClickhouseOptions;
 
   @IsOptional()
   @ValidateNested()
-  @IsString({ each: true })
-  googleAuthScopes?: string[];
+  @Type(() => ConnectionMotherduckOptions)
+  motherduckOptions?: ConnectionMotherduckOptions;
 
   @IsOptional()
-  @IsInt()
-  bigqueryQuerySizeLimitGb?: number;
+  @ValidateNested()
+  @Type(() => ConnectionPostgresOptions)
+  postgresOptions?: ConnectionPostgresOptions;
 
   @IsOptional()
-  @IsString()
-  account?: string;
+  @ValidateNested()
+  @Type(() => ConnectionSnowflakeOptions)
+  snowflakeOptions?: ConnectionSnowflakeOptions;
 
   @IsOptional()
-  @IsString()
-  warehouse?: string;
+  @ValidateNested()
+  @Type(() => ConnectionStoreApiOptions)
+  storeApiOptions?: ConnectionStoreApiOptions;
 
   @IsOptional()
-  @IsString()
-  host?: string;
-
-  @IsOptional()
-  @IsInt()
-  port?: number;
-
-  @IsOptional()
-  @IsString()
-  database?: string;
-
-  @IsOptional()
-  @IsString()
-  username?: string;
-
-  @IsOptional()
-  @IsString()
-  password?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isSSL?: boolean;
+  @ValidateNested()
+  @Type(() => ConnectionStoreGoogleApiOptions)
+  storeGoogleApiOptions?: ConnectionStoreGoogleApiOptions;
 }
 
 export class ToBackendSeedRecordsRequestPayloadEnvsItem {

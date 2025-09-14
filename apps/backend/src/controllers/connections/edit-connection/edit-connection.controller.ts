@@ -17,7 +17,9 @@ import { ConnectionsService } from '~backend/services/connections.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendEditConnectionRequest,
   ToBackendEditConnectionResponsePayload
@@ -45,20 +47,13 @@ export class EditConnectionController {
       projectId,
       envId,
       connectionId,
-      isSSL,
-      baseUrl,
-      motherduckToken,
-      serviceAccountCredentials,
-      headers,
-      googleAuthScopes,
-      bigqueryQuerySizeLimitGb,
-      account,
-      warehouse,
-      host,
-      port,
-      database,
-      username,
-      password
+      bigqueryOptions,
+      clickhouseOptions,
+      motherduckOptions,
+      postgresOptions,
+      snowflakeOptions,
+      storeApiOptions,
+      storeGoogleApiOptions
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -76,22 +71,35 @@ export class EditConnectionController {
       connectionId: connectionId
     });
 
-    connection.baseUrl = baseUrl;
-    connection.headers = headers;
-    connection.googleAuthScopes = googleAuthScopes;
-    connection.isSsl = isSSL;
-    connection.account = account;
-    connection.warehouse = warehouse;
-    connection.host = host;
-    connection.port = port;
-    connection.database = database;
-    connection.username = username;
-    connection.password = password;
-    connection.motherduckToken = motherduckToken;
-    connection.serviceAccountCredentials = serviceAccountCredentials;
-    connection.googleCloudProject = serviceAccountCredentials?.project_id;
-    connection.googleCloudClientEmail = serviceAccountCredentials?.client_email;
-    connection.bigqueryQuerySizeLimitGb = bigqueryQuerySizeLimitGb;
+    if (isDefined(storeGoogleApiOptions)) {
+      storeGoogleApiOptions.googleCloudProject =
+        storeGoogleApiOptions.serviceAccountCredentials?.project_id;
+
+      storeGoogleApiOptions.googleCloudClientEmail =
+        storeGoogleApiOptions.serviceAccountCredentials?.client_email;
+    }
+
+    if (isDefined(bigqueryOptions)) {
+      bigqueryOptions.googleCloudProject =
+        bigqueryOptions.serviceAccountCredentials?.project_id;
+
+      bigqueryOptions.googleCloudClientEmail =
+        bigqueryOptions.serviceAccountCredentials?.client_email;
+
+      let slimit = bigqueryOptions.bigqueryQuerySizeLimitGb;
+
+      bigqueryOptions.bigqueryQuerySizeLimitGb =
+        isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
+    }
+
+    connection.bigqueryOptions = bigqueryOptions;
+    connection.clickhouseOptions = clickhouseOptions;
+    connection.motherduckOptions = motherduckOptions;
+    connection.bigqueryOptions = bigqueryOptions;
+    connection.postgresOptions = postgresOptions;
+    connection.snowflakeOptions = snowflakeOptions;
+    connection.storeApiOptions = storeApiOptions;
+    connection.storeGoogleApiOptions = storeGoogleApiOptions;
 
     await retry(
       async () =>
@@ -108,7 +116,10 @@ export class EditConnectionController {
     );
 
     let payload: ToBackendEditConnectionResponsePayload = {
-      connection: this.wrapToApiService.wrapToApiConnection(connection)
+      connection: this.wrapToApiService.wrapToApiConnection({
+        connection: connection,
+        isIncludePasswords: false
+      })
     };
 
     return payload;
