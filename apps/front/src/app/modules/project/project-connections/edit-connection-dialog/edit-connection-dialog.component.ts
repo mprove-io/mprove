@@ -91,10 +91,10 @@ export class EditConnectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.isClickhouseSSL =
-      this.dataItem.connection.clickhouseOptions.isSSL === true ? true : false;
+      this.dataItem.connection.clickhouseOptions?.isSSL === true ? true : false;
 
     this.isPostgresSSL =
-      this.dataItem.connection.postgresOptions.isSSL === true ? true : false;
+      this.dataItem.connection.postgresOptions?.isSSL === true ? true : false;
 
     this.editForm = this.fb.group({
       connectionId: [this.dataItem.connection.connectionId],
@@ -209,7 +209,7 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editGoogleApiForm = this.fb.group({
       serviceAccountCredentials: [
         this.dataItem.connection.storeGoogleApiOptions
-          .serviceAccountCredentials,
+          ?.serviceAccountCredentials,
         [Validators.required]
       ],
       baseUrl: [
@@ -243,26 +243,6 @@ export class EditConnectionDialogComponent implements OnInit {
               }
             )
       )
-    });
-
-    this.editForm.get('type').valueChanges.subscribe(value => {
-      console.log('editForm valueChanges'); // TODO: check updateValueAndValidity
-
-      // this.editConnectionForm.get('baseUrl').updateValueAndValidity();
-      // this.editConnectionForm
-      //   .get('serviceAccountCredentials')
-      //   .updateValueAndValidity();
-      // this.editConnectionForm
-      //   .get('bigqueryQuerySizeLimitGb')
-      //   .updateValueAndValidity();
-      // this.editConnectionForm.get('account').updateValueAndValidity();
-      // this.editConnectionForm.get('warehouse').updateValueAndValidity();
-      // this.editConnectionForm.get('host').updateValueAndValidity();
-      // this.editConnectionForm.get('port').updateValueAndValidity();
-      // this.editConnectionForm.get('database').updateValueAndValidity();
-      // this.editConnectionForm.get('username').updateValueAndValidity();
-      // this.editConnectionForm.get('password').updateValueAndValidity();
-      // this.editConnectionForm.get('motherduckToken').updateValueAndValidity();
     });
 
     setTimeout(() => {

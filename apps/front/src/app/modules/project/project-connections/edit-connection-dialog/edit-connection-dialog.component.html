@@ -9,25 +9,29 @@
     <div class="mt-9 flex flex-row">
       <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Name</div>
       <div>
-        {{ this.ref.data.connection.connectionId }}
+        {{ ref.data.connection.connectionId }}
       </div>
     </div>
 
     <div class="flex flex-row">
       <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Env</div>
       <div>
-        {{ this.ref.data.connection.envId }}
+        {{ ref.data.connection.envId }}
       </div>
     </div>
 
     <div class="flex flex-row">
       <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Type</div>
       <div>
-        {{ this.ref.data.connection.type }}
+        {{ ref.data.connection.type }}
       </div>
     </div>
 
-    <form class="flex w-80 flex-col text-base" [formGroup]="editBigqueryForm">
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="editBigqueryForm"
+      *ngIf="ref.data.connection.type === typeBigQuery"
+    >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
           >Service Account Credentials</div
@@ -79,7 +83,11 @@
       </div>
     </form>
 
-    <form class="flex w-80 flex-col text-base" [formGroup]="editClickhouseForm">
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="editClickhouseForm"
+      *ngIf="ref.data.connection.type === typeClickHouse"
+    >
       <div>
         <div class="mb-6 flex flex-row items-center">
           <div class="w-[200px] flex-shrink-0 font-semibold">HTTPS</div>
@@ -189,7 +197,11 @@
       </div>
     </form>
 
-    <form class="flex w-80 flex-col text-base" [formGroup]="editMotherduckForm">
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="editMotherduckForm"
+      *ngIf="ref.data.connection.type === typeMotherDuck"
+    >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
 
@@ -238,7 +250,11 @@
       </div>
     </form>
 
-    <form class="flex w-80 flex-col text-base" [formGroup]="editPostgresForm">
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="editPostgresForm"
+      *ngIf="ref.data.connection.type === typePostgreSQL"
+    >
       <div>
         <div class="mb-6 flex flex-row items-center">
           <div class="w-[200px] flex-shrink-0 font-semibold">SSL</div>
@@ -370,7 +386,11 @@
       </div>
     </form>
 
-    <form class="flex w-80 flex-col text-base" [formGroup]="editSnowflakeForm">
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="editSnowflakeForm"
+      *ngIf="ref.data.connection.type === typeSnowFlake"
+    >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Account</div>
 
@@ -484,7 +504,11 @@
       </div>
     </form>
 
-    <form class="flex w-80 flex-col text-base" [formGroup]="editApiForm">
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="editApiForm"
+      *ngIf="ref.data.connection.type === typeApi"
+    >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Base URL</div>
 
@@ -563,7 +587,11 @@
       </div>
     </form>
 
-    <form class="flex w-80 flex-col text-base" [formGroup]="editGoogleApiForm">
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="editGoogleApiForm"
+      *ngIf="ref.data.connection.type === typeGoogleApi"
+    >
       <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
           >Service Account Credentials</div

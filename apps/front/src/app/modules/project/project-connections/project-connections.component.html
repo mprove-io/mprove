@@ -109,21 +109,21 @@
                   [ngClass]="{
                     'text-s400':
                       (connection.type === typeApi &&
-                        !!connection.storeApiOptions.baseUrl) ||
+                        !!connection.storeApiOptions?.baseUrl) ||
                       (connection.type === typeGoogleApi &&
-                        !!connection.storeGoogleApiOptions.baseUrl)
+                        !!connection.storeGoogleApiOptions?.baseUrl)
                   }"
                 >
                   {{
                     (connection.type === typeApi &&
-                      !!connection.storeApiOptions.baseUrl) ||
+                      !!connection.storeApiOptions?.baseUrl) ||
                     (connection.type === typeGoogleApi &&
-                      !!connection.storeGoogleApiOptions.baseUrl)
+                      !!connection.storeGoogleApiOptions?.baseUrl)
                       ? ''
                       : ((connection.type === typePostgreSQL
-                          ? connection.postgresOptions.isSSL
+                          ? connection.postgresOptions?.isSSL
                           : connection.type === typeClickHouse
-                            ? connection.clickhouseOptions.isSSL
+                            ? connection.clickhouseOptions?.isSSL
                             : ''
                         ).toString() | capitalize)
                   }}
@@ -132,36 +132,84 @@
                 <td data-cy="projectConnectionsHost" class="w-96"
                   >{{
                     (connection.type === typePostgreSQL
-                      ? connection.postgresOptions.host
+                      ? connection.postgresOptions?.host
                       : connection.type === typeClickHouse
-                        ? connection.clickhouseOptions.host
+                        ? connection.clickhouseOptions?.host
                         : undefined) ||
                       (connection.type === typeApi
-                        ? connection.storeApiOptions.baseUrl
+                        ? connection.storeApiOptions?.baseUrl
                         : connection.type === typeGoogleApi
-                          ? connection.storeGoogleApiOptions.baseUrl
+                          ? connection.storeGoogleApiOptions?.baseUrl
                           : undefined)
                   }}
                 </td>
 
-                <td class="w-48">{{ connection.port }} </td>
+                <td class="w-48"
+                  >{{
+                    connection.type === typePostgreSQL
+                      ? connection.postgresOptions?.port
+                      : connection.type === typeClickHouse
+                        ? connection.clickhouseOptions?.port
+                        : undefined
+                  }}
+                </td>
 
-                <td class="w-48">{{ connection.database }} </td>
+                <td class="w-48"
+                  >{{
+                    connection.type === typePostgreSQL
+                      ? connection.postgresOptions?.database
+                      : connection.type === typeSnowFlake
+                        ? connection.snowflakeOptions?.database
+                        : connection.type === typeMotherDuck
+                          ? connection.motherduckOptions?.database
+                          : undefined
+                  }}
+                </td>
 
-                <td class="w-48">{{ connection.username }} </td>
+                <td class="w-48"
+                  >{{
+                    connection.type === typePostgreSQL
+                      ? connection.postgresOptions?.username
+                      : connection.type === typeClickHouse
+                        ? connection.clickhouseOptions?.username
+                        : connection.type === typeSnowFlake
+                          ? connection.snowflakeOptions?.username
+                          : undefined
+                  }}
+                </td>
 
                 <td>
-                  <div class="flex-col" *ngIf="connection.googleCloudProject">
+                  <div
+                    class="flex-col"
+                    *ngIf="
+                      connection.type === typeBigQuery ||
+                      connection.type === typeGoogleApi
+                    "
+                  >
                     <div>
                       <span class="font-medium">Project: </span>
                       <span class="text-g700">
-                        {{ connection.googleCloudProject }}
+                        {{
+                          connection.type === typeBigQuery
+                            ? connection.bigqueryOptions?.googleCloudProject
+                            : connection.type === typeGoogleApi
+                              ? connection.storeGoogleApiOptions
+                                  ?.googleCloudProject
+                              : undefined
+                        }}
                       </span>
                     </div>
                     <div>
                       <span class="font-medium">Client Email: </span>
                       <span class="text-g700">
-                        {{ connection.googleCloudClientEmail }}
+                        {{
+                          connection.type === typeBigQuery
+                            ? connection.bigqueryOptions?.googleCloudClientEmail
+                            : connection.type === typeGoogleApi
+                              ? connection.storeGoogleApiOptions
+                                  ?.googleCloudClientEmail
+                              : undefined
+                        }}
                       </span>
                     </div>
                     <div *ngIf="connection.type === typeBigQuery">
@@ -169,40 +217,52 @@
                         >Query Size Limit, gb:
                       </span>
                       <span class="text-g700">
-                        {{ connection.bigqueryQuerySizeLimitGb }}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div class="flex-col" *ngIf="connection.account">
-                    <div>
-                      <span class="font-medium">Account: </span>
-                      <span class="text-g700">
-                        {{ connection.account }}
-                      </span>
-                    </div>
-                    <div>
-                      <span class="font-medium">Warehouse: </span>
-                      <span class="text-g700">
-                        {{ connection.warehouse }}
+                        {{
+                          connection.bigqueryOptions?.bigqueryQuerySizeLimitGb
+                        }}
                       </span>
                     </div>
                   </div>
 
                   <div
                     class="flex-col"
-                    *ngIf="connection.googleAuthScopes?.length > 0"
+                    *ngIf="connection.type === typeSnowFlake"
+                  >
+                    <div>
+                      <span class="font-medium">Account: </span>
+                      <span class="text-g700">
+                        {{ connection.snowflakeOptions?.account }}
+                      </span>
+                    </div>
+                    <div>
+                      <span class="font-medium">Warehouse: </span>
+                      <span class="text-g700">
+                        {{ connection.snowflakeOptions?.warehouse }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex-col"
+                    *ngIf="
+                      connection.type === typeGoogleApi &&
+                      connection.storeGoogleApiOptions?.googleAuthScopes
+                        .length > 0
+                    "
                   >
                     <div
                       class="font-medium"
                       [ngClass]="{
-                        'mt-2': !!connection.googleCloudClientEmail
+                        'mt-2':
+                          !!connection.storeGoogleApiOptions
+                            ?.googleCloudClientEmail
                       }"
                       >Scopes:</div
                     >
                     <div
                       *ngFor="
-                        let googleAuthScope of connection.googleAuthScopes
+                        let googleAuthScope of connection.storeGoogleApiOptions
+                          .googleAuthScopes
                       "
                     >
                       <span class="text-g700">
@@ -211,15 +271,34 @@
                     </div>
                   </div>
 
-                  <div class="flex-col" *ngIf="connection.headers?.length > 0">
+                  <div
+                    class="flex-col"
+                    *ngIf="
+                      (connection.type === typeApi &&
+                        connection.storeApiOptions?.headers?.length > 0) ||
+                      (connection.type === typeGoogleApi &&
+                        connection.storeGoogleApiOptions?.headers?.length > 0)
+                    "
+                  >
                     <div
                       class="font-medium"
                       [ngClass]="{
-                        'mt-2': !!connection.googleCloudClientEmail
+                        'mt-2':
+                          connection.type === typeGoogleApi &&
+                          !!connection.storeGoogleApiOptions
+                            .googleCloudClientEmail
                       }"
                       >Headers:</div
                     >
-                    <div *ngFor="let header of connection.headers">
+                    <div
+                      *ngFor="
+                        let header of connection.type === typeApi
+                          ? connection.storeApiOptions?.headers
+                          : connection.type === typeGoogleApi
+                            ? connection.storeGoogleApiOptions?.headers
+                            : []
+                      "
+                    >
                       <span class="ml-5 font-medium">{{ header.key }}: </span>
                       <span class="text-g700">
                         {{ header.value }}
