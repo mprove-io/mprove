@@ -17,7 +17,13 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
   templateUrl: './project-connections.component.html'
 })
 export class ProjectConnectionsComponent implements OnInit {
+  typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
+  typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  typeMotherDuck = ConnectionTypeEnum.MotherDuck;
+  typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
+  typeGoogleApi = ConnectionTypeEnum.GoogleApi;
+  typeApi = ConnectionTypeEnum.Api;
 
   pageTitle = PROJECT_CONNECTIONS_PAGE_TITLE;
 

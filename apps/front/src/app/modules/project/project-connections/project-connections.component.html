@@ -107,18 +107,41 @@
                 <td
                   class="w-48"
                   [ngClass]="{
-                    'text-s400': !!connection.baseUrl
+                    'text-s400':
+                      (connection.type === typeApi &&
+                        !!connection.storeApiOptions.baseUrl) ||
+                      (connection.type === typeGoogleApi &&
+                        !!connection.storeGoogleApiOptions.baseUrl)
                   }"
                 >
                   {{
-                    !!connection.baseUrl
+                    (connection.type === typeApi &&
+                      !!connection.storeApiOptions.baseUrl) ||
+                    (connection.type === typeGoogleApi &&
+                      !!connection.storeGoogleApiOptions.baseUrl)
                       ? ''
-                      : (connection.isSSL.toString() | capitalize)
+                      : ((connection.type === typePostgreSQL
+                          ? connection.postgresOptions.isSSL
+                          : connection.type === typeClickHouse
+                            ? connection.clickhouseOptions.isSSL
+                            : ''
+                        ).toString() | capitalize)
                   }}
                 </td>
 
                 <td data-cy="projectConnectionsHost" class="w-96"
-                  >{{ connection.host || connection.baseUrl }}
+                  >{{
+                    (connection.type === typePostgreSQL
+                      ? connection.postgresOptions.host
+                      : connection.type === typeClickHouse
+                        ? connection.clickhouseOptions.host
+                        : undefined) ||
+                      (connection.type === typeApi
+                        ? connection.storeApiOptions.baseUrl
+                        : connection.type === typeGoogleApi
+                          ? connection.storeGoogleApiOptions.baseUrl
+                          : undefined)
+                  }}
                 </td>
 
                 <td class="w-48">{{ connection.port }} </td>

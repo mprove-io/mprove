@@ -246,7 +246,7 @@ export class EditConnectionDialogComponent implements OnInit {
     });
 
     this.editForm.get('type').valueChanges.subscribe(value => {
-      console.log('editForm valueChanges');
+      console.log('editForm valueChanges'); // TODO: check updateValueAndValidity
 
       // this.editConnectionForm.get('baseUrl').updateValueAndValidity();
       // this.editConnectionForm
