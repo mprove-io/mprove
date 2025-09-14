@@ -35,25 +35,25 @@ export function makeMalloyConnections(item: {
     let mConnection =
       c.type === ConnectionTypeEnum.PostgreSQL
         ? new PostgresConnection(c.connectionId, () => ({}), {
-            host: c.postgresOptions.host,
-            port: c.postgresOptions.port,
-            username: c.postgresOptions.username,
-            password: c.postgresOptions.password,
-            databaseName: c.postgresOptions.database
+            host: c.postgresOptions?.host,
+            port: c.postgresOptions?.port,
+            username: c.postgresOptions?.username,
+            password: c.postgresOptions?.password,
+            databaseName: c.postgresOptions?.database
           })
         : c.type === ConnectionTypeEnum.BigQuery
           ? new BigQueryConnection(c.connectionId, () => ({}), {
-              credentials: c.bigqueryOptions.serviceAccountCredentials,
-              projectId: c.bigqueryOptions.googleCloudProject
+              credentials: c.bigqueryOptions?.serviceAccountCredentials,
+              projectId: c.bigqueryOptions?.googleCloudProject
             })
           : c.type === ConnectionTypeEnum.SnowFlake
             ? new SnowflakeConnection(c.connectionId, {
                 connOptions: {
-                  account: c.snowflakeOptions.account,
-                  warehouse: c.snowflakeOptions.warehouse,
-                  database: c.snowflakeOptions.database,
-                  username: c.snowflakeOptions.username,
-                  password: c.snowflakeOptions.password
+                  account: c.snowflakeOptions?.account,
+                  warehouse: c.snowflakeOptions?.warehouse,
+                  database: c.snowflakeOptions?.database,
+                  username: c.snowflakeOptions?.username,
+                  password: c.snowflakeOptions?.password
                   //  schema?: string | undefined;
                   //  role?: string | undefined;
                   //  clientSessionKeepAlive?: boolean | undefined;
@@ -70,10 +70,10 @@ export function makeMalloyConnections(item: {
             : c.type === ConnectionTypeEnum.MotherDuck
               ? new DuckDBConnection({
                   name: c.connectionId,
-                  databasePath: isDefined(c.motherduckOptions.database)
-                    ? `md:${c.motherduckOptions.database}`
+                  databasePath: isDefined(c.motherduckOptions?.database)
+                    ? `md:${c.motherduckOptions?.database}`
                     : `md:`,
-                  motherDuckToken: c.motherduckOptions.motherduckToken
+                  motherDuckToken: c.motherduckOptions?.motherduckToken
                   // additionalExtensions?: string[];
                   // workingDirectory?: string;
                   // readOnly?: boolean;
