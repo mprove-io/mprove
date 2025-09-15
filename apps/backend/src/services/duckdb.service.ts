@@ -36,7 +36,8 @@ export class DuckDbService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let dbPath =
-      connection.motherduckOptions.attachModeSingle === true
+      connection.motherduckOptions.attachModeSingle === true &&
+      connection.motherduckOptions.database?.length > 0
         ? `md:${connection.motherduckOptions.database}?attach_mode=single&saas_mode=true`
         : `md:${connection.motherduckOptions.database}?saas_mode=true`;
 

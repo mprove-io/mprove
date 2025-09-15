@@ -389,7 +389,9 @@ export class EditConnectionDialogComponent implements OnInit {
           ? {
               motherduckToken: this.editMotherduckForm.value.motherduckToken,
               database: this.editMotherduckForm.value.database,
-              attachModeSingle: this.isMotherduckAttachModeSingle,
+              attachModeSingle:
+                this.isMotherduckAttachModeSingle &&
+                this.editMotherduckForm.controls['database'].value?.length > 0,
               accessModeReadOnly: this.isMotherduckAccessModeReadOnly
             }
           : undefined,

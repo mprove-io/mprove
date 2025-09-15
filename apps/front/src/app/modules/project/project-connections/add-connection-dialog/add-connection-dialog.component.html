@@ -329,14 +329,19 @@
           <div class="text-s400 mb-5 mt-2 h-[50px] text-base"
             >md:{{ addMotherduckForm.controls['database'].value }}?{{
               isMotherduckAttachModeSingle === true
-                ? 'attach_mode=single&'
+                ? addMotherduckForm.controls['database'].value?.length > 0
+                  ? 'attach_mode=single&'
+                  : ''
                 : ''
             }}saas_mode:true</div
           >
         </div>
       </div>
 
-      <div class="mb-6 flex flex-row items-center">
+      <div
+        class="mb-6 flex flex-row items-center"
+        *ngIf="addMotherduckForm.controls['database'].value?.length > 0"
+      >
         <div class="w-[200px] flex-shrink-0 font-semibold"
           >Attach Mode "single"</div
         >

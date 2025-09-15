@@ -1,7 +1,7 @@
-<div class="flex flex-row items-center text-base">
+<div class="flex max-h-[34px] flex-row items-center overflow-hidden text-base">
   <div
     [tp]="t1"
-    [tpIsEnabled]="isTpEnabled"
+    [tpIsEnabled]="true"
     *ngIf="
       query?.status === queryStatusEnum.Completed &&
       showDataRowsLength === true &&
@@ -21,7 +21,7 @@
 
   <div
     [tp]="t2"
-    [tpIsEnabled]="isTpEnabled"
+    [tpIsEnabled]="true"
     *ngIf="
       query?.status === queryStatusEnum.Completed &&
       showDataRowsLength === true &&
@@ -41,7 +41,7 @@
 
   <div
     [tp]="t3"
-    [tpIsEnabled]="isTpEnabled"
+    [tpIsEnabled]="true"
     *ngIf="
       query?.status === queryStatusEnum.Completed &&
       showDataRowsLength === false &&
@@ -61,7 +61,7 @@
 
   <div
     [tp]="t4"
-    [tpIsEnabled]="isTpEnabled"
+    [tpIsEnabled]="true"
     *ngIf="
       query?.status === queryStatusEnum.Completed &&
       showDataRowsLength === false &&
@@ -78,7 +78,7 @@
 
   <div
     [tp]="t5"
-    [tpIsEnabled]="isTpEnabled"
+    [tpIsEnabled]="true"
     *ngIf="query?.status === queryStatusEnum.Running"
     class="flex flex-row items-center"
   >
@@ -112,7 +112,7 @@
   >
     <div
       [tp]="t6"
-      [tpIsEnabled]="isTpEnabled"
+      [tpIsEnabled]="true"
       class="bg-r100 text-r700 line-clamp-1 max-w-xl select-none px-3 py-2"
     >
       <ng-template #t6>
@@ -122,11 +122,7 @@
       <ng-container *ngTemplateOutlet="t6"></ng-container>
     </div>
 
-    <div
-      [tp]="t7"
-      [tpIsEnabled]="isTpEnabled"
-      class="ml-5 line-clamp-1 select-none"
-    >
+    <div [tp]="t7" [tpIsEnabled]="true" class="ml-5 line-clamp-1 select-none">
       <ng-template #t7>
         <div>Error - {{ errorTimeAgo }}</div>
       </ng-template>
@@ -137,7 +133,7 @@
 
   <div
     [tp]="t8"
-    [tpIsEnabled]="isTpEnabled"
+    [tpIsEnabled]="true"
     *ngIf="query?.status === queryStatusEnum.Canceled"
     class="line-clamp-1 select-none"
   >

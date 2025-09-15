@@ -503,7 +503,9 @@ export class AddConnectionDialogComponent implements OnInit {
           ? {
               motherduckToken: this.addMotherduckForm.value.motherduckToken,
               database: this.addMotherduckForm.value.database,
-              attachModeSingle: this.isMotherduckAttachModeSingle,
+              attachModeSingle:
+                this.isMotherduckAttachModeSingle &&
+                this.addMotherduckForm.controls['database'].value?.length > 0,
               accessModeReadOnly: this.isMotherduckAccessModeReadOnly
             }
           : undefined,
