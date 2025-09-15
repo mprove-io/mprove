@@ -31,7 +31,6 @@ import {
   ToBackendGetEnvsListRequestPayload,
   ToBackendGetEnvsListResponse
 } from '~common/interfaces/to-backend/envs/to-backend-get-envs-list';
-import { conditionalValidator } from '~front/app/functions/conditional-validator';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
@@ -69,20 +68,31 @@ export class AddConnectionDialogComponent implements OnInit {
     // this.ref.close();
   }
 
-  addConnectionForm: FormGroup;
+  addForm: FormGroup;
+
+  addBigqueryForm: FormGroup;
+  addClickhouseForm: FormGroup;
+  addMotherduckForm: FormGroup;
+  addPostgresForm: FormGroup;
+  addSnowflakeForm: FormGroup;
+  addApiForm: FormGroup;
+  addGoogleApiForm: FormGroup;
 
   envsList: EnvsItem[] = [];
   envsListLoading = false;
   envsListLength = 0;
 
-  isSSL = true;
+  isClickhouseSSL = true;
+  isPostgresSSL = true;
+  isMotherduckAttachModeSingle = true;
+  isMotherduckAccessModeReadOnly = true;
 
   connectionTypes = [
     ConnectionTypeEnum.PostgreSQL,
     ConnectionTypeEnum.SnowFlake,
     ConnectionTypeEnum.BigQuery,
     ConnectionTypeEnum.MotherDuck,
-    ConnectionTypeEnum.ClickHouse,
+    ConnectionTypeEnum.ClickHouse, // TODO: hide clickhouse
     ConnectionTypeEnum.GoogleApi,
     ConnectionTypeEnum.Api
   ];
@@ -102,7 +112,7 @@ export class AddConnectionDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.addConnectionForm = this.fb.group({
+    this.addForm = this.fb.group({
       connectionId: [
         undefined,
         [
@@ -112,156 +122,50 @@ export class AddConnectionDialogComponent implements OnInit {
         ]
       ],
       envId: [PROJECT_ENV_PROD],
-      type: [ConnectionTypeEnum.PostgreSQL],
-      baseUrl: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.GoogleApi, ConnectionTypeEnum.Api].indexOf(
-                this.addConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      serviceAccountCredentials: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.BigQuery,
-                ConnectionTypeEnum.GoogleApi
-              ].indexOf(this.addConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
+      type: [ConnectionTypeEnum.PostgreSQL]
+    });
+
+    this.addBigqueryForm = this.fb.group({
+      serviceAccountCredentials: [undefined, [Validators.required]],
       bigqueryQuerySizeLimitGb: [
         1,
-        [
-          ValidationService.integerOrEmptyValidator,
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.BigQuery].indexOf(
-                this.addConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      account: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.SnowFlake].indexOf(
-                this.addConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      warehouse: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.SnowFlake].indexOf(
-                this.addConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      host: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse
-              ].indexOf(this.addConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      port: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse
-              ].indexOf(this.addConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
+        [ValidationService.integerOrEmptyValidator, Validators.required]
+      ]
+    });
+
+    this.addClickhouseForm = this.fb.group({
+      host: [undefined, [Validators.required]],
+      port: [undefined, [Validators.required]],
+      username: [undefined, [Validators.required]],
+      password: [undefined, [Validators.required]]
+    });
+
+    this.addMotherduckForm = this.fb.group({
+      motherduckToken: [undefined, [Validators.required]],
       database: [
         undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL
-                // ,
-                // ConnectionTypeEnum.ClickHouse
-                // ,
-                // ConnectionTypeEnum.SnowFlake
-              ].indexOf(this.addConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      username: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse,
-                ConnectionTypeEnum.SnowFlake
-              ].indexOf(this.addConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      password: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [
-                ConnectionTypeEnum.PostgreSQL,
-                ConnectionTypeEnum.ClickHouse,
-                ConnectionTypeEnum.SnowFlake
-              ].indexOf(this.addConnectionForm.get('type').value) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      motherduckToken: [
-        undefined,
-        [
-          conditionalValidator(
-            () =>
-              [ConnectionTypeEnum.MotherDuck].indexOf(
-                this.addConnectionForm.get('type').value
-              ) > -1,
-            Validators.required
-          )
-        ]
-      ],
-      scopes: this.fb.array([
-        this.fb.group({
-          value: 'https://www.googleapis.com/auth/analytics.readonly'
-        })
-      ]),
+        [Validators.required, ValidationService.motherduckDatabaseWrongChars]
+      ]
+    });
+
+    this.addPostgresForm = this.fb.group({
+      host: [undefined, [Validators.required]],
+      port: [undefined, [Validators.required]],
+      database: [undefined, [Validators.required]],
+      username: [undefined, [Validators.required]],
+      password: [undefined, [Validators.required]]
+    });
+
+    this.addSnowflakeForm = this.fb.group({
+      account: [undefined, [Validators.required]],
+      warehouse: [undefined, [Validators.required]],
+      database: [undefined, [Validators.required]],
+      username: [undefined, [Validators.required]],
+      password: [undefined, [Validators.required]]
+    });
+
+    this.addApiForm = this.fb.group({
+      baseUrl: [undefined, [Validators.required]],
       headers: this.fb.array([])
       // headers: this.fb.array([
       //   this.fb.group({ key: 'a1', value: 'v1' }),
@@ -269,22 +173,58 @@ export class AddConnectionDialogComponent implements OnInit {
       // ])
     });
 
-    this.addConnectionForm.get('type').valueChanges.subscribe(value => {
-      this.addConnectionForm.get('baseUrl').updateValueAndValidity();
-      this.addConnectionForm
+    this.addGoogleApiForm = this.fb.group({
+      serviceAccountCredentials: [undefined, [Validators.required]],
+      baseUrl: ['https://analyticsdata.googleapis.com', [Validators.required]],
+      headers: this.fb.array([]),
+      // headers: this.fb.array([
+      //   this.fb.group({ key: 'a1', value: 'v1' }),
+      //   this.fb.group({ key: 'a2', value: 'v2' })
+      // ])
+      scopes: this.fb.array([
+        this.fb.group({
+          value: 'https://www.googleapis.com/auth/analytics.readonly'
+        })
+      ])
+    });
+
+    this.addForm.get('type').valueChanges.subscribe(value => {
+      this.addBigqueryForm
         .get('serviceAccountCredentials')
         .updateValueAndValidity();
-      this.addConnectionForm
+      this.addBigqueryForm
         .get('bigqueryQuerySizeLimitGb')
         .updateValueAndValidity();
-      this.addConnectionForm.get('account').updateValueAndValidity();
-      this.addConnectionForm.get('warehouse').updateValueAndValidity();
-      this.addConnectionForm.get('host').updateValueAndValidity();
-      this.addConnectionForm.get('port').updateValueAndValidity();
-      this.addConnectionForm.get('database').updateValueAndValidity();
-      this.addConnectionForm.get('username').updateValueAndValidity();
-      this.addConnectionForm.get('password').updateValueAndValidity();
-      this.addConnectionForm.get('motherduckToken').updateValueAndValidity();
+
+      this.addClickhouseForm.get('host').updateValueAndValidity();
+      this.addClickhouseForm.get('port').updateValueAndValidity();
+      this.addClickhouseForm.get('username').updateValueAndValidity();
+      this.addClickhouseForm.get('password').updateValueAndValidity();
+
+      this.addMotherduckForm.get('motherduckToken').updateValueAndValidity();
+      this.addMotherduckForm.get('database').updateValueAndValidity();
+
+      this.addPostgresForm.get('host').updateValueAndValidity();
+      this.addPostgresForm.get('port').updateValueAndValidity();
+      this.addPostgresForm.get('database').updateValueAndValidity();
+      this.addPostgresForm.get('username').updateValueAndValidity();
+      this.addPostgresForm.get('password').updateValueAndValidity();
+
+      this.addSnowflakeForm.get('account').updateValueAndValidity();
+      this.addSnowflakeForm.get('warehouse').updateValueAndValidity();
+      this.addSnowflakeForm.get('database').updateValueAndValidity();
+      this.addSnowflakeForm.get('username').updateValueAndValidity();
+      this.addSnowflakeForm.get('password').updateValueAndValidity();
+
+      this.addApiForm.get('baseUrl').updateValueAndValidity();
+      this.addApiForm.get('headers').updateValueAndValidity();
+
+      this.addGoogleApiForm
+        .get('serviceAccountCredentials')
+        .updateValueAndValidity();
+      this.addGoogleApiForm.get('baseUrl').updateValueAndValidity();
+      this.addGoogleApiForm.get('headers').updateValueAndValidity();
+      this.addGoogleApiForm.get('scopes').updateValueAndValidity();
     });
 
     setTimeout(() => {
@@ -292,20 +232,10 @@ export class AddConnectionDialogComponent implements OnInit {
     }, 0);
   }
 
-  getHeaders(): FormArray {
-    return this.addConnectionForm.controls['headers'] as FormArray;
-  }
+  // scopes
 
   getScopes(): FormArray {
-    return this.addConnectionForm.controls['scopes'] as FormArray;
-  }
-
-  addHeader() {
-    let headerGroup = this.fb.group({
-      key: [''],
-      value: ['']
-    });
-    this.getHeaders().push(headerGroup);
+    return this.addGoogleApiForm.controls['scopes'] as FormArray;
   }
 
   addScope() {
@@ -315,17 +245,65 @@ export class AddConnectionDialogComponent implements OnInit {
     this.getScopes().push(scopeGroup);
   }
 
-  removeHeader(index: number) {
-    this.getHeaders().removeAt(index);
-  }
-
   removeScope(index: number) {
     this.getScopes().removeAt(index);
   }
 
-  showLog() {
-    console.log(this.addConnectionForm.get('headers').value);
-    console.log(this.addConnectionForm.get('scopes').value);
+  // googleApi
+
+  googleApiGetHeaders(): FormArray {
+    return this.addGoogleApiForm.controls['headers'] as FormArray;
+  }
+
+  googleApiAddHeader() {
+    let headerGroup = this.fb.group({
+      key: [''],
+      value: ['']
+    });
+    this.googleApiGetHeaders().push(headerGroup);
+  }
+
+  googleApiRemoveHeader(index: number) {
+    this.googleApiGetHeaders().removeAt(index);
+  }
+
+  // api
+
+  apiGetHeaders(): FormArray {
+    return this.addApiForm.controls['headers'] as FormArray;
+  }
+
+  apiAddHeader() {
+    let headerGroup = this.fb.group({
+      key: [''],
+      value: ['']
+    });
+    this.apiGetHeaders().push(headerGroup);
+  }
+
+  apiRemoveHeader(index: number) {
+    this.apiGetHeaders().removeAt(index);
+  }
+
+  // showLog() {
+  //   console.log(this.addConnectionForm.get('headers').value);
+  //   console.log(this.addConnectionForm.get('scopes').value);
+  // }
+
+  toggleClickhouseSSL() {
+    this.isClickhouseSSL = !this.isClickhouseSSL;
+  }
+
+  togglePostgresSSL() {
+    this.isPostgresSSL = !this.isPostgresSSL;
+  }
+
+  toggleMotherduckAttachModeSingle() {
+    this.isMotherduckAttachModeSingle = !this.isMotherduckAttachModeSingle;
+  }
+
+  toggleMotherduckAccessModeReadOnly() {
+    this.isMotherduckAccessModeReadOnly = !this.isMotherduckAccessModeReadOnly;
   }
 
   openEnvSelect() {
@@ -355,159 +333,211 @@ export class AddConnectionDialogComponent implements OnInit {
       .subscribe();
   }
 
-  changeType(type: ConnectionTypeEnum) {
-    if (
-      [ConnectionTypeEnum.GoogleApi, ConnectionTypeEnum.Api].indexOf(type) < 0
-    ) {
-      this.addConnectionForm.controls['baseUrl'].reset();
-      this.addConnectionForm.controls['headers'].reset();
-      this.addConnectionForm.controls['scopes'].reset();
-    }
-
-    if ([ConnectionTypeEnum.GoogleApi].indexOf(type) > -1) {
-      this.addConnectionForm.controls['baseUrl'].setValue(
-        'https://analyticsdata.googleapis.com'
-      );
-    }
-
-    if ([ConnectionTypeEnum.Api].indexOf(type) > -1) {
-      this.addConnectionForm.controls['baseUrl'].reset();
-    }
-
-    if (
-      [ConnectionTypeEnum.BigQuery, ConnectionTypeEnum.GoogleApi].indexOf(
-        type
-      ) < 0
-    ) {
-      this.addConnectionForm.controls['serviceAccountCredentials'].reset();
-    }
-
+  resetBigqueryForm(type: ConnectionTypeEnum) {
     if (type !== ConnectionTypeEnum.BigQuery) {
-      this.addConnectionForm.controls['bigqueryQuerySizeLimitGb'].reset();
+      this.addBigqueryForm.controls['serviceAccountCredentials'].reset();
+      this.addBigqueryForm.controls['bigqueryQuerySizeLimitGb'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.ClickHouse) {
+      this.addClickhouseForm.controls['host'].reset();
+      this.addClickhouseForm.controls['port'].reset();
+      this.addClickhouseForm.controls['username'].reset();
+      this.addClickhouseForm.controls['password'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.MotherDuck) {
+      this.addClickhouseForm.controls['motherduckToken'].reset();
+      this.addClickhouseForm.controls['database'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.PostgreSQL) {
+      this.addPostgresForm.controls['host'].reset();
+      this.addPostgresForm.controls['port'].reset();
+      this.addPostgresForm.controls['database'].reset();
+      this.addPostgresForm.controls['username'].reset();
+      this.addPostgresForm.controls['password'].reset();
     }
 
     if (type !== ConnectionTypeEnum.SnowFlake) {
-      this.addConnectionForm.controls['account'].reset();
-      this.addConnectionForm.controls['warehouse'].reset();
+      this.addPostgresForm.controls['account'].reset();
+      this.addPostgresForm.controls['warehouse'].reset();
+      this.addPostgresForm.controls['database'].reset();
+      this.addPostgresForm.controls['username'].reset();
+      this.addPostgresForm.controls['password'].reset();
     }
 
-    if (
-      [
-        ConnectionTypeEnum.SnowFlake,
-        ConnectionTypeEnum.ClickHouse,
-        ConnectionTypeEnum.PostgreSQL
-      ].indexOf(type) < 0
-    ) {
-      this.addConnectionForm.controls['username'].reset();
-      this.addConnectionForm.controls['password'].reset();
+    if (type !== ConnectionTypeEnum.Api) {
+      this.addPostgresForm.controls['baseUrl'].reset();
+      this.addPostgresForm.controls['headers'].reset();
     }
 
-    if ([ConnectionTypeEnum.MotherDuck].indexOf(type) < 0) {
-      this.addConnectionForm.controls['motherduckToken'].reset();
-    }
-
-    if (
-      [
-        ConnectionTypeEnum.PostgreSQL,
-        ConnectionTypeEnum.ClickHouse,
-        ConnectionTypeEnum.MotherDuck,
-        ConnectionTypeEnum.SnowFlake
-      ].indexOf(type) < 0
-    ) {
-      this.addConnectionForm.controls['host'].reset();
-      this.addConnectionForm.controls['port'].reset();
-      this.addConnectionForm.controls['database'].reset();
+    if (type !== ConnectionTypeEnum.GoogleApi) {
+      this.addPostgresForm.controls['serviceAccountCredentials'].reset();
+      this.addPostgresForm.controls['baseUrl'].reset();
+      this.addPostgresForm.controls['headers'].reset();
+      this.addPostgresForm.controls['scopes'].reset();
     }
   }
 
-  toggleSSL() {
-    this.isSSL = !this.isSSL;
+  changeType(type: ConnectionTypeEnum) {
+    if (type !== ConnectionTypeEnum.BigQuery) {
+      this.addBigqueryForm.controls['serviceAccountCredentials'].reset();
+      this.addBigqueryForm.controls['bigqueryQuerySizeLimitGb'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.ClickHouse) {
+      this.addClickhouseForm.controls['host'].reset();
+      this.addClickhouseForm.controls['port'].reset();
+      this.addClickhouseForm.controls['username'].reset();
+      this.addClickhouseForm.controls['password'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.MotherDuck) {
+      this.addClickhouseForm.controls['motherduckToken'].reset();
+      this.addClickhouseForm.controls['database'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.PostgreSQL) {
+      this.addPostgresForm.controls['host'].reset();
+      this.addPostgresForm.controls['port'].reset();
+      this.addPostgresForm.controls['database'].reset();
+      this.addPostgresForm.controls['username'].reset();
+      this.addPostgresForm.controls['password'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.SnowFlake) {
+      this.addPostgresForm.controls['account'].reset();
+      this.addPostgresForm.controls['warehouse'].reset();
+      this.addPostgresForm.controls['database'].reset();
+      this.addPostgresForm.controls['username'].reset();
+      this.addPostgresForm.controls['password'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.Api) {
+      this.addPostgresForm.controls['baseUrl'].reset();
+      this.addPostgresForm.controls['headers'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.GoogleApi) {
+      this.addPostgresForm.controls['serviceAccountCredentials'].reset();
+      this.addPostgresForm.controls['baseUrl'].reset();
+      this.addPostgresForm.controls['headers'].reset();
+      this.addPostgresForm.controls['scopes'].reset();
+    }
   }
 
   add() {
-    this.addConnectionForm.markAllAsTouched();
+    this.addForm.markAllAsTouched();
 
-    if (!this.addConnectionForm.valid) {
+    this.addBigqueryForm.markAllAsTouched();
+    this.addClickhouseForm.markAllAsTouched();
+    this.addMotherduckForm.markAllAsTouched();
+    this.addPostgresForm.markAllAsTouched();
+    this.addSnowflakeForm.markAllAsTouched();
+    this.addApiForm.markAllAsTouched();
+    this.addGoogleApiForm.markAllAsTouched();
+
+    let cType = this.addForm.value.type;
+
+    if (
+      !this.addForm.valid ||
+      (cType === ConnectionTypeEnum.BigQuery && !this.addBigqueryForm.valid) ||
+      (cType === ConnectionTypeEnum.ClickHouse &&
+        !this.addClickhouseForm.valid) ||
+      (cType === ConnectionTypeEnum.MotherDuck &&
+        !this.addMotherduckForm.valid) ||
+      (cType === ConnectionTypeEnum.PostgreSQL &&
+        !this.addPostgresForm.valid) ||
+      (cType === ConnectionTypeEnum.SnowFlake &&
+        !this.addSnowflakeForm.valid) ||
+      (cType === ConnectionTypeEnum.Api && !this.addApiForm.valid) ||
+      (cType === ConnectionTypeEnum.GoogleApi && !this.addGoogleApiForm.valid)
+    ) {
       return;
     }
 
     this.ref.close();
 
-    let cType = this.addConnectionForm.value.type;
-
-    let saCredentials = isDefined(
-      this.addConnectionForm.value.serviceAccountCredentials
+    let bigqueryCredentials = isDefined(
+      this.addBigqueryForm.value.serviceAccountCredentials
     )
-      ? JSON.parse(this.addConnectionForm.value.serviceAccountCredentials)
+      ? JSON.parse(this.addBigqueryForm.value.serviceAccountCredentials)
+      : undefined;
+
+    let googleApiCredentials = isDefined(
+      this.addGoogleApiForm.value.serviceAccountCredentials
+    )
+      ? JSON.parse(this.addGoogleApiForm.value.serviceAccountCredentials)
       : undefined;
 
     let payload: ToBackendCreateConnectionRequestPayload = {
       projectId: this.ref.data.projectId,
-      connectionId: this.addConnectionForm.value.connectionId,
-      envId: this.addConnectionForm.value.envId,
-      type: this.addConnectionForm.value.type,
+      connectionId: this.addForm.value.connectionId,
+      envId: this.addForm.value.envId,
+      type: this.addForm.value.type,
       bigqueryOptions:
         cType === ConnectionTypeEnum.BigQuery
           ? {
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
-              serviceAccountCredentials: saCredentials,
+              serviceAccountCredentials: bigqueryCredentials,
               bigqueryQuerySizeLimitGb: isDefined(
-                this.addConnectionForm.value.bigqueryQuerySizeLimitGb
+                this.addBigqueryForm.value.bigqueryQuerySizeLimitGb
               )
-                ? Number(this.addConnectionForm.value.bigqueryQuerySizeLimitGb)
+                ? Number(this.addBigqueryForm.value.bigqueryQuerySizeLimitGb)
                 : undefined
             }
           : undefined,
       clickhouseOptions:
         cType === ConnectionTypeEnum.ClickHouse
           ? {
-              host: this.addConnectionForm.value.host,
-              port: isDefined(this.addConnectionForm.value.port)
-                ? Number(this.addConnectionForm.value.port)
+              host: this.addClickhouseForm.value.host,
+              port: isDefined(this.addClickhouseForm.value.port)
+                ? Number(this.addClickhouseForm.value.port)
                 : undefined,
-              username: this.addConnectionForm.value.username,
-              password: this.addConnectionForm.value.password,
-              isSSL: this.isSSL
+              username: this.addClickhouseForm.value.username,
+              password: this.addClickhouseForm.value.password,
+              isSSL: this.isClickhouseSSL
             }
           : undefined,
       motherduckOptions:
         cType === ConnectionTypeEnum.MotherDuck
           ? {
-              motherduckToken: this.addConnectionForm.value.motherduckToken,
-              database: this.addConnectionForm.value.database,
-              attachModeSingle: true, // TODO: attachModeSingle
-              accessModeReadOnly: true // TODO: accessModeReadOnly
+              motherduckToken: this.addMotherduckForm.value.motherduckToken,
+              database: this.addMotherduckForm.value.database,
+              attachModeSingle: this.isMotherduckAttachModeSingle,
+              accessModeReadOnly: this.isMotherduckAccessModeReadOnly
             }
           : undefined,
       postgresOptions:
         cType === ConnectionTypeEnum.PostgreSQL
           ? {
-              host: this.addConnectionForm.value.host,
-              port: isDefined(this.addConnectionForm.value.port)
-                ? Number(this.addConnectionForm.value.port)
+              host: this.addPostgresForm.value.host,
+              port: isDefined(this.addPostgresForm.value.port)
+                ? Number(this.addPostgresForm.value.port)
                 : undefined,
-              database: this.addConnectionForm.value.database,
-              username: this.addConnectionForm.value.username,
-              password: this.addConnectionForm.value.password,
-              isSSL: this.isSSL
+              database: this.addPostgresForm.value.database,
+              username: this.addPostgresForm.value.username,
+              password: this.addPostgresForm.value.password,
+              isSSL: this.isPostgresSSL
             }
           : undefined,
       snowflakeOptions:
         cType === ConnectionTypeEnum.SnowFlake
           ? {
-              account: this.addConnectionForm.value.account,
-              warehouse: this.addConnectionForm.value.warehouse,
-              database: this.addConnectionForm.value.database,
-              username: this.addConnectionForm.value.username,
-              password: this.addConnectionForm.value.password
+              account: this.addSnowflakeForm.value.account,
+              warehouse: this.addSnowflakeForm.value.warehouse,
+              database: this.addSnowflakeForm.value.database,
+              username: this.addSnowflakeForm.value.username,
+              password: this.addSnowflakeForm.value.password
             }
           : undefined,
       storeApiOptions:
         cType === ConnectionTypeEnum.Api
           ? {
-              baseUrl: this.addConnectionForm.value.baseUrl,
-              headers: this.addConnectionForm.value.headers
+              baseUrl: this.addApiForm.value.baseUrl,
+              headers: this.addApiForm.value.headers
             }
           : undefined,
       storeGoogleApiOptions:
@@ -516,14 +546,14 @@ export class AddConnectionDialogComponent implements OnInit {
               googleAccessToken: undefined,
               googleCloudProject: undefined,
               googleCloudClientEmail: undefined,
-              serviceAccountCredentials: saCredentials,
-              baseUrl: this.addConnectionForm.value.baseUrl,
-              headers: this.addConnectionForm.value.headers,
+              serviceAccountCredentials: googleApiCredentials,
+              baseUrl: this.addGoogleApiForm.value.baseUrl,
+              headers: this.addGoogleApiForm.value.headers,
               googleAuthScopes:
                 [ConnectionTypeEnum.GoogleApi].indexOf(
-                  this.addConnectionForm.get('type').value
+                  this.addGoogleApiForm.get('type').value
                 ) > -1
-                  ? this.addConnectionForm.value.scopes.map((x: any) => x.value)
+                  ? this.addGoogleApiForm.value.scopes.map((x: any) => x.value)
                   : []
             }
           : undefined

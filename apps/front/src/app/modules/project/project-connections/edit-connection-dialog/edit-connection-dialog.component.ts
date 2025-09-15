@@ -50,8 +50,6 @@ export class EditConnectionDialogComponent implements OnInit {
 
   dataItem: EditConnectionDialogData = this.ref.data;
 
-  editForm: FormGroup;
-
   editBigqueryForm: FormGroup;
   editClickhouseForm: FormGroup;
   editMotherduckForm: FormGroup;
@@ -62,18 +60,8 @@ export class EditConnectionDialogComponent implements OnInit {
 
   isClickhouseSSL = true;
   isPostgresSSL = true;
-
   isMotherduckAttachModeSingle = true;
   isMotherduckAccessModeReadOnly = true;
-
-  connectionTypes = [
-    ConnectionTypeEnum.PostgreSQL,
-    ConnectionTypeEnum.SnowFlake,
-    ConnectionTypeEnum.ClickHouse, // TODO: hide clickhouse
-    ConnectionTypeEnum.BigQuery,
-    ConnectionTypeEnum.GoogleApi,
-    ConnectionTypeEnum.Api
-  ];
 
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
@@ -105,11 +93,6 @@ export class EditConnectionDialogComponent implements OnInit {
       this.dataItem.connection.motherduckOptions?.accessModeReadOnly === true
         ? true
         : false;
-
-    this.editForm = this.fb.group({
-      connectionId: [this.dataItem.connection.connectionId],
-      type: [this.dataItem.connection.type]
-    });
 
     this.editBigqueryForm = this.fb.group({
       serviceAccountCredentials: [
@@ -318,10 +301,6 @@ export class EditConnectionDialogComponent implements OnInit {
   //   console.log(this.editConnectionForm.get('scopes').value);
   // }
 
-  // toggleSSL() {
-  //   this.isSSL = !this.isSSL;
-  // }
-
   toggleClickhouseSSL() {
     this.isClickhouseSSL = !this.isClickhouseSSL;
   }
@@ -339,8 +318,6 @@ export class EditConnectionDialogComponent implements OnInit {
   }
 
   save() {
-    this.editForm.markAllAsTouched();
-
     this.editBigqueryForm.markAllAsTouched();
     this.editClickhouseForm.markAllAsTouched();
     this.editMotherduckForm.markAllAsTouched();
@@ -349,7 +326,7 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editApiForm.markAllAsTouched();
     this.editGoogleApiForm.markAllAsTouched();
 
-    let cType: ConnectionTypeEnum = this.editForm.value.type;
+    let cType: ConnectionTypeEnum = this.dataItem.connection.type;
 
     if (
       (cType === ConnectionTypeEnum.BigQuery && !this.editBigqueryForm.valid) ||
@@ -384,7 +361,7 @@ export class EditConnectionDialogComponent implements OnInit {
     let payload: ToBackendEditConnectionRequestPayload = {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
-      connectionId: this.editForm.value.connectionId,
+      connectionId: this.dataItem.connection.connectionId,
       bigqueryOptions:
         cType === ConnectionTypeEnum.BigQuery
           ? {
