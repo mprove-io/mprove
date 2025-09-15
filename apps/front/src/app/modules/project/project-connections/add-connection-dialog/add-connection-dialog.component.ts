@@ -394,8 +394,8 @@ export class AddConnectionDialogComponent implements OnInit {
     }
 
     if (type !== ConnectionTypeEnum.MotherDuck) {
-      this.addClickhouseForm.controls['motherduckToken'].reset();
-      this.addClickhouseForm.controls['database'].reset();
+      this.addMotherduckForm.controls['motherduckToken'].reset();
+      this.addMotherduckForm.controls['database'].reset();
     }
 
     if (type !== ConnectionTypeEnum.PostgreSQL) {
@@ -407,23 +407,23 @@ export class AddConnectionDialogComponent implements OnInit {
     }
 
     if (type !== ConnectionTypeEnum.SnowFlake) {
-      this.addPostgresForm.controls['account'].reset();
-      this.addPostgresForm.controls['warehouse'].reset();
-      this.addPostgresForm.controls['database'].reset();
-      this.addPostgresForm.controls['username'].reset();
-      this.addPostgresForm.controls['password'].reset();
+      this.addSnowflakeForm.controls['account'].reset();
+      this.addSnowflakeForm.controls['warehouse'].reset();
+      this.addSnowflakeForm.controls['database'].reset();
+      this.addSnowflakeForm.controls['username'].reset();
+      this.addSnowflakeForm.controls['password'].reset();
     }
 
     if (type !== ConnectionTypeEnum.Api) {
-      this.addPostgresForm.controls['baseUrl'].reset();
-      this.addPostgresForm.controls['headers'].reset();
+      this.addApiForm.controls['baseUrl'].reset();
+      this.addApiForm.controls['headers'].reset();
     }
 
     if (type !== ConnectionTypeEnum.GoogleApi) {
-      this.addPostgresForm.controls['serviceAccountCredentials'].reset();
-      this.addPostgresForm.controls['baseUrl'].reset();
-      this.addPostgresForm.controls['headers'].reset();
-      this.addPostgresForm.controls['scopes'].reset();
+      this.addGoogleApiForm.controls['serviceAccountCredentials'].reset();
+      this.addGoogleApiForm.controls['baseUrl'].reset();
+      this.addGoogleApiForm.controls['headers'].reset();
+      this.addGoogleApiForm.controls['scopes'].reset();
     }
   }
 
