@@ -7,9 +7,12 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq } from 'drizzle-orm';
+import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -116,6 +119,17 @@ export class EditConnectionController {
     connection.storeApiOptions = storeApiOptions;
     connection.storeGoogleApiOptions = storeGoogleApiOptions;
 
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, projectId),
+        eq(bridgesTable.envId, envId)
+      )
+    });
+
+    await forEachSeries(branchBridges, async x => {
+      x.needValidate = true;
+    });
+
     await retry(
       async () =>
         await this.db.drizzle.transaction(
@@ -123,7 +137,8 @@ export class EditConnectionController {
             await this.db.packer.write({
               tx: tx,
               insertOrUpdate: {
-                connections: [connection]
+                connections: [connection],
+                bridges: [...branchBridges]
               }
             })
         ),
