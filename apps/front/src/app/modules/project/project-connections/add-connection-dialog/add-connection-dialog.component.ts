@@ -142,10 +142,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addMotherduckForm = this.fb.group({
       motherduckToken: [undefined, [Validators.required]],
-      database: [
-        undefined,
-        [Validators.required, ValidationService.motherduckDatabaseWrongChars]
-      ]
+      database: [undefined, [ValidationService.motherduckDatabaseWrongChars]]
     });
 
     this.addPostgresForm = this.fb.group({
@@ -159,7 +156,7 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addSnowflakeForm = this.fb.group({
       account: [undefined, [Validators.required]],
       warehouse: [undefined, [Validators.required]],
-      database: [undefined, [Validators.required]],
+      database: [undefined, []],
       username: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]]
     });

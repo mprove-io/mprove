@@ -131,7 +131,7 @@ export class EditConnectionDialogComponent implements OnInit {
       ],
       database: [
         this.dataItem.connection.motherduckOptions?.database,
-        [Validators.required, ValidationService.motherduckDatabaseWrongChars]
+        [ValidationService.motherduckDatabaseWrongChars]
       ]
     });
 
@@ -167,10 +167,7 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.snowflakeOptions?.warehouse,
         [Validators.required]
       ],
-      database: [
-        this.dataItem.connection.snowflakeOptions?.database,
-        [Validators.required]
-      ],
+      database: [this.dataItem.connection.snowflakeOptions?.database, []],
       username: [
         this.dataItem.connection.snowflakeOptions?.username,
         [Validators.required]

@@ -280,29 +280,6 @@
       *ngIf="addForm.controls['type'].value === typeMotherDuck"
     >
       <div class="flex flex-row items-center">
-        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
-
-        <div class="flex flex-col">
-          <input
-            autocomplete="off"
-            spellcheck="false"
-            data-cy="addConnectionDialogMotherduckDatabaseInput"
-            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
-            [ngClass]="{
-              'border-r600':
-                addMotherduckForm.controls['database'].invalid &&
-                addMotherduckForm.controls['database'].touched
-            }"
-            formControlName="database"
-            placeholder="Optional"
-          />
-          <m-validation
-            [control]="addMotherduckForm.controls['database']"
-          ></m-validation>
-        </div>
-      </div>
-
-      <div class="flex flex-row items-center">
         <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
           >MotherDuck Token</div
         >
@@ -323,6 +300,39 @@
           <m-validation
             [control]="addMotherduckForm.controls['motherduckToken']"
           ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-start">
+        <div class="mb-6 mt-3 w-[200px] flex-shrink-0 font-semibold"
+          >Database</div
+        >
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogMotherduckDatabaseInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addMotherduckForm.controls['database'].invalid &&
+                addMotherduckForm.controls['database'].touched
+            }"
+            formControlName="database"
+            placeholder="Optional"
+          />
+          <m-validation
+            [control]="addMotherduckForm.controls['database']"
+          ></m-validation>
+
+          <div class="text-s400 mb-5 mt-2 h-[50px] text-base"
+            >md:{{ addMotherduckForm.controls['database'].value }}?{{
+              isMotherduckAttachModeSingle === true
+                ? 'attach_mode=single&'
+                : ''
+            }}saas_mode:true</div
+          >
         </div>
       </div>
 
