@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 import { formatSpecifier } from 'd3-format';
+import { getMotherduckDatabaseWrongChars } from '~common/functions/check-motherduck-database-name';
 import { isUndefined } from '~common/functions/is-undefined';
 import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
 import { MyRegex } from '~common/models/my-regex';
@@ -42,7 +43,8 @@ export class ValidationService {
       [
         'labelIsNotUnique',
         'Filter label must be unique for filter labels and Ids'
-      ]
+      ],
+      ['motherduckDatabaseWrongChars', 'Use only "a-zA-Z0-9_-" chars']
     ]);
 
     return config.get(validatorName);
@@ -346,4 +348,16 @@ export class ValidationService {
 
   //   return q;
   // }
+
+  static motherduckDatabaseWrongChars(control: FormControl) {
+    let wrongChars: string[] = getMotherduckDatabaseWrongChars({
+      databaseName: control.value
+    });
+
+    if (isUndefined(wrongChars) || wrongChars.length === 0) {
+      return null;
+    } else {
+      return { motherduckDatabaseWrongChars: true };
+    }
+  }
 }

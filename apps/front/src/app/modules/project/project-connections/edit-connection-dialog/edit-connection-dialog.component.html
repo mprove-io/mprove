@@ -248,6 +248,44 @@
           ></m-validation>
         </div>
       </div>
+
+      <div class="mb-6 flex flex-row items-center">
+        <div class="w-[200px] flex-shrink-0 font-semibold"
+          >Attach Mode "single"</div
+        >
+
+        <div class="flex flex-col">
+          <div
+            class="flex max-w-min cursor-pointer flex-row items-center"
+            (click)="toggleMotherduckAttachModeSingle()"
+          >
+            <ui-switch
+              class=""
+              [checked]="isMotherduckAttachModeSingle"
+              color="#64BD63"
+            ></ui-switch>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-6 flex flex-row items-center">
+        <div class="w-[200px] flex-shrink-0 font-semibold"
+          >Access Mode "READ_ONLY"</div
+        >
+
+        <div class="flex flex-col">
+          <div
+            class="flex max-w-min cursor-pointer flex-row items-center"
+            (click)="toggleMotherduckAccessModeReadOnly()"
+          >
+            <ui-switch
+              class=""
+              [checked]="isMotherduckAccessModeReadOnly"
+              color="#64BD63"
+            ></ui-switch>
+          </div>
+        </div>
+      </div>
     </form>
 
     <form

@@ -22,11 +22,15 @@ import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { getMotherduckDatabaseWrongChars } from '~common/functions/check-motherduck-database-name';
+import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendCreateConnectionRequest,
   ToBackendCreateConnectionResponsePayload
 } from '~common/interfaces/to-backend/connections/to-backend-create-connection';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -61,6 +65,18 @@ export class CreateConnectionController {
       storeApiOptions,
       storeGoogleApiOptions
     } = reqValid.payload;
+
+    if (isDefined(motherduckOptions)) {
+      let wrongChars: string[] = getMotherduckDatabaseWrongChars({
+        databaseName: motherduckOptions.database
+      });
+
+      if (wrongChars?.length > 0) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS
+        });
+      }
+    }
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

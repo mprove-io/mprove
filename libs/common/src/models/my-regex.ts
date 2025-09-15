@@ -181,6 +181,9 @@ export class MyRegex {
   static CAPTURE_NOT_ALLOWED_FILE_DECLARATION_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-zA-Z0-9_])/g); // A-Z for generated names
   }
+  static CAPTURE_NOT_ALLOWED_MOTHERDUCK_DATABASE_CHARS_G(): RegExp {
+    return cloneRegexp(/([^a-zA-Z0-9_\-])/g);
+  }
   static CAPTURE_NOT_SNAKE_CASE_CHARS_G(): RegExp {
     return cloneRegexp(/([^a-z0-9_])/g);
   }

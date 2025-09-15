@@ -96,6 +96,16 @@ export class EditConnectionDialogComponent implements OnInit {
     this.isPostgresSSL =
       this.dataItem.connection.postgresOptions?.isSSL === true ? true : false;
 
+    this.isMotherduckAttachModeSingle =
+      this.dataItem.connection.motherduckOptions?.attachModeSingle === true
+        ? true
+        : false;
+
+    this.isMotherduckAccessModeReadOnly =
+      this.dataItem.connection.motherduckOptions?.accessModeReadOnly === true
+        ? true
+        : false;
+
     this.editForm = this.fb.group({
       connectionId: [this.dataItem.connection.connectionId],
       type: [this.dataItem.connection.type]
@@ -138,7 +148,7 @@ export class EditConnectionDialogComponent implements OnInit {
       ],
       database: [
         this.dataItem.connection.motherduckOptions?.database,
-        [Validators.required]
+        [Validators.required, ValidationService.motherduckDatabaseWrongChars]
       ]
     });
 
@@ -320,6 +330,14 @@ export class EditConnectionDialogComponent implements OnInit {
     this.isPostgresSSL = !this.isPostgresSSL;
   }
 
+  toggleMotherduckAttachModeSingle() {
+    this.isMotherduckAttachModeSingle = !this.isMotherduckAttachModeSingle;
+  }
+
+  toggleMotherduckAccessModeReadOnly() {
+    this.isMotherduckAccessModeReadOnly = !this.isMotherduckAccessModeReadOnly;
+  }
+
   save() {
     this.editForm.markAllAsTouched();
 
@@ -397,8 +415,8 @@ export class EditConnectionDialogComponent implements OnInit {
           ? {
               motherduckToken: this.editMotherduckForm.value.motherduckToken,
               database: this.editMotherduckForm.value.database,
-              attachModeSingle: true, // TODO: attachModeSingle
-              accessModeReadOnly: true // TODO: accessModeReadOnly
+              attachModeSingle: this.isMotherduckAttachModeSingle,
+              accessModeReadOnly: this.isMotherduckAccessModeReadOnly
             }
           : undefined,
       postgresOptions:

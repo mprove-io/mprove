@@ -18,12 +18,15 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
+import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { getMotherduckDatabaseWrongChars } from '~common/functions/check-motherduck-database-name';
 import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendEditConnectionRequest,
   ToBackendEditConnectionResponsePayload
 } from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -90,6 +93,18 @@ export class EditConnectionController {
 
       bigqueryOptions.bigqueryQuerySizeLimitGb =
         isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
+    }
+
+    if (isDefined(motherduckOptions)) {
+      let wrongChars: string[] = getMotherduckDatabaseWrongChars({
+        databaseName: motherduckOptions.database
+      });
+
+      if (wrongChars?.length > 0) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_WRONG_MOTHERDUCK_DATABASE_CHARACTERS
+        });
+      }
     }
 
     connection.bigqueryOptions = bigqueryOptions;
