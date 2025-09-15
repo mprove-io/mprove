@@ -11,6 +11,7 @@ _nogit/
 !.vscode/launch.json
 apps/integra/cypress/
 dist/
+malloy_data/
 mprove_data/
 node_modules/
 secrets/
