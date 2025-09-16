@@ -123,13 +123,15 @@ services:
         target: /var/lib/postgresql/data
 
   dwh-mysql:
-    image: mysql:8.0.29
+    build:
+      context: ./
+      dockerfile: tools/docker/dwh-mysql.Dockerfile
+    image: ghcr.io/mprove-io/mprove-dwh-mysql:$MPROVE_DWH_MYSQL_TAG
     environment:
-      - MYSQL_ROOT_PASSWORD=$COMPOSE_DB_MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE=$COMPOSE_DB_MYSQL_DATABASE
+      - MYSQL_ROOT_PASSWORD=$COMPOSE_DWH_MYSQL_ROOT_PASSWORD
     command:
       [
-        '--default-authentication-plugin=mysql_native_password',
+        # '--default-authentication-plugin=mysql_native_password',
         '--max_allowed_packet=128M',
         '--innodb-buffer-pool-size=1G'
       ]
@@ -137,7 +139,7 @@ services:
       - 3306:3306
     volumes:
       - type: bind
-        source: $COMPOSE_DB_MYSQL_VOLUME_SOURCE_PATH
+        source: $COMPOSE_DWH_MYSQL_VOLUME_SOURCE_PATH
         target: /var/lib/mysql
 
   dwh-clickhouse:
