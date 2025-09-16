@@ -63,9 +63,11 @@ export class MysqlService {
 
     await mc
       .query(querySql)
-      .then(async (data: any) => {
-        console.log('data');
-        console.log(data);
+      .then(async (result: [MYSQL.QueryResult, MYSQL.FieldPacket[]]) => {
+        let data = result[0];
+
+        // console.log('data');
+        // console.log(data);
 
         let q = await this.db.drizzle.query.queriesTable.findFirst({
           where: and(
