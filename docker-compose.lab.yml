@@ -14,6 +14,9 @@ services:
   dwh-postgres:
     image: ghcr.io/mprove-io/mprove-lab-dwh-postgres:$MPROVE_DWH_POSTGRES_TAG
 
+  dwh-mysql:
+    image: ghcr.io/mprove-io/mprove-lab-dwh-mysql:$MPROVE_DWH_MYSQL_TAG
+
   dwh-clickhouse:
     image: ghcr.io/mprove-io/mprove-lab-dwh-clickhouse:$MPROVE_DWH_CLICKHOUSE_TAG
 
