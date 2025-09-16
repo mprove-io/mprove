@@ -490,6 +490,48 @@ export class AppModule implements OnModuleInit {
               connections.push(c5);
             }
 
+            let c6connection =
+              await this.db.drizzle.query.connectionsTable.findFirst({
+                where: and(
+                  eq(connectionsTable.projectId, firstProjectId),
+                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                  eq(connectionsTable.connectionId, 'c6_mysql')
+                )
+              });
+
+            let firstProjectDwhMysqlPassword = this.cs.get<
+              BackendConfig['firstProjectDwhMysqlPassword']
+            >('firstProjectDwhMysqlPassword');
+
+            if (
+              isUndefined(c6connection) &&
+              isDefinedAndNotEmpty(firstProjectDwhMysqlPassword)
+            ) {
+              let c6 = this.makerService.makeConnection({
+                projectId: firstProjectId,
+                envId: PROJECT_ENV_PROD,
+                connectionId: 'c6_mysql',
+                type: ConnectionTypeEnum.MySQL,
+                mysqlOptions: {
+                  host: this.cs.get<BackendConfig['firstProjectDwhMysqlHost']>(
+                    'firstProjectDwhMysqlHost'
+                  ),
+                  port: this.cs.get<BackendConfig['firstProjectDwhMysqlPort']>(
+                    'firstProjectDwhMysqlPort'
+                  ),
+                  database: this.cs.get<
+                    BackendConfig['firstProjectDwhMysqlDatabase']
+                  >('firstProjectDwhMysqlDatabase'),
+                  user: this.cs.get<BackendConfig['firstProjectDwhMysqlUser']>(
+                    'firstProjectDwhMysqlUser'
+                  ),
+                  password: firstProjectDwhMysqlPassword
+                }
+              });
+
+              connections.push(c6);
+            }
+
             let c7connection =
               await this.db.drizzle.query.connectionsTable.findFirst({
                 where: and(

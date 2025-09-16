@@ -4,6 +4,7 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
 import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
 import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
+import { ConnectionMysqlOptions } from '~common/interfaces/backend/connection/connection-mysql-options';
 import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
 import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
 import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
@@ -44,6 +45,11 @@ export class ToBackendCreateConnectionRequestPayload {
   @ValidateNested()
   @Type(() => ConnectionPostgresOptions)
   postgresOptions?: ConnectionPostgresOptions;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectionMysqlOptions)
+  mysqlOptions?: ConnectionMysqlOptions;
 
   @IsOptional()
   @ValidateNested()

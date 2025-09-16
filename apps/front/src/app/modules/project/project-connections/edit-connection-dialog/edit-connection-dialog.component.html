@@ -441,6 +441,125 @@
 
     <form
       class="flex w-80 flex-col text-base"
+      [formGroup]="editMysqlForm"
+      *ngIf="ref.data.connection.type === typeMySQL"
+    >
+      <div>
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="editConnectionDialogMysqlHostInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  editMysqlForm.controls['host'].invalid &&
+                  editMysqlForm.controls['host'].touched
+              }"
+              formControlName="host"
+            />
+            <m-validation
+              [control]="editMysqlForm.controls['host']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="editConnectionDialogMysqlPortInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  editMysqlForm.controls['port'].invalid &&
+                  editMysqlForm.controls['port'].touched
+              }"
+              formControlName="port"
+            />
+            <m-validation
+              [control]="editMysqlForm.controls['port']"
+            ></m-validation>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Database</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogMysqlDatabaseInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editMysqlForm.controls['database'].invalid &&
+                editMysqlForm.controls['database'].touched
+            }"
+            formControlName="database"
+          />
+          <m-validation
+            [control]="editMysqlForm.controls['database']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">User</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogMysqlUserInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editMysqlForm.controls['user'].invalid &&
+                editMysqlForm.controls['user'].touched
+            }"
+            formControlName="user"
+          />
+          <m-validation
+            [control]="editMysqlForm.controls['user']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Password</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="editConnectionDialogMysqlPasswordInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                editMysqlForm.controls['password'].invalid &&
+                editMysqlForm.controls['password'].touched
+            }"
+            formControlName="password"
+            type="password"
+          />
+          <m-validation
+            [control]="editMysqlForm.controls['password']"
+          ></m-validation>
+        </div>
+      </div>
+    </form>
+
+    <form
+      class="flex w-80 flex-col text-base"
       [formGroup]="editSnowflakeForm"
       *ngIf="ref.data.connection.type === typeSnowFlake"
     >

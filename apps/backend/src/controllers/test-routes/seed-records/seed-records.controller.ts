@@ -198,6 +198,7 @@ export class SeedRecordsController {
           clickhouseOptions: x.clickhouseOptions,
           motherduckOptions: x.motherduckOptions,
           postgresOptions: x.postgresOptions,
+          mysqlOptions: x.mysqlOptions,
           snowflakeOptions: x.snowflakeOptions,
           storeApiOptions: x.storeApiOptions,
           storeGoogleApiOptions: x.storeGoogleApiOptions

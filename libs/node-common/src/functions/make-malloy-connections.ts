@@ -1,5 +1,6 @@
 import { BigQueryConnection } from '@malloydata/db-bigquery';
 import { DuckDBConnection } from '@malloydata/db-duckdb';
+import { MySQLConnection } from '@malloydata/db-mysql';
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { SnowflakeConnection } from '@malloydata/db-snowflake';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -10,7 +11,8 @@ export type MalloyConnection =
   | PostgresConnection
   | BigQueryConnection
   | SnowflakeConnection
-  | DuckDBConnection;
+  | DuckDBConnection
+  | MySQLConnection;
 
 export function makeMalloyConnections(item: {
   connections: ProjectConnection[];
@@ -41,44 +43,56 @@ export function makeMalloyConnections(item: {
             password: c.postgresOptions?.password,
             databaseName: c.postgresOptions?.database
           })
-        : c.type === ConnectionTypeEnum.BigQuery
-          ? new BigQueryConnection(c.connectionId, () => ({}), {
-              credentials: c.bigqueryOptions?.serviceAccountCredentials,
-              projectId: c.bigqueryOptions?.googleCloudProject
-            })
-          : c.type === ConnectionTypeEnum.SnowFlake
-            ? new SnowflakeConnection(c.connectionId, {
-                connOptions: {
-                  account: c.snowflakeOptions?.account,
-                  warehouse: c.snowflakeOptions?.warehouse,
-                  database: c.snowflakeOptions?.database,
-                  username: c.snowflakeOptions?.username,
-                  password: c.snowflakeOptions?.password
-                  //  schema?: string | undefined;
-                  //  role?: string | undefined;
-                  //  clientSessionKeepAlive?: boolean | undefined;
-                  //  clientSessionKeepAliveHeartbeatFrequency?: number | undefined;
-                  //  jsTreatIntegerAsBigInt?: boolean | undefined;
-                  //  application?: string;
-                  //  authenticator?: string;
-                  //  token?: string;
-                  //  privateKey?: string | Buffer;
-                  //  privateKeyPath?: string;
-                  //  privateKeyPass?: string;
-                }
+        : c.type === ConnectionTypeEnum.MySQL
+          ? new MySQLConnection(
+              c.connectionId,
+              {
+                host: c.mysqlOptions?.host,
+                port: c.mysqlOptions?.port,
+                database: c.mysqlOptions?.database,
+                user: c.mysqlOptions?.user,
+                password: c.mysqlOptions?.password
+              },
+              {}
+            )
+          : c.type === ConnectionTypeEnum.BigQuery
+            ? new BigQueryConnection(c.connectionId, () => ({}), {
+                credentials: c.bigqueryOptions?.serviceAccountCredentials,
+                projectId: c.bigqueryOptions?.googleCloudProject
               })
-            : c.type === ConnectionTypeEnum.MotherDuck
-              ? new DuckDBConnection({
-                  name: c.connectionId,
-                  databasePath: isDefined(c.motherduckOptions?.database)
-                    ? `md:${c.motherduckOptions?.database}`
-                    : `md:`,
-                  motherDuckToken: c.motherduckOptions?.motherduckToken
-                  // additionalExtensions?: string[];
-                  // workingDirectory?: string;
-                  // readOnly?: boolean;
+            : c.type === ConnectionTypeEnum.SnowFlake
+              ? new SnowflakeConnection(c.connectionId, {
+                  connOptions: {
+                    account: c.snowflakeOptions?.account,
+                    warehouse: c.snowflakeOptions?.warehouse,
+                    database: c.snowflakeOptions?.database,
+                    username: c.snowflakeOptions?.username,
+                    password: c.snowflakeOptions?.password
+                    //  schema?: string | undefined;
+                    //  role?: string | undefined;
+                    //  clientSessionKeepAlive?: boolean | undefined;
+                    //  clientSessionKeepAliveHeartbeatFrequency?: number | undefined;
+                    //  jsTreatIntegerAsBigInt?: boolean | undefined;
+                    //  application?: string;
+                    //  authenticator?: string;
+                    //  token?: string;
+                    //  privateKey?: string | Buffer;
+                    //  privateKeyPath?: string;
+                    //  privateKeyPass?: string;
+                  }
                 })
-              : undefined;
+              : c.type === ConnectionTypeEnum.MotherDuck
+                ? new DuckDBConnection({
+                    name: c.connectionId,
+                    databasePath: isDefined(c.motherduckOptions?.database)
+                      ? `md:${c.motherduckOptions?.database}`
+                      : `md:`,
+                    motherDuckToken: c.motherduckOptions?.motherduckToken
+                    // additionalExtensions?: string[];
+                    // workingDirectory?: string;
+                    // readOnly?: boolean;
+                  })
+                : undefined;
 
     if (isDefined(mConnection)) {
       malloyConnections.push(mConnection);

@@ -10,6 +10,7 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ConnectionBigqueryOptions } from './connection/connection-bigquery-options';
 import { ConnectionClickhouseOptions } from './connection/connection-clickhouse-options';
 import { ConnectionMotherduckOptions } from './connection/connection-motherduck-options';
+import { ConnectionMysqlOptions } from './connection/connection-mysql-options';
 import { ConnectionPostgresOptions } from './connection/connection-postgres-options';
 import { ConnectionSnowflakeOptions } from './connection/connection-snowflake-options';
 import { ConnectionStoreApiOptions } from './connection/connection-store-api-options';
@@ -56,6 +57,11 @@ export class ProjectConnection {
   @ValidateNested()
   @Type(() => ConnectionSnowflakeOptions)
   snowflakeOptions?: ConnectionSnowflakeOptions;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectionMysqlOptions)
+  mysqlOptions?: ConnectionMysqlOptions;
 
   @IsOptional()
   @ValidateNested()

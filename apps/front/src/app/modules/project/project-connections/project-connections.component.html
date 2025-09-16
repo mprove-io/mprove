@@ -133,9 +133,11 @@
                   >{{
                     (connection.type === typePostgreSQL
                       ? connection.postgresOptions?.host
-                      : connection.type === typeClickHouse
-                        ? connection.clickhouseOptions?.host
-                        : undefined) ||
+                      : connection.type === typeMySQL
+                        ? connection.mysqlOptions?.host
+                        : connection.type === typeClickHouse
+                          ? connection.clickhouseOptions?.host
+                          : undefined) ||
                       (connection.type === typeApi
                         ? connection.storeApiOptions?.baseUrl
                         : connection.type === typeGoogleApi
@@ -148,9 +150,11 @@
                   >{{
                     connection.type === typePostgreSQL
                       ? connection.postgresOptions?.port
-                      : connection.type === typeClickHouse
-                        ? connection.clickhouseOptions?.port
-                        : undefined
+                      : connection.type === typeMySQL
+                        ? connection.mysqlOptions?.port
+                        : connection.type === typeClickHouse
+                          ? connection.clickhouseOptions?.port
+                          : undefined
                   }}
                 </td>
 
@@ -158,11 +162,13 @@
                   >{{
                     connection.type === typePostgreSQL
                       ? connection.postgresOptions?.database
-                      : connection.type === typeSnowFlake
-                        ? connection.snowflakeOptions?.database
-                        : connection.type === typeMotherDuck
-                          ? connection.motherduckOptions?.database
-                          : undefined
+                      : connection.type === typeMySQL
+                        ? connection.mysqlOptions?.database
+                        : connection.type === typeSnowFlake
+                          ? connection.snowflakeOptions?.database
+                          : connection.type === typeMotherDuck
+                            ? connection.motherduckOptions?.database
+                            : undefined
                   }}
                 </td>
 
@@ -170,11 +176,13 @@
                   >{{
                     connection.type === typePostgreSQL
                       ? connection.postgresOptions?.username
-                      : connection.type === typeClickHouse
-                        ? connection.clickhouseOptions?.username
-                        : connection.type === typeSnowFlake
-                          ? connection.snowflakeOptions?.username
-                          : undefined
+                      : connection.type === typeMySQL
+                        ? connection.mysqlOptions?.user
+                        : connection.type === typeClickHouse
+                          ? connection.clickhouseOptions?.username
+                          : connection.type === typeSnowFlake
+                            ? connection.snowflakeOptions?.username
+                            : undefined
                   }}
                 </td>
 

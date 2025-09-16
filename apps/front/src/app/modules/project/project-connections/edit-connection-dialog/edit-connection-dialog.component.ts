@@ -54,6 +54,7 @@ export class EditConnectionDialogComponent implements OnInit {
   editClickhouseForm: FormGroup;
   editMotherduckForm: FormGroup;
   editPostgresForm: FormGroup;
+  editMysqlForm: FormGroup;
   editSnowflakeForm: FormGroup;
   editApiForm: FormGroup;
   editGoogleApiForm: FormGroup;
@@ -68,6 +69,7 @@ export class EditConnectionDialogComponent implements OnInit {
   typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
+  typeMySQL = ConnectionTypeEnum.MySQL;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
 
@@ -154,6 +156,29 @@ export class EditConnectionDialogComponent implements OnInit {
       ],
       password: [
         this.dataItem.connection.postgresOptions?.password,
+        [Validators.required]
+      ]
+    });
+
+    this.editMysqlForm = this.fb.group({
+      host: [
+        this.dataItem.connection.mysqlOptions?.host,
+        [Validators.required]
+      ],
+      port: [
+        this.dataItem.connection.mysqlOptions?.port,
+        [Validators.required]
+      ],
+      database: [
+        this.dataItem.connection.mysqlOptions?.database,
+        [Validators.required]
+      ],
+      user: [
+        this.dataItem.connection.mysqlOptions?.user,
+        [Validators.required]
+      ],
+      password: [
+        this.dataItem.connection.mysqlOptions?.password,
         [Validators.required]
       ]
     });
@@ -319,6 +344,7 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editClickhouseForm.markAllAsTouched();
     this.editMotherduckForm.markAllAsTouched();
     this.editPostgresForm.markAllAsTouched();
+    this.editMysqlForm.markAllAsTouched();
     this.editSnowflakeForm.markAllAsTouched();
     this.editApiForm.markAllAsTouched();
     this.editGoogleApiForm.markAllAsTouched();
@@ -333,6 +359,7 @@ export class EditConnectionDialogComponent implements OnInit {
         !this.editMotherduckForm.valid) ||
       (cType === ConnectionTypeEnum.PostgreSQL &&
         !this.editPostgresForm.valid) ||
+      (cType === ConnectionTypeEnum.MySQL && !this.editMysqlForm.valid) ||
       (cType === ConnectionTypeEnum.SnowFlake &&
         !this.editSnowflakeForm.valid) ||
       (cType === ConnectionTypeEnum.Api && !this.editApiForm.valid) ||
@@ -406,6 +433,18 @@ export class EditConnectionDialogComponent implements OnInit {
               username: this.editPostgresForm.value.username,
               password: this.editPostgresForm.value.password,
               isSSL: this.isPostgresSSL
+            }
+          : undefined,
+      mysqlOptions:
+        cType === ConnectionTypeEnum.PostgreSQL
+          ? {
+              host: this.editMysqlForm.value.host,
+              port: isDefined(this.editMysqlForm.value.port)
+                ? Number(this.editMysqlForm.value.port)
+                : undefined,
+              database: this.editMysqlForm.value.database,
+              user: this.editMysqlForm.value.user,
+              password: this.editMysqlForm.value.password
             }
           : undefined,
       snowflakeOptions:

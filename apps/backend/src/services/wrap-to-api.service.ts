@@ -60,6 +60,7 @@ export class WrapToApiService {
     let clickhouseOptions = connection.clickhouseOptions;
     let motherduckOptions = connection.motherduckOptions;
     let postgresOptions = connection.postgresOptions;
+    let mysqlOptions = connection.mysqlOptions;
     let snowflakeOptions = connection.snowflakeOptions;
     let storeApiOptions = connection.storeApiOptions;
     let storeGoogleApiOptions = connection.storeGoogleApiOptions;
@@ -114,6 +115,16 @@ export class WrapToApiService {
                 ? postgresOptions.password
                 : undefined,
             isSSL: postgresOptions.isSSL
+          }
+        : undefined,
+      mysqlOptions: isDefined(mysqlOptions)
+        ? {
+            host: mysqlOptions.host,
+            port: mysqlOptions.port,
+            database: mysqlOptions.database,
+            user: mysqlOptions.user,
+            password:
+              isIncludePasswords === true ? mysqlOptions.password : undefined
           }
         : undefined,
       snowflakeOptions: isDefined(snowflakeOptions)

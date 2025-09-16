@@ -12,6 +12,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
 import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
 import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
+import { ConnectionMysqlOptions } from '~common/interfaces/backend/connection/connection-mysql-options';
 import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
 import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
 import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
@@ -134,6 +135,7 @@ export class MakerService {
     clickhouseOptions?: ConnectionClickhouseOptions;
     motherduckOptions?: ConnectionMotherduckOptions;
     postgresOptions?: ConnectionPostgresOptions;
+    mysqlOptions?: ConnectionMysqlOptions;
     snowflakeOptions?: ConnectionSnowflakeOptions;
     storeApiOptions?: ConnectionStoreApiOptions;
     storeGoogleApiOptions?: ConnectionStoreGoogleApiOptions;
@@ -147,6 +149,7 @@ export class MakerService {
       clickhouseOptions,
       motherduckOptions,
       postgresOptions,
+      mysqlOptions,
       snowflakeOptions,
       storeApiOptions,
       storeGoogleApiOptions
@@ -187,6 +190,7 @@ export class MakerService {
       clickhouseOptions: clickhouseOptions,
       motherduckOptions: motherduckOptions,
       postgresOptions: postgresOptions,
+      mysqlOptions: mysqlOptions,
       snowflakeOptions: snowflakeOptions,
       storeApiOptions: storeApiOptions,
       storeGoogleApiOptions: storeGoogleApiOptions,

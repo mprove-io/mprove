@@ -95,6 +95,28 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD ||
       envFile.BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD,
 
+    firstProjectDwhMysqlHost:
+      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_HOST ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_HOST,
+
+    firstProjectDwhMysqlPort: Number(
+      isDefined(process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_PORT)
+        ? process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_PORT
+        : envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_PORT
+    ),
+
+    firstProjectDwhMysqlDatabase:
+      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_DATABASE ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_DATABASE,
+
+    firstProjectDwhMysqlUser:
+      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_USER ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_USER,
+
+    firstProjectDwhMysqlPassword:
+      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_PASSWORD ||
+      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_PASSWORD,
+
     firstProjectDwhSnowflakeAccount:
       process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_ACCOUNT ||
       envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_ACCOUNT,
@@ -180,24 +202,6 @@ export function getDevConfig(envFilePath: any) {
 
     backendRabbitProtocol:
       process.env.BACKEND_RABBIT_PROTOCOL || envFile.BACKEND_RABBIT_PROTOCOL,
-
-    backendMysqlHost:
-      process.env.BACKEND_MYSQL_HOST || envFile.BACKEND_MYSQL_HOST,
-
-    backendMysqlPort: Number(
-      isDefined(process.env.BACKEND_MYSQL_PORT)
-        ? process.env.BACKEND_MYSQL_PORT
-        : envFile.BACKEND_MYSQL_PORT
-    ),
-
-    backendMysqlUsername:
-      process.env.BACKEND_MYSQL_USERNAME || envFile.BACKEND_MYSQL_USERNAME,
-
-    backendMysqlPassword:
-      process.env.BACKEND_MYSQL_PASSWORD || envFile.BACKEND_MYSQL_PASSWORD,
-
-    backendMysqlDatabase:
-      process.env.BACKEND_MYSQL_DATABASE || envFile.BACKEND_MYSQL_DATABASE,
 
     backendPostgresDatabaseUrl:
       process.env.BACKEND_POSTGRES_DATABASE_URL ||

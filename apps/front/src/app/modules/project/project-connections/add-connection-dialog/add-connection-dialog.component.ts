@@ -74,6 +74,7 @@ export class AddConnectionDialogComponent implements OnInit {
   addClickhouseForm: FormGroup;
   addMotherduckForm: FormGroup;
   addPostgresForm: FormGroup;
+  addMysqlForm: FormGroup;
   addSnowflakeForm: FormGroup;
   addApiForm: FormGroup;
   addGoogleApiForm: FormGroup;
@@ -89,15 +90,17 @@ export class AddConnectionDialogComponent implements OnInit {
 
   connectionTypes = [
     ConnectionTypeEnum.PostgreSQL,
+    ConnectionTypeEnum.MySQL,
+    ConnectionTypeEnum.ClickHouse, // TODO: hide clickhouse
     ConnectionTypeEnum.SnowFlake,
     ConnectionTypeEnum.BigQuery,
     ConnectionTypeEnum.MotherDuck,
-    ConnectionTypeEnum.ClickHouse, // TODO: hide clickhouse
     ConnectionTypeEnum.GoogleApi,
     ConnectionTypeEnum.Api
   ];
 
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
+  typeMySQL = ConnectionTypeEnum.MySQL;
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
@@ -150,6 +153,14 @@ export class AddConnectionDialogComponent implements OnInit {
       port: [undefined, [Validators.required]],
       database: [undefined, [Validators.required]],
       username: [undefined, [Validators.required]],
+      password: [undefined, [Validators.required]]
+    });
+
+    this.addMysqlForm = this.fb.group({
+      host: [undefined, [Validators.required]],
+      port: [undefined, [Validators.required]],
+      database: [undefined, [Validators.required]],
+      user: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]]
     });
 
@@ -206,6 +217,12 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addPostgresForm.get('database').updateValueAndValidity();
       this.addPostgresForm.get('username').updateValueAndValidity();
       this.addPostgresForm.get('password').updateValueAndValidity();
+
+      this.addMysqlForm.get('host').updateValueAndValidity();
+      this.addMysqlForm.get('port').updateValueAndValidity();
+      this.addMysqlForm.get('database').updateValueAndValidity();
+      this.addMysqlForm.get('user').updateValueAndValidity();
+      this.addMysqlForm.get('password').updateValueAndValidity();
 
       this.addSnowflakeForm.get('account').updateValueAndValidity();
       this.addSnowflakeForm.get('warehouse').updateValueAndValidity();
@@ -330,53 +347,6 @@ export class AddConnectionDialogComponent implements OnInit {
       .subscribe();
   }
 
-  resetBigqueryForm(type: ConnectionTypeEnum) {
-    if (type !== ConnectionTypeEnum.BigQuery) {
-      this.addBigqueryForm.controls['serviceAccountCredentials'].reset();
-      this.addBigqueryForm.controls['bigqueryQuerySizeLimitGb'].reset();
-    }
-
-    if (type !== ConnectionTypeEnum.ClickHouse) {
-      this.addClickhouseForm.controls['host'].reset();
-      this.addClickhouseForm.controls['port'].reset();
-      this.addClickhouseForm.controls['username'].reset();
-      this.addClickhouseForm.controls['password'].reset();
-    }
-
-    if (type !== ConnectionTypeEnum.MotherDuck) {
-      this.addClickhouseForm.controls['motherduckToken'].reset();
-      this.addClickhouseForm.controls['database'].reset();
-    }
-
-    if (type !== ConnectionTypeEnum.PostgreSQL) {
-      this.addPostgresForm.controls['host'].reset();
-      this.addPostgresForm.controls['port'].reset();
-      this.addPostgresForm.controls['database'].reset();
-      this.addPostgresForm.controls['username'].reset();
-      this.addPostgresForm.controls['password'].reset();
-    }
-
-    if (type !== ConnectionTypeEnum.SnowFlake) {
-      this.addPostgresForm.controls['account'].reset();
-      this.addPostgresForm.controls['warehouse'].reset();
-      this.addPostgresForm.controls['database'].reset();
-      this.addPostgresForm.controls['username'].reset();
-      this.addPostgresForm.controls['password'].reset();
-    }
-
-    if (type !== ConnectionTypeEnum.Api) {
-      this.addPostgresForm.controls['baseUrl'].reset();
-      this.addPostgresForm.controls['headers'].reset();
-    }
-
-    if (type !== ConnectionTypeEnum.GoogleApi) {
-      this.addPostgresForm.controls['serviceAccountCredentials'].reset();
-      this.addPostgresForm.controls['baseUrl'].reset();
-      this.addPostgresForm.controls['headers'].reset();
-      this.addPostgresForm.controls['scopes'].reset();
-    }
-  }
-
   changeType(type: ConnectionTypeEnum) {
     if (type !== ConnectionTypeEnum.BigQuery) {
       this.addBigqueryForm.controls['serviceAccountCredentials'].reset();
@@ -401,6 +371,14 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addPostgresForm.controls['database'].reset();
       this.addPostgresForm.controls['username'].reset();
       this.addPostgresForm.controls['password'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.MySQL) {
+      this.addMysqlForm.controls['host'].reset();
+      this.addMysqlForm.controls['port'].reset();
+      this.addMysqlForm.controls['database'].reset();
+      this.addMysqlForm.controls['user'].reset();
+      this.addMysqlForm.controls['password'].reset();
     }
 
     if (type !== ConnectionTypeEnum.SnowFlake) {
@@ -431,6 +409,7 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addClickhouseForm.markAllAsTouched();
     this.addMotherduckForm.markAllAsTouched();
     this.addPostgresForm.markAllAsTouched();
+    this.addMysqlForm.markAllAsTouched();
     this.addSnowflakeForm.markAllAsTouched();
     this.addApiForm.markAllAsTouched();
     this.addGoogleApiForm.markAllAsTouched();
@@ -446,6 +425,7 @@ export class AddConnectionDialogComponent implements OnInit {
         !this.addMotherduckForm.valid) ||
       (cType === ConnectionTypeEnum.PostgreSQL &&
         !this.addPostgresForm.valid) ||
+      (cType === ConnectionTypeEnum.MySQL && !this.addMysqlForm.valid) ||
       (cType === ConnectionTypeEnum.SnowFlake &&
         !this.addSnowflakeForm.valid) ||
       (cType === ConnectionTypeEnum.Api && !this.addApiForm.valid) ||
@@ -520,6 +500,18 @@ export class AddConnectionDialogComponent implements OnInit {
               username: this.addPostgresForm.value.username,
               password: this.addPostgresForm.value.password,
               isSSL: this.isPostgresSSL
+            }
+          : undefined,
+      mysqlOptions:
+        cType === ConnectionTypeEnum.MySQL
+          ? {
+              host: this.addMysqlForm.value.host,
+              port: isDefined(this.addMysqlForm.value.port)
+                ? Number(this.addMysqlForm.value.port)
+                : undefined,
+              database: this.addMysqlForm.value.database,
+              user: this.addMysqlForm.value.user,
+              password: this.addMysqlForm.value.password
             }
           : undefined,
       snowflakeOptions:

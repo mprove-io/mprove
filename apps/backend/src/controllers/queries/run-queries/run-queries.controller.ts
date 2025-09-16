@@ -30,6 +30,7 @@ import { ConnectionsService } from '~backend/services/connections.service';
 import { DuckDbService } from '~backend/services/duckdb.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
+import { MysqlService } from '~backend/services/mysql.service';
 import { PgService } from '~backend/services/pg.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { SnowFlakeService } from '~backend/services/snowflake.service';
@@ -64,6 +65,7 @@ export class RunQueriesController {
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private pgService: PgService,
+    private mysqlService: MysqlService,
     private duckdbService: DuckDbService,
     private storeService: StoreService,
     private clickhouseService: ClickHouseService,
@@ -300,6 +302,14 @@ export class RunQueriesController {
               querySql: query.sql,
               projectId: projectId
             });
+          } else if (connection.type === ConnectionTypeEnum.MySQL) {
+            await this.mysqlService.runQuery({
+              connection: connection,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
+              querySql: query.sql,
+              projectId: projectId
+            });
           } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
             await this.duckdbService.runQuery({
               connection: connection,
@@ -463,6 +473,26 @@ export class RunQueriesController {
                 logToConsoleBackend({
                   log: new ServerError({
                     message: ErEnum.BACKEND_RUN_QUERY_POSTGRES_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
+          } else if (connection.type === ConnectionTypeEnum.MySQL) {
+            this.mysqlService
+              .runQuery({
+                connection: connection,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
+                querySql: query.sql,
+                projectId: projectId
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_MYSQL_ERROR,
                     originalError: e
                   }),
                   logLevel: LogLevelEnum.Error,

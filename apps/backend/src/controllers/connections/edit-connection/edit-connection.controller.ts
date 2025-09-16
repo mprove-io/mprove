@@ -57,6 +57,7 @@ export class EditConnectionController {
       clickhouseOptions,
       motherduckOptions,
       postgresOptions,
+      mysqlOptions,
       snowflakeOptions,
       storeApiOptions,
       storeGoogleApiOptions
@@ -115,6 +116,7 @@ export class EditConnectionController {
     connection.motherduckOptions = motherduckOptions;
     connection.bigqueryOptions = bigqueryOptions;
     connection.postgresOptions = postgresOptions;
+    connection.mysqlOptions = mysqlOptions;
     connection.snowflakeOptions = snowflakeOptions;
     connection.storeApiOptions = storeApiOptions;
     connection.storeGoogleApiOptions = storeGoogleApiOptions;

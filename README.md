@@ -23,21 +23,12 @@ cd mprove
 ### 3. Create `mprove_data` directory with subdirectories:
 
 ```
-mkdir -p mprove_data/blockml-data \
-  mprove_data/blockml-logs \
-  mprove_data/db-main \
-  mprove_data/dwh-clickhouse \
-  mprove_data/dwh-clickhouse-logs \
-  mprove_data/dwh-mysql \
-  mprove_data/dwh-postgres \
-  mprove_data/mcli-repos \
-  mprove_data/organizations \
-  mprove_data/redis
+mkdir -p mprove_data
 ```
 
 ### 4. Clean `mprove_data` directory
 
-This command deletes content of `mprove_data` subdirectories
+This command deletes the contents of `mprove_data` and recreates the subdirectories.
 
 ```
 yarn clean:mprove_data

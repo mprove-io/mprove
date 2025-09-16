@@ -117,11 +117,14 @@ test('1', async t => {
               connectionId: 'c1_postgres',
               envId: PROJECT_ENV_PROD,
               type: ConnectionTypeEnum.PostgreSQL,
-              host: 'dwh-postgres',
-              port: 5436,
-              database: 'p_db',
-              username: 'postgres',
-              password: config.mproveCliTestDwhPostgresPassword
+              postgresOptions: {
+                host: 'dwh-postgres',
+                port: 5436,
+                database: 'p_db',
+                username: 'postgres',
+                password: config.mproveCliTestDwhPostgresPassword,
+                isSSL: false
+              }
             }
           ]
         },

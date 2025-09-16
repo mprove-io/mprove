@@ -69,6 +69,21 @@ export class BackendConfig {
   firstProjectDwhClickhousePassword?: string;
 
   @IsString()
+  firstProjectDwhMysqlHost?: string;
+
+  @IsNumber()
+  firstProjectDwhMysqlPort?: number;
+
+  @IsString()
+  firstProjectDwhMysqlDatabase?: string;
+
+  @IsString()
+  firstProjectDwhMysqlUser?: string;
+
+  @IsString()
+  firstProjectDwhMysqlPassword?: string;
+
+  @IsString()
   firstProjectDwhSnowflakeAccount?: string;
 
   @IsString()
@@ -144,21 +159,6 @@ export class BackendConfig {
 
   @IsString()
   backendRabbitPort?: string;
-
-  @IsString()
-  backendMysqlHost?: string;
-
-  @IsNumber()
-  backendMysqlPort?: number;
-
-  @IsString()
-  backendMysqlUsername?: string;
-
-  @IsString()
-  backendMysqlPassword?: string;
-
-  @IsString()
-  backendMysqlDatabase?: string;
 
   @IsString()
   backendPostgresDatabaseUrl?: string;

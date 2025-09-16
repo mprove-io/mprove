@@ -61,6 +61,7 @@ export class CreateConnectionController {
       clickhouseOptions,
       motherduckOptions,
       postgresOptions,
+      mysqlOptions,
       snowflakeOptions,
       storeApiOptions,
       storeGoogleApiOptions
@@ -113,6 +114,7 @@ export class CreateConnectionController {
       clickhouseOptions: clickhouseOptions,
       motherduckOptions: motherduckOptions,
       postgresOptions: postgresOptions,
+      mysqlOptions: mysqlOptions,
       snowflakeOptions: snowflakeOptions,
       storeApiOptions: storeApiOptions,
       storeGoogleApiOptions: storeGoogleApiOptions

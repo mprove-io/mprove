@@ -22,6 +22,7 @@ export class ProjectConnectionsComponent implements OnInit {
   typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
+  typeMySQL = ConnectionTypeEnum.MySQL;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
 

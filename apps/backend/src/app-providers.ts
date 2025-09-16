@@ -22,6 +22,7 @@ import { MalloyService } from './services/malloy.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
 import { ModelsService } from './services/models.service';
+import { MysqlService } from './services/mysql.service';
 import { OrgsService } from './services/orgs.service';
 import { PgService } from './services/pg.service';
 import { ProjectsService } from './services/projects.service';
@@ -60,6 +61,7 @@ export const appProviders = [
   MconfigsService,
   MalloyService,
   PgService,
+  MysqlService,
   DuckDbService,
   ClickHouseService,
   BigQueryService,
