@@ -115,14 +115,17 @@ export class DocService {
       topQueryError = SOME_ROWS_HAVE_FORMULA_ERRORS;
     } else {
       let cn: pg.IConnectionParameters<pg.IClient> = {
-        host: this.cs.get<BackendConfig['firstProjectDwhPostgresHost']>(
-          'firstProjectDwhPostgresHost'
+        host: this.cs.get<BackendConfig['calcPostgresHost']>(
+          'calcPostgresHost'
         ),
-        port: 5436,
-        database: 'p_db',
-        user: 'postgres',
-        password: this.cs.get<BackendConfig['firstProjectDwhPostgresPassword']>(
-          'firstProjectDwhPostgresPassword'
+        port: this.cs.get<BackendConfig['calcPostgresPort']>(
+          'calcPostgresPort'
+        ),
+        user: this.cs.get<BackendConfig['calcPostgresUsername']>(
+          'calcPostgresUsername'
+        ),
+        password: this.cs.get<BackendConfig['calcPostgresPassword']>(
+          'calcPostgresPassword'
         ),
         ssl: false
       };

@@ -27,11 +27,11 @@
   </ng-template>
 
   <ng-template #templateNewProject>
-    <div *ngIf="nav.orgName === firstOrgName"
+    <div *ngIf="nav.orgName === demoOrgName"
       >Organization "Demo" is restricted</div
     >
 
-    <div *ngIf="nav.orgName !== firstOrgName && user.userId !== nav.orgOwnerId"
+    <div *ngIf="nav.orgName !== demoOrgName && user.userId !== nav.orgOwnerId"
       >Only organization owner can access</div
     >
   </ng-template>
@@ -41,7 +41,7 @@
       [tp]="templateNewProject"
       placement="left"
       [tpIsEnabled]="
-        user.userId !== nav.orgOwnerId || nav.orgName === firstOrgName
+        user.userId !== nav.orgOwnerId || nav.orgName === demoOrgName
       "
     >
       <button
@@ -49,13 +49,13 @@
         class="w-full rounded py-3 text-base focus:outline-none"
         [ngClass]="{
           'text-m600 hover:bg-m50':
-            user.userId === nav.orgOwnerId && nav.orgName !== firstOrgName,
+            user.userId === nav.orgOwnerId && nav.orgName !== demoOrgName,
           'text-s400 cursor-default':
-            user.userId !== nav.orgOwnerId || nav.orgName === firstOrgName
+            user.userId !== nav.orgOwnerId || nav.orgName === demoOrgName
         }"
         (click)="createNewProject()"
         [disabled]="
-          user.userId !== nav.orgOwnerId || nav.orgName === firstOrgName
+          user.userId !== nav.orgOwnerId || nav.orgName === demoOrgName
         "
         >New Project</button
       >

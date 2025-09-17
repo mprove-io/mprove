@@ -93,12 +93,12 @@ export class PushRepoController {
       member: member
     });
 
-    let firstProjectId =
-      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
+    let demoProjectId =
+      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
     if (
       member.isAdmin === false && // no check for repoId
-      projectId === firstProjectId
+      projectId === demoProjectId
     ) {
       throw new ServerError({
         message: ErEnum.BACKEND_RESTRICTED_PROJECT

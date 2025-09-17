@@ -9,7 +9,7 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
-import { FIRST_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
+import { DEMO_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -62,7 +62,7 @@ export class CreateOrgController {
       where: eq(orgsTable.name, name)
     });
 
-    if (name.toLowerCase() === FIRST_ORG_NAME.toLowerCase()) {
+    if (name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()) {
       throw new ServerError({
         message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME
       });

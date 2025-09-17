@@ -15,7 +15,7 @@ import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import * as fse from 'fs-extra';
 import { Client, ClientConfig } from 'pg';
 import { BackendConfig } from '~backend/config/backend-config';
-import { FIRST_ORG_NAME, PROJECT_ENV_PROD } from '~common/constants/top';
+import { DEMO_ORG_NAME, PROJECT_ENV_PROD } from '~common/constants/top';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
@@ -250,332 +250,329 @@ export class AppModule implements OnModuleInit {
 
         //
 
-        let email =
+        let firstUserEmail =
           this.cs.get<BackendConfig['firstUserEmail']>('firstUserEmail');
 
-        let password =
+        let firstUserPassword =
           this.cs.get<BackendConfig['firstUserPassword']>('firstUserPassword');
 
         let firstUser: UserEnt;
 
-        if (isDefinedAndNotEmpty(email) && isDefinedAndNotEmpty(password)) {
+        if (
+          isDefinedAndNotEmpty(firstUserEmail) &&
+          isDefinedAndNotEmpty(firstUserPassword)
+        ) {
           firstUser = await this.db.drizzle.query.usersTable.findFirst({
-            where: eq(usersTable.email, email)
+            where: eq(usersTable.email, firstUserEmail)
           });
 
           if (isUndefined(firstUser)) {
             firstUser = await this.usersService.addFirstUser({
-              email: email,
-              password: password
+              email: firstUserEmail,
+              password: firstUserPassword
             });
           }
         }
 
-        let firstOrgId = this.cs.get<BackendConfig['firstOrgId']>('firstOrgId');
+        let demoOrgId = this.cs.get<BackendConfig['demoOrgId']>('demoOrgId');
 
-        let firstProjectId =
-          this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
+        let demoProjectId =
+          this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
-        let firstProjectName =
-          this.cs.get<BackendConfig['firstProjectName']>('firstProjectName');
+        let demoProjectName =
+          this.cs.get<BackendConfig['demoProjectName']>('demoProjectName');
 
-        let firstProjectSeedConnections = this.cs.get<
-          BackendConfig['firstProjectSeedConnections']
-        >('firstProjectSeedConnections');
-
-        let firstOrg;
+        let seedDemoOrgAndProject = this.cs.get<
+          BackendConfig['seedDemoOrgAndProject']
+        >('seedDemoOrgAndProject');
 
         if (
+          seedDemoOrgAndProject === BoolEnum.TRUE &&
           isDefined(firstUser) &&
-          isDefinedAndNotEmpty(firstOrgId) &&
-          isDefinedAndNotEmpty(firstProjectId)
+          isDefinedAndNotEmpty(demoOrgId) &&
+          isDefinedAndNotEmpty(demoProjectId)
         ) {
-          firstOrg = await this.db.drizzle.query.orgsTable.findFirst({
-            where: eq(orgsTable.orgId, firstOrgId)
+          let firstOrg = await this.db.drizzle.query.orgsTable.findFirst({
+            where: eq(orgsTable.orgId, demoOrgId)
           });
 
           if (isUndefined(firstOrg)) {
             firstOrg = await this.orgsService.addOrg({
               ownerId: firstUser.userId,
               ownerEmail: firstUser.email,
-              name: FIRST_ORG_NAME,
+              name: DEMO_ORG_NAME,
               traceId: makeId(),
-              orgId: firstOrgId
+              orgId: demoOrgId
             });
           }
 
           let connections: ConnectionEnt[] = [];
 
-          if (firstProjectSeedConnections === BoolEnum.TRUE) {
-            let c1connection =
-              await this.db.drizzle.query.connectionsTable.findFirst({
-                where: and(
-                  eq(connectionsTable.projectId, firstProjectId),
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  eq(connectionsTable.connectionId, 'c1_postgres')
-                )
-              });
+          let c1connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c1_postgres')
+              )
+            });
 
-            let firstProjectDwhPostgresPassword = this.cs.get<
-              BackendConfig['firstProjectDwhPostgresPassword']
-            >('firstProjectDwhPostgresPassword');
+          let demoProjectDwhPostgresPassword = this.cs.get<
+            BackendConfig['demoProjectDwhPostgresPassword']
+          >('demoProjectDwhPostgresPassword');
 
-            if (
-              isUndefined(c1connection) &&
-              isDefinedAndNotEmpty(firstProjectDwhPostgresPassword)
-            ) {
-              let c1 = this.makerService.makeConnection({
-                projectId: firstProjectId,
-                envId: PROJECT_ENV_PROD,
-                connectionId: 'c1_postgres',
-                type: ConnectionTypeEnum.PostgreSQL,
-                postgresOptions: {
-                  host: this.cs.get<
-                    BackendConfig['firstProjectDwhPostgresHost']
-                  >('firstProjectDwhPostgresHost'),
-                  port: 5436,
-                  database: 'p_db',
-                  username: 'postgres',
-                  password: firstProjectDwhPostgresPassword,
-                  isSSL: false
-                }
-              });
+          if (
+            isUndefined(c1connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhPostgresPassword)
+          ) {
+            let c1 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c1_postgres',
+              type: ConnectionTypeEnum.PostgreSQL,
+              postgresOptions: {
+                host: this.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
+                  'demoProjectDwhPostgresHost'
+                ),
+                port: 5436,
+                database: 'p_db',
+                username: 'postgres',
+                password: demoProjectDwhPostgresPassword,
+                isSSL: false
+              }
+            });
 
-              connections.push(c1);
-            }
+            connections.push(c1);
+          }
 
-            let c2connection =
-              await this.db.drizzle.query.connectionsTable.findFirst({
-                where: and(
-                  eq(connectionsTable.projectId, firstProjectId),
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  eq(connectionsTable.connectionId, 'c2_clickhouse')
-                )
-              });
+          let c2connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c2_clickhouse')
+              )
+            });
 
-            let firstProjectDwhClickhousePassword = this.cs.get<
-              BackendConfig['firstProjectDwhClickhousePassword']
-            >('firstProjectDwhClickhousePassword');
+          let demoProjectDwhClickhousePassword = this.cs.get<
+            BackendConfig['demoProjectDwhClickhousePassword']
+          >('demoProjectDwhClickhousePassword');
 
-            if (
-              isUndefined(c2connection) &&
-              isDefinedAndNotEmpty(firstProjectDwhClickhousePassword)
-            ) {
-              let c2 = this.makerService.makeConnection({
-                projectId: firstProjectId,
-                envId: PROJECT_ENV_PROD,
-                connectionId: 'c2_clickhouse',
-                type: ConnectionTypeEnum.ClickHouse,
-                clickhouseOptions: {
-                  host: 'dwh-clickhouse',
-                  port: 8123,
-                  username: 'c_user',
-                  password: firstProjectDwhClickhousePassword,
-                  isSSL: false
-                }
-              });
+          if (
+            isUndefined(c2connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhClickhousePassword)
+          ) {
+            let c2 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c2_clickhouse',
+              type: ConnectionTypeEnum.ClickHouse,
+              clickhouseOptions: {
+                host: 'dwh-clickhouse',
+                port: 8123,
+                username: 'c_user',
+                password: demoProjectDwhClickhousePassword,
+                isSSL: false
+              }
+            });
 
-              connections.push(c2);
-            }
+            connections.push(c2);
+          }
 
-            let c3connection =
-              await this.db.drizzle.query.connectionsTable.findFirst({
-                where: and(
-                  eq(connectionsTable.projectId, firstProjectId),
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  eq(connectionsTable.connectionId, 'c3_bigquery')
-                )
-              });
+          let c3connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c3_bigquery')
+              )
+            });
 
-            let firstProjectDwhBigqueryCredentialsPath = this.cs.get<
-              BackendConfig['firstProjectDwhBigqueryCredentialsPath']
-            >('firstProjectDwhBigqueryCredentialsPath');
+          let demoProjectDwhBigqueryCredentialsPath = this.cs.get<
+            BackendConfig['demoProjectDwhBigqueryCredentialsPath']
+          >('demoProjectDwhBigqueryCredentialsPath');
 
-            if (
-              isUndefined(c3connection) &&
-              isDefinedAndNotEmpty(firstProjectDwhBigqueryCredentialsPath)
-            ) {
-              let bigqueryTestCredentials = JSON.parse(
-                fse
-                  .readFileSync(firstProjectDwhBigqueryCredentialsPath)
-                  .toString()
-              );
+          if (
+            isUndefined(c3connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhBigqueryCredentialsPath)
+          ) {
+            let bigqueryTestCredentials = JSON.parse(
+              fse.readFileSync(demoProjectDwhBigqueryCredentialsPath).toString()
+            );
 
-              let c3 = this.makerService.makeConnection({
-                projectId: firstProjectId,
-                envId: PROJECT_ENV_PROD,
-                connectionId: 'c3_bigquery',
-                type: ConnectionTypeEnum.BigQuery,
-                bigqueryOptions: {
-                  serviceAccountCredentials: bigqueryTestCredentials,
-                  googleCloudProject: bigqueryTestCredentials?.project_id,
-                  googleCloudClientEmail: bigqueryTestCredentials?.client_email,
-                  bigqueryQuerySizeLimitGb: 1
-                }
-              });
+            let c3 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c3_bigquery',
+              type: ConnectionTypeEnum.BigQuery,
+              bigqueryOptions: {
+                serviceAccountCredentials: bigqueryTestCredentials,
+                googleCloudProject: bigqueryTestCredentials?.project_id,
+                googleCloudClientEmail: bigqueryTestCredentials?.client_email,
+                bigqueryQuerySizeLimitGb: 1
+              }
+            });
 
-              connections.push(c3);
-            }
+            connections.push(c3);
+          }
 
-            let c4connection =
-              await this.db.drizzle.query.connectionsTable.findFirst({
-                where: and(
-                  eq(connectionsTable.projectId, firstProjectId),
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  eq(connectionsTable.connectionId, 'c4_snowflake')
-                )
-              });
+          let c4connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c4_snowflake')
+              )
+            });
 
-            let firstProjectDwhSnowflakeAccount = this.cs.get<
-              BackendConfig['firstProjectDwhSnowflakeAccount']
-            >('firstProjectDwhSnowflakeAccount');
+          let demoProjectDwhSnowflakeAccount = this.cs.get<
+            BackendConfig['demoProjectDwhSnowflakeAccount']
+          >('demoProjectDwhSnowflakeAccount');
 
-            if (
-              isUndefined(c4connection) &&
-              isDefinedAndNotEmpty(firstProjectDwhSnowflakeAccount)
-            ) {
-              let c4 = this.makerService.makeConnection({
-                projectId: firstProjectId,
-                envId: PROJECT_ENV_PROD,
-                connectionId: 'c4_snowflake',
-                type: ConnectionTypeEnum.SnowFlake,
-                snowflakeOptions: {
-                  account: firstProjectDwhSnowflakeAccount,
-                  warehouse: this.cs.get<
-                    BackendConfig['firstProjectDwhSnowflakeWarehouse']
-                  >('firstProjectDwhSnowflakeWarehouse'),
-                  database: undefined,
-                  username: this.cs.get<
-                    BackendConfig['firstProjectDwhSnowflakeUsername']
-                  >('firstProjectDwhSnowflakeUsername'),
-                  password: this.cs.get<
-                    BackendConfig['firstProjectDwhSnowflakePassword']
-                  >('firstProjectDwhSnowflakePassword')
-                }
-              });
+          if (
+            isUndefined(c4connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhSnowflakeAccount)
+          ) {
+            let c4 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c4_snowflake',
+              type: ConnectionTypeEnum.SnowFlake,
+              snowflakeOptions: {
+                account: demoProjectDwhSnowflakeAccount,
+                warehouse: this.cs.get<
+                  BackendConfig['demoProjectDwhSnowflakeWarehouse']
+                >('demoProjectDwhSnowflakeWarehouse'),
+                database: undefined,
+                username: this.cs.get<
+                  BackendConfig['demoProjectDwhSnowflakeUsername']
+                >('demoProjectDwhSnowflakeUsername'),
+                password: this.cs.get<
+                  BackendConfig['demoProjectDwhSnowflakePassword']
+                >('demoProjectDwhSnowflakePassword')
+              }
+            });
 
-              connections.push(c4);
-            }
+            connections.push(c4);
+          }
 
-            let c5connection =
-              await this.db.drizzle.query.connectionsTable.findFirst({
-                where: and(
-                  eq(connectionsTable.projectId, firstProjectId),
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  eq(connectionsTable.connectionId, 'c5_duckdb')
-                )
-              });
+          let c5connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c5_duckdb')
+              )
+            });
 
-            let firstProjectDwhMotherDuckToken = this.cs.get<
-              BackendConfig['firstProjectDwhMotherDuckToken']
-            >('firstProjectDwhMotherDuckToken');
+          let demoProjectDwhMotherDuckToken = this.cs.get<
+            BackendConfig['demoProjectDwhMotherDuckToken']
+          >('demoProjectDwhMotherDuckToken');
 
-            if (
-              isUndefined(c5connection) &&
-              isDefinedAndNotEmpty(firstProjectDwhMotherDuckToken)
-            ) {
-              let c5 = this.makerService.makeConnection({
-                projectId: firstProjectId,
-                envId: PROJECT_ENV_PROD,
-                connectionId: 'c5_duckdb',
-                type: ConnectionTypeEnum.MotherDuck,
-                motherduckOptions: {
-                  motherduckToken: firstProjectDwhMotherDuckToken,
-                  database: 'db1',
-                  attachModeSingle: true,
-                  accessModeReadOnly: true
-                }
-              });
+          if (
+            isUndefined(c5connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhMotherDuckToken)
+          ) {
+            let c5 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c5_duckdb',
+              type: ConnectionTypeEnum.MotherDuck,
+              motherduckOptions: {
+                motherduckToken: demoProjectDwhMotherDuckToken,
+                database: 'db1',
+                attachModeSingle: true,
+                accessModeReadOnly: true
+              }
+            });
 
-              connections.push(c5);
-            }
+            connections.push(c5);
+          }
 
-            let c6connection =
-              await this.db.drizzle.query.connectionsTable.findFirst({
-                where: and(
-                  eq(connectionsTable.projectId, firstProjectId),
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  eq(connectionsTable.connectionId, 'c6_mysql')
-                )
-              });
+          let c6connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c6_mysql')
+              )
+            });
 
-            let firstProjectDwhMysqlPassword = this.cs.get<
-              BackendConfig['firstProjectDwhMysqlPassword']
-            >('firstProjectDwhMysqlPassword');
+          let demoProjectDwhMysqlPassword = this.cs.get<
+            BackendConfig['demoProjectDwhMysqlPassword']
+          >('demoProjectDwhMysqlPassword');
 
-            if (
-              isUndefined(c6connection) &&
-              isDefinedAndNotEmpty(firstProjectDwhMysqlPassword)
-            ) {
-              let c6 = this.makerService.makeConnection({
-                projectId: firstProjectId,
-                envId: PROJECT_ENV_PROD,
-                connectionId: 'c6_mysql',
-                type: ConnectionTypeEnum.MySQL,
-                mysqlOptions: {
-                  host: this.cs.get<BackendConfig['firstProjectDwhMysqlHost']>(
-                    'firstProjectDwhMysqlHost'
-                  ),
-                  port: this.cs.get<BackendConfig['firstProjectDwhMysqlPort']>(
-                    'firstProjectDwhMysqlPort'
-                  ),
-                  database: this.cs.get<
-                    BackendConfig['firstProjectDwhMysqlDatabase']
-                  >('firstProjectDwhMysqlDatabase'),
-                  user: this.cs.get<BackendConfig['firstProjectDwhMysqlUser']>(
-                    'firstProjectDwhMysqlUser'
-                  ),
-                  password: firstProjectDwhMysqlPassword
-                }
-              });
+          if (
+            isUndefined(c6connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhMysqlPassword)
+          ) {
+            let c6 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c6_mysql',
+              type: ConnectionTypeEnum.MySQL,
+              mysqlOptions: {
+                host: this.cs.get<BackendConfig['demoProjectDwhMysqlHost']>(
+                  'demoProjectDwhMysqlHost'
+                ),
+                port: this.cs.get<BackendConfig['demoProjectDwhMysqlPort']>(
+                  'demoProjectDwhMysqlPort'
+                ),
+                database: this.cs.get<
+                  BackendConfig['demoProjectDwhMysqlDatabase']
+                >('demoProjectDwhMysqlDatabase'),
+                user: this.cs.get<BackendConfig['demoProjectDwhMysqlUser']>(
+                  'demoProjectDwhMysqlUser'
+                ),
+                password: demoProjectDwhMysqlPassword
+              }
+            });
 
-              connections.push(c6);
-            }
+            connections.push(c6);
+          }
 
-            let c7connection =
-              await this.db.drizzle.query.connectionsTable.findFirst({
-                where: and(
-                  eq(connectionsTable.projectId, firstProjectId),
-                  eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                  eq(connectionsTable.connectionId, 'c7_google')
-                )
-              });
+          let c7connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c7_google')
+              )
+            });
 
-            let firstProjectGoogleApiCredentialsPath = this.cs.get<
-              BackendConfig['firstProjectGoogleApiCredentialsPath']
-            >('firstProjectGoogleApiCredentialsPath');
+          let demoProjectDwhGoogleApiCredentialsPath = this.cs.get<
+            BackendConfig['demoProjectDwhGoogleApiCredentialsPath']
+          >('demoProjectDwhGoogleApiCredentialsPath');
 
-            if (
-              isUndefined(c7connection) &&
-              isDefinedAndNotEmpty(firstProjectGoogleApiCredentialsPath)
-            ) {
-              let googleApiTestCredentials = JSON.parse(
-                fse
-                  .readFileSync(firstProjectGoogleApiCredentialsPath)
-                  .toString()
-              );
+          if (
+            isUndefined(c7connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhGoogleApiCredentialsPath)
+          ) {
+            let googleApiTestCredentials = JSON.parse(
+              fse
+                .readFileSync(demoProjectDwhGoogleApiCredentialsPath)
+                .toString()
+            );
 
-              let c7 = this.makerService.makeConnection({
-                projectId: firstProjectId,
-                envId: PROJECT_ENV_PROD,
-                connectionId: 'c7_google',
-                type: ConnectionTypeEnum.GoogleApi,
-                storeGoogleApiOptions: {
-                  baseUrl: 'https://analyticsdata.googleapis.com',
-                  headers: [],
-                  googleAuthScopes: [
-                    'https://www.googleapis.com/auth/analytics.readonly'
-                  ],
-                  serviceAccountCredentials: googleApiTestCredentials,
-                  googleCloudProject: googleApiTestCredentials?.project_id,
-                  googleCloudClientEmail:
-                    googleApiTestCredentials?.client_email,
-                  googleAccessToken: undefined
-                }
-              });
+            let c7 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c7_google',
+              type: ConnectionTypeEnum.GoogleApi,
+              storeGoogleApiOptions: {
+                baseUrl: 'https://analyticsdata.googleapis.com',
+                headers: [],
+                googleAuthScopes: [
+                  'https://www.googleapis.com/auth/analytics.readonly'
+                ],
+                serviceAccountCredentials: googleApiTestCredentials,
+                googleCloudProject: googleApiTestCredentials?.project_id,
+                googleCloudClientEmail: googleApiTestCredentials?.client_email,
+                googleAccessToken: undefined
+              }
+            });
 
-              connections.push(c7);
-            }
+            connections.push(c7);
           }
 
           await retry(
@@ -592,41 +589,42 @@ export class AppModule implements OnModuleInit {
             getRetryOption(this.cs, this.logger)
           );
 
-          let firstProject =
-            await this.db.drizzle.query.projectsTable.findFirst({
-              where: eq(projectsTable.projectId, firstProjectId)
-            });
+          let demoProject = await this.db.drizzle.query.projectsTable.findFirst(
+            {
+              where: eq(projectsTable.projectId, demoProjectId)
+            }
+          );
 
-          if (isUndefined(firstProject)) {
-            let firstProjectRemoteType = this.cs.get<
-              BackendConfig['firstProjectRemoteType']
-            >('firstProjectRemoteType');
+          if (isUndefined(demoProject)) {
+            let demoProjectRemoteType = this.cs.get<
+              BackendConfig['demoProjectRemoteType']
+            >('demoProjectRemoteType');
 
-            let firstProjectRemoteGitUrl = this.cs.get<
-              BackendConfig['firstProjectRemoteGitUrl']
-            >('firstProjectRemoteGitUrl');
+            let demoProjectRemoteGitUrl = this.cs.get<
+              BackendConfig['demoProjectRemoteGitUrl']
+            >('demoProjectRemoteGitUrl');
 
-            let firstProjectRemotePrivateKeyPath = this.cs.get<
-              BackendConfig['firstProjectRemotePrivateKeyPath']
-            >('firstProjectRemotePrivateKeyPath');
+            let demoProjectRemotePrivateKeyPath = this.cs.get<
+              BackendConfig['demoProjectRemotePrivateKeyPath']
+            >('demoProjectRemotePrivateKeyPath');
 
-            let firstProjectRemotePublicKeyPath = this.cs.get<
-              BackendConfig['firstProjectRemotePublicKeyPath']
-            >('firstProjectRemotePublicKeyPath');
+            let demoProjectRemotePublicKeyPath = this.cs.get<
+              BackendConfig['demoProjectRemotePublicKeyPath']
+            >('demoProjectRemotePublicKeyPath');
 
             let privateKey;
             let publicKey;
 
             if (
-              isDefinedAndNotEmpty(firstProjectRemotePrivateKeyPath) &&
-              isDefinedAndNotEmpty(firstProjectRemotePublicKeyPath)
+              isDefinedAndNotEmpty(demoProjectRemotePrivateKeyPath) &&
+              isDefinedAndNotEmpty(demoProjectRemotePublicKeyPath)
             ) {
               privateKey = fse
-                .readFileSync(firstProjectRemotePrivateKeyPath)
+                .readFileSync(demoProjectRemotePrivateKeyPath)
                 .toString();
 
               publicKey = fse
-                .readFileSync(firstProjectRemotePublicKeyPath)
+                .readFileSync(demoProjectRemotePublicKeyPath)
                 .toString();
             }
 
@@ -635,15 +633,15 @@ export class AppModule implements OnModuleInit {
               val: 's_db'
             };
 
-            firstProject = await this.projectsService.addProject({
+            demoProject = await this.projectsService.addProject({
               orgId: firstOrg.orgId,
-              name: firstProjectName,
+              name: demoProjectName,
               user: firstUser,
               traceId: makeId(),
-              projectId: firstProjectId,
-              testProjectId: 'first-project',
-              remoteType: firstProjectRemoteType,
-              gitUrl: firstProjectRemoteGitUrl,
+              projectId: demoProjectId,
+              testProjectId: 'demo-project',
+              remoteType: demoProjectRemoteType,
+              gitUrl: demoProjectRemoteGitUrl,
               privateKey: privateKey,
               publicKey: publicKey,
               evs: [ev1],

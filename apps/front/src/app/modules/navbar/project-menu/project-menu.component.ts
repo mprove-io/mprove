@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import {
-  FIRST_ORG_NAME,
+  DEMO_ORG_NAME,
   PATH_CONNECTIONS,
   PATH_ENVIRONMENTS,
   PATH_INFO,
@@ -25,7 +25,7 @@ import { UserQuery } from '~front/app/queries/user.query';
 export class ProjectMenuComponent implements OnInit {
   restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
-  firstOrgName = FIRST_ORG_NAME;
+  demoOrgName = DEMO_ORG_NAME;
 
   pathInfo = PATH_INFO;
   pathConnections = PATH_CONNECTIONS;

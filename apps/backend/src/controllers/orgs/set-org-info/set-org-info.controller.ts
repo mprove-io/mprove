@@ -15,7 +15,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
-import { FIRST_ORG_NAME } from '~common/constants/top';
+import { DEMO_ORG_NAME } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -52,7 +52,7 @@ export class SetOrgInfoController {
     });
 
     if (isDefined(name)) {
-      if (name.toLowerCase() === FIRST_ORG_NAME.toLowerCase()) {
+      if (name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()) {
         throw new ServerError({
           message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION_NAME
         });

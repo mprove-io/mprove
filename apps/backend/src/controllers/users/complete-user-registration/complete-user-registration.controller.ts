@@ -65,7 +65,7 @@ export class CompleteUserRegistrationController {
       });
     }
 
-    await this.membersService.addMemberToFirstProject({
+    await this.membersService.addMemberToDemoProject({
       traceId: traceId,
       user: user
     });

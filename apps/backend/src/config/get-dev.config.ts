@@ -27,13 +27,13 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER)
     ),
 
-    firstProjectDwhBigqueryCredentialsPath:
-      process.env.BACKEND_FIRST_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH,
+    demoProjectDwhBigqueryCredentialsPath:
+      process.env.BACKEND_DEMO_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH,
 
-    firstProjectGoogleApiCredentialsPath:
-      process.env.BACKEND_FIRST_PROJECT_GOOGLE_API_CREDENTIALS_PATH ||
-      envFile.BACKEND_FIRST_PROJECT_GOOGLE_API_CREDENTIALS_PATH,
+    demoProjectDwhGoogleApiCredentialsPath:
+      process.env.BACKEND_DEMO_PROJECT_DWH_GOOGLE_API_CREDENTIALS_PATH ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_GOOGLE_API_CREDENTIALS_PATH,
 
     jwtSecret: process.env.BACKEND_JWT_SECRET || envFile.BACKEND_JWT_SECRET,
 
@@ -51,91 +51,108 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_FIRST_USER_PASSWORD ||
       envFile.BACKEND_FIRST_USER_PASSWORD,
 
-    firstOrgId:
-      process.env.BACKEND_FIRST_ORG_ID || envFile.BACKEND_FIRST_ORG_ID,
+    demoOrgId: process.env.BACKEND_DEMO_ORG_ID || envFile.BACKEND_DEMO_ORG_ID,
 
-    firstProjectId:
-      process.env.BACKEND_FIRST_PROJECT_ID || envFile.BACKEND_FIRST_PROJECT_ID,
+    demoProjectId:
+      process.env.BACKEND_DEMO_PROJECT_ID || envFile.BACKEND_DEMO_PROJECT_ID,
 
-    firstProjectName:
-      process.env.BACKEND_FIRST_PROJECT_NAME ||
-      envFile.BACKEND_FIRST_PROJECT_NAME,
+    demoProjectName:
+      process.env.BACKEND_DEMO_PROJECT_NAME ||
+      envFile.BACKEND_DEMO_PROJECT_NAME,
 
-    firstProjectRemoteType: <ProjectRemoteTypeEnum>(
-      (process.env.BACKEND_FIRST_PROJECT_REMOTE_TYPE ||
-        envFile.BACKEND_FIRST_PROJECT_REMOTE_TYPE)
+    demoProjectRemoteType: <ProjectRemoteTypeEnum>(
+      (process.env.BACKEND_DEMO_PROJECT_REMOTE_TYPE ||
+        envFile.BACKEND_DEMO_PROJECT_REMOTE_TYPE)
     ),
 
-    firstProjectRemoteGitUrl:
-      process.env.BACKEND_FIRST_PROJECT_GIT_URL ||
-      envFile.BACKEND_FIRST_PROJECT_GIT_URL,
+    demoProjectRemoteGitUrl:
+      process.env.BACKEND_DEMO_PROJECT_GIT_URL ||
+      envFile.BACKEND_DEMO_PROJECT_GIT_URL,
 
-    firstProjectRemotePrivateKeyPath:
-      process.env.BACKEND_FIRST_PROJECT_PRIVATE_KEY_PATH ||
-      envFile.BACKEND_FIRST_PROJECT_PRIVATE_KEY_PATH,
+    demoProjectRemotePrivateKeyPath:
+      process.env.BACKEND_DEMO_PROJECT_PRIVATE_KEY_PATH ||
+      envFile.BACKEND_DEMO_PROJECT_PRIVATE_KEY_PATH,
 
-    firstProjectRemotePublicKeyPath:
-      process.env.BACKEND_FIRST_PROJECT_PUBLIC_KEY_PATH ||
-      envFile.BACKEND_FIRST_PROJECT_PUBLIC_KEY_PATH,
+    demoProjectRemotePublicKeyPath:
+      process.env.BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH ||
+      envFile.BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH,
 
-    firstProjectSeedConnections: <BoolEnum>(
-      (process.env.BACKEND_FIRST_PROJECT_SEED_CONNECTIONS ||
-        envFile.BACKEND_FIRST_PROJECT_SEED_CONNECTIONS)
+    seedDemoOrgAndProject: <BoolEnum>(
+      (process.env.BACKEND_SEED_DEMO_ORG_AND_PROJECT ||
+        envFile.BACKEND_SEED_DEMO_ORG_AND_PROJECT)
     ),
 
-    firstProjectDwhPostgresHost:
-      process.env.BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_POSTGRES_HOST,
+    demoProjectDwhPostgresHost:
+      process.env.BACKEND_DEMO_PROJECT_DWH_POSTGRES_HOST ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_POSTGRES_HOST,
 
-    firstProjectDwhPostgresPassword:
-      process.env.BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_POSTGRES_PASSWORD,
+    demoProjectDwhPostgresPassword:
+      process.env.BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD,
 
-    firstProjectDwhClickhousePassword:
-      process.env.BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_CLICKHOUSE_PASSWORD,
+    demoProjectDwhClickhousePassword:
+      process.env.BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD,
 
-    firstProjectDwhMysqlHost:
-      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_HOST ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_HOST,
+    demoProjectDwhMysqlHost:
+      process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_HOST ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_HOST,
 
-    firstProjectDwhMysqlPort: Number(
-      isDefined(process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_PORT)
-        ? process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_PORT
-        : envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_PORT
+    demoProjectDwhMysqlPort: Number(
+      isDefined(process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT)
+        ? process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT
+        : envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT
     ),
 
-    firstProjectDwhMysqlDatabase:
-      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_DATABASE ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_DATABASE,
+    demoProjectDwhMysqlDatabase:
+      process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_DATABASE ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_DATABASE,
 
-    firstProjectDwhMysqlUser:
-      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_USER ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_USER,
+    demoProjectDwhMysqlUser:
+      process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_USER ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_USER,
 
-    firstProjectDwhMysqlPassword:
-      process.env.BACKEND_FIRST_PROJECT_DWH_MYSQL_PASSWORD ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_MYSQL_PASSWORD,
+    demoProjectDwhMysqlPassword:
+      process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PASSWORD ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PASSWORD,
 
-    firstProjectDwhSnowflakeAccount:
-      process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_ACCOUNT ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_ACCOUNT,
+    demoProjectDwhSnowflakeAccount:
+      process.env.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_ACCOUNT ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_ACCOUNT,
 
-    firstProjectDwhSnowflakeWarehouse:
-      process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_WAREHOUSE ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_WAREHOUSE,
+    demoProjectDwhSnowflakeWarehouse:
+      process.env.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_WAREHOUSE ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_WAREHOUSE,
 
-    firstProjectDwhSnowflakeUsername:
-      process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_USERNAME ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_USERNAME,
+    demoProjectDwhSnowflakeUsername:
+      process.env.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_USERNAME ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_USERNAME,
 
-    firstProjectDwhSnowflakePassword:
-      process.env.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_SNOWFLAKE_PASSWORD,
+    demoProjectDwhSnowflakePassword:
+      process.env.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_PASSWORD ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_PASSWORD,
 
-    firstProjectDwhMotherDuckToken:
-      process.env.BACKEND_FIRST_PROJECT_DWH_MOTHERDUCK_TOKEN ||
-      envFile.BACKEND_FIRST_PROJECT_DWH_MOTHERDUCK_TOKEN,
+    demoProjectDwhMotherDuckToken:
+      process.env.BACKEND_DEMO_PROJECT_DWH_MOTHERDUCK_TOKEN ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_MOTHERDUCK_TOKEN,
+
+    calcPostgresHost:
+      process.env.BACKEND_CALC_POSTGRES_HOST ||
+      envFile.BACKEND_CALC_POSTGRES_HOST,
+
+    calcPostgresPort: Number(
+      isDefined(process.env.BACKEND_CALC_POSTGRES_PORT)
+        ? process.env.BACKEND_CALC_POSTGRES_PORT
+        : envFile.BACKEND_CALC_POSTGRES_PORT
+    ),
+
+    calcPostgresUsername:
+      process.env.BACKEND_CALC_POSTGRES_USERNAME ||
+      envFile.BACKEND_CALC_POSTGRES_USERNAME,
+
+    calcPostgresPassword:
+      process.env.BACKEND_CALC_POSTGRES_PASSWORD ||
+      envFile.BACKEND_CALC_POSTGRES_PASSWORD,
 
     allowUsersToCreateOrganizations: <BoolEnum>(
       (process.env.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS ||

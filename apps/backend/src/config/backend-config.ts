@@ -15,10 +15,10 @@ export class BackendConfig {
   isScheduler?: BoolEnum;
 
   @IsString()
-  firstProjectDwhBigqueryCredentialsPath?: string;
+  demoProjectDwhBigqueryCredentialsPath?: string;
 
   @IsString()
-  firstProjectGoogleApiCredentialsPath?: string;
+  demoProjectDwhGoogleApiCredentialsPath?: string;
 
   @IsString()
   jwtSecret?: string;
@@ -35,68 +35,80 @@ export class BackendConfig {
   @IsString()
   firstUserPassword?: string;
 
-  @IsString()
-  firstOrgId?: string;
+  @IsEnum(BoolEnum)
+  seedDemoOrgAndProject?: BoolEnum;
 
   @IsString()
-  firstProjectId?: string;
+  demoOrgId?: string;
 
   @IsString()
-  firstProjectName?: string;
+  demoProjectId?: string;
+
+  @IsString()
+  demoProjectName?: string;
 
   @IsEnum(ProjectRemoteTypeEnum)
-  firstProjectRemoteType?: ProjectRemoteTypeEnum;
+  demoProjectRemoteType?: ProjectRemoteTypeEnum;
 
   @IsString()
-  firstProjectRemoteGitUrl?: string;
+  demoProjectRemoteGitUrl?: string;
 
   @IsString()
-  firstProjectRemotePrivateKeyPath?: string;
+  demoProjectRemotePrivateKeyPath?: string;
 
   @IsString()
-  firstProjectRemotePublicKeyPath?: string;
-
-  @IsEnum(BoolEnum)
-  firstProjectSeedConnections?: BoolEnum;
+  demoProjectRemotePublicKeyPath?: string;
 
   @IsString()
-  firstProjectDwhPostgresHost?: string;
+  demoProjectDwhPostgresHost?: string;
 
   @IsString()
-  firstProjectDwhPostgresPassword?: string;
+  demoProjectDwhPostgresPassword?: string;
 
   @IsString()
-  firstProjectDwhClickhousePassword?: string;
+  demoProjectDwhClickhousePassword?: string;
 
   @IsString()
-  firstProjectDwhMysqlHost?: string;
+  demoProjectDwhMysqlHost?: string;
 
   @IsNumber()
-  firstProjectDwhMysqlPort?: number;
+  demoProjectDwhMysqlPort?: number;
 
   @IsString()
-  firstProjectDwhMysqlDatabase?: string;
+  demoProjectDwhMysqlDatabase?: string;
 
   @IsString()
-  firstProjectDwhMysqlUser?: string;
+  demoProjectDwhMysqlUser?: string;
 
   @IsString()
-  firstProjectDwhMysqlPassword?: string;
+  demoProjectDwhMysqlPassword?: string;
 
   @IsString()
-  firstProjectDwhSnowflakeAccount?: string;
+  demoProjectDwhSnowflakeAccount?: string;
 
   @IsString()
-  firstProjectDwhSnowflakeWarehouse?: string;
+  demoProjectDwhSnowflakeWarehouse?: string;
 
   @IsString()
-  firstProjectDwhSnowflakeUsername?: string;
+  demoProjectDwhSnowflakeUsername?: string;
 
   @IsString()
-  firstProjectDwhSnowflakePassword?: string;
+  demoProjectDwhSnowflakePassword?: string;
 
   @IsString()
-  firstProjectDwhMotherDuckToken?: string;
+  demoProjectDwhMotherDuckToken?: string;
+
+  @IsString()
+  calcPostgresHost?: string;
+
+  @IsNumber()
+  calcPostgresPort?: number;
+
+  @IsString()
+  calcPostgresUsername?: string;
+
+  @IsString()
+  calcPostgresPassword?: string;
 
   @IsEnum(BoolEnum)
   allowUsersToCreateOrganizations?: BoolEnum;

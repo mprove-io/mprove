@@ -48,9 +48,9 @@ export class CreateProjectController {
       userId: user.userId
     });
 
-    let firstOrgId = this.cs.get<BackendConfig['firstOrgId']>('firstOrgId');
+    let demoOrgId = this.cs.get<BackendConfig['demoOrgId']>('demoOrgId');
 
-    if (org.orgId === firstOrgId) {
+    if (org.orgId === demoOrgId) {
       throw new ServerError({
         message: ErEnum.BACKEND_RESTRICTED_ORGANIZATION
       });

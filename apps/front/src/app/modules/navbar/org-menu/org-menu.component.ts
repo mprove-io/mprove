@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import {
-  FIRST_ORG_NAME,
+  DEMO_ORG_NAME,
   PATH_ACCOUNT,
   PATH_ORG,
   PATH_USERS
@@ -18,7 +18,7 @@ import { UserQuery, UserState } from '~front/app/queries/user.query';
   templateUrl: './org-menu.component.html'
 })
 export class OrgMenuComponent implements OnInit {
-  firstOrgName = FIRST_ORG_NAME;
+  demoOrgName = DEMO_ORG_NAME;
 
   pathAccount = PATH_ACCOUNT;
   pathUsers = PATH_USERS;

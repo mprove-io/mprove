@@ -40,20 +40,20 @@
       <div
         tp="Project is restricted for demo purposes. Only admin can access."
         placement="left"
-        [tpIsEnabled]="nav.orgName === firstOrgName && isAdmin === false"
+        [tpIsEnabled]="nav.orgName === demoOrgName && isAdmin === false"
       >
         <button
           class="text-s1 hover:bg-m50 block w-full px-4 py-2 text-left text-base focus:outline-none"
           [ngClass]="{
             'font-semibold': lastUrl === pathTeam,
-            'text-s400': nav.orgName === firstOrgName && isAdmin === false,
+            'text-s400': nav.orgName === demoOrgName && isAdmin === false,
             'border-s3 cursor-pointer': !(
-              nav.orgName === firstOrgName && isAdmin === false
+              nav.orgName === demoOrgName && isAdmin === false
             )
           }"
           [disabled]="
             lastUrl === pathTeam ||
-            (nav.orgName === firstOrgName && isAdmin === false)
+            (nav.orgName === demoOrgName && isAdmin === false)
           "
           (click)="t1.hide(); navigateTeam()"
           >Team</button

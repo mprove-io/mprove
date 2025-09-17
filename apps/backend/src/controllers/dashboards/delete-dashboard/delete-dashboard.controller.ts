@@ -104,12 +104,12 @@ export class DeleteDashboardController {
       envId: envId
     });
 
-    let firstProjectId =
-      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
+    let demoProjectId =
+      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
     if (
       member.isAdmin === false &&
-      projectId === firstProjectId &&
+      projectId === demoProjectId &&
       repoId === PROD_REPO_ID
     ) {
       throw new ServerError({

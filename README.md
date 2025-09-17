@@ -20,13 +20,13 @@ git clone https://github.com/mprove-io/mprove.git
 cd mprove
 ```
 
-### 3. Create `mprove_data` directory with subdirectories:
+### 3. Create `mprove_data` directory
 
 ```
 mkdir -p mprove_data
 ```
 
-### 4. Clean `mprove_data` directory
+### 4. Clean `mprove_data`
 
 This command deletes the contents of `mprove_data` and recreates the subdirectories.
 
@@ -38,9 +38,9 @@ yarn clean:mprove_data
 
 ```
 mkdir secrets \
-  && echo {} > secrets/first-project-bigquery-credentials.json \
-  && echo '' > secrets/first-project-remote-private-key.pem \
-  && echo '' > secrets/first-project-remote-public-key.pem
+  && echo {} > secrets/demo-project-bigquery-credentials.json \
+  && echo '' > secrets/demo-project-remote-private-key.pem \
+  && echo '' > secrets/demo-project-remote-public-key.pem
 ```
 
 ### 6. Run script to create ".env" file with generated values
@@ -56,6 +56,7 @@ Set most recent Mprove release tag from https://github.com/mprove-io/mprove/rele
 ```
 MPROVE_RELEASE_TAG=
 MPROVE_DWH_POSTGRES_TAG=
+MPROVE_DWH_MYSQL_TAG=
 ```
 
 Set your real email address. You may need it later to receive transactional emails (for example, to change your password).
@@ -80,8 +81,16 @@ BACKEND_SMTP_AUTH_PASSWORD=
 
 ### 8. Run docker images
 
+if .env has `BACKEND_SEED_DEMO_ORG_AND_PROJECT=FALSE`
+
 ```
-docker-compose up --pull db dwh-postgres rabbit redis backend blockml disk front
+docker-compose up --pull db calc-postgres rabbit redis backend blockml disk front
+```
+
+if .env has `BACKEND_SEED_DEMO_ORG_AND_PROJECT=TRUE`
+
+```
+docker-compose up --pull db calc-postgres rabbit redis backend blockml disk front dwh-postgres
 ```
 
 ### 9. Login

@@ -64,10 +64,10 @@ export class EditEnvFallbacksController {
       projectId: projectId
     });
 
-    let firstProjectId =
-      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
+    let demoProjectId =
+      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
-    if (userMember.isAdmin === false && projectId === firstProjectId) {
+    if (userMember.isAdmin === false && projectId === demoProjectId) {
       throw new ServerError({
         message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });

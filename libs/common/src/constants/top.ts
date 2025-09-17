@@ -74,7 +74,7 @@ export const NODEGIT_LOCAL_BRANCH_NOT_FOUND = 'cannot locate local branch';
 export const NODEGIT_PATH_NOT_EXIST_IN_TREE =
   'does not exist in the given tree';
 
-export const FIRST_ORG_NAME = 'demo';
+export const DEMO_ORG_NAME = 'demo';
 export const RESTRICTED_USER_ALIAS = 'demo-user';
 
 export const README_FILE_NAME = 'readme.md';

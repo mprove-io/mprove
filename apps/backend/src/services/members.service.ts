@@ -163,31 +163,31 @@ export class MembersService {
     }
   }
 
-  async addMemberToFirstProject(item: {
+  async addMemberToDemoProject(item: {
     user: UserEnt;
     traceId: string;
   }) {
     let { user, traceId } = item;
 
-    let firstProjectId =
-      this.cs.get<BackendConfig['firstProjectId']>('firstProjectId');
+    let demoProjectId =
+      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
-    if (isDefined(firstProjectId)) {
+    if (isDefined(demoProjectId)) {
       let project = await this.db.drizzle.query.projectsTable.findFirst({
-        where: eq(projectsTable.projectId, firstProjectId)
+        where: eq(projectsTable.projectId, demoProjectId)
       });
 
       if (isDefined(project)) {
         let member = await this.db.drizzle.query.membersTable.findFirst({
           where: and(
             eq(membersTable.memberId, user.userId),
-            eq(membersTable.projectId, firstProjectId)
+            eq(membersTable.projectId, demoProjectId)
           )
         });
 
         if (isUndefined(member)) {
           let newMember: MemberEnt = this.makerService.makeMember({
-            projectId: firstProjectId,
+            projectId: demoProjectId,
             user: user,
             isAdmin: false,
             isEditor: true,
@@ -201,7 +201,7 @@ export class MembersService {
             },
             payload: {
               orgId: project.orgId,
-              projectId: firstProjectId,
+              projectId: demoProjectId,
               devRepoId: newMember.memberId,
               remoteType: project.remoteType,
               gitUrl: project.gitUrl,
@@ -214,7 +214,7 @@ export class MembersService {
             await this.rabbitService.sendToDisk<ToDiskCreateDevRepoResponse>({
               routingKey: makeRoutingKeyToDisk({
                 orgId: project.orgId,
-                projectId: firstProjectId
+                projectId: demoProjectId
               }),
               message: toDiskCreateDevRepoRequest,
               checkIsOk: true
@@ -222,14 +222,14 @@ export class MembersService {
 
           let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
             where: and(
-              eq(branchesTable.projectId, firstProjectId),
+              eq(branchesTable.projectId, demoProjectId),
               eq(branchesTable.repoId, PROD_REPO_ID),
               eq(branchesTable.branchId, project.defaultBranch)
             )
           });
 
           let devBranch = this.makerService.makeBranch({
-            projectId: firstProjectId,
+            projectId: demoProjectId,
             repoId: newMember.memberId,
             branchId: project.defaultBranch
           });
@@ -264,7 +264,7 @@ export class MembersService {
 
               await this.blockmlService.rebuildStruct({
                 traceId,
-                projectId: firstProjectId,
+                projectId: demoProjectId,
                 structId,
                 diskFiles: diskResponse.payload.files,
                 mproveDir: diskResponse.payload.mproveDir,

@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { map, take, tap } from 'rxjs/operators';
 import {
-  FIRST_ORG_NAME,
+  DEMO_ORG_NAME,
   LAST_SELECTED_REPORT_ID,
   PATH_BRANCH,
   PATH_ENV,
@@ -47,7 +47,7 @@ export class ProjectSelectComponent {
     this.projectSelectElement?.close();
   }
 
-  firstOrgName = FIRST_ORG_NAME;
+  demoOrgName = DEMO_ORG_NAME;
 
   projectsList: ProjectsItem[] = [];
   projectsListLoading = false;
