@@ -55,23 +55,18 @@ Set most recent Mprove release tag from https://github.com/mprove-io/mprove/rele
 
 ```
 MPROVE_RELEASE_TAG=
-MPROVE_DWH_POSTGRES_TAG=
-MPROVE_DWH_MYSQL_TAG=
 ```
 
 Set your real email address. You may need it later to receive transactional emails (for example, to change your password).
 
-```
-BACKEND_FIRST_USER_EMAIL=
-```
-
 Change your initial password if necessary. Later changes can only be done through web interface (by sending an email).
 
 ```
+BACKEND_FIRST_USER_EMAIL=
 BACKEND_FIRST_USER_PASSWORD=
 ```
 
-Set SMTP parameters to be able to send transactional emails (required if you need to add more users or to change user passwords in future).
+Set SMTP parameters to be able to send transactional emails (required if you need to invite more users or be able to change user passwords).
 
 ```
 BACKEND_SMTP_HOST=
@@ -81,16 +76,8 @@ BACKEND_SMTP_AUTH_PASSWORD=
 
 ### 8. Run docker images
 
-if .env has `BACKEND_SEED_DEMO_ORG_AND_PROJECT=FALSE`
-
 ```
 docker-compose up --pull db calc-postgres rabbit redis backend blockml disk front
-```
-
-if .env has `BACKEND_SEED_DEMO_ORG_AND_PROJECT=TRUE`
-
-```
-docker-compose up --pull db calc-postgres rabbit redis backend blockml disk front dwh-postgres
 ```
 
 ### 9. Login
