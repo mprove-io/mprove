@@ -1253,11 +1253,12 @@ export class ReportsComponent implements OnInit, OnDestroy {
   setProjectReportLink(item: { reportId: string }) {
     let { reportId } = item;
 
-    if (isUndefined(reportId)) {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(reportId) || isUndefined(nav.projectId)) {
       return;
     }
 
-    let nav = this.navQuery.getValue();
     let links = this.uiQuery.getValue().projectReportLinks;
 
     let link: ProjectReportLink = links.find(

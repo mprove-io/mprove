@@ -45,14 +45,11 @@ export async function createInitialCommitToProd(item: {
     let mproveFileName = MPROVE_CONFIG_FILENAME;
     let mproveFilePath = `${item.prodDir}/${mproveFileName}`;
     let mproveContent = `mprove_dir: ./
-week_start: Monday    
-allow_timezones: true
-default_timezone: UTC
-format_number: ',.0f'
-currency_prefix: $
-currency_suffix: ''
 case_sensitive_string_filters: false
-simplify_safe_aggregates: true
+format_number: ''
+thousands_separator: ','
+currency_prefix: '$'
+currency_suffix: ''
 `;
 
     await writeToFile({

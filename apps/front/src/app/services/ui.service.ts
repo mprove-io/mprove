@@ -4,6 +4,7 @@ import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
 import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
 import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboard-link';
 import { ProjectFileLink } from '~common/interfaces/backend/project-file-link';
@@ -96,6 +97,11 @@ export class UiService {
     let fileId = this.fileQuery.getValue().fileId;
 
     let projectId = this.navQuery.getValue().projectId;
+
+    if (isUndefined(projectId)) {
+      return;
+    }
+
     let links = this.uiQuery.getValue().projectFileLinks;
 
     let link: ProjectFileLink = links.find(l => l.projectId === projectId);

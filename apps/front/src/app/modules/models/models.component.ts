@@ -1761,11 +1761,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
   setProjectModelLink(item: { modelId: string }) {
     let { modelId } = item;
 
-    if (isUndefined(modelId)) {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(modelId) || isUndefined(nav.projectId)) {
       return;
     }
-
-    let nav = this.navQuery.getValue();
 
     let links = this.uiQuery.getValue().projectModelLinks;
 
@@ -1807,11 +1807,12 @@ export class ModelsComponent implements OnInit, OnDestroy {
   setProjectChartLink(item: { chartId: string }) {
     let { chartId } = item;
 
-    if (isUndefined(chartId)) {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(chartId) || isUndefined(nav.projectId)) {
       return;
     }
 
-    let nav = this.navQuery.getValue();
     let links = this.uiQuery.getValue().projectChartLinks;
 
     let link: ProjectChartLink = links.find(l => l.projectId === nav.projectId);

@@ -438,11 +438,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   setProjectDashboardLink(item: { dashboardId: string }) {
     let { dashboardId } = item;
 
-    if (isUndefined(dashboardId)) {
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(dashboardId) || isUndefined(nav.projectId)) {
       return;
     }
 
-    let nav = this.navQuery.getValue();
     let links = this.uiQuery.getValue().projectDashboardLinks;
 
     let link: ProjectDashboardLink = links.find(
