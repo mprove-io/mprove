@@ -12,6 +12,7 @@ import {
   DOUBLE_UNDERSCORE,
   SOME_ROWS_HAVE_FORMULA_ERRORS
 } from '~common/constants/top';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
@@ -388,7 +389,8 @@ FROM main;`;
       )
       .forEach(row => {
         row.query.data =
-          row.mconfig?.modelType === ModelTypeEnum.Malloy
+          row.mconfig?.modelType === ModelTypeEnum.Malloy &&
+          row.query.connectionType === ConnectionTypeEnum.PostgreSQL
             ? row.query.data
                 .filter((x: any) => isDefined(x.row))
                 .map((x: any) => {
@@ -464,12 +466,19 @@ FROM main;`;
                                   undefined;
 
               dataRow =
-                row.mconfig?.modelType === ModelTypeEnum.Malloy
+                row.mconfig?.modelType === ModelTypeEnum.Malloy &&
+                row.query.connectionType === ConnectionTypeEnum.PostgreSQL
                   ? row.query?.data?.find(
-                      (r: any) => r.row?.[timeFieldId]?.toString() === timeValue
+                      (r: any) =>
+                        [timeValue, `${timeValue}.000Z`].indexOf(
+                          r.row?.[timeFieldId]?.toString()
+                        ) > -1
                     )?.row
                   : row.query?.data?.find(
-                      (r: any) => r[timeFieldId]?.toString() === timeValue
+                      (r: any) =>
+                        [timeValue, `${timeValue}.000Z`].indexOf(
+                          r[timeFieldId]?.toString()
+                        ) > -1
                     );
             }
 
@@ -505,7 +514,10 @@ FROM main;`;
 
           (row.query?.data as any[])?.forEach(x => {
             let dataRow =
-              row.mconfig?.modelType === ModelTypeEnum.Malloy ? x.row : x;
+              row.mconfig?.modelType === ModelTypeEnum.Malloy &&
+              row.query.connectionType === ConnectionTypeEnum.PostgreSQL
+                ? x.row
+                : x;
 
             let timestampString = dataRow[timeFieldId]?.toString();
 
