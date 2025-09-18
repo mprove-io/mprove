@@ -1012,7 +1012,10 @@ export class DataService {
   private getDateFromT(rValue: string) {
     let data = rValue;
 
-    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)T(\d\d)[:](\d\d)[:](\d\d)$/g;
+    // console.log('data')
+    // console.log(data)
+
+    let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)T(\d\d)[:](\d\d)[:](\d\d)/g;
 
     let r = regEx.exec(data);
 

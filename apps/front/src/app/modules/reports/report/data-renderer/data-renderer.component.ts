@@ -47,6 +47,8 @@ export class DataRendererComponent implements ICellRendererAngularComp {
   applyFormat(params: ICellRendererParams<DataRow>) {
     this.params = params;
 
+    // console.log(this.params.data);
+
     let rowDataRecord = params.data.records.find(
       x => x.key === Number(params.colDef.field)
     );
