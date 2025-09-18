@@ -150,6 +150,15 @@ services:
         source: $COMPOSE_DWH_MYSQL_VOLUME_SOURCE_PATH
         target: /var/lib/mysql
 
+  dwh-trino:
+    image: trinodb/trino:476
+    ports:
+      - 8080:8080
+    volumes:
+      - type: bind
+        source: $COMPOSE_DWH_TRINO_VOLUME_SOURCE_PATH
+        target: /etc/trino/catalog
+
   dwh-clickhouse:
     build:
       context: ./

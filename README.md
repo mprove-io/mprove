@@ -40,7 +40,8 @@ yarn clean:mprove_data
 mkdir secrets \
   && echo {} > secrets/demo-project-bigquery-credentials.json \
   && echo '' > secrets/demo-project-remote-private-key.pem \
-  && echo '' > secrets/demo-project-remote-public-key.pem
+  && echo '' > secrets/demo-project-remote-public-key.pem \
+  && echo '' > secrets/trino/catalog/pgs.properties
 ```
 
 #### 6. Run script to create ".env" file with generated values
