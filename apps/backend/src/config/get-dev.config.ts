@@ -116,6 +116,22 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PASSWORD ||
       envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PASSWORD,
 
+    demoProjectDwhTrinoUser:
+      process.env.BACKEND_DEMO_PROJECT_DWH_TRINO_USER ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_TRINO_USER,
+
+    demoProjectDwhTrinoPassword:
+      process.env.BACKEND_DEMO_PROJECT_DWH_TRINO_PASSWORD ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_TRINO_PASSWORD,
+
+    demoProjectDwhPrestoUser:
+      process.env.BACKEND_DEMO_PROJECT_DWH_PRESTO_USER ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_PRESTO_USER,
+
+    demoProjectDwhPrestoPassword:
+      process.env.BACKEND_DEMO_PROJECT_DWH_PRESTO_PASSWORD ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_PRESTO_PASSWORD,
+
     demoProjectDwhSnowflakeAccount:
       process.env.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_ACCOUNT ||
       envFile.BACKEND_DEMO_PROJECT_DWH_SNOWFLAKE_ACCOUNT,

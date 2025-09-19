@@ -62,6 +62,8 @@ export class CreateConnectionController {
       motherduckOptions,
       postgresOptions,
       mysqlOptions,
+      trinoOptions,
+      prestoOptions,
       snowflakeOptions,
       storeApiOptions,
       storeGoogleApiOptions
@@ -115,6 +117,8 @@ export class CreateConnectionController {
       motherduckOptions: motherduckOptions,
       postgresOptions: postgresOptions,
       mysqlOptions: mysqlOptions,
+      trinoOptions: trinoOptions,
+      prestoOptions: prestoOptions,
       snowflakeOptions: snowflakeOptions,
       storeApiOptions: storeApiOptions,
       storeGoogleApiOptions: storeGoogleApiOptions

@@ -61,6 +61,8 @@ export class WrapToApiService {
     let motherduckOptions = connection.motherduckOptions;
     let postgresOptions = connection.postgresOptions;
     let mysqlOptions = connection.mysqlOptions;
+    let trinoOptions = connection.trinoOptions;
+    let prestoOptions = connection.prestoOptions;
     let snowflakeOptions = connection.snowflakeOptions;
     let storeApiOptions = connection.storeApiOptions;
     let storeGoogleApiOptions = connection.storeGoogleApiOptions;
@@ -125,6 +127,27 @@ export class WrapToApiService {
             user: mysqlOptions.user,
             password:
               isIncludePasswords === true ? mysqlOptions.password : undefined
+          }
+        : undefined,
+      trinoOptions: isDefined(trinoOptions)
+        ? {
+            server: trinoOptions.server,
+            catalog: trinoOptions.catalog,
+            schema: trinoOptions.schema,
+            user: trinoOptions.user,
+            password:
+              isIncludePasswords === true ? trinoOptions.password : undefined
+          }
+        : undefined,
+      prestoOptions: isDefined(prestoOptions)
+        ? {
+            server: prestoOptions.server,
+            port: prestoOptions.port,
+            catalog: prestoOptions.catalog,
+            schema: prestoOptions.schema,
+            user: prestoOptions.user,
+            password:
+              isIncludePasswords === true ? prestoOptions.password : undefined
           }
         : undefined,
       snowflakeOptions: isDefined(snowflakeOptions)

@@ -67,13 +67,13 @@ export class ProjectConnection {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionPrestoOptions)
-  prestoOptions?: ConnectionPrestoOptions;
+  @Type(() => ConnectionTrinoOptions)
+  trinoOptions?: ConnectionTrinoOptions;
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionTrinoOptions)
-  trinoOptions?: ConnectionTrinoOptions;
+  @Type(() => ConnectionPrestoOptions)
+  prestoOptions?: ConnectionPrestoOptions;
 
   @IsOptional()
   @ValidateNested()

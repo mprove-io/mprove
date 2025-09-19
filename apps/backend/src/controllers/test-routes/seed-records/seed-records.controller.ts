@@ -199,6 +199,8 @@ export class SeedRecordsController {
           motherduckOptions: x.motherduckOptions,
           postgresOptions: x.postgresOptions,
           mysqlOptions: x.mysqlOptions,
+          trinoOptions: x.trinoOptions,
+          prestoOptions: x.prestoOptions,
           snowflakeOptions: x.snowflakeOptions,
           storeApiOptions: x.storeApiOptions,
           storeGoogleApiOptions: x.storeGoogleApiOptions

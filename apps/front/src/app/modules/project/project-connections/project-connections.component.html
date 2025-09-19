@@ -135,9 +135,13 @@
                       ? connection.postgresOptions?.host
                       : connection.type === typeMySQL
                         ? connection.mysqlOptions?.host
-                        : connection.type === typeClickHouse
-                          ? connection.clickhouseOptions?.host
-                          : undefined) ||
+                        : connection.type === typeTrino
+                          ? connection.trinoOptions?.server
+                          : connection.type === typePresto
+                            ? connection.prestoOptions?.server
+                            : connection.type === typeClickHouse
+                              ? connection.clickhouseOptions?.host
+                              : undefined) ||
                       (connection.type === typeApi
                         ? connection.storeApiOptions?.baseUrl
                         : connection.type === typeGoogleApi
@@ -152,9 +156,11 @@
                       ? connection.postgresOptions?.port
                       : connection.type === typeMySQL
                         ? connection.mysqlOptions?.port
-                        : connection.type === typeClickHouse
-                          ? connection.clickhouseOptions?.port
-                          : undefined
+                        : connection.type === typePresto
+                          ? connection.prestoOptions?.port
+                          : connection.type === typeClickHouse
+                            ? connection.clickhouseOptions?.port
+                            : undefined
                   }}
                 </td>
 
@@ -164,11 +170,15 @@
                       ? connection.postgresOptions?.database
                       : connection.type === typeMySQL
                         ? connection.mysqlOptions?.database
-                        : connection.type === typeSnowFlake
-                          ? connection.snowflakeOptions?.database
-                          : connection.type === typeMotherDuck
-                            ? connection.motherduckOptions?.database
-                            : undefined
+                        : connection.type === typeTrino
+                          ? connection.trinoOptions?.catalog
+                          : connection.type === typePresto
+                            ? connection.prestoOptions?.catalog
+                            : connection.type === typeSnowFlake
+                              ? connection.snowflakeOptions?.database
+                              : connection.type === typeMotherDuck
+                                ? connection.motherduckOptions?.database
+                                : undefined
                   }}
                 </td>
 
@@ -178,11 +188,15 @@
                       ? connection.postgresOptions?.username
                       : connection.type === typeMySQL
                         ? connection.mysqlOptions?.user
-                        : connection.type === typeClickHouse
-                          ? connection.clickhouseOptions?.username
-                          : connection.type === typeSnowFlake
-                            ? connection.snowflakeOptions?.username
-                            : undefined
+                        : connection.type === typeTrino
+                          ? connection.trinoOptions?.user
+                          : connection.type === typePresto
+                            ? connection.prestoOptions?.user
+                            : connection.type === typeClickHouse
+                              ? connection.clickhouseOptions?.username
+                              : connection.type === typeSnowFlake
+                                ? connection.snowflakeOptions?.username
+                                : undefined
                   }}
                 </td>
 
@@ -246,6 +260,36 @@
                       <span class="font-medium">Warehouse: </span>
                       <span class="text-g700">
                         {{ connection.snowflakeOptions?.warehouse }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex-col"
+                    *ngIf="
+                      connection.type === typeTrino &&
+                      !!connection.trinoOptions?.schema
+                    "
+                  >
+                    <div>
+                      <span class="font-medium">Schema: </span>
+                      <span class="text-g700">
+                        {{ connection.trinoOptions?.schema }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    class="flex-col"
+                    *ngIf="
+                      connection.type === typePresto &&
+                      !!connection.prestoOptions?.schema
+                    "
+                  >
+                    <div>
+                      <span class="font-medium">Schema: </span>
+                      <span class="text-g700">
+                        {{ connection.prestoOptions?.schema }}
                       </span>
                     </div>
                   </div>

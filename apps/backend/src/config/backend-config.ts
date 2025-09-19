@@ -84,6 +84,18 @@ export class BackendConfig {
   demoProjectDwhMysqlPassword?: string;
 
   @IsString()
+  demoProjectDwhTrinoUser?: string;
+
+  @IsString()
+  demoProjectDwhTrinoPassword?: string;
+
+  @IsString()
+  demoProjectDwhPrestoUser?: string;
+
+  @IsString()
+  demoProjectDwhPrestoPassword?: string;
+
+  @IsString()
   demoProjectDwhSnowflakeAccount?: string;
 
   @IsString()

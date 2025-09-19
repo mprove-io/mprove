@@ -75,6 +75,8 @@ export class AddConnectionDialogComponent implements OnInit {
   addMotherduckForm: FormGroup;
   addPostgresForm: FormGroup;
   addMysqlForm: FormGroup;
+  addTrinoForm: FormGroup;
+  addPrestoForm: FormGroup;
   addSnowflakeForm: FormGroup;
   addApiForm: FormGroup;
   addGoogleApiForm: FormGroup;
@@ -91,6 +93,8 @@ export class AddConnectionDialogComponent implements OnInit {
   connectionTypes = [
     ConnectionTypeEnum.PostgreSQL,
     ConnectionTypeEnum.MySQL,
+    ConnectionTypeEnum.Trino,
+    ConnectionTypeEnum.Presto,
     ConnectionTypeEnum.ClickHouse, // TODO: hide clickhouse
     ConnectionTypeEnum.SnowFlake,
     ConnectionTypeEnum.BigQuery,
@@ -101,6 +105,8 @@ export class AddConnectionDialogComponent implements OnInit {
 
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
   typeMySQL = ConnectionTypeEnum.MySQL;
+  typeTrino = ConnectionTypeEnum.Trino;
+  typePresto = ConnectionTypeEnum.Presto;
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
@@ -138,7 +144,10 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addClickhouseForm = this.fb.group({
       host: [undefined, [Validators.required]],
-      port: [undefined, [Validators.required]],
+      port: [
+        undefined,
+        [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
       username: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]]
     });
@@ -150,7 +159,10 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addPostgresForm = this.fb.group({
       host: [undefined, [Validators.required]],
-      port: [undefined, [Validators.required]],
+      port: [
+        undefined,
+        [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
       database: [undefined, [Validators.required]],
       username: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]]
@@ -158,10 +170,33 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addMysqlForm = this.fb.group({
       host: [undefined, [Validators.required]],
-      port: [undefined, [Validators.required]],
+      port: [
+        undefined,
+        [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
       database: [undefined, [Validators.required]],
       user: [undefined, [Validators.required]],
       password: [undefined, [Validators.required]]
+    });
+
+    this.addTrinoForm = this.fb.group({
+      server: [undefined, [Validators.required]],
+      catalog: [undefined, []],
+      schema: [undefined, []],
+      user: [undefined, [Validators.required]],
+      password: [undefined, []]
+    });
+
+    this.addPrestoForm = this.fb.group({
+      server: [undefined, [Validators.required]],
+      port: [
+        undefined,
+        [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
+      catalog: [undefined, []],
+      schema: [undefined, []],
+      user: [undefined, [Validators.required]],
+      password: [undefined, []]
     });
 
     this.addSnowflakeForm = this.fb.group({
@@ -223,6 +258,19 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addMysqlForm.get('database').updateValueAndValidity();
       this.addMysqlForm.get('user').updateValueAndValidity();
       this.addMysqlForm.get('password').updateValueAndValidity();
+
+      this.addTrinoForm.get('server').updateValueAndValidity();
+      this.addTrinoForm.get('catalog').updateValueAndValidity();
+      this.addTrinoForm.get('schema').updateValueAndValidity();
+      this.addTrinoForm.get('user').updateValueAndValidity();
+      this.addTrinoForm.get('password').updateValueAndValidity();
+
+      this.addPrestoForm.get('server').updateValueAndValidity();
+      this.addPrestoForm.get('port').updateValueAndValidity();
+      this.addPrestoForm.get('catalog').updateValueAndValidity();
+      this.addPrestoForm.get('schema').updateValueAndValidity();
+      this.addPrestoForm.get('user').updateValueAndValidity();
+      this.addPrestoForm.get('password').updateValueAndValidity();
 
       this.addSnowflakeForm.get('account').updateValueAndValidity();
       this.addSnowflakeForm.get('warehouse').updateValueAndValidity();
@@ -381,6 +429,23 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addMysqlForm.controls['password'].reset();
     }
 
+    if (type !== ConnectionTypeEnum.Trino) {
+      this.addTrinoForm.controls['server'].reset();
+      this.addTrinoForm.controls['catalog'].reset();
+      this.addTrinoForm.controls['schema'].reset();
+      this.addTrinoForm.controls['user'].reset();
+      this.addTrinoForm.controls['password'].reset();
+    }
+
+    if (type !== ConnectionTypeEnum.Presto) {
+      this.addPrestoForm.controls['server'].reset();
+      this.addPrestoForm.controls['port'].reset();
+      this.addPrestoForm.controls['catalog'].reset();
+      this.addPrestoForm.controls['schema'].reset();
+      this.addPrestoForm.controls['user'].reset();
+      this.addPrestoForm.controls['password'].reset();
+    }
+
     if (type !== ConnectionTypeEnum.SnowFlake) {
       this.addSnowflakeForm.controls['account'].reset();
       this.addSnowflakeForm.controls['warehouse'].reset();
@@ -410,6 +475,8 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addMotherduckForm.markAllAsTouched();
     this.addPostgresForm.markAllAsTouched();
     this.addMysqlForm.markAllAsTouched();
+    this.addTrinoForm.markAllAsTouched();
+    this.addPrestoForm.markAllAsTouched();
     this.addSnowflakeForm.markAllAsTouched();
     this.addApiForm.markAllAsTouched();
     this.addGoogleApiForm.markAllAsTouched();
@@ -426,6 +493,8 @@ export class AddConnectionDialogComponent implements OnInit {
       (cType === ConnectionTypeEnum.PostgreSQL &&
         !this.addPostgresForm.valid) ||
       (cType === ConnectionTypeEnum.MySQL && !this.addMysqlForm.valid) ||
+      (cType === ConnectionTypeEnum.Trino && !this.addTrinoForm.valid) ||
+      (cType === ConnectionTypeEnum.Presto && !this.addPrestoForm.valid) ||
       (cType === ConnectionTypeEnum.SnowFlake &&
         !this.addSnowflakeForm.valid) ||
       (cType === ConnectionTypeEnum.Api && !this.addApiForm.valid) ||
@@ -512,6 +581,29 @@ export class AddConnectionDialogComponent implements OnInit {
               database: this.addMysqlForm.value.database,
               user: this.addMysqlForm.value.user,
               password: this.addMysqlForm.value.password
+            }
+          : undefined,
+      trinoOptions:
+        cType === ConnectionTypeEnum.Trino
+          ? {
+              server: this.addTrinoForm.value.server,
+              catalog: this.addTrinoForm.value.catalog,
+              schema: this.addTrinoForm.value.schema,
+              user: this.addTrinoForm.value.user,
+              password: this.addTrinoForm.value.password
+            }
+          : undefined,
+      prestoOptions:
+        cType === ConnectionTypeEnum.Presto
+          ? {
+              server: this.addPrestoForm.value.server,
+              port: isDefined(this.addPrestoForm.value.port)
+                ? Number(this.addPrestoForm.value.port)
+                : undefined,
+              catalog: this.addPrestoForm.value.catalog,
+              schema: this.addPrestoForm.value.schema,
+              user: this.addPrestoForm.value.user,
+              password: this.addPrestoForm.value.password
             }
           : undefined,
       snowflakeOptions:

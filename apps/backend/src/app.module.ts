@@ -575,6 +575,81 @@ export class AppModule implements OnModuleInit {
             connections.push(c7);
           }
 
+          let c8connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c8_trino')
+              )
+            });
+
+          let demoProjectDwhTrinoUser = this.cs.get<
+            BackendConfig['demoProjectDwhTrinoUser']
+          >('demoProjectDwhTrinoUser');
+
+          if (
+            isUndefined(c8connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhTrinoUser)
+          ) {
+            let c8 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c8_trino',
+              type: ConnectionTypeEnum.Trino,
+              trinoOptions: {
+                server: 'http://dwh-trino:8081',
+                catalog: undefined,
+                schema: undefined,
+                user: demoProjectDwhTrinoUser,
+                password: this.cs.get<
+                  BackendConfig['demoProjectDwhTrinoPassword']
+                >('demoProjectDwhTrinoPassword'),
+                extraConfig: undefined
+              }
+            });
+
+            connections.push(c8);
+          }
+
+          let c9connection =
+            await this.db.drizzle.query.connectionsTable.findFirst({
+              where: and(
+                eq(connectionsTable.projectId, demoProjectId),
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                eq(connectionsTable.connectionId, 'c9_presto')
+              )
+            });
+
+          let demoProjectDwhPrestoUser = this.cs.get<
+            BackendConfig['demoProjectDwhPrestoUser']
+          >('demoProjectDwhPrestoUser');
+
+          if (
+            isUndefined(c9connection) &&
+            isDefinedAndNotEmpty(demoProjectDwhPrestoUser)
+          ) {
+            let c9 = this.makerService.makeConnection({
+              projectId: demoProjectId,
+              envId: PROJECT_ENV_PROD,
+              connectionId: 'c9_presto',
+              type: ConnectionTypeEnum.Presto,
+              prestoOptions: {
+                server: 'http://dwh-presto',
+                port: 8082,
+                catalog: undefined,
+                schema: undefined,
+                user: demoProjectDwhPrestoUser,
+                password: this.cs.get<
+                  BackendConfig['demoProjectDwhPrestoPassword']
+                >('demoProjectDwhPrestoPassword'),
+                extraConfig: undefined
+              }
+            });
+
+            connections.push(c9);
+          }
+
           await retry(
             async () =>
               await this.db.drizzle.transaction(

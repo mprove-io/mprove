@@ -64,32 +64,32 @@ export function makeMalloyConnections(item: {
                 credentials: c.bigqueryOptions?.serviceAccountCredentials,
                 projectId: c.bigqueryOptions?.googleCloudProject
               })
-            : c.type === ConnectionTypeEnum.Presto
-              ? new PrestoConnection(
+            : c.type === ConnectionTypeEnum.Trino
+              ? new TrinoConnection(
                   c.connectionId,
                   {},
                   {
-                    server: c.prestoOptions?.server,
-                    port: c.prestoOptions?.port,
-                    catalog: c.prestoOptions?.catalog,
-                    schema: c.prestoOptions?.schema,
-                    user: c.prestoOptions?.user,
-                    password: c.prestoOptions?.password,
-                    extraConfig: c.prestoOptions?.extraConfig
+                    server: c.trinoOptions?.server,
+                    port: undefined,
+                    catalog: c.trinoOptions?.catalog,
+                    schema: c.trinoOptions?.schema,
+                    user: c.trinoOptions?.user,
+                    password: c.trinoOptions?.password,
+                    extraConfig: c.trinoOptions?.extraConfig
                   }
                 )
-              : c.type === ConnectionTypeEnum.Trino
-                ? new TrinoConnection(
+              : c.type === ConnectionTypeEnum.Presto
+                ? new PrestoConnection(
                     c.connectionId,
                     {},
                     {
-                      server: c.trinoOptions?.server,
-                      port: undefined,
-                      catalog: c.trinoOptions?.catalog,
-                      schema: c.trinoOptions?.schema,
-                      user: c.trinoOptions?.user,
-                      password: c.trinoOptions?.password,
-                      extraConfig: c.trinoOptions?.extraConfig
+                      server: c.prestoOptions?.server,
+                      port: c.prestoOptions?.port,
+                      catalog: c.prestoOptions?.catalog,
+                      schema: c.prestoOptions?.schema,
+                      user: c.prestoOptions?.user,
+                      password: c.prestoOptions?.password,
+                      extraConfig: c.prestoOptions?.extraConfig
                     }
                   )
                 : c.type === ConnectionTypeEnum.SnowFlake

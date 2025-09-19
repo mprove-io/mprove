@@ -637,6 +637,268 @@
 
     <form
       class="flex w-80 flex-col text-base"
+      [formGroup]="addTrinoForm"
+      *ngIf="addForm.controls['type'].value === typeTrino"
+    >
+      <div>
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Server</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogTrinoServerInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  addTrinoForm.controls['server'].invalid &&
+                  addTrinoForm.controls['server'].touched
+              }"
+              formControlName="server"
+              placeholder="http(s)://hostname:port"
+            />
+            <m-validation
+              [control]="addTrinoForm.controls['server']"
+            ></m-validation>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Catalog</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogTrinoCatalogInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addTrinoForm.controls['catalog'].invalid &&
+                addTrinoForm.controls['catalog'].touched
+            }"
+            formControlName="catalog"
+          />
+          <m-validation
+            [control]="addTrinoForm.controls['catalog']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Schema</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogTrinoSchemaInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addTrinoForm.controls['schema'].invalid &&
+                addTrinoForm.controls['schema'].touched
+            }"
+            formControlName="schema"
+          />
+          <m-validation
+            [control]="addTrinoForm.controls['schema']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">User</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogTrinoUserInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addTrinoForm.controls['user'].invalid &&
+                addTrinoForm.controls['user'].touched
+            }"
+            formControlName="user"
+          />
+          <m-validation
+            [control]="addTrinoForm.controls['user']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Password</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogTrinoPasswordInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addTrinoForm.controls['password'].invalid &&
+                addTrinoForm.controls['password'].touched
+            }"
+            formControlName="password"
+            type="password"
+          />
+          <m-validation
+            [control]="addTrinoForm.controls['password']"
+          ></m-validation>
+        </div>
+      </div>
+    </form>
+
+    <form
+      class="flex w-80 flex-col text-base"
+      [formGroup]="addPrestoForm"
+      *ngIf="addForm.controls['type'].value === typePresto"
+    >
+      <div>
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Server</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogPrestoServerInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  addPrestoForm.controls['server'].invalid &&
+                  addPrestoForm.controls['server'].touched
+              }"
+              formControlName="server"
+              placeholder="http(s)://hostname"
+            />
+            <m-validation
+              [control]="addPrestoForm.controls['server']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Port</div>
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogPrestoPortInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  addPrestoForm.controls['port'].invalid &&
+                  addPrestoForm.controls['port'].touched
+              }"
+              formControlName="port"
+            />
+            <m-validation
+              [control]="addPrestoForm.controls['port']"
+            ></m-validation>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Catalog</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogPrestoCatalogInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addPrestoForm.controls['catalog'].invalid &&
+                addPrestoForm.controls['catalog'].touched
+            }"
+            formControlName="catalog"
+          />
+          <m-validation
+            [control]="addPrestoForm.controls['catalog']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Schema</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogPrestoSchemaInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addPrestoForm.controls['schema'].invalid &&
+                addPrestoForm.controls['schema'].touched
+            }"
+            formControlName="schema"
+          />
+          <m-validation
+            [control]="addPrestoForm.controls['schema']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">User</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogPrestoUserInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addPrestoForm.controls['user'].invalid &&
+                addPrestoForm.controls['user'].touched
+            }"
+            formControlName="user"
+          />
+          <m-validation
+            [control]="addPrestoForm.controls['user']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Password</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogPrestoPasswordInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addPrestoForm.controls['password'].invalid &&
+                addPrestoForm.controls['password'].touched
+            }"
+            formControlName="password"
+            type="password"
+          />
+          <m-validation
+            [control]="addPrestoForm.controls['password']"
+          ></m-validation>
+        </div>
+      </div>
+    </form>
+
+    <form
+      class="flex w-80 flex-col text-base"
       [formGroup]="addSnowflakeForm"
       *ngIf="addForm.controls['type'].value === typeSnowFlake"
     >

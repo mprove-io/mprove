@@ -55,6 +55,8 @@ export class EditConnectionDialogComponent implements OnInit {
   editMotherduckForm: FormGroup;
   editPostgresForm: FormGroup;
   editMysqlForm: FormGroup;
+  editTrinoForm: FormGroup;
+  editPrestoForm: FormGroup;
   editSnowflakeForm: FormGroup;
   editApiForm: FormGroup;
   editGoogleApiForm: FormGroup;
@@ -70,6 +72,8 @@ export class EditConnectionDialogComponent implements OnInit {
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
   typeMySQL = ConnectionTypeEnum.MySQL;
+  typeTrino = ConnectionTypeEnum.Trino;
+  typePresto = ConnectionTypeEnum.Presto;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
 
@@ -114,7 +118,7 @@ export class EditConnectionDialogComponent implements OnInit {
       ],
       port: [
         this.dataItem.connection.clickhouseOptions?.port,
-        [Validators.required]
+        [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       username: [
         this.dataItem.connection.clickhouseOptions?.username,
@@ -144,7 +148,7 @@ export class EditConnectionDialogComponent implements OnInit {
       ],
       port: [
         this.dataItem.connection.postgresOptions?.port,
-        [Validators.required]
+        [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       database: [
         this.dataItem.connection.postgresOptions?.database,
@@ -167,7 +171,7 @@ export class EditConnectionDialogComponent implements OnInit {
       ],
       port: [
         this.dataItem.connection.mysqlOptions?.port,
-        [Validators.required]
+        [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       database: [
         this.dataItem.connection.mysqlOptions?.database,
@@ -181,6 +185,38 @@ export class EditConnectionDialogComponent implements OnInit {
         this.dataItem.connection.mysqlOptions?.password,
         [Validators.required]
       ]
+    });
+
+    this.editTrinoForm = this.fb.group({
+      server: [
+        this.dataItem.connection.trinoOptions?.server,
+        [Validators.required]
+      ],
+      catalog: [this.dataItem.connection.trinoOptions?.catalog, []],
+      schema: [this.dataItem.connection.trinoOptions?.schema, []],
+      user: [
+        this.dataItem.connection.trinoOptions?.user,
+        [Validators.required]
+      ],
+      password: [this.dataItem.connection.trinoOptions?.password, []]
+    });
+
+    this.editPrestoForm = this.fb.group({
+      server: [
+        this.dataItem.connection.prestoOptions?.server,
+        [Validators.required]
+      ],
+      port: [
+        this.dataItem.connection.prestoOptions?.port,
+        [ValidationService.integerOrEmptyValidator, Validators.required]
+      ],
+      catalog: [this.dataItem.connection.prestoOptions?.catalog, []],
+      schema: [this.dataItem.connection.prestoOptions?.schema, []],
+      user: [
+        this.dataItem.connection.prestoOptions?.user,
+        [Validators.required]
+      ],
+      password: [this.dataItem.connection.prestoOptions?.password, []]
     });
 
     this.editSnowflakeForm = this.fb.group({
@@ -345,6 +381,8 @@ export class EditConnectionDialogComponent implements OnInit {
     this.editMotherduckForm.markAllAsTouched();
     this.editPostgresForm.markAllAsTouched();
     this.editMysqlForm.markAllAsTouched();
+    this.editTrinoForm.markAllAsTouched();
+    this.editPrestoForm.markAllAsTouched();
     this.editSnowflakeForm.markAllAsTouched();
     this.editApiForm.markAllAsTouched();
     this.editGoogleApiForm.markAllAsTouched();
@@ -360,6 +398,8 @@ export class EditConnectionDialogComponent implements OnInit {
       (cType === ConnectionTypeEnum.PostgreSQL &&
         !this.editPostgresForm.valid) ||
       (cType === ConnectionTypeEnum.MySQL && !this.editMysqlForm.valid) ||
+      (cType === ConnectionTypeEnum.Trino && !this.editTrinoForm.valid) ||
+      (cType === ConnectionTypeEnum.Presto && !this.editPrestoForm.valid) ||
       (cType === ConnectionTypeEnum.SnowFlake &&
         !this.editSnowflakeForm.valid) ||
       (cType === ConnectionTypeEnum.Api && !this.editApiForm.valid) ||
@@ -436,7 +476,7 @@ export class EditConnectionDialogComponent implements OnInit {
             }
           : undefined,
       mysqlOptions:
-        cType === ConnectionTypeEnum.PostgreSQL
+        cType === ConnectionTypeEnum.MySQL
           ? {
               host: this.editMysqlForm.value.host,
               port: isDefined(this.editMysqlForm.value.port)
@@ -445,6 +485,29 @@ export class EditConnectionDialogComponent implements OnInit {
               database: this.editMysqlForm.value.database,
               user: this.editMysqlForm.value.user,
               password: this.editMysqlForm.value.password
+            }
+          : undefined,
+      trinoOptions:
+        cType === ConnectionTypeEnum.Trino
+          ? {
+              server: this.editTrinoForm.value.server,
+              catalog: this.editTrinoForm.value.catalog,
+              schema: this.editTrinoForm.value.schema,
+              user: this.editTrinoForm.value.user,
+              password: this.editTrinoForm.value.password
+            }
+          : undefined,
+      prestoOptions:
+        cType === ConnectionTypeEnum.Presto
+          ? {
+              server: this.editPrestoForm.value.server,
+              port: isDefined(this.editPrestoForm.value.port)
+                ? Number(this.editPrestoForm.value.port)
+                : undefined,
+              catalog: this.editPrestoForm.value.catalog,
+              schema: this.editPrestoForm.value.schema,
+              user: this.editPrestoForm.value.user,
+              password: this.editPrestoForm.value.password
             }
           : undefined,
       snowflakeOptions:

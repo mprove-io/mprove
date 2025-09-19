@@ -58,6 +58,8 @@ export class EditConnectionController {
       motherduckOptions,
       postgresOptions,
       mysqlOptions,
+      trinoOptions,
+      prestoOptions,
       snowflakeOptions,
       storeApiOptions,
       storeGoogleApiOptions
@@ -117,6 +119,8 @@ export class EditConnectionController {
     connection.bigqueryOptions = bigqueryOptions;
     connection.postgresOptions = postgresOptions;
     connection.mysqlOptions = mysqlOptions;
+    connection.trinoOptions = trinoOptions;
+    connection.prestoOptions = prestoOptions;
     connection.snowflakeOptions = snowflakeOptions;
     connection.storeApiOptions = storeApiOptions;
     connection.storeGoogleApiOptions = storeGoogleApiOptions;

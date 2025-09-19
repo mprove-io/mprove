@@ -14,9 +14,11 @@ import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connecti
 import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
 import { ConnectionMysqlOptions } from '~common/interfaces/backend/connection/connection-mysql-options';
 import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
+import { ConnectionPrestoOptions } from '~common/interfaces/backend/connection/connection-presto-options';
 import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
 import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
 import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
+import { ConnectionTrinoOptions } from '~common/interfaces/backend/connection/connection-trino-options';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
@@ -167,6 +169,16 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   @ValidateNested()
   @Type(() => ConnectionMysqlOptions)
   mysqlOptions?: ConnectionMysqlOptions;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectionTrinoOptions)
+  trinoOptions?: ConnectionTrinoOptions;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectionPrestoOptions)
+  prestoOptions?: ConnectionPrestoOptions;
 
   @IsOptional()
   @ValidateNested()

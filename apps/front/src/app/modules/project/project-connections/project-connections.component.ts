@@ -23,6 +23,8 @@ export class ProjectConnectionsComponent implements OnInit {
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
   typeMySQL = ConnectionTypeEnum.MySQL;
+  typeTrino = ConnectionTypeEnum.Trino;
+  typePresto = ConnectionTypeEnum.Presto;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
 

@@ -136,11 +136,11 @@ export class MakerService {
     bigqueryOptions?: ConnectionBigqueryOptions;
     clickhouseOptions?: ConnectionClickhouseOptions;
     motherduckOptions?: ConnectionMotherduckOptions;
+    snowflakeOptions?: ConnectionSnowflakeOptions;
     postgresOptions?: ConnectionPostgresOptions;
     mysqlOptions?: ConnectionMysqlOptions;
-    snowflakeOptions?: ConnectionSnowflakeOptions;
-    prestoOptions?: ConnectionPrestoOptions;
     trinoOptions?: ConnectionTrinoOptions;
+    prestoOptions?: ConnectionPrestoOptions;
     storeApiOptions?: ConnectionStoreApiOptions;
     storeGoogleApiOptions?: ConnectionStoreGoogleApiOptions;
   }) {
@@ -153,10 +153,10 @@ export class MakerService {
       clickhouseOptions,
       motherduckOptions,
       postgresOptions,
-      mysqlOptions,
       snowflakeOptions,
-      prestoOptions,
+      mysqlOptions,
       trinoOptions,
+      prestoOptions,
       storeApiOptions,
       storeGoogleApiOptions
     } = item;
@@ -196,10 +196,10 @@ export class MakerService {
       clickhouseOptions: clickhouseOptions,
       motherduckOptions: motherduckOptions,
       postgresOptions: postgresOptions,
-      mysqlOptions: mysqlOptions,
       snowflakeOptions: snowflakeOptions,
-      prestoOptions: prestoOptions,
+      mysqlOptions: mysqlOptions,
       trinoOptions: trinoOptions,
+      prestoOptions: prestoOptions,
       storeApiOptions: storeApiOptions,
       storeGoogleApiOptions: storeGoogleApiOptions,
       serverTs: undefined
