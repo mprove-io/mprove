@@ -25,6 +25,7 @@ import { ModelsService } from './services/models.service';
 import { MysqlService } from './services/mysql.service';
 import { OrgsService } from './services/orgs.service';
 import { PgService } from './services/pg.service';
+import { PrestoService } from './services/presto.service';
 import { ProjectsService } from './services/projects.service';
 import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
@@ -37,6 +38,7 @@ import { SnowFlakeService } from './services/snowflake.service';
 import { StoreService } from './services/store.service';
 import { StructsService } from './services/structs.service';
 import { TasksService } from './services/tasks.service';
+import { TrinoService } from './services/trino.service';
 import { UserCodeService } from './services/user-code.service';
 import { UsersService } from './services/users.service';
 import { WrapToApiService } from './services/wrap-to-api.service';
@@ -62,6 +64,8 @@ export const appProviders = [
   MalloyService,
   PgService,
   MysqlService,
+  TrinoService,
+  PrestoService,
   DuckDbService,
   ClickHouseService,
   BigQueryService,

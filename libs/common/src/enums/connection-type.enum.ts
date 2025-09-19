@@ -5,6 +5,8 @@ export enum ConnectionTypeEnum {
   SnowFlake = 'SnowFlake',
   BigQuery = 'BigQuery',
   MotherDuck = 'MotherDuck',
+  Presto = 'Presto',
+  Trino = 'Trino',
   GoogleApi = 'GoogleApi',
   Api = 'Api'
 }

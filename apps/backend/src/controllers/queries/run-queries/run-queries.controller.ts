@@ -32,10 +32,12 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { MysqlService } from '~backend/services/mysql.service';
 import { PgService } from '~backend/services/pg.service';
+import { PrestoService } from '~backend/services/presto.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { SnowFlakeService } from '~backend/services/snowflake.service';
 import { StoreService } from '~backend/services/store.service';
 import { StructsService } from '~backend/services/structs.service';
+import { TrinoService } from '~backend/services/trino.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -67,6 +69,8 @@ export class RunQueriesController {
     private pgService: PgService,
     private mysqlService: MysqlService,
     private duckdbService: DuckDbService,
+    private prestoService: PrestoService,
+    private trinoService: TrinoService,
     private storeService: StoreService,
     private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
@@ -318,6 +322,22 @@ export class RunQueriesController {
               querySql: query.sql,
               projectId: projectId
             });
+          } else if (connection.type === ConnectionTypeEnum.Presto) {
+            await this.prestoService.runQuery({
+              connection: connection,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
+              querySql: query.sql,
+              projectId: projectId
+            });
+          } else if (connection.type === ConnectionTypeEnum.Trino) {
+            await this.trinoService.runQuery({
+              connection: connection,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
+              querySql: query.sql,
+              projectId: projectId
+            });
           } else if (
             [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
               connection.type
@@ -493,6 +513,46 @@ export class RunQueriesController {
                 logToConsoleBackend({
                   log: new ServerError({
                     message: ErEnum.BACKEND_RUN_QUERY_MYSQL_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
+          } else if (connection.type === ConnectionTypeEnum.Presto) {
+            this.prestoService
+              .runQuery({
+                connection: connection,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
+                querySql: query.sql,
+                projectId: projectId
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_PRESTO_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
+          } else if (connection.type === ConnectionTypeEnum.Trino) {
+            this.trinoService
+              .runQuery({
+                connection: connection,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
+                querySql: query.sql,
+                projectId: projectId
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_TRINO_ERROR,
                     originalError: e
                   }),
                   logLevel: LogLevelEnum.Error,

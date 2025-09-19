@@ -13,9 +13,11 @@ import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connecti
 import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
 import { ConnectionMysqlOptions } from '~common/interfaces/backend/connection/connection-mysql-options';
 import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
+import { ConnectionPrestoOptions } from '~common/interfaces/backend/connection/connection-presto-options';
 import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
 import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
 import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
+import { ConnectionTrinoOptions } from '~common/interfaces/backend/connection/connection-trino-options';
 
 export const connectionsTable = pgTable(
   'connections',
@@ -38,6 +40,8 @@ export const connectionsTable = pgTable(
       json('snowflake_options').$type<ConnectionSnowflakeOptions>(),
     motherduckOptions:
       json('motherduck_options').$type<ConnectionMotherduckOptions>(),
+    trinoOptions: json('trino_options').$type<ConnectionTrinoOptions>(),
+    prestoOptions: json('presto_options').$type<ConnectionPrestoOptions>(),
     storeApiOptions:
       json('store_api_options').$type<ConnectionStoreApiOptions>(),
     storeGoogleApiOptions: json(

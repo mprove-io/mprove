@@ -3,6 +3,8 @@ import { DuckDBConnection } from '@malloydata/db-duckdb';
 import { MySQLConnection } from '@malloydata/db-mysql';
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { SnowflakeConnection } from '@malloydata/db-snowflake';
+import { TrinoConnection } from '@malloydata/db-trino';
+import { PrestoConnection } from '@malloydata/db-trino';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
@@ -12,7 +14,9 @@ export type MalloyConnection =
   | BigQueryConnection
   | SnowflakeConnection
   | DuckDBConnection
-  | MySQLConnection;
+  | MySQLConnection
+  | PrestoConnection
+  | TrinoConnection;
 
 export function makeMalloyConnections(item: {
   connections: ProjectConnection[];
@@ -60,39 +64,67 @@ export function makeMalloyConnections(item: {
                 credentials: c.bigqueryOptions?.serviceAccountCredentials,
                 projectId: c.bigqueryOptions?.googleCloudProject
               })
-            : c.type === ConnectionTypeEnum.SnowFlake
-              ? new SnowflakeConnection(c.connectionId, {
-                  connOptions: {
-                    account: c.snowflakeOptions?.account,
-                    warehouse: c.snowflakeOptions?.warehouse,
-                    database: c.snowflakeOptions?.database,
-                    username: c.snowflakeOptions?.username,
-                    password: c.snowflakeOptions?.password
-                    //  schema?: string | undefined;
-                    //  role?: string | undefined;
-                    //  clientSessionKeepAlive?: boolean | undefined;
-                    //  clientSessionKeepAliveHeartbeatFrequency?: number | undefined;
-                    //  jsTreatIntegerAsBigInt?: boolean | undefined;
-                    //  application?: string;
-                    //  authenticator?: string;
-                    //  token?: string;
-                    //  privateKey?: string | Buffer;
-                    //  privateKeyPath?: string;
-                    //  privateKeyPass?: string;
+            : c.type === ConnectionTypeEnum.Presto
+              ? new PrestoConnection(
+                  c.connectionId,
+                  {},
+                  {
+                    server: c.prestoOptions?.server,
+                    port: c.prestoOptions?.port,
+                    catalog: c.prestoOptions?.catalog,
+                    schema: c.prestoOptions?.schema,
+                    user: c.prestoOptions?.user,
+                    password: c.prestoOptions?.password,
+                    extraConfig: c.prestoOptions?.extraConfig
                   }
-                })
-              : c.type === ConnectionTypeEnum.MotherDuck
-                ? new DuckDBConnection({
-                    name: c.connectionId,
-                    databasePath: isDefined(c.motherduckOptions?.database)
-                      ? `md:${c.motherduckOptions?.database}`
-                      : `md:`,
-                    motherDuckToken: c.motherduckOptions?.motherduckToken
-                    // additionalExtensions?: string[];
-                    // workingDirectory?: string;
-                    // readOnly?: boolean;
-                  })
-                : undefined;
+                )
+              : c.type === ConnectionTypeEnum.Trino
+                ? new TrinoConnection(
+                    c.connectionId,
+                    {},
+                    {
+                      server: c.trinoOptions?.server,
+                      port: undefined,
+                      catalog: c.trinoOptions?.catalog,
+                      schema: c.trinoOptions?.schema,
+                      user: c.trinoOptions?.user,
+                      password: c.trinoOptions?.password,
+                      extraConfig: c.trinoOptions?.extraConfig
+                    }
+                  )
+                : c.type === ConnectionTypeEnum.SnowFlake
+                  ? new SnowflakeConnection(c.connectionId, {
+                      connOptions: {
+                        account: c.snowflakeOptions?.account,
+                        warehouse: c.snowflakeOptions?.warehouse,
+                        database: c.snowflakeOptions?.database,
+                        username: c.snowflakeOptions?.username,
+                        password: c.snowflakeOptions?.password
+                        //  schema?: string | undefined;
+                        //  role?: string | undefined;
+                        //  clientSessionKeepAlive?: boolean | undefined;
+                        //  clientSessionKeepAliveHeartbeatFrequency?: number | undefined;
+                        //  jsTreatIntegerAsBigInt?: boolean | undefined;
+                        //  application?: string;
+                        //  authenticator?: string;
+                        //  token?: string;
+                        //  privateKey?: string | Buffer;
+                        //  privateKeyPath?: string;
+                        //  privateKeyPass?: string;
+                      }
+                    })
+                  : c.type === ConnectionTypeEnum.MotherDuck
+                    ? new DuckDBConnection({
+                        name: c.connectionId,
+                        databasePath: isDefined(c.motherduckOptions?.database)
+                          ? `md:${c.motherduckOptions?.database}`
+                          : `md:`,
+                        motherDuckToken: c.motherduckOptions?.motherduckToken
+                        // additionalExtensions?: string[];
+                        // workingDirectory?: string;
+                        // readOnly?: boolean;
+                      })
+                    : undefined;
 
     if (isDefined(mConnection)) {
       malloyConnections.push(mConnection);

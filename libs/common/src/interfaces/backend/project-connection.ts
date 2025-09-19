@@ -12,9 +12,11 @@ import { ConnectionClickhouseOptions } from './connection/connection-clickhouse-
 import { ConnectionMotherduckOptions } from './connection/connection-motherduck-options';
 import { ConnectionMysqlOptions } from './connection/connection-mysql-options';
 import { ConnectionPostgresOptions } from './connection/connection-postgres-options';
+import { ConnectionPrestoOptions } from './connection/connection-presto-options';
 import { ConnectionSnowflakeOptions } from './connection/connection-snowflake-options';
 import { ConnectionStoreApiOptions } from './connection/connection-store-api-options';
 import { ConnectionStoreGoogleApiOptions } from './connection/connection-store-google-api-options';
+import { ConnectionTrinoOptions } from './connection/connection-trino-options';
 
 export class ProjectConnection {
   @IsOptional()
@@ -62,6 +64,16 @@ export class ProjectConnection {
   @ValidateNested()
   @Type(() => ConnectionMysqlOptions)
   mysqlOptions?: ConnectionMysqlOptions;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectionPrestoOptions)
+  prestoOptions?: ConnectionPrestoOptions;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ConnectionTrinoOptions)
+  trinoOptions?: ConnectionTrinoOptions;
 
   @IsOptional()
   @ValidateNested()
