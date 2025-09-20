@@ -75,7 +75,7 @@ export class TrinoService {
               : queryResult?.value?.error?.toString();
             q.lastErrorTs = makeTsNumber();
           } else {
-            // let columns = queryResult.value.columns;
+            let columns = queryResult.value.columns;
 
             let outputRows: unknown[][] = [];
 
@@ -91,10 +91,15 @@ export class TrinoService {
               }
             }
 
-            let data = outputRows;
+            let data = outputRows.map(r => {
+              let dRow: { [name: string]: any } = {};
 
-            console.log('data');
-            console.log(data);
+              columns.forEach((column: any, index: number) => {
+                dRow[column.name as string] = r[index];
+              });
+
+              return dRow;
+            });
 
             q.status = QueryStatusEnum.Completed;
             q.queryJobId = undefined; // null;

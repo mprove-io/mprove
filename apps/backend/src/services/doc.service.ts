@@ -465,20 +465,27 @@ FROM main;`;
                                   // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
                                   undefined;
 
+              let normalizeTimeValue = (v: string) => {
+                const match = v?.match(
+                  /^(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2}:\d{2})(\.\d{3})?(?: UTC|Z)?$/
+                );
+                return match
+                  ? `${match[1]}T${match[2]}${match[3] || '.000'}`
+                  : null;
+              };
+
               dataRow =
                 row.mconfig?.modelType === ModelTypeEnum.Malloy &&
                 row.query.connectionType === ConnectionTypeEnum.PostgreSQL
                   ? row.query?.data?.find(
                       (r: any) =>
-                        [timeValue, `${timeValue}.000Z`].indexOf(
-                          r.row?.[timeFieldId]?.toString()
-                        ) > -1
+                        normalizeTimeValue(timeValue) ===
+                        normalizeTimeValue(r.row?.[timeFieldId]?.toString())
                     )?.row
                   : row.query?.data?.find(
                       (r: any) =>
-                        [timeValue, `${timeValue}.000Z`].indexOf(
-                          r[timeFieldId]?.toString()
-                        ) > -1
+                        normalizeTimeValue(timeValue) ===
+                        normalizeTimeValue(r[timeFieldId]?.toString())
                     );
             }
 

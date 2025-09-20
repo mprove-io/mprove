@@ -52,11 +52,17 @@ export class PrestoService {
     await pc
       .query(querySql)
       .then(async result => {
-        // let columns = result.columns;
-        let data = result.data;
+        let columns = result.columns;
 
-        console.log('data');
-        console.log(data);
+        let data = result.data.map(r => {
+          let dRow: { [name: string]: any } = {};
+
+          columns.forEach((column: any, index: number) => {
+            dRow[column.name as string] = r[index];
+          });
+
+          return dRow;
+        });
 
         let q = await this.db.drizzle.query.queriesTable.findFirst({
           where: and(

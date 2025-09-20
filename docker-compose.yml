@@ -156,8 +156,11 @@ services:
       - 8081:8080
     volumes:
       - type: bind
-        source: $COMPOSE_DWH_TRINO_VOLUME_SOURCE_PATH
+        source: $COMPOSE_DWH_TRINO_CATALOG_VOLUME_SOURCE_PATH
         target: /etc/trino/catalog
+      - type: bind
+        source: $COMPOSE_DWH_TRINO_CONFIG_VOLUME_SOURCE_PATH
+        target: /opt/trino/etc/config.properties
 
   dwh-presto:
     image: prestodb/presto:0.294
@@ -165,8 +168,11 @@ services:
       - 8082:8080
     volumes:
       - type: bind
-        source: $COMPOSE_DWH_PRESTO_VOLUME_SOURCE_PATH
+        source: $COMPOSE_DWH_PRESTO_CATALOG_VOLUME_SOURCE_PATH
         target: /opt/presto-server/etc/catalog
+      - type: bind
+        source: $COMPOSE_DWH_PRESTO_CONFIG_VOLUME_SOURCE_PATH
+        target: /opt/presto-server/etc/config.properties
 
   dwh-clickhouse:
     build:

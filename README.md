@@ -42,7 +42,9 @@ mkdir secrets \
   && echo '' > secrets/demo-project-remote-private-key.pem \
   && echo '' > secrets/demo-project-remote-public-key.pem \
   && echo '' > secrets/presto/catalog/pgs.properties \
-  && echo '' > secrets/trino/catalog/pgs.properties
+  && echo '' > secrets/presto/config.properties \
+  && echo '' > secrets/trino/catalog/pgs.properties \
+  && echo '' > secrets/trino/config.properties
 ```
 
 #### 6. Run script to create ".env" file with generated values
