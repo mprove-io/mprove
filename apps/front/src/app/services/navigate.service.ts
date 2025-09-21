@@ -66,20 +66,20 @@ export class NavigateService {
     this.userId$.subscribe();
   }
 
-  navigateTo(item: { navParts: string[] }) {
+  async navigateTo(item: { navParts: string[] }) {
     let { navParts } = item;
 
-    this.router.navigate(navParts);
+    return this.router.navigate(navParts);
   }
 
-  navigateToProfile() {
-    this.router.navigate([PATH_PROFILE]);
+  async navigateToProfile() {
+    return this.router.navigate([PATH_PROFILE]);
   }
 
-  navigateToFiles(branchId?: string) {
+  async navigateToFiles(branchId?: string) {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
-    this.router.navigate([
+    return this.router.navigate([
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
@@ -94,7 +94,7 @@ export class NavigateService {
     ]);
   }
 
-  navigateToFileLine(item: {
+  async navigateToFileLine(item: {
     panel: PanelEnum;
     encodedFileId: string;
     lineNumber?: number;
@@ -119,7 +119,7 @@ export class NavigateService {
       encodedFileId
     ];
 
-    this.router.navigate(ar, {
+    let navResult = this.router.navigate(ar, {
       queryParams: {
         panel: panel
       }
@@ -133,12 +133,14 @@ export class NavigateService {
         }
       });
     }, 0);
+
+    return navResult;
   }
 
-  navigateToModels() {
+  async navigateToModels() {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
-    this.router.navigate([
+    return this.router.navigate([
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
@@ -153,7 +155,7 @@ export class NavigateService {
     ]);
   }
 
-  navigateToChartsList(item: { modelId: string }) {
+  async navigateToChartsList(item: { modelId: string }) {
     let { modelId } = item;
 
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
@@ -190,10 +192,10 @@ export class NavigateService {
           PATH_CHARTS_LIST
         ];
 
-    this.router.navigate(navTo);
+    return this.router.navigate(navTo);
   }
 
-  navigateToModelsList(item: { modelId: string }) {
+  async navigateToModelsList(item: { modelId: string }) {
     let { modelId } = item;
 
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
@@ -230,10 +232,10 @@ export class NavigateService {
           PATH_MODELS_LIST
         ];
 
-    this.router.navigate(navTo);
+    return this.router.navigate(navTo);
   }
 
-  navigateToChart(item: { modelId: string; chartId: string }) {
+  async navigateToChart(item: { modelId: string; chartId: string }) {
     let { modelId, chartId } = item;
 
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
@@ -262,7 +264,7 @@ export class NavigateService {
     );
   }
 
-  navigateToDashboards(item?: { extra?: any }) {
+  async navigateToDashboards(item?: { extra?: any }) {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
     let navTo = [
@@ -279,10 +281,10 @@ export class NavigateService {
       PATH_DASHBOARDS
     ];
 
-    this.router.navigate(navTo);
+    return this.router.navigate(navTo);
   }
 
-  navigateToDashboardsList() {
+  async navigateToDashboardsList() {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
     let navTo = [
@@ -300,17 +302,17 @@ export class NavigateService {
       PATH_DASHBOARDS_LIST
     ];
 
-    this.router.navigate(navTo);
+    return this.router.navigate(navTo);
   }
 
-  navigateToDashboard(item: { dashboardId: string }) {
+  async navigateToDashboard(item: { dashboardId: string }) {
     let { dashboardId } = item;
 
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
     let uiState = this.uiQuery.getValue();
 
-    this.router.navigate(
+    return this.router.navigate(
       [
         PATH_ORG,
         this.nav.orgId,
@@ -330,7 +332,7 @@ export class NavigateService {
     );
   }
 
-  navigateToReports() {
+  async navigateToReports() {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
     let navTo = [
@@ -347,10 +349,10 @@ export class NavigateService {
       PATH_REPORTS
     ];
 
-    this.router.navigate(navTo);
+    return this.router.navigate(navTo);
   }
 
-  navigateToReportsList() {
+  async navigateToReportsList() {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
     let navTo = [
@@ -368,10 +370,10 @@ export class NavigateService {
       PATH_REPORTS_LIST
     ];
 
-    this.router.navigate(navTo);
+    return this.router.navigate(navTo);
   }
 
-  navigateToReport(item: { reportId: string; skipDeselect?: boolean }) {
+  async navigateToReport(item: { reportId: string; skipDeselect?: boolean }) {
     let { reportId, skipDeselect } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -398,7 +400,7 @@ export class NavigateService {
       reportId
     ];
 
-    this.router.navigate(navTo, {
+    return this.router.navigate(navTo, {
       queryParams: makeQueryParams({
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,

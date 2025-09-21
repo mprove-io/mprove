@@ -106,14 +106,15 @@
               </ng-template>
 
               <div
-                class="flex w-1/4 flex-row pb-[9px] pt-[7px]"
+                class="flex w-1/4 select-none flex-row pb-[9px] pt-[7px]"
                 [tp]="templateModelsModel"
                 [tpIsEnabled]="item.hasAccess === false"
               >
                 <span
                   class="truncate"
                   [ngClass]="{
-                    'text-m600 font-semibold': item.modelId === modelId
+                    'text-m600 select-none font-semibold':
+                      item.modelId === modelId
                   }"
                 >
                   {{ item.label || item.modelId | capitalize }}

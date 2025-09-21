@@ -1048,7 +1048,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
-  modelChange() {
+  async modelChange() {
     (document.activeElement as HTMLElement).blur();
 
     let modelId = this.modelForm.controls['model'].value;
@@ -1057,31 +1057,21 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.setProjectChartLink({ chartId: EMPTY_CHART_ID });
 
     if (this.lastUrl === this.pathChartsList) {
-      this.navigateService.navigateToChartsList({
+      await this.navigateService.navigateToChartsList({
         modelId: modelId
       });
     } else if (this.lastUrl === this.pathModelsList) {
-      this.navigateService.navigateToModelsList({
+      await this.navigateService.navigateToModelsList({
         modelId: modelId
       });
     } else {
-      // if (
-      //   (this.lastUrl === this.pathCharts ||
-      //     this.chart.chartId === EMPTY_CHART_ID) &&
-      //   this.showSchema === false
-      // ) {
-      //   this.showSchema = true;
-      // }
-
-      if (isDefined(modelId)) {
-        this.navigateService.navigateToChart({
-          modelId: modelId,
-          chartId: EMPTY_CHART_ID
-        });
-      } else {
-        this.navigateService.navigateToModels();
-      }
+      await this.navigateService.navigateToChart({
+        modelId: modelId,
+        chartId: EMPTY_CHART_ID
+      });
     }
+
+    this.uiQuery.updatePart({ showSchema: true });
   }
 
   timezoneChange() {
