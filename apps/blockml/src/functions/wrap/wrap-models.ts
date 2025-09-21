@@ -58,6 +58,8 @@ export function wrapModels(item: {
     let mproveTags = [];
     let malloyTags = [];
     let accessRolesTag: KeyValuePair;
+    let labelTag: KeyValuePair;
+    let topLabelTag: KeyValuePair;
 
     if (modelType === ModelTypeEnum.Malloy) {
       {
@@ -78,6 +80,11 @@ export function wrapModels(item: {
 
         accessRolesTag = mproveTags.find(
           tag => tag.key === ParameterEnum.AccessRoles
+        );
+
+        labelTag = mproveTags.find(tag => tag.key === ParameterEnum.Label);
+        topLabelTag = mproveTags.find(
+          tag => tag.key === ParameterEnum.TopLabel
         );
 
         let fieldItems = getFieldItems(malloySourceInfo);
@@ -141,9 +148,11 @@ export function wrapModels(item: {
           let topNode: ModelNode = {
             id: topId,
             label:
-              topId === MF
-                ? // ModelNodeLabelEnum.ModelFields
-                  x.label
+              topId === MF // ModelNodeLabelEnum.ModelFields
+                ? modelType === ModelTypeEnum.Malloy &&
+                  isDefined(topLabelTag?.value)
+                  ? topLabelTag?.value.trim()
+                  : x.label
                 : topId
                     .split('.')
                     .map(k => capitalizeFirstLetter(k))
@@ -485,10 +494,9 @@ export function wrapModels(item: {
           ? accessRolesTag.value.split(',').map(x => x.trim())
           : (x.access_roles ?? []),
       label:
-        // x.fileExt === FileExtensionEnum.Store
-        //   ? `Store - ${x.label}`
-        //   :
-        x.label,
+        modelType === ModelTypeEnum.Malloy && isDefined(labelTag?.value)
+          ? labelTag?.value.trim()
+          : x.label,
       description: (x as FileStore).description,
       gr: undefined,
       hidden: false,

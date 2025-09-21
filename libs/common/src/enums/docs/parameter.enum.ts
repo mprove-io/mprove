@@ -46,6 +46,7 @@ export enum ParameterEnum {
   HideFields = 'hide_fields',
   // Joins = 'joins',
   Label = 'label',
+  TopLabel = 'top_label',
   Limit = 'limit',
   Listen = 'listen',
   Measure = 'measure',
