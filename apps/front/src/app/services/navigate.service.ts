@@ -240,7 +240,7 @@ export class NavigateService {
 
     let uiState = this.uiQuery.getValue();
 
-    this.router.navigate(
+    return this.router.navigate(
       [
         PATH_ORG,
         this.nav.orgId,

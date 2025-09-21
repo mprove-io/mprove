@@ -103,6 +103,7 @@ import { SettingsIconComponent } from './icons/settings-icon/settings-icon.compo
 import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { TreeIconComponent } from './icons/tree-icon/tree-icon.component';
+import { TreeStructureIconComponent } from './icons/tree-structure-icon/tree-structure-icon.component';
 import { UnfoldLessIconComponent } from './icons/unfold-less-icon/unfold-less-icon.component';
 import { UnfoldMoreIconComponent } from './icons/unfold-more-icon/unfold-more-icon.component';
 import { UserIconComponent } from './icons/user-icon/user-icon.component';
@@ -181,6 +182,7 @@ let sharedComponents = [
   AscIconComponent,
   CurrencyDollarIconComponent,
   FilterIconComponent,
+  TreeStructureIconComponent,
   MagGlassIconComponent,
   FractionComponent,
   StoreFractionSubTypeComponent,

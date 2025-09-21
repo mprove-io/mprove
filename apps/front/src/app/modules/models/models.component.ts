@@ -1758,6 +1758,22 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
+  async schema(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
+
+    // console.log('node.data');
+    // console.log(node.data);
+
+    if (this.chart?.modelId !== node.data.id) {
+      await this.navigateService.navigateToChart({
+        modelId: node.data.id,
+        chartId: EMPTY_CHART_ID
+      });
+    }
+
+    this.uiQuery.updatePart({ showSchema: true });
+  }
+
   setProjectModelLink(item: { modelId: string }) {
     let { modelId } = item;
 

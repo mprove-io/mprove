@@ -587,7 +587,7 @@
                   "
                   class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                 >
-                  Saved Charts
+                  Saved Charts by Model
                 </div>
 
                 <tree-root
@@ -602,16 +602,12 @@
                     <div
                       *ngIf="node.data.isTop === true"
                       data-cy="chartsTreeItem"
-                      class="flex h-11 w-full select-none flex-row rounded px-5 pr-5"
+                      class="group-bar flex h-11 w-full select-none flex-row rounded px-5 pr-5"
                       [ngClass]="{
                         'cursor-pointer':
                           node.data.isTop === false || node.hasChildren === true
                       }"
                       (click)="chartsItemModelNodeOnClick(node)"
-                      tp="This model has no saved charts"
-                      [tpIsEnabled]="
-                        node.data.isTop === true && node.hasChildren === false
-                      "
                     >
                       <div class="relative flex w-full flex-row items-center">
                         <div class="flex min-w-[2px] flex-row items-center">
@@ -645,6 +641,27 @@
                                 </span>
                               </div>
                             </div>
+                          </div>
+
+                          <!-- <div class="flex flex-1"></div> -->
+
+                          <div class="ml-5 flex flex-row items-center">
+                            <button
+                              *ngIf="node.data.isTop === true"
+                              data-cy="chartsTreeSchemaButton"
+                              class="group invisible flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
+                              (click)="schema(node, $event)"
+                            >
+                              <div
+                                class="group-hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded"
+                              >
+                                <div
+                                  class="text-s1 flex flex-shrink-0 flex-row items-center justify-center rounded"
+                                >
+                                  <m-tree-structure-icon></m-tree-structure-icon>
+                                </div>
+                              </div>
+                            </button>
                           </div>
                         </div>
                       </div>
