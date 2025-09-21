@@ -9,6 +9,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
+import { FieldOptionsComponent } from '../models/model-tree/field-options/field-options.component';
 import { ReportAddRowDialogComponent } from '../reports/report-add-row-dialog/report-add-row-dialog.component';
 import { MiniChartRendererComponent } from '../reports/report/mini-chart-renderer/mini-chart-renderer.component';
 import { AvatarComponent } from './avatar/avatar.component';
@@ -152,6 +153,7 @@ let sharedComponents = [
   AvatarComponent,
   BricksComponent,
   MainTableComponent,
+  FieldOptionsComponent,
   //
   CompletedRingComponent,
   EmailRingComponent,

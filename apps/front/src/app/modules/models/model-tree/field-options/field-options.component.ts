@@ -14,6 +14,9 @@ export class FieldOptionsComponent {
   @Input()
   node: TreeNode;
 
+  @Input()
+  isMetric: boolean;
+
   constructor(
     private uiQuery: UiQuery,
     private navigateService: NavigateService
@@ -28,7 +31,10 @@ export class FieldOptionsComponent {
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
-    let fileIdAr = this.node.data.fieldFilePath.split('/');
+    let fileIdAr =
+      this.isMetric === true
+        ? this.node.data.metric.filePath.split('/')
+        : this.node.data.fieldFilePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');
@@ -36,7 +42,10 @@ export class FieldOptionsComponent {
     this.navigateService.navigateToFileLine({
       panel: PanelEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),
-      lineNumber: this.node.data.fieldLineNum
+      lineNumber:
+        this.isMetric === true
+          ? this.node.data.metric.fieldLineNum
+          : this.node.data.fieldLineNum
     });
   }
 }

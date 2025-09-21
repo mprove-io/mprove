@@ -94,6 +94,7 @@ export function createModelMetrics(
           let modelMetric: ModelMetric = {
             metricId: `${store.name}.${storeField.name}.${METRIC_ID_BY}.${timeId}`,
             filePath: store.filePath,
+            fieldLineNum: storeField.name_line_num,
             // partId: partId,
             modelId: `${store.name}`,
             modelType: ModelTypeEnum.Store,
@@ -204,6 +205,7 @@ export function createModelMetrics(
             let modelMetric: ModelMetric = {
               metricId: `${apiModel.modelId}.${y.id}.${METRIC_ID_BY}.${tg.timeId}`,
               filePath: yNode.fieldFilePath,
+              fieldLineNum: yNode.fieldLineNum,
               // partId: partId,
               modelId: apiModel.modelId,
               modelType: ModelTypeEnum.Malloy,

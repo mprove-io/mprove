@@ -98,6 +98,16 @@
                 </div>
 
                 <div class="flex flex-grow"></div>
+
+                <div
+                  *ngIf="node.data.isField === true"
+                  class="invisible ml-3 flex [.group-bar:hover_&]:visible"
+                >
+                  <m-field-options
+                    [node]="node"
+                    [isMetric]="true"
+                  ></m-field-options>
+                </div>
               </div>
             </div>
           </div>

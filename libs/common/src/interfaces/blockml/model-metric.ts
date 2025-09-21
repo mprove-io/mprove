@@ -33,6 +33,9 @@ export class ModelMetric {
   @IsString()
   filePath?: string;
 
+  @IsInt()
+  fieldLineNum?: number;
+
   @IsEnum(MetricTypeEnum)
   type?: MetricTypeEnum;
 
