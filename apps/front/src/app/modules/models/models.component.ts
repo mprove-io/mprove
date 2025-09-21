@@ -60,6 +60,7 @@ import { makeId } from '~common/functions/make-id';
 import { setChartFields } from '~common/functions/set-chart-fields';
 import { ChartX } from '~common/interfaces/backend/chart-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { ModelX } from '~common/interfaces/backend/model-x';
 import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
 import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
 import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
@@ -229,10 +230,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
     })
   );
 
-  models: ModelState[];
+  filteredModels: ModelX[];
+
+  models: ModelX[];
   models$ = this.modelsQuery.select().pipe(
     tap(ml => {
       this.models = ml.models;
+      this.filteredModels = this.models.filter(model => model.hasAccess);
 
       let selectedModel = this.modelQuery.getValue();
 
@@ -1636,17 +1640,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let models = this.modelsQuery.getValue().models;
 
-    models.forEach(model => {
-      let topNode: ChartsItemNode = {
-        id: model.modelId,
-        isTop: true,
-        topLabel: model.label,
-        chart: undefined,
-        children: []
-      };
+    models
+      .filter(model => model.hasAccess === true)
+      .forEach(model => {
+        let topNode: ChartsItemNode = {
+          id: model.modelId,
+          isTop: true,
+          topLabel: model.label,
+          chart: undefined,
+          children: []
+        };
 
-      chartsItemNodes.push(topNode);
-    });
+        chartsItemNodes.push(topNode);
+      });
 
     let idxs;
 

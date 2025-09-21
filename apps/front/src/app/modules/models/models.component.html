@@ -357,7 +357,7 @@
                   [fixNgSelectBottom]="modelsModelSelect"
                   data-cy="modelsModelSelect"
                   class="model-select w-full select-none text-base"
-                  [items]="models"
+                  [items]="filteredModels"
                   [clearable]="false"
                   [searchable]="true"
                   (change)="modelChange()"
@@ -602,15 +602,19 @@
                     <div
                       *ngIf="node.data.isTop === true"
                       data-cy="chartsTreeItem"
-                      class="group-bar flex h-11 w-full select-none flex-row rounded px-5 pr-5"
+                      class="group-bar flex h-11 w-full select-none flex-row rounded pl-3 pr-5"
                       [ngClass]="{
                         'cursor-pointer':
                           node.data.isTop === false || node.hasChildren === true
                       }"
                       (click)="chartsItemModelNodeOnClick(node)"
                     >
-                      <div class="relative flex w-full flex-row items-center">
-                        <div class="flex min-w-[2px] flex-row items-center">
+                      <div
+                        class="hover:bg-m50 relative flex w-full flex-row items-center rounded pl-2"
+                      >
+                        <div
+                          class="flex min-w-[2px] flex-1 flex-row items-center"
+                        >
                           <div class="flex flex-row items-center space-x-1">
                             <div class="flex items-center">
                               <div
@@ -643,9 +647,9 @@
                             </div>
                           </div>
 
-                          <!-- <div class="flex flex-1"></div> -->
+                          <div class="flex flex-1"></div>
 
-                          <div class="ml-5 flex flex-row items-center">
+                          <div class="ml-5 mr-2 flex flex-row items-center">
                             <button
                               *ngIf="node.data.isTop === true"
                               data-cy="chartsTreeSchemaButton"

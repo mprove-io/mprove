@@ -13,18 +13,18 @@
       >
         <ng-template #treeNodeTemplate let-node="node">
           <div
-            class="group-bar flex w-full flex-row"
+            class="group-bar flex w-full flex-row pr-5"
             [ngClass]="{
-              'h-[60px]': node.data.isField === false,
-              'h-11 pl-3 pr-5': node.data.isField === true
+              'h-[60px] pl-3': node.data.isField === false,
+              'h-11 pl-8': node.data.isField === true
             }"
           >
             <div
               data-cy="metricsTreeItem"
-              class="flex w-full cursor-pointer select-none flex-row rounded pr-5"
+              class="hover:bg-m50 flex w-full cursor-pointer select-none flex-row rounded pr-5"
               [ngClass]="{
-                'hover:bg-m50 pl-11': node.data.isField === true,
-                'px-5': node.data.isField === false
+                'pl-6': node.data.isField === true,
+                'pl-2': node.data.isField === false
               }"
               (click)="nodeOnClick(node)"
             >
