@@ -387,7 +387,7 @@
               (click)="setShowSchema()"
               class="ml-4 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
             >
-              <div class="flex w-[90px] flex-row items-center justify-center">
+              <!-- <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
                     'text-s400': showSchema === false,
@@ -395,6 +395,20 @@
                   }"
                 >
                   SCHEMA
+                </div>
+              </div> -->
+
+              <div
+                class="group-hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded"
+              >
+                <div
+                  class="flex flex-shrink-0 flex-row items-center justify-center rounded"
+                  [ngClass]="{
+                    'text-s400': showSchema === false,
+                    'text-s1': showSchema === true
+                  }"
+                >
+                  <m-tree-structure-icon></m-tree-structure-icon>
                 </div>
               </div>
             </div>
@@ -660,7 +674,7 @@
                                 class="group-hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded"
                               >
                                 <div
-                                  class="text-s1 flex flex-shrink-0 flex-row items-center justify-center rounded"
+                                  class="text-s500 flex flex-shrink-0 flex-row items-center justify-center rounded"
                                 >
                                   <m-tree-structure-icon></m-tree-structure-icon>
                                 </div>
