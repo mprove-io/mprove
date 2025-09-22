@@ -35,9 +35,9 @@
           >
             <div
               data-cy="modelTreeItem"
-              class="bg-m0 flex w-full select-none flex-row rounded pr-5"
+              class="bg-m0 flex w-full select-none flex-row rounded"
               [ngClass]="{
-                'pl-6': !node.data.isField,
+                'pl-3': node.data.isField === false,
                 'cursor-pointer':
                   (!node.data.isField && node.hasChildren) ||
                   (node.data.required === false &&
@@ -45,18 +45,25 @@
                       nodeClassDimension,
                       nodeClassMeasure,
                       nodeClassCalculation
-                    ].indexOf(node.data.nodeClass) > -1),
-                'hover:bg-m50':
-                  node.data.required === false &&
-                  [
-                    nodeClassDimension,
-                    nodeClassMeasure,
-                    nodeClassCalculation
-                  ].indexOf(node.data.nodeClass) > -1
+                    ].indexOf(node.data.nodeClass) > -1)
               }"
               (click)="nodeOnClick(node)"
             >
-              <div class="relative flex w-full flex-row items-center">
+              <div
+                class="relative flex w-full flex-row items-center rounded"
+                [ngClass]="{
+                  'mr-5 pl-3': node.data.isField === false,
+                  'pr-3': node.data.isField === true,
+                  'hover:bg-m50':
+                    node.data.required === false &&
+                    [
+                      nodeClassJoin,
+                      nodeClassDimension,
+                      nodeClassMeasure,
+                      nodeClassCalculation
+                    ].indexOf(node.data.nodeClass) > -1
+                }"
+              >
                 <div class="flex min-w-[2px] flex-row items-center">
                   <div
                     *ngIf="

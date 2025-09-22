@@ -69,6 +69,7 @@ export class ModelNodeExtra extends ModelNode {
 // implements OnDestroy
 export class ModelTreeComponent implements AfterViewInit {
   nodeClassInfo = FieldClassEnum.Info;
+  nodeClassJoin = FieldClassEnum.Join;
   nodeClassDimension = FieldClassEnum.Dimension;
   nodeClassMeasure = FieldClassEnum.Measure;
   nodeClassCalculation = FieldClassEnum.Calculation;
