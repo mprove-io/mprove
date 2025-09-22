@@ -272,10 +272,12 @@
       </ng-scrollbar>
     </div>
 
-    <div class="ml-10 flex flex-shrink-0 flex-row items-start">
+    <div
+      class="ml-10 flex flex-shrink-0 flex-row items-start"
+      *ngIf="mconfig?.filters.length > 0"
+    >
       <m-bricks
         class="flex max-h-[150px] max-w-max overflow-auto"
-        *ngIf="mconfig?.filters.length > 0"
         [extendedFilters]="mconfig.extendedFilters"
         [listen]="ref.data.listen"
         [isKeepBackgroundColor]="false"
