@@ -104,12 +104,19 @@ export function wrapModels(item: {
         fieldItems.forEach(fieldItem => {
           // console.log('fieldItem');
           // console.log(fieldItem);
+          // console.log('fieldItem.path');
+          // console.log(fieldItem.path);
 
           let fields = sourceDef.fields;
 
+          // console.log('sourceDef.fields?.length');
+          // console.log(sourceDef.fields?.length);
+
           fieldItem.path.forEach(path => {
             let parent = fields.find(
-              pField => pField.as === path || pField.name === path
+              pField =>
+                (pField.as === path || pField.name === path) &&
+                isDefined((pField as any)?.fields)
             );
 
             if (isDefined(parent)) {
