@@ -1,12 +1,8 @@
-import {
-  type DuckDBConnection,
-  DuckDBInstance,
-  DuckDBValue
-} from '@duckdb/node-api';
-import { DuckDBResultReader } from '@duckdb/node-api/lib/DuckDBResultReader';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import type { DuckDbError, TableData } from 'duckdb';
+import { Database } from 'duckdb';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
@@ -49,15 +45,28 @@ export class DuckDbService {
       opts.access_mode = 'READ_ONLY';
     }
 
-    let instance = await DuckDBInstance.create(dbPath, opts);
+    let db = new Database(dbPath, opts, err => {
+      if (err) {
+        throw err;
+      }
+    });
 
-    let dc: DuckDBConnection = await instance.connect();
+    let dbQuery = new Promise<TableData>((resolve, reject) => {
+      if (db) {
+        db.all(querySql, (err: DuckDbError | null, rows: TableData) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      } else {
+        reject(new Error('duckdbService: db is not defined'));
+      }
+    });
 
-    await dc
-      .runAndReadAll(querySql)
-      .then(async (reader: DuckDBResultReader) => {
-        let data: Record<string, DuckDBValue>[] = reader.getRowObjects();
-
+    return dbQuery
+      .then(async data => {
         data = JSON.parse(
           JSON.stringify(data, (_key, value) => {
             if (typeof value === 'bigint') {
@@ -130,5 +139,93 @@ export class DuckDbService {
           );
         }
       });
+
+    // import {
+    //   type DuckDBConnection,
+    //   DuckDBInstance,
+    //   DuckDBValue
+    // } from '@duckdb/node-api';
+    // import { DuckDBResultReader } from '@duckdb/node-api/lib/DuckDBResultReader';
+
+    // let instance = await DuckDBInstance.create(dbPath, opts);
+    // let dc: DuckDBConnection = await instance.connect();
+
+    // await dc
+    //   .runAndReadAll(querySql)
+    //   .then(async (reader: DuckDBResultReader) => {
+    //     let data: Record<string, DuckDBValue>[] = reader.getRowObjects();
+
+    //     data = JSON.parse(
+    //       JSON.stringify(data, (_key, value) => {
+    //         if (typeof value === 'bigint') {
+    //           return Number(value);
+    //         }
+    //         return value;
+    //       })
+    //     );
+
+    //     let q = await this.db.drizzle.query.queriesTable.findFirst({
+    //       where: and(
+    //         eq(queriesTable.queryId, queryId),
+    //         eq(queriesTable.queryJobId, queryJobId),
+    //         eq(queriesTable.projectId, projectId)
+    //       )
+    //     });
+
+    //     if (isDefined(q)) {
+    //       q.status = QueryStatusEnum.Completed;
+    //       q.queryJobId = undefined; // null;
+    //       q.data = data;
+    //       q.lastCompleteTs = makeTsNumber();
+    //       q.lastCompleteDuration = Math.floor(
+    //         (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000
+    //       );
+
+    //       await retry(
+    //         async () =>
+    //           await this.db.drizzle.transaction(
+    //             async tx =>
+    //               await this.db.packer.write({
+    //                 tx: tx,
+    //                 insertOrUpdate: {
+    //                   queries: [q]
+    //                 }
+    //               })
+    //           ),
+    //         getRetryOption(this.cs, this.logger)
+    //       );
+    //     }
+    //   })
+    //   .catch(async e => {
+    //     let q = await this.db.drizzle.query.queriesTable.findFirst({
+    //       where: and(
+    //         eq(queriesTable.queryId, queryId),
+    //         eq(queriesTable.queryJobId, queryJobId),
+    //         eq(queriesTable.projectId, projectId)
+    //       )
+    //     });
+
+    //     if (isDefined(q)) {
+    //       q.status = QueryStatusEnum.Error;
+    //       q.data = [];
+    //       q.queryJobId = undefined; // null
+    //       q.lastErrorMessage = e.message;
+    //       q.lastErrorTs = makeTsNumber();
+
+    //       await retry(
+    //         async () =>
+    //           await this.db.drizzle.transaction(
+    //             async tx =>
+    //               await this.db.packer.write({
+    //                 tx: tx,
+    //                 insertOrUpdate: {
+    //                   queries: [q]
+    //                 }
+    //               })
+    //           ),
+    //         getRetryOption(this.cs, this.logger)
+    //       );
+    //     }
+    //   });
   }
 }
