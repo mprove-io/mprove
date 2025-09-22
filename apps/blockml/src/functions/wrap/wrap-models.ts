@@ -130,11 +130,12 @@ export function wrapModels(item: {
               pField.name === fieldItem.field.name
           );
 
-          let filePathStartIndex = field.location.url.indexOf(`${projectId}/`);
+          // TODO: check "field.location?" for field type array and record
+          let filePathStartIndex = field.location?.url.indexOf(`${projectId}/`);
 
           let fieldItemX = Object.assign({}, fieldItem, <FieldItemX>{
-            filePath: field.location.url.slice(filePathStartIndex),
-            lineNum: field.location.range.start.line + 1
+            filePath: field.location?.url.slice(filePathStartIndex),
+            lineNum: field.location?.range.start.line + 1
           });
 
           fieldItemXs.push(fieldItemX);
