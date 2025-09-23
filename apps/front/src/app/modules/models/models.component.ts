@@ -1718,7 +1718,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
-  newChart() {
+  clearQuery() {
     if (isDefined(this.model.modelId)) {
       if (this.showSchema === false) {
         this.showSchema = true;
