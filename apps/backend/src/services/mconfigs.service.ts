@@ -169,7 +169,7 @@ export class MconfigsService {
       projectId: project.projectId,
       envId: envId,
       connectionId: model.connectionId,
-      connectionType: (model.content as any).connection.type,
+      connectionType: connection.type,
       sql: undefined,
       apiMethod: (model.content as FileStore).method as StoreMethodEnum,
       apiUrl: apiUrl,
