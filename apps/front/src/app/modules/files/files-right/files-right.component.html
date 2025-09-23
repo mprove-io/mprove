@@ -1,17 +1,46 @@
 <div class="bg-m0 ml-6 w-full min-w-[2px] select-none rounded shadow">
   <div
     class="flex h-full flex-col items-center justify-center"
-    *ngIf="nav?.needValidate === true"
+    *ngIf="
+      nav?.needValidate === true ||
+      (repo &&
+        repo.conflicts.length === 0 &&
+        struct &&
+        struct.errors.length === 0 &&
+        !secondFileNodeId)
+    "
   >
-    <div class="text-a500">
-      <m-alert-ring></m-alert-ring>
-    </div>
+    <div
+      class="flex flex-col items-center justify-center"
+      *ngIf="nav?.needValidate === true"
+    >
+      <div class="text-a500 flex h-14 flex-row items-end">
+        <m-alert-ring></m-alert-ring>
+      </div>
 
-    <div class="text-xl"> Validation is required </div>
+      <div class="mt-2 text-xl"> Validation is required </div></div
+    >
+
+    <div
+      *ngIf="
+        nav?.needValidate === false &&
+        repo &&
+        repo.conflicts.length === 0 &&
+        struct &&
+        struct.errors.length === 0 &&
+        !secondFileNodeId
+      "
+      class="flex flex-col items-center justify-center"
+    >
+      <div class="h-12">
+        <m-completed-ring></m-completed-ring>
+      </div>
+      <div class="mt-4 text-xl"> Mprove Files are valid </div>
+    </div>
 
     <button
       data-cy="filesRightValidateButton"
-      class="text-m0 mt-5 h-11 rounded px-5 py-2 text-lg font-medium focus:outline-none"
+      class="text-m0 mt-7 h-11 rounded px-5 py-2 text-lg font-medium focus:outline-none"
       type="button"
       [ngClass]="{
         'bg-m600': isEditor === true,
@@ -36,21 +65,6 @@
       struct.errors.length > 0
     "
   ></m-blockml-errors>
-
-  <div
-    *ngIf="
-      nav?.needValidate === false &&
-      repo &&
-      repo.conflicts.length === 0 &&
-      struct &&
-      struct.errors.length === 0 &&
-      !secondFileNodeId
-    "
-    class="flex h-full flex-col items-center justify-center"
-  >
-    <m-completed-ring></m-completed-ring>
-    <div class="mt-4 text-xl"> Mprove Files are valid </div>
-  </div>
 
   <div
     class="flex h-full w-full flex-col"
