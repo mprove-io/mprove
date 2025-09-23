@@ -237,7 +237,15 @@ export function wrapFieldItem(item: {
       //   return modelField;
       // });
     }
-  } else {
+  } else if (
+    [
+      FieldResultEnum.String,
+      FieldResultEnum.Number,
+      FieldResultEnum.Boolean,
+      FieldResultEnum.Ts,
+      FieldResultEnum.Date
+    ].indexOf(fieldNode.fieldResult) > -1
+  ) {
     topNode.children.push(fieldNode);
   }
 

@@ -225,8 +225,8 @@ export async function fetchSql<T extends dcType>(
       // console.log('filtersFractions');
       // console.log(filtersFractions);
 
-      console.log('fetchSqlMalloyQuery:');
-      console.log(Date.now() - startFetchSqlMalloyQuery);
+      // console.log('fetchSqlMalloyQuery:');
+      // console.log(Date.now() - startFetchSqlMalloyQuery);
 
       tile.compiledQuery = newMconfig.compiledQuery;
       tile.sql = newMconfig.compiledQuery.sql.split('\n');

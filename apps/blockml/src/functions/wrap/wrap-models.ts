@@ -6,6 +6,7 @@ import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
 import { MF } from '~common/constants/top';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelNodeIdSuffixEnum } from '~common/enums/model-node-id-suffix.enum';
 import { ModelNodeLabelEnum } from '~common/enums/model-node-label.enum';
@@ -193,10 +194,23 @@ export function wrapModels(item: {
               topNode: topNode
             });
 
-            apiFields.push(apiField);
+            if (
+              [
+                FieldResultEnum.String,
+                FieldResultEnum.Number,
+                FieldResultEnum.Boolean,
+                FieldResultEnum.Ts,
+                FieldResultEnum.Date
+              ].indexOf(apiField.result) > -1
+            ) {
+              apiFields.push(apiField);
+            } else {
+              // console.log('apiField');
+              // console.log(apiField);
+            }
           });
 
-          if (nodeFieldItems.length > 0) {
+          if (topNode.children?.length > 0) {
             nodes.push(topNode);
           }
         });
@@ -486,7 +500,10 @@ export function wrapModels(item: {
       connectionId: x.connection.connectionId,
       filePath: x.filePath,
       fileText: files.find(file => file.path === x.filePath).content,
-      content: x.fileExt === FileExtensionEnum.Store ? x : undefined,
+      content:
+        x.fileExt === FileExtensionEnum.Store
+          ? Object.assign({}, x, { connection: undefined })
+          : undefined,
       // isStoreModel: x.fileExt === FileExtensionEnum.Store,
       dateRangeIncludesRightSide:
         x.fileExt === FileExtensionEnum.Store &&

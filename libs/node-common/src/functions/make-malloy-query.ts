@@ -453,9 +453,9 @@ export async function makeMalloyQuery(item: {
 
   let newMalloyQuery = astQuery.toMalloy();
 
-  console.log('newMalloyQuery');
-  console.log(Date.now());
-  console.log(newMalloyQuery);
+  // console.log('newMalloyQuery');
+  // console.log(Date.now());
+  // console.log(newMalloyQuery);
 
   let runtime = new MalloyRuntime({
     urlReader: {
