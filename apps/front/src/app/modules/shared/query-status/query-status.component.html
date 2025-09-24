@@ -1,4 +1,4 @@
-<div class="flex max-h-[34px] flex-row items-center overflow-hidden text-base">
+<div class="flex flex-row items-center overflow-hidden text-base">
   <div
     [tp]="t1"
     [tpIsEnabled]="true"
@@ -113,13 +113,15 @@
     <div
       [tp]="t6"
       [tpIsEnabled]="true"
-      class="bg-r100 text-r700 line-clamp-1 max-w-xl select-none px-3 py-2"
+      class="bg-r100 text-r700 line-clamp-1 max-w-xl select-none rounded px-3 py-2"
     >
-      <ng-template #t6>
-        {{ query?.lastErrorMessage | capitalize }}
-      </ng-template>
+      <div class="truncate">
+        <ng-template #t6>
+          {{ query?.lastErrorMessage | capitalize }}
+        </ng-template>
 
-      <ng-container *ngTemplateOutlet="t6"></ng-container>
+        <ng-container *ngTemplateOutlet="t6"></ng-container>
+      </div>
     </div>
 
     <div [tp]="t7" [tpIsEnabled]="true" class="ml-5 line-clamp-1 select-none">
