@@ -96,36 +96,56 @@ export class PrestoService {
           );
         }
       })
-      .catch(async e => {
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+      .catch(async e =>
+        this.processPrestoError({
+          e: e,
+          queryId: queryId,
+          queryJobId: queryJobId,
+          projectId: projectId
+        })
+      );
+  }
 
-        if (isDefined(q)) {
-          q.status = QueryStatusEnum.Error;
-          q.data = [];
-          q.queryJobId = undefined; // null
-          q.lastErrorMessage = e.message;
-          q.lastErrorTs = makeTsNumber();
+  async processPrestoError(item: {
+    e: any;
+    queryId: string;
+    queryJobId: string;
+    projectId: string;
+  }) {
+    let { e, queryId, queryJobId, projectId } = item;
 
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.write({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [q]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
-        }
-      });
+    // console.log(e);
+    // console.log(e.cause);
+    // console.log(e.cause.message);
+
+    let q = await this.db.drizzle.query.queriesTable.findFirst({
+      where: and(
+        eq(queriesTable.queryId, queryId),
+        eq(queriesTable.queryJobId, queryJobId),
+        eq(queriesTable.projectId, projectId)
+      )
+    });
+
+    if (isDefined(q)) {
+      q.status = QueryStatusEnum.Error;
+      q.data = [];
+      q.queryJobId = undefined; // null
+      q.lastErrorMessage = e.cause?.message ?? e.message; // presto specific
+      q.lastErrorTs = makeTsNumber();
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  queries: [q]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
   }
 }

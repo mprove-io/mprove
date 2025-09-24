@@ -55,19 +55,13 @@ export class SnowFlakeService {
 
     let snowflakeConnection = snowflake.createConnection(options);
 
-    let logger = this.logger;
-    let cs = this.cs;
-
-    snowflakeConnection.connect(function (err, conn): void {
+    snowflakeConnection.connect((err, conn) => {
       if (err) {
-        logToConsoleBackend({
-          log: new ServerError({
-            message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_CONNECT,
-            originalError: err
-          }),
-          logLevel: LogLevelEnum.Error,
-          logger: logger,
-          cs: cs
+        this.processError({
+          e: err,
+          queryId: queryId,
+          queryJobId: queryJobId,
+          projectId: projectId
         });
       }
     });
@@ -135,35 +129,12 @@ export class SnowFlakeService {
         this.snowflakeConnectionDestroy(snowflakeConnection);
       })
       .catch(async e => {
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
+        await this.processError({
+          e: e,
+          queryId: queryId,
+          queryJobId: queryJobId,
+          projectId: projectId
         });
-
-        if (isDefined(q)) {
-          q.status = QueryStatusEnum.Error;
-          q.data = [];
-          q.queryJobId = undefined; // null
-          q.lastErrorMessage = e.message;
-          q.lastErrorTs = makeTsNumber();
-
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.write({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [q]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
-        }
         this.snowflakeConnectionDestroy(snowflakeConnection);
       });
   }
@@ -204,6 +175,45 @@ export class SnowFlakeService {
           });
         }
       });
+    }
+  }
+
+  async processError(item: {
+    e: any;
+    queryId: string;
+    queryJobId: string;
+    projectId: string;
+  }) {
+    let { e, queryId, queryJobId, projectId } = item;
+
+    let q = await this.db.drizzle.query.queriesTable.findFirst({
+      where: and(
+        eq(queriesTable.queryId, queryId),
+        eq(queriesTable.queryJobId, queryJobId),
+        eq(queriesTable.projectId, projectId)
+      )
+    });
+
+    if (isDefined(q)) {
+      q.status = QueryStatusEnum.Error;
+      q.data = [];
+      q.queryJobId = undefined; // null
+      q.lastErrorMessage = e.message;
+      q.lastErrorTs = makeTsNumber();
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  queries: [q]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
     }
   }
 }

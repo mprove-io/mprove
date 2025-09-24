@@ -45,13 +45,9 @@ export class DuckDbService {
       opts.access_mode = 'READ_ONLY';
     }
 
-    let isError = false;
-
     let db = new Database(dbPath, opts, async err => {
       if (err) {
-        isError = true;
-
-        await this.processError({
+        this.processError({
           e: err,
           queryId: queryId,
           queryJobId: queryJobId,
@@ -59,10 +55,6 @@ export class DuckDbService {
         });
       }
     });
-
-    if (isError) {
-      return;
-    }
 
     let dbQuery = new Promise<TableData>((resolve, reject) => {
       if (db) {

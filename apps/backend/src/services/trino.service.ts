@@ -125,36 +125,52 @@ export class TrinoService {
           );
         }
       })
-      .catch(async e => {
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+      .catch(async e =>
+        this.processError({
+          e: e,
+          queryId: queryId,
+          queryJobId: queryJobId,
+          projectId: projectId
+        })
+      );
+  }
 
-        if (isDefined(q)) {
-          q.status = QueryStatusEnum.Error;
-          q.data = [];
-          q.queryJobId = undefined; // null
-          q.lastErrorMessage = e.message;
-          q.lastErrorTs = makeTsNumber();
+  async processError(item: {
+    e: any;
+    queryId: string;
+    queryJobId: string;
+    projectId: string;
+  }) {
+    let { e, queryId, queryJobId, projectId } = item;
 
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.write({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [q]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
-        }
-      });
+    let q = await this.db.drizzle.query.queriesTable.findFirst({
+      where: and(
+        eq(queriesTable.queryId, queryId),
+        eq(queriesTable.queryJobId, queryJobId),
+        eq(queriesTable.projectId, projectId)
+      )
+    });
+
+    if (isDefined(q)) {
+      q.status = QueryStatusEnum.Error;
+      q.data = [];
+      q.queryJobId = undefined; // null
+      q.lastErrorMessage = e.message;
+      q.lastErrorTs = makeTsNumber();
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  queries: [q]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
   }
 }
