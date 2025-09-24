@@ -41,25 +41,34 @@ export class MysqlService {
       timezone: '+00:00'
     };
 
-    // let pgp = pgPromise({ noWarnings: true });
-    // let pgDb = pgp(cn);
+    let mc = await MYSQL.createConnection(connectionOptions).catch(async e =>
+      this.processError({
+        e: e,
+        queryId: queryId,
+        queryJobId: queryJobId,
+        projectId: projectId
+      })
+    );
 
-    let mc = await MYSQL.createConnection(connectionOptions);
+    if (!mc) {
+      return;
+    }
 
     // packages/malloy-db-mysql/src/mysql_connection.ts
     await mc
       .query(
-        // LTNOTE: Need to make the group_concat_max_len configurable.
         "set @@session.time_zone = 'UTC';" +
-          // LTNOTE: for nesting this is the max buffer size.  Currently set to 10M, have to figure out perf implications.
           'SET SESSION group_concat_max_len = 10000000;' +
-          // Need this to make NULL LAST in order by (ISNULL(exp) can't appear in an ORDER BY without it)
           "SET SESSION sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
       )
-      .catch(async e => {
-        console.log('error start mc.query');
-        console.log(e);
-      });
+      .catch(async e =>
+        this.processError({
+          e: e,
+          queryId: queryId,
+          queryJobId: queryJobId,
+          projectId: projectId
+        })
+      );
 
     await mc
       .query(querySql)
@@ -101,36 +110,52 @@ export class MysqlService {
           );
         }
       })
-      .catch(async e => {
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+      .catch(async e =>
+        this.processError({
+          e: e,
+          queryId: queryId,
+          queryJobId: queryJobId,
+          projectId: projectId
+        })
+      );
+  }
 
-        if (isDefined(q)) {
-          q.status = QueryStatusEnum.Error;
-          q.data = [];
-          q.queryJobId = undefined; // null
-          q.lastErrorMessage = e.message;
-          q.lastErrorTs = makeTsNumber();
+  async processError(item: {
+    e: any;
+    queryId: string;
+    queryJobId: string;
+    projectId: string;
+  }) {
+    let { e, queryId, queryJobId, projectId } = item;
 
-          await retry(
-            async () =>
-              await this.db.drizzle.transaction(
-                async tx =>
-                  await this.db.packer.write({
-                    tx: tx,
-                    insertOrUpdate: {
-                      queries: [q]
-                    }
-                  })
-              ),
-            getRetryOption(this.cs, this.logger)
-          );
-        }
-      });
+    let q = await this.db.drizzle.query.queriesTable.findFirst({
+      where: and(
+        eq(queriesTable.queryId, queryId),
+        eq(queriesTable.queryJobId, queryJobId),
+        eq(queriesTable.projectId, projectId)
+      )
+    });
+
+    if (isDefined(q)) {
+      q.status = QueryStatusEnum.Error;
+      q.data = [];
+      q.queryJobId = undefined; // null
+      q.lastErrorMessage = e.message;
+      q.lastErrorTs = makeTsNumber();
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  queries: [q]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
   }
 }
