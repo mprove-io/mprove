@@ -345,39 +345,39 @@ export class AppModule implements OnModuleInit {
             connections.push(c1);
           }
 
-          let c2connection =
-            await this.db.drizzle.query.connectionsTable.findFirst({
-              where: and(
-                eq(connectionsTable.projectId, demoProjectId),
-                eq(connectionsTable.envId, PROJECT_ENV_PROD),
-                eq(connectionsTable.connectionId, 'c2_clickhouse')
-              )
-            });
+          // let c2connection =
+          //   await this.db.drizzle.query.connectionsTable.findFirst({
+          //     where: and(
+          //       eq(connectionsTable.projectId, demoProjectId),
+          //       eq(connectionsTable.envId, PROJECT_ENV_PROD),
+          //       eq(connectionsTable.connectionId, 'c2_clickhouse')
+          //     )
+          //   });
 
-          let demoProjectDwhClickhousePassword = this.cs.get<
-            BackendConfig['demoProjectDwhClickhousePassword']
-          >('demoProjectDwhClickhousePassword');
+          // let demoProjectDwhClickhousePassword = this.cs.get<
+          //   BackendConfig['demoProjectDwhClickhousePassword']
+          // >('demoProjectDwhClickhousePassword');
 
-          if (
-            isUndefined(c2connection) &&
-            isDefinedAndNotEmpty(demoProjectDwhClickhousePassword)
-          ) {
-            let c2 = this.makerService.makeConnection({
-              projectId: demoProjectId,
-              envId: PROJECT_ENV_PROD,
-              connectionId: 'c2_clickhouse',
-              type: ConnectionTypeEnum.ClickHouse,
-              clickhouseOptions: {
-                host: 'dwh-clickhouse',
-                port: 8123,
-                username: 'c_user',
-                password: demoProjectDwhClickhousePassword,
-                isSSL: false
-              }
-            });
+          // if (
+          //   isUndefined(c2connection) &&
+          //   isDefinedAndNotEmpty(demoProjectDwhClickhousePassword)
+          // ) {
+          //   let c2 = this.makerService.makeConnection({
+          //     projectId: demoProjectId,
+          //     envId: PROJECT_ENV_PROD,
+          //     connectionId: 'c2_clickhouse',
+          //     type: ConnectionTypeEnum.ClickHouse,
+          //     clickhouseOptions: {
+          //       host: 'dwh-clickhouse',
+          //       port: 8123,
+          //       username: 'c_user',
+          //       password: demoProjectDwhClickhousePassword,
+          //       isSSL: false
+          //     }
+          //   });
 
-            connections.push(c2);
-          }
+          //   connections.push(c2);
+          // }
 
           let c3connection =
             await this.db.drizzle.query.connectionsTable.findFirst({

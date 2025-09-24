@@ -174,25 +174,25 @@ services:
         source: $COMPOSE_DWH_PRESTO_CONFIG_VOLUME_SOURCE_PATH
         target: /opt/presto-server/etc/config.properties
 
-  dwh-clickhouse:
-    build:
-      context: ./
-      dockerfile: tools/docker/dwh-clickhouse.Dockerfile
-    image: ghcr.io/mprove-io/mprove-dwh-clickhouse:$MPROVE_DWH_CLICKHOUSE_TAG
-    environment:
-      - CLICKHOUSE_USER=$COMPOSE_DWH_CLICKHOUSE_USER
-      - CLICKHOUSE_PASSWORD=$COMPOSE_DWH_CLICKHOUSE_PASSWORD
-      - CLICKHOUSE_DB=$COMPOSE_DWH_CLICKHOUSE_DB
-    ports:
-      - 8123:8123
-      - 9000:9000
-    volumes:
-      - type: bind
-        source: $COMPOSE_DWH_CLICKHOUSE_VOLUME_SOURCE_PATH
-        target: /var/lib/clickhouse
-      - type: bind
-        source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
-        target: /var/log/clickhouse-server
+  # dwh-clickhouse:
+  #   build:
+  #     context: ./
+  #     dockerfile: tools/docker/dwh-clickhouse.Dockerfile
+  #   image: ghcr.io/mprove-io/mprove-dwh-clickhouse:$MPROVE_DWH_CLICKHOUSE_TAG
+  #   environment:
+  #     - CLICKHOUSE_USER=$COMPOSE_DWH_CLICKHOUSE_USER
+  #     - CLICKHOUSE_PASSWORD=$COMPOSE_DWH_CLICKHOUSE_PASSWORD
+  #     - CLICKHOUSE_DB=$COMPOSE_DWH_CLICKHOUSE_DB
+  #   ports:
+  #     - 8123:8123
+  #     - 9000:9000
+  #   volumes:
+  #     - type: bind
+  #       source: $COMPOSE_DWH_CLICKHOUSE_VOLUME_SOURCE_PATH
+  #       target: /var/lib/clickhouse
+  #     - type: bind
+  #       source: $COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH
+  #       target: /var/log/clickhouse-server
 
   mcli:
     build:

@@ -62,7 +62,7 @@
     "e2e:integra": "nx e2e integra",
     "make:dist": "mkdir -p dist/apps/disk dist/apps/backend dist/apps/blockml dist/apps/front",
     "clean": "yarn clean:mprove_data && yarn clean:dist && yarn clean:angular && yarn clean:nx && yarn clean:cypress",
-    "clean:mprove_data": "rm -rf mprove_data && mkdir -p mprove_data mprove_data/blockml-data mprove_data/blockml-logs mprove_data/db-main mprove_data/dwh-clickhouse mprove_data/dwh-clickhouse-logs mprove_data/dwh-mysql mprove_data/dwh-postgres mprove_data/mcli-repos mprove_data/organizations mprove_data/redis",
+    "clean:mprove_data": "rm -rf mprove_data && mkdir -p mprove_data mprove_data/blockml-data mprove_data/blockml-logs mprove_data/db-main mprove_data/dwh-mysql mprove_data/dwh-postgres mprove_data/mcli-repos mprove_data/organizations mprove_data/redis",
     "clean:blockml-data": "rm -rf mprove_data/blockml-data/*",
     "clean:blockml-logs": "rm -rf mprove_data/blockml-logs/*",
     "clean:db-main": "rm -rf mprove_data/db-main/*",

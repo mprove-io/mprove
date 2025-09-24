@@ -17,8 +17,8 @@ services:
   dwh-mysql:
     image: ghcr.io/mprove-io/mprove-lab-dwh-mysql:$MPROVE_DWH_MYSQL_TAG
 
-  dwh-clickhouse:
-    image: ghcr.io/mprove-io/mprove-lab-dwh-clickhouse:$MPROVE_DWH_CLICKHOUSE_TAG
+  # dwh-clickhouse:
+  #   image: ghcr.io/mprove-io/mprove-lab-dwh-clickhouse:$MPROVE_DWH_CLICKHOUSE_TAG
 
   mcli:
     image: ghcr.io/mprove-io/mprove-lab-mcli:$MPROVE_RELEASE_TAG

@@ -95,7 +95,7 @@ export class AddConnectionDialogComponent implements OnInit {
     ConnectionTypeEnum.MySQL,
     ConnectionTypeEnum.Trino,
     ConnectionTypeEnum.Presto,
-    ConnectionTypeEnum.ClickHouse, // TODO: hide clickhouse
+    // ConnectionTypeEnum.ClickHouse,
     ConnectionTypeEnum.SnowFlake,
     ConnectionTypeEnum.BigQuery,
     ConnectionTypeEnum.MotherDuck,
