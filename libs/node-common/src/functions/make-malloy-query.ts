@@ -468,6 +468,7 @@ export async function makeMalloyQuery(item: {
   let newMalloyQueryStable = astQuery.toMalloy();
 
   let timezone =
+    queryOperations.length > 0 &&
     queryOperations[0].type === QueryOperationTypeEnum.Get
       ? queryOperations[0].timezone
       : mconfig.timezone;
@@ -648,7 +649,10 @@ export async function makeMalloyQuery(item: {
     // joinAggregations: [],
     sortings: sortings,
     sorts: newSorts.length > 0 ? newSorts.join(', ') : null,
-    timezone: queryOperations[0].timezone,
+    timezone:
+      queryOperations.length > 0
+        ? queryOperations[0].timezone
+        : mconfig.timezone,
     limit: compiledQuery.structs[0].resultMetadata.limit,
     filters: mconfig.filters,
     chart: mconfig.chart, // previous mconfig chart
