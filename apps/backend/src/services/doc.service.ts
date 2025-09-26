@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { format, fromUnixTime } from 'date-fns';
+import { DateTime } from 'luxon';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -444,9 +445,39 @@ FROM main;`;
             } else {
               let tsDate = fromUnixTime(column.columnId);
 
+              // console.log('tsDate.toISOString().slice(0, 19)');
+              // console.log(tsDate.toISOString().slice(0, 19));
+
+              let zonedDate = DateTime.fromJSDate(tsDate, {
+                zone: 'utc'
+              }).setZone(row.mconfig.timezone);
+
+              if (!zonedDate.isValid) {
+                console.log('zonedDate.isValid false'); // TODO: throw error
+                return null;
+              }
+
+              let offsetMs = zonedDate.offset * 60 * 1000;
+
+              let inverseOffsetMs = -offsetMs;
+
+              let inverseDate = new Date(tsDate.getTime() + inverseOffsetMs);
+
+              let inverseZonedDate = DateTime.fromJSDate(inverseDate, {
+                zone: 'utc'
+              });
+
+              // let zonedTimeValue = tsDate.toISOString().slice(0, 19)
+              let zonedTimeValue = inverseZonedDate.toFormat(
+                'yyyy-MM-dd HH:mm:ss'
+              );
+
+              // console.log('zonedTimeValue');
+              // console.log(zonedTimeValue);
+
               let timeValue =
                 row.mconfig?.modelType === ModelTypeEnum.Malloy
-                  ? tsDate.toISOString().slice(0, 19)
+                  ? zonedTimeValue
                   : timeSpec === TimeSpecEnum.Years
                     ? format(tsDate, 'yyyy')
                     : timeSpec === TimeSpecEnum.Quarters
