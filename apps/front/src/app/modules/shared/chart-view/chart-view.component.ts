@@ -78,6 +78,9 @@ export class ChartViewComponent implements OnChanges {
   @Input()
   mconfigFields: MconfigField[];
 
+  @Input()
+  mconfigTimezone: string;
+
   yFieldColumn: MconfigField;
 
   @Input()
@@ -207,8 +210,8 @@ export class ChartViewComponent implements OnChanges {
       // echarts - data
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
-        console.log('this.qData');
-        console.log(this.qData);
+        // console.log('this.qData');
+        // console.log(this.qData);
 
         //   [
         //     {
@@ -232,6 +235,7 @@ export class ChartViewComponent implements OnChanges {
           this.chart.yFields.length > 0
             ? this.dataService.makeSeriesData({
                 modelType: this.modelType,
+                mconfigTimezone: this.mconfigTimezone,
                 selectFields: this.mconfigFields,
                 xFieldId: this.chart.xField,
                 sizeFieldId: this.chart.sizeField,
@@ -242,8 +246,8 @@ export class ChartViewComponent implements OnChanges {
               })
             : [];
 
-        console.log('this.seriesData');
-        console.log(this.seriesData);
+        // console.log('this.seriesData');
+        // console.log(this.seriesData);
 
         //   [
         //     {

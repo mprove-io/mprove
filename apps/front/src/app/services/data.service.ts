@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FieldBase } from '@malloydata/malloy/dist/model';
 import { formatLocale } from 'd3-format';
 import { SeriesOption } from 'echarts';
+import { DateTime } from 'luxon';
 import { format } from 'ssf';
 import { NO_FIELDS_SELECTED } from '~common/constants/top';
 import {
@@ -467,19 +468,21 @@ export class DataService {
             sqlName = field.sqlName;
           }
 
-          let tsValue: number;
+          let tsValueMs: number;
 
           if (isDefined(field.detail)) {
-            tsValue = dataRow[field.id] as unknown as number;
+            tsValueMs = dataRow[field.id] as unknown as number;
           } else if (field.result === FieldResultEnum.Ts) {
-            let tsValueFn =
+            tsValueMs =
               mconfig.modelType === ModelTypeEnum.Malloy
-                ? this.getDateFromT
-                : this.getTsValueFn(sqlName);
-
-            tsValue = isDefined(tsValueFn)
-              ? tsValueFn(value).getTime()
-              : undefined;
+                ? this.getMsFromT({
+                    value: value,
+                    timezone: mconfig.timezone
+                  })
+                : this.getMsFromValue({
+                    fieldSqlName: sqlName,
+                    value: value
+                  });
           }
 
           let storeTimeSpec =
@@ -518,7 +521,7 @@ export class DataService {
                   : 'NULL',
             valueFmt: isUndefined(value)
               ? 'NULL'
-              : isDefined(tsValue)
+              : isDefined(tsValueMs)
                 ? frontFormatTsUnix({
                     timeSpec:
                       isStore === true
@@ -526,7 +529,8 @@ export class DataService {
                         : this.getTimeSpecByMalloyTimeframe({
                             timeframe: field.timeframe
                           }),
-                    unixTimeZoned: isStore === true ? tsValue : tsValue / 1000
+                    unixTimeZoned:
+                      isStore === true ? tsValueMs : tsValueMs / 1000
                   })
                 : this.formatValue({
                     value: value,
@@ -550,6 +554,7 @@ export class DataService {
 
   makeSeriesData(item: {
     modelType: ModelTypeEnum;
+    mconfigTimezone: string;
     selectFields: MconfigField[];
     data: QDataRow[];
     multiFieldId: string;
@@ -560,6 +565,7 @@ export class DataService {
   }) {
     let {
       modelType,
+      mconfigTimezone,
       selectFields,
       data,
       multiFieldId,
@@ -685,16 +691,22 @@ export class DataService {
 
         // x null check
         if (row[xField.id]) {
-          let tsValueFn =
-            modelType === ModelTypeEnum.Malloy
-              ? this.getDateFromT
-              : this.getTsValueFn(xField.sqlName);
+          let tsValueMs =
+            xField.result === FieldResultEnum.Ts
+              ? modelType === ModelTypeEnum.Malloy
+                ? this.getMsFromT({
+                    value: row[xField.id].value,
+                    timezone: mconfigTimezone
+                  })
+                : this.getMsFromValue({
+                    fieldSqlName: xField.sqlName,
+                    value: row[xField.id].value
+                  })
+              : undefined;
 
           let xV =
             xField.result === FieldResultEnum.Ts
-              ? isDefined(tsValueFn)
-                ? tsValueFn(row[xField.id].value).getTime()
-                : row[xField.id].value
+              ? (tsValueMs ?? row[xField.id].value)
               : row[xField.id].value;
 
           if (isDefined(xV)) {
@@ -828,7 +840,9 @@ export class DataService {
     return seriesData;
   }
 
-  private getTsValueFn(fieldSqlName: string) {
+  private getMsFromValue(item: { value: string; fieldSqlName: string }) {
+    let { value, fieldSqlName } = item;
+
     let tsValueFn: (rValue: string) => Date;
 
     if (fieldSqlName.match(/(?:___date)$/g)) {
@@ -879,7 +893,9 @@ export class DataService {
       tsValueFn = this.getDateFromMinute;
     }
 
-    return tsValueFn;
+    let ms = isDefined(tsValueFn) ? tsValueFn(value)?.getTime() : undefined;
+
+    return ms;
   }
 
   getTimeSpecByFieldSqlName(fieldSqlName: string) {
@@ -1009,12 +1025,18 @@ export class DataService {
     return date;
   }
 
-  private getDateFromT(rValue: string) {
-    let data = rValue;
+  private getMsFromT(item: { value: string; timezone: string }) {
+    let { value, timezone } = item;
+
+    // console.log('timezone');
+    // console.log(timezone);
+
+    // console.log('value');
+    // console.log(value);
 
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)[T|\s](\d\d)[:](\d\d)[:](\d\d)/g;
 
-    let r = regEx.exec(data);
+    let r = regEx.exec(value);
 
     if (isUndefined(r)) {
       return null;
@@ -1033,7 +1055,38 @@ export class DataService {
       )
     );
 
-    return date;
+    let dateMs = date.getTime();
+
+    // console.log('dateMs');
+    // console.log(dateMs);
+
+    // packages/malloy-render/src/html/utils.ts -> normalizeToTimezone
+
+    let dateTime = DateTime.fromMillis(dateMs, {
+      zone: timezone
+    });
+
+    let dateTZ = new Date(
+      Date.UTC(
+        dateTime.year,
+        dateTime.month - 1,
+        dateTime.day,
+        dateTime.hour,
+        dateTime.minute,
+        dateTime.second,
+        dateTime.millisecond
+      )
+    );
+
+    // console.log('dateTZ');
+    // console.log(dateTZ);
+
+    // let dateTzMs = dateTZ.getTime();
+
+    // console.log('dateTzMs');
+    // console.log(dateTzMs);
+
+    return dateTZ.getTime();
   }
 
   private getDateFromMonth(rValue: string) {
