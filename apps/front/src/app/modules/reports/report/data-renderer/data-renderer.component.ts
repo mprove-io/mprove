@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { Moment } from '@malloydata/malloy-filter';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { TRIPLE_UNDERSCORE } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTsMixUnitEnum } from '~common/enums/fraction/fraction-ts-mix-unit.enum';
+import { FractionTsMomentTypeEnum } from '~common/enums/fraction/fraction-ts-moment-type.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
@@ -237,10 +239,29 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         dateSeparator: metric.modelType === ModelTypeEnum.Malloy ? '-' : '/'
       });
 
+      let fromMoment: Moment = {
+        moment: 'literal',
+        literal: minuteStr,
+        units: FractionTsMixUnitEnum.Minute
+      };
+
+      let toMoment: Moment = {
+        moment: 'literal',
+        literal: minuteToStr,
+        units: FractionTsMixUnitEnum.Minute
+      };
+
       timeRangeFraction = {
-        brick: `on ${minuteStr} to ${minuteToStr}`,
+        brick: `f\`${minuteStr} to ${minuteToStr}\``,
+        parentBrick: `f\`${minuteStr} to ${minuteToStr}\``,
         operator: FractionOperatorEnum.Or,
         type: FractionTypeEnum.TsIsBetween,
+        tsFromMomentType: FractionTsMomentTypeEnum.Literal,
+        tsToMomentType: FractionTsMomentTypeEnum.Literal,
+        tsFromMoment: fromMoment,
+        tsFromMomentUnit: FractionTsMixUnitEnum.Minute,
+        tsToMoment: toMoment,
+        tsToMomentUnit: FractionTsMixUnitEnum.Minute,
         tsDateYear: Number(dateStr.split('-')[0]),
         tsDateMonth: Number(dateStr.split('-')[1].replace(/^0+/, '')),
         tsDateDay: Number(dateStr.split('-')[2].replace(/^0+/, '')),
@@ -273,7 +294,7 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         let newFraction = timeRangeFraction;
 
         let newFilter: Filter = {
-          fieldId: `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${TimeframeEnum.Time}`,
+          fieldId: `${metric.timeFieldId}_ts`,
           fractions: [newFraction]
         };
 
