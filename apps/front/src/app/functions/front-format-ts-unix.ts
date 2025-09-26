@@ -27,22 +27,22 @@ export function frontFormatTsUnix(item: {
   // console.log(unixTimeZoned);
 
   return timeSpec === TimeSpecEnum.Years
-    ? date.format('YYYY') // format(date, 'yyyy')
+    ? date.format('YYYY')
     : timeSpec === TimeSpecEnum.Quarters
-      ? 'Q' + date.format('Q YYYY') // format(date, 'QQQ yyyy')
+      ? 'Q' + date.format('Q YYYY')
       : timeSpec === TimeSpecEnum.Months
-        ? date.format('MMM YYYY') // format(date, 'MMM yyyy')
+        ? date.format('MMM YYYY')
         : timeSpec === TimeSpecEnum.Weeks
-          ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
+          ? date.format('YYYY MMM DD')
           : timeSpec === TimeSpecEnum.Days
-            ? date.format('DD MMM YYYY') // format(date, 'dd MMM yyyy')
+            ? date.format('YYYY MMM DD')
             : timeSpec === TimeSpecEnum.Hours
-              ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
+              ? date.format('YYYY MMM DD HH:mm')
               : timeSpec === TimeSpecEnum.Minutes
-                ? date.format('HH:mm DD MMM YYYY') // format(date, 'HH:mm dd MMM yyyy')
+                ? date.format('YYYY MMM DD  HH:mm')
                 : timeSpec === TimeSpecEnum.Seconds
-                  ? date.format('HH:mm:ss DD MMM YYYY') //
+                  ? date.format('YYYY MMM DD HH:mm:ss') //
                   : timeSpec === TimeSpecEnum.Timestamps // not *_ts
-                    ? date.format('HH:mm:ss.SSS DD MMM YYYY') //
+                    ? date.format('YYYY MMM DD HH:mm:ss.SSS') //
                     : `${unixTimeZoned}`;
 }
