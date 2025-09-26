@@ -14,6 +14,7 @@ import {
   SOME_ROWS_HAVE_FORMULA_ERRORS
 } from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
@@ -26,6 +27,7 @@ import { Fraction } from '~common/interfaces/blockml/fraction';
 import { Row } from '~common/interfaces/blockml/row';
 import { RowRecord } from '~common/interfaces/blockml/row-record';
 import { MyRegex } from '~common/models/my-regex';
+import { ServerError } from '~common/models/server-error';
 import { nodeFormatTsUnix } from '~node-common/functions/node-format-ts-unix';
 
 let Graph = require('tarjan-graph');
@@ -453,8 +455,9 @@ FROM main;`;
               }).setZone(row.mconfig.timezone);
 
               if (!zonedDate.isValid) {
-                console.log('zonedDate.isValid false'); // TODO: throw error
-                return null;
+                throw new ServerError({
+                  message: ErEnum.BACKEND_DATE_CONVERSION_FAILED
+                });
               }
 
               let offsetMs = zonedDate.offset * 60 * 1000;
