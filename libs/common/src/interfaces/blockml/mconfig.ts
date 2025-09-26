@@ -53,7 +53,11 @@ export class Mconfig {
 
   @IsOptional()
   @IsString()
-  malloyQuery: string;
+  malloyQueryStable: string;
+
+  @IsOptional()
+  @IsString()
+  malloyQueryExtra: string;
 
   compiledQuery: CompiledQuery;
 

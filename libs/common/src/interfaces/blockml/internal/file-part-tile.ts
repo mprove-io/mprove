@@ -46,7 +46,9 @@ export interface FilePartTile {
 
   //
 
-  malloyQuery?: string;
+  malloyQueryStable?: string;
+
+  malloyQueryExtra?: string;
 
   compiledQuery?: CompiledQuery;
 

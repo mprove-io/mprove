@@ -111,7 +111,8 @@ export async function fetchSql<T extends dcType>(
         storePart: undefined,
         modelLabel: apiModel.label,
         modelFilePath: apiModel.filePath,
-        malloyQuery: undefined,
+        malloyQueryStable: undefined,
+        malloyQueryExtra: undefined,
         compiledQuery: undefined,
         select: [],
         // unsafeSelect: [],
@@ -230,7 +231,8 @@ export async function fetchSql<T extends dcType>(
 
       tile.compiledQuery = newMconfig.compiledQuery;
       tile.sql = newMconfig.compiledQuery.sql.split('\n');
-      tile.malloyQuery = newMconfig.malloyQuery;
+      tile.malloyQueryStable = newMconfig.malloyQueryStable;
+      tile.malloyQueryExtra = newMconfig.malloyQueryExtra;
       tile.filtersFractions = filtersFractions;
       // tile.select = [];
       // tile.model = preparedResult._rawQuery.sourceExplore;

@@ -154,7 +154,7 @@ export class QueryInfoViewerComponent implements OnChanges {
         : VS_LIGHT_THEME_EXTRA_SINGLE_READ;
 
     if (this.queryPart === QueryPartEnum.MalloyQuery) {
-      this.content = this.chart.tiles[0].mconfig.malloyQuery;
+      this.content = this.chart.tiles[0].mconfig.malloyQueryExtra;
     } else if (this.queryPart === QueryPartEnum.MalloyCompiledQuery) {
       let parsed = this.chart.tiles[0].mconfig.compiledQuery;
       delete parsed.sql;

@@ -26,6 +26,7 @@ import {
 import { FieldBase } from '@malloydata/malloy/dist/model';
 import * as fse from 'fs-extra';
 import { DOUBLE_UNDERSCORE } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
@@ -42,6 +43,7 @@ import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
 import { Query } from '~common/interfaces/blockml/query';
 import { Sorting } from '~common/interfaces/blockml/sorting';
+import { ServerError } from '~common/models/server-error';
 import { getBlankMconfigAndQuery } from './get-blank-mconfig-and-query';
 import { MalloyConnection } from './make-malloy-connections';
 import { makeQueryId } from './make-query-id';
@@ -76,7 +78,7 @@ export async function makeMalloyQuery(item: {
   if (
     queryOperations.length === 1 &&
     ((queryOperations[0].type === QueryOperationTypeEnum.Get &&
-      isUndefined(mconfig.malloyQuery)) ||
+      isUndefined(mconfig.malloyQueryStable)) ||
       (queryOperations[0].type === QueryOperationTypeEnum.Remove &&
         mconfig.select?.length === 1))
   ) {
@@ -99,11 +101,23 @@ export async function makeMalloyQuery(item: {
   );
   // console.log(Date.now() - startModelDefToModelInfo);
 
-  let malloyToQueryResult = isDefined(mconfig.malloyQuery)
-    ? malloyToQuery(mconfig.malloyQuery)
+  let malloyToQueryResult = isDefined(mconfig.malloyQueryStable)
+    ? malloyToQuery(mconfig.malloyQueryStable)
     : undefined;
 
-  let logs: LogMessage[] = malloyToQueryResult?.logs;
+  let malloyToQueryLogs: LogMessage[] = malloyToQueryResult?.logs;
+
+  if (malloyToQueryLogs?.length > 0) {
+    console.log('malloyToQueryLogs');
+    console.log(malloyToQueryLogs);
+  }
+
+  if (malloyToQueryLogs?.filter(x => x.severity === 'error').length > 0) {
+    throw new ServerError({
+      message: ErEnum.MALLOY_TO_QUERY_FAILED
+    });
+  }
+
   let q1: MalloyQuery = malloyToQueryResult?.query;
 
   // fse.writeFileSync(
@@ -451,11 +465,25 @@ export async function makeMalloyQuery(item: {
   // 'group_by' | 'aggregate' | 'order_by' | 'limit' | 'where' | 'nest' | 'having';
   // segment0.addWhere('state', ['users'], 'WN, AA');
 
-  let newMalloyQuery = astQuery.toMalloy();
+  let newMalloyQueryStable = astQuery.toMalloy();
 
-  // console.log('newMalloyQuery');
+  let timezone =
+    queryOperations[0].type === QueryOperationTypeEnum.Get
+      ? queryOperations[0].timezone
+      : mconfig.timezone;
+
+  let newMalloyQueryExtra =
+    newMalloyQueryStable.slice(0, -1) +
+    `  timezone: '${timezone}'
+}`;
+
+  // console.log('newMalloyQueryStable');
   // console.log(Date.now());
-  // console.log(newMalloyQuery);
+  // console.log(newMalloyQueryStable);
+
+  console.log('newMalloyQueryExtra');
+  console.log(Date.now());
+  console.log(newMalloyQueryExtra);
 
   let runtime = new MalloyRuntime({
     urlReader: {
@@ -484,7 +512,7 @@ export async function makeMalloyQuery(item: {
   //   parse: Malloy.parse({ source: mconfig.malloyQuery })
   // });
 
-  let qm: QueryMaterializer = mm.loadQuery(newMalloyQuery); // 0 ms
+  let qm: QueryMaterializer = mm.loadQuery(newMalloyQueryExtra); // 0 ms
 
   // console.log('await qm.getPreparedQuery()');
   // let startGetPreparedQuery = Date.now();
@@ -495,6 +523,9 @@ export async function makeMalloyQuery(item: {
   // let startGetPreparedResult = Date.now();
   let pr: PreparedResult = pq.getPreparedResult();
   // console.log(Date.now() - startGetPreparedResult);
+
+  // console.log('pr.sql');
+  // console.log(pr.sql);
 
   //
 
@@ -608,7 +639,8 @@ export async function makeMalloyQuery(item: {
     storePart: undefined,
     modelLabel: model.label,
     modelFilePath: model.filePath,
-    malloyQuery: newMalloyQuery,
+    malloyQueryStable: newMalloyQueryStable,
+    malloyQueryExtra: newMalloyQueryExtra,
     compiledQuery: compiledQuery,
     select: compiledQuerySelect,
     // unsafeSelect: [],
