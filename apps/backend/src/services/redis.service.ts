@@ -17,6 +17,7 @@ export class RedisService {
       'backendRedisPassword'
     );
 
+    // the same as apps/backend/src/app.module.ts -> customThrottlerModule
     this.client = new Redis({
       host: redisHost,
       port: 6379,

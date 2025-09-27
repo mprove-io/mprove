@@ -14,7 +14,5 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
     }
 
     return req.user.userId;
-
-    // return req.ips.length ? req.ips[0] : req.ip;
   }
 }

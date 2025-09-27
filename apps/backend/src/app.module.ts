@@ -48,7 +48,6 @@ import { getRetryOption } from './functions/get-retry-option';
 import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { ThrottlerUserIdGuard } from './guards/throttler-user-id.guard';
 import { MakerService } from './services/maker.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
@@ -181,8 +180,19 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     return {
       throttlers: [
         {
+          name: '1s',
+          ttl: seconds(1),
+          limit: 10 * 2
+        },
+        {
+          name: '5s',
           ttl: seconds(10),
-          limit: 5 // TODO: throttle
+          limit: 20 * 2
+        },
+        {
+          name: '60s',
+          ttl: seconds(60),
+          limit: 100 * 2
         }
       ],
       storage: new ThrottlerStorageRedisService(redisClient)
@@ -208,10 +218,6 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerUserIdGuard
     },
     {
       provide: APP_FILTER,

@@ -1,0 +1,43 @@
+import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
+import {
+  ThrottlerGuard,
+  ThrottlerModuleOptions,
+  ThrottlerStorage
+} from '@nestjs/throttler';
+import { BackendConfig } from '~backend/config/backend-config';
+import { BoolEnum } from '~common/enums/bool.enum';
+
+@Injectable()
+export class ThrottlerIpGuard extends ThrottlerGuard {
+  constructor(
+    options: ThrottlerModuleOptions,
+    storageService: ThrottlerStorage,
+    reflector: Reflector,
+    private cs: ConfigService<BackendConfig>
+  ) {
+    super(options, storageService, reflector);
+  }
+
+  protected async shouldSkip(context: ExecutionContext): Promise<boolean> {
+    // const request = context.switchToHttp().getRequest();
+
+    let isThrottleByIp = this.cs.get<BackendConfig['backendThrottleByIp']>(
+      'backendThrottleByIp'
+    );
+
+    let isSkip = isThrottleByIp === BoolEnum.FALSE;
+
+    return isSkip;
+  }
+
+  protected async getTracker(req: Record<string, any>): Promise<string> {
+    let ip = req.ip || req.ips?.[0] || 'unknown';
+
+    // console.log('ip');
+    // console.log(ip);
+
+    return ip;
+  }
+}
