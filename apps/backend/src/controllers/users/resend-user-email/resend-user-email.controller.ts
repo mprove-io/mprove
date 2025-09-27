@@ -1,4 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { eq } from 'drizzle-orm';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -16,6 +17,7 @@ import {
 import { ServerError } from '~common/models/server-error';
 
 @SkipJwtCheck()
+@SkipThrottle()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class ResendUserEmailController {

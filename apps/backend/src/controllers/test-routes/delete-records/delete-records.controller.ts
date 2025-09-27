@@ -7,6 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SkipThrottle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -48,6 +49,7 @@ let retry = require('async-retry');
 
 @UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
+@SkipThrottle()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class DeleteRecordsController {

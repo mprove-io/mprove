@@ -7,6 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SkipThrottle } from '@nestjs/throttler';
 import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -51,6 +52,7 @@ import { ServerError } from '~common/models/server-error';
 let retry = require('async-retry');
 
 @SkipJwtCheck()
+@SkipThrottle()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class SpecialRebuildStructsController {

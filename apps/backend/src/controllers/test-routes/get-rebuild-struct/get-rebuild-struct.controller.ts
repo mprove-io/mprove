@@ -1,4 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -27,6 +28,7 @@ import {
 
 @UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
+@SkipThrottle()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class GetRebuildStructController {

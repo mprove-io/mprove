@@ -48,9 +48,13 @@ export function makeErrorResponse(item: {
           : {
               name: undefined,
               message:
-                Object.values(ErEnum).includes(wError.message) === true
-                  ? wError.message
-                  : ErEnum.INTERNAL_ERROR,
+                wError.message === 'ThrottlerException: Too Many Requests'
+                  ? ErEnum.TOO_MANY_REQUESTS_ERROR
+                  : wError.name === 'ThrottlerException'
+                    ? ErEnum.THROTTLER_ERROR
+                    : Object.values(ErEnum).includes(wError.message) === true
+                      ? wError.message
+                      : ErEnum.INTERNAL_ERROR,
               data:
                 wError.message === ErEnum.BACKEND_WRONG_REQUEST_PARAMS
                   ? wError.data

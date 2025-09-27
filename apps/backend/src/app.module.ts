@@ -1,4 +1,5 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Inject, Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,6 +7,7 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerModule, seconds } from '@nestjs/throttler';
 import { DefaultLogger, and, eq } from 'drizzle-orm';
 import {
   NodePgDatabase,
@@ -13,6 +15,7 @@ import {
 } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import * as fse from 'fs-extra';
+import Redis from 'ioredis';
 import { Client, ClientConfig } from 'pg';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DEMO_ORG_NAME, PROJECT_ENV_PROD } from '~common/constants/top';
@@ -45,6 +48,7 @@ import { getRetryOption } from './functions/get-retry-option';
 import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ThrottlerUserIdGuard } from './guards/throttler-user-id.guard';
 import { MakerService } from './services/maker.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
@@ -59,14 +63,15 @@ let configModule = ConfigModule.forRoot({
 });
 
 let jwtModule = JwtModule.registerAsync({
+  inject: [ConfigService],
   useFactory: async (cs: ConfigService<BackendConfig>) => ({
     secret: cs.get<BackendConfig['jwtSecret']>('jwtSecret'),
     signOptions: { expiresIn: '30d' }
-  }),
-  inject: [ConfigService]
+  })
 });
 
 let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
+  inject: [ConfigService],
   useFactory: (cs: ConfigService<BackendConfig>) => {
     let rabbitUser =
       cs.get<BackendConfig['backendRabbitUser']>('backendRabbitUser');
@@ -105,16 +110,16 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
         connectionOptions: { rejectUnauthorized: false }
       }
     };
-  },
-  inject: [ConfigService]
+  }
 });
 
 let mailerModule = MailerModule.forRootAsync({
+  inject: [ConfigService],
   useFactory: (cs: ConfigService<BackendConfig>) => {
     let transport;
 
-    let emailTransport =
-      cs.get<BackendConfig['emailTransport']>('emailTransport');
+    // let emailTransport =
+    //   cs.get<BackendConfig['emailTransport']>('emailTransport');
 
     transport = {
       host: cs.get<BackendConfig['smtpHost']>('smtpHost'),
@@ -149,8 +154,40 @@ let mailerModule = MailerModule.forRootAsync({
       //   }
       // }
     };
-  },
-  inject: [ConfigService]
+  }
+});
+
+let customThrottlerModule = ThrottlerModule.forRootAsync({
+  inject: [ConfigService],
+  useFactory: (cs: ConfigService<BackendConfig>) => {
+    let redisHost =
+      cs.get<BackendConfig['backendRedisHost']>('backendRedisHost');
+
+    let redisPassword = cs.get<BackendConfig['backendRedisPassword']>(
+      'backendRedisPassword'
+    );
+
+    // the same as apps/backend/src/services/redis.service.ts
+    let redisClient = new Redis({
+      host: redisHost,
+      port: 6379,
+      password: redisPassword
+      // ,
+      // tls: {
+      //   rejectUnauthorized: false
+      // }
+    });
+
+    return {
+      throttlers: [
+        {
+          ttl: seconds(10),
+          limit: 5 // TODO: throttle
+        }
+      ],
+      storage: new ThrottlerStorageRedisService(redisClient)
+    };
+  }
 });
 
 @Module({
@@ -158,6 +195,7 @@ let mailerModule = MailerModule.forRootAsync({
     configModule,
     ScheduleModule.forRoot(),
     jwtModule,
+    customThrottlerModule,
     PassportModule,
     rabbitModule,
     mailerModule,
@@ -170,6 +208,10 @@ let mailerModule = MailerModule.forRootAsync({
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerUserIdGuard
     },
     {
       provide: APP_FILTER,

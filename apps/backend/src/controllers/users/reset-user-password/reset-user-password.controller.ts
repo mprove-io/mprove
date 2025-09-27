@@ -8,6 +8,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { SkipThrottle } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -29,6 +30,7 @@ import { ServerError } from '~common/models/server-error';
 let retry = require('async-retry');
 
 @SkipJwtCheck()
+@SkipThrottle()
 @UseGuards(ValidateRequestGuard)
 @Controller()
 export class ResetUserPasswordController {

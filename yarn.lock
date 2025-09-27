@@ -5076,6 +5076,13 @@
     "@emnapi/runtime" "^1.1.0"
     "@tybys/wasm-util" "^0.9.0"
 
+"@nest-lab/throttler-storage-redis@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@nest-lab/throttler-storage-redis/-/throttler-storage-redis-1.1.0.tgz#78f3dad83dbf6f890f27ce3f323b4a1e5f33e227"
+  integrity sha512-7DW8MuqoB+ubu8cWby9Vw56eAFqsHFfowEflHbmmAF2sNByRdzcR4ddcyoYLwL3zG53nLmvzUa4EXoHKB4RoaQ==
+  dependencies:
+    tslib "^2.3.0"
+
 "@nestjs-modules/mailer@1.9.1":
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/@nestjs-modules/mailer/-/mailer-1.9.1.tgz#afa2866ce7b0ab612131b5ddc1bc4f06cb937567"
@@ -5174,6 +5181,11 @@
   integrity sha512-gQ+NGshkHbNrDNXMVaPiwduqZ8YHpXrnsQqhSsnyNYOcDNPdBbB+0FDq7XiiklluXqjdLAN8i+bS7MbGlZIhKw==
   dependencies:
     tslib "2.8.1"
+
+"@nestjs/throttler@6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@nestjs/throttler/-/throttler-6.4.0.tgz#5060e2157f4e8b0cb7886eef367751700549de5e"
+  integrity sha512-osL67i0PUuwU5nqSuJjtUJZMkxAnYB4VldgYUMGzvYRJDCqGRFMWbsbzm/CkUtPLRL30I8T74Xgt/OQxnYokiA==
 
 "@ng-select/ng-select@14.7.0":
   version "14.7.0"
