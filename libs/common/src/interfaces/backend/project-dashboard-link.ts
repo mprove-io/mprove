@@ -1,4 +1,4 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ProjectDashboardLink {
   @IsString()
@@ -7,6 +7,7 @@ export class ProjectDashboardLink {
   @IsString()
   dashboardId: string;
 
+  @IsOptional()
   @IsInt()
-  lastNavTs: number;
+  navTs: number;
 }

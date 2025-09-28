@@ -8,6 +8,7 @@ export class ProjectFileLink {
   @IsString()
   fileId: string;
 
+  @IsOptional()
   @IsInt()
-  lastNavTs: number;
+  navTs: number;
 }

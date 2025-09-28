@@ -450,13 +450,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       l => l.projectId === nav.projectId
     );
 
+    if (link?.dashboardId === dashboardId) {
+      return;
+    }
+
     let newProjectDashboardLinks;
 
     if (isDefined(link)) {
       let newLink: ProjectDashboardLink = {
         projectId: nav.projectId,
         dashboardId: dashboardId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectDashboardLinks = [
@@ -467,7 +471,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       let newLink: ProjectDashboardLink = {
         projectId: nav.projectId,
         dashboardId: dashboardId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectDashboardLinks = [newLink, ...links];
@@ -476,7 +480,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
 
     newProjectDashboardLinks = newProjectDashboardLinks.filter(
-      l => l.lastNavTs >= oneYearAgoTimestamp
+      l => l.navTs >= oneYearAgoTimestamp
     );
 
     this.uiQuery.updatePart({

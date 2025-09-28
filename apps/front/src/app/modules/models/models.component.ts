@@ -1783,13 +1783,17 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let link: ProjectModelLink = links.find(l => l.projectId === nav.projectId);
 
+    if (link?.modelId === modelId) {
+      return;
+    }
+
     let newProjectModelLinks;
 
     if (isDefined(link)) {
       let newLink = {
         projectId: nav.projectId,
         modelId: modelId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectModelLinks = [
@@ -1800,7 +1804,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       let newLink = {
         projectId: nav.projectId,
         modelId: modelId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectModelLinks = [newLink, ...links];
@@ -1809,7 +1813,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
 
     newProjectModelLinks = newProjectModelLinks.filter(
-      l => l.lastNavTs >= oneYearAgoTimestamp
+      l => l.navTs >= oneYearAgoTimestamp
     );
 
     this.uiQuery.updatePart({ projectModelLinks: newProjectModelLinks });
@@ -1829,13 +1833,17 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let link: ProjectChartLink = links.find(l => l.projectId === nav.projectId);
 
+    if (link?.chartId === chartId) {
+      return;
+    }
+
     let newProjectChartLinks;
 
     if (isDefined(link)) {
       let newLink: ProjectChartLink = {
         projectId: nav.projectId,
         chartId: chartId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectChartLinks = [
@@ -1846,7 +1854,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       let newLink: ProjectChartLink = {
         projectId: nav.projectId,
         chartId: chartId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectChartLinks = [newLink, ...links];
@@ -1855,7 +1863,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
 
     newProjectChartLinks = newProjectChartLinks.filter(
-      l => l.lastNavTs >= oneYearAgoTimestamp
+      l => l.navTs >= oneYearAgoTimestamp
     );
 
     this.uiQuery.updatePart({ projectChartLinks: newProjectChartLinks });

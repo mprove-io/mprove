@@ -106,13 +106,23 @@ export class UiService {
 
     let link: ProjectFileLink = links.find(l => l.projectId === projectId);
 
+    let linkNewFileId = isDefined(fileId) ? fileId : link.fileId;
+
+    if (isUndefined(link?.fileId) && isUndefined(linkNewFileId)) {
+      return;
+    }
+
+    if (link?.fileId === linkNewFileId) {
+      return;
+    }
+
     let newProjectFileLinks: ProjectFileLink[];
 
     if (isDefined(link)) {
       let newLink: ProjectFileLink = {
         projectId: projectId,
         fileId: isDefined(fileId) ? fileId : link.fileId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectFileLinks = [
@@ -123,7 +133,7 @@ export class UiService {
       let newLink: ProjectFileLink = {
         projectId: projectId,
         fileId: fileId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectFileLinks = [newLink, ...links];
@@ -132,7 +142,7 @@ export class UiService {
     let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
 
     newProjectFileLinks = newProjectFileLinks.filter(
-      l => l.lastNavTs >= oneYearAgoTimestamp
+      l => l.navTs >= oneYearAgoTimestamp
     );
 
     this.uiQuery.updatePart({ projectFileLinks: newProjectFileLinks });

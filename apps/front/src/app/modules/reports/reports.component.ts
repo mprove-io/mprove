@@ -1265,13 +1265,17 @@ export class ReportsComponent implements OnInit, OnDestroy {
       l => l.projectId === nav.projectId
     );
 
+    if (link?.reportId === reportId) {
+      return;
+    }
+
     let newProjectReportLinks;
 
     if (isDefined(link)) {
       let newLink: ProjectReportLink = {
         projectId: nav.projectId,
         reportId: reportId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectReportLinks = [
@@ -1282,7 +1286,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       let newLink: ProjectReportLink = {
         projectId: nav.projectId,
         reportId: reportId,
-        lastNavTs: Date.now()
+        navTs: Date.now()
       };
 
       newProjectReportLinks = [newLink, ...links];
@@ -1291,7 +1295,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
 
     newProjectReportLinks = newProjectReportLinks.filter(
-      l => l.lastNavTs >= oneYearAgoTimestamp
+      l => l.navTs >= oneYearAgoTimestamp
     );
 
     this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });

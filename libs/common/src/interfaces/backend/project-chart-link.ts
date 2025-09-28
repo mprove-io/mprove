@@ -1,4 +1,4 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class ProjectChartLink {
   @IsString()
@@ -7,6 +7,7 @@ export class ProjectChartLink {
   @IsString()
   chartId: string;
 
+  @IsOptional()
   @IsInt()
-  lastNavTs: number;
+  navTs: number;
 }
