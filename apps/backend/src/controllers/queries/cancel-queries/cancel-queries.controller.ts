@@ -8,6 +8,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -20,6 +21,7 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -30,6 +32,7 @@ import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
@@ -44,7 +47,8 @@ import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class CancelQueriesController {
   constructor(

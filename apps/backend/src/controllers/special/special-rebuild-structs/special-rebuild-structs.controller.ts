@@ -56,10 +56,10 @@ let retry = require('async-retry');
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
 @Throttle({
   '1s': {
-    limit: 1 * 2
+    limit: 3 * 2
   },
   '5s': {
-    limit: 2 * 2
+    limit: 5 * 2
   },
   '60s': {
     limit: 99999 * 2

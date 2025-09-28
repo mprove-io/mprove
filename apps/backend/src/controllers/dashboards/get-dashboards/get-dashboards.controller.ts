@@ -9,6 +9,7 @@ import {
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -25,7 +26,7 @@ import {
   ToBackendGetDashboardsResponsePayload
 } from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetDashboardsController {
   constructor(

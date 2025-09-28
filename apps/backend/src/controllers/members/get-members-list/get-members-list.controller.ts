@@ -6,6 +6,7 @@ import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -16,7 +17,7 @@ import {
   ToBackendGetMembersListResponsePayload
 } from '~common/interfaces/to-backend/members/to-backend-get-members-list';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetMembersListController {
   constructor(

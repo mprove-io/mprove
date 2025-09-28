@@ -2,6 +2,7 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -18,7 +19,7 @@ import {
   ToBackendGetModelResponsePayload
 } from '~common/interfaces/to-backend/models/to-backend-get-model';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetModelController {
   constructor(

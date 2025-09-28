@@ -7,6 +7,7 @@ import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
 import { makeFullName } from '~backend/functions/make-full-name';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -16,7 +17,7 @@ import {
   ToBackendGetOrgUsersResponsePayload
 } from '~common/interfaces/to-backend/org-users/to-backend-get-org-users';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetOrgUsersController {
   constructor(

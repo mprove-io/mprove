@@ -1,6 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
@@ -17,7 +18,7 @@ import {
   ToBackendGetMconfigResponsePayload
 } from '~common/interfaces/to-backend/mconfigs/to-backend-get-mconfig';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetMconfigController {
   constructor(

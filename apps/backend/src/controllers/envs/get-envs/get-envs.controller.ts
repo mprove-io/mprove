@@ -2,6 +2,7 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
@@ -13,7 +14,7 @@ import {
   ToBackendGetEnvsResponsePayload
 } from '~common/interfaces/to-backend/envs/to-backend-get-envs';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetEnvsController {
   constructor(

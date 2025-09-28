@@ -19,7 +19,7 @@ export const SKIP_JWT = 'skipJwt';
 
 export const THROTTLE_CUSTOM = {
   '1s': {
-    limit: 2 * 2
+    limit: 3 * 2
   },
   '5s': {
     limit: 5 * 2

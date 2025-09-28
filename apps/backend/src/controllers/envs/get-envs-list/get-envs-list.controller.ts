@@ -4,6 +4,7 @@ import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -15,7 +16,7 @@ import {
   ToBackendGetEnvsListResponsePayload
 } from '~common/interfaces/to-backend/envs/to-backend-get-envs-list';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetEnvsListController {
   constructor(

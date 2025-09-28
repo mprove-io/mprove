@@ -8,6 +8,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle } from '@nestjs/throttler';
 import { parseKey, parsePrivateKey } from 'sshpk';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
@@ -15,9 +16,11 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { NoteEnt } from '~backend/drizzle/postgres/schema/notes';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { PASS_PHRASE } from '~common/constants/top';
+import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import {
@@ -27,7 +30,8 @@ import {
 
 let retry = require('async-retry');
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GenerateProjectRemoteKeyController {
   constructor(

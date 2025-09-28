@@ -5,6 +5,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -16,7 +17,7 @@ import {
 } from '~common/interfaces/to-backend/orgs/to-backend-get-org';
 import { ServerError } from '~common/models/server-error';
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetOrgController {
   constructor(
