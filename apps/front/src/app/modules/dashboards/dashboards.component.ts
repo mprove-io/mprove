@@ -717,15 +717,20 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   getQueriesObservable() {
     let nav = this.navQuery.getValue();
 
+    let mconfigIds = this.dashboard.tiles
+      .filter(tile => tile.query?.status === QueryStatusEnum.Running)
+      .map(tile => tile.mconfigId);
+
+    if (mconfigIds.length === 0) {
+      return of(1);
+    }
+
     let payload: ToBackendGetQueriesRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      mconfigIds: this.dashboard.tiles
-        .filter(tile => tile.query?.status === QueryStatusEnum.Running)
-        .map(tile => tile.mconfigId)
-      // queryIds: this.dashboard.tiles.map(tile => tile.queryId)
+      mconfigIds: mconfigIds
     };
 
     return this.apiService
