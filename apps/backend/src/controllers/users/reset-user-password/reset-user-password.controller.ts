@@ -1,4 +1,3 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import {
   Controller,
   Inject,
@@ -8,13 +7,15 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SkipThrottle } from '@nestjs/throttler';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offset-from-now';
+import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { EmailService } from '~backend/services/email.service';
 import { UsersService } from '~backend/services/users.service';
 import {
   PATH_UPDATE_PASSWORD,
@@ -30,12 +31,23 @@ import { ServerError } from '~common/models/server-error';
 let retry = require('async-retry');
 
 @SkipJwtCheck()
-@SkipThrottle()
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
+@Throttle({
+  '1s': {
+    limit: 2 * 2
+  },
+  '5s': {
+    limit: 3 * 2
+  },
+  '60s': {
+    limit: 10 * 2,
+    blockDuration: seconds(24 * 60 * 60)
+  }
+})
 @Controller()
 export class ResetUserPasswordController {
   constructor(
-    private mailerService: MailerService,
+    private emailService: EmailService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -83,10 +95,9 @@ export class ResetUserPasswordController {
 
     let urlUpdatePassword = `${hostUrl}/${PATH_UPDATE_PASSWORD}?token=${user.passwordResetToken}`;
 
-    await this.mailerService.sendMail({
-      to: user.email,
-      subject: '[Mprove] Reset your password',
-      text: `You requested password change. Click the link to set a new password: ${urlUpdatePassword}`
+    await this.emailService.sendResetPassword({
+      user: user,
+      urlUpdatePassword: urlUpdatePassword
     });
 
     let payload = {};

@@ -182,16 +182,19 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
         {
           name: '1s',
           ttl: seconds(1),
+          blockDuration: seconds(1),
           limit: 10 * 2
         },
         {
           name: '5s',
-          ttl: seconds(10),
+          ttl: seconds(5),
+          blockDuration: seconds(5),
           limit: 20 * 2
         },
         {
           name: '60s',
           ttl: seconds(60),
+          blockDuration: seconds(60),
           limit: 100 * 2
         }
       ],

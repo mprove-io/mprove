@@ -47,10 +47,9 @@ import {
 
 let retry = require('async-retry');
 
-@UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
 @SkipThrottle()
-@UseGuards(ValidateRequestGuard)
+@UseGuards(TestRoutesGuard, ValidateRequestGuard)
 @Controller()
 export class DeleteRecordsController {
   constructor(

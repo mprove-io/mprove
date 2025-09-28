@@ -1,9 +1,10 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { SkipThrottle } from '@nestjs/throttler';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { eq } from 'drizzle-orm';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EmailService } from '~backend/services/email.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
@@ -17,8 +18,19 @@ import {
 import { ServerError } from '~common/models/server-error';
 
 @SkipJwtCheck()
-@SkipThrottle()
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
+@Throttle({
+  '1s': {
+    limit: 2 * 2
+  },
+  '5s': {
+    limit: 3 * 2
+  },
+  '60s': {
+    limit: 10 * 2,
+    blockDuration: seconds(24 * 60 * 60)
+  }
+})
 @Controller()
 export class ResendUserEmailController {
   constructor(
@@ -55,7 +67,7 @@ export class ResendUserEmailController {
       return payload;
     }
 
-    await this.emailService.sendEmailVerification({
+    await this.emailService.sendVerification({
       email: user.email,
       emailVerificationToken: user.emailVerificationToken
     });

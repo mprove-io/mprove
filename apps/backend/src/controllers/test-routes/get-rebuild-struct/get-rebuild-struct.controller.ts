@@ -26,10 +26,9 @@ import {
   ToDiskGetCatalogFilesResponse
 } from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
 
-@UseGuards(TestRoutesGuard)
 @SkipJwtCheck()
 @SkipThrottle()
-@UseGuards(ValidateRequestGuard)
+@UseGuards(TestRoutesGuard, ValidateRequestGuard)
 @Controller()
 export class GetRebuildStructController {
   constructor(

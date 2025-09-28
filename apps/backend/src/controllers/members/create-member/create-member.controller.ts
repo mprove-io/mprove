@@ -1,4 +1,3 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import {
   Controller,
   Inject,
@@ -8,6 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -22,8 +22,10 @@ import {
 import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
+import { EmailService } from '~backend/services/email.service';
 import { MakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
@@ -62,7 +64,29 @@ import {
 
 let retry = require('async-retry');
 
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+@Throttle({
+  '1s': {
+    limit: 2 * 2
+  },
+  '5s': {
+    limit: 3 * 2
+  },
+  '60s': {
+    limit: 20 * 2,
+    blockDuration: seconds(60)
+  },
+  '600s': {
+    ttl: seconds(600), // no default ttl
+    blockDuration: seconds(600), // 10m
+    limit: 100 * 2
+  },
+  '3600s': {
+    ttl: seconds(3600), // no default ttl
+    blockDuration: seconds(24 * 60 * 60), // 24h
+    limit: 200 * 2
+  }
+})
 @Controller()
 export class CreateMemberController {
   constructor(
@@ -71,7 +95,7 @@ export class CreateMemberController {
     private blockmlService: BlockmlService,
     private usersService: UsersService,
     private membersService: MembersService,
-    private mailerService: MailerService,
+    private emailService: EmailService,
     private wrapToApiService: WrapToApiService,
     private makerService: MakerService,
     private cs: ConfigService<BackendConfig>,
@@ -275,10 +299,11 @@ export class CreateMemberController {
         EMPTY_REPORT_ID
       ].join('/');
 
-      await this.mailerService.sendMail({
-        to: email,
-        subject: `[Mprove] ${user.alias} added you to ${project.name} project team`,
-        text: `Project metrics: ${urlProjectMetrics}`
+      await this.emailService.sendInviteToVerifiedUser({
+        email: email,
+        user: user,
+        project: project,
+        urlProjectMetrics: urlProjectMetrics
       });
     } else {
       let emailVerificationToken = isDefined(invitedUser)
@@ -289,10 +314,11 @@ export class CreateMemberController {
 
       let urlCompleteRegistration = `${hostUrl}/${PATH_COMPLETE_REGISTRATION}?token=${emailVerificationToken}&b=${emailBase64}`;
 
-      await this.mailerService.sendMail({
-        to: email,
-        subject: `[Mprove] ${user.alias} invited you to ${project.name} project team`,
-        text: `Click the link to complete registration: ${urlCompleteRegistration}`
+      await this.emailService.sendInviteToUnverifiedUser({
+        email: email,
+        user: user,
+        project: project,
+        urlCompleteRegistration: urlCompleteRegistration
       });
     }
 

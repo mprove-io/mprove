@@ -1,10 +1,10 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SkipThrottle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
+import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -14,9 +14,7 @@ import {
 } from '~common/interfaces/to-backend/users/to-backend-login-user';
 
 @SkipJwtCheck()
-@SkipThrottle()
-@UseGuards(LocalAuthGuard)
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard, LocalAuthGuard, ValidateRequestGuard)
 @Controller()
 export class LoginUserController {
   constructor(

@@ -7,7 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SkipThrottle } from '@nestjs/throttler';
+import { Throttle } from '@nestjs/throttler';
 import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -27,6 +27,7 @@ import {
 } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
+import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -52,8 +53,18 @@ import { ServerError } from '~common/models/server-error';
 let retry = require('async-retry');
 
 @SkipJwtCheck()
-@SkipThrottle()
-@UseGuards(ValidateRequestGuard)
+@UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
+@Throttle({
+  '1s': {
+    limit: 1 * 2
+  },
+  '5s': {
+    limit: 2 * 2
+  },
+  '60s': {
+    limit: 99999 * 2
+  }
+})
 @Controller()
 export class SpecialRebuildStructsController {
   constructor(
