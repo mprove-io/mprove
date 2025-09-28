@@ -7,6 +7,7 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -35,6 +36,22 @@ import {
 let retry = require('async-retry');
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+// apps/front/src/app/modules/reports/reports.component.ts -> startCheckRunning()
+@Throttle({
+  '1s': {
+    limit: 3 * 2 * 1.5
+  },
+  '5s': {
+    limit: 5 * 2 * 1.5
+  },
+  '60s': {
+    limit: (60 / 2) * 2 * 1.5
+  },
+  '600s': {
+    limit: 10 * (60 / 2) * 2 * 1.5,
+    blockDuration: seconds(12 * 60 * 60) // 12h
+  }
+})
 @Controller()
 export class GetReportController {
   constructor(
