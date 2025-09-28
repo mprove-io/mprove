@@ -3,31 +3,22 @@ import {
   Component,
   Input,
   OnChanges,
-  OnDestroy,
   OnInit,
   QueryList,
   SimpleChanges,
   ViewChildren
 } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription, interval, of } from 'rxjs';
-import { concatMap, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { Query } from '~common/interfaces/blockml/query';
 import { DeleteFilterFnItem } from '~common/interfaces/front/delete-filter-fn-item';
-import {
-  ToBackendGetQueryRequestPayload,
-  ToBackendGetQueryResponse
-} from '~common/interfaces/to-backend/queries/to-backend-get-query';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
@@ -42,9 +33,7 @@ import { ChartViewComponent } from '../chart-view/chart-view.component';
   selector: 'm-dashboard-tile-chart',
   templateUrl: './dashboard-tile-chart.component.html'
 })
-export class DashboardTileChartComponent
-  implements OnInit, OnChanges, OnDestroy
-{
+export class DashboardTileChartComponent implements OnInit, OnChanges {
   chartTypeEnumTable = ChartTypeEnum.Table;
   chartTypeEnumSingle = ChartTypeEnum.Single;
 
@@ -80,8 +69,6 @@ export class DashboardTileChartComponent
   showTileParameters: boolean;
 
   qData: QDataRow[];
-
-  checkRunning$: Subscription;
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -122,44 +109,6 @@ export class DashboardTileChartComponent
           })
         : [];
 
-    // apps/backend/src/controllers/queries/get-query/get-query.controller.ts -> Throttle
-    this.checkRunning$ = interval(3000)
-      .pipe(
-        concatMap(() => {
-          let nav = this.navQuery.getValue();
-
-          if (this.query?.status === QueryStatusEnum.Running) {
-            let payload: ToBackendGetQueryRequestPayload = {
-              projectId: nav.projectId,
-              branchId: nav.branchId,
-              envId: nav.envId,
-              isRepoProd: nav.isRepoProd,
-              mconfigId: this.mconfig.mconfigId,
-              queryId: this.query.queryId,
-              dashboardId: this.dashboard.dashboardId
-            };
-
-            return this.apiService
-              .req({
-                pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
-                payload: payload
-              })
-              .pipe(
-                tap((resp: ToBackendGetQueryResponse) => {
-                  if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-                    if (resp.payload.query.status !== QueryStatusEnum.Running) {
-                      this.updateQuery(resp.payload.query);
-                    }
-                  }
-                })
-              );
-          } else {
-            return of(1);
-          }
-        })
-      )
-      .subscribe();
-
     let checkSelectResult = getSelectValid({
       chart: this.mconfig.chart,
       mconfigFields: this.mconfig.fields,
@@ -179,7 +128,12 @@ export class DashboardTileChartComponent
       (isUndefined(changes.query?.previousValue?.status) ||
         changes.query.previousValue.status !== QueryStatusEnum.Running)
     ) {
-      this.showSpinner();
+      this.spinner.show(this.tile.title);
+    } else if (
+      !!changes.query?.currentValue?.status &&
+      changes.query?.currentValue?.status !== QueryStatusEnum.Running
+    ) {
+      this.spinner.hide(this.tile.title);
     }
   }
 
@@ -187,10 +141,6 @@ export class DashboardTileChartComponent
     this.chartViewComponents.forEach(x => {
       x.chartViewUpdateChart();
     });
-  }
-
-  showSpinner() {
-    this.spinner.show(this.tile.title);
   }
 
   showChart() {
@@ -212,44 +162,5 @@ export class DashboardTileChartComponent
 
   stopClick(event?: MouseEvent) {
     event.stopPropagation();
-  }
-
-  updateQuery(query: Query) {
-    this.query = query;
-
-    if (this.query.status !== QueryStatusEnum.Running) {
-      this.spinner.hide(this.tile.title);
-    }
-
-    this.qData =
-      this.mconfig.queryId === this.query.queryId
-        ? this.dataService.makeQData({
-            query: this.query,
-            mconfig: this.mconfig
-          })
-        : [];
-
-    let newDashboard = Object.assign({}, this.dashboard, {
-      tiles: this.dashboard.tiles.map(x => {
-        if (x.queryId === this.query.queryId) {
-          let newTile = Object.assign({}, x);
-          newTile.query = this.query;
-          return newTile;
-        } else {
-          return x;
-        }
-      })
-    });
-
-    this.dashboardQuery.update(newDashboard);
-
-    this.cd.detectChanges();
-  }
-
-  ngOnDestroy() {
-    // console.log('ngOnDestroyChart')
-    if (isDefined(this.checkRunning$)) {
-      this.checkRunning$?.unsubscribe();
-    }
   }
 }

@@ -35,6 +35,10 @@ import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboa
 import { Query } from '~common/interfaces/blockml/query';
 import { RefreshItem } from '~common/interfaces/front/refresh-item';
 import {
+  ToBackendGetQueriesRequestPayload,
+  ToBackendGetQueriesResponse
+} from '~common/interfaces/to-backend/queries/to-backend-get-queries';
+import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
 } from '~common/interfaces/to-backend/queries/to-backend-run-queries';
@@ -146,9 +150,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     })
   );
 
+  checkRunning$: Subscription;
+
   isRunButtonPressed = false;
 
-  isCompleted = false;
+  isCompleted = true;
   lastCompletedQuery: Query;
 
   refreshProgress = 0;
@@ -268,6 +274,30 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.scrollToSelectedDashboard({ isSmooth: false });
     });
+
+    this.startCheckRunning();
+  }
+
+  startCheckRunning() {
+    this.checkRunning$ = interval(3000)
+      .pipe(
+        concatMap(() => {
+          // console.log(`check ${Date.now()}`);
+
+          if (this.isCompleted === false) {
+            return this.getQueriesObservable();
+          } else {
+            return of(1);
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  stopCheckRunning() {
+    if (isDefined(this.checkRunning$)) {
+      this.checkRunning$?.unsubscribe();
+    }
   }
 
   dashboardSaveAs(event: any) {
@@ -628,6 +658,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   run() {
+    this.stopCheckRunning();
+
     this.startRunButtonTimer();
 
     let nav: NavState;
@@ -676,9 +708,54 @@ export class DashboardsComponent implements OnInit, OnDestroy {
             this.cd.detectChanges();
           }
         }),
+        tap(() => this.startCheckRunning()),
         take(1)
       )
       .subscribe();
+  }
+
+  getQueriesObservable() {
+    let nav = this.navQuery.getValue();
+
+    let payload: ToBackendGetQueriesRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      mconfigIds: this.dashboard.tiles
+        .filter(tile => tile.query?.status === QueryStatusEnum.Running)
+        .map(tile => tile.mconfigId)
+      // queryIds: this.dashboard.tiles.map(tile => tile.queryId)
+    };
+
+    return this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendGetQueriesResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            let { queries } = resp.payload;
+
+            let newDashboard = Object.assign({}, this.dashboard, {
+              tiles: this.dashboard.tiles.map(x => {
+                let query = queries.find(q => q.queryId === x.queryId);
+
+                let newTile = Object.assign({}, x, {
+                  query: query ?? x.query
+                });
+
+                return newTile;
+              })
+            });
+
+            this.dashboardQuery.update(newDashboard);
+            this.checkQueries();
+            this.cd.detectChanges();
+          }
+        })
+      );
   }
 
   startRunButtonTimer() {
@@ -749,5 +826,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.refreshSubscription?.unsubscribe();
     this.runButtonTimerSubscription?.unsubscribe();
+
+    this.stopCheckRunning();
   }
 }
