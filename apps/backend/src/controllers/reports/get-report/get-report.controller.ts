@@ -36,7 +36,7 @@ import {
 let retry = require('async-retry');
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
-// apps/front/src/app/modules/reports/reports.component.ts -> startCheckRunning()
+// reports.component.ts -> startCheckRunning()
 @Throttle({
   '1s': {
     limit: 3 * 2 * 1.5

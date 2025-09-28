@@ -27,18 +27,20 @@ import {
 import { ServerError } from '~common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+// chart-dialog.component.ts -> startCheckRunning()
+// models.component.ts -> checkRunning$
 @Throttle({
   '1s': {
-    limit: 20 * 2
+    limit: 3 * 2 * 1.5
   },
   '5s': {
-    limit: 2 * 20 * 2
+    limit: 5 * 2 * 1.5
   },
   '60s': {
-    limit: (60 / 3) * 20 * 2
+    limit: (60 / 3) * 2 * 1.5
   },
   '600s': {
-    limit: 10 * (60 / 3) * 20 * 2,
+    limit: 10 * (60 / 3) * 2 * 1.5,
     blockDuration: seconds(12 * 60 * 60) // 12h
   }
 })

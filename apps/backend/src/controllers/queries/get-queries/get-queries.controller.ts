@@ -1,4 +1,5 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -22,6 +23,22 @@ import {
 } from '~common/interfaces/to-backend/queries/to-backend-get-queries';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
+// dashboards.component.ts -> startCheckRunning()
+@Throttle({
+  '1s': {
+    limit: 3 * 2 * 1.5
+  },
+  '5s': {
+    limit: 5 * 2 * 1.5
+  },
+  '60s': {
+    limit: (60 / 3) * 2 * 1.5
+  },
+  '600s': {
+    limit: 10 * (60 / 3) * 2 * 1.5,
+    blockDuration: seconds(12 * 60 * 60) // 12h
+  }
+})
 @Controller()
 export class GetQueriesController {
   constructor(
