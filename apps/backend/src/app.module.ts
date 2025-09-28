@@ -196,6 +196,12 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
           ttl: seconds(60),
           blockDuration: seconds(60),
           limit: 100 * 2
+        },
+        {
+          name: '600s',
+          ttl: seconds(600),
+          blockDuration: seconds(12 * 60 * 60), // 12h
+          limit: 300 * 2
         }
       ],
       storage: new ThrottlerStorageRedisService(redisClient)

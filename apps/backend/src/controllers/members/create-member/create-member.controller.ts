@@ -77,14 +77,8 @@ let retry = require('async-retry');
     blockDuration: seconds(60)
   },
   '600s': {
-    ttl: seconds(600), // no default ttl
-    blockDuration: seconds(600), // 10m
-    limit: 100 * 2
-  },
-  '3600s': {
-    ttl: seconds(3600), // no default ttl
-    blockDuration: seconds(24 * 60 * 60), // 24h
-    limit: 200 * 2
+    limit: 100 * 2,
+    blockDuration: seconds(12 * 60 * 60) // 24h
   }
 })
 @Controller()

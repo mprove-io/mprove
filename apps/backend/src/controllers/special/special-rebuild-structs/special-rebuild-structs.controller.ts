@@ -63,6 +63,9 @@ let retry = require('async-retry');
   },
   '60s': {
     limit: 99999 * 2
+  },
+  '600s': {
+    limit: 99999 * 2
   }
 })
 @Controller()

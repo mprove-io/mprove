@@ -14,6 +14,9 @@ import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
   },
   '60s': {
     limit: 99999 * 2
+  },
+  '600s': {
+    limit: 99999 * 2
   }
 })
 @Controller('*')

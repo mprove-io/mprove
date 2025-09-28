@@ -191,7 +191,10 @@ export class BackendConfig {
   backendIsPostgresTls?: BoolEnum;
 
   @IsEnum(BoolEnum)
-  backendThrottleByIp?: BoolEnum;
+  backendThrottlePublicRoutesByIp?: BoolEnum;
+
+  @IsEnum(BoolEnum)
+  backendThrottlePrivateRoutesByUserId?: BoolEnum;
 
   @IsEnum(BoolEnum)
   backendLogDrizzlePostgres?: BoolEnum;

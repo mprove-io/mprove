@@ -244,8 +244,14 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_IS_POSTGRES_TLS || envFile.BACKEND_IS_POSTGRES_TLS)
     ),
 
-    backendThrottleByIp: <BoolEnum>(
-      (process.env.BACKEND_THROTTLE_BY_IP || envFile.BACKEND_THROTTLE_BY_IP)
+    backendThrottlePublicRoutesByIp: <BoolEnum>(
+      (process.env.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP ||
+        envFile.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP)
+    ),
+
+    backendThrottlePrivateRoutesByUserId: <BoolEnum>(
+      (process.env.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID ||
+        envFile.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID)
     ),
 
     backendLogDrizzlePostgres: <BoolEnum>(
