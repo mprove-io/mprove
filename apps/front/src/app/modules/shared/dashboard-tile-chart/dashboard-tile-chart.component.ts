@@ -122,6 +122,7 @@ export class DashboardTileChartComponent
           })
         : [];
 
+    // apps/backend/src/controllers/queries/get-query/get-query.controller.ts -> Throttle
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {

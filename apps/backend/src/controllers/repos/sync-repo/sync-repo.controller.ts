@@ -45,7 +45,7 @@ import {
 let retry = require('async-retry');
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
-@Throttle(THROTTLE_CUSTOM) // TODO: throttle
+@Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class SyncRepoController {
   constructor(

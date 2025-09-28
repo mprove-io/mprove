@@ -1,5 +1,5 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { Throttle } from '@nestjs/throttler';
+import { Throttle, seconds } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
@@ -17,7 +17,6 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
-import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -28,7 +27,21 @@ import {
 import { ServerError } from '~common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
-@Throttle(THROTTLE_CUSTOM) // TODO: throttle
+@Throttle({
+  '1s': {
+    limit: 20 * 2
+  },
+  '5s': {
+    limit: 2 * 20 * 2
+  },
+  '60s': {
+    limit: (60 / 3) * 20 * 2
+  },
+  '600s': {
+    limit: 10 * (60 / 3) * 20 * 2,
+    blockDuration: seconds(12 * 60 * 60) // 12h
+  }
+})
 @Controller()
 export class GetQueryController {
   constructor(
