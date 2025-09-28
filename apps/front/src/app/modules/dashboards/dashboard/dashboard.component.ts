@@ -79,7 +79,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isShow = false;
 
-  TIMEOUT_MS = 0; // set >200 to fix right scroll padding, but add delay
+  TIMEOUT_MS = 0; // set >200 to solve previous version of right scroll padding (not needed now)
 
   showDashboardsLeftPanel = true;
   showDashboardsLeftPanel$ = this.uiQuery.showDashboardsLeftPanel$.pipe(

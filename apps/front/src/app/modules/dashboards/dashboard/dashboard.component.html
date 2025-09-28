@@ -1,12 +1,12 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
-  <div class="flex h-2 flex-1 flex-row overflow-y-auto">
+  <div class="flex flex-row">
     <div class="flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
       <div class="divide-s300 divide-y">
         <div></div>
         <div></div>
       </div>
 
-      <div class="mt-6 w-full shadow-md">
+      <div class="mt-6 w-full">
         <div class="flex flex-col">
           <div class="mr-5 flex min-h-[44px] flex-shrink-0 flex-grow flex-row">
             <div
@@ -78,29 +78,22 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
+  <div class="mb-[3px] flex h-2 w-full flex-row shadow-md"></div>
+
+  <div class="flex h-2 flex-1 flex-row overflow-y-auto">
+    <div class="flex min-w-[2px] flex-grow flex-col" *ngIf="!!dashboard">
       <div
-        class="flex min-w-[2px] flex-grow flex-col"
+        class="overflow-overlay flex h-full min-w-[2px] flex-grow flex-col"
         [ngClass]="{
           'pl-5': showDashboardsLeftPanel === true
         }"
       >
-        <div
-          #scrollable
-          class="mt-1 flex h-2 w-full flex-grow flex-col overflow-auto"
-        >
+        <div #scrollable class="mt-1 flex w-full flex-grow flex-col">
           <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
             <div class="mb-[100px] mt-5 pr-0">
-              <!-- <ktd-grid
-                [ngClass]="{
-                  invisible: isShow === false
-                }"
-              ></ktd-grid> -->
-
-              <!-- <m-dashboard-tile-chart
-                *ngIf="isShow === true"
-              ></m-dashboard-tile-chart> -->
-
               <ktd-grid
                 [ngClass]="{
                   invisible: isShow === false
