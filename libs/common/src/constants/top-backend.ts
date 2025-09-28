@@ -1,3 +1,4 @@
+import { seconds } from '@nestjs/throttler';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTsLastCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-last-complete-option.enum';
 import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
@@ -15,6 +16,22 @@ export const PASSWORD_EXPIRES_OFFSET = 86400000;
 export const IDEMP_EXPIRE_SECONDS = 600;
 
 export const SKIP_JWT = 'skipJwt';
+
+export const THROTTLE_CUSTOM = {
+  '1s': {
+    limit: 2 * 2
+  },
+  '5s': {
+    limit: 5 * 2
+  },
+  '60s': {
+    limit: 20 * 2
+  },
+  '600s': {
+    limit: 50 * 2,
+    blockDuration: seconds(12 * 60 * 60) // 12h
+  }
+};
 
 export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 
