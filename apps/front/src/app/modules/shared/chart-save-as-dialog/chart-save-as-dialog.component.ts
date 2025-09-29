@@ -409,6 +409,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       listen: {},
       deletedFilterFieldIds: undefined,
       queryId: this.chart.tiles[0].mconfig.queryId,
+      trackChangeId: this.chart.tiles[0].mconfig.mconfigId,
       hasAccessToModel: true,
       title: newTitle.trim(),
       plateWidth: TILE_DEFAULT_PLATE_WIDTH,

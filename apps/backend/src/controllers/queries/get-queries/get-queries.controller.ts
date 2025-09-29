@@ -57,7 +57,7 @@ export class GetQueriesController {
   async getQueries(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: ToBackendGetQueriesRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, mconfigIds } =
+    let { projectId, isRepoProd, branchId, envId, mconfigIds, skipData } =
       reqValid.payload;
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
@@ -104,10 +104,16 @@ export class GetQueriesController {
 
     let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
 
-    let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
-      queryIds: queryIds,
-      projectId: projectId
-    });
+    let queries =
+      skipData === true
+        ? await this.queriesService.getQueriesCheckExistSkipSqlData({
+            queryIds: queryIds,
+            projectId: projectId
+          })
+        : await this.queriesService.getQueriesCheckExist({
+            queryIds: queryIds,
+            projectId: projectId
+          });
 
     let payload: ToBackendGetQueriesResponsePayload = {
       queries: queries.map(x => this.wrapToApiService.wrapToApiQuery(x))

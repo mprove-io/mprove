@@ -207,6 +207,7 @@ export class EditDraftChartController {
       modelFilePath: newMconfig.modelFilePath,
       mconfigId: newMconfig.mconfigId,
       queryId: newQuery.queryId,
+      trackChangeId: newMconfig.mconfigId,
       // malloyQueryId: undefined,
       listen: undefined,
       deletedFilterFieldIds: undefined,

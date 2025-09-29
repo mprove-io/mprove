@@ -333,8 +333,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  trackByFn(index: number, item: any) {
-    return item.tile.mconfigId;
+  trackByFn(index: number, item: { tile: TileX }) {
+    return item.tile.trackChangeId;
   }
 
   ngOnDestroy() {

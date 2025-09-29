@@ -44,8 +44,17 @@ export class GetRebuildStructController {
   async getRebuildStruct(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: ToBackendGetRebuildStructRequest = request.body;
 
-    let { orgId, projectId, repoId, branch, envId, overrideTimezone } =
-      reqValid.payload;
+    let {
+      orgId,
+      projectId,
+      repoId,
+      branch,
+      envId,
+      overrideTimezone,
+      isUseCache,
+      cachedModels,
+      cachedMetrics
+    } = reqValid.payload;
 
     let structId = makeId();
 
@@ -106,7 +115,10 @@ export class GetRebuildStructController {
         envId: envId,
         evs: apiEnv.evsWithFallback,
         connections: connectionsWithFallback,
-        overrideTimezone: overrideTimezone
+        overrideTimezone: overrideTimezone,
+        isUseCache: isUseCache,
+        cachedModels: cachedModels,
+        cachedMetrics: cachedMetrics
       }
     };
 

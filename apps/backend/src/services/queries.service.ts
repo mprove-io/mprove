@@ -164,6 +164,39 @@ export class QueriesService {
     return queries;
   }
 
+  async getQueriesCheckExist(item: {
+    queryIds: string[];
+    projectId: string;
+  }) {
+    let { queryIds, projectId } = item;
+
+    let queries = await this.db.drizzle.query.queriesTable.findMany({
+      where: and(
+        inArray(queriesTable.queryId, queryIds),
+        eq(queriesTable.projectId, projectId)
+      )
+    });
+
+    let notFoundQueryIds: string[] = [];
+
+    queryIds.forEach(x => {
+      if (queries.map(query => query.queryId).indexOf(x) < -1) {
+        notFoundQueryIds.push(x);
+      }
+    });
+
+    if (notFoundQueryIds.length > 0) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
+        data: {
+          notFoundQueryIds: notFoundQueryIds
+        }
+      });
+    }
+
+    return queries;
+  }
+
   async removeOrphanedQueries() {
     let rawData = await this.db.drizzle.execute(sql`
 SELECT

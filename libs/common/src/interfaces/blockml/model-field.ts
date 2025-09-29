@@ -53,6 +53,7 @@ export class ModelField {
   @IsEnum(FieldClassEnum)
   fieldClass: FieldClassEnum;
 
+  @IsOptional()
   @IsEnum(FieldResultEnum)
   result: FieldResultEnum;
 

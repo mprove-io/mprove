@@ -14,6 +14,8 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Ev } from '~common/interfaces/backend/ev';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { Model } from '~common/interfaces/blockml/model';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import {
   ToBlockmlRebuildStructRequest,
@@ -49,6 +51,9 @@ export class BlockmlService {
     connections?: ProjectConnection[];
     evs?: Ev[];
     overrideTimezone: string;
+    isUseCache?: boolean;
+    cachedModels?: Model[];
+    cachedMetrics?: ModelMetric[];
   }) {
     let {
       traceId,
@@ -60,7 +65,10 @@ export class BlockmlService {
       skipDb,
       connections,
       evs,
-      overrideTimezone
+      overrideTimezone,
+      isUseCache,
+      cachedModels,
+      cachedMetrics
     } = item;
 
     let apiEnvs = await this.envsService.getApiEnvs({
@@ -109,7 +117,10 @@ export class BlockmlService {
         connections: isDefined(connections)
           ? connections
           : connectionsWithFallback,
-        overrideTimezone: overrideTimezone
+        overrideTimezone: overrideTimezone,
+        isUseCache: !!isUseCache,
+        cachedModels: cachedModels ?? [],
+        cachedMetrics: cachedMetrics ?? []
       }
     };
 

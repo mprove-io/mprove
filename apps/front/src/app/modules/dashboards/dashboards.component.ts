@@ -28,6 +28,7 @@ import { getTimezones } from '~common/functions/get-timezones';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
@@ -702,9 +703,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
             });
 
             this.dashboardQuery.update(newDashboard);
-
             this.checkQueries();
-
             this.cd.detectChanges();
           }
         }),
@@ -730,7 +729,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      mconfigIds: mconfigIds
+      mconfigIds: mconfigIds,
+      skipData: false
     };
 
     return this.apiService
@@ -748,9 +748,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
                 let query = queries.find(q => q.queryId === x.queryId);
 
                 let newTile = Object.assign({}, x, {
-                  query: query ?? x.query
+                  query: isDefined(query) ? query : x.query,
+                  trackChangeId:
+                    isDefined(query) && query.status !== QueryStatusEnum.Running
+                      ? makeId()
+                      : x.trackChangeId
                 });
-
                 return newTile;
               })
             });

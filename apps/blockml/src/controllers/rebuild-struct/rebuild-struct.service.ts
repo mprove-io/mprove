@@ -42,6 +42,7 @@ import {
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
@@ -131,7 +132,10 @@ export class RebuildStructService {
       envId,
       evs,
       mproveDir,
-      overrideTimezone
+      overrideTimezone,
+      isUseCache,
+      cachedModels,
+      cachedMetrics
     } = reqValid.payload;
 
     let prep: RebuildStructPrep = await this.rebuildStructStateless({
@@ -144,6 +148,9 @@ export class RebuildStructService {
       mproveDir: mproveDir,
       overrideTimezone: overrideTimezone,
       projectId: projectId,
+      isUseCache: isUseCache,
+      cachedModels: cachedModels,
+      cachedMetrics: cachedMetrics,
       isTest: false
     });
 
@@ -260,6 +267,9 @@ export class RebuildStructService {
       mproveDir: mproveDir,
       overrideTimezone: item.overrideTimezone,
       projectId: undefined,
+      isUseCache: false,
+      cachedModels: [],
+      cachedMetrics: [],
       isTest: true
     });
 
@@ -276,6 +286,9 @@ export class RebuildStructService {
     mproveDir: string;
     overrideTimezone: string;
     projectId: string;
+    isUseCache: boolean;
+    cachedModels: Model[];
+    cachedMetrics: ModelMetric[];
     isTest: boolean;
   }): Promise<RebuildStructPrep> {
     //
@@ -303,7 +316,12 @@ export class RebuildStructService {
       this.cs
     );
 
-    stores = yamlBuildItem.stores;
+    stores =
+      item.isUseCache === true
+        ? item.cachedModels
+            .filter(model => model.type === ModelTypeEnum.Store)
+            .map(model => model.storeContent)
+        : yamlBuildItem.stores;
     dashboards = yamlBuildItem.dashboards;
     reports = yamlBuildItem.reports;
     charts = yamlBuildItem.charts;
@@ -347,7 +365,10 @@ export class RebuildStructService {
 
     let tempDir = `${blockmlDataPath}/${Date.now()}-${makeId()}`;
 
-    let malloyFiles = item.files.filter(y => y.name.endsWith('.malloy'));
+    let malloyFiles =
+      item.isUseCache === true
+        ? []
+        : item.files.filter(y => y.name.endsWith('.malloy'));
 
     // console.log('malloyFiles');
     // console.log(malloyFiles);
@@ -423,78 +444,87 @@ export class RebuildStructService {
     // console.log('mods');
     // console.log(mods);
 
-    let buildModStartResult = await buildModStart(
-      {
-        files: item.files,
-        malloyConnections: malloyConnections,
-        connections: item.connections,
-        mods: mods,
-        tempDir: tempDir,
-        projectId: item.projectId,
-        errors: errors,
-        structId: item.structId,
-        caller: CallerEnum.BuildModStart
-      },
-      this.cs
-    );
+    mods =
+      item.isUseCache === true
+        ? []
+        : (
+            await buildModStart(
+              {
+                files: item.files,
+                malloyConnections: malloyConnections,
+                connections: item.connections,
+                mods: mods,
+                tempDir: tempDir,
+                projectId: item.projectId,
+                errors: errors,
+                structId: item.structId,
+                caller: CallerEnum.BuildModStart
+              },
+              this.cs
+            )
+          ).mods;
 
     // console.log('diffBuildModStart');
     // console.log(Date.now() - startBuildModStart);
 
-    mods = buildModStartResult.mods;
+    if (item.isUseCache === false) {
+      stores = buildStoreStart(
+        {
+          stores: stores,
+          presets: presets,
+          structId: item.structId,
+          errors: errors,
+          caller: CallerEnum.BuildStoreStart
+        },
+        this.cs
+      );
 
-    stores = buildStoreStart(
-      {
-        stores: stores,
-        presets: presets,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildStoreStart
-      },
-      this.cs
-    );
+      stores = buildField(
+        {
+          entities: stores,
+          projectConfig: projectConfig,
+          structId: item.structId,
+          errors: errors,
+          caller: CallerEnum.BuildStoreField
+        },
+        this.cs
+      );
 
-    stores = buildField(
-      {
-        entities: stores,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildStoreField
-      },
-      this.cs
-    );
+      stores = buildStoreNext(
+        {
+          stores: stores,
+          structId: item.structId,
+          errors: errors,
+          caller: CallerEnum.BuildStoreNext
+        },
+        this.cs
+      );
+    }
 
-    stores = buildStoreNext(
-      {
-        stores: stores,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildStoreNext
-      },
-      this.cs
-    );
+    let apiModels =
+      item.isUseCache === true
+        ? item.cachedModels
+        : wrapModels({
+            projectId: item.projectId,
+            structId: item.structId,
+            stores: stores,
+            mods: mods,
+            files: item.files
+          });
 
-    let apiModels = wrapModels({
-      projectId: item.projectId,
-      structId: item.structId,
-      stores: stores,
-      mods: mods,
-      files: item.files
-    });
-
-    let buildMetricsNextResult = buildMetricsNext(
-      {
-        apiModels: apiModels,
-        stores: stores,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildModelMetric
-      },
-      this.cs
-    );
-
-    let metrics = buildMetricsNextResult.metrics;
+    let metrics =
+      item.isUseCache === true
+        ? item.cachedMetrics
+        : buildMetricsNext(
+            {
+              apiModels: apiModels,
+              stores: stores,
+              structId: item.structId,
+              errors: errors,
+              caller: CallerEnum.BuildModelMetric
+            },
+            this.cs
+          ).metrics;
 
     dashboards = buildField(
       {
@@ -704,7 +734,7 @@ export class RebuildStructService {
     let prep: RebuildStructPrep = {
       errors: errors,
       stores: stores,
-      dashboards: dashboards,
+      apiModels: apiModels,
       metrics: metrics,
       presets: presets.map(preset => {
         let presetPart: Preset = {
@@ -715,7 +745,7 @@ export class RebuildStructService {
         };
         return presetPart;
       }),
-      apiModels: apiModels,
+      dashboards: dashboards,
       reports: reports,
       charts: charts,
       mproveDirValue: projectConfig.mprove_dir,

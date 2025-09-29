@@ -7,11 +7,13 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -217,11 +219,11 @@ export class GetDashboardController {
         ? `${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
         : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
 
-    let secondFileNodeId = `${projectId}/${secondRelativePath}`;
+    // let secondFileNodeId = `${projectId}/${secondRelativePath}`;
 
-    let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
+    // let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
 
-    let secondFileId = encodeFilePath({ filePath: secondRelativePath });
+    // let secondFileId = encodeFilePath({ filePath: secondRelativePath });
 
     let {
       dashboardFileText
@@ -272,10 +274,8 @@ export class GetDashboardController {
         let ar = x.name.split('.');
         let ext = ar[ar.length - 1];
         let allow =
-          x.fileNodeId !== secondFileNodeId &&
-          [FileExtensionEnum.Chart, FileExtensionEnum.Dashboard].indexOf(
-            `.${ext}` as FileExtensionEnum
-          ) < 0;
+          // x.fileNodeId !== secondFileNodeId &&
+          [FileExtensionEnum.Yml].indexOf(`.${ext}` as FileExtensionEnum) > -1;
         return allow;
       })
     ];
@@ -283,6 +283,15 @@ export class GetDashboardController {
     // if (isDefined(malloyFileText)) {
     //   diskFiles.push(secondTempFile);
     // }
+
+    let modelIds = fromDashboard.tiles.map(tile => tile.modelId);
+
+    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        eq(modelsTable.structId, bridge.structId),
+        inArray(modelsTable.modelId, modelIds)
+      )
+    });
 
     let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({
@@ -293,7 +302,10 @@ export class GetDashboardController {
         mproveDir: diskResponse.payload.mproveDir,
         skipDb: true,
         envId: envId,
-        overrideTimezone: timezone
+        overrideTimezone: timezone,
+        isUseCache: true,
+        cachedModels: cachedModels,
+        cachedMetrics: []
       });
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
@@ -389,6 +401,8 @@ export class GetDashboardController {
         );
         newDashboardTile.queryId = newMconfig.queryId;
         newDashboardTile.mconfigId = newMconfig.mconfigId;
+
+        newDashboardTile.trackChangeId = newMconfig.mconfigId;
 
         insertMconfigs.push(
           this.wrapToEntService.wrapToEntityMconfig(newMconfig)

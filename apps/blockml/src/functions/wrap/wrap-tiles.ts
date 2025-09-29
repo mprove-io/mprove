@@ -282,6 +282,7 @@ export function wrapTiles(item: {
       modelFilePath: apiModel.filePath,
       mconfigId: mconfigId,
       queryId: queryId,
+      trackChangeId: mconfigId,
       // malloyQueryId: tile.query,
       listen: tile.listen,
       deletedFilterFieldIds: undefined,

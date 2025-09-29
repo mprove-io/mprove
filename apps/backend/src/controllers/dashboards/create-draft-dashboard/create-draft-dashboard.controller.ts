@@ -8,11 +8,13 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -304,9 +306,7 @@ export class CreateDraftDashboardController {
         let ext = ar[ar.length - 1];
         let allow =
           // x.fileNodeId !== secondFileNodeId &&
-          [FileExtensionEnum.Chart, FileExtensionEnum.Dashboard].indexOf(
-            `.${ext}` as FileExtensionEnum
-          ) < 0;
+          [FileExtensionEnum.Yml].indexOf(`.${ext}` as FileExtensionEnum) > -1;
         return allow;
       })
     ];
@@ -314,6 +314,15 @@ export class CreateDraftDashboardController {
     // if (isDefined(malloyFileText)) {
     //   diskFiles.push(secondTempFile);
     // }
+
+    let modelIds = tiles.map(tile => tile.modelId);
+
+    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        eq(modelsTable.structId, bridge.structId),
+        inArray(modelsTable.modelId, modelIds)
+      )
+    });
 
     let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({
@@ -324,11 +333,20 @@ export class CreateDraftDashboardController {
         mproveDir: diskResponse.payload.mproveDir,
         skipDb: true,
         envId: envId,
-        overrideTimezone: timezone
+        overrideTimezone: timezone,
+        isUseCache: true,
+        cachedModels: cachedModels,
+        cachedMetrics: []
       });
 
-    console.log('struct.errors');
-    console.log(struct.errors);
+    if (struct.errors.length > 0) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ERROR_REBUILD_DASHBOARD_FAILED,
+        data: {
+          structErrors: struct.errors
+        }
+      });
+    }
 
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 

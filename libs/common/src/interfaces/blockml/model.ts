@@ -24,6 +24,7 @@ export class Model {
   @IsEnum(ModelTypeEnum)
   type: ModelTypeEnum;
 
+  @IsOptional()
   @IsString()
   source: string;
 

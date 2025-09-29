@@ -16,6 +16,9 @@ export class Tile {
   @IsString()
   queryId: string;
 
+  @IsString()
+  trackChangeId: string;
+
   // @IsOptional()
   // @IsString()
   // malloyQueryId: string;

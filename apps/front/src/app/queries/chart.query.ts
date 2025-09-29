@@ -77,6 +77,7 @@ let emptyTile: TileX = {
   modelFilePath: undefined,
   mconfigId: emptyMconfig.mconfigId,
   queryId: emptyQuery.queryId,
+  trackChangeId: emptyMconfig.mconfigId,
   // malloyQueryId: undefined,
   listen: undefined,
   deletedFilterFieldIds: undefined,

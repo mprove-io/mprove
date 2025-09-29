@@ -25,6 +25,9 @@ export class ToBackendGetQueriesRequestPayload {
   @ArrayNotEmpty()
   @IsString({ each: true })
   mconfigIds: string[];
+
+  @IsBoolean()
+  skipData: boolean;
 }
 
 export class ToBackendGetQueriesRequest extends ToBackendRequest {

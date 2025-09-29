@@ -407,8 +407,8 @@ export class RunCommand extends CustomCommand {
       isRepoProd: isRepoProd,
       branchId: this.branch,
       envId: this.env,
-      mconfigIds: mconfigParts.map(x => x.mconfigId)
-      // queryIds: uniqueQueryIds
+      mconfigIds: mconfigParts.map(x => x.mconfigId),
+      skipData: true
     };
 
     let getQueriesRespStart = await mreq<ToBackendGetQueriesResponse>({
@@ -475,8 +475,8 @@ export class RunCommand extends CustomCommand {
           isRepoProd: isRepoProd,
           branchId: this.branch,
           envId: this.env,
-          mconfigIds: mconfigPartsToGet.map(x => x.mconfigId)
-          // queryIds: queryIdsToGet
+          mconfigIds: mconfigPartsToGet.map(x => x.mconfigId),
+          skipData: true
         };
 
         let getQueriesResp = await mreq<ToBackendGetQueriesResponse>({

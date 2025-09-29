@@ -137,7 +137,8 @@ test('1', async t => {
         mconfigIds: [
           resp1.payload.dashboard.tiles[0].mconfigId,
           resp1.payload.dashboard.tiles[1].mconfigId
-        ]
+        ],
+        skipData: true
       }
     };
 

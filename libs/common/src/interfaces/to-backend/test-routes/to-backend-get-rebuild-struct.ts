@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
+import { Model } from '~common/interfaces/blockml/model';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetRebuildStructRequestPayload {
@@ -21,6 +28,17 @@ export class ToBackendGetRebuildStructRequestPayload {
   @IsOptional()
   @IsString()
   overrideTimezone: string;
+
+  @IsBoolean()
+  isUseCache: boolean;
+
+  @ValidateNested()
+  @Type(() => Model)
+  cachedModels: Model[];
+
+  @ValidateNested()
+  @Type(() => ModelMetric)
+  cachedMetrics: ModelMetric[];
 }
 
 export class ToBackendGetRebuildStructRequest extends ToBackendRequest {

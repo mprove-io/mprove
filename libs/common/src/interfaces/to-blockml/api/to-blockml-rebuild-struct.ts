@@ -52,6 +52,17 @@ export class ToBlockmlRebuildStructRequestPayload {
   @IsOptional()
   @IsString()
   overrideTimezone: string;
+
+  @IsBoolean()
+  isUseCache: boolean;
+
+  @ValidateNested()
+  @Type(() => Model)
+  cachedModels: Model[];
+
+  @ValidateNested()
+  @Type(() => ModelMetric)
+  cachedMetrics: ModelMetric[];
 }
 
 export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {
