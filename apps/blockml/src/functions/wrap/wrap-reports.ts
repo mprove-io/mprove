@@ -60,10 +60,10 @@ export function wrapReports(item: {
         maxFractions:
           isDefined(field.store_model) && isDefined(field.store_filter)
             ? Number(
-                (
-                  models.find(model => model.modelId === field.store_model)
-                    .content as FileStore
-                ).fields.find(k => k.name === field.store_filter).max_fractions
+                models
+                  .find(model => model.modelId === field.store_model)
+                  .storeContent.fields.find(k => k.name === field.store_filter)
+                  .max_fractions
               )
             : undefined,
         storeModel: field.store_model,
@@ -74,7 +74,7 @@ export function wrapReports(item: {
           : field.fractions.map(y => {
               let store = models.find(
                 model => model.modelId === field.store_model
-              ).content as FileStore;
+              ).storeContent;
 
               let storeResultCurrentTypeFraction: FileStoreFractionType;
 
@@ -270,7 +270,7 @@ export function wrapReports(item: {
                   let isStore = metric.modelType === ModelTypeEnum.Store;
 
                   if (isStore === true) {
-                    store = model.content as FileStore;
+                    store = model.storeContent;
                     storeField = store.fields.find(
                       k => k.name === parameter.apply_to
                     );

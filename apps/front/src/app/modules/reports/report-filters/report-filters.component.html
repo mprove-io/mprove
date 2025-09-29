@@ -37,7 +37,7 @@
             !!filter.storeResult ? filter.storeResult : filter.result
           "
           [fieldTimeframe]="undefined"
-          [modelContent]="getModelContent(filter.storeModel)"
+          [storeContent]="getStoreContent(filter.storeModel)"
           [metricsStartDateYYYYMMDD]="report?.metricsStartDateYYYYMMDD"
           [metricsEndDateYYYYMMDD]="
             getMetricsEndDateYYYYMMDD(filter.storeModel)

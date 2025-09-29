@@ -24,7 +24,6 @@ import { Filter } from '~common/interfaces/blockml/filter';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
 import { MyRegex } from '~common/models/my-regex';
@@ -74,17 +73,15 @@ export class StoreService {
 
     //
     newMconfig.dateRangeIncludesRightSide =
-      isUndefined(
-        (model.content as FileStore).date_range_includes_right_side
-      ) ||
+      isUndefined(model.storeContent.date_range_includes_right_side) ||
       toBooleanFromLowercaseString(
-        (model.content as FileStore).date_range_includes_right_side
+        model.storeContent.date_range_includes_right_side
       ) === true
         ? true
         : false;
 
     // add required filters
-    (model.content as FileStore).fields
+    model.storeContent.fields
       .filter(x => x.fieldClass === FieldClassEnum.Filter)
       .forEach(storeFilter => {
         if (toBooleanFromLowercaseString(storeFilter.required) === true) {
@@ -158,7 +155,7 @@ export class StoreService {
             // console.log('control');
             // console.log(control);
 
-            let storeFilt = (model.content as FileStore).fields
+            let storeFilt = model.storeContent.fields
               .filter(
                 storeField => storeField.fieldClass === FieldClassEnum.Filter
               )
@@ -235,7 +232,7 @@ export class StoreService {
 
     let addSelect: string[] = [];
 
-    (model.content as FileStore).fields
+    model.storeContent.fields
       .filter(
         storeField =>
           storeField.fieldClass !== FieldClassEnum.Filter &&
@@ -278,11 +275,11 @@ export class StoreService {
 
     let refError;
 
-    let selectedDimensions = (storeModel.content as FileStore).fields
+    let selectedDimensions = storeModel.storeContent.fields
       .filter(field => field.fieldClass === FieldClassEnum.Dimension)
       .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
-    let selectedMeasures = (storeModel.content as FileStore).fields
+    let selectedMeasures = storeModel.storeContent.fields
       .filter(field => field.fieldClass === FieldClassEnum.Measure)
       .filter(f => mconfig.select.indexOf(`${f.name}`) > -1);
 
@@ -295,7 +292,7 @@ export class StoreService {
     mconfig.sortings.forEach(sorting => {
       let orderByElement = {
         fieldId: sorting.fieldId,
-        field: (storeModel.content as FileStore).fields.find(
+        field: storeModel.storeContent.fields.find(
           field => `${field.name}` === sorting.fieldId
         ),
         desc: sorting.desc
@@ -340,7 +337,7 @@ export class StoreService {
       } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
         target = caseSensitiveStringFilters;
       } else if (reference === 'STORE_FIELDS') {
-        target = JSON.stringify((storeModel.content as FileStore).fields);
+        target = JSON.stringify(storeModel.storeContent.fields);
       } else if (reference === 'QUERY_TIMEZONE') {
         target = mconfig.timezone;
       } else {
@@ -383,7 +380,7 @@ ${inputSub}
     // console.log('respData');
     // console.log(respData);
 
-    let store = storeModel.content as FileStore;
+    let store = storeModel.storeContent;
 
     let inputSub = store.response;
 

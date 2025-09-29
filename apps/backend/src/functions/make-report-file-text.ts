@@ -18,7 +18,6 @@ import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fr
 import { FileReport } from '~common/interfaces/blockml/internal/file-report';
 import { FileReportRow } from '~common/interfaces/blockml/internal/file-report-row';
 import { FileReportRowParameter } from '~common/interfaces/blockml/internal/file-report-row-parameter';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { ReportField } from '~common/interfaces/blockml/report-field';
@@ -286,7 +285,7 @@ export function makeReportFileText(item: {
 
                                 newFileControl.value =
                                   mconfigControl.isMetricsDate === true
-                                    ? (model.content as FileStore).fields
+                                    ? model.storeContent.fields
                                         .find(
                                           field =>
                                             field.fieldClass ===

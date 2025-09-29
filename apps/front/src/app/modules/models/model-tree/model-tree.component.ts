@@ -40,7 +40,6 @@ import { Filter } from '~common/interfaces/blockml/filter';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelNode } from '~common/interfaces/blockml/model-node';
 import { ChartQuery } from '~front/app/queries/chart.query';
@@ -329,15 +328,13 @@ export class ModelTreeComponent implements AfterViewInit {
 
         let storeFilter =
           field.fieldClass === FieldClassEnum.Filter
-            ? (this.model.content as FileStore).fields.find(
-                f => f.name === field.id
-              )
+            ? this.model.storeContent.fields.find(f => f.name === field.id)
             : undefined;
 
         let storeResultFraction =
           field.fieldClass === FieldClassEnum.Filter
             ? undefined
-            : (this.model.content as FileStore).results.find(
+            : this.model.storeContent.results.find(
                 r => r.result === field.result
               ).fraction_types[0];
 
@@ -347,7 +344,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
         let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
           ? []
-          : (this.model.content as FileStore).results
+          : this.model.storeContent.results
               .find(r => r.result === field.result)
               .fraction_types.map(ft => {
                 let options = [];
@@ -411,7 +408,7 @@ export class ModelTreeComponent implements AfterViewInit {
                 };
                 return newControl;
               })
-            : (this.model.content as FileStore).results
+            : this.model.storeContent.results
                 .find(r => r.result === field.result)
                 .fraction_types[0].controls.map(control => {
                   let newControl: FractionControl = {

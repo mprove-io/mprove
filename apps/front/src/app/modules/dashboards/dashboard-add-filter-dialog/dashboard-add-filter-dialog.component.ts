@@ -44,7 +44,6 @@ import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Model } from '~common/interfaces/blockml/model';
 import { SelectItem } from '~common/interfaces/front/select-item';
 import {
@@ -472,7 +471,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
               });
 
             this.storeResultsList =
-              (resp.payload.model.content as FileStore).results?.map(
+              resp.payload.model.storeContent.results?.map(
                 result => result.result
               ) || [];
 
@@ -587,7 +586,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       storeFilter =
         this.storeFilterForForm.controls['storeFilterFor'].value ===
         StoreFilterForEnum.Filter
-          ? (this.storeModel.content as FileStore).fields.find(
+          ? this.storeModel.storeContent.fields.find(
               f => f.name === this.storeFilterForm.controls['storeFilter'].value
             )
           : undefined;
@@ -596,7 +595,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
         this.storeFilterForForm.controls['storeFilterFor'].value ===
         StoreFilterForEnum.Filter
           ? undefined
-          : (this.storeModel.content as FileStore).results.find(
+          : this.storeModel.storeContent.results.find(
               r =>
                 r.result === this.fieldResultForm.controls['fieldResult'].value
             ).fraction_types[0];
@@ -607,7 +606,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
       let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
-        : (this.storeModel.content as FileStore).results
+        : this.storeModel.storeContent.results
             .find(
               r =>
                 r.result === this.fieldResultForm.controls['fieldResult'].value
@@ -652,7 +651,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
             };
             return newControl;
           })
-        : (this.storeModel.content as FileStore).results
+        : this.storeModel.storeContent.results
             .find(
               r =>
                 r.result === this.fieldResultForm.controls['fieldResult'].value

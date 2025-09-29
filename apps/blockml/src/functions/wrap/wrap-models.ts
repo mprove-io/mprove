@@ -501,7 +501,7 @@ export function wrapModels(item: {
       connectionType: x.connectionType,
       filePath: x.filePath,
       fileText: files.find(file => file.path === x.filePath).content,
-      content: x.fileExt === FileExtensionEnum.Store ? x : undefined,
+      storeContent: x.fileExt === FileExtensionEnum.Store ? x : undefined,
       dateRangeIncludesRightSide:
         x.fileExt === FileExtensionEnum.Store &&
         (isUndefined((x as FileStore).date_range_includes_right_side) ||

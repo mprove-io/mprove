@@ -44,7 +44,6 @@ import { Member } from '~common/interfaces/backend/member';
 import { Filter } from '~common/interfaces/blockml/filter';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { Parameter } from '~common/interfaces/blockml/parameter';
@@ -199,7 +198,7 @@ export class ReportDataService {
 
         if (model.type === ModelTypeEnum.Store) {
           // add required parameters
-          (model.content as FileStore).fields
+          model.storeContent.fields
             .filter(x => x.fieldClass === FieldClassEnum.Filter)
             .forEach(storeFilter => {
               if (toBooleanFromLowercaseString(storeFilter.required) === true) {
@@ -329,7 +328,7 @@ export class ReportDataService {
               weekStart: struct.weekStart
             });
 
-            let storeField = (model.content as FileStore).fields.find(
+            let storeField = model.storeContent.fields.find(
               field =>
                 field.time_group === metric.timeFieldId &&
                 field.detail === timeSpecDetail

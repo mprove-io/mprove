@@ -72,7 +72,7 @@ export class ModelsService {
     }
 
     if (addContent === true) {
-      selectObj.content = modelsTable.content;
+      selectObj.content = modelsTable.storeContent;
     }
 
     let models = (await this.db.drizzle

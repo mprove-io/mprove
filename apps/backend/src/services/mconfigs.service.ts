@@ -15,7 +15,6 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
@@ -121,7 +120,7 @@ export class MconfigsService {
     });
 
     let processedRequest = await this.storeService.transformStoreRequest({
-      input: (model.content as FileStore).request,
+      input: model.storeContent.request,
       mconfig: newMconfig,
       storeModel: model,
       storeParam: ParameterEnum.Request,
@@ -160,7 +159,7 @@ export class MconfigsService {
       envId: envId,
       connectionId: model.connectionId,
       sql: undefined, // isStore true
-      store: model.content as FileStore,
+      store: model.storeContent,
       storeTransformedRequestString: processedRequest.result
     });
 
@@ -171,7 +170,7 @@ export class MconfigsService {
       connectionId: model.connectionId,
       connectionType: connection.type,
       sql: undefined,
-      apiMethod: (model.content as FileStore).method as StoreMethodEnum,
+      apiMethod: model.storeContent.method as StoreMethodEnum,
       apiUrl: apiUrl,
       apiBody: apiBody,
       status: isError === true ? QueryStatusEnum.Error : QueryStatusEnum.New,
@@ -193,7 +192,7 @@ export class MconfigsService {
     newMconfig.queryId = newQuery.queryId;
     newMconfig.temp = true;
     newMconfig.storePart = {
-      reqTemplate: (model.content as FileStore).request,
+      reqTemplate: model.storeContent.request,
       reqFunction: processedRequest.userCode,
       reqJsonParts: processedRequest.result,
       reqBody: JSON.stringify(apiBody),

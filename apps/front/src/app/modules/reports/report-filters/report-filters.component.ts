@@ -11,7 +11,6 @@ import { ReportX } from '~common/interfaces/backend/report-x';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -78,14 +77,14 @@ export class ReportFiltersComponent {
       // );
 
       let storeFilter = isDefined(reportField.storeFilter)
-        ? (store.content as FileStore).fields.find(
+        ? store.storeContent.fields.find(
             f => f.name === reportField.storeFilter
           )
         : undefined;
 
       let storeResultFirstTypeFraction = isDefined(reportField.storeFilter)
         ? undefined
-        : (store.content as FileStore).results.find(
+        : store.storeContent.results.find(
             r => r.result === reportField.storeResult
           ).fraction_types[0];
 
@@ -97,7 +96,7 @@ export class ReportFiltersComponent {
         storeResultFirstTypeFraction
       )
         ? []
-        : (store.content as FileStore).results
+        : store.storeContent.results
             .find(r => r.result === reportField.storeResult)
             .fraction_types.map(ft => {
               let options = [];
@@ -261,9 +260,9 @@ export class ReportFiltersComponent {
     });
   }
 
-  getModelContent(storeId: string) {
-    return this.modelsQuery.getValue().models.find(x => x.modelId === storeId)
-      ?.content;
+  getStoreContent(modelId: string) {
+    return this.modelsQuery.getValue().models.find(x => x.modelId === modelId)
+      ?.storeContent;
   }
 
   getMetricsEndDateYYYYMMDD(storeId: string) {

@@ -41,7 +41,7 @@ export class StoreFractionSubTypeComponent {
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
   @Input() isDisabled: boolean;
-  @Input() modelContent: any;
+  @Input() storeContent: FileStore;
   @Input() fieldResult: FieldResultEnum | string;
   @Input() fractionControl: FractionControl;
 
@@ -60,7 +60,7 @@ export class StoreFractionSubTypeComponent {
   }
 
   subTypeChange(item: FractionSubTypeOption) {
-    let storeTypeFraction = (this.modelContent as FileStore).results
+    let storeTypeFraction = this.storeContent.results
       .find(r => r.result === this.fieldResult)
       .fraction_types.find(ft => ft.type === item.typeValue);
 
@@ -80,7 +80,7 @@ export class StoreFractionSubTypeComponent {
           ).label
         : item.typeValue,
       storeFractionLogicGroupWithSubType: `${item.logicGroup}${TRIPLE_UNDERSCORE}${item.typeValue}`,
-      controls: (this.modelContent as FileStore).results
+      controls: this.storeContent.results
         .find(r => r.result === this.fieldResult)
         .fraction_types.find(ft => ft.type === item.typeValue)
         .controls.map(control => {

@@ -13,6 +13,7 @@ import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { FractionYesnoValueEnum } from '~common/enums/fraction/fraction-yesno-value.enum';
 import { Fraction } from '~common/interfaces/blockml/fraction';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 
 export class FractionTypeItem {
@@ -87,7 +88,7 @@ export class FractionComponent {
 
   @Input() suggestModelDimension: string;
   @Input() structId: string;
-  @Input() modelContent: any;
+  @Input() storeContent: FileStore;
 
   @Input() metricsStartDateYYYYMMDD: string;
   @Input() metricsEndDateYYYYMMDD: string;

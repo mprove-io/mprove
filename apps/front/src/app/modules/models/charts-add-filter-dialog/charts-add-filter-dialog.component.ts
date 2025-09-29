@@ -29,7 +29,6 @@ import { Filter } from '~common/interfaces/blockml/filter';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
@@ -145,7 +144,7 @@ export class ChartsAddFilterDialogComponent implements OnInit {
       // if (newMconfig.isStoreModel === true) {
       let storeFilter =
         field.fieldClass === FieldClassEnum.Filter
-          ? (this.ref.data.model.content as FileStore).fields.find(
+          ? this.ref.data.model.storeContent.fields.find(
               f => f.name === field.id
             )
           : undefined;
@@ -153,7 +152,7 @@ export class ChartsAddFilterDialogComponent implements OnInit {
       let storeResultFraction =
         field.fieldClass === FieldClassEnum.Filter
           ? undefined
-          : (this.ref.data.model.content as FileStore).results.find(
+          : this.ref.data.model.storeContent.results.find(
               r => r.result === field.result
             ).fraction_types[0];
 
@@ -163,7 +162,7 @@ export class ChartsAddFilterDialogComponent implements OnInit {
 
       let storeFractionSubTypeOptions = isUndefined(storeResultFraction)
         ? []
-        : (this.ref.data.model.content as FileStore).results
+        : this.ref.data.model.storeContent.results
             .find(r => r.result === field.result)
             .fraction_types.map(ft => {
               let options = [];
@@ -227,7 +226,7 @@ export class ChartsAddFilterDialogComponent implements OnInit {
               };
               return newControl;
             })
-          : (this.ref.data.model.content as FileStore).results
+          : this.ref.data.model.storeContent.results
               .find(r => r.result === field.result)
               .fraction_types[0].controls.map(control => {
                 let newControl: FractionControl = {

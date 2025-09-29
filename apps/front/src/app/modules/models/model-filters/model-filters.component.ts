@@ -30,7 +30,7 @@ import { StructService } from '~front/app/services/struct.service';
   templateUrl: './model-filters.component.html'
 })
 export class ModelFiltersComponent {
-  @Input() modelContent: any;
+  @Input() storeContent: FileStore;
 
   mconfig: MconfigX;
 
@@ -121,17 +121,14 @@ export class ModelFiltersComponent {
 
       let storeFilter =
         field.fieldClass === FieldClassEnum.Filter
-          ? (this.modelContent as FileStore).fields.find(
-              f => f.name === field.id
-            )
+          ? this.storeContent.fields.find(f => f.name === field.id)
           : undefined;
 
       let storeResultFirstTypeFraction =
         field.fieldClass === FieldClassEnum.Filter
           ? undefined
-          : (this.modelContent as FileStore).results.find(
-              r => r.result === field.result
-            ).fraction_types[0];
+          : this.storeContent.results.find(r => r.result === field.result)
+              .fraction_types[0];
 
       let logicGroup = isUndefined(storeResultFirstTypeFraction)
         ? undefined
@@ -141,7 +138,7 @@ export class ModelFiltersComponent {
         storeResultFirstTypeFraction
       )
         ? []
-        : (this.modelContent as FileStore).results
+        : this.storeContent.results
             .find(r => r.result === field.result)
             .fraction_types.map(ft => {
               let options = [];

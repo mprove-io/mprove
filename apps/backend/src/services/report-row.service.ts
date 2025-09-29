@@ -376,7 +376,7 @@ export class ReportRowService {
       //     parameters:
       //       model.type !== ModelTypeEnum.Store
       //         ? []
-      //         : (model.content as FileStore).fields
+      //         : model.storeContent.fields
       //             .filter(
       //               x =>
       //                 x.fieldClass === FieldClassEnum.Filter &&

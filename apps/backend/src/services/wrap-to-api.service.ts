@@ -415,7 +415,7 @@ export class WrapToApiService {
       connectionType: model.connectionType,
       filePath: model.filePath,
       fileText: model.fileText,
-      content: model.content,
+      storeContent: model.storeContent,
       isViewModel: model.isViewModel,
       // isStoreModel: model.isStoreModel,
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,

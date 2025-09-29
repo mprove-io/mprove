@@ -11,6 +11,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelNode } from '~common/interfaces/blockml/model-node';
 
@@ -29,7 +30,7 @@ export const modelsTable = pgTable(
     connectionType: varchar('connection_type').$type<ConnectionTypeEnum>(),
     filePath: varchar('file_path'),
     fileText: varchar('file_text'),
-    content: json('content'),
+    storeContent: json('store_content').$type<FileStore>(),
     isViewModel: boolean('is_view_model'),
     // isStoreModel: boolean('is_store_model'),
     dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),

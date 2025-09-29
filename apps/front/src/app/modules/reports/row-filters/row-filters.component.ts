@@ -17,7 +17,6 @@ import { ReportX } from '~common/interfaces/backend/report-x';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Parameter } from '~common/interfaces/blockml/parameter';
 import { RowChange } from '~common/interfaces/blockml/row-change';
 import { DataRow } from '~common/interfaces/front/data-row';
@@ -135,7 +134,7 @@ export class RowFiltersComponent {
     if (metric.modelType === ModelTypeEnum.Store) {
       let store = this.modelsQuery
         .getValue()
-        .models.find(m => m.modelId === metric.modelId).content as FileStore;
+        .models.find(m => m.modelId === metric.modelId).storeContent;
 
       let field = filterExtended.field;
 
@@ -372,13 +371,13 @@ export class RowFiltersComponent {
     });
   }
 
-  getModelContent() {
+  getStoreContent() {
     let metric = this.structQuery
       .getValue()
       .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
 
     return this.modelsQuery
       .getValue()
-      .models.find(x => x.modelId === metric?.modelId)?.content;
+      .models.find(x => x.modelId === metric?.modelId)?.storeContent;
   }
 }

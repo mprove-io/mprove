@@ -12,7 +12,6 @@ import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { DashboardService } from '~front/app/services/dashboard.service';
@@ -31,8 +30,9 @@ export class DashboardFiltersComponent {
     private uiQuery: UiQuery
   ) {}
 
-  getModelContent(storeId: string) {
-    return this.dashboard.storeModels.find(x => x.modelId === storeId)?.content;
+  getStoreContent(modelId: string) {
+    return this.dashboard.storeModels.find(x => x.modelId === modelId)
+      ?.storeContent;
   }
 
   fractionUpdate(
@@ -79,14 +79,14 @@ export class DashboardFiltersComponent {
       );
 
       let storeFilter = isDefined(dashboardField.storeFilter)
-        ? (store.content as FileStore).fields.find(
+        ? store.storeContent.fields.find(
             f => f.name === dashboardField.storeFilter
           )
         : undefined;
 
       let storeResultFirstTypeFraction = isDefined(dashboardField.storeFilter)
         ? undefined
-        : (store.content as FileStore).results.find(
+        : store.storeContent.results.find(
             r => r.result === dashboardField.storeResult
           ).fraction_types[0];
 
@@ -98,7 +98,7 @@ export class DashboardFiltersComponent {
         storeResultFirstTypeFraction
       )
         ? []
-        : (store.content as FileStore).results
+        : store.storeContent.results
             .find(r => r.result === dashboardField.storeResult)
             .fraction_types.map(ft => {
               let options = [];
