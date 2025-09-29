@@ -7,9 +7,13 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
+import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -118,6 +122,18 @@ export class MysqlService {
           projectId: projectId
         })
       );
+
+    mc.end().catch(er => {
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_MYSQL_CONNECTION_CLOSE_ERROR,
+          originalError: er
+        }),
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
+    });
   }
 
   async processError(item: {
