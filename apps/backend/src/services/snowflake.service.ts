@@ -31,7 +31,7 @@ export class SnowFlakeService {
     queryId: string;
     querySql: string;
     projectId: string;
-  }) {
+  }): Promise<void> {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let options: snowflake.ConnectionOptions = {

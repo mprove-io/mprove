@@ -27,7 +27,7 @@ export class PrestoService {
     queryId: string;
     projectId: string;
     querySql: string;
-  }) {
+  }): Promise<void> {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let prestoClientConfig: PrestoClientConfig = {

@@ -28,7 +28,7 @@ export class PgService {
     queryId: string;
     projectId: string;
     querySql: string;
-  }) {
+  }): Promise<void> {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let cn: pg.IConnectionParameters<pg.IClient> = {

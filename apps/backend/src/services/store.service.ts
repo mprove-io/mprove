@@ -449,7 +449,7 @@ ${inputSub}
     model: ModelEnt;
     queryId: string;
     queryJobId: string;
-  }) {
+  }): Promise<void> {
     let { connection, queryJobId, queryId, projectId, model } = item;
 
     // console.log('store runQuery start');

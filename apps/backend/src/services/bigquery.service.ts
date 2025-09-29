@@ -15,7 +15,7 @@ export class BigQueryService {
     userId: string;
     query: QueryEnt;
     connection: ConnectionEnt;
-  }) {
+  }): Promise<QueryEnt> {
     let { query, userId, connection } = item;
 
     let bigquery = new BigQuery({

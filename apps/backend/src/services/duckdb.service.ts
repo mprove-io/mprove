@@ -28,7 +28,7 @@ export class DuckDbService {
     queryId: string;
     projectId: string;
     querySql: string;
-  }) {
+  }): Promise<void> {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let dbPath =
@@ -70,7 +70,7 @@ export class DuckDbService {
       }
     });
 
-    return dbQuery
+    dbQuery
       .then(async data => {
         data = JSON.parse(
           JSON.stringify(data, (_key, value) => {
@@ -121,6 +121,8 @@ export class DuckDbService {
           projectId: projectId
         })
       );
+
+    db.close();
 
     // import {
     //   type DuckDBConnection,
