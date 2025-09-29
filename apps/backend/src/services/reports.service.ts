@@ -72,15 +72,15 @@ export class ReportsService {
     structId: string;
     user: UserEnt;
     userMember: MemberEnt;
-    checkExist: boolean;
-    checkAccess: boolean;
+    isCheckExist: boolean;
+    isCheckAccess: boolean;
   }) {
     let {
       projectId,
       reportId,
       structId,
-      checkExist,
-      checkAccess: isCheckAccess,
+      isCheckExist,
+      isCheckAccess,
       user,
       userMember
     } = item;
@@ -113,7 +113,7 @@ export class ReportsService {
             )
           });
 
-    if (checkExist === true && isUndefined(report)) {
+    if (isCheckExist === true && isUndefined(report)) {
       throw new ServerError({
         message: ErEnum.BACKEND_REPORT_NOT_FOUND
       });

@@ -123,8 +123,8 @@ export class GetReportController {
       projectId: projectId,
       reportId: reportId,
       structId: bridge.structId,
-      checkExist: true,
-      checkAccess: true,
+      isCheckExist: true,
+      isCheckAccess: true,
       user: user,
       userMember: userMember
     });

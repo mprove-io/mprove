@@ -143,8 +143,8 @@ export class SaveModifyReportController {
       projectId: projectId,
       reportId: fromReportId,
       structId: bridge.structId,
-      checkExist: true,
-      checkAccess: true,
+      isCheckExist: true,
+      isCheckAccess: true,
       user: user,
       userMember: userMember
     });
