@@ -224,9 +224,12 @@ export async function buildMods(
 
     let modelInfo: MalloyModelInfo = modelDefToModelInfo(malloyModelDef);
 
-    x.connection = item.connections.find(
+    let projectConnection = item.connections.find(
       c => c.connectionId === sourceDef.connection
     );
+
+    x.connectionId = projectConnection.connectionId;
+    x.connectionType = projectConnection.type;
 
     x.valueWithSourceInfo = modelInfo.entries.find(
       entry => entry.kind === 'source' && entry.name === x.source

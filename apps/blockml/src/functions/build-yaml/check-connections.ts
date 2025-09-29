@@ -76,7 +76,8 @@ export function checkConnections(
         return;
       }
 
-      file.connection = connection;
+      file.connectionId = connection.connectionId;
+      file.connectionType = connection.type;
     }
     newFilesAny.push(file);
   });

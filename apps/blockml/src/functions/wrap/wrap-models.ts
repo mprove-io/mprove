@@ -497,15 +497,11 @@ export function wrapModels(item: {
       type: modelType,
       source: (x as FileMod).source,
       malloyModelDef: malloyModelDef,
-      connectionId: x.connection.connectionId,
-      connectionType: x.connection.type,
+      connectionId: x.connectionId,
+      connectionType: x.connectionType,
       filePath: x.filePath,
       fileText: files.find(file => file.path === x.filePath).content,
-      content:
-        x.fileExt === FileExtensionEnum.Store
-          ? Object.assign({}, x, { connection: undefined })
-          : undefined,
-      // isStoreModel: x.fileExt === FileExtensionEnum.Store,
+      content: x.fileExt === FileExtensionEnum.Store ? x : undefined,
       dateRangeIncludesRightSide:
         x.fileExt === FileExtensionEnum.Store &&
         (isUndefined((x as FileStore).date_range_includes_right_side) ||

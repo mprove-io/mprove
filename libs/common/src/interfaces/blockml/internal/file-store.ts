@@ -1,4 +1,4 @@
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
 import { FileStoreBuildMetric } from './file-store-build-metric';
@@ -54,7 +54,9 @@ export interface FileStore extends FileBasic {
 
   //
 
-  connection?: ProjectConnection;
+  connectionId?: string;
+
+  connectionType?: ConnectionTypeEnum;
 
   // only for types
   fieldsDeps?: {

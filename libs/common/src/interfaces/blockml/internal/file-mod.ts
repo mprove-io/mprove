@@ -1,6 +1,6 @@
 import { Model as MalloyModel } from '@malloydata/malloy';
 import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { FileBasic } from './file-basic';
 
 export interface FileMod extends FileBasic {
@@ -14,7 +14,9 @@ export interface FileMod extends FileBasic {
 
   access_roles?: string[];
 
-  connection?: ProjectConnection;
+  connectionId?: string;
+
+  connectionType?: ConnectionTypeEnum;
 
   malloyModel?: MalloyModel;
 
