@@ -19,6 +19,7 @@ import { checkSuggestModelDimension } from '~blockml/functions/extra/check-sugge
 import { collectFiles } from '~blockml/functions/extra/collect-files';
 import { getMproveConfigFile } from '~blockml/functions/extra/get-mprove-config-file';
 import { logStruct } from '~blockml/functions/extra/log-struct';
+import { logToConsoleBlockml } from '~blockml/functions/extra/log-to-console-blockml';
 import { wrapCharts } from '~blockml/functions/wrap/wrap-charts';
 import { wrapDashboards } from '~blockml/functions/wrap/wrap-dashboards';
 import { wrapErrors } from '~blockml/functions/wrap/wrap-errors';
@@ -40,6 +41,7 @@ import {
 } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
@@ -688,6 +690,20 @@ export class RebuildStructService {
     } else {
       fse.remove(tempDir);
     }
+
+    malloyConnections.forEach(connection =>
+      connection.close().catch(er => {
+        logToConsoleBlockml({
+          log: new ServerError({
+            message: ErEnum.BLOCKML_MALLOY_CONNECTION_CLOSE_ERROR,
+            originalError: er
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      })
+    );
 
     let prep: RebuildStructPrep = {
       errors: errors,
