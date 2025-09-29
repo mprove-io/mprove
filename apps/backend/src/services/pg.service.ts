@@ -91,6 +91,8 @@ export class PgService {
           projectId: projectId
         })
       );
+
+    pgp.end();
   }
 
   async processError(item: {
