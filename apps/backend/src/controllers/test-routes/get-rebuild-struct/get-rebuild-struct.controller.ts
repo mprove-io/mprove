@@ -26,6 +26,8 @@ import {
   ToDiskGetCatalogFilesResponse
 } from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
 
+// ToBackendGetRebuildStructRequest is for tests only
+// backend use apps/backend/src/services/blockml.service.ts -> rebuildStruct
 @SkipJwtCheck()
 @SkipThrottle()
 @UseGuards(TestRoutesGuard, ValidateRequestGuard)
