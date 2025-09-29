@@ -126,7 +126,6 @@ export class SnowFlakeService {
             getRetryOption(this.cs, this.logger)
           );
         }
-        this.snowflakeConnectionDestroy(snowflakeConnection);
       })
       .catch(async e => {
         await this.processError({
@@ -135,8 +134,21 @@ export class SnowFlakeService {
           queryJobId: queryJobId,
           projectId: projectId
         });
-        this.snowflakeConnectionDestroy(snowflakeConnection);
       });
+
+    snowflakeConnection.destroy((err, conn) => {
+      if (err) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
+            originalError: err
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+    });
   }
 
   async snowflakeConnectionExecute(
@@ -155,27 +167,6 @@ export class SnowFlakeService {
         }
       });
     });
-  }
-
-  snowflakeConnectionDestroy(snowflakeConnection: snowflake.Connection) {
-    if (snowflakeConnection.isUp()) {
-      let logger = this.logger;
-      let cs = this.cs;
-
-      snowflakeConnection.destroy(function (err, conn) {
-        if (err) {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
-              originalError: err
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: logger,
-            cs: cs
-          });
-        }
-      });
-    }
   }
 
   async processError(item: {
