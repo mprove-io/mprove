@@ -167,6 +167,13 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
             this.navQuery.updatePart({
               needValidate: resp.payload.needValidate
             });
+
+            resp.payload.dashboard.tiles.forEach(
+              tile =>
+                (tile.trackChangeId =
+                  tile.mconfigId + JSON.stringify(tile.query.data))
+            );
+
             this.dashboardQuery.update(resp.payload.dashboard);
 
             return true;

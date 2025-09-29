@@ -749,10 +749,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
                 let newTile = Object.assign({}, x, {
                   query: isDefined(query) ? query : x.query,
-                  trackChangeId:
-                    isDefined(query) && query.status !== QueryStatusEnum.Running
-                      ? makeId()
-                      : x.trackChangeId
+                  trackChangeId: isUndefined(query)
+                    ? x.trackChangeId
+                    : query.status === QueryStatusEnum.Completed
+                      ? x.mconfigId + JSON.stringify(query.data)
+                      : query.status !== QueryStatusEnum.Running
+                        ? makeId()
+                        : x.trackChangeId
                 });
                 return newTile;
               })

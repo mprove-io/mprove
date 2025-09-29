@@ -191,6 +191,12 @@ export class DashboardService {
           this.spinner.hide(APP_SPINNER_NAME);
 
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            resp.payload.dashboard.tiles.forEach(
+              tile =>
+                (tile.trackChangeId =
+                  tile.mconfigId + JSON.stringify(tile.query.data))
+            );
+
             this.dashboardQuery.update(resp.payload.dashboard);
           }
         }),
