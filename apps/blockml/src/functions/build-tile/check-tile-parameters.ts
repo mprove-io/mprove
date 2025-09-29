@@ -11,10 +11,8 @@ import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
 import { FileErrorLine } from '~common/interfaces/blockml/internal/file-error-line';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { FileStoreResult } from '~common/interfaces/blockml/internal/file-store-result';
 import { FileTileParameter } from '~common/interfaces/blockml/internal/file-tile-parameter';
@@ -34,10 +32,10 @@ export function checkTileParameters<T extends dcType>(
   item: {
     caseSensitiveStringFilters: boolean;
     entities: T[];
-    mods: FileMod[];
+    // mods: FileMod[];
     apiModels: Model[];
     stores: FileStore[];
-    malloyFiles: BmlFile[];
+    // malloyFiles: BmlFile[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -47,9 +45,9 @@ export function checkTileParameters<T extends dcType>(
   let {
     caller,
     structId,
-    mods,
+    // mods,
     apiModels,
-    malloyFiles,
+    // malloyFiles,
     stores,
     caseSensitiveStringFilters
   } = item;
@@ -62,11 +60,11 @@ export function checkTileParameters<T extends dcType>(
 
     x.tiles.forEach(tile => {
       let apiModel = getTileApiModel({
-        mods: mods,
+        // mods: mods,
         filePath: x.filePath,
         apiModels: apiModels,
-        tile: tile,
-        malloyFiles: malloyFiles
+        tile: tile
+        // malloyFiles: malloyFiles
       });
 
       if (isUndefined(tile.parameters)) {
@@ -189,11 +187,11 @@ export function checkTileParameters<T extends dcType>(
     if (errorsOnStart === item.errors.length) {
       x.tiles.forEach(tile => {
         let apiModel = getTileApiModel({
-          mods: mods,
+          // mods: mods,
           filePath: x.filePath,
           apiModels: apiModels,
-          tile: tile,
-          malloyFiles: malloyFiles
+          tile: tile
+          // malloyFiles: malloyFiles
         });
 
         if (x.fileExt === FileExtensionEnum.Dashboard) {

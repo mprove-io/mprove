@@ -36,7 +36,6 @@ import { makeId } from '~common/functions/make-id';
 import { replaceChartField } from '~common/functions/replace-chart-field';
 import { setChartFields } from '~common/functions/set-chart-fields';
 import { setChartTitleOnSelectChange } from '~common/functions/set-chart-title-on-select-change';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import { Filter } from '~common/interfaces/blockml/filter';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
@@ -57,7 +56,6 @@ export async function makeMalloyQuery(item: {
   mconfig: Mconfig;
   queryOperations: QueryOperation[];
   malloyConnections: MalloyConnection[];
-  projectConnection: ProjectConnection;
 }) {
   let {
     projectId,
@@ -66,8 +64,7 @@ export async function makeMalloyQuery(item: {
     model,
     mconfig,
     queryOperations,
-    malloyConnections,
-    projectConnection
+    malloyConnections
   } = item;
 
   let startMakeMalloyQuery = Date.now();
@@ -87,8 +84,7 @@ export async function makeMalloyQuery(item: {
       envId: envId,
       structId: structId,
       model: model,
-      mconfig: mconfig,
-      connection: projectConnection
+      mconfig: mconfig
     });
 
     return { isError: false, newMconfig: blankMconfig, newQuery: blankQuery };
@@ -543,8 +539,8 @@ export async function makeMalloyQuery(item: {
     queryId: queryId,
     projectId: projectId,
     envId: envId,
-    connectionId: projectConnection.connectionId,
-    connectionType: projectConnection.type,
+    connectionId: model.connectionId,
+    connectionType: model.connectionType,
     sql: pr.sql,
     apiMethod: undefined,
     apiUrl: undefined,

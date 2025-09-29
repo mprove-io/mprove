@@ -4,8 +4,6 @@ import { BmError } from '~blockml/models/bm-error';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Model } from '~common/interfaces/blockml/model';
 import { dcType } from '~common/types/dc-type';
@@ -26,11 +24,11 @@ export async function buildTile<T extends dcType>(
     projectId: string;
     entities: T[];
     stores: FileStore[];
-    mods: FileMod[];
+    // mods: FileMod[];
     apiModels: Model[];
     malloyConnections: MalloyConnection[];
     projectConnections: ProjectConnection[];
-    malloyFiles: BmlFile[];
+    // malloyFiles: BmlFile[];
     weekStart: ProjectWeekStartEnum;
     timezone: string;
     caseSensitiveStringFilters: boolean;
@@ -113,9 +111,9 @@ export async function buildTile<T extends dcType>(
       entities: entities,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       apiModels: item.apiModels,
-      mods: item.mods,
+      // mods: item.mods,
       stores: item.stores,
-      malloyFiles: item.malloyFiles,
+      // malloyFiles: item.malloyFiles,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -127,11 +125,11 @@ export async function buildTile<T extends dcType>(
     {
       traceId: item.traceId,
       entities: entities,
-      mods: item.mods,
+      // mods: item.mods,
       apiModels: item.apiModels,
       malloyConnections: item.malloyConnections,
       projectConnections: item.projectConnections,
-      malloyFiles: item.malloyFiles,
+      // malloyFiles: item.malloyFiles,
       weekStart: item.weekStart,
       timezone: item.timezone,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,

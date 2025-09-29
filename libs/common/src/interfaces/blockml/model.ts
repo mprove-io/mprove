@@ -8,6 +8,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ModelField } from './model-field';
 import { ModelNode } from './model-node';
@@ -27,6 +28,9 @@ export class Model {
 
   @IsString()
   connectionId: string;
+
+  @IsEnum(ConnectionTypeEnum)
+  connectionType: ConnectionTypeEnum;
 
   @IsString()
   filePath: string;

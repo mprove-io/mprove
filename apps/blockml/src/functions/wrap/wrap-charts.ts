@@ -1,7 +1,6 @@
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { Chart } from '~common/interfaces/blockml/chart';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
@@ -13,21 +12,12 @@ export function wrapCharts(item: {
   projectId: string;
   envId: string;
   timezone: string;
-  mods: FileMod[];
   apiModels: Model[];
   stores: FileStore[];
   charts: FileChart[];
 }) {
-  let {
-    structId,
-    projectId,
-    apiModels,
-    mods,
-    stores,
-    charts,
-    envId,
-    timezone
-  } = item;
+  let { structId, projectId, apiModels, stores, charts, envId, timezone } =
+    item;
 
   let apiCharts: Chart[] = [];
   let chartMconfigs: Mconfig[] = [];
@@ -38,7 +28,6 @@ export function wrapCharts(item: {
       projectId: projectId,
       structId: structId,
       apiModels: apiModels,
-      mods: mods,
       stores: stores,
       tiles: x.tiles,
       envId: envId,

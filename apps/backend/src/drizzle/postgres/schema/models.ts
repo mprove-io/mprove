@@ -9,6 +9,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelNode } from '~common/interfaces/blockml/model-node';
@@ -25,6 +26,7 @@ export const modelsTable = pgTable(
     type: varchar('type').$type<ModelTypeEnum>(),
     malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
     connectionId: varchar('connection_id'),
+    connectionType: varchar('connection_type').$type<ConnectionTypeEnum>(),
     filePath: varchar('file_path'),
     fileText: varchar('file_text'),
     content: json('content'),

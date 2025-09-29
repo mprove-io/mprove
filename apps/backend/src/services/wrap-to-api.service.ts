@@ -412,6 +412,7 @@ export class WrapToApiService {
       malloyModelDef: model.malloyModelDef,
       hasAccess: hasAccess,
       connectionId: model.connectionId,
+      connectionType: model.connectionType,
       filePath: model.filePath,
       fileText: model.fileText,
       content: model.content,

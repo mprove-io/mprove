@@ -13,7 +13,6 @@ import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { FileStoreFractionType } from '~common/interfaces/blockml/internal/file-store-fraction-type';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
@@ -27,20 +26,11 @@ export function wrapDashboards(item: {
   dashboards: FileDashboard[];
   apiModels: Model[];
   stores: FileStore[];
-  mods: FileMod[];
   envId: string;
   timezone: string;
 }) {
-  let {
-    structId,
-    projectId,
-    apiModels,
-    stores,
-    mods,
-    dashboards,
-    envId,
-    timezone
-  } = item;
+  let { structId, projectId, apiModels, stores, dashboards, envId, timezone } =
+    item;
 
   let apiDashboards: Dashboard[] = [];
   let dashMconfigs: Mconfig[] = [];
@@ -195,7 +185,6 @@ export function wrapDashboards(item: {
       projectId: projectId,
       structId: structId,
       apiModels: apiModels,
-      mods: mods,
       stores: stores,
       tiles: x.tiles,
       envId: envId,

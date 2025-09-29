@@ -1,0 +1,1 @@
+ALTER TABLE "models" ADD COLUMN "connection_type" varchar;

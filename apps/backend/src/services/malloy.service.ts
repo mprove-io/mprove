@@ -40,12 +40,12 @@ export class MalloyService {
         envId: envId
       });
 
-    let connection = connectionsWithFallback.find(
+    let projectConnection = connectionsWithFallback.find(
       x => x.connectionId === model.connectionId
     );
 
     let malloyConnections = makeMalloyConnections({
-      connections: [connection]
+      connections: [projectConnection]
     });
 
     let { isError, errorMessage, newMconfig, newQuery } = await makeMalloyQuery(
@@ -56,8 +56,7 @@ export class MalloyService {
         model: model,
         mconfig: mconfig,
         queryOperations: queryOperations,
-        malloyConnections: malloyConnections,
-        projectConnection: connection
+        malloyConnections: malloyConnections
       }
     );
 

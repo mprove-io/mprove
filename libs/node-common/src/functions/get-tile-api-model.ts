@@ -1,14 +1,12 @@
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
 import { Model } from '~common/interfaces/blockml/model';
 
 export function getTileApiModel(item: {
   tile: FilePartTile;
   filePath: string;
-  mods: FileMod[];
+  // mods: FileMod[];
   apiModels: Model[];
-  malloyFiles: BmlFile[];
+  // malloyFiles: BmlFile[];
 }) {
   let { tile, filePath } = item;
 

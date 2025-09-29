@@ -2,7 +2,6 @@ import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
 import { Query } from '~common/interfaces/blockml/query';
@@ -14,9 +13,8 @@ export function getBlankMconfigAndQuery(item: {
   structId: string;
   model: Model;
   mconfig: Mconfig;
-  connection: ProjectConnection;
 }) {
-  let { projectId, envId, structId, model, mconfig, connection } = item;
+  let { projectId, envId, structId, model, mconfig } = item;
 
   let queryId = makeQueryId({
     projectId: projectId,
@@ -32,7 +30,7 @@ export function getBlankMconfigAndQuery(item: {
     projectId: projectId,
     envId: envId,
     connectionId: model.connectionId,
-    connectionType: connection.type,
+    connectionType: model.connectionType,
     sql: undefined,
     apiMethod: undefined,
     apiUrl: undefined,

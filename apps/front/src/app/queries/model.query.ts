@@ -11,6 +11,7 @@ let modelState: ModelState = {
   type: undefined,
   source: undefined,
   connectionId: undefined,
+  connectionType: undefined,
   filePath: undefined,
   fileText: undefined,
   content: undefined,

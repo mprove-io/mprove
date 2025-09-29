@@ -22,7 +22,6 @@ import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
 import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { FileStoreFractionType } from '~common/interfaces/blockml/internal/file-store-fraction-type';
@@ -39,12 +38,10 @@ export function wrapTiles(item: {
   envId: string;
   tiles: FilePartTile[];
   apiModels: Model[];
-  mods: FileMod[];
   stores: FileStore[];
   timezone: string;
 }) {
-  let { structId, projectId, apiModels, stores, mods, tiles, envId, timezone } =
-    item;
+  let { structId, projectId, apiModels, stores, tiles, envId, timezone } = item;
 
   let apiTiles: Tile[] = [];
   let mconfigs: Mconfig[] = [];
@@ -64,29 +61,20 @@ export function wrapTiles(item: {
       data: tile.data
     });
 
-    let mod: FileMod;
     let store: FileStore;
 
     let apiModel = apiModels.find(m => m.modelId === tile.model);
 
     if (apiModel.type === ModelTypeEnum.Store) {
       store = stores.find(s => s.name === tile.model);
-    } else if (apiModel.type === ModelTypeEnum.Malloy) {
-      mod = mods.find(m => m.name === tile.model);
     }
-
-    let connection = isDefined(store)
-      ? store.connection
-      : isDefined(mod)
-        ? mod.connection
-        : undefined;
 
     let queryId =
       apiModel.type === ModelTypeEnum.Store
         ? EMPTY_QUERY_ID
         : makeQueryId({
             projectId: projectId,
-            connectionId: connection.connectionId,
+            connectionId: apiModel.connectionId,
             envId: envId,
             sql: tile.sql.join('\n'),
             store: undefined, // isStore false
@@ -97,8 +85,8 @@ export function wrapTiles(item: {
       queryId: queryId,
       projectId: projectId,
       envId: envId,
-      connectionId: connection.connectionId,
-      connectionType: connection.type,
+      connectionId: apiModel.connectionId,
+      connectionType: apiModel.connectionType,
       sql:
         apiModel.type === ModelTypeEnum.Store ? undefined : tile.sql.join('\n'),
       apiMethod: undefined,
@@ -249,11 +237,7 @@ export function wrapTiles(item: {
       mconfigId: mconfigId,
       queryId: queryId,
       modelId: tile.model,
-      modelType: isDefined(store)
-        ? ModelTypeEnum.Store
-        : isDefined(mod)
-          ? ModelTypeEnum.Malloy
-          : undefined,
+      modelType: apiModel.type,
       dateRangeIncludesRightSide:
         apiModel.type === ModelTypeEnum.Store &&
         (isUndefined(store.date_range_includes_right_side) ||
@@ -262,8 +246,8 @@ export function wrapTiles(item: {
           ? true
           : false,
       storePart: undefined,
-      modelLabel: store?.label || mod?.label,
-      modelFilePath: store?.filePath || mod?.filePath,
+      modelLabel: apiModel.label,
+      modelFilePath: apiModel.filePath,
       malloyQueryStable: tile.malloyQueryStable,
       malloyQueryExtra: tile.malloyQueryExtra,
       compiledQuery: tile.compiledQuery,
@@ -294,9 +278,8 @@ export function wrapTiles(item: {
     queries.push(query);
     apiTiles.push({
       modelId: tile.model,
-      modelLabel: store?.label || mod?.label,
-      // modelLabel: isStore === true ? store.label : model.label,
-      modelFilePath: store?.filePath || mod?.filePath,
+      modelLabel: apiModel.label,
+      modelFilePath: apiModel.filePath,
       mconfigId: mconfigId,
       queryId: queryId,
       // malloyQueryId: tile.query,

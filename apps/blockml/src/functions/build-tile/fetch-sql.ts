@@ -13,9 +13,7 @@ import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { Fraction } from '~common/interfaces/blockml/fraction';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
@@ -38,11 +36,11 @@ export async function fetchSql<T extends dcType>(
     envId: string;
     projectId: string;
     entities: T[];
-    mods: FileMod[];
+    // mods: FileMod[];
     apiModels: Model[];
     malloyConnections: MalloyConnection[];
     projectConnections: ProjectConnection[];
-    malloyFiles: BmlFile[];
+    // malloyFiles: BmlFile[];
     weekStart: ProjectWeekStartEnum;
     timezone: string;
     simplifySafeAggregates: boolean;
@@ -164,9 +162,6 @@ export async function fetchSql<T extends dcType>(
         model: apiModel,
         mconfig: mconfig,
         malloyConnections: item.malloyConnections,
-        projectConnection: item.projectConnections.find(
-          x => x.connectionId === apiModel.connectionId
-        ),
         queryOperations: [
           // {
           //   type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,

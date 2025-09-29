@@ -498,6 +498,7 @@ export function wrapModels(item: {
       source: (x as FileMod).source,
       malloyModelDef: malloyModelDef,
       connectionId: x.connection.connectionId,
+      connectionType: x.connection.type,
       filePath: x.filePath,
       fileText: files.find(file => file.path === x.filePath).content,
       content:

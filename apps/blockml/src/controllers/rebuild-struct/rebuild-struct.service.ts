@@ -83,7 +83,6 @@ interface RebuildStructPrep {
   metrics: ModelMetric[];
   presets: Preset[];
   apiModels: Model[];
-  mods: FileMod[];
   reports: FileReport[];
   charts: FileChart[];
   mproveDirValue: string;
@@ -165,7 +164,6 @@ export class RebuildStructService {
       structId: structId,
       projectId: projectId,
       apiModels: prep.apiModels,
-      mods: prep.mods,
       stores: prep.stores,
       dashboards: prep.dashboards,
       envId: envId,
@@ -176,7 +174,6 @@ export class RebuildStructService {
       structId: structId,
       projectId: projectId,
       apiModels: prep.apiModels,
-      mods: prep.mods,
       stores: prep.stores,
       charts: prep.charts,
       envId: envId,
@@ -316,7 +313,6 @@ export class RebuildStructService {
       return {
         errors: errors,
         apiModels: [],
-        mods: [],
         metrics: [],
         presets: [],
         stores: [],
@@ -479,17 +475,6 @@ export class RebuildStructService {
       this.cs
     );
 
-    dashboards = buildField(
-      {
-        entities: dashboards,
-        projectConfig: projectConfig,
-        structId: item.structId,
-        errors: errors,
-        caller: CallerEnum.BuildDashboardField
-      },
-      this.cs
-    );
-
     let apiModels = wrapModels({
       projectId: item.projectId,
       structId: item.structId,
@@ -510,6 +495,17 @@ export class RebuildStructService {
     );
 
     let metrics = buildMetricsNextResult.metrics;
+
+    dashboards = buildField(
+      {
+        entities: dashboards,
+        projectConfig: projectConfig,
+        structId: item.structId,
+        errors: errors,
+        caller: CallerEnum.BuildDashboardField
+      },
+      this.cs
+    );
 
     dashboards = buildDashboard(
       {
@@ -541,11 +537,11 @@ export class RebuildStructService {
         projectId: item.projectId,
         envId: item.envId,
         entities: dashboards,
-        mods: mods,
+        // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
         projectConnections: item.connections,
-        malloyFiles: malloyFiles,
+        // malloyFiles: malloyFiles,
         stores: stores,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
@@ -568,12 +564,12 @@ export class RebuildStructService {
         projectId: item.projectId,
         envId: item.envId,
         entities: charts,
-        mods: mods,
+        // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
         projectConnections: item.connections,
         stores: stores,
-        malloyFiles: malloyFiles,
+        // malloyFiles: malloyFiles,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
         caseSensitiveStringFilters: toBooleanFromLowercaseString(
@@ -720,7 +716,6 @@ export class RebuildStructService {
         return presetPart;
       }),
       apiModels: apiModels,
-      mods: mods,
       reports: reports,
       charts: charts,
       mproveDirValue: projectConfig.mprove_dir,

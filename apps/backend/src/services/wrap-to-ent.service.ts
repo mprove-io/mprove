@@ -95,6 +95,7 @@ export class WrapToEntService {
       source: model.source,
       malloyModelDef: model.malloyModelDef,
       connectionId: model.connectionId,
+      connectionType: model.connectionType,
       filePath: model.filePath,
       fileText: model.fileText,
       content: model.content,
