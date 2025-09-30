@@ -52,6 +52,7 @@ export class GetRebuildStructController {
       envId,
       overrideTimezone,
       isUseCache,
+      cachedMproveConfig,
       cachedModels,
       cachedMetrics
     } = reqValid.payload;
@@ -117,6 +118,7 @@ export class GetRebuildStructController {
         connections: connectionsWithFallback,
         overrideTimezone: overrideTimezone,
         isUseCache: isUseCache,
+        cachedMproveConfig: cachedMproveConfig,
         cachedModels: cachedModels,
         cachedMetrics: cachedMetrics
       }

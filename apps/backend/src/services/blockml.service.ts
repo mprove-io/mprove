@@ -13,6 +13,7 @@ import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-reques
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Ev } from '~common/interfaces/backend/ev';
+import { MproveConfig } from '~common/interfaces/backend/mprove-config';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
@@ -52,6 +53,7 @@ export class BlockmlService {
     evs?: Ev[];
     overrideTimezone: string;
     isUseCache?: boolean;
+    cachedMproveConfig?: MproveConfig;
     cachedModels?: Model[];
     cachedMetrics?: ModelMetric[];
   }) {
@@ -67,6 +69,7 @@ export class BlockmlService {
       evs,
       overrideTimezone,
       isUseCache,
+      cachedMproveConfig,
       cachedModels,
       cachedMetrics
     } = item;
@@ -119,6 +122,7 @@ export class BlockmlService {
           : connectionsWithFallback,
         overrideTimezone: overrideTimezone,
         isUseCache: !!isUseCache,
+        cachedMproveConfig: cachedMproveConfig,
         cachedModels: cachedModels ?? [],
         cachedMetrics: cachedMetrics ?? []
       }

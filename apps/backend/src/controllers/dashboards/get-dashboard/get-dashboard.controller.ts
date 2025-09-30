@@ -306,6 +306,7 @@ export class GetDashboardController {
         envId: envId,
         overrideTimezone: timezone,
         isUseCache: true,
+        cachedMproveConfig: currentStruct.mproveConfig,
         cachedModels: cachedModels,
         cachedMetrics: []
       });

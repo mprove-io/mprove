@@ -337,6 +337,7 @@ export class CreateDraftDashboardController {
         envId: envId,
         overrideTimezone: timezone,
         isUseCache: true,
+        cachedMproveConfig: currentStruct.mproveConfig,
         cachedModels: cachedModels,
         cachedMetrics: []
       });

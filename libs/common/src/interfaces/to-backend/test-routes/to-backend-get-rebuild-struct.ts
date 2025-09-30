@@ -5,6 +5,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { MproveConfig } from '~common/interfaces/backend/mprove-config';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { ToBackendRequest } from '../to-backend-request';
@@ -31,6 +32,11 @@ export class ToBackendGetRebuildStructRequestPayload {
 
   @IsBoolean()
   isUseCache: boolean;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MproveConfig)
+  cachedMproveConfig?: MproveConfig;
 
   @ValidateNested()
   @Type(() => Model)

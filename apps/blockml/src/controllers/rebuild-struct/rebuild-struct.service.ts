@@ -124,6 +124,7 @@ export class RebuildStructService {
       mproveDir,
       overrideTimezone,
       isUseCache,
+      cachedMproveConfig,
       cachedModels,
       cachedMetrics
     } = reqValid.payload;
@@ -139,6 +140,7 @@ export class RebuildStructService {
       overrideTimezone: overrideTimezone,
       projectId: projectId,
       isUseCache: isUseCache,
+      cachedMproveConfig: cachedMproveConfig,
       cachedModels: cachedModels,
       cachedMetrics: cachedMetrics,
       isTest: false
@@ -249,6 +251,7 @@ export class RebuildStructService {
       overrideTimezone: item.overrideTimezone,
       projectId: undefined,
       isUseCache: false,
+      cachedMproveConfig: undefined,
       cachedModels: [],
       cachedMetrics: [],
       isTest: true
@@ -268,6 +271,7 @@ export class RebuildStructService {
     overrideTimezone: string;
     projectId: string;
     isUseCache: boolean;
+    cachedMproveConfig: MproveConfig;
     cachedModels: Model[];
     cachedMetrics: ModelMetric[];
     isTest: boolean;
@@ -306,7 +310,37 @@ export class RebuildStructService {
     dashboards = yamlBuildItem.dashboards;
     reports = yamlBuildItem.reports;
     charts = yamlBuildItem.charts;
-    projectConfig = yamlBuildItem.projectConfig;
+    projectConfig =
+      item.isUseCache === true
+        ? <FileProjectConf>{
+            mprove_dir: item.cachedMproveConfig.mproveDirValue,
+            case_sensitive_string_filters:
+              item.cachedMproveConfig.caseSensitiveStringFilters
+                ?.toString()
+                .toLowerCase() ?? PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
+            week_start:
+              item.cachedMproveConfig.weekStart ?? PROJECT_CONFIG_WEEK_START,
+            default_timezone:
+              item.cachedMproveConfig.defaultTimezone ??
+              PROJECT_CONFIG_DEFAULT_TIMEZONE,
+            allow_timezones:
+              item.cachedMproveConfig.allowTimezones
+                ?.toString()
+                .toLowerCase() ?? PROJECT_CONFIG_ALLOW_TIMEZONES,
+            format_number:
+              item.cachedMproveConfig.formatNumber ??
+              PROJECT_CONFIG_FORMAT_NUMBER,
+            currency_prefix:
+              item.cachedMproveConfig.currencyPrefix ??
+              PROJECT_CONFIG_CURRENCY_PREFIX,
+            currency_suffix:
+              item.cachedMproveConfig.currencySuffix ??
+              PROJECT_CONFIG_CURRENCY_SUFFIX,
+            thousands_separator:
+              item.cachedMproveConfig.thousandsSeparator ??
+              PROJECT_CONFIG_THOUSANDS_SEPARATOR
+          }
+        : yamlBuildItem.projectConfig;
 
     if (isUndefined(projectConfig)) {
       return {

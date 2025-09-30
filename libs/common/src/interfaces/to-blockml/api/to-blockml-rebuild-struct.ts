@@ -54,6 +54,11 @@ export class ToBlockmlRebuildStructRequestPayload {
   @IsBoolean()
   isUseCache: boolean;
 
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => MproveConfig)
+  cachedMproveConfig: MproveConfig;
+
   @ValidateNested()
   @Type(() => Model)
   cachedModels: Model[];
