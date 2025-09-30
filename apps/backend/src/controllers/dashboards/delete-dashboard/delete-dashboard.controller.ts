@@ -198,16 +198,16 @@ export class DeleteDashboardController {
       }
     });
 
-    let { struct } = await this.blockmlService.rebuildStruct({
-      traceId: traceId,
-      projectId: projectId,
-      structId: bridge.structId,
-      diskFiles: diskResponse.payload.files,
-      mproveDir: diskResponse.payload.mproveDir,
-      skipDb: true,
-      envId: envId,
-      overrideTimezone: undefined
-    });
+    // let { struct } = await this.blockmlService.rebuildStruct({
+    //   traceId: traceId,
+    //   projectId: projectId,
+    //   structId: bridge.structId,
+    //   diskFiles: diskResponse.payload.files,
+    //   mproveDir: diskResponse.payload.mproveDir,
+    //   skipDb: true,
+    //   envId: envId,
+    //   overrideTimezone: undefined
+    // });
 
     await retry(
       async () =>
@@ -221,13 +221,13 @@ export class DeleteDashboardController {
               )
             );
 
-          await this.db.packer.write({
-            tx: tx,
-            insertOrUpdate: {
-              structs: [struct],
-              bridges: [...branchBridges]
-            }
-          });
+          // await this.db.packer.write({
+          //   tx: tx,
+          //   insertOrUpdate: {
+          //     structs: [struct],
+          //     bridges: [...branchBridges]
+          //   }
+          // });
         }),
       getRetryOption(this.cs, this.logger)
     );

@@ -173,6 +173,16 @@ export class PushRepoService {
       isRootMproveDir: false
     });
 
+    await checkoutBranch({
+      projectId: projectId,
+      projectDir: projectDir,
+      repoId: PROD_REPO_ID,
+      repoDir: prodRepoDir,
+      branchName: branch,
+      fetchOptions: fetchOptions,
+      isFetch: true
+    });
+
     let productionItemCatalog = <DiskItemCatalog>await getNodesAndFiles({
       projectId: projectId,
       projectDir: projectDir,

@@ -8,13 +8,14 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -347,16 +348,35 @@ export class SaveModifyDashboardController {
       }
     });
 
+    let diskFiles = [
+      diskResponse.payload.files.find(
+        file => file.fileNodeId === toDashboardEntity.filePath
+      )
+    ];
+
+    let modelIds = tilesGrid.map(tile => tile.modelId);
+
+    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        eq(modelsTable.structId, bridge.structId),
+        inArray(modelsTable.modelId, modelIds)
+      )
+    });
+
     let { struct, dashboards, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         projectId: projectId,
         structId: bridge.structId,
-        diskFiles: diskResponse.payload.files,
-        mproveDir: diskResponse.payload.mproveDir,
+        diskFiles: diskFiles,
+        mproveDir: currentStruct.mproveConfig.mproveDirValue,
         skipDb: true,
         envId: envId,
-        overrideTimezone: undefined
+        overrideTimezone: undefined,
+        isUseCache: true,
+        cachedMproveConfig: currentStruct.mproveConfig,
+        cachedModels: cachedModels,
+        cachedMetrics: []
       });
 
     let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
@@ -382,7 +402,8 @@ export class SaveModifyDashboardController {
             throw new ServerError({
               message: ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
               data: {
-                encodedFileId: encodeFilePath({ filePath: filePath })
+                encodedFileId: encodeFilePath({ filePath: filePath }),
+                structErrors: struct.errors
               }
             });
           } else {

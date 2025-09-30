@@ -385,54 +385,50 @@ export class CreateDraftDashboardController {
         );
       });
 
-    await forEachSeries(
-      dashboardMconfigs,
-      // dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
-      async mconfig => {
-        let newMconfig: Mconfig;
-        let newQuery: Query;
-        let isError = false;
+    await forEachSeries(dashboardMconfigs, async mconfig => {
+      let newMconfig: Mconfig;
+      let newQuery: Query;
+      let isError = false;
 
-        let model = models.find(y => y.modelId === mconfig.modelId);
+      let model = models.find(y => y.modelId === mconfig.modelId);
 
-        if (mconfig.modelType === ModelTypeEnum.Store) {
-          let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-            struct: struct,
-            project: project,
-            envId: envId,
-            model: this.wrapToEntService.wrapToEntityModel(model),
-            mconfig: mconfig,
-            metricsStartDateYYYYMMDD: undefined,
-            metricsEndDateYYYYMMDD: undefined
-          });
+      if (mconfig.modelType === ModelTypeEnum.Store) {
+        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+          struct: struct,
+          project: project,
+          envId: envId,
+          model: this.wrapToEntService.wrapToEntityModel(model),
+          mconfig: mconfig,
+          metricsStartDateYYYYMMDD: undefined,
+          metricsEndDateYYYYMMDD: undefined
+        });
 
-          newMconfig = mqe.newMconfig;
-          newQuery = mqe.newQuery;
-          isError = mqe.isError;
+        newMconfig = mqe.newMconfig;
+        newQuery = mqe.newQuery;
+        isError = mqe.isError;
 
-          let newDashboardTile = newDashboard.tiles.find(
-            tile => tile.mconfigId === mconfig.mconfigId
+        let newDashboardTile = newDashboard.tiles.find(
+          tile => tile.mconfigId === mconfig.mconfigId
+        );
+        newDashboardTile.queryId = newMconfig.queryId;
+        newDashboardTile.mconfigId = newMconfig.mconfigId;
+        newDashboardTile.trackChangeId = makeId();
+
+        insertMconfigs.push(
+          this.wrapToEntService.wrapToEntityMconfig(newMconfig)
+        );
+
+        if (isError === true) {
+          insertOrUpdateQueries.push(
+            this.wrapToEntService.wrapToEntityQuery(newQuery)
           );
-          newDashboardTile.queryId = newMconfig.queryId;
-          newDashboardTile.mconfigId = newMconfig.mconfigId;
-          newDashboardTile.trackChangeId = makeId();
-
-          insertMconfigs.push(
-            this.wrapToEntService.wrapToEntityMconfig(newMconfig)
+        } else {
+          insertOrDoNothingQueries.push(
+            this.wrapToEntService.wrapToEntityQuery(newQuery)
           );
-
-          if (isError === true) {
-            insertOrUpdateQueries.push(
-              this.wrapToEntService.wrapToEntityQuery(newQuery)
-            );
-          } else {
-            insertOrDoNothingQueries.push(
-              this.wrapToEntService.wrapToEntityQuery(newQuery)
-            );
-          }
         }
       }
-    );
+    });
 
     await retry(
       async () =>

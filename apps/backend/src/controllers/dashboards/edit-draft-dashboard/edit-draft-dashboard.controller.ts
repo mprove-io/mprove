@@ -8,16 +8,17 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -42,7 +43,6 @@ import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
@@ -56,10 +56,7 @@ import {
   ToBackendEditDraftDashboardRequest,
   ToBackendEditDraftDashboardResponsePayload
 } from '~common/interfaces/to-backend/dashboards/to-backend-edit-draft-dashboard';
-import {
-  ToDiskGetCatalogFilesRequest,
-  ToDiskGetCatalogFilesResponse
-} from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
+import { ToDiskGetCatalogFilesRequest } from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
 import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
@@ -245,15 +242,15 @@ export class EditDraftDashboardController {
       }
     };
 
-    let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
-        message: getCatalogFilesRequest,
-        checkIsOk: true
-      });
+    // let diskResponse =
+    //   await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+    //     routingKey: makeRoutingKeyToDisk({
+    //       orgId: project.orgId,
+    //       projectId: projectId
+    //     }),
+    //     message: getCatalogFilesRequest,
+    //     checkIsOk: true
+    //   });
 
     // add dashboard file
 
@@ -278,22 +275,31 @@ export class EditDraftDashboardController {
     // };
 
     let diskFiles = [
-      tempFile,
-      ...diskResponse.payload.files.filter(x => {
-        let ar = x.name.split('.');
-        let ext = ar[ar.length - 1];
-        let allow =
-          // x.fileNodeId !== secondFileNodeId &&
-          [FileExtensionEnum.Chart, FileExtensionEnum.Dashboard].indexOf(
-            `.${ext}` as FileExtensionEnum
-          ) < 0;
-        return allow;
-      })
+      tempFile
+      // ...diskResponse.payload.files.filter(x => {
+      //   let ar = x.name.split('.');
+      //   let ext = ar[ar.length - 1];
+      //   let allow =
+      //     // x.fileNodeId !== secondFileNodeId &&
+      //     [FileExtensionEnum.Chart, FileExtensionEnum.Dashboard].indexOf(
+      //       `.${ext}` as FileExtensionEnum
+      //     ) < 0;
+      //   return allow;
+      // })
     ];
 
     // if (isDefined(malloyFileText)) {
     //   diskFiles.push(secondTempFile);
     // }
+
+    let modelIds = tiles.map(tile => tile.modelId);
+
+    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        eq(modelsTable.structId, bridge.structId),
+        inArray(modelsTable.modelId, modelIds)
+      )
+    });
 
     let { struct, dashboards, mconfigs, models, queries } =
       await this.blockmlService.rebuildStruct({
@@ -301,10 +307,14 @@ export class EditDraftDashboardController {
         projectId: projectId,
         structId: bridge.structId,
         diskFiles: diskFiles,
-        mproveDir: diskResponse.payload.mproveDir,
+        mproveDir: currentStruct.mproveConfig.mproveDirValue,
         skipDb: true,
         envId: envId,
-        overrideTimezone: timezone
+        overrideTimezone: timezone,
+        isUseCache: true,
+        cachedMproveConfig: currentStruct.mproveConfig,
+        cachedModels: cachedModels,
+        cachedMetrics: []
       });
 
     // console.log('struct');
@@ -351,53 +361,27 @@ export class EditDraftDashboardController {
         );
       });
 
-    await forEachSeries(
-      dashboardMconfigs.filter(
-        mconfig =>
-          mconfig.modelType === ModelTypeEnum.Store ||
-          mconfig.modelType === ModelTypeEnum.Malloy
-      ),
-      // dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
-      async mconfig => {
-        let newMconfig: Mconfig;
-        let newQuery: Query;
-        let isError = false;
+    await forEachSeries(dashboardMconfigs, async mconfig => {
+      let newMconfig: Mconfig;
+      let newQuery: Query;
+      let isError = false;
 
-        let model = models.find(y => y.modelId === mconfig.modelId);
+      let model = models.find(y => y.modelId === mconfig.modelId);
 
-        if (mconfig.modelType === ModelTypeEnum.Store) {
-          let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-            struct: struct,
-            project: project,
-            envId: envId,
-            model: this.wrapToEntService.wrapToEntityModel(model),
-            mconfig: mconfig,
-            metricsStartDateYYYYMMDD: undefined,
-            metricsEndDateYYYYMMDD: undefined
-          });
+      if (mconfig.modelType === ModelTypeEnum.Store) {
+        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+          struct: struct,
+          project: project,
+          envId: envId,
+          model: this.wrapToEntService.wrapToEntityModel(model),
+          mconfig: mconfig,
+          metricsStartDateYYYYMMDD: undefined,
+          metricsEndDateYYYYMMDD: undefined
+        });
 
-          newMconfig = mqe.newMconfig;
-          newQuery = mqe.newQuery;
-          isError = mqe.isError;
-        } else if (mconfig.modelType === ModelTypeEnum.Malloy) {
-          let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
-            projectId: projectId,
-            envId: envId,
-            structId: struct.structId,
-            model: model,
-            mconfig: mconfig,
-            queryOperations: [
-              {
-                type: QueryOperationTypeEnum.Get,
-                timezone: timezone
-              }
-            ]
-          });
-
-          newMconfig = editMalloyQueryResult.newMconfig;
-          newQuery = editMalloyQueryResult.newQuery;
-          isError = editMalloyQueryResult.isError;
-        }
+        newMconfig = mqe.newMconfig;
+        newQuery = mqe.newQuery;
+        isError = mqe.isError;
 
         let newDashboardTile = newDashboard.tiles.find(
           tile => tile.mconfigId === mconfig.mconfigId
@@ -420,7 +404,7 @@ export class EditDraftDashboardController {
           );
         }
       }
-    );
+    });
 
     await retry(
       async () =>
