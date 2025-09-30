@@ -478,9 +478,9 @@ export async function makeMalloyQuery(item: {
   // console.log(Date.now());
   // console.log(newMalloyQueryStable);
 
-  console.log('newMalloyQueryExtra');
-  console.log(Date.now());
-  console.log(newMalloyQueryExtra);
+  // console.log('newMalloyQueryExtra');
+  // console.log(Date.now());
+  // console.log(newMalloyQueryExtra);
 
   let runtime = new MalloyRuntime({
     urlReader: {
