@@ -120,7 +120,7 @@
 
   <div class="text-s400 mt-9 h-7 text-base">
     <div *ngIf="saveAs === reportSaveAsEnum.NEW_REPORT"
-      >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
+      >{{ struct?.mproveConfig.mproveDirValue | mproveDir | capitalize }} /
       {{ usersFolder }} / {{ alias }} / {{ newReportId }}.report</div
     >
 

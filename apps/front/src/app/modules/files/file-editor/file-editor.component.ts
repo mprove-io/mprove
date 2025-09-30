@@ -475,7 +475,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
-      // console.log(this.struct.mproveDirValue);
+      // console.log(this.struct.mproveConfig.mproveDirValue);
       this.refreshMarkers();
       this.checkSelectedFile();
 
@@ -652,8 +652,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     this.nav = this.navQuery.getValue();
     this.struct = this.structQuery.getValue();
 
-    let mdir = this.struct.mproveDirValue;
-    if (isDefined(this.struct.mproveDirValue)) {
+    let mdir = this.struct.mproveConfig.mproveDirValue;
+    if (isDefined(this.struct.mproveConfig.mproveDirValue)) {
       if (mdir.substring(0, 1) === '.') {
         mdir = mdir.substring(1);
       }
@@ -727,7 +727,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
     if (
       this.file.fileId === MPROVE_CONFIG_FILENAME ||
-      ((this.struct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH ||
+      ((this.struct.mproveConfig.mproveDirValue ===
+        MPROVE_CONFIG_DIR_DOT_SLASH ||
         (isDefined(mdir) &&
           this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
         BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0)

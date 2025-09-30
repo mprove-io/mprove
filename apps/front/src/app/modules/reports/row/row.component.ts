@@ -128,11 +128,11 @@ export class RowComponent {
                   fieldResult: FieldResultEnum.Number,
                   currencyPrefix:
                     this.reportSelectedNode.data.currencyPrefix ??
-                    struct.currencyPrefix,
+                    struct.mproveConfig.currencyPrefix,
                   currencySuffix:
                     this.reportSelectedNode.data.currencySuffix ??
-                    struct.currencySuffix,
-                  thousandsSeparator: struct.thousandsSeparator
+                    struct.mproveConfig.currencySuffix,
+                  thousandsSeparator: struct.mproveConfig.thousandsSeparator
                 });
 
           return example;
@@ -215,14 +215,14 @@ export class RowComponent {
             control: this.currencyPrefixForm.controls['currencyPrefix'],
             value:
               this.reportSelectedNode.data.currencyPrefix ??
-              struct.currencyPrefix
+              struct.mproveConfig.currencyPrefix
           });
 
           setValueAndMark({
             control: this.currencySuffixForm.controls['currencySuffix'],
             value:
               this.reportSelectedNode.data.currencySuffix ??
-              struct.currencySuffix
+              struct.mproveConfig.currencySuffix
           });
         }
       }

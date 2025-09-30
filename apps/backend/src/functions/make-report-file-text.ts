@@ -195,21 +195,21 @@ export function makeReportFileText(item: {
           x.rowType === RowTypeEnum.Metric &&
           metric.formatNumber === x.formatNumber
             ? undefined
-            : struct.formatNumber === x.formatNumber
+            : struct.mproveConfig.formatNumber === x.formatNumber
               ? undefined
               : x.formatNumber,
         currency_prefix:
           x.rowType === RowTypeEnum.Metric &&
           metric.currencyPrefix === x.currencyPrefix
             ? undefined
-            : struct.currencyPrefix === x.currencyPrefix
+            : struct.mproveConfig.currencyPrefix === x.currencyPrefix
               ? undefined
               : x.currencyPrefix,
         currency_suffix:
           x.rowType === RowTypeEnum.Metric &&
           metric.currencySuffix === x.currencySuffix
             ? undefined
-            : struct.currencySuffix === x.currencySuffix
+            : struct.mproveConfig.currencySuffix === x.currencySuffix
               ? undefined
               : x.currencySuffix,
         parameters:

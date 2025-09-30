@@ -32,7 +32,6 @@ export async function buildTile<T extends dcType>(
     weekStart: ProjectWeekStartEnum;
     timezone: string;
     caseSensitiveStringFilters: boolean;
-    simplifySafeAggregates: boolean;
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
@@ -133,7 +132,6 @@ export async function buildTile<T extends dcType>(
       weekStart: item.weekStart,
       timezone: item.timezone,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
-      simplifySafeAggregates: item.simplifySafeAggregates,
       envId: item.envId,
       projectId: item.projectId,
       structId: item.structId,

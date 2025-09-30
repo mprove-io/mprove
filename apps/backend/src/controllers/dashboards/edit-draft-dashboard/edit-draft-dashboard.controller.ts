@@ -179,7 +179,7 @@ export class EditDraftDashboardController {
 
     let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
 
-    let mdir = currentStruct.mproveDirValue;
+    let mdir = currentStruct.mproveConfig.mproveDirValue;
 
     if (
       mdir.length > 2 &&
@@ -189,7 +189,7 @@ export class EditDraftDashboardController {
     }
 
     let relativePath =
-      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+      currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
         ? `${MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`
         : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${fileName}`;
 
@@ -204,7 +204,7 @@ export class EditDraftDashboardController {
     // let secondFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
 
     // let secondRelativePath =
-    //   currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+    //   currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
     //     ? `${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
     //     : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
 
@@ -222,7 +222,8 @@ export class EditDraftDashboardController {
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
       roles: fromDashboard.accessRoles.join(', '),
-      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+      caseSensitiveStringFilters:
+        currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
       // malloyDashboardFilePath: secondFileNodeId
     });

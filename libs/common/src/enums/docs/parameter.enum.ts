@@ -9,7 +9,6 @@ export enum ParameterEnum {
   DefaultTimezone = 'default_timezone',
   AllowTimezones = 'allow_timezones',
   CaseSensitiveStringFilters = 'case_sensitive_string_filters',
-  SimplifySafeAggregates = 'simplify_safe_aggregates',
   //
   AccessRoles = 'access_roles',
   // AlwaysJoin = 'always_join',

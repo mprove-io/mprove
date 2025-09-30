@@ -199,11 +199,12 @@ export class SaveCreateReportController {
       struct: currentStruct,
       newReportFields: newReportFields,
       chart: chart,
-      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+      caseSensitiveStringFilters:
+        currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
     });
 
-    let mdir = currentStruct.mproveDirValue;
+    let mdir = currentStruct.mproveConfig.mproveDirValue;
 
     if (
       mdir.length > 2 &&
@@ -213,7 +214,7 @@ export class SaveCreateReportController {
     }
 
     let parentNodeId =
-      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+      currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
         ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 

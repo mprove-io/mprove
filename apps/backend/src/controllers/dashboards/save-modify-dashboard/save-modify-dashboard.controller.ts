@@ -249,7 +249,8 @@ export class SaveModifyDashboardController {
         newDashboardId: fromDashboard.dashboardId,
         newTitle: fromDashboard.title,
         roles: fromDashboard.accessRoles.join(', '),
-        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+        caseSensitiveStringFilters:
+          currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
         // malloyDashboardFilePath: secondFileNodeId
       });
@@ -288,7 +289,8 @@ export class SaveModifyDashboardController {
         newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+        caseSensitiveStringFilters:
+          currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
         // malloyDashboardFilePath: secondFileNodeId
       });

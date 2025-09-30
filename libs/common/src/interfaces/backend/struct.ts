@@ -1,56 +1,16 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsEnum,
-  IsInt,
-  IsString,
-  ValidateNested
-} from 'class-validator';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
+import { IsInt, IsString, ValidateNested } from 'class-validator';
 import { BmlError } from '../blockml/bml-error';
 import { ModelMetric } from '../blockml/model-metric';
 import { Preset } from '../blockml/preset';
+import { MproveConfig } from './mprove-config';
 
 export class Struct {
   @IsString()
   projectId: string;
 
   @IsString()
-  mproveDirValue: string;
-
-  @IsString()
-  mproveVersion: string;
-
-  @IsString()
   structId: string;
-
-  @IsEnum(ProjectWeekStartEnum)
-  weekStart: ProjectWeekStartEnum;
-
-  @IsBoolean()
-  allowTimezones: boolean;
-
-  @IsTimezone()
-  defaultTimezone: string;
-
-  @IsString()
-  formatNumber: string;
-
-  @IsString()
-  currencyPrefix: string;
-
-  @IsString()
-  currencySuffix: string;
-
-  @IsString()
-  thousandsSeparator: string;
-
-  @IsBoolean()
-  caseSensitiveStringFilters: boolean;
-
-  @IsBoolean()
-  simplifySafeAggregates: boolean;
 
   @ValidateNested()
   @Type(() => BmlError)
@@ -64,6 +24,40 @@ export class Struct {
   @Type(() => Preset)
   presets: Preset[];
 
+  @ValidateNested()
+  @Type(() => MproveConfig)
+  mproveConfig: MproveConfig;
+
+  @IsString()
+  mproveVersion: string;
+
   @IsInt()
   serverTs: number;
+
+  // @IsString()
+  // mproveDirValue: string;
+
+  // @IsEnum(ProjectWeekStartEnum)
+  // weekStart: ProjectWeekStartEnum;
+
+  // @IsBoolean()
+  // allowTimezones: boolean;
+
+  // @IsTimezone()
+  // defaultTimezone: string;
+
+  // @IsString()
+  // formatNumber: string;
+
+  // @IsString()
+  // currencyPrefix: string;
+
+  // @IsString()
+  // currencySuffix: string;
+
+  // @IsString()
+  // thousandsSeparator: string;
+
+  // @IsBoolean()
+  // caseSensitiveStringFilters: boolean;
 }

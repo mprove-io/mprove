@@ -296,7 +296,7 @@ export class RunCommand extends CustomCommand {
             branch: this.branch,
             env: this.env,
             chartId: x.chartId,
-            timezone: getRepoResp.payload.struct.defaultTimezone
+            timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
           });
 
           let chartPart: ChartPart = {
@@ -385,7 +385,7 @@ export class RunCommand extends CustomCommand {
             branch: this.branch,
             env: this.env,
             dashboardId: dashboard.dashboardId,
-            timezone: getRepoResp.payload.struct.defaultTimezone
+            timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
           });
 
           let dashboardPart: DashboardPart = {

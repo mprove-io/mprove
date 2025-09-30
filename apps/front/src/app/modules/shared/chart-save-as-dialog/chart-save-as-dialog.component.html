@@ -199,7 +199,7 @@
 
   <div class="text-s400 mt-9 h-7 text-base">
     <div *ngIf="chartSaveAs === chartSaveAsEnum.NEW_CHART"
-      >{{ struct?.mproveDirValue | mproveDir | capitalize }} /
+      >{{ struct?.mproveConfig.mproveDirValue | mproveDir | capitalize }} /
       {{ usersFolder }} / {{ alias }} / {{ newChartId }}.chart</div
     >
 

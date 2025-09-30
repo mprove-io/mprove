@@ -424,8 +424,8 @@ export class FilesRightComponent {
     this.nav = this.navQuery.getValue();
     this.struct = this.structQuery.getValue();
 
-    let mdir = this.struct.mproveDirValue;
-    if (isDefined(this.struct.mproveDirValue)) {
+    let mdir = this.struct.mproveConfig.mproveDirValue;
+    if (isDefined(this.struct.mproveConfig.mproveDirValue)) {
       if (mdir.substring(0, 1) === '.') {
         mdir = mdir.substring(1);
       }
@@ -455,7 +455,8 @@ export class FilesRightComponent {
 
     if (
       this.secondFileName === MPROVE_CONFIG_FILENAME ||
-      ((this.struct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH ||
+      ((this.struct.mproveConfig.mproveDirValue ===
+        MPROVE_CONFIG_DIR_DOT_SLASH ||
         (isDefined(mdir) &&
           this.secondFileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
         BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0)

@@ -2,4 +2,3 @@ mprove_dir: ./
 allow_timezones: true
 default_timezone: unk
 week_start: Sunday
-simplify_safe_aggregates: false

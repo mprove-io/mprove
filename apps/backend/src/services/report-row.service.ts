@@ -225,9 +225,9 @@ export class ReportRowService {
         query: undefined,
         hasAccessToModel: false,
         records: [],
-        formatNumber: struct.formatNumber,
-        currencyPrefix: struct.currencyPrefix,
-        currencySuffix: struct.currencySuffix
+        formatNumber: struct.mproveConfig.formatNumber,
+        currencyPrefix: struct.mproveConfig.currencyPrefix,
+        currencySuffix: struct.mproveConfig.currencySuffix
       };
 
       processedRows.push(newRow);
@@ -462,9 +462,9 @@ export class ReportRowService {
       //     query: undefined,
       //     hasAccessToModel: false,
       //     records: [],
-      //     formatNumber: struct.formatNumber,
-      //     currencyPrefix: struct.currencyPrefix,
-      //     currencySuffix: struct.currencySuffix
+      //     formatNumber: struct.mproveConfig.formatNumber,
+      //     currencyPrefix: struct.mproveConfig.currencyPrefix,
+      //     currencySuffix: struct.mproveConfig.currencySuffix
       //   };
 
       //   processedRows = processedRows.map(row =>

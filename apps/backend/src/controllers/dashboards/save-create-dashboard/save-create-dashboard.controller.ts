@@ -158,7 +158,7 @@ export class SaveCreateDashboardController {
       });
     }
 
-    let mdir = currentStruct.mproveDirValue;
+    let mdir = currentStruct.mproveConfig.mproveDirValue;
 
     if (
       mdir.length > 2 &&
@@ -168,7 +168,7 @@ export class SaveCreateDashboardController {
     }
 
     let parentNodeId =
-      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+      currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
         ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 
@@ -228,7 +228,8 @@ export class SaveCreateDashboardController {
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+        caseSensitiveStringFilters:
+          currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
         // malloyDashboardFilePath: malloyDashboardFilePath
       });
@@ -263,7 +264,8 @@ export class SaveCreateDashboardController {
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
-        caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+        caseSensitiveStringFilters:
+          currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
         // malloyDashboardFilePath: malloyDashboardFilePath
       });

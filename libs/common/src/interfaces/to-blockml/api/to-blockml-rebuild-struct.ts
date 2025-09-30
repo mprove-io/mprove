@@ -1,14 +1,12 @@
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
-  IsEnum,
   IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
 import { Ev } from '~common/interfaces/backend/ev';
+import { MproveConfig } from '~common/interfaces/backend/mprove-config';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { BmlError } from '~common/interfaces/blockml/bml-error';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
@@ -72,35 +70,9 @@ export class ToBlockmlRebuildStructRequest extends ToBlockmlRequest {
 }
 
 export class ToBlockmlRebuildStructResponsePayload {
-  @IsString()
-  mproveDirValue: string;
-
-  @IsEnum(ProjectWeekStartEnum)
-  weekStart: ProjectWeekStartEnum;
-
-  @IsTimezone()
-  defaultTimezone: string;
-
-  @IsBoolean()
-  allowTimezones: boolean;
-
-  @IsString()
-  formatNumber: string;
-
-  @IsString()
-  currencyPrefix: string;
-
-  @IsString()
-  currencySuffix: string;
-
-  @IsString()
-  thousandsSeparator: string;
-
-  @IsBoolean()
-  caseSensitiveStringFilters: boolean;
-
-  @IsBoolean()
-  simplifySafeAggregates: boolean;
+  @ValidateNested()
+  @Type(() => MproveConfig)
+  mproveConfig: MproveConfig;
 
   @ValidateNested()
   @Type(() => BmlError)

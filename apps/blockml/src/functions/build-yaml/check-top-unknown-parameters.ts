@@ -191,8 +191,7 @@ export function checkTopUnknownParameters(
                 ParameterEnum.CurrencyPrefix.toString(),
                 ParameterEnum.CurrencySuffix.toString(),
                 ParameterEnum.ThousandsSeparator.toString(),
-                ParameterEnum.CaseSensitiveStringFilters.toString(),
-                ParameterEnum.SimplifySafeAggregates.toString()
+                ParameterEnum.CaseSensitiveStringFilters.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(

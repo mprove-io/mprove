@@ -125,8 +125,8 @@ export class ReportDataService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
-      projectWeekStart: struct.weekStart,
-      caseSensitiveStringFilters: struct.caseSensitiveStringFilters
+      projectWeekStart: struct.mproveConfig.weekStart,
+      caseSensitiveStringFilters: struct.mproveConfig.caseSensitiveStringFilters
     });
 
     let metricsStartDateYYYYMMDD = isUndefined(rangeStart)
@@ -325,7 +325,7 @@ export class ReportDataService {
           if (model.type === ModelTypeEnum.Store) {
             let timeSpecDetail = getTimeSpecDetail({
               timeSpec: timeSpec,
-              weekStart: struct.weekStart
+              weekStart: struct.mproveConfig.weekStart
             });
 
             let storeField = model.storeContent.fields.find(
@@ -338,7 +338,7 @@ export class ReportDataService {
           } else if (model.type === ModelTypeEnum.Malloy) {
             let timeSpecDetail = getTimeSpecDetail({
               timeSpec: timeSpec,
-              weekStart: struct.weekStart
+              weekStart: struct.mproveConfig.weekStart
             });
 
             let mField = model.fields.find(field => {

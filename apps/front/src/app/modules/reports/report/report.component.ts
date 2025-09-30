@@ -659,7 +659,7 @@ export class ReportComponent {
 
       let timeSpecDetail = getTimeSpecDetail({
         timeSpec: timeSpec,
-        weekStart: struct.weekStart
+        weekStart: struct.mproveConfig.weekStart
       });
 
       let timeFieldIdSpec =

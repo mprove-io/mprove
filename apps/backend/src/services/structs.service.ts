@@ -43,21 +43,22 @@ export class StructsService {
     let emptyStruct: StructEnt = {
       structId: structId,
       projectId: projectId,
-      mproveDirValue: './data',
-      mproveVersion:
-        this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
-      weekStart: ProjectWeekStartEnum.Sunday,
-      allowTimezones: true,
-      caseSensitiveStringFilters: false,
-      simplifySafeAggregates: true,
-      defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
-      formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
-      currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
-      currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
-      thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
+      mproveConfig: {
+        mproveDirValue: './data',
+        weekStart: ProjectWeekStartEnum.Sunday,
+        allowTimezones: true,
+        caseSensitiveStringFilters: false,
+        defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
+        formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
+        currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
+        currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
+        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR
+      },
       errors: [],
       metrics: [],
       presets: [],
+      mproveVersion:
+        this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
       serverTs: undefined
     };
 
@@ -78,20 +79,11 @@ export class StructsService {
           .select({
             structId: structsTable.structId,
             projectId: structsTable.projectId,
-            mproveDirValue: structsTable.mproveDirValue,
-            mproveVersion: structsTable.mproveVersion,
-            caseSensitiveStringFilters: structsTable.caseSensitiveStringFilters,
-            simplifySafeAggregates: structsTable.simplifySafeAggregates,
-            weekStart: structsTable.weekStart,
-            allowTimezones: structsTable.allowTimezones,
-            defaultTimezone: structsTable.defaultTimezone,
-            formatNumber: structsTable.formatNumber,
-            currencyPrefix: structsTable.currencyPrefix,
-            currencySuffix: structsTable.currencySuffix,
-            thousandsSeparator: structsTable.thousandsSeparator,
+            mproveConfig: structsTable.mproveConfig,
             errors: structsTable.errors,
             // metrics: structsTable.metrics,
             presets: structsTable.presets,
+            mproveVersion: structsTable.mproveVersion,
             serverTs: structsTable.serverTs
           })
           .from(structsTable)

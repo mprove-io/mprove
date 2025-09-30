@@ -208,7 +208,8 @@ export class SaveModifyReportController {
       struct: currentStruct,
       newReportFields: newReportFields,
       chart: chart,
-      caseSensitiveStringFilters: currentStruct.caseSensitiveStringFilters,
+      caseSensitiveStringFilters:
+        currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
     });
 

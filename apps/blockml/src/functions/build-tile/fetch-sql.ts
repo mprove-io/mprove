@@ -43,7 +43,6 @@ export async function fetchSql<T extends dcType>(
     // malloyFiles: BmlFile[];
     weekStart: ProjectWeekStartEnum;
     timezone: string;
-    simplifySafeAggregates: boolean;
     caseSensitiveStringFilters: boolean;
     errors: BmError[];
     structId: string;

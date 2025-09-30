@@ -615,20 +615,11 @@ export class WrapToApiService {
     return {
       projectId: struct.projectId,
       structId: struct.structId,
-      mproveDirValue: struct.mproveDirValue,
-      mproveVersion: struct.mproveVersion,
-      weekStart: struct.weekStart,
-      allowTimezones: struct.allowTimezones,
-      caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
-      simplifySafeAggregates: struct.simplifySafeAggregates,
-      defaultTimezone: struct.defaultTimezone,
-      formatNumber: struct.formatNumber,
-      currencyPrefix: struct.currencyPrefix,
-      currencySuffix: struct.currencySuffix,
-      thousandsSeparator: struct.thousandsSeparator,
       errors: struct.errors,
       metrics: struct.metrics,
       presets: struct.presets,
+      mproveConfig: struct.mproveConfig,
+      mproveVersion: struct.mproveVersion,
       serverTs: Number(struct.serverTs)
     };
   }

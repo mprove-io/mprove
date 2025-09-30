@@ -118,7 +118,7 @@ export class NewFileDialogComponent implements OnInit {
 
     let struct = this.structQuery.getValue();
 
-    // let part = struct.mproveDirValue;
+    // let part = struct.mproveConfig.mproveDirValue;
 
     // part = part.startsWith('.') ? part.slice(1) : part;
     // part = part.startsWith('/') ? part.slice(1) : part;

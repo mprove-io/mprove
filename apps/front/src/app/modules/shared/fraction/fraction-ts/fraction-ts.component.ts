@@ -747,7 +747,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     let structState = this.structQuery.getValue();
 
     let dowMixList =
-      structState.weekStart === ProjectWeekStartEnum.Monday
+      structState.mproveConfig.weekStart === ProjectWeekStartEnum.Monday
         ? this.fractionTsMixUnitsDayOfWeekMondayList
         : this.fractionTsMixUnitsDayOfWeekSundayList;
 
@@ -789,7 +789,9 @@ export class FractionTsComponent implements OnInit, OnChanges {
     this.buildToMomentAgoFromNowQuantityForm();
 
     let firstDayOfWeek =
-      structState.weekStart === ProjectWeekStartEnum.Monday ? 1 : 0;
+      structState.mproveConfig.weekStart === ProjectWeekStartEnum.Monday
+        ? 1
+        : 0;
 
     this.onYearDateI18n.firstDayOfWeek = firstDayOfWeek;
     this.onQuarterDateI18n.firstDayOfWeek = firstDayOfWeek;

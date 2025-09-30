@@ -104,7 +104,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   struct$ = this.structQuery.select().pipe(
     tap(x => {
-      if (x.allowTimezones === false) {
+      if (x.mproveConfig.allowTimezones === false) {
         this.timezoneForm.controls['timezone'].disable();
       } else {
         this.timezoneForm.controls['timezone'].enable();

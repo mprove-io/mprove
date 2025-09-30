@@ -136,21 +136,12 @@ export class BlockmlService {
     let struct: StructEnt = {
       projectId: projectId,
       structId: structId,
-      mproveDirValue: rs.mproveDirValue,
-      mproveVersion:
-        this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
-      weekStart: rs.weekStart,
-      allowTimezones: rs.allowTimezones,
-      caseSensitiveStringFilters: rs.caseSensitiveStringFilters,
-      simplifySafeAggregates: rs.simplifySafeAggregates,
-      defaultTimezone: rs.defaultTimezone,
-      formatNumber: rs.formatNumber,
-      currencyPrefix: rs.currencyPrefix,
-      currencySuffix: rs.currencySuffix,
-      thousandsSeparator: rs.thousandsSeparator,
+      mproveConfig: rs.mproveConfig,
       errors: rs.errors,
       metrics: rs.metrics,
       presets: rs.presets,
+      mproveVersion:
+        this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
       serverTs: undefined
     };
 

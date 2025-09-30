@@ -100,9 +100,9 @@ export class ChartEditorComponent implements OnChanges {
       value: x.input,
       formatNumber: x.id,
       fieldResult: FieldResultEnum.Number,
-      currencyPrefix: struct.currencyPrefix,
-      currencySuffix: struct.currencySuffix,
-      thousandsSeparator: struct.thousandsSeparator
+      currencyPrefix: struct.mproveConfig.currencyPrefix,
+      currencySuffix: struct.mproveConfig.currencySuffix,
+      thousandsSeparator: struct.mproveConfig.thousandsSeparator
     });
 
     return x;

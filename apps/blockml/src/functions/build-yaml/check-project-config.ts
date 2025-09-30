@@ -11,7 +11,6 @@ import {
   PROJECT_CONFIG_CURRENCY_SUFFIX,
   PROJECT_CONFIG_DEFAULT_TIMEZONE,
   PROJECT_CONFIG_FORMAT_NUMBER,
-  PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
   PROJECT_CONFIG_THOUSANDS_SEPARATOR,
   PROJECT_CONFIG_WEEK_START,
   PROJECT_WEEK_START_VALUES
@@ -55,7 +54,6 @@ export function checkProjectConfig(
     format_number: PROJECT_CONFIG_FORMAT_NUMBER,
     thousands_separator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
     case_sensitive_string_filters: PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
-    simplify_safe_aggregates: PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
@@ -152,8 +150,7 @@ export function checkProjectConfig(
       if (
         [
           ParameterEnum.AllowTimezones.toString(),
-          ParameterEnum.CaseSensitiveStringFilters.toString(),
-          ParameterEnum.SimplifySafeAggregates.toString()
+          ParameterEnum.CaseSensitiveStringFilters.toString()
         ].indexOf(parameter) > -1 &&
         !conf[parameter as keyof FileProjectConf]
           .toString()
@@ -167,10 +164,7 @@ export function checkProjectConfig(
                 : parameter ===
                     ParameterEnum.CaseSensitiveStringFilters.toString()
                   ? ErTitleEnum.WRONG_CASE_SENSITIVE_STRING_FILTERS
-                  : parameter ===
-                      ParameterEnum.SimplifySafeAggregates.toString()
-                    ? ErTitleEnum.WRONG_SIMPLIFY_SAFE_AGGREGATES
-                    : ErTitleEnum.WRONG_PROJECT_CONFIG_PARAMETER,
+                  : ErTitleEnum.WRONG_PROJECT_CONFIG_PARAMETER,
 
             message: `parameter "${parameter}:" must be "true" or "false" if specified`,
             lines: [

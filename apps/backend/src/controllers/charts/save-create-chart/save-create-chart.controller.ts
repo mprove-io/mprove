@@ -179,7 +179,7 @@ export class SaveCreateChartController {
       });
     }
 
-    let mdir = currentStruct.mproveDirValue;
+    let mdir = currentStruct.mproveConfig.mproveDirValue;
 
     if (
       mdir.length > 2 &&
@@ -189,7 +189,7 @@ export class SaveCreateChartController {
     }
 
     let parentNodeId =
-      currentStruct.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
+      currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
         ? `${projectId}/${MPROVE_USERS_FOLDER}/${user.alias}`
         : `${projectId}/${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}`;
 

@@ -62,8 +62,8 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     let structState = this.structQuery.getValue();
 
     let timezone =
-      structState.allowTimezones === false
-        ? structState.defaultTimezone
+      structState.mproveConfig.allowTimezones === false
+        ? structState.mproveConfig.defaultTimezone
         : isDefined(timezoneParam)
           ? timezoneParam.split('-').join('/')
           : uiState.timezone;

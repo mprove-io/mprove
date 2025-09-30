@@ -310,7 +310,8 @@ export class DataService {
     );
 
     let thousandsSeparator =
-      fieldThousandsSeparatorTag?.value ?? struct.thousandsSeparator;
+      fieldThousandsSeparatorTag?.value ??
+      struct.mproveConfig.thousandsSeparator;
 
     let formattedValue =
       // malloy duration
@@ -334,8 +335,10 @@ export class DataService {
               value: value,
               formatNumber: fieldFormatNumber,
               fieldResult: fieldResult,
-              currencyPrefix: fieldCurrencyPrefix ?? struct.currencyPrefix,
-              currencySuffix: fieldCurrencySuffix ?? struct.currencySuffix,
+              currencyPrefix:
+                fieldCurrencyPrefix ?? struct.mproveConfig.currencyPrefix,
+              currencySuffix:
+                fieldCurrencySuffix ?? struct.mproveConfig.currencySuffix,
               thousandsSeparator: thousandsSeparator
             })
           : // malloy percent
@@ -357,11 +360,11 @@ export class DataService {
                   isDefined(fieldMalloyNumberTag)
                 ? format(fieldMalloyNumberTag.value, value)
                 : fieldResult === FieldResultEnum.Number &&
-                    isDefinedAndNotEmpty(struct.formatNumber)
-                  ? // struct.formatNumber
+                    isDefinedAndNotEmpty(struct.mproveConfig.formatNumber)
+                  ? // struct.mproveConfig.formatNumber
                     this.d3FormatValue({
                       value: value,
-                      formatNumber: struct.formatNumber,
+                      formatNumber: struct.mproveConfig.formatNumber,
                       fieldResult: fieldResult,
                       currencyPrefix: fieldCurrencyPrefix,
                       currencySuffix: fieldCurrencySuffix,
@@ -748,7 +751,7 @@ export class DataService {
     // console.log(ySeries);
 
     let sortedDaysOfWeek =
-      struct.weekStart === ProjectWeekStartEnum.Monday
+      struct.mproveConfig.weekStart === ProjectWeekStartEnum.Monday
         ? [
             'Monday',
             'Tuesday',
@@ -1365,7 +1368,7 @@ export class DataService {
                   fieldResult: FieldResultEnum.Number,
                   currencyPrefix: row.currencyPrefix,
                   currencySuffix: row.currencySuffix,
-                  thousandsSeparator: struct.thousandsSeparator
+                  thousandsSeparator: struct.mproveConfig.thousandsSeparator
                 })
               : 'null';
 

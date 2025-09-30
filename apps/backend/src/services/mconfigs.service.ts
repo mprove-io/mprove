@@ -77,7 +77,8 @@ export class MconfigsService {
     newMconfig = await this.storeService.adjustMconfig({
       mconfig: mconfig,
       model: model,
-      caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+      caseSensitiveStringFilters:
+        struct.mproveConfig.caseSensitiveStringFilters,
       metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
       metricsEndDateYYYYMMDD: metricsEndDateYYYYMMDD
     });
@@ -124,7 +125,8 @@ export class MconfigsService {
       mconfig: newMconfig,
       storeModel: model,
       storeParam: ParameterEnum.Request,
-      caseSensitiveStringFilters: struct.caseSensitiveStringFilters,
+      caseSensitiveStringFilters:
+        struct.mproveConfig.caseSensitiveStringFilters,
       metricsStartDateYYYYMMDD: undefined,
       metricsEndDateYYYYMMDD: undefined
     });

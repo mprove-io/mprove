@@ -135,7 +135,10 @@ test('1', async t => {
         repoId: devRepoId,
         branch: BRANCH_MAIN,
         envId: envId,
-        overrideTimezone: undefined
+        overrideTimezone: undefined,
+        isUseCache: false,
+        cachedModels: [],
+        cachedMetrics: []
       }
     };
 

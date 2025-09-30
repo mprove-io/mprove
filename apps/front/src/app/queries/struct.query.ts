@@ -8,21 +8,22 @@ export class StructState extends Struct {}
 let structState: StructState = {
   projectId: undefined,
   structId: undefined,
-  mproveDirValue: undefined,
-  mproveVersion: undefined,
-  weekStart: undefined,
-  allowTimezones: false,
-  caseSensitiveStringFilters: false,
-  simplifySafeAggregates: false,
-  defaultTimezone: undefined,
+  mproveConfig: {
+    mproveDirValue: undefined,
+    caseSensitiveStringFilters: false,
+    weekStart: undefined,
+    allowTimezones: false,
+    defaultTimezone: undefined,
+    formatNumber: undefined,
+    currencyPrefix: undefined,
+    currencySuffix: undefined,
+    thousandsSeparator: undefined
+  },
   errors: [],
   metrics: [],
   presets: [],
-  serverTs: undefined,
-  formatNumber: undefined,
-  currencyPrefix: undefined,
-  currencySuffix: undefined,
-  thousandsSeparator: undefined
+  mproveVersion: undefined,
+  serverTs: undefined
 };
 
 @Injectable({ providedIn: 'root' })

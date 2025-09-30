@@ -194,7 +194,7 @@ export class FilesTreeComponent implements OnDestroy {
       return;
     }
 
-    let mproveDirValue = this.struct.mproveDirValue;
+    let mproveDirValue = this.struct.mproveConfig.mproveDirValue;
 
     if (
       isUndefined(mproveDirValue) ||

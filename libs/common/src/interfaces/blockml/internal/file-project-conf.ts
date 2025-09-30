@@ -8,9 +8,6 @@ export interface FileProjectConf extends FileBasic {
   case_sensitive_string_filters?: string; // boolean
   case_sensitive_string_filters_line_num?: number;
 
-  simplify_safe_aggregates?: string; // boolean
-  simplify_safe_aggregates_line_num?: number;
-
   week_start?: ProjectWeekStartEnum;
   week_start_line_num?: number;
 

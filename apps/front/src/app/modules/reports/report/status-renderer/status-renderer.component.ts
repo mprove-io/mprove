@@ -63,7 +63,7 @@ export class StatusRendererComponent implements ICellRendererAngularComp {
     this.timeSpec = this.reportQuery.getValue().timeSpec;
     this.timeSpecDetail = getTimeSpecDetail({
       timeSpec: this.timeSpec,
-      weekStart: this.structQuery.getValue().weekStart
+      weekStart: this.structQuery.getValue().mproveConfig.weekStart
     });
 
     this.isLimitReached =

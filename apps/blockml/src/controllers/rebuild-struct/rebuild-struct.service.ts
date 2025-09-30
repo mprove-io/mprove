@@ -35,7 +35,6 @@ import {
   PROJECT_CONFIG_CURRENCY_SUFFIX,
   PROJECT_CONFIG_DEFAULT_TIMEZONE,
   PROJECT_CONFIG_FORMAT_NUMBER,
-  PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES,
   PROJECT_CONFIG_THOUSANDS_SEPARATOR,
   PROJECT_CONFIG_WEEK_START
 } from '~common/constants/top';
@@ -43,7 +42,6 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
 import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
@@ -53,6 +51,7 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { Ev } from '~common/interfaces/backend/ev';
+import { MproveConfig } from '~common/interfaces/backend/mprove-config';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
@@ -86,16 +85,7 @@ interface RebuildStructPrep {
   apiModels: Model[];
   reports: FileReport[];
   charts: FileChart[];
-  mproveDirValue: string;
-  weekStart: ProjectWeekStartEnum;
-  allowTimezones: boolean;
-  defaultTimezone: string;
-  formatNumber: string;
-  currencyPrefix: string;
-  currencySuffix: string;
-  thousandsSeparator: string;
-  caseSensitiveStringFilters: boolean;
-  simplifySafeAggregates: boolean;
+  mproveConfig: MproveConfig;
 }
 
 @Injectable()
@@ -162,9 +152,9 @@ export class RebuildStructService {
       reports: prep.reports,
       metrics: prep.metrics,
       models: prep.apiModels,
-      formatNumber: prep.formatNumber,
-      currencyPrefix: prep.currencyPrefix,
-      currencySuffix: prep.currencySuffix
+      formatNumber: prep.mproveConfig.formatNumber,
+      currencyPrefix: prep.mproveConfig.currencyPrefix,
+      currencySuffix: prep.mproveConfig.currencySuffix
     });
 
     let { apiDashboards, dashMconfigs, dashQueries } = wrapDashboards({
@@ -174,7 +164,7 @@ export class RebuildStructService {
       stores: prep.stores,
       dashboards: prep.dashboards,
       envId: envId,
-      timezone: prep.defaultTimezone
+      timezone: prep.mproveConfig.defaultTimezone
     });
 
     let { apiCharts, chartMconfigs, chartQueries } = wrapCharts({
@@ -184,7 +174,7 @@ export class RebuildStructService {
       stores: prep.stores,
       charts: prep.charts,
       envId: envId,
-      timezone: prep.defaultTimezone
+      timezone: prep.mproveConfig.defaultTimezone
     });
 
     let queries = [...dashQueries, ...chartQueries];
@@ -200,16 +190,7 @@ export class RebuildStructService {
       presets: prep.presets,
       mconfigs: mconfigs,
       queries: queries,
-      mproveDirValue: prep.mproveDirValue,
-      weekStart: prep.weekStart,
-      allowTimezones: prep.allowTimezones,
-      defaultTimezone: prep.defaultTimezone,
-      formatNumber: prep.formatNumber,
-      currencyPrefix: prep.currencyPrefix,
-      currencySuffix: prep.currencySuffix,
-      thousandsSeparator: prep.thousandsSeparator,
-      caseSensitiveStringFilters: prep.caseSensitiveStringFilters,
-      simplifySafeAggregates: prep.simplifySafeAggregates
+      mproveConfig: prep.mproveConfig
     };
 
     return payload;
@@ -337,22 +318,21 @@ export class RebuildStructService {
         reports: [],
         dashboards: [],
         charts: [],
-        mproveDirValue: undefined,
-        weekStart: PROJECT_CONFIG_WEEK_START,
-        allowTimezones: toBooleanFromLowercaseString(
-          PROJECT_CONFIG_ALLOW_TIMEZONES
-        ),
-        defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
-        currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
-        currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
-        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
-        formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
-        caseSensitiveStringFilters: toBooleanFromLowercaseString(
-          PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
-        ),
-        simplifySafeAggregates: toBooleanFromLowercaseString(
-          PROJECT_CONFIG_SIMPLIFY_SAFE_AGGREGATES
-        )
+        mproveConfig: {
+          mproveDirValue: undefined,
+          weekStart: PROJECT_CONFIG_WEEK_START,
+          allowTimezones: toBooleanFromLowercaseString(
+            PROJECT_CONFIG_ALLOW_TIMEZONES
+          ),
+          defaultTimezone: PROJECT_CONFIG_DEFAULT_TIMEZONE,
+          currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
+          currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
+          thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
+          formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
+          caseSensitiveStringFilters: toBooleanFromLowercaseString(
+            PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
+          )
+        }
       };
     }
 
@@ -578,9 +558,6 @@ export class RebuildStructService {
         caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
         ),
-        simplifySafeAggregates: toBooleanFromLowercaseString(
-          projectConfig.simplify_safe_aggregates
-        ),
         structId: item.structId,
         errors: errors,
         caller: CallerEnum.BuildDashboardTile
@@ -604,9 +581,6 @@ export class RebuildStructService {
         timezone: projectConfig.default_timezone,
         caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
-        ),
-        simplifySafeAggregates: toBooleanFromLowercaseString(
-          projectConfig.simplify_safe_aggregates
         ),
         structId: item.structId,
         errors: errors,
@@ -748,22 +722,21 @@ export class RebuildStructService {
       dashboards: dashboards,
       reports: reports,
       charts: charts,
-      mproveDirValue: projectConfig.mprove_dir,
-      weekStart: projectConfig.week_start,
-      allowTimezones: toBooleanFromLowercaseString(
-        projectConfig.allow_timezones
-      ),
-      defaultTimezone: projectConfig.default_timezone,
-      formatNumber: projectConfig.format_number,
-      currencyPrefix: projectConfig.currency_prefix,
-      currencySuffix: projectConfig.currency_suffix,
-      thousandsSeparator: projectConfig.thousands_separator,
-      caseSensitiveStringFilters: toBooleanFromLowercaseString(
-        projectConfig.case_sensitive_string_filters
-      ),
-      simplifySafeAggregates: toBooleanFromLowercaseString(
-        projectConfig.simplify_safe_aggregates
-      )
+      mproveConfig: {
+        mproveDirValue: projectConfig.mprove_dir,
+        weekStart: projectConfig.week_start,
+        allowTimezones: toBooleanFromLowercaseString(
+          projectConfig.allow_timezones
+        ),
+        defaultTimezone: projectConfig.default_timezone,
+        formatNumber: projectConfig.format_number,
+        currencyPrefix: projectConfig.currency_prefix,
+        currencySuffix: projectConfig.currency_suffix,
+        thousandsSeparator: projectConfig.thousands_separator,
+        caseSensitiveStringFilters: toBooleanFromLowercaseString(
+          projectConfig.case_sensitive_string_filters
+        )
+      }
     };
 
     return prep;

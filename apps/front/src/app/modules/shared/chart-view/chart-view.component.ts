@@ -567,7 +567,7 @@ export class ChartViewComponent implements OnChanges {
 
     let locale = formatLocale({
       decimal: FORMAT_NUMBER_DECIMAL,
-      thousands: struct.thousandsSeparator,
+      thousands: struct.mproveConfig.thousandsSeparator,
       grouping: FORMAT_NUMBER_GROUPING,
       currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
     });
@@ -599,7 +599,7 @@ export class ChartViewComponent implements OnChanges {
 
     // let locale = formatLocale({
     //   decimal: FORMAT_NUMBER_DECIMAL,
-    //   thousands: struct.thousandsSeparator,
+    //   thousands: struct.mproveConfig.thousandsSeparator,
     //   grouping: FORMAT_NUMBER_GROUPING,
     //   currency: [field.currencyPrefix, field.currencySuffix]
     // });
@@ -635,7 +635,7 @@ export class ChartViewComponent implements OnChanges {
 
   //   let locale = formatLocale({
   //     decimal: FORMAT_NUMBER_DECIMAL,
-  //     thousands: struct.thousandsSeparator,
+  //     thousands: struct.mproveConfig.thousandsSeparator,
   //     grouping: FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });
@@ -665,7 +665,7 @@ export class ChartViewComponent implements OnChanges {
 
   //   let locale = formatLocale({
   //     decimal: FORMAT_NUMBER_DECIMAL,
-  //     thousands: struct.thousandsSeparator,
+  //     thousands: struct.mproveConfig.thousandsSeparator,
   //     grouping: FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });
@@ -693,7 +693,7 @@ export class ChartViewComponent implements OnChanges {
 
     let locale = formatLocale({
       decimal: FORMAT_NUMBER_DECIMAL,
-      thousands: struct.thousandsSeparator,
+      thousands: struct.mproveConfig.thousandsSeparator,
       grouping: FORMAT_NUMBER_GROUPING,
       currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
     });
@@ -719,7 +719,7 @@ export class ChartViewComponent implements OnChanges {
 
   //   let locale = formatLocale({
   //     decimal: FORMAT_NUMBER_DECIMAL,
-  //     thousands: struct.thousandsSeparator,
+  //     thousands: struct.mproveConfig.thousandsSeparator,
   //     grouping: FORMAT_NUMBER_GROUPING,
   //     currency: [field.currencyPrefix, field.currencySuffix]
   //   });

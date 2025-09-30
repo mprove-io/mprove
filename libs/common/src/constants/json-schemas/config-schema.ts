@@ -33,9 +33,6 @@ export const CONFIG_SCHEMA: JSONSchema7 = {
     },
     case_sensitive_string_filters: {
       type: 'boolean'
-    },
-    simplify_safe_aggregates: {
-      type: 'boolean'
     }
   },
   required: ['mprove_dir']

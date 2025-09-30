@@ -267,7 +267,9 @@ export class TimeService {
     let structState = this.structQuery.getValue();
 
     let firstDayOfWeek =
-      structState.weekStart === ProjectWeekStartEnum.Monday ? 1 : 0;
+      structState.mproveConfig.weekStart === ProjectWeekStartEnum.Monday
+        ? 1
+        : 0;
 
     let wDate = new Date(`${dateValue}T00:00:00Z`);
 
