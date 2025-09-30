@@ -43,7 +43,6 @@ import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -387,11 +386,7 @@ export class CreateDraftDashboardController {
       });
 
     await forEachSeries(
-      dashboardMconfigs.filter(
-        mconfig =>
-          mconfig.modelType === ModelTypeEnum.Store ||
-          mconfig.modelType === ModelTypeEnum.Malloy
-      ),
+      dashboardMconfigs,
       // dashboardMconfigs.filter(mconfig => mconfig.isStoreModel === true),
       async mconfig => {
         let newMconfig: Mconfig;
@@ -414,45 +409,27 @@ export class CreateDraftDashboardController {
           newMconfig = mqe.newMconfig;
           newQuery = mqe.newQuery;
           isError = mqe.isError;
-        } else if (mconfig.modelType === ModelTypeEnum.Malloy) {
-          let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
-            projectId: projectId,
-            envId: envId,
-            structId: struct.structId,
-            model: model,
-            mconfig: mconfig,
-            queryOperations: [
-              {
-                type: QueryOperationTypeEnum.Get,
-                timezone: timezone
-              }
-            ]
-          });
 
-          newMconfig = editMalloyQueryResult.newMconfig;
-          newQuery = editMalloyQueryResult.newQuery;
-          isError = editMalloyQueryResult.isError;
-        }
-
-        let newDashboardTile = newDashboard.tiles.find(
-          tile => tile.mconfigId === mconfig.mconfigId
-        );
-        newDashboardTile.queryId = newMconfig.queryId;
-        newDashboardTile.mconfigId = newMconfig.mconfigId;
-        newDashboardTile.trackChangeId = makeId();
-
-        insertMconfigs.push(
-          this.wrapToEntService.wrapToEntityMconfig(newMconfig)
-        );
-
-        if (isError === true) {
-          insertOrUpdateQueries.push(
-            this.wrapToEntService.wrapToEntityQuery(newQuery)
+          let newDashboardTile = newDashboard.tiles.find(
+            tile => tile.mconfigId === mconfig.mconfigId
           );
-        } else {
-          insertOrDoNothingQueries.push(
-            this.wrapToEntService.wrapToEntityQuery(newQuery)
+          newDashboardTile.queryId = newMconfig.queryId;
+          newDashboardTile.mconfigId = newMconfig.mconfigId;
+          newDashboardTile.trackChangeId = makeId();
+
+          insertMconfigs.push(
+            this.wrapToEntService.wrapToEntityMconfig(newMconfig)
           );
+
+          if (isError === true) {
+            insertOrUpdateQueries.push(
+              this.wrapToEntService.wrapToEntityQuery(newQuery)
+            );
+          } else {
+            insertOrDoNothingQueries.push(
+              this.wrapToEntService.wrapToEntityQuery(newQuery)
+            );
+          }
         }
       }
     );
