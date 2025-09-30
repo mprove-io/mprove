@@ -354,6 +354,22 @@ export class SaveCreateDashboardController {
         cachedMetrics: []
       });
 
+    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              structs: [currentStruct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
     let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
     if (isUndefined(dashboard)) {
@@ -381,6 +397,9 @@ export class SaveCreateDashboardController {
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
 
+    let dashboardEntity =
+      this.wrapToEntService.wrapToEntityDashboard(dashboard);
+
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
@@ -397,16 +416,10 @@ export class SaveCreateDashboardController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              dashboards: [
-                this.wrapToEntService.wrapToEntityDashboard(dashboard)
-              ],
+              dashboards: isDefined(dashboardEntity) ? [dashboardEntity] : [],
               mconfigs: dashboardMconfigs.map(x =>
                 this.wrapToEntService.wrapToEntityMconfig(x)
               )
-            },
-            insertOrUpdate: {
-              structs: [struct],
-              bridges: [...branchBridges]
             },
             insertOrDoNothing: {
               queries: dashboardQueries.map(x =>

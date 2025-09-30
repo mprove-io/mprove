@@ -25,14 +25,13 @@ export class ModelMetric {
   timeFieldId?: string;
 
   @IsString()
-  connection?: string;
-
-  @IsString()
   structId?: string;
 
+  @IsOptional()
   @IsString()
   filePath?: string;
 
+  @IsOptional()
   @IsInt()
   fieldLineNum?: number;
 
@@ -42,33 +41,42 @@ export class ModelMetric {
   @IsString()
   metricId?: string;
 
+  @IsOptional()
   @IsString()
   topNode?: string;
 
   // @IsString()
   // partId?: string;
 
+  @IsOptional()
   @IsString()
   label?: string;
 
+  @IsOptional()
   @IsString()
   topLabel?: string;
 
+  @IsOptional()
   @IsString()
   partNodeLabel?: string;
 
+  @IsOptional()
   @IsString()
   partFieldLabel?: string;
 
+  @IsOptional()
   @IsString()
   partLabel?: string;
 
+  @IsOptional()
   @IsString()
   timeNodeLabel?: string;
 
+  @IsOptional()
   @IsString()
   timeFieldLabel?: string;
 
+  @IsOptional()
   @IsString()
   timeLabel?: string;
 

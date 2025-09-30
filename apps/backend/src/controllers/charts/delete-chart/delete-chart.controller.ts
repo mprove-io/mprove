@@ -170,15 +170,14 @@ export class DeleteChartController {
       }
     };
 
-    let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
-        message: toDiskDeleteFileRequest,
-        checkIsOk: true
-      });
+    await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
+      routingKey: makeRoutingKeyToDisk({
+        orgId: project.orgId,
+        projectId: projectId
+      }),
+      message: toDiskDeleteFileRequest,
+      checkIsOk: true
+    });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -195,16 +194,16 @@ export class DeleteChartController {
       }
     });
 
-    let { struct } = await this.blockmlService.rebuildStruct({
-      traceId: traceId,
-      projectId: projectId,
-      structId: bridge.structId,
-      diskFiles: diskResponse.payload.files,
-      mproveDir: diskResponse.payload.mproveDir,
-      skipDb: true,
-      envId: envId,
-      overrideTimezone: undefined
-    });
+    // let { struct } = await this.blockmlService.rebuildStruct({
+    //   traceId: traceId,
+    //   projectId: projectId,
+    //   structId: bridge.structId,
+    //   diskFiles: diskResponse.payload.files,
+    //   mproveDir: diskResponse.payload.mproveDir,
+    //   skipDb: true,
+    //   envId: envId,
+    //   overrideTimezone: undefined
+    // });
 
     await retry(
       async () =>
@@ -221,7 +220,7 @@ export class DeleteChartController {
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              structs: [struct],
+              // structs: [struct],
               bridges: [...branchBridges]
             }
           });

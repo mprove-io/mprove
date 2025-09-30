@@ -317,9 +317,6 @@ export class EditDraftDashboardController {
         cachedMetrics: []
       });
 
-    // console.log('struct');
-    // console.log(struct);
-
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
     if (isUndefined(newDashboard)) {

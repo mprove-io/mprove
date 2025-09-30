@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
@@ -268,17 +268,52 @@ export class SaveCreateChartController {
       }
     });
 
+    let diskFiles = [
+      diskResponse.payload.files.find(
+        file => file.fileNodeId === `${parentNodeId}/${fileName}`
+      )
+    ];
+
+    let modelIds = [mconfig.modelId];
+
+    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        eq(modelsTable.structId, bridge.structId),
+        inArray(modelsTable.modelId, modelIds)
+      )
+    });
+
     let { charts, mconfigs, queries, struct } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         projectId: projectId,
         structId: bridge.structId,
-        diskFiles: diskResponse.payload.files,
-        mproveDir: diskResponse.payload.mproveDir,
+        diskFiles: diskFiles,
+        mproveDir: currentStruct.mproveConfig.mproveDirValue,
         skipDb: true,
         envId: envId,
-        overrideTimezone: undefined
+        overrideTimezone: undefined,
+        isUseCache: true,
+        cachedMproveConfig: currentStruct.mproveConfig,
+        cachedModels: cachedModels,
+        cachedMetrics: []
       });
+
+    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              structs: [currentStruct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
 
     let chart = charts.find(x => x.chartId === newChartId);
 
@@ -292,7 +327,8 @@ export class SaveCreateChartController {
       throw new ServerError({
         message: ErEnum.BACKEND_CREATE_CHART_FAIL,
         data: {
-          encodedFileId: encodeFilePath({ filePath: filePath })
+          encodedFileId: encodeFilePath({ filePath: filePath }),
+          structErrors: struct.errors
         }
       });
     }
@@ -330,12 +366,8 @@ export class SaveCreateChartController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              charts: [chartEnt],
+              charts: isDefined(chart) ? [chartEnt] : [],
               mconfigs: [chartMconfig]
-            },
-            insertOrUpdate: {
-              structs: [struct],
-              bridges: [...branchBridges]
             },
             insertOrDoNothing: {
               queries: [chartQuery]

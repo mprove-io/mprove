@@ -45,12 +45,12 @@ import {
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import {
   ToBackendSaveCreateReportRequest,
   ToBackendSaveCreateReportResponsePayload
@@ -152,15 +152,10 @@ export class SaveCreateReportController {
       userMember: userMember
     });
 
-    let metricRows = fromReport.rows.filter(
-      row => row.rowType === RowTypeEnum.Metric
-    );
-
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId,
       addMetrics: true
-      // addMetrics: metricRows.length > 0
     });
 
     let demoProjectId =
@@ -176,18 +171,29 @@ export class SaveCreateReportController {
       });
     }
 
-    let models: ModelEnt[] = [];
+    let metricIds = [
+      ...new Set(
+        fromReport.rows.map(row => row.metricId).filter(x => isDefined(x))
+      )
+    ];
 
-    if (currentStruct.metrics.length > 0) {
-      let metricModelIds = currentStruct.metrics.map(x => x.modelId);
+    let cachedMetrics: ModelMetric[] = currentStruct.metrics.filter(
+      metric => metricIds.indexOf(metric.metricId) > -1
+    );
 
-      models = await this.db.drizzle.query.modelsTable.findMany({
-        where: and(
-          inArray(modelsTable.modelId, metricModelIds),
-          eq(modelsTable.structId, bridge.structId)
-        )
-      });
-    }
+    let modelIds = [
+      ...new Set(cachedMetrics.map(x => x.modelId).filter(x => isDefined(x)))
+    ];
+
+    let cachedModels: ModelEnt[] =
+      modelIds.length === 0
+        ? []
+        : await this.db.drizzle.query.modelsTable.findMany({
+            where: and(
+              eq(modelsTable.structId, bridge.structId),
+              inArray(modelsTable.modelId, modelIds)
+            )
+          });
 
     let repFileText = makeReportFileText({
       reportId: newReportId,
@@ -195,7 +201,7 @@ export class SaveCreateReportController {
       title: title,
       rows: fromReport.rows,
       metrics: currentStruct.metrics,
-      models: models,
+      models: cachedModels,
       struct: currentStruct,
       newReportFields: newReportFields,
       chart: chart,
@@ -266,26 +272,62 @@ export class SaveCreateReportController {
       }
     });
 
+    let diskFiles = [
+      diskResponse.payload.files.find(
+        file => file.fileNodeId === `${parentNodeId}/${fileName}`
+      )
+    ];
+
     let { reports, struct } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       projectId: projectId,
       structId: bridge.structId,
-      diskFiles: diskResponse.payload.files,
-      mproveDir: diskResponse.payload.mproveDir,
+      diskFiles: diskFiles,
+      mproveDir: currentStruct.mproveConfig.mproveDirValue,
       skipDb: true,
       envId: envId,
-      overrideTimezone: undefined
+      overrideTimezone: undefined,
+      isUseCache: true,
+      cachedMproveConfig: currentStruct.mproveConfig,
+      cachedModels: cachedModels,
+      cachedMetrics: cachedMetrics
     });
+
+    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              structs: [currentStruct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
 
     let report = reports.find(x => x.reportId === newReportId);
 
-    if (isDefined(report)) {
-      report.rows = fromReport.rows;
+    if (isUndefined(report)) {
+      let fileId = `${parentNodeId}/${fileName}`;
+      let fileIdAr = fileId.split('/');
+      fileIdAr.shift();
+      let filePath = fileIdAr.join('/');
+
+      throw new ServerError({
+        message: ErEnum.BACKEND_CREATE_REPORT_FAIL,
+        data: {
+          encodedFileId: encodeFilePath({ filePath: filePath })
+        }
+      });
     }
 
-    let repEnt = isDefined(report)
-      ? this.wrapToEntService.wrapToEntityReport(report)
-      : undefined;
+    report.rows = fromReport.rows;
+
+    let reportEntity = this.wrapToEntService.wrapToEntityReport(report);
 
     await retry(
       async () =>
@@ -304,35 +346,17 @@ export class SaveCreateReportController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              reports: isDefined(repEnt) ? [repEnt] : []
-            },
-            insertOrUpdate: {
-              structs: [struct],
-              bridges: [...branchBridges]
+              reports: isDefined(reportEntity) ? [reportEntity] : []
             }
           });
         }),
       getRetryOption(this.cs, this.logger)
     );
 
-    if (isUndefined(report)) {
-      let fileId = `${parentNodeId}/${fileName}`;
-      let fileIdAr = fileId.split('/');
-      fileIdAr.shift();
-      let filePath = fileIdAr.join('/');
-
-      throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_REPORT_FAIL,
-        data: {
-          encodedFileId: encodeFilePath({ filePath: filePath })
-        }
-      });
-    }
-
     let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
 
     let repApi = await this.reportDataService.getReportData({
-      report: repEnt,
+      report: reportEntity,
       traceId: traceId,
       project: project,
       userMemberApi: userMemberApi,

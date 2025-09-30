@@ -173,15 +173,14 @@ export class DeleteDashboardController {
       }
     };
 
-    let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
-        message: toDiskDeleteFileRequest,
-        checkIsOk: true
-      });
+    await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
+      routingKey: makeRoutingKeyToDisk({
+        orgId: project.orgId,
+        projectId: projectId
+      }),
+      message: toDiskDeleteFileRequest,
+      checkIsOk: true
+    });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
@@ -221,13 +220,13 @@ export class DeleteDashboardController {
               )
             );
 
-          // await this.db.packer.write({
-          //   tx: tx,
-          //   insertOrUpdate: {
-          //     structs: [struct],
-          //     bridges: [...branchBridges]
-          //   }
-          // });
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              // structs: [struct],
+              bridges: [...branchBridges]
+            }
+          });
         }),
       getRetryOption(this.cs, this.logger)
     );

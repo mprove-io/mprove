@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
@@ -16,6 +16,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
@@ -48,14 +49,12 @@ import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
-import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
 import {
@@ -289,21 +288,71 @@ export class SaveModifyChartController {
       }
     });
 
+    let diskFiles = [
+      diskResponse.payload.files.find(
+        file => file.fileNodeId === existingChart.filePath
+      )
+    ];
+
+    let modelIds = [mconfig.modelId];
+
+    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
+      where: and(
+        eq(modelsTable.structId, bridge.structId),
+        inArray(modelsTable.modelId, modelIds)
+      )
+    });
+
     let { struct, charts, mconfigs, queries } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         projectId: projectId,
         structId: bridge.structId,
-        diskFiles: diskResponse.payload.files,
-        mproveDir: diskResponse.payload.mproveDir,
+        diskFiles: diskFiles,
+        mproveDir: currentStruct.mproveConfig.mproveDirValue,
         skipDb: true,
         envId: envId,
-        overrideTimezone: undefined
+        overrideTimezone: timezone,
+        isUseCache: true,
+        cachedMproveConfig: currentStruct.mproveConfig,
+        cachedModels: cachedModels,
+        cachedMetrics: []
       });
+
+    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              structs: [currentStruct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
 
     let chart = charts.find(x => x.chartId === chartId);
 
     if (isUndefined(chart)) {
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(async tx => {
+            await tx
+              .delete(chartsTable)
+              .where(
+                and(
+                  eq(chartsTable.chartId, chartId),
+                  eq(chartsTable.structId, bridge.structId)
+                )
+              );
+          }),
+        getRetryOption(this.cs, this.logger)
+      );
+
       let fileIdAr = existingChart.filePath.split('/');
       fileIdAr.shift();
       let filePath = fileIdAr.join('/');
@@ -311,7 +360,8 @@ export class SaveModifyChartController {
       throw new ServerError({
         message: ErEnum.BACKEND_MODIFY_CHART_FAIL,
         data: {
-          encodedFileId: encodeFilePath({ filePath: filePath })
+          encodedFileId: encodeFilePath({ filePath: filePath }),
+          structErrors: struct.errors
         }
       });
     }
@@ -336,18 +386,6 @@ export class SaveModifyChartController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          if (isUndefined(chart)) {
-            // because file chart changed
-            await tx
-              .delete(chartsTable)
-              .where(
-                and(
-                  eq(chartsTable.chartId, chartId),
-                  eq(chartsTable.structId, bridge.structId)
-                )
-              );
-          }
-
           await tx
             .delete(chartsTable)
             .where(
@@ -364,9 +402,7 @@ export class SaveModifyChartController {
               mconfigs: [chartMconfig]
             },
             insertOrUpdate: {
-              charts: isDefined(chart) ? [chartEnt] : undefined,
-              structs: [struct],
-              bridges: [...branchBridges]
+              charts: isDefined(chart) ? [chartEnt] : []
             },
             insertOrDoNothing: {
               queries: [chartQuery]
@@ -400,11 +436,10 @@ export class SaveModifyChartController {
 
     let isError = false;
 
-    if (model.type === ModelTypeEnum.Store) {
-      // if (model.isStoreModel === true) {
-      let newMconfigId = makeId();
-      let newQueryId = makeId();
+    let newMconfigId = makeId();
+    let newQueryId = makeId();
 
+    if (model.type === ModelTypeEnum.Store) {
       // biome-ignore format: theme breaks
       let sMconfig = Object.assign({}, chartMconfig, <MconfigEnt>{
         mconfigId: newMconfigId,
@@ -427,23 +462,28 @@ export class SaveModifyChartController {
       newQuery = mqe.newQuery;
       isError = mqe.isError;
     } else if (model.type === ModelTypeEnum.Malloy) {
-      let queryOperation: QueryOperation = {
-        type: QueryOperationTypeEnum.Get,
-        timezone: timezone
-      };
+      //   let queryOperation: QueryOperation = {
+      //     type: QueryOperationTypeEnum.Get,
+      //     timezone: timezone
+      //   };
 
-      let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
-        projectId: projectId,
-        envId: envId,
-        structId: struct.structId,
-        model: model,
-        mconfig: chartMconfig,
-        queryOperations: [queryOperation]
+      //   let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
+      //     projectId: projectId,
+      //     envId: envId,
+      //     structId: struct.structId,
+      //     model: model,
+      //     mconfig: chartMconfig,
+      //     queryOperations: [queryOperation]
+      //   });
+
+      //   newMconfig = editMalloyQueryResult.newMconfig;
+      //   newQuery = editMalloyQueryResult.newQuery;
+      //   isError = editMalloyQueryResult.isError;
+
+      newQuery = chartQuery;
+      newMconfig = Object.assign({}, chartMconfig, <MconfigEnt>{
+        mconfigId: newMconfigId
       });
-
-      newMconfig = editMalloyQueryResult.newMconfig;
-      newQuery = editMalloyQueryResult.newQuery;
-      isError = editMalloyQueryResult.isError;
     }
 
     let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);

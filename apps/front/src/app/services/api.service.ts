@@ -439,11 +439,17 @@ export class ApiService {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              this.navigateService.navigateToFileLine({
-                panel: PanelEnum.Tree,
-                encodedFileId:
-                  errorData.response.body.info.error.data.encodedFileId
-              });
+              let encodedFileId =
+                errorData?.response?.body?.info?.error?.data?.encodedFileId;
+
+              if (isDefined(encodedFileId)) {
+                this.navigateService.navigateToFileLine({
+                  panel: PanelEnum.Tree,
+                  encodedFileId: encodedFileId
+                });
+              } else {
+                this.navigateService.navigateToFiles(nav.branchId);
+              }
             });
         }).bind(this);
 

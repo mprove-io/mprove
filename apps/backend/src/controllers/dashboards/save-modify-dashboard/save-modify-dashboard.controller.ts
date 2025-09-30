@@ -379,13 +379,28 @@ export class SaveModifyDashboardController {
         cachedMetrics: []
       });
 
-    let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
+    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
 
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          // TODO: add same logic for chart and report
-          if (isUndefined(newDashboard)) {
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              structs: [currentStruct],
+              bridges: [...branchBridges]
+            }
+          });
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    let newDashboard = dashboards.find(x => x.dashboardId === toDashboardId);
+
+    if (isUndefined(newDashboard)) {
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(async tx => {
             await tx
               .delete(dashboardsTable)
               .where(
@@ -394,60 +409,65 @@ export class SaveModifyDashboardController {
                   eq(dashboardsTable.structId, bridge.structId)
                 )
               );
+          }),
+        getRetryOption(this.cs, this.logger)
+      );
 
-            let fileIdAr = toDashboardEntity.filePath.split('/');
-            fileIdAr.shift();
-            let filePath = fileIdAr.join('/');
+      let fileIdAr = toDashboardEntity.filePath.split('/');
+      fileIdAr.shift();
+      let filePath = fileIdAr.join('/');
 
-            throw new ServerError({
-              message: ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
-              data: {
-                encodedFileId: encodeFilePath({ filePath: filePath }),
-                structErrors: struct.errors
-              }
-            });
-          } else {
-            await tx
-              .delete(dashboardsTable)
-              .where(
-                and(
-                  eq(dashboardsTable.draft, true),
-                  eq(dashboardsTable.dashboardId, fromDashboardId),
-                  eq(dashboardsTable.structId, bridge.structId)
-                )
-              );
+      throw new ServerError({
+        message: ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
+        data: {
+          encodedFileId: encodeFilePath({ filePath: filePath }),
+          structErrors: struct.errors
+        }
+      });
+    }
 
-            let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
-            let dashboardMconfigs = mconfigs.filter(
-              x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+    let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
+    let dashboardMconfigs = mconfigs.filter(
+      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+    );
+
+    let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
+    let dashboardQueries = queries.filter(
+      x => dashboardQueryIds.indexOf(x.queryId) > -1
+    );
+
+    let dashboardEntity =
+      this.wrapToEntService.wrapToEntityDashboard(newDashboard);
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(dashboardsTable)
+            .where(
+              and(
+                eq(dashboardsTable.draft, true),
+                eq(dashboardsTable.dashboardId, fromDashboardId),
+                eq(dashboardsTable.structId, bridge.structId)
+              )
             );
 
-            let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
-            let dashboardQueries = queries.filter(
-              x => dashboardQueryIds.indexOf(x.queryId) > -1
-            );
-
-            await this.db.packer.write({
-              tx: tx,
-              insert: {
-                mconfigs: dashboardMconfigs.map(x =>
-                  this.wrapToEntService.wrapToEntityMconfig(x)
-                )
-              },
-              insertOrUpdate: {
-                dashboards: isDefined(newDashboard)
-                  ? [this.wrapToEntService.wrapToEntityDashboard(newDashboard)]
-                  : undefined,
-                structs: [struct],
-                bridges: [...branchBridges]
-              },
-              insertOrDoNothing: {
-                queries: dashboardQueries.map(x =>
-                  this.wrapToEntService.wrapToEntityQuery(x)
-                )
-              }
-            });
-          }
+          await this.db.packer.write({
+            tx: tx,
+            insert: {
+              mconfigs: dashboardMconfigs.map(x =>
+                this.wrapToEntService.wrapToEntityMconfig(x)
+              )
+            },
+            insertOrUpdate: {
+              dashboards: isDefined(dashboardEntity) ? [dashboardEntity] : []
+            },
+            insertOrDoNothing: {
+              queries: dashboardQueries.map(x =>
+                this.wrapToEntService.wrapToEntityQuery(x)
+              )
+            }
+          });
         }),
       getRetryOption(this.cs, this.logger)
     );
@@ -462,7 +482,7 @@ export class SaveModifyDashboardController {
     let newDashboardX = await this.dashboardsService.getDashboardXCheckAccess({
       user: user,
       member: userMember,
-      dashboard: this.wrapToEntService.wrapToEntityDashboard(newDashboard),
+      dashboard: dashboardEntity,
       bridge: bridge,
       projectId: projectId
     });
