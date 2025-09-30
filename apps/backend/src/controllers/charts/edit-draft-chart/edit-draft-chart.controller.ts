@@ -36,6 +36,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { makeId } from '~common/functions/make-id';
 import { Chart } from '~common/interfaces/blockml/chart';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
@@ -207,7 +208,7 @@ export class EditDraftChartController {
       modelFilePath: newMconfig.modelFilePath,
       mconfigId: newMconfig.mconfigId,
       queryId: newQuery.queryId,
-      trackChangeId: newMconfig.mconfigId,
+      trackChangeId: makeId(),
       // malloyQueryId: undefined,
       listen: undefined,
       deletedFilterFieldIds: undefined,

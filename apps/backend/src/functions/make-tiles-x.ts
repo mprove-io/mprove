@@ -1,4 +1,5 @@
 import { isDefined } from '~common/functions/is-defined';
+import { makeId } from '~common/functions/make-id';
 import { FilterX } from '~common/interfaces/backend/filter-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { ModelX } from '~common/interfaces/backend/model-x';
@@ -31,6 +32,7 @@ export function makeTilesX(item: {
     if (isAddMconfigAndQuery === true) {
       tileX.mconfig = mconfigs.find(m => m.mconfigId === x.mconfigId);
       tileX.query = queries.find(q => q.queryId === x.queryId);
+      tileX.trackChangeId = makeId();
 
       let listen = tileX.listen;
 

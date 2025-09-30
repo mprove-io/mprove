@@ -19,6 +19,7 @@ import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum'
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { makeTrackChangeId } from '~common/functions/make-track-change-id';
 import {
   ToBackendGetDashboardRequestPayload,
   ToBackendGetDashboardResponse
@@ -168,11 +169,12 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
               needValidate: resp.payload.needValidate
             });
 
-            resp.payload.dashboard.tiles.forEach(
-              tile =>
-                (tile.trackChangeId =
-                  tile.mconfigId + JSON.stringify(tile.query.data))
-            );
+            resp.payload.dashboard.tiles.forEach(tile => {
+              tile.trackChangeId = makeTrackChangeId({
+                mconfig: tile.mconfig,
+                query: tile.query
+              });
+            });
 
             this.dashboardQuery.update(resp.payload.dashboard);
 

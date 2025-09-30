@@ -47,6 +47,7 @@ import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
@@ -402,6 +403,7 @@ export class EditDraftDashboardController {
         );
         newDashboardTile.queryId = newMconfig.queryId;
         newDashboardTile.mconfigId = newMconfig.mconfigId;
+        newDashboardTile.trackChangeId = makeId();
 
         insertMconfigs.push(
           this.wrapToEntService.wrapToEntityMconfig(newMconfig)

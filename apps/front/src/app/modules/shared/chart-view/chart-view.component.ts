@@ -15,6 +15,7 @@ import {
   ScatterSeriesOption,
   SeriesOption
 } from 'echarts';
+import { YAXisOption } from 'echarts/types/dist/shared';
 import {
   FORMAT_NUMBER_DECIMAL,
   FORMAT_NUMBER_GROUPING
@@ -369,11 +370,14 @@ export class ChartViewComponent implements OnChanges {
             : this.chart.yAxis;
 
         eChartOptions.yAxis = yAxis.map(y => {
-          (y as any).type = 'value';
-          (y as any).axisLabel = {
-            fontSize: 14
-          };
-          return y;
+          let newY: YAXisOption = Object.assign({}, y, <YAXisOption>{
+            type: 'value',
+            axisLabel: {
+              fontSize: 14
+            }
+          });
+
+          return newY;
         });
       }
 

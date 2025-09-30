@@ -7,6 +7,7 @@ import {
 } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { makeId } from '~common/functions/make-id';
 import { ChartX } from '~common/interfaces/backend/chart-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
@@ -75,9 +76,9 @@ let emptyTile: TileX = {
   modelId: undefined,
   modelLabel: undefined,
   modelFilePath: undefined,
-  mconfigId: emptyMconfig.mconfigId,
   queryId: emptyQuery.queryId,
-  trackChangeId: emptyMconfig.mconfigId,
+  mconfigId: emptyMconfig.mconfigId,
+  trackChangeId: makeId(),
   // malloyQueryId: undefined,
   listen: undefined,
   deletedFilterFieldIds: undefined,

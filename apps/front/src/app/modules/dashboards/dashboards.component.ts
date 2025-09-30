@@ -28,7 +28,7 @@ import { getTimezones } from '~common/functions/get-timezones';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
+import { makeTrackChangeId } from '~common/functions/make-track-change-id';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
@@ -749,13 +749,14 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
                 let newTile = Object.assign({}, x, {
                   query: isDefined(query) ? query : x.query,
-                  trackChangeId: isUndefined(query)
-                    ? x.trackChangeId
-                    : query.status === QueryStatusEnum.Completed
-                      ? x.mconfigId + JSON.stringify(query.data)
-                      : query.status !== QueryStatusEnum.Running
-                        ? makeId()
-                        : x.trackChangeId
+                  trackChangeId:
+                    isUndefined(query) ||
+                    query.status === QueryStatusEnum.Running
+                      ? x.trackChangeId
+                      : makeTrackChangeId({
+                          mconfig: x.mconfig,
+                          query: query
+                        })
                 });
                 return newTile;
               })

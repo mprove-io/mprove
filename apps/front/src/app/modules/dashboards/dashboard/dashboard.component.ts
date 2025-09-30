@@ -132,6 +132,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           }
       );
 
+      // fixing of layout after nav to different dashboard
       if (
         isDefined(this.dashboard.dashboardId) &&
         isDefined(this.prevDashboardId) &&

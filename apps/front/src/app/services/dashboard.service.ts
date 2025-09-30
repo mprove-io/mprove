@@ -5,6 +5,7 @@ import { APP_SPINNER_NAME } from '~common/constants/top-front';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '~common/functions/make-copy';
+import { makeTrackChangeId } from '~common/functions/make-track-change-id';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
 import { ToBackendDeleteDraftChartsResponse } from '~common/interfaces/to-backend/charts/to-backend-delete-draft-charts';
@@ -191,13 +192,18 @@ export class DashboardService {
           this.spinner.hide(APP_SPINNER_NAME);
 
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            resp.payload.dashboard.tiles.forEach(
-              tile =>
-                (tile.trackChangeId =
-                  tile.mconfigId + JSON.stringify(tile.query.data))
-            );
+            resp.payload.dashboard.tiles.forEach(tile => {
+              tile.trackChangeId = makeTrackChangeId({
+                mconfig: tile.mconfig,
+                query: tile.query
+              });
+            });
 
             this.dashboardQuery.update(resp.payload.dashboard);
+
+            // console.log(
+            //   resp.payload.dashboard.tiles.map(tile => tile.trackChangeId)
+            // );
           }
         }),
         take(1)
