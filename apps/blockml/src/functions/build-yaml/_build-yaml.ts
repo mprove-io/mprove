@@ -30,6 +30,7 @@ export function buildYaml(
     structId: string;
     connections: ProjectConnection[];
     mproveDir: string;
+    isUseCache: boolean;
     caller: CallerEnum;
   },
   cs: ConfigService<BlockmlConfig>
@@ -138,16 +139,19 @@ export function buildYaml(
   reports = splitFilesResult.reports;
   charts = splitFilesResult.charts;
 
-  let projectConfig = checkProjectConfig(
-    {
-      confs: confs,
-      structId: item.structId,
-      mproveDir: item.mproveDir,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
+  let projectConfig =
+    item.isUseCache === false
+      ? checkProjectConfig(
+          {
+            confs: confs,
+            structId: item.structId,
+            mproveDir: item.mproveDir,
+            errors: item.errors,
+            caller: item.caller
+          },
+          cs
+        )
+      : undefined;
 
   return {
     mods: mods,

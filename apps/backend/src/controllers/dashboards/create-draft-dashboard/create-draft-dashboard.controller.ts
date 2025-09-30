@@ -19,7 +19,6 @@ import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -46,7 +45,6 @@ import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
@@ -58,10 +56,6 @@ import {
   ToBackendCreateDraftDashboardRequest,
   ToBackendCreateDraftDashboardResponsePayload
 } from '~common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
-import {
-  ToDiskGetCatalogFilesRequest,
-  ToDiskGetCatalogFilesResponse
-} from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
 import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
@@ -252,32 +246,32 @@ export class CreateDraftDashboardController {
     // console.log('malloyFileText');
     // console.log(malloyFileText);
 
-    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        branch: branchId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
-      }
-    };
+    // let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
+    //   info: {
+    //     name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
+    //     traceId: reqValid.info.traceId
+    //   },
+    //   payload: {
+    //     orgId: project.orgId,
+    //     projectId: projectId,
+    //     repoId: repoId,
+    //     branch: branchId,
+    //     remoteType: project.remoteType,
+    //     gitUrl: project.gitUrl,
+    //     privateKey: project.privateKey,
+    //     publicKey: project.publicKey
+    //   }
+    // };
 
-    let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
-        message: getCatalogFilesRequest,
-        checkIsOk: true
-      });
+    // let diskResponse =
+    //   await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+    //     routingKey: makeRoutingKeyToDisk({
+    //       orgId: project.orgId,
+    //       projectId: projectId
+    //     }),
+    //     message: getCatalogFilesRequest,
+    //     checkIsOk: true
+    //   });
 
     // add dashboard file
 
@@ -302,15 +296,15 @@ export class CreateDraftDashboardController {
     // };
 
     let diskFiles = [
-      tempFile,
-      ...diskResponse.payload.files.filter(x => {
-        let ar = x.name.split('.');
-        let ext = ar[ar.length - 1];
-        let allow =
-          // x.fileNodeId !== secondFileNodeId &&
-          [FileExtensionEnum.Yml].indexOf(`.${ext}` as FileExtensionEnum) > -1;
-        return allow;
-      })
+      tempFile
+      // ...diskResponse.payload.files.filter(x => {
+      //   let ar = x.name.split('.');
+      //   let ext = ar[ar.length - 1];
+      //   let allow =
+      //     // x.fileNodeId !== secondFileNodeId &&
+      //     [FileExtensionEnum.Yml].indexOf(`.${ext}` as FileExtensionEnum) > -1;
+      //   return allow;
+      // })
     ];
 
     // if (isDefined(malloyFileText)) {
@@ -332,7 +326,7 @@ export class CreateDraftDashboardController {
         projectId: projectId,
         structId: bridge.structId,
         diskFiles: diskFiles,
-        mproveDir: diskResponse.payload.mproveDir,
+        mproveDir: currentStruct.mproveConfig.mproveDirValue,
         skipDb: true,
         envId: envId,
         overrideTimezone: timezone,

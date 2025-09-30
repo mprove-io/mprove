@@ -296,6 +296,7 @@ export class RebuildStructService {
         mproveDir: item.mproveDir,
         structId: item.structId,
         errors: errors,
+        isUseCache: item.isUseCache,
         caller: CallerEnum.BuildYaml
       },
       this.cs
