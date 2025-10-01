@@ -1,4 +1,6 @@
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '~common/constants/top-front';
@@ -8,12 +10,14 @@ import { makeCopy } from '~common/functions/make-copy';
 import { makeTrackChangeId } from '~common/functions/make-track-change-id';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
-import { ToBackendDeleteDraftChartsResponse } from '~common/interfaces/to-backend/charts/to-backend-delete-draft-charts';
 import {
   ToBackendCreateDraftDashboardRequestPayload,
   ToBackendCreateDraftDashboardResponse
 } from '~common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
-import { ToBackendDeleteDraftDashboardsRequestPayload } from '~common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
+import {
+  ToBackendDeleteDraftDashboardsRequestPayload,
+  ToBackendDeleteDraftDashboardsResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
 import {
   ToBackendEditDraftDashboardRequestPayload,
   ToBackendEditDraftDashboardResponse
@@ -34,6 +38,9 @@ export class DashboardService {
   );
 
   constructor(
+    private location: Location,
+    private router: Router,
+    private route: ActivatedRoute,
     private apiService: ApiService,
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
@@ -132,12 +139,37 @@ export class DashboardService {
             let dashboards = this.dashboardsQuery.getValue().dashboards;
             let newDashboards = [dashboardPart, ...dashboards];
 
+            resp.payload.dashboard.tiles.forEach(tile => {
+              tile.trackChangeId = makeTrackChangeId({
+                mconfig: tile.mconfig,
+                query: tile.query
+              });
+            });
+
             this.dashboardsQuery.update({ dashboards: newDashboards });
+            this.dashboardQuery.update(resp.payload.dashboard);
+
+            let url = this.router
+              .createUrlTree([], { relativeTo: this.route })
+              .toString();
+
+            // console.log('url');
+            // console.log(url);
+
+            let urlArray = url.split('/');
+            urlArray.pop();
+            urlArray.push(resp.payload.dashboard.dashboardId);
+
+            url = urlArray.join('/') + `?timezone=${timezone}`;
+
+            this.location.replaceState(url);
 
             this.navigateService.navigateToDashboard({
               dashboardId: newDashboardId
             });
           }
+
+          this.spinner.hide(APP_SPINNER_NAME);
         }),
         take(1)
       )
@@ -189,8 +221,6 @@ export class DashboardService {
       })
       .pipe(
         tap((resp: ToBackendEditDraftDashboardResponse) => {
-          this.spinner.hide(APP_SPINNER_NAME);
-
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             resp.payload.dashboard.tiles.forEach(tile => {
               tile.trackChangeId = makeTrackChangeId({
@@ -200,11 +230,9 @@ export class DashboardService {
             });
 
             this.dashboardQuery.update(resp.payload.dashboard);
-
-            // console.log(
-            //   resp.payload.dashboard.tiles.map(tile => tile.trackChangeId)
-            // );
           }
+
+          this.spinner.hide(APP_SPINNER_NAME);
         }),
         take(1)
       )
@@ -230,7 +258,7 @@ export class DashboardService {
         showSpinner: true
       })
       .pipe(
-        tap((resp: ToBackendDeleteDraftChartsResponse) => {
+        tap((resp: ToBackendDeleteDraftDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboards = this.dashboardsQuery.getValue().dashboards;
 

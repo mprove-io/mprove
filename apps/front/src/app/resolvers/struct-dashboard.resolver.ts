@@ -144,6 +144,13 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       }
     }
 
+    if (
+      route?.params[PARAMETER_DASHBOARD_ID] ===
+      this.dashboardQuery.getValue().dashboardId
+    ) {
+      return of(true);
+    }
+
     let payload: ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,

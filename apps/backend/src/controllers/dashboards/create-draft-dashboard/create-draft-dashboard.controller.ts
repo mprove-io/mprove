@@ -451,9 +451,18 @@ export class CreateDraftDashboardController {
       userMember: userMember
     });
 
+    let newDashboardX = await this.dashboardsService.getDashboardXCheckAccess({
+      user: user,
+      member: userMember,
+      dashboard: this.wrapToEntService.wrapToEntityDashboard(newDashboard),
+      bridge: bridge,
+      projectId: projectId
+    });
+
     let payload: ToBackendCreateDraftDashboardResponsePayload = {
       newDashboardPart:
-        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
+        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined,
+      dashboard: newDashboardX
     };
 
     return payload;

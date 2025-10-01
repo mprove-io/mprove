@@ -47,6 +47,10 @@ export class ToBackendCreateDraftDashboardResponsePayload {
   @ValidateNested()
   @Type(() => DashboardX)
   newDashboardPart: DashboardX;
+
+  @ValidateNested()
+  @Type(() => DashboardX)
+  dashboard: DashboardX;
 }
 
 export class ToBackendCreateDraftDashboardResponse extends MyResponse {
