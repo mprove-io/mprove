@@ -8,6 +8,7 @@ import {
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
+import { EMPTY_CHART_ID } from '~common/constants/top';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { Chart } from '~common/interfaces/blockml/chart';
@@ -19,6 +20,7 @@ import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { UiService } from '~front/app/services/ui.service';
 
 export interface DeleteChartDialogData {
   apiService: ApiService;
@@ -47,6 +49,7 @@ export class DeleteChartDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private chartsQuery: ChartsQuery,
     private chartQuery: ChartQuery,
+    private uiService: UiService,
     private router: Router
   ) {}
 
@@ -90,7 +93,12 @@ export class DeleteChartDialogComponent implements OnInit {
             let currentChart = this.chartQuery.getValue();
 
             if (currentChart.chartId === chart.chartId) {
-              this.navigateService.navigateToModels();
+              this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
+
+              this.navigateService.navigateToChart({
+                modelId: chart.modelId,
+                chartId: EMPTY_CHART_ID
+              });
             }
           }
         }),

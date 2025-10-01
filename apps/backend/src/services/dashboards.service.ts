@@ -176,7 +176,8 @@ export class DashboardsService {
         modelId: modelsTable.modelId,
         accessRoles: modelsTable.accessRoles,
         hidden: modelsTable.hidden,
-        connectionId: modelsTable.connectionId
+        connectionId: modelsTable.connectionId,
+        connectionType: modelsTable.connectionType
       })
       .from(modelsTable)
       .where(

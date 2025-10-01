@@ -364,11 +364,23 @@
                   formControlName="model"
                 >
                   <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
+                    <div class="truncate">
+                      <span>{{ item.label }}</span>
+
+                      <span class="text-s400 ml-3 mr-2">{{
+                        item.connectionType
+                      }}</span>
+                    </div>
                   </ng-template>
 
                   <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">{{ item.label }}</div>
+                    <div class="truncate">
+                      <span>{{ item.label }}</span>
+
+                      <span class="text-s400 ml-3 mr-2">{{
+                        item.connectionType
+                      }}</span>
+                    </div>
                   </ng-template>
                 </ng-select>
               </form>

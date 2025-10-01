@@ -89,7 +89,8 @@ export class GetChartsController {
         modelId: modelsTable.modelId,
         accessRoles: modelsTable.accessRoles,
         hidden: modelsTable.hidden,
-        connectionId: modelsTable.connectionId
+        connectionId: modelsTable.connectionId,
+        connectionType: modelsTable.connectionType
       })
       .from(modelsTable)
       .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];

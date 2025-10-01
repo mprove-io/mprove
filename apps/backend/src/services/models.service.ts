@@ -46,6 +46,7 @@ export class ModelsService {
       type: modelsTable.type,
       // isStoreModel: modelsTable.isStoreModel,
       connectionId: modelsTable.connectionId,
+      connectionType: modelsTable.connectionType,
       filePath: modelsTable.filePath,
       // 'content'
       isViewModel: modelsTable.isViewModel,

@@ -32,7 +32,6 @@ import { makeTrackChangeId } from '~common/functions/make-track-change-id';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
-import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboard-link';
 import { Query } from '~common/interfaces/blockml/query';
 import { RefreshItem } from '~common/interfaces/front/refresh-item';
 import {
@@ -192,7 +191,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
 
       if (x.draft === false) {
-        this.setProjectDashboardLink({
+        this.uiService.setProjectDashboardLink({
           dashboardId: this.dashboard.dashboardId
         });
       }
@@ -464,62 +463,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
-  }
-
-  setProjectDashboardLink(item: { dashboardId: string }) {
-    let { dashboardId } = item;
-
-    let nav = this.navQuery.getValue();
-
-    if (isUndefined(dashboardId) || isUndefined(nav.projectId)) {
-      return;
-    }
-
-    let links = this.uiQuery.getValue().projectDashboardLinks;
-
-    let link: ProjectDashboardLink = links.find(
-      l => l.projectId === nav.projectId
-    );
-
-    if (link?.dashboardId === dashboardId) {
-      return;
-    }
-
-    let newProjectDashboardLinks;
-
-    if (isDefined(link)) {
-      let newLink: ProjectDashboardLink = {
-        projectId: nav.projectId,
-        dashboardId: dashboardId,
-        navTs: Date.now()
-      };
-
-      newProjectDashboardLinks = [
-        newLink,
-        ...links.filter(r => !(r.projectId === nav.projectId))
-      ];
-    } else {
-      let newLink: ProjectDashboardLink = {
-        projectId: nav.projectId,
-        dashboardId: dashboardId,
-        navTs: Date.now()
-      };
-
-      newProjectDashboardLinks = [newLink, ...links];
-    }
-
-    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-    newProjectDashboardLinks = newProjectDashboardLinks.filter(
-      l => l.navTs >= oneYearAgoTimestamp
-    );
-
-    this.uiQuery.updatePart({
-      projectDashboardLinks: newProjectDashboardLinks
-    });
-    this.uiService.setUserUi({
-      projectDashboardLinks: newProjectDashboardLinks
-    });
   }
 
   scrollToSelectedDashboard(item: { isSmooth: boolean }) {

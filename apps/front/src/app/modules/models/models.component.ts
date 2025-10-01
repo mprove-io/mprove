@@ -61,8 +61,6 @@ import { setChartFields } from '~common/functions/set-chart-fields';
 import { ChartX } from '~common/interfaces/backend/chart-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { ModelX } from '~common/interfaces/backend/model-x';
-import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
-import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
 import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
@@ -334,7 +332,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
       // this.scrollToSelectedChart();
 
-      this.setProjectModelLink({ modelId: this.model.modelId });
+      this.uiService.setProjectModelLink({ modelId: this.model.modelId });
     })
   );
 
@@ -483,7 +481,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
 
       if (x.draft === false && this.chart.chartId !== EMPTY_CHART_ID) {
-        this.setProjectChartLink({ chartId: this.chart.chartId });
+        this.uiService.setProjectChartLink({ chartId: this.chart.chartId });
       }
     })
   );
@@ -1054,7 +1052,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let modelId = this.modelForm.controls['model'].value;
 
     // chart (empty model not available for selection)
-    this.setProjectChartLink({ chartId: EMPTY_CHART_ID });
+    this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
 
     if (this.lastUrl === this.pathChartsList) {
       await this.navigateService.navigateToChartsList({
@@ -1724,7 +1722,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
         this.showSchema = true;
       }
 
-      this.setProjectChartLink({ chartId: EMPTY_CHART_ID });
+      this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
 
       this.navigateService.navigateToChart({
         modelId: this.model.modelId,
@@ -1768,106 +1766,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
 
     this.uiQuery.updatePart({ showSchema: true });
-  }
-
-  setProjectModelLink(item: { modelId: string }) {
-    let { modelId } = item;
-
-    let nav = this.navQuery.getValue();
-
-    if (isUndefined(modelId) || isUndefined(nav.projectId)) {
-      return;
-    }
-
-    let links = this.uiQuery.getValue().projectModelLinks;
-
-    let link: ProjectModelLink = links.find(l => l.projectId === nav.projectId);
-
-    if (link?.modelId === modelId) {
-      return;
-    }
-
-    let newProjectModelLinks;
-
-    if (isDefined(link)) {
-      let newLink = {
-        projectId: nav.projectId,
-        modelId: modelId,
-        navTs: Date.now()
-      };
-
-      newProjectModelLinks = [
-        newLink,
-        ...links.filter(r => !(r.projectId === nav.projectId))
-      ];
-    } else {
-      let newLink = {
-        projectId: nav.projectId,
-        modelId: modelId,
-        navTs: Date.now()
-      };
-
-      newProjectModelLinks = [newLink, ...links];
-    }
-
-    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-    newProjectModelLinks = newProjectModelLinks.filter(
-      l => l.navTs >= oneYearAgoTimestamp
-    );
-
-    this.uiQuery.updatePart({ projectModelLinks: newProjectModelLinks });
-    this.uiService.setUserUi({ projectModelLinks: newProjectModelLinks });
-  }
-
-  setProjectChartLink(item: { chartId: string }) {
-    let { chartId } = item;
-
-    let nav = this.navQuery.getValue();
-
-    if (isUndefined(chartId) || isUndefined(nav.projectId)) {
-      return;
-    }
-
-    let links = this.uiQuery.getValue().projectChartLinks;
-
-    let link: ProjectChartLink = links.find(l => l.projectId === nav.projectId);
-
-    if (link?.chartId === chartId) {
-      return;
-    }
-
-    let newProjectChartLinks;
-
-    if (isDefined(link)) {
-      let newLink: ProjectChartLink = {
-        projectId: nav.projectId,
-        chartId: chartId,
-        navTs: Date.now()
-      };
-
-      newProjectChartLinks = [
-        newLink,
-        ...links.filter(r => !(r.projectId === nav.projectId))
-      ];
-    } else {
-      let newLink: ProjectChartLink = {
-        projectId: nav.projectId,
-        chartId: chartId,
-        navTs: Date.now()
-      };
-
-      newProjectChartLinks = [newLink, ...links];
-    }
-
-    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-    newProjectChartLinks = newProjectChartLinks.filter(
-      l => l.navTs >= oneYearAgoTimestamp
-    );
-
-    this.uiQuery.updatePart({ projectChartLinks: newProjectChartLinks });
-    this.uiService.setUserUi({ projectChartLinks: newProjectChartLinks });
   }
 
   scrollToSelectedChart(item: { isSmooth: boolean }) {

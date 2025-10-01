@@ -148,4 +148,212 @@ export class UiService {
     this.uiQuery.updatePart({ projectFileLinks: newProjectFileLinks });
     this.setUserUi({ projectFileLinks: newProjectFileLinks });
   }
+
+  setProjectChartLink(item: { chartId: string }) {
+    let { chartId } = item;
+
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(chartId) || isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectChartLinks;
+
+    let link: ProjectChartLink = links.find(l => l.projectId === nav.projectId);
+
+    if (link?.chartId === chartId) {
+      return;
+    }
+
+    let newProjectChartLinks;
+
+    if (isDefined(link)) {
+      let newLink: ProjectChartLink = {
+        projectId: nav.projectId,
+        chartId: chartId,
+        navTs: Date.now()
+      };
+
+      newProjectChartLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === nav.projectId))
+      ];
+    } else {
+      let newLink: ProjectChartLink = {
+        projectId: nav.projectId,
+        chartId: chartId,
+        navTs: Date.now()
+      };
+
+      newProjectChartLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectChartLinks = newProjectChartLinks.filter(
+      l => l.navTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({ projectChartLinks: newProjectChartLinks });
+    this.setUserUi({ projectChartLinks: newProjectChartLinks });
+  }
+
+  setProjectModelLink(item: { modelId: string }) {
+    let { modelId } = item;
+
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(modelId) || isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectModelLinks;
+
+    let link: ProjectModelLink = links.find(l => l.projectId === nav.projectId);
+
+    if (link?.modelId === modelId) {
+      return;
+    }
+
+    let newProjectModelLinks;
+
+    if (isDefined(link)) {
+      let newLink = {
+        projectId: nav.projectId,
+        modelId: modelId,
+        navTs: Date.now()
+      };
+
+      newProjectModelLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === nav.projectId))
+      ];
+    } else {
+      let newLink = {
+        projectId: nav.projectId,
+        modelId: modelId,
+        navTs: Date.now()
+      };
+
+      newProjectModelLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectModelLinks = newProjectModelLinks.filter(
+      l => l.navTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({ projectModelLinks: newProjectModelLinks });
+    this.setUserUi({ projectModelLinks: newProjectModelLinks });
+  }
+
+  setProjectDashboardLink(item: { dashboardId: string }) {
+    let { dashboardId } = item;
+
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(dashboardId) || isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectDashboardLinks;
+
+    let link: ProjectDashboardLink = links.find(
+      l => l.projectId === nav.projectId
+    );
+
+    if (link?.dashboardId === dashboardId) {
+      return;
+    }
+
+    let newProjectDashboardLinks;
+
+    if (isDefined(link)) {
+      let newLink: ProjectDashboardLink = {
+        projectId: nav.projectId,
+        dashboardId: dashboardId,
+        navTs: Date.now()
+      };
+
+      newProjectDashboardLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === nav.projectId))
+      ];
+    } else {
+      let newLink: ProjectDashboardLink = {
+        projectId: nav.projectId,
+        dashboardId: dashboardId,
+        navTs: Date.now()
+      };
+
+      newProjectDashboardLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectDashboardLinks = newProjectDashboardLinks.filter(
+      l => l.navTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({
+      projectDashboardLinks: newProjectDashboardLinks
+    });
+    this.setUserUi({
+      projectDashboardLinks: newProjectDashboardLinks
+    });
+  }
+
+  setProjectReportLink(item: { reportId: string }) {
+    let { reportId } = item;
+
+    let nav = this.navQuery.getValue();
+
+    if (isUndefined(reportId) || isUndefined(nav.projectId)) {
+      return;
+    }
+
+    let links = this.uiQuery.getValue().projectReportLinks;
+
+    let link: ProjectReportLink = links.find(
+      l => l.projectId === nav.projectId
+    );
+
+    if (link?.reportId === reportId) {
+      return;
+    }
+
+    let newProjectReportLinks;
+
+    if (isDefined(link)) {
+      let newLink: ProjectReportLink = {
+        projectId: nav.projectId,
+        reportId: reportId,
+        navTs: Date.now()
+      };
+
+      newProjectReportLinks = [
+        newLink,
+        ...links.filter(r => !(r.projectId === nav.projectId))
+      ];
+    } else {
+      let newLink: ProjectReportLink = {
+        projectId: nav.projectId,
+        reportId: reportId,
+        navTs: Date.now()
+      };
+
+      newProjectReportLinks = [newLink, ...links];
+    }
+
+    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
+
+    newProjectReportLinks = newProjectReportLinks.filter(
+      l => l.navTs >= oneYearAgoTimestamp
+    );
+
+    this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
+    this.setUserUi({ projectReportLinks: newProjectReportLinks });
+  }
 }

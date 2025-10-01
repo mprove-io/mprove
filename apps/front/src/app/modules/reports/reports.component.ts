@@ -48,7 +48,6 @@ import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
-import { ProjectReportLink } from '~common/interfaces/backend/project-report-link';
 import { ReportX } from '~common/interfaces/backend/report-x';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { Query } from '~common/interfaces/blockml/query';
@@ -178,7 +177,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
 
       if (x.draft === false && this.report.reportId !== EMPTY_REPORT_ID) {
-        this.setProjectReportLink({ reportId: this.report.reportId });
+        this.uiService.setProjectReportLink({ reportId: this.report.reportId });
       }
     })
   );
@@ -1233,7 +1232,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   newReport() {
-    this.setProjectReportLink({ reportId: EMPTY_REPORT_ID });
+    this.uiService.setProjectReportLink({ reportId: EMPTY_REPORT_ID });
 
     this.navigateService.navigateToReport({
       reportId: EMPTY_REPORT_ID
@@ -1248,58 +1247,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     let idxs = uf.filter(haystack, term);
 
     return idxs != null && idxs.length > 0;
-  }
-
-  setProjectReportLink(item: { reportId: string }) {
-    let { reportId } = item;
-
-    let nav = this.navQuery.getValue();
-
-    if (isUndefined(reportId) || isUndefined(nav.projectId)) {
-      return;
-    }
-
-    let links = this.uiQuery.getValue().projectReportLinks;
-
-    let link: ProjectReportLink = links.find(
-      l => l.projectId === nav.projectId
-    );
-
-    if (link?.reportId === reportId) {
-      return;
-    }
-
-    let newProjectReportLinks;
-
-    if (isDefined(link)) {
-      let newLink: ProjectReportLink = {
-        projectId: nav.projectId,
-        reportId: reportId,
-        navTs: Date.now()
-      };
-
-      newProjectReportLinks = [
-        newLink,
-        ...links.filter(r => !(r.projectId === nav.projectId))
-      ];
-    } else {
-      let newLink: ProjectReportLink = {
-        projectId: nav.projectId,
-        reportId: reportId,
-        navTs: Date.now()
-      };
-
-      newProjectReportLinks = [newLink, ...links];
-    }
-
-    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-    newProjectReportLinks = newProjectReportLinks.filter(
-      l => l.navTs >= oneYearAgoTimestamp
-    );
-
-    this.uiQuery.updatePart({ projectReportLinks: newProjectReportLinks });
-    this.uiService.setUserUi({ projectReportLinks: newProjectReportLinks });
   }
 
   scrollToSelectedReport(item: { isSmooth: boolean }) {

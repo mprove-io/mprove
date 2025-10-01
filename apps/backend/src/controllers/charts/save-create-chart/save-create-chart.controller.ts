@@ -381,7 +381,9 @@ export class SaveCreateChartController {
       .select({
         modelId: modelsTable.modelId,
         accessRoles: modelsTable.accessRoles,
-        hidden: modelsTable.hidden
+        hidden: modelsTable.hidden,
+        connectionId: modelsTable.connectionId,
+        connectionType: modelsTable.connectionType
       })
       .from(modelsTable)
       .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];
