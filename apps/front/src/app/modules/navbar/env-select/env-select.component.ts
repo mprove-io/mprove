@@ -14,7 +14,8 @@ import {
   PATH_PROJECT,
   PATH_REPO,
   PATH_REPORTS,
-  PROD_REPO_ID
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
 } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { EnvsItem } from '~common/interfaces/backend/envs-item';
@@ -41,6 +42,8 @@ export class EnvSelectComponent {
   onEscKeyUp() {
     this.envSelectElement?.close();
   }
+
+  projectEnvProd = PROJECT_ENV_PROD;
 
   envsList: EnvsItem[] = [];
   envsListLoading = false;

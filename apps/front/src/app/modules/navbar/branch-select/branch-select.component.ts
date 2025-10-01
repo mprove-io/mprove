@@ -14,7 +14,8 @@ import {
   PATH_PROJECT,
   PATH_REPO,
   PATH_REPORTS,
-  PROD_REPO_ID
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
 } from '~common/constants/top';
 import { RepoStatusEnum } from '~common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
@@ -325,6 +326,8 @@ export class BranchSelectComponent {
     let repoId =
       newSelectedBranchItem.isRepoProd === true ? PROD_REPO_ID : userId;
 
+    let envId = repoId === PROD_REPO_ID ? PROJECT_ENV_PROD : this.nav.envId;
+
     let urlParts = this.router.url.split('/');
 
     let navArray = checkNavMain({
@@ -339,7 +342,7 @@ export class BranchSelectComponent {
         PATH_BRANCH,
         newSelectedBranchItem.branchId,
         PATH_ENV,
-        this.nav.envId
+        envId
       ]
     });
 

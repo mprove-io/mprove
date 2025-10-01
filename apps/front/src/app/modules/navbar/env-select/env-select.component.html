@@ -6,35 +6,44 @@
   appendTo="body"
 ></ng-select>
 
-<ng-select
-  #envSelect
-  [fixNgSelectBottom]="envSelect"
-  *ngIf="showEmptySelector === false"
-  data-cy="envSelect"
-  class="w-[150px] select-none text-base"
-  (open)="openEnvSelect()"
-  [loading]="envsListLoading"
-  [items]="envsList"
-  [clearable]="false"
-  [searchable]="false"
-  [disabled]="selectedProjectId === undefined || needSave === true"
-  [(ngModel)]="selectedEnvId"
-  (change)="envChange()"
-  (keyup.esc)="$event.stopImmediatePropagation(); envSelect.blur()"
-  (keyup.enter)="$event.stopImmediatePropagation(); envSelect.blur()"
-  appendTo="body"
-  placeholder="Env"
-  bindLabel="envId"
-  bindValue="envId"
+<div
+  tp="Environment can only be selected for Dev repo branches"
+  [tpIsEnabled]="showEmptySelector === false && nav?.isRepoProd === true"
 >
-  <ng-template ng-label-tmp let-item="item">
-    <div class="ml-1 truncate"> {{ item.envId }}</div>
-  </ng-template>
+  <ng-select
+    #envSelect
+    [fixNgSelectBottom]="envSelect"
+    *ngIf="showEmptySelector === false"
+    data-cy="envSelect"
+    class="w-[150px] select-none text-base"
+    (open)="openEnvSelect()"
+    [loading]="envsListLoading"
+    [items]="envsList"
+    [clearable]="false"
+    [searchable]="false"
+    [disabled]="
+      nav?.isRepoProd === true ||
+      selectedProjectId === undefined ||
+      needSave === true
+    "
+    [(ngModel)]="selectedEnvId"
+    (change)="envChange()"
+    (keyup.esc)="$event.stopImmediatePropagation(); envSelect.blur()"
+    (keyup.enter)="$event.stopImmediatePropagation(); envSelect.blur()"
+    appendTo="body"
+    placeholder="Env"
+    bindLabel="envId"
+    bindValue="envId"
+  >
+    <ng-template ng-label-tmp let-item="item">
+      <div class="ml-1 truncate"> {{ item.envId }}</div>
+    </ng-template>
 
-  <ng-template ng-option-tmp let-item="item">
-    <div class="ml-1 truncate">{{ item.envId }}</div>
-  </ng-template>
-</ng-select>
+    <ng-template ng-option-tmp let-item="item">
+      <div class="ml-1 truncate">{{ item.envId }}</div>
+    </ng-template>
+  </ng-select>
+</div>
 
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="nav$ | async"></div>
