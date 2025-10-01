@@ -414,29 +414,11 @@
                 </div> -->
 
                 <div
-                  (click)="setShowMetrics()"
+                  (click)="setShowReports()"
                   class="ml-6 flex cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
                 >
                   <div
                     class="flex w-[90px] flex-row items-center justify-center"
-                  >
-                    <div
-                      [ngClass]="{
-                        'text-s400': showMetrics === false,
-                        'font-semibold': showMetrics === true
-                      }"
-                    >
-                      METRICS
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  (click)="setShowReports()"
-                  class="ml-2 flex cursor-pointer select-none flex-row items-center pl-2 text-lg"
-                >
-                  <div
-                    class="flex w-[94px] flex-row items-center justify-center"
                   >
                     <div
                       [ngClass]="{
@@ -445,6 +427,24 @@
                       }"
                     >
                       REPORTS
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  (click)="setShowMetrics()"
+                  class="ml-2 flex cursor-pointer select-none flex-row items-center pl-2 text-lg"
+                >
+                  <div
+                    class="flex w-[94px] flex-row items-center justify-center"
+                  >
+                    <div
+                      [ngClass]="{
+                        'text-s400': showMetrics === false,
+                        'font-semibold': showMetrics === true
+                      }"
+                    >
+                      METRICS
                     </div>
                   </div>
                 </div>

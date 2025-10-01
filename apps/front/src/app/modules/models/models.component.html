@@ -333,13 +333,13 @@
           <div
             class="text-s1 flex h-[92px] w-full flex-shrink-0 flex-row items-center pb-6 pt-6"
           >
-            <div
+            <!-- <div
               class="flex h-11 select-none flex-row items-center pl-6 text-lg font-semibold"
             >
               <div class="flex flex-row items-center">
                 <div> MODEL </div>
               </div>
-            </div>
+            </div> -->
 
             <div class="ml-6 flex w-2 flex-1 items-center">
               <form class="w-full" [formGroup]="modelForm">
@@ -364,7 +364,7 @@
                   formControlName="model"
                 >
                   <ng-template ng-label-tmp let-item="item">
-                    <div class="truncate">
+                    <div class="ml-1 truncate">
                       <span>{{ item.label }}</span>
 
                       <span class="text-s400 ml-3 mr-2">{{
@@ -374,7 +374,7 @@
                   </ng-template>
 
                   <ng-template ng-option-tmp let-item="item">
-                    <div class="truncate">
+                    <div class="ml-1 truncate">
                       <span>{{ item.label }}</span>
 
                       <span class="text-s400 ml-3 mr-2">{{
@@ -390,7 +390,7 @@
               (click)="setShowSchema()"
               class="ml-4 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
             >
-              <!-- <div class="flex w-[90px] flex-row items-center justify-center">
+              <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
                   [ngClass]="{
                     'text-s400': showSchema === false,
@@ -399,9 +399,9 @@
                 >
                   SCHEMA
                 </div>
-              </div> -->
+              </div>
 
-              <div
+              <!-- <div
                 class="group-hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded"
               >
                 <div
@@ -413,7 +413,7 @@
                 >
                   <m-tree-structure-icon></m-tree-structure-icon>
                 </div>
-              </div>
+              </div> -->
             </div>
 
             <div
@@ -674,12 +674,13 @@
                               (click)="schema(node, $event)"
                             >
                               <div
-                                class="group-hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded"
+                                class="group-hover:bg-m200 flex h-9 w-[100px] flex-shrink-0 flex-row items-center justify-center rounded"
                               >
                                 <div
                                   class="text-s500 flex flex-shrink-0 flex-row items-center justify-center rounded"
                                 >
-                                  <m-tree-structure-icon></m-tree-structure-icon>
+                                  SCHEMA
+                                  <!-- <m-tree-structure-icon></m-tree-structure-icon> -->
                                 </div>
                               </div>
                             </button>
