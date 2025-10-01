@@ -110,6 +110,7 @@ export class ChartsItemNode {
   id: string;
   isTop: boolean;
   topLabel: string;
+  connectionType: ConnectionTypeEnum;
   chart: ChartX;
   children: ChartsItemNode[];
 }
@@ -1635,6 +1636,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           id: model.modelId,
           isTop: true,
           topLabel: model.label,
+          connectionType: model.connectionType,
           chart: undefined,
           children: []
         };
@@ -1683,6 +1685,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
           id: chart.chartId,
           isTop: false,
           topLabel: chart.modelLabel,
+          connectionType: undefined,
           chart: chart,
           children: []
         };
@@ -1698,6 +1701,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
             id: chart.modelId,
             isTop: true,
             topLabel: chart.modelLabel,
+            connectionType: undefined,
             chart: undefined,
             children: [chartsItemNode]
           };

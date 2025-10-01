@@ -654,12 +654,16 @@
 
                           <div class="text-s1 ml-0 flex-grow truncate">
                             <div class="flex flex-col">
-                              <div class="flex">
+                              <div class="truncate">
                                 <span
                                   class="ml-3 truncate text-base font-semibold"
+                                  >{{ node.data.topLabel }}</span
                                 >
-                                  <span class="">{{ node.data.topLabel }}</span>
-                                </span>
+
+                                <span
+                                  class="text-s400 ml-3 truncate text-base"
+                                  >{{ node.data.connectionType }}</span
+                                >
                               </div>
                             </div>
                           </div>
