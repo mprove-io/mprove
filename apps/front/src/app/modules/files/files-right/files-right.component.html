@@ -38,28 +38,38 @@
       <div class="mt-4 text-xl"> Mprove Files are valid </div>
     </div>
 
-    <button
-      *ngIf="nav?.needValidate === true"
-      data-cy="filesRightValidateButton"
-      class="text-m0 mt-7 h-11 rounded px-5 py-2 text-lg font-medium focus:outline-none"
-      type="button"
-      [ngClass]="{
-        'bg-m600': isEditor === true,
-        'bg-s400 cursor-default': isEditor === false
-      }"
-      (click)="validate()"
-      [disabled]="isEditor === false"
-      >Validate Files</button
+    <div
+      tp="FileEditor role is required to validate files"
+      [tpIsEnabled]="isEditor === false"
     >
+      <button
+        *ngIf="nav?.needValidate === true"
+        data-cy="filesRightValidateButton"
+        class="text-m0 mt-7 h-11 rounded px-5 py-2 text-lg font-medium focus:outline-none"
+        type="button"
+        [ngClass]="{
+          'bg-m600': isEditor === true && needSave === false,
+          'bg-s400 cursor-default': isEditor === false || needSave === true
+        }"
+        (click)="validate()"
+        [disabled]="isEditor === false || needSave === true"
+        >Validate Files</button
+      >
 
-    <button
-      *ngIf="nav?.needValidate === false"
-      type="button"
-      data-cy="filesRightRevalidateButton"
-      class="border-s400 text-s500 mt-5 h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-lg font-medium hover:bg-gray-50 focus:outline-none"
-      (click)="validate()"
-      >Validate Files</button
-    >
+      <button
+        *ngIf="nav?.needValidate === false"
+        type="button"
+        data-cy="filesRightRevalidateButton"
+        class="border-s400 text-s500 mt-5 h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-lg font-medium focus:outline-none"
+        [ngClass]="{
+          'hover:bg-gray-50': isEditor === true && needSave === false,
+          'cursor-default bg-gray-100': isEditor === false || needSave === true
+        }"
+        (click)="validate()"
+        [disabled]="isEditor === false || needSave === true"
+        >Validate Files</button
+      >
+    </div>
   </div>
 
   <m-repo-conflicts
@@ -201,6 +211,7 @@
 <div *ngIf="isHighlighterReady$ | async"></div>
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>
+<div *ngIf="needSave$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>

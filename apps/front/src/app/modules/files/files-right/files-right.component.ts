@@ -90,6 +90,9 @@ export class FilesRightComponent {
   prevBranchId: string;
   prevEnvId: string;
 
+  needSave = false;
+  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
