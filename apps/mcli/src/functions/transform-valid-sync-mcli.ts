@@ -26,8 +26,7 @@ export function transformValidSyncMcli<T extends object>(item: {
 
     let serverError = new ServerError({
       message: errorMessage,
-      data: constraints,
-      originalError: null
+      displayData: constraints
     });
 
     throw serverError;

@@ -420,7 +420,7 @@ export class SaveModifyDashboardController {
 
       throw new ServerError({
         message: ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
-        data: {
+        displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: struct.errors
         }

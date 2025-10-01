@@ -3,26 +3,28 @@
   <div class="flex-grow overflow-auto">
     <div class="text-s1 grid grid-cols-4 gap-4 text-base">
       <div>Message</div>
-      <div data-cy="errorDialogMessage" class="col-span-3">{{ message }}</div>
+      <div data-cy="errorDialogMessage" class="col-span-3 break-words">{{
+        message
+      }}</div>
 
       <div *ngIf="description">Description</div>
       <div
         *ngIf="description"
         data-cy="errorDialogDescription"
-        class="col-span-3 font-semibold"
+        class="col-span-3 break-words"
         >{{ description }}</div
       >
 
       <div *ngIf="originalErrorMessage">Info</div>
-      <div class="col-span-3" *ngIf="originalErrorMessage">
+      <div class="col-span-3 break-words" *ngIf="originalErrorMessage">
         {{ originalErrorMessage }}
       </div>
 
-      <div>Path</div>
-      <div class="col-span-3">{{ path }}</div>
+      <div *ngIf="path">Path</div>
+      <div class="col-span-3 break-words">{{ path }}</div>
 
-      <div>TraceId</div>
-      <div class="col-span-3">{{ traceId }}</div>
+      <div *ngIf="traceId">TraceId</div>
+      <div class="col-span-3 break-words">{{ traceId }}</div>
     </div>
   </div>
 

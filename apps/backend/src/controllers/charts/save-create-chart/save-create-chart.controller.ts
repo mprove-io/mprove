@@ -327,7 +327,7 @@ export class SaveCreateChartController {
 
       throw new ServerError({
         message: ErEnum.BACKEND_CREATE_CHART_FAIL,
-        data: {
+        displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: struct.errors
         }

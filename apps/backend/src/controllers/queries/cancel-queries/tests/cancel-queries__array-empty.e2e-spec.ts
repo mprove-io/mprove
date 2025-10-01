@@ -194,7 +194,7 @@ test('1', async t => {
 
   t.is(resp1.info.error.message, ErEnum.BACKEND_WRONG_REQUEST_PARAMS);
   t.is(
-    resp1.info.error.data[0].arrayNotEmpty,
+    resp1.info.error.displayData[0].arrayNotEmpty,
     'mconfigIds should not be empty'
   );
 });

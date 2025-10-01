@@ -335,21 +335,12 @@ export class CreateDraftDashboardController {
         cachedMetrics: []
       });
 
-    if (struct.errors.length > 0) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_REBUILD_DASHBOARD_FAILED,
-        data: {
-          structErrors: struct.errors
-        }
-      });
-    }
-
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
     if (isUndefined(newDashboard)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_TEMP_DASHBOARD_FAIL,
-        data: {
+        message: ErEnum.BACKEND_CREATE_DRAFT_DASHBOARD_FAILED,
+        displayData: {
           structErrors: struct.errors
         }
       });

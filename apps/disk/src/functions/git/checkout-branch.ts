@@ -40,7 +40,7 @@ export async function checkoutBranch(item: {
   if (okStatuses.indexOf(repoStatus) < 0) {
     throw new ServerError({
       message: ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH,
-      data: {
+      displayData: {
         currentBranch: currentBranch
       }
     });

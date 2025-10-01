@@ -169,7 +169,7 @@ export class RunCommand extends CustomCommand {
     if (this.noDashboards === true && this.getDashboards === true) {
       let serverError = new ServerError({
         message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `no-dashboards and get-dashboards`,
+        displayData: `no-dashboards and get-dashboards`,
         originalError: null
       });
       throw serverError;
@@ -178,7 +178,7 @@ export class RunCommand extends CustomCommand {
     if (this.noDashboards === true && isDefined(this.dashboardIds)) {
       let serverError = new ServerError({
         message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `no-dashboards and dashboard-ids`,
+        displayData: `no-dashboards and dashboard-ids`,
         originalError: null
       });
       throw serverError;
@@ -187,7 +187,7 @@ export class RunCommand extends CustomCommand {
     if (this.noCharts === true && this.getCharts === true) {
       let serverError = new ServerError({
         message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `no-charts and get-charts`,
+        displayData: `no-charts and get-charts`,
         originalError: null
       });
       throw serverError;
@@ -196,7 +196,7 @@ export class RunCommand extends CustomCommand {
     if (this.noCharts === true && isDefined(this.chartIds)) {
       let serverError = new ServerError({
         message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `no-charts and chart-ids`,
+        displayData: `no-charts and chart-ids`,
         originalError: null
       });
       throw serverError;
@@ -266,15 +266,15 @@ export class RunCommand extends CustomCommand {
       let chartIds = this.chartIds?.split(',');
 
       if (isDefined(chartIds)) {
-        chartIds.forEach(x => {
+        chartIds.forEach(chartId => {
           if (
             getChartsResp.payload.charts
               .map(chart => chart.chartId)
-              .indexOf(x) < 0
+              .indexOf(chartId) < 0
           ) {
             let serverError = new ServerError({
               message: ErEnum.MCLI_CHART_NOT_FOUND,
-              data: { id: x },
+              displayData: { id: chartId },
               originalError: null
             });
             throw serverError;
@@ -336,15 +336,15 @@ export class RunCommand extends CustomCommand {
       let dashboardIds = this.dashboardIds?.split(',');
 
       if (isDefined(dashboardIds)) {
-        dashboardIds.forEach(x => {
+        dashboardIds.forEach(dashboardId => {
           if (
             getDashboardsResp.payload.dashboards
               .map(dashboard => dashboard.dashboardId)
-              .indexOf(x) < 0
+              .indexOf(dashboardId) < 0
           ) {
             let serverError = new ServerError({
               message: ErEnum.MCLI_DASHBOARD_NOT_FOUND,
-              data: { id: x },
+              displayData: { id: dashboardId },
               originalError: null
             });
             throw serverError;

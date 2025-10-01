@@ -174,7 +174,7 @@ export class ApiService {
             })
           })
         : req.body,
-      response: res,
+      response: Object.assign({}, res, { headers: undefined }),
       message:
         res.status !== 201
           ? ErEnum.FRONT_RESPONSE_CODE_IS_NOT_201
@@ -204,54 +204,60 @@ export class ApiService {
         errorData.response.body.info.error.originalError?.message ===
           ErEnum.DISK_REPO_IS_NOT_CLEAN_FOR_CHECKOUT_BRANCH
       ) {
-        setTimeout(() => {
-          let nav = this.navQuery.getValue();
+        let errorCurrentBranch =
+          errorData.response.body?.info?.error?.originalError?.displayData
+            ?.currentBranch;
 
-          let repoId =
-            nav.isRepoProd === true
-              ? PROD_REPO_ID
-              : this.userQuery.getValue().userId;
+        if (isDefined(errorCurrentBranch)) {
+          setTimeout(() => {
+            let nav = this.navQuery.getValue();
 
-          let arStart = [
-            PATH_ORG,
-            nav.orgId,
-            PATH_PROJECT,
-            nav.projectId,
-            PATH_REPO,
-            repoId
-          ];
+            let repoId =
+              nav.isRepoProd === true
+                ? PROD_REPO_ID
+                : this.userQuery.getValue().userId;
 
-          let arStartStr = arStart.join('/');
+            let arStart = [
+              PATH_ORG,
+              nav.orgId,
+              PATH_PROJECT,
+              nav.projectId,
+              PATH_REPO,
+              repoId
+            ];
 
-          let arNext = [
-            ...arStart,
-            PATH_BRANCH,
-            errorData.response.body.info.error.originalError.data.currentBranch,
-            PATH_ENV,
-            nav.envId,
-            PATH_FILES,
-            PATH_FILE,
-            LAST_SELECTED_FILE_ID
-          ];
+            let arStartStr = arStart.join('/');
 
-          this.router
-            .navigateByUrl(arStartStr, { skipLocationChange: true })
-            .then(() => {
-              this.router.navigate(arNext, {
-                queryParams: {
-                  panel: PanelEnum.Tree
-                }
+            let arNext = [
+              ...arStart,
+              PATH_BRANCH,
+              errorCurrentBranch,
+              PATH_ENV,
+              nav.envId,
+              PATH_FILES,
+              PATH_FILE,
+              LAST_SELECTED_FILE_ID
+            ];
+
+            this.router
+              .navigateByUrl(arStartStr, { skipLocationChange: true })
+              .then(() => {
+                this.router.navigate(arNext, {
+                  queryParams: {
+                    panel: PanelEnum.Tree
+                  }
+                });
               });
-            });
 
-          this.myDialogService.showError({
-            errorData: {
-              message:
-                ErEnum.FRONT_CANNOT_SWITCH_BRANCH_WHILE_SELECTED_REPO_HAS_UNCOMMITTED_CHANGES
-            },
-            isThrow: false
-          });
-        }, 0);
+            this.myDialogService.showError({
+              errorData: {
+                message:
+                  ErEnum.FRONT_CANNOT_SWITCH_BRANCH_WHILE_SELECTED_REPO_HAS_UNCOMMITTED_CHANGES
+              },
+              isThrow: false
+            });
+          }, 0);
+        }
       } else if (
         [ErEnum.BACKEND_FORBIDDEN_DASHBOARD].indexOf(infoErrorMessage) > -1
       ) {
@@ -440,7 +446,8 @@ export class ApiService {
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
               let encodedFileId =
-                errorData?.response?.body?.info?.error?.data?.encodedFileId;
+                errorData?.response?.body?.info?.error?.displayData
+                  ?.encodedFileId;
 
               if (isDefined(encodedFileId)) {
                 this.navigateService.navigateToFileLine({

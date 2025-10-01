@@ -381,7 +381,7 @@ export class SaveCreateDashboardController {
 
       throw new ServerError({
         message: ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
-        data: {
+        displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: struct.errors
         }

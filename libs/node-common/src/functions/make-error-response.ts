@@ -43,9 +43,8 @@ export function makeErrorResponse(item: {
       traceId: body.info?.traceId,
       status: ResponseInfoStatusEnum.Error,
       error:
-        isBackend === false
-          ? wError
-          : {
+        isBackend === true
+          ? {
               name: undefined,
               message:
                 wError.message === 'ThrottlerException: Too Many Requests'
@@ -55,9 +54,10 @@ export function makeErrorResponse(item: {
                     : Object.values(ErEnum).includes(wError.message) === true
                       ? wError.message
                       : ErEnum.INTERNAL_ERROR,
-              data:
-                wError.message === ErEnum.BACKEND_WRONG_REQUEST_PARAMS
-                  ? wError.data
+              customData: undefined,
+              displayData:
+                Object.values(ErEnum).includes(wError.message) === true
+                  ? wError.displayData
                   : undefined,
               originalError: isDefined(wError.originalError)
                 ? {
@@ -67,24 +67,16 @@ export function makeErrorResponse(item: {
                       ) === true
                         ? wError.originalError.message
                         : ErEnum.INTERNAL_ERROR,
-                    data:
-                      [
-                        ErEnum.DISK_WRONG_REQUEST_PARAMS,
-                        ErEnum.BLOCKML_WRONG_REQUEST_PARAMS
-                      ].indexOf(wError.originalError.message) > -1
-                        ? wError.originalError.data
-                        : isDefined(wError.originalError.data?.currentBranch) ||
-                            isDefined(wError.originalError.data?.encodedFileId)
-                          ? {
-                              currentBranch:
-                                wError.originalError.data.currentBranch,
-                              encodedFileId:
-                                wError.originalError.data.encodedFileId
-                            }
-                          : undefined
+                    customData: undefined,
+                    displayData: Object.values(ErEnum).includes(
+                      wError.originalError.message
+                    )
+                      ? wError.originalError.displayData
+                      : undefined
                   }
                 : undefined
             }
+          : wError
     },
     payload: {}
   };

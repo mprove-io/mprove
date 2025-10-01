@@ -325,7 +325,7 @@ export class SaveModifyReportController {
 
       throw new ServerError({
         message: ErEnum.BACKEND_MODIFY_REPORT_FAIL,
-        data: {
+        displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
           structErrors: struct.errors
         }

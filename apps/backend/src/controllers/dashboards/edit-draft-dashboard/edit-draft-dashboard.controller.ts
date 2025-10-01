@@ -321,8 +321,8 @@ export class EditDraftDashboardController {
 
     if (isUndefined(newDashboard)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_CREATE_TEMP_DASHBOARD_FAIL,
-        data: {
+        message: ErEnum.BACKEND_EDIT_DRAFT_DASHBOARD_FAILED,
+        displayData: {
           structErrors: struct.errors
         }
       });

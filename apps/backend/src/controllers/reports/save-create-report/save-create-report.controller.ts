@@ -319,8 +319,9 @@ export class SaveCreateReportController {
 
       throw new ServerError({
         message: ErEnum.BACKEND_CREATE_REPORT_FAIL,
-        data: {
-          encodedFileId: encodeFilePath({ filePath: filePath })
+        displayData: {
+          encodedFileId: encodeFilePath({ filePath: filePath }),
+          structErrors: struct.errors
         }
       });
     }

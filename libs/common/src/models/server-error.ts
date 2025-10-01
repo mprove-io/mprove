@@ -4,16 +4,25 @@ export class ServerError extends Error {
   message: any;
 
   @IsOptional()
-  data?: any;
+  displayData?: any;
+
+  @IsOptional()
+  customData?: any;
 
   @IsOptional()
   originalError?: any;
 
-  constructor(item: { message: any; data?: any; originalError?: any }) {
+  constructor(item: {
+    message: any;
+    displayData?: any;
+    customData?: any;
+    originalError?: any;
+  }) {
     super();
 
     this.message = item.message;
-    this.data = item.data;
+    this.displayData = item.displayData;
+    this.customData = item.customData;
     this.originalError = item.originalError;
   }
 }

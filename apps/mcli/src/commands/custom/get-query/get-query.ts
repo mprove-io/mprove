@@ -222,7 +222,7 @@ export class GetQueryCommand extends CustomCommand {
     ) {
       let serverError = new ServerError({
         message: ErEnum.MCLI_MUTUALLY_EXCLUSIVE_FLAGS,
-        data: `dashboard-id, chart-id, report-id`,
+        displayData: `dashboard-id, chart-id, report-id`,
         originalError: null
       });
       throw serverError;

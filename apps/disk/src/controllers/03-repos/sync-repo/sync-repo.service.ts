@@ -131,7 +131,7 @@ export class SyncRepoService {
     if (lastCommit !== diskLastCommit) {
       throw new ServerError({
         message: ErEnum.DISK_DEV_REPO_COMMIT_DOES_NOT_MATCH_LOCAL_COMMIT,
-        data: {
+        displayData: {
           branch: branch,
           devLastCommit: diskLastCommit,
           localLastCommit: lastCommit

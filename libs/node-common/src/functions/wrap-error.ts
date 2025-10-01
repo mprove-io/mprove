@@ -6,7 +6,8 @@ export interface WrappedError {
   name: any;
   message: any;
   at: any;
-  data: any;
+  displayData: any;
+  customData: any;
   stackArray: any;
   originalError: any;
   originalErrorStack: any;
@@ -22,7 +23,8 @@ export function wrapError(e: any) {
     name: e.name || null,
     message: e.message || null,
     at: e.stack?.split('\n')[1] || null,
-    data: e.data || null,
+    displayData: e.displayData || null,
+    customData: e.customData || null,
     stackArray: e.stack?.split('\n') || null,
     originalError: e.originalError || null,
     originalErrorStack: e.originalError?.stack?.split('\n') || null,

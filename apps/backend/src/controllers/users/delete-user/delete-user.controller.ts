@@ -70,7 +70,7 @@ export class DeleteUserController {
     if (ownerOrgs.length > 0) {
       throw new ServerError({
         message: ErEnum.BACKEND_USER_IS_ORG_OWNER,
-        data: {
+        displayData: {
           orgIds: ownerOrgs.map(x => x.orgId)
         }
       });
@@ -107,7 +107,7 @@ export class DeleteUserController {
     if (erProjectIds.length > 0) {
       throw new ServerError({
         message: ErEnum.BACKEND_USER_IS_THE_ONLY_PROJECT_ADMIN,
-        data: {
+        displayData: {
           projectIds: erProjectIds
         }
       });

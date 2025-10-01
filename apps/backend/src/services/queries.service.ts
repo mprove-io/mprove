@@ -155,7 +155,7 @@ export class QueriesService {
     if (notFoundQueryIds.length > 0) {
       throw new ServerError({
         message: ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
-        data: {
+        displayData: {
           notFoundQueryIds: notFoundQueryIds
         }
       });
@@ -188,7 +188,7 @@ export class QueriesService {
     if (notFoundQueryIds.length > 0) {
       throw new ServerError({
         message: ErEnum.BACKEND_QUERIES_DO_NOT_EXIST,
-        data: {
+        displayData: {
           notFoundQueryIds: notFoundQueryIds
         }
       });

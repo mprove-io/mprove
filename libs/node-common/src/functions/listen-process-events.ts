@@ -24,7 +24,7 @@ export function listenProcessEvents(item: {
       logToConsoleFn({
         log: new ServerError({
           message: appTerminated,
-          data: {
+          customData: {
             signal: signal
           }
         }),
@@ -51,7 +51,7 @@ export function listenProcessEvents(item: {
     logToConsoleFn({
       log: new ServerError({
         message: unhandledRejectionReason,
-        data: {
+        customData: {
           reason: reason
         }
       }),
@@ -64,7 +64,7 @@ export function listenProcessEvents(item: {
         log: new ServerError({
           message: unhandledRejection,
           originalError: e,
-          data: {
+          customData: {
             reason: reason
           }
         }),

@@ -321,21 +321,12 @@ export class GetDashboardController {
         cachedMetrics: []
       });
 
-    if (struct.errors.length > 0) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_REBUILD_DASHBOARD_FAILED,
-        data: {
-          structErrors: struct.errors
-        }
-      });
-    }
-
     let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
 
     if (isUndefined(newDashboard)) {
       throw new ServerError({
         message: ErEnum.BACKEND_GET_DASHBOARD_FAIL,
-        data: {
+        displayData: {
           structErrors: struct.errors
         }
       });

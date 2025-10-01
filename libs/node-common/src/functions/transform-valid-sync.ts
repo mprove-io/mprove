@@ -35,13 +35,13 @@ export function transformValidSync<T extends object>(item: {
 
     let serverError = new ServerError({
       message: errorMessage,
-      data: constraints,
+      displayData: constraints,
       originalError: null
     });
 
     if (
       [
-        // default exception handler doesn't print constraints (error.data)
+        // default exception handler doesn't print constraints (error data)
         ErEnum.BACKEND_WRONG_ENV_VALUES,
         ErEnum.BLOCKML_WRONG_ENV_VALUES,
         ErEnum.DISK_WRONG_ENV_VALUES
