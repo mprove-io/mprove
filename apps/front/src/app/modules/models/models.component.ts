@@ -380,6 +380,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.showSchema = x;
 
+      if (this.showSchema === true) {
+        this.isInitialScrollCompleted = false;
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -463,21 +467,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
           this.mconfig.chart.title
         );
       }
-
-      // let urlSegments = this.router.url.split('?')[0].split('/');
-
-      // let isPathEmptyChartSelected =
-      //   urlSegments.length >= 15
-      //     ? urlSegments[15] === EMPTY_CHART_ID
-      //     : false;
-
-      // if (
-      //   isPathEmptyChartSelected === true &&
-      //   this.chart.chartId === EMPTY_CHART_ID &&
-      //   this.showSchema === false
-      // ) {
-      //   this.showSchema = true;
-      // }
 
       this.cd.detectChanges();
 
@@ -688,10 +677,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     // this.searchChartsWordChange();
     // this.searchSchemaWordChange();
 
-    setTimeout(() => {
-      this.scrollToSelectedChart({ isSmooth: false });
-    });
-
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
@@ -739,12 +724,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   treeOnInitialized() {
-    if (isDefined(this.chart.modelId) && this.chart.draft === false) {
-      this.chartsTree.treeModel.getNodeById(this.chart.modelId)?.expand();
-      setTimeout(() => {
-        this.scrollToSelectedChart({ isSmooth: true });
-      });
-    }
+    this.scrollToSelectedChart({ isSmooth: false });
+    // console.log('treeOnInitialized');
   }
 
   treeOnUpdateData() {}
@@ -755,6 +736,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
 
     this.showSchema = true;
+    this.isInitialScrollCompleted = false;
+
     this.uiQuery.updatePart({ showSchema: true });
 
     this.cd.detectChanges();
@@ -1471,6 +1454,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     if (this.showSchema === false) {
       this.showSchema = true;
+      this.isInitialScrollCompleted = false;
+
       this.uiQuery.updatePart({ showSchema: true });
     }
   }
@@ -1724,6 +1709,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     if (isDefined(this.model.modelId)) {
       if (this.showSchema === false) {
         this.showSchema = true;
+        this.isInitialScrollCompleted = false;
       }
 
       this.uiService.setProjectChartLink({ chartId: EMPTY_CHART_ID });
@@ -1776,6 +1762,10 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let { isSmooth } = item;
 
     if (this.chart) {
+      if (this.chart.draft === false && isDefined(this.chart.modelId)) {
+        this.chartsTree?.treeModel?.getNodeById(this.chart.modelId)?.expand();
+      }
+
       let selectedElement =
         this.leftChartsContainer?.nativeElement.querySelector(
           `[chartId="${this.chart.chartId}"]`

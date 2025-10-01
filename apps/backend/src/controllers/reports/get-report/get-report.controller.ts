@@ -115,8 +115,8 @@ export class GetReportController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId,
-      addMetrics: true
+      projectId: projectId
+      // skipMetrics: false
     });
 
     let report = await this.reportsService.getReport({

@@ -110,7 +110,7 @@ export class GetFileController {
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId,
-      skipError: true
+      isGetEmptyStructOnError: true
     });
 
     let payload: ToBackendGetFileResponsePayload = {

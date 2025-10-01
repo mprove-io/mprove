@@ -95,14 +95,8 @@ export class EditDraftReportController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId,
-      addMetrics: true
-      // addMetrics:
-      //   isDefined(rowChange) &&
-      //   [
-      //     ChangeTypeEnum.AddMetric,
-      //     ChangeTypeEnum.ConvertToMetric
-      //   ].indexOf(changeType) > -1
+      projectId: projectId
+      // skipMetrics: false
     });
 
     let report = await this.reportsService.getReport({

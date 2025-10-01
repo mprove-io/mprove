@@ -35,10 +35,15 @@ export class StructsService {
   async getStructCheckExists(item: {
     structId: string;
     projectId: string;
-    skipError?: boolean;
-    addMetrics?: boolean;
+    isGetEmptyStructOnError?: boolean;
+    // skipMetrics?: boolean;
   }) {
-    let { structId, projectId, skipError, addMetrics } = item;
+    let {
+      structId,
+      projectId,
+      isGetEmptyStructOnError
+      // , skipMetrics
+    } = item;
 
     let emptyStruct: StructEnt = {
       structId: structId,
@@ -67,40 +72,40 @@ export class StructsService {
     if (structId === EMPTY_STRUCT_ID) {
       struct = emptyStruct;
     } else {
-      if (addMetrics === true) {
-        struct = await this.db.drizzle.query.structsTable.findFirst({
-          where: and(
-            eq(structsTable.structId, structId),
-            eq(structsTable.projectId, projectId)
-          )
-        });
-      } else {
-        let structs = (await this.db.drizzle
-          .select({
-            structId: structsTable.structId,
-            projectId: structsTable.projectId,
-            mproveConfig: structsTable.mproveConfig,
-            errors: structsTable.errors,
-            // metrics: structsTable.metrics,
-            presets: structsTable.presets,
-            mproveVersion: structsTable.mproveVersion,
-            serverTs: structsTable.serverTs
-          })
-          .from(structsTable)
-          .where(
-            and(
-              eq(structsTable.structId, structId),
-              eq(structsTable.projectId, projectId)
-            )
-          )) as StructEnt[];
+      // if (skipMetrics === true) {
+      //   let structs = (await this.db.drizzle
+      //     .select({
+      //       structId: structsTable.structId,
+      //       projectId: structsTable.projectId,
+      //       mproveConfig: structsTable.mproveConfig,
+      //       errors: structsTable.errors,
+      //       // metrics: structsTable.metrics,
+      //       presets: structsTable.presets,
+      //       mproveVersion: structsTable.mproveVersion,
+      //       serverTs: structsTable.serverTs
+      //     })
+      //     .from(structsTable)
+      //     .where(
+      //       and(
+      //         eq(structsTable.structId, structId),
+      //         eq(structsTable.projectId, projectId)
+      //       )
+      //     )) as StructEnt[];
 
-        struct = structs.length > 0 ? structs[0] : undefined;
+      //   struct = structs.length > 0 ? structs[0] : undefined;
 
-        struct.metrics = [];
-      }
+      //   struct.metrics = [];
+      // } else {
+      struct = await this.db.drizzle.query.structsTable.findFirst({
+        where: and(
+          eq(structsTable.structId, structId),
+          eq(structsTable.projectId, projectId)
+        )
+      });
+      // }
 
       if (isUndefined(struct)) {
-        if (skipError === true) {
+        if (isGetEmptyStructOnError === true) {
           struct = emptyStruct;
         } else {
           throw new ServerError({

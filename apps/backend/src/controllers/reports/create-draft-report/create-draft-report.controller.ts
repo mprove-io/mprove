@@ -121,14 +121,8 @@ export class CreateDraftReportController {
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId,
-      addMetrics: true
-      // addMetrics:
-      //   isDefined(rowChange) &&
-      //   [
-      //     ChangeTypeEnum.AddMetric,
-      //     ChangeTypeEnum.ConvertToMetric
-      //   ].indexOf(changeType) > -1
+      projectId: projectId
+      // skipMetrics: false
     });
 
     let fromReport: ReportEnt = await this.reportsService.getReport({

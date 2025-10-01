@@ -156,6 +156,7 @@ export class SaveModifyChartController {
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
+      // skipMetrics: false
     });
 
     let demoProjectId =

@@ -151,8 +151,8 @@ export class SaveModifyReportController {
 
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
-      projectId: projectId,
-      addMetrics: true
+      projectId: projectId
+      // skipMetrics: false
     });
 
     let demoProjectId =
