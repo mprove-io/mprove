@@ -330,6 +330,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
+  cachedCanDeactivateAnswerNoTimestamp: number;
+
   panel: PanelEnum;
   panel$ = this.uiQuery.panel$.pipe(
     tap(x => {
@@ -1065,6 +1067,19 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   canDeactivate(): Promise<boolean> | boolean {
+    // console.log('canDeactivate');
+
+    // prevents the dialog from trigger twice after cancel clicked
+    if (
+      this.cachedCanDeactivateAnswerNoTimestamp > 0 &&
+      Date.now() - this.cachedCanDeactivateAnswerNoTimestamp < 500
+    ) {
+      this.cachedCanDeactivateAnswerNoTimestamp = 0;
+      return false;
+    }
+
+    this.cachedCanDeactivateAnswerNoTimestamp = 0;
+
     if (this.needSave === false) {
       return true;
     }
@@ -1072,9 +1087,9 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     return this.confirmService.confirm('Discard changes?').then(answer => {
       if (answer === true) {
         this.uiQuery.updatePart({ needSave: false });
-
         return true;
       } else {
+        this.cachedCanDeactivateAnswerNoTimestamp = Date.now();
         return false;
       }
     });
