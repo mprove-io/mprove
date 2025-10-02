@@ -252,12 +252,18 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      logToConsoleBackend({
-        log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
-        logLevel: LogLevelEnum.Info,
-        logger: this.logger,
-        cs: this.cs
-      });
+      setTimeout(() => {
+        let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+        if (backendEnv !== BackendEnvEnum.TEST) {
+          logToConsoleBackend({
+            log: `NODE_ENV "${process.env.NODE_ENV}", BACKEND_ENV "${backendEnv}"`,
+            logLevel: LogLevelEnum.Info,
+            logger: this.logger,
+            cs: this.cs
+          });
+        }
+      }, 1000);
 
       if (isScheduler(this.cs)) {
         // Drizzle

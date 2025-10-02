@@ -183,6 +183,8 @@ export class SaveCreateDashboardController {
     let dashFileText: string;
     // let secondFileContent: string;
 
+    let fromDashboard: DashboardX;
+
     if (isDefined(fromDashboardId)) {
       let fromDashboardEntity =
         await this.dashboardsService.getDashboardCheckExists({
@@ -190,15 +192,13 @@ export class SaveCreateDashboardController {
           dashboardId: fromDashboardId
         });
 
-      let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess(
-        {
-          user: user,
-          member: userMember,
-          dashboard: fromDashboardEntity,
-          bridge: bridge,
-          projectId: projectId
-        }
-      );
+      fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
+        user: user,
+        member: userMember,
+        dashboard: fromDashboardEntity,
+        bridge: bridge,
+        projectId: projectId
+      });
 
       let yTiles: TileX[] = [];
 
@@ -330,7 +330,9 @@ export class SaveCreateDashboardController {
       )
     ];
 
-    let modelIds = tilesGrid.map(tile => tile.modelId);
+    let modelIds = (
+      (isDefined(fromDashboardId) ? fromDashboard?.tiles : tilesGrid) ?? []
+    ).map(tile => tile.modelId);
 
     let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
       where: and(

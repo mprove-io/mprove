@@ -14,10 +14,11 @@ export function makeErrorResponse(item: {
   method: any;
   mproveVersion?: string;
   duration: number;
-  isBackend: boolean;
+  isRemoveErrorData: boolean;
   logResponseError: boolean;
   logIsJson: boolean;
   logger: Logger;
+  useLoggerOnlyForErrorLevel: boolean;
 }) {
   let {
     body,
@@ -26,10 +27,11 @@ export function makeErrorResponse(item: {
     method,
     mproveVersion,
     duration,
-    isBackend,
+    isRemoveErrorData,
     logResponseError,
     logIsJson,
-    logger
+    logger,
+    useLoggerOnlyForErrorLevel
   } = item;
 
   let wError = wrapError(e);
@@ -43,7 +45,7 @@ export function makeErrorResponse(item: {
       traceId: body.info?.traceId,
       status: ResponseInfoStatusEnum.Error,
       error:
-        isBackend === true
+        isRemoveErrorData === true
           ? {
               name: undefined,
               message:
@@ -81,7 +83,7 @@ export function makeErrorResponse(item: {
     payload: {}
   };
 
-  if (logResponseError === true && isBackend === false) {
+  if (logResponseError === true) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };
@@ -89,7 +91,8 @@ export function makeErrorResponse(item: {
       log: log,
       logLevel: LogLevelEnum.Error,
       logIsJson: logIsJson,
-      logger: logger
+      logger: logger,
+      useLoggerOnlyForErrorLevel: useLoggerOnlyForErrorLevel
     });
   }
 

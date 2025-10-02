@@ -51,7 +51,8 @@ export function transformValidSync<T extends object>(item: {
         log: serverError,
         logIsJson: isDefined(logIsJson) ? enumToBoolean(logIsJson) : false,
         logger: logger,
-        logLevel: LogLevelEnum.Error
+        logLevel: LogLevelEnum.Error,
+        useLoggerOnlyForErrorLevel: false // not need because logLevel is LogLevelEnum.Error
       });
     }
 

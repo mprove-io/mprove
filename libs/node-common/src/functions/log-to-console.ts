@@ -10,8 +10,9 @@ export function logToConsole(item: {
   logLevel: LogLevelEnum;
   logger: Logger;
   logIsJson: boolean;
+  useLoggerOnlyForErrorLevel: boolean;
 }) {
-  let { log, logIsJson, logger, logLevel } = item;
+  let { log, logIsJson, logger, logLevel, useLoggerOnlyForErrorLevel } = item;
 
   if (
     log instanceof Error ||
@@ -29,7 +30,10 @@ export function logToConsole(item: {
   //   hostname: hostname()
   // });
 
-  if (isDefined(logger)) {
+  if (
+    isDefined(logger) &&
+    (logLevel === LogLevelEnum.Error || useLoggerOnlyForErrorLevel === false)
+  ) {
     let logSorted = getLogSorted(log);
 
     if (logLevel === LogLevelEnum.Error) {

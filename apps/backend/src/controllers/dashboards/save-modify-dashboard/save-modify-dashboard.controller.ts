@@ -355,7 +355,9 @@ export class SaveModifyDashboardController {
       )
     ];
 
-    let modelIds = tilesGrid.map(tile => tile.modelId);
+    let modelIds = (
+      (isDefined(newTile) ? fromDashboard?.tiles : tilesGrid) ?? []
+    ).map(tile => tile.modelId);
 
     let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
       where: and(

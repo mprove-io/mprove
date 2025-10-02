@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { getConfig } from '~blockml/config/get.config';
 import { BoolEnum } from '~common/enums/bool.enum';
+import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
@@ -29,6 +30,8 @@ export function logToConsoleBlockml(item: {
     log: log,
     logIsJson: enumToBoolean(logIsJson),
     logger: logger,
-    logLevel: logLevel
+    logLevel: logLevel,
+    useLoggerOnlyForErrorLevel:
+      cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv') !== BlockmlEnvEnum.PROD
   });
 }

@@ -75,12 +75,16 @@ export class AppModule implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    logToConsoleBlockml({
-      log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
-      logLevel: LogLevelEnum.Info,
-      logger: this.logger,
-      cs: this.cs
-    });
+    setTimeout(() => {
+      let blockmlEnv = this.cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv');
+
+      logToConsoleBlockml({
+        log: `NODE_ENV "${process.env.NODE_ENV}", BLOCKML_ENV "${blockmlEnv}"`,
+        logLevel: LogLevelEnum.Info,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }, 1000);
 
     try {
       let errors: BmError[] = [];

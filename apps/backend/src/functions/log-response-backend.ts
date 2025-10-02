@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
 import { BoolEnum } from '~common/enums/bool.enum';
+import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
@@ -29,7 +30,7 @@ export function logResponseBackend(item: {
     ) === BoolEnum.TRUE &&
     response.info.status === ResponseInfoStatusEnum.Error;
 
-  if (isLogOk || isLogError) {
+  if (isLogOk === true || isLogError === true) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };
@@ -44,7 +45,10 @@ export function logResponseBackend(item: {
         cs.get<BackendConfig['backendLogIsJson']>('backendLogIsJson')
       ),
       logger: logger,
-      logLevel: logLevel
+      logLevel: logLevel,
+      useLoggerOnlyForErrorLevel:
+        cs.get<BackendConfig['backendEnv']>('backendEnv') !==
+        BackendEnvEnum.PROD
     });
   }
 }

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
 import { BoolEnum } from '~common/enums/bool.enum';
+import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
@@ -29,6 +30,8 @@ export function logToConsoleBackend(item: {
     log: log,
     logIsJson: enumToBoolean(logIsJson),
     logger: logger,
-    logLevel: logLevel
+    logLevel: logLevel,
+    useLoggerOnlyForErrorLevel:
+      cs.get<BackendConfig['backendEnv']>('backendEnv') !== BackendEnvEnum.PROD
   });
 }

@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
+import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { makeOkResponse } from '~node-common/functions/make-ok-response';
 
@@ -21,13 +22,14 @@ export function makeOkResponseBlockml(item: {
     path: path,
     method: method,
     duration: duration,
-    isBackend: false,
     logResponseOk: enumToBoolean(
       cs.get<BlockmlConfig['blockmlLogResponseOk']>('blockmlLogResponseOk')
     ),
     logIsJson: enumToBoolean(
       cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson')
     ),
-    logger: logger
+    logger: logger,
+    useLoggerOnlyForErrorLevel:
+      cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv') !== BlockmlEnvEnum.PROD
   });
 }

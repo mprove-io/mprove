@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BoolEnum } from '~common/enums/bool.enum';
+import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
@@ -29,6 +30,8 @@ export function logToConsoleDisk(item: {
     log: log,
     logIsJson: enumToBoolean(logIsJson),
     logger: logger,
-    logLevel: logLevel
+    logLevel: logLevel,
+    useLoggerOnlyForErrorLevel:
+      cs.get<DiskConfig['diskEnv']>('diskEnv') !== DiskEnvEnum.PROD
   });
 }

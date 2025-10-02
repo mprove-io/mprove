@@ -58,11 +58,15 @@ export class AppModule implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    logToConsoleDisk({
-      log: `NODE_ENV is set to "${process.env.NODE_ENV}"`,
-      logLevel: LogLevelEnum.Info,
-      logger: this.logger,
-      cs: this.cs
-    });
+    setTimeout(() => {
+      let diskEnv = this.cs.get<DiskConfig['diskEnv']>('diskEnv');
+
+      logToConsoleDisk({
+        log: `NODE_ENV "${process.env.NODE_ENV}", DISK_ENV "${diskEnv}"`,
+        logLevel: LogLevelEnum.Info,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }, 1000);
   }
 }

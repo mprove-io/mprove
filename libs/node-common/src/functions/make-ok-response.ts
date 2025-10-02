@@ -11,10 +11,10 @@ export function makeOkResponse(item: {
   method: any;
   mproveVersion?: string;
   duration: number;
-  isBackend: boolean;
   logResponseOk: boolean;
   logIsJson: boolean;
   logger: Logger;
+  useLoggerOnlyForErrorLevel: boolean;
 }) {
   let {
     body,
@@ -23,10 +23,10 @@ export function makeOkResponse(item: {
     method,
     mproveVersion,
     duration,
-    isBackend,
     logResponseOk,
     logIsJson,
-    logger
+    logger,
+    useLoggerOnlyForErrorLevel
   } = item;
 
   let response: MyResponse = {
@@ -41,7 +41,7 @@ export function makeOkResponse(item: {
     payload: payload
   };
 
-  if (logResponseOk === true && isBackend === false) {
+  if (logResponseOk === true) {
     let log = {
       response: Object.assign({}, response, { payload: undefined })
     };
@@ -49,7 +49,8 @@ export function makeOkResponse(item: {
       log: log,
       logLevel: LogLevelEnum.Info,
       logIsJson: logIsJson,
-      logger: logger
+      logger: logger,
+      useLoggerOnlyForErrorLevel: useLoggerOnlyForErrorLevel
     });
   }
 

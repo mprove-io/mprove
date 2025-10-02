@@ -296,7 +296,7 @@ export class GetDashboardController {
     //   diskFiles.push(secondTempFile);
     // }
 
-    let modelIds = fromDashboard.tiles.map(tile => tile.modelId);
+    let modelIds = (fromDashboard?.tiles ?? []).map(tile => tile.modelId);
 
     let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
       where: and(

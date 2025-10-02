@@ -310,7 +310,7 @@ export class CreateDraftDashboardController {
     //   diskFiles.push(secondTempFile);
     // }
 
-    let modelIds = tiles.map(tile => tile.modelId);
+    let modelIds = (tiles ?? []).map(tile => tile.modelId);
 
     let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
       where: and(
