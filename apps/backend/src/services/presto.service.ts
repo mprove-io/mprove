@@ -4,12 +4,12 @@ import { PrestoClient, PrestoClientConfig } from '@prestodb/presto-js-client';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 
 let retry = require('async-retry');
 
@@ -22,7 +22,7 @@ export class PrestoService {
   ) {}
 
   async runQuery(item: {
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     queryJobId: string;
     queryId: string;
     projectId: string;
@@ -31,17 +31,17 @@ export class PrestoService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let prestoClientConfig: PrestoClientConfig = {
-      catalog: connection.prestoOptions.catalog,
-      host: connection.prestoOptions.server,
-      port: connection.prestoOptions.port,
-      schema: connection.prestoOptions.schema,
-      user: connection.prestoOptions.user,
+      catalog: connection.options.presto.catalog,
+      host: connection.options.presto.server,
+      port: connection.options.presto.port,
+      schema: connection.options.presto.schema,
+      user: connection.options.presto.user,
       basicAuthentication:
-        isDefined(connection.prestoOptions.user) &&
-        isDefined(connection.prestoOptions.password)
+        isDefined(connection.options.presto.user) &&
+        isDefined(connection.options.presto.password)
           ? {
-              user: connection.prestoOptions.user,
-              password: connection.prestoOptions.password
+              user: connection.options.presto.user,
+              password: connection.options.presto.password
             }
           : undefined,
       extraHeaders: { 'X-Presto-Session': 'legacy_unnest=true' }

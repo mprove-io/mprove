@@ -250,8 +250,8 @@ export class RunQueriesController {
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connection = await this.connectionsService.getConnectionCheckExists(
-          {
+        let connectionEnt: ConnectionEnt =
+          await this.connectionsService.getConnectionCheckExists({
             projectId: query.projectId,
             envId:
               apiEnv.isFallbackToProdConnections === true &&
@@ -259,8 +259,12 @@ export class RunQueriesController {
                 ? PROJECT_ENV_PROD
                 : query.envId,
             connectionId: query.connectionId
-          }
-        );
+          });
+
+        let connection = this.wrapToApiService.wrapToApiConnection({
+          connection: connectionEnt,
+          isIncludePasswords: true
+        });
 
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({
@@ -404,8 +408,8 @@ export class RunQueriesController {
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connection = await this.connectionsService.getConnectionCheckExists(
-          {
+        let connectionEnt: ConnectionEnt =
+          await this.connectionsService.getConnectionCheckExists({
             projectId: query.projectId,
             envId:
               apiEnv.isFallbackToProdConnections === true &&
@@ -413,8 +417,12 @@ export class RunQueriesController {
                 ? PROJECT_ENV_PROD
                 : query.envId,
             connectionId: query.connectionId
-          }
-        );
+          });
+
+        let connection = this.wrapToApiService.wrapToApiConnection({
+          connection: connectionEnt,
+          isIncludePasswords: true
+        });
 
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({

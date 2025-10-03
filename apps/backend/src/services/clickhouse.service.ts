@@ -8,12 +8,12 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 
 let retry = require('async-retry');
 
@@ -26,7 +26,7 @@ export class ClickHouseService {
   ) {}
 
   async runQuery(item: {
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     queryJobId: string;
     queryId: string;
     querySql: string;
@@ -36,13 +36,13 @@ export class ClickHouseService {
 
     let options: ClickHouseClientOptions = {
       protocol:
-        connection.clickhouseOptions.isSSL === true
+        connection.options.clickhouse.isSSL === true
           ? ClickHouseConnectionProtocol.HTTPS
           : ClickHouseConnectionProtocol.HTTP,
-      host: connection.clickhouseOptions.host,
-      port: connection.clickhouseOptions.port,
-      username: connection.clickhouseOptions.username,
-      password: connection.clickhouseOptions.password
+      host: connection.options.clickhouse.host,
+      port: connection.options.clickhouse.port,
+      username: connection.options.clickhouse.username,
+      password: connection.options.clickhouse.password
     };
 
     let clickhouse = new ClickHouseClient(options);

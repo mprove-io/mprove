@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -20,6 +19,7 @@ import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { Filter } from '~common/interfaces/blockml/filter';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
@@ -442,7 +442,7 @@ ${inputSub}
 
   async runQuery(item: {
     projectId: string;
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     model: ModelEnt;
     queryId: string;
     queryJobId: string;
@@ -470,16 +470,16 @@ ${inputSub}
       let response;
 
       if (connection.type === ConnectionTypeEnum.Api) {
-        connection.storeApiOptions.headers.forEach(header => {
+        connection.options.storeApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
       } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
-        connection.storeGoogleApiOptions.headers.forEach(header => {
+        connection.options.storeGoogleApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
 
         headers['Authorization'] =
-          `Bearer ${connection.storeGoogleApiOptions.googleAccessToken}`;
+          `Bearer ${connection.options.storeGoogleApi.googleAccessToken}`;
 
         headers['Content-Type'] = 'application/json';
       }

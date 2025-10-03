@@ -5,12 +5,12 @@ import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 
 let retry = require('async-retry');
 
@@ -23,7 +23,7 @@ export class PgService {
   ) {}
 
   async runQuery(item: {
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     queryJobId: string;
     queryId: string;
     projectId: string;
@@ -32,13 +32,13 @@ export class PgService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let cn: pg.IConnectionParameters<pg.IClient> = {
-      host: connection.postgresOptions.host,
-      port: connection.postgresOptions.port,
-      database: connection.postgresOptions.database,
-      user: connection.postgresOptions.username,
-      password: connection.postgresOptions.password,
+      host: connection.options.postgres.host,
+      port: connection.options.postgres.port,
+      database: connection.options.postgres.database,
+      user: connection.options.postgres.username,
+      password: connection.options.postgres.password,
       ssl:
-        connection.postgresOptions.isSSL === true
+        connection.options.postgres.isSSL === true
           ? {
               rejectUnauthorized: false
             }

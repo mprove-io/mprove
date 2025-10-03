@@ -4,7 +4,6 @@ import { and, eq } from 'drizzle-orm';
 import * as MYSQL from 'mysql2/promise';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
@@ -13,6 +12,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
@@ -26,7 +26,7 @@ export class MysqlService {
   ) {}
 
   async runQuery(item: {
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     queryJobId: string;
     queryId: string;
     projectId: string;
@@ -35,11 +35,11 @@ export class MysqlService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let connectionOptions: MYSQL.ConnectionOptions = {
-      host: connection.mysqlOptions.host,
-      port: connection.mysqlOptions.port,
-      database: connection.mysqlOptions.database,
-      user: connection.mysqlOptions.user,
-      password: connection.mysqlOptions.password,
+      host: connection.options.mysql.host,
+      port: connection.options.mysql.port,
+      database: connection.options.mysql.database,
+      user: connection.options.mysql.user,
+      password: connection.options.mysql.password,
       multipleStatements: true,
       decimalNumbers: true,
       timezone: '+00:00'

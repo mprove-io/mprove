@@ -5,12 +5,12 @@ import type { DuckDbError, TableData } from 'duckdb';
 import { Database } from 'duckdb';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 
 let retry = require('async-retry');
 
@@ -23,7 +23,7 @@ export class DuckDbService {
   ) {}
 
   async runQuery(item: {
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     queryJobId: string;
     queryId: string;
     projectId: string;
@@ -32,16 +32,16 @@ export class DuckDbService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let dbPath =
-      connection.motherduckOptions.attachModeSingle === true &&
-      connection.motherduckOptions.database?.length > 0
-        ? `md:${connection.motherduckOptions.database}?attach_mode=single&saas_mode=true`
-        : `md:${connection.motherduckOptions.database}?saas_mode=true`;
+      connection.options.motherduck.attachModeSingle === true &&
+      connection.options.motherduck.database?.length > 0
+        ? `md:${connection.options.motherduck.database}?attach_mode=single&saas_mode=true`
+        : `md:${connection.options.motherduck.database}?saas_mode=true`;
 
     let opts: Record<string, string> = {
-      motherduck_token: connection.motherduckOptions.motherduckToken
+      motherduck_token: connection.options.motherduck.motherduckToken
     };
 
-    if (connection.motherduckOptions.accessModeReadOnly === true) {
+    if (connection.options.motherduck.accessModeReadOnly === true) {
       opts.access_mode = 'READ_ONLY';
     }
 

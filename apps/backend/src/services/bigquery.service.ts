@@ -1,10 +1,10 @@
 import { BigQuery, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
 
 @Injectable()
@@ -14,13 +14,13 @@ export class BigQueryService {
   async runQuery(item: {
     userId: string;
     query: QueryEnt;
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
   }): Promise<QueryEnt> {
     let { query, userId, connection } = item;
 
     let bigquery = new BigQuery({
-      credentials: connection.bigqueryOptions.serviceAccountCredentials,
-      projectId: connection.bigqueryOptions.googleCloudProject
+      credentials: connection.options.bigquery.serviceAccountCredentials,
+      projectId: connection.options.bigquery.googleCloudProject
     });
 
     query.lastRunBy = userId;
@@ -30,7 +30,7 @@ export class BigQueryService {
     query.bigqueryConsecutiveErrorsGetResults = 0;
 
     let maximumBytesBilled =
-      connection.bigqueryOptions.bigqueryQuerySizeLimitGb * 1024 * 1024 * 1024;
+      connection.options.bigquery.bigqueryQuerySizeLimitGb * 1024 * 1024 * 1024;
 
     let createQueryJobItem = await bigquery
       .createQueryJob({
@@ -60,7 +60,7 @@ export class BigQueryService {
 
   async runQueryDry(item: {
     query: QueryEnt;
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
   }) {
     let { query, connection } = item;
 
@@ -68,8 +68,8 @@ export class BigQueryService {
     let errorQuery: QueryEnt;
 
     let bigquery = new BigQuery({
-      credentials: connection.bigqueryOptions.serviceAccountCredentials,
-      projectId: connection.bigqueryOptions.googleCloudProject
+      credentials: connection.options.bigquery.serviceAccountCredentials,
+      projectId: connection.options.bigquery.googleCloudProject
     });
 
     let createQueryJobItem = await bigquery

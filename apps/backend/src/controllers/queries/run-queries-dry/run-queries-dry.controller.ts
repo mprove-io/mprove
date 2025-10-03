@@ -13,6 +13,7 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
@@ -124,14 +125,20 @@ export class RunQueriesDryController {
 
       let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-      let connection = await this.connectionsService.getConnectionCheckExists({
-        projectId: query.projectId,
-        envId:
-          apiEnv.isFallbackToProdConnections === true &&
-          apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
-            ? PROJECT_ENV_PROD
-            : query.envId,
-        connectionId: query.connectionId
+      let connectionEnt: ConnectionEnt =
+        await this.connectionsService.getConnectionCheckExists({
+          projectId: query.projectId,
+          envId:
+            apiEnv.isFallbackToProdConnections === true &&
+            apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+              ? PROJECT_ENV_PROD
+              : query.envId,
+          connectionId: query.connectionId
+        });
+
+      let connection = this.wrapToApiService.wrapToApiConnection({
+        connection: connectionEnt,
+        isIncludePasswords: true
       });
 
       let result = await this.bigqueryService.runQueryDry({

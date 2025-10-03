@@ -4,7 +4,6 @@ import { and, eq } from 'drizzle-orm';
 import * as snowflake from 'snowflake-sdk';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
@@ -13,6 +12,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
@@ -26,7 +26,7 @@ export class SnowFlakeService {
   ) {}
 
   async runQuery(item: {
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     queryJobId: string;
     queryId: string;
     querySql: string;
@@ -35,11 +35,11 @@ export class SnowFlakeService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let options: snowflake.ConnectionOptions = {
-      account: connection.snowflakeOptions.account,
-      warehouse: connection.snowflakeOptions.warehouse,
-      database: connection.snowflakeOptions.database,
-      username: connection.snowflakeOptions.username,
-      password: connection.snowflakeOptions.password
+      account: connection.options.snowflake.account,
+      warehouse: connection.options.snowflake.warehouse,
+      database: connection.options.snowflake.database,
+      username: connection.options.snowflake.username,
+      password: connection.options.snowflake.password
       //  schema?: string | undefined;
       //  role?: string | undefined;
       //  clientSessionKeepAlive?: boolean | undefined;

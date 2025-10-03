@@ -5,13 +5,13 @@ import { and, eq } from 'drizzle-orm';
 import { BasicAuth, Trino } from 'trino-client';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 
 let retry = require('async-retry');
 
@@ -24,7 +24,7 @@ export class TrinoService {
   ) {}
 
   async runQuery(item: {
-    connection: ConnectionEnt;
+    connection: ProjectConnection;
     queryJobId: string;
     queryId: string;
     projectId: string;
@@ -33,12 +33,12 @@ export class TrinoService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let connectionOptions: TrinoConnectionConfiguration = {
-      server: connection.trinoOptions.server,
-      catalog: connection.trinoOptions.catalog,
-      schema: connection.trinoOptions.schema,
-      user: connection.trinoOptions.user,
-      password: connection.trinoOptions.password,
-      extraConfig: connection.trinoOptions.extraConfig
+      server: connection.options.trino.server,
+      catalog: connection.options.trino.catalog,
+      schema: connection.options.trino.schema,
+      user: connection.options.trino.user,
+      password: connection.options.trino.password,
+      extraConfig: connection.options.trino.extraConfig
     };
 
     let tc = Trino.create({
