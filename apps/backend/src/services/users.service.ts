@@ -79,7 +79,7 @@ export class UsersService {
     return { salt, hash };
   }
 
-  async addFirstUser(item: { email: string; password: string }) {
+  async addMproveAdminUser(item: { email: string; password: string }) {
     let { email, password } = item;
 
     let { salt, hash } = await this.makeSaltAndHash(password);

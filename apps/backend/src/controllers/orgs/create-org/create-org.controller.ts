@@ -48,12 +48,12 @@ export class CreateOrgController {
       BackendConfig['allowUsersToCreateOrganizations']
     >('allowUsersToCreateOrganizations');
 
-    let firstUserEmail =
-      this.cs.get<BackendConfig['firstUserEmail']>('firstUserEmail');
+    let mproveAdminEmail =
+      this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail');
 
     if (
       allowUsersToCreateOrganizations !== BoolEnum.TRUE &&
-      user.email !== firstUserEmail
+      user.email !== mproveAdminEmail
     ) {
       throw new ServerError({
         message: ErEnum.BACKEND_CREATION_OF_ORGANIZATIONS_IS_FORBIDDEN

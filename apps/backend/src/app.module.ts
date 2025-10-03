@@ -313,26 +313,27 @@ export class AppModule implements OnModuleInit {
 
         //
 
-        let firstUserEmail =
-          this.cs.get<BackendConfig['firstUserEmail']>('firstUserEmail');
+        let mproveAdminEmail =
+          this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail');
 
-        let firstUserPassword =
-          this.cs.get<BackendConfig['firstUserPassword']>('firstUserPassword');
+        let mproveAdminInitialPassword = this.cs.get<
+          BackendConfig['mproveAdminInitialPassword']
+        >('mproveAdminInitialPassword');
 
-        let firstUser: UserEnt;
+        let mproveAdminUser: UserEnt;
 
         if (
-          isDefinedAndNotEmpty(firstUserEmail) &&
-          isDefinedAndNotEmpty(firstUserPassword)
+          isDefinedAndNotEmpty(mproveAdminEmail) &&
+          isDefinedAndNotEmpty(mproveAdminInitialPassword)
         ) {
-          firstUser = await this.db.drizzle.query.usersTable.findFirst({
-            where: eq(usersTable.email, firstUserEmail)
+          mproveAdminUser = await this.db.drizzle.query.usersTable.findFirst({
+            where: eq(usersTable.email, mproveAdminEmail)
           });
 
-          if (isUndefined(firstUser)) {
-            firstUser = await this.usersService.addFirstUser({
-              email: firstUserEmail,
-              password: firstUserPassword
+          if (isUndefined(mproveAdminUser)) {
+            mproveAdminUser = await this.usersService.addMproveAdminUser({
+              email: mproveAdminEmail,
+              password: mproveAdminInitialPassword
             });
           }
         }
@@ -351,7 +352,7 @@ export class AppModule implements OnModuleInit {
 
         if (
           seedDemoOrgAndProject === BoolEnum.TRUE &&
-          isDefined(firstUser) &&
+          isDefined(mproveAdminUser) &&
           isDefinedAndNotEmpty(demoOrgId) &&
           isDefinedAndNotEmpty(demoProjectId)
         ) {
@@ -361,8 +362,8 @@ export class AppModule implements OnModuleInit {
 
           if (isUndefined(firstOrg)) {
             firstOrg = await this.orgsService.addOrg({
-              ownerId: firstUser.userId,
-              ownerEmail: firstUser.email,
+              ownerId: mproveAdminUser.userId,
+              ownerEmail: mproveAdminUser.email,
               name: DEMO_ORG_NAME,
               traceId: makeId(),
               orgId: demoOrgId
@@ -774,7 +775,7 @@ export class AppModule implements OnModuleInit {
             demoProject = await this.projectsService.addProject({
               orgId: firstOrg.orgId,
               name: demoProjectName,
-              user: firstUser,
+              user: mproveAdminUser,
               traceId: makeId(),
               projectId: demoProjectId,
               testProjectId: 'demo-project',

@@ -44,12 +44,13 @@ export function getDevConfig(envFilePath: any) {
         envFile.BACKEND_ALLOW_TEST_ROUTES)
     ),
 
-    firstUserEmail:
-      process.env.BACKEND_FIRST_USER_EMAIL || envFile.BACKEND_FIRST_USER_EMAIL,
+    mproveAdminEmail:
+      process.env.BACKEND_MPROVE_ADMIN_EMAIL ||
+      envFile.BACKEND_MPROVE_ADMIN_EMAIL,
 
-    firstUserPassword:
-      process.env.BACKEND_FIRST_USER_PASSWORD ||
-      envFile.BACKEND_FIRST_USER_PASSWORD,
+    mproveAdminInitialPassword:
+      process.env.BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD ||
+      envFile.BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD,
 
     demoOrgId: process.env.BACKEND_DEMO_ORG_ID || envFile.BACKEND_DEMO_ORG_ID,
 

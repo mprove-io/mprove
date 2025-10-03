@@ -30,10 +30,10 @@ export class BackendConfig {
   allowTestRoutes?: BoolEnum;
 
   @IsString()
-  firstUserEmail?: string;
+  mproveAdminEmail?: string;
 
   @IsString()
-  firstUserPassword?: string;
+  mproveAdminInitialPassword?: string;
 
   @IsEnum(BoolEnum)
   seedDemoOrgAndProject?: BoolEnum;

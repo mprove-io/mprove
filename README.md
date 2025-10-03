@@ -64,13 +64,13 @@ MPROVE_RELEASE_TAG=
 Set your real email address. You may need it later to receive transactional emails (for example, to change your password).
 
 ```
-BACKEND_FIRST_USER_EMAIL=
+BACKEND_MPROVE_ADMIN_EMAIL=
 ```
 
 Change your initial password if necessary. Later changes can only be done through web interface (by sending an email).
 
 ```
-BACKEND_FIRST_USER_PASSWORD=
+BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD=
 ```
 
 Set SMTP parameters to be able to send transactional emails (required if you need to invite more users or be able to change user passwords).
@@ -91,7 +91,7 @@ docker-compose up --pull db calc-postgres rabbit redis backend blockml disk fron
 
 Open `http://localhost:3003` in Chrome.
 
-Login using values from `.env` file environment variables `BACKEND_FIRST_USER_EMAIL` and `BACKEND_FIRST_USER_PASSWORD`.
+Login using values from `.env` file environment variables `BACKEND_MPROVE_ADMIN_EMAIL` and `BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD`.
 
 Continue with [Quickstart Docs](https://docs.mprove.io/docs/quickstart).
 
