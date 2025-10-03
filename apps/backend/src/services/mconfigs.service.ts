@@ -1,5 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -15,9 +17,11 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
+import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 import { makeQueryId } from '~node-common/functions/make-query-id';
 import { EnvsService } from './envs.service';
 import { StoreService } from './store.service';
@@ -27,6 +31,7 @@ export class MconfigsService {
   constructor(
     private envsService: EnvsService,
     private storeService: StoreService,
+    private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -141,11 +146,16 @@ export class MconfigsService {
         ? errorMessage
         : (JSON.parse(processedRequest.result) as any).urlPath;
 
+    let cnOptions = decryptData<ConnectionOptions>({
+      encryptedString: connection.options,
+      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+    });
+
     let connectionBaseUrl =
       connection.type === ConnectionTypeEnum.Api
-        ? connection.storeApiOptions.baseUrl
+        ? cnOptions.storeApi.baseUrl
         : connection.type === ConnectionTypeEnum.GoogleApi
-          ? connection.storeGoogleApiOptions.baseUrl
+          ? cnOptions.storeGoogleApi.baseUrl
           : '';
 
     let apiUrl =
@@ -170,7 +180,7 @@ export class MconfigsService {
       projectId: project.projectId,
       envId: envId,
       connectionId: model.connectionId,
-      connectionType: connection.type,
+      connectionType: model.connectionType,
       sql: undefined,
       apiMethod: model.storeContent.method as StoreMethodEnum,
       apiUrl: apiUrl,

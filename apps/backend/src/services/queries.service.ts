@@ -19,7 +19,9 @@ import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
 import { ServerError } from '~common/models/server-error';
+import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 import { EnvsService } from './envs.service';
 
 let retry = require('async-retry');
@@ -251,8 +253,8 @@ WHERE m.mconfig_id is NULL
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connection = await this.db.drizzle.query.connectionsTable.findFirst(
-          {
+        let connectionEnt =
+          await this.db.drizzle.query.connectionsTable.findFirst({
             where: and(
               eq(connectionsTable.projectId, query.projectId),
               eq(
@@ -263,10 +265,9 @@ WHERE m.mconfig_id is NULL
               ),
               eq(connectionsTable.connectionId, query.connectionId)
             )
-          }
-        );
+          });
 
-        if (isUndefined(connection)) {
+        if (isUndefined(connectionEnt)) {
           query.status = QueryStatusEnum.Error;
           query.data = [];
           query.lastErrorMessage = `Project connection not found`;
@@ -289,9 +290,15 @@ WHERE m.mconfig_id is NULL
           return;
         }
 
+        let cnOptions = decryptData<ConnectionOptions>({
+          encryptedString: connectionEnt.options,
+          keyBase64:
+            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+        });
+
         let bigquery = new BigQuery({
-          credentials: connection.bigqueryOptions.serviceAccountCredentials,
-          projectId: connection.bigqueryOptions.googleCloudProject
+          credentials: cnOptions.bigquery.serviceAccountCredentials,
+          projectId: cnOptions.bigquery.googleCloudProject
         });
 
         let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);
