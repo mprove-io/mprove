@@ -23,6 +23,8 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_ENV || envFile.BACKEND_ENV)
     ),
 
+    backendAesKey: process.env.BACKEND_AES_KEY || envFile.BACKEND_AES_KEY,
+
     isScheduler: <BoolEnum>(
       (process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER)
     ),

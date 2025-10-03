@@ -9,6 +9,9 @@ export class BackendConfig {
   backendEnv?: BackendEnvEnum;
 
   @IsString()
+  backendAesKey?: string;
+
+  @IsString()
   mproveReleaseTag?: string;
 
   @IsEnum(BoolEnum)

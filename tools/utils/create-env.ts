@@ -1,9 +1,22 @@
-import { randomBytes } from 'crypto';
+import * as crypto from 'crypto';
 import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
 
 function makeRandomString(length: number): string {
-  return randomBytes(length).toString('hex').slice(0, length);
+  let output: string;
+
+  let charset: string =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+  let randomValues: Uint8Array = new Uint8Array(length);
+  crypto.getRandomValues(randomValues);
+
+  for (let i = 0; i < length; i++) {
+    let randomIndex: number = randomValues[i] % charset.length;
+    output += charset[randomIndex];
+  }
+
+  return output;
 }
 
 async function createEnvFile(): Promise<void> {
@@ -13,6 +26,8 @@ async function createEnvFile(): Promise<void> {
     console.error(`Error: ${filePath} file already exists!`);
     process.exit(1);
   }
+
+  let aes256KeyBase64 = crypto.randomBytes(32).toString('base64');
 
   let dbPgUserPass = makeRandomString(32);
   let dbPgPostgresPass = makeRandomString(32);
@@ -103,6 +118,7 @@ COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH=dist/apps/backend
 COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH=dist/apps/blockml
 
 BACKEND_ENV=PROD
+BACKEND_AES_KEY="${aes256KeyBase64}"
 BACKEND_REDIS_HOST=localhost
 BACKEND_REDIS_PASSWORD=${redisPass}
 BACKEND_RABBIT_PROTOCOL=amqp
@@ -171,6 +187,7 @@ BACKEND_LOG_RESPONSE_ERROR=TRUE
 BACKEND_LOG_RESPONSE_OK=FALSE
 
 BLOCKML_ENV=PROD
+BLOCKML_AES_KEY="${aes256KeyBase64}"
 BLOCKML_RABBIT_PROTOCOL=amqp
 BLOCKML_RABBIT_USER=rabbituser
 BLOCKML_RABBIT_PASS=${rabbitPass}

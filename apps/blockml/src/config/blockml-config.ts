@@ -7,6 +7,9 @@ export class BlockmlConfig {
   @IsEnum(BlockmlEnvEnum)
   blockmlEnv?: BlockmlEnvEnum;
 
+  @IsString()
+  blockmlAesKey?: string;
+
   @IsEnum(BoolEnum)
   logIO?: BoolEnum;
 
