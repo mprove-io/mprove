@@ -47,17 +47,19 @@ test('1', async t => {
       projectId: projectId,
       connectionId: 'c1_postgres',
       type: ConnectionTypeEnum.PostgreSQL,
-      postgresOptions: {
-        host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
-          'demoProjectDwhPostgresHost'
-        ),
-        port: 5436,
-        username: 'postgres',
-        password: prepTest.cs.get<
-          BackendConfig['demoProjectDwhPostgresPassword']
-        >('demoProjectDwhPostgresPassword'),
-        database: 'p_db',
-        isSSL: false
+      options: {
+        postgres: {
+          host: prepTest.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
+            'demoProjectDwhPostgresHost'
+          ),
+          port: 5436,
+          username: 'postgres',
+          password: prepTest.cs.get<
+            BackendConfig['demoProjectDwhPostgresPassword']
+          >('demoProjectDwhPostgresPassword'),
+          database: 'p_db',
+          isSSL: false
+        }
       }
     };
 
