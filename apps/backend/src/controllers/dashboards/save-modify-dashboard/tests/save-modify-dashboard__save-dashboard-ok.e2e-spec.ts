@@ -99,7 +99,9 @@ test('1', async t => {
             connectionId: 'c7',
             envId: PROJECT_ENV_PROD,
             type: ConnectionTypeEnum.GoogleApi,
-            storeGoogleApiOptions: EMPTY_STORE_GOOGLE_API_OPTIONS
+            options: {
+              storeGoogleApi: EMPTY_STORE_GOOGLE_API_OPTIONS
+            }
           }
         ]
       },
