@@ -14,7 +14,10 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import {
+  ConnectionEnt,
+  connectionsTable
+} from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
@@ -39,11 +42,13 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
 import {
   ToBackendCancelQueriesRequest,
   ToBackendCancelQueriesResponsePayload
 } from '~common/interfaces/to-backend/queries/to-backend-cancel-queries';
 import { ServerError } from '~common/models/server-error';
+import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 
 let retry = require('async-retry');
 
@@ -121,7 +126,7 @@ export class CancelQueriesController {
       projectId: projectId
     });
 
-    let projectConnectionsWithAnyEnvId =
+    let connectionsWithAnyEnvId: ConnectionEnt[] =
       await this.db.drizzle.query.connectionsTable.findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),
@@ -142,7 +147,7 @@ export class CancelQueriesController {
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connection = projectConnectionsWithAnyEnvId.find(
+        let connection: ConnectionEnt = connectionsWithAnyEnvId.find(
           x =>
             x.connectionId === query.connectionId &&
             x.envId ===
@@ -157,10 +162,16 @@ export class CancelQueriesController {
           });
         }
 
+        let cnOptions = decryptData<ConnectionOptions>({
+          encryptedString: connection.options,
+          keyBase64:
+            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+        });
+
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           let bigquery = new BigQuery({
-            projectId: connection.bigqueryOptions.googleCloudProject,
-            credentials: connection.bigqueryOptions.serviceAccountCredentials
+            projectId: cnOptions.bigquery.googleCloudProject,
+            credentials: cnOptions.bigquery.serviceAccountCredentials
           });
 
           let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);

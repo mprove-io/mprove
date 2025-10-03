@@ -1,13 +1,13 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
-export class ConnectionMysqlOptions {
+export class ConnectionOptionsSnowflake {
   @IsOptional()
   @IsString()
-  host: string;
+  account: string;
 
   @IsOptional()
-  @IsInt()
-  port: number;
+  @IsString()
+  warehouse: string;
 
   @IsOptional()
   @IsString()
@@ -15,7 +15,7 @@ export class ConnectionMysqlOptions {
 
   @IsOptional()
   @IsString()
-  user: string;
+  username: string;
 
   @IsOptional()
   @IsString()

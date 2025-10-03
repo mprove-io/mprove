@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import type { ConnectionOptions } from 'trino-client';
 
-export class ConnectionPrestoTrinoCommonOptions {
+export class ConnectionOptionsPrestoTrinoCommon {
   @IsOptional()
   @IsString()
   server?: string;
@@ -23,6 +23,6 @@ export class ConnectionPrestoTrinoCommonOptions {
   password?: string;
 
   extraConfig?: Partial<
-    Omit<ConnectionOptions, keyof ConnectionPrestoTrinoCommonOptions>
+    Omit<ConnectionOptions, keyof ConnectionOptionsPrestoTrinoCommon>
   >;
 }

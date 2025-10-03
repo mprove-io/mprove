@@ -9,16 +9,7 @@ import {
 } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
-import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
-import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
-import { ConnectionMysqlOptions } from '~common/interfaces/backend/connection/connection-mysql-options';
-import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
-import { ConnectionPrestoOptions } from '~common/interfaces/backend/connection/connection-presto-options';
-import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
-import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
-import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
-import { ConnectionTrinoOptions } from '~common/interfaces/backend/connection/connection-trino-options';
+import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
@@ -147,53 +138,8 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionBigqueryOptions)
-  bigqueryOptions?: ConnectionBigqueryOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionClickhouseOptions)
-  clickhouseOptions?: ConnectionClickhouseOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionMotherduckOptions)
-  motherduckOptions?: ConnectionMotherduckOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionPostgresOptions)
-  postgresOptions?: ConnectionPostgresOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionMysqlOptions)
-  mysqlOptions?: ConnectionMysqlOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionTrinoOptions)
-  trinoOptions?: ConnectionTrinoOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionPrestoOptions)
-  prestoOptions?: ConnectionPrestoOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionSnowflakeOptions)
-  snowflakeOptions?: ConnectionSnowflakeOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionStoreApiOptions)
-  storeApiOptions?: ConnectionStoreApiOptions;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => ConnectionStoreGoogleApiOptions)
-  storeGoogleApiOptions?: ConnectionStoreGoogleApiOptions;
+  @Type(() => ConnectionOptions)
+  options?: ConnectionOptions;
 }
 
 export class ToBackendSeedRecordsRequestPayloadEnvsItem {

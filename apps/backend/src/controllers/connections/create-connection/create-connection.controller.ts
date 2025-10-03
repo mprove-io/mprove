@@ -56,26 +56,11 @@ export class CreateConnectionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateConnection)
   async createConnection(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: ToBackendCreateConnectionRequest = request.body;
-    let {
-      projectId,
-      envId,
-      connectionId,
-      type,
-      bigqueryOptions,
-      clickhouseOptions,
-      motherduckOptions,
-      postgresOptions,
-      mysqlOptions,
-      trinoOptions,
-      prestoOptions,
-      snowflakeOptions,
-      storeApiOptions,
-      storeGoogleApiOptions
-    } = reqValid.payload;
+    let { projectId, envId, connectionId, type, options } = reqValid.payload;
 
-    if (isDefined(motherduckOptions)) {
+    if (isDefined(options.motherduck)) {
       let wrongChars: string[] = getMotherduckDatabaseWrongChars({
-        databaseName: motherduckOptions.database
+        databaseName: options.motherduck.database
       });
 
       if (wrongChars?.length > 0) {
@@ -116,16 +101,7 @@ export class CreateConnectionController {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      bigqueryOptions: bigqueryOptions,
-      clickhouseOptions: clickhouseOptions,
-      motherduckOptions: motherduckOptions,
-      postgresOptions: postgresOptions,
-      mysqlOptions: mysqlOptions,
-      trinoOptions: trinoOptions,
-      prestoOptions: prestoOptions,
-      snowflakeOptions: snowflakeOptions,
-      storeApiOptions: storeApiOptions,
-      storeGoogleApiOptions: storeGoogleApiOptions
+      options: options
     });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({

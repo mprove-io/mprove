@@ -1,6 +1,6 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ConnectionBigqueryOptions {
+export class ConnectionOptionsBigquery {
   @IsOptional()
   serviceAccountCredentials: any;
 

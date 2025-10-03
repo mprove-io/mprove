@@ -2,22 +2,12 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
-  json,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
-import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
-import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
-import { ConnectionMysqlOptions } from '~common/interfaces/backend/connection/connection-mysql-options';
-import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
-import { ConnectionPrestoOptions } from '~common/interfaces/backend/connection/connection-presto-options';
-import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
-import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
-import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
-import { ConnectionTrinoOptions } from '~common/interfaces/backend/connection/connection-trino-options';
 
 export const connectionsTable = pgTable(
   'connections',
@@ -29,24 +19,7 @@ export const connectionsTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
     type: varchar('type').$type<ConnectionTypeEnum>().notNull(),
-    postgresOptions:
-      json('postgres_options').$type<ConnectionPostgresOptions>(),
-    mysqlOptions: json('mysql_options').$type<ConnectionMysqlOptions>(),
-    clickhouseOptions:
-      json('clickhouse_options').$type<ConnectionClickhouseOptions>(),
-    bigqueryOptions:
-      json('bigquery_options').$type<ConnectionBigqueryOptions>(),
-    snowflakeOptions:
-      json('snowflake_options').$type<ConnectionSnowflakeOptions>(),
-    motherduckOptions:
-      json('motherduck_options').$type<ConnectionMotherduckOptions>(),
-    trinoOptions: json('trino_options').$type<ConnectionTrinoOptions>(),
-    prestoOptions: json('presto_options').$type<ConnectionPrestoOptions>(),
-    storeApiOptions:
-      json('store_api_options').$type<ConnectionStoreApiOptions>(),
-    storeGoogleApiOptions: json(
-      'store_google_api_options'
-    ).$type<ConnectionStoreGoogleApiOptions>(),
+    options: text('options'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

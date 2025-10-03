@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '~backend/config/backend-config';
 import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
@@ -9,25 +11,20 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ConnectionBigqueryOptions } from '~common/interfaces/backend/connection/connection-bigquery-options';
-import { ConnectionClickhouseOptions } from '~common/interfaces/backend/connection/connection-clickhouse-options';
-import { ConnectionMotherduckOptions } from '~common/interfaces/backend/connection/connection-motherduck-options';
-import { ConnectionMysqlOptions } from '~common/interfaces/backend/connection/connection-mysql-options';
-import { ConnectionPostgresOptions } from '~common/interfaces/backend/connection/connection-postgres-options';
-import { ConnectionPrestoOptions } from '~common/interfaces/backend/connection/connection-presto-options';
-import { ConnectionSnowflakeOptions } from '~common/interfaces/backend/connection/connection-snowflake-options';
-import { ConnectionStoreApiOptions } from '~common/interfaces/backend/connection/connection-store-api-options';
-import { ConnectionStoreGoogleApiOptions } from '~common/interfaces/backend/connection/connection-store-google-api-options';
-import { ConnectionTrinoOptions } from '~common/interfaces/backend/connection/connection-trino-options';
+import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { Row } from '~common/interfaces/blockml/row';
+import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 import { HashService } from './hash.service';
 
 @Injectable()
 export class MakerService {
-  constructor(private hashService: HashService) {}
+  constructor(
+    private hashService: HashService,
+    private cs: ConfigService<BackendConfig>
+  ) {}
 
   makeMember(item: {
     projectId: string;
@@ -133,52 +130,28 @@ export class MakerService {
     connectionId: string;
     envId: string;
     type: ConnectionTypeEnum;
-    bigqueryOptions?: ConnectionBigqueryOptions;
-    clickhouseOptions?: ConnectionClickhouseOptions;
-    motherduckOptions?: ConnectionMotherduckOptions;
-    snowflakeOptions?: ConnectionSnowflakeOptions;
-    postgresOptions?: ConnectionPostgresOptions;
-    mysqlOptions?: ConnectionMysqlOptions;
-    trinoOptions?: ConnectionTrinoOptions;
-    prestoOptions?: ConnectionPrestoOptions;
-    storeApiOptions?: ConnectionStoreApiOptions;
-    storeGoogleApiOptions?: ConnectionStoreGoogleApiOptions;
+    options: ConnectionOptions;
   }) {
-    let {
-      projectId,
-      connectionId,
-      envId,
-      type,
-      bigqueryOptions,
-      clickhouseOptions,
-      motherduckOptions,
-      postgresOptions,
-      snowflakeOptions,
-      mysqlOptions,
-      trinoOptions,
-      prestoOptions,
-      storeApiOptions,
-      storeGoogleApiOptions
-    } = item;
+    let { projectId, connectionId, envId, type, options } = item;
 
-    if (isDefined(storeGoogleApiOptions)) {
-      storeGoogleApiOptions.googleCloudProject =
-        storeGoogleApiOptions.serviceAccountCredentials?.project_id;
+    if (isDefined(options.storeGoogleApi)) {
+      options.storeGoogleApi.googleCloudProject =
+        options.storeGoogleApi.serviceAccountCredentials?.project_id;
 
-      storeGoogleApiOptions.googleCloudClientEmail =
-        storeGoogleApiOptions.serviceAccountCredentials?.client_email;
+      options.storeGoogleApi.googleCloudClientEmail =
+        options.storeGoogleApi.serviceAccountCredentials?.client_email;
     }
 
-    if (isDefined(bigqueryOptions)) {
-      bigqueryOptions.googleCloudProject =
-        bigqueryOptions.serviceAccountCredentials?.project_id;
+    if (isDefined(options.bigquery)) {
+      options.bigquery.googleCloudProject =
+        options.bigquery.serviceAccountCredentials?.project_id;
 
-      bigqueryOptions.googleCloudClientEmail =
-        bigqueryOptions.serviceAccountCredentials?.client_email;
+      options.bigquery.googleCloudClientEmail =
+        options.bigquery.serviceAccountCredentials?.client_email;
 
-      let slimit = bigqueryOptions.bigqueryQuerySizeLimitGb;
+      let slimit = options.bigquery.bigqueryQuerySizeLimitGb;
 
-      bigqueryOptions.bigqueryQuerySizeLimitGb =
+      options.bigquery.bigqueryQuerySizeLimitGb =
         isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
     }
 
@@ -192,16 +165,10 @@ export class MakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      bigqueryOptions: bigqueryOptions,
-      clickhouseOptions: clickhouseOptions,
-      motherduckOptions: motherduckOptions,
-      postgresOptions: postgresOptions,
-      snowflakeOptions: snowflakeOptions,
-      mysqlOptions: mysqlOptions,
-      trinoOptions: trinoOptions,
-      prestoOptions: prestoOptions,
-      storeApiOptions: storeApiOptions,
-      storeGoogleApiOptions: storeGoogleApiOptions,
+      options: encryptData({
+        data: options,
+        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+      }),
       serverTs: undefined
     };
 

@@ -35,6 +35,7 @@ import {
   ToBackendEditConnectionResponsePayload
 } from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
 import { ServerError } from '~common/models/server-error';
+import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let retry = require('async-retry');
 
@@ -55,21 +56,7 @@ export class EditConnectionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendEditConnection)
   async editConnection(@AttachUser() user: UserEnt, @Req() request: any) {
     let reqValid: ToBackendEditConnectionRequest = request.body;
-    let {
-      projectId,
-      envId,
-      connectionId,
-      bigqueryOptions,
-      clickhouseOptions,
-      motherduckOptions,
-      postgresOptions,
-      mysqlOptions,
-      trinoOptions,
-      prestoOptions,
-      snowflakeOptions,
-      storeApiOptions,
-      storeGoogleApiOptions
-    } = reqValid.payload;
+    let { projectId, envId, connectionId, options } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -86,30 +73,30 @@ export class EditConnectionController {
       connectionId: connectionId
     });
 
-    if (isDefined(storeGoogleApiOptions)) {
-      storeGoogleApiOptions.googleCloudProject =
-        storeGoogleApiOptions.serviceAccountCredentials?.project_id;
+    if (isDefined(options.storeGoogleApi)) {
+      options.storeGoogleApi.googleCloudProject =
+        options.storeGoogleApi.serviceAccountCredentials?.project_id;
 
-      storeGoogleApiOptions.googleCloudClientEmail =
-        storeGoogleApiOptions.serviceAccountCredentials?.client_email;
+      options.storeGoogleApi.googleCloudClientEmail =
+        options.storeGoogleApi.serviceAccountCredentials?.client_email;
     }
 
-    if (isDefined(bigqueryOptions)) {
-      bigqueryOptions.googleCloudProject =
-        bigqueryOptions.serviceAccountCredentials?.project_id;
+    if (isDefined(options.bigquery)) {
+      options.bigquery.googleCloudProject =
+        options.bigquery.serviceAccountCredentials?.project_id;
 
-      bigqueryOptions.googleCloudClientEmail =
-        bigqueryOptions.serviceAccountCredentials?.client_email;
+      options.bigquery.googleCloudClientEmail =
+        options.bigquery.serviceAccountCredentials?.client_email;
 
-      let slimit = bigqueryOptions.bigqueryQuerySizeLimitGb;
+      let slimit = options.bigquery.bigqueryQuerySizeLimitGb;
 
-      bigqueryOptions.bigqueryQuerySizeLimitGb =
+      options.bigquery.bigqueryQuerySizeLimitGb =
         isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
     }
 
-    if (isDefined(motherduckOptions)) {
+    if (isDefined(options.motherduck)) {
       let wrongChars: string[] = getMotherduckDatabaseWrongChars({
-        databaseName: motherduckOptions.database
+        databaseName: options.motherduck.database
       });
 
       if (wrongChars?.length > 0) {
@@ -119,17 +106,10 @@ export class EditConnectionController {
       }
     }
 
-    connection.bigqueryOptions = bigqueryOptions;
-    connection.clickhouseOptions = clickhouseOptions;
-    connection.motherduckOptions = motherduckOptions;
-    connection.bigqueryOptions = bigqueryOptions;
-    connection.postgresOptions = postgresOptions;
-    connection.mysqlOptions = mysqlOptions;
-    connection.trinoOptions = trinoOptions;
-    connection.prestoOptions = prestoOptions;
-    connection.snowflakeOptions = snowflakeOptions;
-    connection.storeApiOptions = storeApiOptions;
-    connection.storeGoogleApiOptions = storeGoogleApiOptions;
+    connection.options = encryptData({
+      data: options,
+      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+    });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(

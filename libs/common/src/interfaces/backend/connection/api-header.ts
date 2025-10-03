@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class ConnectionOptionsHeader {
+export class ApiHeader {
   @IsString()
   key: string;
 

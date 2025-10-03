@@ -85,169 +85,171 @@ export class EditConnectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.isClickhouseSSL =
-      this.dataItem.connection.clickhouseOptions?.isSSL === true ? true : false;
+      this.dataItem.connection.options.clickhouse?.isSSL === true
+        ? true
+        : false;
 
     this.isPostgresSSL =
-      this.dataItem.connection.postgresOptions?.isSSL === true ? true : false;
+      this.dataItem.connection.options.postgres.isSSL === true ? true : false;
 
     this.isMotherduckAttachModeSingle =
-      this.dataItem.connection.motherduckOptions?.attachModeSingle === true
+      this.dataItem.connection.options.motherduck.attachModeSingle === true
         ? true
         : false;
 
     this.isMotherduckAccessModeReadOnly =
-      this.dataItem.connection.motherduckOptions?.accessModeReadOnly === true
+      this.dataItem.connection.options.motherduck.accessModeReadOnly === true
         ? true
         : false;
 
     this.editBigqueryForm = this.fb.group({
       serviceAccountCredentials: [
-        this.dataItem.connection.bigqueryOptions?.serviceAccountCredentials,
+        this.dataItem.connection.options.bigquery.serviceAccountCredentials,
         [Validators.required]
       ],
       bigqueryQuerySizeLimitGb: [
-        this.dataItem.connection.bigqueryOptions?.bigqueryQuerySizeLimitGb,
+        this.dataItem.connection.options.bigquery.bigqueryQuerySizeLimitGb,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ]
     });
 
     this.editClickhouseForm = this.fb.group({
       host: [
-        this.dataItem.connection.clickhouseOptions?.host,
+        this.dataItem.connection.options.clickhouse.host,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.clickhouseOptions?.port,
+        this.dataItem.connection.options.clickhouse.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       username: [
-        this.dataItem.connection.clickhouseOptions?.username,
+        this.dataItem.connection.options.clickhouse.username,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.clickhouseOptions?.password,
+        this.dataItem.connection.options.clickhouse.password,
         [Validators.required]
       ]
     });
 
     this.editMotherduckForm = this.fb.group({
       motherduckToken: [
-        this.dataItem.connection.motherduckOptions?.motherduckToken,
+        this.dataItem.connection.options.motherduck.motherduckToken,
         [Validators.required]
       ],
       database: [
-        this.dataItem.connection.motherduckOptions?.database,
+        this.dataItem.connection.options.motherduck.database,
         [ValidationService.motherduckDatabaseWrongChars]
       ]
     });
 
     this.editPostgresForm = this.fb.group({
       host: [
-        this.dataItem.connection.postgresOptions?.host,
+        this.dataItem.connection.options.postgres.host,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.postgresOptions?.port,
+        this.dataItem.connection.options.postgres.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       database: [
-        this.dataItem.connection.postgresOptions?.database,
+        this.dataItem.connection.options.postgres.database,
         [Validators.required]
       ],
       username: [
-        this.dataItem.connection.postgresOptions?.username,
+        this.dataItem.connection.options.postgres.username,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.postgresOptions?.password,
+        this.dataItem.connection.options.postgres.password,
         [Validators.required]
       ]
     });
 
     this.editMysqlForm = this.fb.group({
       host: [
-        this.dataItem.connection.mysqlOptions?.host,
+        this.dataItem.connection.options.mysql.host,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.mysqlOptions?.port,
+        this.dataItem.connection.options.mysql.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       database: [
-        this.dataItem.connection.mysqlOptions?.database,
+        this.dataItem.connection.options.mysql.database,
         [Validators.required]
       ],
       user: [
-        this.dataItem.connection.mysqlOptions?.user,
+        this.dataItem.connection.options.mysql.user,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.mysqlOptions?.password,
+        this.dataItem.connection.options.mysql.password,
         [Validators.required]
       ]
     });
 
     this.editTrinoForm = this.fb.group({
       server: [
-        this.dataItem.connection.trinoOptions?.server,
+        this.dataItem.connection.options.trino.server,
         [Validators.required]
       ],
-      catalog: [this.dataItem.connection.trinoOptions?.catalog, []],
-      schema: [this.dataItem.connection.trinoOptions?.schema, []],
+      catalog: [this.dataItem.connection.options.trino.catalog, []],
+      schema: [this.dataItem.connection.options.trino.schema, []],
       user: [
-        this.dataItem.connection.trinoOptions?.user,
+        this.dataItem.connection.options.trino.user,
         [Validators.required]
       ],
-      password: [this.dataItem.connection.trinoOptions?.password, []]
+      password: [this.dataItem.connection.options.trino.password, []]
     });
 
     this.editPrestoForm = this.fb.group({
       server: [
-        this.dataItem.connection.prestoOptions?.server,
+        this.dataItem.connection.options.presto.server,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.prestoOptions?.port,
+        this.dataItem.connection.options.presto.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
-      catalog: [this.dataItem.connection.prestoOptions?.catalog, []],
-      schema: [this.dataItem.connection.prestoOptions?.schema, []],
+      catalog: [this.dataItem.connection.options.presto.catalog, []],
+      schema: [this.dataItem.connection.options.presto.schema, []],
       user: [
-        this.dataItem.connection.prestoOptions?.user,
+        this.dataItem.connection.options.presto.user,
         [Validators.required]
       ],
-      password: [this.dataItem.connection.prestoOptions?.password, []]
+      password: [this.dataItem.connection.options.presto.password, []]
     });
 
     this.editSnowflakeForm = this.fb.group({
       account: [
-        this.dataItem.connection.snowflakeOptions?.account,
+        this.dataItem.connection.options.snowflake.account,
         [Validators.required]
       ],
       warehouse: [
-        this.dataItem.connection.snowflakeOptions?.warehouse,
+        this.dataItem.connection.options.snowflake.warehouse,
         [Validators.required]
       ],
-      database: [this.dataItem.connection.snowflakeOptions?.database, []],
+      database: [this.dataItem.connection.options.snowflake.database, []],
       username: [
-        this.dataItem.connection.snowflakeOptions?.username,
+        this.dataItem.connection.options.snowflake.username,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.snowflakeOptions?.password,
+        this.dataItem.connection.options.snowflake.password,
         [Validators.required]
       ]
     });
 
     this.editApiForm = this.fb.group({
       baseUrl: [
-        this.dataItem.connection.storeApiOptions?.baseUrl,
+        this.dataItem.connection.options.storeApi.baseUrl,
         [Validators.required]
       ],
       headers: this.fb.array(
-        isUndefined(this.dataItem.connection.storeApiOptions?.headers)
+        isUndefined(this.dataItem.connection.options.storeApi.headers)
           ? []
-          : this.dataItem.connection.storeApiOptions?.headers.map(header => {
+          : this.dataItem.connection.options.storeApi.headers.map(header => {
               let newHeader = {
                 key: header.key,
                 value: header.value ?? ''
@@ -259,18 +261,18 @@ export class EditConnectionDialogComponent implements OnInit {
 
     this.editGoogleApiForm = this.fb.group({
       serviceAccountCredentials: [
-        this.dataItem.connection.storeGoogleApiOptions
+        this.dataItem.connection.options.storeGoogleApi
           ?.serviceAccountCredentials,
         [Validators.required]
       ],
       baseUrl: [
-        this.dataItem.connection.storeGoogleApiOptions?.baseUrl,
+        this.dataItem.connection.options.storeGoogleApi?.baseUrl,
         [Validators.required]
       ],
       headers: this.fb.array(
-        isUndefined(this.dataItem.connection.storeGoogleApiOptions?.headers)
+        isUndefined(this.dataItem.connection.options.storeGoogleApi?.headers)
           ? []
-          : this.dataItem.connection.storeGoogleApiOptions?.headers.map(
+          : this.dataItem.connection.options.storeGoogleApi?.headers.map(
               header => {
                 let newHeader = {
                   key: header.key,
@@ -282,10 +284,10 @@ export class EditConnectionDialogComponent implements OnInit {
       ),
       scopes: this.fb.array(
         isUndefined(
-          this.dataItem.connection.storeGoogleApiOptions?.googleAuthScopes
+          this.dataItem.connection.options.storeGoogleApi?.googleAuthScopes
         )
           ? []
-          : this.dataItem.connection.storeGoogleApiOptions?.googleAuthScopes.map(
+          : this.dataItem.connection.options.storeGoogleApi?.googleAuthScopes.map(
               scope => {
                 let newScope = {
                   value: scope
@@ -426,124 +428,129 @@ export class EditConnectionDialogComponent implements OnInit {
       projectId: this.dataItem.connection.projectId,
       envId: this.dataItem.connection.envId,
       connectionId: this.dataItem.connection.connectionId,
-      bigqueryOptions:
-        cType === ConnectionTypeEnum.BigQuery
-          ? {
-              googleCloudProject: undefined,
-              googleCloudClientEmail: undefined,
-              serviceAccountCredentials: bigqueryCredentials,
-              bigqueryQuerySizeLimitGb: isDefined(
-                this.editBigqueryForm.value.bigqueryQuerySizeLimitGb
-              )
-                ? Number(this.editBigqueryForm.value.bigqueryQuerySizeLimitGb)
-                : undefined
-            }
-          : undefined,
-      clickhouseOptions:
-        cType === ConnectionTypeEnum.ClickHouse
-          ? {
-              host: this.editClickhouseForm.value.host,
-              port: isDefined(this.editClickhouseForm.value.port)
-                ? Number(this.editClickhouseForm.value.port)
-                : undefined,
-              username: this.editClickhouseForm.value.username,
-              password: this.editClickhouseForm.value.password,
-              isSSL: this.isClickhouseSSL
-            }
-          : undefined,
-      motherduckOptions:
-        cType === ConnectionTypeEnum.MotherDuck
-          ? {
-              motherduckToken: this.editMotherduckForm.value.motherduckToken,
-              database: this.editMotherduckForm.value.database,
-              attachModeSingle:
-                this.isMotherduckAttachModeSingle &&
-                this.editMotherduckForm.controls['database'].value?.length > 0,
-              accessModeReadOnly: this.isMotherduckAccessModeReadOnly
-            }
-          : undefined,
-      postgresOptions:
-        cType === ConnectionTypeEnum.PostgreSQL
-          ? {
-              host: this.editPostgresForm.value.host,
-              port: isDefined(this.editPostgresForm.value.port)
-                ? Number(this.editPostgresForm.value.port)
-                : undefined,
-              database: this.editPostgresForm.value.database,
-              username: this.editPostgresForm.value.username,
-              password: this.editPostgresForm.value.password,
-              isSSL: this.isPostgresSSL
-            }
-          : undefined,
-      mysqlOptions:
-        cType === ConnectionTypeEnum.MySQL
-          ? {
-              host: this.editMysqlForm.value.host,
-              port: isDefined(this.editMysqlForm.value.port)
-                ? Number(this.editMysqlForm.value.port)
-                : undefined,
-              database: this.editMysqlForm.value.database,
-              user: this.editMysqlForm.value.user,
-              password: this.editMysqlForm.value.password
-            }
-          : undefined,
-      trinoOptions:
-        cType === ConnectionTypeEnum.Trino
-          ? {
-              server: this.editTrinoForm.value.server,
-              catalog: this.editTrinoForm.value.catalog,
-              schema: this.editTrinoForm.value.schema,
-              user: this.editTrinoForm.value.user,
-              password: this.editTrinoForm.value.password
-            }
-          : undefined,
-      prestoOptions:
-        cType === ConnectionTypeEnum.Presto
-          ? {
-              server: this.editPrestoForm.value.server,
-              port: isDefined(this.editPrestoForm.value.port)
-                ? Number(this.editPrestoForm.value.port)
-                : undefined,
-              catalog: this.editPrestoForm.value.catalog,
-              schema: this.editPrestoForm.value.schema,
-              user: this.editPrestoForm.value.user,
-              password: this.editPrestoForm.value.password
-            }
-          : undefined,
-      snowflakeOptions:
-        cType === ConnectionTypeEnum.SnowFlake
-          ? {
-              account: this.editSnowflakeForm.value.account,
-              warehouse: this.editSnowflakeForm.value.warehouse,
-              database: this.editSnowflakeForm.value.database,
-              username: this.editSnowflakeForm.value.username,
-              password: this.editSnowflakeForm.value.password
-            }
-          : undefined,
-      storeApiOptions:
-        cType === ConnectionTypeEnum.Api
-          ? {
-              baseUrl: this.editApiForm.value.baseUrl,
-              headers: this.editApiForm.value.headers
-            }
-          : undefined,
-      storeGoogleApiOptions:
-        cType === ConnectionTypeEnum.GoogleApi
-          ? {
-              googleAccessToken: undefined,
-              googleCloudProject: undefined,
-              googleCloudClientEmail: undefined,
-              serviceAccountCredentials: googleApiCredentials,
-              baseUrl: this.editGoogleApiForm.value.baseUrl,
-              headers: this.editGoogleApiForm.value.headers,
-              googleAuthScopes:
-                [ConnectionTypeEnum.GoogleApi].indexOf(
-                  this.editGoogleApiForm.get('type').value
-                ) > -1
-                  ? this.editGoogleApiForm.value.scopes.map((x: any) => x.value)
-                  : []
-            }
-          : undefined
+      options: {
+        bigquery:
+          cType === ConnectionTypeEnum.BigQuery
+            ? {
+                googleCloudProject: undefined,
+                googleCloudClientEmail: undefined,
+                serviceAccountCredentials: bigqueryCredentials,
+                bigqueryQuerySizeLimitGb: isDefined(
+                  this.editBigqueryForm.value.bigqueryQuerySizeLimitGb
+                )
+                  ? Number(this.editBigqueryForm.value.bigqueryQuerySizeLimitGb)
+                  : undefined
+              }
+            : undefined,
+        clickhouse:
+          cType === ConnectionTypeEnum.ClickHouse
+            ? {
+                host: this.editClickhouseForm.value.host,
+                port: isDefined(this.editClickhouseForm.value.port)
+                  ? Number(this.editClickhouseForm.value.port)
+                  : undefined,
+                username: this.editClickhouseForm.value.username,
+                password: this.editClickhouseForm.value.password,
+                isSSL: this.isClickhouseSSL
+              }
+            : undefined,
+        motherduck:
+          cType === ConnectionTypeEnum.MotherDuck
+            ? {
+                motherduckToken: this.editMotherduckForm.value.motherduckToken,
+                database: this.editMotherduckForm.value.database,
+                attachModeSingle:
+                  this.isMotherduckAttachModeSingle &&
+                  this.editMotherduckForm.controls['database'].value?.length >
+                    0,
+                accessModeReadOnly: this.isMotherduckAccessModeReadOnly
+              }
+            : undefined,
+        postgres:
+          cType === ConnectionTypeEnum.PostgreSQL
+            ? {
+                host: this.editPostgresForm.value.host,
+                port: isDefined(this.editPostgresForm.value.port)
+                  ? Number(this.editPostgresForm.value.port)
+                  : undefined,
+                database: this.editPostgresForm.value.database,
+                username: this.editPostgresForm.value.username,
+                password: this.editPostgresForm.value.password,
+                isSSL: this.isPostgresSSL
+              }
+            : undefined,
+        mysql:
+          cType === ConnectionTypeEnum.MySQL
+            ? {
+                host: this.editMysqlForm.value.host,
+                port: isDefined(this.editMysqlForm.value.port)
+                  ? Number(this.editMysqlForm.value.port)
+                  : undefined,
+                database: this.editMysqlForm.value.database,
+                user: this.editMysqlForm.value.user,
+                password: this.editMysqlForm.value.password
+              }
+            : undefined,
+        trino:
+          cType === ConnectionTypeEnum.Trino
+            ? {
+                server: this.editTrinoForm.value.server,
+                catalog: this.editTrinoForm.value.catalog,
+                schema: this.editTrinoForm.value.schema,
+                user: this.editTrinoForm.value.user,
+                password: this.editTrinoForm.value.password
+              }
+            : undefined,
+        presto:
+          cType === ConnectionTypeEnum.Presto
+            ? {
+                server: this.editPrestoForm.value.server,
+                port: isDefined(this.editPrestoForm.value.port)
+                  ? Number(this.editPrestoForm.value.port)
+                  : undefined,
+                catalog: this.editPrestoForm.value.catalog,
+                schema: this.editPrestoForm.value.schema,
+                user: this.editPrestoForm.value.user,
+                password: this.editPrestoForm.value.password
+              }
+            : undefined,
+        snowflake:
+          cType === ConnectionTypeEnum.SnowFlake
+            ? {
+                account: this.editSnowflakeForm.value.account,
+                warehouse: this.editSnowflakeForm.value.warehouse,
+                database: this.editSnowflakeForm.value.database,
+                username: this.editSnowflakeForm.value.username,
+                password: this.editSnowflakeForm.value.password
+              }
+            : undefined,
+        storeApi:
+          cType === ConnectionTypeEnum.Api
+            ? {
+                baseUrl: this.editApiForm.value.baseUrl,
+                headers: this.editApiForm.value.headers
+              }
+            : undefined,
+        storeGoogleApi:
+          cType === ConnectionTypeEnum.GoogleApi
+            ? {
+                googleAccessToken: undefined,
+                googleCloudProject: undefined,
+                googleCloudClientEmail: undefined,
+                serviceAccountCredentials: googleApiCredentials,
+                baseUrl: this.editGoogleApiForm.value.baseUrl,
+                headers: this.editGoogleApiForm.value.headers,
+                googleAuthScopes:
+                  [ConnectionTypeEnum.GoogleApi].indexOf(
+                    this.editGoogleApiForm.get('type').value
+                  ) > -1
+                    ? this.editGoogleApiForm.value.scopes.map(
+                        (x: any) => x.value
+                      )
+                    : []
+              }
+            : undefined
+      }
     };
 
     let apiService: ApiService = this.dataItem.apiService;

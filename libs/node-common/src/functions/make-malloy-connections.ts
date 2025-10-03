@@ -23,9 +23,7 @@ export function makeMalloyConnections(item: {
 }) {
   let malloyConnections: MalloyConnection[] = [];
 
-  item.connections.forEach(c => {
-    // TODO: more connection types
-
+  item.connections.forEach(x => {
     // node_modules/@malloydata/db-bigquery/dist/bigquery_connection.d.ts
     //   interface BigQueryConnectionConfiguration {
     //     /** This ID is used for Bigquery Table Normalization */
@@ -39,67 +37,67 @@ export function makeMalloyConnections(item: {
     // }
 
     let mConnection =
-      c.type === ConnectionTypeEnum.PostgreSQL
-        ? new PostgresConnection(c.connectionId, () => ({}), {
-            host: c.postgresOptions?.host,
-            port: c.postgresOptions?.port,
-            username: c.postgresOptions?.username,
-            password: c.postgresOptions?.password,
-            databaseName: c.postgresOptions?.database
+      x.type === ConnectionTypeEnum.PostgreSQL
+        ? new PostgresConnection(x.connectionId, () => ({}), {
+            host: x.options.postgres?.host,
+            port: x.options.postgres?.port,
+            username: x.options.postgres?.username,
+            password: x.options.postgres?.password,
+            databaseName: x.options.postgres?.database
           })
-        : c.type === ConnectionTypeEnum.MySQL
+        : x.type === ConnectionTypeEnum.MySQL
           ? new MySQLConnection(
-              c.connectionId,
+              x.connectionId,
               {
-                host: c.mysqlOptions?.host,
-                port: c.mysqlOptions?.port,
-                database: c.mysqlOptions?.database,
-                user: c.mysqlOptions?.user,
-                password: c.mysqlOptions?.password
+                host: x.options.mysql?.host,
+                port: x.options.mysql?.port,
+                database: x.options.mysql?.database,
+                user: x.options.mysql?.user,
+                password: x.options.mysql?.password
               },
               {}
             )
-          : c.type === ConnectionTypeEnum.BigQuery
-            ? new BigQueryConnection(c.connectionId, () => ({}), {
-                credentials: c.bigqueryOptions?.serviceAccountCredentials,
-                projectId: c.bigqueryOptions?.googleCloudProject
+          : x.type === ConnectionTypeEnum.BigQuery
+            ? new BigQueryConnection(x.connectionId, () => ({}), {
+                credentials: x.options.bigquery?.serviceAccountCredentials,
+                projectId: x.options.bigquery?.googleCloudProject
               })
-            : c.type === ConnectionTypeEnum.Trino
+            : x.type === ConnectionTypeEnum.Trino
               ? new TrinoConnection(
-                  c.connectionId,
+                  x.connectionId,
                   {},
                   {
-                    server: c.trinoOptions?.server,
+                    server: x.options.trino?.server,
                     port: undefined,
-                    catalog: c.trinoOptions?.catalog,
-                    schema: c.trinoOptions?.schema,
-                    user: c.trinoOptions?.user,
-                    password: c.trinoOptions?.password,
-                    extraConfig: c.trinoOptions?.extraConfig
+                    catalog: x.options.trino?.catalog,
+                    schema: x.options.trino?.schema,
+                    user: x.options.trino?.user,
+                    password: x.options.trino?.password,
+                    extraConfig: x.options.trino?.extraConfig
                   }
                 )
-              : c.type === ConnectionTypeEnum.Presto
+              : x.type === ConnectionTypeEnum.Presto
                 ? new PrestoConnection(
-                    c.connectionId,
+                    x.connectionId,
                     {},
                     {
-                      server: c.prestoOptions?.server,
-                      port: c.prestoOptions?.port,
-                      catalog: c.prestoOptions?.catalog,
-                      schema: c.prestoOptions?.schema,
-                      user: c.prestoOptions?.user,
-                      password: c.prestoOptions?.password,
-                      extraConfig: c.prestoOptions?.extraConfig
+                      server: x.options.presto?.server,
+                      port: x.options.presto?.port,
+                      catalog: x.options.presto?.catalog,
+                      schema: x.options.presto?.schema,
+                      user: x.options.presto?.user,
+                      password: x.options.presto?.password,
+                      extraConfig: x.options.presto?.extraConfig
                     }
                   )
-                : c.type === ConnectionTypeEnum.SnowFlake
-                  ? new SnowflakeConnection(c.connectionId, {
+                : x.type === ConnectionTypeEnum.SnowFlake
+                  ? new SnowflakeConnection(x.connectionId, {
                       connOptions: {
-                        account: c.snowflakeOptions?.account,
-                        warehouse: c.snowflakeOptions?.warehouse,
-                        database: c.snowflakeOptions?.database,
-                        username: c.snowflakeOptions?.username,
-                        password: c.snowflakeOptions?.password
+                        account: x.options.snowflake?.account,
+                        warehouse: x.options.snowflake?.warehouse,
+                        database: x.options.snowflake?.database,
+                        username: x.options.snowflake?.username,
+                        password: x.options.snowflake?.password
                         //  schema?: string | undefined;
                         //  role?: string | undefined;
                         //  clientSessionKeepAlive?: boolean | undefined;
@@ -113,13 +111,13 @@ export function makeMalloyConnections(item: {
                         //  privateKeyPass?: string;
                       }
                     })
-                  : c.type === ConnectionTypeEnum.MotherDuck
+                  : x.type === ConnectionTypeEnum.MotherDuck
                     ? new DuckDBConnection({
-                        name: c.connectionId,
-                        databasePath: isDefined(c.motherduckOptions?.database)
-                          ? `md:${c.motherduckOptions?.database}`
+                        name: x.connectionId,
+                        databasePath: isDefined(x.options.motherduck?.database)
+                          ? `md:${x.options.motherduck?.database}`
                           : `md:`,
-                        motherDuckToken: c.motherduckOptions?.motherduckToken
+                        motherDuckToken: x.options.motherduck?.motherduckToken
                         // additionalExtensions?: string[];
                         // workingDirectory?: string;
                         // readOnly?: boolean;

@@ -394,15 +394,17 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c1_postgres',
               type: ConnectionTypeEnum.PostgreSQL,
-              postgresOptions: {
-                host: this.cs.get<BackendConfig['demoProjectDwhPostgresHost']>(
-                  'demoProjectDwhPostgresHost'
-                ),
-                port: 5436,
-                database: 'p_db',
-                username: 'postgres',
-                password: demoProjectDwhPostgresPassword,
-                isSSL: false
+              options: {
+                postgres: {
+                  host: this.cs.get<
+                    BackendConfig['demoProjectDwhPostgresHost']
+                  >('demoProjectDwhPostgresHost'),
+                  port: 5436,
+                  database: 'p_db',
+                  username: 'postgres',
+                  password: demoProjectDwhPostgresPassword,
+                  isSSL: false
+                }
               }
             });
 
@@ -431,12 +433,14 @@ export class AppModule implements OnModuleInit {
           //     envId: PROJECT_ENV_PROD,
           //     connectionId: 'c2_clickhouse',
           //     type: ConnectionTypeEnum.ClickHouse,
-          //     clickhouseOptions: {
-          //       host: 'dwh-clickhouse',
-          //       port: 8123,
-          //       username: 'c_user',
-          //       password: demoProjectDwhClickhousePassword,
-          //       isSSL: false
+          //     options: {
+          //       clickhouse: {
+          //         host: 'dwh-clickhouse',
+          //         port: 8123,
+          //         username: 'c_user',
+          //         password: demoProjectDwhClickhousePassword,
+          //         isSSL: false
+          //       }
           //     }
           //   });
 
@@ -469,11 +473,13 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c3_bigquery',
               type: ConnectionTypeEnum.BigQuery,
-              bigqueryOptions: {
-                serviceAccountCredentials: bigqueryTestCredentials,
-                googleCloudProject: bigqueryTestCredentials?.project_id,
-                googleCloudClientEmail: bigqueryTestCredentials?.client_email,
-                bigqueryQuerySizeLimitGb: 1
+              options: {
+                bigquery: {
+                  serviceAccountCredentials: bigqueryTestCredentials,
+                  googleCloudProject: bigqueryTestCredentials?.project_id,
+                  googleCloudClientEmail: bigqueryTestCredentials?.client_email,
+                  bigqueryQuerySizeLimitGb: 1
+                }
               }
             });
 
@@ -502,18 +508,20 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c4_snowflake',
               type: ConnectionTypeEnum.SnowFlake,
-              snowflakeOptions: {
-                account: demoProjectDwhSnowflakeAccount,
-                warehouse: this.cs.get<
-                  BackendConfig['demoProjectDwhSnowflakeWarehouse']
-                >('demoProjectDwhSnowflakeWarehouse'),
-                database: undefined,
-                username: this.cs.get<
-                  BackendConfig['demoProjectDwhSnowflakeUsername']
-                >('demoProjectDwhSnowflakeUsername'),
-                password: this.cs.get<
-                  BackendConfig['demoProjectDwhSnowflakePassword']
-                >('demoProjectDwhSnowflakePassword')
+              options: {
+                snowflake: {
+                  account: demoProjectDwhSnowflakeAccount,
+                  warehouse: this.cs.get<
+                    BackendConfig['demoProjectDwhSnowflakeWarehouse']
+                  >('demoProjectDwhSnowflakeWarehouse'),
+                  database: undefined,
+                  username: this.cs.get<
+                    BackendConfig['demoProjectDwhSnowflakeUsername']
+                  >('demoProjectDwhSnowflakeUsername'),
+                  password: this.cs.get<
+                    BackendConfig['demoProjectDwhSnowflakePassword']
+                  >('demoProjectDwhSnowflakePassword')
+                }
               }
             });
 
@@ -542,11 +550,13 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c5_duckdb',
               type: ConnectionTypeEnum.MotherDuck,
-              motherduckOptions: {
-                motherduckToken: demoProjectDwhMotherDuckToken,
-                database: 'db1',
-                attachModeSingle: true,
-                accessModeReadOnly: true
+              options: {
+                motherduck: {
+                  motherduckToken: demoProjectDwhMotherDuckToken,
+                  database: 'db1',
+                  attachModeSingle: true,
+                  accessModeReadOnly: true
+                }
               }
             });
 
@@ -575,20 +585,22 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c6_mysql',
               type: ConnectionTypeEnum.MySQL,
-              mysqlOptions: {
-                host: this.cs.get<BackendConfig['demoProjectDwhMysqlHost']>(
-                  'demoProjectDwhMysqlHost'
-                ),
-                port: this.cs.get<BackendConfig['demoProjectDwhMysqlPort']>(
-                  'demoProjectDwhMysqlPort'
-                ),
-                database: this.cs.get<
-                  BackendConfig['demoProjectDwhMysqlDatabase']
-                >('demoProjectDwhMysqlDatabase'),
-                user: this.cs.get<BackendConfig['demoProjectDwhMysqlUser']>(
-                  'demoProjectDwhMysqlUser'
-                ),
-                password: demoProjectDwhMysqlPassword
+              options: {
+                mysql: {
+                  host: this.cs.get<BackendConfig['demoProjectDwhMysqlHost']>(
+                    'demoProjectDwhMysqlHost'
+                  ),
+                  port: this.cs.get<BackendConfig['demoProjectDwhMysqlPort']>(
+                    'demoProjectDwhMysqlPort'
+                  ),
+                  database: this.cs.get<
+                    BackendConfig['demoProjectDwhMysqlDatabase']
+                  >('demoProjectDwhMysqlDatabase'),
+                  user: this.cs.get<BackendConfig['demoProjectDwhMysqlUser']>(
+                    'demoProjectDwhMysqlUser'
+                  ),
+                  password: demoProjectDwhMysqlPassword
+                }
               }
             });
 
@@ -623,16 +635,19 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c7_google',
               type: ConnectionTypeEnum.GoogleApi,
-              storeGoogleApiOptions: {
-                baseUrl: 'https://analyticsdata.googleapis.com',
-                headers: [],
-                googleAuthScopes: [
-                  'https://www.googleapis.com/auth/analytics.readonly'
-                ],
-                serviceAccountCredentials: googleApiTestCredentials,
-                googleCloudProject: googleApiTestCredentials?.project_id,
-                googleCloudClientEmail: googleApiTestCredentials?.client_email,
-                googleAccessToken: undefined
+              options: {
+                storeGoogleApi: {
+                  baseUrl: 'https://analyticsdata.googleapis.com',
+                  headers: [],
+                  googleAuthScopes: [
+                    'https://www.googleapis.com/auth/analytics.readonly'
+                  ],
+                  serviceAccountCredentials: googleApiTestCredentials,
+                  googleCloudProject: googleApiTestCredentials?.project_id,
+                  googleCloudClientEmail:
+                    googleApiTestCredentials?.client_email,
+                  googleAccessToken: undefined
+                }
               }
             });
 
@@ -661,15 +676,17 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c8_trino',
               type: ConnectionTypeEnum.Trino,
-              trinoOptions: {
-                server: 'http://dwh-trino:8081',
-                catalog: undefined,
-                schema: undefined,
-                user: demoProjectDwhTrinoUser,
-                password: this.cs.get<
-                  BackendConfig['demoProjectDwhTrinoPassword']
-                >('demoProjectDwhTrinoPassword'),
-                extraConfig: undefined
+              options: {
+                trino: {
+                  server: 'http://dwh-trino:8081',
+                  catalog: undefined,
+                  schema: undefined,
+                  user: demoProjectDwhTrinoUser,
+                  password: this.cs.get<
+                    BackendConfig['demoProjectDwhTrinoPassword']
+                  >('demoProjectDwhTrinoPassword'),
+                  extraConfig: undefined
+                }
               }
             });
 
@@ -698,16 +715,18 @@ export class AppModule implements OnModuleInit {
               envId: PROJECT_ENV_PROD,
               connectionId: 'c9_presto',
               type: ConnectionTypeEnum.Presto,
-              prestoOptions: {
-                server: 'http://dwh-presto',
-                port: 8082,
-                catalog: undefined,
-                schema: undefined,
-                user: demoProjectDwhPrestoUser,
-                password: this.cs.get<
-                  BackendConfig['demoProjectDwhPrestoPassword']
-                >('demoProjectDwhPrestoPassword'),
-                extraConfig: undefined
+              options: {
+                presto: {
+                  server: 'http://dwh-presto',
+                  port: 8082,
+                  catalog: undefined,
+                  schema: undefined,
+                  user: demoProjectDwhPrestoUser,
+                  password: this.cs.get<
+                    BackendConfig['demoProjectDwhPrestoPassword']
+                  >('demoProjectDwhPrestoPassword'),
+                  extraConfig: undefined
+                }
               }
             });
 

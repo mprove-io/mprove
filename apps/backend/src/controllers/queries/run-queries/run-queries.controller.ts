@@ -14,7 +14,10 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
+import {
+  ConnectionEnt,
+  connectionsTable
+} from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
@@ -41,6 +44,7 @@ import { StoreService } from '~backend/services/store.service';
 import { StructsService } from '~backend/services/structs.service';
 import { TrinoService } from '~backend/services/trino.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -50,11 +54,14 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
+import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
 import {
   ToBackendRunQueriesRequest,
   ToBackendRunQueriesResponsePayload
 } from '~common/interfaces/to-backend/queries/to-backend-run-queries';
 import { ServerError } from '~common/models/server-error';
+import { decryptData } from '~node-common/functions/encryption/decrypt-data';
+import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let { JWT } = require('google-auth-library');
 let retry = require('async-retry');
@@ -81,6 +88,7 @@ export class RunQueriesController {
     private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
     private wrapToApiService: WrapToApiService,
+    private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -162,7 +170,7 @@ export class RunQueriesController {
     // console.log('uniqueGoogleApiConnectionIds');
     // console.log(uniqueGoogleApiConnectionIds);
 
-    let uniqueGoogleApiConnectionsWithAnyEnvId =
+    let uniqueGoogleApiConnectionsWithAnyEnvId: ConnectionEnt[] =
       await this.db.drizzle.query.connectionsTable.findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),
@@ -179,20 +187,28 @@ export class RunQueriesController {
         // console.log('googleApiConnections start');
         // let tsStart = Date.now();
 
+        let cnOptions = decryptData<ConnectionOptions>({
+          encryptedString: connection.options,
+          keyBase64:
+            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+        });
+
         let authClient = new JWT({
-          email: (
-            connection.storeGoogleApiOptions.serviceAccountCredentials as any
-          ).client_email,
-          key: (
-            connection.storeGoogleApiOptions.serviceAccountCredentials as any
-          ).private_key,
-          scopes: connection.storeGoogleApiOptions.googleAuthScopes
+          email:
+            cnOptions.storeGoogleApi.serviceAccountCredentials.client_email,
+          key: cnOptions.storeGoogleApi.serviceAccountCredentials.private_key,
+          scopes: cnOptions.storeGoogleApi.googleAuthScopes
         });
 
         let tokens = await authClient.authorize();
 
-        connection.storeGoogleApiOptions.googleAccessToken =
-          tokens.access_token;
+        cnOptions.storeGoogleApi.googleAccessToken = tokens.access_token;
+
+        connection.options = encryptData({
+          keyBase64:
+            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey'),
+          data: cnOptions
+        });
 
         // console.log(Date.now() - tsStart);
         // console.log('googleApiConnections end');

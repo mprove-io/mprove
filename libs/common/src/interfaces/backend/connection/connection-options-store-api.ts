@@ -1,12 +1,12 @@
 import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ConnectionOptionsHeader } from './connection-options-header';
+import { ApiHeader } from './api-header';
 
-export class ConnectionStoreApiOptions {
+export class ConnectionOptionsStoreApi {
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionOptionsHeader)
-  headers: ConnectionOptionsHeader[];
+  @Type(() => ApiHeader)
+  headers: ApiHeader[];
 
   @IsOptional()
   @IsString()
