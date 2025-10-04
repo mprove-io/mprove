@@ -219,6 +219,13 @@ export class SaveCreateChartController {
       // malloyChartFilePath: malloyChartFilePath
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -226,21 +233,17 @@ export class SaveCreateChartController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,
         parentNodeId: parentNodeId,
         fileName: fileName,
-        fileText: chartFileText,
+        fileText: chartFileText
         // secondFileName: isDefined(malloyFileText)
         //   ? malloyQueryFileName
         //   : undefined,
         // secondFileText: malloyFileText,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
       }
     };
 

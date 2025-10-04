@@ -94,6 +94,13 @@ export class RevertRepoToLastCommitController {
       member: member
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskRevertRepoToLastCommitRequest: ToDiskRevertRepoToLastCommitRequest =
       {
         info: {
@@ -102,13 +109,9 @@ export class RevertRepoToLastCommitController {
         },
         payload: {
           orgId: project.orgId,
-          projectId: projectId,
+          project: apiProject,
           repoId: repoId,
-          branch: branchId,
-          remoteType: project.remoteType,
-          gitUrl: project.gitUrl,
-          privateKey: project.privateKey,
-          publicKey: project.publicKey
+          branch: branchId
         }
       };
 

@@ -40,18 +40,10 @@ export class CreateProjectService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      projectName,
-      testProjectId,
-      devRepoId,
-      userAlias,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, testProjectId, devRepoId, userAlias } =
+      requestValid.payload;
+
+    let { name: projectName, projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -83,8 +75,8 @@ export class CreateProjectService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     let cloneOptions: nodegit.CloneOptions = {

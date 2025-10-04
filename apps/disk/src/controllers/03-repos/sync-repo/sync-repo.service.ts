@@ -48,19 +48,16 @@ export class SyncRepoService {
 
     let {
       orgId,
-      projectId,
+      project,
       repoId,
       branch,
       lastCommit,
       lastSyncTime,
       localChangedFiles,
-      localDeletedFiles,
-      userAlias,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
+      localDeletedFiles
     } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -77,8 +74,8 @@ export class SyncRepoService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     let isOrgExist = await isPathExist(orgDir);

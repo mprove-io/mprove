@@ -38,17 +38,9 @@ export class GetCatalogNodesService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      repoId,
-      branch,
-      isFetch,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, repoId, branch, isFetch } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -85,8 +77,8 @@ export class GetCatalogNodesService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     if (branch !== null && typeof branch !== 'undefined') {

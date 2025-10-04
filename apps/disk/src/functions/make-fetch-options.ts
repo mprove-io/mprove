@@ -6,9 +6,9 @@ import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 export function makeFetchOptions(item: {
   remoteType: ProjectRemoteTypeEnum;
   keyDir: string;
-  gitUrl?: string;
-  publicKey?: string;
-  privateKey?: string;
+  gitUrl: string;
+  publicKey: string;
+  privateKey: string;
 }) {
   let pubKeyPath = `${item.keyDir}/id_rsa.pub`;
   let privateKeyPath = `${item.keyDir}/id_rsa`;

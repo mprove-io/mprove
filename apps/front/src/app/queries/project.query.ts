@@ -12,7 +12,10 @@ let projectState: ProjectState = {
   defaultBranch: undefined,
   remoteType: undefined,
   gitUrl: undefined,
-  publicKey: undefined,
+  tab: {
+    privateKey: undefined,
+    publicKey: undefined
+  },
   serverTs: 1
 };
 

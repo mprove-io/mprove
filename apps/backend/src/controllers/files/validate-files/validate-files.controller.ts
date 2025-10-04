@@ -50,6 +50,7 @@ let retry = require('async-retry');
 @Controller()
 export class ValidateFilesController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
@@ -57,7 +58,6 @@ export class ValidateFilesController {
     private branchesService: BranchesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -106,20 +106,23 @@ export class ValidateFilesController {
       member: member
     });
 
-    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
+    let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
         traceId: reqValid.info.traceId
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
-        branch: branchId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        branch: branchId
       }
     };
 
@@ -129,7 +132,7 @@ export class ValidateFilesController {
           orgId: project.orgId,
           projectId: projectId
         }),
-        message: getCatalogFilesRequest,
+        message: toDiskGetCatalogFilesRequest,
         checkIsOk: true
       });
 

@@ -77,6 +77,13 @@ export class GetRepoController {
       envId: envId
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
@@ -84,14 +91,10 @@ export class GetRepoController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
-        isFetch: isFetch,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        isFetch: isFetch
       }
     };
 

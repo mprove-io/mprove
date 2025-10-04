@@ -161,6 +161,13 @@ export class CreateMemberController {
       isExplorer: true
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
@@ -168,12 +175,8 @@ export class CreateMemberController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
-        devRepoId: newMember.memberId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        project: apiProject,
+        devRepoId: newMember.memberId
       }
     };
 

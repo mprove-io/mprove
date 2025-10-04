@@ -1,12 +1,6 @@
 import { Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { IsNumber, IsString, ValidateNested } from 'class-validator';
+import { Project } from '~common/interfaces/backend/project';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
 import { Repo } from '~common/interfaces/disk/repo';
@@ -17,8 +11,9 @@ export class ToDiskSyncRepoRequestPayload {
   @IsString()
   orgId: string;
 
-  @IsString()
-  projectId: string;
+  @ValidateNested()
+  @Type(() => Project)
+  project: Project;
 
   @IsString()
   repoId: string;
@@ -39,24 +34,6 @@ export class ToDiskSyncRepoRequestPayload {
   @ValidateNested()
   @Type(() => DiskSyncFile)
   localDeletedFiles: DiskSyncFile[];
-
-  @IsString()
-  userAlias: string;
-
-  @IsEnum(ProjectRemoteTypeEnum)
-  remoteType: ProjectRemoteTypeEnum;
-
-  @IsString()
-  @IsOptional()
-  gitUrl?: string;
-
-  @IsString()
-  @IsOptional()
-  privateKey?: string;
-
-  @IsString()
-  @IsOptional()
-  publicKey?: string;
 }
 
 export class ToDiskSyncRepoRequest extends ToDiskRequest {

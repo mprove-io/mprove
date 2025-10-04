@@ -38,15 +38,9 @@ export class CreateDevRepoService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      devRepoId,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, devRepoId } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -77,8 +71,8 @@ export class CreateDevRepoService {
         remoteType: remoteType,
         keyDir: keyDir,
         gitUrl: gitUrl,
-        privateKey: privateKey,
-        publicKey: publicKey
+        privateKey: project.tab.privateKey,
+        publicKey: project.tab.publicKey
       })
     };
 

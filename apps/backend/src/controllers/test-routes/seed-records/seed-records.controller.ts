@@ -48,6 +48,7 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isDefined } from '~common/functions/is-defined';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
+import { Project } from '~common/interfaces/backend/project';
 import {
   ToBackendSeedRecordsRequest,
   ToBackendSeedRecordsRequestPayloadMembersItem,
@@ -64,6 +65,7 @@ import {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponse
 } from '~common/interfaces/to-disk/08-seed/to-disk-seed-project';
+import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let retry = require('async-retry');
 
@@ -219,15 +221,17 @@ export class SeedRecordsController {
         1,
         payloadProjects,
         async (x: ToBackendSeedRecordsRequestPayloadProjectsItem) => {
-          let newProject: ProjectEnt = {
+          let newProject: Project = {
             orgId: x.orgId,
             projectId: x.projectId || makeId(),
             name: x.name,
             defaultBranch: x.defaultBranch,
             remoteType: x.remoteType,
             gitUrl: x.gitUrl,
-            privateKey: x.privateKey,
-            publicKey: x.publicKey,
+            tab: {
+              privateKey: x.privateKey,
+              publicKey: x.publicKey
+            },
             serverTs: undefined
           };
 
@@ -244,16 +248,10 @@ export class SeedRecordsController {
             },
             payload: {
               orgId: newProject.orgId,
-              projectId: newProject.projectId,
-              projectName: newProject.name,
+              project: newProject,
               testProjectId: x.testProjectId,
               devRepoId: users[0].userId,
-              userAlias: users[0].alias,
-              defaultBranch: newProject.defaultBranch,
-              remoteType: newProject.remoteType,
-              gitUrl: newProject.gitUrl,
-              privateKey: newProject.privateKey,
-              publicKey: newProject.publicKey
+              userAlias: users[0].alias
             }
           };
 
@@ -357,7 +355,22 @@ export class SeedRecordsController {
             needValidate: false
           });
 
-          projects.push(newProject);
+          let newProjectEnt: ProjectEnt = {
+            orgId: newProject.orgId,
+            projectId: newProject.projectId,
+            name: newProject.name,
+            defaultBranch: newProject.defaultBranch,
+            remoteType: newProject.remoteType,
+            gitUrl: newProject.gitUrl,
+            tab: encryptData({
+              data: newProject.tab,
+              keyBase64:
+                this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+            }),
+            serverTs: newProject.serverTs
+          };
+
+          projects.push(newProjectEnt);
           envs.push(prodEnv);
 
           structs = [...structs, devStruct, prodStruct];

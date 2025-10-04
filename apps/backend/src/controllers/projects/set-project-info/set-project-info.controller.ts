@@ -77,7 +77,9 @@ export class SetProjectInfoController {
     let payload: ToBackendSetProjectInfoResponsePayload = {
       project: this.wrapToApiService.wrapToApiProject({
         project: project,
-        isAdmin: userMember.isAdmin
+        isAddPrivateKey: false,
+        isAddPublicKey: userMember.isAdmin,
+        isAddGitUrl: userMember.isAdmin
       })
     };
 

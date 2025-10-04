@@ -17,22 +17,26 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
+import { Project } from '~common/interfaces/backend/project';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import {
   ToDiskCreateProjectRequest,
   ToDiskCreateProjectResponse
 } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ServerError } from '~common/models/server-error';
+import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 import { BlockmlService } from './blockml.service';
 import { HashService } from './hash.service';
 import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
+import { WrapToApiService } from './wrap-to-api.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class ProjectsService {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private hashService: HashService,
@@ -87,6 +91,20 @@ export class ProjectsService {
       connections
     } = item;
 
+    let apiProject: Project = {
+      orgId: orgId,
+      projectId: projectId,
+      name: name,
+      remoteType: remoteType,
+      defaultBranch: undefined,
+      gitUrl: gitUrl,
+      tab: {
+        privateKey: privateKey,
+        publicKey: publicKey
+      },
+      serverTs: undefined
+    };
+
     let toDiskCreateProjectRequest: ToDiskCreateProjectRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
@@ -94,15 +112,10 @@ export class ProjectsService {
       },
       payload: {
         orgId: orgId,
-        projectId: projectId,
-        projectName: name,
+        project: apiProject,
         devRepoId: user.userId,
         userAlias: user.alias,
-        testProjectId: testProjectId,
-        remoteType: remoteType,
-        gitUrl: gitUrl,
-        privateKey: privateKey,
-        publicKey: publicKey
+        testProjectId: testProjectId
       }
     };
 
@@ -123,8 +136,10 @@ export class ProjectsService {
       defaultBranch: diskResponse.payload.defaultBranch,
       remoteType: remoteType,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey,
+      tab: encryptData({
+        data: apiProject.tab,
+        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+      }),
       serverTs: undefined
     };
 

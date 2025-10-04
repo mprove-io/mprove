@@ -37,18 +37,10 @@ export class SeedProjectService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      projectName,
-      devRepoId,
-      userAlias,
-      testProjectId,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, devRepoId, userAlias, testProjectId } =
+      requestValid.payload;
+
+    let { name: projectName, projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -69,8 +61,8 @@ export class SeedProjectService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     let cloneOptions: nodegit.CloneOptions = {

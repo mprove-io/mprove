@@ -109,6 +109,13 @@ export class PushRepoController {
       });
     }
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskPushRepoRequest: ToDiskPushRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskPushRepo,
@@ -116,14 +123,10 @@ export class PushRepoController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
-        userAlias: user.alias,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        userAlias: user.alias
       }
     };
 

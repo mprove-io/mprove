@@ -59,6 +59,13 @@ export class GetFileController {
       memberId: user.userId
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskGetFileRequest: ToDiskGetFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskGetFile,
@@ -66,15 +73,11 @@ export class GetFileController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: fileNodeId,
-        panel: panel,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        panel: panel
       }
     };
 

@@ -106,6 +106,13 @@ export class PullRepoController {
       member: member
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskPullRepoRequest: ToDiskPullRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskPullRepo,
@@ -113,14 +120,10 @@ export class PullRepoController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
-        userAlias: user.alias,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        userAlias: user.alias
       }
     };
 

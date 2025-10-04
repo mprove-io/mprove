@@ -226,6 +226,13 @@ export class SaveCreateReportController {
 
     let fileName = `${newReportId}${FileExtensionEnum.Report}`;
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -233,17 +240,13 @@ export class SaveCreateReportController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,
         parentNodeId: parentNodeId,
         fileName: fileName,
-        fileText: repFileText,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        fileText: repFileText
       }
     };
 

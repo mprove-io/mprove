@@ -91,6 +91,13 @@ export class MoveCatalogNodeController {
       member: member
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskMoveCatalogNodeRequest: ToDiskMoveCatalogNodeRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskMoveCatalogNode,
@@ -98,15 +105,11 @@ export class MoveCatalogNodeController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         fromNodeId: fromNodeId,
-        toNodeId: toNodeId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        toNodeId: toNodeId
       }
     };
 

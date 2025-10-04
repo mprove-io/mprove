@@ -49,6 +49,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateFolderController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
@@ -57,7 +58,6 @@ export class CreateFolderController {
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -101,6 +101,13 @@ export class CreateFolderController {
       envId: envId
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskCreateFolderRequest: ToDiskCreateFolderRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateFolder,
@@ -108,15 +115,11 @@ export class CreateFolderController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
-        folderName: folderName.toLowerCase(),
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        folderName: folderName.toLowerCase()
       }
     };
 

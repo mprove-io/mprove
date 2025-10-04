@@ -41,17 +41,9 @@ export class DeleteFolderService {
     });
 
     let { traceId } = requestValid.info;
-    let {
-      orgId,
-      projectId,
-      repoId,
-      branch,
-      folderNodeId,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, repoId, branch, folderNodeId } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -101,8 +93,8 @@ export class DeleteFolderService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     await checkoutBranch({

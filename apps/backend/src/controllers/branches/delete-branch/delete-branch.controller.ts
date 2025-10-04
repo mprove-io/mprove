@@ -22,6 +22,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -41,6 +42,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteBranchController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
@@ -85,6 +87,13 @@ export class DeleteBranchController {
       });
     }
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskDeleteBranchRequest: ToDiskDeleteBranchRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteBranch,
@@ -92,14 +101,9 @@ export class DeleteBranchController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
-        branch: branchId,
-        defaultBranch: project.defaultBranch,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        branch: branchId
       }
     };
 

@@ -91,6 +91,13 @@ export class RenameCatalogNodeController {
       member: member
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskRenameCatalogNodeRequest: ToDiskRenameCatalogNodeRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskRenameCatalogNode,
@@ -98,15 +105,11 @@ export class RenameCatalogNodeController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         nodeId: nodeId,
-        newName: newName.toLowerCase(),
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        newName: newName.toLowerCase()
       }
     };
 

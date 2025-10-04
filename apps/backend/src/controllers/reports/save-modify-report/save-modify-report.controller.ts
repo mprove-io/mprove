@@ -219,6 +219,13 @@ export class SaveModifyReportController {
       timezone: UTC
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
@@ -226,16 +233,12 @@ export class SaveModifyReportController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingModReport.filePath,
         userAlias: user.alias,
-        content: repFileText,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        content: repFileText
       }
     };
 

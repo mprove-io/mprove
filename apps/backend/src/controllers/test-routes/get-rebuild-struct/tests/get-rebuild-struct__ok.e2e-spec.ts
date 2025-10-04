@@ -11,6 +11,7 @@ import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
+import { Project } from '~common/interfaces/backend/project';
 import { ToBackendGetRebuildStructRequest } from '~common/interfaces/to-backend/test-routes/to-backend-get-rebuild-struct';
 import { ToBlockmlRebuildStructResponse } from '~common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
 import {
@@ -92,23 +93,31 @@ test('1', async t => {
 
     // to disk
 
-    let seedProjectReq: ToDiskSeedProjectRequest = {
+    let apiProject: Project = {
+      orgId: orgId,
+      projectId: projectId,
+      name: projectName,
+      defaultBranch: BRANCH_MAIN,
+      remoteType: ProjectRemoteTypeEnum.Managed,
+      gitUrl: undefined,
+      tab: {
+        privateKey: undefined,
+        publicKey: undefined
+      },
+      serverTs: 0
+    };
+
+    let toDiskSeedProjectReq: ToDiskSeedProjectRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSeedProject,
         traceId: traceId
       },
       payload: {
         orgId: orgId,
-        projectId: projectId,
-        projectName: projectName,
+        project: apiProject,
         testProjectId: testProjectId,
         devRepoId: devRepoId,
-        userAlias: userAlias,
-        defaultBranch: BRANCH_MAIN,
-        remoteType: ProjectRemoteTypeEnum.Managed,
-        gitUrl: undefined,
-        privateKey: undefined,
-        publicKey: undefined
+        userAlias: userAlias
       }
     };
 
@@ -118,7 +127,7 @@ test('1', async t => {
         orgId: orgId,
         projectId: null
       }),
-      message: seedProjectReq
+      message: toDiskSeedProjectReq
     });
 
     // to backend

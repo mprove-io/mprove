@@ -42,18 +42,10 @@ export class GetFileService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      repoId,
-      branch,
-      fileNodeId,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey,
-      panel
-    } = requestValid.payload;
+    let { orgId, project, repoId, branch, fileNodeId, panel } =
+      requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -102,8 +94,8 @@ export class GetFileService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     await checkoutBranch({

@@ -28,6 +28,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ReportsService } from '~backend/services/reports.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -47,6 +48,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteReportController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
@@ -122,6 +124,13 @@ export class DeleteReportController {
       });
     }
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
@@ -129,15 +138,11 @@ export class DeleteReportController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingReport.filePath,
-        userAlias: user.alias,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        userAlias: user.alias
       }
     };
 

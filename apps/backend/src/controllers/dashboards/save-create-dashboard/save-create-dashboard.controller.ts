@@ -31,6 +31,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   EMPTY_STRUCT_ID,
@@ -67,6 +68,7 @@ let retry = require('async-retry');
 @Controller()
 export class SaveCreateDashboardController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rabbitService: RabbitService,
@@ -276,6 +278,13 @@ export class SaveCreateDashboardController {
       // secondFileContent = malloyFileText;
     }
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -283,19 +292,15 @@ export class SaveCreateDashboardController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
         fileName: fileName,
         fileText: dashFileText,
+        userAlias: user.alias
         // secondFileName: malloyFileName,
         // secondFileText: secondFileContent,
-        userAlias: user.alias,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
       }
     };
 

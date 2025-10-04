@@ -49,6 +49,7 @@ let retry = require('async-retry');
 @Controller()
 export class SyncRepoController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
@@ -57,7 +58,6 @@ export class SyncRepoController {
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private blockmlService: BlockmlService,
-    private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -108,6 +108,13 @@ export class SyncRepoController {
       envId: envId
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskSyncRepoRequest: ToDiskSyncRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSyncRepo,
@@ -115,18 +122,13 @@ export class SyncRepoController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         lastCommit: lastCommit,
         lastSyncTime: lastSyncTime,
         localChangedFiles: localChangedFiles,
-        localDeletedFiles: localDeletedFiles,
-        userAlias: user.alias,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        localDeletedFiles: localDeletedFiles
       }
     };
 

@@ -38,18 +38,10 @@ export class CreateFolderService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      repoId,
-      branch,
-      folderName,
-      parentNodeId,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, repoId, branch, folderName, parentNodeId } =
+      requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -102,8 +94,8 @@ export class CreateFolderService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     await checkoutBranch({

@@ -47,7 +47,7 @@ export class CreateFileService {
 
     let {
       orgId,
-      projectId,
+      project,
       repoId,
       branch,
       fileName,
@@ -55,12 +55,10 @@ export class CreateFileService {
       // secondFileName,
       // secondFileText,
       parentNodeId,
-      userAlias,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
+      userAlias
     } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -107,8 +105,8 @@ export class CreateFileService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     await checkoutBranch({

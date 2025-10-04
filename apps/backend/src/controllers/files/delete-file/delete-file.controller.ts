@@ -91,6 +91,13 @@ export class DeleteFileController {
       member: member
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteFile,
@@ -98,15 +105,11 @@ export class DeleteFileController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: fileNodeId,
-        userAlias: user.alias,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        userAlias: user.alias
       }
     };
 

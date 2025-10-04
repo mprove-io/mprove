@@ -106,6 +106,13 @@ export class RevertRepoToRemoteController {
       member: member
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskRevertRepoToRemoteRequest: ToDiskRevertRepoToRemoteRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskRevertRepoToRemote,
@@ -113,13 +120,9 @@ export class RevertRepoToRemoteController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
-        branch: branchId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        branch: branchId
       }
     };
 

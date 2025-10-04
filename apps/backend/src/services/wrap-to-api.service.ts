@@ -40,6 +40,7 @@ import { Org } from '~common/interfaces/backend/org';
 import { OrgsItem } from '~common/interfaces/backend/orgs-item';
 import { Project } from '~common/interfaces/backend/project';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { ProjectTab } from '~common/interfaces/backend/project-tab';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import { ReportX } from '~common/interfaces/backend/report-x';
 import { Struct } from '~common/interfaces/backend/struct';
@@ -67,7 +68,7 @@ export class WrapToApiService {
 
     let options = cTab.options;
 
-    return {
+    let projectConnection: ProjectConnection = {
       projectId: connection.projectId,
       connectionId: connection.connectionId,
       envId: connection.envId,
@@ -202,6 +203,8 @@ export class WrapToApiService {
       },
       serverTs: connection.serverTs
     };
+
+    return projectConnection;
   }
 
   wrapToApiDashboard(item: {
@@ -462,20 +465,32 @@ export class WrapToApiService {
 
   wrapToApiProject(item: {
     project: ProjectEnt;
-    isAdmin: boolean;
+    isAddPrivateKey: boolean;
+    isAddPublicKey: boolean;
+    isAddGitUrl: boolean;
   }): Project {
-    let { project, isAdmin } = item;
+    let { project, isAddGitUrl, isAddPrivateKey, isAddPublicKey } = item;
 
-    return {
+    let pTab = decryptData<ProjectTab>({
+      encryptedString: project.tab,
+      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+    });
+
+    let apiProject: Project = {
       orgId: project.orgId,
       projectId: project.projectId,
       name: project.name,
       remoteType: project.remoteType,
       defaultBranch: project.defaultBranch,
-      gitUrl: isAdmin === true ? project.gitUrl : undefined,
-      publicKey: isAdmin === true ? project.publicKey : undefined,
+      gitUrl: isAddGitUrl === true ? project.gitUrl : undefined,
+      tab: {
+        privateKey: isAddPrivateKey === true ? pTab.privateKey : undefined,
+        publicKey: isAddPublicKey === true ? pTab.publicKey : undefined
+      },
       serverTs: Number(project.serverTs)
     };
+
+    return apiProject;
   }
 
   wrapToApiProjectsItem(project: ProjectEnt): ProjectsItem {

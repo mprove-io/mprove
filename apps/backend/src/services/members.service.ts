@@ -35,12 +35,14 @@ import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
 import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
+import { WrapToApiService } from './wrap-to-api.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class MembersService {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private makerService: MakerService,
@@ -194,6 +196,13 @@ export class MembersService {
             isExplorer: true
           });
 
+          let apiProject = this.wrapToApiService.wrapToApiProject({
+            project: project,
+            isAddGitUrl: true,
+            isAddPrivateKey: true,
+            isAddPublicKey: true
+          });
+
           let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
             info: {
               name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
@@ -201,12 +210,8 @@ export class MembersService {
             },
             payload: {
               orgId: project.orgId,
-              projectId: demoProjectId,
-              devRepoId: newMember.memberId,
-              remoteType: project.remoteType,
-              gitUrl: project.gitUrl,
-              privateKey: project.privateKey,
-              publicKey: project.publicKey
+              project: apiProject,
+              devRepoId: newMember.memberId
             }
           };
 

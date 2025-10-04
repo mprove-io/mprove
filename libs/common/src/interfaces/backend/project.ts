@@ -1,5 +1,13 @@
-import { IsEnum, IsInt, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ProjectTab } from './project-tab';
 
 export class Project {
   @IsString()
@@ -11,6 +19,7 @@ export class Project {
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsString()
   defaultBranch: string;
 
@@ -20,9 +29,11 @@ export class Project {
   @IsString()
   gitUrl: string;
 
-  @IsString()
-  publicKey: string;
+  @ValidateNested()
+  @Type(() => ProjectTab)
+  tab: ProjectTab;
 
+  @IsOptional()
   @IsInt()
   serverTs: number;
 }

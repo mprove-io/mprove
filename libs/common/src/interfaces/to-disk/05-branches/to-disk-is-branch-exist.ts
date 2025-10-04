@@ -1,12 +1,6 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { Project } from '~common/interfaces/backend/project';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToDiskRequest } from '../to-disk-request';
 
@@ -14,8 +8,9 @@ export class ToDiskIsBranchExistRequestPayload {
   @IsString()
   orgId: string;
 
-  @IsString()
-  projectId: string;
+  @ValidateNested()
+  @Type(() => Project)
+  project: Project;
 
   @IsString()
   repoId: string;
@@ -25,21 +20,6 @@ export class ToDiskIsBranchExistRequestPayload {
 
   @IsBoolean()
   isRemote: boolean;
-
-  @IsEnum(ProjectRemoteTypeEnum)
-  remoteType: ProjectRemoteTypeEnum;
-
-  @IsString()
-  @IsOptional()
-  gitUrl?: string;
-
-  @IsString()
-  @IsOptional()
-  privateKey?: string;
-
-  @IsString()
-  @IsOptional()
-  publicKey?: string;
 }
 
 export class ToDiskIsBranchExistRequest extends ToDiskRequest {

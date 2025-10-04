@@ -38,16 +38,9 @@ export class GetCatalogFilesService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      repoId,
-      branch,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, repoId, branch } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -94,8 +87,8 @@ export class GetCatalogFilesService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     await checkoutBranch({

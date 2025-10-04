@@ -31,6 +31,7 @@ import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
@@ -71,6 +72,7 @@ let retry = require('async-retry');
 @Controller()
 export class SpecialRebuildStructsController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
@@ -148,20 +150,23 @@ export class SpecialRebuildStructsController {
       };
 
       if (skipRebuild === false) {
-        let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
+        let apiProject = this.wrapToApiService.wrapToApiProject({
+          project: project,
+          isAddGitUrl: true,
+          isAddPrivateKey: true,
+          isAddPublicKey: true
+        });
+
+        let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
           info: {
             name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
             traceId: reqValid.info.traceId
           },
           payload: {
             orgId: project.orgId,
-            projectId: project.projectId,
+            project: apiProject,
             repoId: bridge.repoId,
-            branch: bridge.branchId,
-            remoteType: project.remoteType,
-            gitUrl: project.gitUrl,
-            privateKey: project.privateKey,
-            publicKey: project.publicKey
+            branch: bridge.branchId
           }
         };
 
@@ -171,7 +176,7 @@ export class SpecialRebuildStructsController {
               orgId: project.orgId,
               projectId: project.projectId
             }),
-            message: getCatalogFilesRequest,
+            message: toDiskGetCatalogFilesRequest,
             checkIsOk: false
           });
 

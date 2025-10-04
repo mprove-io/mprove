@@ -245,33 +245,6 @@ export class CreateDraftDashboardController {
     // console.log('malloyFileText');
     // console.log(malloyFileText);
 
-    // let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
-    //   info: {
-    //     name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-    //     traceId: reqValid.info.traceId
-    //   },
-    //   payload: {
-    //     orgId: project.orgId,
-    //     projectId: projectId,
-    //     repoId: repoId,
-    //     branch: branchId,
-    //     remoteType: project.remoteType,
-    //     gitUrl: project.gitUrl,
-    //     privateKey: project.privateKey,
-    //     publicKey: project.publicKey
-    //   }
-    // };
-
-    // let diskResponse =
-    //   await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-    //     routingKey: makeRoutingKeyToDisk({
-    //       orgId: project.orgId,
-    //       projectId: projectId
-    //     }),
-    //     message: getCatalogFilesRequest,
-    //     checkIsOk: true
-    //   });
-
     // add dashboard file
 
     let tempFile: DiskCatalogFile = {

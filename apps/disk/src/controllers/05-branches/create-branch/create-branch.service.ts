@@ -41,18 +41,10 @@ export class CreateBranchService {
     });
 
     let { traceId } = requestValid.info;
-    let {
-      orgId,
-      projectId,
-      repoId,
-      newBranch,
-      fromBranch,
-      isFromRemote,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, repoId, newBranch, fromBranch, isFromRemote } =
+      requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -99,8 +91,8 @@ export class CreateBranchService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     let isFromBranchExist =

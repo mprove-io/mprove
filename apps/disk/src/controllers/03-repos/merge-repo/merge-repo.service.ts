@@ -42,17 +42,15 @@ export class MergeRepoService {
 
     let {
       orgId,
-      projectId,
+      project,
       repoId,
       branch,
       theirBranch,
       isTheirBranchRemote,
-      userAlias,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
+      userAlias
     } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -97,8 +95,8 @@ export class MergeRepoService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     let isTheirBranchExist =

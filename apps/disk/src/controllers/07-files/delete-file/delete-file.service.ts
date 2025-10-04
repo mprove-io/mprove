@@ -45,17 +45,15 @@ export class DeleteFileService {
 
     let {
       orgId,
-      projectId,
+      project,
       repoId,
       branch,
       fileNodeId,
       // secondFileNodeId,
-      userAlias,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
+      userAlias
     } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -105,8 +103,8 @@ export class DeleteFileService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     await checkoutBranch({

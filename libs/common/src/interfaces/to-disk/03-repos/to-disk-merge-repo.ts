@@ -1,12 +1,6 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsEnum,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { Project } from '~common/interfaces/backend/project';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import { Repo } from '~common/interfaces/disk/repo';
 import { MyResponse } from '~common/interfaces/to/my-response';
@@ -16,8 +10,9 @@ export class ToDiskMergeRepoRequestPayload {
   @IsString()
   orgId: string;
 
-  @IsString()
-  projectId: string;
+  @ValidateNested()
+  @Type(() => Project)
+  project: Project;
 
   @IsString()
   repoId: string;
@@ -33,21 +28,6 @@ export class ToDiskMergeRepoRequestPayload {
 
   @IsString()
   userAlias: string;
-
-  @IsEnum(ProjectRemoteTypeEnum)
-  remoteType: ProjectRemoteTypeEnum;
-
-  @IsString()
-  @IsOptional()
-  gitUrl?: string;
-
-  @IsString()
-  @IsOptional()
-  privateKey?: string;
-
-  @IsString()
-  @IsOptional()
-  publicKey?: string;
 }
 
 export class ToDiskMergeRepoRequest extends ToDiskRequest {

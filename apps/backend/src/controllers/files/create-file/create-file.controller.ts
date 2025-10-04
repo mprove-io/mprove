@@ -116,6 +116,13 @@ export class CreateFileController {
       });
     }
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
@@ -123,17 +130,13 @@ export class CreateFileController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
         fileName: fileName.toLowerCase(),
         fileText: fileText,
-        userAlias: user.alias,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        userAlias: user.alias
       }
     };
 

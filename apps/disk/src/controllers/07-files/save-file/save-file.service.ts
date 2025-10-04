@@ -41,7 +41,7 @@ export class SaveFileService {
 
     let {
       orgId,
-      projectId,
+      project,
       repoId,
       branch,
       fileNodeId,
@@ -49,12 +49,10 @@ export class SaveFileService {
       // secondFileNodeId,
       // secondFileContent,
       // isDeleteSecondFile,
-      userAlias,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
+      userAlias
     } = requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -71,8 +69,8 @@ export class SaveFileService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     let isOrgExist = await isPathExist(orgDir);

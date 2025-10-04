@@ -43,7 +43,6 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
@@ -54,7 +53,6 @@ import {
   ToBackendGetDashboardRequest,
   ToBackendGetDashboardResponsePayload
 } from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
-import { ToDiskGetCatalogFilesRequest } from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
 import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
@@ -145,33 +143,6 @@ export class GetDashboardController {
     });
 
     // fromDashboard.fields = newDashboardFields;
-
-    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        branch: branchId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
-      }
-    };
-
-    // let diskResponse =
-    //   await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-    //     routingKey: makeRoutingKeyToDisk({
-    //       orgId: project.orgId,
-    //       projectId: projectId
-    //     }),
-    //     message: getCatalogFilesRequest,
-    //     checkIsOk: true
-    //   });
 
     let newDashboardId = fromDashboard.dashboardId;
 

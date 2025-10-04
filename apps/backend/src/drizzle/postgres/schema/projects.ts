@@ -21,8 +21,7 @@ export const projectsTable = pgTable(
       .$type<ProjectRemoteTypeEnum>()
       .notNull(),
     gitUrl: varchar('git_url'),
-    publicKey: text('public_key'),
-    privateKey: text('private_key'),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

@@ -39,7 +39,9 @@ export class GetProjectController {
     let payload: ToBackendGetProjectResponsePayload = {
       project: this.wrapToApiService.wrapToApiProject({
         project: project,
-        isAdmin: userMember.isAdmin
+        isAddPrivateKey: false,
+        isAddPublicKey: userMember.isAdmin,
+        isAddGitUrl: userMember.isAdmin
       }),
       userMember: this.wrapToApiService.wrapToApiMember(userMember)
     };

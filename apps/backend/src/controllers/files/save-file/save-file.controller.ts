@@ -91,6 +91,13 @@ export class SaveFileController {
       member: member
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskSaveFile,
@@ -98,16 +105,12 @@ export class SaveFileController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: fileNodeId,
         userAlias: user.alias,
-        content: content,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        content: content
       }
     };
 

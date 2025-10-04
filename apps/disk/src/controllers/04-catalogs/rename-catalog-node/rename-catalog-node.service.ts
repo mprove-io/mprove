@@ -40,18 +40,10 @@ export class RenameCatalogNodeService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      projectId,
-      repoId,
-      branch,
-      nodeId,
-      newName,
-      remoteType,
-      gitUrl,
-      privateKey,
-      publicKey
-    } = requestValid.payload;
+    let { orgId, project, repoId, branch, nodeId, newName } =
+      requestValid.payload;
+
+    let { projectId, remoteType, gitUrl } = project;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -102,8 +94,8 @@ export class RenameCatalogNodeService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKey: project.tab.privateKey,
+      publicKey: project.tab.publicKey
     });
 
     await checkoutBranch({

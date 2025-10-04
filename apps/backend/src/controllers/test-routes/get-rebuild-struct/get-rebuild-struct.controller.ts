@@ -11,6 +11,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
@@ -34,6 +35,7 @@ import {
 @Controller()
 export class GetRebuildStructController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private projectsService: ProjectsService,
     private envsService: EnvsService,
@@ -65,20 +67,23 @@ export class GetRebuildStructController {
 
     // to disk
 
-    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
+    let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
         traceId: reqValid.info.traceId
       },
       payload: {
         orgId: orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
-        branch: branch,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        branch: branch
       }
     };
 
@@ -88,7 +93,7 @@ export class GetRebuildStructController {
           orgId: orgId,
           projectId: projectId
         }),
-        message: getCatalogFilesRequest,
+        message: toDiskGetCatalogFilesRequest,
         checkIsOk: true
       });
 

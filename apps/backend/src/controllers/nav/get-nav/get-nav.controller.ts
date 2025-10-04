@@ -35,10 +35,10 @@ import {
 @Controller()
 export class GetNavController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private structsService: StructsService,
-    private wrapToApiService: WrapToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -137,6 +137,13 @@ export class GetNavController {
 
       apiStruct = this.wrapToApiService.wrapToApiStruct(struct);
 
+      let apiResultProject = this.wrapToApiService.wrapToApiProject({
+        project: resultProject,
+        isAddGitUrl: true,
+        isAddPrivateKey: true,
+        isAddPublicKey: true
+      });
+
       let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
         info: {
           name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogNodes,
@@ -144,14 +151,10 @@ export class GetNavController {
         },
         payload: {
           orgId: resultProject.orgId,
-          projectId: resultProject.projectId,
+          project: apiResultProject,
           repoId: bridge.repoId,
           branch: bridge.branchId,
-          isFetch: true,
-          remoteType: resultProject.remoteType,
-          gitUrl: resultProject.gitUrl,
-          privateKey: resultProject.privateKey,
-          publicKey: resultProject.publicKey
+          isFetch: true
         }
       };
 

@@ -100,6 +100,13 @@ export class DeleteFolderController {
       envId: envId
     });
 
+    let apiProject = this.wrapToApiService.wrapToApiProject({
+      project: project,
+      isAddGitUrl: true,
+      isAddPrivateKey: true,
+      isAddPublicKey: true
+    });
+
     let toDiskDeleteFolderRequest: ToDiskDeleteFolderRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteFolder,
@@ -107,14 +114,10 @@ export class DeleteFolderController {
       },
       payload: {
         orgId: project.orgId,
-        projectId: projectId,
+        project: apiProject,
         repoId: repoId,
         branch: branchId,
-        folderNodeId: folderNodeId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
+        folderNodeId: folderNodeId
       }
     };
 

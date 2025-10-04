@@ -32,6 +32,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
+import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -44,7 +45,6 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
@@ -56,7 +56,6 @@ import {
   ToBackendEditDraftDashboardRequest,
   ToBackendEditDraftDashboardResponsePayload
 } from '~common/interfaces/to-backend/dashboards/to-backend-edit-draft-dashboard';
-import { ToDiskGetCatalogFilesRequest } from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
 import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
@@ -66,6 +65,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditDraftDashboardController {
   constructor(
+    private wrapToApiService: WrapToApiService,
     private malloyService: MalloyService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
@@ -224,33 +224,6 @@ export class EditDraftDashboardController {
       timezone: UTC
       // malloyDashboardFilePath: secondFileNodeId
     });
-
-    let getCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
-      info: {
-        name: ToDiskRequestInfoNameEnum.ToDiskGetCatalogFiles,
-        traceId: reqValid.info.traceId
-      },
-      payload: {
-        orgId: project.orgId,
-        projectId: projectId,
-        repoId: repoId,
-        branch: branchId,
-        remoteType: project.remoteType,
-        gitUrl: project.gitUrl,
-        privateKey: project.privateKey,
-        publicKey: project.publicKey
-      }
-    };
-
-    // let diskResponse =
-    //   await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-    //     routingKey: makeRoutingKeyToDisk({
-    //       orgId: project.orgId,
-    //       projectId: projectId
-    //     }),
-    //     message: getCatalogFilesRequest,
-    //     checkIsOk: true
-    //   });
 
     // add dashboard file
 
