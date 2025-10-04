@@ -18,12 +18,15 @@ export function logToConsoleBlockml(item: {
   let { log, logger, logLevel, cs } = item;
 
   let logIsJson: BoolEnum;
+  let blockmlEnv: BlockmlEnvEnum;
 
   if (isDefined(cs)) {
     logIsJson = cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson');
+    blockmlEnv = cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv');
   } else {
     let config = getConfig();
     logIsJson = config.blockmlLogIsJson;
+    blockmlEnv = config.blockmlEnv;
   }
 
   logToConsole({
@@ -31,7 +34,6 @@ export function logToConsoleBlockml(item: {
     logIsJson: enumToBoolean(logIsJson),
     logger: logger,
     logLevel: logLevel,
-    useLoggerOnlyForErrorLevel:
-      cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv') !== BlockmlEnvEnum.PROD
+    useLoggerOnlyForErrorLevel: blockmlEnv !== BlockmlEnvEnum.PROD
   });
 }

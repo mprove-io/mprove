@@ -6,7 +6,7 @@ import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
-import { OptionsStoreGoogleApi } from '~common/interfaces/backend/connection/connection-options-store-google-api';
+import { OptionsStoreGoogleApi } from '~common/interfaces/backend/connection/options-store-google-api';
 
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';

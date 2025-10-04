@@ -18,12 +18,15 @@ export function logToConsoleBackend(item: {
   let { log, logger, logLevel, cs } = item;
 
   let logIsJson: BoolEnum;
+  let backendEnv: BackendEnvEnum;
 
   if (isDefined(cs)) {
     logIsJson = cs.get<BackendConfig['backendLogIsJson']>('backendLogIsJson');
+    backendEnv = cs.get<BackendConfig['backendEnv']>('backendEnv');
   } else {
     let config = getConfig();
     logIsJson = config.backendLogIsJson;
+    backendEnv = config.backendEnv;
   }
 
   logToConsole({
@@ -31,7 +34,6 @@ export function logToConsoleBackend(item: {
     logIsJson: enumToBoolean(logIsJson),
     logger: logger,
     logLevel: logLevel,
-    useLoggerOnlyForErrorLevel:
-      cs.get<BackendConfig['backendEnv']>('backendEnv') !== BackendEnvEnum.PROD
+    useLoggerOnlyForErrorLevel: backendEnv !== BackendEnvEnum.PROD
   });
 }

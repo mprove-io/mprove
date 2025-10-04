@@ -18,12 +18,15 @@ export function logToConsoleDisk(item: {
   let { log, logger, logLevel, cs } = item;
 
   let logIsJson: BoolEnum;
+  let diskEnv: DiskEnvEnum;
 
   if (isDefined(cs)) {
     logIsJson = cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson');
+    diskEnv = cs.get<DiskConfig['diskEnv']>('diskEnv');
   } else {
     let config = getConfig();
     logIsJson = config.diskLogIsJson;
+    diskEnv = config.diskEnv;
   }
 
   logToConsole({
@@ -31,7 +34,6 @@ export function logToConsoleDisk(item: {
     logIsJson: enumToBoolean(logIsJson),
     logger: logger,
     logLevel: logLevel,
-    useLoggerOnlyForErrorLevel:
-      cs.get<DiskConfig['diskEnv']>('diskEnv') !== DiskEnvEnum.PROD
+    useLoggerOnlyForErrorLevel: diskEnv !== DiskEnvEnum.PROD
   });
 }
