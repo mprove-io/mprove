@@ -17,6 +17,7 @@ async function run() {
 
   let connection: ProjectConnection = {
     connectionId: 'c1',
+    tab: { options: {} },
     type: ConnectionTypeEnum.PostgreSQL
   };
 

@@ -44,6 +44,7 @@ test('1', async t => {
 
     let connection: ProjectConnection = {
       connectionId: 'c1',
+      tab: { options: {} },
       type: ConnectionTypeEnum.PostgreSQL
     };
 

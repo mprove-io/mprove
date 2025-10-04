@@ -26,10 +26,9 @@ export class ProjectConnection {
   @IsEnum(ConnectionTypeEnum)
   type?: ConnectionTypeEnum;
 
-  @IsOptional()
   @ValidateNested()
   @Type(() => ConnectionTab)
-  tab?: ConnectionTab;
+  tab: ConnectionTab;
 
   @IsOptional()
   @IsInt()
