@@ -39,41 +39,41 @@ export function makeMalloyConnections(item: {
     let mConnection =
       x.type === ConnectionTypeEnum.PostgreSQL
         ? new PostgresConnection(x.connectionId, () => ({}), {
-            host: x.options.postgres?.host,
-            port: x.options.postgres?.port,
-            username: x.options.postgres?.username,
-            password: x.options.postgres?.password,
-            databaseName: x.options.postgres?.database
+            host: x.tab.options.postgres?.host,
+            port: x.tab.options.postgres?.port,
+            username: x.tab.options.postgres?.username,
+            password: x.tab.options.postgres?.password,
+            databaseName: x.tab.options.postgres?.database
           })
         : x.type === ConnectionTypeEnum.MySQL
           ? new MySQLConnection(
               x.connectionId,
               {
-                host: x.options.mysql?.host,
-                port: x.options.mysql?.port,
-                database: x.options.mysql?.database,
-                user: x.options.mysql?.user,
-                password: x.options.mysql?.password
+                host: x.tab.options.mysql?.host,
+                port: x.tab.options.mysql?.port,
+                database: x.tab.options.mysql?.database,
+                user: x.tab.options.mysql?.user,
+                password: x.tab.options.mysql?.password
               },
               {}
             )
           : x.type === ConnectionTypeEnum.BigQuery
             ? new BigQueryConnection(x.connectionId, () => ({}), {
-                credentials: x.options.bigquery?.serviceAccountCredentials,
-                projectId: x.options.bigquery?.googleCloudProject
+                credentials: x.tab.options.bigquery?.serviceAccountCredentials,
+                projectId: x.tab.options.bigquery?.googleCloudProject
               })
             : x.type === ConnectionTypeEnum.Trino
               ? new TrinoConnection(
                   x.connectionId,
                   {},
                   {
-                    server: x.options.trino?.server,
+                    server: x.tab.options.trino?.server,
                     port: undefined,
-                    catalog: x.options.trino?.catalog,
-                    schema: x.options.trino?.schema,
-                    user: x.options.trino?.user,
-                    password: x.options.trino?.password,
-                    extraConfig: x.options.trino?.extraConfig
+                    catalog: x.tab.options.trino?.catalog,
+                    schema: x.tab.options.trino?.schema,
+                    user: x.tab.options.trino?.user,
+                    password: x.tab.options.trino?.password,
+                    extraConfig: x.tab.options.trino?.extraConfig
                   }
                 )
               : x.type === ConnectionTypeEnum.Presto
@@ -81,23 +81,23 @@ export function makeMalloyConnections(item: {
                     x.connectionId,
                     {},
                     {
-                      server: x.options.presto?.server,
-                      port: x.options.presto?.port,
-                      catalog: x.options.presto?.catalog,
-                      schema: x.options.presto?.schema,
-                      user: x.options.presto?.user,
-                      password: x.options.presto?.password,
-                      extraConfig: x.options.presto?.extraConfig
+                      server: x.tab.options.presto?.server,
+                      port: x.tab.options.presto?.port,
+                      catalog: x.tab.options.presto?.catalog,
+                      schema: x.tab.options.presto?.schema,
+                      user: x.tab.options.presto?.user,
+                      password: x.tab.options.presto?.password,
+                      extraConfig: x.tab.options.presto?.extraConfig
                     }
                   )
                 : x.type === ConnectionTypeEnum.SnowFlake
                   ? new SnowflakeConnection(x.connectionId, {
                       connOptions: {
-                        account: x.options.snowflake?.account,
-                        warehouse: x.options.snowflake?.warehouse,
-                        database: x.options.snowflake?.database,
-                        username: x.options.snowflake?.username,
-                        password: x.options.snowflake?.password
+                        account: x.tab.options.snowflake?.account,
+                        warehouse: x.tab.options.snowflake?.warehouse,
+                        database: x.tab.options.snowflake?.database,
+                        username: x.tab.options.snowflake?.username,
+                        password: x.tab.options.snowflake?.password
                         //  schema?: string | undefined;
                         //  role?: string | undefined;
                         //  clientSessionKeepAlive?: boolean | undefined;
@@ -114,10 +114,13 @@ export function makeMalloyConnections(item: {
                   : x.type === ConnectionTypeEnum.MotherDuck
                     ? new DuckDBConnection({
                         name: x.connectionId,
-                        databasePath: isDefined(x.options.motherduck?.database)
-                          ? `md:${x.options.motherduck?.database}`
+                        databasePath: isDefined(
+                          x.tab.options.motherduck?.database
+                        )
+                          ? `md:${x.tab.options.motherduck?.database}`
                           : `md:`,
-                        motherDuckToken: x.options.motherduck?.motherduckToken
+                        motherDuckToken:
+                          x.tab.options.motherduck?.motherduckToken
                         // additionalExtensions?: string[];
                         // workingDirectory?: string;
                         // readOnly?: boolean;

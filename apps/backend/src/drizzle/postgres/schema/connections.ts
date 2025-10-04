@@ -19,7 +19,7 @@ export const connectionsTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
     type: varchar('type').$type<ConnectionTypeEnum>().notNull(),
-    options: text('options'),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

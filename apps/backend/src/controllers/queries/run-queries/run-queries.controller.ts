@@ -54,7 +54,7 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
-import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
+import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import {
   ToBackendRunQueriesRequest,
   ToBackendRunQueriesResponsePayload
@@ -187,27 +187,28 @@ export class RunQueriesController {
         // console.log('googleApiConnections start');
         // let tsStart = Date.now();
 
-        let cnOptions = decryptData<ConnectionOptions>({
-          encryptedString: connection.options,
+        let cTab = decryptData<ConnectionTab>({
+          encryptedString: connection.tab,
           keyBase64:
             this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
         });
 
         let authClient = new JWT({
           email:
-            cnOptions.storeGoogleApi.serviceAccountCredentials.client_email,
-          key: cnOptions.storeGoogleApi.serviceAccountCredentials.private_key,
-          scopes: cnOptions.storeGoogleApi.googleAuthScopes
+            cTab.options.storeGoogleApi.serviceAccountCredentials.client_email,
+          key: cTab.options.storeGoogleApi.serviceAccountCredentials
+            .private_key,
+          scopes: cTab.options.storeGoogleApi.googleAuthScopes
         });
 
         let tokens = await authClient.authorize();
 
-        cnOptions.storeGoogleApi.googleAccessToken = tokens.access_token;
+        cTab.options.storeGoogleApi.googleAccessToken = tokens.access_token;
 
-        connection.options = encryptData({
+        connection.tab = encryptData({
+          data: cTab,
           keyBase64:
-            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey'),
-          data: cnOptions
+            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
         });
 
         // console.log(Date.now() - tsStart);

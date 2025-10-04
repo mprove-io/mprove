@@ -30,6 +30,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { getMotherduckDatabaseWrongChars } from '~common/functions/check-motherduck-database-name';
 import { isDefined } from '~common/functions/is-defined';
+import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import {
   ToBackendEditConnectionRequest,
   ToBackendEditConnectionResponsePayload
@@ -106,8 +107,10 @@ export class EditConnectionController {
       }
     }
 
-    connection.options = encryptData({
-      data: options,
+    let connectionTab: ConnectionTab = { options: options };
+
+    connection.tab = encryptData({
+      data: connectionTab,
       keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
     });
 

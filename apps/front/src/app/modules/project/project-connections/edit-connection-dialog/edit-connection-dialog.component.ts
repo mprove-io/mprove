@@ -85,194 +85,201 @@ export class EditConnectionDialogComponent implements OnInit {
 
   ngOnInit() {
     this.isClickhouseSSL =
-      this.dataItem.connection.options.clickhouse?.isSSL === true
+      this.dataItem.connection.tab.options.clickhouse?.isSSL === true
         ? true
         : false;
 
     this.isPostgresSSL =
-      this.dataItem.connection.options.postgres.isSSL === true ? true : false;
+      this.dataItem.connection.tab.options.postgres.isSSL === true
+        ? true
+        : false;
 
     this.isMotherduckAttachModeSingle =
-      this.dataItem.connection.options.motherduck.attachModeSingle === true
+      this.dataItem.connection.tab.options.motherduck.attachModeSingle === true
         ? true
         : false;
 
     this.isMotherduckAccessModeReadOnly =
-      this.dataItem.connection.options.motherduck.accessModeReadOnly === true
+      this.dataItem.connection.tab.options.motherduck.accessModeReadOnly ===
+      true
         ? true
         : false;
 
     this.editBigqueryForm = this.fb.group({
       serviceAccountCredentials: [
-        this.dataItem.connection.options.bigquery.serviceAccountCredentials,
+        this.dataItem.connection.tab.options.bigquery.serviceAccountCredentials,
         [Validators.required]
       ],
       bigqueryQuerySizeLimitGb: [
-        this.dataItem.connection.options.bigquery.bigqueryQuerySizeLimitGb,
+        this.dataItem.connection.tab.options.bigquery.bigqueryQuerySizeLimitGb,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ]
     });
 
     this.editClickhouseForm = this.fb.group({
       host: [
-        this.dataItem.connection.options.clickhouse.host,
+        this.dataItem.connection.tab.options.clickhouse.host,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.options.clickhouse.port,
+        this.dataItem.connection.tab.options.clickhouse.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       username: [
-        this.dataItem.connection.options.clickhouse.username,
+        this.dataItem.connection.tab.options.clickhouse.username,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.options.clickhouse.password,
+        this.dataItem.connection.tab.options.clickhouse.password,
         [Validators.required]
       ]
     });
 
     this.editMotherduckForm = this.fb.group({
       motherduckToken: [
-        this.dataItem.connection.options.motherduck.motherduckToken,
+        this.dataItem.connection.tab.options.motherduck.motherduckToken,
         [Validators.required]
       ],
       database: [
-        this.dataItem.connection.options.motherduck.database,
+        this.dataItem.connection.tab.options.motherduck.database,
         [ValidationService.motherduckDatabaseWrongChars]
       ]
     });
 
     this.editPostgresForm = this.fb.group({
       host: [
-        this.dataItem.connection.options.postgres.host,
+        this.dataItem.connection.tab.options.postgres.host,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.options.postgres.port,
+        this.dataItem.connection.tab.options.postgres.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       database: [
-        this.dataItem.connection.options.postgres.database,
+        this.dataItem.connection.tab.options.postgres.database,
         [Validators.required]
       ],
       username: [
-        this.dataItem.connection.options.postgres.username,
+        this.dataItem.connection.tab.options.postgres.username,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.options.postgres.password,
+        this.dataItem.connection.tab.options.postgres.password,
         [Validators.required]
       ]
     });
 
     this.editMysqlForm = this.fb.group({
       host: [
-        this.dataItem.connection.options.mysql.host,
+        this.dataItem.connection.tab.options.mysql.host,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.options.mysql.port,
+        this.dataItem.connection.tab.options.mysql.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
       database: [
-        this.dataItem.connection.options.mysql.database,
+        this.dataItem.connection.tab.options.mysql.database,
         [Validators.required]
       ],
       user: [
-        this.dataItem.connection.options.mysql.user,
+        this.dataItem.connection.tab.options.mysql.user,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.options.mysql.password,
+        this.dataItem.connection.tab.options.mysql.password,
         [Validators.required]
       ]
     });
 
     this.editTrinoForm = this.fb.group({
       server: [
-        this.dataItem.connection.options.trino.server,
+        this.dataItem.connection.tab.options.trino.server,
         [Validators.required]
       ],
-      catalog: [this.dataItem.connection.options.trino.catalog, []],
-      schema: [this.dataItem.connection.options.trino.schema, []],
+      catalog: [this.dataItem.connection.tab.options.trino.catalog, []],
+      schema: [this.dataItem.connection.tab.options.trino.schema, []],
       user: [
-        this.dataItem.connection.options.trino.user,
+        this.dataItem.connection.tab.options.trino.user,
         [Validators.required]
       ],
-      password: [this.dataItem.connection.options.trino.password, []]
+      password: [this.dataItem.connection.tab.options.trino.password, []]
     });
 
     this.editPrestoForm = this.fb.group({
       server: [
-        this.dataItem.connection.options.presto.server,
+        this.dataItem.connection.tab.options.presto.server,
         [Validators.required]
       ],
       port: [
-        this.dataItem.connection.options.presto.port,
+        this.dataItem.connection.tab.options.presto.port,
         [ValidationService.integerOrEmptyValidator, Validators.required]
       ],
-      catalog: [this.dataItem.connection.options.presto.catalog, []],
-      schema: [this.dataItem.connection.options.presto.schema, []],
+      catalog: [this.dataItem.connection.tab.options.presto.catalog, []],
+      schema: [this.dataItem.connection.tab.options.presto.schema, []],
       user: [
-        this.dataItem.connection.options.presto.user,
+        this.dataItem.connection.tab.options.presto.user,
         [Validators.required]
       ],
-      password: [this.dataItem.connection.options.presto.password, []]
+      password: [this.dataItem.connection.tab.options.presto.password, []]
     });
 
     this.editSnowflakeForm = this.fb.group({
       account: [
-        this.dataItem.connection.options.snowflake.account,
+        this.dataItem.connection.tab.options.snowflake.account,
         [Validators.required]
       ],
       warehouse: [
-        this.dataItem.connection.options.snowflake.warehouse,
+        this.dataItem.connection.tab.options.snowflake.warehouse,
         [Validators.required]
       ],
-      database: [this.dataItem.connection.options.snowflake.database, []],
+      database: [this.dataItem.connection.tab.options.snowflake.database, []],
       username: [
-        this.dataItem.connection.options.snowflake.username,
+        this.dataItem.connection.tab.options.snowflake.username,
         [Validators.required]
       ],
       password: [
-        this.dataItem.connection.options.snowflake.password,
+        this.dataItem.connection.tab.options.snowflake.password,
         [Validators.required]
       ]
     });
 
     this.editApiForm = this.fb.group({
       baseUrl: [
-        this.dataItem.connection.options.storeApi.baseUrl,
+        this.dataItem.connection.tab.options.storeApi.baseUrl,
         [Validators.required]
       ],
       headers: this.fb.array(
-        isUndefined(this.dataItem.connection.options.storeApi.headers)
+        isUndefined(this.dataItem.connection.tab.options.storeApi.headers)
           ? []
-          : this.dataItem.connection.options.storeApi.headers.map(header => {
-              let newHeader = {
-                key: header.key,
-                value: header.value ?? ''
-              };
-              return this.fb.group(newHeader);
-            })
+          : this.dataItem.connection.tab.options.storeApi.headers.map(
+              header => {
+                let newHeader = {
+                  key: header.key,
+                  value: header.value ?? ''
+                };
+                return this.fb.group(newHeader);
+              }
+            )
       )
     });
 
     this.editGoogleApiForm = this.fb.group({
       serviceAccountCredentials: [
-        this.dataItem.connection.options.storeGoogleApi
+        this.dataItem.connection.tab.options.storeGoogleApi
           ?.serviceAccountCredentials,
         [Validators.required]
       ],
       baseUrl: [
-        this.dataItem.connection.options.storeGoogleApi?.baseUrl,
+        this.dataItem.connection.tab.options.storeGoogleApi?.baseUrl,
         [Validators.required]
       ],
       headers: this.fb.array(
-        isUndefined(this.dataItem.connection.options.storeGoogleApi?.headers)
+        isUndefined(
+          this.dataItem.connection.tab.options.storeGoogleApi?.headers
+        )
           ? []
-          : this.dataItem.connection.options.storeGoogleApi?.headers.map(
+          : this.dataItem.connection.tab.options.storeGoogleApi?.headers.map(
               header => {
                 let newHeader = {
                   key: header.key,
@@ -284,10 +291,10 @@ export class EditConnectionDialogComponent implements OnInit {
       ),
       scopes: this.fb.array(
         isUndefined(
-          this.dataItem.connection.options.storeGoogleApi?.googleAuthScopes
+          this.dataItem.connection.tab.options.storeGoogleApi?.googleAuthScopes
         )
           ? []
-          : this.dataItem.connection.options.storeGoogleApi?.googleAuthScopes.map(
+          : this.dataItem.connection.tab.options.storeGoogleApi?.googleAuthScopes.map(
               scope => {
                 let newScope = {
                   value: scope

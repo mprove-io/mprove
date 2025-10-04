@@ -27,7 +27,7 @@ import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeCopy } from '~common/functions/make-copy';
 import { ChartX } from '~common/interfaces/backend/chart-x';
-import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
+import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Env } from '~common/interfaces/backend/env';
 import { EnvUser } from '~common/interfaces/backend/env-user';
@@ -60,137 +60,145 @@ export class WrapToApiService {
   }): ProjectConnection {
     let { connection, isIncludePasswords } = item;
 
-    let options = decryptData<ConnectionOptions>({
-      encryptedString: connection.options,
+    let cTab = decryptData<ConnectionTab>({
+      encryptedString: connection.tab,
       keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
     });
+
+    let options = cTab.options;
 
     return {
       projectId: connection.projectId,
       connectionId: connection.connectionId,
       envId: connection.envId,
       type: connection.type,
-      options: {
-        bigquery: isDefined(options.bigquery)
-          ? {
-              serviceAccountCredentials:
-                isIncludePasswords === true
-                  ? options.bigquery.serviceAccountCredentials
-                  : undefined,
-              googleCloudProject: options.bigquery.googleCloudProject,
-              googleCloudClientEmail: options.bigquery.googleCloudClientEmail,
-              bigqueryQuerySizeLimitGb:
-                options.bigquery.bigqueryQuerySizeLimitGb
-            }
-          : undefined,
-        clickhouse: isDefined(options.clickhouse)
-          ? {
-              host: options.clickhouse.host,
-              port: options.clickhouse.port,
-              username: options.clickhouse.username,
-              password:
-                isIncludePasswords === true
-                  ? options.clickhouse.password
-                  : undefined,
-              isSSL: options.clickhouse.isSSL
-            }
-          : undefined,
-        motherduck: isDefined(options.motherduck)
-          ? {
-              motherduckToken:
-                isIncludePasswords === true
-                  ? options.motherduck.motherduckToken
-                  : undefined,
-              database: options.motherduck.database,
-              attachModeSingle: options.motherduck.attachModeSingle,
-              accessModeReadOnly: options.motherduck.accessModeReadOnly
-            }
-          : undefined,
-        postgres: isDefined(options.postgres)
-          ? {
-              host: options.postgres.host,
-              port: options.postgres.port,
-              database: options.postgres.database,
-              username: options.postgres.username,
-              password:
-                isIncludePasswords === true
-                  ? options.postgres.password
-                  : undefined,
-              isSSL: options.postgres.isSSL
-            }
-          : undefined,
-        mysql: isDefined(options.mysql)
-          ? {
-              host: options.mysql.host,
-              port: options.mysql.port,
-              database: options.mysql.database,
-              user: options.mysql.user,
-              password:
-                isIncludePasswords === true ? options.mysql.password : undefined
-            }
-          : undefined,
-        trino: isDefined(options.trino)
-          ? {
-              server: options.trino.server,
-              catalog: options.trino.catalog,
-              schema: options.trino.schema,
-              user: options.trino.user,
-              password:
-                isIncludePasswords === true ? options.trino.password : undefined
-            }
-          : undefined,
-        presto: isDefined(options.presto)
-          ? {
-              server: options.presto.server,
-              port: options.presto.port,
-              catalog: options.presto.catalog,
-              schema: options.presto.schema,
-              user: options.presto.user,
-              password:
-                isIncludePasswords === true
-                  ? options.presto.password
-                  : undefined
-            }
-          : undefined,
-        snowflake: isDefined(options.snowflake)
-          ? {
-              account: options.snowflake.account,
-              warehouse: options.snowflake.warehouse,
-              database: options.snowflake.database,
-              username: options.snowflake.username,
-              password:
-                isIncludePasswords === true
-                  ? options.snowflake.password
-                  : undefined
-            }
-          : undefined,
-        storeApi: isDefined(options.storeApi)
-          ? {
-              baseUrl: options.storeApi.baseUrl,
-              headers: options.storeApi.headers?.map(header => ({
-                key: header.key,
-                value: isIncludePasswords === true ? (header.value ?? '') : ''
-              }))
-            }
-          : undefined,
-        storeGoogleApi: isDefined(options.storeGoogleApi)
-          ? {
-              baseUrl: options.storeGoogleApi.baseUrl,
-              headers: options.storeGoogleApi.headers?.map(header => ({
-                key: header.key,
-                value: isIncludePasswords === true ? (header.value ?? '') : ''
-              })),
-              googleAuthScopes: options.storeGoogleApi.googleAuthScopes,
-              serviceAccountCredentials:
-                isIncludePasswords === true
-                  ? options.storeGoogleApi.serviceAccountCredentials
-                  : undefined,
-              googleCloudProject: options.storeGoogleApi.googleCloudProject,
-              googleCloudClientEmail:
-                options.storeGoogleApi.googleCloudClientEmail,
-              googleAccessToken: options.storeGoogleApi.googleAccessToken
-            }
-          : undefined
+      tab: {
+        options: {
+          bigquery: isDefined(options.bigquery)
+            ? {
+                serviceAccountCredentials:
+                  isIncludePasswords === true
+                    ? options.bigquery.serviceAccountCredentials
+                    : undefined,
+                googleCloudProject: options.bigquery.googleCloudProject,
+                googleCloudClientEmail: options.bigquery.googleCloudClientEmail,
+                bigqueryQuerySizeLimitGb:
+                  options.bigquery.bigqueryQuerySizeLimitGb
+              }
+            : undefined,
+          clickhouse: isDefined(options.clickhouse)
+            ? {
+                host: options.clickhouse.host,
+                port: options.clickhouse.port,
+                username: options.clickhouse.username,
+                password:
+                  isIncludePasswords === true
+                    ? options.clickhouse.password
+                    : undefined,
+                isSSL: options.clickhouse.isSSL
+              }
+            : undefined,
+          motherduck: isDefined(options.motherduck)
+            ? {
+                motherduckToken:
+                  isIncludePasswords === true
+                    ? options.motherduck.motherduckToken
+                    : undefined,
+                database: options.motherduck.database,
+                attachModeSingle: options.motherduck.attachModeSingle,
+                accessModeReadOnly: options.motherduck.accessModeReadOnly
+              }
+            : undefined,
+          postgres: isDefined(options.postgres)
+            ? {
+                host: options.postgres.host,
+                port: options.postgres.port,
+                database: options.postgres.database,
+                username: options.postgres.username,
+                password:
+                  isIncludePasswords === true
+                    ? options.postgres.password
+                    : undefined,
+                isSSL: options.postgres.isSSL
+              }
+            : undefined,
+          mysql: isDefined(options.mysql)
+            ? {
+                host: options.mysql.host,
+                port: options.mysql.port,
+                database: options.mysql.database,
+                user: options.mysql.user,
+                password:
+                  isIncludePasswords === true
+                    ? options.mysql.password
+                    : undefined
+              }
+            : undefined,
+          trino: isDefined(options.trino)
+            ? {
+                server: options.trino.server,
+                catalog: options.trino.catalog,
+                schema: options.trino.schema,
+                user: options.trino.user,
+                password:
+                  isIncludePasswords === true
+                    ? options.trino.password
+                    : undefined
+              }
+            : undefined,
+          presto: isDefined(options.presto)
+            ? {
+                server: options.presto.server,
+                port: options.presto.port,
+                catalog: options.presto.catalog,
+                schema: options.presto.schema,
+                user: options.presto.user,
+                password:
+                  isIncludePasswords === true
+                    ? options.presto.password
+                    : undefined
+              }
+            : undefined,
+          snowflake: isDefined(options.snowflake)
+            ? {
+                account: options.snowflake.account,
+                warehouse: options.snowflake.warehouse,
+                database: options.snowflake.database,
+                username: options.snowflake.username,
+                password:
+                  isIncludePasswords === true
+                    ? options.snowflake.password
+                    : undefined
+              }
+            : undefined,
+          storeApi: isDefined(options.storeApi)
+            ? {
+                baseUrl: options.storeApi.baseUrl,
+                headers: options.storeApi.headers?.map(header => ({
+                  key: header.key,
+                  value: isIncludePasswords === true ? (header.value ?? '') : ''
+                }))
+              }
+            : undefined,
+          storeGoogleApi: isDefined(options.storeGoogleApi)
+            ? {
+                baseUrl: options.storeGoogleApi.baseUrl,
+                headers: options.storeGoogleApi.headers?.map(header => ({
+                  key: header.key,
+                  value: isIncludePasswords === true ? (header.value ?? '') : ''
+                })),
+                googleAuthScopes: options.storeGoogleApi.googleAuthScopes,
+                serviceAccountCredentials:
+                  isIncludePasswords === true
+                    ? options.storeGoogleApi.serviceAccountCredentials
+                    : undefined,
+                googleCloudProject: options.storeGoogleApi.googleCloudProject,
+                googleCloudClientEmail:
+                  options.storeGoogleApi.googleCloudClientEmail,
+                googleAccessToken: options.storeGoogleApi.googleAccessToken
+              }
+            : undefined
+        }
       },
       serverTs: connection.serverTs
     };

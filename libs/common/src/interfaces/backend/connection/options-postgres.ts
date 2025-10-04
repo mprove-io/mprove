@@ -1,6 +1,6 @@
 import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ConnectionOptionsClickhouse {
+export class OptionsPostgres {
   @IsOptional()
   @IsString()
   host: string;
@@ -8,6 +8,10 @@ export class ConnectionOptionsClickhouse {
   @IsOptional()
   @IsInt()
   port: number;
+
+  @IsOptional()
+  @IsString()
+  database: string;
 
   @IsOptional()
   @IsString()

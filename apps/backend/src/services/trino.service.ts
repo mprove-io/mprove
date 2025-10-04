@@ -33,12 +33,12 @@ export class TrinoService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let connectionOptions: TrinoConnectionConfiguration = {
-      server: connection.options.trino.server,
-      catalog: connection.options.trino.catalog,
-      schema: connection.options.trino.schema,
-      user: connection.options.trino.user,
-      password: connection.options.trino.password,
-      extraConfig: connection.options.trino.extraConfig
+      server: connection.tab.options.trino.server,
+      catalog: connection.tab.options.trino.catalog,
+      schema: connection.tab.options.trino.schema,
+      user: connection.tab.options.trino.user,
+      password: connection.tab.options.trino.password,
+      extraConfig: connection.tab.options.trino.extraConfig
     };
 
     let tc = Trino.create({

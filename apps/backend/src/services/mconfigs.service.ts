@@ -17,7 +17,7 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
+import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
@@ -146,16 +146,16 @@ export class MconfigsService {
         ? errorMessage
         : (JSON.parse(processedRequest.result) as any).urlPath;
 
-    let cnOptions = decryptData<ConnectionOptions>({
-      encryptedString: connection.options,
+    let cTab = decryptData<ConnectionTab>({
+      encryptedString: connection.tab,
       keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
     });
 
     let connectionBaseUrl =
       connection.type === ConnectionTypeEnum.Api
-        ? cnOptions.storeApi.baseUrl
+        ? cTab.options.storeApi.baseUrl
         : connection.type === ConnectionTypeEnum.GoogleApi
-          ? cnOptions.storeGoogleApi.baseUrl
+          ? cTab.options.storeGoogleApi.baseUrl
           : '';
 
     let apiUrl =

@@ -470,16 +470,16 @@ ${inputSub}
       let response;
 
       if (connection.type === ConnectionTypeEnum.Api) {
-        connection.options.storeApi.headers.forEach(header => {
+        connection.tab.options.storeApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
       } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
-        connection.options.storeGoogleApi.headers.forEach(header => {
+        connection.tab.options.storeGoogleApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
 
         headers['Authorization'] =
-          `Bearer ${connection.options.storeGoogleApi.googleAccessToken}`;
+          `Bearer ${connection.tab.options.storeGoogleApi.googleAccessToken}`;
 
         headers['Content-Type'] = 'application/json';
       }

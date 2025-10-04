@@ -32,16 +32,16 @@ export class DuckDbService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let dbPath =
-      connection.options.motherduck.attachModeSingle === true &&
-      connection.options.motherduck.database?.length > 0
-        ? `md:${connection.options.motherduck.database}?attach_mode=single&saas_mode=true`
-        : `md:${connection.options.motherduck.database}?saas_mode=true`;
+      connection.tab.options.motherduck.attachModeSingle === true &&
+      connection.tab.options.motherduck.database?.length > 0
+        ? `md:${connection.tab.options.motherduck.database}?attach_mode=single&saas_mode=true`
+        : `md:${connection.tab.options.motherduck.database}?saas_mode=true`;
 
     let opts: Record<string, string> = {
-      motherduck_token: connection.options.motherduck.motherduckToken
+      motherduck_token: connection.tab.options.motherduck.motherduckToken
     };
 
-    if (connection.options.motherduck.accessModeReadOnly === true) {
+    if (connection.tab.options.motherduck.accessModeReadOnly === true) {
       opts.access_mode = 'READ_ONLY';
     }
 

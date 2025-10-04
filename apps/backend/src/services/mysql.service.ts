@@ -35,11 +35,11 @@ export class MysqlService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let connectionOptions: MYSQL.ConnectionOptions = {
-      host: connection.options.mysql.host,
-      port: connection.options.mysql.port,
-      database: connection.options.mysql.database,
-      user: connection.options.mysql.user,
-      password: connection.options.mysql.password,
+      host: connection.tab.options.mysql.host,
+      port: connection.tab.options.mysql.port,
+      database: connection.tab.options.mysql.database,
+      user: connection.tab.options.mysql.user,
+      password: connection.tab.options.mysql.password,
       multipleStatements: true,
       decimalNumbers: true,
       timezone: '+00:00'

@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
+import { ConnectionTabOptions } from '~common/interfaces/backend/connection/connection-tab-options';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -21,8 +21,8 @@ export class ToBackendCreateConnectionRequestPayload {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionOptions)
-  options?: ConnectionOptions;
+  @Type(() => ConnectionTabOptions)
+  options?: ConnectionTabOptions;
 }
 
 export class ToBackendCreateConnectionRequest extends ToBackendRequest {

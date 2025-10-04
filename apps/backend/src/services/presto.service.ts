@@ -31,17 +31,17 @@ export class PrestoService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let prestoClientConfig: PrestoClientConfig = {
-      catalog: connection.options.presto.catalog,
-      host: connection.options.presto.server,
-      port: connection.options.presto.port,
-      schema: connection.options.presto.schema,
-      user: connection.options.presto.user,
+      catalog: connection.tab.options.presto.catalog,
+      host: connection.tab.options.presto.server,
+      port: connection.tab.options.presto.port,
+      schema: connection.tab.options.presto.schema,
+      user: connection.tab.options.presto.user,
       basicAuthentication:
-        isDefined(connection.options.presto.user) &&
-        isDefined(connection.options.presto.password)
+        isDefined(connection.tab.options.presto.user) &&
+        isDefined(connection.tab.options.presto.password)
           ? {
-              user: connection.options.presto.user,
-              password: connection.options.presto.password
+              user: connection.tab.options.presto.user,
+              password: connection.tab.options.presto.password
             }
           : undefined,
       extraHeaders: { 'X-Presto-Session': 'legacy_unnest=true' }

@@ -11,7 +11,8 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
+import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
+import { ConnectionTabOptions } from '~common/interfaces/backend/connection/connection-tab-options';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { ReportField } from '~common/interfaces/blockml/report-field';
@@ -130,7 +131,7 @@ export class MakerService {
     connectionId: string;
     envId: string;
     type: ConnectionTypeEnum;
-    options: ConnectionOptions;
+    options: ConnectionTabOptions;
   }) {
     let { projectId, connectionId, envId, type, options } = item;
 
@@ -155,6 +156,8 @@ export class MakerService {
         isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
     }
 
+    let connectionTab: ConnectionTab = { options: options };
+
     let connection: ConnectionEnt = {
       connectionFullId: this.hashService.makeConnectionFullId({
         projectId: projectId,
@@ -165,8 +168,8 @@ export class MakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      options: encryptData({
-        data: options,
+      tab: encryptData({
+        data: connectionTab,
         keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
       }),
       serverTs: undefined

@@ -19,7 +19,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
+import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import { ServerError } from '~common/models/server-error';
 import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 import { EnvsService } from './envs.service';
@@ -290,15 +290,15 @@ WHERE m.mconfig_id is NULL
           return;
         }
 
-        let cnOptions = decryptData<ConnectionOptions>({
-          encryptedString: connectionEnt.options,
+        let cTab = decryptData<ConnectionTab>({
+          encryptedString: connectionEnt.tab,
           keyBase64:
             this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
         });
 
         let bigquery = new BigQuery({
-          credentials: cnOptions.bigquery.serviceAccountCredentials,
-          projectId: cnOptions.bigquery.googleCloudProject
+          credentials: cTab.options.bigquery.serviceAccountCredentials,
+          projectId: cTab.options.bigquery.googleCloudProject
         });
 
         let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);

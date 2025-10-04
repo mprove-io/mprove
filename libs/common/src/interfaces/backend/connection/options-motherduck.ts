@@ -1,6 +1,6 @@
 import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
-export class ConnectionOptionsMotherduck {
+export class OptionsMotherduck {
   @IsOptional()
   @IsString()
   motherduckToken: string;

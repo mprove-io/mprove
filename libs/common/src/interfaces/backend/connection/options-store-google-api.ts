@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ApiHeader } from './api-header';
 
-export class ConnectionOptionsStoreGoogleApi {
+export class OptionsStoreGoogleApi {
   @IsOptional()
   @ValidateNested()
   @Type(() => ApiHeader)

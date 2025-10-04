@@ -6,7 +6,7 @@ import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
-import { ConnectionOptionsStoreGoogleApi } from '~common/interfaces/backend/connection/connection-options-store-google-api';
+import { OptionsStoreGoogleApi } from '~common/interfaces/backend/connection/connection-options-store-google-api';
 
 // export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
@@ -39,7 +39,7 @@ export const BRANCH_MAIN = 'main'; // also set as string in project default_bran
 export const PROJECT_ENV_PROD = 'prod';
 export const PASS_PHRASE = '';
 
-export const EMPTY_STORE_GOOGLE_API_OPTIONS: ConnectionOptionsStoreGoogleApi = {
+export const EMPTY_STORE_GOOGLE_API_OPTIONS: OptionsStoreGoogleApi = {
   baseUrl: 'https://analyticsdata.googleapis.com',
   headers: [],
   googleAuthScopes: ['https://www.googleapis.com/auth/analytics.readonly'],

@@ -42,7 +42,7 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionOptions } from '~common/interfaces/backend/connection/connection-options';
+import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import {
   ToBackendCancelQueriesRequest,
   ToBackendCancelQueriesResponsePayload
@@ -162,16 +162,16 @@ export class CancelQueriesController {
           });
         }
 
-        let cnOptions = decryptData<ConnectionOptions>({
-          encryptedString: connection.options,
+        let cTab = decryptData<ConnectionTab>({
+          encryptedString: connection.tab,
           keyBase64:
             this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
         });
 
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           let bigquery = new BigQuery({
-            projectId: cnOptions.bigquery.googleCloudProject,
-            credentials: cnOptions.bigquery.serviceAccountCredentials
+            projectId: cTab.options.bigquery.googleCloudProject,
+            credentials: cTab.options.bigquery.serviceAccountCredentials
           });
 
           let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);
