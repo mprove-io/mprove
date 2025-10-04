@@ -26,6 +26,7 @@ export class Project {
   @IsEnum(ProjectRemoteTypeEnum)
   remoteType: ProjectRemoteTypeEnum;
 
+  @IsOptional()
   @IsString()
   gitUrl: string;
 

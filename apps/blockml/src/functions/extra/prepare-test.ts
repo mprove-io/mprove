@@ -10,6 +10,7 @@ import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuil
 import { ConsumerMainService } from '~blockml/services/consumer-main.service';
 import { APP_NAME_BLOCKML, SRC_PATH } from '~common/constants/top-blockml';
 import { BoolEnum } from '~common/enums/bool.enum';
+import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -23,12 +24,19 @@ export async function prepareTest(
   connection?: ProjectConnection,
   overrideConfigOptions?: BlockmlConfig
 ) {
+  let extraOverride: BlockmlConfig = {
+    blockmlEnv: BlockmlEnvEnum.TEST,
+    // blockmlLogResponseOk: BoolEnum.TRUE,
+    blockmlLogResponseError: BoolEnum.TRUE
+  };
+
   let config = getConfig();
 
   let mockConfig: BlockmlConfig = Object.assign(
     config,
     <BlockmlConfig>{ logFunc: func },
-    overrideConfigOptions
+    overrideConfigOptions,
+    extraOverride
   );
 
   // let presetFiles: BmlFile[] = await barYaml.collectFiles(

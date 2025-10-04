@@ -5,6 +5,7 @@ import * as fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '~common/constants/top-disk';
 import { BoolEnum } from '~common/enums/bool.enum';
+import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 import { appServices } from '~disk/app-services';
 import { DiskConfig } from '~disk/config/disk-config';
 import { getConfig } from '~disk/config/get.config';
@@ -16,9 +17,15 @@ export async function prepareTest(
   orgId: string,
   overrideConfigOptions?: DiskConfig
 ) {
+  let extraOverride: DiskConfig = {
+    diskEnv: DiskEnvEnum.TEST,
+    // diskLogResponseOk: BoolEnum.TRUE,
+    diskLogResponseError: BoolEnum.TRUE
+  };
+
   let config = getConfig();
 
-  let mockConfig = Object.assign(config, overrideConfigOptions);
+  let mockConfig = Object.assign(config, overrideConfigOptions, extraOverride);
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [

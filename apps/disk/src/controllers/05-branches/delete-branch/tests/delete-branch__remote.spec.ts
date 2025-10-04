@@ -4,6 +4,7 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
+import { Project } from '~common/interfaces/backend/project';
 import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
 import { ToDiskCreateProjectRequest } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ToDiskPushRepoRequest } from '~common/interfaces/to-disk/03-repos/to-disk-push-repo';
@@ -43,6 +44,20 @@ test('1', async t => {
       }
     };
 
+    let project: Project = {
+      orgId: orgId,
+      projectId: projectId,
+      name: projectName,
+      remoteType: ProjectRemoteTypeEnum.Managed,
+      defaultBranch: BRANCH_MAIN,
+      gitUrl: undefined,
+      tab: {
+        privateKey: undefined,
+        publicKey: undefined
+      },
+      serverTs: undefined
+    };
+
     let createProjectRequest: ToDiskCreateProjectRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskCreateProject,
@@ -50,11 +65,9 @@ test('1', async t => {
       },
       payload: {
         orgId: orgId,
-        projectId: projectId,
-        projectName: projectName,
+        project: project,
         devRepoId: 'r1',
-        userAlias: 'u1',
-        remoteType: ProjectRemoteTypeEnum.Managed
+        userAlias: 'u1'
       }
     };
 
@@ -65,12 +78,11 @@ test('1', async t => {
       },
       payload: {
         orgId: orgId,
-        projectId: projectId,
+        project: project,
         repoId: 'r1',
         newBranch: 'b2',
         fromBranch: BRANCH_MAIN,
-        isFromRemote: true,
-        remoteType: ProjectRemoteTypeEnum.Managed
+        isFromRemote: true
       }
     };
 
@@ -81,11 +93,10 @@ test('1', async t => {
       },
       payload: {
         orgId: orgId,
-        projectId: projectId,
+        project: project,
         repoId: 'r1',
         branch: 'b2',
-        userAlias: 'u1',
-        remoteType: ProjectRemoteTypeEnum.Managed
+        userAlias: 'u1'
       }
     };
 
@@ -96,11 +107,9 @@ test('1', async t => {
       },
       payload: {
         orgId: orgId,
-        projectId: projectId,
+        project: project,
         repoId: PROD_REPO_ID,
-        branch: 'b2',
-        remoteType: ProjectRemoteTypeEnum.Managed,
-        defaultBranch: BRANCH_MAIN
+        branch: 'b2'
       }
     };
 

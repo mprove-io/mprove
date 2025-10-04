@@ -1,4 +1,5 @@
 import test from 'ava';
+import { BRANCH_MAIN } from '~common/constants/top';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
@@ -46,7 +47,7 @@ test('1', async t => {
       projectId: projectId,
       name: projectName,
       remoteType: ProjectRemoteTypeEnum.Managed,
-      defaultBranch: undefined,
+      defaultBranch: BRANCH_MAIN,
       gitUrl: undefined,
       tab: {
         privateKey: undefined,

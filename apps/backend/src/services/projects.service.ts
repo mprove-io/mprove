@@ -96,7 +96,7 @@ export class ProjectsService {
       projectId: projectId,
       name: name,
       remoteType: remoteType,
-      defaultBranch: undefined,
+      defaultBranch: undefined, // set based on remoteType in Disk service
       gitUrl: gitUrl,
       tab: {
         privateKey: privateKey,

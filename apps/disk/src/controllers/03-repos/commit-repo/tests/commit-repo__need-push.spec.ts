@@ -49,7 +49,7 @@ test('1', async t => {
       projectId: projectId,
       name: projectName,
       remoteType: ProjectRemoteTypeEnum.Managed,
-      defaultBranch: undefined,
+      defaultBranch: BRANCH_MAIN,
       gitUrl: undefined,
       tab: {
         privateKey: undefined,
