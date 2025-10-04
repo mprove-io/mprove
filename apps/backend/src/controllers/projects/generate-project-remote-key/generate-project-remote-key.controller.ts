@@ -23,10 +23,12 @@ import { PASS_PHRASE } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
+import { NoteTab } from '~common/interfaces/backend/note-tab';
 import {
   ToBackendGenerateProjectRemoteKeyRequest,
   ToBackendGenerateProjectRemoteKeyResponsePayload
 } from '~common/interfaces/to-backend/projects/to-backend-generate-project-remote-key';
+import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let retry = require('async-retry');
 
@@ -77,10 +79,17 @@ export class GenerateProjectRemoteKeyController {
       passphrase: PASS_PHRASE
     }).toString('ssh');
 
+    let noteTab: NoteTab = {
+      publicKey: sshPublicKey,
+      privateKey: sshPrivateKey
+    };
+
     let note: NoteEnt = {
       noteId: makeId(),
-      publicKey: sshPublicKey,
-      privateKey: sshPrivateKey,
+      tab: encryptData({
+        data: noteTab,
+        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+      }),
       serverTs: undefined
     };
 
@@ -100,7 +109,7 @@ export class GenerateProjectRemoteKeyController {
 
     let payload: ToBackendGenerateProjectRemoteKeyResponsePayload = {
       noteId: note.noteId,
-      publicKey: note.publicKey
+      publicKey: noteTab.publicKey
     };
 
     return payload;

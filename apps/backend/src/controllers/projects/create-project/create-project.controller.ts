@@ -20,11 +20,13 @@ import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-reques
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
+import { NoteTab } from '~common/interfaces/backend/note-tab';
 import {
   ToBackendCreateProjectRequest,
   ToBackendCreateProjectResponsePayload
 } from '~common/interfaces/to-backend/projects/to-backend-create-project';
 import { ServerError } from '~common/models/server-error';
+import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -84,6 +86,11 @@ export class CreateProjectController {
       }
     }
 
+    let noteTab = decryptData<NoteTab>({
+      encryptedString: note.tab,
+      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+    });
+
     let newProject = await this.projectsService.addProject({
       orgId: orgId,
       name: name,
@@ -93,8 +100,8 @@ export class CreateProjectController {
       remoteType: remoteType,
       projectId: makeId(),
       gitUrl: gitUrl,
-      privateKey: note?.privateKey,
-      publicKey: note?.publicKey,
+      privateKey: noteTab?.privateKey,
+      publicKey: noteTab?.publicKey,
       evs: [],
       connections: []
     });

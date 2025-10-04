@@ -5,8 +5,7 @@ export const notesTable = pgTable(
   'notes',
   {
     noteId: varchar('note_id', { length: 32 }).notNull().primaryKey(),
-    publicKey: text('public_key').notNull(),
-    privateKey: text('private_key').notNull(),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   }
   // ,
