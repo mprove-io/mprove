@@ -57,7 +57,7 @@
       >
 
       <button
-        *ngIf="nav?.needValidate === false"
+        *ngIf="nav?.needValidate === false && nav?.isRepoProd === false"
         type="button"
         data-cy="filesRightRevalidateButton"
         class="border-s400 text-s500 mt-5 h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-lg font-medium focus:outline-none"

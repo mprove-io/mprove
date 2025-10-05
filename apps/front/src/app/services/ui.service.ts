@@ -106,7 +106,7 @@ export class UiService {
 
     let link: ProjectFileLink = links.find(l => l.projectId === projectId);
 
-    let linkNewFileId = isDefined(fileId) ? fileId : link.fileId;
+    let linkNewFileId = isDefined(fileId) ? fileId : link?.fileId;
 
     if (isUndefined(link?.fileId) && isUndefined(linkNewFileId)) {
       return;
