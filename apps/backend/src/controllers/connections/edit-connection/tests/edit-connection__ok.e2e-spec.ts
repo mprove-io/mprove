@@ -102,7 +102,8 @@ test('1', async t => {
       payload: {
         connectionId: connectionId,
         envId: PROJECT_ENV_PROD,
-        projectId: projectId
+        projectId: projectId,
+        options: {}
       }
     };
 

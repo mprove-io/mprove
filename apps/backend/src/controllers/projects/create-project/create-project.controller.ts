@@ -73,6 +73,7 @@ export class CreateProjectController {
     }
 
     let note: NoteEnt;
+    let noteTab: NoteTab;
 
     if (remoteType === ProjectRemoteTypeEnum.GitClone) {
       note = await this.db.drizzle.query.notesTable.findFirst({
@@ -84,12 +85,12 @@ export class CreateProjectController {
           message: ErEnum.BACKEND_NOTE_DOES_NOT_EXIST
         });
       }
-    }
 
-    let noteTab = decryptData<NoteTab>({
-      encryptedString: note.tab,
-      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
-    });
+      noteTab = decryptData<NoteTab>({
+        encryptedString: note.tab,
+        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+      });
+    }
 
     let newProject = await this.projectsService.addProject({
       orgId: orgId,

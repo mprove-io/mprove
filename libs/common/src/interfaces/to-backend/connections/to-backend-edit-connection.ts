@@ -18,7 +18,7 @@ export class ToBackendEditConnectionRequestPayload {
   @IsOptional()
   @ValidateNested()
   @Type(() => ConnectionTabOptions)
-  options?: ConnectionTabOptions;
+  options: ConnectionTabOptions;
 }
 
 export class ToBackendEditConnectionRequest extends ToBackendRequest {
