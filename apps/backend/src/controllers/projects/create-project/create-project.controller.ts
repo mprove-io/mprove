@@ -1,4 +1,11 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { and, eq } from 'drizzle-orm';
@@ -8,6 +15,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { NoteEnt, notesTable } from '~backend/drizzle/postgres/schema/notes';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
@@ -28,6 +36,8 @@ import {
 import { ServerError } from '~common/models/server-error';
 import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 
+let retry = require('async-retry');
+
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
@@ -36,6 +46,7 @@ export class CreateProjectController {
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
     private wrapToApiService: WrapToApiService,
+    private logger: Logger,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -106,6 +117,14 @@ export class CreateProjectController {
       evs: [],
       connections: []
     });
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx.delete(notesTable).where(eq(notesTable.noteId, noteId));
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
 
     let payload: ToBackendCreateProjectResponsePayload = {
       project: this.wrapToApiService.wrapToApiProject({
