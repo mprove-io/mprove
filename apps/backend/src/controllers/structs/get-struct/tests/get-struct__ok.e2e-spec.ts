@@ -86,7 +86,8 @@ test('1', async t => {
             projectId: projectId,
             connectionId: 'c1',
             envId: PROJECT_ENV_PROD,
-            type: ConnectionTypeEnum.PostgreSQL
+            type: ConnectionTypeEnum.PostgreSQL,
+            options: {}
           }
         ]
       },

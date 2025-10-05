@@ -139,7 +139,7 @@ export class ToBackendSeedRecordsRequestPayloadConnectionsItem {
   @IsOptional()
   @ValidateNested()
   @Type(() => ConnectionTabOptions)
-  options?: ConnectionTabOptions;
+  options: ConnectionTabOptions;
 }
 
 export class ToBackendSeedRecordsRequestPayloadEnvsItem {

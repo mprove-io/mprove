@@ -152,7 +152,8 @@ test('1', async t => {
             projectId: projectId,
             connectionId: connectionId,
             envId: PROJECT_ENV_PROD,
-            type: connectionType
+            type: connectionType,
+            options: {}
           }
         ],
         queries: [query],
