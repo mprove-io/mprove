@@ -5,6 +5,10 @@
     >Create Project</div
   >
 
+  <div class="text-s2 mt-9 select-none text-left text-base font-semibold"
+    >Project Name</div
+  >
+
   <form
     class="flex flex-col"
     [formGroup]="createProjectForm"
@@ -14,24 +18,24 @@
       autocomplete="off"
       spellcheck="false"
       data-cy="createProjectDialogProjectNameInput"
-      class="form-input border-s3 focus:border-m600 mt-9 select-none rounded"
+      class="form-input border-s3 focus:border-m600 mt-2 select-none rounded"
       [ngClass]="{
         'border-r600':
           createProjectForm.controls['projectName'].invalid &&
           createProjectForm.controls['projectName'].touched
       }"
       formControlName="projectName"
-      placeholder="Project Name"
+      placeholder=""
     />
     <m-validation
       [control]="createProjectForm.controls['projectName']"
     ></m-validation>
 
-    <div class="text-s2 mt-5 select-none text-left text-lg font-semibold"
-      >Remote Repo</div
+    <div class="text-s2 mt-5 select-none text-left text-base font-semibold"
+      >Git URL of Remote Repository (GitHub, GitLab, BitBucket, etc)</div
     >
 
-    <div
+    <!-- <div
       data-cy="createProjectDialogManagedCheckbox"
       class="mt-5 flex h-9 cursor-pointer flex-row items-center"
       (click)="managedOnClick()"
@@ -48,9 +52,9 @@
       </div>
 
       <div class="ml-5 select-none text-base">Managed (server directory)</div>
-    </div>
+    </div> -->
 
-    <div
+    <!-- <div
       data-cy="createProjectDialogGitCloneCheckbox"
       class="mt-5 flex h-9 cursor-pointer flex-row items-center"
       (click)="gitCloneOnClick()"
@@ -70,7 +74,7 @@
       <div class="ml-5 select-none text-base"
         >git Clone (GitHub, GitLab, BitBucket, etc) - recommended</div
       >
-    </div>
+    </div> -->
 
     <div
       *ngIf="projectRemoteRepoType === projectRemoteRepoTypeEnum.GitClone"
@@ -80,7 +84,7 @@
         autocomplete="off"
         spellcheck="false"
         data-cy="createProjectDialogGitUrlInput"
-        class="form-input border-s3 focus:border-m600 mt-9 w-full select-none rounded"
+        class="form-input border-s3 focus:border-m600 mt-3 w-full select-none rounded"
         [ngClass]="{
           'border-r600':
             createProjectForm.controls['projectGitUrl'].invalid &&
@@ -93,11 +97,12 @@
         [control]="createProjectForm.controls['projectGitUrl']"
       ></m-validation>
 
-      <div class="text-s2 mt-5 select-none text-left text-lg"
-        >Add this <span class="font-semibold">Deploy Key</span> to your git
-        provider and enable <span class="font-semibold">Write Access</span>
+      <div class="text mt-5 select-none text-left"
+        >Add this <span class="text-s2 font-semibold">Deploy Key</span> to your
+        git provider and enable
+        <span class="text-s2 font-semibold">Write Access</span>
       </div>
-      <div class="text-s2 select-none text-left text-lg"
+      <div class="text select-none text-left"
         >(for github.com use Github Repository Settings Page)</div
       >
 
@@ -141,10 +146,7 @@
         </div>
 
         <div class="ml-5 select-none flex-col text-base">
-          <div>Remote Repo has at least 1 commit.</div>
-          <div
-            >Deploy key is added. Write access for deploy key is enabled.</div
-          >
+          <div>Remote Repository has at least 1 commit</div>
         </div>
       </div>
     </div>
