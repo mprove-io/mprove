@@ -3,7 +3,7 @@ import { existsSync } from 'fs';
 import * as fs from 'fs/promises';
 
 function makeRandomString(length: number): string {
-  let output: string;
+  let output = '';
 
   let charset: string =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
