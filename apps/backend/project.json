@@ -50,6 +50,12 @@
       }
     },
     "build-tests": {
+      "dependsOn": [
+        {
+          "target": "build-tests",
+          "projects": "dependencies"
+        }
+      ],
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -60,12 +66,6 @@
       }
     },
     "e2e": {
-      "dependsOn": [
-        {
-          "target": "build-tests",
-          "projects": "dependencies"
-        }
-      ],
       "executor": "nx:run-commands",
       "options": {
         "commands": [
