@@ -48,6 +48,8 @@
             </thead>
 
             <tbody class="divide-s300 divide-y">
+              <tr *ngIf="members?.length === 0"> </tr>
+
               <tr
                 *ngFor="
                   let member of members

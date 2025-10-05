@@ -77,6 +77,8 @@
             </thead>
 
             <tbody class="divide-s300 divide-y text-base">
+              <tr *ngIf="environments?.length === 0"> </tr>
+
               <tr *ngFor="let environment of environments" class="h-16">
                 <td class="w-[100px]">
                   <ng-template #templateDeleteEnv>

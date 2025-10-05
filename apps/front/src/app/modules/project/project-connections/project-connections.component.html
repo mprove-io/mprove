@@ -53,6 +53,8 @@
             </thead>
 
             <tbody class="divide-s300 divide-y text-base">
+              <tr *ngIf="connections?.length === 0"> </tr>
+
               <tr *ngFor="let connection of connections" class="h-16">
                 <td class="w-[100px]">
                   <div

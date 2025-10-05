@@ -33,6 +33,8 @@
             </thead>
 
             <tbody class="divide-s300 divide-y">
+              <tr *ngIf="users?.length === 0"> </tr>
+
               <tr
                 *ngFor="
                   let user of users
