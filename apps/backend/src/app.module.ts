@@ -29,6 +29,7 @@ import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
+import { UserTab } from '~common/interfaces/backend/user-tab';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
@@ -48,9 +49,11 @@ import { getRetryOption } from './functions/get-retry-option';
 import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { HashService } from './services/hash.service';
 import { EntMakerService } from './services/maker.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
+import { TabService } from './services/tab.service';
 import { UsersService } from './services/users.service';
 import { WrapToApiService } from './services/wrap-to-api.service';
 
@@ -245,6 +248,8 @@ export class AppModule implements OnModuleInit {
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
     private entMakerService: EntMakerService,
+    private hashService: HashService,
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -326,8 +331,11 @@ export class AppModule implements OnModuleInit {
           isDefinedAndNotEmpty(mproveAdminEmail) &&
           isDefinedAndNotEmpty(mproveAdminInitialPassword)
         ) {
+          let mproveAdminEmailHash =
+            this.hashService.makeHash(mproveAdminEmail);
+
           mproveAdminUser = await this.db.drizzle.query.usersTable.findFirst({
-            where: eq(usersTable.email, mproveAdminEmail)
+            where: eq(usersTable.emailHash, mproveAdminEmailHash)
           });
 
           if (isUndefined(mproveAdminUser)) {
@@ -361,9 +369,13 @@ export class AppModule implements OnModuleInit {
           });
 
           if (isUndefined(firstOrg)) {
+            let mproveAdminUserTab = this.tabService.decryptData<UserTab>({
+              encryptedString: mproveAdminUser.tab
+            });
+
             firstOrg = await this.orgsService.addOrg({
               ownerId: mproveAdminUser.userId,
-              ownerEmail: mproveAdminUser.email,
+              ownerEmail: mproveAdminUserTab.email,
               name: DEMO_ORG_NAME,
               traceId: makeId(),
               orgId: demoOrgId

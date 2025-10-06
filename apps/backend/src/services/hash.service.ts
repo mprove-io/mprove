@@ -5,11 +5,7 @@ import { Injectable } from '@nestjs/common';
 export class HashService {
   constructor() {}
 
-  makeHash(item: {
-    text: string;
-  }) {
-    let { text } = item;
-
+  makeHash(text: string) {
     let hash = crypto.createHash('sha256').update(text).digest('hex');
     return hash;
   }

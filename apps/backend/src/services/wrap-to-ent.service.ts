@@ -161,7 +161,7 @@ export class WrapToEntService {
       )
         ? query.bigqueryConsecutiveErrorsGetResults
         : 0,
-      apiUrlHash: this.hashService.makeHash({ text: query.apiUrl }),
+      apiUrlHash: this.hashService.makeHash(query.apiUrl),
       tab: this.tabService.encryptData({ data: queryTab }),
       serverTs: query.serverTs
     };
