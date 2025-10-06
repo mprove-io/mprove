@@ -7,6 +7,12 @@ import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { ChartTab } from '~common/interfaces/backend/chart-tab';
+import { DashboardTab } from '~common/interfaces/backend/dashboard-tab';
+import { MconfigTab } from '~common/interfaces/backend/mconfig-tab';
+import { ModelTab } from '~common/interfaces/backend/model-tab';
+import { QueryTab } from '~common/interfaces/backend/query-tab';
+import { ReportTab } from '~common/interfaces/backend/report-tab';
 import { Chart } from '~common/interfaces/blockml/chart';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
@@ -14,24 +20,28 @@ import { Model } from '~common/interfaces/blockml/model';
 import { Query } from '~common/interfaces/blockml/query';
 import { Report } from '~common/interfaces/blockml/report';
 import { HashService } from './hash.service';
+import { TabService } from './tab.service';
 
 @Injectable()
 export class WrapToEntService {
-  constructor(private hashService: HashService) {}
+  constructor(
+    private tabService: TabService,
+    private hashService: HashService
+  ) {}
 
-  // wrapToEntityApi(x: Api): ApiEnt {
-  //   return {
-  //     struct_id: x.structId,
-  //     api_id: x.apiId,
-  //     file_path: x.filePath,
-  //     label: x.label,
-  //     steps: x.steps,
-  //     server_ts: x.serverTs.toString()
-  //   };
-  // }
+  wrapToEntityDashboard(item: { dashboard: Dashboard }): DashboardEnt {
+    let { dashboard } = item;
 
-  wrapToEntityDashboard(dashboard: Dashboard): DashboardEnt {
-    return {
+    let dashboardTab: DashboardTab = {
+      filePath: dashboard.filePath,
+      content: dashboard.content,
+      accessRoles: dashboard.accessRoles,
+      title: dashboard.title,
+      fields: dashboard.fields,
+      tiles: dashboard.tiles
+    };
+
+    let dashboardEnt: DashboardEnt = {
       dashboardFullId: this.hashService.makeDashboardFullId({
         structId: dashboard.structId,
         dashboardId: dashboard.dashboardId
@@ -40,24 +50,17 @@ export class WrapToEntService {
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
       creatorId: dashboard.creatorId,
-      filePath: dashboard.filePath,
-      content: dashboard.content,
-      accessRoles: dashboard.accessRoles,
-      title: dashboard.title,
-      fields: dashboard.fields,
-      tiles: dashboard.tiles,
+      tab: this.tabService.encryptData({ data: dashboardTab }),
       serverTs: dashboard.serverTs
     };
+
+    return dashboardEnt;
   }
 
-  wrapToEntityMconfig(mconfig: Mconfig): MconfigEnt {
-    return {
-      structId: mconfig.structId,
-      queryId: mconfig.queryId,
-      mconfigId: mconfig.mconfigId,
-      modelId: mconfig.modelId,
-      modelType: mconfig.modelType,
-      // isStoreModel: mconfig.isStoreModel,
+  wrapToEntityMconfig(item: { mconfig: Mconfig }): MconfigEnt {
+    let { mconfig } = item;
+
+    let mconfigTab: MconfigTab = {
       dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
       storePart: mconfig.storePart,
       modelLabel: mconfig.modelLabel,
@@ -66,33 +69,34 @@ export class WrapToEntService {
       malloyQueryExtra: mconfig.malloyQueryExtra,
       compiledQuery: mconfig.compiledQuery,
       select: mconfig.select,
-      // unsafeSelect: mconfig.unsafeSelect,
-      // warnSelect: mconfig.warnSelect,
-      // joinAggregations: mconfig.joinAggregations,
       sortings: mconfig.sortings,
       sorts: mconfig.sorts,
       timezone: mconfig.timezone,
       limit: mconfig.limit,
       filters: mconfig.filters,
-      chart: mconfig.chart,
+      chart: mconfig.chart
+    };
+
+    let mconfigEnt: MconfigEnt = {
+      structId: mconfig.structId,
+      queryId: mconfig.queryId,
+      mconfigId: mconfig.mconfigId,
+      modelId: mconfig.modelId,
+      modelType: mconfig.modelType,
       temp: mconfig.temp,
+      tab: this.tabService.encryptData({ data: mconfigTab }),
       serverTs: mconfig.serverTs
     };
+
+    return mconfigEnt;
   }
 
-  wrapToEntityModel(model: Model): ModelEnt {
-    return {
-      modelFullId: this.hashService.makeModelFullId({
-        structId: model.structId,
-        modelId: model.modelId
-      }),
-      structId: model.structId,
-      modelId: model.modelId,
-      type: model.type,
+  wrapToEntityModel(item: { model: Model }): ModelEnt {
+    let { model } = item;
+
+    let modelTab: ModelTab = {
       source: model.source,
       malloyModelDef: model.malloyModelDef,
-      connectionId: model.connectionId,
-      connectionType: model.connectionType,
       filePath: model.filePath,
       fileText: model.fileText,
       storeContent: model.storeContent,
@@ -100,30 +104,50 @@ export class WrapToEntService {
       accessRoles: model.accessRoles,
       label: model.label,
       fields: model.fields,
-      nodes: model.nodes,
+      nodes: model.nodes
+    };
+
+    let modelEnt: ModelEnt = {
+      modelFullId: this.hashService.makeModelFullId({
+        structId: model.structId,
+        modelId: model.modelId
+      }),
+      structId: model.structId,
+      modelId: model.modelId,
+      type: model.type,
+      connectionId: model.connectionId,
+      connectionType: model.connectionType,
+      tab: this.tabService.encryptData({ data: modelTab }),
       serverTs: model.serverTs
     };
+
+    return modelEnt;
   }
 
-  wrapToEntityQuery(query: Query): QueryEnt {
-    return {
-      projectId: query.projectId,
-      envId: query.envId,
-      connectionId: query.connectionId,
-      connectionType: query.connectionType,
-      queryId: query.queryId,
+  wrapToEntityQuery(item: { query: Query }): QueryEnt {
+    let { query } = item;
+
+    let queryTab: QueryTab = {
       sql: query.sql,
       apiMethod: query.apiMethod,
       apiUrl: query.apiUrl,
       apiBody: query.apiBody,
       data: query.data,
+      lastErrorMessage: query.lastErrorMessage
+    };
+
+    let queryEnt: QueryEnt = {
+      projectId: query.projectId,
+      envId: query.envId,
+      connectionId: query.connectionId,
+      connectionType: query.connectionType,
+      queryId: query.queryId,
       status: query.status,
       lastRunBy: query.lastRunBy,
       lastRunTs: query.lastRunTs,
       lastCancelTs: query.lastCancelTs,
       lastCompleteTs: query.lastCompleteTs,
       lastCompleteDuration: query.lastCompleteDuration,
-      lastErrorMessage: query.lastErrorMessage,
       lastErrorTs: query.lastErrorTs,
       queryJobId: undefined, // null
       bigqueryQueryJobId: undefined, // null
@@ -137,12 +161,27 @@ export class WrapToEntService {
       )
         ? query.bigqueryConsecutiveErrorsGetResults
         : 0,
+      apiUrlHash: this.hashService.makeHash({ text: query.apiUrl }),
+      tab: this.tabService.encryptData({ data: queryTab }),
       serverTs: query.serverTs
     };
+
+    return queryEnt;
   }
 
-  wrapToEntityReport(report: Report): ReportEnt {
-    return {
+  wrapToEntityReport(item: { report: Report }): ReportEnt {
+    let { report } = item;
+
+    let reportTab: ReportTab = {
+      filePath: report.filePath,
+      fields: report.fields,
+      accessRoles: report.accessRoles,
+      title: report.title,
+      rows: report.rows,
+      chart: report.chart
+    };
+
+    let reportEnt: ReportEnt = {
       reportFullId: this.hashService.makeReportFullId({
         structId: report.structId,
         reportId: report.reportId
@@ -150,17 +189,14 @@ export class WrapToEntService {
       projectId: report.projectId,
       structId: report.structId,
       reportId: report.reportId,
-      filePath: report.filePath,
-      fields: report.fields,
-      draft: report.draft,
       creatorId: report.creatorId,
-      accessRoles: report.accessRoles,
-      title: report.title,
-      rows: report.rows,
-      chart: report.chart,
+      draft: report.draft,
       draftCreatedTs: report.draftCreatedTs,
+      tab: this.tabService.encryptData({ data: reportTab }),
       serverTs: report.serverTs
     };
+
+    return reportEnt;
   }
 
   wrapToEntityChart(item: {
@@ -169,7 +205,15 @@ export class WrapToEntService {
   }): ChartEnt {
     let { chart, chartType } = item;
 
-    return {
+    let chartTab: ChartTab = {
+      title: chart.title,
+      modelLabel: chart.modelLabel,
+      filePath: chart.filePath,
+      accessRoles: chart.accessRoles,
+      tiles: chart.tiles
+    };
+
+    let chartEnt: ChartEnt = {
       chartFullId: this.hashService.makeChartFullId({
         structId: chart.structId,
         chartId: chart.chartId
@@ -178,14 +222,12 @@ export class WrapToEntService {
       chartId: chart.chartId,
       draft: chart.draft,
       creatorId: chart.creatorId,
-      title: chart.title,
       chartType: chartType,
       modelId: chart.modelId,
-      modelLabel: chart.modelLabel,
-      filePath: chart.filePath,
-      accessRoles: chart.accessRoles,
-      tiles: chart.tiles,
+      tab: this.tabService.encryptData({ data: chartTab }),
       serverTs: chart.serverTs
     };
+
+    return chartEnt;
   }
 }

@@ -20,7 +20,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/connections.service';
 import { EnvsService } from '~backend/services/envs.service';
-import { MakerService } from '~backend/services/maker.service';
+import { EntMakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -46,7 +46,7 @@ export class CreateConnectionController {
     private connectionsService: ConnectionsService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -96,7 +96,7 @@ export class CreateConnectionController {
       member: member
     });
 
-    let newConnection = this.makerService.makeConnection({
+    let newConnection = this.entMakerService.makeConnection({
       projectId: projectId,
       envId: envId,
       connectionId: connectionId,

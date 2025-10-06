@@ -16,7 +16,7 @@ import { makeCopy } from '~common/functions/make-copy';
 import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
 import { DocService } from './doc.service';
-import { MakerService } from './maker.service';
+import { EntMakerService } from './maker.service';
 import { MconfigsService } from './mconfigs.service';
 import { RabbitService } from './rabbit.service';
 import { WrapToApiService } from './wrap-to-api.service';
@@ -27,7 +27,7 @@ let retry = require('async-retry');
 @Injectable()
 export class ReportsService {
   constructor(
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private docService: DocService,
     private mconfigsService: MconfigsService,
     private blockmlService: BlockmlService,
@@ -88,7 +88,7 @@ export class ReportsService {
     let chart = makeCopy(DEFAULT_CHART);
     chart.type = ChartTypeEnum.Line;
 
-    let emptyRep = this.makerService.makeReport({
+    let emptyRep = this.entMakerService.makeReport({
       structId: undefined,
       reportId: reportId,
       projectId: projectId,

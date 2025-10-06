@@ -25,7 +25,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
-import { MakerService } from '~backend/services/maker.service';
+import { EntMakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { ReportDataService } from '~backend/services/report-data.service';
@@ -62,7 +62,7 @@ export class CreateDraftReportController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -315,7 +315,7 @@ export class CreateDraftReportController {
         a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
       );
 
-    let report: ReportEnt = this.makerService.makeReport({
+    let report: ReportEnt = this.entMakerService.makeReport({
       projectId: projectId,
       structId: bridge.structId,
       reportId: reportId,

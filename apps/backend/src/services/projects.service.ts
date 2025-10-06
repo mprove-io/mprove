@@ -26,7 +26,7 @@ import {
 import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
 import { HashService } from './hash.service';
-import { MakerService } from './maker.service';
+import { EntMakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
 import { TabService } from './tab.service';
 import { WrapToApiService } from './wrap-to-api.service';
@@ -41,7 +41,7 @@ export class ProjectsService {
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private hashService: HashService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -141,13 +141,13 @@ export class ProjectsService {
       serverTs: undefined
     };
 
-    let prodEnv = this.makerService.makeEnv({
+    let prodEnv = this.entMakerService.makeEnv({
       projectId: newProject.projectId,
       envId: PROJECT_ENV_PROD,
       evs: evs
     });
 
-    let newMember = this.makerService.makeMember({
+    let newMember = this.entMakerService.makeMember({
       projectId: newProject.projectId,
       user: user,
       isAdmin: true,
@@ -158,19 +158,19 @@ export class ProjectsService {
     let devStructId = makeId();
     let prodStructId = makeId();
 
-    let prodBranch = this.makerService.makeBranch({
+    let prodBranch = this.entMakerService.makeBranch({
       projectId: newProject.projectId,
       repoId: PROD_REPO_ID,
       branchId: newProject.defaultBranch
     });
 
-    let devBranch = this.makerService.makeBranch({
+    let devBranch = this.entMakerService.makeBranch({
       projectId: newProject.projectId,
       repoId: user.userId,
       branchId: newProject.defaultBranch
     });
 
-    let prodBranchBridgeProdEnv = this.makerService.makeBridge({
+    let prodBranchBridgeProdEnv = this.entMakerService.makeBridge({
       projectId: prodBranch.projectId,
       repoId: prodBranch.repoId,
       branchId: prodBranch.branchId,
@@ -179,7 +179,7 @@ export class ProjectsService {
       needValidate: false
     });
 
-    let devBranchBridgeProdEnv = this.makerService.makeBridge({
+    let devBranchBridgeProdEnv = this.entMakerService.makeBridge({
       projectId: devBranch.projectId,
       repoId: devBranch.repoId,
       branchId: devBranch.branchId,

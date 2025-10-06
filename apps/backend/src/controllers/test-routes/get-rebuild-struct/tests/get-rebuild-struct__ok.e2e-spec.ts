@@ -96,11 +96,11 @@ test('1', async t => {
     let apiProject: Project = {
       orgId: orgId,
       projectId: projectId,
-      name: projectName,
-      defaultBranch: BRANCH_MAIN,
       remoteType: ProjectRemoteTypeEnum.Managed,
-      gitUrl: undefined,
       tab: {
+        name: projectName,
+        defaultBranch: BRANCH_MAIN,
+        gitUrl: undefined,
         privateKey: undefined,
         publicKey: undefined
       },

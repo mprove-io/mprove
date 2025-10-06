@@ -19,7 +19,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
-import { MakerService } from '~backend/services/maker.service';
+import { EntMakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
@@ -41,7 +41,7 @@ export class CreateEnvController {
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -68,7 +68,7 @@ export class CreateEnvController {
       envId: envId
     });
 
-    let newEnv = this.makerService.makeEnv({
+    let newEnv = this.entMakerService.makeEnv({
       projectId: projectId,
       envId: envId,
       evs: []
@@ -94,7 +94,7 @@ export class CreateEnvController {
     let newBridges: BridgeEnt[] = [];
 
     branches.forEach(x => {
-      let newBridge = this.makerService.makeBridge({
+      let newBridge = this.entMakerService.makeBridge({
         projectId: projectId,
         repoId: x.repoId,
         branchId: x.branchId,

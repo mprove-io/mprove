@@ -17,7 +17,7 @@ import { DuckDbService } from './services/duckdb.service';
 import { EmailService } from './services/email.service';
 import { EnvsService } from './services/envs.service';
 import { HashService } from './services/hash.service';
-import { MakerService } from './services/maker.service';
+import { EntMakerService } from './services/maker.service';
 import { MalloyService } from './services/malloy.service';
 import { MconfigsService } from './services/mconfigs.service';
 import { MembersService } from './services/members.service';
@@ -48,7 +48,7 @@ import { WrapToEntService } from './services/wrap-to-ent.service';
 export const appProviders = [
   WrapToEntService,
   WrapToApiService,
-  MakerService,
+  EntMakerService,
   HashService,
   RedisService,
   RabbitService,

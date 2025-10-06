@@ -48,7 +48,7 @@ import { getRetryOption } from './functions/get-retry-option';
 import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { MakerService } from './services/maker.service';
+import { EntMakerService } from './services/maker.service';
 import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { UsersService } from './services/users.service';
@@ -244,7 +244,7 @@ export class AppModule implements OnModuleInit {
     private usersService: UsersService,
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -389,7 +389,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c1connection) &&
             isDefinedAndNotEmpty(demoProjectDwhPostgresPassword)
           ) {
-            let c1 = this.makerService.makeConnection({
+            let c1 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c1_postgres',
@@ -468,7 +468,7 @@ export class AppModule implements OnModuleInit {
               fse.readFileSync(demoProjectDwhBigqueryCredentialsPath).toString()
             );
 
-            let c3 = this.makerService.makeConnection({
+            let c3 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c3_bigquery',
@@ -503,7 +503,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c4connection) &&
             isDefinedAndNotEmpty(demoProjectDwhSnowflakeAccount)
           ) {
-            let c4 = this.makerService.makeConnection({
+            let c4 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c4_snowflake',
@@ -545,7 +545,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c5connection) &&
             isDefinedAndNotEmpty(demoProjectDwhMotherDuckToken)
           ) {
-            let c5 = this.makerService.makeConnection({
+            let c5 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c5_duckdb',
@@ -580,7 +580,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c6connection) &&
             isDefinedAndNotEmpty(demoProjectDwhMysqlPassword)
           ) {
-            let c6 = this.makerService.makeConnection({
+            let c6 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c6_mysql',
@@ -630,7 +630,7 @@ export class AppModule implements OnModuleInit {
                 .toString()
             );
 
-            let c7 = this.makerService.makeConnection({
+            let c7 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c7_google',
@@ -671,7 +671,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c8connection) &&
             isDefinedAndNotEmpty(demoProjectDwhTrinoUser)
           ) {
-            let c8 = this.makerService.makeConnection({
+            let c8 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c8_trino',
@@ -710,7 +710,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c9connection) &&
             isDefinedAndNotEmpty(demoProjectDwhPrestoUser)
           ) {
-            let c9 = this.makerService.makeConnection({
+            let c9 = this.entMakerService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c9_presto',

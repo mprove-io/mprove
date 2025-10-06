@@ -33,7 +33,7 @@ import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offse
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { MakerService } from '~backend/services/maker.service';
+import { EntMakerService } from '~backend/services/maker.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
 import { UsersService } from '~backend/services/users.service';
@@ -79,7 +79,7 @@ export class SeedRecordsController {
     private rabbitService: RabbitService,
     private usersService: UsersService,
     private blockmlService: BlockmlService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private wrapToApiService: WrapToApiService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
@@ -193,7 +193,7 @@ export class SeedRecordsController {
 
     if (isDefined(payloadConnections)) {
       payloadConnections.forEach(x => {
-        let newConnection = this.makerService.makeConnection({
+        let newConnection = this.entMakerService.makeConnection({
           projectId: x.projectId,
           envId: x.envId,
           connectionId: x.connectionId,
@@ -207,7 +207,7 @@ export class SeedRecordsController {
 
     if (isDefined(payloadEnvs)) {
       payloadEnvs.forEach(x => {
-        let newEnv = this.makerService.makeEnv({
+        let newEnv = this.entMakerService.makeEnv({
           projectId: x.projectId,
           envId: x.envId,
           evs: x.evs
@@ -225,18 +225,18 @@ export class SeedRecordsController {
           let newProject: Project = {
             orgId: x.orgId,
             projectId: x.projectId || makeId(),
-            name: x.name,
-            defaultBranch: x.defaultBranch,
             remoteType: x.remoteType,
-            gitUrl: x.gitUrl,
             tab: {
+              name: x.name,
+              defaultBranch: x.defaultBranch,
+              gitUrl: x.gitUrl,
               privateKey: x.privateKey,
               publicKey: x.publicKey
             },
             serverTs: undefined
           };
 
-          let prodEnv = this.makerService.makeEnv({
+          let prodEnv = this.entMakerService.makeEnv({
             projectId: newProject.projectId,
             envId: PROJECT_ENV_PROD,
             evs: []
@@ -326,19 +326,19 @@ export class SeedRecordsController {
             evs: prodEnv.evs
           });
 
-          let devBranch = this.makerService.makeBranch({
+          let devBranch = this.entMakerService.makeBranch({
             projectId: newProject.projectId,
             repoId: users[0].userId,
             branchId: newProject.defaultBranch
           });
 
-          let prodBranch = this.makerService.makeBranch({
+          let prodBranch = this.entMakerService.makeBranch({
             projectId: newProject.projectId,
             repoId: PROD_REPO_ID,
             branchId: newProject.defaultBranch
           });
 
-          let devBranchBridgeProdEnv = this.makerService.makeBridge({
+          let devBranchBridgeProdEnv = this.entMakerService.makeBridge({
             projectId: devBranch.projectId,
             repoId: devBranch.repoId,
             branchId: devBranch.branchId,
@@ -347,7 +347,7 @@ export class SeedRecordsController {
             needValidate: false
           });
 
-          let prodBranchBridgeProdEnv = this.makerService.makeBridge({
+          let prodBranchBridgeProdEnv = this.entMakerService.makeBridge({
             projectId: prodBranch.projectId,
             repoId: prodBranch.repoId,
             branchId: prodBranch.branchId,
@@ -460,7 +460,7 @@ export class SeedRecordsController {
         async (x: ToBackendSeedRecordsRequestPayloadMembersItem) => {
           let user = users.find(u => u.email === x.email);
 
-          let newMember = this.makerService.makeMember({
+          let newMember = this.entMakerService.makeMember({
             projectId: x.projectId,
             user: user,
             roles: x.roles,

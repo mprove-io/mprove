@@ -23,7 +23,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
 import { EnvsService } from '~backend/services/envs.service';
-import { MakerService } from '~backend/services/maker.service';
+import { EntMakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -60,7 +60,7 @@ export class PushRepoController {
     private branchesService: BranchesService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private wrapToApiService: WrapToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -165,14 +165,14 @@ export class PushRepoController {
     });
 
     if (isUndefined(prodBranch)) {
-      prodBranch = this.makerService.makeBranch({
+      prodBranch = this.entMakerService.makeBranch({
         projectId: projectId,
         repoId: PROD_REPO_ID,
         branchId: branchId
       });
 
       branchBridges.forEach(x => {
-        let prodBranchBridge = this.makerService.makeBridge({
+        let prodBranchBridge = this.entMakerService.makeBridge({
           projectId: branch.projectId,
           repoId: PROD_REPO_ID,
           branchId: branch.branchId,

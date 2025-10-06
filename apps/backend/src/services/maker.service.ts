@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '~backend/config/backend-config';
 import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
@@ -13,7 +11,11 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import { ConnectionTabOptions } from '~common/interfaces/backend/connection/connection-tab-options';
+import { EnvTab } from '~common/interfaces/backend/env-tab';
 import { Ev } from '~common/interfaces/backend/ev';
+import { MemberTab } from '~common/interfaces/backend/member-tab';
+import { ReportTab } from '~common/interfaces/backend/report-tab';
+import { UserTab } from '~common/interfaces/backend/user-tab';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { Row } from '~common/interfaces/blockml/row';
@@ -21,11 +23,10 @@ import { HashService } from './hash.service';
 import { TabService } from './tab.service';
 
 @Injectable()
-export class MakerService {
+export class EntMakerService {
   constructor(
     private tabService: TabService,
-    private hashService: HashService,
-    private cs: ConfigService<BackendConfig>
+    private hashService: HashService
   ) {}
 
   makeMember(item: {
@@ -36,8 +37,20 @@ export class MakerService {
     isAdmin: boolean;
     isEditor: boolean;
     isExplorer: boolean;
-  }) {
+  }): MemberEnt {
     let { projectId, roles, envs, user, isAdmin, isEditor, isExplorer } = item;
+
+    let userTab = this.tabService.decryptData<UserTab>({
+      encryptedString: user.tab
+    });
+
+    let memberTab: MemberTab = {
+      email: userTab.email,
+      alias: userTab.alias,
+      firstName: userTab.firstName,
+      lastName: userTab.lastName,
+      roles: roles || []
+    };
 
     let member: MemberEnt = {
       memberFullId: this.hashService.makeMemberFullId({
@@ -46,14 +59,14 @@ export class MakerService {
       }),
       projectId: projectId,
       memberId: user.userId,
-      email: user.email,
-      alias: user.alias,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      roles: roles || [],
+      emailHash: this.hashService.makeHash({ text: userTab.email }),
+      aliasHash: this.hashService.makeHash({ text: userTab.alias }),
       isAdmin: isAdmin,
       isEditor: isEditor,
       isExplorer: isExplorer,
+      tab: this.tabService.encryptData({
+        data: memberTab
+      }),
       serverTs: undefined
     };
 
@@ -67,7 +80,7 @@ export class MakerService {
     envId: string;
     structId: string;
     needValidate: boolean;
-  }) {
+  }): BridgeEnt {
     let { projectId, repoId, branchId, envId, structId, needValidate } = item;
 
     let bridge: BridgeEnt = {
@@ -89,7 +102,11 @@ export class MakerService {
     return bridge;
   }
 
-  makeBranch(item: { projectId: string; repoId: string; branchId: string }) {
+  makeBranch(item: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+  }): BranchEnt {
     let { projectId, repoId, branchId } = item;
 
     let branch: BranchEnt = {
@@ -107,8 +124,12 @@ export class MakerService {
     return branch;
   }
 
-  makeEnv(item: { projectId: string; envId: string; evs: Ev[] }) {
+  makeEnv(item: { projectId: string; envId: string; evs: Ev[] }): EnvEnt {
     let { projectId, envId, evs } = item;
+
+    let envTab: EnvTab = {
+      evs: evs
+    };
 
     let env: EnvEnt = {
       envFullId: this.hashService.makeEnvFullId({
@@ -117,10 +138,10 @@ export class MakerService {
       }),
       projectId: projectId,
       envId: envId,
-      evs: evs,
       memberIds: [],
       isFallbackToProdConnections: true,
       isFallbackToProdVariables: true,
+      tab: this.tabService.encryptData({ data: envTab }),
       serverTs: undefined
     };
 
@@ -133,7 +154,7 @@ export class MakerService {
     envId: string;
     type: ConnectionTypeEnum;
     options: ConnectionTabOptions;
-  }) {
+  }): ConnectionEnt {
     let { projectId, connectionId, envId, type, options } = item;
 
     if (isDefined(options.storeGoogleApi)) {
@@ -189,7 +210,7 @@ export class MakerService {
     chart: MconfigChart;
     draftCreatedTs?: number;
     draft: boolean;
-  }) {
+  }): ReportEnt {
     let {
       structId,
       reportId,
@@ -205,6 +226,15 @@ export class MakerService {
       draftCreatedTs
     } = item;
 
+    let reportTab: ReportTab = {
+      filePath: filePath,
+      accessRoles: accessRoles,
+      title: title,
+      fields: fields,
+      rows: rows,
+      chart: chart
+    };
+
     let report: ReportEnt = {
       reportFullId: this.hashService.makeReportFullId({
         structId: structId,
@@ -214,14 +244,9 @@ export class MakerService {
       reportId: reportId,
       projectId: projectId,
       creatorId: creatorId,
-      filePath: filePath,
-      accessRoles: accessRoles,
-      title: title,
-      fields: fields,
-      rows: rows,
-      chart: chart,
       draft: draft,
       draftCreatedTs: draftCreatedTs,
+      tab: this.tabService.encryptData({ data: reportTab }),
       serverTs: undefined
     };
 

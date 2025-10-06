@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '~backend/config/backend-config';
 import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
@@ -26,25 +24,36 @@ import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeCopy } from '~common/functions/make-copy';
+import { ChartTab } from '~common/interfaces/backend/chart-tab';
 import { ChartX } from '~common/interfaces/backend/chart-x';
 import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
+import { DashboardTab } from '~common/interfaces/backend/dashboard-tab';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Env } from '~common/interfaces/backend/env';
+import { EnvTab } from '~common/interfaces/backend/env-tab';
 import { EnvUser } from '~common/interfaces/backend/env-user';
 import { EnvsItem } from '~common/interfaces/backend/envs-item';
 import { Ev } from '~common/interfaces/backend/ev';
+import { MconfigTab } from '~common/interfaces/backend/mconfig-tab';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Member } from '~common/interfaces/backend/member';
+import { MemberTab } from '~common/interfaces/backend/member-tab';
+import { ModelTab } from '~common/interfaces/backend/model-tab';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Org } from '~common/interfaces/backend/org';
+import { OrgTab } from '~common/interfaces/backend/org-tab';
 import { OrgsItem } from '~common/interfaces/backend/orgs-item';
 import { Project } from '~common/interfaces/backend/project';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ProjectTab } from '~common/interfaces/backend/project-tab';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
+import { QueryTab } from '~common/interfaces/backend/query-tab';
+import { ReportTab } from '~common/interfaces/backend/report-tab';
 import { ReportX } from '~common/interfaces/backend/report-x';
 import { Struct } from '~common/interfaces/backend/struct';
+import { StructTab } from '~common/interfaces/backend/struct-tab';
 import { User } from '~common/interfaces/backend/user';
+import { UserTab } from '~common/interfaces/backend/user-tab';
 import { Column } from '~common/interfaces/blockml/column';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { ModelField } from '~common/interfaces/blockml/model-field';
@@ -53,10 +62,7 @@ import { TabService } from './tab.service';
 
 @Injectable()
 export class WrapToApiService {
-  constructor(
-    private tabService: TabService,
-    private cs: ConfigService<BackendConfig>
-  ) {}
+  constructor(private tabService: TabService) {}
 
   wrapToApiConnection(item: {
     connection: ConnectionEnt;
@@ -64,11 +70,11 @@ export class WrapToApiService {
   }): ProjectConnection {
     let { connection, isIncludePasswords } = item;
 
-    let cTab = this.tabService.decryptData<ConnectionTab>({
+    let connectionTab = this.tabService.decryptData<ConnectionTab>({
       encryptedString: connection.tab
     });
 
-    let options = cTab.options;
+    let options = connectionTab.options;
 
     let projectConnection: ProjectConnection = {
       projectId: connection.projectId,
@@ -220,7 +226,11 @@ export class WrapToApiService {
     let { dashboard, mconfigs, queries, isAddMconfigAndQuery, member, models } =
       item;
 
-    let filePathArray = dashboard.filePath.split('/');
+    let dashboardTab = this.tabService.decryptData<DashboardTab>({
+      encryptedString: dashboard.tab
+    });
+
+    let filePathArray = dashboardTab.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(
       x => x === MPROVE_USERS_FOLDER
@@ -236,22 +246,22 @@ export class WrapToApiService {
 
     let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
 
-    let storeModelIds = dashboard.fields
+    let storeModelIds = dashboardTab.fields
       .filter(x => isDefined(x.storeModel))
       .map(x => x.storeModel);
 
-    let dashboardX: DashboardX = {
+    let apiDashboard: DashboardX = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
       creatorId: dashboard.creatorId,
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard,
-      filePath: dashboard.filePath,
-      content: dashboard.content,
-      accessRoles: dashboard.accessRoles,
-      title: dashboard.title,
-      fields: dashboard.fields.sort((a, b) => {
+      filePath: dashboardTab.filePath,
+      content: dashboardTab.content,
+      accessRoles: dashboardTab.accessRoles,
+      title: dashboardTab.title,
+      fields: dashboardTab.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
@@ -262,7 +272,7 @@ export class WrapToApiService {
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
       tiles: makeTilesX({
-        tiles: dashboard.tiles,
+        tiles: dashboardTab.tiles,
         mconfigs: mconfigs,
         queries: queries,
         isAddMconfigAndQuery: isAddMconfigAndQuery,
@@ -276,7 +286,7 @@ export class WrapToApiService {
       serverTs: dashboard.serverTs
     };
 
-    return dashboardX;
+    return apiDashboard;
   }
 
   wrapToApiEnv(item: {
@@ -294,24 +304,32 @@ export class WrapToApiService {
       envMembers
     } = item;
 
+    let envTab = this.tabService.decryptData<EnvTab>({
+      encryptedString: env.tab
+    });
+
     let envUsers: EnvUser[] = [];
 
-    envMembers.forEach(x => {
+    envMembers.forEach(member => {
+      let memberTab = this.tabService.decryptData<MemberTab>({
+        encryptedString: member.tab
+      });
+
       let envUser: EnvUser = {
-        userId: x.memberId,
-        alias: x.alias,
-        firstName: x.firstName,
-        lastName: x.lastName,
+        userId: member.memberId,
+        alias: memberTab.alias,
+        firstName: memberTab.firstName,
+        lastName: memberTab.lastName,
         fullName: makeFullName({
-          firstName: x.firstName,
-          lastName: x.lastName
+          firstName: memberTab.firstName,
+          lastName: memberTab.lastName
         })
       };
 
       envUsers.push(envUser);
     });
 
-    return {
+    let apiEnv: Env = {
       projectId: env.projectId,
       envId: env.envId,
       envConnectionIds: envConnectionIds,
@@ -320,22 +338,28 @@ export class WrapToApiService {
         ...envConnectionIds,
         ...fallbackConnectionIds
       ].sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
-      evs: env.evs,
+      evs: envTab.evs,
       fallbackEvIds: fallbackEvs.map(x => x.evId),
-      evsWithFallback: [...env.evs, ...fallbackEvs].sort((a, b) =>
+      evsWithFallback: [...envTab.evs, ...fallbackEvs].sort((a, b) =>
         a.evId > b.evId ? 1 : b.evId > a.evId ? -1 : 0
       ),
       envUsers: envUsers,
       isFallbackToProdConnections: env.isFallbackToProdConnections,
       isFallbackToProdVariables: env.isFallbackToProdVariables
     };
+
+    return apiEnv;
   }
 
-  wrapToApiEnvsItem(env: EnvEnt): EnvsItem {
-    return {
+  wrapToApiEnvsItem(item: { env: EnvEnt }): EnvsItem {
+    let { env } = item;
+
+    let apiEnvsItem: EnvsItem = {
       projectId: env.projectId,
       envId: env.envId
     };
+
+    return apiEnvsItem;
   }
 
   wrapToApiMconfig(item: {
@@ -344,71 +368,95 @@ export class WrapToApiService {
   }): MconfigX {
     let { mconfig, modelFields } = item;
 
-    return {
+    let mconfigTab = this.tabService.decryptData<MconfigTab>({
+      encryptedString: mconfig.tab
+    });
+
+    let apiMconfig: MconfigX = {
       structId: mconfig.structId,
       mconfigId: mconfig.mconfigId,
       queryId: mconfig.queryId,
       modelId: mconfig.modelId,
       modelType: mconfig.modelType,
-      // isStoreModel: mconfig.isStoreModel,
-      dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
-      storePart: mconfig.storePart,
-      modelLabel: mconfig.modelLabel,
-      modelFilePath: mconfig.modelFilePath,
-      malloyQueryStable: mconfig.malloyQueryStable,
-      malloyQueryExtra: mconfig.malloyQueryExtra,
-      compiledQuery: mconfig.compiledQuery,
-      select: mconfig.select,
-      // unsafeSelect: mconfig.unsafeSelect,
-      // warnSelect: mconfig.warnSelect,
-      // joinAggregations: mconfig.joinAggregations,
+      dateRangeIncludesRightSide: mconfigTab.dateRangeIncludesRightSide,
+      storePart: mconfigTab.storePart,
+      modelLabel: mconfigTab.modelLabel,
+      modelFilePath: mconfigTab.modelFilePath,
+      malloyQueryStable: mconfigTab.malloyQueryStable,
+      malloyQueryExtra: mconfigTab.malloyQueryExtra,
+      compiledQuery: mconfigTab.compiledQuery,
+      select: mconfigTab.select,
       fields: makeMconfigFields({
         modelFields: modelFields,
-        select: mconfig.select,
-        sortings: mconfig.sortings,
-        chart: mconfig.chart
+        select: mconfigTab.select,
+        sortings: mconfigTab.sortings,
+        chart: mconfigTab.chart
       }),
       extendedFilters: makeMconfigFiltersX({
         modelFields: modelFields,
-        mconfigFilters: mconfig.filters
+        mconfigFilters: mconfigTab.filters
       }),
-      sortings: mconfig.sortings,
-      sorts: mconfig.sorts,
-      timezone: mconfig.timezone,
-      limit: mconfig.limit,
-      filters: mconfig.filters,
-      chart: mconfig.chart,
+      sortings: mconfigTab.sortings,
+      sorts: mconfigTab.sorts,
+      timezone: mconfigTab.timezone,
+      limit: mconfigTab.limit,
+      filters: mconfigTab.filters,
+      chart: mconfigTab.chart,
       temp: mconfig.temp,
       serverTs: mconfig.serverTs
     };
+
+    return apiMconfig;
   }
 
-  wrapToApiMember(x: MemberEnt): Member {
-    return {
-      projectId: x.projectId,
-      memberId: x.memberId,
-      email: x.email,
-      alias: x.alias,
-      firstName: x.firstName,
-      lastName: x.lastName,
-      fullName: makeFullName({ firstName: x.firstName, lastName: x.lastName }),
+  wrapToApiMember(item: { member: MemberEnt }): Member {
+    let { member } = item;
+
+    let memberTab = this.tabService.decryptData<MemberTab>({
+      encryptedString: member.tab
+    });
+
+    let apiMember: Member = {
+      projectId: member.projectId,
+      memberId: member.memberId,
+      email: memberTab.email,
+      alias: memberTab.alias,
+      firstName: memberTab.firstName,
+      lastName: memberTab.lastName,
+      fullName: makeFullName({
+        firstName: memberTab.firstName,
+        lastName: memberTab.lastName
+      }),
       avatarSmall: undefined,
-      isAdmin: x.isAdmin,
-      isEditor: x.isEditor,
-      isExplorer: x.isExplorer,
-      roles: x.roles,
-      serverTs: x.serverTs
+      isAdmin: member.isAdmin,
+      isEditor: member.isEditor,
+      isExplorer: member.isExplorer,
+      roles: memberTab.roles,
+      serverTs: member.serverTs
     };
+
+    return apiMember;
   }
 
-  wrapToApiEnvUser(x: MemberEnt): EnvUser {
-    return {
-      userId: x.memberId,
-      alias: x.alias,
-      firstName: x.firstName,
-      lastName: x.lastName,
-      fullName: makeFullName({ firstName: x.firstName, lastName: x.lastName })
+  wrapToApiEnvUser(item: { member: MemberEnt }): EnvUser {
+    let { member } = item;
+
+    let memberTab = this.tabService.decryptData<MemberTab>({
+      encryptedString: member.tab
+    });
+
+    let apiEnvUser: EnvUser = {
+      userId: member.memberId,
+      alias: memberTab.alias,
+      firstName: memberTab.firstName,
+      lastName: memberTab.lastName,
+      fullName: makeFullName({
+        firstName: memberTab.firstName,
+        lastName: memberTab.lastName
+      })
     };
+
+    return apiEnvUser;
   }
 
   wrapToApiModel(item: {
@@ -417,44 +465,64 @@ export class WrapToApiService {
   }): ModelX {
     let { model, hasAccess } = item;
 
-    let modelX: ModelX = {
+    let modelTab = this.tabService.decryptData<ModelTab>({
+      encryptedString: model.tab
+    });
+
+    let apiModel: ModelX = {
       structId: model.structId,
       modelId: model.modelId,
       type: model.type,
-      source: model.source,
-      malloyModelDef: model.malloyModelDef,
+      source: modelTab.source,
+      malloyModelDef: modelTab.malloyModelDef,
       hasAccess: hasAccess,
       connectionId: model.connectionId,
       connectionType: model.connectionType,
-      filePath: model.filePath,
-      fileText: model.fileText,
-      storeContent: model.storeContent,
-      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
-      accessRoles: model.accessRoles,
-      label: model.label,
-      fields: model.fields,
-      nodes: model.nodes,
+      filePath: modelTab.filePath,
+      fileText: modelTab.fileText,
+      storeContent: modelTab.storeContent,
+      dateRangeIncludesRightSide: modelTab.dateRangeIncludesRightSide,
+      accessRoles: modelTab.accessRoles,
+      label: modelTab.label,
+      fields: modelTab.fields,
+      nodes: modelTab.nodes,
       serverTs: model.serverTs
     };
 
-    return modelX;
+    return apiModel;
   }
 
-  wrapToApiOrg(org: OrgEnt): Org {
-    return {
+  wrapToApiOrg(item: { org: OrgEnt }): Org {
+    let { org } = item;
+
+    let orgTab = this.tabService.decryptData<OrgTab>({
+      encryptedString: org.tab
+    });
+
+    let apiOrg: Org = {
       orgId: org.orgId,
-      name: org.name,
-      ownerEmail: org.ownerEmail,
+      name: orgTab.name,
       ownerId: org.ownerId,
+      ownerEmail: orgTab.ownerEmail,
       serverTs: Number(org.serverTs)
     };
+
+    return apiOrg;
   }
 
-  wrapToApiOrgsItem(org: OrgEnt): OrgsItem {
-    return {
+  wrapToApiOrgsItem(item: { org: OrgEnt }): OrgsItem {
+    let { org } = item;
+
+    let orgTab = this.tabService.decryptData<OrgTab>({
+      encryptedString: org.tab
+    });
+
+    let apiOrgsItem: OrgsItem = {
       orgId: org.orgId,
-      name: org.name
+      name: orgTab.name
     };
+
+    return apiOrgsItem;
   }
 
   wrapToApiProject(item: {
@@ -465,20 +533,21 @@ export class WrapToApiService {
   }): Project {
     let { project, isAddGitUrl, isAddPrivateKey, isAddPublicKey } = item;
 
-    let pTab = this.tabService.decryptData<ProjectTab>({
+    let projectTab = this.tabService.decryptData<ProjectTab>({
       encryptedString: project.tab
     });
 
     let apiProject: Project = {
       orgId: project.orgId,
       projectId: project.projectId,
-      name: project.name,
       remoteType: project.remoteType,
-      defaultBranch: project.defaultBranch,
-      gitUrl: isAddGitUrl === true ? project.gitUrl : undefined,
       tab: {
-        privateKey: isAddPrivateKey === true ? pTab.privateKey : undefined,
-        publicKey: isAddPublicKey === true ? pTab.publicKey : undefined
+        name: projectTab.name,
+        defaultBranch: projectTab.defaultBranch,
+        gitUrl: isAddGitUrl === true ? projectTab.gitUrl : undefined,
+        privateKey:
+          isAddPrivateKey === true ? projectTab.privateKey : undefined,
+        publicKey: isAddPublicKey === true ? projectTab.publicKey : undefined
       },
       serverTs: Number(project.serverTs)
     };
@@ -486,41 +555,59 @@ export class WrapToApiService {
     return apiProject;
   }
 
-  wrapToApiProjectsItem(project: ProjectEnt): ProjectsItem {
-    return {
+  wrapToApiProjectsItem(item: {
+    project: ProjectEnt;
+  }): ProjectsItem {
+    let { project } = item;
+
+    let projectTab = this.tabService.decryptData<ProjectTab>({
+      encryptedString: project.tab
+    });
+
+    let apiProjectItem: ProjectsItem = {
       projectId: project.projectId,
-      name: project.name,
-      defaultBranch: project.defaultBranch
+      name: projectTab.name,
+      defaultBranch: projectTab.defaultBranch
     };
+
+    return apiProjectItem;
   }
 
-  wrapToApiQuery(x: QueryEnt): Query {
-    return {
-      projectId: x.projectId,
-      envId: x.envId,
-      connectionId: x.connectionId,
-      connectionType: x.connectionType,
-      queryId: x.queryId,
-      sql: x.sql,
-      apiMethod: x.apiMethod as StoreMethodEnum,
-      apiUrl: x.apiUrl,
-      apiBody: x.apiBody,
-      status: x.status,
-      lastRunBy: x.lastRunBy,
-      lastRunTs: x.lastRunTs,
-      lastCancelTs: x.lastCancelTs,
-      lastCompleteTs: x.lastCompleteTs,
-      lastCompleteDuration: x.lastCompleteDuration,
-      lastErrorMessage: x.lastErrorMessage,
-      lastErrorTs: x.lastErrorTs,
-      data: x.data,
-      queryJobId: x.queryJobId,
-      bigqueryQueryJobId: x.bigqueryQueryJobId,
-      bigqueryConsecutiveErrorsGetJob: x.bigqueryConsecutiveErrorsGetJob,
+  wrapToApiQuery(item: { query: QueryEnt }): Query {
+    let { query } = item;
+
+    let queryTab = this.tabService.decryptData<QueryTab>({
+      encryptedString: query.tab
+    });
+
+    let apiQuery: Query = {
+      projectId: query.projectId,
+      envId: query.envId,
+      connectionId: query.connectionId,
+      connectionType: query.connectionType,
+      queryId: query.queryId,
+      sql: queryTab.sql,
+      apiMethod: queryTab.apiMethod as StoreMethodEnum,
+      apiUrl: queryTab.apiUrl,
+      apiBody: queryTab.apiBody,
+      status: query.status,
+      lastRunBy: query.lastRunBy,
+      lastRunTs: query.lastRunTs,
+      lastCancelTs: query.lastCancelTs,
+      lastCompleteTs: query.lastCompleteTs,
+      lastCompleteDuration: query.lastCompleteDuration,
+      lastErrorMessage: queryTab.lastErrorMessage,
+      lastErrorTs: query.lastErrorTs,
+      data: queryTab.data,
+      queryJobId: query.queryJobId,
+      bigqueryQueryJobId: query.bigqueryQueryJobId,
+      bigqueryConsecutiveErrorsGetJob: query.bigqueryConsecutiveErrorsGetJob,
       bigqueryConsecutiveErrorsGetResults:
-        x.bigqueryConsecutiveErrorsGetResults,
-      serverTs: x.serverTs
+        query.bigqueryConsecutiveErrorsGetResults,
+      serverTs: query.serverTs
     };
+
+    return apiQuery;
   }
 
   wrapToApiReport(item: {
@@ -530,8 +617,6 @@ export class WrapToApiService {
     timezone: string;
     timeSpec: TimeSpecEnum;
     timeRangeFraction: Fraction;
-    // rangeOpen: number;
-    // rangeClose: number;
     rangeStart: number;
     rangeEnd: number;
     timeColumnsLimit: number;
@@ -550,8 +635,6 @@ export class WrapToApiService {
       timeSpec,
       models,
       timeRangeFraction,
-      // rangeOpen,
-      // rangeClose,
       rangeStart,
       rangeEnd,
       timeColumnsLimit,
@@ -562,9 +645,13 @@ export class WrapToApiService {
       metricsEndDateIncludedYYYYMMDD
     } = item;
 
+    let reportTab = this.tabService.decryptData<ReportTab>({
+      encryptedString: report.tab
+    });
+
     let author;
-    if (isDefined(report.filePath)) {
-      let filePathArray = report.filePath.split('/');
+    if (isDefined(reportTab.filePath)) {
+      let filePathArray = reportTab.filePath.split('/');
 
       let usersFolderIndex = filePathArray.findIndex(
         x => x === MPROVE_USERS_FOLDER
@@ -581,7 +668,7 @@ export class WrapToApiService {
 
     let reportExtendedFilters = makeReportFiltersX(report);
 
-    let reportX: ReportX = {
+    let apiReport: ReportX = {
       projectId: report.projectId,
       structId: report.structId,
       reportId: report.reportId,
@@ -589,20 +676,18 @@ export class WrapToApiService {
       author: author,
       draft: report.draft,
       creatorId: report.creatorId,
-      filePath: report.filePath,
-      accessRoles: report.accessRoles,
-      title: report.title,
+      filePath: reportTab.filePath,
+      accessRoles: reportTab.accessRoles,
+      title: reportTab.title,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      // rangeOpen: rangeOpen,
-      // rangeClose: rangeClose,
       rangeStart: rangeStart,
       rangeEnd: rangeEnd,
       metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
       metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
       metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
-      fields: report.fields.sort((a, b) => {
+      fields: reportTab.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
@@ -612,7 +697,7 @@ export class WrapToApiService {
         let labelB = b.fieldId.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
-      rows: report.rows.map(x => {
+      rows: reportTab.rows.map(x => {
         x.hasAccessToModel = isDefined(x.mconfig)
           ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess
           : false;
@@ -622,69 +707,85 @@ export class WrapToApiService {
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: timeColumnsLength,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
-      chart: report.chart,
+      chart: reportTab.chart,
       draftCreatedTs: Number(report.draftCreatedTs),
       serverTs: Number(report.serverTs)
     };
 
-    return reportX;
+    return apiReport;
   }
 
-  wrapToApiStruct(struct: StructEnt): Struct {
-    return {
+  wrapToApiStruct(item: { struct: StructEnt }): Struct {
+    let { struct } = item;
+
+    let structTab = this.tabService.decryptData<StructTab>({
+      encryptedString: struct.tab
+    });
+
+    let apiStruct: Struct = {
       projectId: struct.projectId,
       structId: struct.structId,
-      errors: struct.errors,
-      metrics: struct.metrics,
-      presets: struct.presets,
-      mproveConfig: struct.mproveConfig,
+      errors: structTab.errors,
+      metrics: structTab.metrics,
+      presets: structTab.presets,
+      mproveConfig: structTab.mproveConfig,
       mproveVersion: struct.mproveVersion,
       serverTs: Number(struct.serverTs)
     };
+
+    return apiStruct;
   }
 
-  wrapToApiUser(user: UserEnt): User {
+  wrapToApiUser(item: { user: UserEnt }): User {
+    let { user } = item;
+
+    let userTab = this.tabService.decryptData<UserTab>({
+      encryptedString: user.tab
+    });
+
     let defaultSrvUi = makeCopy(DEFAULT_SRV_UI);
 
-    return {
+    let apiUser: User = {
       userId: user.userId,
-      email: user.email,
-      alias: user.alias,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      email: userTab.email,
+      alias: userTab.alias,
+      firstName: userTab.firstName,
+      lastName: userTab.lastName,
       isEmailVerified: user.isEmailVerified,
       ui: {
-        timezone: user.ui?.timezone || defaultSrvUi.timezone,
-        timeSpec: user.ui?.timeSpec || defaultSrvUi.timeSpec,
+        timezone: userTab.ui?.timezone || defaultSrvUi.timezone,
+        timeSpec: userTab.ui?.timeSpec || defaultSrvUi.timeSpec,
         timeRangeFraction:
-          user.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
+          userTab.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
 
-        projectFileLinks: isDefined(user.ui?.projectFileLinks)
-          ? user.ui?.projectFileLinks
+        projectFileLinks: isDefined(userTab.ui?.projectFileLinks)
+          ? userTab.ui?.projectFileLinks
           : defaultSrvUi.projectFileLinks,
 
-        projectModelLinks: isDefined(user.ui?.projectModelLinks)
-          ? user.ui?.projectModelLinks
+        projectModelLinks: isDefined(userTab.ui?.projectModelLinks)
+          ? userTab.ui?.projectModelLinks
           : defaultSrvUi.projectModelLinks,
 
-        projectChartLinks: isDefined(user.ui?.projectChartLinks)
-          ? user.ui?.projectChartLinks
+        projectChartLinks: isDefined(userTab.ui?.projectChartLinks)
+          ? userTab.ui?.projectChartLinks
           : defaultSrvUi.projectChartLinks,
 
-        projectDashboardLinks: isDefined(user.ui?.projectDashboardLinks)
-          ? user.ui?.projectDashboardLinks
+        projectDashboardLinks: isDefined(userTab.ui?.projectDashboardLinks)
+          ? userTab.ui?.projectDashboardLinks
           : defaultSrvUi.projectDashboardLinks,
 
-        projectReportLinks: isDefined(user.ui?.projectReportLinks)
-          ? user.ui?.projectReportLinks
+        projectReportLinks: isDefined(userTab.ui?.projectReportLinks)
+          ? userTab.ui?.projectReportLinks
           : defaultSrvUi.projectReportLinks,
 
-        modelTreeLevels: isDefined(user.ui?.modelTreeLevels)
-          ? user.ui?.modelTreeLevels
+        modelTreeLevels: isDefined(userTab.ui?.modelTreeLevels)
+          ? userTab.ui?.modelTreeLevels
           : defaultSrvUi.modelTreeLevels
       },
       serverTs: Number(user.serverTs)
     };
+
+    return apiUser;
   }
 
   wrapToApiChart(item: {
@@ -698,8 +799,12 @@ export class WrapToApiService {
     let { chart, mconfigs, queries, member, isAddMconfigAndQuery, models } =
       item;
 
-    let filePathArray = isDefined(chart.filePath)
-      ? chart.filePath.split('/')
+    let chartTab = this.tabService.decryptData<ChartTab>({
+      encryptedString: chart.tab
+    });
+
+    let filePathArray = isDefined(chartTab.filePath)
+      ? chartTab.filePath.split('/')
       : [];
 
     let usersFolderIndex = filePathArray.findIndex(
@@ -714,21 +819,21 @@ export class WrapToApiService {
     let canEditOrDeleteChart =
       member.isEditor || member.isAdmin || author === member.alias;
 
-    return {
+    let apiChart: ChartX = {
       structId: chart.structId,
       chartId: chart.chartId,
       draft: chart.draft,
       creatorId: chart.creatorId,
       author: author,
       canEditOrDeleteChart: canEditOrDeleteChart,
-      title: chart.title,
+      title: chartTab.title,
       chartType: chart.chartType,
       modelId: chart.modelId,
-      modelLabel: chart.modelLabel,
-      filePath: chart.filePath,
-      accessRoles: chart.accessRoles,
+      modelLabel: chartTab.modelLabel,
+      filePath: chartTab.filePath,
+      accessRoles: chartTab.accessRoles,
       tiles: makeTilesX({
-        tiles: chart.tiles,
+        tiles: chartTab.tiles,
         mconfigs: mconfigs,
         queries: queries,
         isAddMconfigAndQuery: isAddMconfigAndQuery,
@@ -737,5 +842,7 @@ export class WrapToApiService {
       }),
       serverTs: Number(chart.serverTs)
     };
+
+    return apiChart;
   }
 }

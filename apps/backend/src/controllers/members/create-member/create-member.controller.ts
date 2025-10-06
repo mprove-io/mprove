@@ -26,7 +26,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { EmailService } from '~backend/services/email.service';
-import { MakerService } from '~backend/services/maker.service';
+import { EntMakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -91,7 +91,7 @@ export class CreateMemberController {
     private membersService: MembersService,
     private emailService: EmailService,
     private wrapToApiService: WrapToApiService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -153,7 +153,7 @@ export class CreateMemberController {
       });
     }
 
-    let newMember = this.makerService.makeMember({
+    let newMember = this.entMakerService.makeMember({
       projectId: projectId,
       user: isDefined(invitedUser) ? invitedUser : newUser,
       isAdmin: false,
@@ -198,7 +198,7 @@ export class CreateMemberController {
       )
     });
 
-    let devBranch = this.makerService.makeBranch({
+    let devBranch = this.entMakerService.makeBranch({
       projectId: projectId,
       repoId: newMember.memberId,
       branchId: project.defaultBranch
@@ -215,7 +215,7 @@ export class CreateMemberController {
     let devBranchBridges: BridgeEnt[] = [];
 
     prodBranchBridges.forEach(x => {
-      let devBranchBridge = this.makerService.makeBridge({
+      let devBranchBridge = this.entMakerService.makeBridge({
         projectId: devBranch.projectId,
         repoId: devBranch.repoId,
         branchId: devBranch.branchId,

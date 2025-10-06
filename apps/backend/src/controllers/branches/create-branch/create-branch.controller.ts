@@ -24,7 +24,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/branches.service';
-import { MakerService } from '~backend/services/maker.service';
+import { EntMakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -52,7 +52,7 @@ let retry = require('async-retry');
 export class CreateBranchController {
   constructor(
     private wrapToApiService: WrapToApiService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService,
@@ -125,7 +125,7 @@ export class CreateBranchController {
         checkIsOk: true
       });
 
-    let newBranch = this.makerService.makeBranch({
+    let newBranch = this.entMakerService.makeBranch({
       projectId: projectId,
       repoId: repoId,
       branchId: newBranchId
@@ -142,7 +142,7 @@ export class CreateBranchController {
     let newBranchBridges: BridgeEnt[] = [];
 
     fromBranchBridges.forEach(x => {
-      let newBranchBridge = this.makerService.makeBridge({
+      let newBranchBridge = this.entMakerService.makeBridge({
         projectId: newBranch.projectId,
         repoId: newBranch.repoId,
         branchId: newBranch.branchId,

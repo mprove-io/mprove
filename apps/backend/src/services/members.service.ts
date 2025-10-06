@@ -33,7 +33,7 @@ import {
 } from '~common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
 import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
-import { MakerService } from './maker.service';
+import { EntMakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
 import { WrapToApiService } from './wrap-to-api.service';
 
@@ -45,7 +45,7 @@ export class MembersService {
     private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private makerService: MakerService,
+    private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -188,7 +188,7 @@ export class MembersService {
         });
 
         if (isUndefined(member)) {
-          let newMember: MemberEnt = this.makerService.makeMember({
+          let newMember: MemberEnt = this.entMakerService.makeMember({
             projectId: demoProjectId,
             user: user,
             isAdmin: false,
@@ -233,7 +233,7 @@ export class MembersService {
             )
           });
 
-          let devBranch = this.makerService.makeBranch({
+          let devBranch = this.entMakerService.makeBranch({
             projectId: demoProjectId,
             repoId: newMember.memberId,
             branchId: project.defaultBranch
@@ -251,7 +251,7 @@ export class MembersService {
           let devBranchBridges: BridgeEnt[] = [];
 
           prodBranchBridges.forEach(x => {
-            let devBranchBridge = this.makerService.makeBridge({
+            let devBranchBridge = this.entMakerService.makeBridge({
               projectId: devBranch.projectId,
               repoId: devBranch.repoId,
               branchId: devBranch.branchId,
