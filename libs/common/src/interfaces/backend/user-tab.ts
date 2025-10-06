@@ -30,10 +30,6 @@ export class UserTab {
 
   @IsOptional()
   @IsNumber()
-  jwtMinIat: number;
-
-  @IsOptional()
-  @IsNumber()
   passwordResetExpiresTs: number;
 
   @ValidateNested()

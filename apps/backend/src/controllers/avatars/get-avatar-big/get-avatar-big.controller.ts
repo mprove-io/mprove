@@ -6,7 +6,10 @@ import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { AvatarTab } from '~common/interfaces/backend/avatar-tab';
 import {
   ToBackendGetAvatarBigRequest,
   ToBackendGetAvatarBigResponsePayload
@@ -15,7 +18,10 @@ import {
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetAvatarBigController {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(
+    private tabService: TabService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig)
   async getAvatarBig(@AttachUser() user: UserEnt, @Req() request: any) {
@@ -27,9 +33,15 @@ export class GetAvatarBigController {
       where: eq(avatarsTable.userId, avatarUserId)
     });
 
+    let avatarTab = isDefined(avatar)
+      ? this.tabService.decrypt<AvatarTab>({
+          encryptedString: avatar.tab
+        })
+      : undefined;
+
     let payload: ToBackendGetAvatarBigResponsePayload = {
-      avatarSmall: avatar?.avatarSmall,
-      avatarBig: avatar?.avatarBig
+      avatarSmall: avatarTab?.avatarSmall,
+      avatarBig: avatarTab?.avatarBig
     };
 
     return payload;

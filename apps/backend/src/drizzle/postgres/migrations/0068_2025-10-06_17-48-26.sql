@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "jwt_min_iat" bigint;

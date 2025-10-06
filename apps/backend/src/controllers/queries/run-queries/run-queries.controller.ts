@@ -256,7 +256,7 @@ export class RunQueriesController {
             connectionId: query.connectionId
           });
 
-        let connection = this.wrapToApiService.wrapToApiConnection({
+        let connection = this.wrapToApiService.wrapToApiProjectConnection({
           connection: connectionEnt,
           isIncludePasswords: true
         });
@@ -414,7 +414,7 @@ export class RunQueriesController {
             connectionId: query.connectionId
           });
 
-        let connection = this.wrapToApiService.wrapToApiConnection({
+        let connection = this.wrapToApiService.wrapToApiProjectConnection({
           connection: connectionEnt,
           isIncludePasswords: true
         });

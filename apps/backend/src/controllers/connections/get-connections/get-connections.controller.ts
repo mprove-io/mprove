@@ -98,7 +98,7 @@ export class GetConnectionsController {
               : 0
         )
         .map(x =>
-          this.wrapToApiService.wrapToApiConnection({
+          this.wrapToApiService.wrapToApiProjectConnection({
             connection: x,
             isIncludePasswords: false
           })

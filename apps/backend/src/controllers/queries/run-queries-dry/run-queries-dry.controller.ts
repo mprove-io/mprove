@@ -136,7 +136,7 @@ export class RunQueriesDryController {
           connectionId: query.connectionId
         });
 
-      let connection = this.wrapToApiService.wrapToApiConnection({
+      let connection = this.wrapToApiService.wrapToApiProjectConnection({
         connection: connectionEnt,
         isIncludePasswords: true
       });

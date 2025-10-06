@@ -276,7 +276,7 @@ export class SeedRecordsController {
                 y.envId === prodEnv.envId
             )
             .map(c =>
-              this.wrapToApiService.wrapToApiConnection({
+              this.wrapToApiService.wrapToApiProjectConnection({
                 connection: c,
                 isIncludePasswords: true
               })

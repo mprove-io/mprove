@@ -816,7 +816,7 @@ export class AppModule implements OnModuleInit {
               publicKey: publicKey,
               evs: [ev1],
               connections: connections.map(x =>
-                this.wrapToApiService.wrapToApiConnection({
+                this.wrapToApiService.wrapToApiProjectConnection({
                   connection: x,
                   isIncludePasswords: true
                 })

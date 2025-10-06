@@ -133,7 +133,7 @@ export class CreateConnectionController {
     );
 
     let payload: ToBackendCreateConnectionResponsePayload = {
-      connection: this.wrapToApiService.wrapToApiConnection({
+      connection: this.wrapToApiService.wrapToApiProjectConnection({
         connection: newConnection,
         isIncludePasswords: false
       })

@@ -22,6 +22,7 @@ export const usersTable = pgTable(
     isEmailVerified: boolean('is_email_verified').notNull(),
     hash: varchar('hash'),
     salt: varchar('salt'),
+    jwtMinIat: bigint('jwt_min_iat', { mode: 'number' }),
     tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

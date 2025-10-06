@@ -139,7 +139,7 @@ export class EditConnectionController {
     );
 
     let payload: ToBackendEditConnectionResponsePayload = {
-      connection: this.wrapToApiService.wrapToApiConnection({
+      connection: this.wrapToApiService.wrapToApiProjectConnection({
         connection: connection,
         isIncludePasswords: false
       })
