@@ -33,6 +33,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
+import { TabService } from '~backend/services/tab.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -48,7 +49,6 @@ import {
   ToBackendCancelQueriesResponsePayload
 } from '~common/interfaces/to-backend/queries/to-backend-cancel-queries';
 import { ServerError } from '~common/models/server-error';
-import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 
 let retry = require('async-retry');
 
@@ -57,6 +57,7 @@ let retry = require('async-retry');
 @Controller()
 export class CancelQueriesController {
   constructor(
+    private tabService: TabService,
     private structsService: StructsService,
     private branchesService: BranchesService,
     private projectsService: ProjectsService,
@@ -162,10 +163,8 @@ export class CancelQueriesController {
           });
         }
 
-        let cTab = decryptData<ConnectionTab>({
-          encryptedString: connection.tab,
-          keyBase64:
-            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+        let cTab = this.tabService.decryptData<ConnectionTab>({
+          encryptedString: connection.tab
         });
 
         if (connection.type === ConnectionTypeEnum.BigQuery) {

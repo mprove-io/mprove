@@ -35,6 +35,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { MakerService } from '~backend/services/maker.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { UsersService } from '~backend/services/users.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
@@ -65,7 +66,6 @@ import {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponse
 } from '~common/interfaces/to-disk/08-seed/to-disk-seed-project';
-import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let retry = require('async-retry');
 
@@ -75,6 +75,7 @@ let retry = require('async-retry');
 @Controller()
 export class SeedRecordsController {
   constructor(
+    private tabService: TabService,
     private rabbitService: RabbitService,
     private usersService: UsersService,
     private blockmlService: BlockmlService,
@@ -362,11 +363,7 @@ export class SeedRecordsController {
             defaultBranch: newProject.defaultBranch,
             remoteType: newProject.remoteType,
             gitUrl: newProject.gitUrl,
-            tab: encryptData({
-              data: newProject.tab,
-              keyBase64:
-                this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
-            }),
+            tab: this.tabService.encryptData({ data: newProject.tab }),
             serverTs: newProject.serverTs
           };
 

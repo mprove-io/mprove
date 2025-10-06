@@ -42,6 +42,7 @@ import { QueriesService } from '~backend/services/queries.service';
 import { SnowFlakeService } from '~backend/services/snowflake.service';
 import { StoreService } from '~backend/services/store.service';
 import { StructsService } from '~backend/services/structs.service';
+import { TabService } from '~backend/services/tab.service';
 import { TrinoService } from '~backend/services/trino.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
@@ -60,8 +61,6 @@ import {
   ToBackendRunQueriesResponsePayload
 } from '~common/interfaces/to-backend/queries/to-backend-run-queries';
 import { ServerError } from '~common/models/server-error';
-import { decryptData } from '~node-common/functions/encryption/decrypt-data';
-import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let { JWT } = require('google-auth-library');
 let retry = require('async-retry');
@@ -71,6 +70,7 @@ let retry = require('async-retry');
 @Controller()
 export class RunQueriesController {
   constructor(
+    private tabService: TabService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -187,10 +187,8 @@ export class RunQueriesController {
         // console.log('googleApiConnections start');
         // let tsStart = Date.now();
 
-        let cTab = decryptData<ConnectionTab>({
-          encryptedString: connection.tab,
-          keyBase64:
-            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+        let cTab = this.tabService.decryptData<ConnectionTab>({
+          encryptedString: connection.tab
         });
 
         let authClient = new JWT({
@@ -205,11 +203,7 @@ export class RunQueriesController {
 
         cTab.options.storeGoogleApi.googleAccessToken = tokens.access_token;
 
-        connection.tab = encryptData({
-          data: cTab,
-          keyBase64:
-            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
-        });
+        connection.tab = this.tabService.encryptData({ data: cTab });
 
         // console.log(Date.now() - tsStart);
         // console.log('googleApiConnections end');

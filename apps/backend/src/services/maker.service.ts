@@ -17,12 +17,13 @@ import { Ev } from '~common/interfaces/backend/ev';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { Row } from '~common/interfaces/blockml/row';
-import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 import { HashService } from './hash.service';
+import { TabService } from './tab.service';
 
 @Injectable()
 export class MakerService {
   constructor(
+    private tabService: TabService,
     private hashService: HashService,
     private cs: ConfigService<BackendConfig>
   ) {}
@@ -168,10 +169,7 @@ export class MakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      tab: encryptData({
-        data: connectionTab,
-        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
-      }),
+      tab: this.tabService.encryptData({ data: connectionTab }),
       serverTs: undefined
     };
 

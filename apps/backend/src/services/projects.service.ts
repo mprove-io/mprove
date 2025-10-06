@@ -24,11 +24,11 @@ import {
   ToDiskCreateProjectResponse
 } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ServerError } from '~common/models/server-error';
-import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 import { BlockmlService } from './blockml.service';
 import { HashService } from './hash.service';
 import { MakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
+import { TabService } from './tab.service';
 import { WrapToApiService } from './wrap-to-api.service';
 
 let retry = require('async-retry');
@@ -36,6 +36,7 @@ let retry = require('async-retry');
 @Injectable()
 export class ProjectsService {
   constructor(
+    private tabService: TabService,
     private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -136,10 +137,7 @@ export class ProjectsService {
       defaultBranch: diskResponse.payload.defaultBranch,
       remoteType: remoteType,
       gitUrl: gitUrl,
-      tab: encryptData({
-        data: apiProject.tab,
-        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
-      }),
+      tab: this.tabService.encryptData({ data: apiProject.tab }),
       serverTs: undefined
     };
 

@@ -49,11 +49,14 @@ import { Column } from '~common/interfaces/blockml/column';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { Query } from '~common/interfaces/blockml/query';
-import { decryptData } from '~node-common/functions/encryption/decrypt-data';
+import { TabService } from './tab.service';
 
 @Injectable()
 export class WrapToApiService {
-  constructor(private cs: ConfigService<BackendConfig>) {}
+  constructor(
+    private tabService: TabService,
+    private cs: ConfigService<BackendConfig>
+  ) {}
 
   wrapToApiConnection(item: {
     connection: ConnectionEnt;
@@ -61,9 +64,8 @@ export class WrapToApiService {
   }): ProjectConnection {
     let { connection, isIncludePasswords } = item;
 
-    let cTab = decryptData<ConnectionTab>({
-      encryptedString: connection.tab,
-      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+    let cTab = this.tabService.decryptData<ConnectionTab>({
+      encryptedString: connection.tab
     });
 
     let options = cTab.options;
@@ -471,9 +473,8 @@ export class WrapToApiService {
   }): Project {
     let { project, isAddGitUrl, isAddPrivateKey, isAddPublicKey } = item;
 
-    let pTab = decryptData<ProjectTab>({
-      encryptedString: project.tab,
-      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+    let pTab = this.tabService.decryptData<ProjectTab>({
+      encryptedString: project.tab
     });
 
     let apiProject: Project = {

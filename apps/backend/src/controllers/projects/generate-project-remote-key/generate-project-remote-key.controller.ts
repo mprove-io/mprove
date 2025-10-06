@@ -19,6 +19,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
+import { TabService } from '~backend/services/tab.service';
 import { PASS_PHRASE } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -28,7 +29,6 @@ import {
   ToBackendGenerateProjectRemoteKeyRequest,
   ToBackendGenerateProjectRemoteKeyResponsePayload
 } from '~common/interfaces/to-backend/projects/to-backend-generate-project-remote-key';
-import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let retry = require('async-retry');
 
@@ -37,6 +37,7 @@ let retry = require('async-retry');
 @Controller()
 export class GenerateProjectRemoteKeyController {
   constructor(
+    private tabService: TabService,
     private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -86,10 +87,7 @@ export class GenerateProjectRemoteKeyController {
 
     let note: NoteEnt = {
       noteId: makeId(),
-      tab: encryptData({
-        data: noteTab,
-        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
-      }),
+      tab: this.tabService.encryptData({ data: noteTab }),
       serverTs: undefined
     };
 

@@ -21,14 +21,15 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
 import { ServerError } from '~common/models/server-error';
-import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 import { EnvsService } from './envs.service';
+import { TabService } from './tab.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class QueriesService {
   constructor(
+    private tabService: TabService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -290,10 +291,8 @@ WHERE m.mconfig_id is NULL
           return;
         }
 
-        let cTab = decryptData<ConnectionTab>({
-          encryptedString: connectionEnt.tab,
-          keyBase64:
-            this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+        let cTab = this.tabService.decryptData<ConnectionTab>({
+          encryptedString: connectionEnt.tab
         });
 
         let bigquery = new BigQuery({

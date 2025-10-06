@@ -20,6 +20,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -34,7 +35,6 @@ import {
   ToBackendCreateProjectResponsePayload
 } from '~common/interfaces/to-backend/projects/to-backend-create-project';
 import { ServerError } from '~common/models/server-error';
-import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 
 let retry = require('async-retry');
 
@@ -43,6 +43,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateProjectController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
     private wrapToApiService: WrapToApiService,
@@ -97,9 +98,8 @@ export class CreateProjectController {
         });
       }
 
-      noteTab = decryptData<NoteTab>({
-        encryptedString: note.tab,
-        keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+      noteTab = this.tabService.decryptData<NoteTab>({
+        encryptedString: note.tab
       });
     }
 

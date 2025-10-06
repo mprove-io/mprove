@@ -21,6 +21,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/connections.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import {
   DEFAULT_QUERY_SIZE_LIMIT,
@@ -36,7 +37,6 @@ import {
   ToBackendEditConnectionResponsePayload
 } from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
 import { ServerError } from '~common/models/server-error';
-import { encryptData } from '~node-common/functions/encryption/encrypt-data';
 
 let retry = require('async-retry');
 
@@ -45,6 +45,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditConnectionController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
@@ -109,10 +110,7 @@ export class EditConnectionController {
 
     let connectionTab: ConnectionTab = { options: options };
 
-    connection.tab = encryptData({
-      data: connectionTab,
-      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
-    });
+    connection.tab = this.tabService.encryptData({ data: connectionTab });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(

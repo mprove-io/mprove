@@ -37,6 +37,7 @@ import { ReportsService } from './services/reports.service';
 import { SnowFlakeService } from './services/snowflake.service';
 import { StoreService } from './services/store.service';
 import { StructsService } from './services/structs.service';
+import { TabService } from './services/tab.service';
 import { TasksService } from './services/tasks.service';
 import { TrinoService } from './services/trino.service';
 import { UserCodeService } from './services/user-code.service';
@@ -57,6 +58,7 @@ export const appProviders = [
   UsersService,
   OrgsService,
   ProjectsService,
+  TabService,
   ConnectionsService,
   BranchesService,
   ModelsService,

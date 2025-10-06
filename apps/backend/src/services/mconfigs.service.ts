@@ -21,14 +21,15 @@ import { ConnectionTab } from '~common/interfaces/backend/connection/connection-
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
-import { decryptData } from '~node-common/functions/encryption/decrypt-data';
 import { makeQueryId } from '~node-common/functions/make-query-id';
 import { EnvsService } from './envs.service';
 import { StoreService } from './store.service';
+import { TabService } from './tab.service';
 
 @Injectable()
 export class MconfigsService {
   constructor(
+    private tabService: TabService,
     private envsService: EnvsService,
     private storeService: StoreService,
     private cs: ConfigService<BackendConfig>,
@@ -146,9 +147,8 @@ export class MconfigsService {
         ? errorMessage
         : (JSON.parse(processedRequest.result) as any).urlPath;
 
-    let cTab = decryptData<ConnectionTab>({
-      encryptedString: connection.tab,
-      keyBase64: this.cs.get<BackendConfig['backendAesKey']>('backendAesKey')
+    let cTab = this.tabService.decryptData<ConnectionTab>({
+      encryptedString: connection.tab
     });
 
     let connectionBaseUrl =
