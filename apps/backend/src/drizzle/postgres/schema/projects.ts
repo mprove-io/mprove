@@ -14,22 +14,23 @@ export const projectsTable = pgTable(
   {
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
     orgId: varchar('org_id', { length: 128 }).notNull(),
-    name: text('name').notNull(), // name is unique across org projects
-    defaultBranch: text('default_branch').default('main').notNull(),
-    remoteType: varchar('remote_type')
-      .default('Managed')
-      .$type<ProjectRemoteTypeEnum>()
-      .notNull(),
-    gitUrl: varchar('git_url'),
+    defaultBranch: text('default_branch').notNull(),
+    remoteType: varchar('remote_type').$type<ProjectRemoteTypeEnum>().notNull(),
     tab: text('tab'),
+    nameHash: varchar('name_hash').notNull(), // name is unique across org projects
+    gitUrlHash: varchar('git_url_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
     idxProjectsOrgId: index('idx_projects_org_id').on(table.orgId),
+    idxProjectsNameHash: index('idx_projects_name_hash').on(table.nameHash),
+    idxProjectsGitUrlHash: index('idx_projects_git_url_hash').on(
+      table.gitUrlHash
+    ),
     //
-    uidxProjectsOrgIdName: uniqueIndex('uidx_projects_org_id_name').on(
+    uidxProjectsOrgIdNameHash: uniqueIndex('uidx_projects_org_id_name_hash').on(
       table.orgId,
-      table.name
+      table.nameHash
     )
   })
 );

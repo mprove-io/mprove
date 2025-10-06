@@ -5,10 +5,10 @@ import {
   index,
   json,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { Ev } from '~common/interfaces/backend/ev';
 
 export const envsTable = pgTable(
   'envs',
@@ -17,13 +17,13 @@ export const envsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull(),
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     memberIds: json('member_ids').$type<string[]>().default([]),
-    evs: json('evs').$type<Ev[]>().default([]),
     isFallbackToProdConnections: boolean(
       'is_fallback_to_prod_connections'
     ).default(false),
     isFallbackToProdVariables: boolean('is_fallback_to_prod_variables').default(
       false
     ),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

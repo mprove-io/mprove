@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { bigint, index, json, pgTable, varchar } from 'drizzle-orm/pg-core';
+import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 
 export const kitsTable = pgTable(
   'kits',
@@ -7,7 +7,7 @@ export const kitsTable = pgTable(
     kitId: varchar('kit_id', { length: 32 }).notNull().primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     reportId: varchar('report_id', { length: 32 }).notNull(),
-    data: json('data'),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

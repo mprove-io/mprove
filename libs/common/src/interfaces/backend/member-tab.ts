@@ -1,18 +1,17 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class ProjectTab {
+export class MemberTab {
   @IsString()
-  name: string;
+  email: string;
+
+  @IsString()
+  alias: string;
 
   @IsOptional()
   @IsString()
-  gitUrl: string;
+  firstName: string;
 
   @IsOptional()
   @IsString()
-  privateKey: string;
-
-  @IsOptional()
-  @IsString()
-  publicKey: string;
+  lastName: string;
 }

@@ -5,8 +5,7 @@ export const avatarsTable = pgTable(
   'avatars',
   {
     userId: varchar('user_id', { length: 32 }).notNull().primaryKey(),
-    avatarSmall: text('avatar_small'),
-    avatarBig: text('avatar_big'),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

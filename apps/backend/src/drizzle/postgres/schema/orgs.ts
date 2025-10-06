@@ -12,16 +12,19 @@ export const orgsTable = pgTable(
   'orgs',
   {
     orgId: varchar('org_id', { length: 128 }).notNull().primaryKey(), // length 128 required for tests
-    name: text('name').notNull(),
-    ownerId: text('owner_id').notNull(),
-    ownerEmail: text('owner_email').notNull(),
+    ownerId: varchar('owner_id').notNull(),
+    tab: text('tab'),
+    nameHash: varchar('name_hash').notNull(),
+    ownerEmailHash: varchar('owner_email_hash').notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
     idxOrgsOwnerId: index('idx_orgs_owner_id').on(table.ownerId),
-    idxOrgsOwnerEmail: index('idx_orgs_owner_email').on(table.ownerEmail),
+    idxOrgsOwnerEmailHash: index('idx_orgs_owner_email_hash').on(
+      table.ownerEmailHash
+    ),
     //
-    uidxOrgsName: uniqueIndex('uidx_orgs_name').on(table.name)
+    uidxOrgsNameHash: uniqueIndex('uidx_orgs_name_hash').on(table.nameHash)
   })
 );
 

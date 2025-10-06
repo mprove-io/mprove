@@ -3,7 +3,6 @@ import {
   bigint,
   index,
   integer,
-  json,
   pgTable,
   text,
   varchar
@@ -24,11 +23,7 @@ export const queriesTable = pgTable(
     queryJobId: varchar('query_job_id'),
     bigqueryQueryJobId: varchar('bigquery_query_job_id'),
     sql: text('sql'),
-    apiMethod: text('api_method'),
-    apiUrl: text('api_url'),
-    apiBody: text('api_body'),
     status: varchar('status').$type<QueryStatusEnum>().notNull(),
-    data: json('data'),
     lastRunBy: varchar('last_run_by'),
     lastRunTs: bigint('last_run_ts', { mode: 'number' }),
     lastCancelTs: bigint('last_cancel_ts', { mode: 'number' }),
@@ -42,6 +37,8 @@ export const queriesTable = pgTable(
     bigqueryConsecutiveErrorsGetResults: integer(
       'bigquery_consecutive_errors_get_results'
     ),
+    apiUrlHash: varchar('api_url_hash'),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -56,7 +53,8 @@ export const queriesTable = pgTable(
     ),
     idxQueriesBigqueryQueryJobId: index('idx_queries_bigquery_query_job_id').on(
       table.bigqueryQueryJobId
-    )
+    ),
+    idxQueriesApiUrlHash: index('idx_queries_api_url_hash').on(table.apiUrlHash)
   })
 );
 
