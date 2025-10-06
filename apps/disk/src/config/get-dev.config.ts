@@ -16,6 +16,8 @@ export function getDevConfig(envFilePath: any) {
   let devConfig: DiskConfig = {
     diskEnv: <DiskEnvEnum>(process.env.DISK_ENV || envFile.DISK_ENV),
 
+    aesKey: process.env.DISK_AES_KEY || envFile.DISK_AES_KEY,
+
     diskRabbitUser: process.env.DISK_RABBIT_USER || envFile.DISK_RABBIT_USER,
     diskRabbitPass: process.env.DISK_RABBIT_PASS || envFile.DISK_RABBIT_PASS,
     diskRabbitHost: process.env.DISK_RABBIT_HOST || envFile.DISK_RABBIT_HOST,

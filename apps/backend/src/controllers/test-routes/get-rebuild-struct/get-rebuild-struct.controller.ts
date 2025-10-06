@@ -81,7 +81,7 @@ export class GetRebuildStructController {
       },
       payload: {
         orgId: orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branch
       }
@@ -120,7 +120,7 @@ export class GetRebuildStructController {
         files: diskFilesToBlockmlFiles(getCatalogFilesResponse.payload.files),
         envId: envId,
         evs: apiEnv.evsWithFallback,
-        connections: connectionsWithFallback,
+        baseConnections: connectionsWithFallback,
         overrideTimezone: overrideTimezone,
         isUseCache: isUseCache,
         cachedMproveConfig: cachedMproveConfig,

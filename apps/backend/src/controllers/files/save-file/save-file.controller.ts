@@ -105,7 +105,7 @@ export class SaveFileController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: fileNodeId,

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ConnectionTabOptions } from '~common/interfaces/backend/connection/connection-tab-options';
+import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -17,8 +17,8 @@ export class ToBackendEditConnectionRequestPayload {
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionTabOptions)
-  options: ConnectionTabOptions;
+  @Type(() => ConnectionOptions)
+  options: ConnectionOptions;
 }
 
 export class ToBackendEditConnectionRequest extends ToBackendRequest {

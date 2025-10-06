@@ -185,7 +185,6 @@ export function prepareTile(item: {
     // :
     {
       title: chart.title,
-      description: isDefined(chart.description) ? chart.description : undefined,
       model: mconfig.modelId,
       select: mconfig.select,
       sorts: isDefined(mconfig.sorts) ? mconfig.sorts : undefined,

@@ -53,7 +53,6 @@ export function wrapTiles(item: {
   tiles.forEach(tile => {
     let mconfigChart = wrapMconfigChart({
       title: tile.title,
-      description: tile.description,
       type: tile.type,
       options: tile.options,
       isReport: false,

@@ -115,7 +115,7 @@ export class CreateFolderController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,

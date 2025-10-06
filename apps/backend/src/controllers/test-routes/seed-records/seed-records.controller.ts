@@ -249,7 +249,7 @@ export class SeedRecordsController {
             },
             payload: {
               orgId: newProject.orgId,
-              project: newProject,
+              baseProject: newProject,
               testProjectId: x.testProjectId,
               devRepoId: users[0].userId,
               userAlias: users[0].alias
@@ -363,7 +363,7 @@ export class SeedRecordsController {
             defaultBranch: newProject.defaultBranch,
             remoteType: newProject.remoteType,
             gitUrl: newProject.gitUrl,
-            tab: this.tabService.encryptData({ data: newProject.tab }),
+            tab: this.tabService.encrypt({ data: newProject.tab }),
             serverTs: newProject.serverTs
           };
 

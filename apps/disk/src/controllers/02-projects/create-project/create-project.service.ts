@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
+import { ProjectTab } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
@@ -18,6 +19,7 @@ import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '~disk/functions/git/prepare-remote-and-prod';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
@@ -40,10 +42,22 @@ export class CreateProjectService {
       logger: this.logger
     });
 
-    let { orgId, project, testProjectId, devRepoId, userAlias } =
+    let { orgId, baseProject, testProjectId, devRepoId, userAlias } =
       requestValid.payload;
 
-    let { name: projectName, projectId, remoteType, gitUrl } = project;
+    let projectTab: ProjectTab = decryptData<ProjectTab>({
+      encryptedString: baseProject.tab,
+      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    });
+
+    let { projectId, remoteType } = baseProject;
+    let {
+      name: projectName,
+      gitUrl,
+      defaultBranch,
+      privateKey,
+      publicKey
+    } = projectTab;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -75,8 +89,8 @@ export class CreateProjectService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: project.tab.privateKey,
-      publicKey: project.tab.publicKey
+      privateKey: privateKey,
+      publicKey: publicKey
     });
 
     let cloneOptions: nodegit.CloneOptions = {

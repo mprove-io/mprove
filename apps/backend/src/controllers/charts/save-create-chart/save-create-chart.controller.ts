@@ -233,7 +233,7 @@ export class SaveCreateChartController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,

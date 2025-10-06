@@ -105,7 +105,7 @@ export class MoveCatalogNodeController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         fromNodeId: fromNodeId,

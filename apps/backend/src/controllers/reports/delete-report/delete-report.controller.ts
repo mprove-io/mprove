@@ -138,7 +138,7 @@ export class DeleteReportController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingReport.filePath,

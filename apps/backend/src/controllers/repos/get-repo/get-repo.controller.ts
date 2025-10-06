@@ -91,7 +91,7 @@ export class GetRepoController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         isFetch: isFetch

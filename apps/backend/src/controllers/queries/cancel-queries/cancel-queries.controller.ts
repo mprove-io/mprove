@@ -43,7 +43,7 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
+import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 import {
   ToBackendCancelQueriesRequest,
   ToBackendCancelQueriesResponsePayload
@@ -163,7 +163,7 @@ export class CancelQueriesController {
           });
         }
 
-        let cTab = this.tabService.decryptData<ConnectionTab>({
+        let cTab = this.tabService.decrypt<ConnectionTab>({
           encryptedString: connection.tab
         });
 

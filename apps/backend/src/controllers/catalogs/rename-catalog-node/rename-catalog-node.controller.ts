@@ -105,7 +105,7 @@ export class RenameCatalogNodeController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         nodeId: nodeId,

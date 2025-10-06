@@ -50,6 +50,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
+import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MproveConfig } from '~common/interfaces/backend/mprove-config';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
@@ -74,6 +75,7 @@ import {
   MalloyConnection,
   makeMalloyConnections
 } from '~node-common/functions/make-malloy-connections';
+import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 interface RebuildStructPrep {
@@ -118,7 +120,7 @@ export class RebuildStructService {
       structId,
       projectId,
       files,
-      connections,
+      baseConnections,
       envId,
       evs,
       mproveDir,
@@ -129,13 +131,33 @@ export class RebuildStructService {
       cachedMetrics
     } = reqValid.payload;
 
+    let projectConnections: ProjectConnection[] = baseConnections.map(
+      baseConnection => {
+        let connectionTab = decryptData<ConnectionTab>({
+          encryptedString: baseConnection.tab,
+          keyBase64: this.cs.get<BlockmlConfig['aesKey']>('aesKey')
+        });
+
+        let projectConnection: ProjectConnection = {
+          projectId: baseConnection.projectId,
+          connectionId: baseConnection.connectionId,
+          envId: baseConnection.envId,
+          type: baseConnection.type,
+          options: connectionTab.options,
+          serverTs: baseConnection.serverTs
+        };
+
+        return projectConnection;
+      }
+    );
+
     let prep: RebuildStructPrep = await this.rebuildStructStateless({
       traceId: reqValid.info.traceId,
       files: files,
       structId: structId,
       envId: envId,
       evs: evs,
-      connections: connections,
+      projectConnections: projectConnections,
       mproveDir: mproveDir,
       overrideTimezone: overrideTimezone,
       projectId: projectId,
@@ -204,7 +226,7 @@ export class RebuildStructService {
     structId: string;
     envId: string;
     evs: Ev[];
-    connections: ProjectConnection[];
+    projectConnections: ProjectConnection[];
     overrideTimezone: string;
   }): Promise<RebuildStructPrep> {
     let configPath = item.dir + '/' + MPROVE_CONFIG_FILENAME;
@@ -246,7 +268,7 @@ export class RebuildStructService {
       structId: item.structId,
       envId: item.envId,
       evs: item.evs,
-      connections: item.connections,
+      projectConnections: item.projectConnections,
       mproveDir: mproveDir,
       overrideTimezone: item.overrideTimezone,
       projectId: undefined,
@@ -266,7 +288,7 @@ export class RebuildStructService {
     structId: string;
     envId: string;
     evs: Ev[];
-    connections: ProjectConnection[];
+    projectConnections: ProjectConnection[];
     mproveDir: string;
     overrideTimezone: string;
     projectId: string;
@@ -292,7 +314,7 @@ export class RebuildStructService {
     let yamlBuildItem = buildYaml(
       {
         files: item.files,
-        connections: item.connections,
+        connections: item.projectConnections,
         mproveDir: item.mproveDir,
         structId: item.structId,
         errors: errors,
@@ -451,7 +473,7 @@ export class RebuildStructService {
     // await fse.writeFile(mainPath, mainContent);
 
     let malloyConnections: MalloyConnection[] = makeMalloyConnections({
-      connections: item.connections
+      connections: item.projectConnections
     });
 
     // let startBuildModStart = Date.now();
@@ -467,7 +489,7 @@ export class RebuildStructService {
               {
                 files: item.files,
                 malloyConnections: malloyConnections,
-                connections: item.connections,
+                connections: item.projectConnections,
                 mods: mods,
                 tempDir: tempDir,
                 projectId: item.projectId,
@@ -585,7 +607,7 @@ export class RebuildStructService {
         // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
-        projectConnections: item.connections,
+        projectConnections: item.projectConnections,
         // malloyFiles: malloyFiles,
         stores: stores,
         weekStart: projectConfig.week_start,
@@ -609,7 +631,7 @@ export class RebuildStructService {
         // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
-        projectConnections: item.connections,
+        projectConnections: item.projectConnections,
         stores: stores,
         // malloyFiles: malloyFiles,
         weekStart: projectConfig.week_start,

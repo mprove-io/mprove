@@ -17,7 +17,7 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
+import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
@@ -147,7 +147,7 @@ export class MconfigsService {
         ? errorMessage
         : (JSON.parse(processedRequest.result) as any).urlPath;
 
-    let cTab = this.tabService.decryptData<ConnectionTab>({
+    let cTab = this.tabService.decrypt<ConnectionTab>({
       encryptedString: connection.tab
     });
 

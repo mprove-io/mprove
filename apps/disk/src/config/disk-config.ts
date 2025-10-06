@@ -7,6 +7,9 @@ export class DiskConfig {
   diskEnv?: DiskEnvEnum;
 
   @IsString()
+  aesKey?: string;
+
+  @IsString()
   diskRabbitUser?: string;
 
   @IsString()

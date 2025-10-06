@@ -7,7 +7,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ConnectionTab } from './connection/connection-tab';
+import { ConnectionOptions } from './connection-parts/connection-options';
 
 export class ProjectConnection {
   @IsOptional()
@@ -26,9 +26,10 @@ export class ProjectConnection {
   @IsEnum(ConnectionTypeEnum)
   type?: ConnectionTypeEnum;
 
+  @IsOptional()
   @ValidateNested()
-  @Type(() => ConnectionTab)
-  tab: ConnectionTab;
+  @Type(() => ConnectionOptions)
+  options: ConnectionOptions;
 
   @IsOptional()
   @IsInt()

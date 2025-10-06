@@ -9,8 +9,8 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
-import { ConnectionTabOptions } from '~common/interfaces/backend/connection/connection-tab-options';
+import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
+import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 import { EnvTab } from '~common/interfaces/backend/env-tab';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MemberTab } from '~common/interfaces/backend/member-tab';
@@ -40,7 +40,7 @@ export class EntMakerService {
   }): MemberEnt {
     let { projectId, roles, envs, user, isAdmin, isEditor, isExplorer } = item;
 
-    let userTab = this.tabService.decryptData<UserTab>({
+    let userTab = this.tabService.decrypt<UserTab>({
       encryptedString: user.tab
     });
 
@@ -64,7 +64,7 @@ export class EntMakerService {
       isAdmin: isAdmin,
       isEditor: isEditor,
       isExplorer: isExplorer,
-      tab: this.tabService.encryptData({
+      tab: this.tabService.encrypt({
         data: memberTab
       }),
       serverTs: undefined
@@ -141,7 +141,7 @@ export class EntMakerService {
       memberIds: [],
       isFallbackToProdConnections: true,
       isFallbackToProdVariables: true,
-      tab: this.tabService.encryptData({ data: envTab }),
+      tab: this.tabService.encrypt({ data: envTab }),
       serverTs: undefined
     };
 
@@ -153,7 +153,7 @@ export class EntMakerService {
     connectionId: string;
     envId: string;
     type: ConnectionTypeEnum;
-    options: ConnectionTabOptions;
+    options: ConnectionOptions;
   }): ConnectionEnt {
     let { projectId, connectionId, envId, type, options } = item;
 
@@ -190,7 +190,7 @@ export class EntMakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      tab: this.tabService.encryptData({ data: connectionTab }),
+      tab: this.tabService.encrypt({ data: connectionTab }),
       serverTs: undefined
     };
 
@@ -246,7 +246,7 @@ export class EntMakerService {
       creatorId: creatorId,
       draft: draft,
       draftCreatedTs: draftCreatedTs,
-      tab: this.tabService.encryptData({ data: reportTab }),
+      tab: this.tabService.encrypt({ data: reportTab }),
       serverTs: undefined
     };
 

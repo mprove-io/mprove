@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { Project } from '~common/interfaces/backend/project';
+import { BaseProject } from '~common/interfaces/backend/base-project';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import { Repo } from '~common/interfaces/disk/repo';
 import { MyResponse } from '~common/interfaces/to/my-response';
@@ -11,8 +11,8 @@ export class ToDiskPullRepoRequestPayload {
   orgId: string;
 
   @ValidateNested()
-  @Type(() => Project)
-  project: Project;
+  @Type(() => BaseProject)
+  baseProject: BaseProject;
 
   @IsString()
   repoId: string;

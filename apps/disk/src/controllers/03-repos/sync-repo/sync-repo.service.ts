@@ -6,6 +6,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileStatusEnum } from '~common/enums/file-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ProjectTab } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
@@ -26,6 +27,7 @@ import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { getSyncFiles } from '~node-common/functions/get-sync-files';
+import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
@@ -48,7 +50,7 @@ export class SyncRepoService {
 
     let {
       orgId,
-      project,
+      baseProject,
       repoId,
       branch,
       lastCommit,
@@ -57,7 +59,19 @@ export class SyncRepoService {
       localDeletedFiles
     } = requestValid.payload;
 
-    let { projectId, remoteType, gitUrl } = project;
+    let projectTab: ProjectTab = decryptData<ProjectTab>({
+      encryptedString: baseProject.tab,
+      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    });
+
+    let { projectId, remoteType } = baseProject;
+    let {
+      name: projectName,
+      gitUrl,
+      defaultBranch,
+      privateKey,
+      publicKey
+    } = projectTab;
 
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -74,8 +88,8 @@ export class SyncRepoService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: project.tab.privateKey,
-      publicKey: project.tab.publicKey
+      privateKey: privateKey,
+      publicKey: publicKey
     });
 
     let isOrgExist = await isPathExist(orgDir);

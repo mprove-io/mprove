@@ -113,7 +113,7 @@ export class ProjectsService {
       },
       payload: {
         orgId: orgId,
-        project: apiProject,
+        baseProject: apiProject,
         devRepoId: user.userId,
         userAlias: user.alias,
         testProjectId: testProjectId
@@ -137,7 +137,7 @@ export class ProjectsService {
       defaultBranch: diskResponse.payload.defaultBranch,
       remoteType: remoteType,
       gitUrl: gitUrl,
-      tab: this.tabService.encryptData({ data: apiProject.tab }),
+      tab: this.tabService.encrypt({ data: apiProject.tab }),
       serverTs: undefined
     };
 

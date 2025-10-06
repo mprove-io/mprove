@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsNumber, IsString, ValidateNested } from 'class-validator';
-import { Project } from '~common/interfaces/backend/project';
+import { BaseProject } from '~common/interfaces/backend/base-project';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
 import { Repo } from '~common/interfaces/disk/repo';
@@ -12,8 +12,8 @@ export class ToDiskSyncRepoRequestPayload {
   orgId: string;
 
   @ValidateNested()
-  @Type(() => Project)
-  project: Project;
+  @Type(() => BaseProject)
+  baseProject: BaseProject;
 
   @IsString()
   repoId: string;

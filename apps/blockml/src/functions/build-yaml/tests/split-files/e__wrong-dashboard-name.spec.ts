@@ -44,7 +44,7 @@ test('1', async t => {
 
     let connection: ProjectConnection = {
       connectionId: 'c1',
-      tab: { options: {} },
+      options: {},
       type: ConnectionTypeEnum.PostgreSQL
     };
 
@@ -54,7 +54,7 @@ test('1', async t => {
       structId: structId,
       envId: PROJECT_ENV_PROD,
       evs: [],
-      connections: [connection],
+      projectConnections: [connection],
       overrideTimezone: undefined
     });
 

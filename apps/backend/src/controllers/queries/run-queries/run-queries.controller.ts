@@ -55,7 +55,7 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
-import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
+import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 import {
   ToBackendRunQueriesRequest,
   ToBackendRunQueriesResponsePayload
@@ -187,7 +187,7 @@ export class RunQueriesController {
         // console.log('googleApiConnections start');
         // let tsStart = Date.now();
 
-        let cTab = this.tabService.decryptData<ConnectionTab>({
+        let cTab = this.tabService.decrypt<ConnectionTab>({
           encryptedString: connection.tab
         });
 
@@ -203,7 +203,7 @@ export class RunQueriesController {
 
         cTab.options.storeGoogleApi.googleAccessToken = tokens.access_token;
 
-        connection.tab = this.tabService.encryptData({ data: cTab });
+        connection.tab = this.tabService.encrypt({ data: cTab });
 
         // console.log(Date.now() - tsStart);
         // console.log('googleApiConnections end');

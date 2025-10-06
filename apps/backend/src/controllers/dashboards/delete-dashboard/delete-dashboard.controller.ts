@@ -169,7 +169,7 @@ export class DeleteDashboardController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingDashboard.filePath,

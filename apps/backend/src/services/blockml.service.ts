@@ -117,7 +117,7 @@ export class BlockmlService {
         files: diskFilesToBlockmlFiles(diskFiles),
         envId: envId,
         evs: isDefined(evs) ? evs : apiEnv.evsWithFallback,
-        connections: isDefined(connections)
+        baseConnections: isDefined(connections)
           ? connections
           : connectionsWithFallback,
         overrideTimezone: overrideTimezone,

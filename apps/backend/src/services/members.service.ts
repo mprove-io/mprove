@@ -210,7 +210,7 @@ export class MembersService {
             },
             payload: {
               orgId: project.orgId,
-              project: apiProject,
+              baseProject: apiProject,
               devRepoId: newMember.memberId
             }
           };

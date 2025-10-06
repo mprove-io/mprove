@@ -233,7 +233,7 @@ export class SaveModifyReportController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingModReport.filePath,

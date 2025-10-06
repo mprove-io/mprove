@@ -43,28 +43,26 @@ test('1', async t => {
     let c1: ProjectConnection = {
       connectionId: 'c1_postgres',
       type: ConnectionTypeEnum.PostgreSQL,
-      tab: {
-        options: {
-          postgres: {
-            host: cs.get<BlockmlConfig['blockmlTestsDwhPostgresHost']>(
-              'blockmlTestsDwhPostgresHost'
-            ),
-            port: Number(
-              cs.get<BlockmlConfig['blockmlTestsDwhPostgresPort']>(
-                'blockmlTestsDwhPostgresPort'
-              )
-            ),
-            username: cs.get<BlockmlConfig['blockmlTestsDwhPostgresUsername']>(
-              'blockmlTestsDwhPostgresUsername'
-            ),
-            password: cs.get<BlockmlConfig['blockmlTestsDwhPostgresPassword']>(
-              'blockmlTestsDwhPostgresPassword'
-            ),
-            database: cs.get<
-              BlockmlConfig['blockmlTestsDwhPostgresDatabaseName']
-            >('blockmlTestsDwhPostgresDatabaseName'),
-            isSSL: false
-          }
+      options: {
+        postgres: {
+          host: cs.get<BlockmlConfig['blockmlTestsDwhPostgresHost']>(
+            'blockmlTestsDwhPostgresHost'
+          ),
+          port: Number(
+            cs.get<BlockmlConfig['blockmlTestsDwhPostgresPort']>(
+              'blockmlTestsDwhPostgresPort'
+            )
+          ),
+          username: cs.get<BlockmlConfig['blockmlTestsDwhPostgresUsername']>(
+            'blockmlTestsDwhPostgresUsername'
+          ),
+          password: cs.get<BlockmlConfig['blockmlTestsDwhPostgresPassword']>(
+            'blockmlTestsDwhPostgresPassword'
+          ),
+          database: cs.get<
+            BlockmlConfig['blockmlTestsDwhPostgresDatabaseName']
+          >('blockmlTestsDwhPostgresDatabaseName'),
+          isSSL: false
         }
       }
     };
@@ -75,7 +73,7 @@ test('1', async t => {
       structId: structId,
       envId: PROJECT_ENV_PROD,
       evs: [],
-      connections: [c1],
+      projectConnections: [c1],
       overrideTimezone: undefined
     });
 

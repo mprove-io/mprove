@@ -369,7 +369,7 @@ export class AppModule implements OnModuleInit {
           });
 
           if (isUndefined(firstOrg)) {
-            let mproveAdminUserTab = this.tabService.decryptData<UserTab>({
+            let mproveAdminUserTab = this.tabService.decrypt<UserTab>({
               encryptedString: mproveAdminUser.tab
             });
 

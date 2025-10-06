@@ -26,7 +26,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { makeCopy } from '~common/functions/make-copy';
 import { ChartTab } from '~common/interfaces/backend/chart-tab';
 import { ChartX } from '~common/interfaces/backend/chart-x';
-import { ConnectionTab } from '~common/interfaces/backend/connection/connection-tab';
+import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 import { DashboardTab } from '~common/interfaces/backend/dashboard-tab';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Env } from '~common/interfaces/backend/env';
@@ -70,7 +70,7 @@ export class WrapToApiService {
   }): ProjectConnection {
     let { connection, isIncludePasswords } = item;
 
-    let connectionTab = this.tabService.decryptData<ConnectionTab>({
+    let connectionTab = this.tabService.decrypt<ConnectionTab>({
       encryptedString: connection.tab
     });
 
@@ -226,7 +226,7 @@ export class WrapToApiService {
     let { dashboard, mconfigs, queries, isAddMconfigAndQuery, member, models } =
       item;
 
-    let dashboardTab = this.tabService.decryptData<DashboardTab>({
+    let dashboardTab = this.tabService.decrypt<DashboardTab>({
       encryptedString: dashboard.tab
     });
 
@@ -304,14 +304,14 @@ export class WrapToApiService {
       envMembers
     } = item;
 
-    let envTab = this.tabService.decryptData<EnvTab>({
+    let envTab = this.tabService.decrypt<EnvTab>({
       encryptedString: env.tab
     });
 
     let envUsers: EnvUser[] = [];
 
     envMembers.forEach(member => {
-      let memberTab = this.tabService.decryptData<MemberTab>({
+      let memberTab = this.tabService.decrypt<MemberTab>({
         encryptedString: member.tab
       });
 
@@ -368,7 +368,7 @@ export class WrapToApiService {
   }): MconfigX {
     let { mconfig, modelFields } = item;
 
-    let mconfigTab = this.tabService.decryptData<MconfigTab>({
+    let mconfigTab = this.tabService.decrypt<MconfigTab>({
       encryptedString: mconfig.tab
     });
 
@@ -412,7 +412,7 @@ export class WrapToApiService {
   wrapToApiMember(item: { member: MemberEnt }): Member {
     let { member } = item;
 
-    let memberTab = this.tabService.decryptData<MemberTab>({
+    let memberTab = this.tabService.decrypt<MemberTab>({
       encryptedString: member.tab
     });
 
@@ -441,7 +441,7 @@ export class WrapToApiService {
   wrapToApiEnvUser(item: { member: MemberEnt }): EnvUser {
     let { member } = item;
 
-    let memberTab = this.tabService.decryptData<MemberTab>({
+    let memberTab = this.tabService.decrypt<MemberTab>({
       encryptedString: member.tab
     });
 
@@ -465,7 +465,7 @@ export class WrapToApiService {
   }): ModelX {
     let { model, hasAccess } = item;
 
-    let modelTab = this.tabService.decryptData<ModelTab>({
+    let modelTab = this.tabService.decrypt<ModelTab>({
       encryptedString: model.tab
     });
 
@@ -495,7 +495,7 @@ export class WrapToApiService {
   wrapToApiOrg(item: { org: OrgEnt }): Org {
     let { org } = item;
 
-    let orgTab = this.tabService.decryptData<OrgTab>({
+    let orgTab = this.tabService.decrypt<OrgTab>({
       encryptedString: org.tab
     });
 
@@ -513,7 +513,7 @@ export class WrapToApiService {
   wrapToApiOrgsItem(item: { org: OrgEnt }): OrgsItem {
     let { org } = item;
 
-    let orgTab = this.tabService.decryptData<OrgTab>({
+    let orgTab = this.tabService.decrypt<OrgTab>({
       encryptedString: org.tab
     });
 
@@ -533,7 +533,7 @@ export class WrapToApiService {
   }): Project {
     let { project, isAddGitUrl, isAddPrivateKey, isAddPublicKey } = item;
 
-    let projectTab = this.tabService.decryptData<ProjectTab>({
+    let projectTab = this.tabService.decrypt<ProjectTab>({
       encryptedString: project.tab
     });
 
@@ -560,7 +560,7 @@ export class WrapToApiService {
   }): ProjectsItem {
     let { project } = item;
 
-    let projectTab = this.tabService.decryptData<ProjectTab>({
+    let projectTab = this.tabService.decrypt<ProjectTab>({
       encryptedString: project.tab
     });
 
@@ -576,7 +576,7 @@ export class WrapToApiService {
   wrapToApiQuery(item: { query: QueryEnt }): Query {
     let { query } = item;
 
-    let queryTab = this.tabService.decryptData<QueryTab>({
+    let queryTab = this.tabService.decrypt<QueryTab>({
       encryptedString: query.tab
     });
 
@@ -645,7 +645,7 @@ export class WrapToApiService {
       metricsEndDateIncludedYYYYMMDD
     } = item;
 
-    let reportTab = this.tabService.decryptData<ReportTab>({
+    let reportTab = this.tabService.decrypt<ReportTab>({
       encryptedString: report.tab
     });
 
@@ -718,7 +718,7 @@ export class WrapToApiService {
   wrapToApiStruct(item: { struct: StructEnt }): Struct {
     let { struct } = item;
 
-    let structTab = this.tabService.decryptData<StructTab>({
+    let structTab = this.tabService.decrypt<StructTab>({
       encryptedString: struct.tab
     });
 
@@ -739,7 +739,7 @@ export class WrapToApiService {
   wrapToApiUser(item: { user: UserEnt }): User {
     let { user } = item;
 
-    let userTab = this.tabService.decryptData<UserTab>({
+    let userTab = this.tabService.decrypt<UserTab>({
       encryptedString: user.tab
     });
 
@@ -799,7 +799,7 @@ export class WrapToApiService {
     let { chart, mconfigs, queries, member, isAddMconfigAndQuery, models } =
       item;
 
-    let chartTab = this.tabService.decryptData<ChartTab>({
+    let chartTab = this.tabService.decrypt<ChartTab>({
       encryptedString: chart.tab
     });
 

@@ -151,7 +151,7 @@ export class GetNavController {
         },
         payload: {
           orgId: resultProject.orgId,
-          project: apiResultProject,
+          baseProject: apiResultProject,
           repoId: bridge.repoId,
           branch: bridge.branchId,
           isFetch: true

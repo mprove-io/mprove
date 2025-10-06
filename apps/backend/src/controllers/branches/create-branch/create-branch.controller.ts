@@ -107,7 +107,7 @@ export class CreateBranchController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         newBranch: newBranchId,
         fromBranch: fromBranchId,

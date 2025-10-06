@@ -175,7 +175,7 @@ export class CreateMemberController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         devRepoId: newMember.memberId
       }
     };

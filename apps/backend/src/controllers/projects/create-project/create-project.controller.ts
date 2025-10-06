@@ -98,7 +98,7 @@ export class CreateProjectController {
         });
       }
 
-      noteTab = this.tabService.decryptData<NoteTab>({
+      noteTab = this.tabService.decrypt<NoteTab>({
         encryptedString: note.tab
       });
     }

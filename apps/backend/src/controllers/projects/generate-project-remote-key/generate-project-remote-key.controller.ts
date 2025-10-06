@@ -87,7 +87,7 @@ export class GenerateProjectRemoteKeyController {
 
     let note: NoteEnt = {
       noteId: makeId(),
-      tab: this.tabService.encryptData({ data: noteTab }),
+      tab: this.tabService.encrypt({ data: noteTab }),
       serverTs: undefined
     };
 

@@ -164,7 +164,7 @@ export class SpecialRebuildStructsController {
           },
           payload: {
             orgId: project.orgId,
-            project: apiProject,
+            baseProject: apiProject,
             repoId: bridge.repoId,
             branch: bridge.branchId
           }

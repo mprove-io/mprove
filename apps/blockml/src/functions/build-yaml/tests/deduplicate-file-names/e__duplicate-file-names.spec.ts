@@ -44,7 +44,7 @@ test('1', async t => {
       structId: structId,
       envId: PROJECT_ENV_PROD,
       evs: [],
-      connections: [],
+      projectConnections: [],
       overrideTimezone: undefined
     });
 

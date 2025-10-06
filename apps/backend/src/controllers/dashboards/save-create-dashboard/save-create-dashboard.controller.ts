@@ -291,7 +291,7 @@ export class SaveCreateDashboardController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,

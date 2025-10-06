@@ -120,7 +120,7 @@ export class RevertRepoToRemoteController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId
       }

@@ -2,6 +2,7 @@ import * as nodegit from '@figma/nodegit';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
+import { ProjectTab } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
@@ -16,6 +17,7 @@ import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
@@ -38,9 +40,21 @@ export class CreateDevRepoService {
       logger: this.logger
     });
 
-    let { orgId, project, devRepoId } = requestValid.payload;
+    let { orgId, baseProject, devRepoId } = requestValid.payload;
 
-    let { projectId, remoteType, gitUrl } = project;
+    let projectTab: ProjectTab = decryptData<ProjectTab>({
+      encryptedString: baseProject.tab,
+      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    });
+
+    let { projectId, remoteType } = baseProject;
+    let {
+      name: projectName,
+      gitUrl,
+      defaultBranch,
+      privateKey,
+      publicKey
+    } = projectTab;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -71,8 +85,8 @@ export class CreateDevRepoService {
         remoteType: remoteType,
         keyDir: keyDir,
         gitUrl: gitUrl,
-        privateKey: project.tab.privateKey,
-        publicKey: project.tab.publicKey
+        privateKey: privateKey,
+        publicKey: publicKey
       })
     };
 

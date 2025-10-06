@@ -50,7 +50,7 @@ export class WrapToEntService {
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
       creatorId: dashboard.creatorId,
-      tab: this.tabService.encryptData({ data: dashboardTab }),
+      tab: this.tabService.encrypt({ data: dashboardTab }),
       serverTs: dashboard.serverTs
     };
 
@@ -84,7 +84,7 @@ export class WrapToEntService {
       modelId: mconfig.modelId,
       modelType: mconfig.modelType,
       temp: mconfig.temp,
-      tab: this.tabService.encryptData({ data: mconfigTab }),
+      tab: this.tabService.encrypt({ data: mconfigTab }),
       serverTs: mconfig.serverTs
     };
 
@@ -117,7 +117,7 @@ export class WrapToEntService {
       type: model.type,
       connectionId: model.connectionId,
       connectionType: model.connectionType,
-      tab: this.tabService.encryptData({ data: modelTab }),
+      tab: this.tabService.encrypt({ data: modelTab }),
       serverTs: model.serverTs
     };
 
@@ -162,7 +162,7 @@ export class WrapToEntService {
         ? query.bigqueryConsecutiveErrorsGetResults
         : 0,
       apiUrlHash: this.hashService.makeHash(query.apiUrl),
-      tab: this.tabService.encryptData({ data: queryTab }),
+      tab: this.tabService.encrypt({ data: queryTab }),
       serverTs: query.serverTs
     };
 
@@ -192,7 +192,7 @@ export class WrapToEntService {
       creatorId: report.creatorId,
       draft: report.draft,
       draftCreatedTs: report.draftCreatedTs,
-      tab: this.tabService.encryptData({ data: reportTab }),
+      tab: this.tabService.encrypt({ data: reportTab }),
       serverTs: report.serverTs
     };
 
@@ -224,7 +224,7 @@ export class WrapToEntService {
       creatorId: chart.creatorId,
       chartType: chartType,
       modelId: chart.modelId,
-      tab: this.tabService.encryptData({ data: chartTab }),
+      tab: this.tabService.encrypt({ data: chartTab }),
       serverTs: chart.serverTs
     };
 

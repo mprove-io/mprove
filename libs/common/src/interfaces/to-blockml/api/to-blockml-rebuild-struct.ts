@@ -5,9 +5,9 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { BaseConnection } from '~common/interfaces/backend/base-connection';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MproveConfig } from '~common/interfaces/backend/mprove-config';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { BmlError } from '~common/interfaces/blockml/bml-error';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { Chart } from '~common/interfaces/blockml/chart';
@@ -44,8 +44,8 @@ export class ToBlockmlRebuildStructRequestPayload {
   files: BmlFile[];
 
   @ValidateNested()
-  @Type(() => ProjectConnection)
-  connections: ProjectConnection[];
+  @Type(() => BaseConnection)
+  baseConnections: BaseConnection[];
 
   @IsOptional()
   @IsString()

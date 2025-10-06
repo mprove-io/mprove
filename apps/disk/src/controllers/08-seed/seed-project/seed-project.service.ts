@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { emptyDir, ensureDir } from 'fs-extra';
 import { ErEnum } from '~common/enums/er.enum';
+import { ProjectTab } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
@@ -15,6 +16,7 @@ import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '~disk/functions/git/prepare-remote-and-prod';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
@@ -37,10 +39,22 @@ export class SeedProjectService {
       logger: this.logger
     });
 
-    let { orgId, project, devRepoId, userAlias, testProjectId } =
+    let { orgId, baseProject, devRepoId, userAlias, testProjectId } =
       requestValid.payload;
 
-    let { name: projectName, projectId, remoteType, gitUrl } = project;
+    let projectTab: ProjectTab = decryptData<ProjectTab>({
+      encryptedString: baseProject.tab,
+      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    });
+
+    let { projectId, remoteType } = baseProject;
+    let {
+      name: projectName,
+      gitUrl,
+      defaultBranch,
+      privateKey,
+      publicKey
+    } = projectTab;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -61,8 +75,8 @@ export class SeedProjectService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: project.tab.privateKey,
-      publicKey: project.tab.publicKey
+      privateKey: privateKey,
+      publicKey: publicKey
     });
 
     let cloneOptions: nodegit.CloneOptions = {

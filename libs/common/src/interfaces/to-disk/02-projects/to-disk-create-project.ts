@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Project } from '~common/interfaces/backend/project';
+import { BaseProject } from '~common/interfaces/backend/base-project';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToDiskRequest } from '../to-disk-request';
@@ -10,8 +10,8 @@ export class ToDiskCreateProjectRequestPayload {
   orgId: string;
 
   @ValidateNested()
-  @Type(() => Project)
-  project: Project;
+  @Type(() => BaseProject)
+  baseProject: BaseProject;
 
   @IsOptional()
   @IsString()

@@ -11,7 +11,7 @@ import { OptionsStoreApi } from './options-store-api';
 import { OptionsStoreGoogleApi } from './options-store-google-api';
 import { OptionsTrino } from './options-trino';
 
-export class ConnectionTabOptions {
+export class ConnectionOptions {
   @IsOptional()
   @ValidateNested()
   @Type(() => OptionsBigquery)

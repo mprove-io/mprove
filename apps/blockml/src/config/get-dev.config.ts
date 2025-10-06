@@ -17,6 +17,9 @@ export function getDevConfig(envFilePath: any) {
     blockmlEnv: <BlockmlEnvEnum>(
       (process.env.BLOCKML_ENV || envFile.BLOCKML_ENV)
     ),
+
+    aesKey: process.env.BLOCKML_AES_KEY || envFile.BLOCKML_AES_KEY,
+
     logIO: <BoolEnum>(process.env.BLOCKML_LOG_IO || envFile.BLOCKML_LOG_IO),
     logFunc: <FuncEnum>(
       (process.env.BLOCKML_LOG_FUNC || envFile.BLOCKML_LOG_FUNC)

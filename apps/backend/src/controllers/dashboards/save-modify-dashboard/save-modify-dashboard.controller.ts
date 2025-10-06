@@ -317,7 +317,7 @@ export class SaveModifyDashboardController {
       },
       payload: {
         orgId: project.orgId,
-        project: apiProject,
+        baseProject: apiProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: toDashboardEntity.filePath,

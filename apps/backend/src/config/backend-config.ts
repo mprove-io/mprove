@@ -9,7 +9,7 @@ export class BackendConfig {
   backendEnv?: BackendEnvEnum;
 
   @IsString()
-  backendAesKey?: string;
+  aesKey?: string;
 
   @IsString()
   mproveReleaseTag?: string;
