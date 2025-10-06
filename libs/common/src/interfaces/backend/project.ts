@@ -16,19 +16,12 @@ export class Project {
   @IsString()
   projectId: string;
 
-  @IsString()
-  name: string;
-
   @IsOptional()
   @IsString()
   defaultBranch: string;
 
   @IsEnum(ProjectRemoteTypeEnum)
   remoteType: ProjectRemoteTypeEnum;
-
-  @IsOptional()
-  @IsString()
-  gitUrl: string;
 
   @ValidateNested()
   @Type(() => ProjectTab)

@@ -43,28 +43,6 @@ export function checkTopValues(
         }
 
         if (
-          parameter === ParameterEnum.Hidden.toString() &&
-          !file[parameter].toString().match(MyRegex.TRUE_FALSE())
-        ) {
-          item.errors.push(
-            new BmError({
-              title: ErTitleEnum.WRONG_HIDDEN,
-              message:
-                'parameter "hidden:" must be "true" or "false" if specified',
-              lines: [
-                {
-                  line: file[parameter + LINE_NUM],
-                  name: file.name,
-                  path: file.path
-                }
-              ]
-            })
-          );
-
-          return;
-        }
-
-        if (
           [
             ParameterEnum.Model.toString(),
             ParameterEnum.Mod.toString(),

@@ -1,11 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsBoolean, IsInt, IsString, ValidateNested } from 'class-validator';
 import { Tile } from './tile';
 
 export class Chart {
@@ -35,13 +29,6 @@ export class Chart {
 
   @IsString({ each: true })
   accessRoles: string[];
-
-  @IsOptional()
-  @IsString()
-  gr?: string; // TODO: remove chart gr
-
-  @IsBoolean()
-  hidden: boolean; // TODO: remove chart hidden
 
   @ValidateNested()
   @Type(() => Tile)

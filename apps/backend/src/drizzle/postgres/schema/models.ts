@@ -36,8 +36,6 @@ export const modelsTable = pgTable(
     dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     label: varchar('label').notNull(),
-    gr: varchar('gr'),
-    hidden: boolean('hidden').notNull(),
     fields: json('fields').$type<ModelField[]>().notNull(),
     nodes: json('nodes').$type<ModelNode[]>().notNull(),
     description: varchar('description'),

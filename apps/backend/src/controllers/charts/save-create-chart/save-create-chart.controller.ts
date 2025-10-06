@@ -385,7 +385,6 @@ export class SaveCreateChartController {
       .select({
         modelId: modelsTable.modelId,
         accessRoles: modelsTable.accessRoles,
-        hidden: modelsTable.hidden,
         connectionId: modelsTable.connectionId,
         connectionType: modelsTable.connectionType
       })

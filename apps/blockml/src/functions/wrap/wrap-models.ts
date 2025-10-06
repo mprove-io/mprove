@@ -520,8 +520,6 @@ export function wrapModels(item: {
           ? labelTag?.value.trim()
           : x.label,
       description: (x as FileStore).description,
-      gr: undefined,
-      hidden: false,
       fields: apiFields,
       nodes: sortedNodes,
       serverTs: 1

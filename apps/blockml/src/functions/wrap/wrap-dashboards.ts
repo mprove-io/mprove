@@ -204,8 +204,6 @@ export function wrapDashboards(item: {
       accessRoles: x.access_roles || [],
       title: x.title,
       description: x.description,
-      gr: x.group,
-      hidden: toBooleanFromLowercaseString(x.hidden),
       fields: dashFields,
       tiles: apiTiles,
       serverTs: 1

@@ -57,13 +57,6 @@ export class Model {
   @IsString()
   label: string;
 
-  @IsOptional()
-  @IsString()
-  gr?: string;
-
-  @IsBoolean()
-  hidden: boolean;
-
   @ValidateNested()
   @Type(() => ModelField)
   fields: ModelField[];

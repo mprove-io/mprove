@@ -52,8 +52,6 @@ export class ModelsService {
       isViewModel: modelsTable.isViewModel,
       accessRoles: modelsTable.accessRoles,
       label: modelsTable.label,
-      gr: modelsTable.gr,
-      hidden: modelsTable.hidden,
       // 'fields'
       nodes: modelsTable.nodes,
       description: modelsTable.description

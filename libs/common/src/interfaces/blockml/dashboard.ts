@@ -33,13 +33,6 @@ export class Dashboard {
   @IsString()
   title: string;
 
-  @IsOptional()
-  @IsString()
-  gr?: string; // TODO: remove dashboard gr
-
-  @IsBoolean()
-  hidden: boolean; // TODO: remove dashboard hidden
-
   @ValidateNested()
   @Type(() => DashboardField)
   fields: DashboardField[];

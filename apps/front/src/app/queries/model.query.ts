@@ -21,8 +21,6 @@ let modelState: ModelState = {
   dateRangeIncludesRightSide: undefined,
   accessRoles: [],
   label: undefined,
-  gr: undefined,
-  hidden: false,
   fields: [],
   nodes: [],
   description: undefined,

@@ -229,7 +229,6 @@ export class EditDraftChartController {
       modelLabel: tile.modelLabel,
       filePath: undefined,
       accessRoles: [],
-      hidden: false,
       tiles: [tile],
       serverTs: undefined
     };

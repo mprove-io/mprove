@@ -14,8 +14,6 @@ let dashboardState: DashboardState = {
   content: undefined,
   accessRoles: [],
   title: undefined,
-  gr: undefined,
-  hidden: false,
   extendedFilters: [],
   fields: [],
   tiles: [],

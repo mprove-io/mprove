@@ -1,4 +1,3 @@
-import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { Chart } from '~common/interfaces/blockml/chart';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
@@ -54,8 +53,6 @@ export function wrapCharts(item: {
       // store?.label || mod?.label || model?.label,
       filePath: x.filePath,
       accessRoles: x.access_roles || [],
-      gr: x.group,
-      hidden: toBooleanFromLowercaseString(x.hidden),
       tiles: apiTiles,
       serverTs: 1
     });

@@ -23,8 +23,6 @@ export const dashboardsTable = pgTable(
     content: json('content').notNull(),
     accessRoles: json('access_roles').$type<string[]>().notNull(),
     title: varchar('title'),
-    gr: varchar('gr'),
-    hidden: boolean('hidden').notNull(),
     fields: json('fields').$type<DashboardField[]>().notNull(),
     tiles: json('tiles').$type<Tile[]>().notNull(),
     description: varchar('description'),

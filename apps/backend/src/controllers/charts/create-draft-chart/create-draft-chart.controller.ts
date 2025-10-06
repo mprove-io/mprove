@@ -247,7 +247,6 @@ export class CreateDraftChartController {
       modelLabel: tile.modelLabel,
       filePath: undefined,
       accessRoles: [],
-      hidden: false,
       tiles: [tile],
       serverTs: undefined
     };

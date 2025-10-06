@@ -251,8 +251,6 @@ export class WrapToApiService {
       content: dashboard.content,
       accessRoles: dashboard.accessRoles,
       title: dashboard.title,
-      gr: dashboard.gr,
-      hidden: dashboard.hidden,
       fields: dashboard.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();
@@ -437,8 +435,6 @@ export class WrapToApiService {
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       label: model.label,
-      gr: model.gr,
-      hidden: model.hidden,
       fields: model.fields,
       nodes: model.nodes,
       description: model.description,
@@ -735,8 +731,6 @@ export class WrapToApiService {
       modelLabel: chart.modelLabel,
       filePath: chart.filePath,
       accessRoles: chart.accessRoles,
-      gr: chart.gr,
-      hidden: chart.hidden,
       tiles: makeTilesX({
         tiles: chart.tiles,
         mconfigs: mconfigs,

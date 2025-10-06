@@ -44,8 +44,6 @@ export class WrapToEntService {
       content: dashboard.content,
       accessRoles: dashboard.accessRoles,
       title: dashboard.title,
-      gr: dashboard.gr,
-      hidden: dashboard.hidden,
       fields: dashboard.fields,
       tiles: dashboard.tiles,
       description: dashboard.description,
@@ -104,8 +102,6 @@ export class WrapToEntService {
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       label: model.label,
-      gr: model.gr,
-      hidden: model.hidden,
       fields: model.fields,
       nodes: model.nodes,
       description: model.description,
@@ -192,8 +188,6 @@ export class WrapToEntService {
       modelLabel: chart.modelLabel,
       filePath: chart.filePath,
       accessRoles: chart.accessRoles,
-      gr: chart.gr,
-      hidden: chart.hidden,
       tiles: chart.tiles,
       serverTs: chart.serverTs
     };

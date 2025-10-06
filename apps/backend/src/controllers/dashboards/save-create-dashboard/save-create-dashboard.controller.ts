@@ -250,7 +250,6 @@ export class SaveCreateDashboardController {
         content: undefined,
         accessRoles: undefined,
         title: undefined,
-        hidden: undefined,
         tiles: [],
         author: undefined,
         canEditOrDeleteDashboard: undefined,

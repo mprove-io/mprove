@@ -143,8 +143,6 @@ export class DashboardsService {
         filePath: dashboardsTable.filePath,
         accessRoles: dashboardsTable.accessRoles,
         title: dashboardsTable.title,
-        gr: dashboardsTable.gr,
-        hidden: dashboardsTable.hidden,
         fields: dashboardsTable.fields,
         tiles: dashboardsTable.tiles,
         description: dashboardsTable.description
@@ -175,7 +173,6 @@ export class DashboardsService {
       .select({
         modelId: modelsTable.modelId,
         accessRoles: modelsTable.accessRoles,
-        hidden: modelsTable.hidden,
         connectionId: modelsTable.connectionId,
         connectionType: modelsTable.connectionType
       })
