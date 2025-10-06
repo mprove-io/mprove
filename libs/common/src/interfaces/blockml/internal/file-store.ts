@@ -16,9 +16,6 @@ export interface FileStore extends FileBasic {
   label?: string;
   label_line_num?: number;
 
-  description?: string;
-  description_line_num?: number;
-
   access_roles?: string[];
   access_roles_line_num?: number;
 

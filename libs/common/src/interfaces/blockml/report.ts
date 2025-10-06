@@ -55,14 +55,6 @@ export class Report {
   @Type(() => Fraction)
   timeRangeFraction: Fraction;
 
-  // @IsOptional()
-  // @IsNumber()
-  // rangeOpen: number;
-
-  // @IsOptional()
-  // @IsNumber()
-  // rangeClose: number;
-
   @IsOptional()
   @IsNumber()
   rangeStart: number;

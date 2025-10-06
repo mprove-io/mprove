@@ -2,36 +2,18 @@ import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
-  IsEnum,
-  IsInt,
   IsNumber,
   IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
-import { Filter } from './filter';
-import { MconfigChart } from './mconfig-chart';
-import { Sorting } from './sorting';
-import { StorePart } from './store-part';
+import { Filter } from '../blockml/filter';
+import { MconfigChart } from '../blockml/mconfig-chart';
+import { Sorting } from '../blockml/sorting';
+import { StorePart } from '../blockml/store-part';
 
-export class Mconfig {
-  @IsString()
-  structId: string;
-
-  @IsString()
-  mconfigId: string;
-
-  @IsString()
-  queryId: string;
-
-  @IsString()
-  modelId: string;
-
-  @IsEnum(ModelTypeEnum)
-  modelType: ModelTypeEnum;
-
+export class MconfigTab {
   @IsOptional()
   @IsBoolean()
   dateRangeIncludesRightSide: boolean;
@@ -82,10 +64,4 @@ export class Mconfig {
   @ValidateNested()
   @Type(() => MconfigChart)
   chart: MconfigChart;
-
-  @IsBoolean()
-  temp: boolean;
-
-  @IsInt()
-  serverTs: number;
 }

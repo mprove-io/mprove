@@ -16,10 +16,6 @@ export class Project {
   @IsString()
   projectId: string;
 
-  @IsOptional()
-  @IsString()
-  defaultBranch: string;
-
   @IsEnum(ProjectRemoteTypeEnum)
   remoteType: ProjectRemoteTypeEnum;
 

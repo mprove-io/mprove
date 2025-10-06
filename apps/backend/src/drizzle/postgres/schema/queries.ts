@@ -22,7 +22,6 @@ export const queriesTable = pgTable(
       .notNull(),
     queryJobId: varchar('query_job_id'),
     bigqueryQueryJobId: varchar('bigquery_query_job_id'),
-    sql: text('sql'),
     status: varchar('status').$type<QueryStatusEnum>().notNull(),
     lastRunBy: varchar('last_run_by'),
     lastRunTs: bigint('last_run_ts', { mode: 'number' }),
@@ -30,7 +29,6 @@ export const queriesTable = pgTable(
     lastCompleteTs: bigint('last_complete_ts', { mode: 'number' }),
     lastCompleteDuration: bigint('last_complete_duration', { mode: 'number' }),
     lastErrorTs: bigint('last_error_ts', { mode: 'number' }),
-    lastErrorMessage: text('last_error_message'),
     bigqueryConsecutiveErrorsGetJob: integer(
       'bigquery_consecutive_errors_get_job'
     ),

@@ -107,15 +107,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
       let aLabel = a.label || a.modelId;
       let bLabel = b.label || b.modelId;
 
-      return a.isViewModel === true && b.isViewModel === false
-        ? 1
-        : a.isViewModel === false && b.isViewModel === true
-          ? -1
-          : aLabel > bLabel
-            ? 1
-            : bLabel > aLabel
-              ? -1
-              : 0;
+      return aLabel > bLabel ? 1 : bLabel > aLabel ? -1 : 0;
     });
   }
 

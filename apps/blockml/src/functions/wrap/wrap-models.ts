@@ -510,7 +510,6 @@ export function wrapModels(item: {
           ) === true)
           ? true
           : false,
-      isViewModel: false,
       accessRoles:
         modelType === ModelTypeEnum.Malloy && isDefined(accessRolesTag?.value)
           ? accessRolesTag.value.split(',').map(x => x.trim())
@@ -519,7 +518,6 @@ export function wrapModels(item: {
         modelType === ModelTypeEnum.Malloy && isDefined(labelTag?.value)
           ? labelTag?.value.trim()
           : x.label,
-      description: (x as FileStore).description,
       fields: apiFields,
       nodes: sortedNodes,
       serverTs: 1

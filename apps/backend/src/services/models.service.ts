@@ -49,12 +49,10 @@ export class ModelsService {
       connectionType: modelsTable.connectionType,
       filePath: modelsTable.filePath,
       // 'content'
-      isViewModel: modelsTable.isViewModel,
       accessRoles: modelsTable.accessRoles,
       label: modelsTable.label,
       // 'fields'
-      nodes: modelsTable.nodes,
-      description: modelsTable.description
+      nodes: modelsTable.nodes
       // 'server_ts'
     };
 

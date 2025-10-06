@@ -3,14 +3,11 @@ import {
   bigint,
   boolean,
   index,
-  json,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { ReportField } from '~common/interfaces/blockml/report-field';
-import { Row } from '~common/interfaces/blockml/row';
 
 export const reportsTable = pgTable(
   'reports',
@@ -21,15 +18,16 @@ export const reportsTable = pgTable(
     structId: varchar('struct_id', { length: 32 }).notNull(),
     reportId: varchar('report_id', { length: 32 }).notNull(), // name
     projectId: varchar('project_id', { length: 32 }).notNull(),
-    filePath: varchar('file_path'),
-    accessRoles: json('access_roles').$type<string[]>().notNull(),
-    title: varchar('title').notNull(),
-    fields: json('fields').$type<ReportField[]>(),
-    rows: json('rows').$type<Row[]>().notNull(),
-    chart: json('chart').$type<MconfigChart>(),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft').notNull(),
     draftCreatedTs: bigint('draft_created_ts', { mode: 'number' }).notNull(),
+    // filePath: varchar('file_path'),
+    // accessRoles: json('access_roles').$type<string[]>().notNull(),
+    // title: varchar('title').notNull(),
+    // fields: json('fields').$type<ReportField[]>(),
+    // rows: json('rows').$type<Row[]>().notNull(),
+    // chart: json('chart').$type<MconfigChart>(),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

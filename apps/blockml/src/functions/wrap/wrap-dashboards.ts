@@ -203,7 +203,6 @@ export function wrapDashboards(item: {
       content: x,
       accessRoles: x.access_roles || [],
       title: x.title,
-      description: x.description,
       fields: dashFields,
       tiles: apiTiles,
       serverTs: 1

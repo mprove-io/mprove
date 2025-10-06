@@ -3,13 +3,11 @@ import {
   bigint,
   boolean,
   index,
-  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { Ui } from '~common/interfaces/backend/ui';
 
 export const usersTable = pgTable(
   'users',
@@ -24,7 +22,6 @@ export const usersTable = pgTable(
     isEmailVerified: boolean('is_email_verified').notNull(),
     hash: varchar('hash'),
     salt: varchar('salt'),
-    ui: json('ui').$type<Ui>(),
     tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

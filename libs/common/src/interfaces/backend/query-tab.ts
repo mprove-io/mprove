@@ -1,6 +1,14 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class QueryTab {
+  @IsOptional()
+  @IsString()
+  sql: string;
+
+  @IsOptional()
+  @IsString()
+  lastErrorMessage: string;
+
   data: any;
 
   @IsString()

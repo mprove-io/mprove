@@ -46,7 +46,6 @@ export class WrapToEntService {
       title: dashboard.title,
       fields: dashboard.fields,
       tiles: dashboard.tiles,
-      description: dashboard.description,
       serverTs: dashboard.serverTs
     };
   }
@@ -97,14 +96,11 @@ export class WrapToEntService {
       filePath: model.filePath,
       fileText: model.fileText,
       storeContent: model.storeContent,
-      isViewModel: model.isViewModel,
-      // isStoreModel: model.isStoreModel,
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       label: model.label,
       fields: model.fields,
       nodes: model.nodes,
-      description: model.description,
       serverTs: model.serverTs
     };
   }

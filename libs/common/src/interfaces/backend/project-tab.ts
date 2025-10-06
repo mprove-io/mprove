@@ -10,6 +10,10 @@ export class ProjectTab {
 
   @IsOptional()
   @IsString()
+  defaultBranch: string;
+
+  @IsOptional()
+  @IsString()
   privateKey: string;
 
   @IsOptional()

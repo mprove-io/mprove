@@ -144,8 +144,7 @@ export class DashboardsService {
         accessRoles: dashboardsTable.accessRoles,
         title: dashboardsTable.title,
         fields: dashboardsTable.fields,
-        tiles: dashboardsTable.tiles,
-        description: dashboardsTable.description
+        tiles: dashboardsTable.tiles
       })
       .from(dashboardsTable)
       .where(

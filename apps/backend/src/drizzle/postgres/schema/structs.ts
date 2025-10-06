@@ -1,20 +1,17 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { bigint, index, json, pgTable, varchar } from 'drizzle-orm/pg-core';
-import { MproveConfig } from '~common/interfaces/backend/mprove-config';
-import { BmlError } from '~common/interfaces/blockml/bml-error';
-import { ModelMetric } from '~common/interfaces/blockml/model-metric';
-import { Preset } from '~common/interfaces/blockml/preset';
+import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 
 export const structsTable = pgTable(
   'structs',
   {
     structId: varchar('struct_id', { length: 32 }).notNull().primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
-    errors: json('errors').$type<BmlError[]>().notNull(),
-    metrics: json('metrics').$type<ModelMetric[]>().default([]),
-    presets: json('presets').$type<Preset[]>().default([]),
-    mproveConfig: json('mprove_config').$type<MproveConfig>(),
+    // errors: json('errors').$type<BmlError[]>().notNull(),
+    // metrics: json('metrics').$type<ModelMetric[]>().default([]),
+    // presets: json('presets').$type<Preset[]>().default([]),
+    // mproveConfig: json('mprove_config').$type<MproveConfig>(),
     mproveVersion: varchar('mprove_version'),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

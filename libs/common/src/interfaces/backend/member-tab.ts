@@ -14,4 +14,7 @@ export class MemberTab {
   @IsOptional()
   @IsString()
   lastName: string;
+
+  @IsString({ each: true })
+  roles: string[];
 }

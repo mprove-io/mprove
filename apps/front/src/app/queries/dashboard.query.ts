@@ -17,7 +17,6 @@ let dashboardState: DashboardState = {
   extendedFilters: [],
   fields: [],
   tiles: [],
-  description: undefined,
   serverTs: undefined,
   author: undefined,
   canEditOrDeleteDashboard: undefined,

@@ -14,11 +14,10 @@ export const projectsTable = pgTable(
   {
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
     orgId: varchar('org_id', { length: 128 }).notNull(),
-    defaultBranch: text('default_branch').notNull(),
     remoteType: varchar('remote_type').$type<ProjectRemoteTypeEnum>().notNull(),
-    tab: text('tab'),
     nameHash: varchar('name_hash').notNull(), // name is unique across org projects
     gitUrlHash: varchar('git_url_hash'),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

@@ -261,7 +261,6 @@ export class WrapToApiService {
         let labelB = b.fieldId.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
-      description: dashboard.description,
       tiles: makeTilesX({
         tiles: dashboard.tiles,
         mconfigs: mconfigs,
@@ -430,14 +429,11 @@ export class WrapToApiService {
       filePath: model.filePath,
       fileText: model.fileText,
       storeContent: model.storeContent,
-      isViewModel: model.isViewModel,
-      // isStoreModel: model.isStoreModel,
       dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
       accessRoles: model.accessRoles,
       label: model.label,
       fields: model.fields,
       nodes: model.nodes,
-      description: model.description,
       serverTs: model.serverTs
     };
 

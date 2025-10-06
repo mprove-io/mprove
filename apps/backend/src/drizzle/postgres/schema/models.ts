@@ -1,19 +1,14 @@
-import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
-  boolean,
   index,
-  json,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
-import { ModelField } from '~common/interfaces/blockml/model-field';
-import { ModelNode } from '~common/interfaces/blockml/model-node';
 
 export const modelsTable = pgTable(
   'models',
@@ -23,22 +18,20 @@ export const modelsTable = pgTable(
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(), // name
-    source: varchar('source'),
     type: varchar('type').$type<ModelTypeEnum>(),
-    malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
     connectionId: varchar('connection_id'),
     connectionType: varchar('connection_type').$type<ConnectionTypeEnum>(),
-    filePath: varchar('file_path'),
-    fileText: varchar('file_text'),
-    storeContent: json('store_content').$type<FileStore>(),
-    isViewModel: boolean('is_view_model'),
-    // isStoreModel: boolean('is_store_model'),
-    dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
-    accessRoles: json('access_roles').$type<string[]>().notNull(),
-    label: varchar('label').notNull(),
-    fields: json('fields').$type<ModelField[]>().notNull(),
-    nodes: json('nodes').$type<ModelNode[]>().notNull(),
-    description: varchar('description'),
+    // source: varchar('source'),
+    // malloyModelDef: json('malloy_model_def').$type<MalloyModelDef>(),
+    // filePath: varchar('file_path'),
+    // fileText: varchar('file_text'),
+    // storeContent: json('store_content').$type<FileStore>(),
+    // dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
+    // accessRoles: json('access_roles').$type<string[]>().notNull(),
+    // label: varchar('label').notNull(),
+    // fields: json('fields').$type<ModelField[]>().notNull(),
+    // nodes: json('nodes').$type<ModelNode[]>().notNull(),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

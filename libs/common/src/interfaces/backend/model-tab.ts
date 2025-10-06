@@ -2,37 +2,20 @@ import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
-  IsEnum,
-  IsInt,
   IsOptional,
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { FileStore } from './internal/file-store';
-import { ModelField } from './model-field';
-import { ModelNode } from './model-node';
+import { FileStore } from '../blockml/internal/file-store';
+import { ModelField } from '../blockml/model-field';
+import { ModelNode } from '../blockml/model-node';
 
-export class Model {
-  @IsString()
-  structId: string;
-
-  @IsString()
-  modelId: string;
-
-  @IsEnum(ModelTypeEnum)
-  type: ModelTypeEnum;
-
+export class ModelTab {
   @IsOptional()
   @IsString()
   source: string;
 
-  @IsString()
-  connectionId: string;
-
-  @IsEnum(ConnectionTypeEnum)
-  connectionType: ConnectionTypeEnum;
+  malloyModelDef: MalloyModelDef;
 
   @IsString()
   filePath: string;
@@ -58,9 +41,4 @@ export class Model {
   @ValidateNested()
   @Type(() => ModelNode)
   nodes: ModelNode[];
-
-  malloyModelDef: MalloyModelDef;
-
-  @IsInt()
-  serverTs: number;
 }

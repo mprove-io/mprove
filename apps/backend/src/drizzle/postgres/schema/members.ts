@@ -3,7 +3,6 @@ import {
   bigint,
   boolean,
   index,
-  json,
   pgTable,
   text,
   uniqueIndex,
@@ -20,7 +19,6 @@ export const membersTable = pgTable(
     memberId: varchar('member_id', { length: 32 }).notNull(), // user_id
     emailHash: varchar('email_hash').notNull(),
     aliasHash: varchar('alias_hash'),
-    roles: json('roles').$type<string[]>().notNull(),
     isAdmin: boolean('is_admin').notNull(),
     isEditor: boolean('is_editor').notNull(),
     isExplorer: boolean('is_explorer').notNull(),

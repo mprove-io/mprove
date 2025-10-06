@@ -15,22 +15,13 @@ import { MconfigChartYAxis } from '~common/interfaces/blockml/mconfig-chart-y-ax
 
 export function wrapMconfigChart(item: {
   title: string;
-  description: string;
   type: ChartTypeEnum;
   options: FileChartOptions;
   data: FileChartData;
   isReport: boolean;
   rowIdsWithShowChart: string[];
 }) {
-  let {
-    title,
-    description,
-    type,
-    options,
-    data,
-    rowIdsWithShowChart,
-    isReport
-  } = item;
+  let { title, type, options, data, rowIdsWithShowChart, isReport } = item;
 
   let xAxis: MconfigChartXAxis = {
     scale: isDefined(options?.x_axis?.scale)
@@ -89,7 +80,6 @@ export function wrapMconfigChart(item: {
   let mconfigChart: MconfigChart = {
     isValid: true,
     title: title,
-    description: description,
     type: type,
 
     // data

@@ -1,19 +1,13 @@
-import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   boolean,
   index,
-  integer,
-  json,
   pgTable,
+  text,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { Filter } from '~common/interfaces/blockml/filter';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { Sorting } from '~common/interfaces/blockml/sorting';
-import { StorePart } from '~common/interfaces/blockml/store-part';
 
 export const mconfigsTable = pgTable(
   'mconfigs',
@@ -23,26 +17,22 @@ export const mconfigsTable = pgTable(
     queryId: varchar('query_id', { length: 64 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
     modelType: varchar('model_type').$type<ModelTypeEnum>(),
-    // isStoreModel: boolean('is_store_model'),
-    dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
-    storePart: json('store_part').$type<StorePart>(),
-    modelLabel: varchar('model_label'),
-    modelFilePath: varchar('model_file_path'),
-    malloyQueryStable: varchar('malloy_query_stable'),
-    malloyQueryExtra: varchar('malloy_query_extra'),
-    compiledQuery: json('compiled_query').$type<CompiledQuery>(),
-    select: json('select').$type<string[]>().notNull(),
-    // unsafeSelect: json('unsafe_select').$type<string[]>(),
-    // warnSelect: json('warn_select').$type<string[]>(),
-    // joinAggregations:
-    //   json('join_aggregations').$type<JoinAggregation[]>(),
-    sortings: json('sortings').$type<Sorting[]>().notNull(),
-    sorts: varchar('sorts'),
-    timezone: varchar('timezone').notNull(),
-    limit: integer('limit').notNull(),
-    filters: json('filters').$type<Filter[]>().notNull(),
-    chart: json('chart').$type<MconfigChart>().notNull(),
     temp: boolean('temp').notNull(),
+    // dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
+    // storePart: json('store_part').$type<StorePart>(),
+    // modelLabel: varchar('model_label'),
+    // modelFilePath: varchar('model_file_path'),
+    // malloyQueryStable: varchar('malloy_query_stable'),
+    // malloyQueryExtra: varchar('malloy_query_extra'),
+    // compiledQuery: json('compiled_query').$type<CompiledQuery>(),
+    // select: json('select').$type<string[]>().notNull(),
+    // sortings: json('sortings').$type<Sorting[]>().notNull(),
+    // sorts: varchar('sorts'),
+    // timezone: varchar('timezone').notNull(),
+    // limit: integer('limit').notNull(),
+    // filters: json('filters').$type<Filter[]>().notNull(),
+    // chart: json('chart').$type<MconfigChart>().notNull(),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

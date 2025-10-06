@@ -15,9 +15,6 @@ export interface FileDashboard extends FileBasic {
   group?: string;
   group_line_num?: number;
 
-  description?: string;
-  description_line_num?: number;
-
   access_roles?: string[];
   access_roles_line_num?: number;
 

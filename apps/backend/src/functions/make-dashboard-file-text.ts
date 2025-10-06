@@ -50,13 +50,6 @@ export function makeDashboardFileText(item: {
     name: undefined,
     dashboard: newDashboardId,
     title: isDefined(newTitle) ? newTitle.trim() : undefined,
-    description: isDefined(dashboard.description)
-      ? dashboard.description
-      : undefined,
-    // group:
-    //   isDefined(group) && group.trim().length > 0
-    //     ? group.trim()
-    //     : undefined,
     access_roles:
       isDefined(roles) && roles.trim().length > 0
         ? roles.split(',').map(x => x.trim())

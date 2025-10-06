@@ -1,11 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsBoolean, IsInt, IsString, ValidateNested } from 'class-validator';
 import { DashboardField } from './dashboard-field';
 import { Tile } from './tile';
 
@@ -40,10 +34,6 @@ export class Dashboard {
   @ValidateNested()
   @Type(() => Tile)
   tiles: Tile[];
-
-  @IsOptional()
-  @IsString()
-  description?: string;
 
   @IsInt()
   serverTs: number;

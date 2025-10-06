@@ -14,9 +14,6 @@ export const DASHBOARD_SCHEMA: JSONSchema7 = {
     title: {
       type: 'string'
     },
-    description: {
-      type: 'string'
-    },
     access_roles: {
       type: 'array',
       items: {

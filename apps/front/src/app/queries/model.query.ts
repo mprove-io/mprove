@@ -15,7 +15,6 @@ let modelState: ModelState = {
   filePath: undefined,
   fileText: undefined,
   storeContent: undefined,
-  isViewModel: undefined,
   malloyModelDef: undefined,
   // isStoreModel: undefined,
   dateRangeIncludesRightSide: undefined,
@@ -23,7 +22,6 @@ let modelState: ModelState = {
   label: undefined,
   fields: [],
   nodes: [],
-  description: undefined,
   serverTs: undefined
 };
 

@@ -3,13 +3,11 @@ import {
   bigint,
   boolean,
   index,
-  json,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
-import { Tile } from '~common/interfaces/blockml/tile';
 
 export const dashboardsTable = pgTable(
   'dashboards',
@@ -19,15 +17,15 @@ export const dashboardsTable = pgTable(
       .primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     dashboardId: varchar('dashboard_id', { length: 32 }).notNull(), // name
-    filePath: varchar('file_path'),
-    content: json('content').notNull(),
-    accessRoles: json('access_roles').$type<string[]>().notNull(),
-    title: varchar('title'),
-    fields: json('fields').$type<DashboardField[]>().notNull(),
-    tiles: json('tiles').$type<Tile[]>().notNull(),
-    description: varchar('description'),
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft').notNull(),
+    // title: varchar('title'),
+    // filePath: varchar('file_path'),
+    // content: json('content').notNull(),
+    // accessRoles: json('access_roles').$type<string[]>().notNull(),
+    // fields: json('fields').$type<DashboardField[]>().notNull(),
+    // tiles: json('tiles').$type<Tile[]>().notNull(),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

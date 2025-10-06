@@ -1,4 +1,11 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
+import { Ui } from './ui';
 
 export class UserTab {
   @IsString()
@@ -28,4 +35,8 @@ export class UserTab {
   @IsOptional()
   @IsNumber()
   passwordResetExpiresTs: number;
+
+  @ValidateNested()
+  @Type(() => Ui)
+  ui: Ui;
 }

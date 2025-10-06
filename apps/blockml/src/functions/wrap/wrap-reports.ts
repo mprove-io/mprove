@@ -198,7 +198,6 @@ export function wrapReports(item: {
 
     let mconfigChart = wrapMconfigChart({
       title: undefined,
-      description: undefined,
       type: ChartTypeEnum.Line,
       options: x.options,
       isReport: true,

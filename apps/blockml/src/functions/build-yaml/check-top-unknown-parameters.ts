@@ -51,7 +51,6 @@ export function checkTopUnknownParameters(
                 ParameterEnum.Store.toString(),
                 ParameterEnum.Connection.toString(),
                 ParameterEnum.Label.toString(),
-                ParameterEnum.Description.toString(),
                 ParameterEnum.AccessRoles.toString(),
                 ParameterEnum.Method.toString(),
                 ParameterEnum.Preset.toString(),
@@ -91,9 +90,6 @@ export function checkTopUnknownParameters(
               [
                 ParameterEnum.Dashboard.toString(),
                 ParameterEnum.Title.toString(),
-                // ParameterEnum.Group.toString(),
-                // ParameterEnum.Hidden.toString(),
-                ParameterEnum.Description.toString(),
                 ParameterEnum.AccessRoles.toString(),
                 ParameterEnum.Parameters.toString(),
                 ParameterEnum.Tiles.toString()

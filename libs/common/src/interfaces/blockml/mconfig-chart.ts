@@ -25,10 +25,6 @@ export class MconfigChart {
 
   @IsOptional()
   @IsString()
-  description?: string;
-
-  @IsOptional()
-  @IsString()
   xField?: string;
 
   @IsOptional()
