@@ -9,6 +9,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ChartTab } from '~common/interfaces/backend/chart-tab';
 
 export const chartsTable = pgTable(
   'charts',
@@ -45,3 +46,7 @@ export const chartsTable = pgTable(
 
 export type ChartEnt = InferSelectModel<typeof chartsTable>;
 export type ChartEntIns = InferInsertModel<typeof chartsTable>;
+
+export interface ChartEnx extends Omit<ChartEnt, 'tab'> {
+  tab: ChartTab;
+}

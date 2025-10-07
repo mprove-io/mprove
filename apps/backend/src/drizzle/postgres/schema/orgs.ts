@@ -7,6 +7,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { OrgTab } from '~common/interfaces/backend/org-tab';
 
 export const orgsTable = pgTable(
   'orgs',
@@ -30,3 +31,7 @@ export const orgsTable = pgTable(
 
 export type OrgEnt = InferSelectModel<typeof orgsTable>;
 export type OrgEntIns = InferInsertModel<typeof orgsTable>;
+
+export interface OrgEnx extends Omit<OrgEnt, 'tab'> {
+  tab: OrgTab;
+}

@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { bigint, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { NoteTab } from '~common/interfaces/backend/note-tab';
 
 export const notesTable = pgTable(
   'notes',
@@ -15,3 +16,7 @@ export const notesTable = pgTable(
 
 export type NoteEnt = InferSelectModel<typeof notesTable>;
 export type NoteEntIns = InferInsertModel<typeof notesTable>;
+
+export interface NoteEnx extends Omit<NoteEnt, 'tab'> {
+  tab: NoteTab;
+}

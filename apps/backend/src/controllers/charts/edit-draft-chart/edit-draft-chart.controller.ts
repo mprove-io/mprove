@@ -15,6 +15,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -132,10 +133,9 @@ export class EditDraftChartController {
       });
     }
 
-    let isAccessGrantedForModel = checkAccess({
-      userAlias: user.alias,
+    let isAccessGrantedForModel = checkModelAccess({
       member: userMember,
-      entity: model
+      modelAccessRoles: model.tab.accessRoles
     });
 
     if (isAccessGrantedForModel === false) {

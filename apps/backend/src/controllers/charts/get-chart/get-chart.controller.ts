@@ -117,9 +117,8 @@ export class GetChartController {
     });
 
     let isAccessGranted = checkAccess({
-      userAlias: user.alias,
       member: userMember,
-      entity: chart
+      accessRoles: chart.tab.accessRoles
     });
 
     if (isAccessGranted === false) {

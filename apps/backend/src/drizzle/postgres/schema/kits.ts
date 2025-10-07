@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { KitTab } from '~common/interfaces/backend/kit-tab';
 
 export const kitsTable = pgTable(
   'kits',
@@ -19,3 +20,7 @@ export const kitsTable = pgTable(
 
 export type KitEnt = InferSelectModel<typeof kitsTable>;
 export type KitEntIns = InferInsertModel<typeof kitsTable>;
+
+export interface KitEnx extends Omit<KitEnt, 'tab'> {
+  tab: KitTab;
+}

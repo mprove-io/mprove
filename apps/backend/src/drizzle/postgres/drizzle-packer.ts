@@ -3,9 +3,10 @@ import { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import { forEachSeries } from 'p-iteration';
 import { schemaPostgres } from '~backend/drizzle/postgres/schema/_schema-postgres';
+import { encryptTabAndRefreshServerTs } from '~backend/functions/encrypt-tab-and-refresh-server-ts';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
-import { refreshServerTs } from '~backend/functions/refresh-server-ts';
 import { DbRecords } from '~backend/interfaces/db-records';
+import { TabService } from '~backend/services/tab.service';
 import { isDefined } from '~common/functions/is-defined';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
@@ -27,8 +28,6 @@ import { queriesTable } from './schema/queries';
 import { reportsTable } from './schema/reports';
 import { structsTable } from './schema/structs';
 import { usersTable } from './schema/users';
-
-// let retry = require('async-retry');
 
 export interface RecordsPack {
   tx: PgTransaction<
@@ -54,7 +53,7 @@ export interface RecordsPackOutput {
 }
 
 export class DrizzlePacker {
-  constructor() {}
+  constructor(private tabService: TabService) {}
 
   async write(item: RecordsPack): Promise<RecordsPackOutput> {
     let {
@@ -72,10 +71,11 @@ export class DrizzlePacker {
     if (isDefined(insertRecords)) {
       Object.keys(insertRecords).forEach(key => {
         if (isDefined(insertRecords[key as keyof DbRecords])) {
-          refreshServerTs(
-            insertRecords[key as keyof DbRecords] as any,
-            newServerTs
-          );
+          encryptTabAndRefreshServerTs({
+            elements: insertRecords[key as keyof DbRecords] as any[],
+            newServerTs: newServerTs,
+            tabService: this.tabService
+          });
         }
       });
 
@@ -192,10 +192,11 @@ export class DrizzlePacker {
     if (isDefined(updateRecords)) {
       Object.keys(updateRecords).forEach(key => {
         if (isDefined(updateRecords[key as keyof DbRecords])) {
-          refreshServerTs(
-            updateRecords[key as keyof DbRecords] as any,
-            newServerTs
-          );
+          encryptTabAndRefreshServerTs({
+            elements: updateRecords[key as keyof DbRecords] as any[],
+            newServerTs: newServerTs,
+            tabService: this.tabService
+          });
         }
       });
 
@@ -486,10 +487,11 @@ export class DrizzlePacker {
     if (isDefined(insOrUpdRecords)) {
       Object.keys(insOrUpdRecords).forEach(key => {
         if (isDefined(insOrUpdRecords[key as keyof DbRecords])) {
-          refreshServerTs(
-            insOrUpdRecords[key as keyof DbRecords] as any,
-            newServerTs
-          );
+          encryptTabAndRefreshServerTs({
+            elements: insOrUpdRecords[key as keyof DbRecords] as any[],
+            newServerTs: newServerTs,
+            tabService: this.tabService
+          });
         }
       });
 
@@ -892,10 +894,11 @@ export class DrizzlePacker {
     if (isDefined(insOrDoNothingRecords)) {
       Object.keys(insOrDoNothingRecords).forEach(key => {
         if (isDefined(insOrDoNothingRecords[key as keyof DbRecords])) {
-          refreshServerTs(
-            insOrDoNothingRecords[key as keyof DbRecords] as any,
-            newServerTs
-          );
+          encryptTabAndRefreshServerTs({
+            elements: insOrDoNothingRecords[key as keyof DbRecords] as any[],
+            newServerTs: newServerTs,
+            tabService: this.tabService
+          });
         }
       });
 
@@ -931,7 +934,8 @@ export class DrizzlePacker {
     let pack: RecordsPackOutput = {
       insert: insertRecords,
       update: updateRecords,
-      insertOrUpdate: insOrUpdRecords
+      insertOrUpdate: insOrUpdRecords,
+      insertOrDoNothing: insOrDoNothingRecords
     };
 
     return pack;

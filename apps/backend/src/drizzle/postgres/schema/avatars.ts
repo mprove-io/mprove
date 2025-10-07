@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { AvatarTab } from '~common/interfaces/backend/avatar-tab';
 
 export const avatarsTable = pgTable(
   'avatars',
@@ -15,3 +16,7 @@ export const avatarsTable = pgTable(
 
 export type AvatarEnt = InferSelectModel<typeof avatarsTable>;
 export type AvatarEntIns = InferInsertModel<typeof avatarsTable>;
+
+export interface AvatarEnx extends Omit<AvatarEnt, 'tab'> {
+  tab: AvatarTab;
+}

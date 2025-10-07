@@ -8,6 +8,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { MconfigTab } from '~common/interfaces/backend/mconfig-tab';
 
 export const mconfigsTable = pgTable(
   'mconfigs',
@@ -44,3 +45,7 @@ export const mconfigsTable = pgTable(
 
 export type MconfigEnt = InferSelectModel<typeof mconfigsTable>;
 export type MconfigEntIns = InferInsertModel<typeof mconfigsTable>;
+
+export interface MconfigEnx extends Omit<MconfigEnt, 'tab'> {
+  tab: MconfigTab;
+}

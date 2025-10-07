@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ModelTab } from '~common/interfaces/backend/model-tab';
 
 export const modelsTable = pgTable(
   'models',
@@ -48,3 +49,7 @@ export const modelsTable = pgTable(
 
 export type ModelEnt = InferSelectModel<typeof modelsTable>;
 export type ModelEntIns = InferInsertModel<typeof modelsTable>;
+
+export interface ModelEnx extends Omit<ModelEnt, 'tab'> {
+  tab: ModelTab;
+}

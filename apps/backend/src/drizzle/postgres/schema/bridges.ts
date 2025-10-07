@@ -4,6 +4,7 @@ import {
   boolean,
   index,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
@@ -20,6 +21,7 @@ export const bridgesTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     structId: varchar('struct_id', { length: 32 }).notNull(),
     needValidate: boolean('need_validate').notNull(),
+    tab: text('tab'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -38,3 +40,7 @@ export const bridgesTable = pgTable(
 
 export type BridgeEnt = InferSelectModel<typeof bridgesTable>;
 export type BridgeEntIns = InferInsertModel<typeof bridgesTable>;
+
+export interface BridgeEnx extends Omit<BridgeEnt, 'tab'> {
+  tab: {};
+}

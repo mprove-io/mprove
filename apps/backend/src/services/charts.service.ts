@@ -1,15 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
+import { ChartEnx, chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ChartTab } from '~common/interfaces/backend/chart-tab';
 import { ServerError } from '~common/models/server-error';
+import { TabService } from './tab.service';
 
 @Injectable()
 export class ChartsService {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(
+    private tabService: TabService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   async getChartCheckExists(item: { chartId: string; structId: string }) {
     let { chartId, structId } = item;
@@ -27,7 +32,16 @@ export class ChartsService {
       });
     }
 
-    return chart;
+    let chartTab = this.tabService.decrypt<ChartTab>({
+      encryptedString: chart.tab
+    });
+
+    let chartEnx: ChartEnx = {
+      ...chart,
+      tab: chartTab
+    };
+
+    return chartEnx;
   }
 
   checkChartPath(item: { filePath: string; userAlias: string }) {

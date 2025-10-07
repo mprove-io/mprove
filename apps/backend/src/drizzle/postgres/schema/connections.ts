@@ -8,6 +8,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 
 export const connectionsTable = pgTable(
   'connections',
@@ -42,3 +43,7 @@ export const connectionsTable = pgTable(
 
 export type ConnectionEnt = InferSelectModel<typeof connectionsTable>;
 export type ConnectionEntIns = InferInsertModel<typeof connectionsTable>;
+
+export interface ConnectionEnx extends Omit<ConnectionEnt, 'tab'> {
+  tab: ConnectionTab;
+}

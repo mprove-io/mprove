@@ -1,5 +1,5 @@
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import { ModelEnx } from '~backend/drizzle/postgres/schema/models';
+import { StructEnx } from '~backend/drizzle/postgres/schema/structs';
 import {
   REPORT_FIELD_DEFAULT_HIDDEN,
   REPORT_ROW_DEFAULT_SHOW_CHART
@@ -30,8 +30,8 @@ export function makeReportFileText(item: {
   accessRoles: string[];
   rows: Row[];
   metrics: ModelMetric[];
-  models: ModelEnt[];
-  struct: StructEnt;
+  models: ModelEnx[];
+  struct: StructEnx;
   newReportFields: ReportField[];
   chart: MconfigChart;
   timezone: string;
@@ -195,21 +195,21 @@ export function makeReportFileText(item: {
           x.rowType === RowTypeEnum.Metric &&
           metric.formatNumber === x.formatNumber
             ? undefined
-            : struct.mproveConfig.formatNumber === x.formatNumber
+            : struct.tab.mproveConfig.formatNumber === x.formatNumber
               ? undefined
               : x.formatNumber,
         currency_prefix:
           x.rowType === RowTypeEnum.Metric &&
           metric.currencyPrefix === x.currencyPrefix
             ? undefined
-            : struct.mproveConfig.currencyPrefix === x.currencyPrefix
+            : struct.tab.mproveConfig.currencyPrefix === x.currencyPrefix
               ? undefined
               : x.currencyPrefix,
         currency_suffix:
           x.rowType === RowTypeEnum.Metric &&
           metric.currencySuffix === x.currencySuffix
             ? undefined
-            : struct.mproveConfig.currencySuffix === x.currencySuffix
+            : struct.tab.mproveConfig.currencySuffix === x.currencySuffix
               ? undefined
               : x.currencySuffix,
         parameters:
@@ -285,7 +285,7 @@ export function makeReportFileText(item: {
 
                                 newFileControl.value =
                                   mconfigControl.isMetricsDate === true
-                                    ? model.storeContent.fields
+                                    ? model.tab.storeContent.fields
                                         .find(
                                           field =>
                                             field.fieldClass ===

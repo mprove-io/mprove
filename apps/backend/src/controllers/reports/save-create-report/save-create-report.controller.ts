@@ -17,6 +17,7 @@ import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeReportFileText } from '~backend/functions/make-report-file-text';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
@@ -194,6 +195,17 @@ export class SaveCreateReportController {
               inArray(modelsTable.modelId, modelIds)
             )
           });
+
+    let apiModels = cachedModels.map(model =>
+      this.wrapToApiService.wrapToApiModel({
+        model: model,
+        hasAccess: checkAccess({
+          userAlias: user.alias,
+          member: member,
+          entity: model
+        })
+      })
+    );
 
     let repFileText = makeReportFileText({
       reportId: newReportId,

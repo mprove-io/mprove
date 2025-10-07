@@ -11,6 +11,7 @@ import {
 } from '~backend/drizzle/postgres/schema/bridges';
 import {
   MemberEnt,
+  MemberEnx,
   membersTable
 } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
@@ -27,6 +28,7 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
+import { MemberTab } from '~common/interfaces/backend/member-tab';
 import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
@@ -35,6 +37,7 @@ import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from './blockml.service';
 import { EntMakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
+import { TabService } from './tab.service';
 import { WrapToApiService } from './wrap-to-api.service';
 
 let retry = require('async-retry');
@@ -42,6 +45,7 @@ let retry = require('async-retry');
 @Injectable()
 export class MembersService {
   constructor(
+    private tabService: TabService,
     private wrapToApiService: WrapToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
@@ -145,7 +149,16 @@ export class MembersService {
       });
     }
 
-    return member;
+    let memberTab = this.tabService.decrypt<MemberTab>({
+      encryptedString: member.tab
+    });
+
+    let memberEnx: MemberEnx = {
+      ...member,
+      tab: memberTab
+    };
+
+    return memberEnx;
   }
 
   async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {

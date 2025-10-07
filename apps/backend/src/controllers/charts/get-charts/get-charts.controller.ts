@@ -76,13 +76,13 @@ export class GetChartsController {
       where: eq(chartsTable.structId, bridge.structId)
     });
 
-    let chartsGrantedAccess = charts.filter(x =>
-      checkAccess({
+    let chartsGrantedAccess = charts.filter(x => {
+      return checkAccess({
         userAlias: user.alias,
         member: userMember,
         entity: x
-      })
-    );
+      });
+    });
 
     let models = (await this.db.drizzle
       .select({

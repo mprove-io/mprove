@@ -1,6 +1,6 @@
 import { BigQuery, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
+import { QueryEnx } from '~backend/drizzle/postgres/schema/queries';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -13,14 +13,14 @@ export class BigQueryService {
 
   async runQuery(item: {
     userId: string;
-    query: QueryEnt;
+    query: QueryEnx;
     connection: ProjectConnection;
-  }): Promise<QueryEnt> {
+  }): Promise<QueryEnx> {
     let { query, userId, connection } = item;
 
     let bigquery = new BigQuery({
-      credentials: connection.tab.options.bigquery.serviceAccountCredentials,
-      projectId: connection.tab.options.bigquery.googleCloudProject
+      credentials: connection.options.bigquery.serviceAccountCredentials,
+      projectId: connection.options.bigquery.googleCloudProject
     });
 
     query.lastRunBy = userId;
@@ -30,23 +30,20 @@ export class BigQueryService {
     query.bigqueryConsecutiveErrorsGetResults = 0;
 
     let maximumBytesBilled =
-      connection.tab.options.bigquery.bigqueryQuerySizeLimitGb *
-      1024 *
-      1024 *
-      1024;
+      connection.options.bigquery.bigqueryQuerySizeLimitGb * 1024 * 1024 * 1024;
 
     let createQueryJobItem = await bigquery
       .createQueryJob({
         destination: undefined,
         dryRun: false,
         useLegacySql: false,
-        query: query.sql,
+        query: query.tab.sql,
         maximumBytesBilled: maximumBytesBilled.toString()
       })
       .catch(e => {
         query.status = QueryStatusEnum.Error;
-        query.data = [];
-        query.lastErrorMessage = e.message;
+        query.tab.data = [];
+        query.tab.lastErrorMessage = e.message;
         query.lastErrorTs = makeTsNumber();
       });
 
@@ -62,17 +59,17 @@ export class BigQueryService {
   }
 
   async runQueryDry(item: {
-    query: QueryEnt;
+    query: QueryEnx;
     connection: ProjectConnection;
   }) {
     let { query, connection } = item;
 
     let validEstimate: QueryEstimate;
-    let errorQuery: QueryEnt;
+    let errorQuery: QueryEnx;
 
     let bigquery = new BigQuery({
-      credentials: connection.tab.options.bigquery.serviceAccountCredentials,
-      projectId: connection.tab.options.bigquery.googleCloudProject
+      credentials: connection.options.bigquery.serviceAccountCredentials,
+      projectId: connection.options.bigquery.googleCloudProject
     });
 
     let createQueryJobItem = await bigquery
@@ -80,12 +77,12 @@ export class BigQueryService {
         destination: undefined,
         dryRun: true,
         useLegacySql: false,
-        query: query.sql
+        query: query.tab.sql
       })
       .catch(e => {
         query.status = QueryStatusEnum.Error;
-        query.data = [];
-        query.lastErrorMessage = e.message;
+        query.tab.data = [];
+        query.tab.lastErrorMessage = e.message;
         query.lastErrorTs = makeTsNumber();
 
         errorQuery = query;

@@ -2,15 +2,24 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import {
+  ModelEnt,
+  ModelEnx,
+  modelsTable
+} from '~backend/drizzle/postgres/schema/models';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ModelTab } from '~common/interfaces/backend/model-tab';
 import { ServerError } from '~common/models/server-error';
+import { TabService } from './tab.service';
 
 @Injectable()
 export class ModelsService {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(
+    private tabService: TabService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   async getModelCheckExists(item: { modelId: string; structId: string }) {
     let { modelId, structId } = item;
@@ -28,7 +37,16 @@ export class ModelsService {
       });
     }
 
-    return model;
+    let modelTab = this.tabService.decrypt<ModelTab>({
+      encryptedString: model.tab
+    });
+
+    let modelEnx: ModelEnx = {
+      ...model,
+      tab: modelTab
+    };
+
+    return modelEnx;
   }
 
   async getModelsY(item: {

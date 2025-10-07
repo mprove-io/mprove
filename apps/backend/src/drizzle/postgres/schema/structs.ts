@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { StructTab } from '~common/interfaces/backend/struct-tab';
 
 export const structsTable = pgTable(
   'structs',
@@ -22,3 +23,7 @@ export const structsTable = pgTable(
 
 export type StructEnt = InferSelectModel<typeof structsTable>;
 export type StructEntIns = InferInsertModel<typeof structsTable>;
+
+export interface StructEnx extends Omit<StructEnt, 'tab'> {
+  tab: StructTab;
+}

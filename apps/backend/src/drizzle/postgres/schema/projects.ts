@@ -8,6 +8,7 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ProjectTab } from '~common/interfaces/backend/project-tab';
 
 export const projectsTable = pgTable(
   'projects',
@@ -36,3 +37,7 @@ export const projectsTable = pgTable(
 
 export type ProjectEnt = InferSelectModel<typeof projectsTable>;
 export type ProjectEntIns = InferInsertModel<typeof projectsTable>;
+
+export interface ProjectEnx extends Omit<ProjectEnt, 'tab'> {
+  tab: ProjectTab;
+}

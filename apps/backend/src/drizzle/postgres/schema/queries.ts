@@ -9,6 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { QueryTab } from '~common/interfaces/backend/query-tab';
 
 export const queriesTable = pgTable(
   'queries',
@@ -58,3 +59,7 @@ export const queriesTable = pgTable(
 
 export type QueryEnt = InferSelectModel<typeof queriesTable>;
 export type QueryEntIns = InferInsertModel<typeof queriesTable>;
+
+export interface QueryEnx extends Omit<QueryEnt, 'tab'> {
+  tab: QueryTab;
+}
