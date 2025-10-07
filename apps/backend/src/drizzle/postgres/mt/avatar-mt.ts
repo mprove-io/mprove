@@ -1,7 +1,7 @@
 import { IsString } from 'class-validator';
 import { AvatarEnt } from '../schema/avatars';
 
-export interface AvatarEnx extends Omit<AvatarEnt, 'st' | 'lt'> {
+export interface AvatarMt extends Omit<AvatarEnt, 'st' | 'lt'> {
   st: AvatarSt;
   lt: AvatarLt;
 }

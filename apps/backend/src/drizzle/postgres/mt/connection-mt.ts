@@ -3,7 +3,7 @@ import { IsOptional, ValidateNested } from 'class-validator';
 import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
 import { ConnectionEnt } from '../schema/connections';
 
-export interface ConnectionEnx extends Omit<ConnectionEnt, 'st' | 'lt'> {
+export interface ConnectionMt extends Omit<ConnectionEnt, 'st' | 'lt'> {
   st: ConnectionSt;
   lt: ConnectionLt;
 }

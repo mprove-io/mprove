@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import { QueryEnt } from '../schema/queries';
 
-export interface QueryEnx extends Omit<QueryEnt, 'st' | 'lt'> {
+export interface QueryMt extends Omit<QueryEnt, 'st' | 'lt'> {
   st: QuerySt;
   lt: QueryLt;
 }

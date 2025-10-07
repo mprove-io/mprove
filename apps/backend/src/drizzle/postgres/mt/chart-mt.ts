@@ -3,7 +3,7 @@ import { IsString, ValidateNested } from 'class-validator';
 import { Tile } from '~common/interfaces/blockml/tile';
 import { ChartEnt } from '../schema/charts';
 
-export interface ChartEnx extends Omit<ChartEnt, 'st' | 'lt'> {
+export interface ChartMt extends Omit<ChartEnt, 'st' | 'lt'> {
   st: ChartSt;
   lt: ChartLt;
 }

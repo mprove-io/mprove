@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import {
-  ModelEnx,
   ModelLt,
+  ModelMt,
   ModelSt
-} from '~backend/drizzle/postgres/enx/model-enx';
+} from '~backend/drizzle/postgres/mt/model-mt';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Model } from '~common/interfaces/blockml/model';
@@ -17,8 +17,8 @@ export class WrapModelService {
     private hashService: HashService
   ) {}
 
-  entToMx(model: ModelEnt): ModelEnx {
-    let modelEnx: ModelEnx = {
+  entToMt(model: ModelEnt): ModelMt {
+    let modelMt: ModelMt = {
       ...model,
       st: this.tabService.decrypt<ModelSt>({
         encryptedString: model.st
@@ -28,10 +28,10 @@ export class WrapModelService {
       })
     };
 
-    return modelEnx;
+    return modelMt;
   }
 
-  mxToEnt(model: ModelEnx): ModelEnt {
+  mtToEnt(model: ModelMt): ModelEnt {
     let modelEnt: ModelEnt = {
       modelFullId: model.modelFullId,
       structId: model.structId,
@@ -47,8 +47,8 @@ export class WrapModelService {
     return modelEnt;
   }
 
-  mxToApi(item: {
-    model: ModelEnx;
+  mtToApi(item: {
+    model: ModelMt;
     hasAccess: boolean;
   }): ModelX {
     let { model, hasAccess } = item;
@@ -76,7 +76,7 @@ export class WrapModelService {
     return apiModel;
   }
 
-  apiToMx(model: Model): ModelEnx {
+  apiToMt(model: Model): ModelMt {
     let modelSt: ModelSt = {
       accessRoles: model.accessRoles
     };
@@ -93,7 +93,7 @@ export class WrapModelService {
       nodes: model.nodes
     };
 
-    let modelEnx: ModelEnx = {
+    let modelMt: ModelMt = {
       modelFullId: this.hashService.makeModelFullId({
         structId: model.structId,
         modelId: model.modelId
@@ -108,6 +108,6 @@ export class WrapModelService {
       serverTs: model.serverTs
     };
 
-    return modelEnx;
+    return modelMt;
   }
 }

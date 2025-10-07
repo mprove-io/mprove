@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import { MemberEnt } from '../schema/members';
 
-export interface MemberEnx extends Omit<MemberEnt, 'st' | 'lt'> {
+export interface MemberMt extends Omit<MemberEnt, 'st' | 'lt'> {
   st: MemberSt;
   lt: MemberLt;
 }

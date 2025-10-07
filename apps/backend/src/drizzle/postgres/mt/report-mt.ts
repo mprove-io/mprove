@@ -5,7 +5,7 @@ import { ReportField } from '~common/interfaces/blockml/report-field';
 import { Row } from '~common/interfaces/blockml/row';
 import { ReportEnt } from '../schema/reports';
 
-export interface ReportEnx extends Omit<ReportEnt, 'st' | 'lt'> {
+export interface ReportMt extends Omit<ReportEnt, 'st' | 'lt'> {
   st: ReportSt;
   lt: ReportLt;
 }

@@ -1,7 +1,7 @@
 import { IsString } from 'class-validator';
 import { OrgEnt } from '../schema/orgs';
 
-export interface OrgEnx extends Omit<OrgEnt, 'st' | 'lt'> {
+export interface OrgMt extends Omit<OrgEnt, 'st' | 'lt'> {
   st: OrgSt;
   lt: OrgLt;
 }

@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import { ProjectEnt } from '../schema/projects';
 
-export interface ProjectEnx extends Omit<ProjectEnt, 'st' | 'lt'> {
+export interface ProjectMt extends Omit<ProjectEnt, 'st' | 'lt'> {
   st: ProjectSt;
   lt: ProjectLt;
 }

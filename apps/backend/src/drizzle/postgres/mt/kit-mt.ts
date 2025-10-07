@@ -1,6 +1,6 @@
 import { KitEnt } from '../schema/kits';
 
-export interface KitEnx extends Omit<KitEnt, 'st' | 'lt'> {
+export interface KitMt extends Omit<KitEnt, 'st' | 'lt'> {
   st: KitSt;
   lt: KitLt;
 }
