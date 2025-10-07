@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { MemberTab } from '~common/interfaces/backend/member-tab';
 
 export const membersTable = pgTable(
   'members',
@@ -23,7 +22,8 @@ export const membersTable = pgTable(
     isAdmin: boolean('is_admin').notNull(),
     isEditor: boolean('is_editor').notNull(),
     isExplorer: boolean('is_explorer').notNull(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -41,7 +41,3 @@ export const membersTable = pgTable(
 
 export type MemberEnt = InferSelectModel<typeof membersTable>;
 export type MemberEntIns = InferInsertModel<typeof membersTable>;
-
-export interface MemberEnx extends Omit<MemberEnt, 'tab'> {
-  tab: MemberTab;
-}

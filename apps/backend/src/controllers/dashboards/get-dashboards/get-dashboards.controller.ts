@@ -105,22 +105,20 @@ export class GetDashboardsController {
       })
     );
 
-    let models = (await this.db.drizzle
+    let models: ModelEnt[] = await this.db.drizzle
       .select({
+        structId: modelsTable.structId,
         modelId: modelsTable.modelId,
-        accessRoles: modelsTable.accessRoles,
+        type: modelsTable.type,
         connectionId: modelsTable.connectionId,
-        connectionType: modelsTable.connectionType
+        connectionType: modelsTable.connectionType,
+        filePath: modelsTable.filePath,
+        accessRoles: modelsTable.accessRoles,
+        label: modelsTable.label,
+        nodes: modelsTable.nodes
       })
       .from(modelsTable)
-      .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];
-
-    let modelsY = await this.modelsService.getModelsY({
-      bridge: bridge,
-      filterByModelIds: undefined,
-      addFields: false,
-      addContent: false
-    });
+      .where(eq(modelsTable.structId, bridge.structId));
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
@@ -133,7 +131,7 @@ export class GetDashboardsController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
-      models: modelsY
+      models: models
         .map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,

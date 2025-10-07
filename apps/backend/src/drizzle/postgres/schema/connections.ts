@@ -8,7 +8,6 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
 
 export const connectionsTable = pgTable(
   'connections',
@@ -20,7 +19,8 @@ export const connectionsTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
     type: varchar('type').$type<ConnectionTypeEnum>().notNull(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -43,7 +43,3 @@ export const connectionsTable = pgTable(
 
 export type ConnectionEnt = InferSelectModel<typeof connectionsTable>;
 export type ConnectionEntIns = InferInsertModel<typeof connectionsTable>;
-
-export interface ConnectionEnx extends Omit<ConnectionEnt, 'tab'> {
-  tab: ConnectionTab;
-}

@@ -9,7 +9,6 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { ChartTab } from '~common/interfaces/backend/chart-tab';
 
 export const chartsTable = pgTable(
   'charts',
@@ -28,7 +27,8 @@ export const chartsTable = pgTable(
     // filePath: varchar('file_path'),
     // accessRoles: json('access_roles').$type<string[]>().notNull(),
     // tiles: json('tiles').$type<Tile[]>().notNull(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -46,7 +46,3 @@ export const chartsTable = pgTable(
 
 export type ChartEnt = InferSelectModel<typeof chartsTable>;
 export type ChartEntIns = InferInsertModel<typeof chartsTable>;
-
-export interface ChartEnx extends Omit<ChartEnt, 'tab'> {
-  tab: ChartTab;
-}

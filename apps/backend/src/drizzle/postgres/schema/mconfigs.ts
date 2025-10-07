@@ -8,7 +8,6 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { MconfigTab } from '~common/interfaces/backend/mconfig-tab';
 
 export const mconfigsTable = pgTable(
   'mconfigs',
@@ -33,7 +32,8 @@ export const mconfigsTable = pgTable(
     // limit: integer('limit').notNull(),
     // filters: json('filters').$type<Filter[]>().notNull(),
     // chart: json('chart').$type<MconfigChart>().notNull(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -45,7 +45,3 @@ export const mconfigsTable = pgTable(
 
 export type MconfigEnt = InferSelectModel<typeof mconfigsTable>;
 export type MconfigEntIns = InferInsertModel<typeof mconfigsTable>;
-
-export interface MconfigEnx extends Omit<MconfigEnt, 'tab'> {
-  tab: MconfigTab;
-}

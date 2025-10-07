@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { UserTab } from '~common/interfaces/backend/user-tab';
 
 export const usersTable = pgTable(
   'users',
@@ -24,7 +23,8 @@ export const usersTable = pgTable(
     hash: varchar('hash'),
     salt: varchar('salt'),
     jwtMinIat: bigint('jwt_min_iat', { mode: 'number' }),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -46,7 +46,3 @@ export const usersTable = pgTable(
 
 export type UserEnt = InferSelectModel<typeof usersTable>;
 export type UserEntIns = InferInsertModel<typeof usersTable>;
-
-export interface UserEnx extends Omit<UserEnt, 'tab'> {
-  tab: UserTab;
-}

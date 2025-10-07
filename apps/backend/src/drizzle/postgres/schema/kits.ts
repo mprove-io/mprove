@@ -1,6 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
-import { KitTab } from '~common/interfaces/backend/kit-tab';
 
 export const kitsTable = pgTable(
   'kits',
@@ -8,7 +7,8 @@ export const kitsTable = pgTable(
     kitId: varchar('kit_id', { length: 32 }).notNull().primaryKey(),
     structId: varchar('struct_id', { length: 32 }).notNull(),
     reportId: varchar('report_id', { length: 32 }).notNull(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -20,7 +20,3 @@ export const kitsTable = pgTable(
 
 export type KitEnt = InferSelectModel<typeof kitsTable>;
 export type KitEntIns = InferInsertModel<typeof kitsTable>;
-
-export interface KitEnx extends Omit<KitEnt, 'tab'> {
-  tab: KitTab;
-}

@@ -1,12 +1,12 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { bigint, pgTable, text, varchar } from 'drizzle-orm/pg-core';
-import { NoteTab } from '~common/interfaces/backend/note-tab';
 
 export const notesTable = pgTable(
   'notes',
   {
     noteId: varchar('note_id', { length: 32 }).notNull().primaryKey(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   }
   // ,
@@ -16,7 +16,3 @@ export const notesTable = pgTable(
 
 export type NoteEnt = InferSelectModel<typeof notesTable>;
 export type NoteEntIns = InferInsertModel<typeof notesTable>;
-
-export interface NoteEnx extends Omit<NoteEnt, 'tab'> {
-  tab: NoteTab;
-}

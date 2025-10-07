@@ -1,6 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
-import { StructTab } from '~common/interfaces/backend/struct-tab';
 
 export const structsTable = pgTable(
   'structs',
@@ -12,7 +11,8 @@ export const structsTable = pgTable(
     // presets: json('presets').$type<Preset[]>().default([]),
     // mproveConfig: json('mprove_config').$type<MproveConfig>(),
     mproveVersion: varchar('mprove_version'),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -23,7 +23,3 @@ export const structsTable = pgTable(
 
 export type StructEnt = InferSelectModel<typeof structsTable>;
 export type StructEntIns = InferInsertModel<typeof structsTable>;
-
-export interface StructEnx extends Omit<StructEnt, 'tab'> {
-  tab: StructTab;
-}

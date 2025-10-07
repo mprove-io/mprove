@@ -9,7 +9,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { EnvTab } from '~common/interfaces/backend/env-tab';
 
 export const envsTable = pgTable(
   'envs',
@@ -24,7 +23,8 @@ export const envsTable = pgTable(
     isFallbackToProdVariables: boolean('is_fallback_to_prod_variables').default(
       false
     ),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -41,7 +41,3 @@ export const envsTable = pgTable(
 
 export type EnvEnt = InferSelectModel<typeof envsTable>;
 export type EnvEntIns = InferInsertModel<typeof envsTable>;
-
-export interface EnvEnx extends Omit<EnvEnt, 'tab'> {
-  tab: EnvTab;
-}

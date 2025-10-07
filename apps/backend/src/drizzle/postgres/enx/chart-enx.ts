@@ -1,8 +1,14 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { Tile } from '../blockml/tile';
+import { Tile } from '~common/interfaces/blockml/tile';
+import { ChartEnt } from '../schema/charts';
 
-export class ChartTab {
+export interface ChartEnx extends Omit<ChartEnt, 'st' | 'lt'> {
+  st: ChartSt;
+  lt: ChartLt;
+}
+
+export class ChartSt {
   @IsString()
   title: string;
 
@@ -19,3 +25,5 @@ export class ChartTab {
   @Type(() => Tile)
   tiles: Tile[];
 }
+
+export class ChartLt {}

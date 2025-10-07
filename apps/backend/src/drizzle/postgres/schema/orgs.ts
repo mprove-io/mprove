@@ -7,14 +7,14 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { OrgTab } from '~common/interfaces/backend/org-tab';
 
 export const orgsTable = pgTable(
   'orgs',
   {
     orgId: varchar('org_id', { length: 128 }).notNull().primaryKey(), // length 128 required for tests
     ownerId: varchar('owner_id').notNull(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     nameHash: varchar('name_hash').notNull(),
     ownerEmailHash: varchar('owner_email_hash').notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
@@ -31,7 +31,3 @@ export const orgsTable = pgTable(
 
 export type OrgEnt = InferSelectModel<typeof orgsTable>;
 export type OrgEntIns = InferInsertModel<typeof orgsTable>;
-
-export interface OrgEnx extends Omit<OrgEnt, 'tab'> {
-  tab: OrgTab;
-}

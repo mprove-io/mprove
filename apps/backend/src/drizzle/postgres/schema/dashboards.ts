@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { DashboardTab } from '~common/interfaces/backend/dashboard-tab';
 
 export const dashboardsTable = pgTable(
   'dashboards',
@@ -26,7 +25,8 @@ export const dashboardsTable = pgTable(
     // accessRoles: json('access_roles').$type<string[]>().notNull(),
     // fields: json('fields').$type<DashboardField[]>().notNull(),
     // tiles: json('tiles').$type<Tile[]>().notNull(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -44,7 +44,3 @@ export const dashboardsTable = pgTable(
 
 export type DashboardEnt = InferSelectModel<typeof dashboardsTable>;
 export type DashboardEntIns = InferInsertModel<typeof dashboardsTable>;
-
-export interface DashboardEnx extends Omit<DashboardEnt, 'tab'> {
-  tab: DashboardTab;
-}

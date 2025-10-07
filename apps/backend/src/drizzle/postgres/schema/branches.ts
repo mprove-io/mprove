@@ -17,7 +17,8 @@ export const branchesTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull(),
     repoId: varchar('repo_id', { length: 32 }).notNull(),
     branchId: varchar('branch_id', { length: 32 }).notNull(), // name
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -34,7 +35,3 @@ export const branchesTable = pgTable(
 
 export type BranchEnt = InferSelectModel<typeof branchesTable>;
 export type BranchEntIns = InferInsertModel<typeof branchesTable>;
-
-export interface BranchEnx extends Omit<BranchEnt, 'tab'> {
-  tab: {};
-}

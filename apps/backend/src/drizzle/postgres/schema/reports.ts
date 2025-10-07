@@ -8,7 +8,6 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ReportTab } from '~common/interfaces/backend/report-tab';
 
 export const reportsTable = pgTable(
   'reports',
@@ -28,7 +27,8 @@ export const reportsTable = pgTable(
     // fields: json('fields').$type<ReportField[]>(),
     // rows: json('rows').$type<Row[]>().notNull(),
     // chart: json('chart').$type<MconfigChart>(),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -45,7 +45,3 @@ export const reportsTable = pgTable(
 
 export type ReportEnt = InferSelectModel<typeof reportsTable>;
 export type ReportEntIns = InferInsertModel<typeof reportsTable>;
-
-export interface ReportEnx extends Omit<ReportEnt, 'tab'> {
-  tab: ReportTab;
-}

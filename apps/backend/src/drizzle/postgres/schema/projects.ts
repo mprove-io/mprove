@@ -8,7 +8,6 @@ import {
   varchar
 } from 'drizzle-orm/pg-core';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ProjectTab } from '~common/interfaces/backend/project-tab';
 
 export const projectsTable = pgTable(
   'projects',
@@ -18,7 +17,8 @@ export const projectsTable = pgTable(
     remoteType: varchar('remote_type').$type<ProjectRemoteTypeEnum>().notNull(),
     nameHash: varchar('name_hash').notNull(), // name is unique across org projects
     gitUrlHash: varchar('git_url_hash'),
-    tab: text('tab'),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -37,7 +37,3 @@ export const projectsTable = pgTable(
 
 export type ProjectEnt = InferSelectModel<typeof projectsTable>;
 export type ProjectEntIns = InferInsertModel<typeof projectsTable>;
-
-export interface ProjectEnx extends Omit<ProjectEnt, 'tab'> {
-  tab: ProjectTab;
-}

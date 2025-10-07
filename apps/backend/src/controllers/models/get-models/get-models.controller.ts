@@ -1,5 +1,8 @@
-import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
+import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -8,12 +11,12 @@ import { BranchesService } from '~backend/services/branches.service';
 import { BridgesService } from '~backend/services/bridges.service';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
 import { WrapToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendGetModelsRequest,
   ToBackendGetModelsResponsePayload
@@ -25,12 +28,12 @@ export class GetModelsController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private modelsService: ModelsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService
+    private wrapToApiService: WrapToApiService,
+    @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetModels)
@@ -43,8 +46,7 @@ export class GetModelsController {
       branchId,
       envId,
       filterByModelIds,
-      addFields,
-      addContent
+      addFields
     } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
@@ -75,12 +77,31 @@ export class GetModelsController {
       envId: envId
     });
 
-    let modelsY = await this.modelsService.getModelsY({
-      bridge: bridge,
-      filterByModelIds: filterByModelIds,
-      addFields: addFields,
-      addContent: addContent
-    });
+    let where = [eq(modelsTable.structId, bridge.structId)];
+
+    if (isDefined(filterByModelIds) && filterByModelIds.length > 0) {
+      where = [...where, inArray(modelsTable.modelId, filterByModelIds)];
+    }
+
+    let models: ModelEnt[] =
+      addFields === true
+        ? await this.db.drizzle.query.modelsTable.findMany({
+            where: and(...where)
+          })
+        : await this.db.drizzle
+            .select({
+              structId: modelsTable.structId,
+              modelId: modelsTable.modelId,
+              type: modelsTable.type,
+              connectionId: modelsTable.connectionId,
+              connectionType: modelsTable.connectionType,
+              filePath: modelsTable.filePath,
+              accessRoles: modelsTable.accessRoles,
+              label: modelsTable.label,
+              nodes: modelsTable.nodes
+            })
+            .from(modelsTable)
+            .where(and(...where));
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
@@ -93,7 +114,7 @@ export class GetModelsController {
       needValidate: bridge.needValidate,
       struct: this.wrapToApiService.wrapToApiStruct(struct),
       userMember: apiMember,
-      models: modelsY
+      models: models
         .map(model =>
           this.wrapToApiService.wrapToApiModel({
             model: model,
