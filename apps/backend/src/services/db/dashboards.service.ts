@@ -16,12 +16,12 @@ import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
 import { ServerError } from '~common/models/server-error';
-import { WrapToApiService } from './wrap-to-api.service';
+import { WrapEnxToApiService } from './wrap-to-api.service';
 
 @Injectable()
 export class DashboardsService {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -100,7 +100,7 @@ export class DashboardsService {
     });
 
     let apiModels = models.map(model =>
-      this.wrapToApiService.wrapToApiModel({
+      this.wrapToApiService.wrapEnxToApiModel({
         model: model,
         hasAccess: checkAccess({
           userAlias: user.alias,
@@ -190,7 +190,7 @@ export class DashboardsService {
         queries: [],
         member: this.wrapToApiService.wrapToApiMember(userMember),
         models: models.map(model =>
-          this.wrapToApiService.wrapToApiModel({
+          this.wrapToApiService.wrapEnxToApiModel({
             model: model,
             hasAccess: checkAccess({
               userAlias: user.alias,

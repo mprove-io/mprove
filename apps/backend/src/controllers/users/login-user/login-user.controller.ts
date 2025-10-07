@@ -6,7 +6,7 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendLoginUserRequest,
@@ -19,7 +19,7 @@ import {
 export class LoginUserController {
   constructor(
     private jwtService: JwtService,
-    private wrapToApiService: WrapToApiService
+    private wrapToApiService: WrapEnxToApiService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendLoginUser)

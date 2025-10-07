@@ -4,14 +4,13 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ModelEnx, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ModelTab } from '~common/interfaces/backend/model-tab';
 import { ServerError } from '~common/models/server-error';
-import { TabService } from './tab.service';
+import { WrapToEnxService } from './wrap-to-enx.service';
 
 @Injectable()
 export class ModelsService {
   constructor(
-    private tabService: TabService,
+    private wrapToEnxService: WrapToEnxService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -31,14 +30,7 @@ export class ModelsService {
       });
     }
 
-    let modelTab = this.tabService.decrypt<ModelTab>({
-      encryptedString: model.tab
-    });
-
-    let modelEnx: ModelEnx = {
-      ...model,
-      tab: modelTab
-    };
+    let modelEnx: ModelEnx = this.wrapToEnxService.wrapToEnxModel(model);
 
     return modelEnx;
   }

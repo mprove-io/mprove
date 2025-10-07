@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ModelEnx } from '~backend/drizzle/postgres/enx/model-enx';
 import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
 import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { OrgEnt } from '~backend/drizzle/postgres/schema/orgs';
 import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
@@ -38,7 +38,6 @@ import { MconfigTab } from '~common/interfaces/backend/mconfig-tab';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Member } from '~common/interfaces/backend/member';
 import { MemberTab } from '~common/interfaces/backend/member-tab';
-import { ModelTab } from '~common/interfaces/backend/model-tab';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Org } from '~common/interfaces/backend/org';
 import { OrgTab } from '~common/interfaces/backend/org-tab';
@@ -61,8 +60,37 @@ import { Query } from '~common/interfaces/blockml/query';
 import { TabService } from './tab.service';
 
 @Injectable()
-export class WrapToApiService {
+export class WrapEnxToApiService {
   constructor(private tabService: TabService) {}
+
+  wrapEnxToApiModel(item: {
+    model: ModelEnx;
+    hasAccess: boolean;
+  }): ModelX {
+    let { model, hasAccess } = item;
+
+    let apiModel: ModelX = {
+      structId: model.structId,
+      modelId: model.modelId,
+      type: model.type,
+      source: model.lt.source,
+      malloyModelDef: model.lt.malloyModelDef,
+      hasAccess: hasAccess,
+      connectionId: model.connectionId,
+      connectionType: model.connectionType,
+      filePath: model.lt.filePath,
+      fileText: model.lt.fileText,
+      storeContent: model.lt.storeContent,
+      dateRangeIncludesRightSide: model.lt.dateRangeIncludesRightSide,
+      accessRoles: model.st.accessRoles,
+      label: model.lt.label,
+      fields: model.lt.fields,
+      nodes: model.lt.nodes,
+      serverTs: model.serverTs
+    };
+
+    return apiModel;
+  }
 
   wrapToApiProjectConnection(item: {
     connection: ConnectionEnt;
@@ -451,39 +479,6 @@ export class WrapToApiService {
     };
 
     return apiEnvUser;
-  }
-
-  wrapToApiModel(item: {
-    model: ModelEnt;
-    hasAccess: boolean;
-  }): ModelX {
-    let { model, hasAccess } = item;
-
-    let modelTab = this.tabService.decrypt<ModelTab>({
-      encryptedString: model.tab
-    });
-
-    let apiModel: ModelX = {
-      structId: model.structId,
-      modelId: model.modelId,
-      type: model.type,
-      source: modelTab.source,
-      malloyModelDef: modelTab.malloyModelDef,
-      hasAccess: hasAccess,
-      connectionId: model.connectionId,
-      connectionType: model.connectionType,
-      filePath: modelTab.filePath,
-      fileText: modelTab.fileText,
-      storeContent: modelTab.storeContent,
-      dateRangeIncludesRightSide: modelTab.dateRangeIncludesRightSide,
-      accessRoles: modelTab.accessRoles,
-      label: modelTab.label,
-      fields: modelTab.fields,
-      nodes: modelTab.nodes,
-      serverTs: model.serverTs
-    };
-
-    return apiModel;
   }
 
   wrapToApiOrg(item: { org: OrgEnt }): Org {

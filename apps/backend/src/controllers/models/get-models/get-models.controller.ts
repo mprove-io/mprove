@@ -13,7 +13,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -32,7 +32,7 @@ export class GetModelsController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -116,7 +116,7 @@ export class GetModelsController {
       userMember: apiMember,
       models: models
         .map(model =>
-          this.wrapToApiService.wrapToApiModel({
+          this.wrapToApiService.wrapEnxToApiModel({
             model: model,
             hasAccess: checkAccess({
               userAlias: user.alias,

@@ -56,7 +56,7 @@ import { DocService } from './doc.service';
 import { MalloyService } from './malloy.service';
 import { MconfigsService } from './mconfigs.service';
 import { ReportTimeColumnsService } from './report-time-columns.service';
-import { WrapToApiService } from './wrap-to-api.service';
+import { WrapEnxToApiService } from './wrap-to-api.service';
 import { WrapToEntService } from './wrap-to-ent.service';
 
 let retry = require('async-retry');
@@ -69,7 +69,7 @@ export class ReportDataService {
     private mconfigsService: MconfigsService,
     private reportTimeColumnsService: ReportTimeColumnsService,
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -615,7 +615,7 @@ export class ReportDataService {
     );
 
     let modelsApi = models.map(model =>
-      this.wrapToApiService.wrapToApiModel({
+      this.wrapToApiService.wrapEnxToApiModel({
         model: model,
         hasAccess: checkAccess({
           userAlias: user.alias,

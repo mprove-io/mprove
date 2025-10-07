@@ -8,7 +8,7 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetOrgsListRequest,
@@ -19,7 +19,7 @@ import {
 @Controller()
 export class GetOrgsListController {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

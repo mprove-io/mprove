@@ -22,7 +22,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { EntMakerService } from '~backend/services/maker.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -42,7 +42,7 @@ export class CreateEnvController {
     private envsService: EnvsService,
     private membersService: MembersService,
     private entMakerService: EntMakerService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

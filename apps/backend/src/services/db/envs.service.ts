@@ -13,12 +13,12 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
-import { WrapToApiService } from './wrap-to-api.service';
+import { WrapEnxToApiService } from './wrap-to-api.service';
 
 @Injectable()
 export class EnvsService {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

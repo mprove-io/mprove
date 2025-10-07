@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ModelLt, ModelSt } from '~backend/drizzle/postgres/enx/model-enx';
 import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
 import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -10,7 +11,6 @@ import { isDefined } from '~common/functions/is-defined';
 import { ChartTab } from '~common/interfaces/backend/chart-tab';
 import { DashboardTab } from '~common/interfaces/backend/dashboard-tab';
 import { MconfigTab } from '~common/interfaces/backend/mconfig-tab';
-import { ModelTab } from '~common/interfaces/backend/model-tab';
 import { QueryTab } from '~common/interfaces/backend/query-tab';
 import { ReportTab } from '~common/interfaces/backend/report-tab';
 import { Chart } from '~common/interfaces/blockml/chart';
@@ -28,6 +28,43 @@ export class WrapToEntService {
     private tabService: TabService,
     private hashService: HashService
   ) {}
+
+  wrapToEntityModel(item: { model: Model }): ModelEnt {
+    let { model } = item;
+
+    let modelSt: ModelSt = {
+      accessRoles: model.accessRoles
+    };
+
+    let modelLt: ModelLt = {
+      source: model.source,
+      malloyModelDef: model.malloyModelDef,
+      filePath: model.filePath,
+      fileText: model.fileText,
+      storeContent: model.storeContent,
+      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
+      label: model.label,
+      fields: model.fields,
+      nodes: model.nodes
+    };
+
+    let modelEnt: ModelEnt = {
+      modelFullId: this.hashService.makeModelFullId({
+        structId: model.structId,
+        modelId: model.modelId
+      }),
+      structId: model.structId,
+      modelId: model.modelId,
+      type: model.type,
+      connectionId: model.connectionId,
+      connectionType: model.connectionType,
+      st: this.tabService.encrypt({ data: modelSt }),
+      lt: this.tabService.encrypt({ data: modelLt }),
+      serverTs: model.serverTs
+    };
+
+    return modelEnt;
+  }
 
   wrapToEntityDashboard(item: { dashboard: Dashboard }): DashboardEnt {
     let { dashboard } = item;
@@ -89,39 +126,6 @@ export class WrapToEntService {
     };
 
     return mconfigEnt;
-  }
-
-  wrapToEntityModel(item: { model: Model }): ModelEnt {
-    let { model } = item;
-
-    let modelTab: ModelTab = {
-      source: model.source,
-      malloyModelDef: model.malloyModelDef,
-      filePath: model.filePath,
-      fileText: model.fileText,
-      storeContent: model.storeContent,
-      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
-      accessRoles: model.accessRoles,
-      label: model.label,
-      fields: model.fields,
-      nodes: model.nodes
-    };
-
-    let modelEnt: ModelEnt = {
-      modelFullId: this.hashService.makeModelFullId({
-        structId: model.structId,
-        modelId: model.modelId
-      }),
-      structId: model.structId,
-      modelId: model.modelId,
-      type: model.type,
-      connectionId: model.connectionId,
-      connectionType: model.connectionType,
-      tab: this.tabService.encrypt({ data: modelTab }),
-      serverTs: model.serverTs
-    };
-
-    return modelEnt;
   }
 
   wrapToEntityQuery(item: { query: Query }): QueryEnt {

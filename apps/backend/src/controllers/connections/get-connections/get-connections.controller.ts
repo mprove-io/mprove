@@ -9,7 +9,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -25,7 +25,7 @@ export class GetConnectionsController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

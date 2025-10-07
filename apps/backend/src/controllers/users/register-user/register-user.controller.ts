@@ -18,7 +18,7 @@ import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EmailService } from '~backend/services/email.service';
 import { UsersService } from '~backend/services/users.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -58,7 +58,7 @@ export class RegisterUserController {
   constructor(
     private usersService: UsersService,
     private emailService: EmailService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

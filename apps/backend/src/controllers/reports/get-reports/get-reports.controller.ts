@@ -14,7 +14,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -34,7 +34,7 @@ export class GetReportsController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -142,7 +142,7 @@ export class GetReportsController {
           member: apiMember,
           columns: [],
           models: models.map(model =>
-            this.wrapToApiService.wrapToApiModel({
+            this.wrapToApiService.wrapEnxToApiModel({
               model: model,
               hasAccess: checkAccess({
                 userAlias: user.alias,
@@ -170,7 +170,7 @@ export class GetReportsController {
         .filter(model => model.type === ModelTypeEnum.Store)
         // .filter(model => model.isStoreModel === true)
         .map(model =>
-          this.wrapToApiService.wrapToApiModel({
+          this.wrapToApiService.wrapEnxToApiModel({
             model: model,
             hasAccess: checkAccess({
               userAlias: user.alias,

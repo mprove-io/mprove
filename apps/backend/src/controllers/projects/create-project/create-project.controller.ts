@@ -21,7 +21,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { TabService } from '~backend/services/tab.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
@@ -46,7 +46,7 @@ export class CreateProjectController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private logger: Logger,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db

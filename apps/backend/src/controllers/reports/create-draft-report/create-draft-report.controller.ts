@@ -32,7 +32,7 @@ import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportRowService } from '~backend/services/report-row.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
@@ -63,7 +63,7 @@ export class CreateDraftReportController {
     private structsService: StructsService,
     private envsService: EnvsService,
     private entMakerService: EntMakerService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

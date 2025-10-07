@@ -16,7 +16,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { DEMO_ORG_NAME } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -36,7 +36,7 @@ let retry = require('async-retry');
 export class SetOrgInfoController {
   constructor(
     private orgsService: OrgsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

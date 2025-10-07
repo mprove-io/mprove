@@ -8,7 +8,7 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -22,7 +22,7 @@ import { ServerError } from '~common/models/server-error';
 export class GetOrgController {
   constructor(
     private orgsService: OrgsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

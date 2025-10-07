@@ -10,7 +10,7 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { DEMO_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { BoolEnum } from '~common/enums/bool.enum';
@@ -29,7 +29,7 @@ import { ServerError } from '~common/models/server-error';
 export class CreateOrgController {
   constructor(
     private orgsService: OrgsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}

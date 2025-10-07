@@ -27,7 +27,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -49,7 +49,7 @@ let retry = require('async-retry');
 @Controller()
 export class SyncRepoController {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,

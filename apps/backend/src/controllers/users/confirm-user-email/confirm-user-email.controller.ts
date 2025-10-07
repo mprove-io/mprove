@@ -17,7 +17,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -36,7 +36,7 @@ export class ConfirmUserEmailController {
   constructor(
     private jwtService: JwtService,
     private membersService: MembersService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

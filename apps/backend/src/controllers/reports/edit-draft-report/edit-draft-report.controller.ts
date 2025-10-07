@@ -15,7 +15,7 @@ import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportRowService } from '~backend/services/report-row.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -39,7 +39,7 @@ export class EditDraftReportController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

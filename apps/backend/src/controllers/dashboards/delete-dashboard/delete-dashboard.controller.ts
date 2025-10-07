@@ -28,7 +28,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -52,7 +52,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteDashboardController {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,

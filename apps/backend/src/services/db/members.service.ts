@@ -38,7 +38,7 @@ import { BlockmlService } from './blockml.service';
 import { EntMakerService } from './maker.service';
 import { RabbitService } from './rabbit.service';
 import { TabService } from './tab.service';
-import { WrapToApiService } from './wrap-to-api.service';
+import { WrapEnxToApiService } from './wrap-to-api.service';
 
 let retry = require('async-retry');
 
@@ -46,7 +46,7 @@ let retry = require('async-retry');
 export class MembersService {
   constructor(
     private tabService: TabService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private entMakerService: EntMakerService,

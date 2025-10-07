@@ -32,7 +32,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -65,7 +65,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditDraftDashboardController {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private malloyService: MalloyService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,

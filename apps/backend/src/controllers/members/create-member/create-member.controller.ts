@@ -31,7 +31,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { UsersService } from '~backend/services/users.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import {
   EMPTY_REPORT_ID,
   EMPTY_STRUCT_ID,
@@ -90,7 +90,7 @@ export class CreateMemberController {
     private usersService: UsersService,
     private membersService: MembersService,
     private emailService: EmailService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

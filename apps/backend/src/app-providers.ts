@@ -42,12 +42,12 @@ import { TasksService } from './services/tasks.service';
 import { TrinoService } from './services/trino.service';
 import { UserCodeService } from './services/user-code.service';
 import { UsersService } from './services/users.service';
-import { WrapToApiService } from './services/wrap-to-api.service';
+import { WrapEnxToApiService } from './services/wrap-to-api.service';
 import { WrapToEntService } from './services/wrap-to-ent.service';
 
 export const appProviders = [
   WrapToEntService,
-  WrapToApiService,
+  WrapEnxToApiService,
   EntMakerService,
   HashService,
   RedisService,

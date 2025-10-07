@@ -17,7 +17,7 @@ import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -37,7 +37,7 @@ let retry = require('async-retry');
 export class SetUserNameController {
   constructor(
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

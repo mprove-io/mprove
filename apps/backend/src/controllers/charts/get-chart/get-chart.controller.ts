@@ -29,7 +29,7 @@ import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
@@ -64,7 +64,7 @@ export class GetChartController {
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -261,7 +261,7 @@ export class GetChartController {
         queries: [this.wrapToApiService.wrapToApiQuery(query)],
         member: apiMember,
         models: [
-          this.wrapToApiService.wrapToApiModel({
+          this.wrapToApiService.wrapEnxToApiModel({
             model: model,
             hasAccess: checkAccess({
               userAlias: user.alias,

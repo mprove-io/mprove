@@ -16,7 +16,7 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetProjectsListRequest,
@@ -29,7 +29,7 @@ let retry = require('async-retry');
 @Controller()
 export class GetProjectsListController {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

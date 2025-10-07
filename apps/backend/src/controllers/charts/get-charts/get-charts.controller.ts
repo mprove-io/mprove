@@ -15,7 +15,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -34,7 +34,7 @@ export class GetChartsController {
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -112,7 +112,7 @@ export class GetChartsController {
       userMember: apiMember,
       models: models
         .map(model =>
-          this.wrapToApiService.wrapToApiModel({
+          this.wrapToApiService.wrapEnxToApiModel({
             model: model,
             hasAccess: checkAccess({
               userAlias: user.alias,
@@ -129,7 +129,7 @@ export class GetChartsController {
           queries: [],
           member: this.wrapToApiService.wrapToApiMember(userMember),
           models: models.map(model =>
-            this.wrapToApiService.wrapToApiModel({
+            this.wrapToApiService.wrapEnxToApiModel({
               model: model,
               hasAccess: checkAccess({
                 userAlias: user.alias,

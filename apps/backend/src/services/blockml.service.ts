@@ -24,7 +24,7 @@ import {
 } from '~common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
 import { EnvsService } from './envs.service';
 import { RabbitService } from './rabbit.service';
-import { WrapToApiService } from './wrap-to-api.service';
+import { WrapEnxToApiService } from './wrap-to-api.service';
 import { WrapToEntService } from './wrap-to-ent.service';
 
 let retry = require('async-retry');
@@ -35,7 +35,7 @@ export class BlockmlService {
     private rabbitService: RabbitService,
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

@@ -5,7 +5,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetProjectRequest,
@@ -18,7 +18,7 @@ export class GetProjectController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private wrapToApiService: WrapToApiService
+    private wrapToApiService: WrapEnxToApiService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetProject)

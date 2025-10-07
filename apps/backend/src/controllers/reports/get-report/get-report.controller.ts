@@ -23,7 +23,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -63,7 +63,7 @@ export class GetReportController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

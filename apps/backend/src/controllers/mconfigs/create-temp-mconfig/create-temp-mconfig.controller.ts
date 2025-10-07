@@ -24,7 +24,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -52,7 +52,7 @@ export class CreateTempMconfigController {
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

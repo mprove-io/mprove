@@ -44,7 +44,7 @@ import { StoreService } from '~backend/services/store.service';
 import { StructsService } from '~backend/services/structs.service';
 import { TabService } from '~backend/services/tab.service';
 import { TrinoService } from '~backend/services/trino.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -87,7 +87,7 @@ export class RunQueriesController {
     private bigqueryService: BigQueryService,
     private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

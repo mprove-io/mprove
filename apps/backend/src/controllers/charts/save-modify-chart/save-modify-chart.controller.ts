@@ -38,7 +38,7 @@ import { ProjectsService } from '~backend/services/projects.service';
 import { QueriesService } from '~backend/services/queries.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   EMPTY_STRUCT_ID,
@@ -87,7 +87,7 @@ export class SaveModifyChartController {
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -421,7 +421,7 @@ export class SaveModifyChartController {
       modelId: mconfig.modelId
     });
 
-    let modelApi = this.wrapToApiService.wrapToApiModel({
+    let modelApi = this.wrapToApiService.wrapEnxToApiModel({
       model: modelEnt,
       hasAccess: checkAccess({
         userAlias: user.alias,

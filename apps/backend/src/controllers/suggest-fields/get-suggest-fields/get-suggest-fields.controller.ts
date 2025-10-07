@@ -13,7 +13,7 @@ import { EnvsService } from '~backend/services/envs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
@@ -35,7 +35,7 @@ export class GetSuggestFieldsController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

@@ -19,7 +19,7 @@ import { DocService } from './doc.service';
 import { EntMakerService } from './maker.service';
 import { MconfigsService } from './mconfigs.service';
 import { RabbitService } from './rabbit.service';
-import { WrapToApiService } from './wrap-to-api.service';
+import { WrapEnxToApiService } from './wrap-to-api.service';
 import { WrapToEntService } from './wrap-to-ent.service';
 
 let retry = require('async-retry');
@@ -33,7 +33,7 @@ export class ReportsService {
     private blockmlService: BlockmlService,
     private rabbitService: RabbitService,
     private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

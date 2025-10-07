@@ -17,7 +17,7 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/users.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -32,7 +32,7 @@ let retry = require('async-retry');
 export class UpdateUserPasswordController {
   constructor(
     private usersService: UsersService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

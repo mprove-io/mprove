@@ -17,7 +17,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
@@ -35,7 +35,7 @@ import {
 @Controller()
 export class GetNavController {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private structsService: StructsService,

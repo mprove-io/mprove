@@ -4,7 +4,7 @@ import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -16,7 +16,7 @@ import {
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetUserProfileController {
-  constructor(private wrapToApiService: WrapToApiService) {}
+  constructor(private wrapToApiService: WrapEnxToApiService) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
   async getUserProfile(@AttachUser() user: UserEnt, @Req() request: any) {

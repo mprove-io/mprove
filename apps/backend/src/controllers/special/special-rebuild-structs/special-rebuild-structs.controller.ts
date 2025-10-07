@@ -31,7 +31,7 @@ import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
@@ -72,7 +72,7 @@ let retry = require('async-retry');
 @Controller()
 export class SpecialRebuildStructsController {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,

@@ -37,7 +37,7 @@ import { EntMakerService } from '~backend/services/maker.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
 import { UsersService } from '~backend/services/users.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import {
@@ -80,7 +80,7 @@ export class SeedRecordsController {
     private usersService: UsersService,
     private blockmlService: BlockmlService,
     private entMakerService: EntMakerService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

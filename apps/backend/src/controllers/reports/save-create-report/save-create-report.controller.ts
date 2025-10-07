@@ -33,7 +33,7 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportsService } from '~backend/services/reports.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   EMPTY_STRUCT_ID,
@@ -79,7 +79,7 @@ export class SaveCreateReportController {
     private reportDataService: ReportDataService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -197,7 +197,7 @@ export class SaveCreateReportController {
           });
 
     let apiModels = cachedModels.map(model =>
-      this.wrapToApiService.wrapToApiModel({
+      this.wrapToApiService.wrapEnxToApiModel({
         model: model,
         hasAccess: checkAccess({
           userAlias: user.alias,

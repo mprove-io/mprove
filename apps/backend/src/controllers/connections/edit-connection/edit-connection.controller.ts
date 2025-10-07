@@ -22,7 +22,7 @@ import { ConnectionsService } from '~backend/services/connections.service';
 import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { TabService } from '~backend/services/tab.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import {
   DEFAULT_QUERY_SIZE_LIMIT,
   THROTTLE_CUSTOM
@@ -49,7 +49,7 @@ export class EditConnectionController {
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db

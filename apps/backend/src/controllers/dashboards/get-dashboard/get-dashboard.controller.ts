@@ -31,7 +31,7 @@ import { MembersService } from '~backend/services/members.service';
 import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { StructsService } from '~backend/services/structs.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -72,7 +72,7 @@ export class GetDashboardController {
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private mconfigsService: MconfigsService,
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

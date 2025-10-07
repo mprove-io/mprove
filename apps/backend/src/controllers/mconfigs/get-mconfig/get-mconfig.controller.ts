@@ -10,7 +10,7 @@ import { MconfigsService } from '~backend/services/mconfigs.service';
 import { MembersService } from '~backend/services/members.service';
 import { ModelsService } from '~backend/services/models.service';
 import { ProjectsService } from '~backend/services/projects.service';
-import { WrapToApiService } from '~backend/services/wrap-to-api.service';
+import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -29,7 +29,7 @@ export class GetMconfigController {
     private membersService: MembersService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapToApiService
+    private wrapToApiService: WrapEnxToApiService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetMconfig)

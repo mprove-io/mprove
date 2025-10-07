@@ -55,7 +55,7 @@ import { OrgsService } from './services/orgs.service';
 import { ProjectsService } from './services/projects.service';
 import { TabService } from './services/tab.service';
 import { UsersService } from './services/users.service';
-import { WrapToApiService } from './services/wrap-to-api.service';
+import { WrapEnxToApiService } from './services/wrap-to-api.service';
 
 let retry = require('async-retry');
 
@@ -243,7 +243,7 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
 })
 export class AppModule implements OnModuleInit {
   constructor(
-    private wrapToApiService: WrapToApiService,
+    private wrapToApiService: WrapEnxToApiService,
     private usersService: UsersService,
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
