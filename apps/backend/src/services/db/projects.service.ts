@@ -112,7 +112,7 @@ export class ProjectsService {
 
   tabToEnt(project: ProjectTab): ProjectEnt {
     let projectEnt: ProjectEnt = {
-      ...project,
+      // ...project,
       st: this.tabService.encrypt({ data: project.st }),
       lt: this.tabService.encrypt({ data: project.lt })
     };

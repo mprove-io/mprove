@@ -7,7 +7,6 @@ import {
   dashboardsTable
 } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
@@ -16,7 +15,9 @@ import {
   DashboardSt,
   DashboardTab
 } from '~backend/drizzle/postgres/tabs/dashboard-tab';
+import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
 import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '~common/constants/top';
@@ -32,11 +33,19 @@ import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
+import { MconfigsService } from './mconfigs.service';
+import { MembersService } from './members.service';
+import { ModelsService } from './models.service';
+import { QueriesService } from './queries.service';
 
 @Injectable()
 export class DashboardsService {
   constructor(
     private tabService: TabService,
+    private modelsService: ModelsService,
+    private mconfigsService: MconfigsService,
+    private membersService: MembersService,
+    private queriesService: QueriesService,
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -147,7 +156,7 @@ export class DashboardsService {
 
   tabToEnt(dashboard: DashboardTab): DashboardEnt {
     let dashboardEnt: DashboardEnt = {
-      ...dashboard,
+      // ...dashboard,
       st: this.tabService.encrypt({ data: dashboard.st }),
       lt: this.tabService.encrypt({ data: dashboard.lt })
     };
@@ -203,17 +212,15 @@ export class DashboardsService {
 
   async getDashboardXCheckAccess(item: {
     projectId: string;
-    dashboard: DashboardEnt;
-    member: MemberEnt;
-    user: UserEnt;
+    dashboard: DashboardTab;
+    userMember: MemberTab;
     bridge: BridgeEnt;
   }): Promise<DashboardX> {
-    let { projectId, dashboard, member, user, bridge } = item;
+    let { projectId, dashboard, userMember, bridge } = item;
 
     let isAccessGranted = checkAccess({
-      userAlias: user.alias,
-      member: member,
-      entity: dashboard
+      member: userMember,
+      accessRoles: dashboard.st.accessRoles
     });
 
     if (isAccessGranted === false) {
@@ -222,7 +229,8 @@ export class DashboardsService {
       });
     }
 
-    let mconfigIds = dashboard.tiles.map(x => x.mconfigId);
+    let mconfigIds = dashboard.st.tiles.map(x => x.mconfigId);
+
     let mconfigs =
       mconfigIds.length === 0
         ? []
@@ -230,7 +238,7 @@ export class DashboardsService {
             where: inArray(mconfigsTable.mconfigId, mconfigIds)
           });
 
-    let queryIds = dashboard.tiles.map(x => x.queryId);
+    let queryIds = dashboard.st.tiles.map(x => x.queryId);
     let queries =
       queryIds.length === 0
         ? []
@@ -245,27 +253,32 @@ export class DashboardsService {
       where: eq(modelsTable.structId, bridge.structId)
     });
 
-    let apiModels = models.map(model =>
-      this.wrapToApiService.wrapEnxToApiModel({
-        model: model,
-        hasAccess: checkAccess({
-          userAlias: user.alias,
-          member: member,
-          entity: model
+    let modelTabs = models.map(x => this.modelsService.entToTab(x));
+
+    let apiModels = modelTabs.map(modelTab =>
+      this.modelsService.tabToApi({
+        model: modelTab,
+        hasAccess: checkModelAccess({
+          member: userMember,
+          modelAccessRoles: modelTab.st.accessRoles
         })
       })
     );
 
-    let dashboardX = this.wrapToApiService.wrapToApiDashboard({
+    let dashboardX = this.tabToApi({
       dashboard: dashboard,
-      mconfigs: mconfigs.map(x =>
-        this.wrapToApiService.wrapToApiMconfig({
-          mconfig: x,
-          modelFields: apiModels.find(m => m.modelId === x.modelId).fields
-        })
-      ),
-      queries: queries.map(x => this.wrapToApiService.wrapToApiQuery(x)),
-      member: this.wrapToApiService.wrapToApiMember(member),
+      mconfigs: mconfigs
+        .map(x => this.mconfigsService.entToTab(x))
+        .map(x =>
+          this.mconfigsService.tabToApi({
+            mconfig: x,
+            modelFields: apiModels.find(m => m.modelId === x.modelId).fields
+          })
+        ),
+      queries: queries
+        .map(x => this.queriesService.entToTab(x))
+        .map(x => this.queriesService.tabToApi({ query: x })),
+      member: this.membersService.tabToApi({ member: userMember }),
       models: apiModels,
       isAddMconfigAndQuery: true
     });
@@ -276,7 +289,7 @@ export class DashboardsService {
   async getDashboardParts(item: {
     structId: string;
     user: UserEnt;
-    userMember: MemberEnt;
+    userMember: MemberTab;
     newDashboard: Dashboard;
   }): Promise<any> {
     let { structId, user, userMember, newDashboard } = item;
@@ -286,11 +299,12 @@ export class DashboardsService {
         dashboardId: dashboardsTable.dashboardId,
         draft: dashboardsTable.draft,
         creatorId: dashboardsTable.creatorId,
-        filePath: dashboardsTable.filePath,
-        accessRoles: dashboardsTable.accessRoles,
-        title: dashboardsTable.title,
-        fields: dashboardsTable.fields,
-        tiles: dashboardsTable.tiles
+        st: dashboardsTable.st
+        // filePath: dashboardsTable.filePath,
+        // accessRoles: dashboardsTable.accessRoles,
+        // title: dashboardsTable.title,
+        // fields: dashboardsTable.fields,
+        // tiles: dashboardsTable.tiles
       })
       .from(dashboardsTable)
       .where(
@@ -303,11 +317,12 @@ export class DashboardsService {
         )
       )) as DashboardEnt[];
 
-    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
+    let dashboardTabParts = dashboardParts.map(x => this.entToTab(x));
+
+    let dashboardPartsGrantedAccess = dashboardTabParts.filter(x =>
       checkAccess({
-        userAlias: user.alias,
         member: userMember,
-        entity: x
+        accessRoles: x.st.accessRoles
       })
     );
 
@@ -317,9 +332,10 @@ export class DashboardsService {
     let models = (await this.db.drizzle
       .select({
         modelId: modelsTable.modelId,
-        accessRoles: modelsTable.accessRoles,
         connectionId: modelsTable.connectionId,
-        connectionType: modelsTable.connectionType
+        connectionType: modelsTable.connectionType,
+        st: modelsTable.st
+        // accessRoles: modelsTable.accessRoles,
       })
       .from(modelsTable)
       .where(
@@ -329,22 +345,25 @@ export class DashboardsService {
         )
       )) as ModelEnt[];
 
+    let modelTabs = models.map(x => this.modelsService.entToTab(x));
+
+    let apiModels = modelTabs.map(modelTab =>
+      this.modelsService.tabToApi({
+        model: modelTab,
+        hasAccess: checkModelAccess({
+          member: userMember,
+          modelAccessRoles: modelTab.st.accessRoles
+        })
+      })
+    );
+
     let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
-      this.wrapToApiService.wrapToApiDashboard({
+      this.tabToApi({
         dashboard: x,
         mconfigs: [],
         queries: [],
-        member: this.wrapToApiService.wrapToApiMember(userMember),
-        models: models.map(model =>
-          this.wrapToApiService.wrapEnxToApiModel({
-            model: model,
-            hasAccess: checkAccess({
-              userAlias: user.alias,
-              member: userMember,
-              entity: model
-            })
-          })
-        ),
+        member: this.membersService.tabToApi({ member: userMember }),
+        models: apiModels,
         isAddMconfigAndQuery: false
       })
     );

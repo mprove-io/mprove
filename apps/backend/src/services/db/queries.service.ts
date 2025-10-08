@@ -129,7 +129,7 @@ export class QueriesService {
 
   tabToEnt(query: QueryTab): QueryEnt {
     let queryEnt: QueryEnt = {
-      ...query,
+      // ...query,
       st: this.tabService.encrypt({ data: query.st }),
       lt: this.tabService.encrypt({ data: query.lt })
     };

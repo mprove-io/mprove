@@ -6,14 +6,15 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
-import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import { ConnectionSt } from '~backend/drizzle/postgres/tabs/connection-tab';
 import {
   MconfigLt,
   MconfigSt,
   MconfigTab
 } from '~backend/drizzle/postgres/tabs/mconfig-tab';
+import { ModelTab } from '~backend/drizzle/postgres/tabs/model-tab';
+import { ProjectTab } from '~backend/drizzle/postgres/tabs/project-tab';
+import { StructTab } from '~backend/drizzle/postgres/tabs/struct-tab';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
 import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -127,7 +128,7 @@ export class MconfigsService {
 
   tabToEnt(mconfig: MconfigTab): MconfigEnt {
     let mconfigEnt: MconfigEnt = {
-      ...mconfig,
+      // ...mconfig,
       st: this.tabService.encrypt({ data: mconfig.st }),
       lt: this.tabService.encrypt({ data: mconfig.lt })
     };
@@ -169,10 +170,10 @@ export class MconfigsService {
   }
 
   async prepStoreMconfigQuery(item: {
-    struct: StructEnt;
-    project: ProjectEnt;
+    struct: StructTab;
+    project: ProjectTab;
     envId: string;
-    model: ModelEnt;
+    model: ModelTab;
     mconfig: Mconfig;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;

@@ -85,7 +85,7 @@ export class UsersService {
 
   tabToEnt(user: UserTab): UserEnt {
     let userEnt: UserEnt = {
-      ...user,
+      // ...user,
       st: this.tabService.encrypt({ data: user.st }),
       lt: this.tabService.encrypt({ data: user.lt })
     };

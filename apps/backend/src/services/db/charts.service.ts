@@ -42,8 +42,8 @@ export class ChartsService {
     let { chart, mconfigs, queries, member, isAddMconfigAndQuery, models } =
       item;
 
-    let filePathArray = isDefined(chart.st.filePath)
-      ? chart.st.filePath.split('/')
+    let filePathArray = isDefined(chart.filePath)
+      ? chart.filePath.split('/')
       : [];
 
     let usersFolderIndex = filePathArray.findIndex(
@@ -65,14 +65,14 @@ export class ChartsService {
       creatorId: chart.creatorId,
       author: author,
       canEditOrDeleteChart: canEditOrDeleteChart,
-      title: chart.st.title,
+      title: chart.title,
       chartType: chart.chartType,
       modelId: chart.modelId,
-      modelLabel: chart.st.modelLabel,
-      filePath: chart.st.filePath,
-      accessRoles: chart.st.accessRoles,
+      modelLabel: chart.modelLabel,
+      filePath: chart.filePath,
+      accessRoles: chart.accessRoles,
       tiles: makeTilesX({
-        tiles: chart.st.tiles,
+        tiles: chart.tiles,
         mconfigs: mconfigs,
         queries: queries,
         isAddMconfigAndQuery: isAddMconfigAndQuery,
@@ -91,6 +91,29 @@ export class ChartsService {
   }): ChartTab {
     let { chart, chartType } = item;
 
+    let chartTab: ChartTab = {
+      chartFullId: this.hashService.makeChartFullId({
+        structId: chart.structId,
+        chartId: chart.chartId
+      }),
+      structId: chart.structId,
+      chartId: chart.chartId,
+      modelId: chart.modelId,
+      creatorId: chart.creatorId,
+      chartType: chartType,
+      draft: chart.draft,
+      title: chart.title,
+      modelLabel: chart.modelLabel,
+      filePath: chart.filePath,
+      accessRoles: chart.accessRoles,
+      tiles: chart.tiles,
+      serverTs: chart.serverTs
+    };
+
+    return chartTab;
+  }
+
+  tabToEnt(chart: ChartTab): ChartEnt {
     let chartSt: ChartSt = {
       title: chart.title,
       modelLabel: chart.modelLabel,
@@ -101,30 +124,17 @@ export class ChartsService {
 
     let chartLt: ChartLt = {};
 
-    let chartTab: ChartTab = {
-      chartFullId: this.hashService.makeChartFullId({
-        structId: chart.structId,
-        chartId: chart.chartId
-      }),
+    let chartEnt: ChartEnt = {
+      chartFullId: chart.chartFullId,
       structId: chart.structId,
       chartId: chart.chartId,
-      draft: chart.draft,
-      creatorId: chart.creatorId,
-      chartType: chartType,
       modelId: chart.modelId,
-      st: chartSt,
-      lt: chartLt,
+      creatorId: chart.creatorId,
+      chartType: chart.chartType,
+      draft: chart.draft,
+      st: this.tabService.encrypt({ data: chartSt }),
+      lt: this.tabService.encrypt({ data: chartLt }),
       serverTs: chart.serverTs
-    };
-
-    return chartTab;
-  }
-
-  tabToEnt(chart: ChartTab): ChartEnt {
-    let chartEnt: ChartEnt = {
-      ...chart,
-      st: this.tabService.encrypt({ data: chart.st }),
-      lt: this.tabService.encrypt({ data: chart.lt })
     };
 
     return chartEnt;
@@ -133,10 +143,10 @@ export class ChartsService {
   entToTab(chart: ChartEnt): ChartTab {
     let chartTab: ChartTab = {
       ...chart,
-      st: this.tabService.decrypt<ChartSt>({
+      ...this.tabService.decrypt<ChartSt>({
         encryptedString: chart.st
       }),
-      lt: this.tabService.decrypt<ChartLt>({
+      ...this.tabService.decrypt<ChartLt>({
         encryptedString: chart.lt
       })
     };

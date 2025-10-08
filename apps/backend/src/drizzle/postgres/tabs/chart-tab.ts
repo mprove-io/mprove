@@ -1,28 +1,16 @@
-import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
 import { Tile } from '~common/interfaces/blockml/tile';
 import { ChartEnt } from '../schema/charts';
 
-export interface ChartTab extends Omit<ChartEnt, 'st' | 'lt'> {
-  st: ChartSt;
-  lt: ChartLt;
-}
+export interface ChartTab
+  extends Omit<ChartEnt, 'st' | 'lt'>,
+    ChartSt,
+    ChartLt {}
 
 export class ChartSt {
-  @IsString()
   title: string;
-
-  @IsString()
   modelLabel: string;
-
-  @IsString()
   filePath: string;
-
-  @IsString({ each: true })
   accessRoles: string[];
-
-  @ValidateNested()
-  @Type(() => Tile)
   tiles: Tile[];
 }
 

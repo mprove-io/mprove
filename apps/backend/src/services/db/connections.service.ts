@@ -84,7 +84,7 @@ export class ConnectionsService {
   }): ProjectConnection {
     let { connection, isIncludePasswords } = item;
 
-    let options = connection.st.options;
+    let options = connection.options;
 
     let apiProjectConnection: ProjectConnection = {
       projectId: connection.projectId,
@@ -220,10 +220,22 @@ export class ConnectionsService {
   }
 
   tabToEnt(connection: ConnectionTab): ConnectionEnt {
+    let connectionSt: ConnectionSt = { options: connection.options };
+    let connectionLt: ConnectionLt = {};
+
     let connectionEnt: ConnectionEnt = {
-      ...connection,
-      st: this.tabService.encrypt({ data: connection.st }),
-      lt: this.tabService.encrypt({ data: connection.lt })
+      connectionFullId: this.hashService.makeConnectionFullId({
+        projectId: connection.projectId,
+        envId: connection.envId,
+        connectionId: connection.connectionId
+      }),
+      projectId: connection.projectId,
+      envId: connection.envId,
+      connectionId: connection.connectionId,
+      type: connection.type,
+      st: this.tabService.encrypt({ data: connectionSt }),
+      lt: this.tabService.encrypt({ data: connectionLt }),
+      serverTs: undefined
     };
 
     return connectionEnt;

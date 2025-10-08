@@ -61,7 +61,7 @@ export class StructsService {
 
   tabToEnt(struct: StructTab): StructEnt {
     let structEnt: StructEnt = {
-      ...struct,
+      // ...struct,
       st: this.tabService.encrypt({ data: struct.st }),
       lt: this.tabService.encrypt({ data: struct.lt })
     };

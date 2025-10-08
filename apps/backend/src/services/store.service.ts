@@ -5,6 +5,8 @@ import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { MconfigTab } from '~backend/drizzle/postgres/tabs/mconfig-tab';
+import { ModelTab } from '~backend/drizzle/postgres/tabs/model-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -50,8 +52,8 @@ export class StoreService {
   ) {}
 
   async adjustMconfig(item: {
-    mconfig: Mconfig;
-    model: Model;
+    mconfig: MconfigTab;
+    model: ModelTab;
     caseSensitiveStringFilters: boolean;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
@@ -72,20 +74,20 @@ export class StoreService {
     let newMconfig = makeCopy(mconfig);
 
     //
-    newMconfig.dateRangeIncludesRightSide =
-      isUndefined(model.storeContent.date_range_includes_right_side) ||
+    newMconfig.lt.dateRangeIncludesRightSide =
+      isUndefined(model.lt.storeContent.date_range_includes_right_side) ||
       toBooleanFromLowercaseString(
-        model.storeContent.date_range_includes_right_side
+        model.lt.storeContent.date_range_includes_right_side
       ) === true
         ? true
         : false;
 
     // add required filters
-    model.storeContent.fields
+    model.lt.storeContent.fields
       .filter(x => x.fieldClass === FieldClassEnum.Filter)
       .forEach(storeFilter => {
         if (toBooleanFromLowercaseString(storeFilter.required) === true) {
-          let selectedFilter = newMconfig.filters.find(
+          let selectedFilter = newMconfig.lt.filters.find(
             x => x.fieldId === `${storeFilter.name}`
           );
 
@@ -102,7 +104,7 @@ export class StoreService {
               fractions: [newFraction]
             };
 
-            newMconfig.filters.push(newFilter);
+            newMconfig.lt.filters.push(newFilter);
 
             selectedFilter = newFilter;
           }
@@ -132,7 +134,7 @@ export class StoreService {
     // console.log('newMconfig.filters');
     // console.log(newMconfig.filters);
 
-    newMconfig.filters.forEach(filter => {
+    newMconfig.lt.filters.forEach(filter => {
       // console.log('filter.fieldId');
       // console.log(filter.fieldId);
 
@@ -155,7 +157,7 @@ export class StoreService {
             // console.log('control');
             // console.log(control);
 
-            let storeFilt = model.storeContent.fields
+            let storeFilt = model.lt.storeContent.fields
               .filter(
                 storeField => storeField.fieldClass === FieldClassEnum.Filter
               )
@@ -190,7 +192,7 @@ export class StoreService {
                 target = isDefined(metricsStartDateYYYYMMDD)
                   ? metricsStartDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
-                      timezone: mconfig.timezone,
+                      timezone: mconfig.lt.timezone,
                       deltaDays: -1
                     });
               } else if (
@@ -200,12 +202,12 @@ export class StoreService {
                 target = isDefined(metricsEndDateYYYYMMDD)
                   ? metricsEndDateYYYYMMDD
                   : getYYYYMMDDCurrentDateByTimezone({
-                      timezone: mconfig.timezone,
+                      timezone: mconfig.lt.timezone,
                       deltaDays: 1
                     });
               } else if (reference === 'DATE_TODAY') {
                 target = getYYYYMMDDCurrentDateByTimezone({
-                  timezone: mconfig.timezone,
+                  timezone: mconfig.lt.timezone,
                   deltaDays: 0
                 });
               } else if (reference === 'PROJECT_CONFIG_CASE_SENSITIVE') {
@@ -232,7 +234,7 @@ export class StoreService {
 
     let addSelect: string[] = [];
 
-    model.storeContent.fields
+    model.lt.storeContent.fields
       .filter(
         storeField =>
           storeField.fieldClass !== FieldClassEnum.Filter &&

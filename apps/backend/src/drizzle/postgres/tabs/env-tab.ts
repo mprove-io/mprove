@@ -1,16 +1,9 @@
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
 import { Ev } from '~common/interfaces/backend/ev';
 import { EnvEnt } from '../schema/envs';
 
-export interface EnvTab extends Omit<EnvEnt, 'st' | 'lt'> {
-  st: EnvSt;
-  lt: EnvLt;
-}
+export interface EnvTab extends Omit<EnvEnt, 'st' | 'lt'>, EnvSt, EnvLt {}
 
 export class EnvSt {
-  @ValidateNested()
-  @Type(() => Ev)
   evs: Ev[];
 }
 

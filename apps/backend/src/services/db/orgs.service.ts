@@ -83,7 +83,7 @@ export class OrgsService {
 
   tabToEnt(org: OrgTab): OrgEnt {
     let orgEnt: OrgEnt = {
-      ...org,
+      // ...org,
       st: this.tabService.encrypt({ data: org.st }),
       lt: this.tabService.encrypt({ data: org.lt })
     };

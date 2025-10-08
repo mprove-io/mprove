@@ -125,7 +125,7 @@ export class MembersService {
 
   tabToEnt(member: MemberTab): MemberEnt {
     let memberEnt: MemberEnt = {
-      ...member,
+      // ...member,
       st: this.tabService.encrypt({ data: member.st }),
       lt: this.tabService.encrypt({ data: member.lt })
     };

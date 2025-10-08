@@ -246,7 +246,7 @@ export class ReportsService {
 
   tabToEnt(report: ReportTab): ReportEnt {
     let reportEnt: ReportEnt = {
-      ...report,
+      // ...report,
       st: this.tabService.encrypt({ data: report.st }),
       lt: this.tabService.encrypt({ data: report.lt })
     };

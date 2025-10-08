@@ -1,16 +1,9 @@
-import { IsString } from 'class-validator';
 import { OrgEnt } from '../schema/orgs';
 
-export interface OrgTab extends Omit<OrgEnt, 'st' | 'lt'> {
-  st: OrgSt;
-  lt: OrgLt;
-}
+export interface OrgTab extends Omit<OrgEnt, 'st' | 'lt'>, OrgSt, OrgLt {}
 
 export class OrgSt {
-  @IsString()
   name: string;
-
-  @IsString()
   ownerEmail: string;
 }
 

@@ -34,19 +34,19 @@ export class ModelsService {
       structId: model.structId,
       modelId: model.modelId,
       type: model.type,
-      source: model.lt.source,
-      malloyModelDef: model.lt.malloyModelDef,
+      source: model.source,
+      malloyModelDef: model.malloyModelDef,
       hasAccess: hasAccess,
       connectionId: model.connectionId,
       connectionType: model.connectionType,
-      filePath: model.lt.filePath,
-      fileText: model.lt.fileText,
-      storeContent: model.lt.storeContent,
-      dateRangeIncludesRightSide: model.lt.dateRangeIncludesRightSide,
-      accessRoles: model.st.accessRoles,
-      label: model.lt.label,
-      fields: model.lt.fields,
-      nodes: model.lt.nodes,
+      filePath: model.filePath,
+      fileText: model.fileText,
+      storeContent: model.storeContent,
+      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
+      accessRoles: model.accessRoles,
+      label: model.label,
+      fields: model.fields,
+      nodes: model.nodes,
       serverTs: model.serverTs
     };
 
@@ -54,6 +54,33 @@ export class ModelsService {
   }
 
   apiToTab(model: Model): ModelTab {
+    let modelTab: ModelTab = {
+      modelFullId: this.hashService.makeModelFullId({
+        structId: model.structId,
+        modelId: model.modelId
+      }),
+      structId: model.structId,
+      modelId: model.modelId,
+      type: model.type,
+      connectionId: model.connectionId,
+      connectionType: model.connectionType,
+      accessRoles: model.accessRoles,
+      source: model.source,
+      malloyModelDef: model.malloyModelDef,
+      filePath: model.filePath,
+      fileText: model.fileText,
+      storeContent: model.storeContent,
+      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
+      label: model.label,
+      fields: model.fields,
+      nodes: model.nodes,
+      serverTs: model.serverTs
+    };
+
+    return modelTab;
+  }
+
+  tabToEnt(model: ModelTab): ModelEnt {
     let modelSt: ModelSt = {
       accessRoles: model.accessRoles
     };
@@ -70,29 +97,16 @@ export class ModelsService {
       nodes: model.nodes
     };
 
-    let modelTab: ModelTab = {
-      modelFullId: this.hashService.makeModelFullId({
-        structId: model.structId,
-        modelId: model.modelId
-      }),
+    let modelEnt: ModelEnt = {
+      modelFullId: model.modelFullId,
       structId: model.structId,
       modelId: model.modelId,
       type: model.type,
       connectionId: model.connectionId,
       connectionType: model.connectionType,
-      st: modelSt,
-      lt: modelLt,
+      st: this.tabService.encrypt({ data: modelSt }),
+      lt: this.tabService.encrypt({ data: modelLt }),
       serverTs: model.serverTs
-    };
-
-    return modelTab;
-  }
-
-  tabToEnt(model: ModelTab): ModelEnt {
-    let modelEnt: ModelEnt = {
-      ...model,
-      st: this.tabService.encrypt({ data: model.st }),
-      lt: this.tabService.encrypt({ data: model.lt })
     };
 
     return modelEnt;
@@ -101,10 +115,10 @@ export class ModelsService {
   entToTab(model: ModelEnt): ModelTab {
     let modelTab: ModelTab = {
       ...model,
-      st: this.tabService.decrypt<ModelSt>({
+      ...this.tabService.decrypt<ModelSt>({
         encryptedString: model.st
       }),
-      lt: this.tabService.decrypt<ModelLt>({
+      ...this.tabService.decrypt<ModelLt>({
         encryptedString: model.lt
       })
     };
@@ -112,24 +126,27 @@ export class ModelsService {
     return modelTab;
   }
 
-  async getModelCheckExists(item: { modelId: string; structId: string }) {
+  async getModelTabCheckExists(item: {
+    modelId: string;
+    structId: string;
+  }): Promise<ModelTab> {
     let { modelId, structId } = item;
 
-    let model = await this.db.drizzle.query.modelsTable.findFirst({
+    let modelEnt = await this.db.drizzle.query.modelsTable.findFirst({
       where: and(
         eq(modelsTable.structId, structId),
         eq(modelsTable.modelId, modelId)
       )
     });
 
-    if (isUndefined(model)) {
+    if (isUndefined(modelEnt)) {
       throw new ServerError({
         message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
       });
     }
 
-    let modelEnx: ModelEnx = this.wrapToEnxService.wrapToEnxModel(model);
+    let modelTab: ModelTab = this.entToTab(modelEnt);
 
-    return modelEnx;
+    return modelTab;
   }
 }

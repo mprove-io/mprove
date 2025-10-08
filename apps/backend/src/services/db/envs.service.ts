@@ -23,10 +23,14 @@ import { ProjectConnection } from '~common/interfaces/backend/project-connection
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
+import { ConnectionsService } from './connections.service';
+import { MembersService } from './members.service';
 
 @Injectable()
 export class EnvsService {
   constructor(
+    private connectionsService: ConnectionsService,
+    private membersService: MembersService,
     private tabService: TabService,
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
@@ -138,7 +142,7 @@ export class EnvsService {
 
   tabToEnt(env: EnvTab): EnvEnt {
     let orgEnt: EnvEnt = {
-      ...env,
+      // ...env,
       st: this.tabService.encrypt({ data: env.st }),
       lt: this.tabService.encrypt({ data: env.lt })
     };
@@ -207,38 +211,44 @@ export class EnvsService {
   async getApiEnvs(item: { projectId: string }) {
     let { projectId } = item;
 
-    let envs = await this.db.drizzle.query.envsTable.findMany({
+    let envEnts: EnvEnt[] = await this.db.drizzle.query.envsTable.findMany({
       where: eq(connectionsTable.projectId, projectId)
     });
 
-    let connections = await this.db.drizzle.query.connectionsTable.findMany({
+    let envTabs: EnvTab[] = envEnts.map(x => this.entToTab(x));
+
+    let connectionEnts = await this.db.drizzle.query.connectionsTable.findMany({
       where: and(
         eq(connectionsTable.projectId, projectId),
         inArray(
           connectionsTable.envId,
-          envs.map(x => x.envId)
+          envEnts.map(x => x.envId)
         )
       )
     });
 
-    let members = await this.db.drizzle.query.membersTable.findMany({
+    let memberEnts = await this.db.drizzle.query.membersTable.findMany({
       where: eq(membersTable.projectId, projectId)
     });
 
-    let prodEnv = envs.find(x => x.envId === PROJECT_ENV_PROD);
+    let memberTabs = memberEnts.map(x => this.membersService.entToTab(x));
 
-    let apiEnvs = envs
+    let prodEnvEnt = envEnts.find(x => x.envId === PROJECT_ENV_PROD);
+
+    let prodEnvTab = this.entToTab(prodEnvEnt);
+
+    let apiEnvs = envTabs
       .map(x => {
-        let envConnectionIds = connections
+        let envConnectionIds = connectionEnts
           .filter(y => y.envId === x.envId)
           .map(connection => connection.connectionId);
 
-        return this.wrapToApiService.wrapToApiEnv({
+        let apiEnv: Env = this.tabToApi({
           env: x,
           envConnectionIds: envConnectionIds,
           fallbackConnectionIds:
             x.isFallbackToProdConnections === true
-              ? connections
+              ? connectionEnts
                   .filter(
                     y =>
                       y.envId === PROJECT_ENV_PROD &&
@@ -248,15 +258,17 @@ export class EnvsService {
               : [],
           fallbackEvs:
             x.isFallbackToProdVariables === true
-              ? prodEnv.evs.filter(
-                  y => x.evs.map(ev => ev.evId).indexOf(y.evId) < 0
+              ? prodEnvTab.st.evs.filter(
+                  y => x.st.evs.map(ev => ev.evId).indexOf(y.evId) < 0
                 )
               : [],
           envMembers:
             x.envId === PROJECT_ENV_PROD
               ? []
-              : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
+              : memberTabs.filter(m => x.memberIds.indexOf(m.memberId) > -1)
         });
+
+        return apiEnv;
       })
       .sort((a, b) =>
         a.envId !== PROJECT_ENV_PROD && b.envId === PROJECT_ENV_PROD
@@ -298,8 +310,8 @@ export class EnvsService {
 
     let connectionsWithFallback: ProjectConnection[] =
       connectionsEntsWithFallback.map(x =>
-        this.wrapToApiService.wrapToApiProjectConnection({
-          connection: x,
+        this.connectionsService.tabToApi({
+          connection: this.connectionsService.entToTab(x),
           isIncludePasswords: true
         })
       );

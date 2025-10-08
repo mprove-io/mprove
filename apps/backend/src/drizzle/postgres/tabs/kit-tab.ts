@@ -1,9 +1,6 @@
 import { KitEnt } from '../schema/kits';
 
-export interface KitTab extends Omit<KitEnt, 'st' | 'lt'> {
-  st: KitSt;
-  lt: KitLt;
-}
+export interface KitTab extends Omit<KitEnt, 'st' | 'lt'>, KitSt, KitLt {}
 
 export class KitSt {
   emptyData?: number;
