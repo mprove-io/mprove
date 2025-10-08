@@ -22,14 +22,9 @@ export class WrapConnectionService {
 
   tabToApi(item: {
     connection: ConnectionTab;
-    // isIncludePasswords: boolean;
+    isIncludePasswords: boolean;
   }): ProjectConnection {
-    let {
-      connection
-      // isIncludePasswords
-    } = item;
-
-    let isIncludePasswords = !!false; // TODO: remove
+    let { connection, isIncludePasswords } = item;
 
     let options = connection.st.options;
 

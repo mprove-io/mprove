@@ -10,7 +10,7 @@ export class WrapBridgeService {
     private hashService: HashService
   ) {}
 
-  makeBridge(item: {
+  makeBridgeEnt(item: {
     projectId: string;
     repoId: string;
     branchId: string;

@@ -10,7 +10,7 @@ export class WrapBranchService {
     private hashService: HashService
   ) {}
 
-  makeBranch(item: {
+  makeBranchEnt(item: {
     projectId: string;
     repoId: string;
     branchId: string;

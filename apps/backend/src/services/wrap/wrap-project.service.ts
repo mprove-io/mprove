@@ -6,6 +6,7 @@ import {
   ProjectTab
 } from '~backend/drizzle/postgres/tabs/project-tab';
 import { Project } from '~common/interfaces/backend/project';
+import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -17,18 +18,14 @@ export class WrapProjectService {
   ) {}
 
   wrapToApiProjectsItem(item: {
-    project: ProjectEnt;
+    project: ProjectTab;
   }): ProjectsItem {
     let { project } = item;
 
-    let projectTab = this.tabService.decrypt<ProjectLt>({
-      encryptedString: project.tab
-    });
-
     let apiProjectItem: ProjectsItem = {
       projectId: project.projectId,
-      name: projectTab.name,
-      defaultBranch: projectTab.defaultBranch
+      name: project.st.name,
+      defaultBranch: project.lt.defaultBranch
     };
 
     return apiProjectItem;

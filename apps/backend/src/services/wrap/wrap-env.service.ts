@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
-import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
 import { EnvLt, EnvSt, EnvTab } from '~backend/drizzle/postgres/tabs/env-tab';
+import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
+import { makeFullName } from '~backend/functions/make-full-name';
 import { Env } from '~common/interfaces/backend/env';
+import { EnvUser } from '~common/interfaces/backend/env-user';
+import { EnvsItem } from '~common/interfaces/backend/envs-item';
 import { Ev } from '~common/interfaces/backend/ev';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -14,7 +17,7 @@ export class WrapEnvService {
     private hashService: HashService
   ) {}
 
-  wrapToApiEnvsItem(item: { env: EnvEnt }): EnvsItem {
+  wrapToApiEnvsItem(item: { env: EnvTab }): EnvsItem {
     let { env } = item;
 
     let apiEnvsItem: EnvsItem = {
@@ -25,21 +28,17 @@ export class WrapEnvService {
     return apiEnvsItem;
   }
 
-  wrapToApiEnvUser(item: { member: MemberEnt }): EnvUser {
+  wrapToApiEnvUser(item: { member: MemberTab }): EnvUser {
     let { member } = item;
-
-    let memberTab = this.tabService.decrypt<MemberTab>({
-      encryptedString: member.tab
-    });
 
     let apiEnvUser: EnvUser = {
       userId: member.memberId,
-      alias: memberTab.alias,
-      firstName: memberTab.firstName,
-      lastName: memberTab.lastName,
+      alias: member.st.alias,
+      firstName: member.st.firstName,
+      lastName: member.st.lastName,
       fullName: makeFullName({
-        firstName: memberTab.firstName,
-        lastName: memberTab.lastName
+        firstName: member.st.firstName,
+        lastName: member.st.lastName
       })
     };
 
@@ -51,7 +50,7 @@ export class WrapEnvService {
     envConnectionIds: string[];
     fallbackConnectionIds: string[];
     fallbackEvs: Ev[];
-    envMembers: MemberEnt[];
+    envMembers: MemberTab[];
   }): Env {
     let {
       env,
@@ -61,29 +60,19 @@ export class WrapEnvService {
       envMembers
     } = item;
 
-    let envTab = this.tabService.decrypt<EnvTab>({
-      encryptedString: env.tab
-    });
-
-    let envUsers: EnvUser[] = [];
-
-    envMembers.forEach(member => {
-      let memberTab = this.tabService.decrypt<MemberTab>({
-        encryptedString: member.tab
-      });
-
+    let envUsers: EnvUser[] = envMembers.map(member => {
       let envUser: EnvUser = {
         userId: member.memberId,
-        alias: memberTab.alias,
-        firstName: memberTab.firstName,
-        lastName: memberTab.lastName,
+        alias: member.st.alias,
+        firstName: member.st.firstName,
+        lastName: member.st.lastName,
         fullName: makeFullName({
-          firstName: memberTab.firstName,
-          lastName: memberTab.lastName
+          firstName: member.st.firstName,
+          lastName: member.st.lastName
         })
       };
 
-      envUsers.push(envUser);
+      return envUser;
     });
 
     let apiEnv: Env = {
@@ -95,9 +84,9 @@ export class WrapEnvService {
         ...envConnectionIds,
         ...fallbackConnectionIds
       ].sort((a, b) => (a > b ? 1 : b > a ? -1 : 0)),
-      evs: envTab.evs,
+      evs: env.st.evs,
       fallbackEvIds: fallbackEvs.map(x => x.evId),
-      evsWithFallback: [...envTab.evs, ...fallbackEvs].sort((a, b) =>
+      evsWithFallback: [...env.st.evs, ...fallbackEvs].sort((a, b) =>
         a.evId > b.evId ? 1 : b.evId > a.evId ? -1 : 0
       ),
       envUsers: envUsers,

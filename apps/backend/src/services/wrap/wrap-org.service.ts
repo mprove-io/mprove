@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { OrgEnt } from '~backend/drizzle/postgres/schema/orgs';
 import { OrgLt, OrgSt, OrgTab } from '~backend/drizzle/postgres/tabs/org-tab';
 import { Org } from '~common/interfaces/backend/org';
+import { OrgsItem } from '~common/interfaces/backend/orgs-item';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -12,16 +13,12 @@ export class WrapOrgService {
     private hashService: HashService
   ) {}
 
-  wrapToApiOrgsItem(item: { org: OrgEnt }): OrgsItem {
+  wrapToApiOrgsItem(item: { org: OrgTab }): OrgsItem {
     let { org } = item;
-
-    let orgTab = this.tabService.decrypt<OrgTab>({
-      encryptedString: org.tab
-    });
 
     let apiOrgsItem: OrgsItem = {
       orgId: org.orgId,
-      name: orgTab.name
+      name: org.st.name
     };
 
     return apiOrgsItem;
