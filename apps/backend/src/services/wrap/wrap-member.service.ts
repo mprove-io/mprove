@@ -7,11 +7,40 @@ import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
 @Injectable()
-export class WrapBridgeService {
+export class WrapMemberService {
   constructor(
     private tabService: TabService,
     private hashService: HashService
   ) {}
+
+  wrapToApiMember(item: { member: MemberEnt }): Member {
+    let { member } = item;
+
+    let memberTab = this.tabService.decrypt<MemberTab>({
+      encryptedString: member.tab
+    });
+
+    let apiMember: Member = {
+      projectId: member.projectId,
+      memberId: member.memberId,
+      email: memberTab.email,
+      alias: memberTab.alias,
+      firstName: memberTab.firstName,
+      lastName: memberTab.lastName,
+      fullName: makeFullName({
+        firstName: memberTab.firstName,
+        lastName: memberTab.lastName
+      }),
+      avatarSmall: undefined,
+      isAdmin: member.isAdmin,
+      isEditor: member.isEditor,
+      isExplorer: member.isExplorer,
+      roles: memberTab.roles,
+      serverTs: member.serverTs
+    };
+
+    return apiMember;
+  }
 
   makeMember(item: {
     projectId: string;

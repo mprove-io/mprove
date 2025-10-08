@@ -16,6 +16,24 @@ export class WrapProjectService {
     private hashService: HashService
   ) {}
 
+  wrapToApiProjectsItem(item: {
+    project: ProjectEnt;
+  }): ProjectsItem {
+    let { project } = item;
+
+    let projectTab = this.tabService.decrypt<ProjectLt>({
+      encryptedString: project.tab
+    });
+
+    let apiProjectItem: ProjectsItem = {
+      projectId: project.projectId,
+      name: projectTab.name,
+      defaultBranch: projectTab.defaultBranch
+    };
+
+    return apiProjectItem;
+  }
+
   tabToApi(item: {
     project: ProjectTab;
     isAddPublicKey: boolean;

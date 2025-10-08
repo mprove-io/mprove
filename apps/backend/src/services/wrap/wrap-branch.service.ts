@@ -4,7 +4,7 @@ import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
 @Injectable()
-export class WrapBridgeService {
+export class WrapBranchService {
   constructor(
     private tabService: TabService,
     private hashService: HashService

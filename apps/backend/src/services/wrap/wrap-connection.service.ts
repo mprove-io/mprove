@@ -166,25 +166,6 @@ export class WrapConnectionService {
     return apiProjectConnection;
   }
 
-  apiToTab(connection: ProjectConnection): ConnectionTab {
-    let connectionTab: ConnectionTab = {
-      connectionFullId: this.hashService.makeConnectionFullId({
-        projectId: connection.projectId,
-        envId: connection.envId,
-        connectionId: connection.connectionId
-      }),
-      projectId: connection.projectId,
-      envId: connection.envId,
-      connectionId: connection.connectionId,
-      type: connection.type,
-      st: { options: connection.options },
-      lt: {},
-      serverTs: undefined
-    };
-
-    return connectionTab;
-  }
-
   entToTab(connection: ConnectionEnt): ConnectionTab {
     let connectionTab: ConnectionTab = {
       ...connection,

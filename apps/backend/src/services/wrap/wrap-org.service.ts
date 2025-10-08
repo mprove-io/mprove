@@ -12,6 +12,21 @@ export class WrapOrgService {
     private hashService: HashService
   ) {}
 
+  wrapToApiOrgsItem(item: { org: OrgEnt }): OrgsItem {
+    let { org } = item;
+
+    let orgTab = this.tabService.decrypt<OrgTab>({
+      encryptedString: org.tab
+    });
+
+    let apiOrgsItem: OrgsItem = {
+      orgId: org.orgId,
+      name: orgTab.name
+    };
+
+    return apiOrgsItem;
+  }
+
   tabToApi(item: { org: OrgTab }): Org {
     let { org } = item;
 
