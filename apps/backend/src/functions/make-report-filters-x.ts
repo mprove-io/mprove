@@ -1,9 +1,9 @@
-import { ReportEnx } from '~backend/drizzle/postgres/schema/reports';
+import { ReportTab } from '~backend/drizzle/postgres/tabs/report-tab';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FilterX } from '~common/interfaces/backend/filter-x';
 
-export function makeReportFiltersX(item: { report: ReportEnx }) {
-  let filtersX: FilterX[] = item.report.tab.fields.map(field => {
+export function makeReportFiltersX(item: { report: ReportTab }) {
+  let filtersX: FilterX[] = item.report.st.fields.map(field => {
     let filterX: FilterX = {
       fieldId: field.id,
       fractions: field.fractions.sort((a, b) => {

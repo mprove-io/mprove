@@ -1,7 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
-import { ReportTab } from '~backend/drizzle/postgres/tabs/report-tab';
+import {
+  ReportLt,
+  ReportSt,
+  ReportTab
+} from '~backend/drizzle/postgres/tabs/report-tab';
+import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
+import { MPROVE_USERS_FOLDER } from '~common/constants/top';
+import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { Member } from '~common/interfaces/backend/member';
+import { ModelX } from '~common/interfaces/backend/model-x';
+import { ReportX } from '~common/interfaces/backend/report-x';
+import { Column } from '~common/interfaces/blockml/column';
+import { Fraction } from '~common/interfaces/blockml/fraction';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { Report } from '~common/interfaces/blockml/report';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { Row } from '~common/interfaces/blockml/row';
 import { HashService } from '../hash.service';
@@ -14,8 +28,68 @@ export class WrapReportService {
     private hashService: HashService
   ) {}
 
-  wrapToApiReport(item: {
-    report: ReportEnt;
+  makeReportEnt(item: {
+    structId: string;
+    reportId: string;
+    projectId: string;
+    creatorId: string;
+    filePath: string;
+    accessRoles: string[];
+    title: string;
+    fields: ReportField[];
+    rows: Row[];
+    chart: MconfigChart;
+    draftCreatedTs?: number;
+    draft: boolean;
+  }): ReportEnt {
+    let {
+      structId,
+      reportId,
+      projectId,
+      creatorId,
+      filePath,
+      accessRoles,
+      title,
+      fields,
+      rows,
+      chart,
+      draft,
+      draftCreatedTs
+    } = item;
+
+    let reportSt: ReportSt = {
+      filePath: filePath,
+      accessRoles: accessRoles,
+      title: title,
+      fields: fields,
+      chart: chart
+    };
+
+    let reportLt: ReportLt = {
+      rows: rows
+    };
+
+    let report: ReportEnt = {
+      reportFullId: this.hashService.makeReportFullId({
+        structId: structId,
+        reportId: reportId
+      }),
+      structId: structId,
+      reportId: reportId,
+      projectId: projectId,
+      creatorId: creatorId,
+      draft: draft,
+      draftCreatedTs: draftCreatedTs,
+      st: this.tabService.encrypt({ data: reportSt }),
+      lt: this.tabService.encrypt({ data: reportLt }),
+      serverTs: undefined
+    };
+
+    return report;
+  }
+
+  tabToApi(item: {
+    report: ReportTab;
     member: Member;
     models: ModelX[];
     timezone: string;
@@ -49,13 +123,10 @@ export class WrapReportService {
       metricsEndDateIncludedYYYYMMDD
     } = item;
 
-    let reportTab = this.tabService.decrypt<ReportTab>({
-      encryptedString: report.tab
-    });
-
     let author;
-    if (isDefined(reportTab.filePath)) {
-      let filePathArray = reportTab.filePath.split('/');
+
+    if (isDefined(report.st.filePath)) {
+      let filePathArray = report.st.filePath.split('/');
 
       let usersFolderIndex = filePathArray.findIndex(
         x => x === MPROVE_USERS_FOLDER
@@ -70,7 +141,7 @@ export class WrapReportService {
     let canEditOrDeleteRep =
       member.isEditor || member.isAdmin || author === member.alias;
 
-    let reportExtendedFilters = makeReportFiltersX(report);
+    let reportExtendedFilters = makeReportFiltersX({ report: report });
 
     let apiReport: ReportX = {
       projectId: report.projectId,
@@ -80,9 +151,9 @@ export class WrapReportService {
       author: author,
       draft: report.draft,
       creatorId: report.creatorId,
-      filePath: reportTab.filePath,
-      accessRoles: reportTab.accessRoles,
-      title: reportTab.title,
+      filePath: report.st.filePath,
+      accessRoles: report.st.accessRoles,
+      title: report.st.title,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
@@ -91,7 +162,7 @@ export class WrapReportService {
       metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
       metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
       metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
-      fields: reportTab.fields.sort((a, b) => {
+      fields: report.st.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
@@ -101,7 +172,7 @@ export class WrapReportService {
         let labelB = b.fieldId.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
-      rows: reportTab.rows.map(x => {
+      rows: report.lt.rows.map(x => {
         x.hasAccessToModel = isDefined(x.mconfig)
           ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess
           : false;
@@ -111,7 +182,7 @@ export class WrapReportService {
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: timeColumnsLength,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
-      chart: reportTab.chart,
+      chart: report.st.chart,
       draftCreatedTs: Number(report.draftCreatedTs),
       serverTs: Number(report.serverTs)
     };
@@ -119,19 +190,22 @@ export class WrapReportService {
     return apiReport;
   }
 
-  wrapToEntityReport(item: { report: Report }): ReportEnt {
+  apiToTab(item: { report: Report }): ReportTab {
     let { report } = item;
 
-    let reportTab: ReportTab = {
+    let reportSt: ReportSt = {
       filePath: report.filePath,
       fields: report.fields,
       accessRoles: report.accessRoles,
       title: report.title,
-      rows: report.rows,
       chart: report.chart
     };
 
-    let reportEnt: ReportEnt = {
+    let reportLt: ReportLt = {
+      rows: report.rows
+    };
+
+    let reportTab: ReportTab = {
       reportFullId: this.hashService.makeReportFullId({
         structId: report.structId,
         reportId: report.reportId
@@ -142,66 +216,35 @@ export class WrapReportService {
       creatorId: report.creatorId,
       draft: report.draft,
       draftCreatedTs: report.draftCreatedTs,
-      tab: this.tabService.encrypt({ data: reportTab }),
+      st: reportSt,
+      lt: reportLt,
       serverTs: report.serverTs
+    };
+
+    return reportTab;
+  }
+
+  tabToEnt(report: ReportTab): ReportEnt {
+    let reportEnt: ReportEnt = {
+      ...report,
+      st: this.tabService.encrypt({ data: report.st }),
+      lt: this.tabService.encrypt({ data: report.lt })
     };
 
     return reportEnt;
   }
 
-  makeReport(item: {
-    structId: string;
-    reportId: string;
-    projectId: string;
-    creatorId: string;
-    filePath: string;
-    accessRoles: string[];
-    title: string;
-    fields: ReportField[];
-    rows: Row[];
-    chart: MconfigChart;
-    draftCreatedTs?: number;
-    draft: boolean;
-  }): ReportEnt {
-    let {
-      structId,
-      reportId,
-      projectId,
-      creatorId,
-      filePath,
-      accessRoles,
-      title,
-      fields,
-      rows,
-      chart,
-      draft,
-      draftCreatedTs
-    } = item;
-
+  entToTab(report: ReportEnt): ReportTab {
     let reportTab: ReportTab = {
-      filePath: filePath,
-      accessRoles: accessRoles,
-      title: title,
-      fields: fields,
-      rows: rows,
-      chart: chart
-    };
-
-    let report: ReportEnt = {
-      reportFullId: this.hashService.makeReportFullId({
-        structId: structId,
-        reportId: reportId
+      ...report,
+      st: this.tabService.decrypt<ReportSt>({
+        encryptedString: report.st
       }),
-      structId: structId,
-      reportId: reportId,
-      projectId: projectId,
-      creatorId: creatorId,
-      draft: draft,
-      draftCreatedTs: draftCreatedTs,
-      tab: this.tabService.encrypt({ data: reportTab }),
-      serverTs: undefined
+      lt: this.tabService.decrypt<ReportLt>({
+        encryptedString: report.lt
+      })
     };
 
-    return report;
+    return reportTab;
   }
 }

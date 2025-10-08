@@ -81,6 +81,16 @@ export class WrapModelService {
     return modelTab;
   }
 
+  tabToEnt(model: ModelTab): ModelEnt {
+    let modelEnt: ModelEnt = {
+      ...model,
+      st: this.tabService.encrypt({ data: model.st }),
+      lt: this.tabService.encrypt({ data: model.lt })
+    };
+
+    return modelEnt;
+  }
+
   entToTab(model: ModelEnt): ModelTab {
     let modelTab: ModelTab = {
       ...model,
@@ -93,15 +103,5 @@ export class WrapModelService {
     };
 
     return modelTab;
-  }
-
-  tabToEnt(model: ModelTab): ModelEnt {
-    let modelEnt: ModelEnt = {
-      ...model,
-      st: this.tabService.encrypt({ data: model.st }),
-      lt: this.tabService.encrypt({ data: model.lt })
-    };
-
-    return modelEnt;
   }
 }

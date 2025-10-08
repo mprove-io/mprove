@@ -5,7 +5,9 @@ export interface KitTab extends Omit<KitEnt, 'st' | 'lt'> {
   lt: KitLt;
 }
 
-export class KitSt {}
+export class KitSt {
+  emptyData?: number;
+}
 
 export class KitLt {
   data: any;

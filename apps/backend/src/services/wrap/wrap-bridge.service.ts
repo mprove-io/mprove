@@ -20,7 +20,7 @@ export class WrapBridgeService {
   }): BridgeEnt {
     let { projectId, repoId, branchId, envId, structId, needValidate } = item;
 
-    let bridge: BridgeEnt = {
+    let bridgeEnt: BridgeEnt = {
       bridgeFullId: this.hashService.makeBridgeFullId({
         projectId: projectId,
         repoId: repoId,
@@ -36,6 +36,6 @@ export class WrapBridgeService {
       serverTs: undefined
     };
 
-    return bridge;
+    return bridgeEnt;
   }
 }

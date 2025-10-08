@@ -6,7 +6,9 @@ export interface NoteTab extends Omit<NoteEnt, 'st' | 'lt'> {
   lt: NoteLt;
 }
 
-export class NoteSt {}
+export class NoteSt {
+  emptyData?: number;
+}
 
 export class NoteLt {
   @IsOptional()

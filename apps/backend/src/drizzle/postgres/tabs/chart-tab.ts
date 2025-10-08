@@ -26,4 +26,6 @@ export class ChartSt {
   tiles: Tile[];
 }
 
-export class ChartLt {}
+export class ChartLt {
+  emptyData?: number;
+}

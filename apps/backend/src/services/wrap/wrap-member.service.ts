@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
-import { MemberTab } from '~common/interfaces/backend/member-tab';
-import { UserTab } from '~common/interfaces/backend/user-tab';
+import {
+  MemberLt,
+  MemberSt,
+  MemberTab
+} from '~backend/drizzle/postgres/tabs/member-tab';
+import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
+import { makeFullName } from '~backend/functions/make-full-name';
+import { Member } from '~common/interfaces/backend/member';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -13,76 +18,92 @@ export class WrapMemberService {
     private hashService: HashService
   ) {}
 
-  wrapToApiMember(item: { member: MemberEnt }): Member {
-    let { member } = item;
-
-    let memberTab = this.tabService.decrypt<MemberTab>({
-      encryptedString: member.tab
-    });
-
-    let apiMember: Member = {
-      projectId: member.projectId,
-      memberId: member.memberId,
-      email: memberTab.email,
-      alias: memberTab.alias,
-      firstName: memberTab.firstName,
-      lastName: memberTab.lastName,
-      fullName: makeFullName({
-        firstName: memberTab.firstName,
-        lastName: memberTab.lastName
-      }),
-      avatarSmall: undefined,
-      isAdmin: member.isAdmin,
-      isEditor: member.isEditor,
-      isExplorer: member.isExplorer,
-      roles: memberTab.roles,
-      serverTs: member.serverTs
-    };
-
-    return apiMember;
-  }
-
-  makeMember(item: {
+  makeMemberEnt(item: {
     projectId: string;
     roles?: string[];
-    envs?: string[];
-    user: UserEnt;
+    user: UserTab;
     isAdmin: boolean;
     isEditor: boolean;
     isExplorer: boolean;
   }): MemberEnt {
-    let { projectId, roles, envs, user, isAdmin, isEditor, isExplorer } = item;
+    let { projectId, roles, user, isAdmin, isEditor, isExplorer } = item;
 
-    let userTab = this.tabService.decrypt<UserTab>({
-      encryptedString: user.tab
-    });
-
-    let memberTab: MemberTab = {
-      email: userTab.email,
-      alias: userTab.alias,
-      firstName: userTab.firstName,
-      lastName: userTab.lastName,
+    let memberSt: MemberSt = {
+      email: user.lt.email,
+      alias: user.lt.alias,
+      firstName: user.lt.firstName,
+      lastName: user.lt.lastName,
       roles: roles || []
     };
 
-    let member: MemberEnt = {
+    let memberLt: MemberLt = {};
+
+    let memberEnt: MemberEnt = {
       memberFullId: this.hashService.makeMemberFullId({
         projectId: projectId,
         memberId: user.userId
       }),
       projectId: projectId,
       memberId: user.userId,
-      emailHash: this.hashService.makeHash(userTab.email),
-      aliasHash: this.hashService.makeHash(userTab.alias),
       isAdmin: isAdmin,
       isEditor: isEditor,
       isExplorer: isExplorer,
-      tab: this.tabService.encrypt({
-        data: memberTab
-      }),
+      st: this.tabService.encrypt({ data: memberSt }),
+      lt: this.tabService.encrypt({ data: memberLt }),
+      emailHash: this.hashService.makeHash(user.lt.email),
+      aliasHash: this.hashService.makeHash(user.lt.alias),
       serverTs: undefined
     };
 
-    return member;
+    return memberEnt;
+  }
+
+  tabToApi(item: { member: MemberTab }): Member {
+    let { member } = item;
+
+    let apiMember: Member = {
+      projectId: member.projectId,
+      memberId: member.memberId,
+      email: member.st.email,
+      alias: member.st.alias,
+      firstName: member.st.firstName,
+      lastName: member.st.lastName,
+      fullName: makeFullName({
+        firstName: member.st.firstName,
+        lastName: member.st.lastName
+      }),
+      avatarSmall: undefined,
+      isAdmin: member.isAdmin,
+      isEditor: member.isEditor,
+      isExplorer: member.isExplorer,
+      roles: member.st.roles,
+      serverTs: member.serverTs
+    };
+
+    return apiMember;
+  }
+
+  tabToEnt(member: MemberTab): MemberEnt {
+    let memberEnt: MemberEnt = {
+      ...member,
+      st: this.tabService.encrypt({ data: member.st }),
+      lt: this.tabService.encrypt({ data: member.lt })
+    };
+
+    return memberEnt;
+  }
+
+  entToTab(member: MemberEnt): MemberTab {
+    let memberTab: MemberTab = {
+      ...member,
+      st: this.tabService.decrypt<MemberSt>({
+        encryptedString: member.st
+      }),
+      lt: this.tabService.decrypt<MemberLt>({
+        encryptedString: member.lt
+      })
+    };
+
+    return memberTab;
   }
 }

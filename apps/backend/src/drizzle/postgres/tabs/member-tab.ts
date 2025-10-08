@@ -25,4 +25,6 @@ export class MemberSt {
   roles: string[];
 }
 
-export class MemberLt {}
+export class MemberLt {
+  emptyData?: number;
+}

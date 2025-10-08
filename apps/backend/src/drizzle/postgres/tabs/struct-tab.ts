@@ -11,7 +11,9 @@ export interface StructTab extends Omit<StructEnt, 'st' | 'lt'> {
   lt: StructLt;
 }
 
-export class StructSt {}
+export class StructSt {
+  emptyData?: number;
+}
 
 export class StructLt {
   @ValidateNested()

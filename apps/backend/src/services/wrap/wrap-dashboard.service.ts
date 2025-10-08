@@ -1,4 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
+import {
+  DashboardLt,
+  DashboardSt,
+  DashboardTab
+} from '~backend/drizzle/postgres/tabs/dashboard-tab';
+import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
+import { makeTilesX } from '~backend/functions/make-tiles-x';
+import { MPROVE_USERS_FOLDER } from '~common/constants/top';
+import { isDefined } from '~common/functions/is-defined';
+import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { Member } from '~common/interfaces/backend/member';
+import { ModelX } from '~common/interfaces/backend/model-x';
+import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { Query } from '~common/interfaces/blockml/query';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -9,8 +25,8 @@ export class WrapDashboardService {
     private hashService: HashService
   ) {}
 
-  wrapToApiDashboard(item: {
-    dashboard: DashboardEnt;
+  tabToApi(item: {
+    dashboard: DashboardTab;
     mconfigs: MconfigX[];
     queries: Query[];
     member: Member;
@@ -20,11 +36,7 @@ export class WrapDashboardService {
     let { dashboard, mconfigs, queries, isAddMconfigAndQuery, member, models } =
       item;
 
-    let dashboardTab = this.tabService.decrypt<DashboardTab>({
-      encryptedString: dashboard.tab
-    });
-
-    let filePathArray = dashboardTab.filePath.split('/');
+    let filePathArray = dashboard.st.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(
       x => x === MPROVE_USERS_FOLDER
@@ -38,24 +50,26 @@ export class WrapDashboardService {
     let canEditOrDeleteDashboard =
       member.isEditor || member.isAdmin || author === member.alias;
 
-    let dashboardExtendedFilters = makeDashboardFiltersX(dashboard);
+    let dashboardExtendedFilters = makeDashboardFiltersX({
+      dashboard: dashboard
+    });
 
-    let storeModelIds = dashboardTab.fields
+    let storeModelIds = dashboard.st.fields
       .filter(x => isDefined(x.storeModel))
       .map(x => x.storeModel);
 
-    let apiDashboard: DashboardX = {
+    let dashboardX: DashboardX = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
       creatorId: dashboard.creatorId,
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard,
-      filePath: dashboardTab.filePath,
-      content: dashboardTab.content,
-      accessRoles: dashboardTab.accessRoles,
-      title: dashboardTab.title,
-      fields: dashboardTab.fields.sort((a, b) => {
+      filePath: dashboard.st.filePath,
+      content: dashboard.lt.content,
+      accessRoles: dashboard.st.accessRoles,
+      title: dashboard.st.title,
+      fields: dashboard.st.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
@@ -66,7 +80,7 @@ export class WrapDashboardService {
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
       tiles: makeTilesX({
-        tiles: dashboardTab.tiles,
+        tiles: dashboard.st.tiles,
         mconfigs: mconfigs,
         queries: queries,
         isAddMconfigAndQuery: isAddMconfigAndQuery,
@@ -80,22 +94,25 @@ export class WrapDashboardService {
       serverTs: dashboard.serverTs
     };
 
-    return apiDashboard;
+    return dashboardX;
   }
 
-  wrapToEntityDashboard(item: { dashboard: Dashboard }): DashboardEnt {
+  apiToTab(item: { dashboard: Dashboard }): DashboardTab {
     let { dashboard } = item;
 
-    let dashboardTab: DashboardTab = {
+    let dashboardSt: DashboardSt = {
       filePath: dashboard.filePath,
-      content: dashboard.content,
       accessRoles: dashboard.accessRoles,
       title: dashboard.title,
       fields: dashboard.fields,
       tiles: dashboard.tiles
     };
 
-    let dashboardEnt: DashboardEnt = {
+    let dashboardLt: DashboardLt = {
+      content: dashboard.content
+    };
+
+    let dashboardTab: DashboardTab = {
       dashboardFullId: this.hashService.makeDashboardFullId({
         structId: dashboard.structId,
         dashboardId: dashboard.dashboardId
@@ -104,10 +121,35 @@ export class WrapDashboardService {
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
       creatorId: dashboard.creatorId,
-      tab: this.tabService.encrypt({ data: dashboardTab }),
+      st: dashboardSt,
+      lt: dashboardLt,
       serverTs: dashboard.serverTs
     };
 
+    return dashboardTab;
+  }
+
+  tabToEnt(dashboard: DashboardTab): DashboardEnt {
+    let dashboardEnt: DashboardEnt = {
+      ...dashboard,
+      st: this.tabService.encrypt({ data: dashboard.st }),
+      lt: this.tabService.encrypt({ data: dashboard.lt })
+    };
+
     return dashboardEnt;
+  }
+
+  entToTab(dashboard: DashboardEnt): DashboardTab {
+    let dashboardTab: DashboardTab = {
+      ...dashboard,
+      st: this.tabService.decrypt<DashboardSt>({
+        encryptedString: dashboard.st
+      }),
+      lt: this.tabService.decrypt<DashboardLt>({
+        encryptedString: dashboard.lt
+      })
+    };
+
+    return dashboardTab;
   }
 }

@@ -5,6 +5,10 @@ export interface BridgeTab extends Omit<BridgeEnt, 'st' | 'lt'> {
   lt: BridgeLt;
 }
 
-export class BridgeSt {}
+export class BridgeSt {
+  emptyData?: number;
+}
 
-export class BridgeLt {}
+export class BridgeLt {
+  emptyData?: number;
+}

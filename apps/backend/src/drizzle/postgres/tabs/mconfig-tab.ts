@@ -19,7 +19,9 @@ export interface MconfigTab extends Omit<MconfigEnt, 'st' | 'lt'> {
   lt: MconfigLt;
 }
 
-export class MconfigSt {}
+export class MconfigSt {
+  emptyData?: number;
+}
 
 export class MconfigLt {
   @IsOptional()

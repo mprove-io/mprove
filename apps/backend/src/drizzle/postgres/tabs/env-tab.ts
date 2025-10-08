@@ -14,4 +14,6 @@ export class EnvSt {
   evs: Ev[];
 }
 
-export class EnvLt {}
+export class EnvLt {
+  emptyData?: number;
+}

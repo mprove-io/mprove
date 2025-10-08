@@ -17,7 +17,7 @@ export class WrapBranchService {
   }): BranchEnt {
     let { projectId, repoId, branchId } = item;
 
-    let branch: BranchEnt = {
+    let branchEnt: BranchEnt = {
       branchFullId: this.hashService.makeBranchFullId({
         projectId: projectId,
         repoId: repoId,
@@ -29,6 +29,6 @@ export class WrapBranchService {
       serverTs: undefined
     };
 
-    return branch;
+    return branchEnt;
   }
 }

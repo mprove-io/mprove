@@ -17,6 +17,30 @@ export class WrapEnvService {
     private hashService: HashService
   ) {}
 
+  makeEnvEnt(item: { projectId: string; envId: string; evs: Ev[] }): EnvEnt {
+    let { projectId, envId, evs } = item;
+
+    let envSt: EnvSt = { evs: evs };
+    let envLt: EnvLt = {};
+
+    let envEnt: EnvEnt = {
+      envFullId: this.hashService.makeEnvFullId({
+        projectId: projectId,
+        envId: envId
+      }),
+      projectId: projectId,
+      envId: envId,
+      memberIds: [],
+      isFallbackToProdConnections: true,
+      isFallbackToProdVariables: true,
+      st: this.tabService.encrypt({ data: envSt }),
+      lt: this.tabService.encrypt({ data: envLt }),
+      serverTs: undefined
+    };
+
+    return envEnt;
+  }
+
   wrapToApiEnvsItem(item: { env: EnvTab }): EnvsItem {
     let { env } = item;
 
@@ -97,6 +121,16 @@ export class WrapEnvService {
     return apiEnv;
   }
 
+  tabToEnt(env: EnvTab): EnvEnt {
+    let orgEnt: EnvEnt = {
+      ...env,
+      st: this.tabService.encrypt({ data: env.st }),
+      lt: this.tabService.encrypt({ data: env.lt })
+    };
+
+    return orgEnt;
+  }
+
   entToTab(env: EnvEnt): EnvTab {
     let orgTab: EnvTab = {
       ...env,
@@ -109,39 +143,5 @@ export class WrapEnvService {
     };
 
     return orgTab;
-  }
-
-  tabToEnt(env: EnvTab): EnvEnt {
-    let orgEnt: EnvEnt = {
-      ...env,
-      st: this.tabService.encrypt({ data: env.st }),
-      lt: this.tabService.encrypt({ data: env.lt })
-    };
-
-    return orgEnt;
-  }
-
-  makeEnvEnt(item: { projectId: string; envId: string; evs: Ev[] }): EnvEnt {
-    let { projectId, envId, evs } = item;
-
-    let envSt: EnvSt = { evs: evs };
-    let envLt: EnvLt = {};
-
-    let env: EnvEnt = {
-      envFullId: this.hashService.makeEnvFullId({
-        projectId: projectId,
-        envId: envId
-      }),
-      projectId: projectId,
-      envId: envId,
-      memberIds: [],
-      isFallbackToProdConnections: true,
-      isFallbackToProdVariables: true,
-      st: this.tabService.encrypt({ data: envSt }),
-      lt: this.tabService.encrypt({ data: envLt }),
-      serverTs: undefined
-    };
-
-    return env;
   }
 }

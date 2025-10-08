@@ -1,4 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
+import {
+  QueryLt,
+  QuerySt,
+  QueryTab
+} from '~backend/drizzle/postgres/tabs/query-tab';
+import { StoreMethodEnum } from '~common/enums/store-method.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { Query } from '~common/interfaces/blockml/query';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -9,12 +18,8 @@ export class WrapQueryService {
     private hashService: HashService
   ) {}
 
-  wrapToApiQuery(item: { query: QueryEnt }): Query {
+  tabToApi(item: { query: QueryTab }): Query {
     let { query } = item;
-
-    let queryTab = this.tabService.decrypt<QueryTab>({
-      encryptedString: query.tab
-    });
 
     let apiQuery: Query = {
       projectId: query.projectId,
@@ -22,19 +27,19 @@ export class WrapQueryService {
       connectionId: query.connectionId,
       connectionType: query.connectionType,
       queryId: query.queryId,
-      sql: queryTab.sql,
-      apiMethod: queryTab.apiMethod as StoreMethodEnum,
-      apiUrl: queryTab.apiUrl,
-      apiBody: queryTab.apiBody,
+      sql: query.st.sql,
+      apiMethod: query.st.apiMethod as StoreMethodEnum,
+      apiUrl: query.st.apiUrl,
+      apiBody: query.st.apiBody,
       status: query.status,
       lastRunBy: query.lastRunBy,
       lastRunTs: query.lastRunTs,
       lastCancelTs: query.lastCancelTs,
       lastCompleteTs: query.lastCompleteTs,
       lastCompleteDuration: query.lastCompleteDuration,
-      lastErrorMessage: queryTab.lastErrorMessage,
+      lastErrorMessage: query.st.lastErrorMessage,
       lastErrorTs: query.lastErrorTs,
-      data: queryTab.data,
+      data: query.lt.data,
       queryJobId: query.queryJobId,
       bigqueryQueryJobId: query.bigqueryQueryJobId,
       bigqueryConsecutiveErrorsGetJob: query.bigqueryConsecutiveErrorsGetJob,
@@ -46,19 +51,22 @@ export class WrapQueryService {
     return apiQuery;
   }
 
-  wrapToEntityQuery(item: { query: Query }): QueryEnt {
+  apiToTab(item: { query: Query }): QueryTab {
     let { query } = item;
 
-    let queryTab: QueryTab = {
+    let querySt: QuerySt = {
       sql: query.sql,
       apiMethod: query.apiMethod,
       apiUrl: query.apiUrl,
       apiBody: query.apiBody,
-      data: query.data,
       lastErrorMessage: query.lastErrorMessage
     };
 
-    let queryEnt: QueryEnt = {
+    let queryLt: QueryLt = {
+      data: query.data
+    };
+
+    let queryTab: QueryTab = {
       projectId: query.projectId,
       envId: query.envId,
       connectionId: query.connectionId,
@@ -83,11 +91,36 @@ export class WrapQueryService {
       )
         ? query.bigqueryConsecutiveErrorsGetResults
         : 0,
+      st: querySt,
+      lt: queryLt,
       apiUrlHash: this.hashService.makeHash(query.apiUrl),
-      tab: this.tabService.encrypt({ data: queryTab }),
       serverTs: query.serverTs
     };
 
+    return queryTab;
+  }
+
+  tabToEnt(query: QueryTab): QueryEnt {
+    let queryEnt: QueryEnt = {
+      ...query,
+      st: this.tabService.encrypt({ data: query.st }),
+      lt: this.tabService.encrypt({ data: query.lt })
+    };
+
     return queryEnt;
+  }
+
+  entToTab(query: QueryEnt): QueryTab {
+    let queryTab: QueryTab = {
+      ...query,
+      st: this.tabService.decrypt<QuerySt>({
+        encryptedString: query.st
+      }),
+      lt: this.tabService.decrypt<QueryLt>({
+        encryptedString: query.lt
+      })
+    };
+
+    return queryTab;
   }
 }

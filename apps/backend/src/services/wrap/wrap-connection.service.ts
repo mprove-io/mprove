@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { isDefined } from 'class-validator';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import {
   ConnectionLt,
@@ -8,6 +7,7 @@ import {
 } from '~backend/drizzle/postgres/tabs/connection-tab';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { isDefined } from '~common/functions/is-defined';
 import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { HashService } from '../hash.service';
@@ -19,6 +19,57 @@ export class WrapConnectionService {
     private tabService: TabService,
     private hashService: HashService
   ) {}
+
+  makeConnectionEnt(item: {
+    projectId: string;
+    connectionId: string;
+    envId: string;
+    type: ConnectionTypeEnum;
+    options: ConnectionOptions;
+  }): ConnectionEnt {
+    let { projectId, connectionId, envId, type, options } = item;
+
+    if (isDefined(options.storeGoogleApi)) {
+      options.storeGoogleApi.googleCloudProject =
+        options.storeGoogleApi.serviceAccountCredentials?.project_id;
+
+      options.storeGoogleApi.googleCloudClientEmail =
+        options.storeGoogleApi.serviceAccountCredentials?.client_email;
+    }
+
+    if (isDefined(options.bigquery)) {
+      options.bigquery.googleCloudProject =
+        options.bigquery.serviceAccountCredentials?.project_id;
+
+      options.bigquery.googleCloudClientEmail =
+        options.bigquery.serviceAccountCredentials?.client_email;
+
+      let slimit = options.bigquery.bigqueryQuerySizeLimitGb;
+
+      options.bigquery.bigqueryQuerySizeLimitGb =
+        isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
+    }
+
+    let connectionSt: ConnectionSt = { options: options };
+    let connectionLt: ConnectionLt = {};
+
+    let connectionEnt: ConnectionEnt = {
+      connectionFullId: this.hashService.makeConnectionFullId({
+        projectId: projectId,
+        envId: envId,
+        connectionId: connectionId
+      }),
+      projectId: projectId,
+      envId: envId,
+      connectionId: connectionId,
+      type: type,
+      st: this.tabService.encrypt({ data: connectionSt }),
+      lt: this.tabService.encrypt({ data: connectionLt }),
+      serverTs: undefined
+    };
+
+    return connectionEnt;
+  }
 
   tabToApi(item: {
     connection: ConnectionTab;
@@ -161,6 +212,16 @@ export class WrapConnectionService {
     return apiProjectConnection;
   }
 
+  tabToEnt(connection: ConnectionTab): ConnectionEnt {
+    let connectionEnt: ConnectionEnt = {
+      ...connection,
+      st: this.tabService.encrypt({ data: connection.st }),
+      lt: this.tabService.encrypt({ data: connection.lt })
+    };
+
+    return connectionEnt;
+  }
+
   entToTab(connection: ConnectionEnt): ConnectionTab {
     let connectionTab: ConnectionTab = {
       ...connection,
@@ -173,66 +234,5 @@ export class WrapConnectionService {
     };
 
     return connectionTab;
-  }
-
-  tabToEnt(connection: ConnectionTab): ConnectionEnt {
-    let connectionEnt: ConnectionEnt = {
-      ...connection,
-      st: this.tabService.encrypt({ data: connection.st }),
-      lt: this.tabService.encrypt({ data: connection.lt })
-    };
-
-    return connectionEnt;
-  }
-
-  makeConnectionEnt(item: {
-    projectId: string;
-    connectionId: string;
-    envId: string;
-    type: ConnectionTypeEnum;
-    options: ConnectionOptions;
-  }): ConnectionEnt {
-    let { projectId, connectionId, envId, type, options } = item;
-
-    if (isDefined(options.storeGoogleApi)) {
-      options.storeGoogleApi.googleCloudProject =
-        options.storeGoogleApi.serviceAccountCredentials?.project_id;
-
-      options.storeGoogleApi.googleCloudClientEmail =
-        options.storeGoogleApi.serviceAccountCredentials?.client_email;
-    }
-
-    if (isDefined(options.bigquery)) {
-      options.bigquery.googleCloudProject =
-        options.bigquery.serviceAccountCredentials?.project_id;
-
-      options.bigquery.googleCloudClientEmail =
-        options.bigquery.serviceAccountCredentials?.client_email;
-
-      let slimit = options.bigquery.bigqueryQuerySizeLimitGb;
-
-      options.bigquery.bigqueryQuerySizeLimitGb =
-        isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
-    }
-
-    let connectionSt: ConnectionSt = { options: options };
-    let connectionLt: ConnectionLt = {};
-
-    let connection: ConnectionEnt = {
-      connectionFullId: this.hashService.makeConnectionFullId({
-        projectId: projectId,
-        envId: envId,
-        connectionId: connectionId
-      }),
-      projectId: projectId,
-      envId: envId,
-      connectionId: connectionId,
-      type: type,
-      st: this.tabService.encrypt({ data: connectionSt }),
-      lt: this.tabService.encrypt({ data: connectionLt }),
-      serverTs: undefined
-    };
-
-    return connection;
   }
 }

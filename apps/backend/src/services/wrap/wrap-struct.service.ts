@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
-import { UserTab } from '~common/interfaces/backend/user-tab';
+import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import {
+  StructLt,
+  StructSt,
+  StructTab
+} from '~backend/drizzle/postgres/tabs/struct-tab';
+import { Struct } from '~common/interfaces/backend/struct';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -11,20 +16,16 @@ export class WrapUserService {
     private hashService: HashService
   ) {}
 
-  wrapToApiStruct(item: { struct: StructEnt }): Struct {
+  tabToApi(item: { struct: StructTab }): Struct {
     let { struct } = item;
-
-    let structTab = this.tabService.decrypt<StructTab>({
-      encryptedString: struct.tab
-    });
 
     let apiStruct: Struct = {
       projectId: struct.projectId,
       structId: struct.structId,
-      errors: structTab.errors,
-      metrics: structTab.metrics,
-      presets: structTab.presets,
-      mproveConfig: structTab.mproveConfig,
+      errors: struct.lt.errors,
+      metrics: struct.lt.metrics,
+      presets: struct.lt.presets,
+      mproveConfig: struct.lt.mproveConfig,
       mproveVersion: struct.mproveVersion,
       serverTs: Number(struct.serverTs)
     };
@@ -32,55 +33,27 @@ export class WrapUserService {
     return apiStruct;
   }
 
-  wrapToApiUser(item: { user: UserEnt }): User {
-    let { user } = item;
-
-    let userTab = this.tabService.decrypt<UserTab>({
-      encryptedString: user.tab
-    });
-
-    let defaultSrvUi = makeCopy(DEFAULT_SRV_UI);
-
-    let apiUser: User = {
-      userId: user.userId,
-      email: userTab.email,
-      alias: userTab.alias,
-      firstName: userTab.firstName,
-      lastName: userTab.lastName,
-      isEmailVerified: user.isEmailVerified,
-      ui: {
-        timezone: userTab.ui?.timezone || defaultSrvUi.timezone,
-        timeSpec: userTab.ui?.timeSpec || defaultSrvUi.timeSpec,
-        timeRangeFraction:
-          userTab.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
-
-        projectFileLinks: isDefined(userTab.ui?.projectFileLinks)
-          ? userTab.ui?.projectFileLinks
-          : defaultSrvUi.projectFileLinks,
-
-        projectModelLinks: isDefined(userTab.ui?.projectModelLinks)
-          ? userTab.ui?.projectModelLinks
-          : defaultSrvUi.projectModelLinks,
-
-        projectChartLinks: isDefined(userTab.ui?.projectChartLinks)
-          ? userTab.ui?.projectChartLinks
-          : defaultSrvUi.projectChartLinks,
-
-        projectDashboardLinks: isDefined(userTab.ui?.projectDashboardLinks)
-          ? userTab.ui?.projectDashboardLinks
-          : defaultSrvUi.projectDashboardLinks,
-
-        projectReportLinks: isDefined(userTab.ui?.projectReportLinks)
-          ? userTab.ui?.projectReportLinks
-          : defaultSrvUi.projectReportLinks,
-
-        modelTreeLevels: isDefined(userTab.ui?.modelTreeLevels)
-          ? userTab.ui?.modelTreeLevels
-          : defaultSrvUi.modelTreeLevels
-      },
-      serverTs: Number(user.serverTs)
+  tabToEnt(struct: StructTab): StructEnt {
+    let structEnt: StructEnt = {
+      ...struct,
+      st: this.tabService.encrypt({ data: struct.st }),
+      lt: this.tabService.encrypt({ data: struct.lt })
     };
 
-    return apiUser;
+    return structEnt;
+  }
+
+  entToTab(struct: StructEnt): StructTab {
+    let structTab: StructTab = {
+      ...struct,
+      st: this.tabService.decrypt<StructSt>({
+        encryptedString: struct.st
+      }),
+      lt: this.tabService.decrypt<StructLt>({
+        encryptedString: struct.lt
+      })
+    };
+
+    return structTab;
   }
 }

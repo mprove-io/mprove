@@ -5,6 +5,10 @@ export interface BranchTab extends Omit<BranchEnt, 'st' | 'lt'> {
   lt: BranchLt;
 }
 
-export class BranchSt {}
+export class BranchSt {
+  emptyData?: number;
+}
 
-export class BranchLt {}
+export class BranchLt {
+  emptyData?: number;
+}

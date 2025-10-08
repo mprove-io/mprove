@@ -15,4 +15,6 @@ export class ConnectionSt {
   options?: ConnectionOptions;
 }
 
-export class ConnectionLt {}
+export class ConnectionLt {
+  emptyData?: number;
+}

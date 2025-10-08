@@ -78,6 +78,16 @@ export class WrapProjectService {
     return projectTab;
   }
 
+  tabToEnt(project: ProjectTab): ProjectEnt {
+    let projectEnt: ProjectEnt = {
+      ...project,
+      st: this.tabService.encrypt({ data: project.st }),
+      lt: this.tabService.encrypt({ data: project.lt })
+    };
+
+    return projectEnt;
+  }
+
   entToTab(project: ProjectEnt): ProjectTab {
     let projectTab: ProjectTab = {
       ...project,
@@ -90,15 +100,5 @@ export class WrapProjectService {
     };
 
     return projectTab;
-  }
-
-  tabToEnt(project: ProjectTab): ProjectEnt {
-    let projectEnt: ProjectEnt = {
-      ...project,
-      st: this.tabService.encrypt({ data: project.st }),
-      lt: this.tabService.encrypt({ data: project.lt })
-    };
-
-    return projectEnt;
   }
 }

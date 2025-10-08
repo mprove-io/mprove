@@ -13,7 +13,9 @@ export interface UserTab extends Omit<UserEnt, 'st' | 'lt'> {
   lt: UserLt;
 }
 
-export class UserSt {}
+export class UserSt {
+  emptyData?: number;
+}
 
 export class UserLt {
   @IsString()

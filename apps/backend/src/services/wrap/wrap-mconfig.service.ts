@@ -1,4 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import {
+  MconfigLt,
+  MconfigSt,
+  MconfigTab
+} from '~backend/drizzle/postgres/tabs/mconfig-tab';
+import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
+import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
+import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { ModelField } from '~common/interfaces/blockml/model-field';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -9,57 +20,55 @@ export class WrapMconfigService {
     private hashService: HashService
   ) {}
 
-  wrapToApiMconfig(item: {
-    mconfig: MconfigEnt;
+  tabToApi(item: {
+    mconfig: MconfigTab;
     modelFields: ModelField[];
   }): MconfigX {
     let { mconfig, modelFields } = item;
 
-    let mconfigTab = this.tabService.decrypt<MconfigTab>({
-      encryptedString: mconfig.tab
-    });
-
-    let apiMconfig: MconfigX = {
+    let mconfigX: MconfigX = {
       structId: mconfig.structId,
       mconfigId: mconfig.mconfigId,
       queryId: mconfig.queryId,
       modelId: mconfig.modelId,
       modelType: mconfig.modelType,
-      dateRangeIncludesRightSide: mconfigTab.dateRangeIncludesRightSide,
-      storePart: mconfigTab.storePart,
-      modelLabel: mconfigTab.modelLabel,
-      modelFilePath: mconfigTab.modelFilePath,
-      malloyQueryStable: mconfigTab.malloyQueryStable,
-      malloyQueryExtra: mconfigTab.malloyQueryExtra,
-      compiledQuery: mconfigTab.compiledQuery,
-      select: mconfigTab.select,
+      dateRangeIncludesRightSide: mconfig.lt.dateRangeIncludesRightSide,
+      storePart: mconfig.lt.storePart,
+      modelLabel: mconfig.lt.modelLabel,
+      modelFilePath: mconfig.lt.modelFilePath,
+      malloyQueryStable: mconfig.lt.malloyQueryStable,
+      malloyQueryExtra: mconfig.lt.malloyQueryExtra,
+      compiledQuery: mconfig.lt.compiledQuery,
+      select: mconfig.lt.select,
       fields: makeMconfigFields({
         modelFields: modelFields,
-        select: mconfigTab.select,
-        sortings: mconfigTab.sortings,
-        chart: mconfigTab.chart
+        select: mconfig.lt.select,
+        sortings: mconfig.lt.sortings,
+        chart: mconfig.lt.chart
       }),
       extendedFilters: makeMconfigFiltersX({
         modelFields: modelFields,
-        mconfigFilters: mconfigTab.filters
+        mconfigFilters: mconfig.lt.filters
       }),
-      sortings: mconfigTab.sortings,
-      sorts: mconfigTab.sorts,
-      timezone: mconfigTab.timezone,
-      limit: mconfigTab.limit,
-      filters: mconfigTab.filters,
-      chart: mconfigTab.chart,
+      sortings: mconfig.lt.sortings,
+      sorts: mconfig.lt.sorts,
+      timezone: mconfig.lt.timezone,
+      limit: mconfig.lt.limit,
+      filters: mconfig.lt.filters,
+      chart: mconfig.lt.chart,
       temp: mconfig.temp,
       serverTs: mconfig.serverTs
     };
 
-    return apiMconfig;
+    return mconfigX;
   }
 
-  wrapToEntityMconfig(item: { mconfig: Mconfig }): MconfigEnt {
+  apiToTab(item: { mconfig: Mconfig }): MconfigTab {
     let { mconfig } = item;
 
-    let mconfigTab: MconfigTab = {
+    let mconfigSt: MconfigSt = {};
+
+    let mconfigLt: MconfigLt = {
       dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
       storePart: mconfig.storePart,
       modelLabel: mconfig.modelLabel,
@@ -76,17 +85,42 @@ export class WrapMconfigService {
       chart: mconfig.chart
     };
 
-    let mconfigEnt: MconfigEnt = {
+    let mconfigTab: MconfigTab = {
       structId: mconfig.structId,
       queryId: mconfig.queryId,
       mconfigId: mconfig.mconfigId,
       modelId: mconfig.modelId,
       modelType: mconfig.modelType,
       temp: mconfig.temp,
-      tab: this.tabService.encrypt({ data: mconfigTab }),
+      st: mconfigSt,
+      lt: mconfigLt,
       serverTs: mconfig.serverTs
     };
 
+    return mconfigTab;
+  }
+
+  tabToEnt(mconfig: MconfigTab): MconfigEnt {
+    let mconfigEnt: MconfigEnt = {
+      ...mconfig,
+      st: this.tabService.encrypt({ data: mconfig.st }),
+      lt: this.tabService.encrypt({ data: mconfig.lt })
+    };
+
     return mconfigEnt;
+  }
+
+  entToTab(mconfig: MconfigEnt): MconfigTab {
+    let mconfigTab: MconfigTab = {
+      ...mconfig,
+      st: this.tabService.decrypt<MconfigSt>({
+        encryptedString: mconfig.st
+      }),
+      lt: this.tabService.decrypt<MconfigLt>({
+        encryptedString: mconfig.lt
+      })
+    };
+
+    return mconfigTab;
   }
 }

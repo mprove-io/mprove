@@ -14,4 +14,6 @@ export class OrgSt {
   ownerEmail: string;
 }
 
-export class OrgLt {}
+export class OrgLt {
+  emptyData?: number;
+}

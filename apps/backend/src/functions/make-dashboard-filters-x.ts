@@ -1,9 +1,9 @@
-import { DashboardEnx } from '~backend/drizzle/postgres/schema/dashboards';
+import { DashboardTab } from '~backend/drizzle/postgres/tabs/dashboard-tab';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FilterX } from '~common/interfaces/backend/filter-x';
 
-export function makeDashboardFiltersX(item: { dashboard: DashboardEnx }) {
-  let filtersX: FilterX[] = item.dashboard.tab.fields.map(field => {
+export function makeDashboardFiltersX(item: { dashboard: DashboardTab }) {
+  let filtersX: FilterX[] = item.dashboard.st.fields.map(field => {
     let filterX: FilterX = {
       fieldId: field.id,
       fractions: field.fractions.sort((a, b) => {

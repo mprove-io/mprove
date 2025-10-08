@@ -59,6 +59,16 @@ export class WrapOrgService {
     return orgTab;
   }
 
+  tabToEnt(org: OrgTab): OrgEnt {
+    let orgEnt: OrgEnt = {
+      ...org,
+      st: this.tabService.encrypt({ data: org.st }),
+      lt: this.tabService.encrypt({ data: org.lt })
+    };
+
+    return orgEnt;
+  }
+
   entToTab(org: OrgEnt): OrgTab {
     let orgTab: OrgTab = {
       ...org,
@@ -71,15 +81,5 @@ export class WrapOrgService {
     };
 
     return orgTab;
-  }
-
-  tabToEnt(org: OrgTab): OrgEnt {
-    let orgEnt: OrgEnt = {
-      ...org,
-      st: this.tabService.encrypt({ data: org.st }),
-      lt: this.tabService.encrypt({ data: org.lt })
-    };
-
-    return orgEnt;
   }
 }
