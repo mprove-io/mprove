@@ -4,29 +4,106 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { OrgEnt, orgsTable } from '~backend/drizzle/postgres/schema/orgs';
+import { OrgLt, OrgSt, OrgTab } from '~backend/drizzle/postgres/tabs/org-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
+import { Org } from '~common/interfaces/backend/org';
+import { OrgsItem } from '~common/interfaces/backend/orgs-item';
 import {
   ToDiskCreateOrgRequest,
   ToDiskCreateOrgResponse
 } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
 import { ServerError } from '~common/models/server-error';
-import { RabbitService } from './rabbit.service';
+import { HashService } from '../hash.service';
+import { RabbitService } from '../rabbit.service';
+import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class OrgsService {
   constructor(
+    private tabService: TabService,
+    private hashService: HashService,
     private rabbitService: RabbitService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  wrapToApiOrgsItem(item: { org: OrgTab }): OrgsItem {
+    let { org } = item;
+
+    let apiOrgsItem: OrgsItem = {
+      orgId: org.orgId,
+      name: org.st.name
+    };
+
+    return apiOrgsItem;
+  }
+
+  tabToApi(item: { org: OrgTab }): Org {
+    let { org } = item;
+
+    let apiOrg: Org = {
+      orgId: org.orgId,
+      ownerId: org.ownerId,
+      name: org.st.name,
+      ownerEmail: org.st.ownerEmail,
+      serverTs: Number(org.serverTs)
+    };
+
+    return apiOrg;
+  }
+
+  apiToTab(org: Org): OrgTab {
+    let orgSt: OrgSt = {
+      name: org.name,
+      ownerEmail: org.ownerEmail
+    };
+
+    let orgLt: OrgLt = {};
+
+    let orgTab: OrgTab = {
+      orgId: org.orgId,
+      ownerId: org.ownerId,
+      st: orgSt,
+      lt: orgLt,
+      nameHash: this.hashService.makeHash(org.name),
+      ownerEmailHash: this.hashService.makeHash(org.ownerEmail),
+      serverTs: org.serverTs
+    };
+
+    return orgTab;
+  }
+
+  tabToEnt(org: OrgTab): OrgEnt {
+    let orgEnt: OrgEnt = {
+      ...org,
+      st: this.tabService.encrypt({ data: org.st }),
+      lt: this.tabService.encrypt({ data: org.lt })
+    };
+
+    return orgEnt;
+  }
+
+  entToTab(org: OrgEnt): OrgTab {
+    let orgTab: OrgTab = {
+      ...org,
+      st: this.tabService.decrypt<OrgSt>({
+        encryptedString: org.st
+      }),
+      lt: this.tabService.decrypt<OrgLt>({
+        encryptedString: org.lt
+      })
+    };
+
+    return orgTab;
+  }
 
   async getOrgCheckExists(item: { orgId: string }) {
     let { orgId } = item;

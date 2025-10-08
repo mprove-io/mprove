@@ -13,6 +13,11 @@ import {
   structsTable
 } from '~backend/drizzle/postgres/schema/structs';
 import {
+  StructLt,
+  StructSt,
+  StructTab
+} from '~backend/drizzle/postgres/tabs/struct-tab';
+import {
   EMPTY_STRUCT_ID,
   PROJECT_CONFIG_CURRENCY_PREFIX,
   PROJECT_CONFIG_CURRENCY_SUFFIX,
@@ -23,14 +28,60 @@ import {
 import { ErEnum } from '~common/enums/er.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { Struct } from '~common/interfaces/backend/struct';
 import { ServerError } from '~common/models/server-error';
+import { HashService } from '../hash.service';
+import { TabService } from '../tab.service';
 
 @Injectable()
 export class StructsService {
   constructor(
+    private tabService: TabService,
+    private hashService: HashService,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  tabToApi(item: { struct: StructTab }): Struct {
+    let { struct } = item;
+
+    let apiStruct: Struct = {
+      projectId: struct.projectId,
+      structId: struct.structId,
+      errors: struct.lt.errors,
+      metrics: struct.lt.metrics,
+      presets: struct.lt.presets,
+      mproveConfig: struct.lt.mproveConfig,
+      mproveVersion: struct.mproveVersion,
+      serverTs: Number(struct.serverTs)
+    };
+
+    return apiStruct;
+  }
+
+  tabToEnt(struct: StructTab): StructEnt {
+    let structEnt: StructEnt = {
+      ...struct,
+      st: this.tabService.encrypt({ data: struct.st }),
+      lt: this.tabService.encrypt({ data: struct.lt })
+    };
+
+    return structEnt;
+  }
+
+  entToTab(struct: StructEnt): StructTab {
+    let structTab: StructTab = {
+      ...struct,
+      st: this.tabService.decrypt<StructSt>({
+        encryptedString: struct.st
+      }),
+      lt: this.tabService.decrypt<StructLt>({
+        encryptedString: struct.lt
+      })
+    };
+
+    return structTab;
+  }
 
   async getStructCheckExists(item: {
     structId: string;

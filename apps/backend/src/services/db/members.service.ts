@@ -16,7 +16,14 @@ import {
 } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import {
+  MemberLt,
+  MemberSt,
+  MemberTab
+} from '~backend/drizzle/postgres/tabs/member-tab';
+import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { makeFullName } from '~backend/functions/make-full-name';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import {
   EMPTY_STRUCT_ID,
@@ -28,17 +35,15 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
-import { MemberTab } from '~common/interfaces/backend/member-tab';
+import { Member } from '~common/interfaces/backend/member';
 import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
 } from '~common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
 import { ServerError } from '~common/models/server-error';
-import { BlockmlService } from './blockml.service';
-import { EntMakerService } from './maker.service';
-import { RabbitService } from './rabbit.service';
-import { TabService } from './tab.service';
-import { WrapEnxToApiService } from './wrap-to-api.service';
+import { BlockmlService } from '../blockml.service';
+import { RabbitService } from '../rabbit.service';
+import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
 
@@ -46,14 +51,101 @@ let retry = require('async-retry');
 export class MembersService {
   constructor(
     private tabService: TabService,
-    private wrapToApiService: WrapEnxToApiService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  makeMemberEnt(item: {
+    projectId: string;
+    roles?: string[];
+    user: UserTab;
+    isAdmin: boolean;
+    isEditor: boolean;
+    isExplorer: boolean;
+  }): MemberEnt {
+    let { projectId, roles, user, isAdmin, isEditor, isExplorer } = item;
+
+    let memberSt: MemberSt = {
+      email: user.lt.email,
+      alias: user.lt.alias,
+      firstName: user.lt.firstName,
+      lastName: user.lt.lastName,
+      roles: roles || []
+    };
+
+    let memberLt: MemberLt = {};
+
+    let memberEnt: MemberEnt = {
+      memberFullId: this.hashService.makeMemberFullId({
+        projectId: projectId,
+        memberId: user.userId
+      }),
+      projectId: projectId,
+      memberId: user.userId,
+      isAdmin: isAdmin,
+      isEditor: isEditor,
+      isExplorer: isExplorer,
+      st: this.tabService.encrypt({ data: memberSt }),
+      lt: this.tabService.encrypt({ data: memberLt }),
+      emailHash: this.hashService.makeHash(user.lt.email),
+      aliasHash: this.hashService.makeHash(user.lt.alias),
+      serverTs: undefined
+    };
+
+    return memberEnt;
+  }
+
+  tabToApi(item: { member: MemberTab }): Member {
+    let { member } = item;
+
+    let apiMember: Member = {
+      projectId: member.projectId,
+      memberId: member.memberId,
+      email: member.st.email,
+      alias: member.st.alias,
+      firstName: member.st.firstName,
+      lastName: member.st.lastName,
+      fullName: makeFullName({
+        firstName: member.st.firstName,
+        lastName: member.st.lastName
+      }),
+      avatarSmall: undefined,
+      isAdmin: member.isAdmin,
+      isEditor: member.isEditor,
+      isExplorer: member.isExplorer,
+      roles: member.st.roles,
+      serverTs: member.serverTs
+    };
+
+    return apiMember;
+  }
+
+  tabToEnt(member: MemberTab): MemberEnt {
+    let memberEnt: MemberEnt = {
+      ...member,
+      st: this.tabService.encrypt({ data: member.st }),
+      lt: this.tabService.encrypt({ data: member.lt })
+    };
+
+    return memberEnt;
+  }
+
+  entToTab(member: MemberEnt): MemberTab {
+    let memberTab: MemberTab = {
+      ...member,
+      st: this.tabService.decrypt<MemberSt>({
+        encryptedString: member.st
+      }),
+      lt: this.tabService.decrypt<MemberLt>({
+        encryptedString: member.lt
+      })
+    };
+
+    return memberTab;
+  }
 
   async getMemberCheckIsAdmin(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;

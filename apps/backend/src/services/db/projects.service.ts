@@ -8,6 +8,11 @@ import {
   projectsTable
 } from '~backend/drizzle/postgres/schema/projects';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import {
+  ProjectLt,
+  ProjectSt,
+  ProjectTab
+} from '~backend/drizzle/postgres/tabs/project-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
@@ -19,17 +24,16 @@ import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Project } from '~common/interfaces/backend/project';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import {
   ToDiskCreateProjectRequest,
   ToDiskCreateProjectResponse
 } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ServerError } from '~common/models/server-error';
-import { BlockmlService } from './blockml.service';
-import { HashService } from './hash.service';
-import { EntMakerService } from './maker.service';
-import { RabbitService } from './rabbit.service';
-import { TabService } from './tab.service';
-import { WrapEnxToApiService } from './wrap-to-api.service';
+import { BlockmlService } from '../blockml.service';
+import { HashService } from '../hash.service';
+import { RabbitService } from '../rabbit.service';
+import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
 
@@ -37,15 +41,98 @@ let retry = require('async-retry');
 export class ProjectsService {
   constructor(
     private tabService: TabService,
-    private wrapToApiService: WrapEnxToApiService,
+    private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private hashService: HashService,
-    private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  wrapToApiProjectsItem(item: {
+    project: ProjectTab;
+  }): ProjectsItem {
+    let { project } = item;
+
+    let apiProjectItem: ProjectsItem = {
+      projectId: project.projectId,
+      name: project.st.name,
+      defaultBranch: project.lt.defaultBranch
+    };
+
+    return apiProjectItem;
+  }
+
+  tabToApi(item: {
+    project: ProjectTab;
+    isAddPublicKey: boolean;
+    isAddGitUrl: boolean;
+  }): Project {
+    let { project, isAddGitUrl, isAddPublicKey } = item;
+
+    let apiProject: Project = {
+      orgId: project.orgId,
+      projectId: project.projectId,
+      remoteType: project.remoteType,
+      name: project.st.name,
+      defaultBranch: project.lt.defaultBranch,
+      gitUrl: isAddGitUrl === true ? project.lt.gitUrl : undefined,
+      publicKey: isAddPublicKey === true ? project.lt.publicKey : undefined,
+      serverTs: Number(project.serverTs)
+    };
+
+    return apiProject;
+  }
+
+  apiToTab(project: Project): ProjectTab {
+    let projectSt: ProjectSt = {
+      name: project.name
+    };
+
+    let projectLt: ProjectLt = {
+      defaultBranch: project.defaultBranch,
+      gitUrl: project.defaultBranch,
+      privateKey: project.defaultBranch,
+      publicKey: project.defaultBranch
+    };
+
+    let projectTab: ProjectTab = {
+      projectId: project.projectId,
+      orgId: project.orgId,
+      remoteType: project.remoteType,
+      st: projectSt,
+      lt: projectLt,
+      nameHash: this.hashService.makeHash(project.name),
+      gitUrlHash: this.hashService.makeHash(project.gitUrl),
+      serverTs: project.serverTs
+    };
+
+    return projectTab;
+  }
+
+  tabToEnt(project: ProjectTab): ProjectEnt {
+    let projectEnt: ProjectEnt = {
+      ...project,
+      st: this.tabService.encrypt({ data: project.st }),
+      lt: this.tabService.encrypt({ data: project.lt })
+    };
+
+    return projectEnt;
+  }
+
+  entToTab(project: ProjectEnt): ProjectTab {
+    let projectTab: ProjectTab = {
+      ...project,
+      st: this.tabService.decrypt<ProjectSt>({
+        encryptedString: project.st
+      }),
+      lt: this.tabService.decrypt<ProjectLt>({
+        encryptedString: project.lt
+      })
+    };
+
+    return projectTab;
+  }
 
   async getProjectCheckExists(item: { projectId: string }) {
     let { projectId } = item;
