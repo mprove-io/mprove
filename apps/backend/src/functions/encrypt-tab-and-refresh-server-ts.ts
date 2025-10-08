@@ -2,7 +2,7 @@ import { TabService } from '~backend/services/tab.service';
 import { isDefined } from '~common/functions/is-defined';
 
 export function encryptTabAndRefreshServerTs<
-  T extends { serverTs: number; tab: any }
+  T extends { serverTs: number; st: any; lt: any }
 >(item: {
   elements: T[];
   newServerTs: number;
@@ -12,7 +12,13 @@ export function encryptTabAndRefreshServerTs<
 
   if (isDefined(elements)) {
     elements.forEach(element => {
-      element.tab = tabService.encrypt({ data: element.tab });
+      if (isDefined(element.st)) {
+        element.st = tabService.encrypt({ data: element.st });
+      }
+
+      if (isDefined(element.lt)) {
+        element.lt = tabService.encrypt({ data: element.lt });
+      }
 
       element.serverTs = newServerTs;
     });

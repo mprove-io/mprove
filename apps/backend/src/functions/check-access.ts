@@ -1,7 +1,7 @@
-import { MemberEnx } from '~backend/drizzle/postgres/schema/members';
+import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
 
 export function checkAccess(item: {
-  member: MemberEnx;
+  member: MemberTab;
   accessRoles: string[];
 }): boolean {
   let { member, accessRoles } = item;
@@ -23,7 +23,7 @@ export function checkAccess(item: {
     return true;
   }
 
-  if (accessRoles.some(x => member.tab.roles.includes(x)) === false) {
+  if (accessRoles.some(x => member.st.roles.includes(x)) === false) {
     return false;
   }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import * as bcrypt from 'bcrypt';
 import { Strategy } from 'passport-local';
-import { UsersService } from '~backend/services/users.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ServerError } from '~common/models/server-error';
 

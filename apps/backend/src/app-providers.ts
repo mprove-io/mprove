@@ -4,51 +4,45 @@ import { BackendConfig } from '~backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { isScheduler } from './functions/is-scheduler';
-import { BigQueryService } from './services/bigquery.service';
 import { BlockmlService } from './services/blockml.service';
-import { BranchesService } from './services/branches.service';
-import { BridgesService } from './services/bridges.service';
-import { ChartsService } from './services/charts.service';
-import { ClickHouseService } from './services/clickhouse.service';
-import { ConnectionsService } from './services/connections.service';
-import { DashboardsService } from './services/dashboards.service';
+import { BranchesService } from './services/db/branches.service';
+import { BridgesService } from './services/db/bridges.service';
+import { ChartsService } from './services/db/charts.service';
+import { ConnectionsService } from './services/db/connections.service';
+import { DashboardsService } from './services/db/dashboards.service';
+import { EnvsService } from './services/db/envs.service';
+import { MconfigsService } from './services/db/mconfigs.service';
+import { MembersService } from './services/db/members.service';
+import { ModelsService } from './services/db/models.service';
+import { OrgsService } from './services/db/orgs.service';
+import { ProjectsService } from './services/db/projects.service';
+import { QueriesService } from './services/db/queries.service';
+import { ReportsService } from './services/db/reports.service';
+import { StructsService } from './services/db/structs.service';
+import { UsersService } from './services/db/users.service';
 import { DocService } from './services/doc.service';
-import { DuckDbService } from './services/duckdb.service';
+import { BigQueryService } from './services/dwh/bigquery.service';
+import { ClickHouseService } from './services/dwh/clickhouse.service';
+import { DuckDbService } from './services/dwh/duckdb.service';
+import { MysqlService } from './services/dwh/mysql.service';
+import { PgService } from './services/dwh/pg.service';
+import { PrestoService } from './services/dwh/presto.service';
+import { SnowFlakeService } from './services/dwh/snowflake.service';
+import { TrinoService } from './services/dwh/trino.service';
 import { EmailService } from './services/email.service';
-import { EnvsService } from './services/envs.service';
 import { HashService } from './services/hash.service';
-import { EntMakerService } from './services/maker.service';
 import { MalloyService } from './services/malloy.service';
-import { MconfigsService } from './services/mconfigs.service';
-import { MembersService } from './services/members.service';
-import { ModelsService } from './services/models.service';
-import { MysqlService } from './services/mysql.service';
-import { OrgsService } from './services/orgs.service';
-import { PgService } from './services/pg.service';
-import { PrestoService } from './services/presto.service';
-import { ProjectsService } from './services/projects.service';
-import { QueriesService } from './services/queries.service';
 import { RabbitService } from './services/rabbit.service';
 import { RedisService } from './services/redis.service';
 import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
-import { ReportsService } from './services/reports.service';
-import { SnowFlakeService } from './services/snowflake.service';
 import { StoreService } from './services/store.service';
-import { StructsService } from './services/structs.service';
 import { TabService } from './services/tab.service';
 import { TasksService } from './services/tasks.service';
-import { TrinoService } from './services/trino.service';
 import { UserCodeService } from './services/user-code.service';
-import { UsersService } from './services/users.service';
-import { WrapEnxToApiService } from './services/wrap-to-api.service';
-import { WrapToEntService } from './services/wrap-to-ent.service';
 
 export const appProviders = [
-  WrapToEntService,
-  WrapEnxToApiService,
-  EntMakerService,
   HashService,
   RedisService,
   RabbitService,

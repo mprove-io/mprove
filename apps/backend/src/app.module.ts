@@ -29,7 +29,6 @@ import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
-import { UserTab } from '~common/interfaces/backend/user-tab';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
@@ -50,12 +49,7 @@ import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { HashService } from './services/hash.service';
-import { EntMakerService } from './services/maker.service';
-import { OrgsService } from './services/orgs.service';
-import { ProjectsService } from './services/projects.service';
 import { TabService } from './services/tab.service';
-import { UsersService } from './services/users.service';
-import { WrapEnxToApiService } from './services/wrap-to-api.service';
 
 let retry = require('async-retry');
 
