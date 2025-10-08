@@ -46,10 +46,10 @@ export class BranchesService {
     projectId: string;
     repoId: string;
     branchId: string;
-  }) {
+  }): Promise<BranchEnt> {
     let { projectId, repoId, branchId } = item;
 
-    let branch = await this.db.drizzle.query.branchesTable.findFirst({
+    let branchEnt = await this.db.drizzle.query.branchesTable.findFirst({
       where: and(
         eq(branchesTable.projectId, projectId),
         eq(branchesTable.repoId, repoId),
@@ -57,13 +57,13 @@ export class BranchesService {
       )
     });
 
-    if (isUndefined(branch)) {
+    if (isUndefined(branchEnt)) {
       throw new ServerError({
         message: ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
       });
     }
 
-    return branch;
+    return branchEnt;
   }
 
   async checkBranchDoesNotExist(item: {

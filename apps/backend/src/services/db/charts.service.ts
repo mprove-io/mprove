@@ -144,7 +144,10 @@ export class ChartsService {
     return chartTab;
   }
 
-  async getChartCheckExists(item: { chartId: string; structId: string }) {
+  async getChartTabCheckExists(item: {
+    chartId: string;
+    structId: string;
+  }): Promise<ChartTab> {
     let { chartId, structId } = item;
 
     let chart = await this.db.drizzle.query.chartsTable.findFirst({
@@ -160,16 +163,9 @@ export class ChartsService {
       });
     }
 
-    let chartTab = this.tabService.decrypt<ChartTab>({
-      encryptedString: chart.tab
-    });
+    let chartTab: ChartTab = this.entToTab(chart);
 
-    let chartEnx: ChartEnx = {
-      ...chart,
-      tab: chartTab
-    };
-
-    return chartEnx;
+    return chartTab;
   }
 
   checkChartPath(item: { filePath: string; userAlias: string }) {

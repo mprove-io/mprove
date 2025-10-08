@@ -265,11 +265,11 @@ export class ConnectionsService {
     }
   }
 
-  async getConnectionCheckExists(item: {
+  async getConnectionTabCheckExists(item: {
     connectionId: string;
     envId: string;
     projectId: string;
-  }) {
+  }): Promise<ConnectionTab> {
     let { projectId, envId, connectionId } = item;
 
     let connection = await this.db.drizzle.query.connectionsTable.findFirst({
@@ -286,6 +286,8 @@ export class ConnectionsService {
       });
     }
 
-    return connection;
+    let connectionTab = this.entToTab(connection);
+
+    return connectionTab;
   }
 }

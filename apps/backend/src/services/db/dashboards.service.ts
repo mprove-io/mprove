@@ -169,10 +169,10 @@ export class DashboardsService {
     return dashboardTab;
   }
 
-  async getDashboardCheckExists(item: {
+  async getDashboardTabCheckExists(item: {
     dashboardId: string;
     structId: string;
-  }) {
+  }): Promise<DashboardTab> {
     let { dashboardId, structId } = item;
 
     let dashboard = await this.db.drizzle.query.dashboardsTable.findFirst({
@@ -188,7 +188,9 @@ export class DashboardsService {
       });
     }
 
-    return dashboard;
+    let dashboardTab = this.entToTab(dashboard);
+
+    return dashboardTab;
   }
 
   checkDashboardPath(item: { filePath: string; userAlias: string }) {
@@ -205,7 +207,7 @@ export class DashboardsService {
     member: MemberEnt;
     user: UserEnt;
     bridge: BridgeEnt;
-  }) {
+  }): Promise<DashboardX> {
     let { projectId, dashboard, member, user, bridge } = item;
 
     let isAccessGranted = checkAccess({
@@ -276,7 +278,7 @@ export class DashboardsService {
     user: UserEnt;
     userMember: MemberEnt;
     newDashboard: Dashboard;
-  }) {
+  }): Promise<any> {
     let { structId, user, userMember, newDashboard } = item;
 
     let dashboardParts = (await this.db.drizzle

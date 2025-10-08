@@ -48,15 +48,15 @@ export class BridgesService {
     return bridgeEnt;
   }
 
-  async getBridgeCheckExists(item: {
+  async getBridgeEntCheckExists(item: {
     projectId: string;
     repoId: string;
     branchId: string;
     envId: string;
-  }) {
+  }): Promise<BridgeEnt> {
     let { projectId, repoId, branchId, envId } = item;
 
-    let bridge = await this.db.drizzle.query.bridgesTable.findFirst({
+    let bridgeEnt = await this.db.drizzle.query.bridgesTable.findFirst({
       where: and(
         eq(bridgesTable.projectId, projectId),
         eq(bridgesTable.repoId, repoId),
@@ -65,12 +65,12 @@ export class BridgesService {
       )
     });
 
-    if (isUndefined(bridge)) {
+    if (isUndefined(bridgeEnt)) {
       throw new ServerError({
         message: ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST
       });
     }
 
-    return bridge;
+    return bridgeEnt;
   }
 }
