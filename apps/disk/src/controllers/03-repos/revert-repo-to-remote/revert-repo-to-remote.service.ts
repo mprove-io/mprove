@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '~common/enums/er.enum';
-import { ProjectTab } from '~common/interfaces/backend/project-tab';
+import { ProjectLt } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import {
@@ -43,7 +43,7 @@ export class RevertRepoToRemoteService {
 
     let { orgId, baseProject, repoId, branch } = requestValid.payload;
 
-    let projectTab: ProjectTab = decryptData<ProjectTab>({
+    let projectTab: ProjectLt = decryptData<ProjectLt>({
       encryptedString: baseProject.tab,
       keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
     });

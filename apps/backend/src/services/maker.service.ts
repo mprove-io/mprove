@@ -10,7 +10,7 @@ import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
-import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
+import { ConnectionSt } from '~common/interfaces/backend/connection-parts/connection-tab';
 import { EnvTab } from '~common/interfaces/backend/env-tab';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MemberTab } from '~common/interfaces/backend/member-tab';
@@ -178,7 +178,7 @@ export class EntMakerService {
         isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
     }
 
-    let connectionTab: ConnectionTab = { options: options };
+    let connectionSt: ConnectionSt = { options: options };
 
     let connection: ConnectionEnt = {
       connectionFullId: this.hashService.makeConnectionFullId({
@@ -190,7 +190,7 @@ export class EntMakerService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      tab: this.tabService.encrypt({ data: connectionTab }),
+      tab: this.tabService.encrypt({ data: connectionSt }),
       serverTs: undefined
     };
 

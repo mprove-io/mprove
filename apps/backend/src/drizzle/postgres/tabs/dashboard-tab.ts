@@ -4,7 +4,7 @@ import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
 import { Tile } from '~common/interfaces/blockml/tile';
 import { DashboardEnt } from '../schema/dashboards';
 
-export interface DashboardMt extends Omit<DashboardEnt, 'st' | 'lt'> {
+export interface DashboardTab extends Omit<DashboardEnt, 'st' | 'lt'> {
   st: DashboardSt;
   lt: DashboardLt;
 }

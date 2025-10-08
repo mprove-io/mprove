@@ -14,7 +14,7 @@ import { Sorting } from '~common/interfaces/blockml/sorting';
 import { StorePart } from '~common/interfaces/blockml/store-part';
 import { MconfigEnt } from '../schema/mconfigs';
 
-export interface MconfigMt extends Omit<MconfigEnt, 'st' | 'lt'> {
+export interface MconfigTab extends Omit<MconfigEnt, 'st' | 'lt'> {
   st: MconfigSt;
   lt: MconfigLt;
 }

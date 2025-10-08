@@ -8,7 +8,7 @@ import {
 import { Ui } from '~common/interfaces/backend/ui';
 import { UserEnt } from '../schema/users';
 
-export interface UserMt extends Omit<UserEnt, 'st' | 'lt'> {
+export interface UserTab extends Omit<UserEnt, 'st' | 'lt'> {
   st: UserSt;
   lt: UserLt;
 }

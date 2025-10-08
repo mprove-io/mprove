@@ -1,14 +1,12 @@
 import { IsOptional, IsString } from 'class-validator';
 import { MemberEnt } from '../schema/members';
 
-export interface MemberMt extends Omit<MemberEnt, 'st' | 'lt'> {
+export interface MemberTab extends Omit<MemberEnt, 'st' | 'lt'> {
   st: MemberSt;
   lt: MemberLt;
 }
 
-export class MemberSt {}
-
-export class MemberLt {
+export class MemberSt {
   @IsString()
   email: string;
 
@@ -26,3 +24,5 @@ export class MemberLt {
   @IsString({ each: true })
   roles: string[];
 }
+
+export class MemberLt {}

@@ -6,7 +6,7 @@ import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { Preset } from '~common/interfaces/blockml/preset';
 import { StructEnt } from '../schema/structs';
 
-export interface StructMt extends Omit<StructEnt, 'st' | 'lt'> {
+export interface StructTab extends Omit<StructEnt, 'st' | 'lt'> {
   st: StructSt;
   lt: StructLt;
 }

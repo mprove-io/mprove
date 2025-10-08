@@ -6,7 +6,7 @@ import { RepoStatusEnum } from '~common/enums/repo-status.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import { BaseProject } from '~common/interfaces/backend/base-project';
-import { ProjectTab } from '~common/interfaces/backend/project-tab';
+import { ProjectLt } from '~common/interfaces/backend/project-tab';
 import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
 import { ToDiskCreateProjectRequest } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ToDiskCommitRepoRequest } from '~common/interfaces/to-disk/03-repos/to-disk-commit-repo';
@@ -48,7 +48,7 @@ test('1', async t => {
       }
     };
 
-    let projectTab: ProjectTab = {
+    let projectTab: ProjectLt = {
       name: projectName,
       defaultBranch: BRANCH_MAIN,
       gitUrl: undefined,

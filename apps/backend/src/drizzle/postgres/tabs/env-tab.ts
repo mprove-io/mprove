@@ -3,7 +3,7 @@ import { ValidateNested } from 'class-validator';
 import { Ev } from '~common/interfaces/backend/ev';
 import { EnvEnt } from '../schema/envs';
 
-export interface EnvMt extends Omit<EnvEnt, 'st' | 'lt'> {
+export interface EnvTab extends Omit<EnvEnt, 'st' | 'lt'> {
   st: EnvSt;
   lt: EnvLt;
 }

@@ -19,7 +19,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
+import { ConnectionSt } from '~common/interfaces/backend/connection-parts/connection-tab';
 import { ServerError } from '~common/models/server-error';
 import { EnvsService } from './envs.service';
 import { TabService } from './tab.service';
@@ -291,7 +291,7 @@ WHERE m.mconfig_id is NULL
           return;
         }
 
-        let cTab = this.tabService.decrypt<ConnectionTab>({
+        let cTab = this.tabService.decrypt<ConnectionSt>({
           encryptedString: connectionEnt.tab
         });
 

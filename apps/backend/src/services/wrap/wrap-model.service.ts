@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import {
   ModelLt,
-  ModelMt,
-  ModelSt
-} from '~backend/drizzle/postgres/mt/model-mt';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
+  ModelSt,
+  ModelTab
+} from '~backend/drizzle/postgres/tabs/model-tab';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Model } from '~common/interfaces/blockml/model';
 import { HashService } from '../hash.service';
@@ -17,38 +17,8 @@ export class WrapModelService {
     private hashService: HashService
   ) {}
 
-  entToMt(model: ModelEnt): ModelMt {
-    let modelMt: ModelMt = {
-      ...model,
-      st: this.tabService.decrypt<ModelSt>({
-        encryptedString: model.st
-      }),
-      lt: this.tabService.decrypt<ModelLt>({
-        encryptedString: model.lt
-      })
-    };
-
-    return modelMt;
-  }
-
-  mtToEnt(model: ModelMt): ModelEnt {
-    let modelEnt: ModelEnt = {
-      modelFullId: model.modelFullId,
-      structId: model.structId,
-      modelId: model.modelId,
-      type: model.type,
-      connectionId: model.connectionId,
-      connectionType: model.connectionType,
-      st: this.tabService.encrypt({ data: model.st }),
-      lt: this.tabService.encrypt({ data: model.lt }),
-      serverTs: model.serverTs
-    };
-
-    return modelEnt;
-  }
-
-  mtToApi(item: {
-    model: ModelMt;
+  tabToApi(item: {
+    model: ModelTab;
     hasAccess: boolean;
   }): ModelX {
     let { model, hasAccess } = item;
@@ -76,7 +46,7 @@ export class WrapModelService {
     return apiModel;
   }
 
-  apiToMt(model: Model): ModelMt {
+  apiToTab(model: Model): ModelTab {
     let modelSt: ModelSt = {
       accessRoles: model.accessRoles
     };
@@ -93,7 +63,7 @@ export class WrapModelService {
       nodes: model.nodes
     };
 
-    let modelMt: ModelMt = {
+    let modelTab: ModelTab = {
       modelFullId: this.hashService.makeModelFullId({
         structId: model.structId,
         modelId: model.modelId
@@ -108,6 +78,30 @@ export class WrapModelService {
       serverTs: model.serverTs
     };
 
-    return modelMt;
+    return modelTab;
+  }
+
+  entToTab(model: ModelEnt): ModelTab {
+    let modelTab: ModelTab = {
+      ...model,
+      st: this.tabService.decrypt<ModelSt>({
+        encryptedString: model.st
+      }),
+      lt: this.tabService.decrypt<ModelLt>({
+        encryptedString: model.lt
+      })
+    };
+
+    return modelTab;
+  }
+
+  tabToEnt(model: ModelTab): ModelEnt {
+    let modelEnt: ModelEnt = {
+      ...model,
+      st: this.tabService.encrypt({ data: model.st }),
+      lt: this.tabService.encrypt({ data: model.lt })
+    };
+
+    return modelEnt;
   }
 }

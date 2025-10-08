@@ -26,7 +26,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { makeCopy } from '~common/functions/make-copy';
 import { ChartTab } from '~common/interfaces/backend/chart-tab';
 import { ChartX } from '~common/interfaces/backend/chart-x';
-import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
+import { ConnectionSt } from '~common/interfaces/backend/connection-parts/connection-tab';
 import { DashboardTab } from '~common/interfaces/backend/dashboard-tab';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Env } from '~common/interfaces/backend/env';
@@ -44,7 +44,7 @@ import { OrgTab } from '~common/interfaces/backend/org-tab';
 import { OrgsItem } from '~common/interfaces/backend/orgs-item';
 import { Project } from '~common/interfaces/backend/project';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
-import { ProjectTab } from '~common/interfaces/backend/project-tab';
+import { ProjectLt } from '~common/interfaces/backend/project-tab';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import { QueryTab } from '~common/interfaces/backend/query-tab';
 import { ReportTab } from '~common/interfaces/backend/report-tab';
@@ -98,11 +98,11 @@ export class WrapEnxToApiService {
   }): ProjectConnection {
     let { connection, isIncludePasswords } = item;
 
-    let connectionTab = this.tabService.decrypt<ConnectionTab>({
+    let connectionSt = this.tabService.decrypt<ConnectionSt>({
       encryptedString: connection.tab
     });
 
-    let options = connectionTab.options;
+    let options = connectionSt.options;
 
     let projectConnection: ProjectConnection = {
       projectId: connection.projectId,
@@ -522,7 +522,7 @@ export class WrapEnxToApiService {
   }): Project {
     let { project, isAddGitUrl, isAddPrivateKey, isAddPublicKey } = item;
 
-    let projectTab = this.tabService.decrypt<ProjectTab>({
+    let projectTab = this.tabService.decrypt<ProjectLt>({
       encryptedString: project.tab
     });
 
@@ -549,7 +549,7 @@ export class WrapEnxToApiService {
   }): ProjectsItem {
     let { project } = item;
 
-    let projectTab = this.tabService.decrypt<ProjectTab>({
+    let projectTab = this.tabService.decrypt<ProjectLt>({
       encryptedString: project.tab
     });
 

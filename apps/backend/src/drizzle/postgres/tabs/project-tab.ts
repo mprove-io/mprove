@@ -1,9 +1,17 @@
 import { IsOptional, IsString } from 'class-validator';
+import { ProjectEnt } from '../schema/projects';
 
-export class ProjectTab {
+export interface ProjectTab extends Omit<ProjectEnt, 'st' | 'lt'> {
+  st: ProjectSt;
+  lt: ProjectLt;
+}
+
+export class ProjectSt {
   @IsString()
   name: string;
+}
 
+export class ProjectLt {
   @IsOptional()
   @IsString()
   gitUrl: string;

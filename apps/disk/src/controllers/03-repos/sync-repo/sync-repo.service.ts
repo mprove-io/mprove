@@ -6,7 +6,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileStatusEnum } from '~common/enums/file-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ProjectTab } from '~common/interfaces/backend/project-tab';
+import { ProjectLt } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
@@ -59,7 +59,7 @@ export class SyncRepoService {
       localDeletedFiles
     } = requestValid.payload;
 
-    let projectTab: ProjectTab = decryptData<ProjectTab>({
+    let projectTab: ProjectLt = decryptData<ProjectLt>({
       encryptedString: baseProject.tab,
       keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
     });

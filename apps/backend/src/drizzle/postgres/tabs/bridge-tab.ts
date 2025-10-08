@@ -1,6 +1,6 @@
 import { BridgeEnt } from '../schema/bridges';
 
-export interface BridgeMt extends Omit<BridgeEnt, 'st' | 'lt'> {
+export interface BridgeTab extends Omit<BridgeEnt, 'st' | 'lt'> {
   st: BridgeSt;
   lt: BridgeLt;
 }

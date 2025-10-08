@@ -11,7 +11,7 @@ import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelNode } from '~common/interfaces/blockml/model-node';
 import { ModelEnt } from '../schema/models';
 
-export interface ModelMt extends Omit<ModelEnt, 'st' | 'lt'> {
+export interface ModelTab extends Omit<ModelEnt, 'st' | 'lt'> {
   st: ModelSt;
   lt: ModelLt;
 }

@@ -31,7 +31,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { getMotherduckDatabaseWrongChars } from '~common/functions/check-motherduck-database-name';
 import { isDefined } from '~common/functions/is-defined';
-import { ConnectionTab } from '~common/interfaces/backend/connection-parts/connection-tab';
+import { ConnectionSt } from '~common/interfaces/backend/connection-parts/connection-tab';
 import {
   ToBackendEditConnectionRequest,
   ToBackendEditConnectionResponsePayload
@@ -108,9 +108,9 @@ export class EditConnectionController {
       }
     }
 
-    let connectionTab: ConnectionTab = { options: options };
+    let connectionSt: ConnectionSt = { options: options };
 
-    connection.tab = this.tabService.encrypt({ data: connectionTab });
+    connection.tab = this.tabService.encrypt({ data: connectionSt });
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(

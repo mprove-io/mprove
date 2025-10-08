@@ -15,10 +15,10 @@ export const projectsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
     orgId: varchar('org_id', { length: 128 }).notNull(),
     remoteType: varchar('remote_type').$type<ProjectRemoteTypeEnum>().notNull(),
-    nameHash: varchar('name_hash').notNull(), // name is unique across org projects
-    gitUrlHash: varchar('git_url_hash'),
     st: text('st'),
     lt: text('lt'),
+    nameHash: varchar('name_hash').notNull(), // name is unique across org projects
+    gitUrlHash: varchar('git_url_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

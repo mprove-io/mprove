@@ -1,6 +1,6 @@
 import { BranchEnt } from '../schema/branches';
 
-export interface BranchMt extends Omit<BranchEnt, 'st' | 'lt'> {
+export interface BranchTab extends Omit<BranchEnt, 'st' | 'lt'> {
   st: BranchSt;
   lt: BranchLt;
 }

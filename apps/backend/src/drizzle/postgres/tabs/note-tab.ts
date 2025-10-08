@@ -1,7 +1,7 @@
 import { IsOptional, IsString } from 'class-validator';
 import { NoteEnt } from '../schema/notes';
 
-export interface NoteMt extends Omit<NoteEnt, 'st' | 'lt'> {
+export interface NoteTab extends Omit<NoteEnt, 'st' | 'lt'> {
   st: NoteSt;
   lt: NoteLt;
 }
