@@ -35,9 +35,9 @@ export const queriesTable = pgTable(
     bigqueryConsecutiveErrorsGetResults: integer(
       'bigquery_consecutive_errors_get_results'
     ),
-    apiUrlHash: varchar('api_url_hash'),
     st: text('st'),
     lt: text('lt'),
+    apiUrlHash: varchar('api_url_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

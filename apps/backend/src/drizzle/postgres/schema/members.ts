@@ -17,13 +17,13 @@ export const membersTable = pgTable(
       .primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     memberId: varchar('member_id', { length: 32 }).notNull(), // user_id
-    emailHash: varchar('email_hash').notNull(),
-    aliasHash: varchar('alias_hash'),
     isAdmin: boolean('is_admin').notNull(),
     isEditor: boolean('is_editor').notNull(),
     isExplorer: boolean('is_explorer').notNull(),
     st: text('st'),
     lt: text('lt'),
+    emailHash: varchar('email_hash').notNull(),
+    aliasHash: varchar('alias_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

@@ -13,18 +13,18 @@ export const usersTable = pgTable(
   'users',
   {
     userId: varchar('user_id', { length: 32 }).notNull().primaryKey(),
-    emailHash: varchar('email_hash').notNull(),
-    aliasHash: varchar('alias_hash'),
-    emailVerificationTokenHash: varchar(
-      'email_verification_token_hash'
-    ).notNull(),
-    passwordResetTokenHash: varchar('password_reset_token_hash'),
     isEmailVerified: boolean('is_email_verified').notNull(),
     hash: varchar('hash'),
     salt: varchar('salt'),
     jwtMinIat: bigint('jwt_min_iat', { mode: 'number' }),
     st: text('st'),
     lt: text('lt'),
+    emailHash: varchar('email_hash').notNull(),
+    aliasHash: varchar('alias_hash'),
+    emailVerificationTokenHash: varchar(
+      'email_verification_token_hash'
+    ).notNull(),
+    passwordResetTokenHash: varchar('password_reset_token_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
