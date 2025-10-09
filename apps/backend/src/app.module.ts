@@ -37,17 +37,16 @@ import { getConfig } from './config/get.config';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
 import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
 import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
-import {
-  ConnectionEnt,
-  connectionsTable
-} from './drizzle/postgres/schema/connections';
+import { connectionsTable } from './drizzle/postgres/schema/connections';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
 import { projectsTable } from './drizzle/postgres/schema/projects';
 import { UserEnt, usersTable } from './drizzle/postgres/schema/users';
+import { ConnectionTab } from './drizzle/postgres/tabs/connection-tab';
 import { getRetryOption } from './functions/get-retry-option';
 import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { ConnectionsService } from './services/db/connections.service';
 import { HashService } from './services/hash.service';
 import { TabService } from './services/tab.service';
 
@@ -242,6 +241,7 @@ export class AppModule implements OnModuleInit {
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
     private entMakerService: EntMakerService,
+    private connectionsService: ConnectionsService,
     private hashService: HashService,
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
@@ -376,7 +376,7 @@ export class AppModule implements OnModuleInit {
             });
           }
 
-          let connections: ConnectionEnt[] = [];
+          let connections: ConnectionTab[] = [];
 
           let c1connection =
             await this.db.drizzle.query.connectionsTable.findFirst({
@@ -395,7 +395,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c1connection) &&
             isDefinedAndNotEmpty(demoProjectDwhPostgresPassword)
           ) {
-            let c1 = this.entMakerService.makeConnection({
+            let c1 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c1_postgres',

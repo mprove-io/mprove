@@ -53,58 +53,39 @@ export class OrgsService {
     return org;
   }
 
-  wrapToApiOrgsItem(item: { org: OrgTab }): OrgsItem {
-    let { org } = item;
-
-    let apiOrgsItem: OrgsItem = {
-      orgId: org.orgId,
-      name: org.st.name
-    };
-
-    return apiOrgsItem;
-  }
-
   tabToApi(item: { org: OrgTab }): Org {
     let { org } = item;
 
     let apiOrg: Org = {
       orgId: org.orgId,
       ownerId: org.ownerId,
-      name: org.st.name,
-      ownerEmail: org.st.ownerEmail,
+      name: org.name,
+      ownerEmail: org.ownerEmail,
       serverTs: Number(org.serverTs)
     };
 
     return apiOrg;
   }
 
-  apiToTab(org: Org): OrgTab {
-    let orgSt: OrgSt = {
-      name: org.name,
-      ownerEmail: org.ownerEmail
-    };
+  tabToApiOrgsItem(item: { org: OrgTab }): OrgsItem {
+    let { org } = item;
 
-    let orgLt: OrgLt = {};
-
-    let orgTab: OrgTab = {
+    let apiOrgsItem: OrgsItem = {
       orgId: org.orgId,
-      ownerId: org.ownerId,
-      st: orgSt,
-      lt: orgLt,
-      nameHash: this.hashService.makeHash(org.name),
-      ownerEmailHash: this.hashService.makeHash(org.ownerEmail),
-      serverTs: org.serverTs
+      name: org.name
     };
 
-    return orgTab;
+    return apiOrgsItem;
   }
 
   async getOrgCheckExists(item: { orgId: string }) {
     let { orgId } = item;
 
-    let org = await this.db.drizzle.query.orgsTable.findFirst({
-      where: eq(orgsTable.orgId, orgId)
-    });
+    let org = await this.db.drizzle.query.orgsTable
+      .findFirst({
+        where: eq(orgsTable.orgId, orgId)
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(org)) {
       throw new ServerError({
@@ -117,7 +98,7 @@ export class OrgsService {
 
   async checkUserIsOrgOwner(item: {
     userId: string;
-    org: OrgEnt;
+    org: OrgTab;
   }) {
     let { org, userId } = item;
 
@@ -139,11 +120,13 @@ export class OrgsService {
   }) {
     let { ownerId, ownerEmail, name, traceId, orgId } = item;
 
-    let newOrg: OrgEnt = {
+    let newOrg: OrgTab = {
       orgId: orgId || makeId(),
       name: name,
       ownerId: ownerId,
       ownerEmail: ownerEmail,
+      nameHash: this.hashService.makeHash(name),
+      ownerEmailHash: this.hashService.makeHash(ownerEmail),
       serverTs: undefined
     };
 

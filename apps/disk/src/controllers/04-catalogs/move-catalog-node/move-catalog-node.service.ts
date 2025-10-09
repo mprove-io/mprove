@@ -47,7 +47,7 @@ export class MoveCatalogNodeService {
       requestValid.payload;
 
     let projectTab: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.tab,
+      encryptedString: baseProject.slt,
       keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
     });
 

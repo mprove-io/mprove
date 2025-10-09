@@ -79,8 +79,8 @@ export class BridgesService {
   }): Promise<BridgeTab> {
     let { projectId, repoId, branchId, envId } = item;
 
-    let bridge = this.entToTab(
-      await this.db.drizzle.query.bridgesTable.findFirst({
+    let bridge = await this.db.drizzle.query.bridgesTable
+      .findFirst({
         where: and(
           eq(bridgesTable.projectId, projectId),
           eq(bridgesTable.repoId, repoId),
@@ -88,7 +88,7 @@ export class BridgesService {
           eq(bridgesTable.envId, envId)
         )
       })
-    );
+      .then(x => this.entToTab(x));
 
     if (isUndefined(bridge)) {
       throw new ServerError({

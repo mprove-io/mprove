@@ -8,7 +8,6 @@ import {
   MemberEnt,
   membersTable
 } from '~backend/drizzle/postgres/schema/members';
-import { ConnectionTab } from '~backend/drizzle/postgres/tabs/connection-tab';
 import { EnvLt, EnvSt, EnvTab } from '~backend/drizzle/postgres/tabs/env-tab';
 import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
 import { makeFullName } from '~backend/functions/make-full-name';
@@ -176,16 +175,16 @@ export class EnvsService {
   }) {
     let { projectId, envId, member } = item;
 
-    let envTab = this.entToTab(
-      await this.db.drizzle.query.envsTable.findFirst({
+    let env = await this.db.drizzle.query.envsTable
+      .findFirst({
         where: and(
           eq(envsTable.envId, envId),
           eq(envsTable.projectId, projectId)
         )
       })
-    );
+      .then(x => this.entToTab(x));
 
-    if (isUndefined(envTab)) {
+    if (isUndefined(env)) {
       throw new ServerError({
         message: ErEnum.BACKEND_ENV_DOES_NOT_EXIST
       });
@@ -194,62 +193,56 @@ export class EnvsService {
     if (
       envId !== PROJECT_ENV_PROD &&
       member.isAdmin === false &&
-      envTab.memberIds.indexOf(member.memberId) < 0
+      env.memberIds.indexOf(member.memberId) < 0
     ) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_DOES_NOT_HAVE_ACCESS_TO_ENV
       });
     }
 
-    return envTab;
+    return env;
   }
 
   async getApiEnvs(item: { projectId: string }) {
     let { projectId } = item;
 
-    let envs: EnvTab[] = [
-      ...(
-        await this.db.drizzle.query.envsTable.findMany({
-          where: eq(connectionsTable.projectId, projectId)
-        })
-      ).map(x => this.entToTab(x))
-    ];
+    let envs = await this.db.drizzle.query.envsTable
+      .findMany({
+        where: eq(connectionsTable.projectId, projectId)
+      })
+      .then(xs => xs.map(x => this.entToTab(x)));
 
-    let connections: ConnectionTab[] = [
-      ...(
-        await this.db.drizzle.query.connectionsTable.findMany({
-          where: and(
-            eq(connectionsTable.projectId, projectId),
-            inArray(
-              connectionsTable.envId,
-              envs.map(x => x.envId)
-            )
+    let connections = await this.db.drizzle.query.connectionsTable
+      .findMany({
+        where: and(
+          eq(connectionsTable.projectId, projectId),
+          inArray(
+            connectionsTable.envId,
+            envs.map(x => x.envId)
           )
-        })
-      ).map(x => this.connectionsService.entToTab(x))
-    ];
+        )
+      })
+      .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
 
-    let members = [
-      ...(
-        await this.db.drizzle.query.membersTable.findMany({
-          where: eq(membersTable.projectId, projectId)
-        })
-      ).map(x => this.membersService.entToTab(x))
-    ];
+    let members = await this.db.drizzle.query.membersTable
+      .findMany({
+        where: eq(membersTable.projectId, projectId)
+      })
+      .then(xs => xs.map(x => this.membersService.entToTab(x)));
 
     let prodEnv = envs.find(x => x.envId === PROJECT_ENV_PROD);
 
     let apiEnvs = envs
-      .map(x => {
+      .map(env => {
         let envConnectionIds = connections
-          .filter(y => y.envId === x.envId)
+          .filter(y => y.envId === env.envId)
           .map(connection => connection.connectionId);
 
         let apiEnv: Env = this.tabToApi({
-          env: x,
+          env: env,
           envConnectionIds: envConnectionIds,
           fallbackConnectionIds:
-            x.isFallbackToProdConnections === true
+            env.isFallbackToProdConnections === true
               ? connections
                   .filter(
                     y =>
@@ -259,15 +252,15 @@ export class EnvsService {
                   .map(connection => connection.connectionId)
               : [],
           fallbackEvs:
-            x.isFallbackToProdVariables === true
+            env.isFallbackToProdVariables === true
               ? prodEnv.evs.filter(
-                  y => x.evs.map(ev => ev.evId).indexOf(y.evId) < 0
+                  y => env.evs.map(ev => ev.evId).indexOf(y.evId) < 0
                 )
               : [],
           envMembers:
-            x.envId === PROJECT_ENV_PROD
+            env.envId === PROJECT_ENV_PROD
               ? []
-              : members.filter(m => x.memberIds.indexOf(m.memberId) > -1)
+              : members.filter(m => env.memberIds.indexOf(m.memberId) > -1)
         });
 
         return apiEnv;
@@ -299,7 +292,7 @@ export class EnvsService {
 
     let apiEnv = apiEnvs.find(x => x.envId === envId);
 
-    let connectionsEntsWithFallback =
+    let apiConnectionsEntsWithFallback =
       await this.db.drizzle.query.connectionsTable.findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),
@@ -310,8 +303,8 @@ export class EnvsService {
         )
       });
 
-    let connectionsWithFallback: ProjectConnection[] =
-      connectionsEntsWithFallback.map(x =>
+    let apiConnectionsWithFallback: ProjectConnection[] =
+      apiConnectionsEntsWithFallback.map(x =>
         this.connectionsService.tabToApi({
           connection: this.connectionsService.entToTab(x),
           isIncludePasswords: true
@@ -320,7 +313,7 @@ export class EnvsService {
 
     return {
       apiEnv,
-      connectionsWithFallback
+      apiConnectionsWithFallback
     };
   }
 }

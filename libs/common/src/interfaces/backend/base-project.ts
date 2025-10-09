@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsString } from 'class-validator';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 
 export class BaseProject {
@@ -12,9 +12,8 @@ export class BaseProject {
   remoteType: ProjectRemoteTypeEnum;
 
   @IsString()
-  tab: string;
+  st: string;
 
-  @IsOptional()
-  @IsInt()
-  serverTs: number;
+  @IsString()
+  lt: string;
 }

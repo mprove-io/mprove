@@ -5,17 +5,13 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import {
-  BridgeEnt,
-  bridgesTable
-} from '~backend/drizzle/postgres/schema/bridges';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import {
   MemberEnt,
-  MemberEnx,
   membersTable
 } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { BridgeTab } from '~backend/drizzle/postgres/tabs/bridge-tab';
 import {
   MemberLt,
   MemberSt,
@@ -45,6 +41,9 @@ import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RabbitService } from '../rabbit.service';
 import { TabService } from '../tab.service';
+import { BranchesService } from './branches.service';
+import { BridgesService } from './bridges.service';
+import { ProjectsService } from './projects.service';
 
 let retry = require('async-retry');
 
@@ -55,6 +54,9 @@ export class MembersService {
     private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
+    private projectsService: ProjectsService,
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -125,7 +127,7 @@ export class MembersService {
         firstName: member.firstName,
         lastName: member.lastName
       }),
-      avatarSmall: undefined,
+      avatarSmall: undefined, // TODO: add avatar in this method?
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
@@ -139,12 +141,14 @@ export class MembersService {
   async getMemberCheckIsAdmin(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
-    let member = await this.db.drizzle.query.membersTable.findFirst({
-      where: and(
-        eq(membersTable.memberId, memberId),
-        eq(membersTable.projectId, projectId)
-      )
-    });
+    let member = await this.db.drizzle.query.membersTable
+      .findFirst({
+        where: and(
+          eq(membersTable.memberId, memberId),
+          eq(membersTable.projectId, projectId)
+        )
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -167,12 +171,14 @@ export class MembersService {
   }) {
     let { projectId, memberId } = item;
 
-    let member = await this.db.drizzle.query.membersTable.findFirst({
-      where: and(
-        eq(membersTable.memberId, memberId),
-        eq(membersTable.projectId, projectId)
-      )
-    });
+    let member = await this.db.drizzle.query.membersTable
+      .findFirst({
+        where: and(
+          eq(membersTable.memberId, memberId),
+          eq(membersTable.projectId, projectId)
+        )
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -192,12 +198,14 @@ export class MembersService {
   async getMemberCheckIsEditor(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
-    let member = await this.db.drizzle.query.membersTable.findFirst({
-      where: and(
-        eq(membersTable.memberId, memberId),
-        eq(membersTable.projectId, projectId)
-      )
-    });
+    let member = await this.db.drizzle.query.membersTable
+      .findFirst({
+        where: and(
+          eq(membersTable.memberId, memberId),
+          eq(membersTable.projectId, projectId)
+        )
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -217,12 +225,14 @@ export class MembersService {
   async getMemberCheckExists(item: { memberId: string; projectId: string }) {
     let { projectId, memberId } = item;
 
-    let member = await this.db.drizzle.query.membersTable.findFirst({
-      where: and(
-        eq(membersTable.memberId, memberId),
-        eq(membersTable.projectId, projectId)
-      )
-    });
+    let member = await this.db.drizzle.query.membersTable
+      .findFirst({
+        where: and(
+          eq(membersTable.memberId, memberId),
+          eq(membersTable.projectId, projectId)
+        )
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -230,16 +240,7 @@ export class MembersService {
       });
     }
 
-    let memberTab = this.tabService.decrypt<MemberTab>({
-      encryptedString: member.tab
-    });
-
-    let memberEnx: MemberEnx = {
-      ...member,
-      tab: memberTab
-    };
-
-    return memberEnx;
+    return member;
   }
 
   async checkMemberDoesNotExist(item: { memberId: string; projectId: string }) {
@@ -260,7 +261,7 @@ export class MembersService {
   }
 
   async addMemberToDemoProject(item: {
-    user: UserEnt;
+    user: UserTab;
     traceId: string;
   }) {
     let { user, traceId } = item;
@@ -269,20 +270,24 @@ export class MembersService {
       this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
     if (isDefined(demoProjectId)) {
-      let project = await this.db.drizzle.query.projectsTable.findFirst({
-        where: eq(projectsTable.projectId, demoProjectId)
-      });
+      let project = await this.db.drizzle.query.projectsTable
+        .findFirst({
+          where: eq(projectsTable.projectId, demoProjectId)
+        })
+        .then(x => this.projectsService.entToTab(x));
 
       if (isDefined(project)) {
-        let member = await this.db.drizzle.query.membersTable.findFirst({
-          where: and(
-            eq(membersTable.memberId, user.userId),
-            eq(membersTable.projectId, demoProjectId)
-          )
-        });
+        let member = await this.db.drizzle.query.membersTable
+          .findFirst({
+            where: and(
+              eq(membersTable.memberId, user.userId),
+              eq(membersTable.projectId, demoProjectId)
+            )
+          })
+          .then(x => this.entToTab(x));
 
         if (isUndefined(member)) {
-          let newMember: MemberEnt = this.entMakerService.makeMember({
+          let newMember: MemberTab = this.makeMember({
             projectId: demoProjectId,
             user: user,
             isAdmin: false,
@@ -290,11 +295,8 @@ export class MembersService {
             isExplorer: true
           });
 
-          let apiProject = this.wrapToApiService.wrapToApiProject({
-            project: project,
-            isAddGitUrl: true,
-            isAddPrivateKey: true,
-            isAddPublicKey: true
+          let baseProject = this.projectsService.tabToApiBaseProject({
+            project: project
           });
 
           let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
@@ -304,7 +306,7 @@ export class MembersService {
             },
             payload: {
               orgId: project.orgId,
-              baseProject: apiProject,
+              baseProject: baseProject,
               devRepoId: newMember.memberId
             }
           };
@@ -319,33 +321,36 @@ export class MembersService {
               checkIsOk: true
             });
 
-          let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
-            where: and(
-              eq(branchesTable.projectId, demoProjectId),
-              eq(branchesTable.repoId, PROD_REPO_ID),
-              eq(branchesTable.branchId, project.defaultBranch)
-            )
-          });
+          let prodBranch = await this.db.drizzle.query.branchesTable
+            .findFirst({
+              where: and(
+                eq(branchesTable.projectId, demoProjectId),
+                eq(branchesTable.repoId, PROD_REPO_ID),
+                eq(branchesTable.branchId, project.defaultBranch)
+              )
+            })
+            .then(x => this.branchesService.entToTab(x));
 
-          let devBranch = this.entMakerService.makeBranch({
+          let devBranch = this.branchesService.makeBranch({
             projectId: demoProjectId,
             repoId: newMember.memberId,
             branchId: project.defaultBranch
           });
 
-          let prodBranchBridges =
-            await this.db.drizzle.query.bridgesTable.findMany({
+          let prodBranchBridges = await this.db.drizzle.query.bridgesTable
+            .findMany({
               where: and(
                 eq(bridgesTable.projectId, prodBranch.projectId),
                 eq(bridgesTable.repoId, prodBranch.repoId),
                 eq(bridgesTable.branchId, prodBranch.branchId)
               )
-            });
+            })
+            .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
 
-          let devBranchBridges: BridgeEnt[] = [];
+          let devBranchBridges: BridgeTab[] = [];
 
           prodBranchBridges.forEach(x => {
-            let devBranchBridge = this.entMakerService.makeBridge({
+            let devBranchBridge = this.bridgesService.makeBridge({
               projectId: devBranch.projectId,
               repoId: devBranch.repoId,
               branchId: devBranch.branchId,

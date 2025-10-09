@@ -137,14 +137,14 @@ export class ChartsService {
   }): Promise<ChartTab> {
     let { chartId, structId } = item;
 
-    let chart = this.entToTab(
-      await this.db.drizzle.query.chartsTable.findFirst({
+    let chart = await this.db.drizzle.query.chartsTable
+      .findFirst({
         where: and(
           eq(chartsTable.structId, structId),
           eq(chartsTable.chartId, chartId)
         )
       })
-    );
+      .then(x => this.entToTab(x));
 
     if (isUndefined(chart)) {
       throw new ServerError({

@@ -96,53 +96,45 @@ export class QueriesService {
     return apiQuery;
   }
 
-  apiToTab(item: { query: Query }): QueryTab {
-    let { query } = item;
+  apiToTab(item: { apiQuery: Query }): QueryTab {
+    let { apiQuery } = item;
 
-    let querySt: QuerySt = {
-      sql: query.sql,
-      apiMethod: query.apiMethod,
-      apiUrl: query.apiUrl,
-      apiBody: query.apiBody,
-      lastErrorMessage: query.lastErrorMessage
-    };
-
-    let queryLt: QueryLt = {
-      data: query.data
-    };
-
-    let queryTab: QueryTab = {
-      projectId: query.projectId,
-      envId: query.envId,
-      connectionId: query.connectionId,
-      connectionType: query.connectionType,
-      queryId: query.queryId,
-      status: query.status,
-      lastRunBy: query.lastRunBy,
-      lastRunTs: query.lastRunTs,
-      lastCancelTs: query.lastCancelTs,
-      lastCompleteTs: query.lastCompleteTs,
-      lastCompleteDuration: query.lastCompleteDuration,
-      lastErrorTs: query.lastErrorTs,
+    let query: QueryTab = {
+      projectId: apiQuery.projectId,
+      envId: apiQuery.envId,
+      connectionId: apiQuery.connectionId,
+      connectionType: apiQuery.connectionType,
+      queryId: apiQuery.queryId,
+      status: apiQuery.status,
+      lastRunBy: apiQuery.lastRunBy,
+      lastRunTs: apiQuery.lastRunTs,
+      lastCancelTs: apiQuery.lastCancelTs,
+      lastCompleteTs: apiQuery.lastCompleteTs,
+      lastCompleteDuration: apiQuery.lastCompleteDuration,
+      lastErrorTs: apiQuery.lastErrorTs,
       queryJobId: undefined, // null
       bigqueryQueryJobId: undefined, // null
       bigqueryConsecutiveErrorsGetJob: isDefined(
-        query.bigqueryConsecutiveErrorsGetJob
+        apiQuery.bigqueryConsecutiveErrorsGetJob
       )
-        ? query.bigqueryConsecutiveErrorsGetJob
+        ? apiQuery.bigqueryConsecutiveErrorsGetJob
         : 0,
       bigqueryConsecutiveErrorsGetResults: isDefined(
-        query.bigqueryConsecutiveErrorsGetResults
+        apiQuery.bigqueryConsecutiveErrorsGetResults
       )
-        ? query.bigqueryConsecutiveErrorsGetResults
+        ? apiQuery.bigqueryConsecutiveErrorsGetResults
         : 0,
-      st: querySt,
-      lt: queryLt,
-      apiUrlHash: this.hashService.makeHash(query.apiUrl),
-      serverTs: query.serverTs
+      sql: apiQuery.sql,
+      apiMethod: apiQuery.apiMethod,
+      apiUrl: apiQuery.apiUrl,
+      apiBody: apiQuery.apiBody,
+      lastErrorMessage: apiQuery.lastErrorMessage,
+      data: apiQuery.data,
+      apiUrlHash: this.hashService.makeHash(apiQuery.apiUrl),
+      serverTs: apiQuery.serverTs
     };
 
-    return queryTab;
+    return query;
   }
 
   async getQueryCheckExistsSkipData(item: {

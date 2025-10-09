@@ -71,31 +71,35 @@ export class ModelsService {
     return apiModel;
   }
 
-  apiToTab(model: Model): ModelTab {
-    let modelTab: ModelTab = {
+  apiToTab(item: {
+    apiModel: Model;
+  }): ModelTab {
+    let { apiModel } = item;
+
+    let model: ModelTab = {
       modelFullId: this.hashService.makeModelFullId({
-        structId: model.structId,
-        modelId: model.modelId
+        structId: apiModel.structId,
+        modelId: apiModel.modelId
       }),
-      structId: model.structId,
-      modelId: model.modelId,
-      type: model.type,
-      connectionId: model.connectionId,
-      connectionType: model.connectionType,
-      accessRoles: model.accessRoles,
-      source: model.source,
-      malloyModelDef: model.malloyModelDef,
-      filePath: model.filePath,
-      fileText: model.fileText,
-      storeContent: model.storeContent,
-      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
-      label: model.label,
-      fields: model.fields,
-      nodes: model.nodes,
-      serverTs: model.serverTs
+      structId: apiModel.structId,
+      modelId: apiModel.modelId,
+      type: apiModel.type,
+      connectionId: apiModel.connectionId,
+      connectionType: apiModel.connectionType,
+      accessRoles: apiModel.accessRoles,
+      source: apiModel.source,
+      malloyModelDef: apiModel.malloyModelDef,
+      filePath: apiModel.filePath,
+      fileText: apiModel.fileText,
+      storeContent: apiModel.storeContent,
+      dateRangeIncludesRightSide: apiModel.dateRangeIncludesRightSide,
+      label: apiModel.label,
+      fields: apiModel.fields,
+      nodes: apiModel.nodes,
+      serverTs: apiModel.serverTs
     };
 
-    return modelTab;
+    return model;
   }
 
   async getModelTabCheckExists(item: {
@@ -104,21 +108,21 @@ export class ModelsService {
   }): Promise<ModelTab> {
     let { modelId, structId } = item;
 
-    let modelEnt = await this.db.drizzle.query.modelsTable.findFirst({
-      where: and(
-        eq(modelsTable.structId, structId),
-        eq(modelsTable.modelId, modelId)
-      )
-    });
+    let model = await this.db.drizzle.query.modelsTable
+      .findFirst({
+        where: and(
+          eq(modelsTable.structId, structId),
+          eq(modelsTable.modelId, modelId)
+        )
+      })
+      .then(x => this.entToTab(x));
 
-    if (isUndefined(modelEnt)) {
+    if (isUndefined(model)) {
       throw new ServerError({
         message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
       });
     }
 
-    let modelTab: ModelTab = this.entToTab(modelEnt);
-
-    return modelTab;
+    return model;
   }
 }

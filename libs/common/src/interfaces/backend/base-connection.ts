@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 
 export class BaseConnection {
@@ -19,9 +19,8 @@ export class BaseConnection {
   type?: ConnectionTypeEnum;
 
   @IsString()
-  tab: string;
+  st: string;
 
-  @IsOptional()
-  @IsInt()
-  serverTs?: number;
+  @IsString()
+  lt: string;
 }

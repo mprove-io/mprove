@@ -170,14 +170,14 @@ export class DashboardsService {
   }): Promise<DashboardTab> {
     let { dashboardId, structId } = item;
 
-    let dashboard = this.entToTab(
-      await this.db.drizzle.query.dashboardsTable.findFirst({
+    let dashboard = await this.db.drizzle.query.dashboardsTable
+      .findFirst({
         where: and(
           eq(dashboardsTable.structId, structId),
           eq(dashboardsTable.dashboardId, dashboardId)
         )
       })
-    );
+      .then(x => this.entToTab(x));
 
     if (isUndefined(dashboard)) {
       throw new ServerError({
@@ -220,50 +220,50 @@ export class DashboardsService {
     let mconfigs =
       mconfigIds.length === 0
         ? []
-        : await this.db.drizzle.query.mconfigsTable.findMany({
-            where: inArray(mconfigsTable.mconfigId, mconfigIds)
-          });
+        : await this.db.drizzle.query.mconfigsTable
+            .findMany({
+              where: inArray(mconfigsTable.mconfigId, mconfigIds)
+            })
+            .then(xs => xs.map(x => this.mconfigsService.entToTab(x)));
 
     let queryIds = dashboard.tiles.map(x => x.queryId);
     let queries =
       queryIds.length === 0
         ? []
-        : await this.db.drizzle.query.queriesTable.findMany({
-            where: and(
-              inArray(queriesTable.queryId, queryIds),
-              eq(queriesTable.projectId, projectId)
-            )
-          });
+        : await this.db.drizzle.query.queriesTable
+            .findMany({
+              where: and(
+                inArray(queriesTable.queryId, queryIds),
+                eq(queriesTable.projectId, projectId)
+              )
+            })
+            .then(xs => xs.map(x => this.queriesService.entToTab(x)));
 
-    let models = await this.db.drizzle.query.modelsTable.findMany({
-      where: eq(modelsTable.structId, bridge.structId)
-    });
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: eq(modelsTable.structId, bridge.structId)
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
 
-    let modelTabs = models.map(x => this.modelsService.entToTab(x));
-
-    let apiModels = modelTabs.map(modelTab =>
+    let apiModels = models.map(model =>
       this.modelsService.tabToApi({
-        model: modelTab,
+        model: model,
         hasAccess: checkModelAccess({
           member: userMember,
-          modelAccessRoles: modelTab.accessRoles
+          modelAccessRoles: model.accessRoles
         })
       })
     );
 
     let dashboardX = this.tabToApi({
       dashboard: dashboard,
-      mconfigs: mconfigs
-        .map(x => this.mconfigsService.entToTab(x))
-        .map(x =>
-          this.mconfigsService.tabToApi({
-            mconfig: x,
-            modelFields: apiModels.find(m => m.modelId === x.modelId).fields
-          })
-        ),
-      queries: queries
-        .map(x => this.queriesService.entToTab(x))
-        .map(x => this.queriesService.tabToApi({ query: x })),
+      mconfigs: mconfigs.map(x =>
+        this.mconfigsService.tabToApi({
+          mconfig: x,
+          modelFields: apiModels.find(m => m.modelId === x.modelId).fields
+        })
+      ),
+      queries: queries.map(x => this.queriesService.tabToApi({ query: x })),
       member: this.membersService.tabToApi({ member: userMember }),
       models: apiModels,
       isAddMconfigAndQuery: true
@@ -280,7 +280,7 @@ export class DashboardsService {
   }): Promise<any> {
     let { structId, user, userMember, newDashboard } = item;
 
-    let dashboardParts = (await this.db.drizzle
+    let dashboardParts = await this.db.drizzle
       .select({
         dashboardId: dashboardsTable.dashboardId,
         draft: dashboardsTable.draft,
@@ -301,11 +301,12 @@ export class DashboardsService {
             ? eq(dashboardsTable.creatorId, user.userId)
             : eq(dashboardsTable.draft, false)
         )
-      )) as DashboardEnt[];
+      )
+      .then(xs => xs.map(x => this.entToTab(x as DashboardEnt)));
 
-    let dashboardTabParts = dashboardParts.map(x => this.entToTab(x));
+    // let dashboardTabParts = dashboardParts.map(x => this.entToTab(x));
 
-    let dashboardPartsGrantedAccess = dashboardTabParts.filter(x =>
+    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
       checkAccess({
         member: userMember,
         accessRoles: x.accessRoles
@@ -315,7 +316,7 @@ export class DashboardsService {
     let modelIdsWithDuplicates = newDashboard.tiles.map(tile => tile.modelId);
     let uniqueModelIds = [...new Set(modelIdsWithDuplicates)];
 
-    let models = (await this.db.drizzle
+    let models = await this.db.drizzle
       .select({
         modelId: modelsTable.modelId,
         connectionId: modelsTable.connectionId,
@@ -329,16 +330,15 @@ export class DashboardsService {
           eq(modelsTable.structId, structId),
           inArray(modelsTable.modelId, uniqueModelIds)
         )
-      )) as ModelEnt[];
+      )
+      .then(xs => xs.map(x => this.modelsService.entToTab(x as ModelEnt)));
 
-    let modelTabs = models.map(x => this.modelsService.entToTab(x));
-
-    let apiModels = modelTabs.map(modelTab =>
+    let apiModels = models.map(model =>
       this.modelsService.tabToApi({
-        model: modelTab,
+        model: model,
         hasAccess: checkModelAccess({
           member: userMember,
-          modelAccessRoles: modelTab.accessRoles
+          modelAccessRoles: model.accessRoles
         })
       })
     );

@@ -60,7 +60,7 @@ test('1', async t => {
       projectId: projectId,
       remoteType: ProjectRemoteTypeEnum.Managed,
       serverTs: undefined,
-      tab: encryptData({
+      slt: encryptData({
         data: projectTab,
         keyBase64: cs.get<DiskConfig['aesKey']>('aesKey')
       })

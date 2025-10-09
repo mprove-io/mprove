@@ -13,6 +13,7 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { BaseConnection } from '~common/interfaces/backend/base-connection';
 import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
@@ -233,6 +234,28 @@ export class ConnectionsService {
     return apiProjectConnection;
   }
 
+  tabToApiBaseConnection(item: {
+    connection: ConnectionTab;
+  }): BaseConnection {
+    let { connection } = item;
+
+    let connectionSt: ConnectionSt = {
+      options: connection.options
+    };
+    let connectionLt: ConnectionLt = {};
+
+    let apiBaseConnection: BaseConnection = {
+      connectionId: connection.connectionId,
+      projectId: connection.projectId,
+      envId: connection.envId,
+      type: connection.type,
+      st: this.tabService.encrypt({ data: connectionSt }),
+      lt: this.tabService.encrypt({ data: connectionLt })
+    };
+
+    return apiBaseConnection;
+  }
+
   async checkConnectionDoesNotExist(item: {
     projectId: string;
     envId: string;
@@ -262,15 +285,15 @@ export class ConnectionsService {
   }): Promise<ConnectionTab> {
     let { projectId, envId, connectionId } = item;
 
-    let connection = this.entToTab(
-      await this.db.drizzle.query.connectionsTable.findFirst({
+    let connection = await this.db.drizzle.query.connectionsTable
+      .findFirst({
         where: and(
           eq(connectionsTable.connectionId, connectionId),
           eq(connectionsTable.envId, envId),
           eq(connectionsTable.projectId, projectId)
         )
       })
-    );
+      .then(x => this.entToTab(x));
 
     if (isUndefined(connection)) {
       throw new ServerError({

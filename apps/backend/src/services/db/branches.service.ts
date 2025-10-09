@@ -72,15 +72,15 @@ export class BranchesService {
   }): Promise<BranchTab> {
     let { projectId, repoId, branchId } = item;
 
-    let branch = this.entToTab(
-      await this.db.drizzle.query.branchesTable.findFirst({
+    let branch = await this.db.drizzle.query.branchesTable
+      .findFirst({
         where: and(
           eq(branchesTable.projectId, projectId),
           eq(branchesTable.repoId, repoId),
           eq(branchesTable.branchId, branchId)
         )
       })
-    );
+      .then(x => this.entToTab(x));
 
     if (isUndefined(branch)) {
       throw new ServerError({

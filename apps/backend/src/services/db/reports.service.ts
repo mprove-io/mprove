@@ -220,38 +220,30 @@ export class ReportsService {
     return apiReport;
   }
 
-  apiToTab(item: { report: Report }): ReportTab {
-    let { report } = item;
+  apiToTab(item: { apiReport: Report }): ReportTab {
+    let { apiReport } = item;
 
-    let reportSt: ReportSt = {
-      filePath: report.filePath,
-      fields: report.fields,
-      accessRoles: report.accessRoles,
-      title: report.title,
-      chart: report.chart
-    };
-
-    let reportLt: ReportLt = {
-      rows: report.rows
-    };
-
-    let reportTab: ReportTab = {
+    let report: ReportTab = {
       reportFullId: this.hashService.makeReportFullId({
-        structId: report.structId,
-        reportId: report.reportId
+        structId: apiReport.structId,
+        reportId: apiReport.reportId
       }),
-      projectId: report.projectId,
-      structId: report.structId,
-      reportId: report.reportId,
-      creatorId: report.creatorId,
-      draft: report.draft,
-      draftCreatedTs: report.draftCreatedTs,
-      st: reportSt,
-      lt: reportLt,
-      serverTs: report.serverTs
+      projectId: apiReport.projectId,
+      structId: apiReport.structId,
+      reportId: apiReport.reportId,
+      creatorId: apiReport.creatorId,
+      draft: apiReport.draft,
+      draftCreatedTs: apiReport.draftCreatedTs,
+      filePath: apiReport.filePath,
+      fields: apiReport.fields,
+      accessRoles: apiReport.accessRoles,
+      title: apiReport.title,
+      chart: apiReport.chart,
+      rows: apiReport.rows,
+      serverTs: apiReport.serverTs
     };
 
-    return reportTab;
+    return report;
   }
 
   async getReportCheckExists(item: { reportId: string; structId: string }) {

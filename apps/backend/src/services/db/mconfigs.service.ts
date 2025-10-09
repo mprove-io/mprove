@@ -110,47 +110,47 @@ export class MconfigsService {
     return mconfigX;
   }
 
-  apiToTab(item: { mconfig: Mconfig }): MconfigTab {
-    let { mconfig } = item;
+  apiToTab(item: { apiMconfig: Mconfig }): MconfigTab {
+    let { apiMconfig } = item;
 
-    let mconfigTab: MconfigTab = {
-      structId: mconfig.structId,
-      queryId: mconfig.queryId,
-      mconfigId: mconfig.mconfigId,
-      modelId: mconfig.modelId,
-      modelType: mconfig.modelType,
-      temp: mconfig.temp,
-      dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
-      storePart: mconfig.storePart,
-      modelLabel: mconfig.modelLabel,
-      modelFilePath: mconfig.modelFilePath,
-      malloyQueryStable: mconfig.malloyQueryStable,
-      malloyQueryExtra: mconfig.malloyQueryExtra,
-      compiledQuery: mconfig.compiledQuery,
-      select: mconfig.select,
-      sortings: mconfig.sortings,
-      sorts: mconfig.sorts,
-      timezone: mconfig.timezone,
-      limit: mconfig.limit,
-      filters: mconfig.filters,
-      chart: mconfig.chart,
-      serverTs: mconfig.serverTs
+    let mconfig: MconfigTab = {
+      structId: apiMconfig.structId,
+      queryId: apiMconfig.queryId,
+      mconfigId: apiMconfig.mconfigId,
+      modelId: apiMconfig.modelId,
+      modelType: apiMconfig.modelType,
+      temp: apiMconfig.temp,
+      dateRangeIncludesRightSide: apiMconfig.dateRangeIncludesRightSide,
+      storePart: apiMconfig.storePart,
+      modelLabel: apiMconfig.modelLabel,
+      modelFilePath: apiMconfig.modelFilePath,
+      malloyQueryStable: apiMconfig.malloyQueryStable,
+      malloyQueryExtra: apiMconfig.malloyQueryExtra,
+      compiledQuery: apiMconfig.compiledQuery,
+      select: apiMconfig.select,
+      sortings: apiMconfig.sortings,
+      sorts: apiMconfig.sorts,
+      timezone: apiMconfig.timezone,
+      limit: apiMconfig.limit,
+      filters: apiMconfig.filters,
+      chart: apiMconfig.chart,
+      serverTs: apiMconfig.serverTs
     };
 
-    return mconfigTab;
+    return mconfig;
   }
 
   async getMconfigCheckExists(item: { mconfigId: string; structId: string }) {
     let { mconfigId, structId } = item;
 
-    let mconfig: MconfigTab = this.entToTab(
-      await this.db.drizzle.query.mconfigsTable.findFirst({
+    let mconfig = await this.db.drizzle.query.mconfigsTable
+      .findFirst({
         where: and(
           eq(mconfigsTable.mconfigId, mconfigId),
           eq(mconfigsTable.structId, structId)
         )
       })
-    );
+      .then(x => this.entToTab(x));
 
     if (isUndefined(mconfig)) {
       throw new ServerError({
@@ -219,8 +219,8 @@ export class MconfigsService {
 
     let apiEnv = apiEnvs.find(x => x.envId === envId);
 
-    let connection = this.connectionsService.entToTab(
-      await this.db.drizzle.query.connectionsTable.findFirst({
+    let connection = await this.db.drizzle.query.connectionsTable
+      .findFirst({
         where: and(
           eq(connectionsTable.projectId, project.projectId),
           eq(
@@ -232,7 +232,7 @@ export class MconfigsService {
           eq(connectionsTable.connectionId, model.connectionId)
         )
       })
-    );
+      .then(x => this.connectionsService.entToTab(x));
 
     let processedRequest = await this.storeService.transformStoreRequest({
       input: model.storeContent.request,

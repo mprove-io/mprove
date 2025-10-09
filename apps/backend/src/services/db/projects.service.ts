@@ -7,12 +7,13 @@ import {
   ProjectEnt,
   projectsTable
 } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { ConnectionTab } from '~backend/drizzle/postgres/tabs/connection-tab';
 import {
   ProjectLt,
   ProjectSt,
   ProjectTab
 } from '~backend/drizzle/postgres/tabs/project-tab';
+import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
@@ -21,9 +22,9 @@ import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
+import { BaseProject } from '~common/interfaces/backend/base-project';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Project } from '~common/interfaces/backend/project';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import {
   ToDiskCreateProjectRequest,
@@ -34,6 +35,10 @@ import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RabbitService } from '../rabbit.service';
 import { TabService } from '../tab.service';
+import { BranchesService } from './branches.service';
+import { BridgesService } from './bridges.service';
+import { EnvsService } from './envs.service';
+import { MembersService } from './members.service';
 
 let retry = require('async-retry');
 
@@ -44,6 +49,10 @@ export class ProjectsService {
     private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
+    private envsService: EnvsService,
+    private membersService: MembersService,
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -74,14 +83,14 @@ export class ProjectsService {
 
     let apiProjectItem: ProjectsItem = {
       projectId: project.projectId,
-      name: project.st.name,
-      defaultBranch: project.lt.defaultBranch
+      name: project.name,
+      defaultBranch: project.defaultBranch
     };
 
     return apiProjectItem;
   }
 
-  tabToApi(item: {
+  tabToApiProject(item: {
     project: ProjectTab;
     isAddPublicKey: boolean;
     isAddGitUrl: boolean;
@@ -92,48 +101,51 @@ export class ProjectsService {
       orgId: project.orgId,
       projectId: project.projectId,
       remoteType: project.remoteType,
-      name: project.st.name,
-      defaultBranch: project.lt.defaultBranch,
-      gitUrl: isAddGitUrl === true ? project.lt.gitUrl : undefined,
-      publicKey: isAddPublicKey === true ? project.lt.publicKey : undefined,
+      name: project.name,
+      defaultBranch: project.defaultBranch,
+      gitUrl: isAddGitUrl === true ? project.gitUrl : undefined,
+      publicKey: isAddPublicKey === true ? project.publicKey : undefined,
       serverTs: Number(project.serverTs)
     };
 
     return apiProject;
   }
 
-  apiToTab(project: Project): ProjectTab {
+  tabToApiBaseProject(item: {
+    project: ProjectTab;
+  }): BaseProject {
+    let { project } = item;
+
     let projectSt: ProjectSt = {
       name: project.name
     };
 
     let projectLt: ProjectLt = {
       defaultBranch: project.defaultBranch,
-      gitUrl: project.defaultBranch,
-      privateKey: project.defaultBranch,
-      publicKey: project.defaultBranch
+      gitUrl: project.gitUrl,
+      privateKey: project.privateKey,
+      publicKey: project.publicKey
     };
 
-    let projectTab: ProjectTab = {
-      projectId: project.projectId,
+    let apiBaseProject: BaseProject = {
       orgId: project.orgId,
+      projectId: project.projectId,
       remoteType: project.remoteType,
-      st: projectSt,
-      lt: projectLt,
-      nameHash: this.hashService.makeHash(project.name),
-      gitUrlHash: this.hashService.makeHash(project.gitUrl),
-      serverTs: project.serverTs
+      st: this.tabService.encrypt({ data: projectSt }),
+      lt: this.tabService.encrypt({ data: projectLt })
     };
 
-    return projectTab;
+    return apiBaseProject;
   }
 
   async getProjectCheckExists(item: { projectId: string }) {
     let { projectId } = item;
 
-    let project = await this.db.drizzle.query.projectsTable.findFirst({
-      where: eq(projectsTable.projectId, projectId)
-    });
+    let project = await this.db.drizzle.query.projectsTable
+      .findFirst({
+        where: eq(projectsTable.projectId, projectId)
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(project)) {
       throw new ServerError({
@@ -145,47 +157,49 @@ export class ProjectsService {
   }
 
   async addProject(item: {
-    orgId: string;
-    name: string;
-    user: UserEnt;
-    traceId: string;
-    testProjectId: string;
     projectId: string;
+    orgId: string;
     remoteType: ProjectRemoteTypeEnum;
+    name: string;
     gitUrl?: string;
     privateKey?: string;
     publicKey?: string;
+    testProjectId: string;
+    user: UserTab;
     evs: Ev[];
-    connections: ProjectConnection[];
+    connections: ConnectionTab[];
+    traceId: string;
   }) {
     let {
-      orgId,
-      name,
-      user,
-      traceId,
       projectId,
-      testProjectId,
+      orgId,
       remoteType,
+      name,
       gitUrl,
       privateKey,
       publicKey,
+      testProjectId,
+      user,
       evs,
-      connections
+      connections,
+      traceId
     } = item;
 
-    let apiProject: Project = {
+    let newProject: ProjectTab = {
       orgId: orgId,
       projectId: projectId,
       name: name,
       remoteType: remoteType,
       defaultBranch: undefined, // set based on remoteType in Disk service
       gitUrl: gitUrl,
-      tab: {
-        privateKey: privateKey,
-        publicKey: publicKey
-      },
+      privateKey: privateKey,
+      publicKey: publicKey,
+      nameHash: this.hashService.makeHash(name),
+      gitUrlHash: this.hashService.makeHash(gitUrl),
       serverTs: undefined
     };
+
+    let baseProject = this.tabToApiBaseProject({ project: newProject });
 
     let toDiskCreateProjectRequest: ToDiskCreateProjectRequest = {
       info: {
@@ -194,7 +208,7 @@ export class ProjectsService {
       },
       payload: {
         orgId: orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         devRepoId: user.userId,
         userAlias: user.alias,
         testProjectId: testProjectId
@@ -211,24 +225,15 @@ export class ProjectsService {
         checkIsOk: true
       });
 
-    let newProject: ProjectEnt = {
-      orgId: orgId,
-      projectId: projectId,
-      name: name,
-      defaultBranch: diskResponse.payload.defaultBranch,
-      remoteType: remoteType,
-      gitUrl: gitUrl,
-      tab: this.tabService.encrypt({ data: apiProject.tab }),
-      serverTs: undefined
-    };
+    newProject.defaultBranch = diskResponse.payload.defaultBranch;
 
-    let prodEnv = this.entMakerService.makeEnv({
+    let prodEnv = this.envsService.makeEnv({
       projectId: newProject.projectId,
       envId: PROJECT_ENV_PROD,
       evs: evs
     });
 
-    let newMember = this.entMakerService.makeMember({
+    let newMember = this.membersService.makeMember({
       projectId: newProject.projectId,
       user: user,
       isAdmin: true,
@@ -239,19 +244,19 @@ export class ProjectsService {
     let devStructId = makeId();
     let prodStructId = makeId();
 
-    let prodBranch = this.entMakerService.makeBranch({
+    let prodBranch = this.branchesService.makeBranch({
       projectId: newProject.projectId,
       repoId: PROD_REPO_ID,
       branchId: newProject.defaultBranch
     });
 
-    let devBranch = this.entMakerService.makeBranch({
+    let devBranch = this.branchesService.makeBranch({
       projectId: newProject.projectId,
       repoId: user.userId,
       branchId: newProject.defaultBranch
     });
 
-    let prodBranchBridgeProdEnv = this.entMakerService.makeBridge({
+    let prodBranchBridgeProdEnv = this.bridgesService.makeBridge({
       projectId: prodBranch.projectId,
       repoId: prodBranch.repoId,
       branchId: prodBranch.branchId,
@@ -260,7 +265,7 @@ export class ProjectsService {
       needValidate: false
     });
 
-    let devBranchBridgeProdEnv = this.entMakerService.makeBridge({
+    let devBranchBridgeProdEnv = this.bridgesService.makeBridge({
       projectId: devBranch.projectId,
       repoId: devBranch.repoId,
       branchId: devBranch.branchId,
