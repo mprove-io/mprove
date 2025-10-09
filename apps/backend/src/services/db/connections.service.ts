@@ -75,7 +75,7 @@ export class ConnectionsService {
         isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
     }
 
-    let connectionTab: ConnectionTab = {
+    let connection: ConnectionTab = {
       connectionFullId: this.hashService.makeConnectionFullId({
         projectId: projectId,
         envId: envId,
@@ -89,7 +89,7 @@ export class ConnectionsService {
       serverTs: undefined
     };
 
-    return connectionTab;
+    return connection;
   }
 
   tabToApi(item: {

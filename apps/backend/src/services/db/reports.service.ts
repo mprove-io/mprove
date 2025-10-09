@@ -66,7 +66,7 @@ export class ReportsService {
     return report;
   }
 
-  makeReportEnt(item: {
+  makeReport(item: {
     structId: string;
     reportId: string;
     projectId: string;
@@ -79,7 +79,7 @@ export class ReportsService {
     chart: MconfigChart;
     draftCreatedTs?: number;
     draft: boolean;
-  }): ReportEnt {
+  }): ReportTab {
     let {
       structId,
       reportId,
@@ -95,19 +95,7 @@ export class ReportsService {
       draftCreatedTs
     } = item;
 
-    let reportSt: ReportSt = {
-      filePath: filePath,
-      accessRoles: accessRoles,
-      title: title,
-      fields: fields,
-      chart: chart
-    };
-
-    let reportLt: ReportLt = {
-      rows: rows
-    };
-
-    let report: ReportEnt = {
+    let report: ReportTab = {
       reportFullId: this.hashService.makeReportFullId({
         structId: structId,
         reportId: reportId
@@ -118,8 +106,12 @@ export class ReportsService {
       creatorId: creatorId,
       draft: draft,
       draftCreatedTs: draftCreatedTs,
-      st: this.tabService.encrypt({ data: reportSt }),
-      lt: this.tabService.encrypt({ data: reportLt }),
+      filePath: filePath,
+      accessRoles: accessRoles,
+      title: title,
+      fields: fields,
+      chart: chart,
+      rows: rows,
       serverTs: undefined
     };
 

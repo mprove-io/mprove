@@ -104,31 +104,31 @@ export class ChartsService {
   }
 
   apiToTab(item: {
-    chart: Chart;
+    apiChart: Chart;
     chartType: ChartTypeEnum;
   }): ChartTab {
-    let { chart, chartType } = item;
+    let { apiChart, chartType } = item;
 
-    let chartTab: ChartTab = {
+    let chart: ChartTab = {
       chartFullId: this.hashService.makeChartFullId({
-        structId: chart.structId,
-        chartId: chart.chartId
+        structId: apiChart.structId,
+        chartId: apiChart.chartId
       }),
-      structId: chart.structId,
-      chartId: chart.chartId,
-      modelId: chart.modelId,
-      creatorId: chart.creatorId,
+      structId: apiChart.structId,
+      chartId: apiChart.chartId,
+      modelId: apiChart.modelId,
+      creatorId: apiChart.creatorId,
       chartType: chartType,
-      draft: chart.draft,
-      title: chart.title,
-      modelLabel: chart.modelLabel,
-      filePath: chart.filePath,
-      accessRoles: chart.accessRoles,
-      tiles: chart.tiles,
-      serverTs: chart.serverTs
+      draft: apiChart.draft,
+      title: apiChart.title,
+      modelLabel: apiChart.modelLabel,
+      filePath: apiChart.filePath,
+      accessRoles: apiChart.accessRoles,
+      tiles: apiChart.tiles,
+      serverTs: apiChart.serverTs
     };
 
-    return chartTab;
+    return chart;
   }
 
   async getChartCheckExists(item: {
@@ -137,7 +137,7 @@ export class ChartsService {
   }): Promise<ChartTab> {
     let { chartId, structId } = item;
 
-    let chartTab = this.entToTab(
+    let chart = this.entToTab(
       await this.db.drizzle.query.chartsTable.findFirst({
         where: and(
           eq(chartsTable.structId, structId),
@@ -146,13 +146,13 @@ export class ChartsService {
       })
     );
 
-    if (isUndefined(chartTab)) {
+    if (isUndefined(chart)) {
       throw new ServerError({
         message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST
       });
     }
 
-    return chartTab;
+    return chart;
   }
 
   checkChartPath(item: { filePath: string; userAlias: string }) {

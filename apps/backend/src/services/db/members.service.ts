@@ -42,6 +42,7 @@ import {
 } from '~common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
 import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from '../blockml.service';
+import { HashService } from '../hash.service';
 import { RabbitService } from '../rabbit.service';
 import { TabService } from '../tab.service';
 
@@ -51,6 +52,7 @@ let retry = require('async-retry');
 export class MembersService {
   constructor(
     private tabService: TabService,
+    private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
@@ -76,27 +78,17 @@ export class MembersService {
     return member;
   }
 
-  makeMemberEnt(item: {
+  makeMember(item: {
     projectId: string;
     roles?: string[];
     user: UserTab;
     isAdmin: boolean;
     isEditor: boolean;
     isExplorer: boolean;
-  }): MemberEnt {
+  }): MemberTab {
     let { projectId, roles, user, isAdmin, isEditor, isExplorer } = item;
 
-    let memberSt: MemberSt = {
-      email: user.lt.email,
-      alias: user.lt.alias,
-      firstName: user.lt.firstName,
-      lastName: user.lt.lastName,
-      roles: roles || []
-    };
-
-    let memberLt: MemberLt = {};
-
-    let memberEnt: MemberEnt = {
+    let member: MemberTab = {
       memberFullId: this.hashService.makeMemberFullId({
         projectId: projectId,
         memberId: user.userId
@@ -106,14 +98,17 @@ export class MembersService {
       isAdmin: isAdmin,
       isEditor: isEditor,
       isExplorer: isExplorer,
-      st: this.tabService.encrypt({ data: memberSt }),
-      lt: this.tabService.encrypt({ data: memberLt }),
-      emailHash: this.hashService.makeHash(user.lt.email),
-      aliasHash: this.hashService.makeHash(user.lt.alias),
+      email: user.email,
+      alias: user.alias,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      roles: roles || [],
+      emailHash: this.hashService.makeHash(user.email),
+      aliasHash: this.hashService.makeHash(user.alias),
       serverTs: undefined
     };
 
-    return memberEnt;
+    return member;
   }
 
   tabToApi(item: { member: MemberTab }): Member {
@@ -122,19 +117,19 @@ export class MembersService {
     let apiMember: Member = {
       projectId: member.projectId,
       memberId: member.memberId,
-      email: member.st.email,
-      alias: member.st.alias,
-      firstName: member.st.firstName,
-      lastName: member.st.lastName,
+      email: member.email,
+      alias: member.alias,
+      firstName: member.firstName,
+      lastName: member.lastName,
       fullName: makeFullName({
-        firstName: member.st.firstName,
-        lastName: member.st.lastName
+        firstName: member.firstName,
+        lastName: member.lastName
       }),
       avatarSmall: undefined,
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,
-      roles: member.st.roles,
+      roles: member.roles,
       serverTs: member.serverTs
     };
 

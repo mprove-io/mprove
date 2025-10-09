@@ -52,7 +52,7 @@ export class BridgesService {
   }): BridgeTab {
     let { projectId, repoId, branchId, envId, structId, needValidate } = item;
 
-    let bridgeTab: BridgeTab = {
+    let bridge: BridgeTab = {
       bridgeFullId: this.hashService.makeBridgeFullId({
         projectId: projectId,
         repoId: repoId,
@@ -68,7 +68,7 @@ export class BridgesService {
       serverTs: undefined
     };
 
-    return bridgeTab;
+    return bridge;
   }
 
   async getBridgeCheckExists(item: {
@@ -79,7 +79,7 @@ export class BridgesService {
   }): Promise<BridgeTab> {
     let { projectId, repoId, branchId, envId } = item;
 
-    let bridgeTab = this.entToTab(
+    let bridge = this.entToTab(
       await this.db.drizzle.query.bridgesTable.findFirst({
         where: and(
           eq(bridgesTable.projectId, projectId),
@@ -90,12 +90,12 @@ export class BridgesService {
       })
     );
 
-    if (isUndefined(bridgeTab)) {
+    if (isUndefined(bridge)) {
       throw new ServerError({
         message: ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST
       });
     }
 
-    return bridgeTab;
+    return bridge;
   }
 }

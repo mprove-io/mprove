@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
 import {
   DashboardEnt,
   dashboardsTable
@@ -9,14 +8,14 @@ import {
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { BridgeTab } from '~backend/drizzle/postgres/tabs/bridge-tab';
 import {
   DashboardLt,
   DashboardSt,
   DashboardTab
 } from '~backend/drizzle/postgres/tabs/dashboard-tab';
 import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
-import { QueryTab } from '~backend/drizzle/postgres/tabs/query-tab';
+import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
@@ -27,8 +26,10 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -70,8 +71,8 @@ export class DashboardsService {
   tabToApi(item: {
     dashboard: DashboardTab;
     mconfigs: MconfigX[];
-    queries: QueryTab[];
-    member: MemberTab;
+    queries: Query[];
+    member: Member;
     isAddMconfigAndQuery: boolean;
     models: ModelX[];
   }): DashboardX {
@@ -199,7 +200,7 @@ export class DashboardsService {
     projectId: string;
     dashboard: DashboardTab;
     userMember: MemberTab;
-    bridge: BridgeEnt;
+    bridge: BridgeTab;
   }): Promise<DashboardX> {
     let { projectId, dashboard, userMember, bridge } = item;
 
@@ -273,9 +274,9 @@ export class DashboardsService {
 
   async getDashboardParts(item: {
     structId: string;
-    user: UserEnt;
+    user: UserTab;
     userMember: MemberTab;
-    newDashboard: Dashboard;
+    newDashboard: DashboardTab;
   }): Promise<any> {
     let { structId, user, userMember, newDashboard } = item;
 

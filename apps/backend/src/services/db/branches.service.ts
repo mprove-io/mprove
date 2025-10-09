@@ -50,7 +50,7 @@ export class BranchesService {
   }): BranchTab {
     let { projectId, repoId, branchId } = item;
 
-    let branchTab: BranchTab = {
+    let branch: BranchTab = {
       branchFullId: this.hashService.makeBranchFullId({
         projectId: projectId,
         repoId: repoId,
@@ -62,7 +62,7 @@ export class BranchesService {
       serverTs: undefined
     };
 
-    return branchTab;
+    return branch;
   }
 
   async getBranchCheckExists(item: {
@@ -72,7 +72,7 @@ export class BranchesService {
   }): Promise<BranchTab> {
     let { projectId, repoId, branchId } = item;
 
-    let branchTab = this.entToTab(
+    let branch = this.entToTab(
       await this.db.drizzle.query.branchesTable.findFirst({
         where: and(
           eq(branchesTable.projectId, projectId),
@@ -82,13 +82,13 @@ export class BranchesService {
       })
     );
 
-    if (isUndefined(branchTab)) {
+    if (isUndefined(branch)) {
       throw new ServerError({
         message: ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
       });
     }
 
-    return branchTab;
+    return branch;
   }
 
   async checkBranchDoesNotExist(item: {
