@@ -1,4 +1,4 @@
-import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
+import { MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
 
 export function checkAccess(item: {
   member: MemberTab;

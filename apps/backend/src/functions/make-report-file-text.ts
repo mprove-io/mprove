@@ -1,5 +1,4 @@
-import { ModelTab } from '~backend/drizzle/postgres/tabs/model-tab';
-import { StructTab } from '~backend/drizzle/postgres/tabs/struct-tab';
+import { ModelTab, StructTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   REPORT_FIELD_DEFAULT_HIDDEN,
   REPORT_ROW_DEFAULT_SHOW_CHART

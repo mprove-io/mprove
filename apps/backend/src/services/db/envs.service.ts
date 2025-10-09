@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { EnvTab, MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
@@ -8,8 +9,6 @@ import {
   MemberEnt,
   membersTable
 } from '~backend/drizzle/postgres/schema/members';
-import { EnvLt, EnvSt, EnvTab } from '~backend/drizzle/postgres/tabs/env-tab';
-import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
@@ -19,6 +18,7 @@ import { Env } from '~common/interfaces/backend/env';
 import { EnvUser } from '~common/interfaces/backend/env-user';
 import { EnvsItem } from '~common/interfaces/backend/envs-item';
 import { Ev } from '~common/interfaces/backend/ev';
+import { EnvLt, EnvSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

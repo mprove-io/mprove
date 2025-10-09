@@ -4,12 +4,8 @@ import * as bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
-import {
-  UserLt,
-  UserSt,
-  UserTab
-} from '~backend/drizzle/postgres/tabs/user-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -18,6 +14,7 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
 import { User } from '~common/interfaces/backend/user';
+import { UserLt, UserSt } from '~common/interfaces/st-lt';
 import { MyRegex } from '~common/models/my-regex';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';

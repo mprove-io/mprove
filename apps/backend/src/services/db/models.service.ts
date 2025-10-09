@@ -1,17 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import {
-  ModelLt,
-  ModelSt,
-  ModelTab
-} from '~backend/drizzle/postgres/tabs/model-tab';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Model } from '~common/interfaces/blockml/model';
+import { ModelLt, ModelSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

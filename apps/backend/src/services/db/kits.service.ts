@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { KitTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
-import { KitLt, KitSt, KitTab } from '~backend/drizzle/postgres/tabs/kit-tab';
 import { isUndefined } from '~common/functions/is-undefined';
+import { KitLt, KitSt } from '~common/interfaces/st-lt';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

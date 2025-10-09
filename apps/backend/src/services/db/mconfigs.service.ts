@@ -3,18 +3,16 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import {
+  MconfigTab,
+  ModelTab,
+  ProjectTab,
+  QueryTab,
+  StructTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
-import {
-  MconfigLt,
-  MconfigSt,
-  MconfigTab
-} from '~backend/drizzle/postgres/tabs/mconfig-tab';
-import { ModelTab } from '~backend/drizzle/postgres/tabs/model-tab';
-import { ProjectTab } from '~backend/drizzle/postgres/tabs/project-tab';
-import { QueryTab } from '~backend/drizzle/postgres/tabs/query-tab';
-import { StructTab } from '~backend/drizzle/postgres/tabs/struct-tab';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
 import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -29,6 +27,7 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { ModelField } from '~common/interfaces/blockml/model-field';
+import { MconfigLt, MconfigSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { makeQueryId } from '~node-common/functions/make-query-id';
 import { HashService } from '../hash.service';

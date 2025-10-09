@@ -1,12 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { NoteTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { NoteEnt } from '~backend/drizzle/postgres/schema/notes';
-import {
-  NoteLt,
-  NoteSt,
-  NoteTab
-} from '~backend/drizzle/postgres/tabs/note-tab';
 import { isUndefined } from '~common/functions/is-undefined';
+import { NoteLt, NoteSt } from '~common/interfaces/st-lt';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

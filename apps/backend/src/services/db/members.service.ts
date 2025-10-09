@@ -4,6 +4,11 @@ import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import {
+  BridgeTab,
+  MemberTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import {
@@ -11,13 +16,6 @@ import {
   membersTable
 } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { BridgeTab } from '~backend/drizzle/postgres/tabs/bridge-tab';
-import {
-  MemberLt,
-  MemberSt,
-  MemberTab
-} from '~backend/drizzle/postgres/tabs/member-tab';
-import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
@@ -32,6 +30,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Member } from '~common/interfaces/backend/member';
+import { MemberLt, MemberSt } from '~common/interfaces/st-lt';
 import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse

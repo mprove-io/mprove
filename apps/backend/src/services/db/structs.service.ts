@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { StructTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -12,11 +13,6 @@ import {
   StructEnt,
   structsTable
 } from '~backend/drizzle/postgres/schema/structs';
-import {
-  StructLt,
-  StructSt,
-  StructTab
-} from '~backend/drizzle/postgres/tabs/struct-tab';
 import {
   EMPTY_STRUCT_ID,
   PROJECT_CONFIG_CURRENCY_PREFIX,
@@ -29,6 +25,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Struct } from '~common/interfaces/backend/struct';
+import { StructLt, StructSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

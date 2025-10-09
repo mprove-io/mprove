@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { OrgTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { OrgEnt, orgsTable } from '~backend/drizzle/postgres/schema/orgs';
-import { OrgLt, OrgSt, OrgTab } from '~backend/drizzle/postgres/tabs/org-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ErEnum } from '~common/enums/er.enum';
@@ -13,6 +13,7 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Org } from '~common/interfaces/backend/org';
 import { OrgsItem } from '~common/interfaces/backend/orgs-item';
+import { OrgLt, OrgSt } from '~common/interfaces/st-lt';
 import {
   ToDiskCreateOrgRequest,
   ToDiskCreateOrgResponse

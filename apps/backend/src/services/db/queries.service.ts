@@ -5,16 +5,12 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { QueryTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import {
   QueryEnt,
   queriesTable
 } from '~backend/drizzle/postgres/schema/queries';
-import {
-  QueryLt,
-  QuerySt,
-  QueryTab
-} from '~backend/drizzle/postgres/tabs/query-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -27,6 +23,7 @@ import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Query } from '~common/interfaces/blockml/query';
+import { QueryLt, QuerySt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

@@ -1,4 +1,4 @@
-import { ReportTab } from '~backend/drizzle/postgres/tabs/report-tab';
+import { ReportTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FilterX } from '~common/interfaces/backend/filter-x';
 

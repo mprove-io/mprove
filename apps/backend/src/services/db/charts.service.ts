@@ -1,12 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { ChartTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ChartEnt, chartsTable } from '~backend/drizzle/postgres/schema/charts';
-import {
-  ChartLt,
-  ChartSt,
-  ChartTab
-} from '~backend/drizzle/postgres/tabs/chart-tab';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
@@ -19,6 +15,7 @@ import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Chart } from '~common/interfaces/blockml/chart';
 import { Query } from '~common/interfaces/blockml/query';
+import { ChartLt, ChartSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

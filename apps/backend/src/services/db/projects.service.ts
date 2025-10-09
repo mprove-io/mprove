@@ -4,16 +4,14 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import {
+  ConnectionTab,
+  ProjectTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
+import {
   ProjectEnt,
   projectsTable
 } from '~backend/drizzle/postgres/schema/projects';
-import { ConnectionTab } from '~backend/drizzle/postgres/tabs/connection-tab';
-import {
-  ProjectLt,
-  ProjectSt,
-  ProjectTab
-} from '~backend/drizzle/postgres/tabs/project-tab';
-import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
@@ -26,6 +24,7 @@ import { BaseProject } from '~common/interfaces/backend/base-project';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Project } from '~common/interfaces/backend/project';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import {
   ToDiskCreateProjectRequest,
   ToDiskCreateProjectResponse

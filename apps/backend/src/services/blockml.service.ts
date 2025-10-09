@@ -3,9 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import {
+  ConnectionTab,
+  StructTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { ConnectionTab } from '~backend/drizzle/postgres/tabs/connection-tab';
-import { StructTab } from '~backend/drizzle/postgres/tabs/struct-tab';
 import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockml-files';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';

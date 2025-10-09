@@ -50,7 +50,6 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
 import { Ev } from '~common/interfaces/backend/ev';
 import { MproveConfig } from '~common/interfaces/backend/mprove-config';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
@@ -64,6 +63,7 @@ import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { Preset } from '~common/interfaces/blockml/preset';
+import { ConnectionSt } from '~common/interfaces/st-lt';
 import {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponsePayload
@@ -133,7 +133,7 @@ export class RebuildStructService {
 
     let projectConnections: ProjectConnection[] = baseConnections.map(
       baseConnection => {
-        let connectionSt = decryptData<{ options: ConnectionOptions }>({
+        let connectionSt = decryptData<ConnectionSt>({
           encryptedString: baseConnection.st,
           keyBase64: this.cs.get<BlockmlConfig['aesKey']>('aesKey')
         });

@@ -2,20 +2,18 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import {
+  BridgeTab,
+  DashboardTab,
+  MemberTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
+import {
   DashboardEnt,
   dashboardsTable
 } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { BridgeTab } from '~backend/drizzle/postgres/tabs/bridge-tab';
-import {
-  DashboardLt,
-  DashboardSt,
-  DashboardTab
-} from '~backend/drizzle/postgres/tabs/dashboard-tab';
-import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
-import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
@@ -30,6 +28,7 @@ import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
 import { Query } from '~common/interfaces/blockml/query';
+import { DashboardLt, DashboardSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

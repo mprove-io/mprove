@@ -1,6 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
+import {
+  AvatarTab,
+  BranchTab,
+  BridgeTab,
+  ChartTab,
+  ConnectionTab,
+  DashboardTab,
+  EnvTab,
+  KitTab,
+  MconfigTab,
+  MemberTab,
+  ModelTab,
+  NoteTab,
+  OrgTab,
+  ProjectTab,
+  QueryTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { AvatarEnt } from '~backend/drizzle/postgres/schema/avatars';
 import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
@@ -19,86 +39,46 @@ import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
 import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
+import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
 import {
   AvatarLt,
   AvatarSt,
-  AvatarTab
-} from '~backend/drizzle/postgres/tabs/avatar-tab';
-import {
   BranchLt,
   BranchSt,
-  BranchTab
-} from '~backend/drizzle/postgres/tabs/branch-tab';
-import {
   BridgeLt,
   BridgeSt,
-  BridgeTab
-} from '~backend/drizzle/postgres/tabs/bridge-tab';
-import {
   ChartLt,
   ChartSt,
-  ChartTab
-} from '~backend/drizzle/postgres/tabs/chart-tab';
-import {
   ConnectionLt,
   ConnectionSt,
-  ConnectionTab
-} from '~backend/drizzle/postgres/tabs/connection-tab';
-import {
   DashboardLt,
   DashboardSt,
-  DashboardTab
-} from '~backend/drizzle/postgres/tabs/dashboard-tab';
-import { EnvLt, EnvSt, EnvTab } from '~backend/drizzle/postgres/tabs/env-tab';
-import { KitLt, KitSt, KitTab } from '~backend/drizzle/postgres/tabs/kit-tab';
-import {
+  EnvLt,
+  EnvSt,
+  KitLt,
+  KitSt,
   MconfigLt,
   MconfigSt,
-  MconfigTab
-} from '~backend/drizzle/postgres/tabs/mconfig-tab';
-import {
   MemberLt,
   MemberSt,
-  MemberTab
-} from '~backend/drizzle/postgres/tabs/member-tab';
-import {
   ModelLt,
   ModelSt,
-  ModelTab
-} from '~backend/drizzle/postgres/tabs/model-tab';
-import {
   NoteLt,
   NoteSt,
-  NoteTab
-} from '~backend/drizzle/postgres/tabs/note-tab';
-import { OrgLt, OrgSt, OrgTab } from '~backend/drizzle/postgres/tabs/org-tab';
-import {
+  OrgLt,
+  OrgSt,
   ProjectLt,
   ProjectSt,
-  ProjectTab
-} from '~backend/drizzle/postgres/tabs/project-tab';
-import {
   QueryLt,
   QuerySt,
-  QueryTab
-} from '~backend/drizzle/postgres/tabs/query-tab';
-import {
   ReportLt,
   ReportSt,
-  ReportTab
-} from '~backend/drizzle/postgres/tabs/report-tab';
-import {
   StructLt,
   StructSt,
-  StructTab
-} from '~backend/drizzle/postgres/tabs/struct-tab';
-import {
   UserLt,
-  UserSt,
-  UserTab
-} from '~backend/drizzle/postgres/tabs/user-tab';
-import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
-import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
+  UserSt
+} from '~common/interfaces/st-lt';
 import { HashService } from './hash.service';
 import { TabService } from './tab.service';
 

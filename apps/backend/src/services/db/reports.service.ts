@@ -3,15 +3,13 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import {
+  MemberTab,
+  ReportTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
-import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
-import {
-  ReportLt,
-  ReportSt,
-  ReportTab
-} from '~backend/drizzle/postgres/tabs/report-tab';
-import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { checkAccess } from '~backend/functions/check-access';
 import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
@@ -32,6 +30,7 @@ import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { Report } from '~common/interfaces/blockml/report';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { Row } from '~common/interfaces/blockml/row';
+import { ReportLt, ReportSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';

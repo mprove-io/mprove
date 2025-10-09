@@ -1,12 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { AvatarTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { AvatarEnt } from '~backend/drizzle/postgres/schema/avatars';
-import {
-  AvatarLt,
-  AvatarSt,
-  AvatarTab
-} from '~backend/drizzle/postgres/tabs/avatar-tab';
 import { isUndefined } from '~common/functions/is-undefined';
+import { AvatarLt, AvatarSt } from '~common/interfaces/st-lt';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
