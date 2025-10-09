@@ -3,15 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
 import {
   ReportLt,
   ReportSt,
   ReportTab
 } from '~backend/drizzle/postgres/tabs/report-tab';
+import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 import { checkAccess } from '~backend/functions/check-access';
 import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
@@ -155,8 +155,8 @@ export class ReportsService {
 
     let author;
 
-    if (isDefined(report.st.filePath)) {
-      let filePathArray = report.st.filePath.split('/');
+    if (isDefined(report.filePath)) {
+      let filePathArray = report.filePath.split('/');
 
       let usersFolderIndex = filePathArray.findIndex(
         x => x === MPROVE_USERS_FOLDER
@@ -181,9 +181,9 @@ export class ReportsService {
       author: author,
       draft: report.draft,
       creatorId: report.creatorId,
-      filePath: report.st.filePath,
-      accessRoles: report.st.accessRoles,
-      title: report.st.title,
+      filePath: report.filePath,
+      accessRoles: report.accessRoles,
+      title: report.title,
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
@@ -192,7 +192,7 @@ export class ReportsService {
       metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
       metricsEndDateExcludedYYYYMMDD: metricsEndDateExcludedYYYYMMDD,
       metricsEndDateIncludedYYYYMMDD: metricsEndDateIncludedYYYYMMDD,
-      fields: report.st.fields.sort((a, b) => {
+      fields: report.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
@@ -202,7 +202,7 @@ export class ReportsService {
         let labelB = b.fieldId.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
-      rows: report.lt.rows.map(x => {
+      rows: report.rows.map(x => {
         x.hasAccessToModel = isDefined(x.mconfig)
           ? models.find(m => m.modelId === x.mconfig.modelId).hasAccess
           : false;
@@ -212,7 +212,7 @@ export class ReportsService {
       timeColumnsLimit: timeColumnsLimit,
       timeColumnsLength: timeColumnsLength,
       isTimeColumnsLimitExceeded: isTimeColumnsLimitExceeded,
-      chart: report.st.chart,
+      chart: report.chart,
       draftCreatedTs: Number(report.draftCreatedTs),
       serverTs: Number(report.serverTs)
     };
@@ -249,12 +249,14 @@ export class ReportsService {
   async getReportCheckExists(item: { reportId: string; structId: string }) {
     let { reportId, structId } = item;
 
-    let report = await this.db.drizzle.query.reportsTable.findFirst({
-      where: and(
-        eq(reportsTable.structId, structId),
-        eq(reportsTable.reportId, reportId)
-      )
-    });
+    let report = await this.db.drizzle.query.reportsTable
+      .findFirst({
+        where: and(
+          eq(reportsTable.structId, structId),
+          eq(reportsTable.reportId, reportId)
+        )
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(report)) {
       throw new ServerError({
@@ -277,8 +279,8 @@ export class ReportsService {
     projectId: string;
     reportId: string;
     structId: string;
-    user: UserEnt;
-    userMember: MemberEnt;
+    user: UserTab;
+    userMember: MemberTab;
     isCheckExist: boolean;
     isCheckAccess: boolean;
   }) {
@@ -293,9 +295,10 @@ export class ReportsService {
     } = item;
 
     let chart = makeCopy(DEFAULT_CHART);
+
     chart.type = ChartTypeEnum.Line;
 
-    let emptyRep = this.entMakerService.makeReport({
+    let emptyReport = this.makeReport({
       structId: undefined,
       reportId: reportId,
       projectId: projectId,
@@ -311,14 +314,16 @@ export class ReportsService {
 
     let report =
       reportId === EMPTY_REPORT_ID
-        ? emptyRep
-        : await this.db.drizzle.query.reportsTable.findFirst({
-            where: and(
-              eq(reportsTable.projectId, projectId),
-              eq(reportsTable.structId, structId),
-              eq(reportsTable.reportId, reportId)
-            )
-          });
+        ? emptyReport
+        : await this.db.drizzle.query.reportsTable
+            .findFirst({
+              where: and(
+                eq(reportsTable.projectId, projectId),
+                eq(reportsTable.structId, structId),
+                eq(reportsTable.reportId, reportId)
+              )
+            })
+            .then(x => this.entToTab(x));
 
     if (isCheckExist === true && isUndefined(report)) {
       throw new ServerError({
@@ -338,9 +343,8 @@ export class ReportsService {
 
     if (isCheckAccess === true && report.draft === false) {
       let isAccessGranted = checkAccess({
-        userAlias: user.alias,
         member: userMember,
-        entity: report
+        accessRoles: report.accessRoles
       });
 
       if (isAccessGranted === false) {

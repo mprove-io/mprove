@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { isDefined } from 'class-validator';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ChartEnt, chartsTable } from '~backend/drizzle/postgres/schema/charts';
@@ -12,6 +11,7 @@ import { makeTilesX } from '~backend/functions/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { ErEnum } from '~common/enums/er.enum';
+import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ChartX } from '~common/interfaces/backend/chart-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';

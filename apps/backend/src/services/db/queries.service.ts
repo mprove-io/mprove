@@ -30,6 +30,7 @@ import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
+import { ConnectionsService } from './connections.service';
 import { EnvsService } from './envs.service';
 
 let retry = require('async-retry');
@@ -40,6 +41,7 @@ export class QueriesService {
     private tabService: TabService,
     private hashService: HashService,
     private envsService: EnvsService,
+    private connectionsService: ConnectionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -72,19 +74,19 @@ export class QueriesService {
       connectionId: query.connectionId,
       connectionType: query.connectionType,
       queryId: query.queryId,
-      sql: query.st.sql,
-      apiMethod: query.st.apiMethod as StoreMethodEnum,
-      apiUrl: query.st.apiUrl,
-      apiBody: query.st.apiBody,
+      sql: query.sql,
+      apiMethod: query.apiMethod as StoreMethodEnum,
+      apiUrl: query.apiUrl,
+      apiBody: query.apiBody,
       status: query.status,
       lastRunBy: query.lastRunBy,
       lastRunTs: query.lastRunTs,
       lastCancelTs: query.lastCancelTs,
       lastCompleteTs: query.lastCompleteTs,
       lastCompleteDuration: query.lastCompleteDuration,
-      lastErrorMessage: query.st.lastErrorMessage,
+      lastErrorMessage: query.lastErrorMessage,
       lastErrorTs: query.lastErrorTs,
-      data: query.lt.data,
+      data: query.data,
       queryJobId: query.queryJobId,
       bigqueryQueryJobId: query.bigqueryQueryJobId,
       bigqueryConsecutiveErrorsGetJob: query.bigqueryConsecutiveErrorsGetJob,
@@ -143,25 +145,19 @@ export class QueriesService {
   }) {
     let { queryId: queryId, projectId: projectId } = item;
 
-    let queries = (await this.db.drizzle
+    let queries = await this.db.drizzle
       .select({
         projectId: queriesTable.projectId,
         envId: queriesTable.envId,
         connectionId: queriesTable.connectionId,
         connectionType: queriesTable.connectionType,
         queryId: queriesTable.queryId,
-        sql: queriesTable.sql,
-        apiMethod: queriesTable.apiMethod,
-        apiUrl: queriesTable.apiUrl,
-        apiBody: queriesTable.apiBody,
         status: queriesTable.status,
-        // data: ...,
         lastRunBy: queriesTable.lastRunBy,
         lastRunTs: queriesTable.lastRunTs,
         lastCancelTs: queriesTable.lastCancelTs,
         lastCompleteTs: queriesTable.lastCompleteTs,
         lastCompleteDuration: queriesTable.lastCompleteDuration,
-        lastErrorMessage: queriesTable.lastErrorMessage,
         lastErrorTs: queriesTable.lastErrorTs,
         queryJobId: queriesTable.queryJobId,
         bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
@@ -169,6 +165,7 @@ export class QueriesService {
           queriesTable.bigqueryConsecutiveErrorsGetJob,
         bigqueryConsecutiveErrorsGetResults:
           queriesTable.bigqueryConsecutiveErrorsGetResults,
+        st: queriesTable.st,
         serverTs: queriesTable.serverTs
       })
       .from(queriesTable)
@@ -177,7 +174,8 @@ export class QueriesService {
           eq(queriesTable.queryId, queryId),
           eq(queriesTable.projectId, projectId)
         )
-      )) as QueryEnt[];
+      )
+      .then(xs => xs.map(x => this.entToTab(x as QueryEnt)));
 
     let query = queries.length < 0 ? undefined : queries[0];
 
@@ -193,12 +191,14 @@ export class QueriesService {
   async getQueryCheckExists(item: { queryId: string; projectId: string }) {
     let { queryId, projectId } = item;
 
-    let query = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let query = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(query)) {
       throw new ServerError({
@@ -215,22 +215,19 @@ export class QueriesService {
   }) {
     let { queryIds, projectId } = item;
 
-    let queries = (await this.db.drizzle
+    let queries = await this.db.drizzle
       .select({
         projectId: queriesTable.projectId,
         envId: queriesTable.envId,
         connectionId: queriesTable.connectionId,
         connectionType: queriesTable.connectionType,
         queryId: queriesTable.queryId,
-        sql: queriesTable.sql,
         status: queriesTable.status,
-        // data: ...,
         lastRunBy: queriesTable.lastRunBy,
         lastRunTs: queriesTable.lastRunTs,
         lastCancelTs: queriesTable.lastCancelTs,
         lastCompleteTs: queriesTable.lastCompleteTs,
         lastCompleteDuration: queriesTable.lastCompleteDuration,
-        lastErrorMessage: queriesTable.lastErrorMessage,
         lastErrorTs: queriesTable.lastErrorTs,
         queryJobId: queriesTable.queryJobId,
         bigqueryQueryJobId: queriesTable.bigqueryQueryJobId,
@@ -238,6 +235,7 @@ export class QueriesService {
           queriesTable.bigqueryConsecutiveErrorsGetJob,
         bigqueryConsecutiveErrorsGetResults:
           queriesTable.bigqueryConsecutiveErrorsGetResults,
+        st: queriesTable.st,
         serverTs: queriesTable.serverTs
       })
       .from(queriesTable)
@@ -246,7 +244,8 @@ export class QueriesService {
           inArray(queriesTable.queryId, queryIds),
           eq(queriesTable.projectId, projectId)
         )
-      )) as QueryEnt[];
+      )
+      .then(xs => xs.map(x => this.entToTab(x as QueryEnt)));
 
     let notFoundQueryIds: string[] = [];
 
@@ -274,12 +273,14 @@ export class QueriesService {
   }) {
     let { queryIds, projectId } = item;
 
-    let queries = await this.db.drizzle.query.queriesTable.findMany({
-      where: and(
-        inArray(queriesTable.queryId, queryIds),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let queries = await this.db.drizzle.query.queriesTable
+      .findMany({
+        where: and(
+          inArray(queriesTable.queryId, queryIds),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(xs => xs.map(x => this.entToTab(x)));
 
     let notFoundQueryIds: string[] = [];
 
@@ -310,18 +311,6 @@ LEFT JOIN mconfigs as m ON q.query_id=m.query_id
 WHERE m.mconfig_id is NULL
       `);
 
-    //     let rawData: any;
-
-    //     await this.dataSource.transaction(async manager => {
-    //       rawData = await manager.query(`
-    // SELECT
-    //   q.query_id
-    // FROM queries as q
-    // LEFT JOIN mconfigs as m ON q.query_id=m.query_id
-    // WHERE m.mconfig_id is NULL
-    // `);
-    //     });
-
     let orphanedQueryIds: string[] =
       rawData.rows.map((x: any) => x.query_id) || [];
 
@@ -340,14 +329,16 @@ WHERE m.mconfig_id is NULL
   }
 
   async checkBigqueryRunningQueries() {
-    let queries = await this.db.drizzle.query.queriesTable.findMany({
-      where: and(
-        eq(queriesTable.status, QueryStatusEnum.Running),
-        eq(queriesTable.connectionType, ConnectionTypeEnum.BigQuery)
-      )
-    });
+    let queries = await this.db.drizzle.query.queriesTable
+      .findMany({
+        where: and(
+          eq(queriesTable.status, QueryStatusEnum.Running),
+          eq(queriesTable.connectionType, ConnectionTypeEnum.BigQuery)
+        )
+      })
+      .then(xs => xs.map(x => this.entToTab(x)));
 
-    await asyncPool(8, queries, async (query: QueryEnt) => {
+    await asyncPool(8, queries, async (query: QueryTab) => {
       try {
         let apiEnvs = await this.envsService.getApiEnvs({
           projectId: query.projectId
@@ -355,8 +346,8 @@ WHERE m.mconfig_id is NULL
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connectionEnt =
-          await this.db.drizzle.query.connectionsTable.findFirst({
+        let connection = await this.db.drizzle.query.connectionsTable
+          .findFirst({
             where: and(
               eq(connectionsTable.projectId, query.projectId),
               eq(
@@ -367,9 +358,10 @@ WHERE m.mconfig_id is NULL
               ),
               eq(connectionsTable.connectionId, query.connectionId)
             )
-          });
+          })
+          .then(x => this.connectionsService.entToTab(x));
 
-        if (isUndefined(connectionEnt)) {
+        if (isUndefined(connection)) {
           query.status = QueryStatusEnum.Error;
           query.data = [];
           query.lastErrorMessage = `Project connection not found`;
@@ -392,13 +384,9 @@ WHERE m.mconfig_id is NULL
           return;
         }
 
-        let cTab = this.tabService.decrypt<ConnectionSt>({
-          encryptedString: connectionEnt.tab
-        });
-
         let bigquery = new BigQuery({
-          credentials: cTab.options.bigquery.serviceAccountCredentials,
-          projectId: cTab.options.bigquery.googleCloudProject
+          credentials: connection.options.bigquery.serviceAccountCredentials,
+          projectId: connection.options.bigquery.googleCloudProject
         });
 
         let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);

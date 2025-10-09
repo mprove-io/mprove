@@ -66,10 +66,10 @@ export class StructsService {
     let apiStruct: Struct = {
       projectId: struct.projectId,
       structId: struct.structId,
-      errors: struct.lt.errors,
-      metrics: struct.lt.metrics,
-      presets: struct.lt.presets,
-      mproveConfig: struct.lt.mproveConfig,
+      errors: struct.errors,
+      metrics: struct.metrics,
+      presets: struct.presets,
+      mproveConfig: struct.mproveConfig,
       mproveVersion: struct.mproveVersion,
       serverTs: Number(struct.serverTs)
     };
@@ -81,18 +81,15 @@ export class StructsService {
     structId: string;
     projectId: string;
     isGetEmptyStructOnError?: boolean;
-    // skipMetrics?: boolean;
   }) {
-    let {
-      structId,
-      projectId,
-      isGetEmptyStructOnError
-      // , skipMetrics
-    } = item;
+    let { structId, projectId, isGetEmptyStructOnError } = item;
 
-    let emptyStruct: StructEnt = {
+    let emptyStruct: StructTab = {
       structId: structId,
       projectId: projectId,
+      errors: [],
+      metrics: [],
+      presets: [],
       mproveConfig: {
         mproveDirValue: './data',
         weekStart: ProjectWeekStartEnum.Sunday,
@@ -104,50 +101,24 @@ export class StructsService {
         currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
         thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR
       },
-      errors: [],
-      metrics: [],
-      presets: [],
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
       serverTs: undefined
     };
 
-    let struct: StructEnt;
+    let struct: StructTab;
 
     if (structId === EMPTY_STRUCT_ID) {
       struct = emptyStruct;
     } else {
-      // if (skipMetrics === true) {
-      //   let structs = (await this.db.drizzle
-      //     .select({
-      //       structId: structsTable.structId,
-      //       projectId: structsTable.projectId,
-      //       mproveConfig: structsTable.mproveConfig,
-      //       errors: structsTable.errors,
-      //       // metrics: structsTable.metrics,
-      //       presets: structsTable.presets,
-      //       mproveVersion: structsTable.mproveVersion,
-      //       serverTs: structsTable.serverTs
-      //     })
-      //     .from(structsTable)
-      //     .where(
-      //       and(
-      //         eq(structsTable.structId, structId),
-      //         eq(structsTable.projectId, projectId)
-      //       )
-      //     )) as StructEnt[];
-
-      //   struct = structs.length > 0 ? structs[0] : undefined;
-
-      //   struct.metrics = [];
-      // } else {
-      struct = await this.db.drizzle.query.structsTable.findFirst({
-        where: and(
-          eq(structsTable.structId, structId),
-          eq(structsTable.projectId, projectId)
-        )
-      });
-      // }
+      struct = await this.db.drizzle.query.structsTable
+        .findFirst({
+          where: and(
+            eq(structsTable.structId, structId),
+            eq(structsTable.projectId, projectId)
+          )
+        })
+        .then(x => this.entToTab(x));
 
       if (isUndefined(struct)) {
         if (isGetEmptyStructOnError === true) {

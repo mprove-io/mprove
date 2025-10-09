@@ -60,39 +60,39 @@ export class UsersService {
 
     let apiUser: User = {
       userId: user.userId,
-      email: user.lt.email,
-      alias: user.lt.alias,
-      firstName: user.lt.firstName,
-      lastName: user.lt.lastName,
+      email: user.email,
+      alias: user.alias,
+      firstName: user.firstName,
+      lastName: user.lastName,
       isEmailVerified: user.isEmailVerified,
       ui: {
-        timezone: user.lt.ui?.timezone || defaultSrvUi.timezone,
-        timeSpec: user.lt.ui?.timeSpec || defaultSrvUi.timeSpec,
+        timezone: user.ui?.timezone || defaultSrvUi.timezone,
+        timeSpec: user.ui?.timeSpec || defaultSrvUi.timeSpec,
         timeRangeFraction:
-          user.lt.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
-
-        projectFileLinks: isDefined(user.lt.ui?.projectFileLinks)
-          ? user.lt.ui?.projectFileLinks
+          user.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
+        //
+        projectFileLinks: isDefined(user.ui?.projectFileLinks)
+          ? user.ui?.projectFileLinks
           : defaultSrvUi.projectFileLinks,
-
-        projectModelLinks: isDefined(user.lt.ui?.projectModelLinks)
-          ? user.lt.ui?.projectModelLinks
+        //
+        projectModelLinks: isDefined(user.ui?.projectModelLinks)
+          ? user.ui?.projectModelLinks
           : defaultSrvUi.projectModelLinks,
-
-        projectChartLinks: isDefined(user.lt.ui?.projectChartLinks)
-          ? user.lt.ui?.projectChartLinks
+        //
+        projectChartLinks: isDefined(user.ui?.projectChartLinks)
+          ? user.ui?.projectChartLinks
           : defaultSrvUi.projectChartLinks,
-
-        projectDashboardLinks: isDefined(user.lt.ui?.projectDashboardLinks)
-          ? user.lt.ui?.projectDashboardLinks
+        //
+        projectDashboardLinks: isDefined(user.ui?.projectDashboardLinks)
+          ? user.ui?.projectDashboardLinks
           : defaultSrvUi.projectDashboardLinks,
-
-        projectReportLinks: isDefined(user.lt.ui?.projectReportLinks)
-          ? user.lt.ui?.projectReportLinks
+        //
+        projectReportLinks: isDefined(user.ui?.projectReportLinks)
+          ? user.ui?.projectReportLinks
           : defaultSrvUi.projectReportLinks,
-
-        modelTreeLevels: isDefined(user.lt.ui?.modelTreeLevels)
-          ? user.lt.ui?.modelTreeLevels
+        //
+        modelTreeLevels: isDefined(user.ui?.modelTreeLevels)
+          ? user.ui?.modelTreeLevels
           : defaultSrvUi.modelTreeLevels
       },
       serverTs: Number(user.serverTs)
@@ -101,7 +101,7 @@ export class UsersService {
     return apiUser;
   }
 
-  checkUserHashIsDefined(item: { user: UserEnt }) {
+  checkUserHashIsDefined(item: { user: UserTab }) {
     let { user } = item;
 
     if (isUndefined(user.hash)) {
@@ -114,9 +114,11 @@ export class UsersService {
   async getUserCheckExists(item: { userId: string }) {
     let { userId } = item;
 
-    let user = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.userId, userId)
-    });
+    let user = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.userId, userId)
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({
@@ -130,9 +132,13 @@ export class UsersService {
   async getUserByEmailCheckExists(item: { email: string }) {
     let { email } = item;
 
-    let user = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.email, email)
-    });
+    let emailHash = this.hashService.makeHash(email);
+
+    let user = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.emailHash, emailHash)
+      })
+      .then(x => this.entToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({
@@ -144,6 +150,7 @@ export class UsersService {
   }
 
   async makeSaltAndHash(password: string) {
+    // TODO: check algo
     // let salt = crypto.randomBytes(16).toString('hex');
     // let hash = crypto
     //   .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
@@ -162,20 +169,28 @@ export class UsersService {
 
     let alias = await this.makeAlias(email);
 
-    let user: UserEnt = {
+    let emailVerificationToken = makeId();
+
+    let user: UserTab = {
       userId: makeId(),
-      email: email,
-      passwordResetToken: undefined,
-      passwordResetExpiresTs: undefined,
       isEmailVerified: true,
-      emailVerificationToken: makeId(),
       hash: hash,
       salt: salt,
       jwtMinIat: undefined,
+      email: email,
       alias: alias,
-      firstName: undefined, // null
-      lastName: undefined, // null
+      firstName: undefined,
+      lastName: undefined,
+      emailVerificationToken: emailVerificationToken,
+      passwordResetToken: undefined,
+      passwordResetExpiresTs: undefined,
       ui: makeCopy(DEFAULT_SRV_UI),
+      emailHash: this.hashService.makeHash(email),
+      aliasHash: this.hashService.makeHash(alias),
+      emailVerificationTokenHash: this.hashService.makeHash(
+        emailVerificationToken
+      ),
+      passwordResetTokenHash: undefined,
       serverTs: undefined
     };
 
@@ -213,11 +228,14 @@ export class UsersService {
     let restart = true;
 
     while (restart) {
+      let aliasHash = this.hashService.makeHash(alias);
+
       let aliasUser = await this.db.drizzle.query.usersTable.findFirst({
-        where: eq(usersTable.alias, alias)
+        where: eq(usersTable.aliasHash, aliasHash)
       });
 
       if (isDefined(aliasUser)) {
+        // TODO: check logic
         alias = `${alias}${count}`;
         count++;
       } else {
