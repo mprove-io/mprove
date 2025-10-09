@@ -6,7 +6,7 @@ import { RepoStatusEnum } from '~common/enums/repo-status.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import { BaseProject } from '~common/interfaces/backend/base-project';
-import { ProjectLt } from '~common/interfaces/backend/project-tab';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
 import { ToDiskCreateProjectRequest } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ToDiskCommitRepoRequest } from '~common/interfaces/to-disk/03-repos/to-disk-commit-repo';
@@ -50,8 +50,11 @@ test('1', async t => {
       }
     };
 
-    let projectTab: ProjectLt = {
-      name: projectName,
+    let projectSt: ProjectSt = {
+      name: projectName
+    };
+
+    let projectLt: ProjectLt = {
       defaultBranch: BRANCH_MAIN,
       gitUrl: undefined,
       privateKey: undefined,
@@ -62,9 +65,12 @@ test('1', async t => {
       orgId: orgId,
       projectId: projectId,
       remoteType: ProjectRemoteTypeEnum.Managed,
-      serverTs: undefined,
-      slt: encryptData({
-        data: projectTab,
+      st: encryptData({
+        data: projectSt,
+        keyBase64: cs.get<DiskConfig['aesKey']>('aesKey')
+      }),
+      lt: encryptData({
+        data: projectLt,
         keyBase64: cs.get<DiskConfig['aesKey']>('aesKey')
       })
     };

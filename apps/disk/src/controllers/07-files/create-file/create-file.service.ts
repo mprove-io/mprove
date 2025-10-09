@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { MPROVE_CONFIG_FILENAME, PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { ProjectLt } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import {
   ToDiskCreateFileRequest,
   ToDiskCreateFileResponsePayload
@@ -60,19 +60,20 @@ export class CreateFileService {
       userAlias
     } = requestValid.payload;
 
-    let projectTab: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.slt,
+    let projectSt: ProjectSt = decryptData<ProjectSt>({
+      encryptedString: baseProject.st,
+      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    });
+
+    let projectLt: ProjectLt = decryptData<ProjectLt>({
+      encryptedString: baseProject.lt,
       keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
     });
 
     let { projectId, remoteType } = baseProject;
-    let {
-      name: projectName,
-      gitUrl,
-      defaultBranch,
-      privateKey,
-      publicKey
-    } = projectTab;
+
+    let { name: projectName } = projectSt;
+    let { gitUrl, defaultBranch, privateKey, publicKey } = projectLt;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;

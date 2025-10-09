@@ -6,10 +6,10 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileStatusEnum } from '~common/enums/file-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ProjectLt } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
 import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import {
   ToDiskSyncRepoRequest,
   ToDiskSyncRepoResponsePayload
@@ -59,19 +59,20 @@ export class SyncRepoService {
       localDeletedFiles
     } = requestValid.payload;
 
-    let projectTab: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.slt,
+    let projectSt: ProjectSt = decryptData<ProjectSt>({
+      encryptedString: baseProject.st,
+      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    });
+
+    let projectLt: ProjectLt = decryptData<ProjectLt>({
+      encryptedString: baseProject.lt,
       keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
     });
 
     let { projectId, remoteType } = baseProject;
-    let {
-      name: projectName,
-      gitUrl,
-      defaultBranch,
-      privateKey,
-      publicKey
-    } = projectTab;
+
+    let { name: projectName } = projectSt;
+    let { gitUrl, defaultBranch, privateKey, publicKey } = projectLt;
 
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'

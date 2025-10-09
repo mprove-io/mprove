@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
-import { ProjectLt } from '~common/interfaces/backend/project-tab';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import {
   ToDiskSaveFileRequest,
   ToDiskSaveFileResponsePayload
@@ -54,19 +54,20 @@ export class SaveFileService {
       userAlias
     } = requestValid.payload;
 
-    let projectTab: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.slt,
+    let projectSt: ProjectSt = decryptData<ProjectSt>({
+      encryptedString: baseProject.st,
+      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    });
+
+    let projectLt: ProjectLt = decryptData<ProjectLt>({
+      encryptedString: baseProject.lt,
       keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
     });
 
     let { projectId, remoteType } = baseProject;
-    let {
-      name: projectName,
-      gitUrl,
-      defaultBranch,
-      privateKey,
-      publicKey
-    } = projectTab;
+
+    let { name: projectName } = projectSt;
+    let { gitUrl, defaultBranch, privateKey, publicKey } = projectLt;
 
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
