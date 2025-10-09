@@ -6,7 +6,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
-import { ConnectionSt } from '~backend/drizzle/postgres/tabs/connection-tab';
 import {
   MconfigLt,
   MconfigSt,
@@ -14,6 +13,7 @@ import {
 } from '~backend/drizzle/postgres/tabs/mconfig-tab';
 import { ModelTab } from '~backend/drizzle/postgres/tabs/model-tab';
 import { ProjectTab } from '~backend/drizzle/postgres/tabs/project-tab';
+import { QueryTab } from '~backend/drizzle/postgres/tabs/query-tab';
 import { StructTab } from '~backend/drizzle/postgres/tabs/struct-tab';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
 import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
@@ -29,18 +29,21 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { ModelField } from '~common/interfaces/blockml/model-field';
-import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
 import { makeQueryId } from '~node-common/functions/make-query-id';
+import { HashService } from '../hash.service';
 import { StoreService } from '../store.service';
 import { TabService } from '../tab.service';
+import { ConnectionsService } from './connections.service';
 import { EnvsService } from './envs.service';
 
 @Injectable()
 export class MconfigsService {
   constructor(
     private tabService: TabService,
+    private hashService: HashService,
     private envsService: EnvsService,
+    private connectionsService: ConnectionsService,
     private storeService: StoreService,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
@@ -76,30 +79,30 @@ export class MconfigsService {
       queryId: mconfig.queryId,
       modelId: mconfig.modelId,
       modelType: mconfig.modelType,
-      dateRangeIncludesRightSide: mconfig.lt.dateRangeIncludesRightSide,
-      storePart: mconfig.lt.storePart,
-      modelLabel: mconfig.lt.modelLabel,
-      modelFilePath: mconfig.lt.modelFilePath,
-      malloyQueryStable: mconfig.lt.malloyQueryStable,
-      malloyQueryExtra: mconfig.lt.malloyQueryExtra,
-      compiledQuery: mconfig.lt.compiledQuery,
-      select: mconfig.lt.select,
+      dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
+      storePart: mconfig.storePart,
+      modelLabel: mconfig.modelLabel,
+      modelFilePath: mconfig.modelFilePath,
+      malloyQueryStable: mconfig.malloyQueryStable,
+      malloyQueryExtra: mconfig.malloyQueryExtra,
+      compiledQuery: mconfig.compiledQuery,
+      select: mconfig.select,
       fields: makeMconfigFields({
         modelFields: modelFields,
-        select: mconfig.lt.select,
-        sortings: mconfig.lt.sortings,
-        chart: mconfig.lt.chart
+        select: mconfig.select,
+        sortings: mconfig.sortings,
+        chart: mconfig.chart
       }),
       extendedFilters: makeMconfigFiltersX({
         modelFields: modelFields,
-        mconfigFilters: mconfig.lt.filters
+        mconfigFilters: mconfig.filters
       }),
-      sortings: mconfig.lt.sortings,
-      sorts: mconfig.lt.sorts,
-      timezone: mconfig.lt.timezone,
-      limit: mconfig.lt.limit,
-      filters: mconfig.lt.filters,
-      chart: mconfig.lt.chart,
+      sortings: mconfig.sortings,
+      sorts: mconfig.sorts,
+      timezone: mconfig.timezone,
+      limit: mconfig.limit,
+      filters: mconfig.filters,
+      chart: mconfig.chart,
       temp: mconfig.temp,
       serverTs: mconfig.serverTs
     };
@@ -110,9 +113,13 @@ export class MconfigsService {
   apiToTab(item: { mconfig: Mconfig }): MconfigTab {
     let { mconfig } = item;
 
-    let mconfigSt: MconfigSt = {};
-
-    let mconfigLt: MconfigLt = {
+    let mconfigTab: MconfigTab = {
+      structId: mconfig.structId,
+      queryId: mconfig.queryId,
+      mconfigId: mconfig.mconfigId,
+      modelId: mconfig.modelId,
+      modelType: mconfig.modelType,
+      temp: mconfig.temp,
       dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
       storePart: mconfig.storePart,
       modelLabel: mconfig.modelLabel,
@@ -126,18 +133,7 @@ export class MconfigsService {
       timezone: mconfig.timezone,
       limit: mconfig.limit,
       filters: mconfig.filters,
-      chart: mconfig.chart
-    };
-
-    let mconfigTab: MconfigTab = {
-      structId: mconfig.structId,
-      queryId: mconfig.queryId,
-      mconfigId: mconfig.mconfigId,
-      modelId: mconfig.modelId,
-      modelType: mconfig.modelType,
-      temp: mconfig.temp,
-      st: mconfigSt,
-      lt: mconfigLt,
+      chart: mconfig.chart,
       serverTs: mconfig.serverTs
     };
 
@@ -147,12 +143,14 @@ export class MconfigsService {
   async getMconfigCheckExists(item: { mconfigId: string; structId: string }) {
     let { mconfigId, structId } = item;
 
-    let mconfig = await this.db.drizzle.query.mconfigsTable.findFirst({
-      where: and(
-        eq(mconfigsTable.mconfigId, mconfigId),
-        eq(mconfigsTable.structId, structId)
-      )
-    });
+    let mconfig: MconfigTab = this.entToTab(
+      await this.db.drizzle.query.mconfigsTable.findFirst({
+        where: and(
+          eq(mconfigsTable.mconfigId, mconfigId),
+          eq(mconfigsTable.structId, structId)
+        )
+      })
+    );
 
     if (isUndefined(mconfig)) {
       throw new ServerError({
@@ -168,7 +166,7 @@ export class MconfigsService {
     project: ProjectTab;
     envId: string;
     model: ModelTab;
-    mconfig: Mconfig;
+    mconfig: MconfigTab;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
   }) {
@@ -182,8 +180,8 @@ export class MconfigsService {
       metricsEndDateYYYYMMDD
     } = item;
 
-    let newMconfig: Mconfig;
-    let newQuery: Query;
+    let newMconfig: MconfigTab;
+    let newQuery: QueryTab;
 
     let isError = false;
     let errorMessage: string;
@@ -221,18 +219,20 @@ export class MconfigsService {
 
     let apiEnv = apiEnvs.find(x => x.envId === envId);
 
-    let connection = await this.db.drizzle.query.connectionsTable.findFirst({
-      where: and(
-        eq(connectionsTable.projectId, project.projectId),
-        eq(
-          connectionsTable.envId,
-          apiEnv.fallbackConnectionIds.indexOf(model.connectionId) > -1
-            ? PROJECT_ENV_PROD
-            : envId
-        ),
-        eq(connectionsTable.connectionId, model.connectionId)
-      )
-    });
+    let connection = this.connectionsService.entToTab(
+      await this.db.drizzle.query.connectionsTable.findFirst({
+        where: and(
+          eq(connectionsTable.projectId, project.projectId),
+          eq(
+            connectionsTable.envId,
+            apiEnv.fallbackConnectionIds.indexOf(model.connectionId) > -1
+              ? PROJECT_ENV_PROD
+              : envId
+          ),
+          eq(connectionsTable.connectionId, model.connectionId)
+        )
+      })
+    );
 
     let processedRequest = await this.storeService.transformStoreRequest({
       input: model.storeContent.request,
@@ -255,15 +255,11 @@ export class MconfigsService {
         ? errorMessage
         : (JSON.parse(processedRequest.result) as any).urlPath;
 
-    let cTab = this.tabService.decrypt<ConnectionSt>({
-      encryptedString: connection.tab
-    });
-
     let connectionBaseUrl =
       connection.type === ConnectionTypeEnum.Api
-        ? cTab.options.storeApi.baseUrl
+        ? connection.options.storeApi.baseUrl
         : connection.type === ConnectionTypeEnum.GoogleApi
-          ? cTab.options.storeGoogleApi.baseUrl
+          ? connection.options.storeGoogleApi.baseUrl
           : '';
 
     let apiUrl =
@@ -306,6 +302,7 @@ export class MconfigsService {
       bigqueryQueryJobId: undefined,
       bigqueryConsecutiveErrorsGetJob: 0,
       bigqueryConsecutiveErrorsGetResults: 0,
+      apiUrlHash: this.hashService.makeHash(apiUrl),
       serverTs: 1
     };
 
