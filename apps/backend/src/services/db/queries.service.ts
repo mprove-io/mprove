@@ -45,6 +45,24 @@ export class QueriesService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(queryEnt: QueryEnt): QueryTab {
+    if (isUndefined(queryEnt)) {
+      return;
+    }
+
+    let query: QueryTab = {
+      ...queryEnt,
+      ...this.tabService.decrypt<QuerySt>({
+        encryptedString: queryEnt.st
+      }),
+      ...this.tabService.decrypt<QueryLt>({
+        encryptedString: queryEnt.lt
+      })
+    };
+
+    return query;
+  }
+
   tabToApi(item: { query: QueryTab }): Query {
     let { query } = item;
 
@@ -122,30 +140,6 @@ export class QueriesService {
       lt: queryLt,
       apiUrlHash: this.hashService.makeHash(query.apiUrl),
       serverTs: query.serverTs
-    };
-
-    return queryTab;
-  }
-
-  tabToEnt(query: QueryTab): QueryEnt {
-    let queryEnt: QueryEnt = {
-      // ...query,
-      st: this.tabService.encrypt({ data: query.st }),
-      lt: this.tabService.encrypt({ data: query.lt })
-    };
-
-    return queryEnt;
-  }
-
-  entToTab(query: QueryEnt): QueryTab {
-    let queryTab: QueryTab = {
-      ...query,
-      st: this.tabService.decrypt<QuerySt>({
-        encryptedString: query.st
-      }),
-      lt: this.tabService.decrypt<QueryLt>({
-        encryptedString: query.lt
-      })
     };
 
     return queryTab;

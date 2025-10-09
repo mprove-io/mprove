@@ -4,6 +4,7 @@ import {
   boolean,
   index,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
@@ -20,6 +21,8 @@ export const bridgesTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     structId: varchar('struct_id', { length: 32 }).notNull(),
     needValidate: boolean('need_validate').notNull(),
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

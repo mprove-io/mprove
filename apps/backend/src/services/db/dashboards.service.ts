@@ -16,6 +16,7 @@ import {
   DashboardTab
 } from '~backend/drizzle/postgres/tabs/dashboard-tab';
 import { MemberTab } from '~backend/drizzle/postgres/tabs/member-tab';
+import { QueryTab } from '~backend/drizzle/postgres/tabs/query-tab';
 import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
@@ -26,10 +27,8 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
-import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -50,18 +49,36 @@ export class DashboardsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(dashboardEnt: DashboardEnt): DashboardTab {
+    if (isUndefined(dashboardEnt)) {
+      return;
+    }
+
+    let dashboard: DashboardTab = {
+      ...dashboardEnt,
+      ...this.tabService.decrypt<DashboardSt>({
+        encryptedString: dashboardEnt.st
+      }),
+      ...this.tabService.decrypt<DashboardLt>({
+        encryptedString: dashboardEnt.lt
+      })
+    };
+
+    return dashboard;
+  }
+
   tabToApi(item: {
     dashboard: DashboardTab;
     mconfigs: MconfigX[];
-    queries: Query[];
-    member: Member;
+    queries: QueryTab[];
+    member: MemberTab;
     isAddMconfigAndQuery: boolean;
     models: ModelX[];
   }): DashboardX {
     let { dashboard, mconfigs, queries, isAddMconfigAndQuery, member, models } =
       item;
 
-    let filePathArray = dashboard.st.filePath.split('/');
+    let filePathArray = dashboard.filePath.split('/');
 
     let usersFolderIndex = filePathArray.findIndex(
       x => x === MPROVE_USERS_FOLDER
@@ -79,7 +96,7 @@ export class DashboardsService {
       dashboard: dashboard
     });
 
-    let storeModelIds = dashboard.st.fields
+    let storeModelIds = dashboard.fields
       .filter(x => isDefined(x.storeModel))
       .map(x => x.storeModel);
 
@@ -90,11 +107,11 @@ export class DashboardsService {
       creatorId: dashboard.creatorId,
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard,
-      filePath: dashboard.st.filePath,
-      content: dashboard.lt.content,
-      accessRoles: dashboard.st.accessRoles,
-      title: dashboard.st.title,
-      fields: dashboard.st.fields.sort((a, b) => {
+      filePath: dashboard.filePath,
+      content: dashboard.content,
+      accessRoles: dashboard.accessRoles,
+      title: dashboard.title,
+      fields: dashboard.fields.sort((a, b) => {
         let labelA = a.label.toUpperCase();
         let labelB = b.label.toUpperCase();
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
@@ -105,7 +122,7 @@ export class DashboardsService {
         return labelA < labelB ? -1 : labelA > labelB ? 1 : 0;
       }),
       tiles: makeTilesX({
-        tiles: dashboard.st.tiles,
+        tiles: dashboard.tiles,
         mconfigs: mconfigs,
         queries: queries,
         isAddMconfigAndQuery: isAddMconfigAndQuery,
@@ -122,74 +139,44 @@ export class DashboardsService {
     return dashboardX;
   }
 
-  apiToTab(item: { dashboard: Dashboard }): DashboardTab {
-    let { dashboard } = item;
+  apiToTab(item: { apiDashboard: Dashboard }): DashboardTab {
+    let { apiDashboard } = item;
 
-    let dashboardSt: DashboardSt = {
-      filePath: dashboard.filePath,
-      accessRoles: dashboard.accessRoles,
-      title: dashboard.title,
-      fields: dashboard.fields,
-      tiles: dashboard.tiles
-    };
-
-    let dashboardLt: DashboardLt = {
-      content: dashboard.content
-    };
-
-    let dashboardTab: DashboardTab = {
+    let dashboard: DashboardTab = {
       dashboardFullId: this.hashService.makeDashboardFullId({
-        structId: dashboard.structId,
-        dashboardId: dashboard.dashboardId
+        structId: apiDashboard.structId,
+        dashboardId: apiDashboard.dashboardId
       }),
-      structId: dashboard.structId,
-      dashboardId: dashboard.dashboardId,
-      draft: dashboard.draft,
-      creatorId: dashboard.creatorId,
-      st: dashboardSt,
-      lt: dashboardLt,
-      serverTs: dashboard.serverTs
+      structId: apiDashboard.structId,
+      dashboardId: apiDashboard.dashboardId,
+      draft: apiDashboard.draft,
+      creatorId: apiDashboard.creatorId,
+      filePath: apiDashboard.filePath,
+      accessRoles: apiDashboard.accessRoles,
+      title: apiDashboard.title,
+      fields: apiDashboard.fields,
+      tiles: apiDashboard.tiles,
+      content: apiDashboard.content,
+      serverTs: apiDashboard.serverTs
     };
 
-    return dashboardTab;
+    return dashboard;
   }
 
-  tabToEnt(dashboard: DashboardTab): DashboardEnt {
-    let dashboardEnt: DashboardEnt = {
-      // ...dashboard,
-      st: this.tabService.encrypt({ data: dashboard.st }),
-      lt: this.tabService.encrypt({ data: dashboard.lt })
-    };
-
-    return dashboardEnt;
-  }
-
-  entToTab(dashboard: DashboardEnt): DashboardTab {
-    let dashboardTab: DashboardTab = {
-      ...dashboard,
-      st: this.tabService.decrypt<DashboardSt>({
-        encryptedString: dashboard.st
-      }),
-      lt: this.tabService.decrypt<DashboardLt>({
-        encryptedString: dashboard.lt
-      })
-    };
-
-    return dashboardTab;
-  }
-
-  async getDashboardTabCheckExists(item: {
+  async getDashboardCheckExists(item: {
     dashboardId: string;
     structId: string;
   }): Promise<DashboardTab> {
     let { dashboardId, structId } = item;
 
-    let dashboard = await this.db.drizzle.query.dashboardsTable.findFirst({
-      where: and(
-        eq(dashboardsTable.structId, structId),
-        eq(dashboardsTable.dashboardId, dashboardId)
-      )
-    });
+    let dashboard = this.entToTab(
+      await this.db.drizzle.query.dashboardsTable.findFirst({
+        where: and(
+          eq(dashboardsTable.structId, structId),
+          eq(dashboardsTable.dashboardId, dashboardId)
+        )
+      })
+    );
 
     if (isUndefined(dashboard)) {
       throw new ServerError({
@@ -197,9 +184,7 @@ export class DashboardsService {
       });
     }
 
-    let dashboardTab = this.entToTab(dashboard);
-
-    return dashboardTab;
+    return dashboard;
   }
 
   checkDashboardPath(item: { filePath: string; userAlias: string }) {
@@ -220,7 +205,7 @@ export class DashboardsService {
 
     let isAccessGranted = checkAccess({
       member: userMember,
-      accessRoles: dashboard.st.accessRoles
+      accessRoles: dashboard.accessRoles
     });
 
     if (isAccessGranted === false) {
@@ -229,7 +214,7 @@ export class DashboardsService {
       });
     }
 
-    let mconfigIds = dashboard.st.tiles.map(x => x.mconfigId);
+    let mconfigIds = dashboard.tiles.map(x => x.mconfigId);
 
     let mconfigs =
       mconfigIds.length === 0
@@ -238,7 +223,7 @@ export class DashboardsService {
             where: inArray(mconfigsTable.mconfigId, mconfigIds)
           });
 
-    let queryIds = dashboard.st.tiles.map(x => x.queryId);
+    let queryIds = dashboard.tiles.map(x => x.queryId);
     let queries =
       queryIds.length === 0
         ? []
@@ -260,7 +245,7 @@ export class DashboardsService {
         model: modelTab,
         hasAccess: checkModelAccess({
           member: userMember,
-          modelAccessRoles: modelTab.st.accessRoles
+          modelAccessRoles: modelTab.accessRoles
         })
       })
     );
@@ -322,7 +307,7 @@ export class DashboardsService {
     let dashboardPartsGrantedAccess = dashboardTabParts.filter(x =>
       checkAccess({
         member: userMember,
-        accessRoles: x.st.accessRoles
+        accessRoles: x.accessRoles
       })
     );
 
@@ -352,7 +337,7 @@ export class DashboardsService {
         model: modelTab,
         hasAccess: checkModelAccess({
           member: userMember,
-          modelAccessRoles: modelTab.st.accessRoles
+          modelAccessRoles: modelTab.accessRoles
         })
       })
     );

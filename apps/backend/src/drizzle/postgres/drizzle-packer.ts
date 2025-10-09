@@ -3,10 +3,10 @@ import { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import { forEachSeries } from 'p-iteration';
 import { schemaPostgres } from '~backend/drizzle/postgres/schema/_schema-postgres';
-import { encryptTabAndRefreshServerTs } from '~backend/functions/encrypt-tab-and-refresh-server-ts';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
-import { DbRecords } from '~backend/interfaces/db-records';
-import { TabService } from '~backend/services/tab.service';
+import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
+import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
+import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { isDefined } from '~common/functions/is-defined';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
@@ -29,159 +29,167 @@ import { reportsTable } from './schema/reports';
 import { structsTable } from './schema/structs';
 import { usersTable } from './schema/users';
 
-export interface RecordsPack {
+export interface PackerInput {
   tx: PgTransaction<
     NodePgQueryResultHKT,
     typeof schemaPostgres,
     ExtractTablesWithRelations<typeof schemaPostgres>
   >;
-  insert?: DbRecords;
-  update?: DbRecords;
-  insertOrUpdate?: DbRecords;
-  insertOrDoNothing?: DbRecords;
+  insert?: DbTabsPack;
+  update?: DbTabsPack;
+  insertOrUpdate?: DbTabsPack;
+  insertOrDoNothing?: DbTabsPack;
   rawQueries?: SQLWrapper[];
   serverTs?: number;
 }
 
-export interface RecordsPackOutput {
-  insert?: DbRecords;
-  update?: DbRecords;
-  insertOrUpdate?: DbRecords;
-  insertOrDoNothing?: DbRecords;
+export interface PackerOutput {
+  insert?: DbTabsPack;
+  update?: DbTabsPack;
+  insertOrUpdate?: DbTabsPack;
+  insertOrDoNothing?: DbTabsPack;
   rawQueries?: SQLWrapper[];
   serverTs?: number;
 }
 
 export class DrizzlePacker {
-  constructor(private tabService: TabService) {}
+  constructor(private tabToEntService: TabToEntService) {}
 
-  async write(item: RecordsPack): Promise<RecordsPackOutput> {
+  private refreshServerTs<T extends { serverTs: number }>(item: {
+    elements: T[];
+    newServerTs: number;
+  }) {
+    let { elements, newServerTs } = item;
+
+    elements?.forEach(element => {
+      element.serverTs = newServerTs;
+    });
+  }
+
+  async write(item: PackerInput): Promise<PackerOutput> {
     let {
-      tx: tx,
-      insert: insertRecords,
-      update: updateRecords,
-      insertOrUpdate: insOrUpdRecords,
-      insertOrDoNothing: insOrDoNothingRecords,
-      rawQueries: rawQueries,
-      serverTs: serverTs
+      tx,
+      insert,
+      update,
+      insertOrUpdate,
+      insertOrDoNothing,
+      rawQueries,
+      serverTs
     } = item;
+
+    let insertEnts = this.tabToEntService.tabsPackToEntsPack(insert);
+    let updateEnts = this.tabToEntService.tabsPackToEntsPack(update);
+    let insOrUpdEnts = this.tabToEntService.tabsPackToEntsPack(insertOrUpdate);
+    let insOrDoNothingEnts =
+      this.tabToEntService.tabsPackToEntsPack(insertOrDoNothing);
 
     let newServerTs = isDefined(serverTs) ? serverTs : makeTsNumber();
 
-    if (isDefined(insertRecords)) {
-      Object.keys(insertRecords).forEach(key => {
-        if (isDefined(insertRecords[key as keyof DbRecords])) {
-          encryptTabAndRefreshServerTs({
-            elements: insertRecords[key as keyof DbRecords] as any[],
-            newServerTs: newServerTs,
-            tabService: this.tabService
-          });
-        }
+    Object.keys(insertEnts ?? {}).forEach(key => {
+      this.refreshServerTs({
+        elements: (insertEnts[key as keyof DbEntsPack] as any[]) ?? [],
+        newServerTs: newServerTs
       });
+    });
 
-      if (
-        isDefined(insertRecords.avatars) &&
-        insertRecords.avatars.length > 0
-      ) {
-        await tx.insert(avatarsTable).values(insertRecords.avatars);
+    Object.keys(updateEnts ?? {}).forEach(key => {
+      this.refreshServerTs({
+        elements: (updateEnts[key as keyof DbEntsPack] as any[]) ?? [],
+        newServerTs: newServerTs
+      });
+    });
+
+    Object.keys(insOrUpdEnts ?? {}).forEach(key => {
+      this.refreshServerTs({
+        elements: (insOrUpdEnts[key as keyof DbEntsPack] as any[]) ?? [],
+        newServerTs: newServerTs
+      });
+    });
+
+    Object.keys(insOrDoNothingEnts ?? {}).forEach(key => {
+      this.refreshServerTs({
+        elements: (insOrDoNothingEnts[key as keyof DbEntsPack] as any[]) ?? [],
+        newServerTs: newServerTs
+      });
+    });
+
+    if (isDefined(insertEnts)) {
+      if (isDefined(insertEnts.avatars) && insertEnts.avatars.length > 0) {
+        await tx.insert(avatarsTable).values(insertEnts.avatars);
+      }
+
+      if (isDefined(insertEnts.branches) && insertEnts.branches.length > 0) {
+        await tx.insert(branchesTable).values(insertEnts.branches);
+      }
+
+      if (isDefined(insertEnts.bridges) && insertEnts.bridges.length > 0) {
+        await tx.insert(bridgesTable).values(insertEnts.bridges);
       }
 
       if (
-        isDefined(insertRecords.branches) &&
-        insertRecords.branches.length > 0
+        isDefined(insertEnts.connections) &&
+        insertEnts.connections.length > 0
       ) {
-        await tx.insert(branchesTable).values(insertRecords.branches);
+        await tx.insert(connectionsTable).values(insertEnts.connections);
       }
 
       if (
-        isDefined(insertRecords.bridges) &&
-        insertRecords.bridges.length > 0
+        isDefined(insertEnts.dashboards) &&
+        insertEnts.dashboards.length > 0
       ) {
-        await tx.insert(bridgesTable).values(insertRecords.bridges);
+        await tx.insert(dashboardsTable).values(insertEnts.dashboards);
       }
 
-      if (
-        isDefined(insertRecords.connections) &&
-        insertRecords.connections.length > 0
-      ) {
-        await tx.insert(connectionsTable).values(insertRecords.connections);
+      if (isDefined(insertEnts.envs) && insertEnts.envs.length > 0) {
+        await tx.insert(envsTable).values(insertEnts.envs);
       }
 
-      if (
-        isDefined(insertRecords.dashboards) &&
-        insertRecords.dashboards.length > 0
-      ) {
-        await tx.insert(dashboardsTable).values(insertRecords.dashboards);
+      if (isDefined(insertEnts.kits) && insertEnts.kits.length > 0) {
+        await tx.insert(kitsTable).values(insertEnts.kits);
       }
 
-      if (isDefined(insertRecords.envs) && insertRecords.envs.length > 0) {
-        await tx.insert(envsTable).values(insertRecords.envs);
+      if (isDefined(insertEnts.mconfigs) && insertEnts.mconfigs.length > 0) {
+        await tx.insert(mconfigsTable).values(insertEnts.mconfigs);
       }
 
-      if (isDefined(insertRecords.kits) && insertRecords.kits.length > 0) {
-        await tx.insert(kitsTable).values(insertRecords.kits);
+      if (isDefined(insertEnts.members) && insertEnts.members.length > 0) {
+        await tx.insert(membersTable).values(insertEnts.members);
       }
 
-      if (
-        isDefined(insertRecords.mconfigs) &&
-        insertRecords.mconfigs.length > 0
-      ) {
-        await tx.insert(mconfigsTable).values(insertRecords.mconfigs);
+      if (isDefined(insertEnts.models) && insertEnts.models.length > 0) {
+        await tx.insert(modelsTable).values(insertEnts.models);
       }
 
-      if (
-        isDefined(insertRecords.members) &&
-        insertRecords.members.length > 0
-      ) {
-        await tx.insert(membersTable).values(insertRecords.members);
+      if (isDefined(insertEnts.notes) && insertEnts.notes.length > 0) {
+        await tx.insert(notesTable).values(insertEnts.notes);
       }
 
-      if (isDefined(insertRecords.models) && insertRecords.models.length > 0) {
-        await tx.insert(modelsTable).values(insertRecords.models);
+      if (isDefined(insertEnts.orgs) && insertEnts.orgs.length > 0) {
+        await tx.insert(orgsTable).values(insertEnts.orgs);
       }
 
-      if (isDefined(insertRecords.notes) && insertRecords.notes.length > 0) {
-        await tx.insert(notesTable).values(insertRecords.notes);
+      if (isDefined(insertEnts.projects) && insertEnts.projects.length > 0) {
+        await tx.insert(projectsTable).values(insertEnts.projects);
       }
 
-      if (isDefined(insertRecords.orgs) && insertRecords.orgs.length > 0) {
-        await tx.insert(orgsTable).values(insertRecords.orgs);
+      if (isDefined(insertEnts.queries) && insertEnts.queries.length > 0) {
+        await tx.insert(queriesTable).values(insertEnts.queries);
       }
 
-      if (
-        isDefined(insertRecords.projects) &&
-        insertRecords.projects.length > 0
-      ) {
-        await tx.insert(projectsTable).values(insertRecords.projects);
+      if (isDefined(insertEnts.reports) && insertEnts.reports.length > 0) {
+        await tx.insert(reportsTable).values(insertEnts.reports);
       }
 
-      if (
-        isDefined(insertRecords.queries) &&
-        insertRecords.queries.length > 0
-      ) {
-        await tx.insert(queriesTable).values(insertRecords.queries);
+      if (isDefined(insertEnts.structs) && insertEnts.structs.length > 0) {
+        await tx.insert(structsTable).values(insertEnts.structs);
       }
 
-      if (
-        isDefined(insertRecords.reports) &&
-        insertRecords.reports.length > 0
-      ) {
-        await tx.insert(reportsTable).values(insertRecords.reports);
+      if (isDefined(insertEnts.users) && insertEnts.users.length > 0) {
+        await tx.insert(usersTable).values(insertEnts.users);
       }
 
-      if (
-        isDefined(insertRecords.structs) &&
-        insertRecords.structs.length > 0
-      ) {
-        await tx.insert(structsTable).values(insertRecords.structs);
-      }
-
-      if (isDefined(insertRecords.users) && insertRecords.users.length > 0) {
-        await tx.insert(usersTable).values(insertRecords.users);
-      }
-
-      if (isDefined(insertRecords.charts) && insertRecords.charts.length > 0) {
-        await tx.insert(chartsTable).values(insertRecords.charts);
+      if (isDefined(insertEnts.charts) && insertEnts.charts.length > 0) {
+        await tx.insert(chartsTable).values(insertEnts.charts);
       }
     }
 
@@ -189,27 +197,14 @@ export class DrizzlePacker {
     //
     //
 
-    if (isDefined(updateRecords)) {
-      Object.keys(updateRecords).forEach(key => {
-        if (isDefined(updateRecords[key as keyof DbRecords])) {
-          encryptTabAndRefreshServerTs({
-            elements: updateRecords[key as keyof DbRecords] as any[],
-            newServerTs: newServerTs,
-            tabService: this.tabService
-          });
-        }
-      });
-
-      if (
-        isDefined(updateRecords.avatars) &&
-        updateRecords.avatars.length > 0
-      ) {
-        updateRecords.avatars = setUndefinedToNull({
-          ents: updateRecords.avatars,
+    if (isDefined(updateEnts)) {
+      if (isDefined(updateEnts.avatars) && updateEnts.avatars.length > 0) {
+        updateEnts.avatars = setUndefinedToNull({
+          ents: updateEnts.avatars,
           table: avatarsTable
         });
 
-        await forEachSeries(updateRecords.avatars, async x => {
+        await forEachSeries(updateEnts.avatars, async x => {
           await tx
             .update(avatarsTable)
             .set(x)
@@ -217,16 +212,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateRecords.branches) &&
-        updateRecords.branches.length > 0
-      ) {
-        updateRecords.branches = setUndefinedToNull({
-          ents: updateRecords.branches,
+      if (isDefined(updateEnts.branches) && updateEnts.branches.length > 0) {
+        updateEnts.branches = setUndefinedToNull({
+          ents: updateEnts.branches,
           table: branchesTable
         });
 
-        await forEachSeries(updateRecords.branches, async x => {
+        await forEachSeries(updateEnts.branches, async x => {
           await tx
             .update(branchesTable)
             .set(x)
@@ -234,16 +226,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateRecords.bridges) &&
-        updateRecords.bridges.length > 0
-      ) {
-        updateRecords.bridges = setUndefinedToNull({
-          ents: updateRecords.bridges,
+      if (isDefined(updateEnts.bridges) && updateEnts.bridges.length > 0) {
+        updateEnts.bridges = setUndefinedToNull({
+          ents: updateEnts.bridges,
           table: bridgesTable
         });
 
-        await forEachSeries(updateRecords.bridges, async x => {
+        await forEachSeries(updateEnts.bridges, async x => {
           await tx
             .update(bridgesTable)
             .set(x)
@@ -252,15 +241,15 @@ export class DrizzlePacker {
       }
 
       if (
-        isDefined(updateRecords.connections) &&
-        updateRecords.connections.length > 0
+        isDefined(updateEnts.connections) &&
+        updateEnts.connections.length > 0
       ) {
-        updateRecords.connections = setUndefinedToNull({
-          ents: updateRecords.connections,
+        updateEnts.connections = setUndefinedToNull({
+          ents: updateEnts.connections,
           table: connectionsTable
         });
 
-        await forEachSeries(updateRecords.connections, async x => {
+        await forEachSeries(updateEnts.connections, async x => {
           await tx
             .update(connectionsTable)
             .set(x)
@@ -269,15 +258,15 @@ export class DrizzlePacker {
       }
 
       if (
-        isDefined(updateRecords.dashboards) &&
-        updateRecords.dashboards.length > 0
+        isDefined(updateEnts.dashboards) &&
+        updateEnts.dashboards.length > 0
       ) {
-        updateRecords.dashboards = setUndefinedToNull({
-          ents: updateRecords.dashboards,
+        updateEnts.dashboards = setUndefinedToNull({
+          ents: updateEnts.dashboards,
           table: dashboardsTable
         });
 
-        await forEachSeries(updateRecords.dashboards, async x => {
+        await forEachSeries(updateEnts.dashboards, async x => {
           await tx
             .update(dashboardsTable)
             .set(x)
@@ -285,13 +274,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateRecords.envs) && updateRecords.envs.length > 0) {
-        updateRecords.envs = setUndefinedToNull({
-          ents: updateRecords.envs,
+      if (isDefined(updateEnts.envs) && updateEnts.envs.length > 0) {
+        updateEnts.envs = setUndefinedToNull({
+          ents: updateEnts.envs,
           table: envsTable
         });
 
-        await forEachSeries(updateRecords.envs, async x => {
+        await forEachSeries(updateEnts.envs, async x => {
           await tx
             .update(envsTable)
             .set(x)
@@ -299,27 +288,24 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateRecords.kits) && updateRecords.kits.length > 0) {
-        updateRecords.kits = setUndefinedToNull({
-          ents: updateRecords.kits,
+      if (isDefined(updateEnts.kits) && updateEnts.kits.length > 0) {
+        updateEnts.kits = setUndefinedToNull({
+          ents: updateEnts.kits,
           table: kitsTable
         });
 
-        await forEachSeries(updateRecords.kits, async x => {
+        await forEachSeries(updateEnts.kits, async x => {
           await tx.update(kitsTable).set(x).where(eq(kitsTable.kitId, x.kitId));
         });
       }
 
-      if (
-        isDefined(updateRecords.mconfigs) &&
-        updateRecords.mconfigs.length > 0
-      ) {
-        updateRecords.mconfigs = setUndefinedToNull({
-          ents: updateRecords.mconfigs,
+      if (isDefined(updateEnts.mconfigs) && updateEnts.mconfigs.length > 0) {
+        updateEnts.mconfigs = setUndefinedToNull({
+          ents: updateEnts.mconfigs,
           table: mconfigsTable
         });
 
-        await forEachSeries(updateRecords.mconfigs, async x => {
+        await forEachSeries(updateEnts.mconfigs, async x => {
           await tx
             .update(mconfigsTable)
             .set(x)
@@ -327,16 +313,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateRecords.members) &&
-        updateRecords.members.length > 0
-      ) {
-        updateRecords.members = setUndefinedToNull({
-          ents: updateRecords.members,
+      if (isDefined(updateEnts.members) && updateEnts.members.length > 0) {
+        updateEnts.members = setUndefinedToNull({
+          ents: updateEnts.members,
           table: membersTable
         });
 
-        await forEachSeries(updateRecords.members, async x => {
+        await forEachSeries(updateEnts.members, async x => {
           await tx
             .update(membersTable)
             .set(x)
@@ -344,13 +327,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateRecords.models) && updateRecords.models.length > 0) {
-        updateRecords.models = setUndefinedToNull({
-          ents: updateRecords.models,
+      if (isDefined(updateEnts.models) && updateEnts.models.length > 0) {
+        updateEnts.models = setUndefinedToNull({
+          ents: updateEnts.models,
           table: modelsTable
         });
 
-        await forEachSeries(updateRecords.models, async x => {
+        await forEachSeries(updateEnts.models, async x => {
           await tx
             .update(modelsTable)
             .set(x)
@@ -358,13 +341,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateRecords.notes) && updateRecords.notes.length > 0) {
-        updateRecords.notes = setUndefinedToNull({
-          ents: updateRecords.notes,
+      if (isDefined(updateEnts.notes) && updateEnts.notes.length > 0) {
+        updateEnts.notes = setUndefinedToNull({
+          ents: updateEnts.notes,
           table: notesTable
         });
 
-        await forEachSeries(updateRecords.notes, async x => {
+        await forEachSeries(updateEnts.notes, async x => {
           await tx
             .update(notesTable)
             .set(x)
@@ -372,27 +355,24 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateRecords.orgs) && updateRecords.orgs.length > 0) {
-        updateRecords.orgs = setUndefinedToNull({
-          ents: updateRecords.orgs,
+      if (isDefined(updateEnts.orgs) && updateEnts.orgs.length > 0) {
+        updateEnts.orgs = setUndefinedToNull({
+          ents: updateEnts.orgs,
           table: orgsTable
         });
 
-        await forEachSeries(updateRecords.orgs, async x => {
+        await forEachSeries(updateEnts.orgs, async x => {
           await tx.update(orgsTable).set(x).where(eq(orgsTable.orgId, x.orgId));
         });
       }
 
-      if (
-        isDefined(updateRecords.projects) &&
-        updateRecords.projects.length > 0
-      ) {
-        updateRecords.projects = setUndefinedToNull({
-          ents: updateRecords.projects,
+      if (isDefined(updateEnts.projects) && updateEnts.projects.length > 0) {
+        updateEnts.projects = setUndefinedToNull({
+          ents: updateEnts.projects,
           table: projectsTable
         });
 
-        await forEachSeries(updateRecords.projects, async x => {
+        await forEachSeries(updateEnts.projects, async x => {
           await tx
             .update(projectsTable)
             .set(x)
@@ -400,16 +380,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateRecords.queries) &&
-        updateRecords.queries.length > 0
-      ) {
-        updateRecords.queries = setUndefinedToNull({
-          ents: updateRecords.queries,
+      if (isDefined(updateEnts.queries) && updateEnts.queries.length > 0) {
+        updateEnts.queries = setUndefinedToNull({
+          ents: updateEnts.queries,
           table: queriesTable
         });
 
-        await forEachSeries(updateRecords.queries, async x => {
+        await forEachSeries(updateEnts.queries, async x => {
           await tx
             .update(queriesTable)
             .set(x)
@@ -417,16 +394,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateRecords.reports) &&
-        updateRecords.reports.length > 0
-      ) {
-        updateRecords.reports = setUndefinedToNull({
-          ents: updateRecords.reports,
+      if (isDefined(updateEnts.reports) && updateEnts.reports.length > 0) {
+        updateEnts.reports = setUndefinedToNull({
+          ents: updateEnts.reports,
           table: reportsTable
         });
 
-        await forEachSeries(updateRecords.reports, async x => {
+        await forEachSeries(updateEnts.reports, async x => {
           await tx
             .update(reportsTable)
             .set(x)
@@ -434,16 +408,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateRecords.structs) &&
-        updateRecords.structs.length > 0
-      ) {
-        updateRecords.structs = setUndefinedToNull({
-          ents: updateRecords.structs,
+      if (isDefined(updateEnts.structs) && updateEnts.structs.length > 0) {
+        updateEnts.structs = setUndefinedToNull({
+          ents: updateEnts.structs,
           table: structsTable
         });
 
-        await forEachSeries(updateRecords.structs, async x => {
+        await forEachSeries(updateEnts.structs, async x => {
           await tx
             .update(structsTable)
             .set(x)
@@ -451,13 +422,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateRecords.users) && updateRecords.users.length > 0) {
-        updateRecords.users = setUndefinedToNull({
-          ents: updateRecords.users,
+      if (isDefined(updateEnts.users) && updateEnts.users.length > 0) {
+        updateEnts.users = setUndefinedToNull({
+          ents: updateEnts.users,
           table: usersTable
         });
 
-        await forEachSeries(updateRecords.users, async x => {
+        await forEachSeries(updateEnts.users, async x => {
           await tx
             .update(usersTable)
             .set(x)
@@ -465,13 +436,13 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateRecords.charts) && updateRecords.charts.length > 0) {
-        updateRecords.charts = setUndefinedToNull({
-          ents: updateRecords.charts,
+      if (isDefined(updateEnts.charts) && updateEnts.charts.length > 0) {
+        updateEnts.charts = setUndefinedToNull({
+          ents: updateEnts.charts,
           table: chartsTable
         });
 
-        await forEachSeries(updateRecords.charts, async x => {
+        await forEachSeries(updateEnts.charts, async x => {
           await tx
             .update(chartsTable)
             .set(x)
@@ -484,33 +455,20 @@ export class DrizzlePacker {
     //
     //
 
-    if (isDefined(insOrUpdRecords)) {
-      Object.keys(insOrUpdRecords).forEach(key => {
-        if (isDefined(insOrUpdRecords[key as keyof DbRecords])) {
-          encryptTabAndRefreshServerTs({
-            elements: insOrUpdRecords[key as keyof DbRecords] as any[],
-            newServerTs: newServerTs,
-            tabService: this.tabService
-          });
-        }
-      });
+    if (isDefined(insOrUpdEnts)) {
+      if (isDefined(insOrUpdEnts.avatars) && insOrUpdEnts.avatars.length > 0) {
+        insOrUpdEnts.avatars = Array.from(
+          new Set(insOrUpdEnts.avatars.map(x => x.userId))
+        ).map(id => insOrUpdEnts.avatars.find(x => x.userId === id));
 
-      if (
-        isDefined(insOrUpdRecords.avatars) &&
-        insOrUpdRecords.avatars.length > 0
-      ) {
-        insOrUpdRecords.avatars = Array.from(
-          new Set(insOrUpdRecords.avatars.map(x => x.userId))
-        ).map(id => insOrUpdRecords.avatars.find(x => x.userId === id));
-
-        insOrUpdRecords.avatars = setUndefinedToNull({
-          ents: insOrUpdRecords.avatars,
+        insOrUpdEnts.avatars = setUndefinedToNull({
+          ents: insOrUpdEnts.avatars,
           table: avatarsTable
         });
 
         await tx
           .insert(avatarsTable)
-          .values(insOrUpdRecords.avatars)
+          .values(insOrUpdEnts.avatars)
           .onConflictDoUpdate({
             target: avatarsTable.userId,
             set: drizzleSetAllColumnsFull({ table: avatarsTable })
@@ -518,43 +476,40 @@ export class DrizzlePacker {
       }
 
       if (
-        isDefined(insOrUpdRecords.branches) &&
-        insOrUpdRecords.branches.length > 0
+        isDefined(insOrUpdEnts.branches) &&
+        insOrUpdEnts.branches.length > 0
       ) {
-        insOrUpdRecords.branches = Array.from(
-          new Set(insOrUpdRecords.branches.map(x => x.branchFullId))
-        ).map(id => insOrUpdRecords.branches.find(x => x.branchFullId === id));
+        insOrUpdEnts.branches = Array.from(
+          new Set(insOrUpdEnts.branches.map(x => x.branchFullId))
+        ).map(id => insOrUpdEnts.branches.find(x => x.branchFullId === id));
 
-        insOrUpdRecords.branches = setUndefinedToNull({
-          ents: insOrUpdRecords.branches,
+        insOrUpdEnts.branches = setUndefinedToNull({
+          ents: insOrUpdEnts.branches,
           table: branchesTable
         });
 
         await tx
           .insert(branchesTable)
-          .values(insOrUpdRecords.branches)
+          .values(insOrUpdEnts.branches)
           .onConflictDoUpdate({
             target: branchesTable.branchFullId,
             set: drizzleSetAllColumnsFull({ table: branchesTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.bridges) &&
-        insOrUpdRecords.bridges.length > 0
-      ) {
-        insOrUpdRecords.bridges = Array.from(
-          new Set(insOrUpdRecords.bridges.map(x => x.bridgeFullId))
-        ).map(id => insOrUpdRecords.bridges.find(x => x.bridgeFullId === id));
+      if (isDefined(insOrUpdEnts.bridges) && insOrUpdEnts.bridges.length > 0) {
+        insOrUpdEnts.bridges = Array.from(
+          new Set(insOrUpdEnts.bridges.map(x => x.bridgeFullId))
+        ).map(id => insOrUpdEnts.bridges.find(x => x.bridgeFullId === id));
 
-        insOrUpdRecords.bridges = setUndefinedToNull({
-          ents: insOrUpdRecords.bridges,
+        insOrUpdEnts.bridges = setUndefinedToNull({
+          ents: insOrUpdEnts.bridges,
           table: bridgesTable
         });
 
         await tx
           .insert(bridgesTable)
-          .values(insOrUpdRecords.bridges)
+          .values(insOrUpdEnts.bridges)
           .onConflictDoUpdate({
             target: bridgesTable.bridgeFullId,
             set: drizzleSetAllColumnsFull({ table: bridgesTable })
@@ -562,23 +517,23 @@ export class DrizzlePacker {
       }
 
       if (
-        isDefined(insOrUpdRecords.connections) &&
-        insOrUpdRecords.connections.length > 0
+        isDefined(insOrUpdEnts.connections) &&
+        insOrUpdEnts.connections.length > 0
       ) {
-        insOrUpdRecords.connections = Array.from(
-          new Set(insOrUpdRecords.connections.map(x => x.connectionFullId))
+        insOrUpdEnts.connections = Array.from(
+          new Set(insOrUpdEnts.connections.map(x => x.connectionFullId))
         ).map(id =>
-          insOrUpdRecords.connections.find(x => x.connectionFullId === id)
+          insOrUpdEnts.connections.find(x => x.connectionFullId === id)
         );
 
-        insOrUpdRecords.connections = setUndefinedToNull({
-          ents: insOrUpdRecords.connections,
+        insOrUpdEnts.connections = setUndefinedToNull({
+          ents: insOrUpdEnts.connections,
           table: connectionsTable
         });
 
         await tx
           .insert(connectionsTable)
-          .values(insOrUpdRecords.connections)
+          .values(insOrUpdEnts.connections)
           .onConflictDoUpdate({
             target: connectionsTable.connectionFullId,
             set: drizzleSetAllColumnsFull({ table: connectionsTable })
@@ -586,61 +541,61 @@ export class DrizzlePacker {
       }
 
       if (
-        isDefined(insOrUpdRecords.dashboards) &&
-        insOrUpdRecords.dashboards.length > 0
+        isDefined(insOrUpdEnts.dashboards) &&
+        insOrUpdEnts.dashboards.length > 0
       ) {
-        insOrUpdRecords.dashboards = Array.from(
-          new Set(insOrUpdRecords.dashboards.map(x => x.dashboardFullId))
+        insOrUpdEnts.dashboards = Array.from(
+          new Set(insOrUpdEnts.dashboards.map(x => x.dashboardFullId))
         ).map(id =>
-          insOrUpdRecords.dashboards.find(x => x.dashboardFullId === id)
+          insOrUpdEnts.dashboards.find(x => x.dashboardFullId === id)
         );
 
-        insOrUpdRecords.dashboards = setUndefinedToNull({
-          ents: insOrUpdRecords.dashboards,
+        insOrUpdEnts.dashboards = setUndefinedToNull({
+          ents: insOrUpdEnts.dashboards,
           table: dashboardsTable
         });
 
         await tx
           .insert(dashboardsTable)
-          .values(insOrUpdRecords.dashboards)
+          .values(insOrUpdEnts.dashboards)
           .onConflictDoUpdate({
             target: dashboardsTable.dashboardFullId,
             set: drizzleSetAllColumnsFull({ table: dashboardsTable })
           });
       }
 
-      if (isDefined(insOrUpdRecords.envs) && insOrUpdRecords.envs.length > 0) {
-        insOrUpdRecords.envs = Array.from(
-          new Set(insOrUpdRecords.envs.map(x => x.envFullId))
-        ).map(id => insOrUpdRecords.envs.find(x => x.envFullId === id));
+      if (isDefined(insOrUpdEnts.envs) && insOrUpdEnts.envs.length > 0) {
+        insOrUpdEnts.envs = Array.from(
+          new Set(insOrUpdEnts.envs.map(x => x.envFullId))
+        ).map(id => insOrUpdEnts.envs.find(x => x.envFullId === id));
 
-        insOrUpdRecords.envs = setUndefinedToNull({
-          ents: insOrUpdRecords.envs,
+        insOrUpdEnts.envs = setUndefinedToNull({
+          ents: insOrUpdEnts.envs,
           table: envsTable
         });
 
         await tx
           .insert(envsTable)
-          .values(insOrUpdRecords.envs)
+          .values(insOrUpdEnts.envs)
           .onConflictDoUpdate({
             target: envsTable.envFullId,
             set: drizzleSetAllColumnsFull({ table: envsTable })
           });
       }
 
-      if (isDefined(insOrUpdRecords.kits) && insOrUpdRecords.kits.length > 0) {
-        insOrUpdRecords.kits = Array.from(
-          new Set(insOrUpdRecords.kits.map(x => x.kitId))
-        ).map(id => insOrUpdRecords.kits.find(x => x.kitId === id));
+      if (isDefined(insOrUpdEnts.kits) && insOrUpdEnts.kits.length > 0) {
+        insOrUpdEnts.kits = Array.from(
+          new Set(insOrUpdEnts.kits.map(x => x.kitId))
+        ).map(id => insOrUpdEnts.kits.find(x => x.kitId === id));
 
-        insOrUpdRecords.kits = setUndefinedToNull({
-          ents: insOrUpdRecords.kits,
+        insOrUpdEnts.kits = setUndefinedToNull({
+          ents: insOrUpdEnts.kits,
           table: kitsTable
         });
 
         await tx
           .insert(kitsTable)
-          .values(insOrUpdRecords.kits)
+          .values(insOrUpdEnts.kits)
           .onConflictDoUpdate({
             target: kitsTable.kitId,
             set: drizzleSetAllColumnsFull({ table: kitsTable })
@@ -648,106 +603,97 @@ export class DrizzlePacker {
       }
 
       if (
-        isDefined(insOrUpdRecords.mconfigs) &&
-        insOrUpdRecords.mconfigs.length > 0
+        isDefined(insOrUpdEnts.mconfigs) &&
+        insOrUpdEnts.mconfigs.length > 0
       ) {
-        insOrUpdRecords.mconfigs = Array.from(
-          new Set(insOrUpdRecords.mconfigs.map(x => x.mconfigId))
-        ).map(id => insOrUpdRecords.mconfigs.find(x => x.mconfigId === id));
+        insOrUpdEnts.mconfigs = Array.from(
+          new Set(insOrUpdEnts.mconfigs.map(x => x.mconfigId))
+        ).map(id => insOrUpdEnts.mconfigs.find(x => x.mconfigId === id));
 
-        insOrUpdRecords.mconfigs = setUndefinedToNull({
-          ents: insOrUpdRecords.mconfigs,
+        insOrUpdEnts.mconfigs = setUndefinedToNull({
+          ents: insOrUpdEnts.mconfigs,
           table: mconfigsTable
         });
 
         await tx
           .insert(mconfigsTable)
-          .values(insOrUpdRecords.mconfigs)
+          .values(insOrUpdEnts.mconfigs)
           .onConflictDoUpdate({
             target: mconfigsTable.mconfigId,
             set: drizzleSetAllColumnsFull({ table: mconfigsTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.members) &&
-        insOrUpdRecords.members.length > 0
-      ) {
-        insOrUpdRecords.members = Array.from(
-          new Set(insOrUpdRecords.members.map(x => x.memberFullId))
-        ).map(id => insOrUpdRecords.members.find(x => x.memberFullId === id));
+      if (isDefined(insOrUpdEnts.members) && insOrUpdEnts.members.length > 0) {
+        insOrUpdEnts.members = Array.from(
+          new Set(insOrUpdEnts.members.map(x => x.memberFullId))
+        ).map(id => insOrUpdEnts.members.find(x => x.memberFullId === id));
 
-        insOrUpdRecords.members = setUndefinedToNull({
-          ents: insOrUpdRecords.members,
+        insOrUpdEnts.members = setUndefinedToNull({
+          ents: insOrUpdEnts.members,
           table: membersTable
         });
 
         await tx
           .insert(membersTable)
-          .values(insOrUpdRecords.members)
+          .values(insOrUpdEnts.members)
           .onConflictDoUpdate({
             target: membersTable.memberFullId,
             set: drizzleSetAllColumnsFull({ table: membersTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.models) &&
-        insOrUpdRecords.models.length > 0
-      ) {
-        insOrUpdRecords.models = Array.from(
-          new Set(insOrUpdRecords.models.map(x => x.modelFullId))
-        ).map(id => insOrUpdRecords.models.find(x => x.modelFullId === id));
+      if (isDefined(insOrUpdEnts.models) && insOrUpdEnts.models.length > 0) {
+        insOrUpdEnts.models = Array.from(
+          new Set(insOrUpdEnts.models.map(x => x.modelFullId))
+        ).map(id => insOrUpdEnts.models.find(x => x.modelFullId === id));
 
-        insOrUpdRecords.models = setUndefinedToNull({
-          ents: insOrUpdRecords.models,
+        insOrUpdEnts.models = setUndefinedToNull({
+          ents: insOrUpdEnts.models,
           table: modelsTable
         });
 
         await tx
           .insert(modelsTable)
-          .values(insOrUpdRecords.models)
+          .values(insOrUpdEnts.models)
           .onConflictDoUpdate({
             target: modelsTable.modelFullId,
             set: drizzleSetAllColumnsFull({ table: modelsTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.notes) &&
-        insOrUpdRecords.notes.length > 0
-      ) {
-        insOrUpdRecords.notes = Array.from(
-          new Set(insOrUpdRecords.notes.map(x => x.noteId))
-        ).map(id => insOrUpdRecords.notes.find(x => x.noteId === id));
+      if (isDefined(insOrUpdEnts.notes) && insOrUpdEnts.notes.length > 0) {
+        insOrUpdEnts.notes = Array.from(
+          new Set(insOrUpdEnts.notes.map(x => x.noteId))
+        ).map(id => insOrUpdEnts.notes.find(x => x.noteId === id));
 
-        insOrUpdRecords.notes = setUndefinedToNull({
-          ents: insOrUpdRecords.notes,
+        insOrUpdEnts.notes = setUndefinedToNull({
+          ents: insOrUpdEnts.notes,
           table: notesTable
         });
 
         await tx
           .insert(notesTable)
-          .values(insOrUpdRecords.notes)
+          .values(insOrUpdEnts.notes)
           .onConflictDoUpdate({
             target: notesTable.noteId,
             set: drizzleSetAllColumnsFull({ table: notesTable })
           });
       }
 
-      if (isDefined(insOrUpdRecords.orgs) && insOrUpdRecords.orgs.length > 0) {
-        insOrUpdRecords.orgs = Array.from(
-          new Set(insOrUpdRecords.orgs.map(x => x.orgId))
-        ).map(id => insOrUpdRecords.orgs.find(x => x.orgId === id));
+      if (isDefined(insOrUpdEnts.orgs) && insOrUpdEnts.orgs.length > 0) {
+        insOrUpdEnts.orgs = Array.from(
+          new Set(insOrUpdEnts.orgs.map(x => x.orgId))
+        ).map(id => insOrUpdEnts.orgs.find(x => x.orgId === id));
 
-        insOrUpdRecords.orgs = setUndefinedToNull({
-          ents: insOrUpdRecords.orgs,
+        insOrUpdEnts.orgs = setUndefinedToNull({
+          ents: insOrUpdEnts.orgs,
           table: orgsTable
         });
 
         await tx
           .insert(orgsTable)
-          .values(insOrUpdRecords.orgs)
+          .values(insOrUpdEnts.orgs)
           .onConflictDoUpdate({
             target: orgsTable.orgId,
             set: drizzleSetAllColumnsFull({ table: orgsTable })
@@ -755,131 +701,116 @@ export class DrizzlePacker {
       }
 
       if (
-        isDefined(insOrUpdRecords.projects) &&
-        insOrUpdRecords.projects.length > 0
+        isDefined(insOrUpdEnts.projects) &&
+        insOrUpdEnts.projects.length > 0
       ) {
-        insOrUpdRecords.projects = Array.from(
-          new Set(insOrUpdRecords.projects.map(x => x.projectId))
-        ).map(id => insOrUpdRecords.projects.find(x => x.projectId === id));
+        insOrUpdEnts.projects = Array.from(
+          new Set(insOrUpdEnts.projects.map(x => x.projectId))
+        ).map(id => insOrUpdEnts.projects.find(x => x.projectId === id));
 
-        insOrUpdRecords.projects = setUndefinedToNull({
-          ents: insOrUpdRecords.projects,
+        insOrUpdEnts.projects = setUndefinedToNull({
+          ents: insOrUpdEnts.projects,
           table: projectsTable
         });
 
         await tx
           .insert(projectsTable)
-          .values(insOrUpdRecords.projects)
+          .values(insOrUpdEnts.projects)
           .onConflictDoUpdate({
             target: projectsTable.projectId,
             set: drizzleSetAllColumnsFull({ table: projectsTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.queries) &&
-        insOrUpdRecords.queries.length > 0
-      ) {
-        insOrUpdRecords.queries = Array.from(
-          new Set(insOrUpdRecords.queries.map(x => x.queryId))
-        ).map(id => insOrUpdRecords.queries.find(x => x.queryId === id));
+      if (isDefined(insOrUpdEnts.queries) && insOrUpdEnts.queries.length > 0) {
+        insOrUpdEnts.queries = Array.from(
+          new Set(insOrUpdEnts.queries.map(x => x.queryId))
+        ).map(id => insOrUpdEnts.queries.find(x => x.queryId === id));
 
-        insOrUpdRecords.queries = setUndefinedToNull({
-          ents: insOrUpdRecords.queries,
+        insOrUpdEnts.queries = setUndefinedToNull({
+          ents: insOrUpdEnts.queries,
           table: queriesTable
         });
 
         await tx
           .insert(queriesTable)
-          .values(insOrUpdRecords.queries)
+          .values(insOrUpdEnts.queries)
           .onConflictDoUpdate({
             target: queriesTable.queryId,
             set: drizzleSetAllColumnsFull({ table: queriesTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.reports) &&
-        insOrUpdRecords.reports.length > 0
-      ) {
-        insOrUpdRecords.reports = Array.from(
-          new Set(insOrUpdRecords.reports.map(x => x.reportFullId))
-        ).map(id => insOrUpdRecords.reports.find(x => x.reportFullId === id));
+      if (isDefined(insOrUpdEnts.reports) && insOrUpdEnts.reports.length > 0) {
+        insOrUpdEnts.reports = Array.from(
+          new Set(insOrUpdEnts.reports.map(x => x.reportFullId))
+        ).map(id => insOrUpdEnts.reports.find(x => x.reportFullId === id));
 
-        insOrUpdRecords.reports = setUndefinedToNull({
-          ents: insOrUpdRecords.reports,
+        insOrUpdEnts.reports = setUndefinedToNull({
+          ents: insOrUpdEnts.reports,
           table: reportsTable
         });
 
         await tx
           .insert(reportsTable)
-          .values(insOrUpdRecords.reports)
+          .values(insOrUpdEnts.reports)
           .onConflictDoUpdate({
             target: reportsTable.reportFullId,
             set: drizzleSetAllColumnsFull({ table: reportsTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.structs) &&
-        insOrUpdRecords.structs.length > 0
-      ) {
-        insOrUpdRecords.structs = Array.from(
-          new Set(insOrUpdRecords.structs.map(x => x.structId))
-        ).map(id => insOrUpdRecords.structs.find(x => x.structId === id));
+      if (isDefined(insOrUpdEnts.structs) && insOrUpdEnts.structs.length > 0) {
+        insOrUpdEnts.structs = Array.from(
+          new Set(insOrUpdEnts.structs.map(x => x.structId))
+        ).map(id => insOrUpdEnts.structs.find(x => x.structId === id));
 
-        insOrUpdRecords.structs = setUndefinedToNull({
-          ents: insOrUpdRecords.structs,
+        insOrUpdEnts.structs = setUndefinedToNull({
+          ents: insOrUpdEnts.structs,
           table: structsTable
         });
 
         await tx
           .insert(structsTable)
-          .values(insOrUpdRecords.structs)
+          .values(insOrUpdEnts.structs)
           .onConflictDoUpdate({
             target: structsTable.structId,
             set: drizzleSetAllColumnsFull({ table: structsTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.users) &&
-        insOrUpdRecords.users.length > 0
-      ) {
-        insOrUpdRecords.users = Array.from(
-          new Set(insOrUpdRecords.users.map(x => x.userId))
-        ).map(id => insOrUpdRecords.users.find(x => x.userId === id));
+      if (isDefined(insOrUpdEnts.users) && insOrUpdEnts.users.length > 0) {
+        insOrUpdEnts.users = Array.from(
+          new Set(insOrUpdEnts.users.map(x => x.userId))
+        ).map(id => insOrUpdEnts.users.find(x => x.userId === id));
 
-        insOrUpdRecords.users = setUndefinedToNull({
-          ents: insOrUpdRecords.users,
+        insOrUpdEnts.users = setUndefinedToNull({
+          ents: insOrUpdEnts.users,
           table: usersTable
         });
 
         await tx
           .insert(usersTable)
-          .values(insOrUpdRecords.users)
+          .values(insOrUpdEnts.users)
           .onConflictDoUpdate({
             target: usersTable.userId,
             set: drizzleSetAllColumnsFull({ table: usersTable })
           });
       }
 
-      if (
-        isDefined(insOrUpdRecords.charts) &&
-        insOrUpdRecords.charts.length > 0
-      ) {
-        insOrUpdRecords.charts = Array.from(
-          new Set(insOrUpdRecords.charts.map(x => x.chartFullId))
-        ).map(id => insOrUpdRecords.charts.find(x => x.chartFullId === id));
+      if (isDefined(insOrUpdEnts.charts) && insOrUpdEnts.charts.length > 0) {
+        insOrUpdEnts.charts = Array.from(
+          new Set(insOrUpdEnts.charts.map(x => x.chartFullId))
+        ).map(id => insOrUpdEnts.charts.find(x => x.chartFullId === id));
 
-        insOrUpdRecords.charts = setUndefinedToNull({
-          ents: insOrUpdRecords.charts,
+        insOrUpdEnts.charts = setUndefinedToNull({
+          ents: insOrUpdEnts.charts,
           table: chartsTable
         });
 
         await tx
           .insert(chartsTable)
-          .values(insOrUpdRecords.charts)
+          .values(insOrUpdEnts.charts)
           .onConflictDoUpdate({
             target: chartsTable.chartFullId,
             set: drizzleSetAllColumnsFull({ table: chartsTable })
@@ -891,33 +822,23 @@ export class DrizzlePacker {
     //
     //
 
-    if (isDefined(insOrDoNothingRecords)) {
-      Object.keys(insOrDoNothingRecords).forEach(key => {
-        if (isDefined(insOrDoNothingRecords[key as keyof DbRecords])) {
-          encryptTabAndRefreshServerTs({
-            elements: insOrDoNothingRecords[key as keyof DbRecords] as any[],
-            newServerTs: newServerTs,
-            tabService: this.tabService
-          });
-        }
-      });
-
+    if (isDefined(insOrDoNothingEnts)) {
       if (
-        isDefined(insOrDoNothingRecords.queries) &&
-        insOrDoNothingRecords.queries.length > 0
+        isDefined(insOrDoNothingEnts.queries) &&
+        insOrDoNothingEnts.queries.length > 0
       ) {
-        insOrDoNothingRecords.queries = Array.from(
-          new Set(insOrDoNothingRecords.queries.map(x => x.queryId))
-        ).map(id => insOrDoNothingRecords.queries.find(x => x.queryId === id));
+        insOrDoNothingEnts.queries = Array.from(
+          new Set(insOrDoNothingEnts.queries.map(x => x.queryId))
+        ).map(id => insOrDoNothingEnts.queries.find(x => x.queryId === id));
 
-        insOrDoNothingRecords.queries = setUndefinedToNull({
-          ents: insOrDoNothingRecords.queries,
+        insOrDoNothingEnts.queries = setUndefinedToNull({
+          ents: insOrDoNothingEnts.queries,
           table: queriesTable
         });
 
         await tx
           .insert(queriesTable)
-          .values(insOrDoNothingRecords.queries)
+          .values(insOrDoNothingEnts.queries)
           .onConflictDoNothing();
       }
     }
@@ -931,11 +852,11 @@ export class DrizzlePacker {
       });
     }
 
-    let pack: RecordsPackOutput = {
-      insert: insertRecords,
-      update: updateRecords,
-      insertOrUpdate: insOrUpdRecords,
-      insertOrDoNothing: insOrDoNothingRecords
+    let pack: PackerOutput = {
+      insert: item.insert,
+      update: item.update,
+      insertOrUpdate: item.insertOrUpdate,
+      insertOrDoNothing: item.insertOrDoNothing
     };
 
     return pack;

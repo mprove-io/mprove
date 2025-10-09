@@ -8,7 +8,7 @@ import {
 import { Pool, PoolConfig } from 'pg';
 import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
-import { TabService } from '~backend/services/tab.service';
+import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { DrizzleLogWriter } from './drizzle-log-writer';
 import { DrizzlePacker } from './postgres/drizzle-packer';
@@ -31,14 +31,14 @@ export interface Db {
   providers: [
     ConfigService,
     Logger,
-    TabService,
+    TabToEntService,
     {
       provide: DRIZZLE,
-      inject: [ConfigService, Logger, TabService],
+      inject: [ConfigService, Logger, TabToEntService],
       useFactory: (
         cs: ConfigService<BackendConfig>,
         logger: Logger,
-        tabService: TabService
+        tabToEntService: TabToEntService
       ) => {
         let poolConfig: PoolConfig = {
           connectionString: cs.get<BackendConfig['backendPostgresDatabaseUrl']>(
@@ -75,7 +75,7 @@ export interface Db {
         let postgresPoolDrizzle: NodePgDatabase<typeof schemaPostgres> =
           drizzlePg(postgresPool, pgDrizzleConfig);
 
-        let postgresPacker = new DrizzlePacker(tabService);
+        let postgresPacker = new DrizzlePacker(tabToEntService);
         // cs, logger, postgresPoolDrizzle
 
         //

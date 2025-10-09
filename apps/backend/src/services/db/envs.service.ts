@@ -36,6 +36,24 @@ export class EnvsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(envEnt: EnvEnt): EnvTab {
+    if (isUndefined(envEnt)) {
+      return;
+    }
+
+    let env: EnvTab = {
+      ...envEnt,
+      ...this.tabService.decrypt<EnvSt>({
+        encryptedString: envEnt.st
+      }),
+      ...this.tabService.decrypt<EnvLt>({
+        encryptedString: envEnt.lt
+      })
+    };
+
+    return env;
+  }
+
   makeEnvEnt(item: { projectId: string; envId: string; evs: Ev[] }): EnvEnt {
     let { projectId, envId, evs } = item;
 
@@ -138,30 +156,6 @@ export class EnvsService {
     };
 
     return apiEnv;
-  }
-
-  tabToEnt(env: EnvTab): EnvEnt {
-    let orgEnt: EnvEnt = {
-      // ...env,
-      st: this.tabService.encrypt({ data: env.st }),
-      lt: this.tabService.encrypt({ data: env.lt })
-    };
-
-    return orgEnt;
-  }
-
-  entToTab(env: EnvEnt): EnvTab {
-    let orgTab: EnvTab = {
-      ...env,
-      st: this.tabService.decrypt<EnvSt>({
-        encryptedString: env.st
-      }),
-      lt: this.tabService.decrypt<EnvLt>({
-        encryptedString: env.lt
-      })
-    };
-
-    return orgTab;
   }
 
   async checkEnvDoesNotExist(item: { projectId: string; envId: string }) {

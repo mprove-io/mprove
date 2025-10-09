@@ -46,6 +46,24 @@ export class MconfigsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(mconfigEnt: MconfigEnt): MconfigTab {
+    if (isUndefined(mconfigEnt)) {
+      return;
+    }
+
+    let mconfig: MconfigTab = {
+      ...mconfigEnt,
+      ...this.tabService.decrypt<MconfigSt>({
+        encryptedString: mconfigEnt.st
+      }),
+      ...this.tabService.decrypt<MconfigLt>({
+        encryptedString: mconfigEnt.lt
+      })
+    };
+
+    return mconfig;
+  }
+
   tabToApi(item: {
     mconfig: MconfigTab;
     modelFields: ModelField[];
@@ -121,30 +139,6 @@ export class MconfigsService {
       st: mconfigSt,
       lt: mconfigLt,
       serverTs: mconfig.serverTs
-    };
-
-    return mconfigTab;
-  }
-
-  tabToEnt(mconfig: MconfigTab): MconfigEnt {
-    let mconfigEnt: MconfigEnt = {
-      // ...mconfig,
-      st: this.tabService.encrypt({ data: mconfig.st }),
-      lt: this.tabService.encrypt({ data: mconfig.lt })
-    };
-
-    return mconfigEnt;
-  }
-
-  entToTab(mconfig: MconfigEnt): MconfigTab {
-    let mconfigTab: MconfigTab = {
-      ...mconfig,
-      st: this.tabService.decrypt<MconfigSt>({
-        encryptedString: mconfig.st
-      }),
-      lt: this.tabService.decrypt<MconfigLt>({
-        encryptedString: mconfig.lt
-      })
     };
 
     return mconfigTab;

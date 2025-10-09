@@ -58,6 +58,24 @@ export class MembersService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(memberEnt: MemberEnt): MemberTab {
+    if (isUndefined(memberEnt)) {
+      return;
+    }
+
+    let member: MemberTab = {
+      ...memberEnt,
+      ...this.tabService.decrypt<MemberSt>({
+        encryptedString: memberEnt.st
+      }),
+      ...this.tabService.decrypt<MemberLt>({
+        encryptedString: memberEnt.lt
+      })
+    };
+
+    return member;
+  }
+
   makeMemberEnt(item: {
     projectId: string;
     roles?: string[];
@@ -121,30 +139,6 @@ export class MembersService {
     };
 
     return apiMember;
-  }
-
-  tabToEnt(member: MemberTab): MemberEnt {
-    let memberEnt: MemberEnt = {
-      // ...member,
-      st: this.tabService.encrypt({ data: member.st }),
-      lt: this.tabService.encrypt({ data: member.lt })
-    };
-
-    return memberEnt;
-  }
-
-  entToTab(member: MemberEnt): MemberTab {
-    let memberTab: MemberTab = {
-      ...member,
-      st: this.tabService.decrypt<MemberSt>({
-        encryptedString: member.st
-      }),
-      lt: this.tabService.decrypt<MemberLt>({
-        encryptedString: member.lt
-      })
-    };
-
-    return memberTab;
   }
 
   async getMemberCheckIsAdmin(item: { memberId: string; projectId: string }) {

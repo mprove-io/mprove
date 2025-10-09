@@ -49,6 +49,24 @@ export class ProjectsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(projectEnt: ProjectEnt): ProjectTab {
+    if (isUndefined(projectEnt)) {
+      return;
+    }
+
+    let project: ProjectTab = {
+      ...projectEnt,
+      ...this.tabService.decrypt<ProjectSt>({
+        encryptedString: projectEnt.st
+      }),
+      ...this.tabService.decrypt<ProjectLt>({
+        encryptedString: projectEnt.lt
+      })
+    };
+
+    return project;
+  }
+
   wrapToApiProjectsItem(item: {
     project: ProjectTab;
   }): ProjectsItem {
@@ -105,30 +123,6 @@ export class ProjectsService {
       nameHash: this.hashService.makeHash(project.name),
       gitUrlHash: this.hashService.makeHash(project.gitUrl),
       serverTs: project.serverTs
-    };
-
-    return projectTab;
-  }
-
-  tabToEnt(project: ProjectTab): ProjectEnt {
-    let projectEnt: ProjectEnt = {
-      // ...project,
-      st: this.tabService.encrypt({ data: project.st }),
-      lt: this.tabService.encrypt({ data: project.lt })
-    };
-
-    return projectEnt;
-  }
-
-  entToTab(project: ProjectEnt): ProjectTab {
-    let projectTab: ProjectTab = {
-      ...project,
-      st: this.tabService.decrypt<ProjectSt>({
-        encryptedString: project.st
-      }),
-      lt: this.tabService.decrypt<ProjectLt>({
-        encryptedString: project.lt
-      })
     };
 
     return projectTab;

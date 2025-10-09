@@ -3,6 +3,7 @@ import {
   bigint,
   index,
   pgTable,
+  text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
@@ -16,6 +17,8 @@ export const branchesTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull(),
     repoId: varchar('repo_id', { length: 32 }).notNull(),
     branchId: varchar('branch_id', { length: 32 }).notNull(), // name
+    st: text('st'),
+    lt: text('lt'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

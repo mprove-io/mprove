@@ -5,6 +5,11 @@ import {
   BranchEnt,
   branchesTable
 } from '~backend/drizzle/postgres/schema/branches';
+import {
+  BranchLt,
+  BranchSt,
+  BranchTab
+} from '~backend/drizzle/postgres/tabs/branch-tab';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -20,14 +25,32 @@ export class BranchesService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  makeBranchEnt(item: {
+  entToTab(branchEnt: BranchEnt): BranchTab {
+    if (isUndefined(branchEnt)) {
+      return;
+    }
+
+    let branch: BranchTab = {
+      ...branchEnt,
+      ...this.tabService.decrypt<BranchSt>({
+        encryptedString: branchEnt.st
+      }),
+      ...this.tabService.decrypt<BranchLt>({
+        encryptedString: branchEnt.lt
+      })
+    };
+
+    return branch;
+  }
+
+  makeBranch(item: {
     projectId: string;
     repoId: string;
     branchId: string;
-  }): BranchEnt {
+  }): BranchTab {
     let { projectId, repoId, branchId } = item;
 
-    let branchEnt: BranchEnt = {
+    let branchTab: BranchTab = {
       branchFullId: this.hashService.makeBranchFullId({
         projectId: projectId,
         repoId: repoId,
@@ -39,14 +62,40 @@ export class BranchesService {
       serverTs: undefined
     };
 
-    return branchEnt;
+    return branchTab;
   }
 
   async getBranchCheckExists(item: {
     projectId: string;
     repoId: string;
     branchId: string;
-  }): Promise<BranchEnt> {
+  }): Promise<BranchTab> {
+    let { projectId, repoId, branchId } = item;
+
+    let branchTab = this.entToTab(
+      await this.db.drizzle.query.branchesTable.findFirst({
+        where: and(
+          eq(branchesTable.projectId, projectId),
+          eq(branchesTable.repoId, repoId),
+          eq(branchesTable.branchId, branchId)
+        )
+      })
+    );
+
+    if (isUndefined(branchTab)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
+      });
+    }
+
+    return branchTab;
+  }
+
+  async checkBranchDoesNotExist(item: {
+    projectId: string;
+    repoId: string;
+    branchId: string;
+  }) {
     let { projectId, repoId, branchId } = item;
 
     let branchEnt = await this.db.drizzle.query.branchesTable.findFirst({
@@ -57,31 +106,7 @@ export class BranchesService {
       )
     });
 
-    if (isUndefined(branchEnt)) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
-      });
-    }
-
-    return branchEnt;
-  }
-
-  async checkBranchDoesNotExist(item: {
-    projectId: string;
-    repoId: string;
-    branchId: string;
-  }) {
-    let { projectId, repoId, branchId } = item;
-
-    let branch = await this.db.drizzle.query.branchesTable.findFirst({
-      where: and(
-        eq(branchesTable.projectId, projectId),
-        eq(branchesTable.repoId, repoId),
-        eq(branchesTable.branchId, branchId)
-      )
-    });
-
-    if (isDefined(branch)) {
+    if (isDefined(branchEnt)) {
       throw new ServerError({
         message: ErEnum.BACKEND_BRANCH_ALREADY_EXISTS
       });

@@ -35,6 +35,24 @@ export class UsersService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(userEnt: UserEnt): UserTab {
+    if (isUndefined(userEnt)) {
+      return;
+    }
+
+    let user: UserTab = {
+      ...userEnt,
+      ...this.tabService.decrypt<UserSt>({
+        encryptedString: userEnt.st
+      }),
+      ...this.tabService.decrypt<UserLt>({
+        encryptedString: userEnt.lt
+      })
+    };
+
+    return user;
+  }
+
   tabToApi(item: { user: UserTab }): User {
     let { user } = item;
 
@@ -81,30 +99,6 @@ export class UsersService {
     };
 
     return apiUser;
-  }
-
-  tabToEnt(user: UserTab): UserEnt {
-    let userEnt: UserEnt = {
-      // ...user,
-      st: this.tabService.encrypt({ data: user.st }),
-      lt: this.tabService.encrypt({ data: user.lt })
-    };
-
-    return userEnt;
-  }
-
-  entToTab(user: UserEnt): UserTab {
-    let userTab: UserTab = {
-      ...user,
-      st: this.tabService.decrypt<UserSt>({
-        encryptedString: user.st
-      }),
-      lt: this.tabService.decrypt<UserLt>({
-        encryptedString: user.lt
-      })
-    };
-
-    return userTab;
   }
 
   checkUserHashIsDefined(item: { user: UserEnt }) {

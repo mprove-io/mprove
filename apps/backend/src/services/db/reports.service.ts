@@ -48,6 +48,24 @@ export class ReportsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(reportEnt: ReportEnt): ReportTab {
+    if (isUndefined(reportEnt)) {
+      return;
+    }
+
+    let report: ReportTab = {
+      ...reportEnt,
+      ...this.tabService.decrypt<ReportSt>({
+        encryptedString: reportEnt.st
+      }),
+      ...this.tabService.decrypt<ReportLt>({
+        encryptedString: reportEnt.lt
+      })
+    };
+
+    return report;
+  }
+
   makeReportEnt(item: {
     structId: string;
     reportId: string;
@@ -239,30 +257,6 @@ export class ReportsService {
       st: reportSt,
       lt: reportLt,
       serverTs: report.serverTs
-    };
-
-    return reportTab;
-  }
-
-  tabToEnt(report: ReportTab): ReportEnt {
-    let reportEnt: ReportEnt = {
-      // ...report,
-      st: this.tabService.encrypt({ data: report.st }),
-      lt: this.tabService.encrypt({ data: report.lt })
-    };
-
-    return reportEnt;
-  }
-
-  entToTab(report: ReportEnt): ReportTab {
-    let reportTab: ReportTab = {
-      ...report,
-      st: this.tabService.decrypt<ReportSt>({
-        encryptedString: report.st
-      }),
-      lt: this.tabService.decrypt<ReportLt>({
-        encryptedString: report.lt
-      })
     };
 
     return reportTab;

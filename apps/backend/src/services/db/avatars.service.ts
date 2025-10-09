@@ -1,5 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { AvatarEnt } from '~backend/drizzle/postgres/schema/avatars';
+import {
+  AvatarLt,
+  AvatarSt,
+  AvatarTab
+} from '~backend/drizzle/postgres/tabs/avatar-tab';
+import { isUndefined } from '~common/functions/is-undefined';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -10,4 +17,22 @@ export class AvatarsService {
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
   ) {}
+
+  entToTab(avatarEnt: AvatarEnt): AvatarTab {
+    if (isUndefined(avatarEnt)) {
+      return;
+    }
+
+    let avatar: AvatarTab = {
+      ...avatarEnt,
+      ...this.tabService.decrypt<AvatarSt>({
+        encryptedString: avatarEnt.st
+      }),
+      ...this.tabService.decrypt<AvatarLt>({
+        encryptedString: avatarEnt.lt
+      })
+    };
+
+    return avatar;
+  }
 }

@@ -5,6 +5,11 @@ import {
   BridgeEnt,
   bridgesTable
 } from '~backend/drizzle/postgres/schema/bridges';
+import {
+  BridgeLt,
+  BridgeSt,
+  BridgeTab
+} from '~backend/drizzle/postgres/tabs/bridge-tab';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ServerError } from '~common/models/server-error';
@@ -19,17 +24,35 @@ export class BridgesService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  makeBridgeEnt(item: {
+  entToTab(bridgeEnt: BridgeEnt): BridgeTab {
+    if (isUndefined(bridgeEnt)) {
+      return;
+    }
+
+    let bridge: BridgeTab = {
+      ...bridgeEnt,
+      ...this.tabService.decrypt<BridgeSt>({
+        encryptedString: bridgeEnt.st
+      }),
+      ...this.tabService.decrypt<BridgeLt>({
+        encryptedString: bridgeEnt.lt
+      })
+    };
+
+    return bridge;
+  }
+
+  makeBridge(item: {
     projectId: string;
     repoId: string;
     branchId: string;
     envId: string;
     structId: string;
     needValidate: boolean;
-  }): BridgeEnt {
+  }): BridgeTab {
     let { projectId, repoId, branchId, envId, structId, needValidate } = item;
 
-    let bridgeEnt: BridgeEnt = {
+    let bridgeTab: BridgeTab = {
       bridgeFullId: this.hashService.makeBridgeFullId({
         projectId: projectId,
         repoId: repoId,
@@ -45,32 +68,34 @@ export class BridgesService {
       serverTs: undefined
     };
 
-    return bridgeEnt;
+    return bridgeTab;
   }
 
-  async getBridgeEntCheckExists(item: {
+  async getBridgeCheckExists(item: {
     projectId: string;
     repoId: string;
     branchId: string;
     envId: string;
-  }): Promise<BridgeEnt> {
+  }): Promise<BridgeTab> {
     let { projectId, repoId, branchId, envId } = item;
 
-    let bridgeEnt = await this.db.drizzle.query.bridgesTable.findFirst({
-      where: and(
-        eq(bridgesTable.projectId, projectId),
-        eq(bridgesTable.repoId, repoId),
-        eq(bridgesTable.branchId, branchId),
-        eq(bridgesTable.envId, envId)
-      )
-    });
+    let bridgeTab = this.entToTab(
+      await this.db.drizzle.query.bridgesTable.findFirst({
+        where: and(
+          eq(bridgesTable.projectId, projectId),
+          eq(bridgesTable.repoId, repoId),
+          eq(bridgesTable.branchId, branchId),
+          eq(bridgesTable.envId, envId)
+        )
+      })
+    );
 
-    if (isUndefined(bridgeEnt)) {
+    if (isUndefined(bridgeTab)) {
       throw new ServerError({
         message: ErEnum.BACKEND_BRIDGE_BRANCH_ENV_DOES_NOT_EXIST
       });
     }
 
-    return bridgeEnt;
+    return bridgeTab;
   }
 }

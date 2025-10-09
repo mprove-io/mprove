@@ -27,13 +27,31 @@ export class ConnectionsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  makeConnectionEnt(item: {
+  entToTab(connectionEnt: ConnectionEnt): ConnectionTab {
+    if (isUndefined(connectionEnt)) {
+      return;
+    }
+
+    let connection: ConnectionTab = {
+      ...connectionEnt,
+      ...this.tabService.decrypt<ConnectionSt>({
+        encryptedString: connectionEnt.st
+      }),
+      ...this.tabService.decrypt<ConnectionLt>({
+        encryptedString: connectionEnt.lt
+      })
+    };
+
+    return connection;
+  }
+
+  makeConnection(item: {
     projectId: string;
     connectionId: string;
     envId: string;
     type: ConnectionTypeEnum;
     options: ConnectionOptions;
-  }): ConnectionEnt {
+  }): ConnectionTab {
     let { projectId, connectionId, envId, type, options } = item;
 
     if (isDefined(options.storeGoogleApi)) {
@@ -57,10 +75,7 @@ export class ConnectionsService {
         isDefined(slimit) && slimit > 0 ? slimit : DEFAULT_QUERY_SIZE_LIMIT;
     }
 
-    let connectionSt: ConnectionSt = { options: options };
-    let connectionLt: ConnectionLt = {};
-
-    let connectionEnt: ConnectionEnt = {
+    let connectionTab: ConnectionTab = {
       connectionFullId: this.hashService.makeConnectionFullId({
         projectId: projectId,
         envId: envId,
@@ -70,12 +85,11 @@ export class ConnectionsService {
       envId: envId,
       connectionId: connectionId,
       type: type,
-      st: this.tabService.encrypt({ data: connectionSt }),
-      lt: this.tabService.encrypt({ data: connectionLt }),
+      options: options,
       serverTs: undefined
     };
 
-    return connectionEnt;
+    return connectionTab;
   }
 
   tabToApi(item: {
@@ -219,42 +233,6 @@ export class ConnectionsService {
     return apiProjectConnection;
   }
 
-  tabToEnt(connection: ConnectionTab): ConnectionEnt {
-    let connectionSt: ConnectionSt = { options: connection.options };
-    let connectionLt: ConnectionLt = {};
-
-    let connectionEnt: ConnectionEnt = {
-      connectionFullId: this.hashService.makeConnectionFullId({
-        projectId: connection.projectId,
-        envId: connection.envId,
-        connectionId: connection.connectionId
-      }),
-      projectId: connection.projectId,
-      envId: connection.envId,
-      connectionId: connection.connectionId,
-      type: connection.type,
-      st: this.tabService.encrypt({ data: connectionSt }),
-      lt: this.tabService.encrypt({ data: connectionLt }),
-      serverTs: undefined
-    };
-
-    return connectionEnt;
-  }
-
-  entToTab(connection: ConnectionEnt): ConnectionTab {
-    let connectionTab: ConnectionTab = {
-      ...connection,
-      st: this.tabService.decrypt<ConnectionSt>({
-        encryptedString: connection.st
-      }),
-      lt: this.tabService.decrypt<ConnectionLt>({
-        encryptedString: connection.lt
-      })
-    };
-
-    return connectionTab;
-  }
-
   async checkConnectionDoesNotExist(item: {
     projectId: string;
     envId: string;
@@ -262,7 +240,7 @@ export class ConnectionsService {
   }) {
     let { projectId, envId, connectionId } = item;
 
-    let connection = await this.db.drizzle.query.connectionsTable.findFirst({
+    let connectionEnt = await this.db.drizzle.query.connectionsTable.findFirst({
       where: and(
         eq(connectionsTable.connectionId, connectionId),
         eq(connectionsTable.envId, envId),
@@ -270,27 +248,29 @@ export class ConnectionsService {
       )
     });
 
-    if (isDefined(connection)) {
+    if (isDefined(connectionEnt)) {
       throw new ServerError({
         message: ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
       });
     }
   }
 
-  async getConnectionTabCheckExists(item: {
+  async getConnectionCheckExists(item: {
     connectionId: string;
     envId: string;
     projectId: string;
   }): Promise<ConnectionTab> {
     let { projectId, envId, connectionId } = item;
 
-    let connection = await this.db.drizzle.query.connectionsTable.findFirst({
-      where: and(
-        eq(connectionsTable.connectionId, connectionId),
-        eq(connectionsTable.envId, envId),
-        eq(connectionsTable.projectId, projectId)
-      )
-    });
+    let connection = this.entToTab(
+      await this.db.drizzle.query.connectionsTable.findFirst({
+        where: and(
+          eq(connectionsTable.connectionId, connectionId),
+          eq(connectionsTable.envId, envId),
+          eq(connectionsTable.projectId, projectId)
+        )
+      })
+    );
 
     if (isUndefined(connection)) {
       throw new ServerError({
@@ -298,8 +278,6 @@ export class ConnectionsService {
       });
     }
 
-    let connectionTab = this.entToTab(connection);
-
-    return connectionTab;
+    return connection;
   }
 }

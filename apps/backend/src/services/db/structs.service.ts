@@ -42,6 +42,24 @@ export class StructsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(structEnt: StructEnt): StructTab {
+    if (isUndefined(structEnt)) {
+      return;
+    }
+
+    let struct: StructTab = {
+      ...structEnt,
+      ...this.tabService.decrypt<StructSt>({
+        encryptedString: structEnt.st
+      }),
+      ...this.tabService.decrypt<StructLt>({
+        encryptedString: structEnt.lt
+      })
+    };
+
+    return struct;
+  }
+
   tabToApi(item: { struct: StructTab }): Struct {
     let { struct } = item;
 
@@ -57,30 +75,6 @@ export class StructsService {
     };
 
     return apiStruct;
-  }
-
-  tabToEnt(struct: StructTab): StructEnt {
-    let structEnt: StructEnt = {
-      // ...struct,
-      st: this.tabService.encrypt({ data: struct.st }),
-      lt: this.tabService.encrypt({ data: struct.lt })
-    };
-
-    return structEnt;
-  }
-
-  entToTab(struct: StructEnt): StructTab {
-    let structTab: StructTab = {
-      ...struct,
-      st: this.tabService.decrypt<StructSt>({
-        encryptedString: struct.st
-      }),
-      lt: this.tabService.decrypt<StructLt>({
-        encryptedString: struct.lt
-      })
-    };
-
-    return structTab;
   }
 
   async getStructCheckExists(item: {

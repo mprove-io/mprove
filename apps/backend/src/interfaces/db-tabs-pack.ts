@@ -17,7 +17,7 @@ import { ReportTab } from '~backend/drizzle/postgres/tabs/report-tab';
 import { StructTab } from '~backend/drizzle/postgres/tabs/struct-tab';
 import { UserTab } from '~backend/drizzle/postgres/tabs/user-tab';
 
-export class DbRecords {
+export class DbTabsPack {
   avatars?: AvatarTab[];
   branches?: BranchTab[];
   bridges?: BridgeTab[];

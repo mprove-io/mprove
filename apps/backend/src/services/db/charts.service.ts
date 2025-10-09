@@ -31,6 +31,24 @@ export class ChartsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(chartEnt: ChartEnt): ChartTab {
+    if (isUndefined(chartEnt)) {
+      return;
+    }
+
+    let chart: ChartTab = {
+      ...chartEnt,
+      ...this.tabService.decrypt<ChartSt>({
+        encryptedString: chartEnt.st
+      }),
+      ...this.tabService.decrypt<ChartLt>({
+        encryptedString: chartEnt.lt
+      })
+    };
+
+    return chart;
+  }
+
   tabToApi(item: {
     chart: ChartTab;
     mconfigs: MconfigX[];
@@ -113,67 +131,26 @@ export class ChartsService {
     return chartTab;
   }
 
-  tabToEnt(chart: ChartTab): ChartEnt {
-    let chartSt: ChartSt = {
-      title: chart.title,
-      modelLabel: chart.modelLabel,
-      filePath: chart.filePath,
-      accessRoles: chart.accessRoles,
-      tiles: chart.tiles
-    };
-
-    let chartLt: ChartLt = {};
-
-    let chartEnt: ChartEnt = {
-      chartFullId: chart.chartFullId,
-      structId: chart.structId,
-      chartId: chart.chartId,
-      modelId: chart.modelId,
-      creatorId: chart.creatorId,
-      chartType: chart.chartType,
-      draft: chart.draft,
-      st: this.tabService.encrypt({ data: chartSt }),
-      lt: this.tabService.encrypt({ data: chartLt }),
-      serverTs: chart.serverTs
-    };
-
-    return chartEnt;
-  }
-
-  entToTab(chart: ChartEnt): ChartTab {
-    let chartTab: ChartTab = {
-      ...chart,
-      ...this.tabService.decrypt<ChartSt>({
-        encryptedString: chart.st
-      }),
-      ...this.tabService.decrypt<ChartLt>({
-        encryptedString: chart.lt
-      })
-    };
-
-    return chartTab;
-  }
-
-  async getChartTabCheckExists(item: {
+  async getChartCheckExists(item: {
     chartId: string;
     structId: string;
   }): Promise<ChartTab> {
     let { chartId, structId } = item;
 
-    let chart = await this.db.drizzle.query.chartsTable.findFirst({
-      where: and(
-        eq(chartsTable.structId, structId),
-        eq(chartsTable.chartId, chartId)
-      )
-    });
+    let chartTab = this.entToTab(
+      await this.db.drizzle.query.chartsTable.findFirst({
+        where: and(
+          eq(chartsTable.structId, structId),
+          eq(chartsTable.chartId, chartId)
+        )
+      })
+    );
 
-    if (isUndefined(chart)) {
+    if (isUndefined(chartTab)) {
       throw new ServerError({
         message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST
       });
     }
-
-    let chartTab: ChartTab = this.entToTab(chart);
 
     return chartTab;
   }

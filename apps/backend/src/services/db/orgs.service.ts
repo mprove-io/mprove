@@ -35,6 +35,24 @@ export class OrgsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(orgEnt: OrgEnt): OrgTab {
+    if (isUndefined(orgEnt)) {
+      return;
+    }
+
+    let org: OrgTab = {
+      ...orgEnt,
+      ...this.tabService.decrypt<OrgSt>({
+        encryptedString: orgEnt.st
+      }),
+      ...this.tabService.decrypt<OrgLt>({
+        encryptedString: orgEnt.lt
+      })
+    };
+
+    return org;
+  }
+
   wrapToApiOrgsItem(item: { org: OrgTab }): OrgsItem {
     let { org } = item;
 
@@ -76,30 +94,6 @@ export class OrgsService {
       nameHash: this.hashService.makeHash(org.name),
       ownerEmailHash: this.hashService.makeHash(org.ownerEmail),
       serverTs: org.serverTs
-    };
-
-    return orgTab;
-  }
-
-  tabToEnt(org: OrgTab): OrgEnt {
-    let orgEnt: OrgEnt = {
-      // ...org,
-      st: this.tabService.encrypt({ data: org.st }),
-      lt: this.tabService.encrypt({ data: org.lt })
-    };
-
-    return orgEnt;
-  }
-
-  entToTab(org: OrgEnt): OrgTab {
-    let orgTab: OrgTab = {
-      ...org,
-      st: this.tabService.decrypt<OrgSt>({
-        encryptedString: org.st
-      }),
-      lt: this.tabService.decrypt<OrgLt>({
-        encryptedString: org.lt
-      })
     };
 
     return orgTab;

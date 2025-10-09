@@ -24,6 +24,24 @@ export class ModelsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  entToTab(modelEnt: ModelEnt): ModelTab {
+    if (isUndefined(modelEnt)) {
+      return;
+    }
+
+    let model: ModelTab = {
+      ...modelEnt,
+      ...this.tabService.decrypt<ModelSt>({
+        encryptedString: modelEnt.st
+      }),
+      ...this.tabService.decrypt<ModelLt>({
+        encryptedString: modelEnt.lt
+      })
+    };
+
+    return model;
+  }
+
   tabToApi(item: {
     model: ModelTab;
     hasAccess: boolean;
@@ -75,52 +93,6 @@ export class ModelsService {
       fields: model.fields,
       nodes: model.nodes,
       serverTs: model.serverTs
-    };
-
-    return modelTab;
-  }
-
-  tabToEnt(model: ModelTab): ModelEnt {
-    let modelSt: ModelSt = {
-      accessRoles: model.accessRoles
-    };
-
-    let modelLt: ModelLt = {
-      source: model.source,
-      malloyModelDef: model.malloyModelDef,
-      filePath: model.filePath,
-      fileText: model.fileText,
-      storeContent: model.storeContent,
-      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
-      label: model.label,
-      fields: model.fields,
-      nodes: model.nodes
-    };
-
-    let modelEnt: ModelEnt = {
-      modelFullId: model.modelFullId,
-      structId: model.structId,
-      modelId: model.modelId,
-      type: model.type,
-      connectionId: model.connectionId,
-      connectionType: model.connectionType,
-      st: this.tabService.encrypt({ data: modelSt }),
-      lt: this.tabService.encrypt({ data: modelLt }),
-      serverTs: model.serverTs
-    };
-
-    return modelEnt;
-  }
-
-  entToTab(model: ModelEnt): ModelTab {
-    let modelTab: ModelTab = {
-      ...model,
-      ...this.tabService.decrypt<ModelSt>({
-        encryptedString: model.st
-      }),
-      ...this.tabService.decrypt<ModelLt>({
-        encryptedString: model.lt
-      })
     };
 
     return modelTab;
