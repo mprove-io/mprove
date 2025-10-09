@@ -19,7 +19,6 @@ import { Env } from '~common/interfaces/backend/env';
 import { EnvUser } from '~common/interfaces/backend/env-user';
 import { EnvsItem } from '~common/interfaces/backend/envs-item';
 import { Ev } from '~common/interfaces/backend/ev';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -292,8 +291,8 @@ export class EnvsService {
 
     let apiEnv = apiEnvs.find(x => x.envId === envId);
 
-    let apiConnectionsEntsWithFallback =
-      await this.db.drizzle.query.connectionsTable.findMany({
+    let connectionsWithFallback = await this.db.drizzle.query.connectionsTable
+      .findMany({
         where: and(
           eq(connectionsTable.projectId, projectId),
           inArray(
@@ -301,19 +300,12 @@ export class EnvsService {
             apiEnv.envConnectionIdsWithFallback
           )
         )
-      });
-
-    let apiConnectionsWithFallback: ProjectConnection[] =
-      apiConnectionsEntsWithFallback.map(x =>
-        this.connectionsService.tabToApi({
-          connection: this.connectionsService.entToTab(x),
-          isIncludePasswords: true
-        })
-      );
+      })
+      .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
 
     return {
       apiEnv,
-      apiConnectionsWithFallback
+      connectionsWithFallback
     };
   }
 }

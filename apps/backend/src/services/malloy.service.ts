@@ -11,12 +11,14 @@ import { Model } from '~common/interfaces/blockml/model';
 import { ServerError } from '~common/models/server-error';
 import { makeMalloyConnections } from '~node-common/functions/make-malloy-connections';
 import { makeMalloyQuery } from '~node-common/functions/make-malloy-query';
-import { EnvsService } from './envs.service';
+import { ConnectionsService } from './db/connections.service';
+import { EnvsService } from './db/envs.service';
 
 @Injectable()
 export class MalloyService {
   constructor(
     private envsService: EnvsService,
+    private connectionsService: ConnectionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -40,9 +42,14 @@ export class MalloyService {
         envId: envId
       });
 
-    let projectConnection = connectionsWithFallback.find(
+    let connection = connectionsWithFallback.find(
       x => x.connectionId === model.connectionId
     );
+
+    let projectConnection = this.connectionsService.tabToApiProjectConnection({
+      connection: connection,
+      isIncludePasswords: true
+    });
 
     let malloyConnections = makeMalloyConnections({
       connections: [projectConnection]

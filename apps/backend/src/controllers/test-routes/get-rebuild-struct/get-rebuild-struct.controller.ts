@@ -8,10 +8,10 @@ import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockm
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { EnvsService } from '~backend/services/envs.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { ConnectionsService } from '~backend/services/db/connections.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
@@ -35,10 +35,10 @@ import {
 @Controller()
 export class GetRebuildStructController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
     private rabbitService: RabbitService,
     private projectsService: ProjectsService,
     private envsService: EnvsService,
+    private connectionsService: ConnectionsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -67,11 +67,8 @@ export class GetRebuildStructController {
 
     // to disk
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToApiBaseProject({
+      project: project
     });
 
     let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
@@ -81,7 +78,7 @@ export class GetRebuildStructController {
       },
       payload: {
         orgId: orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branch
       }
@@ -120,7 +117,9 @@ export class GetRebuildStructController {
         files: diskFilesToBlockmlFiles(getCatalogFilesResponse.payload.files),
         envId: envId,
         evs: apiEnv.evsWithFallback,
-        baseConnections: connectionsWithFallback,
+        baseConnections: connectionsWithFallback.map(x =>
+          this.connectionsService.tabToApiBaseConnection({ connection: x })
+        ),
         overrideTimezone: overrideTimezone,
         isUseCache: isUseCache,
         cachedMproveConfig: cachedMproveConfig,

@@ -93,7 +93,7 @@ export class ConnectionsService {
     return connection;
   }
 
-  tabToApi(item: {
+  tabToApiProjectConnection(item: {
     connection: ConnectionTab;
     isIncludePasswords: boolean;
   }): ProjectConnection {
