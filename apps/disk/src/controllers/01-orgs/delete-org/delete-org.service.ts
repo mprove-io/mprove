@@ -8,11 +8,13 @@ import {
 import { DiskConfig } from '~disk/config/disk-config';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { removePath } from '~disk/functions/disk/remove-path';
+import { DiskTabService } from '~disk/services/disk-tab.service';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class DeleteOrgService {
   constructor(
+    private diskTabService: DiskTabService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}

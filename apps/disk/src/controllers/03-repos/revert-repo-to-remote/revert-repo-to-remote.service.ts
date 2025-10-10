@@ -18,12 +18,13 @@ import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { revertRepoToRemote } from '~disk/functions/git/revert-repo-to-remote';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { decryptData } from '~node-common/functions/tab/decrypt-data';
+import { DiskTabService } from '~disk/services/disk-tab.service';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class RevertRepoToRemoteService {
   constructor(
+    private diskTabService: DiskTabService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -43,14 +44,12 @@ export class RevertRepoToRemoteService {
 
     let { orgId, baseProject, repoId, branch } = requestValid.payload;
 
-    let projectSt: ProjectSt = decryptData<ProjectSt>({
-      encryptedString: baseProject.st,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
+      encryptedString: baseProject.st
     });
 
-    let projectLt: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.lt,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
+      encryptedString: baseProject.lt
     });
 
     let { projectId, remoteType } = baseProject;

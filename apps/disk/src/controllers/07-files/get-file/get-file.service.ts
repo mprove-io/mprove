@@ -20,13 +20,14 @@ import { getLastCommitFileContent } from '~disk/functions/git/get-last-commit-fi
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { DiskTabService } from '~disk/services/disk-tab.service';
 import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
-import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class GetFileService {
   constructor(
+    private diskTabService: DiskTabService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -47,14 +48,12 @@ export class GetFileService {
     let { orgId, baseProject, repoId, branch, fileNodeId, panel } =
       requestValid.payload;
 
-    let projectSt: ProjectSt = decryptData<ProjectSt>({
-      encryptedString: baseProject.st,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
+      encryptedString: baseProject.st
     });
 
-    let projectLt: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.lt,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
+      encryptedString: baseProject.lt
     });
 
     let { projectId, remoteType } = baseProject;

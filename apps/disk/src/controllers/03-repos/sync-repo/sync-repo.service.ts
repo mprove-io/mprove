@@ -26,13 +26,14 @@ import { checkoutBranch } from '~disk/functions/git/checkout-branch';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { DiskTabService } from '~disk/services/disk-tab.service';
 import { getSyncFiles } from '~node-common/functions/get-sync-files';
-import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class SyncRepoService {
   constructor(
+    private diskTabService: DiskTabService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -59,14 +60,12 @@ export class SyncRepoService {
       localDeletedFiles
     } = requestValid.payload;
 
-    let projectSt: ProjectSt = decryptData<ProjectSt>({
-      encryptedString: baseProject.st,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
+      encryptedString: baseProject.st
     });
 
-    let projectLt: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.lt,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
+      encryptedString: baseProject.lt
     });
 
     let { projectId, remoteType } = baseProject;

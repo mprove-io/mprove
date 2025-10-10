@@ -26,6 +26,7 @@ import { wrapErrors } from '~blockml/functions/wrap/wrap-errors';
 import { wrapModels } from '~blockml/functions/wrap/wrap-models';
 import { wrapReports } from '~blockml/functions/wrap/wrap-reports';
 import { BmError } from '~blockml/models/bm-error';
+import { BlockmlTabService } from '~blockml/services/blockml-tab.service';
 import { PresetsService } from '~blockml/services/presets.service';
 import {
   MPROVE_CONFIG_FILENAME,
@@ -75,7 +76,6 @@ import {
   MalloyConnection,
   makeMalloyConnections
 } from '~node-common/functions/make-malloy-connections';
-import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 interface RebuildStructPrep {
@@ -93,6 +93,7 @@ interface RebuildStructPrep {
 @Injectable()
 export class RebuildStructService {
   constructor(
+    private blockmlTabService: BlockmlTabService,
     private presetsService: PresetsService,
     private cs: ConfigService<BlockmlConfig>,
     private logger: Logger
@@ -133,9 +134,8 @@ export class RebuildStructService {
 
     let projectConnections: ProjectConnection[] = baseConnections.map(
       baseConnection => {
-        let connectionSt = decryptData<ConnectionSt>({
-          encryptedString: baseConnection.st,
-          keyBase64: this.cs.get<BlockmlConfig['aesKey']>('aesKey')
+        let connectionSt = this.blockmlTabService.decrypt<ConnectionSt>({
+          encryptedString: baseConnection.st
         });
 
         let projectConnection: ProjectConnection = {

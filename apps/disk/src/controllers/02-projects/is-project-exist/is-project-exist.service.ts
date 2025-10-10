@@ -8,11 +8,13 @@ import {
 import { ServerError } from '~common/models/server-error';
 import { DiskConfig } from '~disk/config/disk-config';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
+import { DiskTabService } from '~disk/services/disk-tab.service';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class IsProjectExistService {
   constructor(
+    private diskTabService: DiskTabService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}

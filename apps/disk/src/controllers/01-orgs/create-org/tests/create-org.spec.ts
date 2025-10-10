@@ -20,7 +20,8 @@ test('1', async t => {
   let configService;
 
   try {
-    let { messageService, logger, cs } = await prepareTest(orgId);
+    let { messageService, diskTabService, logger, cs } =
+      await prepareTest(orgId);
     wLogger = logger;
     configService = cs;
 

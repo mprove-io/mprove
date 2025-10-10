@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '~backend/config/backend-config';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { DiskConfig } from '~disk/config/disk-config';
 import { decryptData } from '~node-common/functions/tab/decrypt-data';
 import { encryptData } from '~node-common/functions/tab/encrypt-data';
 
 @Injectable()
-export class TabService {
+export class DiskTabService {
   private keyBuffer: Buffer;
 
-  constructor(private cs: ConfigService<BackendConfig>) {
-    let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
+  constructor(private cs: ConfigService<DiskConfig>) {
+    let keyBase64 = this.cs.get<DiskConfig['aesKey']>('aesKey');
     this.keyBuffer = Buffer.from(keyBase64, 'base64');
   }
 

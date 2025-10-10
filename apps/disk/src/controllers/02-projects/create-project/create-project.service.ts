@@ -19,12 +19,13 @@ import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '~disk/functions/git/prepare-remote-and-prod';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { decryptData } from '~node-common/functions/tab/decrypt-data';
+import { DiskTabService } from '~disk/services/disk-tab.service';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class CreateProjectService {
   constructor(
+    private diskTabService: DiskTabService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -45,14 +46,12 @@ export class CreateProjectService {
     let { orgId, baseProject, testProjectId, devRepoId, userAlias } =
       requestValid.payload;
 
-    let projectSt: ProjectSt = decryptData<ProjectSt>({
-      encryptedString: baseProject.st,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
+      encryptedString: baseProject.st
     });
 
-    let projectLt: ProjectLt = decryptData<ProjectLt>({
-      encryptedString: baseProject.lt,
-      keyBase64: this.cs.get<DiskConfig['aesKey']>('aesKey')
+    let projectLt: ProjectLt = this.diskTabService.decrypt<ProjectLt>({
+      encryptedString: baseProject.lt
     });
 
     let { projectId, remoteType } = baseProject;

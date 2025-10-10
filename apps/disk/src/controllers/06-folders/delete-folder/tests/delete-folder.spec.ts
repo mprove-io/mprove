@@ -15,10 +15,8 @@ import {
   ToDiskDeleteFolderRequest,
   ToDiskDeleteFolderResponse
 } from '~common/interfaces/to-disk/06-folders/to-disk-delete-folder';
-import { DiskConfig } from '~disk/config/disk-config';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
-import { encryptData } from '~node-common/functions/tab/encrypt-data';
 
 let testId = 'disk-delete-folder';
 
@@ -34,7 +32,8 @@ test('1', async t => {
   let configService;
 
   try {
-    let { messageService, logger, cs } = await prepareTest(orgId);
+    let { messageService, diskTabService, logger, cs } =
+      await prepareTest(orgId);
     wLogger = logger;
     configService = cs;
 
@@ -63,14 +62,8 @@ test('1', async t => {
       orgId: orgId,
       projectId: projectId,
       remoteType: ProjectRemoteTypeEnum.Managed,
-      st: encryptData({
-        data: projectSt,
-        keyBase64: cs.get<DiskConfig['aesKey']>('aesKey')
-      }),
-      lt: encryptData({
-        data: projectLt,
-        keyBase64: cs.get<DiskConfig['aesKey']>('aesKey')
-      })
+      st: diskTabService.encrypt({ data: projectSt }),
+      lt: diskTabService.encrypt({ data: projectLt })
     };
 
     let createProjectRequest: ToDiskCreateProjectRequest = {
