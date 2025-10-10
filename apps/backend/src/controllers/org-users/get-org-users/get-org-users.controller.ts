@@ -5,7 +5,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -26,7 +26,7 @@ export class GetOrgUsersController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgUsers)
-  async getOrgUsers(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getOrgUsers(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetOrgUsersRequest = request.body;
 
     let { orgId, perPage, pageNum } = reqValid.payload;

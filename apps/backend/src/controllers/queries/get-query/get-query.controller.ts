@@ -1,7 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle, seconds } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { checkAccess } from '~backend/functions/check-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -61,7 +61,7 @@ export class GetQueryController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetQuery)
-  async getQuery(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getQuery(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetQueryRequest = request.body;
 
     let {

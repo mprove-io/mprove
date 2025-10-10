@@ -13,8 +13,8 @@ import { parseKey, parsePrivateKey } from 'sshpk';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { NoteEnt } from '~backend/drizzle/postgres/schema/notes';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -45,7 +45,7 @@ export class GenerateProjectRemoteKeyController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGenerateProjectRemoteKey)
-  async createProject(@AttachUser() user: UserEnt, @Req() request: any) {
+  async createProject(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGenerateProjectRemoteKeyRequest = request.body;
 
     let { traceId } = reqValid.info;

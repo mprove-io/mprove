@@ -13,9 +13,9 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -63,7 +63,7 @@ export class DeleteReportController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteReport)
-  async deleteRep(@AttachUser() user: UserEnt, @Req() request: any) {
+  async deleteRep(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteReportRequest = request.body;
 
     let { traceId } = reqValid.info;

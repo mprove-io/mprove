@@ -13,10 +13,10 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
@@ -85,7 +85,7 @@ export class SaveModifyDashboardController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyDashboard)
-  async saveModifyDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
+  async saveModifyDashboard(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSaveModifyDashboardRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {

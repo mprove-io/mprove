@@ -2,10 +2,10 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
@@ -24,7 +24,7 @@ export class GetOrgsListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetOrgsList)
-  async getOrgsList(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getOrgsList(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetOrgsListRequest = request.body;
 
     let userMembers = await this.db.drizzle.query.membersTable.findMany({

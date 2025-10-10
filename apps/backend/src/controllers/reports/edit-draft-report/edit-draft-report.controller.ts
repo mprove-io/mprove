@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -44,7 +44,7 @@ export class EditDraftReportController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendEditDraftReport)
-  async editDraftRep(@AttachUser() user: UserEnt, @Req() request: any) {
+  async editDraftRep(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendEditDraftReportRequest = request.body;
 
     let { traceId } = reqValid.info;

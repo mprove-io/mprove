@@ -1,6 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -33,7 +33,7 @@ export class GetMconfigController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetMconfig)
-  async getMconfig(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getMconfig(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetMconfigRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigId } =

@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
@@ -23,7 +23,7 @@ export class IsProjectExistController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendIsProjectExist)
-  async isProjectExist(@AttachUser() user: UserEnt, @Req() request: any) {
+  async isProjectExist(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendIsProjectExistRequest = request.body;
 
     let { name, orgId } = reqValid.payload;

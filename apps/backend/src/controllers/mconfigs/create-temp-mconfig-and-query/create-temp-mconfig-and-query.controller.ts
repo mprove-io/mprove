@@ -12,8 +12,8 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -69,7 +69,7 @@ export class CreateTempMconfigAndQueryController {
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery)
   async createTempMconfigAndQuery(
-    @AttachUser() user: UserEnt,
+    @AttachUser() user: UserTab,
     @Req() request: any
   ) {
     let reqValid: ToBackendCreateTempMconfigAndQueryRequest = request.body;

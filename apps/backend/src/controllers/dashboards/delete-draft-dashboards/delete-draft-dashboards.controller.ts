@@ -12,8 +12,8 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -47,7 +47,7 @@ export class DeleteDraftDashboardsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteDraftDashboards)
-  async createEmptyDashboard(@AttachUser() user: UserEnt, @Req() request: any) {
+  async createEmptyDashboard(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteDraftDashboardsRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {

@@ -13,10 +13,10 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -61,7 +61,7 @@ export class RunQueriesDryController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendRunQueriesDry)
-  async runQueriesDry(@AttachUser() user: UserEnt, @Req() request: any) {
+  async runQueriesDry(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendRunQueriesDryRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds, dryId } =

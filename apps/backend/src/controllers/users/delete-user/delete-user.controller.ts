@@ -20,7 +20,7 @@ import {
 } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -54,7 +54,7 @@ export class DeleteUserController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteUser)
-  async deleteUser(@AttachUser() user: UserEnt, @Req() request: any) {
+  async deleteUser(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteUserRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {

@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -37,7 +37,7 @@ export class GetModelsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetModels)
-  async getModels(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getModels(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetModelsRequest = request.body;
 
     let {

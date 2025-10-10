@@ -2,12 +2,12 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, or } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   DashboardEnt,
   dashboardsTable
 } from '~backend/drizzle/postgres/schema/dashboards';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -42,7 +42,7 @@ export class GetDashboardsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetDashboards)
-  async getDashboards(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getDashboards(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetDashboardsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;

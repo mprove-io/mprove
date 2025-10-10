@@ -12,9 +12,9 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { NoteEnt, notesTable } from '~backend/drizzle/postgres/schema/notes';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -53,7 +53,7 @@ export class CreateProjectController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateProject)
-  async createProject(@AttachUser() user: UserEnt, @Req() request: any) {
+  async createProject(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateProjectRequest = request.body;
 
     let { traceId } = reqValid.info;

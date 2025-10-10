@@ -13,9 +13,9 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -40,7 +40,7 @@ export class DeleteConnectionController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteConnection)
-  async deleteConnection(@AttachUser() user: UserEnt, @Req() request: any) {
+  async deleteConnection(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteConnectionRequest = request.body;
 
     let { traceId } = reqValid.info;

@@ -11,7 +11,7 @@ import { Throttle, seconds } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -70,7 +70,7 @@ export class GetReportController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetReport)
-  async getRep(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getRep(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetReportRequest = request.body;
 
     let { traceId } = reqValid.info;

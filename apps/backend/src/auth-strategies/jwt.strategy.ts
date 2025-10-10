@@ -6,6 +6,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
+import { UsersService } from '~backend/services/db/users.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -14,7 +15,8 @@ import { ServerError } from '~common/models/server-error';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    cs: ConfigService<BackendConfig>,
+    private usersService: UsersService,
+    private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {
     super({
@@ -25,9 +27,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    let user = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.userId, payload.userId)
-    });
+    let user = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.userId, payload.userId)
+      })
+      .then(x => this.usersService.entToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({

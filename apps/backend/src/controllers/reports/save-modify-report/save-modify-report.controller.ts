@@ -13,10 +13,10 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeReportFileText } from '~backend/functions/make-report-file-text';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
@@ -83,7 +83,7 @@ export class SaveModifyReportController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport)
-  async saveModifyRep(@AttachUser() user: UserEnt, @Req() request: any) {
+  async saveModifyRep(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSaveModifyReportRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {

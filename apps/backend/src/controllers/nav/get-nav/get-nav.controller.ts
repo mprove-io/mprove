@@ -2,6 +2,7 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import {
   BridgeEnt,
@@ -10,7 +11,6 @@ import {
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -43,7 +43,7 @@ export class GetNavController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetNav)
-  async getNav(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getNav(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetNavRequest = request.body;
 
     let { orgId, projectId, getRepo } = reqValid.payload;

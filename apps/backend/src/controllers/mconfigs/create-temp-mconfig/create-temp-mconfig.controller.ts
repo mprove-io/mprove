@@ -11,7 +11,7 @@ import { Throttle } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -59,7 +59,7 @@ export class CreateTempMconfigController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig)
-  async createTempMconfig(@AttachUser() user: UserEnt, @Req() request: any) {
+  async createTempMconfig(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateTempMconfigRequest = request.body;
 
     let { oldMconfigId, mconfig, projectId, isRepoProd, branchId, envId } =

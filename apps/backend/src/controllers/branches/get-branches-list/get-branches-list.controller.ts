@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
@@ -27,7 +27,7 @@ export class GetBranchesListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetBranchesList)
-  async getBranchesList(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getBranchesList(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetBranchesListRequest = request.body;
 
     let { projectId } = reqValid.payload;

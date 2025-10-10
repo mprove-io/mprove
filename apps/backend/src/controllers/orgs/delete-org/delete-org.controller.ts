@@ -12,6 +12,7 @@ import { eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
@@ -19,7 +20,6 @@ import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -50,7 +50,7 @@ export class DeleteOrgController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteOrg)
-  async deleteOrg(@AttachUser() user: UserEnt, @Req() request: any) {
+  async deleteOrg(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteOrgRequest = request.body;
 
     let { orgId } = reqValid.payload;

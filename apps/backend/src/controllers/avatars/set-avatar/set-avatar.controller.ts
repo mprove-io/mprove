@@ -11,11 +11,12 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { AvatarsService } from '~backend/services/db/avatars.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -32,13 +33,14 @@ let retry = require('async-retry');
 @Controller()
 export class SetAvatarController {
   constructor(
+    private avatarsService: AvatarsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetAvatar)
-  async setAvatar(@AttachUser() user: UserEnt, @Req() request: any) {
+  async setAvatar(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSetAvatarRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {
@@ -49,9 +51,11 @@ export class SetAvatarController {
 
     let { avatarSmall, avatarBig } = reqValid.payload;
 
-    let avatar = await this.db.drizzle.query.avatarsTable.findFirst({
-      where: eq(avatarsTable.userId, user.userId)
-    });
+    let avatar = await this.db.drizzle.query.avatarsTable
+      .findFirst({
+        where: eq(avatarsTable.userId, user.userId)
+      })
+      .then(x => this.avatarsService.entToTab(x));
 
     if (isDefined(avatar)) {
       avatar.avatarSmall = avatarSmall;
@@ -63,12 +67,6 @@ export class SetAvatarController {
         avatarBig: avatarBig,
         serverTs: undefined
       };
-
-      // this.makerService.makeAvatar({
-      //   userId: user.userId,
-      //   avatarSmall: avatarSmall,
-      //   avatarBig: avatarBig
-      // });
     }
 
     await retry(

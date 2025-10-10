@@ -1,7 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -34,7 +34,7 @@ export class GetStructController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetStruct)
-  async getStruct(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getStruct(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetStructRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;

@@ -26,7 +26,6 @@ import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
 import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offset-from-now';

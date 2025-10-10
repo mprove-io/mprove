@@ -12,7 +12,7 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -43,7 +43,7 @@ export class SetOrgOwnerController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetOrgOwner)
-  async setOrgOwner(@AttachUser() user: UserEnt, @Req() request: any) {
+  async setOrgOwner(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSetOrgOwnerRequest = request.body;
 
     let { orgId, ownerEmail } = reqValid.payload;

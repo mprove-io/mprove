@@ -1,6 +1,6 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
@@ -22,7 +22,7 @@ export class GetProjectController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetProject)
-  async getProject(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getProject(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetProjectRequest = request.body;
 
     let { projectId } = reqValid.payload;

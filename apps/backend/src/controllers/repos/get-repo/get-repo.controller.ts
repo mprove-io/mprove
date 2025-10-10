@@ -1,7 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -42,7 +42,7 @@ export class GetRepoController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetRepo)
-  async getRepo(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getRepo(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetRepoRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, isFetch } = reqValid.payload;

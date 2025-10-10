@@ -12,9 +12,9 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -49,7 +49,7 @@ export class CreateEnvController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateEnv)
-  async createEnv(@AttachUser() user: UserEnt, @Req() request: any) {
+  async createEnv(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateEnvRequest = request.body;
 
     let { projectId, envId } = reqValid.payload;

@@ -14,6 +14,7 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   ConnectionEnt,
   connectionsTable
@@ -21,7 +22,6 @@ import {
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -95,7 +95,7 @@ export class RunQueriesController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendRunQueries)
-  async runQueries(@AttachUser() user: UserEnt, @Req() request: any) {
+  async runQueries(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendRunQueriesRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds, poolSize } =

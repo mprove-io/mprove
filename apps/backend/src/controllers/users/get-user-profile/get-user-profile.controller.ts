@@ -1,7 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
@@ -19,7 +19,7 @@ export class GetUserProfileController {
   constructor(private wrapToApiService: WrapEnxToApiService) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
-  async getUserProfile(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getUserProfile(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetUserProfileRequest = request.body;
 
     let payload: ToBackendGetUserProfileResponsePayload = {

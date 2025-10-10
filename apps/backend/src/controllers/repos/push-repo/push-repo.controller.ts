@@ -13,9 +13,9 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -68,7 +68,7 @@ export class PushRepoController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendPushRepo)
-  async pushRepo(@AttachUser() user: UserEnt, @Req() request: any) {
+  async pushRepo(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendPushRepoRequest = request.body;
 
     let { traceId } = reqValid.info;

@@ -3,7 +3,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockml-files';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
@@ -43,7 +43,7 @@ export class GetRebuildStructController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct)
-  async getRebuildStruct(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getRebuildStruct(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetRebuildStructRequest = request.body;
 
     let {

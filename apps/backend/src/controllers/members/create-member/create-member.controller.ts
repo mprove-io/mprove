@@ -98,7 +98,7 @@ export class CreateMemberController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateMember)
-  async createMember(@AttachUser() user: UserEnt, @Req() request: any) {
+  async createMember(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateMemberRequest = request.body;
 
     let { traceId } = reqValid.info;

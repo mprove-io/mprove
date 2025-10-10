@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -40,7 +40,7 @@ export class GetSuggestFieldsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetSuggestFields)
-  async getSuggestFields(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getSuggestFields(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetSuggestFieldsRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId } = reqValid.payload;

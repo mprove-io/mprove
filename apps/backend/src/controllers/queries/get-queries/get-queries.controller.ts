@@ -3,8 +3,8 @@ import { Throttle, seconds } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/branches.service';
@@ -54,7 +54,7 @@ export class GetQueriesController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetQueries)
-  async getQueries(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getQueries(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetQueriesRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds, skipData } =

@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -30,7 +30,7 @@ export class GetConnectionsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetConnections)
-  async getConnections(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getConnections(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetConnectionsRequest = request.body;
 
     let { projectId, envId } = reqValid.payload;

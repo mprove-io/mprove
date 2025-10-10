@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
@@ -26,7 +26,7 @@ export class IsBranchExistController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendIsBranchExist)
-  async isBranchExist(@AttachUser() user: UserEnt, @Req() request: any) {
+  async isBranchExist(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendIsBranchExistRequest = request.body;
 
     let { projectId, branchId, isRepoProd } = reqValid.payload;

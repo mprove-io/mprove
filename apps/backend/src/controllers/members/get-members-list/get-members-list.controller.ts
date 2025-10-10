@@ -4,8 +4,8 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/members.service';
@@ -29,7 +29,7 @@ export class GetMembersListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetMembersList)
-  async getMembersList(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getMembersList(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetMembersListRequest = request.body;
 
     let { projectId } = reqValid.payload;

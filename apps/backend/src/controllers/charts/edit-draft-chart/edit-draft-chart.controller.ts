@@ -12,8 +12,8 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -73,7 +73,7 @@ export class EditDraftChartController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendEditDraftChart)
-  async editDraftChart(@AttachUser() user: UserEnt, @Req() request: any) {
+  async editDraftChart(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendEditDraftChartRequest = request.body;
 
     let { traceId } = reqValid.info;

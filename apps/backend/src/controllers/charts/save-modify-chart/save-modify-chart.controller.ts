@@ -13,12 +13,12 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { checkAccess } from '~backend/functions/check-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeChartFileText } from '~backend/functions/make-chart-file-text';
@@ -95,7 +95,7 @@ export class SaveModifyChartController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSaveModifyChart)
-  async saveModifyChart(@AttachUser() user: UserEnt, @Req() request: any) {
+  async saveModifyChart(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSaveModifyChartRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {

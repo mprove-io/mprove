@@ -1,7 +1,7 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/envs.service';
@@ -26,7 +26,7 @@ export class GetEnvsController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetEnvs)
-  async getEnvs(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getEnvs(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetEnvsRequest = request.body;
 
     let { projectId } = reqValid.payload;

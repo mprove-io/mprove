@@ -14,13 +14,13 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   ConnectionEnt,
   connectionsTable
 } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -72,7 +72,7 @@ export class CancelQueriesController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCancelQueries)
-  async cancelQueries(@AttachUser() user: UserEnt, @Req() request: any) {
+  async cancelQueries(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCancelQueriesRequest = request.body;
 
     let { projectId, isRepoProd, branchId, envId, mconfigIds } =

@@ -5,8 +5,8 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/orgs.service';
@@ -35,7 +35,7 @@ export class CreateOrgController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateOrg)
-  async createOrg(@AttachUser() user: UserEnt, @Req() request: any) {
+  async createOrg(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateOrgRequest = request.body;
 
     if (user.alias === RESTRICTED_USER_ALIAS) {

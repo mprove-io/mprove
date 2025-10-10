@@ -12,8 +12,8 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -46,7 +46,7 @@ export class EditMemberController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendEditMember)
-  async editMember(@AttachUser() user: UserEnt, @Req() request: any) {
+  async editMember(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendEditMemberRequest = request.body;
 
     let { projectId, memberId, isAdmin, isEditor, isExplorer, roles } =

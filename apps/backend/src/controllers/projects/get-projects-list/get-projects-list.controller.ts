@@ -11,9 +11,9 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
@@ -36,7 +36,7 @@ export class GetProjectsListController {
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetProjectsList)
-  async getProjectsList(@AttachUser() user: UserEnt, @Req() request: any) {
+  async getProjectsList(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetProjectsListRequest = request.body;
 
     let { orgId } = reqValid.payload;
