@@ -116,7 +116,7 @@ export class BlockmlService {
       : connectionsWithFallback;
 
     let baseConnections = connectionsToUse.map(x =>
-      this.connectionsService.tabToApiBaseConnection({ connection: x })
+      this.connectionsService.tabToBaseConnection({ connection: x })
     );
 
     let toBlockmlRebuildStructRequest: ToBlockmlRebuildStructRequest = {

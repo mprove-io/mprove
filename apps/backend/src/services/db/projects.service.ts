@@ -110,7 +110,7 @@ export class ProjectsService {
     return apiProject;
   }
 
-  tabToApiBaseProject(item: {
+  tabToBaseProject(item: {
     project: ProjectTab;
   }): BaseProject {
     let { project } = item;
@@ -198,7 +198,7 @@ export class ProjectsService {
       serverTs: undefined
     };
 
-    let baseProject = this.tabToApiBaseProject({ project: newProject });
+    let baseProject = this.tabToBaseProject({ project: newProject });
 
     let toDiskCreateProjectRequest: ToDiskCreateProjectRequest = {
       info: {

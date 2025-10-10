@@ -13,22 +13,18 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import {
-  BridgeEnt,
-  bridgesTable
-} from '~backend/drizzle/postgres/schema/bridges';
+import { BridgeTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { EntMakerService } from '~backend/services/maker.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -51,11 +47,10 @@ let retry = require('async-retry');
 @Controller()
 export class CreateBranchController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
-    private entMakerService: EntMakerService,
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private membersService: MembersService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
@@ -93,11 +88,8 @@ export class CreateBranchController {
       branchId: newBranchId
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskCreateBranchRequest: ToDiskCreateBranchRequest = {
@@ -107,7 +99,7 @@ export class CreateBranchController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         newBranch: newBranchId,
         fromBranch: fromBranchId,
@@ -125,7 +117,7 @@ export class CreateBranchController {
         checkIsOk: true
       });
 
-    let newBranch = this.entMakerService.makeBranch({
+    let newBranch = this.branchesService.makeBranch({
       projectId: projectId,
       repoId: repoId,
       branchId: newBranchId
@@ -139,10 +131,10 @@ export class CreateBranchController {
       )
     });
 
-    let newBranchBridges: BridgeEnt[] = [];
+    let newBranchBridges: BridgeTab[] = [];
 
     fromBranchBridges.forEach(x => {
-      let newBranchBridge = this.entMakerService.makeBridge({
+      let newBranchBridge = this.bridgesService.makeBridge({
         projectId: newBranch.projectId,
         repoId: newBranch.repoId,
         branchId: newBranch.branchId,

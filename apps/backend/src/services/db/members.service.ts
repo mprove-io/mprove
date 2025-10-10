@@ -294,7 +294,7 @@ export class MembersService {
             isExplorer: true
           });
 
-          let baseProject = this.projectsService.tabToApiBaseProject({
+          let baseProject = this.projectsService.tabToBaseProject({
             project: project
           });
 

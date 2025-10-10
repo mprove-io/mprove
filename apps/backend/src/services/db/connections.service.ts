@@ -231,7 +231,7 @@ export class ConnectionsService {
     return apiProjectConnection;
   }
 
-  tabToApiBaseConnection(item: {
+  tabToBaseConnection(item: {
     connection: ConnectionTab;
   }): BaseConnection {
     let { connection } = item;

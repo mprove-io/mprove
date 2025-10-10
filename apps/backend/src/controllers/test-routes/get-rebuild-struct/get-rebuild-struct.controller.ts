@@ -67,7 +67,7 @@ export class GetRebuildStructController {
 
     // to disk
 
-    let baseProject = this.projectsService.tabToApiBaseProject({
+    let baseProject = this.projectsService.tabToBaseProject({
       project: project
     });
 
@@ -118,7 +118,7 @@ export class GetRebuildStructController {
         envId: envId,
         evs: apiEnv.evsWithFallback,
         baseConnections: connectionsWithFallback.map(x =>
-          this.connectionsService.tabToApiBaseConnection({ connection: x })
+          this.connectionsService.tabToBaseConnection({ connection: x })
         ),
         overrideTimezone: overrideTimezone,
         isUseCache: isUseCache,
