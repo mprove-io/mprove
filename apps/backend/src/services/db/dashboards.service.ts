@@ -142,6 +142,10 @@ export class DashboardsService {
   apiToTab(item: { apiDashboard: Dashboard }): DashboardTab {
     let { apiDashboard } = item;
 
+    if (isUndefined(apiDashboard)) {
+      return;
+    }
+
     let dashboard: DashboardTab = {
       dashboardFullId: this.hashService.makeDashboardFullId({
         structId: apiDashboard.structId,

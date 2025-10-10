@@ -98,6 +98,10 @@ export class QueriesService {
   apiToTab(item: { apiQuery: Query }): QueryTab {
     let { apiQuery } = item;
 
+    if (isUndefined(apiQuery)) {
+      return;
+    }
+
     let query: QueryTab = {
       projectId: apiQuery.projectId,
       envId: apiQuery.envId,

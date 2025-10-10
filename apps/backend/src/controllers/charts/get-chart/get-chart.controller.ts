@@ -11,26 +11,28 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import {
+  MconfigTab,
+  QueryTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { ChartsService } from '~backend/services/charts.service';
-import { EnvsService } from '~backend/services/envs.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ChartsService } from '~backend/services/db/charts.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { MalloyService } from '~backend/services/malloy.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { QueriesService } from '~backend/services/queries.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
@@ -38,8 +40,6 @@ import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum'
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { Query } from '~common/interfaces/blockml/query';
 import {
   ToBackendGetChartRequest,
   ToBackendGetChartResponsePayload
@@ -63,8 +63,6 @@ export class GetChartController {
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -118,7 +116,7 @@ export class GetChartController {
 
     let isAccessGranted = checkAccess({
       member: userMember,
-      accessRoles: chart.tab.accessRoles
+      accessRoles: chart.accessRoles
     });
 
     if (isAccessGranted === false) {
@@ -132,141 +130,125 @@ export class GetChartController {
       mconfigId: chart.tiles[0].mconfigId
     });
 
-    // console.log('getChart chartMconfig.select');
-    // console.log(chartMconfig.select);
-
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
       modelId: chartMconfig.modelId
     });
 
-    let query;
+    let query: QueryTab;
 
-    let newMconfig: Mconfig;
-    let newQuery: Query;
+    let newMconfig: MconfigTab;
+    let newQuery: QueryTab;
 
     let isError = false;
 
-    let isSearchExisting = // TODO: check (was model.type === ModelTypeEnum.SQL)
-      model.type !== ModelTypeEnum.Store &&
-      model.type !== ModelTypeEnum.Malloy &&
-      chartMconfig.timezone === timezone;
+    if (model.type === ModelTypeEnum.Store) {
+      // let newMconfigId = makeId();
+      // let newQueryId = makeId();
 
-    // console.log('isSearchExisting');
-    // console.log(isSearchExisting);
+      // biome-ignore format: theme breaks
+      // let sMconfig = Object.assign({}, chartMconfig, <MconfigTab>{
+      //     mconfigId: newMconfigId,
+      //     queryId: newQueryId,
+      //     timezone: timezone,
+      //     temp: true
+      //   });
 
-    if (isSearchExisting) {
-      query = await this.queriesService.getQueryCheckExists({
-        queryId: chartMconfig.queryId,
-        projectId: projectId
+      newMconfig.mconfigId = makeId();
+      newMconfig.timezone = timezone;
+      newMconfig.temp = true;
+
+      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+        struct: struct,
+        project: project,
+        envId: envId,
+        model: model,
+        mconfig: newMconfig,
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
       });
-    } else {
-      if (model.type === ModelTypeEnum.Store) {
-        // if (model.isStoreModel === true) {
-        let newMconfigId = makeId();
-        let newQueryId = makeId();
 
-        // biome-ignore format: theme breaks
-        let sMconfig = Object.assign({}, chartMconfig, <MconfigEnt>{
-          mconfigId: newMconfigId,
-          queryId: newQueryId,
-          timezone: timezone,
-          temp: true
-        });
+      newMconfig = mqe.newMconfig;
+      newQuery = mqe.newQuery;
+      isError = mqe.isError;
+    } else if (model.type === ModelTypeEnum.Malloy) {
+      let queryOperation: QueryOperation = {
+        type: QueryOperationTypeEnum.Get,
+        timezone: timezone
+      };
 
-        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-          struct: struct,
-          project: project,
-          envId: envId,
-          model: model,
-          mconfig: sMconfig,
-          metricsStartDateYYYYMMDD: undefined,
-          metricsEndDateYYYYMMDD: undefined
-        });
+      let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
+        projectId: projectId,
+        envId: envId,
+        structId: struct.structId,
+        model: model,
+        mconfig: chartMconfig,
+        queryOperations: [queryOperation]
+      });
 
-        newMconfig = mqe.newMconfig;
-        newQuery = mqe.newQuery;
-        isError = mqe.isError;
-      } else if (model.type === ModelTypeEnum.Malloy) {
-        let queryOperation: QueryOperation = {
-          type: QueryOperationTypeEnum.Get,
-          timezone: timezone
-        };
+      newMconfig = this.mconfigsService.apiToTab({
+        apiMconfig: editMalloyQueryResult.newMconfig
+      });
 
-        let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
-          projectId: projectId,
-          envId: envId,
-          structId: struct.structId,
-          model: model,
-          mconfig: chartMconfig,
-          queryOperations: [queryOperation]
-        });
+      newQuery = this.queriesService.apiToTab({
+        apiQuery: editMalloyQueryResult.newQuery
+      });
 
-        newMconfig = editMalloyQueryResult.newMconfig;
-        newQuery = editMalloyQueryResult.newQuery;
-        isError = editMalloyQueryResult.isError;
-      }
+      isError = editMalloyQueryResult.isError;
+    }
 
-      let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
-      let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                mconfigs: [newMconfig]
+              },
+              insertOrUpdate: {
+                queries: isError === true ? [newQuery] : []
+              },
+              insertOrDoNothing: {
+                queries: isError === false ? [newQuery] : []
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
 
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insert: {
-                  mconfigs: [newMconfigEnt]
-                },
-                insertOrUpdate: {
-                  queries: isError === true ? [newQueryEnt] : []
-                },
-                insertOrDoNothing: {
-                  queries: isError === false ? [newQueryEnt] : []
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-
-      query = await this.db.drizzle.query.queriesTable.findFirst({
+    query = await this.db.drizzle.query.queriesTable
+      .findFirst({
         where: and(
           eq(queriesTable.queryId, newQuery.queryId),
           eq(queriesTable.projectId, newQuery.projectId)
         )
-      });
+      })
+      .then(x => this.queriesService.entToTab(x));
 
-      chart.tiles[0].mconfigId = newMconfig.mconfigId;
-      chart.tiles[0].queryId = newMconfig.queryId;
-    }
+    chart.tiles[0].mconfigId = newMconfig.mconfigId;
+    chart.tiles[0].queryId = newMconfig.queryId;
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
-
-    let mconfig = isSearchExisting ? chartMconfig : newMconfig;
-
-    // console.log('getChart mconfig.select');
-    // console.log(mconfig.select);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendGetChartResponsePayload = {
-      userMember: apiMember,
-      chart: this.wrapToApiService.wrapToApiChart({
+      userMember: apiUserMember,
+      chart: this.chartsService.tabToApi({
         chart: chart,
         mconfigs: [
-          this.wrapToApiService.wrapToApiMconfig({
-            mconfig: mconfig,
+          this.mconfigsService.tabToApi({
+            mconfig: newMconfig,
             modelFields: model.fields
           })
         ],
-        queries: [this.wrapToApiService.wrapToApiQuery(query)],
-        member: apiMember,
+        queries: [this.queriesService.tabToApi({ query: query })],
+        member: apiUserMember,
         models: [
-          this.wrapToApiService.wrapEnxToApiModel({
+          this.modelsService.tabToApi({
             model: model,
-            hasAccess: checkAccess({
-              userAlias: user.alias,
+            hasAccess: checkModelAccess({
               member: userMember,
-              entity: model
+              modelAccessRoles: model.accessRoles
             })
           })
         ],

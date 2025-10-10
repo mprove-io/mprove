@@ -41,6 +41,7 @@ import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
+import { isDefined } from '~common/functions/is-defined';
 import {
   AvatarLt,
   AvatarSt,
@@ -92,24 +93,78 @@ export class TabToEntService {
 
   tabsPackToEntsPack(tabsPack: DbTabsPack) {
     let entsPack: DbEntsPack = {
-      avatars: tabsPack.avatars.map(x => this.avatarTabToEnt(x)),
-      branches: tabsPack.branches.map(x => this.branchTabToEnt(x)),
-      bridges: tabsPack.bridges.map(x => this.bridgeTabToEnt(x)),
-      charts: tabsPack.charts.map(x => this.chartTabToEnt(x)),
-      connections: tabsPack.connections.map(x => this.connectionTabToEnt(x)),
-      dashboards: tabsPack.dashboards.map(x => this.dashboardTabToEnt(x)),
-      envs: tabsPack.envs.map(x => this.envTabToEnt(x)),
-      kits: tabsPack.kits.map(x => this.kitTabToEnt(x)),
-      mconfigs: tabsPack.mconfigs.map(x => this.mconfigTabToEnt(x)),
-      members: tabsPack.members.map(x => this.memberTabToEnt(x)),
-      models: tabsPack.models.map(x => this.modelTabToEnt(x)),
-      notes: tabsPack.notes.map(x => this.noteTabToEnt(x)),
-      orgs: tabsPack.orgs.map(x => this.orgTabToEnt(x)),
-      projects: tabsPack.projects.map(x => this.projectTabToEnt(x)),
-      queries: tabsPack.queries.map(x => this.queryTabToEnt(x)),
-      reports: tabsPack.reports.map(x => this.reportTabToEnt(x)),
-      structs: tabsPack.structs.map(x => this.structTabToEnt(x)),
-      users: tabsPack.users.map(x => this.userTabToEnt(x))
+      avatars:
+        tabsPack.avatars
+          ?.filter(x => isDefined(x))
+          .map(x => this.avatarTabToEnt(x)) ?? [],
+      branches:
+        tabsPack.branches
+          ?.filter(x => isDefined(x))
+          .map(x => this.branchTabToEnt(x)) ?? [],
+      bridges:
+        tabsPack.bridges
+          ?.filter(x => isDefined(x))
+          .map(x => this.bridgeTabToEnt(x)) ?? [],
+      charts:
+        tabsPack.charts
+          ?.filter(x => isDefined(x))
+          .map(x => this.chartTabToEnt(x)) ?? [],
+      connections:
+        tabsPack.connections
+          ?.filter(x => isDefined(x))
+          .map(x => this.connectionTabToEnt(x)) ?? [],
+      dashboards:
+        tabsPack.dashboards
+          ?.filter(x => isDefined(x))
+          .map(x => this.dashboardTabToEnt(x)) ?? [],
+      envs:
+        tabsPack.envs
+          ?.filter(x => isDefined(x))
+          .map(x => this.envTabToEnt(x)) ?? [],
+      kits:
+        tabsPack.kits
+          ?.filter(x => isDefined(x))
+          .map(x => this.kitTabToEnt(x)) ?? [],
+      mconfigs:
+        tabsPack.mconfigs
+          ?.filter(x => isDefined(x))
+          .map(x => this.mconfigTabToEnt(x)) ?? [],
+      members:
+        tabsPack.members
+          ?.filter(x => isDefined(x))
+          .map(x => this.memberTabToEnt(x)) ?? [],
+      models:
+        tabsPack.models
+          ?.filter(x => isDefined(x))
+          .map(x => this.modelTabToEnt(x)) ?? [],
+      notes:
+        tabsPack.notes
+          ?.filter(x => isDefined(x))
+          .map(x => this.noteTabToEnt(x)) ?? [],
+      orgs:
+        tabsPack.orgs
+          ?.filter(x => isDefined(x))
+          .map(x => this.orgTabToEnt(x)) ?? [],
+      projects:
+        tabsPack.projects
+          ?.filter(x => isDefined(x))
+          .map(x => this.projectTabToEnt(x)) ?? [],
+      queries:
+        tabsPack.queries
+          ?.filter(x => isDefined(x))
+          .map(x => this.queryTabToEnt(x)) ?? [],
+      reports:
+        tabsPack.reports
+          ?.filter(x => isDefined(x))
+          .map(x => this.reportTabToEnt(x)) ?? [],
+      structs:
+        tabsPack.structs
+          ?.filter(x => isDefined(x))
+          .map(x => this.structTabToEnt(x)) ?? [],
+      users:
+        tabsPack.users
+          ?.filter(x => isDefined(x))
+          .map(x => this.userTabToEnt(x)) ?? []
     };
 
     return entsPack;
@@ -314,7 +369,7 @@ export class TabToEntService {
       sorts: mconfig.sorts,
       timezone: mconfig.timezone,
       limit: mconfig.limit,
-      filters: mconfig.filters,
+      filters: mconfig?.filters,
       chart: mconfig.chart
     };
 

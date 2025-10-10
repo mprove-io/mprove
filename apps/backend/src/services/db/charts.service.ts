@@ -106,6 +106,10 @@ export class ChartsService {
   }): ChartTab {
     let { apiChart, chartType } = item;
 
+    if (isUndefined(apiChart)) {
+      return;
+    }
+
     let chart: ChartTab = {
       chartFullId: this.hashService.makeChartFullId({
         structId: apiChart.structId,

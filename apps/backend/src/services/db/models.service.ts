@@ -73,6 +73,10 @@ export class ModelsService {
   }): ModelTab {
     let { apiModel } = item;
 
+    if (isUndefined(apiModel)) {
+      return;
+    }
+
     let model: ModelTab = {
       modelFullId: this.hashService.makeModelFullId({
         structId: apiModel.structId,

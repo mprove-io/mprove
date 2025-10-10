@@ -12,25 +12,29 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import {
+  ChartTab,
+  MconfigTab,
+  QueryTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { ChartsService } from '~backend/services/charts.service';
-import { EnvsService } from '~backend/services/envs.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ChartsService } from '~backend/services/db/charts.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
+import { HashService } from '~backend/services/hash.service';
 import { MalloyService } from '~backend/services/malloy.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -38,9 +42,6 @@ import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
-import { Chart } from '~common/interfaces/blockml/chart';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { Query } from '~common/interfaces/blockml/query';
 import { Tile } from '~common/interfaces/blockml/tile';
 import {
   ToBackendEditDraftChartRequest,
@@ -55,6 +56,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditDraftChartController {
   constructor(
+    private hashService: HashService,
     private malloyService: MalloyService,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
@@ -63,9 +65,8 @@ export class EditDraftChartController {
     private structsService: StructsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapEnxToApiService,
     private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
     private chartsService: ChartsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -135,7 +136,7 @@ export class EditDraftChartController {
 
     let isAccessGrantedForModel = checkModelAccess({
       member: userMember,
-      modelAccessRoles: model.tab.accessRoles
+      modelAccessRoles: model.accessRoles
     });
 
     if (isAccessGrantedForModel === false) {
@@ -161,16 +162,12 @@ export class EditDraftChartController {
       });
     }
 
-    let newMconfig: Mconfig;
-    let newQuery: Query;
+    let newMconfig: MconfigTab;
+    let newQuery: QueryTab;
 
     let isError = false;
 
     if (model.type === ModelTypeEnum.Store) {
-      // if (model.isStoreModel === true) {
-
-      // console.log('createMconfigAndQuery prepStoreMconfigQuery');
-
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
         project: project,
@@ -194,13 +191,16 @@ export class EditDraftChartController {
         queryOperations: [queryOperation]
       });
 
-      newMconfig = editMalloyQueryResult.newMconfig;
-      newQuery = editMalloyQueryResult.newQuery;
+      newMconfig = this.mconfigsService.apiToTab({
+        apiMconfig: editMalloyQueryResult.newMconfig
+      });
+
+      newQuery = this.queriesService.apiToTab({
+        apiQuery: editMalloyQueryResult.newQuery
+      });
+
       isError = editMalloyQueryResult.isError;
     }
-
-    let newQueryEnt = this.wrapToEntService.wrapToEntityQuery(newQuery);
-    let newMconfigEnt = this.wrapToEntService.wrapToEntityMconfig(newMconfig);
 
     let tile: Tile = {
       modelId: newMconfig.modelId,
@@ -219,9 +219,14 @@ export class EditDraftChartController {
       plateY: undefined
     };
 
-    let newChart: Chart = {
+    let newChart: ChartTab = {
+      chartFullId: this.hashService.makeChartFullId({
+        structId: bridge.structId,
+        chartId: chartId
+      }),
       structId: bridge.structId,
       chartId: chartId,
+      chartType: newMconfig.chart.type,
       draft: true,
       creatorId: user.userId,
       title: chart.chartId,
@@ -233,11 +238,6 @@ export class EditDraftChartController {
       serverTs: undefined
     };
 
-    let newChartEnt = this.wrapToEntService.wrapToEntityChart({
-      chart: newChart,
-      chartType: newMconfigEnt.chart.type
-    });
-
     await retry(
       async () =>
         await this.db.drizzle.transaction(
@@ -245,51 +245,52 @@ export class EditDraftChartController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                mconfigs: [newMconfigEnt]
+                mconfigs: [newMconfig]
               },
               insertOrUpdate: {
-                charts: [newChartEnt],
-                queries: isError === true ? [newQueryEnt] : []
+                charts: [newChart],
+                queries: isError === true ? [newQuery] : []
               },
               insertOrDoNothing: {
-                queries: isError === true ? [] : [newQueryEnt]
+                queries: isError === true ? [] : [newQuery]
               }
             })
         ),
       getRetryOption(this.cs, this.logger)
     );
 
-    let query = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, newQuery.queryId),
-        eq(queriesTable.projectId, newQuery.projectId)
-      )
-    });
+    let query = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, newQuery.queryId),
+          eq(queriesTable.projectId, newQuery.projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendEditDraftChartResponsePayload = {
-      chart: this.wrapToApiService.wrapToApiChart({
-        chart: newChartEnt,
+      chart: this.chartsService.tabToApi({
+        chart: newChart,
         mconfigs: [
-          this.wrapToApiService.wrapToApiMconfig({
-            mconfig: newMconfigEnt,
+          this.mconfigsService.tabToApi({
+            mconfig: newMconfig,
             modelFields: model.fields
           })
         ],
         queries: [
-          isDefined(query)
-            ? this.wrapToApiService.wrapToApiQuery(query)
-            : this.wrapToApiService.wrapToApiQuery(newQueryEnt)
+          this.queriesService.tabToApi({
+            query: isDefined(query) ? query : newQuery
+          })
         ],
-        member: apiMember,
+        member: apiUserMember,
         models: [
-          this.wrapToApiService.wrapEnxToApiModel({
+          this.modelsService.tabToApi({
             model: model,
-            hasAccess: checkAccess({
-              userAlias: user.alias,
+            hasAccess: checkModelAccess({
               member: userMember,
-              entity: model
+              modelAccessRoles: model.accessRoles
             })
           })
         ],

@@ -222,6 +222,10 @@ export class ReportsService {
   apiToTab(item: { apiReport: Report }): ReportTab {
     let { apiReport } = item;
 
+    if (isUndefined(apiReport)) {
+      return;
+    }
+
     let report: ReportTab = {
       reportFullId: this.hashService.makeReportFullId({
         structId: apiReport.structId,

@@ -93,8 +93,6 @@ export class CreateDraftChartController {
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
-    let kQueryId = isKeepQueryId === true ? mconfig.queryId : undefined;
-
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
@@ -156,10 +154,6 @@ export class CreateDraftChartController {
     let isError = false;
 
     if (model.type === ModelTypeEnum.Store) {
-      // if (model.isStoreModel === true) {
-
-      // console.log('createMconfigAndQuery prepStoreMconfigQuery');
-
       let mqs = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
         project: project,
@@ -184,11 +178,7 @@ export class CreateDraftChartController {
 
       newMconfig = mqs.newMconfig;
 
-      if (isKeepQueryId === true && isError === false) {
-        newMconfig.queryId = kQueryId;
-      } else {
-        newQuery = mqs.newQuery;
-      }
+      newQuery = mqs.newQuery;
     } else if (model.type === ModelTypeEnum.Malloy) {
       let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
@@ -200,18 +190,19 @@ export class CreateDraftChartController {
       });
 
       isError = editMalloyQueryResult.isError;
-      newMconfig = editMalloyQueryResult.newMconfig;
 
-      if (isKeepQueryId === true && isError === false) {
-        newMconfig.queryId = kQueryId;
-      } else {
-        newQuery = this.queriesService.apiToTab({
-          apiQuery: editMalloyQueryResult.newQuery
-        });
-      }
+      newMconfig = this.mconfigsService.apiToTab({
+        apiMconfig: editMalloyQueryResult.newMconfig
+      });
+
+      newQuery = this.queriesService.apiToTab({
+        apiQuery: editMalloyQueryResult.newQuery
+      });
     }
 
     if (isKeepQueryId === true && isError === false) {
+      newMconfig.queryId = mconfig.queryId;
+
       newQuery = await this.queriesService.getQueryCheckExists({
         queryId: newMconfig.queryId,
         projectId: projectId

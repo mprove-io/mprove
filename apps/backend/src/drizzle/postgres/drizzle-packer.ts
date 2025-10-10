@@ -77,118 +77,135 @@ export class DrizzlePacker {
       serverTs
     } = item;
 
-    let insertEnts = this.tabToEntService.tabsPackToEntsPack(insert);
-    let updateEnts = this.tabToEntService.tabsPackToEntsPack(update);
-    let insOrUpdEnts = this.tabToEntService.tabsPackToEntsPack(insertOrUpdate);
+    let insertEnts =
+      isDefined(insert) && Object.keys(insert).length > 0
+        ? this.tabToEntService.tabsPackToEntsPack(insert)
+        : undefined;
+
+    let updateEnts =
+      isDefined(update) && Object.keys(update).length > 0
+        ? this.tabToEntService.tabsPackToEntsPack(update)
+        : undefined;
+
+    let insOrUpdEnts =
+      isDefined(insertOrUpdate) && Object.keys(insertOrUpdate).length > 0
+        ? this.tabToEntService.tabsPackToEntsPack(insertOrUpdate)
+        : undefined;
+
     let insOrDoNothingEnts =
-      this.tabToEntService.tabsPackToEntsPack(insertOrDoNothing);
+      isDefined(insertOrDoNothing) && Object.keys(insertOrDoNothing).length > 0
+        ? this.tabToEntService.tabsPackToEntsPack(insertOrDoNothing)
+        : undefined;
 
     let newServerTs = isDefined(serverTs) ? serverTs : makeTsNumber();
 
-    Object.keys(insertEnts ?? {}).forEach(key => {
-      this.refreshServerTs({
-        elements: (insertEnts[key as keyof DbEntsPack] as any[]) ?? [],
-        newServerTs: newServerTs
+    if (isDefined(insertEnts)) {
+      Object.keys(insertEnts).forEach(key => {
+        this.refreshServerTs({
+          elements: (insertEnts[key as keyof DbEntsPack] as any[]) ?? [],
+          newServerTs: newServerTs
+        });
       });
-    });
+    }
 
-    Object.keys(updateEnts ?? {}).forEach(key => {
-      this.refreshServerTs({
-        elements: (updateEnts[key as keyof DbEntsPack] as any[]) ?? [],
-        newServerTs: newServerTs
+    if (isDefined(updateEnts)) {
+      Object.keys(updateEnts).forEach(key => {
+        this.refreshServerTs({
+          elements: (updateEnts[key as keyof DbEntsPack] as any[]) ?? [],
+          newServerTs: newServerTs
+        });
       });
-    });
+    }
 
-    Object.keys(insOrUpdEnts ?? {}).forEach(key => {
-      this.refreshServerTs({
-        elements: (insOrUpdEnts[key as keyof DbEntsPack] as any[]) ?? [],
-        newServerTs: newServerTs
+    if (isDefined(insOrUpdEnts)) {
+      Object.keys(insOrUpdEnts).forEach(key => {
+        this.refreshServerTs({
+          elements: (insOrUpdEnts[key as keyof DbEntsPack] as any[]) ?? [],
+          newServerTs: newServerTs
+        });
       });
-    });
+    }
 
-    Object.keys(insOrDoNothingEnts ?? {}).forEach(key => {
-      this.refreshServerTs({
-        elements: (insOrDoNothingEnts[key as keyof DbEntsPack] as any[]) ?? [],
-        newServerTs: newServerTs
+    if (isDefined(insOrDoNothingEnts)) {
+      Object.keys(insOrDoNothingEnts).forEach(key => {
+        this.refreshServerTs({
+          elements:
+            (insOrDoNothingEnts[key as keyof DbEntsPack] as any[]) ?? [],
+          newServerTs: newServerTs
+        });
       });
-    });
+    }
 
     if (isDefined(insertEnts)) {
-      if (isDefined(insertEnts.avatars) && insertEnts.avatars.length > 0) {
+      if (insertEnts.avatars.length > 0) {
         await tx.insert(avatarsTable).values(insertEnts.avatars);
       }
 
-      if (isDefined(insertEnts.branches) && insertEnts.branches.length > 0) {
+      if (insertEnts.branches.length > 0) {
         await tx.insert(branchesTable).values(insertEnts.branches);
       }
 
-      if (isDefined(insertEnts.bridges) && insertEnts.bridges.length > 0) {
+      if (insertEnts.bridges.length > 0) {
         await tx.insert(bridgesTable).values(insertEnts.bridges);
       }
 
-      if (
-        isDefined(insertEnts.connections) &&
-        insertEnts.connections.length > 0
-      ) {
+      if (insertEnts.connections.length > 0) {
         await tx.insert(connectionsTable).values(insertEnts.connections);
       }
 
-      if (
-        isDefined(insertEnts.dashboards) &&
-        insertEnts.dashboards.length > 0
-      ) {
+      if (insertEnts.dashboards.length > 0) {
         await tx.insert(dashboardsTable).values(insertEnts.dashboards);
       }
 
-      if (isDefined(insertEnts.envs) && insertEnts.envs.length > 0) {
+      if (insertEnts.envs.length > 0) {
         await tx.insert(envsTable).values(insertEnts.envs);
       }
 
-      if (isDefined(insertEnts.kits) && insertEnts.kits.length > 0) {
+      if (insertEnts.kits.length > 0) {
         await tx.insert(kitsTable).values(insertEnts.kits);
       }
 
-      if (isDefined(insertEnts.mconfigs) && insertEnts.mconfigs.length > 0) {
+      if (insertEnts.mconfigs.length > 0) {
         await tx.insert(mconfigsTable).values(insertEnts.mconfigs);
       }
 
-      if (isDefined(insertEnts.members) && insertEnts.members.length > 0) {
+      if (insertEnts.members.length > 0) {
         await tx.insert(membersTable).values(insertEnts.members);
       }
 
-      if (isDefined(insertEnts.models) && insertEnts.models.length > 0) {
+      if (insertEnts.models.length > 0) {
         await tx.insert(modelsTable).values(insertEnts.models);
       }
 
-      if (isDefined(insertEnts.notes) && insertEnts.notes.length > 0) {
+      if (insertEnts.notes.length > 0) {
         await tx.insert(notesTable).values(insertEnts.notes);
       }
 
-      if (isDefined(insertEnts.orgs) && insertEnts.orgs.length > 0) {
+      if (insertEnts.orgs.length > 0) {
         await tx.insert(orgsTable).values(insertEnts.orgs);
       }
 
-      if (isDefined(insertEnts.projects) && insertEnts.projects.length > 0) {
+      if (insertEnts.projects.length > 0) {
         await tx.insert(projectsTable).values(insertEnts.projects);
       }
 
-      if (isDefined(insertEnts.queries) && insertEnts.queries.length > 0) {
+      if (insertEnts.queries.length > 0) {
         await tx.insert(queriesTable).values(insertEnts.queries);
       }
 
-      if (isDefined(insertEnts.reports) && insertEnts.reports.length > 0) {
+      if (insertEnts.reports.length > 0) {
         await tx.insert(reportsTable).values(insertEnts.reports);
       }
 
-      if (isDefined(insertEnts.structs) && insertEnts.structs.length > 0) {
+      if (insertEnts.structs.length > 0) {
         await tx.insert(structsTable).values(insertEnts.structs);
       }
 
-      if (isDefined(insertEnts.users) && insertEnts.users.length > 0) {
+      if (insertEnts.users.length > 0) {
         await tx.insert(usersTable).values(insertEnts.users);
       }
 
-      if (isDefined(insertEnts.charts) && insertEnts.charts.length > 0) {
+      if (insertEnts.charts.length > 0) {
         await tx.insert(chartsTable).values(insertEnts.charts);
       }
     }
@@ -198,7 +215,7 @@ export class DrizzlePacker {
     //
 
     if (isDefined(updateEnts)) {
-      if (isDefined(updateEnts.avatars) && updateEnts.avatars.length > 0) {
+      if (updateEnts.avatars.length > 0) {
         updateEnts.avatars = setUndefinedToNull({
           ents: updateEnts.avatars,
           table: avatarsTable
@@ -212,7 +229,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.branches) && updateEnts.branches.length > 0) {
+      if (updateEnts.branches.length > 0) {
         updateEnts.branches = setUndefinedToNull({
           ents: updateEnts.branches,
           table: branchesTable
@@ -226,7 +243,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.bridges) && updateEnts.bridges.length > 0) {
+      if (updateEnts.bridges.length > 0) {
         updateEnts.bridges = setUndefinedToNull({
           ents: updateEnts.bridges,
           table: bridgesTable
@@ -240,10 +257,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateEnts.connections) &&
-        updateEnts.connections.length > 0
-      ) {
+      if (updateEnts.connections.length > 0) {
         updateEnts.connections = setUndefinedToNull({
           ents: updateEnts.connections,
           table: connectionsTable
@@ -257,10 +271,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (
-        isDefined(updateEnts.dashboards) &&
-        updateEnts.dashboards.length > 0
-      ) {
+      if (updateEnts.dashboards.length > 0) {
         updateEnts.dashboards = setUndefinedToNull({
           ents: updateEnts.dashboards,
           table: dashboardsTable
@@ -274,7 +285,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.envs) && updateEnts.envs.length > 0) {
+      if (updateEnts.envs.length > 0) {
         updateEnts.envs = setUndefinedToNull({
           ents: updateEnts.envs,
           table: envsTable
@@ -288,7 +299,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.kits) && updateEnts.kits.length > 0) {
+      if (updateEnts.kits.length > 0) {
         updateEnts.kits = setUndefinedToNull({
           ents: updateEnts.kits,
           table: kitsTable
@@ -299,7 +310,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.mconfigs) && updateEnts.mconfigs.length > 0) {
+      if (updateEnts.mconfigs.length > 0) {
         updateEnts.mconfigs = setUndefinedToNull({
           ents: updateEnts.mconfigs,
           table: mconfigsTable
@@ -313,7 +324,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.members) && updateEnts.members.length > 0) {
+      if (updateEnts.members.length > 0) {
         updateEnts.members = setUndefinedToNull({
           ents: updateEnts.members,
           table: membersTable
@@ -327,7 +338,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.models) && updateEnts.models.length > 0) {
+      if (updateEnts.models.length > 0) {
         updateEnts.models = setUndefinedToNull({
           ents: updateEnts.models,
           table: modelsTable
@@ -341,7 +352,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.notes) && updateEnts.notes.length > 0) {
+      if (updateEnts.notes.length > 0) {
         updateEnts.notes = setUndefinedToNull({
           ents: updateEnts.notes,
           table: notesTable
@@ -355,7 +366,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.orgs) && updateEnts.orgs.length > 0) {
+      if (updateEnts.orgs.length > 0) {
         updateEnts.orgs = setUndefinedToNull({
           ents: updateEnts.orgs,
           table: orgsTable
@@ -366,7 +377,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.projects) && updateEnts.projects.length > 0) {
+      if (updateEnts.projects.length > 0) {
         updateEnts.projects = setUndefinedToNull({
           ents: updateEnts.projects,
           table: projectsTable
@@ -380,7 +391,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.queries) && updateEnts.queries.length > 0) {
+      if (updateEnts.queries.length > 0) {
         updateEnts.queries = setUndefinedToNull({
           ents: updateEnts.queries,
           table: queriesTable
@@ -394,7 +405,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.reports) && updateEnts.reports.length > 0) {
+      if (updateEnts.reports.length > 0) {
         updateEnts.reports = setUndefinedToNull({
           ents: updateEnts.reports,
           table: reportsTable
@@ -408,7 +419,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.structs) && updateEnts.structs.length > 0) {
+      if (updateEnts.structs.length > 0) {
         updateEnts.structs = setUndefinedToNull({
           ents: updateEnts.structs,
           table: structsTable
@@ -422,7 +433,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.users) && updateEnts.users.length > 0) {
+      if (updateEnts.users.length > 0) {
         updateEnts.users = setUndefinedToNull({
           ents: updateEnts.users,
           table: usersTable
@@ -436,7 +447,7 @@ export class DrizzlePacker {
         });
       }
 
-      if (isDefined(updateEnts.charts) && updateEnts.charts.length > 0) {
+      if (updateEnts.charts.length > 0) {
         updateEnts.charts = setUndefinedToNull({
           ents: updateEnts.charts,
           table: chartsTable
@@ -456,7 +467,7 @@ export class DrizzlePacker {
     //
 
     if (isDefined(insOrUpdEnts)) {
-      if (isDefined(insOrUpdEnts.avatars) && insOrUpdEnts.avatars.length > 0) {
+      if (insOrUpdEnts.avatars.length > 0) {
         insOrUpdEnts.avatars = Array.from(
           new Set(insOrUpdEnts.avatars.map(x => x.userId))
         ).map(id => insOrUpdEnts.avatars.find(x => x.userId === id));
@@ -475,10 +486,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        isDefined(insOrUpdEnts.branches) &&
-        insOrUpdEnts.branches.length > 0
-      ) {
+      if (insOrUpdEnts.branches.length > 0) {
         insOrUpdEnts.branches = Array.from(
           new Set(insOrUpdEnts.branches.map(x => x.branchFullId))
         ).map(id => insOrUpdEnts.branches.find(x => x.branchFullId === id));
@@ -497,7 +505,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.bridges) && insOrUpdEnts.bridges.length > 0) {
+      if (insOrUpdEnts.bridges.length > 0) {
         insOrUpdEnts.bridges = Array.from(
           new Set(insOrUpdEnts.bridges.map(x => x.bridgeFullId))
         ).map(id => insOrUpdEnts.bridges.find(x => x.bridgeFullId === id));
@@ -516,10 +524,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        isDefined(insOrUpdEnts.connections) &&
-        insOrUpdEnts.connections.length > 0
-      ) {
+      if (insOrUpdEnts.connections.length > 0) {
         insOrUpdEnts.connections = Array.from(
           new Set(insOrUpdEnts.connections.map(x => x.connectionFullId))
         ).map(id =>
@@ -540,10 +545,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        isDefined(insOrUpdEnts.dashboards) &&
-        insOrUpdEnts.dashboards.length > 0
-      ) {
+      if (insOrUpdEnts.dashboards.length > 0) {
         insOrUpdEnts.dashboards = Array.from(
           new Set(insOrUpdEnts.dashboards.map(x => x.dashboardFullId))
         ).map(id =>
@@ -564,7 +566,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.envs) && insOrUpdEnts.envs.length > 0) {
+      if (insOrUpdEnts.envs.length > 0) {
         insOrUpdEnts.envs = Array.from(
           new Set(insOrUpdEnts.envs.map(x => x.envFullId))
         ).map(id => insOrUpdEnts.envs.find(x => x.envFullId === id));
@@ -583,7 +585,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.kits) && insOrUpdEnts.kits.length > 0) {
+      if (insOrUpdEnts.kits.length > 0) {
         insOrUpdEnts.kits = Array.from(
           new Set(insOrUpdEnts.kits.map(x => x.kitId))
         ).map(id => insOrUpdEnts.kits.find(x => x.kitId === id));
@@ -602,10 +604,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        isDefined(insOrUpdEnts.mconfigs) &&
-        insOrUpdEnts.mconfigs.length > 0
-      ) {
+      if (insOrUpdEnts.mconfigs.length > 0) {
         insOrUpdEnts.mconfigs = Array.from(
           new Set(insOrUpdEnts.mconfigs.map(x => x.mconfigId))
         ).map(id => insOrUpdEnts.mconfigs.find(x => x.mconfigId === id));
@@ -624,7 +623,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.members) && insOrUpdEnts.members.length > 0) {
+      if (insOrUpdEnts.members.length > 0) {
         insOrUpdEnts.members = Array.from(
           new Set(insOrUpdEnts.members.map(x => x.memberFullId))
         ).map(id => insOrUpdEnts.members.find(x => x.memberFullId === id));
@@ -643,7 +642,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.models) && insOrUpdEnts.models.length > 0) {
+      if (insOrUpdEnts.models.length > 0) {
         insOrUpdEnts.models = Array.from(
           new Set(insOrUpdEnts.models.map(x => x.modelFullId))
         ).map(id => insOrUpdEnts.models.find(x => x.modelFullId === id));
@@ -662,7 +661,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.notes) && insOrUpdEnts.notes.length > 0) {
+      if (insOrUpdEnts.notes.length > 0) {
         insOrUpdEnts.notes = Array.from(
           new Set(insOrUpdEnts.notes.map(x => x.noteId))
         ).map(id => insOrUpdEnts.notes.find(x => x.noteId === id));
@@ -681,7 +680,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.orgs) && insOrUpdEnts.orgs.length > 0) {
+      if (insOrUpdEnts.orgs.length > 0) {
         insOrUpdEnts.orgs = Array.from(
           new Set(insOrUpdEnts.orgs.map(x => x.orgId))
         ).map(id => insOrUpdEnts.orgs.find(x => x.orgId === id));
@@ -700,10 +699,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (
-        isDefined(insOrUpdEnts.projects) &&
-        insOrUpdEnts.projects.length > 0
-      ) {
+      if (insOrUpdEnts.projects.length > 0) {
         insOrUpdEnts.projects = Array.from(
           new Set(insOrUpdEnts.projects.map(x => x.projectId))
         ).map(id => insOrUpdEnts.projects.find(x => x.projectId === id));
@@ -722,7 +718,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.queries) && insOrUpdEnts.queries.length > 0) {
+      if (insOrUpdEnts.queries.length > 0) {
         insOrUpdEnts.queries = Array.from(
           new Set(insOrUpdEnts.queries.map(x => x.queryId))
         ).map(id => insOrUpdEnts.queries.find(x => x.queryId === id));
@@ -741,7 +737,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.reports) && insOrUpdEnts.reports.length > 0) {
+      if (insOrUpdEnts.reports.length > 0) {
         insOrUpdEnts.reports = Array.from(
           new Set(insOrUpdEnts.reports.map(x => x.reportFullId))
         ).map(id => insOrUpdEnts.reports.find(x => x.reportFullId === id));
@@ -760,7 +756,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.structs) && insOrUpdEnts.structs.length > 0) {
+      if (insOrUpdEnts.structs.length > 0) {
         insOrUpdEnts.structs = Array.from(
           new Set(insOrUpdEnts.structs.map(x => x.structId))
         ).map(id => insOrUpdEnts.structs.find(x => x.structId === id));
@@ -779,7 +775,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.users) && insOrUpdEnts.users.length > 0) {
+      if (insOrUpdEnts.users.length > 0) {
         insOrUpdEnts.users = Array.from(
           new Set(insOrUpdEnts.users.map(x => x.userId))
         ).map(id => insOrUpdEnts.users.find(x => x.userId === id));
@@ -798,7 +794,7 @@ export class DrizzlePacker {
           });
       }
 
-      if (isDefined(insOrUpdEnts.charts) && insOrUpdEnts.charts.length > 0) {
+      if (insOrUpdEnts.charts.length > 0) {
         insOrUpdEnts.charts = Array.from(
           new Set(insOrUpdEnts.charts.map(x => x.chartFullId))
         ).map(id => insOrUpdEnts.charts.find(x => x.chartFullId === id));
@@ -823,10 +819,7 @@ export class DrizzlePacker {
     //
 
     if (isDefined(insOrDoNothingEnts)) {
-      if (
-        isDefined(insOrDoNothingEnts.queries) &&
-        insOrDoNothingEnts.queries.length > 0
-      ) {
+      if (insOrDoNothingEnts.queries.length > 0) {
         insOrDoNothingEnts.queries = Array.from(
           new Set(insOrDoNothingEnts.queries.map(x => x.queryId))
         ).map(id => insOrDoNothingEnts.queries.find(x => x.queryId === id));

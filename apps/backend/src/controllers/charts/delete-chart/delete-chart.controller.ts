@@ -20,16 +20,13 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { ChartsService } from '~backend/services/charts.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ChartsService } from '~backend/services/db/charts.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -53,14 +50,11 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteChartController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
-    private mconfigsService: MconfigsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private chartsService: ChartsService,
-    private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
@@ -152,11 +146,8 @@ export class DeleteChartController {
     //   secondFileNodeId = pathParts.join('.');
     // }
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
@@ -166,7 +157,7 @@ export class DeleteChartController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingChart.filePath,
@@ -198,17 +189,6 @@ export class DeleteChartController {
         x.needValidate = true;
       }
     });
-
-    // let { struct } = await this.blockmlService.rebuildStruct({
-    //   traceId: traceId,
-    //   projectId: projectId,
-    //   structId: bridge.structId,
-    //   diskFiles: diskResponse.payload.files,
-    //   mproveDir: diskResponse.payload.mproveDir,
-    //   skipDb: true,
-    //   envId: envId,
-    //   overrideTimezone: undefined
-    // });
 
     await retry(
       async () =>

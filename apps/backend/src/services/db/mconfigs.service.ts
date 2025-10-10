@@ -112,6 +112,10 @@ export class MconfigsService {
   apiToTab(item: { apiMconfig: Mconfig }): MconfigTab {
     let { apiMconfig } = item;
 
+    if (isUndefined(apiMconfig)) {
+      return;
+    }
+
     let mconfig: MconfigTab = {
       structId: apiMconfig.structId,
       queryId: apiMconfig.queryId,
@@ -168,7 +172,11 @@ export class MconfigsService {
     mconfig: MconfigTab;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
-  }) {
+  }): Promise<{
+    isError: boolean;
+    newMconfig: MconfigTab;
+    newQuery: QueryTab;
+  }> {
     let {
       model,
       struct,
@@ -179,13 +187,10 @@ export class MconfigsService {
       metricsEndDateYYYYMMDD
     } = item;
 
-    let newMconfig: MconfigTab;
-    let newQuery: QueryTab;
-
     let isError = false;
     let errorMessage: string;
 
-    newMconfig = await this.storeService.adjustMconfig({
+    let newMconfig: MconfigTab = await this.storeService.adjustMconfig({
       mconfig: mconfig,
       model: model,
       caseSensitiveStringFilters:
@@ -278,7 +283,7 @@ export class MconfigsService {
       storeTransformedRequestString: processedRequest.result
     });
 
-    newQuery = {
+    let newQuery: QueryTab = {
       queryId: queryId,
       projectId: project.projectId,
       envId: envId,

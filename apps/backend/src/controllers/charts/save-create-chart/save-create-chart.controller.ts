@@ -17,23 +17,24 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeChartFileText } from '~backend/functions/make-chart-file-text';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ChartsService } from '~backend/services/db/charts.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   EMPTY_STRUCT_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -47,7 +48,6 @@ import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
-import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import {
   ToBackendSaveCreateChartRequest,
@@ -66,6 +66,7 @@ let retry = require('async-retry');
 @Controller()
 export class SaveCreateChartController {
   constructor(
+    private chartsService: ChartsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
@@ -73,10 +74,10 @@ export class SaveCreateChartController {
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
     private modelsService: ModelsService,
+    private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -114,12 +115,12 @@ export class SaveCreateChartController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
 
-    if (member.isExplorer === false) {
+    if (userMember.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
@@ -134,7 +135,7 @@ export class SaveCreateChartController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -154,7 +155,7 @@ export class SaveCreateChartController {
       this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
     if (
-      member.isAdmin === false &&
+      userMember.isAdmin === false &&
       projectId === demoProjectId &&
       repoId === PROD_REPO_ID
     ) {
@@ -168,10 +169,9 @@ export class SaveCreateChartController {
       modelId: mconfig.modelId
     });
 
-    let isAccessGranted = checkAccess({
-      userAlias: user.alias,
-      member: member,
-      entity: mconfigModel
+    let isAccessGranted = checkModelAccess({
+      member: userMember,
+      modelAccessRoles: mconfigModel.accessRoles
     });
 
     if (isAccessGranted === false) {
@@ -219,11 +219,8 @@ export class SaveCreateChartController {
       // malloyChartFilePath: malloyChartFilePath
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
@@ -233,7 +230,7 @@ export class SaveCreateChartController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,
@@ -257,13 +254,15 @@ export class SaveCreateChartController {
         checkIsOk: true
       });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, branch.repoId),
-        eq(bridgesTable.branchId, branch.branchId)
-      )
-    });
+    let branchBridges = await this.db.drizzle.query.bridgesTable
+      .findMany({
+        where: and(
+          eq(bridgesTable.projectId, branch.projectId),
+          eq(bridgesTable.repoId, branch.repoId),
+          eq(bridgesTable.branchId, branch.branchId)
+        )
+      })
+      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
@@ -280,30 +279,36 @@ export class SaveCreateChartController {
 
     let modelIds = [mconfig.modelId];
 
-    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
-      where: and(
-        eq(modelsTable.structId, bridge.structId),
-        inArray(modelsTable.modelId, modelIds)
-      )
+    let cachedModels = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: and(
+          eq(modelsTable.structId, bridge.structId),
+          inArray(modelsTable.modelId, modelIds)
+        )
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+
+    let {
+      charts: apiCharts,
+      mconfigs: apiMconfigs,
+      queries: apiQueries,
+      struct: apiStruct
+    } = await this.blockmlService.rebuildStruct({
+      traceId: traceId,
+      projectId: projectId,
+      structId: bridge.structId,
+      diskFiles: diskFiles,
+      mproveDir: currentStruct.mproveConfig.mproveDirValue,
+      skipDb: true,
+      envId: envId,
+      overrideTimezone: undefined,
+      isUseCache: true,
+      cachedMproveConfig: currentStruct.mproveConfig,
+      cachedModels: cachedModels,
+      cachedMetrics: []
     });
 
-    let { charts, mconfigs, queries, struct } =
-      await this.blockmlService.rebuildStruct({
-        traceId: traceId,
-        projectId: projectId,
-        structId: bridge.structId,
-        diskFiles: diskFiles,
-        mproveDir: currentStruct.mproveConfig.mproveDirValue,
-        skipDb: true,
-        envId: envId,
-        overrideTimezone: undefined,
-        isUseCache: true,
-        cachedMproveConfig: currentStruct.mproveConfig,
-        cachedModels: cachedModels,
-        cachedMetrics: []
-      });
-
-    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
 
     await retry(
       async () =>
@@ -319,9 +324,9 @@ export class SaveCreateChartController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let chart = charts.find(x => x.chartId === newChartId);
+    let apiChart = apiCharts.find(x => x.chartId === newChartId);
 
-    if (isUndefined(chart)) {
+    if (isUndefined(apiChart)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
@@ -332,27 +337,31 @@ export class SaveCreateChartController {
         message: ErEnum.BACKEND_CREATE_CHART_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: struct.errors
+          structErrors: apiStruct.errors
         }
       });
     }
 
-    let chartTile = isDefined(chart) ? chart.tiles[0] : undefined;
+    let chartTile = apiChart.tiles[0];
 
-    let chartMconfig = isDefined(chart)
-      ? mconfigs.find(x => x.mconfigId === chartTile.mconfigId)
-      : undefined;
+    let apiMconfig = apiMconfigs.find(x => x.mconfigId === chartTile.mconfigId);
 
-    let chartQuery = isDefined(chart)
-      ? queries.find(x => x.queryId === chartTile.queryId)
-      : undefined;
+    let apiQuery = apiQueries.find(x => x.queryId === chartTile.queryId);
 
-    let chartEnt = isDefined(chart)
-      ? this.wrapToEntService.wrapToEntityChart({
-          chart: chart,
-          chartType: chartMconfig.chart.type
-        })
-      : undefined;
+    let newMconfig = this.mconfigsService.apiToTab({
+      apiMconfig: apiMconfig
+    });
+
+    newMconfig.temp = true;
+
+    let newQuery = this.queriesService.apiToTab({
+      apiQuery: apiQuery
+    });
+
+    let chart = this.chartsService.apiToTab({
+      apiChart: apiChart,
+      chartType: apiMconfig.chart.type
+    });
 
     await retry(
       async () =>
@@ -370,40 +379,40 @@ export class SaveCreateChartController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              charts: isDefined(chart) ? [chartEnt] : [],
-              mconfigs: [chartMconfig]
+              charts: [chart],
+              mconfigs: [newMconfig]
             },
             insertOrDoNothing: {
-              queries: [chartQuery]
+              queries: [newQuery]
             }
           });
         }),
       getRetryOption(this.cs, this.logger)
     );
 
-    let modelEnts = (await this.db.drizzle
+    let models = await this.db.drizzle
       .select({
         modelId: modelsTable.modelId,
-        accessRoles: modelsTable.accessRoles,
         connectionId: modelsTable.connectionId,
-        connectionType: modelsTable.connectionType
+        connectionType: modelsTable.connectionType,
+        st: modelsTable.st
       })
       .from(modelsTable)
-      .where(eq(modelsTable.structId, bridge.structId))) as ModelEnt[];
+      .where(eq(modelsTable.structId, bridge.structId))
+      .then(xs => xs.map(x => this.modelsService.entToTab(x as ModelEnt)));
 
     let payload: ToBackendSaveCreateChartResponsePayload = {
-      chart: this.wrapToApiService.wrapToApiChart({
-        chart: chartEnt,
+      chart: this.chartsService.tabToApi({
+        chart: chart,
         mconfigs: [],
         queries: [],
-        member: this.wrapToApiService.wrapToApiMember(member),
-        models: modelEnts.map(model =>
-          this.wrapToApiService.wrapEnxToApiModel({
+        member: this.membersService.tabToApi({ member: userMember }),
+        models: models.map(model =>
+          this.modelsService.tabToApi({
             model: model,
-            hasAccess: checkAccess({
-              userAlias: user.alias,
-              member: member,
-              entity: model
+            hasAccess: checkModelAccess({
+              member: userMember,
+              modelAccessRoles: model.accessRoles
             })
           })
         ),
