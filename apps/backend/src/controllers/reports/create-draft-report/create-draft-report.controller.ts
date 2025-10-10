@@ -245,8 +245,6 @@ export class CreateDraftReportController {
       x.queryId = copyQueriesMap.find(
         y => y.fromQueryId === x.queryId
       ).toQueryId;
-
-      x.temp = true;
     });
 
     copyKits.forEach(x => {

@@ -137,8 +137,6 @@ export class CreateTempMconfigController {
       });
     }
 
-    mconfig.temp = true;
-
     let mconfigEnt = this.wrapToEntService.wrapToEntityMconfig(mconfig);
 
     await retry(

@@ -73,7 +73,6 @@ test('1', async t => {
     limit: 500,
     filters: [],
     chart: makeCopy(DEFAULT_CHART),
-    temp: true,
     serverTs: 1
   };
 

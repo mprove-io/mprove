@@ -652,7 +652,6 @@ export async function makeMalloyQuery(item: {
     limit: compiledQuery.structs[0].resultMetadata.limit,
     filters: mconfig.filters,
     chart: mconfig.chart, // previous mconfig chart
-    temp: false,
     serverTs: 1
   };
 

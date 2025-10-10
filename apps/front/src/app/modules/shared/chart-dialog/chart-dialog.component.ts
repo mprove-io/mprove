@@ -330,7 +330,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     let newMconfig = Object.assign(mconfigCopy, <MconfigX>{
       mconfigId: newMconfigId,
       queryId: this.query.queryId,
-      temp: true,
       serverTs: 1
     });
 
@@ -551,7 +550,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       let newMconfig = Object.assign(mconfigCopy, <MconfigX>{
         mconfigId: newMconfigId,
         queryId: newQueryId,
-        temp: true,
         serverTs: 1
       });
 

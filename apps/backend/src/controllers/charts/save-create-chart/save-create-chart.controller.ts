@@ -352,8 +352,6 @@ export class SaveCreateChartController {
       apiMconfig: apiMconfig
     });
 
-    newMconfig.temp = true;
-
     let newQuery = this.queriesService.apiToTab({
       apiQuery: apiQuery
     });

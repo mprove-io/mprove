@@ -256,7 +256,6 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 limit: 500,
                 filters: [],
                 chart: makeCopy(DEFAULT_CHART),
-                temp: true,
                 serverTs: 1
               };
 

@@ -183,7 +183,6 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                     ]
                   : [],
                 chart: makeCopy(DEFAULT_CHART),
-                temp: true,
                 serverTs: 1
               };
 

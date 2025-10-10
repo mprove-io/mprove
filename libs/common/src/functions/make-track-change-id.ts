@@ -9,7 +9,6 @@ export function makeTrackChangeId(item: { mconfig: Mconfig; query: Query }) {
     Object.assign({}, mconfig, <Mconfig>{
       mconfigId: undefined,
       compiledQuery: undefined,
-      temp: undefined,
       serverTs: undefined
     });
   // )

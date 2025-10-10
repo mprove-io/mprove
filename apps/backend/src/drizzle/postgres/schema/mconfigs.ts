@@ -1,12 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import {
-  bigint,
-  boolean,
-  index,
-  pgTable,
-  text,
-  varchar
-} from 'drizzle-orm/pg-core';
+import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 
 export const mconfigsTable = pgTable(
@@ -17,7 +10,6 @@ export const mconfigsTable = pgTable(
     queryId: varchar('query_id', { length: 64 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
     modelType: varchar('model_type').$type<ModelTypeEnum>(),
-    temp: boolean('temp').notNull(),
     // dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
     // storePart: json('store_part').$type<StorePart>(),
     // modelLabel: varchar('model_label'),

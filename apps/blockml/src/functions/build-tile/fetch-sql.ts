@@ -121,7 +121,6 @@ export async function fetchSql<T extends dcType>(
         limit: undefined,
         filters: [],
         chart: makeCopy(DEFAULT_CHART),
-        temp: true,
         serverTs: 1
         // fields: [],
         // extendedFilters: [],

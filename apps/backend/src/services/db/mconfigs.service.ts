@@ -102,7 +102,6 @@ export class MconfigsService {
       limit: mconfig.limit,
       filters: mconfig.filters,
       chart: mconfig.chart,
-      temp: mconfig.temp,
       serverTs: mconfig.serverTs
     };
 
@@ -122,7 +121,6 @@ export class MconfigsService {
       mconfigId: apiMconfig.mconfigId,
       modelId: apiMconfig.modelId,
       modelType: apiMconfig.modelType,
-      temp: apiMconfig.temp,
       dateRangeIncludesRightSide: apiMconfig.dateRangeIncludesRightSide,
       storePart: apiMconfig.storePart,
       modelLabel: apiMconfig.modelLabel,
@@ -311,7 +309,6 @@ export class MconfigsService {
     };
 
     newMconfig.queryId = newQuery.queryId;
-    newMconfig.temp = true;
     newMconfig.storePart = {
       reqTemplate: model.storeContent.request,
       reqFunction: processedRequest.userCode,

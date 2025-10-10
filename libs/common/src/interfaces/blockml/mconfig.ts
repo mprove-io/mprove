@@ -83,9 +83,6 @@ export class Mconfig {
   @Type(() => MconfigChart)
   chart: MconfigChart;
 
-  @IsBoolean()
-  temp: boolean;
-
   @IsInt()
   serverTs: number;
 }

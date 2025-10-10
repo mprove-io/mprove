@@ -1,0 +1,1 @@
+ALTER TABLE "mconfigs" DROP COLUMN IF EXISTS "temp";

@@ -149,8 +149,7 @@ export class DuplicateMconfigAndQueryController {
 
     let newMconfig = Object.assign({}, oldMconfig, <MconfigEnt>{
       mconfigId: newMconfigId,
-      queryId: newQueryId,
-      temp: true
+      queryId: newQueryId
     });
 
     let newQuery = Object.assign({}, oldQuery, <QueryEnt>{

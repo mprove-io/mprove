@@ -379,7 +379,6 @@ export class TabToEntService {
       queryId: mconfig.queryId,
       modelId: mconfig.modelId,
       modelType: mconfig.modelType,
-      temp: mconfig.temp,
       st: this.tabService.encrypt({ data: mconfigSt }),
       lt: this.tabService.encrypt({ data: mconfigLt }),
       serverTs: mconfig.serverTs

@@ -42,7 +42,6 @@ export const emptyMconfig: MconfigX = {
   extendedFilters: [],
   fields: [],
   chart: undefined,
-  temp: true,
   serverTs: 1
 };
 

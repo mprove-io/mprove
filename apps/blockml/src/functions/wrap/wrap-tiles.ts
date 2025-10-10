@@ -266,7 +266,6 @@ export function wrapTiles(item: {
         a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
       ),
       chart: mconfigChart,
-      temp: false,
       serverTs: 1
     };
 

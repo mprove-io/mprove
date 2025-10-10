@@ -452,7 +452,6 @@ export class ReportDataService {
                 : timeColumnsLimit,
             filters: model.type === ModelTypeEnum.Malloy ? [] : filters,
             chart: makeCopy(DEFAULT_CHART),
-            temp: true,
             serverTs: 1
             // fields: [],
             // extendedFilters: [],

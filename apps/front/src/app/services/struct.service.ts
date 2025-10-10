@@ -85,7 +85,6 @@ export class StructService {
       filters: [],
       extendedFilters: [],
       chart: makeCopy(DEFAULT_CHART),
-      temp: true,
       serverTs: 1
     };
 
@@ -95,7 +94,6 @@ export class StructService {
       ? Object.assign(mconfigCopy, <MconfigX>{
           mconfigId: newMconfigId,
           queryId: newQueryId,
-          temp: true,
           serverTs: 1
         })
       : emptyMconfig;

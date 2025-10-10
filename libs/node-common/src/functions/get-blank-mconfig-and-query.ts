@@ -74,7 +74,6 @@ export function getBlankMconfigAndQuery(item: {
     limit: 500,
     filters: [],
     chart: makeCopy(DEFAULT_CHART),
-    temp: false,
     serverTs: 1
   };
 

@@ -151,12 +151,10 @@ export class GetChartController {
       //     mconfigId: newMconfigId,
       //     queryId: newQueryId,
       //     timezone: timezone,
-      //     temp: true
       //   });
 
       newMconfig.mconfigId = makeId();
       newMconfig.timezone = timezone;
-      newMconfig.temp = true;
 
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
