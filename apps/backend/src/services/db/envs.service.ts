@@ -5,10 +5,7 @@ import { EnvTab, MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
-import {
-  MemberEnt,
-  membersTable
-} from '~backend/drizzle/postgres/schema/members';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
@@ -170,7 +167,7 @@ export class EnvsService {
   async getEnvCheckExistsAndAccess(item: {
     projectId: string;
     envId: string;
-    member: MemberEnt;
+    member: MemberTab;
   }) {
     let { projectId, envId, member } = item;
 

@@ -6,9 +6,9 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -20,9 +20,9 @@ import {
 @Controller()
 export class GetBranchesListController {
   constructor(
+    private branchesService: BranchesService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -41,15 +41,19 @@ export class GetBranchesListController {
       projectId: projectId
     });
 
-    let branches = await this.db.drizzle.query.branchesTable.findMany({
-      where: and(
-        eq(branchesTable.projectId, projectId),
-        inArray(branchesTable.repoId, [PROD_REPO_ID, user.userId])
-      ),
-      orderBy: asc(branchesTable.branchId)
-    });
+    let branches = await this.db.drizzle.query.branchesTable
+      .findMany({
+        where: and(
+          eq(branchesTable.projectId, projectId),
+          inArray(branchesTable.repoId, [PROD_REPO_ID, user.userId])
+        ),
+        orderBy: asc(branchesTable.branchId)
+      })
+      .then(xs => xs.map(x => this.branchesService.entToTab(x)));
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiMember = this.membersService.tabToApi({
+      member: userMember
+    });
 
     let payload: ToBackendGetBranchesListResponsePayload = {
       userMember: apiMember,

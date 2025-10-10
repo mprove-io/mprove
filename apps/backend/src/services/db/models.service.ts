@@ -99,7 +99,7 @@ export class ModelsService {
     return model;
   }
 
-  async getModelTabCheckExists(item: {
+  async getModelCheckExists(item: {
     modelId: string;
     structId: string;
   }): Promise<ModelTab> {
