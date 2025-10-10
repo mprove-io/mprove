@@ -6,10 +6,10 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { ConnectionsService } from '~backend/services/db/connections.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -22,10 +22,10 @@ import {
 @Controller()
 export class GetConnectionsController {
   constructor(
+    private connectionsService: ConnectionsService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -85,10 +85,10 @@ export class GetConnectionsController {
       });
     }
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendGetConnectionsResponsePayload = {
-      userMember: apiMember,
+      userMember: apiUserMember,
       connections: connections
         .sort((a, b) =>
           a.connectionId > b.connectionId
@@ -98,7 +98,7 @@ export class GetConnectionsController {
               : 0
         )
         .map(x =>
-          this.wrapToApiService.wrapToApiProjectConnection({
+          this.connectionsService.tabToApiProjectConnection({
             connection: x,
             isIncludePasswords: false
           })

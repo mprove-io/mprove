@@ -19,8 +19,9 @@ import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendDeleteConnectionRequest } from '~common/interfaces/to-backend/connections/to-backend-delete-connection';
@@ -32,6 +33,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteConnectionController {
   constructor(
+    private bridgesService: BridgesService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
@@ -55,12 +57,14 @@ export class DeleteConnectionController {
       projectId: projectId
     });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, projectId),
-        eq(bridgesTable.envId, envId)
-      )
-    });
+    let branchBridges = await this.db.drizzle.query.bridgesTable
+      .findMany({
+        where: and(
+          eq(bridgesTable.projectId, projectId),
+          eq(bridgesTable.envId, envId)
+        )
+      })
+      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
 
     await forEachSeries(branchBridges, async x => {
       x.needValidate = true;

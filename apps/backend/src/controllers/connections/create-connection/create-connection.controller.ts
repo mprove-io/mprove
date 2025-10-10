@@ -18,12 +18,11 @@ import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { ConnectionsService } from '~backend/services/connections.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { EntMakerService } from '~backend/services/maker.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ConnectionsService } from '~backend/services/db/connections.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -43,11 +42,10 @@ let retry = require('async-retry');
 export class CreateConnectionController {
   constructor(
     private projectsService: ProjectsService,
+    private bridgesService: BridgesService,
     private connectionsService: ConnectionsService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private entMakerService: EntMakerService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -96,7 +94,7 @@ export class CreateConnectionController {
       member: member
     });
 
-    let newConnection = this.entMakerService.makeConnection({
+    let newConnection = this.connectionsService.makeConnection({
       projectId: projectId,
       envId: envId,
       connectionId: connectionId,
@@ -104,12 +102,14 @@ export class CreateConnectionController {
       options: options
     });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, projectId),
-        eq(bridgesTable.envId, envId)
-      )
-    });
+    let branchBridges = await this.db.drizzle.query.bridgesTable
+      .findMany({
+        where: and(
+          eq(bridgesTable.projectId, projectId),
+          eq(bridgesTable.envId, envId)
+        )
+      })
+      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
 
     await forEachSeries(branchBridges, async x => {
       x.needValidate = true;
@@ -133,7 +133,7 @@ export class CreateConnectionController {
     );
 
     let payload: ToBackendCreateConnectionResponsePayload = {
-      connection: this.wrapToApiService.wrapToApiProjectConnection({
+      connection: this.connectionsService.tabToApiProjectConnection({
         connection: newConnection,
         isIncludePasswords: false
       })
