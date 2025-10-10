@@ -3,7 +3,7 @@ import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.e
 import { FilterX } from '~common/interfaces/backend/filter-x';
 
 export function makeDashboardFiltersX(item: { dashboard: DashboardTab }) {
-  let filtersX: FilterX[] = item.dashboard.st.fields.map(field => {
+  let filtersX: FilterX[] = item.dashboard.fields.map(field => {
     let filterX: FilterX = {
       fieldId: field.id,
       fractions: field.fractions.sort((a, b) => {

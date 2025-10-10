@@ -18,7 +18,7 @@ export function checkModelAccess(item: {
     return true;
   }
 
-  if (modelAccessRoles.some(x => member.st.roles.includes(x)) === false) {
+  if (modelAccessRoles.some(x => member.roles.includes(x)) === false) {
     return false;
   }
 

@@ -41,7 +41,7 @@ import { ConnectionTab, UserTab } from './drizzle/postgres/schema/_tabs';
 import { connectionsTable } from './drizzle/postgres/schema/connections';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
 import { projectsTable } from './drizzle/postgres/schema/projects';
-import { UserEnt, usersTable } from './drizzle/postgres/schema/users';
+import { usersTable } from './drizzle/postgres/schema/users';
 import { getRetryOption } from './functions/get-retry-option';
 import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
@@ -239,11 +239,9 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
 })
 export class AppModule implements OnModuleInit {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
     private usersService: UsersService,
     private orgsService: OrgsService,
     private projectsService: ProjectsService,
-    private entMakerService: EntMakerService,
     private connectionsService: ConnectionsService,
     private hashService: HashService,
     private tabService: TabService,
@@ -322,7 +320,7 @@ export class AppModule implements OnModuleInit {
           BackendConfig['mproveAdminInitialPassword']
         >('mproveAdminInitialPassword');
 
-        let mproveAdminUser: UserEnt;
+        let mproveAdminUser: UserTab;
 
         if (
           isDefinedAndNotEmpty(mproveAdminEmail) &&
@@ -331,9 +329,11 @@ export class AppModule implements OnModuleInit {
           let mproveAdminEmailHash =
             this.hashService.makeHash(mproveAdminEmail);
 
-          mproveAdminUser = await this.db.drizzle.query.usersTable.findFirst({
-            where: eq(usersTable.emailHash, mproveAdminEmailHash)
-          });
+          mproveAdminUser = await this.db.drizzle.query.usersTable
+            .findFirst({
+              where: eq(usersTable.emailHash, mproveAdminEmailHash)
+            })
+            .then(x => this.usersService.entToTab(x));
 
           if (isUndefined(mproveAdminUser)) {
             mproveAdminUser = await this.usersService.addMproveAdminUser({
@@ -361,18 +361,16 @@ export class AppModule implements OnModuleInit {
           isDefinedAndNotEmpty(demoOrgId) &&
           isDefinedAndNotEmpty(demoProjectId)
         ) {
-          let firstOrg = await this.db.drizzle.query.orgsTable.findFirst({
-            where: eq(orgsTable.orgId, demoOrgId)
-          });
+          let firstOrg = await this.db.drizzle.query.orgsTable
+            .findFirst({
+              where: eq(orgsTable.orgId, demoOrgId)
+            })
+            .then(x => this.orgsService.entToTab(x));
 
           if (isUndefined(firstOrg)) {
-            let mproveAdminUserTab = this.tabService.decrypt<UserTab>({
-              encryptedString: mproveAdminUser.tab
-            });
-
             firstOrg = await this.orgsService.addOrg({
               ownerId: mproveAdminUser.userId,
-              ownerEmail: mproveAdminUserTab.email,
+              ownerEmail: mproveAdminUser.email,
               name: DEMO_ORG_NAME,
               traceId: makeId(),
               orgId: demoOrgId
@@ -477,7 +475,7 @@ export class AppModule implements OnModuleInit {
               fse.readFileSync(demoProjectDwhBigqueryCredentialsPath).toString()
             );
 
-            let c3 = this.entMakerService.makeConnection({
+            let c3 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c3_bigquery',
@@ -512,7 +510,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c4connection) &&
             isDefinedAndNotEmpty(demoProjectDwhSnowflakeAccount)
           ) {
-            let c4 = this.entMakerService.makeConnection({
+            let c4 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c4_snowflake',
@@ -554,7 +552,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c5connection) &&
             isDefinedAndNotEmpty(demoProjectDwhMotherDuckToken)
           ) {
-            let c5 = this.entMakerService.makeConnection({
+            let c5 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c5_duckdb',
@@ -589,7 +587,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c6connection) &&
             isDefinedAndNotEmpty(demoProjectDwhMysqlPassword)
           ) {
-            let c6 = this.entMakerService.makeConnection({
+            let c6 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c6_mysql',
@@ -639,7 +637,7 @@ export class AppModule implements OnModuleInit {
                 .toString()
             );
 
-            let c7 = this.entMakerService.makeConnection({
+            let c7 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c7_google',
@@ -680,7 +678,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c8connection) &&
             isDefinedAndNotEmpty(demoProjectDwhTrinoUser)
           ) {
-            let c8 = this.entMakerService.makeConnection({
+            let c8 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c8_trino',
@@ -719,7 +717,7 @@ export class AppModule implements OnModuleInit {
             isUndefined(c9connection) &&
             isDefinedAndNotEmpty(demoProjectDwhPrestoUser)
           ) {
-            let c9 = this.entMakerService.makeConnection({
+            let c9 = this.connectionsService.makeConnection({
               projectId: demoProjectId,
               envId: PROJECT_ENV_PROD,
               connectionId: 'c9_presto',
@@ -756,11 +754,11 @@ export class AppModule implements OnModuleInit {
             getRetryOption(this.cs, this.logger)
           );
 
-          let demoProject = await this.db.drizzle.query.projectsTable.findFirst(
-            {
+          let demoProject = await this.db.drizzle.query.projectsTable
+            .findFirst({
               where: eq(projectsTable.projectId, demoProjectId)
-            }
-          );
+            })
+            .then(x => this.projectsService.entToTab(x));
 
           if (isUndefined(demoProject)) {
             let demoProjectRemoteType = this.cs.get<
@@ -812,12 +810,7 @@ export class AppModule implements OnModuleInit {
               privateKey: privateKey,
               publicKey: publicKey,
               evs: [ev1],
-              connections: connections.map(x =>
-                this.wrapToApiService.wrapToApiProjectConnection({
-                  connection: x,
-                  isIncludePasswords: true
-                })
-              )
+              connections: connections
             });
           }
         }

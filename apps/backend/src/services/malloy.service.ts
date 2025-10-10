@@ -2,11 +2,11 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { MconfigTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
 import { ServerError } from '~common/models/server-error';
 import { makeMalloyConnections } from '~node-common/functions/make-malloy-connections';
@@ -29,12 +29,10 @@ export class MalloyService {
     envId: string;
     structId: string;
     model: Model;
-    mconfig: Mconfig;
+    mconfig: MconfigTab;
     queryOperations: QueryOperation[];
   }) {
     let { projectId, envId, structId, model, mconfig, queryOperations } = item;
-
-    let startEditMalloyQuery = Date.now();
 
     let { apiEnv, connectionsWithFallback } =
       await this.envsService.getApiEnvConnectionsWithFallback({

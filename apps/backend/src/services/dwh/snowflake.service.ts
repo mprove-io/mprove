@@ -14,12 +14,14 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
+import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class SnowFlakeService {
   constructor(
+    private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -35,11 +37,11 @@ export class SnowFlakeService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let options: snowflake.ConnectionOptions = {
-      account: connection.tab.options.snowflake.account,
-      warehouse: connection.tab.options.snowflake.warehouse,
-      database: connection.tab.options.snowflake.database,
-      username: connection.tab.options.snowflake.username,
-      password: connection.tab.options.snowflake.password
+      account: connection.options.snowflake.account,
+      warehouse: connection.options.snowflake.warehouse,
+      database: connection.options.snowflake.database,
+      username: connection.options.snowflake.username,
+      password: connection.options.snowflake.password
       //  schema?: string | undefined;
       //  role?: string | undefined;
       //  clientSessionKeepAlive?: boolean | undefined;
@@ -95,13 +97,15 @@ export class SnowFlakeService {
       // fetchAsString: ['Number', 'Date']
     })
       .then(async (data: any) => {
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+        let q = await this.db.drizzle.query.queriesTable
+          .findFirst({
+            where: and(
+              eq(queriesTable.queryId, queryId),
+              eq(queriesTable.queryJobId, queryJobId),
+              eq(queriesTable.projectId, projectId)
+            )
+          })
+          .then(x => this.queriesService.entToTab(x));
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
@@ -177,13 +181,15 @@ export class SnowFlakeService {
   }) {
     let { e, queryId, queryJobId, projectId } = item;
 
-    let q = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.queryJobId, queryJobId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let q = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.queryJobId, queryJobId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

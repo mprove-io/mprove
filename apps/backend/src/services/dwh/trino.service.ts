@@ -12,12 +12,14 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class TrinoService {
   constructor(
+    private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -33,12 +35,12 @@ export class TrinoService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let connectionOptions: TrinoConnectionConfiguration = {
-      server: connection.tab.options.trino.server,
-      catalog: connection.tab.options.trino.catalog,
-      schema: connection.tab.options.trino.schema,
-      user: connection.tab.options.trino.user,
-      password: connection.tab.options.trino.password,
-      extraConfig: connection.tab.options.trino.extraConfig
+      server: connection.options.trino.server,
+      catalog: connection.options.trino.catalog,
+      schema: connection.options.trino.schema,
+      user: connection.options.trino.user,
+      password: connection.options.trino.password,
+      extraConfig: connection.options.trino.extraConfig
     };
 
     let tc = Trino.create({
@@ -54,13 +56,15 @@ export class TrinoService {
       .then(async result => {
         let queryResult = await result.next();
 
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+        let q = await this.db.drizzle.query.queriesTable
+          .findFirst({
+            where: and(
+              eq(queriesTable.queryId, queryId),
+              eq(queriesTable.queryJobId, queryJobId),
+              eq(queriesTable.projectId, projectId)
+            )
+          })
+          .then(x => this.queriesService.entToTab(x));
 
         if (isDefined(q) || isUndefined(queryResult?.value)) {
           if (
@@ -143,13 +147,15 @@ export class TrinoService {
   }) {
     let { e, queryId, queryJobId, projectId } = item;
 
-    let q = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.queryJobId, queryJobId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let q = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.queryJobId, queryJobId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

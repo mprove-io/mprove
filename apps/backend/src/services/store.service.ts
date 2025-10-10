@@ -26,11 +26,11 @@ import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
 import { MyRegex } from '~common/models/my-regex';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
+import { QueriesService } from './db/queries.service';
 import { UserCodeService } from './user-code.service';
 
 let retry = require('async-retry');
 let axios = require('axios');
-const { JWT } = require('google-auth-library');
 
 export interface StoreUserCodeReturn {
   userCode: string;
@@ -41,6 +41,7 @@ export interface StoreUserCodeReturn {
 @Injectable()
 export class StoreService {
   constructor(
+    private queriesService: QueriesService,
     private userCodeService: UserCodeService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -53,7 +54,7 @@ export class StoreService {
     caseSensitiveStringFilters: boolean;
     metricsStartDateYYYYMMDD: string;
     metricsEndDateYYYYMMDD: string;
-  }) {
+  }): Promise<MconfigTab> {
     let {
       model,
       mconfig,
@@ -450,13 +451,15 @@ ${inputSub}
     // console.log('store runQuery start');
     // let tsStart = Date.now();
 
-    let queryStart = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.queryJobId, queryJobId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let queryStart = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.queryJobId, queryJobId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
     try {
       let body = queryStart.apiBody;
@@ -468,16 +471,16 @@ ${inputSub}
       let response;
 
       if (connection.type === ConnectionTypeEnum.Api) {
-        connection.tab.options.storeApi.headers.forEach(header => {
+        connection.options.storeApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
       } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
-        connection.tab.options.storeGoogleApi.headers.forEach(header => {
+        connection.options.storeGoogleApi.headers.forEach(header => {
           headers[header.key] = header.value;
         });
 
         headers['Authorization'] =
-          `Bearer ${connection.tab.options.storeGoogleApi.googleAccessToken}`;
+          `Bearer ${connection.options.storeGoogleApi.googleAccessToken}`;
 
         headers['Content-Type'] = 'application/json';
       }
@@ -503,13 +506,15 @@ ${inputSub}
       //   response.data.rows.length > 0 ? response.data.rows[0] : undefined
       // );
 
-      let q = await this.db.drizzle.query.queriesTable.findFirst({
-        where: and(
-          eq(queriesTable.queryId, queryId),
-          eq(queriesTable.queryJobId, queryJobId),
-          eq(queriesTable.projectId, projectId)
-        )
-      });
+      let q = await this.db.drizzle.query.queriesTable
+        .findFirst({
+          where: and(
+            eq(queriesTable.queryId, queryId),
+            eq(queriesTable.queryJobId, queryJobId),
+            eq(queriesTable.projectId, projectId)
+          )
+        })
+        .then(x => this.queriesService.entToTab(x));
 
       if (isDefined(q)) {
         if (response.status !== 200 && response.status !== 201) {
@@ -565,13 +570,15 @@ ${inputSub}
       // console.log('errr:');
       // console.log(e);
 
-      let q = await this.db.drizzle.query.queriesTable.findFirst({
-        where: and(
-          eq(queriesTable.queryId, queryId),
-          eq(queriesTable.queryJobId, queryJobId),
-          eq(queriesTable.projectId, projectId)
-        )
-      });
+      let q = await this.db.drizzle.query.queriesTable
+        .findFirst({
+          where: and(
+            eq(queriesTable.queryId, queryId),
+            eq(queriesTable.queryJobId, queryJobId),
+            eq(queriesTable.projectId, projectId)
+          )
+        })
+        .then(x => this.queriesService.entToTab(x));
 
       if (isDefined(q)) {
         q.status = QueryStatusEnum.Error;

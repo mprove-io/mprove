@@ -1,6 +1,6 @@
 import { BigQuery, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
-import { QueryEnx } from '~backend/drizzle/postgres/schema/queries';
+import { QueryTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -13,9 +13,9 @@ export class BigQueryService {
 
   async runQuery(item: {
     userId: string;
-    query: QueryEnx;
+    query: QueryTab;
     connection: ProjectConnection;
-  }): Promise<QueryEnx> {
+  }): Promise<QueryTab> {
     let { query, userId, connection } = item;
 
     let bigquery = new BigQuery({
@@ -37,13 +37,13 @@ export class BigQueryService {
         destination: undefined,
         dryRun: false,
         useLegacySql: false,
-        query: query.tab.sql,
+        query: query.sql,
         maximumBytesBilled: maximumBytesBilled.toString()
       })
       .catch(e => {
         query.status = QueryStatusEnum.Error;
-        query.tab.data = [];
-        query.tab.lastErrorMessage = e.message;
+        query.data = [];
+        query.lastErrorMessage = e.message;
         query.lastErrorTs = makeTsNumber();
       });
 
@@ -59,13 +59,13 @@ export class BigQueryService {
   }
 
   async runQueryDry(item: {
-    query: QueryEnx;
+    query: QueryTab;
     connection: ProjectConnection;
   }) {
     let { query, connection } = item;
 
     let validEstimate: QueryEstimate;
-    let errorQuery: QueryEnx;
+    let errorQuery: QueryTab;
 
     let bigquery = new BigQuery({
       credentials: connection.options.bigquery.serviceAccountCredentials,
@@ -77,12 +77,12 @@ export class BigQueryService {
         destination: undefined,
         dryRun: true,
         useLegacySql: false,
-        query: query.tab.sql
+        query: query.sql
       })
       .catch(e => {
         query.status = QueryStatusEnum.Error;
-        query.tab.data = [];
-        query.tab.lastErrorMessage = e.message;
+        query.data = [];
+        query.lastErrorMessage = e.message;
         query.lastErrorTs = makeTsNumber();
 
         errorQuery = query;

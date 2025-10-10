@@ -4,22 +4,21 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { KitEnt, kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import {
-  MconfigEnt,
-  mconfigsTable
-} from '~backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
+  KitTab,
+  MconfigTab,
+  MemberTab,
+  ProjectTab,
+  QueryTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
+import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
+import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
-import {
-  QueryEnt,
-  queriesTable
-} from '~backend/drizzle/postgres/schema/queries';
-import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
-import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
-import { checkAccess } from '~backend/functions/check-access';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '~common/constants/top';
@@ -44,20 +43,20 @@ import { Member } from '~common/interfaces/backend/member';
 import { Filter } from '~common/interfaces/blockml/filter';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { Parameter } from '~common/interfaces/blockml/parameter';
-import { Query } from '~common/interfaces/blockml/query';
 import { RowRecord } from '~common/interfaces/blockml/row-record';
 import { Rq } from '~common/interfaces/blockml/rq';
 import { Sorting } from '~common/interfaces/blockml/sorting';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
+import { KitsService } from './db/kits.service';
+import { MconfigsService } from './db/mconfigs.service';
+import { ModelsService } from './db/models.service';
+import { QueriesService } from './db/queries.service';
+import { ReportsService } from './db/reports.service';
 import { DocService } from './doc.service';
 import { MalloyService } from './malloy.service';
-import { MconfigsService } from './mconfigs.service';
 import { ReportTimeColumnsService } from './report-time-columns.service';
-import { WrapEnxToApiService } from './wrap-to-api.service';
-import { WrapToEntService } from './wrap-to-ent.service';
 
 let retry = require('async-retry');
 
@@ -66,10 +65,12 @@ export class ReportDataService {
   constructor(
     private docService: DocService,
     private malloyService: MalloyService,
+    private modelsService: ModelsService,
+    private reportsService: ReportsService,
     private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
+    private kitsService: KitsService,
     private reportTimeColumnsService: ReportTimeColumnsService,
-    private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -80,15 +81,15 @@ export class ReportDataService {
     timezone: string;
     timeSpec: TimeSpecEnum;
     timeRangeFractionBrick: string;
-    struct: StructEnt;
+    struct: StructTab;
     metrics: ModelMetric[];
-    report: ReportEnt;
+    report: ReportTab;
     // queryOperation?: QueryOperation;
-    project: ProjectEnt;
+    project: ProjectTab;
     envId: string;
     userMemberApi: Member;
-    userMember: MemberEnt;
-    user: UserEnt;
+    userMember: MemberTab;
+    user: UserTab;
     isSaveToDb?: boolean;
   }) {
     let {
@@ -162,12 +163,14 @@ export class ReportDataService {
       .filter(m => isDefined(m.modelId))
       .map(x => x.modelId);
 
-    let models = await this.db.drizzle.query.modelsTable.findMany({
-      where: and(
-        inArray(modelsTable.modelId, modelIds),
-        eq(modelsTable.structId, struct.structId)
-      )
-    });
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: and(
+          inArray(modelsTable.modelId, modelIds),
+          eq(modelsTable.structId, struct.structId)
+        )
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
 
     report.rows
       .filter(row => isDefined(row.parameters))
@@ -263,8 +266,8 @@ export class ReportDataService {
         row.parametersFiltersWithExcludedTime = filters;
       });
 
-    let newMconfigs: Mconfig[] = [];
-    let newQueries: Query[] = [];
+    let newMconfigs: MconfigTab[] = [];
+    let newQueries: QueryTab[] = [];
 
     let mconfigIds: string[] = [];
     let queryIds: string[] = [];
@@ -307,8 +310,8 @@ export class ReportDataService {
           kitIds.push(rq.kitId);
         }
       } else {
-        let newMconfig: Mconfig;
-        let newQuery: Query;
+        let newMconfig: MconfigTab;
+        let newQuery: QueryTab;
 
         if (x.rowType === RowTypeEnum.Metric) {
           let newMconfigId = makeId();
@@ -423,7 +426,7 @@ export class ReportDataService {
               ? `${timeFieldIdSpec} desc`
               : `${timeFieldIdSpec}`;
 
-          let mconfig: Mconfig = {
+          let mconfig: MconfigTab = {
             structId: struct.structId,
             mconfigId: newMconfigId,
             queryId: newQueryId,
@@ -541,7 +544,9 @@ export class ReportDataService {
               });
 
             newMconfig = editMalloyQueryResult.newMconfig;
-            newQuery = editMalloyQueryResult.newQuery;
+            newQuery = this.queriesService.apiToTab({
+              apiQuery: editMalloyQueryResult.newQuery
+            });
             isError = editMalloyQueryResult.isError;
 
             // console.log('newMconfig');
@@ -575,52 +580,59 @@ export class ReportDataService {
       }
     });
 
-    let mconfigs: MconfigEnt[] = [];
+    let mconfigs: MconfigTab[] = [];
     if (mconfigIds.length > 0) {
-      mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
-        where: and(
-          inArray(mconfigsTable.mconfigId, mconfigIds),
-          eq(mconfigsTable.structId, struct.structId)
-        )
-      });
+      mconfigs = await this.db.drizzle.query.mconfigsTable
+        .findMany({
+          where: and(
+            inArray(mconfigsTable.mconfigId, mconfigIds),
+            eq(mconfigsTable.structId, struct.structId)
+          )
+        })
+        .then(xs => xs.map(x => this.mconfigsService.entToTab(x)));
     }
 
-    let queries: QueryEnt[] = [];
+    let queries: QueryTab[] = [];
     if (queryIds.length > 0) {
-      queries = await this.db.drizzle.query.queriesTable.findMany({
-        where: and(
-          inArray(queriesTable.queryId, queryIds),
-          eq(queriesTable.projectId, project.projectId)
-        )
-      });
+      queries = await this.db.drizzle.query.queriesTable
+        .findMany({
+          where: and(
+            inArray(queriesTable.queryId, queryIds),
+            eq(queriesTable.projectId, project.projectId)
+          )
+        })
+        .then(xs => xs.map(x => this.queriesService.entToTab(x)));
     }
 
-    let kits: KitEnt[] = [];
+    let kits: KitTab[] = [];
     if (kitIds.length > 0) {
-      kits = await this.db.drizzle.query.kitsTable.findMany({
-        where: and(
-          inArray(kitsTable.kitId, kitIds),
-          eq(kitsTable.structId, report.structId)
-        )
-      });
+      kits = await this.db.drizzle.query.kitsTable
+        .findMany({
+          where: and(
+            inArray(kitsTable.kitId, kitIds),
+            eq(kitsTable.structId, report.structId)
+          )
+        })
+        .then(xs => xs.map(x => this.kitsService.entToTab(x)));
     }
 
-    let queriesApi = queries.map(x => this.wrapToApiService.wrapToApiQuery(x));
+    let queriesApi = queries.map(x =>
+      this.queriesService.tabToApi({ query: x })
+    );
 
     let mconfigsApi = mconfigs.map(x =>
-      this.wrapToApiService.wrapToApiMconfig({
+      this.mconfigsService.tabToApi({
         mconfig: x,
         modelFields: models.find(m => m.modelId === x.modelId).fields
       })
     );
 
-    let modelsApi = models.map(model =>
-      this.wrapToApiService.wrapEnxToApiModel({
-        model: model,
-        hasAccess: checkAccess({
-          userAlias: user.alias,
+    let modelsApi = models.map(x =>
+      this.modelsService.tabToApi({
+        model: x,
+        hasAccess: checkModelAccess({
           member: userMember,
-          entity: model
+          modelAccessRoles: x.accessRoles
         })
       })
     );
@@ -634,12 +646,12 @@ export class ReportDataService {
       );
 
       if (x.rowType === RowTypeEnum.Metric) {
-        let newMconfigsEnts = newMconfigs.map(m =>
-          this.wrapToEntService.wrapToEntityMconfig(m)
-        );
+        // let newMconfigsEnts = newMconfigs.map(m =>
+        //   this.mconfigsService.wrapToEntityMconfig(m)
+        // );
 
-        let newMconfigsApi = newMconfigsEnts.map(y =>
-          this.wrapToApiService.wrapToApiMconfig({
+        let newMconfigsApi = newMconfigs.map(y =>
+          this.mconfigsService.tabToApi({
             mconfig: y,
             modelFields: modelsApi.find(m => m.modelId === y.modelId).fields
           })
@@ -649,13 +661,19 @@ export class ReportDataService {
           y => y.mconfigId === rq.mconfigId
         );
 
-        x.query = [...queriesApi, ...newQueries].find(
+        let newQueriesApi = newQueries.map(y =>
+          this.queriesService.tabToApi({
+            query: y
+          })
+        );
+
+        x.query = [...queriesApi, ...newQueriesApi].find(
           y => y.queryId === rq.queryId
         );
       }
     });
 
-    let reportApi = this.wrapToApiService.wrapToApiReport({
+    let reportApi = this.reportsService.tabToApi({
       report: report,
       models: modelsApi,
       member: userMemberApi,
@@ -776,14 +794,10 @@ export class ReportDataService {
               await this.db.packer.write({
                 tx: tx,
                 insert: {
-                  mconfigs: newMconfigs.map(x =>
-                    this.wrapToEntService.wrapToEntityMconfig(x)
-                  )
+                  mconfigs: newMconfigs
                 },
                 insertOrDoNothing: {
-                  queries: newQueries.map(x =>
-                    this.wrapToEntService.wrapToEntityQuery(x)
-                  )
+                  queries: newQueries
                 }
               })
           ),

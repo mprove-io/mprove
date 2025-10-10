@@ -194,21 +194,21 @@ export function makeReportFileText(item: {
           x.rowType === RowTypeEnum.Metric &&
           metric.formatNumber === x.formatNumber
             ? undefined
-            : struct.lt.mproveConfig.formatNumber === x.formatNumber
+            : struct.mproveConfig.formatNumber === x.formatNumber
               ? undefined
               : x.formatNumber,
         currency_prefix:
           x.rowType === RowTypeEnum.Metric &&
           metric.currencyPrefix === x.currencyPrefix
             ? undefined
-            : struct.lt.mproveConfig.currencyPrefix === x.currencyPrefix
+            : struct.mproveConfig.currencyPrefix === x.currencyPrefix
               ? undefined
               : x.currencyPrefix,
         currency_suffix:
           x.rowType === RowTypeEnum.Metric &&
           metric.currencySuffix === x.currencySuffix
             ? undefined
-            : struct.lt.mproveConfig.currencySuffix === x.currencySuffix
+            : struct.mproveConfig.currencySuffix === x.currencySuffix
               ? undefined
               : x.currencySuffix,
         parameters:
@@ -284,7 +284,7 @@ export function makeReportFileText(item: {
 
                                 newFileControl.value =
                                   mconfigControl.isMetricsDate === true
-                                    ? model.lt.storeContent.fields
+                                    ? model.storeContent.fields
                                         .find(
                                           field =>
                                             field.fieldClass ===

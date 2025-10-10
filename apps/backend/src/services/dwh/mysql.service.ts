@@ -14,12 +14,14 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { ServerError } from '~common/models/server-error';
+import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class MysqlService {
   constructor(
+    private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -35,11 +37,11 @@ export class MysqlService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let connectionOptions: MYSQL.ConnectionOptions = {
-      host: connection.tab.options.mysql.host,
-      port: connection.tab.options.mysql.port,
-      database: connection.tab.options.mysql.database,
-      user: connection.tab.options.mysql.user,
-      password: connection.tab.options.mysql.password,
+      host: connection.options.mysql.host,
+      port: connection.options.mysql.port,
+      database: connection.options.mysql.database,
+      user: connection.options.mysql.user,
+      password: connection.options.mysql.password,
       multipleStatements: true,
       decimalNumbers: true,
       timezone: '+00:00'
@@ -82,13 +84,15 @@ export class MysqlService {
         // console.log('data');
         // console.log(data);
 
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+        let q = await this.db.drizzle.query.queriesTable
+          .findFirst({
+            where: and(
+              eq(queriesTable.queryId, queryId),
+              eq(queriesTable.queryJobId, queryJobId),
+              eq(queriesTable.projectId, projectId)
+            )
+          })
+          .then(x => this.queriesService.entToTab(x));
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
@@ -144,13 +148,15 @@ export class MysqlService {
   }) {
     let { e, queryId, queryJobId, projectId } = item;
 
-    let q = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.queryJobId, queryJobId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let q = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.queryJobId, queryJobId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

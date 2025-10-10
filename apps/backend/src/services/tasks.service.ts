@@ -5,8 +5,8 @@ import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ServerError } from '~common/models/server-error';
-import { QueriesService } from './queries.service';
-import { StructsService } from './structs.service';
+import { QueriesService } from './db/queries.service';
+import { StructsService } from './db/structs.service';
 
 @Injectable()
 export class TasksService {

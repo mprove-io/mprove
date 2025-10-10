@@ -2,8 +2,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
-import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+import { ProjectTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { PATH_CONFIRM_EMAIL } from '~common/constants/top';
 
 @Injectable()
@@ -31,7 +30,7 @@ export class EmailService {
   }
 
   async sendResetPassword(item: {
-    user: UserEnt;
+    user: UserTab;
     urlUpdatePassword: string;
   }) {
     let { user, urlUpdatePassword } = item;
@@ -45,8 +44,8 @@ export class EmailService {
 
   async sendInviteToVerifiedUser(item: {
     email: string;
-    user: UserEnt;
-    project: ProjectEnt;
+    user: UserTab;
+    project: ProjectTab;
     urlProjectMetrics: string;
   }) {
     let { email, user, project, urlProjectMetrics } = item;
@@ -60,8 +59,8 @@ export class EmailService {
 
   async sendInviteToUnverifiedUser(item: {
     email: string;
-    user: UserEnt;
-    project: ProjectEnt;
+    user: UserTab;
+    project: ProjectTab;
     urlCompleteRegistration: string;
   }) {
     let { email, user, project, urlCompleteRegistration } = item;

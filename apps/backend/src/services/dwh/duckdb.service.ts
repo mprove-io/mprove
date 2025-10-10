@@ -11,12 +11,14 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class DuckDbService {
   constructor(
+    private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -32,16 +34,16 @@ export class DuckDbService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let dbPath =
-      connection.tab.options.motherduck.attachModeSingle === true &&
-      connection.tab.options.motherduck.database?.length > 0
-        ? `md:${connection.tab.options.motherduck.database}?attach_mode=single&saas_mode=true`
-        : `md:${connection.tab.options.motherduck.database}?saas_mode=true`;
+      connection.options.motherduck.attachModeSingle === true &&
+      connection.options.motherduck.database?.length > 0
+        ? `md:${connection.options.motherduck.database}?attach_mode=single&saas_mode=true`
+        : `md:${connection.options.motherduck.database}?saas_mode=true`;
 
     let opts: Record<string, string> = {
-      motherduck_token: connection.tab.options.motherduck.motherduckToken
+      motherduck_token: connection.options.motherduck.motherduckToken
     };
 
-    if (connection.tab.options.motherduck.accessModeReadOnly === true) {
+    if (connection.options.motherduck.accessModeReadOnly === true) {
       opts.access_mode = 'READ_ONLY';
     }
 
@@ -81,13 +83,15 @@ export class DuckDbService {
           })
         );
 
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+        let q = await this.db.drizzle.query.queriesTable
+          .findFirst({
+            where: and(
+              eq(queriesTable.queryId, queryId),
+              eq(queriesTable.queryJobId, queryJobId),
+              eq(queriesTable.projectId, projectId)
+            )
+          })
+          .then(x => this.queriesService.entToTab(x));
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
@@ -198,13 +202,15 @@ export class DuckDbService {
   }) {
     let { e, queryId, queryJobId, projectId } = item;
 
-    let q = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.queryJobId, queryJobId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let q = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.queryJobId, queryJobId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

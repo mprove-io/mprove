@@ -11,12 +11,14 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class PgService {
   constructor(
+    private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -32,13 +34,13 @@ export class PgService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let cn: pg.IConnectionParameters<pg.IClient> = {
-      host: connection.tab.options.postgres.host,
-      port: connection.tab.options.postgres.port,
-      database: connection.tab.options.postgres.database,
-      user: connection.tab.options.postgres.username,
-      password: connection.tab.options.postgres.password,
+      host: connection.options.postgres.host,
+      port: connection.options.postgres.port,
+      database: connection.options.postgres.database,
+      user: connection.options.postgres.username,
+      password: connection.options.postgres.password,
       ssl:
-        connection.tab.options.postgres.isSSL === true
+        connection.options.postgres.isSSL === true
           ? {
               rejectUnauthorized: false
             }
@@ -51,13 +53,15 @@ export class PgService {
     await pgDb
       .any(querySql)
       .then(async (data: any) => {
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+        let q = await this.db.drizzle.query.queriesTable
+          .findFirst({
+            where: and(
+              eq(queriesTable.queryId, queryId),
+              eq(queriesTable.queryJobId, queryJobId),
+              eq(queriesTable.projectId, projectId)
+            )
+          })
+          .then(x => this.queriesService.entToTab(x));
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
@@ -103,13 +107,15 @@ export class PgService {
   }) {
     let { e, queryId, queryJobId, projectId } = item;
 
-    let q = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.queryJobId, queryJobId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let q = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.queryJobId, queryJobId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

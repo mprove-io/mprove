@@ -6,7 +6,7 @@ import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
+import { KitTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTs } from '~backend/functions/make-ts';
 import {
@@ -238,7 +238,7 @@ FROM main;`;
 
     let lastCalculatedTs = Number(makeTs());
 
-    let newKits: KitEnt[] = [];
+    let newKits: KitTab[] = [];
 
     report.rows
       .filter(
@@ -342,7 +342,7 @@ FROM main;`;
         if (row.rowType === RowTypeEnum.Formula) {
           rq.kitId = makeId();
 
-          let newKit: KitEnt = {
+          let newKit: KitTab = {
             structId: report.structId,
             kitId: rq.kitId,
             reportId: report.reportId,

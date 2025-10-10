@@ -10,12 +10,14 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class PrestoService {
   constructor(
+    private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -31,17 +33,17 @@ export class PrestoService {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
     let prestoClientConfig: PrestoClientConfig = {
-      catalog: connection.tab.options.presto.catalog,
-      host: connection.tab.options.presto.server,
-      port: connection.tab.options.presto.port,
-      schema: connection.tab.options.presto.schema,
-      user: connection.tab.options.presto.user,
+      catalog: connection.options.presto.catalog,
+      host: connection.options.presto.server,
+      port: connection.options.presto.port,
+      schema: connection.options.presto.schema,
+      user: connection.options.presto.user,
       basicAuthentication:
-        isDefined(connection.tab.options.presto.user) &&
-        isDefined(connection.tab.options.presto.password)
+        isDefined(connection.options.presto.user) &&
+        isDefined(connection.options.presto.password)
           ? {
-              user: connection.tab.options.presto.user,
-              password: connection.tab.options.presto.password
+              user: connection.options.presto.user,
+              password: connection.options.presto.password
             }
           : undefined,
       extraHeaders: { 'X-Presto-Session': 'legacy_unnest=true' }
@@ -64,13 +66,15 @@ export class PrestoService {
           return dRow;
         });
 
-        let q = await this.db.drizzle.query.queriesTable.findFirst({
-          where: and(
-            eq(queriesTable.queryId, queryId),
-            eq(queriesTable.queryJobId, queryJobId),
-            eq(queriesTable.projectId, projectId)
-          )
-        });
+        let q = await this.db.drizzle.query.queriesTable
+          .findFirst({
+            where: and(
+              eq(queriesTable.queryId, queryId),
+              eq(queriesTable.queryJobId, queryJobId),
+              eq(queriesTable.projectId, projectId)
+            )
+          })
+          .then(x => this.queriesService.entToTab(x));
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
@@ -118,13 +122,15 @@ export class PrestoService {
     // console.log(e.cause);
     // console.log(e.cause.message);
 
-    let q = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, queryId),
-        eq(queriesTable.queryJobId, queryJobId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let q = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, queryId),
+          eq(queriesTable.queryJobId, queryJobId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.queriesService.entToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

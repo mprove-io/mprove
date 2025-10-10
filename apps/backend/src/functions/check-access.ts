@@ -23,7 +23,7 @@ export function checkAccess(item: {
     return true;
   }
 
-  if (accessRoles.some(x => member.st.roles.includes(x)) === false) {
+  if (accessRoles.some(x => member.roles.includes(x)) === false) {
     return false;
   }
 

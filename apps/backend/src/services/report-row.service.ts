@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import { ModelTab, StructTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { clearRowsCache } from '~backend/functions/clear-rows-cache';
 import { processRowIds } from '~backend/functions/process-row-ids';
 import { ChangeTypeEnum } from '~common/enums/change-type.enum';
@@ -25,13 +24,13 @@ export class ReportRowService {
     rowChange: RowChange;
     rowIds: string[];
     metrics: ModelMetric[];
-    models: ModelEnt[];
+    models: ModelTab[];
     rows: Row[];
     changeType: ChangeTypeEnum;
     timezone: string;
     timeSpec: TimeSpecEnum;
     timeRangeFractionBrick: string;
-    struct: StructEnt;
+    struct: StructTab;
     newReportFields: ReportField[];
     listeners: Listener[];
   }) {

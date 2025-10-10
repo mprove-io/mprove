@@ -14,12 +14,14 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class ClickHouseService {
   constructor(
+    private queriesService: QueriesService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -36,13 +38,13 @@ export class ClickHouseService {
 
     let options: ClickHouseClientOptions = {
       protocol:
-        connection.tab.options.clickhouse.isSSL === true
+        connection.options.clickhouse.isSSL === true
           ? ClickHouseConnectionProtocol.HTTPS
           : ClickHouseConnectionProtocol.HTTP,
-      host: connection.tab.options.clickhouse.host,
-      port: connection.tab.options.clickhouse.port,
-      username: connection.tab.options.clickhouse.username,
-      password: connection.tab.options.clickhouse.password
+      host: connection.options.clickhouse.host,
+      port: connection.options.clickhouse.port,
+      username: connection.options.clickhouse.username,
+      password: connection.options.clickhouse.password
     };
 
     let clickhouse = new ClickHouseClient(options);
@@ -75,13 +77,15 @@ export class ClickHouseService {
           data.push(row);
         },
         complete: async () => {
-          let q = await this.db.drizzle.query.queriesTable.findFirst({
-            where: and(
-              eq(queriesTable.queryId, queryId),
-              eq(queriesTable.queryJobId, queryJobId),
-              eq(queriesTable.projectId, projectId)
-            )
-          });
+          let q = await this.db.drizzle.query.queriesTable
+            .findFirst({
+              where: and(
+                eq(queriesTable.queryId, queryId),
+                eq(queriesTable.queryJobId, queryJobId),
+                eq(queriesTable.projectId, projectId)
+              )
+            })
+            .then(x => this.queriesService.entToTab(x));
 
           if (isDefined(q)) {
             q.status = QueryStatusEnum.Completed;
@@ -111,13 +115,15 @@ export class ClickHouseService {
           }
         },
         error: async (e: any) => {
-          let q = await this.db.drizzle.query.queriesTable.findFirst({
-            where: and(
-              eq(queriesTable.queryId, queryId),
-              eq(queriesTable.queryJobId, queryJobId),
-              eq(queriesTable.projectId, projectId)
-            )
-          });
+          let q = await this.db.drizzle.query.queriesTable
+            .findFirst({
+              where: and(
+                eq(queriesTable.queryId, queryId),
+                eq(queriesTable.queryJobId, queryJobId),
+                eq(queriesTable.projectId, projectId)
+              )
+            })
+            .then(x => this.queriesService.entToTab(x));
 
           if (isDefined(q)) {
             q.status = QueryStatusEnum.Error;
