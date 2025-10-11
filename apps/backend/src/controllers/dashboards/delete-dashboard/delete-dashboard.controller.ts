@@ -21,14 +21,13 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { DashboardsService } from '~backend/services/dashboards.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { DashboardsService } from '~backend/services/db/dashboards.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -52,7 +51,6 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteDashboardController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
@@ -155,11 +153,8 @@ export class DeleteDashboardController {
     //   secondFileNodeId = pathParts.join('.');
     // }
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {
@@ -169,7 +164,7 @@ export class DeleteDashboardController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingDashboard.filePath,
@@ -187,13 +182,15 @@ export class DeleteDashboardController {
       checkIsOk: true
     });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, branch.repoId),
-        eq(bridgesTable.branchId, branch.branchId)
-      )
-    });
+    let branchBridges = await this.db.drizzle.query.bridgesTable
+      .findMany({
+        where: and(
+          eq(bridgesTable.projectId, branch.projectId),
+          eq(bridgesTable.repoId, branch.repoId),
+          eq(bridgesTable.branchId, branch.branchId)
+        )
+      })
+      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
@@ -201,17 +198,6 @@ export class DeleteDashboardController {
         x.needValidate = true;
       }
     });
-
-    // let { struct } = await this.blockmlService.rebuildStruct({
-    //   traceId: traceId,
-    //   projectId: projectId,
-    //   structId: bridge.structId,
-    //   diskFiles: diskResponse.payload.files,
-    //   mproveDir: diskResponse.payload.mproveDir,
-    //   skipDb: true,
-    //   envId: envId,
-    //   overrideTimezone: undefined
-    // });
 
     await retry(
       async () =>
@@ -228,7 +214,6 @@ export class DeleteDashboardController {
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              // structs: [struct],
               bridges: [...branchBridges]
             }
           });

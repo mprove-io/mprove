@@ -13,27 +13,29 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import {
+  MconfigTab,
+  QueryTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { DashboardsService } from '~backend/services/dashboards.service';
-import { EnvsService } from '~backend/services/envs.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { DashboardsService } from '~backend/services/db/dashboards.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { MalloyService } from '~backend/services/malloy.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -49,8 +51,6 @@ import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { TileX } from '~common/interfaces/backend/tile-x';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { Query } from '~common/interfaces/blockml/query';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import {
   ToBackendEditDraftDashboardRequest,
@@ -65,9 +65,9 @@ let retry = require('async-retry');
 @Controller()
 export class EditDraftDashboardController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
     private malloyService: MalloyService,
     private branchesService: BranchesService,
+    private modelsService: ModelsService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -75,9 +75,9 @@ export class EditDraftDashboardController {
     private structsService: StructsService,
     private dashboardsService: DashboardsService,
     private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -134,24 +134,18 @@ export class EditDraftDashboardController {
       projectId: projectId
     });
 
-    let fromDashboardEntity =
-      await this.dashboardsService.getDashboardCheckExists({
+    let fromDashboardX =
+      await this.dashboardsService.getDashboardXCheckExistsAndAccess({
+        dashboardId: oldDashboardId,
         structId: bridge.structId,
-        dashboardId: oldDashboardId
+        userMember: userMember,
+        projectId: projectId
       });
-
-    let fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
-      user: user,
-      member: userMember,
-      dashboard: fromDashboardEntity,
-      bridge: bridge,
-      projectId: projectId
-    });
 
     let yTiles: TileX[] = [];
 
     tiles.forEach(freshTile => {
-      let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
+      let yTile = fromDashboardX.tiles.find(y => freshTile.title === y.title);
 
       yTile.plateX = freshTile.plateX;
       yTile.plateY = freshTile.plateY;
@@ -168,8 +162,8 @@ export class EditDraftDashboardController {
       yTiles.push(yTile);
     });
 
-    fromDashboard.tiles = yTiles;
-    fromDashboard.fields = newDashboardFields;
+    fromDashboardX.tiles = yTiles;
+    fromDashboardX.fields = newDashboardFields;
 
     // oldDashboardId is not on disk because it is draft
     let newDashboardId = oldDashboardId;
@@ -215,10 +209,10 @@ export class EditDraftDashboardController {
       dashboardFileText
       // , malloyFileText
     } = makeDashboardFileText({
-      dashboard: fromDashboard,
+      dashboard: fromDashboardX,
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
-      roles: fromDashboard.accessRoles.join(', '),
+      roles: fromDashboardX.accessRoles.join(', '),
       caseSensitiveStringFilters:
         currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
@@ -267,113 +261,127 @@ export class EditDraftDashboardController {
 
     let modelIds = (tiles ?? []).map(tile => tile.modelId);
 
-    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
-      where: and(
-        eq(modelsTable.structId, bridge.structId),
-        inArray(modelsTable.modelId, modelIds)
-      )
+    let cachedModels = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: and(
+          eq(modelsTable.structId, bridge.structId),
+          inArray(modelsTable.modelId, modelIds)
+        )
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+
+    let {
+      struct: apiStruct,
+      dashboards: apiDashboards,
+      mconfigs: apiMconfigs,
+      models: apiModels,
+      queries: apiQueries
+    } = await this.blockmlService.rebuildStruct({
+      traceId: traceId,
+      projectId: projectId,
+      structId: bridge.structId,
+      diskFiles: diskFiles,
+      mproveDir: currentStruct.mproveConfig.mproveDirValue,
+      skipDb: true,
+      envId: envId,
+      overrideTimezone: timezone,
+      isUseCache: true,
+      cachedMproveConfig: currentStruct.mproveConfig,
+      cachedModels: cachedModels,
+      cachedMetrics: []
     });
 
-    let { struct, dashboards, mconfigs, models, queries } =
-      await this.blockmlService.rebuildStruct({
-        traceId: traceId,
-        projectId: projectId,
-        structId: bridge.structId,
-        diskFiles: diskFiles,
-        mproveDir: currentStruct.mproveConfig.mproveDirValue,
-        skipDb: true,
-        envId: envId,
-        overrideTimezone: timezone,
-        isUseCache: true,
-        cachedMproveConfig: currentStruct.mproveConfig,
-        cachedModels: cachedModels,
-        cachedMetrics: []
-      });
+    let newApiDashboard = apiDashboards.find(
+      x => x.dashboardId === newDashboardId
+    );
 
-    let newDashboard = dashboards.find(x => x.dashboardId === newDashboardId);
-
-    if (isUndefined(newDashboard)) {
+    if (isUndefined(newApiDashboard)) {
       throw new ServerError({
         message: ErEnum.BACKEND_EDIT_DRAFT_DASHBOARD_FAILED,
         displayData: {
-          structErrors: struct.errors
+          structErrors: apiStruct.errors
         }
       });
     }
 
-    newDashboard.draft = true;
-    newDashboard.creatorId = user.userId;
+    newApiDashboard.draft = true;
+    newApiDashboard.creatorId = user.userId;
 
-    let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
-    let dashboardMconfigs = mconfigs.filter(
+    let dashboardMconfigIds = newApiDashboard.tiles.map(x => x.mconfigId);
+    let dashboardMconfigs = apiMconfigs.filter(
       x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
     );
 
-    let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = queries.filter(
+    let dashboardQueryIds = newApiDashboard.tiles.map(x => x.queryId);
+    let dashboardQueries = apiQueries.filter(
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
 
-    let insertMconfigs: MconfigEnt[] = [];
-    let insertOrUpdateQueries: QueryEnt[] = [];
-    let insertOrDoNothingQueries: QueryEnt[] = [];
+    let insertMconfigs: MconfigTab[] = [];
+    let insertOrUpdateQueries: QueryTab[] = [];
+    let insertOrDoNothingQueries: QueryTab[] = [];
 
-    dashboardMconfigs
-      .filter(mconfig => mconfig.modelType !== ModelTypeEnum.Store)
-      // .filter(mconfig => mconfig.isStoreModel === false)
-      .forEach(mconfig => {
-        let query = dashboardQueries.find(y => y.queryId === mconfig.queryId);
+    let dashboardMalloyMconfigs = dashboardMconfigs.filter(
+      mconfig => mconfig.modelType === ModelTypeEnum.Malloy
+    );
 
-        insertMconfigs.push(this.wrapToEntService.wrapToEntityMconfig(mconfig));
+    dashboardMalloyMconfigs.forEach(apiMconfig => {
+      let mconfig = this.mconfigsService.apiToTab({ apiMconfig: apiMconfig });
 
-        insertOrDoNothingQueries.push(
-          this.wrapToEntService.wrapToEntityQuery(query)
-        );
-      });
+      insertMconfigs.push(mconfig);
 
-    await forEachSeries(dashboardMconfigs, async mconfig => {
-      let newMconfig: Mconfig;
-      let newQuery: Query;
+      let apiQuery = dashboardQueries.find(
+        y => y.queryId === apiMconfig.queryId
+      );
+
+      let query = this.queriesService.apiToTab({ apiQuery: apiQuery });
+
+      insertOrDoNothingQueries.push(query);
+    });
+
+    let dashboardStoreMconfigs = dashboardMconfigs.filter(
+      mconfig => mconfig.modelType === ModelTypeEnum.Store
+    );
+
+    await forEachSeries(dashboardStoreMconfigs, async mconfig => {
+      let newMconfig: MconfigTab;
+      let newQuery: QueryTab;
       let isError = false;
 
-      let model = models.find(y => y.modelId === mconfig.modelId);
+      let apiModel = apiModels.find(y => y.modelId === mconfig.modelId);
 
-      if (mconfig.modelType === ModelTypeEnum.Store) {
-        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-          struct: struct,
-          project: project,
-          envId: envId,
-          model: this.wrapToEntService.wrapToEntityModel(model),
-          mconfig: mconfig,
-          metricsStartDateYYYYMMDD: undefined,
-          metricsEndDateYYYYMMDD: undefined
-        });
+      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+        struct: apiStruct,
+        project: project,
+        envId: envId,
+        model: this.modelsService.apiToTab({ apiModel: apiModel }),
+        mconfig: mconfig,
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
+      });
 
-        newMconfig = mqe.newMconfig;
-        newQuery = mqe.newQuery;
-        isError = mqe.isError;
+      newMconfig = mqe.newMconfig;
+      newQuery = mqe.newQuery;
+      isError = mqe.isError;
 
-        let newDashboardTile = newDashboard.tiles.find(
-          tile => tile.mconfigId === mconfig.mconfigId
-        );
-        newDashboardTile.queryId = newMconfig.queryId;
-        newDashboardTile.mconfigId = newMconfig.mconfigId;
-        newDashboardTile.trackChangeId = makeId();
+      let newDashboardTile = newApiDashboard.tiles.find(
+        tile => tile.mconfigId === mconfig.mconfigId
+      );
+      newDashboardTile.queryId = newMconfig.queryId;
+      newDashboardTile.mconfigId = newMconfig.mconfigId;
+      newDashboardTile.trackChangeId = makeId();
 
-        insertMconfigs.push(
-          this.wrapToEntService.wrapToEntityMconfig(newMconfig)
-        );
+      insertMconfigs.push(newMconfig);
 
-        if (isError === true) {
-          insertOrUpdateQueries.push(
-            this.wrapToEntService.wrapToEntityQuery(newQuery)
-          );
-        } else {
-          insertOrDoNothingQueries.push(
-            this.wrapToEntService.wrapToEntityQuery(newQuery)
-          );
-        }
+      if (isError === true) {
+        insertOrUpdateQueries.push(newQuery);
+      } else {
+        insertOrDoNothingQueries.push(newQuery);
       }
+    });
+
+    let newDashboard = this.dashboardsService.apiToTab({
+      apiDashboard: newApiDashboard
     });
 
     await retry(
@@ -386,9 +394,7 @@ export class EditDraftDashboardController {
                 mconfigs: insertMconfigs
               },
               insertOrUpdate: {
-                dashboards: [
-                  this.wrapToEntService.wrapToEntityDashboard(newDashboard)
-                ],
+                dashboards: [newDashboard],
                 queries: insertOrUpdateQueries
               },
               insertOrDoNothing: {
@@ -399,13 +405,13 @@ export class EditDraftDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let newDashboardX = await this.dashboardsService.getDashboardXCheckAccess({
-      user: user,
-      member: userMember,
-      dashboard: this.wrapToEntService.wrapToEntityDashboard(newDashboard),
-      bridge: bridge,
-      projectId: projectId
-    });
+    let newDashboardX =
+      await this.dashboardsService.getDashboardXCheckExistsAndAccess({
+        dashboardId: newDashboard.dashboardId,
+        projectId: projectId,
+        structId: bridge.structId,
+        userMember: userMember
+      });
 
     let payload: ToBackendEditDraftDashboardResponsePayload = {
       dashboard: newDashboardX

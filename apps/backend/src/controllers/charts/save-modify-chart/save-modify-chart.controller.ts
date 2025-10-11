@@ -385,15 +385,7 @@ export class SaveModifyChartController {
 
     let isError = false;
 
-    // newMconfig.mconfigId = makeId();
-
     if (model.type === ModelTypeEnum.Store) {
-      // biome-ignore format: theme breaks
-      // let sMconfig = Object.assign({}, newMconfig, <MconfigTab>{
-      //   // queryId: makeId(),
-      //   timezone: timezone,
-      // });
-
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: apiStruct,
         project: project,

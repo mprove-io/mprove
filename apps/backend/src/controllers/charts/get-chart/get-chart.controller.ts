@@ -38,7 +38,6 @@ import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '~common/functions/make-id';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import {
   ToBackendGetChartRequest,
@@ -143,17 +142,6 @@ export class GetChartController {
     let isError = false;
 
     if (model.type === ModelTypeEnum.Store) {
-      // let newMconfigId = makeId();
-      // let newQueryId = makeId();
-
-      // biome-ignore format: theme breaks
-      // let sMconfig = Object.assign({}, chartMconfig, <MconfigTab>{
-      //     mconfigId: newMconfigId,
-      //     queryId: newQueryId,
-      //     timezone: timezone,
-      //   });
-
-      newMconfig.mconfigId = makeId();
       newMconfig.timezone = timezone;
 
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({

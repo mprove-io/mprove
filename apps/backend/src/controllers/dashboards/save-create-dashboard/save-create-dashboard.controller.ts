@@ -23,16 +23,17 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { DashboardsService } from '~backend/services/dashboards.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { DashboardsService } from '~backend/services/db/dashboards.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   EMPTY_STRUCT_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -68,17 +69,18 @@ let retry = require('async-retry');
 @Controller()
 export class SaveCreateDashboardController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
+    private modelsService: ModelsService,
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private dashboardsService: DashboardsService,
+    private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -185,27 +187,21 @@ export class SaveCreateDashboardController {
     let dashFileText: string;
     // let secondFileContent: string;
 
-    let fromDashboard: DashboardX;
+    let fromDashboardX: DashboardX;
 
     if (isDefined(fromDashboardId)) {
-      let fromDashboardEntity =
-        await this.dashboardsService.getDashboardCheckExists({
+      fromDashboardX =
+        await this.dashboardsService.getDashboardXCheckExistsAndAccess({
+          dashboardId: fromDashboardId,
           structId: bridge.structId,
-          dashboardId: fromDashboardId
+          userMember: userMember,
+          projectId: projectId
         });
-
-      fromDashboard = await this.dashboardsService.getDashboardXCheckAccess({
-        user: user,
-        member: userMember,
-        dashboard: fromDashboardEntity,
-        bridge: bridge,
-        projectId: projectId
-      });
 
       let yTiles: TileX[] = [];
 
       tilesGrid.forEach(freshTile => {
-        let yTile = fromDashboard.tiles.find(y => freshTile.title === y.title);
+        let yTile = fromDashboardX.tiles.find(y => freshTile.title === y.title);
 
         yTile.plateX = freshTile.plateX;
         yTile.plateY = freshTile.plateY;
@@ -222,13 +218,13 @@ export class SaveCreateDashboardController {
         yTiles.push(yTile);
       });
 
-      fromDashboard.tiles = yTiles;
+      fromDashboardX.tiles = yTiles;
 
       let {
         dashboardFileText
         // , malloyFileText
       } = makeDashboardFileText({
-        dashboard: fromDashboard,
+        dashboard: fromDashboardX,
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
         roles: accessRoles,
@@ -277,11 +273,8 @@ export class SaveCreateDashboardController {
       // secondFileContent = malloyFileText;
     }
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
@@ -291,7 +284,7 @@ export class SaveCreateDashboardController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         parentNodeId: parentNodeId,
@@ -313,13 +306,15 @@ export class SaveCreateDashboardController {
         checkIsOk: true
       });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, branch.repoId),
-        eq(bridgesTable.branchId, branch.branchId)
-      )
-    });
+    let branchBridges = await this.db.drizzle.query.bridgesTable
+      .findMany({
+        where: and(
+          eq(bridgesTable.projectId, branch.projectId),
+          eq(bridgesTable.repoId, branch.repoId),
+          eq(bridgesTable.branchId, branch.branchId)
+        )
+      })
+      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {
@@ -335,33 +330,39 @@ export class SaveCreateDashboardController {
     ];
 
     let modelIds = (
-      (isDefined(fromDashboardId) ? fromDashboard?.tiles : tilesGrid) ?? []
+      (isDefined(fromDashboardId) ? fromDashboardX?.tiles : tilesGrid) ?? []
     ).map(tile => tile.modelId);
 
-    let cachedModels = await this.db.drizzle.query.modelsTable.findMany({
-      where: and(
-        eq(modelsTable.structId, bridge.structId),
-        inArray(modelsTable.modelId, modelIds)
-      )
+    let cachedModels = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: and(
+          eq(modelsTable.structId, bridge.structId),
+          inArray(modelsTable.modelId, modelIds)
+        )
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+
+    let {
+      dashboards: apiDashboards,
+      mconfigs: apiMconfigs,
+      queries: apiQueries,
+      struct: apiStruct
+    } = await this.blockmlService.rebuildStruct({
+      traceId,
+      projectId,
+      structId: bridge.structId,
+      diskFiles: diskFiles,
+      mproveDir: currentStruct.mproveConfig.mproveDirValue,
+      skipDb: true,
+      envId: envId,
+      overrideTimezone: undefined,
+      isUseCache: true,
+      cachedMproveConfig: currentStruct.mproveConfig,
+      cachedModels: cachedModels,
+      cachedMetrics: []
     });
 
-    let { dashboards, mconfigs, queries, struct } =
-      await this.blockmlService.rebuildStruct({
-        traceId,
-        projectId,
-        structId: bridge.structId,
-        diskFiles: diskFiles,
-        mproveDir: currentStruct.mproveConfig.mproveDirValue,
-        skipDb: true,
-        envId: envId,
-        overrideTimezone: undefined,
-        isUseCache: true,
-        cachedMproveConfig: currentStruct.mproveConfig,
-        cachedModels: cachedModels,
-        cachedMetrics: []
-      });
-
-    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
 
     await retry(
       async () =>
@@ -377,9 +378,11 @@ export class SaveCreateDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let dashboard = dashboards.find(x => x.dashboardId === newDashboardId);
+    let apiDashboard = apiDashboards.find(
+      x => x.dashboardId === newDashboardId
+    );
 
-    if (isUndefined(dashboard)) {
+    if (isUndefined(apiDashboard)) {
       let fileId = `${parentNodeId}/${fileName}`;
       let fileIdAr = fileId.split('/');
       fileIdAr.shift();
@@ -389,23 +392,24 @@ export class SaveCreateDashboardController {
         message: ErEnum.BACKEND_CREATE_DASHBOARD_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: struct.errors
+          structErrors: apiStruct.errors
         }
       });
     }
 
-    let dashboardMconfigIds = dashboard.tiles.map(x => x.mconfigId);
-    let dashboardMconfigs = mconfigs.filter(
+    let dashboardMconfigIds = apiDashboard.tiles.map(x => x.mconfigId);
+    let dashboardMconfigs = apiMconfigs.filter(
       x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
     );
 
-    let dashboardQueryIds = dashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = queries.filter(
+    let dashboardQueryIds = apiDashboard.tiles.map(x => x.queryId);
+    let dashboardQueries = apiQueries.filter(
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
 
-    let dashboardEntity =
-      this.wrapToEntService.wrapToEntityDashboard(dashboard);
+    let newDashboard = this.dashboardsService.apiToTab({
+      apiDashboard: apiDashboard
+    });
 
     await retry(
       async () =>
@@ -423,14 +427,14 @@ export class SaveCreateDashboardController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              dashboards: isDefined(dashboardEntity) ? [dashboardEntity] : [],
+              dashboards: [newDashboard],
               mconfigs: dashboardMconfigs.map(x =>
-                this.wrapToEntService.wrapToEntityMconfig(x)
+                this.mconfigsService.apiToTab({ apiMconfig: x })
               )
             },
             insertOrDoNothing: {
               queries: dashboardQueries.map(x =>
-                this.wrapToEntService.wrapToEntityQuery(x)
+                this.queriesService.apiToTab({ apiQuery: x })
               )
             }
           });
@@ -439,10 +443,10 @@ export class SaveCreateDashboardController {
     );
 
     let newDashboardParts = await this.dashboardsService.getDashboardParts({
+      newDashboard: newDashboard,
       structId: bridge.structId,
       user: user,
-      userMember: userMember,
-      newDashboard: dashboard
+      userMember: userMember
     });
 
     let payload: ToBackendSaveCreateDashboardResponsePayload = {

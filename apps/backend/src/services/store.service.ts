@@ -18,6 +18,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { Filter } from '~common/interfaces/blockml/filter';
@@ -69,6 +70,8 @@ export class StoreService {
     // console.log(item.metricsEndDateYYYYMMDD);
 
     let newMconfig = makeCopy(mconfig);
+
+    newMconfig.mconfigId = makeId();
 
     //
     newMconfig.dateRangeIncludesRightSide =

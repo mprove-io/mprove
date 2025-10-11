@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import {
-  BridgeTab,
   DashboardTab,
   MemberTab,
   UserTab
@@ -167,6 +166,14 @@ export class DashboardsService {
     return dashboard;
   }
 
+  checkDashboardPath(item: { filePath: string; userAlias: string }) {
+    if (item.filePath.split('/')[2] !== item.userAlias) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
+      });
+    }
+  }
+
   async getDashboardCheckExists(item: {
     dashboardId: string;
     structId: string;
@@ -191,21 +198,18 @@ export class DashboardsService {
     return dashboard;
   }
 
-  checkDashboardPath(item: { filePath: string; userAlias: string }) {
-    if (item.filePath.split('/')[2] !== item.userAlias) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
-      });
-    }
-  }
-
-  async getDashboardXCheckAccess(item: {
+  async getDashboardXCheckExistsAndAccess(item: {
+    dashboardId: string;
+    structId: string;
     projectId: string;
-    dashboard: DashboardTab;
     userMember: MemberTab;
-    bridge: BridgeTab;
   }): Promise<DashboardX> {
-    let { projectId, dashboard, userMember, bridge } = item;
+    let { projectId, dashboardId, structId, userMember } = item;
+
+    let dashboard = await this.getDashboardCheckExists({
+      structId: structId,
+      dashboardId: dashboardId
+    });
 
     let isAccessGranted = checkAccess({
       member: userMember,
@@ -244,7 +248,7 @@ export class DashboardsService {
 
     let models = await this.db.drizzle.query.modelsTable
       .findMany({
-        where: eq(modelsTable.structId, bridge.structId)
+        where: eq(modelsTable.structId, structId)
       })
       .then(xs => xs.map(x => this.modelsService.entToTab(x)));
 
