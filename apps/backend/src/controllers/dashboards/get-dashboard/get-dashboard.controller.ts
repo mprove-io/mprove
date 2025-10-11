@@ -410,9 +410,14 @@ export class GetDashboardController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
     let payload: ToBackendGetDashboardResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: apiStruct,
+      struct: this.structsService.tabToApi({ struct: struct }),
       userMember: apiUserMember,
       dashboard: newDashboardX
     };

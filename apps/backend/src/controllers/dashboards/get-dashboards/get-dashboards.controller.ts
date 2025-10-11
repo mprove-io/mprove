@@ -118,11 +118,6 @@ export class GetDashboardsController {
       .where(eq(modelsTable.structId, bridge.structId))
       .then(xs => xs.map(x => this.modelsService.entToTab(x as ModelEnt)));
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let apiModels = models.map(model =>
@@ -134,6 +129,11 @@ export class GetDashboardsController {
         })
       })
     );
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
 
     let payload: ToBackendGetDashboardsResponsePayload = {
       needValidate: bridge.needValidate,

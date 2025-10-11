@@ -100,11 +100,6 @@ export class GetChartsController {
       .where(eq(modelsTable.structId, bridge.structId))
       .then(xs => xs.map(x => this.modelsService.entToTab(x as ModelEnt)));
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let apiModels = models
@@ -118,6 +113,11 @@ export class GetChartsController {
         })
       )
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
+
+    let struct = await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
 
     let payload: ToBackendGetChartsResponsePayload = {
       needValidate: bridge.needValidate,
