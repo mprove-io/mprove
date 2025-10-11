@@ -4,10 +4,9 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetEnvsRequest,
@@ -21,7 +20,6 @@ export class GetEnvsController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -45,7 +43,7 @@ export class GetEnvsController {
     });
 
     let payload: ToBackendGetEnvsResponsePayload = {
-      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };
 

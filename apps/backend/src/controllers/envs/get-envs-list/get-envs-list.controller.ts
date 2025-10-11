@@ -6,9 +6,9 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -22,7 +22,7 @@ export class GetEnvsListController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private wrapToApiService: WrapEnxToApiService,
+    private envsService: EnvsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -41,9 +41,11 @@ export class GetEnvsListController {
       memberId: user.userId
     });
 
-    let envs = await this.db.drizzle.query.envsTable.findMany({
-      where: eq(envsTable.projectId, projectId)
-    });
+    let envs = await this.db.drizzle.query.envsTable
+      .findMany({
+        where: eq(envsTable.projectId, projectId)
+      })
+      .then(xs => xs.map(x => this.envsService.entToTab(x)));
 
     if (isFilter === true) {
       envs = envs.filter(
@@ -57,7 +59,9 @@ export class GetEnvsListController {
     );
 
     let payload: ToBackendGetEnvsListResponsePayload = {
-      envsList: sortedEnvs.map(x => this.wrapToApiService.wrapToApiEnvsItem(x))
+      envsList: sortedEnvs.map(x =>
+        this.envsService.wrapToApiEnvsItem({ env: x })
+      )
     };
 
     return payload;
