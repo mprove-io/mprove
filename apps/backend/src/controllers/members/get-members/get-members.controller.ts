@@ -1,18 +1,21 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { asc, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
+import {
+  AvatarEnt,
+  avatarsTable
+} from '~backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { AvatarsService } from '~backend/services/db/avatars.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -28,9 +31,9 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class GetMembersController {
   constructor(
+    private avatarsService: AvatarsService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -59,18 +62,32 @@ export class GetMembersController {
       });
     }
 
-    let membersResult = await this.db.drizzle
-      .select({
-        record: membersTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(membersTable)
-      .where(eq(membersTable.projectId, projectId))
-      .orderBy(asc(membersTable.email))
-      .limit(perPage)
-      .offset((pageNum - 1) * perPage);
+    // let membersResult = await this.db.drizzle
+    //   .select({
+    //     record: membersTable,
+    //     total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+    //   })
+    //   .from(membersTable)
+    //   .where(eq(membersTable.projectId, projectId))
+    //   .orderBy(asc(membersTable.email))
+    //   .limit(perPage)
+    //   .offset((pageNum - 1) * perPage);
 
-    let members = membersResult.map(x => x.record);
+    // let members = membersResult.map(x => x.record);
+
+    let sortedMembers = await this.db.drizzle.query.membersTable
+      .findMany({
+        where: and(eq(membersTable.projectId, projectId))
+      })
+      .then(xs =>
+        xs
+          .map(x => this.membersService.entToTab(x))
+          .sort((a, b) => (a.email > b.email ? 1 : b.email > a.email ? -1 : 0))
+      );
+
+    let offset = (pageNum - 1) * perPage;
+
+    let members = sortedMembers.slice(offset, offset + perPage);
 
     let memberIds = members.map(x => x.memberId);
 
@@ -80,12 +97,19 @@ export class GetMembersController {
         : await this.db.drizzle
             .select({
               userId: avatarsTable.userId,
-              avatarSmall: avatarsTable.avatarSmall
+              st: avatarsTable.st
             })
             .from(avatarsTable)
-            .where(inArray(avatarsTable.userId, memberIds));
+            .where(inArray(avatarsTable.userId, memberIds))
+            .then(xs =>
+              xs.map(x => this.avatarsService.entToTab(x as AvatarEnt))
+            );
 
-    let apiMembers = members.map(x => this.wrapToApiService.wrapToApiMember(x));
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let apiMembers = members.map(x =>
+      this.membersService.tabToApi({ member: x })
+    );
 
     apiMembers.forEach(x => {
       let avatar = avatars.find(a => a.userId === x.memberId);
@@ -95,12 +119,10 @@ export class GetMembersController {
       }
     });
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
-
     let payload: ToBackendGetMembersResponsePayload = {
-      userMember: apiMember,
+      userMember: apiUserMember,
       members: apiMembers,
-      total: membersResult.length > 0 ? membersResult[0].total : 0
+      total: sortedMembers.length
     };
 
     return payload;

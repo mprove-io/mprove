@@ -44,17 +44,6 @@ export class GetConnectionsController {
       projectId: projectId
     });
 
-    // let connectionsResult = await this.db.drizzle
-    //   .select({
-    //     record: connectionsTable,
-    //     total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-    //   })
-    //   .from(connectionsTable)
-    //   .where(eq(connectionsTable.projectId, projectId))
-    //   .orderBy(asc(connectionsTable.connectionId))
-    //   .limit(perPage)
-    //   .offset((pageNum - 1) * perPage);
-
     let connections;
 
     if (isDefined(envId)) {

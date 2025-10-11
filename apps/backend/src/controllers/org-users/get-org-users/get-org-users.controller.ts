@@ -1,15 +1,22 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, asc, eq, inArray, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import {
+  AvatarEnt,
+  avatarsTable
+} from '~backend/drizzle/postgres/schema/avatars';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { OrgsService } from '~backend/services/orgs.service';
+import { AvatarsService } from '~backend/services/db/avatars.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   OrgUsersItem,
@@ -21,7 +28,10 @@ import {
 @Controller()
 export class GetOrgUsersController {
   constructor(
+    private projectsService: ProjectsService,
     private orgsService: OrgsService,
+    private usersService: UsersService,
+    private avatarsService: AvatarsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -38,9 +48,11 @@ export class GetOrgUsersController {
       userId: user.userId
     });
 
-    let projects = await this.db.drizzle.query.projectsTable.findMany({
-      where: eq(projectsTable.orgId, orgId)
-    });
+    let projects = await this.db.drizzle.query.projectsTable
+      .findMany({
+        where: eq(projectsTable.orgId, orgId)
+      })
+      .then(xs => xs.map(x => this.projectsService.entToTab(x)));
 
     let projectIds = projects.map(x => x.projectId);
 
@@ -53,18 +65,30 @@ export class GetOrgUsersController {
 
     let userIds = memberParts.map(x => x.memberId);
 
-    let usersResult = await this.db.drizzle
-      .select({
-        record: usersTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(usersTable)
-      .where(inArray(usersTable.userId, userIds))
-      .orderBy(asc(usersTable.email))
-      .limit(perPage)
-      .offset((pageNum - 1) * perPage);
+    // let usersResult = await this.db.drizzle
+    //   .select({
+    //     record: usersTable,
+    //     total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+    //   })
+    //   .from(usersTable)
+    //   .where(inArray(usersTable.userId, userIds))
+    //   .orderBy(asc(usersTable.email))
+    //   .limit(perPage)
+    //   .offset((pageNum - 1) * perPage);
 
-    let users = usersResult.map(x => x.record);
+    let sortedUsers = await this.db.drizzle.query.usersTable
+      .findMany({
+        where: and(inArray(usersTable.userId, userIds))
+      })
+      .then(xs =>
+        xs
+          .map(x => this.usersService.entToTab(x))
+          .sort((a, b) => (a.email > b.email ? 1 : b.email > a.email ? -1 : 0))
+      );
+
+    let offset = (pageNum - 1) * perPage;
+
+    let users = sortedUsers.slice(offset, offset + perPage);
 
     let members =
       userIds.length === 0
@@ -76,7 +100,7 @@ export class GetOrgUsersController {
             )
           });
 
-    let orgUsers: OrgUsersItem[] = [];
+    let orgUserItems: OrgUsersItem[] = [];
 
     let avatars =
       userIds.length === 0
@@ -84,15 +108,18 @@ export class GetOrgUsersController {
         : await this.db.drizzle
             .select({
               userId: avatarsTable.userId,
-              avatarSmall: avatarsTable.avatarSmall
+              st: avatarsTable.st
             })
             .from(avatarsTable)
-            .where(inArray(avatarsTable.userId, userIds));
+            .where(inArray(avatarsTable.userId, userIds))
+            .then(xs =>
+              xs.map(x => this.avatarsService.entToTab(x as AvatarEnt))
+            );
 
     users.forEach(x => {
       let userMembers = members.filter(m => m.memberId === x.userId);
 
-      let orgUser: OrgUsersItem = {
+      let orgUserItem: OrgUsersItem = {
         userId: x.userId,
         avatarSmall: avatars.find(a => a.userId === x.userId)?.avatarSmall,
         email: x.email,
@@ -132,12 +159,12 @@ export class GetOrgUsersController {
           })
       };
 
-      orgUsers.push(orgUser);
+      orgUserItems.push(orgUserItem);
     });
 
     let payload: ToBackendGetOrgUsersResponsePayload = {
-      orgUsersList: orgUsers,
-      total: usersResult.length > 0 ? usersResult[0].total : 0
+      orgUsersList: orgUserItems,
+      total: sortedUsers.length
     };
 
     return payload;

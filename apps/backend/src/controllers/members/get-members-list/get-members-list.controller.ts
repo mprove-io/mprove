@@ -8,9 +8,9 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetMembersListRequest,
@@ -23,7 +23,7 @@ export class GetMembersListController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private wrapToApiService: WrapEnxToApiService,
+    private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -43,13 +43,17 @@ export class GetMembersListController {
       projectId: projectId
     });
 
-    let members = await this.db.drizzle.query.membersTable.findMany({
-      where: eq(membersTable.projectId, projectId)
-    });
+    let members = await this.db.drizzle.query.membersTable
+      .findMany({
+        where: eq(membersTable.projectId, projectId)
+      })
+      .then(xs => xs.map(x => this.membersService.entToTab(x)));
 
     let payload: ToBackendGetMembersListResponsePayload = {
-      userMember: this.wrapToApiService.wrapToApiMember(userMember),
-      membersList: members.map(x => this.wrapToApiService.wrapToApiEnvUser(x))
+      userMember: this.membersService.tabToApi({ member: userMember }),
+      membersList: members.map(x =>
+        this.envsService.wrapToApiEnvUser({ member: x })
+      )
     };
 
     return payload;

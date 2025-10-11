@@ -2,26 +2,29 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { BridgeTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
-import {
-  BridgeEnt,
-  bridgesTable
-} from '~backend/drizzle/postgres/schema/bridges';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
+import { AvatarsService } from '~backend/services/db/avatars.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { StructsService } from '~backend/services/db/structs.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { Member } from '~common/interfaces/backend/member';
+import { Struct } from '~common/interfaces/backend/struct';
+import { Repo } from '~common/interfaces/disk/repo';
 import {
   ToBackendGetNavRequest,
   ToBackendGetNavResponsePayload
@@ -35,10 +38,13 @@ import {
 @Controller()
 export class GetNavController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
+    private orgsService: OrgsService,
     private rabbitService: RabbitService,
+    private avatarsService: AvatarsService,
+    private projectsService: ProjectsService,
     private membersService: MembersService,
     private structsService: StructsService,
+    private usersService: UsersService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -57,22 +63,28 @@ export class GetNavController {
     let projects =
       projectIds.length === 0
         ? []
-        : await this.db.drizzle.query.projectsTable.findMany({
-            where: inArray(projectsTable.projectId, projectIds)
-          });
+        : await this.db.drizzle.query.projectsTable
+            .findMany({
+              where: inArray(projectsTable.projectId, projectIds)
+            })
+            .then(xs => xs.map(x => this.projectsService.entToTab(x)));
 
     let orgIds = projects.map(x => x.orgId);
 
     let orgs =
       orgIds.length === 0
         ? []
-        : await this.db.drizzle.query.orgsTable.findMany({
-            where: inArray(orgsTable.orgId, orgIds)
-          });
+        : await this.db.drizzle.query.orgsTable
+            .findMany({
+              where: inArray(orgsTable.orgId, orgIds)
+            })
+            .then(xs => xs.map(x => this.orgsService.entToTab(x)));
 
-    let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
-      where: eq(orgsTable.ownerId, user.userId)
-    });
+    let ownerOrgs = await this.db.drizzle.query.orgsTable
+      .findMany({
+        where: eq(orgsTable.ownerId, user.userId)
+      })
+      .then(xs => xs.map(x => this.orgsService.entToTab(x)));
 
     let orgIdsWithDuplicates = [...orgs, ...ownerOrgs].map(x => x.orgId);
 
@@ -96,7 +108,7 @@ export class GetNavController {
 
     let resultProject = projects.find(x => x.projectId === resultProjectId);
 
-    let bridge: BridgeEnt;
+    let bridge: BridgeTab;
 
     if (isDefined(resultProject)) {
       bridge = await this.db.drizzle.query.bridgesTable.findFirst({
@@ -109,13 +121,15 @@ export class GetNavController {
       });
     }
 
-    let avatar = await this.db.drizzle.query.avatarsTable.findFirst({
-      where: eq(avatarsTable.userId, user.userId)
-    });
+    let avatar = await this.db.drizzle.query.avatarsTable
+      .findFirst({
+        where: eq(avatarsTable.userId, user.userId)
+      })
+      .then(x => this.avatarsService.entToTab(x));
 
-    let apiMember;
-    let apiStruct;
-    let repo;
+    let apiMember: Member;
+    let apiStruct: Struct;
+    let apiRepo: Repo;
 
     if (
       getRepo === true &&
@@ -128,20 +142,17 @@ export class GetNavController {
         memberId: user.userId
       });
 
-      apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+      apiMember = this.membersService.tabToApi({ member: userMember });
 
       let struct = await this.structsService.getStructCheckExists({
         structId: bridge.structId,
         projectId: resultProject.projectId
       });
 
-      apiStruct = this.wrapToApiService.wrapToApiStruct(struct);
+      apiStruct = this.structsService.tabToApi({ struct: struct });
 
-      let apiResultProject = this.wrapToApiService.wrapToApiProject({
-        project: resultProject,
-        isAddGitUrl: true,
-        isAddPrivateKey: true,
-        isAddPublicKey: true
+      let apiResultBaseProject = this.projectsService.tabToBaseProject({
+        project: resultProject
       });
 
       let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
@@ -151,7 +162,7 @@ export class GetNavController {
         },
         payload: {
           orgId: resultProject.orgId,
-          baseProject: apiResultProject,
+          baseProject: apiResultBaseProject,
           repoId: bridge.repoId,
           branch: bridge.branchId,
           isFetch: true
@@ -168,7 +179,7 @@ export class GetNavController {
           checkIsOk: true
         });
 
-      repo = diskResponse?.payload.repo;
+      apiRepo = diskResponse?.payload.repo;
     }
 
     let payload: ToBackendGetNavResponsePayload = {
@@ -184,11 +195,11 @@ export class GetNavController {
       branchId: resultProject?.defaultBranch,
       envId: PROJECT_ENV_PROD,
       needValidate: isDefined(bridge) ? bridge.needValidate : false,
-      user: this.wrapToApiService.wrapToApiUser(user),
+      user: this.usersService.tabToApi({ user: user }),
       serverNowTs: Date.now(),
       userMember: apiMember,
       struct: apiStruct,
-      repo: repo
+      repo: apiRepo
     };
 
     return payload;

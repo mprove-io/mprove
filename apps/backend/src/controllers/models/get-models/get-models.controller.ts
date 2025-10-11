@@ -2,18 +2,18 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { ModelTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -30,9 +30,9 @@ export class GetModelsController {
     private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
+    private modelsService: ModelsService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -83,11 +83,13 @@ export class GetModelsController {
       where = [...where, inArray(modelsTable.modelId, filterByModelIds)];
     }
 
-    let models: ModelEnt[] =
+    let models: ModelTab[] =
       addFields === true
-        ? await this.db.drizzle.query.modelsTable.findMany({
-            where: and(...where)
-          })
+        ? await this.db.drizzle.query.modelsTable
+            .findMany({
+              where: and(...where)
+            })
+            .then(xs => xs.map(x => this.modelsService.entToTab(x)))
         : await this.db.drizzle
             .select({
               structId: modelsTable.structId,
@@ -95,20 +97,21 @@ export class GetModelsController {
               type: modelsTable.type,
               connectionId: modelsTable.connectionId,
               connectionType: modelsTable.connectionType,
-              filePath: modelsTable.filePath,
-              accessRoles: modelsTable.accessRoles,
-              label: modelsTable.label,
-              nodes: modelsTable.nodes
+              st: modelsTable.st,
+              lt: modelsTable.lt
             })
             .from(modelsTable)
-            .where(and(...where));
+            .where(and(...where))
+            .then(xs =>
+              xs.map(x => this.modelsService.entToTab(x as ModelEnt))
+            );
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
     });
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendGetModelsResponsePayload = {
       needValidate: bridge.needValidate,
@@ -116,12 +119,11 @@ export class GetModelsController {
       userMember: apiMember,
       models: models
         .map(model =>
-          this.wrapToApiService.wrapEnxToApiModel({
+          this.modelsService.tabToApi({
             model: model,
-            hasAccess: checkAccess({
-              userAlias: user.alias,
+            hasAccess: checkModelAccess({
               member: userMember,
-              entity: model
+              modelAccessRoles: model.accessRoles
             })
           })
         )
