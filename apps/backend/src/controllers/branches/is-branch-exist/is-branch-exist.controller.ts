@@ -44,15 +44,13 @@ export class IsBranchExistController {
       projectId: projectId
     });
 
-    let branch = await this.db.drizzle.query.branchesTable
-      .findFirst({
-        where: and(
-          eq(branchesTable.projectId, projectId),
-          eq(branchesTable.repoId, repoId),
-          eq(branchesTable.branchId, branchId)
-        )
-      })
-      .then(x => this.branchesService.entToTab(x));
+    let branch = await this.db.drizzle.query.branchesTable.findFirst({
+      where: and(
+        eq(branchesTable.projectId, projectId),
+        eq(branchesTable.repoId, repoId),
+        eq(branchesTable.branchId, branchId)
+      )
+    });
 
     let payload: ToBackendIsBranchExistResponsePayload = {
       isExist: isDefined(branch)

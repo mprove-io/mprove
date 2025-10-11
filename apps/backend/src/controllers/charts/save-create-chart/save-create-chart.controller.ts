@@ -254,15 +254,13 @@ export class SaveCreateChartController {
         checkIsOk: true
       });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable
-      .findMany({
-        where: and(
-          eq(bridgesTable.projectId, branch.projectId),
-          eq(bridgesTable.repoId, branch.repoId),
-          eq(bridgesTable.branchId, branch.branchId)
-        )
-      })
-      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, branch.projectId),
+        eq(bridgesTable.repoId, branch.repoId),
+        eq(bridgesTable.branchId, branch.branchId)
+      )
+    });
 
     await forEachSeries(branchBridges, async x => {
       if (x.envId !== envId) {

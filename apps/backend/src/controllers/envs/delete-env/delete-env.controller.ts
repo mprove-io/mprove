@@ -18,10 +18,9 @@ import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -42,7 +41,6 @@ export class DeleteEnvController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -98,7 +96,7 @@ export class DeleteEnvController {
     });
 
     let payload: ToBackendDeleteEnvResponsePayload = {
-      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };
 

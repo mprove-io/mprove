@@ -102,14 +102,12 @@ export class CreateConnectionController {
       options: options
     });
 
-    let branchBridges = await this.db.drizzle.query.bridgesTable
-      .findMany({
-        where: and(
-          eq(bridgesTable.projectId, projectId),
-          eq(bridgesTable.envId, envId)
-        )
-      })
-      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
+    let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, projectId),
+        eq(bridgesTable.envId, envId)
+      )
+    });
 
     await forEachSeries(branchBridges, async x => {
       x.needValidate = true;

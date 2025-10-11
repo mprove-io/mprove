@@ -12,18 +12,17 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { BridgeTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { EnvsService } from '~backend/services/envs.service';
-import { EntMakerService } from '~backend/services/maker.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { EMPTY_STRUCT_ID, PROJECT_ENV_PROD } from '~common/constants/top';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -39,10 +38,10 @@ let retry = require('async-retry');
 export class CreateEnvController {
   constructor(
     private projectsService: ProjectsService,
+    private bridgesService: BridgesService,
+    private branchesService: BranchesService,
     private envsService: EnvsService,
     private membersService: MembersService,
-    private entMakerService: EntMakerService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -68,33 +67,20 @@ export class CreateEnvController {
       envId: envId
     });
 
-    let newEnv = this.entMakerService.makeEnv({
+    let newEnv = this.envsService.makeEnv({
       projectId: projectId,
       envId: envId,
       evs: []
     });
 
-    let prodEnv;
-
-    if (
-      newEnv.isFallbackToProdConnections === true ||
-      newEnv.isFallbackToProdVariables === true
-    ) {
-      prodEnv = await this.envsService.getEnvCheckExistsAndAccess({
-        projectId: projectId,
-        envId: PROJECT_ENV_PROD,
-        member: userMember
-      });
-    }
-
     let branches = await this.db.drizzle.query.branchesTable.findMany({
       where: eq(branchesTable.projectId, projectId)
     });
 
-    let newBridges: BridgeEnt[] = [];
+    let newBridges: BridgeTab[] = [];
 
     branches.forEach(x => {
-      let newBridge = this.entMakerService.makeBridge({
+      let newBridge = this.bridgesService.makeBridge({
         projectId: projectId,
         repoId: x.repoId,
         branchId: x.branchId,
@@ -126,7 +112,7 @@ export class CreateEnvController {
     });
 
     let payload: ToBackendCreateEnvResponsePayload = {
-      userMember: this.wrapToApiService.wrapToApiMember(userMember),
+      userMember: this.membersService.tabToApi({ member: userMember }),
       envs: apiEnvs
     };
 

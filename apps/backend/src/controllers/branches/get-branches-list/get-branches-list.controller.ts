@@ -41,15 +41,13 @@ export class GetBranchesListController {
       projectId: projectId
     });
 
-    let branches = await this.db.drizzle.query.branchesTable
-      .findMany({
-        where: and(
-          eq(branchesTable.projectId, projectId),
-          inArray(branchesTable.repoId, [PROD_REPO_ID, user.userId])
-        ),
-        orderBy: asc(branchesTable.branchId)
-      })
-      .then(xs => xs.map(x => this.branchesService.entToTab(x)));
+    let branches = await this.db.drizzle.query.branchesTable.findMany({
+      where: and(
+        eq(branchesTable.projectId, projectId),
+        inArray(branchesTable.repoId, [PROD_REPO_ID, user.userId])
+      ),
+      orderBy: asc(branchesTable.branchId)
+    });
 
     let apiMember = this.membersService.tabToApi({
       member: userMember

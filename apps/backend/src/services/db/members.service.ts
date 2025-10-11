@@ -320,15 +320,13 @@ export class MembersService {
               checkIsOk: true
             });
 
-          let prodBranch = await this.db.drizzle.query.branchesTable
-            .findFirst({
-              where: and(
-                eq(branchesTable.projectId, demoProjectId),
-                eq(branchesTable.repoId, PROD_REPO_ID),
-                eq(branchesTable.branchId, project.defaultBranch)
-              )
-            })
-            .then(x => this.branchesService.entToTab(x));
+          let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
+            where: and(
+              eq(branchesTable.projectId, demoProjectId),
+              eq(branchesTable.repoId, PROD_REPO_ID),
+              eq(branchesTable.branchId, project.defaultBranch)
+            )
+          });
 
           let devBranch = this.branchesService.makeBranch({
             projectId: demoProjectId,
@@ -336,15 +334,14 @@ export class MembersService {
             branchId: project.defaultBranch
           });
 
-          let prodBranchBridges = await this.db.drizzle.query.bridgesTable
-            .findMany({
+          let prodBranchBridges =
+            await this.db.drizzle.query.bridgesTable.findMany({
               where: and(
                 eq(bridgesTable.projectId, prodBranch.projectId),
                 eq(bridgesTable.repoId, prodBranch.repoId),
                 eq(bridgesTable.branchId, prodBranch.branchId)
               )
-            })
-            .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
+            });
 
           let devBranchBridges: BridgeTab[] = [];
 
