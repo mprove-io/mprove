@@ -188,7 +188,7 @@ export class EditDraftReportController {
 
     let payload: ToBackendEditDraftReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       userMember: userMemberApi,
       report: repApi
     };

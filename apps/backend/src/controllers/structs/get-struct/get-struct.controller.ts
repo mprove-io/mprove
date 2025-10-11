@@ -76,7 +76,7 @@ export class GetStructController {
 
     let payload: ToBackendGetStructResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       userMember: apiMember
     };
 

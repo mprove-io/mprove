@@ -12,20 +12,18 @@ import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -51,8 +49,6 @@ export class CreateTempMconfigController {
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -62,8 +58,14 @@ export class CreateTempMconfigController {
   async createTempMconfig(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateTempMconfigRequest = request.body;
 
-    let { oldMconfigId, mconfig, projectId, isRepoProd, branchId, envId } =
-      reqValid.payload;
+    let {
+      oldMconfigId,
+      mconfig: apiMconfig,
+      projectId,
+      isRepoProd,
+      branchId,
+      envId
+    } = reqValid.payload;
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
@@ -102,22 +104,21 @@ export class CreateTempMconfigController {
 
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
-      modelId: mconfig.modelId
+      modelId: apiMconfig.modelId
     });
 
-    if (mconfig.structId !== bridge.structId) {
+    if (apiMconfig.structId !== bridge.structId) {
       throw new ServerError({
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    let isAccessGranted = checkAccess({
-      userAlias: user.alias,
+    let isModelAccessGranted = checkModelAccess({
       member: member,
-      entity: model
+      modelAccessRoles: model.accessRoles
     });
 
-    if (isAccessGranted === false) {
+    if (isModelAccessGranted === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
@@ -129,15 +130,15 @@ export class CreateTempMconfigController {
     });
 
     if (
-      oldMconfig.queryId !== mconfig.queryId ||
-      oldMconfig.modelId !== mconfig.modelId
+      oldMconfig.queryId !== apiMconfig.queryId ||
+      oldMconfig.modelId !== apiMconfig.modelId
     ) {
       throw new ServerError({
         message: ErEnum.BACKEND_OLD_MCONFIG_MISMATCH
       });
     }
 
-    let mconfigEnt = this.wrapToEntService.wrapToEntityMconfig(mconfig);
+    let mconfig = this.mconfigsService.apiToTab({ apiMconfig: apiMconfig });
 
     await retry(
       async () =>
@@ -146,7 +147,7 @@ export class CreateTempMconfigController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                mconfigs: [mconfigEnt]
+                mconfigs: [mconfig]
               }
             })
         ),
@@ -154,8 +155,8 @@ export class CreateTempMconfigController {
     );
 
     let payload: ToBackendCreateTempMconfigResponsePayload = {
-      mconfig: this.wrapToApiService.wrapToApiMconfig({
-        mconfig: mconfigEnt,
+      mconfig: this.mconfigsService.tabToApi({
+        mconfig: mconfig,
         modelFields: model.fields
       })
     };

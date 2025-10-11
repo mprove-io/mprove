@@ -112,7 +112,7 @@ export class GetModelsController {
 
     let payload: ToBackendGetModelsResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       userMember: apiMember,
       models: models
         .map(model =>

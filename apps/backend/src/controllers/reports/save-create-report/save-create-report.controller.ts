@@ -238,11 +238,8 @@ export class SaveCreateReportController {
 
     let fileName = `${newReportId}${FileExtensionEnum.Report}`;
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskCreateFileRequest: ToDiskCreateFileRequest = {
@@ -388,7 +385,7 @@ export class SaveCreateReportController {
 
     let payload: ToBackendSaveCreateReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       userMember: userMemberApi,
       report: repApi,
       reportPart: repApi

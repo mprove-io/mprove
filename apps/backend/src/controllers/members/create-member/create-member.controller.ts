@@ -13,25 +13,28 @@ import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
-import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { BridgeTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
-  BridgeEnt,
-  bridgesTable
-} from '~backend/drizzle/postgres/schema/bridges';
-import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
+  AvatarEnt,
+  avatarsTable
+} from '~backend/drizzle/postgres/schema/avatars';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
+import { AvatarsService } from '~backend/services/db/avatars.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
-import { EntMakerService } from '~backend/services/maker.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { HashService } from '~backend/services/hash.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { UsersService } from '~backend/services/users.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import {
   EMPTY_REPORT_ID,
   EMPTY_STRUCT_ID,
@@ -84,14 +87,16 @@ let retry = require('async-retry');
 @Controller()
 export class CreateMemberController {
   constructor(
+    private hashService: HashService,
     private rabbitService: RabbitService,
+    private avatarsService: AvatarsService,
     private projectsService: ProjectsService,
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private blockmlService: BlockmlService,
     private usersService: UsersService,
     private membersService: MembersService,
     private emailService: EmailService,
-    private wrapToApiService: WrapEnxToApiService,
-    private entMakerService: EntMakerService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -113,14 +118,20 @@ export class CreateMemberController {
       projectId: projectId
     });
 
-    let invitedUser = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.email, email)
-    });
+    let emailHash = this.hashService.makeHash(email);
 
-    let newUser: UserEnt;
+    let invitedUser = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.emailHash, emailHash)
+      })
+      .then(x => this.usersService.entToTab(x));
+
+    let newUser: UserTab;
 
     if (isUndefined(invitedUser)) {
       let alias = await this.usersService.makeAlias(email);
+
+      let emailVerificationToken = makeId();
 
       newUser = {
         userId: makeId(),
@@ -128,7 +139,7 @@ export class CreateMemberController {
         passwordResetToken: undefined,
         passwordResetExpiresTs: undefined,
         isEmailVerified: false,
-        emailVerificationToken: makeId(),
+        emailVerificationToken: emailVerificationToken,
         hash: undefined,
         salt: undefined,
         jwtMinIat: undefined,
@@ -136,14 +147,14 @@ export class CreateMemberController {
         firstName: undefined,
         lastName: undefined,
         ui: makeCopy(DEFAULT_SRV_UI),
+        emailHash: this.hashService.makeHash(email),
+        aliasHash: this.hashService.makeHash(alias),
+        passwordResetTokenHash: undefined,
+        emailVerificationTokenHash: this.hashService.makeHash(
+          emailVerificationToken
+        ),
         serverTs: undefined
       };
-
-      // newUser = maker.makeUser({
-      //   email: email,
-      //   isEmailVerified: false,
-      //   alias: alias
-      // });
     }
 
     if (isDefined(invitedUser)) {
@@ -153,7 +164,7 @@ export class CreateMemberController {
       });
     }
 
-    let newMember = this.entMakerService.makeMember({
+    let newMember = this.membersService.makeMember({
       projectId: projectId,
       user: isDefined(invitedUser) ? invitedUser : newUser,
       isAdmin: false,
@@ -161,11 +172,8 @@ export class CreateMemberController {
       isExplorer: true
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
@@ -175,7 +183,7 @@ export class CreateMemberController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         devRepoId: newMember.memberId
       }
     };
@@ -198,7 +206,7 @@ export class CreateMemberController {
       )
     });
 
-    let devBranch = this.entMakerService.makeBranch({
+    let devBranch = this.branchesService.makeBranch({
       projectId: projectId,
       repoId: newMember.memberId,
       branchId: project.defaultBranch
@@ -212,10 +220,10 @@ export class CreateMemberController {
       )
     });
 
-    let devBranchBridges: BridgeEnt[] = [];
+    let devBranchBridges: BridgeTab[] = [];
 
     prodBranchBridges.forEach(x => {
-      let devBranchBridge = this.entMakerService.makeBridge({
+      let devBranchBridge = this.bridgesService.makeBridge({
         projectId: devBranch.projectId,
         repoId: devBranch.repoId,
         branchId: devBranch.branchId,
@@ -269,10 +277,11 @@ export class CreateMemberController {
     let avatars = await this.db.drizzle
       .select({
         userId: avatarsTable.userId,
-        avatarSmall: avatarsTable.avatarSmall
+        st: avatarsTable.st
       })
       .from(avatarsTable)
-      .where(eq(avatarsTable.userId, newMember.memberId));
+      .where(eq(avatarsTable.userId, newMember.memberId))
+      .then(xs => xs.map(x => this.avatarsService.entToTab(x as AvatarEnt)));
 
     let avatar = avatars.length > 0 ? avatars[0] : undefined;
 
@@ -319,7 +328,7 @@ export class CreateMemberController {
       });
     }
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(newMember);
+    let apiMember = this.membersService.tabToApi({ member: newMember });
 
     if (isDefined(avatar)) {
       apiMember.avatarSmall = avatar.avatarSmall;

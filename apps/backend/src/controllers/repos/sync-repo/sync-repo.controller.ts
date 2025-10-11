@@ -108,11 +108,8 @@ export class SyncRepoController {
       envId: envId
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskSyncRepoRequest: ToDiskSyncRepoRequest = {
@@ -196,7 +193,7 @@ export class SyncRepoController {
     let payload: ToBackendSyncRepoResponsePayload = {
       restChangedFiles: diskResponse.payload.restChangedFiles,
       restDeletedFiles: diskResponse.payload.restDeletedFiles,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       repo: diskResponse.payload.repo,
       needValidate: currentBridge.needValidate,
       devReqReceiveTime: diskResponse.payload.devReqReceiveTime,

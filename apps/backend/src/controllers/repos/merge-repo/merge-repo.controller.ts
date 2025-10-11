@@ -97,11 +97,8 @@ export class MergeRepoController {
       member: member
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskMergeRepoRequest: ToDiskMergeRepoRequest = {
@@ -183,7 +180,7 @@ export class MergeRepoController {
 
     let payload: ToBackendMergeRepoResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       needValidate: currentBridge.needValidate
     };
 

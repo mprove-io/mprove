@@ -124,11 +124,8 @@ export class DeleteReportController {
       });
     }
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskDeleteFileRequest: ToDiskDeleteFileRequest = {

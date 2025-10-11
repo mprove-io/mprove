@@ -12,25 +12,25 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
 import {
-  QueryEnt,
-  queriesTable
-} from '~backend/drizzle/postgres/schema/queries';
-import { checkAccess } from '~backend/functions/check-access';
+  MconfigTab,
+  QueryTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MconfigsService } from '~backend/services/mconfigs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ModelsService } from '~backend/services/models.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -55,9 +55,9 @@ export class DuplicateMconfigAndQueryController {
     private branchesService: BranchesService,
     private structsService: StructsService,
     private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -125,13 +125,12 @@ export class DuplicateMconfigAndQueryController {
       });
     }
 
-    let isAccessGranted = checkAccess({
-      userAlias: user.alias,
+    let isModelAccessGranted = checkModelAccess({
       member: member,
-      entity: model
+      modelAccessRoles: model.accessRoles
     });
 
-    if (isAccessGranted === false) {
+    if (isModelAccessGranted === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
@@ -147,12 +146,12 @@ export class DuplicateMconfigAndQueryController {
     let newMconfigId = makeId();
     let newQueryId = makeId();
 
-    let newMconfig = Object.assign({}, oldMconfig, <MconfigEnt>{
+    let newMconfig = Object.assign({}, oldMconfig, <MconfigTab>{
       mconfigId: newMconfigId,
       queryId: newQueryId
     });
 
-    let newQuery = Object.assign({}, oldQuery, <QueryEnt>{
+    let newQuery = Object.assign({}, oldQuery, <QueryTab>{
       queryId: newQueryId
     });
 
@@ -174,11 +173,11 @@ export class DuplicateMconfigAndQueryController {
     );
 
     let payload: ToBackendDuplicateMconfigAndQueryResponsePayload = {
-      mconfig: this.wrapToApiService.wrapToApiMconfig({
+      mconfig: this.mconfigsService.tabToApi({
         mconfig: newMconfig,
         modelFields: model.fields
       }),
-      query: this.wrapToApiService.wrapToApiQuery(newQuery)
+      query: this.queriesService.tabToApi({ query: newQuery })
     };
 
     return payload;

@@ -109,11 +109,8 @@ export class PushRepoController {
       });
     }
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskPushRepoRequest: ToDiskPushRepoRequest = {
@@ -231,7 +228,7 @@ export class PushRepoController {
 
     let payload: ToBackendPushRepoResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       needValidate: currentBridge.needValidate
     };
 

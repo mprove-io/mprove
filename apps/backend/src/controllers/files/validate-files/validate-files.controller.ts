@@ -20,13 +20,12 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -50,7 +49,6 @@ let retry = require('async-retry');
 @Controller()
 export class ValidateFilesController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
@@ -106,11 +104,8 @@ export class ValidateFilesController {
       member: member
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
@@ -120,7 +115,7 @@ export class ValidateFilesController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId
       }
@@ -187,7 +182,7 @@ export class ValidateFilesController {
     let payload: ToBackendValidateFilesResponsePayload = {
       repo: diskResponse.payload.repo,
       needValidate: currentBridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct)
+      struct: this.structsService.tabToApi({ struct: struct })
     };
 
     return payload;

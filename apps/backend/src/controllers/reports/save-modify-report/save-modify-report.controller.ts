@@ -219,11 +219,8 @@ export class SaveModifyReportController {
       timezone: UTC
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskSaveFileRequest: ToDiskSaveFileRequest = {
@@ -382,7 +379,7 @@ export class SaveModifyReportController {
 
     let payload: ToBackendSaveModifyReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       userMember: userMemberApi,
       report: repApi,
       reportPart: repApi

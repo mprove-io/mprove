@@ -77,11 +77,8 @@ export class GetRepoController {
       envId: envId
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskGetCatalogNodesRequest: ToDiskGetCatalogNodesRequest = {
@@ -120,7 +117,7 @@ export class GetRepoController {
       userMember: apiMember,
       user: this.wrapToApiService.wrapToApiUser(user),
       needValidate: bridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       repo: diskResponse.payload.repo
     };
 

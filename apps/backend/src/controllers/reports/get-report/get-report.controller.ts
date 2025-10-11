@@ -187,7 +187,7 @@ export class GetReportController {
 
     let payload: ToBackendGetReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       userMember: userMemberApi,
       report: repApi
     };

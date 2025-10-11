@@ -94,11 +94,8 @@ export class RevertRepoToLastCommitController {
       member: member
     });
 
-    let apiProject = this.wrapToApiService.wrapToApiProject({
-      project: project,
-      isAddGitUrl: true,
-      isAddPrivateKey: true,
-      isAddPublicKey: true
+    let baseProject = this.projectsService.tabToBaseProject({
+      project: project
     });
 
     let toDiskRevertRepoToLastCommitRequest: ToDiskRevertRepoToLastCommitRequest =
@@ -180,7 +177,7 @@ export class RevertRepoToLastCommitController {
 
     let payload: ToBackendRevertRepoToLastCommitResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: this.wrapToApiService.wrapToApiStruct(struct),
+      struct: this.structsService.tabToApi({ struct: struct }),
       needValidate: currentBridge.needValidate
     };
 
