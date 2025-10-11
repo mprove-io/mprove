@@ -4,6 +4,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { HashService } from '~backend/services/hash.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
@@ -14,7 +15,10 @@ import {
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class IsOrgExistController {
-  constructor(@Inject(DRIZZLE) private db: Db) {}
+  constructor(
+    private hashService: HashService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendIsOrgExist)
   async isOrgExist(@Req() request: any) {
@@ -22,8 +26,10 @@ export class IsOrgExistController {
 
     let { name } = reqValid.payload;
 
+    let nameHash = this.hashService.makeHash(name);
+
     let org = await this.db.drizzle.query.orgsTable.findFirst({
-      where: eq(orgsTable.name, name)
+      where: eq(orgsTable.nameHash, nameHash)
     });
 
     let payload: ToBackendIsOrgExistResponsePayload = {

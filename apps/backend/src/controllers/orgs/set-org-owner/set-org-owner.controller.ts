@@ -12,12 +12,14 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { OrgsService } from '~backend/services/orgs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
+import { UsersService } from '~backend/services/db/users.service';
+import { HashService } from '~backend/services/hash.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -35,8 +37,9 @@ let retry = require('async-retry');
 @Controller()
 export class SetOrgOwnerController {
   constructor(
+    private hashService: HashService,
     private orgsService: OrgsService,
-    private wrapToApiService: WrapEnxToApiService,
+    private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -55,12 +58,16 @@ export class SetOrgOwnerController {
       userId: user.userId
     });
 
-    let newOwner = await this.db.drizzle.query.usersTable.findFirst({
-      where: and(
-        eq(usersTable.email, ownerEmail),
-        eq(usersTable.isEmailVerified, true)
-      )
-    });
+    let ownerEmailHash = this.hashService.makeHash(ownerEmail);
+
+    let newOwner = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: and(
+          eq(usersTable.emailHash, ownerEmailHash),
+          eq(usersTable.isEmailVerified, true)
+        )
+      })
+      .then(x => this.usersService.entToTab(x));
 
     if (isUndefined(newOwner)) {
       throw new ServerError({
@@ -86,7 +93,7 @@ export class SetOrgOwnerController {
     );
 
     let payload: ToBackendSetOrgOwnerResponsePayload = {
-      org: this.wrapToApiService.wrapToApiOrg(org)
+      org: this.orgsService.tabToApi({ org: org })
     };
 
     return payload;

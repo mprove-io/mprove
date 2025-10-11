@@ -1,11 +1,16 @@
 import * as crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
+import { isUndefined } from '~common/functions/is-undefined';
 
 @Injectable()
 export class HashService {
   constructor() {}
 
   makeHash(text: string) {
+    if (isUndefined(text)) {
+      return;
+    }
+
     let hash = crypto.createHash('sha256').update(text).digest('hex');
     return hash;
   }

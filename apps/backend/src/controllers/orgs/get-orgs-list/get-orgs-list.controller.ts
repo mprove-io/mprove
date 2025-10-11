@@ -8,7 +8,7 @@ import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetOrgsListRequest,
@@ -19,7 +19,7 @@ import {
 @Controller()
 export class GetOrgsListController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
+    private orgsService: OrgsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -45,13 +45,17 @@ export class GetOrgsListController {
     let userOrgs =
       userOrgIds.length === 0
         ? []
-        : await this.db.drizzle.query.orgsTable.findMany({
-            where: inArray(orgsTable.orgId, userOrgIds)
-          });
+        : await this.db.drizzle.query.orgsTable
+            .findMany({
+              where: inArray(orgsTable.orgId, userOrgIds)
+            })
+            .then(xs => xs.map(x => this.orgsService.entToTab(x)));
 
-    let ownerOrgs = await this.db.drizzle.query.orgsTable.findMany({
-      where: eq(orgsTable.ownerId, user.userId)
-    });
+    let ownerOrgs = await this.db.drizzle.query.orgsTable
+      .findMany({
+        where: eq(orgsTable.ownerId, user.userId)
+      })
+      .then(xs => xs.map(x => this.orgsService.entToTab(x)));
 
     let orgs = [...userOrgs];
 
@@ -66,7 +70,7 @@ export class GetOrgsListController {
     );
 
     let payload: ToBackendGetOrgsListResponsePayload = {
-      orgsList: sortedOrgs.map(x => this.wrapToApiService.wrapToApiOrgsItem(x))
+      orgsList: sortedOrgs.map(x => this.orgsService.tabToApi({ org: x }))
     };
 
     return payload;

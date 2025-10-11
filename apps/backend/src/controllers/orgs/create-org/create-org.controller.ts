@@ -9,8 +9,8 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { OrgsService } from '~backend/services/orgs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
+import { HashService } from '~backend/services/hash.service';
 import { DEMO_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { BoolEnum } from '~common/enums/bool.enum';
@@ -28,8 +28,8 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class CreateOrgController {
   constructor(
+    private hashService: HashService,
     private orgsService: OrgsService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -62,8 +62,10 @@ export class CreateOrgController {
 
     let { name } = reqValid.payload;
 
+    let nameHash = this.hashService.makeHash(name);
+
     let org = await this.db.drizzle.query.orgsTable.findFirst({
-      where: eq(orgsTable.name, name)
+      where: eq(orgsTable.nameHash, nameHash)
     });
 
     if (name.toLowerCase() === DEMO_ORG_NAME.toLowerCase()) {
@@ -86,7 +88,7 @@ export class CreateOrgController {
     });
 
     let payload: ToBackendCreateOrgResponsePayload = {
-      org: this.wrapToApiService.wrapToApiOrg(newOrg)
+      org: this.orgsService.tabToApi({ org: newOrg })
     };
 
     return payload;
