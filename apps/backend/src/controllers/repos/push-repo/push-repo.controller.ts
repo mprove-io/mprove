@@ -21,14 +21,13 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { EntMakerService } from '~backend/services/maker.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -58,10 +57,9 @@ export class PushRepoController {
     private rabbitService: RabbitService,
     private structsService: StructsService,
     private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
-    private entMakerService: EntMakerService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -120,7 +118,7 @@ export class PushRepoController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias
@@ -145,31 +143,35 @@ export class PushRepoController {
       )
     });
 
-    let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
-      where: and(
-        eq(branchesTable.projectId, projectId),
-        eq(branchesTable.repoId, PROD_REPO_ID),
-        eq(branchesTable.branchId, branchId)
-      )
-    });
+    let prodBranch = await this.db.drizzle.query.branchesTable
+      .findFirst({
+        where: and(
+          eq(branchesTable.projectId, projectId),
+          eq(branchesTable.repoId, PROD_REPO_ID),
+          eq(branchesTable.branchId, branchId)
+        )
+      })
+      .then(x => this.branchesService.entToTab(x));
 
-    let prodBranchBridges = await this.db.drizzle.query.bridgesTable.findMany({
-      where: and(
-        eq(bridgesTable.projectId, branch.projectId),
-        eq(bridgesTable.repoId, PROD_REPO_ID),
-        eq(bridgesTable.branchId, branch.branchId)
-      )
-    });
+    let prodBranchBridges = await this.db.drizzle.query.bridgesTable
+      .findMany({
+        where: and(
+          eq(bridgesTable.projectId, branch.projectId),
+          eq(bridgesTable.repoId, PROD_REPO_ID),
+          eq(bridgesTable.branchId, branch.branchId)
+        )
+      })
+      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
 
     if (isUndefined(prodBranch)) {
-      prodBranch = this.entMakerService.makeBranch({
+      prodBranch = this.branchesService.makeBranch({
         projectId: projectId,
         repoId: PROD_REPO_ID,
         branchId: branchId
       });
 
       branchBridges.forEach(x => {
-        let prodBranchBridge = this.entMakerService.makeBridge({
+        let prodBranchBridge = this.bridgesService.makeBridge({
           projectId: branch.projectId,
           repoId: PROD_REPO_ID,
           branchId: branch.branchId,

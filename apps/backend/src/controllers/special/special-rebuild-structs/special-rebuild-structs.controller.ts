@@ -13,25 +13,18 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import {
-  BridgeEnt,
-  bridgesTable
-} from '~backend/drizzle/postgres/schema/bridges';
-import {
-  MemberEnt,
-  membersTable
-} from '~backend/drizzle/postgres/schema/members';
-import {
-  ProjectEnt,
-  projectsTable
-} from '~backend/drizzle/postgres/schema/projects';
+import { BridgeTab, MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
@@ -72,7 +65,8 @@ let retry = require('async-retry');
 @Controller()
 export class SpecialRebuildStructsController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
+    private projectsService: ProjectsService,
+    private membersService: MembersService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
@@ -97,27 +91,31 @@ export class SpecialRebuildStructsController {
     }
 
     let projectIds: string[] = [];
-    let members: MemberEnt[] = [];
+    let members: MemberTab[] = [];
 
     if (userIds.length > 0) {
-      members = await this.db.drizzle.query.membersTable.findMany({
-        where: inArray(membersTable.memberId, userIds)
-      });
+      members = await this.db.drizzle.query.membersTable
+        .findMany({
+          where: inArray(membersTable.memberId, userIds)
+        })
+        .then(xs => xs.map(x => this.membersService.entToTab(x)));
 
       projectIds = members.map(x => x.projectId);
     }
 
-    let projects: ProjectEnt[] = [];
+    let projects =
+      projectIds.length > 0
+        ? await this.db.drizzle.query.projectsTable
+            .findMany({
+              where: inArray(projectsTable.projectId, projectIds)
+            })
+            .then(xs => xs.map(x => this.projectsService.entToTab(x)))
+        : await this.db.drizzle
+            .select()
+            .from(projectsTable)
+            .then(xs => xs.map(x => this.projectsService.entToTab(x)));
 
-    if (projectIds.length > 0) {
-      projects = await this.db.drizzle.query.projectsTable.findMany({
-        where: inArray(projectsTable.projectId, projectIds)
-      });
-    } else {
-      projects = await this.db.drizzle.select().from(projectsTable);
-    }
-
-    let bridges: BridgeEnt[];
+    let bridges: BridgeTab[];
 
     if (userIds.length > 0) {
       bridges = await this.db.drizzle.query.bridgesTable.findMany({
@@ -150,11 +148,8 @@ export class SpecialRebuildStructsController {
       };
 
       if (skipRebuild === false) {
-        let apiProject = this.wrapToApiService.wrapToApiProject({
-          project: project,
-          isAddGitUrl: true,
-          isAddPrivateKey: true,
-          isAddPublicKey: true
+        let baseProject = this.projectsService.tabToBaseProject({
+          project: project
         });
 
         let toDiskGetCatalogFilesRequest: ToDiskGetCatalogFilesRequest = {
@@ -164,7 +159,7 @@ export class SpecialRebuildStructsController {
           },
           payload: {
             orgId: project.orgId,
-            baseProject: apiProject,
+            baseProject: baseProject,
             repoId: bridge.repoId,
             branch: bridge.branchId
           }

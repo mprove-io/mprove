@@ -4,16 +4,16 @@ import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
@@ -29,13 +29,13 @@ import {
 @Controller()
 export class GetSuggestFieldsController {
   constructor(
+    private modelsService: ModelsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -78,16 +78,17 @@ export class GetSuggestFieldsController {
       projectId: projectId
     });
 
-    let models = await this.db.drizzle.query.modelsTable.findMany({
-      where: eq(modelsTable.structId, bridge.structId)
-    });
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: eq(modelsTable.structId, bridge.structId)
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
 
     let modelsGrantedAccess = models
-      .filter(x =>
-        checkAccess({
-          userAlias: user.alias,
+      .filter(model =>
+        checkModelAccess({
           member: userMember,
-          entity: x
+          modelAccessRoles: model.accessRoles
         })
       )
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
@@ -148,7 +149,7 @@ export class GetSuggestFieldsController {
     let payload: ToBackendGetSuggestFieldsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({ struct: struct }),
-      userMember: apiMember,
+      userMember: apiUserMember,
       suggestFields: suggestFields
     };
 
