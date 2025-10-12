@@ -5,12 +5,12 @@ import type { DuckDbError, TableData } from 'duckdb';
 import { Database } from 'duckdb';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { ConnectionTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { QueriesService } from '../db/queries.service';
 
 let retry = require('async-retry');
@@ -25,7 +25,7 @@ export class DuckDbService {
   ) {}
 
   async runQuery(item: {
-    connection: ProjectConnection;
+    connection: ConnectionTab;
     queryJobId: string;
     queryId: string;
     projectId: string;

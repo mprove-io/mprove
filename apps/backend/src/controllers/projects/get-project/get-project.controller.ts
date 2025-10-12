@@ -3,9 +3,8 @@ import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetProjectRequest,
@@ -17,8 +16,7 @@ import {
 export class GetProjectController {
   constructor(
     private projectsService: ProjectsService,
-    private membersService: MembersService,
-    private wrapToApiService: WrapEnxToApiService
+    private membersService: MembersService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetProject)
@@ -37,13 +35,12 @@ export class GetProjectController {
     });
 
     let payload: ToBackendGetProjectResponsePayload = {
-      project: this.wrapToApiService.wrapToApiProject({
+      project: this.projectsService.tabToApiProject({
         project: project,
-        isAddPrivateKey: false,
-        isAddPublicKey: userMember.isAdmin,
-        isAddGitUrl: userMember.isAdmin
+        isAddPublicKey: userMember.isAdmin === true,
+        isAddGitUrl: userMember.isAdmin === true
       }),
-      userMember: this.wrapToApiService.wrapToApiMember(userMember)
+      userMember: this.membersService.tabToApi({ member: userMember })
     };
 
     return payload;

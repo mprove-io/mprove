@@ -15,9 +15,8 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -35,7 +34,6 @@ export class SetProjectInfoController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -75,9 +73,8 @@ export class SetProjectInfoController {
     );
 
     let payload: ToBackendSetProjectInfoResponsePayload = {
-      project: this.wrapToApiService.wrapToApiProject({
+      project: this.projectsService.tabToApiProject({
         project: project,
-        isAddPrivateKey: false,
         isAddPublicKey: userMember.isAdmin,
         isAddGitUrl: userMember.isAdmin
       })

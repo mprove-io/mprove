@@ -6,7 +6,9 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { OrgsService } from '~backend/services/orgs.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { HashService } from '~backend/services/hash.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
@@ -18,6 +20,8 @@ import {
 @Controller()
 export class IsProjectExistController {
   constructor(
+    private hashService: HashService,
+    private projectsService: ProjectsService,
     private orgsService: OrgsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -28,10 +32,12 @@ export class IsProjectExistController {
 
     let { name, orgId } = reqValid.payload;
 
-    let org = await this.orgsService.getOrgCheckExists({ orgId: orgId });
+    await this.orgsService.getOrgCheckExists({ orgId: orgId });
+
+    let nameHash = this.hashService.makeHash(name);
 
     let project = await this.db.drizzle.query.projectsTable.findFirst({
-      where: eq(projectsTable.name, name)
+      where: eq(projectsTable.nameHash, nameHash)
     });
 
     let payload: ToBackendIsProjectExistResponsePayload = {

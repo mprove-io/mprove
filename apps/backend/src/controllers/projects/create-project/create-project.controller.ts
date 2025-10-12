@@ -12,16 +12,16 @@ import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { NoteEnt, notesTable } from '~backend/drizzle/postgres/schema/notes';
+import { NoteTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { notesTable } from '~backend/drizzle/postgres/schema/notes';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { OrgsService } from '~backend/services/orgs.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { TabService } from '~backend/services/tab.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { NotesService } from '~backend/services/db/notes.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { HashService } from '~backend/services/hash.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
@@ -29,7 +29,6 @@ import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-reques
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
-import { NoteTab } from '~common/interfaces/backend/note-tab';
 import {
   ToBackendCreateProjectRequest,
   ToBackendCreateProjectResponsePayload
@@ -43,10 +42,10 @@ let retry = require('async-retry');
 @Controller()
 export class CreateProjectController {
   constructor(
-    private tabService: TabService,
+    private hashService: HashService,
     private projectsService: ProjectsService,
+    private notesService: NotesService,
     private orgsService: OrgsService,
-    private wrapToApiService: WrapEnxToApiService,
     private logger: Logger,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
@@ -74,8 +73,13 @@ export class CreateProjectController {
       });
     }
 
+    let nameHash = this.hashService.makeHash(name);
+
     let project = await this.db.drizzle.query.projectsTable.findFirst({
-      where: and(eq(projectsTable.orgId, orgId), eq(projectsTable.name, name))
+      where: and(
+        eq(projectsTable.orgId, orgId),
+        eq(projectsTable.nameHash, nameHash)
+      )
     });
 
     if (isDefined(project)) {
@@ -84,23 +88,20 @@ export class CreateProjectController {
       });
     }
 
-    let note: NoteEnt;
-    let noteTab: NoteTab;
+    let note: NoteTab;
 
     if (remoteType === ProjectRemoteTypeEnum.GitClone) {
-      note = await this.db.drizzle.query.notesTable.findFirst({
-        where: eq(notesTable.noteId, noteId)
-      });
+      note = await this.db.drizzle.query.notesTable
+        .findFirst({
+          where: eq(notesTable.noteId, noteId)
+        })
+        .then(x => this.notesService.entToTab(x));
 
       if (isUndefined(note)) {
         throw new ServerError({
           message: ErEnum.BACKEND_NOTE_DOES_NOT_EXIST
         });
       }
-
-      noteTab = this.tabService.decrypt<NoteTab>({
-        encryptedString: note.tab
-      });
     }
 
     let newProject = await this.projectsService.addProject({
@@ -112,8 +113,8 @@ export class CreateProjectController {
       remoteType: remoteType,
       projectId: makeId(),
       gitUrl: gitUrl,
-      privateKey: noteTab?.privateKey,
-      publicKey: noteTab?.publicKey,
+      privateKey: note.privateKey,
+      publicKey: note.publicKey,
       evs: [],
       connections: []
     });
@@ -127,9 +128,8 @@ export class CreateProjectController {
     );
 
     let payload: ToBackendCreateProjectResponsePayload = {
-      project: this.wrapToApiService.wrapToApiProject({
+      project: this.projectsService.tabToApiProject({
         project: newProject,
-        isAddPrivateKey: false,
         isAddPublicKey: true,
         isAddGitUrl: true
       })

@@ -13,18 +13,16 @@ import { parseKey, parsePrivateKey } from 'sshpk';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { NoteEnt } from '~backend/drizzle/postgres/schema/notes';
+import { NoteTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { OrgsService } from '~backend/services/orgs.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
 import { TabService } from '~backend/services/tab.service';
-import { PASS_PHRASE } from '~common/constants/top';
+import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
-import { NoteTab } from '~common/interfaces/backend/note-tab';
 import {
   ToBackendGenerateProjectRemoteKeyRequest,
   ToBackendGenerateProjectRemoteKeyResponsePayload
@@ -68,26 +66,22 @@ export class GenerateProjectRemoteKeyController {
         type: 'pkcs8',
         format: 'pem',
         cipher: 'aes-256-cbc',
-        passphrase: PASS_PHRASE
+        passphrase: GIT_KEY_PASS_PHRASE
       }
     });
 
     let sshPublicKey = parseKey(publicKey, 'pem', {
-      passphrase: PASS_PHRASE
+      passphrase: GIT_KEY_PASS_PHRASE
     }).toString('ssh');
 
     let sshPrivateKey = parsePrivateKey(privateKey, 'pem', {
-      passphrase: PASS_PHRASE
+      passphrase: GIT_KEY_PASS_PHRASE
     }).toString('ssh');
 
-    let noteTab: NoteTab = {
-      publicKey: sshPublicKey,
-      privateKey: sshPrivateKey
-    };
-
-    let note: NoteEnt = {
+    let note: NoteTab = {
       noteId: makeId(),
-      tab: this.tabService.encrypt({ data: noteTab }),
+      publicKey: sshPublicKey,
+      privateKey: sshPrivateKey,
       serverTs: undefined
     };
 
@@ -107,7 +101,7 @@ export class GenerateProjectRemoteKeyController {
 
     let payload: ToBackendGenerateProjectRemoteKeyResponsePayload = {
       noteId: note.noteId,
-      publicKey: noteTab.publicKey
+      publicKey: note.publicKey
     };
 
     return payload;

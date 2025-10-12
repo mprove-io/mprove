@@ -7,14 +7,13 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { QueriesService } from '~backend/services/queries.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -49,7 +48,6 @@ export class GetQueriesController {
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -116,7 +114,7 @@ export class GetQueriesController {
           });
 
     let payload: ToBackendGetQueriesResponsePayload = {
-      queries: queries.map(x => this.wrapToApiService.wrapToApiQuery(x))
+      queries: queries.map(x => this.queriesService.tabToApi({ query: x }))
     };
 
     return payload;

@@ -1,6 +1,6 @@
 import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
-import { PASS_PHRASE } from '~common/constants/top';
+import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 
 export async function cloneRepo(item: {
   repoPath: string;
@@ -25,7 +25,7 @@ export async function cloneRepo(item: {
             'git',
             publicKeyPath,
             privateKeyPath,
-            PASS_PHRASE
+            GIT_KEY_PASS_PHRASE
           );
         }
       },

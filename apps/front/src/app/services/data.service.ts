@@ -405,7 +405,7 @@ export class DataService {
 
     let data: SourceDataRow[] = query.data;
 
-    let isStore = isUndefined(query.sql);
+    let isStore = mconfig.modelType === ModelTypeEnum.Store;
 
     if (isUndefined(data)) {
       return [];

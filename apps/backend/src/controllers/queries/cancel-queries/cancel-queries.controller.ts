@@ -14,27 +14,26 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
-  ConnectionEnt,
-  connectionsTable
-} from '~backend/drizzle/postgres/schema/connections';
+  ConnectionTab,
+  QueryTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { QueriesService } from '~backend/services/queries.service';
-import { StructsService } from '~backend/services/structs.service';
-import { TabService } from '~backend/services/tab.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ConnectionsService } from '~backend/services/db/connections.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -43,7 +42,6 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionSt } from '~common/interfaces/backend/connection-parts/connection-tab';
 import {
   ToBackendCancelQueriesRequest,
   ToBackendCancelQueriesResponsePayload
@@ -57,15 +55,14 @@ let retry = require('async-retry');
 @Controller()
 export class CancelQueriesController {
   constructor(
-    private tabService: TabService,
     private structsService: StructsService,
     private branchesService: BranchesService,
     private projectsService: ProjectsService,
     private bridgesService: BridgesService,
+    private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private queriesService: QueriesService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -127,28 +124,30 @@ export class CancelQueriesController {
       projectId: projectId
     });
 
-    let connectionsWithAnyEnvId: ConnectionEnt[] =
-      await this.db.drizzle.query.connectionsTable.findMany({
-        where: and(
-          eq(connectionsTable.projectId, projectId),
-          inArray(
-            connectionsTable.connectionId,
-            queries.map(q => q.connectionId)
+    let connectionsWithAnyEnvId: ConnectionTab[] =
+      await this.db.drizzle.query.connectionsTable
+        .findMany({
+          where: and(
+            eq(connectionsTable.projectId, projectId),
+            inArray(
+              connectionsTable.connectionId,
+              queries.map(q => q.connectionId)
+            )
           )
-        )
-      });
+        })
+        .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
 
     await asyncPool(
       8,
       queries.filter(q => q.status === QueryStatusEnum.Running),
-      async (query: QueryEnt) => {
+      async (query: QueryTab) => {
         let apiEnvs = await this.envsService.getApiEnvs({
           projectId: query.projectId
         });
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connection: ConnectionEnt = connectionsWithAnyEnvId.find(
+        let connection: ConnectionTab = connectionsWithAnyEnvId.find(
           x =>
             x.connectionId === query.connectionId &&
             x.envId ===
@@ -162,15 +161,10 @@ export class CancelQueriesController {
             message: ErEnum.BACKEND_CONNECTION_DOES_NOT_EXIST
           });
         }
-
-        let cTab = this.tabService.decrypt<ConnectionSt>({
-          encryptedString: connection.tab
-        });
-
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           let bigquery = new BigQuery({
-            projectId: cTab.options.bigquery.googleCloudProject,
-            credentials: cTab.options.bigquery.serviceAccountCredentials
+            projectId: connection.options.bigquery.googleCloudProject,
+            credentials: connection.options.bigquery.serviceAccountCredentials
           });
 
           let bigqueryQueryJob = bigquery.job(query.bigqueryQueryJobId);
@@ -217,7 +211,9 @@ export class CancelQueriesController {
     }
 
     let payload: ToBackendCancelQueriesResponsePayload = {
-      queries: canceledQueries.map(x => this.wrapToApiService.wrapToApiQuery(x))
+      queries: canceledQueries.map(x =>
+        this.queriesService.tabToApi({ query: x })
+      )
     };
 
     return payload;

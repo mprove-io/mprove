@@ -14,38 +14,36 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
-  ConnectionEnt,
-  connectionsTable
-} from '~backend/drizzle/postgres/schema/connections';
+  ConnectionTab,
+  QueryTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
+import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BigQueryService } from '~backend/services/bigquery.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { ClickHouseService } from '~backend/services/clickhouse.service';
-import { ConnectionsService } from '~backend/services/connections.service';
-import { DuckDbService } from '~backend/services/duckdb.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { MysqlService } from '~backend/services/mysql.service';
-import { PgService } from '~backend/services/pg.service';
-import { PrestoService } from '~backend/services/presto.service';
-import { QueriesService } from '~backend/services/queries.service';
-import { SnowFlakeService } from '~backend/services/snowflake.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ConnectionsService } from '~backend/services/db/connections.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
+import { BigQueryService } from '~backend/services/dwh/bigquery.service';
+import { ClickHouseService } from '~backend/services/dwh/clickhouse.service';
+import { DuckDbService } from '~backend/services/dwh/duckdb.service';
+import { MysqlService } from '~backend/services/dwh/mysql.service';
+import { PgService } from '~backend/services/dwh/pg.service';
+import { PrestoService } from '~backend/services/dwh/presto.service';
+import { SnowFlakeService } from '~backend/services/dwh/snowflake.service';
+import { TrinoService } from '~backend/services/dwh/trino.service';
 import { StoreService } from '~backend/services/store.service';
-import { StructsService } from '~backend/services/structs.service';
-import { TabService } from '~backend/services/tab.service';
-import { TrinoService } from '~backend/services/trino.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -55,7 +53,6 @@ import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
-import { ConnectionSt } from '~common/interfaces/backend/connection-parts/connection-tab';
 import {
   ToBackendRunQueriesRequest,
   ToBackendRunQueriesResponsePayload
@@ -70,13 +67,13 @@ let retry = require('async-retry');
 @Controller()
 export class RunQueriesController {
   constructor(
-    private tabService: TabService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private queriesService: QueriesService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
+    private modelsService: ModelsService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private duckdbService: DuckDbService,
@@ -87,8 +84,6 @@ export class RunQueriesController {
     private bigqueryService: BigQueryService,
     private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
-    private wrapToApiService: WrapEnxToApiService,
-    private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -139,12 +134,14 @@ export class RunQueriesController {
 
     let modelIds = [...new Set(mconfigs.map(x => x.modelId))];
 
-    let models = await this.db.drizzle.query.modelsTable.findMany({
-      where: and(
-        eq(modelsTable.structId, bridge.structId),
-        inArray(modelsTable.modelId, modelIds)
-      )
-    });
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: and(
+          eq(modelsTable.structId, bridge.structId),
+          inArray(modelsTable.modelId, modelIds)
+        )
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
 
     let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
 
@@ -153,7 +150,7 @@ export class RunQueriesController {
       projectId: projectId
     });
 
-    let runningQueries: QueryEnt[] = [];
+    let runningQueries: QueryTab[] = [];
     let startedQueryIds: string[] = [];
 
     let googleApiConnectionIds = queries
@@ -170,16 +167,18 @@ export class RunQueriesController {
     // console.log('uniqueGoogleApiConnectionIds');
     // console.log(uniqueGoogleApiConnectionIds);
 
-    let uniqueGoogleApiConnectionsWithAnyEnvId: ConnectionEnt[] =
-      await this.db.drizzle.query.connectionsTable.findMany({
-        where: and(
-          eq(connectionsTable.projectId, projectId),
-          inArray(
-            connectionsTable.connectionId,
-            uniqueGoogleApiConnectionIdsWithAnyEnvId
+    let uniqueGoogleApiConnectionsWithAnyEnvId =
+      await this.db.drizzle.query.connectionsTable
+        .findMany({
+          where: and(
+            eq(connectionsTable.projectId, projectId),
+            inArray(
+              connectionsTable.connectionId,
+              uniqueGoogleApiConnectionIdsWithAnyEnvId
+            )
           )
-        )
-      });
+        })
+        .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
 
     await forEachSeries(
       uniqueGoogleApiConnectionsWithAnyEnvId,
@@ -187,23 +186,19 @@ export class RunQueriesController {
         // console.log('googleApiConnections start');
         // let tsStart = Date.now();
 
-        let cTab = this.tabService.decrypt<ConnectionSt>({
-          encryptedString: connection.tab
-        });
-
         let authClient = new JWT({
           email:
-            cTab.options.storeGoogleApi.serviceAccountCredentials.client_email,
-          key: cTab.options.storeGoogleApi.serviceAccountCredentials
+            connection.options.storeGoogleApi.serviceAccountCredentials
+              .client_email,
+          key: connection.options.storeGoogleApi.serviceAccountCredentials
             .private_key,
-          scopes: cTab.options.storeGoogleApi.googleAuthScopes
+          scopes: connection.options.storeGoogleApi.googleAuthScopes
         });
 
         let tokens = await authClient.authorize();
 
-        cTab.options.storeGoogleApi.googleAccessToken = tokens.access_token;
-
-        connection.tab = this.tabService.encrypt({ data: cTab });
+        connection.options.storeGoogleApi.googleAccessToken =
+          tokens.access_token;
 
         // console.log(Date.now() - tsStart);
         // console.log('googleApiConnections end');
@@ -245,7 +240,7 @@ export class RunQueriesController {
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connectionEnt: ConnectionEnt =
+        let connection: ConnectionTab =
           await this.connectionsService.getConnectionCheckExists({
             projectId: query.projectId,
             envId:
@@ -255,11 +250,6 @@ export class RunQueriesController {
                 : query.envId,
             connectionId: query.connectionId
           });
-
-        let connection = this.wrapToApiService.wrapToApiProjectConnection({
-          connection: connectionEnt,
-          isIncludePasswords: true
-        });
 
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({
@@ -403,7 +393,7 @@ export class RunQueriesController {
 
         let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-        let connectionEnt: ConnectionEnt =
+        let connection: ConnectionTab =
           await this.connectionsService.getConnectionCheckExists({
             projectId: query.projectId,
             envId:
@@ -413,11 +403,6 @@ export class RunQueriesController {
                 : query.envId,
             connectionId: query.connectionId
           });
-
-        let connection = this.wrapToApiService.wrapToApiProjectConnection({
-          connection: connectionEnt,
-          isIncludePasswords: true
-        });
 
         if (connection.type === ConnectionTypeEnum.BigQuery) {
           query = await this.bigqueryService.runQuery({
@@ -636,10 +621,9 @@ export class RunQueriesController {
     }
 
     let payload: ToBackendRunQueriesResponsePayload = {
-      runningQueries: runningQueries.map(x => {
-        delete x.sql;
-        return this.wrapToApiService.wrapToApiQuery(x);
-      }),
+      runningQueries: runningQueries.map(x =>
+        this.queriesService.tabToApi({ query: x })
+      ),
       startedQueryIds: startedQueryIds
     };
 

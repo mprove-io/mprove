@@ -37,7 +37,7 @@ export const INTEGRA_POST = 'POST';
 export const PROD_REPO_ID = 'production';
 export const BRANCH_MAIN = 'main'; // also set as string in project default_branch
 export const PROJECT_ENV_PROD = 'prod';
-export const PASS_PHRASE = '';
+export const GIT_KEY_PASS_PHRASE = '';
 
 export const EMPTY_STORE_GOOGLE_API_OPTIONS: OptionsStoreGoogleApi = {
   baseUrl: 'https://analyticsdata.googleapis.com',

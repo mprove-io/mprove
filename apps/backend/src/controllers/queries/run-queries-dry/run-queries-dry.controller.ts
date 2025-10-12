@@ -13,22 +13,19 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
+import { QueryTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BigQueryService } from '~backend/services/bigquery.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { ConnectionsService } from '~backend/services/connections.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { QueriesService } from '~backend/services/queries.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ConnectionsService } from '~backend/services/db/connections.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { StructsService } from '~backend/services/db/structs.service';
+import { BigQueryService } from '~backend/services/dwh/bigquery.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -54,7 +51,6 @@ export class RunQueriesDryController {
     private bigqueryService: BigQueryService,
     private membersService: MembersService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -107,7 +103,7 @@ export class RunQueriesDryController {
 
     let results: {
       validEstimate: QueryEstimate;
-      errorQuery: QueryEnt;
+      errorQuery: QueryTab;
     }[] = await asyncPool(8, queryIds, async queryId => {
       let query = await this.queriesService.getQueryCheckExistsSkipData({
         projectId: projectId,
@@ -125,20 +121,14 @@ export class RunQueriesDryController {
 
       let apiEnv = apiEnvs.find(x => x.envId === query.envId);
 
-      let connectionEnt: ConnectionEnt =
-        await this.connectionsService.getConnectionCheckExists({
-          projectId: query.projectId,
-          envId:
-            apiEnv.isFallbackToProdConnections === true &&
-            apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
-              ? PROJECT_ENV_PROD
-              : query.envId,
-          connectionId: query.connectionId
-        });
-
-      let connection = this.wrapToApiService.wrapToApiProjectConnection({
-        connection: connectionEnt,
-        isIncludePasswords: true
+      let connection = await this.connectionsService.getConnectionCheckExists({
+        projectId: query.projectId,
+        envId:
+          apiEnv.isFallbackToProdConnections === true &&
+          apiEnv.fallbackConnectionIds.indexOf(query.connectionId) > -1
+            ? PROJECT_ENV_PROD
+            : query.envId,
+        connectionId: query.connectionId
       });
 
       let result = await this.bigqueryService.runQueryDry({
@@ -174,7 +164,7 @@ export class RunQueriesDryController {
     let payload: ToBackendRunQueriesDryResponsePayload = {
       dryId: dryId,
       errorQueries: errorQueries.map(x =>
-        this.wrapToApiService.wrapToApiQuery(x)
+        this.queriesService.tabToApi({ query: x })
       ),
       validQueryEstimates: validEstimates
     };

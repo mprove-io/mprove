@@ -3,7 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { MconfigTab, ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
+import {
+  ConnectionTab,
+  MconfigTab,
+  ModelTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -20,7 +24,6 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { Filter } from '~common/interfaces/blockml/filter';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
@@ -444,7 +447,7 @@ ${inputSub}
 
   async runQuery(item: {
     projectId: string;
-    connection: ProjectConnection;
+    connection: ConnectionTab;
     model: ModelTab;
     queryId: string;
     queryJobId: string;

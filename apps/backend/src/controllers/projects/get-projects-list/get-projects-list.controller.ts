@@ -16,20 +16,19 @@ import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import {
   ToBackendGetProjectsListRequest,
   ToBackendGetProjectsListResponsePayload
 } from '~common/interfaces/to-backend/projects/to-backend-get-projects-list';
 
-let retry = require('async-retry');
-
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
 export class GetProjectsListController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
+    private projectsService: ProjectsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -50,21 +49,25 @@ export class GetProjectsListController {
     let projects =
       projectIds.length === 0
         ? []
-        : await this.db.drizzle.query.projectsTable.findMany({
-            where: and(
-              inArray(projectsTable.projectId, projectIds),
-              eq(projectsTable.orgId, orgId)
-            )
-          });
+        : await this.db.drizzle.query.projectsTable
+            .findMany({
+              where: and(
+                inArray(projectsTable.projectId, projectIds),
+                eq(projectsTable.orgId, orgId)
+              )
+            })
+            .then(xs => xs.map(x => this.projectsService.entToTab(x)));
 
     let sortedProjects = projects.sort((a, b) =>
       a.name > b.name ? 1 : b.name > a.name ? -1 : 0
     );
 
+    let projectsItems: ProjectsItem[] = sortedProjects.map(x =>
+      this.projectsService.wrapToApiProjectsItem({ project: x })
+    );
+
     let payload: ToBackendGetProjectsListResponsePayload = {
-      projectsList: sortedProjects.map(x =>
-        this.wrapToApiService.wrapToApiProjectsItem(x)
-      )
+      projectsList: projectsItems
     };
 
     return payload;

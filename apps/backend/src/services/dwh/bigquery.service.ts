@@ -1,10 +1,12 @@
 import { BigQuery, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
-import { QueryTab } from '~backend/drizzle/postgres/schema/_tabs';
+import {
+  ConnectionTab,
+  QueryTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
 
 @Injectable()
@@ -14,7 +16,7 @@ export class BigQueryService {
   async runQuery(item: {
     userId: string;
     query: QueryTab;
-    connection: ProjectConnection;
+    connection: ConnectionTab;
   }): Promise<QueryTab> {
     let { query, userId, connection } = item;
 
@@ -60,7 +62,7 @@ export class BigQueryService {
 
   async runQueryDry(item: {
     query: QueryTab;
-    connection: ProjectConnection;
+    connection: ConnectionTab;
   }) {
     let { query, connection } = item;
 

@@ -1,6 +1,6 @@
 import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
-import { PASS_PHRASE } from '~common/constants/top';
+import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 
 export function makeFetchOptions(item: {
@@ -28,7 +28,7 @@ export function makeFetchOptions(item: {
                 'git',
                 pubKeyPath,
                 privateKeyPath,
-                PASS_PHRASE
+                GIT_KEY_PASS_PHRASE
               );
             }
           },
