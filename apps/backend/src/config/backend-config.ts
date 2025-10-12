@@ -12,6 +12,9 @@ export class BackendConfig {
   aesKey?: string;
 
   @IsString()
+  aesKeyTag?: string;
+
+  @IsString()
   mproveReleaseTag?: string;
 
   @IsEnum(BoolEnum)

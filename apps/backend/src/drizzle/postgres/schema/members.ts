@@ -22,6 +22,7 @@ export const membersTable = pgTable(
     isExplorer: boolean('is_explorer').notNull(),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     emailHash: varchar('email_hash').notNull(),
     aliasHash: varchar('alias_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

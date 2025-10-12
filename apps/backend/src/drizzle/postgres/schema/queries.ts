@@ -37,6 +37,7 @@ export const queriesTable = pgTable(
     ),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     apiUrlHash: varchar('api_url_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

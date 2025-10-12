@@ -27,6 +27,7 @@ export const dashboardsTable = pgTable(
     // tiles: json('tiles').$type<Tile[]>().notNull(),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

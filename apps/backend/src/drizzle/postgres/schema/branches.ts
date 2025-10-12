@@ -19,6 +19,7 @@ export const branchesTable = pgTable(
     branchId: varchar('branch_id', { length: 32 }).notNull(), // name
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

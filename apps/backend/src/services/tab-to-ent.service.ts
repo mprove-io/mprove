@@ -85,11 +85,15 @@ import { TabService } from './tab.service';
 
 @Injectable()
 export class TabToEntService {
+  private aesKeyTag: string;
+
   constructor(
     private hashService: HashService,
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>
-  ) {}
+  ) {
+    this.aesKeyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
+  }
 
   tabsPackToEntsPack(tabsPack: DbTabsPack) {
     let entsPack: DbEntsPack = {
@@ -182,6 +186,7 @@ export class TabToEntService {
       userId: avatar.userId,
       st: this.tabService.encrypt({ data: avatarSt }),
       lt: this.tabService.encrypt({ data: avatarLt }),
+      keyTag: this.aesKeyTag,
       serverTs: avatar.serverTs
     };
 
@@ -203,6 +208,7 @@ export class TabToEntService {
       branchId: branch.branchId,
       st: this.tabService.encrypt({ data: branchSt }),
       lt: this.tabService.encrypt({ data: branchLt }),
+      keyTag: this.aesKeyTag,
       serverTs: branch.serverTs
     };
 
@@ -228,6 +234,7 @@ export class TabToEntService {
       needValidate: bridge.needValidate,
       st: this.tabService.encrypt({ data: bridgeSt }),
       lt: this.tabService.encrypt({ data: bridgeLt }),
+      keyTag: this.aesKeyTag,
       serverTs: bridge.serverTs
     };
 
@@ -258,6 +265,7 @@ export class TabToEntService {
       draft: chart.draft,
       st: this.tabService.encrypt({ data: chartSt }),
       lt: this.tabService.encrypt({ data: chartLt }),
+      keyTag: this.aesKeyTag,
       serverTs: chart.serverTs
     };
 
@@ -280,6 +288,7 @@ export class TabToEntService {
       type: connection.type,
       st: this.tabService.encrypt({ data: connectionSt }),
       lt: this.tabService.encrypt({ data: connectionLt }),
+      keyTag: this.aesKeyTag,
       serverTs: undefined
     };
 
@@ -307,6 +316,7 @@ export class TabToEntService {
       draft: dashboard.draft,
       st: this.tabService.encrypt({ data: dashboardSt }),
       lt: this.tabService.encrypt({ data: dashboardLt }),
+      keyTag: this.aesKeyTag,
       serverTs: dashboard.serverTs
     };
 
@@ -329,6 +339,7 @@ export class TabToEntService {
       isFallbackToProdVariables: env.isFallbackToProdVariables,
       st: this.tabService.encrypt({ data: envSt }),
       lt: this.tabService.encrypt({ data: envLt }),
+      keyTag: this.aesKeyTag,
       serverTs: env.serverTs
     };
 
@@ -347,6 +358,7 @@ export class TabToEntService {
       reportId: kit.reportId,
       st: this.tabService.encrypt({ data: kitSt }),
       lt: this.tabService.encrypt({ data: kitLt }),
+      keyTag: this.aesKeyTag,
       serverTs: kit.serverTs
     };
 
@@ -381,6 +393,7 @@ export class TabToEntService {
       modelType: mconfig.modelType,
       st: this.tabService.encrypt({ data: mconfigSt }),
       lt: this.tabService.encrypt({ data: mconfigLt }),
+      keyTag: this.aesKeyTag,
       serverTs: mconfig.serverTs
     };
 
@@ -410,6 +423,7 @@ export class TabToEntService {
       isExplorer: member.isExplorer,
       st: this.tabService.encrypt({ data: memberSt }),
       lt: this.tabService.encrypt({ data: memberLt }),
+      keyTag: this.aesKeyTag,
       emailHash: this.hashService.makeHash(member.emailHash),
       aliasHash: this.hashService.makeHash(member.aliasHash),
       serverTs: member.serverTs
@@ -447,6 +461,7 @@ export class TabToEntService {
       connectionType: model.connectionType,
       st: this.tabService.encrypt({ data: modelSt }),
       lt: this.tabService.encrypt({ data: modelLt }),
+      keyTag: this.aesKeyTag,
       serverTs: model.serverTs
     };
 
@@ -464,6 +479,7 @@ export class TabToEntService {
       noteId: note.noteId,
       st: this.tabService.encrypt({ data: noteSt }),
       lt: this.tabService.encrypt({ data: noteLt }),
+      keyTag: this.aesKeyTag,
       serverTs: note.serverTs
     };
 
@@ -483,6 +499,7 @@ export class TabToEntService {
       ownerId: org.ownerId,
       st: this.tabService.encrypt({ data: orgSt }),
       lt: this.tabService.encrypt({ data: orgLt }),
+      keyTag: this.aesKeyTag,
       nameHash: this.hashService.makeHash(org.name),
       ownerEmailHash: this.hashService.makeHash(org.ownerEmail),
       serverTs: org.serverTs
@@ -509,6 +526,7 @@ export class TabToEntService {
       remoteType: project.remoteType,
       st: this.tabService.encrypt({ data: projectSt }),
       lt: this.tabService.encrypt({ data: projectLt }),
+      keyTag: this.aesKeyTag,
       nameHash: this.hashService.makeHash(project.name),
       gitUrlHash: this.hashService.makeHash(project.gitUrl),
       serverTs: project.serverTs
@@ -550,6 +568,7 @@ export class TabToEntService {
         query.bigqueryConsecutiveErrorsGetResults,
       st: this.tabService.encrypt({ data: querySt }),
       lt: this.tabService.encrypt({ data: queryLt }),
+      keyTag: this.aesKeyTag,
       apiUrlHash: this.hashService.makeHash(query.apiUrl),
       serverTs: query.serverTs
     };
@@ -583,6 +602,7 @@ export class TabToEntService {
       draftCreatedTs: report.draftCreatedTs,
       st: this.tabService.encrypt({ data: reportSt }),
       lt: this.tabService.encrypt({ data: reportLt }),
+      keyTag: this.aesKeyTag,
       serverTs: report.serverTs
     };
 
@@ -605,6 +625,7 @@ export class TabToEntService {
       mproveVersion: struct.mproveVersion,
       st: this.tabService.encrypt({ data: structSt }),
       lt: this.tabService.encrypt({ data: structLt }),
+      keyTag: this.aesKeyTag,
       serverTs: struct.serverTs
     };
 
@@ -633,6 +654,7 @@ export class TabToEntService {
       jwtMinIat: user.jwtMinIat,
       st: this.tabService.encrypt({ data: userSt }),
       lt: this.tabService.encrypt({ data: userLt }),
+      keyTag: this.aesKeyTag,
       emailHash: this.hashService.makeHash(user.email),
       aliasHash: this.hashService.makeHash(user.alias),
       emailVerificationTokenHash: this.hashService.makeHash(

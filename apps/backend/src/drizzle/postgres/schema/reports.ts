@@ -29,6 +29,7 @@ export const reportsTable = pgTable(
     // chart: json('chart').$type<MconfigChart>(),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

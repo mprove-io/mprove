@@ -15,6 +15,7 @@ export const orgsTable = pgTable(
     ownerId: varchar('owner_id').notNull(),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     nameHash: varchar('name_hash').notNull(),
     ownerEmailHash: varchar('owner_email_hash').notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

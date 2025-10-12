@@ -19,6 +19,7 @@ export const usersTable = pgTable(
     jwtMinIat: bigint('jwt_min_iat', { mode: 'number' }),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     emailHash: varchar('email_hash').notNull(),
     aliasHash: varchar('alias_hash'),
     emailVerificationTokenHash: varchar(

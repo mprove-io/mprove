@@ -9,6 +9,7 @@ export const kitsTable = pgTable(
     reportId: varchar('report_id', { length: 32 }).notNull(),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

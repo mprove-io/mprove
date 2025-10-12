@@ -17,6 +17,7 @@ export const projectsTable = pgTable(
     remoteType: varchar('remote_type').$type<ProjectRemoteTypeEnum>().notNull(),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     nameHash: varchar('name_hash').notNull(), // name is unique across org projects
     gitUrlHash: varchar('git_url_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

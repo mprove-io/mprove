@@ -33,6 +33,7 @@ export const modelsTable = pgTable(
     // nodes: json('nodes').$type<ModelNode[]>().notNull(),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({

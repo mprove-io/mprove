@@ -13,6 +13,7 @@ export const structsTable = pgTable(
     mproveVersion: varchar('mprove_version'),
     st: text('st'),
     lt: text('lt'),
+    keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
