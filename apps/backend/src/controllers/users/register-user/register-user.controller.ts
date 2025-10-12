@@ -12,13 +12,14 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
-import { UsersService } from '~backend/services/users.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { HashService } from '~backend/services/hash.service';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -56,9 +57,9 @@ let retry = require('async-retry');
 @Controller()
 export class RegisterUserController {
   constructor(
+    private hashService: HashService,
     private usersService: UsersService,
     private emailService: EmailService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -70,13 +71,17 @@ export class RegisterUserController {
 
     let { email, password } = reqValid.payload;
 
-    let newUser: UserEnt;
+    let newUser: UserTab;
 
     let { salt, hash } = await this.usersService.makeSaltAndHash(password);
 
-    let user = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.email, email)
-    });
+    let emailHash = this.hashService.makeHash(email);
+
+    let user = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.emailHash, emailHash)
+      })
+      .then(x => this.usersService.entToTab(x));
 
     if (isDefined(user)) {
       if (isDefined(user.hash) && user.isEmailVerified === true) {
@@ -117,16 +122,12 @@ export class RegisterUserController {
           firstName: undefined,
           lastName: undefined,
           ui: makeCopy(DEFAULT_SRV_UI),
+          emailHash: undefined, // ent-to-tab
+          aliasHash: undefined, // ent-to-tab
+          passwordResetTokenHash: undefined, // ent-to-tab
+          emailVerificationTokenHash: undefined, // ent-to-tab
           serverTs: undefined
         };
-
-        // newUser = maker.makeUser({
-        //   email: email,
-        //   isEmailVerified: false,
-        //   hash: hash,
-        //   salt: salt,
-        //   alias: alias
-        // });
       }
     }
 
@@ -153,7 +154,7 @@ export class RegisterUserController {
     });
 
     let payload: ToBackendRegisterUserResponsePayload = {
-      user: this.wrapToApiService.wrapToApiUser(newUser)
+      user: this.usersService.tabToApi({ user: newUser })
     };
 
     return payload;

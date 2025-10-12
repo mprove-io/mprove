@@ -15,8 +15,8 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offset-from-now';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
-import { UsersService } from '~backend/services/users.service';
 import {
   PATH_UPDATE_PASSWORD,
   RESTRICTED_USER_ALIAS
@@ -77,6 +77,7 @@ export class ResetUserPasswordController {
     this.usersService.checkUserHashIsDefined({ user: user });
 
     user.passwordResetToken = makeId();
+
     user.passwordResetExpiresTs = makeTsUsingOffsetFromNow(
       PASSWORD_EXPIRES_OFFSET
     );

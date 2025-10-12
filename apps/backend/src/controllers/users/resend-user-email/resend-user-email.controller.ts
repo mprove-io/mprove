@@ -6,6 +6,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
@@ -39,6 +40,7 @@ import { ServerError } from '~common/models/server-error';
 export class ResendUserEmailController {
   constructor(
     private emailService: EmailService,
+    private usersService: UsersService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -48,9 +50,11 @@ export class ResendUserEmailController {
 
     let { userId } = reqValid.payload;
 
-    let user = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.userId, userId)
-    });
+    let user = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.userId, userId)
+      })
+      .then(x => this.usersService.entToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({
@@ -69,17 +73,16 @@ export class ResendUserEmailController {
         isEmailVerified: true
       };
       return payload;
+    } else {
+      await this.emailService.sendVerification({
+        email: user.email,
+        emailVerificationToken: user.emailVerificationToken
+      });
+
+      let payload: ToBackendResendUserEmailResponsePayload = {
+        isEmailVerified: false
+      };
+      return payload;
     }
-
-    await this.emailService.sendVerification({
-      email: user.email,
-      emailVerificationToken: user.emailVerificationToken
-    });
-
-    let payload: ToBackendResendUserEmailResponsePayload = {
-      isEmailVerified: false
-    };
-
-    return payload;
   }
 }

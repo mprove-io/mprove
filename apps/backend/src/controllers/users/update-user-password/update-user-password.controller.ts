@@ -16,8 +16,8 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { UsersService } from '~backend/services/users.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { UsersService } from '~backend/services/db/users.service';
+import { HashService } from '~backend/services/hash.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -31,8 +31,8 @@ let retry = require('async-retry');
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
+    private hashService: HashService,
     private usersService: UsersService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -44,9 +44,13 @@ export class UpdateUserPasswordController {
 
     let { passwordResetToken, newPassword } = reqValid.payload;
 
-    let user = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.passwordResetToken, passwordResetToken)
-    });
+    let passwordResetTokenHash = this.hashService.makeHash(passwordResetToken);
+
+    let user = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(usersTable.passwordResetTokenHash, passwordResetTokenHash)
+      })
+      .then(x => this.usersService.entToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({

@@ -26,8 +26,10 @@ export class LoginUserController {
   async loginUser(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendLoginUserRequest = request.body;
 
+    let token = this.jwtService.sign({ userId: user.userId });
+
     let payload: ToBackendLoginUserResponsePayload = {
-      token: this.jwtService.sign({ userId: user.userId }),
+      token: token,
       user: this.usersService.tabToApi({ user: user })
     };
 
