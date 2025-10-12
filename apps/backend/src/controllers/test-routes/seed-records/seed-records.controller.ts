@@ -12,32 +12,44 @@ import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
-import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
-import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
-import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
-import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
-import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import { OrgEnt } from '~backend/drizzle/postgres/schema/orgs';
-import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
-import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
-import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import {
+  BranchTab,
+  BridgeTab,
+  ChartTab,
+  ConnectionTab,
+  DashboardTab,
+  EnvTab,
+  MconfigTab,
+  MemberTab,
+  ModelTab,
+  OrgTab,
+  ProjectTab,
+  QueryTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offset-from-now';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { EntMakerService } from '~backend/services/maker.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { ChartsService } from '~backend/services/db/charts.service';
+import { ConnectionsService } from '~backend/services/db/connections.service';
+import { DashboardsService } from '~backend/services/db/dashboards.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MconfigsService } from '~backend/services/db/mconfigs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { OrgsService } from '~backend/services/db/orgs.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { QueriesService } from '~backend/services/db/queries.service';
+import { ReportsService } from '~backend/services/db/reports.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { TabService } from '~backend/services/tab.service';
-import { UsersService } from '~backend/services/users.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import {
   DEFAULT_SRV_UI,
@@ -48,7 +60,7 @@ import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info
 import { isDefined } from '~common/functions/is-defined';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
-import { Project } from '~common/interfaces/backend/project';
+import { BaseProject } from '~common/interfaces/backend/base-project';
 import {
   ToBackendSeedRecordsRequest,
   ToBackendSeedRecordsRequestPayloadMembersItem,
@@ -74,13 +86,22 @@ let retry = require('async-retry');
 @Controller()
 export class SeedRecordsController {
   constructor(
-    private tabService: TabService,
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private rabbitService: RabbitService,
     private usersService: UsersService,
+    private connectionsService: ConnectionsService,
+    private envsService: EnvsService,
+    private membersService: MembersService,
+    private chartsService: ChartsService,
+    private modelsService: ModelsService,
+    private mconfigsService: MconfigsService,
+    private orgsService: OrgsService,
+    private projectsService: ProjectsService,
+    private queriesService: QueriesService,
+    private reportsService: ReportsService,
+    private dashboardsService: DashboardsService,
     private blockmlService: BlockmlService,
-    private entMakerService: EntMakerService,
-    private wrapToApiService: WrapEnxToApiService,
-    private wrapToEntService: WrapToEntService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -101,21 +122,24 @@ export class SeedRecordsController {
 
     //
 
-    let users: UserEnt[] = [];
-    let orgs: OrgEnt[] = [];
-    let projects: ProjectEnt[] = [];
-    let envs: EnvEnt[] = [];
-    let members: MemberEnt[] = [];
-    let connections: ConnectionEnt[] = [];
-    let structs: StructEnt[] = [];
-    let branches: BranchEnt[] = [];
-    let bridges: BridgeEnt[] = [];
-    let charts: ChartEnt[] = [];
-    let queries: QueryEnt[] = [];
-    let models: ModelEnt[] = [];
-    let reports: ReportEnt[] = [];
-    let mconfigs: MconfigEnt[] = [];
-    let dashboards: DashboardEnt[] = [];
+    // let avatars = ...
+    let branches: BranchTab[] = [];
+    let bridges: BridgeTab[] = [];
+    let charts: ChartTab[] = [];
+    let connections: ConnectionTab[] = [];
+    let dashboards: DashboardTab[] = [];
+    let envs: EnvTab[] = [];
+    // let kits = ...
+    let mconfigs: MconfigTab[] = [];
+    let members: MemberTab[] = [];
+    let models: ModelTab[] = [];
+    // let notes = ...
+    let orgs: OrgTab[] = [];
+    let projects: ProjectTab[] = [];
+    let queries: QueryTab[] = [];
+    let reports: ReportTab[] = [];
+    let structs: StructTab[] = [];
+    let users: UserTab[] = [];
 
     if (isDefined(payloadUsers)) {
       await asyncPool(
@@ -127,7 +151,7 @@ export class SeedRecordsController {
             ? await this.usersService.makeSaltAndHash(x.password)
             : { salt: undefined, hash: undefined };
 
-          let newUser: UserEnt = {
+          let newUser: UserTab = {
             userId: x.userId || makeId(),
             email: x.email,
             alias: alias,
@@ -145,6 +169,10 @@ export class SeedRecordsController {
             firstName: undefined,
             lastName: undefined,
             ui: makeCopy(DEFAULT_SRV_UI),
+            emailHash: undefined, // tab-to-ent
+            aliasHash: undefined, // tab-to-ent
+            emailVerificationTokenHash: undefined, // tab-to-ent
+            passwordResetTokenHash: undefined, // tab-to-ent
             serverTs: undefined
           };
 
@@ -158,11 +186,13 @@ export class SeedRecordsController {
         1,
         payloadOrgs,
         async (x: ToBackendSeedRecordsRequestPayloadOrgsItem) => {
-          let newOrg: OrgEnt = {
+          let newOrg: OrgTab = {
             orgId: x.orgId,
             name: x.name,
             ownerEmail: x.ownerEmail,
             ownerId: users.find(u => u.email === x.ownerEmail).userId,
+            nameHash: undefined, // tab-to-ent
+            ownerEmailHash: undefined, // tab-to-ent
             serverTs: undefined
           };
 
@@ -192,7 +222,7 @@ export class SeedRecordsController {
 
     if (isDefined(payloadConnections)) {
       payloadConnections.forEach(x => {
-        let newConnection = this.entMakerService.makeConnection({
+        let newConnection = this.connectionsService.makeConnection({
           projectId: x.projectId,
           envId: x.envId,
           connectionId: x.connectionId,
@@ -206,7 +236,7 @@ export class SeedRecordsController {
 
     if (isDefined(payloadEnvs)) {
       payloadEnvs.forEach(x => {
-        let newEnv = this.entMakerService.makeEnv({
+        let newEnv = this.envsService.makeEnv({
           projectId: x.projectId,
           envId: x.envId,
           evs: x.evs
@@ -221,22 +251,26 @@ export class SeedRecordsController {
         1,
         payloadProjects,
         async (x: ToBackendSeedRecordsRequestPayloadProjectsItem) => {
-          let newProject: Project = {
+          let newProject: ProjectTab = {
             orgId: x.orgId,
             projectId: x.projectId || makeId(),
             remoteType: x.remoteType,
-            tab: {
-              name: x.name,
-              defaultBranch: x.defaultBranch,
-              gitUrl: x.gitUrl,
-              privateKey: x.privateKey,
-              publicKey: x.publicKey
-            },
+            name: x.name,
+            defaultBranch: x.defaultBranch,
+            gitUrl: x.gitUrl,
+            privateKey: x.privateKey,
+            publicKey: x.publicKey,
+            nameHash: undefined, // ent-to-tab
+            gitUrlHash: undefined, // ent-to-tab
             serverTs: undefined
           };
 
-          let prodEnv = this.entMakerService.makeEnv({
-            projectId: newProject.projectId,
+          let baseProject: BaseProject = this.projectsService.tabToBaseProject({
+            project: newProject
+          });
+
+          let prodEnv = this.envsService.makeEnv({
+            projectId: baseProject.projectId,
             envId: PROJECT_ENV_PROD,
             evs: []
           });
@@ -247,8 +281,8 @@ export class SeedRecordsController {
               traceId: reqValid.info.traceId
             },
             payload: {
-              orgId: newProject.orgId,
-              baseProject: newProject,
+              orgId: baseProject.orgId,
+              baseProject: baseProject,
               testProjectId: x.testProjectId,
               devRepoId: users[0].userId,
               userAlias: users[0].alias
@@ -258,8 +292,8 @@ export class SeedRecordsController {
           let diskResponse =
             await this.rabbitService.sendToDisk<ToDiskSeedProjectResponse>({
               routingKey: makeRoutingKeyToDisk({
-                orgId: newProject.orgId,
-                projectId: newProject.projectId
+                orgId: baseProject.orgId,
+                projectId: baseProject.projectId
               }),
               message: toDiskSeedProjectRequest,
               checkIsOk: true
@@ -268,18 +302,10 @@ export class SeedRecordsController {
           let devStructId = makeId();
           let prodStructId = makeId();
 
-          let prodEnvProjectConnections = connections
-            .filter(
-              y =>
-                y.projectId === newProject.projectId &&
-                y.envId === prodEnv.envId
-            )
-            .map(c =>
-              this.wrapToApiService.wrapToApiProjectConnection({
-                connection: c,
-                isIncludePasswords: true
-              })
-            );
+          let prodEnvConnections = connections.filter(
+            y =>
+              y.projectId === newProject.projectId && y.envId === prodEnv.envId
+          );
 
           let {
             struct: devStruct,
@@ -298,7 +324,7 @@ export class SeedRecordsController {
             mproveDir: diskResponse.payload.mproveDir,
             envId: prodEnv.envId,
             skipDb: true,
-            connections: prodEnvProjectConnections,
+            connections: prodEnvConnections,
             overrideTimezone: undefined,
             evs: prodEnv.evs
           });
@@ -320,24 +346,24 @@ export class SeedRecordsController {
             mproveDir: diskResponse.payload.mproveDir,
             envId: prodEnv.envId,
             skipDb: true,
-            connections: prodEnvProjectConnections,
+            connections: prodEnvConnections,
             overrideTimezone: undefined,
             evs: prodEnv.evs
           });
 
-          let devBranch = this.entMakerService.makeBranch({
+          let devBranch = this.branchesService.makeBranch({
             projectId: newProject.projectId,
             repoId: users[0].userId,
             branchId: newProject.defaultBranch
           });
 
-          let prodBranch = this.entMakerService.makeBranch({
+          let prodBranch = this.branchesService.makeBranch({
             projectId: newProject.projectId,
             repoId: PROD_REPO_ID,
             branchId: newProject.defaultBranch
           });
 
-          let devBranchBridgeProdEnv = this.entMakerService.makeBridge({
+          let devBranchBridgeProdEnv = this.bridgesService.makeBridge({
             projectId: devBranch.projectId,
             repoId: devBranch.repoId,
             branchId: devBranch.branchId,
@@ -346,7 +372,7 @@ export class SeedRecordsController {
             needValidate: false
           });
 
-          let prodBranchBridgeProdEnv = this.entMakerService.makeBridge({
+          let prodBranchBridgeProdEnv = this.bridgesService.makeBridge({
             projectId: prodBranch.projectId,
             repoId: prodBranch.repoId,
             branchId: prodBranch.branchId,
@@ -355,18 +381,7 @@ export class SeedRecordsController {
             needValidate: false
           });
 
-          let newProjectEnt: ProjectEnt = {
-            orgId: newProject.orgId,
-            projectId: newProject.projectId,
-            name: newProject.name,
-            defaultBranch: newProject.defaultBranch,
-            remoteType: newProject.remoteType,
-            gitUrl: newProject.gitUrl,
-            tab: this.tabService.encrypt({ data: newProject.tab }),
-            serverTs: newProject.serverTs
-          };
-
-          projects.push(newProjectEnt);
+          projects.push(newProject);
           envs.push(prodEnv);
 
           structs = [...structs, devStruct, prodStruct];
@@ -382,16 +397,16 @@ export class SeedRecordsController {
           charts = [
             ...charts,
             ...devChartsApi.map(y =>
-              this.wrapToEntService.wrapToEntityChart({
-                chart: y,
+              this.chartsService.apiToTab({
+                apiChart: y,
                 chartType: devMconfigsApi.find(
                   mconfig => mconfig.mconfigId === y.tiles[0].mconfigId
                 ).chart.type
               })
             ),
             ...prodChartsApi.map(y =>
-              this.wrapToEntService.wrapToEntityChart({
-                chart: y,
+              this.chartsService.apiToTab({
+                apiChart: y,
                 chartType: prodMconfigsApi.find(
                   mconfig => mconfig.mconfigId === y.tiles[0].mconfigId
                 ).chart.type
@@ -402,50 +417,50 @@ export class SeedRecordsController {
           models = [
             ...models,
             ...devModelsApi.map(y =>
-              this.wrapToEntService.wrapToEntityModel(y)
+              this.modelsService.apiToTab({ apiModel: y })
             ),
             ...prodModelsApi.map(y =>
-              this.wrapToEntService.wrapToEntityModel(y)
+              this.modelsService.apiToTab({ apiModel: y })
             )
           ];
 
           reports = [
             ...reports,
             ...devReportsApi.map(y =>
-              this.wrapToEntService.wrapToEntityReport(y)
+              this.reportsService.apiToTab({ apiReport: y })
             ),
             ...prodReportsApi.map(y =>
-              this.wrapToEntService.wrapToEntityReport(y)
+              this.reportsService.apiToTab({ apiReport: y })
             )
           ];
 
           queries = [
             ...queries,
             ...devQueriesApi.map(y =>
-              this.wrapToEntService.wrapToEntityQuery(y)
+              this.queriesService.apiToTab({ apiQuery: y })
             ),
             ...prodQueriesApi.map(y =>
-              this.wrapToEntService.wrapToEntityQuery(y)
+              this.queriesService.apiToTab({ apiQuery: y })
             )
           ];
 
           dashboards = [
             ...dashboards,
             ...devDashboardsApi.map(y =>
-              this.wrapToEntService.wrapToEntityDashboard(y)
+              this.dashboardsService.apiToTab({ apiDashboard: y })
             ),
             ...prodDashboardsApi.map(y =>
-              this.wrapToEntService.wrapToEntityDashboard(y)
+              this.dashboardsService.apiToTab({ apiDashboard: y })
             )
           ];
 
           mconfigs = [
             ...mconfigs,
             ...devMconfigsApi.map(y =>
-              this.wrapToEntService.wrapToEntityMconfig(y)
+              this.mconfigsService.apiToTab({ apiMconfig: y })
             ),
             ...prodMconfigsApi.map(y =>
-              this.wrapToEntService.wrapToEntityMconfig(y)
+              this.mconfigsService.apiToTab({ apiMconfig: y })
             )
           ];
         }
@@ -459,11 +474,10 @@ export class SeedRecordsController {
         async (x: ToBackendSeedRecordsRequestPayloadMembersItem) => {
           let user = users.find(u => u.email === x.email);
 
-          let newMember = this.entMakerService.makeMember({
+          let newMember = this.membersService.makeMember({
             projectId: x.projectId,
             user: user,
             roles: x.roles,
-            envs: x.envs,
             isAdmin: x.isAdmin,
             isEditor: x.isEditor,
             isExplorer: x.isExplorer
@@ -477,7 +491,9 @@ export class SeedRecordsController {
     if (isDefined(payloadQueries)) {
       queries = [
         ...queries,
-        ...payloadQueries.map(pq => this.wrapToEntService.wrapToEntityQuery(pq))
+        ...payloadQueries.map(pq =>
+          this.queriesService.apiToTab({ apiQuery: pq })
+        )
       ];
     }
 
@@ -485,7 +501,7 @@ export class SeedRecordsController {
       mconfigs = [
         ...mconfigs,
         ...payloadMconfigs.map(mc =>
-          this.wrapToEntService.wrapToEntityMconfig(mc)
+          this.mconfigsService.apiToTab({ apiMconfig: mc })
         )
       ];
     }

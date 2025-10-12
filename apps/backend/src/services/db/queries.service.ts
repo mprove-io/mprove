@@ -133,7 +133,7 @@ export class QueriesService {
       apiBody: apiQuery.apiBody,
       lastErrorMessage: apiQuery.lastErrorMessage,
       data: apiQuery.data,
-      apiUrlHash: this.hashService.makeHash(apiQuery.apiUrl),
+      apiUrlHash: undefined, // tab-to-ent
       serverTs: apiQuery.serverTs
     };
 

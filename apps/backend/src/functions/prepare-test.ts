@@ -7,6 +7,7 @@ import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
 import { Prep } from '~backend/interfaces/prep';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -59,6 +60,7 @@ export async function prepareTest(item: {
   let httpServer = app.getHttpServer();
 
   let rabbitService = moduleRef.get<RabbitService>(RabbitService);
+  let tabService = moduleRef.get<TabService>(TabService);
   let logger = await moduleRef.resolve<Logger>(Logger);
   let cs = await moduleRef.resolve<ConfigService>(ConfigService);
 
@@ -68,6 +70,7 @@ export async function prepareTest(item: {
     httpServer,
     moduleRef,
     rabbitService,
+    tabService,
     logger,
     cs
   };
@@ -186,6 +189,7 @@ export async function prepareTestAndSeed(item: {
     httpServer: prep1.httpServer,
     moduleRef: prep1.moduleRef,
     rabbitService: prep1.rabbitService,
+    tabService: prep1.tabService,
     logger: prep1.logger,
     cs: prep1.cs
   };

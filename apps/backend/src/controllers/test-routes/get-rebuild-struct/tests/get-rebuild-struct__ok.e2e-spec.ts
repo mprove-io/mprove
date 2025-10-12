@@ -11,7 +11,8 @@ import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum'
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
-import { Project } from '~common/interfaces/backend/project';
+import { BaseProject } from '~common/interfaces/backend/base-project';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import { ToBackendGetRebuildStructRequest } from '~common/interfaces/to-backend/test-routes/to-backend-get-rebuild-struct';
 import { ToBlockmlRebuildStructResponse } from '~common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
 import {
@@ -93,18 +94,23 @@ test('1', async t => {
 
     // to disk
 
-    let apiProject: Project = {
+    let projectSt: ProjectSt = {
+      name: projectName
+    };
+
+    let projectLt: ProjectLt = {
+      defaultBranch: BRANCH_MAIN,
+      gitUrl: undefined,
+      privateKey: undefined,
+      publicKey: undefined
+    };
+
+    let baseProject: BaseProject = {
       orgId: orgId,
       projectId: projectId,
       remoteType: ProjectRemoteTypeEnum.Managed,
-      tab: {
-        name: projectName,
-        defaultBranch: BRANCH_MAIN,
-        gitUrl: undefined,
-        privateKey: undefined,
-        publicKey: undefined
-      },
-      serverTs: 0
+      st: prep.tabService.encrypt({ data: projectSt }),
+      lt: prep.tabService.encrypt({ data: projectLt })
     };
 
     let toDiskSeedProjectReq: ToDiskSeedProjectRequest = {
@@ -114,7 +120,7 @@ test('1', async t => {
       },
       payload: {
         orgId: orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         testProjectId: testProjectId,
         devRepoId: devRepoId,
         userAlias: userAlias

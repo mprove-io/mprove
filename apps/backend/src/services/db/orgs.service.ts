@@ -126,8 +126,8 @@ export class OrgsService {
       name: name,
       ownerId: ownerId,
       ownerEmail: ownerEmail,
-      nameHash: this.hashService.makeHash(name),
-      ownerEmailHash: this.hashService.makeHash(ownerEmail),
+      nameHash: undefined, // tab-to-ent
+      ownerEmailHash: undefined, // tab-to-ent
       serverTs: undefined
     };
 

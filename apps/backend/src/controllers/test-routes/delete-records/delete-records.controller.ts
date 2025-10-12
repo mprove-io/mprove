@@ -32,6 +32,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { HashService } from '~backend/services/hash.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
@@ -53,6 +54,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteRecordsController {
   constructor(
+    private hashService: HashService,
     private rabbitService: RabbitService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -74,10 +76,14 @@ export class DeleteRecordsController {
     let userIds: string[] = [];
 
     if (isDefined(projectNames) && projectNames.length > 0) {
+      let projectNameHashes = projectNames.map(x =>
+        this.hashService.makeHash(x)
+      );
+
       let projects = await this.db.drizzle.query.projectsTable.findMany({
         where: and(
           inArray(projectsTable.orgId, orgIds),
-          inArray(projectsTable.name, projectNames)
+          inArray(projectsTable.nameHash, projectNameHashes)
         )
       });
 
@@ -87,8 +93,10 @@ export class DeleteRecordsController {
     }
 
     if (isDefined(orgNames) && orgNames.length > 0) {
+      let orgNameHashes = orgNames.map(x => this.hashService.makeHash(x));
+
       let orgs = await this.db.drizzle.query.orgsTable.findMany({
-        where: inArray(orgsTable.name, orgNames)
+        where: inArray(orgsTable.nameHash, orgNameHashes)
       });
 
       if (orgs.length > 0) {
@@ -121,8 +129,10 @@ export class DeleteRecordsController {
 
     if (emails.length > 0) {
       await asyncPool(1, emails, async (email: string) => {
+        let emailHash = this.hashService.makeHash(email);
+
         let user = await this.db.drizzle.query.usersTable.findFirst({
-          where: eq(usersTable.email, email)
+          where: eq(usersTable.emailHash, emailHash)
         });
 
         if (isDefined(user)) {

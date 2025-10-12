@@ -147,12 +147,10 @@ export class CreateMemberController {
         firstName: undefined,
         lastName: undefined,
         ui: makeCopy(DEFAULT_SRV_UI),
-        emailHash: this.hashService.makeHash(email),
-        aliasHash: this.hashService.makeHash(alias),
-        passwordResetTokenHash: undefined,
-        emailVerificationTokenHash: this.hashService.makeHash(
-          emailVerificationToken
-        ),
+        emailHash: undefined, // tab-to-ent
+        aliasHash: undefined, // tab-to-ent
+        passwordResetTokenHash: undefined, // tab-to-ent
+        emailVerificationTokenHash: undefined, // tab-to-ent
         serverTs: undefined
       };
     }

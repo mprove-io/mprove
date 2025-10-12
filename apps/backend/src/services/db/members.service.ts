@@ -104,8 +104,8 @@ export class MembersService {
       firstName: user.firstName,
       lastName: user.lastName,
       roles: roles || [],
-      emailHash: this.hashService.makeHash(user.email),
-      aliasHash: this.hashService.makeHash(user.alias),
+      emailHash: undefined, // tab-to-ent
+      aliasHash: undefined, // tab-to-ent
       serverTs: undefined
     };
 

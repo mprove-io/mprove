@@ -304,7 +304,7 @@ export class MconfigsService {
       bigqueryQueryJobId: undefined,
       bigqueryConsecutiveErrorsGetJob: 0,
       bigqueryConsecutiveErrorsGetResults: 0,
-      apiUrlHash: this.hashService.makeHash(apiUrl),
+      apiUrlHash: undefined, // tab-to-ent
       serverTs: 1
     };
 

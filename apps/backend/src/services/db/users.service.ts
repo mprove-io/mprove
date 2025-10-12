@@ -182,12 +182,10 @@ export class UsersService {
       passwordResetToken: undefined,
       passwordResetExpiresTs: undefined,
       ui: makeCopy(DEFAULT_SRV_UI),
-      emailHash: this.hashService.makeHash(email),
-      aliasHash: this.hashService.makeHash(alias),
-      emailVerificationTokenHash: this.hashService.makeHash(
-        emailVerificationToken
-      ),
-      passwordResetTokenHash: undefined,
+      emailHash: undefined, // tab-to-ent
+      aliasHash: undefined, // tab-to-ent
+      emailVerificationTokenHash: undefined, // tab-to-ent
+      passwordResetTokenHash: undefined, // tab-to-ent
       serverTs: undefined
     };
 

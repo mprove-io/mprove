@@ -193,8 +193,8 @@ export class ProjectsService {
       gitUrl: gitUrl,
       privateKey: privateKey,
       publicKey: publicKey,
-      nameHash: this.hashService.makeHash(name),
-      gitUrlHash: this.hashService.makeHash(gitUrl),
+      nameHash: undefined, // tab-to-ent
+      gitUrlHash: undefined, // tab-to-ent
       serverTs: undefined
     };
 
