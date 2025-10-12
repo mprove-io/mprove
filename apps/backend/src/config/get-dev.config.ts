@@ -27,6 +27,12 @@ export function getDevConfig(envFilePath: any) {
 
     aesKeyTag: process.env.BACKEND_AES_KEY_TAG || envFile.BACKEND_AES_KEY_TAG,
 
+    prevAesKey:
+      process.env.BACKEND_PREV_AES_KEY || envFile.BACKEND_PREV_AES_KEY,
+
+    prevAesKeyTag:
+      process.env.BACKEND_PREV_AES_KEY_TAG || envFile.BACKEND_PREV_AES_KEY_TAG,
+
     isScheduler: <BoolEnum>(
       (process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER)
     ),
