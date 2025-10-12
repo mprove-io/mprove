@@ -72,7 +72,7 @@ export class GetStructController {
       projectId: projectId
     });
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendGetStructResponsePayload = {
       needValidate: bridge.needValidate,

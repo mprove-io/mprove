@@ -7,11 +7,10 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -32,12 +31,11 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class CommitRepoController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
-    private cs: ConfigService<BackendConfig>,
-    private branchesService: BranchesService
+    private branchesService: BranchesService,
+    private cs: ConfigService<BackendConfig>
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCommitRepo)
@@ -95,7 +93,7 @@ export class CommitRepoController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         userAlias: user.alias,

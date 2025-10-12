@@ -143,7 +143,7 @@ export class GetSuggestFieldsController {
                   : 0
     );
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendGetSuggestFieldsResponsePayload = {
       needValidate: bridge.needValidate,

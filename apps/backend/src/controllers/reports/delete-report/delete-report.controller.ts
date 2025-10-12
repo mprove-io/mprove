@@ -165,17 +165,6 @@ export class DeleteReportController {
       }
     });
 
-    // let { struct } = await this.blockmlService.rebuildStruct({
-    //   traceId: traceId,
-    //   projectId: projectId,
-    //   structId: bridge.structId,
-    //   diskFiles: diskResponse.payload.files,
-    //   mproveDir: diskResponse.payload.mproveDir,
-    //   skipDb: true,
-    //   envId: envId,
-    //   overrideTimezone: undefined
-    // });
-
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {

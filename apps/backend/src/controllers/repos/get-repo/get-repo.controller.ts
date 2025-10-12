@@ -5,14 +5,14 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { StructsService } from '~backend/services/db/structs.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -33,12 +33,12 @@ export class GetRepoController {
   constructor(
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private usersService: UsersService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
-    private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService
+    private envsService: EnvsService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetRepo)
@@ -88,7 +88,7 @@ export class GetRepoController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         isFetch: isFetch
@@ -111,11 +111,11 @@ export class GetRepoController {
       isGetEmptyStructOnError: true
     });
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let payload: ToBackendGetRepoResponsePayload = {
-      userMember: apiMember,
-      user: this.wrapToApiService.wrapToApiUser(user),
+      userMember: apiUserMember,
+      user: this.usersService.tabToApi({ user: user }),
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({ struct: struct }),
       repo: diskResponse.payload.repo

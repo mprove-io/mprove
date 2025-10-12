@@ -380,7 +380,7 @@ export class SaveModifyReportController {
 
     let payload: ToBackendSaveModifyReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: apiStruct }),
+      struct: this.structsService.tabToApi({ struct: currentStruct }),
       userMember: apiUserMember,
       report: apiFinalReport,
       reportPart: apiFinalReport
