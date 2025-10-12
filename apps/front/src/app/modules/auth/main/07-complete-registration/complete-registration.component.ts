@@ -30,7 +30,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 export class CompleteRegistrationComponent implements OnInit {
   pageTitle = COMPLETE_REGISTRATION_PAGE_TITLE;
 
-  emailConfirmationToken: string;
+  emailVerificationToken: string;
   bToken: string;
   email: string;
 
@@ -72,7 +72,7 @@ export class CompleteRegistrationComponent implements OnInit {
     // console.log('stopWatch from CompleteRegistrationComponent');
     // this.authService.stopWatch();
 
-    this.emailConfirmationToken =
+    this.emailVerificationToken =
       this.route.snapshot.queryParamMap.get('token');
     this.bToken = this.route.snapshot.queryParamMap.get('b');
     if (isDefined(this.bToken)) {
@@ -90,7 +90,7 @@ export class CompleteRegistrationComponent implements OnInit {
     this.spinner.show(APP_SPINNER_NAME);
 
     let payload: ToBackendCompleteUserRegistrationRequestPayload = {
-      emailConfirmationToken: this.emailConfirmationToken,
+      emailVerificationToken: this.emailVerificationToken,
       newPassword: this.setPasswordForm.value.newPassword
     };
 

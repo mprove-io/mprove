@@ -11,7 +11,10 @@ import { LOCAL_STORAGE_TOKEN } from '~common/constants/top-front';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { ToBackendConfirmUserEmailResponse } from '~common/interfaces/to-backend/users/to-backend-confirm-user-email';
+import {
+  ToBackendConfirmUserEmailRequestPayload,
+  ToBackendConfirmUserEmailResponse
+} from '~common/interfaces/to-backend/users/to-backend-confirm-user-email';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
@@ -25,7 +28,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 export class ConfirmEmailComponent implements OnInit {
   pageTitle = EMAIL_CONFIRMATION_PAGE_TITLE;
 
-  emailConfirmationToken: string;
+  emailVerificationToken: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -44,16 +47,18 @@ export class ConfirmEmailComponent implements OnInit {
     // console.log('stopWatch from ConfirmEmailComponent');
     // this.authService.stopWatch();
 
-    this.emailConfirmationToken =
+    this.emailVerificationToken =
       this.route.snapshot.queryParamMap.get('token');
+
+    let payload: ToBackendConfirmUserEmailRequestPayload = {
+      emailVerificationToken: this.emailVerificationToken
+    };
 
     setTimeout(() => {
       this.apiService
         .req({
           pathInfoName: ToBackendRequestInfoNameEnum.ToBackendConfirmUserEmail,
-          payload: {
-            token: this.emailConfirmationToken
-          },
+          payload: payload,
           showSpinner: true
         })
         .pipe(

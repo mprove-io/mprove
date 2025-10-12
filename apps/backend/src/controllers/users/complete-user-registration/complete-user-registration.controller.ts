@@ -16,9 +16,9 @@ import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/members.service';
-import { UsersService } from '~backend/services/users.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { UsersService } from '~backend/services/db/users.service';
+import { HashService } from '~backend/services/hash.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -35,9 +35,9 @@ let retry = require('async-retry');
 export class CompleteUserRegistrationController {
   constructor(
     private jwtService: JwtService,
+    private hashService: HashService,
     private usersService: UsersService,
     private membersService: MembersService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -48,11 +48,20 @@ export class CompleteUserRegistrationController {
     let reqValid: ToBackendCompleteUserRegistrationRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { emailConfirmationToken, newPassword } = reqValid.payload;
+    let { emailVerificationToken, newPassword } = reqValid.payload;
 
-    let user = await this.db.drizzle.query.usersTable.findFirst({
-      where: eq(usersTable.emailVerificationToken, emailConfirmationToken)
-    });
+    let emailVerificationTokenHash = this.hashService.makeHash(
+      emailVerificationToken
+    );
+
+    let user = await this.db.drizzle.query.usersTable
+      .findFirst({
+        where: eq(
+          usersTable.emailVerificationTokenHash,
+          emailVerificationTokenHash
+        )
+      })
+      .then(x => this.usersService.entToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({
@@ -95,9 +104,11 @@ export class CompleteUserRegistrationController {
       getRetryOption(this.cs, this.logger)
     );
 
+    let token = this.jwtService.sign({ userId: user.userId });
+
     payload = {
-      token: this.jwtService.sign({ userId: user.userId }),
-      user: this.wrapToApiService.wrapToApiUser(user)
+      token: token,
+      user: this.usersService.tabToApi({ user: user })
     };
 
     return payload;

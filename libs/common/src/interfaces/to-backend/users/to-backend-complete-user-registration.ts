@@ -6,7 +6,7 @@ import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendCompleteUserRegistrationRequestPayload {
   @IsString()
-  emailConfirmationToken: string;
+  emailVerificationToken: string;
 
   @IsString()
   newPassword: string;

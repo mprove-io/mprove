@@ -35,7 +35,7 @@ test('1', async t => {
         idempotencyKey: makeId()
       },
       payload: {
-        token: emailToken
+        emailVerificationToken: emailToken
       }
     };
 

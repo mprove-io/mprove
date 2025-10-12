@@ -6,7 +6,7 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendLoginUserRequest,
@@ -19,7 +19,7 @@ import {
 export class LoginUserController {
   constructor(
     private jwtService: JwtService,
-    private wrapToApiService: WrapEnxToApiService
+    private usersService: UsersService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendLoginUser)
@@ -28,7 +28,7 @@ export class LoginUserController {
 
     let payload: ToBackendLoginUserResponsePayload = {
       token: this.jwtService.sign({ userId: user.userId }),
-      user: this.wrapToApiService.wrapToApiUser(user)
+      user: this.usersService.tabToApi({ user: user })
     };
 
     return payload;

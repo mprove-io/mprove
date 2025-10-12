@@ -6,7 +6,7 @@ import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendConfirmUserEmailRequestPayload {
   @IsString()
-  token: string;
+  emailVerificationToken: string;
 }
 
 export class ToBackendConfirmUserEmailRequest extends ToBackendRequest {
