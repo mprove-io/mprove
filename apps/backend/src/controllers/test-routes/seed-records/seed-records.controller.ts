@@ -260,8 +260,8 @@ export class SeedRecordsController {
             gitUrl: x.gitUrl,
             privateKey: x.privateKey,
             publicKey: x.publicKey,
-            nameHash: undefined, // ent-to-tab
-            gitUrlHash: undefined, // ent-to-tab
+            nameHash: undefined, // tab-to-ent
+            gitUrlHash: undefined, // tab-to-ent
             serverTs: undefined
           };
 

@@ -122,10 +122,10 @@ export class RegisterUserController {
           firstName: undefined,
           lastName: undefined,
           ui: makeCopy(DEFAULT_SRV_UI),
-          emailHash: undefined, // ent-to-tab
-          aliasHash: undefined, // ent-to-tab
-          passwordResetTokenHash: undefined, // ent-to-tab
-          emailVerificationTokenHash: undefined, // ent-to-tab
+          emailHash: undefined, // tab-to-ent
+          aliasHash: undefined, // tab-to-ent
+          passwordResetTokenHash: undefined, // tab-to-ent
+          emailVerificationTokenHash: undefined, // tab-to-ent
           serverTs: undefined
         };
       }
