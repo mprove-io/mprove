@@ -37,6 +37,7 @@ export const reportsTable = pgTable(
     idxReportsStructId: index('idx_reports_struct_id').on(table.structId),
     idxReportsReportId: index('idx_reports_report_id').on(table.reportId),
     idxReportsProjectId: index('idx_reports_project_id').on(table.projectId),
+    idxReportsKeyTag: index('idx_reports_key_tag').on(table.keyTag),
     //
     uidxReportsStructIdReportId: uniqueIndex(
       'uidx_reports_struct_id_report_id'

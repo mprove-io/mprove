@@ -54,7 +54,10 @@ export const queriesTable = pgTable(
     idxQueriesBigqueryQueryJobId: index('idx_queries_bigquery_query_job_id').on(
       table.bigqueryQueryJobId
     ),
-    idxQueriesApiUrlHash: index('idx_queries_api_url_hash').on(table.apiUrlHash)
+    idxQueriesApiUrlHash: index('idx_queries_api_url_hash').on(
+      table.apiUrlHash
+    ),
+    idxQueriesKeyTag: index('idx_queries_key_tag').on(table.keyTag)
   })
 );
 

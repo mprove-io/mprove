@@ -18,7 +18,8 @@ export const structsTable = pgTable(
   },
   table => ({
     idxStructsServerTs: index('idx_structs_server_ts').on(table.serverTs),
-    idxStructsProjectId: index('idx_structs_project_id').on(table.projectId)
+    idxStructsProjectId: index('idx_structs_project_id').on(table.projectId),
+    idxStructsKeyTag: index('idx_structs_key_tag').on(table.keyTag)
   })
 );
 

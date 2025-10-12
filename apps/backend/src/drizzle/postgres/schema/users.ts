@@ -30,6 +30,8 @@ export const usersTable = pgTable(
   },
   table => ({
     idxUsersServerTs: index('idx_users_server_ts').on(table.serverTs),
+    idxUsersKeyTag: index('idx_users_key_tag').on(table.keyTag),
+    //
     uidxUsersEmailHash: uniqueIndex('uidx_users_email_hash').on(
       table.emailHash
     ),

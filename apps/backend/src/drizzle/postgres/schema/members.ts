@@ -33,6 +33,7 @@ export const membersTable = pgTable(
     idxMembersMemberId: index('idx_members_member_id').on(table.memberId),
     idxMembersEmailHash: index('idx_members_email_hash').on(table.emailHash),
     idxMembersAliasHash: index('idx_members_alias_hash').on(table.aliasHash),
+    idxMembersKeyTag: index('idx_members_key_tag').on(table.keyTag),
     //
     uidxMembersProjectIdMemberId: uniqueIndex(
       'uidx_members_project_id_member_id'

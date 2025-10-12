@@ -37,6 +37,7 @@ export const chartsTable = pgTable(
     idxChartsStructId: index('idx_charts_struct_id').on(table.structId),
     idxChartsChartId: index('idx_charts_chart_id').on(table.chartId),
     idxChartsModelId: index('idx_charts_model_id').on(table.modelId),
+    idxChartsKeyTag: index('idx_charts_key_tag').on(table.keyTag),
     //
     uidxChartsStructIdChartId: uniqueIndex('uidx_charts_struct_id_chart_id').on(
       table.structId,

@@ -33,6 +33,7 @@ export const bridgesTable = pgTable(
     idxBridgesBranchId: index('idx_bridges_branch_id').on(table.branchId),
     idxBridgesEnvId: index('idx_bridges_env_id').on(table.envId),
     idxBridgesStructId: index('idx_bridges_struct_id').on(table.structId),
+    idxBridgesKeyTag: index('idx_bridges_key_tag').on(table.keyTag),
     //
     uidxBridgesProjectIdRepoIdBranchIdEnvId: uniqueIndex(
       'uidx_bridges_project_id_repo_id_branch_id_env_id'

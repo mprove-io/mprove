@@ -27,6 +27,7 @@ export const branchesTable = pgTable(
     idxBranchesProjectId: index('idx_branches_project_id').on(table.projectId),
     idxBranchesRepoId: index('idx_branches_repo_id').on(table.repoId),
     idxBranchesBranchId: index('idx_branches_branch_id').on(table.branchId),
+    idxBranchesKeyTag: index('idx_branches_key_tag').on(table.keyTag),
     //
     uidxBranchesProjectIdRepoIdBranchId: uniqueIndex(
       'uidx_branches_project_id_repo_id_branch_id'

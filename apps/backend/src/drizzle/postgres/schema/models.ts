@@ -40,6 +40,7 @@ export const modelsTable = pgTable(
     idxModelsServerTs: index('idx_models_server_ts').on(table.serverTs),
     idxModelsStructId: index('idx_models_struct_id').on(table.structId),
     idxModelsModelId: index('idx_models_model_id').on(table.modelId),
+    idxModelsKeyTag: index('idx_models_key_tag').on(table.keyTag),
     //
     uidxModelsStructIdModelId: uniqueIndex('uidx_models_struct_id_model_id').on(
       table.structId,

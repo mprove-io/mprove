@@ -25,6 +25,7 @@ export const orgsTable = pgTable(
     idxOrgsOwnerEmailHash: index('idx_orgs_owner_email_hash').on(
       table.ownerEmailHash
     ),
+    idxOrgsKeyTag: index('idx_orgs_key_tag').on(table.keyTag),
     //
     uidxOrgsNameHash: uniqueIndex('uidx_orgs_name_hash').on(table.nameHash)
   })

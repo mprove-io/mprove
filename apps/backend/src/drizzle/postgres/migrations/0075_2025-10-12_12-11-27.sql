@@ -1,0 +1,19 @@
+CREATE INDEX IF NOT EXISTS "idx_avatars_key_tag" ON "avatars" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_branches_key_tag" ON "branches" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_bridges_key_tag" ON "bridges" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_charts_key_tag" ON "charts" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_connections_key_tag" ON "connections" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_dashboards_key_tag" ON "dashboards" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_envs_key_tag" ON "envs" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_kits_key_tag" ON "kits" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_mconfigs_key_tag" ON "mconfigs" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_members_key_tag" ON "members" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_models_key_tag" ON "models" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_notes_server_ts" ON "notes" USING btree ("server_ts");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_notes_key_tag" ON "notes" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_orgs_key_tag" ON "orgs" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_projects_key_tag" ON "projects" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_queries_key_tag" ON "queries" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_reports_key_tag" ON "reports" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_structs_key_tag" ON "structs" USING btree ("key_tag");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "idx_users_key_tag" ON "users" USING btree ("key_tag");

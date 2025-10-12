@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { bigint, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 
 export const notesTable = pgTable(
   'notes',
@@ -9,10 +9,11 @@ export const notesTable = pgTable(
     lt: text('lt'),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
-  }
-  // ,
-  // table => ({
-  // })
+  },
+  table => ({
+    idxNotesServerTs: index('idx_notes_server_ts').on(table.serverTs),
+    idxNotesKeyTag: index('idx_notes_key_tag').on(table.keyTag)
+  })
 );
 
 export type NoteEnt = InferSelectModel<typeof notesTable>;

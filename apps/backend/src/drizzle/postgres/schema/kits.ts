@@ -15,7 +15,8 @@ export const kitsTable = pgTable(
   table => ({
     idxKitsServerTs: index('idx_kits_server_ts').on(table.serverTs),
     idxKitsStructId: index('idx_kits_struct_id').on(table.structId),
-    idxKitsReportId: index('idx_kits_report_id').on(table.reportId)
+    idxKitsReportId: index('idx_kits_report_id').on(table.reportId),
+    idxKitsKeyTag: index('idx_kits_key_tag').on(table.keyTag)
   })
 );
 

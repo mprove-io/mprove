@@ -28,6 +28,7 @@ export const projectsTable = pgTable(
     idxProjectsGitUrlHash: index('idx_projects_git_url_hash').on(
       table.gitUrlHash
     ),
+    idxProjectsKeyTag: index('idx_projects_key_tag').on(table.keyTag),
     //
     uidxProjectsOrgIdNameHash: uniqueIndex('uidx_projects_org_id_name_hash').on(
       table.orgId,

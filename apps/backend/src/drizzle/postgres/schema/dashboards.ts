@@ -36,6 +36,7 @@ export const dashboardsTable = pgTable(
     idxDashboardsDashboardId: index('idx_dashboards_dashboard_id').on(
       table.dashboardId
     ),
+    idxDashboardsKeyTag: index('idx_dashboards_key_tag').on(table.keyTag),
     //
     uidxDashboardsStructIdDasboardId: uniqueIndex(
       'uidx_dashboards_struct_id_dashboard_id'

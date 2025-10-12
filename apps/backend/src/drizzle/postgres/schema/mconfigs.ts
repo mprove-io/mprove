@@ -32,7 +32,8 @@ export const mconfigsTable = pgTable(
   table => ({
     idxMconfigsServerTs: index('idx_mconfigs_server_ts').on(table.serverTs),
     idxMconfigsStructId: index('idx_mconfigs_struct_id').on(table.structId),
-    idxMconfigsQueryId: index('idx_mconfigs_query_id').on(table.queryId)
+    idxMconfigsQueryId: index('idx_mconfigs_query_id').on(table.queryId),
+    idxMconfigsKeyTag: index('idx_mconfigs_key_tag').on(table.keyTag)
   })
 );
 

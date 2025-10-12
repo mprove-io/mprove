@@ -25,7 +25,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     this.usersService.checkUserHashIsDefined({ user: user });
 
-    let hash = await this.hashService.createHash({
+    let hash = await this.hashService.createHashUsingSalt({
       salt: user.salt,
       password: password
     });

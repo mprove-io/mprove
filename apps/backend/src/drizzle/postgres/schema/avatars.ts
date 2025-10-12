@@ -11,7 +11,8 @@ export const avatarsTable = pgTable(
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
-    idxAvatarsServerTs: index('idx_avatars_server_ts').on(table.serverTs)
+    idxAvatarsServerTs: index('idx_avatars_server_ts').on(table.serverTs),
+    idxAvatarsKeyTag: index('idx_avatars_key_tag').on(table.keyTag)
   })
 );
 

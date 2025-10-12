@@ -32,6 +32,7 @@ export const envsTable = pgTable(
     idxEnvsServerTs: index('idx_envs_server_ts').on(table.serverTs),
     idxEnvsProjectId: index('idx_envs_project_id').on(table.projectId),
     idxEnvsEnvId: index('idx_envs_env_id').on(table.envId),
+    idxEnvsKeyTag: index('idx_envs_key_tag').on(table.keyTag),
     //
     uidxEnvsProjectIdEnvId: uniqueIndex('uidx_envs_project_id_env_id').on(
       table.projectId,

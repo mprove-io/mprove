@@ -35,6 +35,7 @@ export const connectionsTable = pgTable(
     idxConnectionsConnectionId: index('idx_connections_connection_id').on(
       table.connectionId
     ),
+    idxConnectionsKeyTag: index('idx_connections_key_tag').on(table.keyTag),
     //
     uidxConnectionsProjectIdEnvIdConnectionId: uniqueIndex(
       'uidx_connections_project_id_env_id_connection_id'

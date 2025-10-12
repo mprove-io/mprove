@@ -14,7 +14,7 @@ export class HashService {
     return { salt, hash };
   }
 
-  async createHash(item: { salt: string; password: string }) {
+  async createHashUsingSalt(item: { salt: string; password: string }) {
     let { salt, password } = item;
 
     return await bcrypt.hash(password, salt);
