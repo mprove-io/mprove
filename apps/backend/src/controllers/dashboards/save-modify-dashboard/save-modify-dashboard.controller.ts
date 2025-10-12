@@ -485,7 +485,7 @@ export class SaveModifyDashboardController {
       userMember: userMember
     });
 
-    let newDashboardX =
+    let apiFinalDashboardX =
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: newDashboard.dashboardId,
         structId: bridge.structId,
@@ -494,7 +494,7 @@ export class SaveModifyDashboardController {
       });
 
     let payload: ToBackendSaveModifyDashboardResponsePayload = {
-      dashboard: newDashboardX,
+      dashboard: apiFinalDashboardX,
       newDashboardPart:
         newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
     };

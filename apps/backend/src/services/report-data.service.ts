@@ -87,7 +87,7 @@ export class ReportDataService {
     // queryOperation?: QueryOperation;
     project: ProjectTab;
     envId: string;
-    userMemberApi: Member;
+    apiUserMember: Member;
     userMember: MemberTab;
     user: UserTab;
     isSaveToDb?: boolean;
@@ -104,7 +104,7 @@ export class ReportDataService {
       project,
       envId,
       user,
-      userMemberApi,
+      apiUserMember,
       userMember,
       isSaveToDb
     } = item;
@@ -675,7 +675,7 @@ export class ReportDataService {
     let reportApi = this.reportsService.tabToApi({
       report: report,
       models: modelsApi,
-      member: userMemberApi,
+      member: apiUserMember,
       columns: columns,
       timezone: timezone,
       timeSpec: timeSpec,

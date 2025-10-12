@@ -15,7 +15,7 @@ import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeReportFileText } from '~backend/functions/make-report-file-text';
@@ -23,17 +23,16 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { ReportsService } from '~backend/services/db/reports.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ReportDataService } from '~backend/services/report-data.service';
-import { ReportsService } from '~backend/services/reports.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
-import { WrapToEntService } from '~backend/services/wrap-to-ent.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -69,14 +68,13 @@ export class SaveModifyReportController {
     private projectsService: ProjectsService,
     private structsService: StructsService,
     private reportsService: ReportsService,
+    private modelsService: ModelsService,
     private reportDataService: ReportDataService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
-    private wrapToEntService: WrapToEntService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -194,15 +192,17 @@ export class SaveModifyReportController {
       ...new Set(cachedMetrics.map(x => x.modelId).filter(x => isDefined(x)))
     ];
 
-    let cachedModels: ModelEnt[] =
+    let cachedModels =
       modelIds.length === 0
         ? []
-        : await this.db.drizzle.query.modelsTable.findMany({
-            where: and(
-              eq(modelsTable.structId, bridge.structId),
-              inArray(modelsTable.modelId, modelIds)
-            )
-          });
+        : await this.db.drizzle.query.modelsTable
+            .findMany({
+              where: and(
+                eq(modelsTable.structId, bridge.structId),
+                inArray(modelsTable.modelId, modelIds)
+              )
+            })
+            .then(xs => xs.map(x => this.modelsService.entToTab(x)));
 
     let repFileText = makeReportFileText({
       reportId: modReportId,
@@ -230,7 +230,7 @@ export class SaveModifyReportController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingModReport.filePath,
@@ -270,22 +270,23 @@ export class SaveModifyReportController {
       )
     ];
 
-    let { reports, struct } = await this.blockmlService.rebuildStruct({
-      traceId: traceId,
-      projectId: projectId,
-      structId: bridge.structId,
-      diskFiles: diskFiles,
-      mproveDir: currentStruct.mproveConfig.mproveDirValue,
-      skipDb: true,
-      envId: envId,
-      overrideTimezone: undefined,
-      isUseCache: true,
-      cachedMproveConfig: currentStruct.mproveConfig,
-      cachedModels: cachedModels,
-      cachedMetrics: cachedMetrics
-    });
+    let { reports: apiReports, struct: apiStruct } =
+      await this.blockmlService.rebuildStruct({
+        traceId: traceId,
+        projectId: projectId,
+        structId: bridge.structId,
+        diskFiles: diskFiles,
+        mproveDir: currentStruct.mproveConfig.mproveDirValue,
+        skipDb: true,
+        envId: envId,
+        overrideTimezone: undefined,
+        isUseCache: true,
+        cachedMproveConfig: currentStruct.mproveConfig,
+        cachedModels: cachedModels,
+        cachedMetrics: cachedMetrics
+      });
 
-    currentStruct.errors = [...currentStruct.errors, ...struct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
 
     await retry(
       async () =>
@@ -301,9 +302,9 @@ export class SaveModifyReportController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let report = reports.find(x => x.reportId === modReportId);
+    let apiReport = apiReports.find(x => x.reportId === modReportId);
 
-    if (isUndefined(report)) {
+    if (isUndefined(apiReport)) {
       await retry(
         async () =>
           await this.db.drizzle.transaction(async tx => {
@@ -327,14 +328,14 @@ export class SaveModifyReportController {
         message: ErEnum.BACKEND_MODIFY_REPORT_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: struct.errors
+          structErrors: apiStruct.errors
         }
       });
     }
 
-    report.rows = fromReport.rows;
+    apiReport.rows = fromReport.rows;
 
-    let reportEntity = this.wrapToEntService.wrapToEntityReport(report);
+    let report = this.reportsService.apiToTab({ apiReport: apiReport });
 
     await retry(
       async () =>
@@ -353,25 +354,25 @@ export class SaveModifyReportController {
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              reports: isDefined(reportEntity) ? [reportEntity] : []
+              reports: [report]
             }
           });
         }),
       getRetryOption(this.cs, this.logger)
     );
 
-    let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
-    let repApi = await this.reportDataService.getReportData({
-      report: reportEntity,
+    let apiFinalReport = await this.reportDataService.getReportData({
+      report: report,
       traceId: traceId,
       project: project,
-      userMemberApi: userMemberApi,
+      apiUserMember: apiUserMember,
       userMember: userMember,
       user: user,
       envId: envId,
-      struct: struct,
-      metrics: struct.metrics,
+      struct: apiStruct,
+      metrics: apiStruct.metrics,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone
@@ -379,10 +380,10 @@ export class SaveModifyReportController {
 
     let payload: ToBackendSaveModifyReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
-      userMember: userMemberApi,
-      report: repApi,
-      reportPart: repApi
+      struct: this.structsService.tabToApi({ struct: apiStruct }),
+      userMember: apiUserMember,
+      report: apiFinalReport,
+      reportPart: apiFinalReport
     };
 
     return payload;

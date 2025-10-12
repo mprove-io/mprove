@@ -15,15 +15,14 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { ReportsService } from '~backend/services/db/reports.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { ReportDataService } from '~backend/services/report-data.service';
-import { ReportsService } from '~backend/services/reports.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -63,7 +62,6 @@ export class GetReportController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -129,24 +127,13 @@ export class GetReportController {
       userMember: userMember
     });
 
-    // report.rows.forEach(row => {
-    //   console.log('row.rowId');
-    //   console.log(row.rowId);
-    //   row.parameters.forEach(rowParameter => {
-    //     console.log('rowParameter');
-    //     console.log(rowParameter);
-    //     console.log('rowParameter.fractions');
-    //     console.log(rowParameter.fractions);
-    //   });
-    // });
-
-    let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let repApi = await this.reportDataService.getReportData({
       report: report,
       traceId: traceId,
       project: project,
-      userMemberApi: userMemberApi,
+      apiUserMember: apiUserMember,
       userMember: userMember,
       user: user,
       envId: envId,
@@ -176,19 +163,10 @@ export class GetReportController {
       getRetryOption(this.cs, this.logger)
     );
 
-    // repApi.rows.forEach(row => {
-    //   console.log('row.rowId');
-    //   console.log(row.rowId);
-    //   row.parameters.forEach(rowParameter => {
-    //     console.log('rowParameter');
-    //     console.log(rowParameter);
-    //   });
-    // });
-
     let payload: ToBackendGetReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({ struct: struct }),
-      userMember: userMemberApi,
+      userMember: apiUserMember,
       report: repApi
     };
 

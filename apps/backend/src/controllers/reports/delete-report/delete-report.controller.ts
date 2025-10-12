@@ -21,14 +21,13 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { ReportsService } from '~backend/services/db/reports.service';
 import { RabbitService } from '~backend/services/rabbit.service';
-import { ReportsService } from '~backend/services/reports.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -48,7 +47,6 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteReportController {
   constructor(
-    private wrapToApiService: WrapEnxToApiService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
@@ -135,7 +133,7 @@ export class DeleteReportController {
       },
       payload: {
         orgId: project.orgId,
-        baseProject: apiProject,
+        baseProject: baseProject,
         repoId: repoId,
         branch: branchId,
         fileNodeId: existingReport.filePath,

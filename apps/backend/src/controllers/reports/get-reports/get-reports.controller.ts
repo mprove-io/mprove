@@ -6,15 +6,17 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '~backend/functions/check-access';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { ReportsService } from '~backend/services/db/reports.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -30,11 +32,12 @@ export class GetReportsController {
   constructor(
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private reportsService: ReportsService,
+    private modelsService: ModelsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -72,26 +75,29 @@ export class GetReportsController {
       envId: envId
     });
 
-    let draftReports = await this.db.drizzle.query.reportsTable.findMany({
-      where: and(
-        eq(reportsTable.draft, true),
-        eq(reportsTable.creatorId, user.userId),
-        eq(reportsTable.structId, bridge.structId)
-      )
-    });
+    let draftReports = await this.db.drizzle.query.reportsTable
+      .findMany({
+        where: and(
+          eq(reportsTable.draft, true),
+          eq(reportsTable.creatorId, user.userId),
+          eq(reportsTable.structId, bridge.structId)
+        )
+      })
+      .then(xs => xs.map(x => this.reportsService.entToTab(x)));
 
-    let structReports = await this.db.drizzle.query.reportsTable.findMany({
-      where: and(
-        eq(reportsTable.draft, false),
-        eq(reportsTable.structId, bridge.structId)
-      )
-    });
+    let structReports = await this.db.drizzle.query.reportsTable
+      .findMany({
+        where: and(
+          eq(reportsTable.draft, false),
+          eq(reportsTable.structId, bridge.structId)
+        )
+      })
+      .then(xs => xs.map(x => this.reportsService.entToTab(x)));
 
     let reportsGrantedAccess = structReports.filter(x =>
       checkAccess({
-        userAlias: user.alias,
         member: userMember,
-        entity: x
+        accessRoles: x.accessRoles
       })
     );
 
@@ -123,39 +129,40 @@ export class GetReportsController {
       .filter(m => isDefined(m.modelId))
       .map(x => x.modelId);
 
-    let models = await this.db.drizzle.query.modelsTable.findMany({
-      where: and(
-        inArray(modelsTable.modelId, modelIds),
-        eq(modelsTable.structId, struct.structId)
-      )
-    });
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: and(
+          inArray(modelsTable.modelId, modelIds),
+          eq(modelsTable.structId, struct.structId)
+        )
+      })
+      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
 
-    let apiMember = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let apiModels = models.map(model =>
+      this.modelsService.tabToApi({
+        model: model,
+        hasAccess: checkModelAccess({
+          member: userMember,
+          modelAccessRoles: model.accessRoles
+        })
+      })
+    );
 
     let payload: ToBackendGetReportsResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({ struct: struct }),
-      userMember: apiMember,
+      userMember: apiUserMember,
       reports: reports.map(x =>
-        this.wrapToApiService.wrapToApiReport({
+        this.reportsService.tabToApi({
           report: x,
-          member: apiMember,
+          member: apiUserMember,
           columns: [],
-          models: models.map(model =>
-            this.wrapToApiService.wrapEnxToApiModel({
-              model: model,
-              hasAccess: checkAccess({
-                userAlias: user.alias,
-                member: userMember,
-                entity: model
-              })
-            })
-          ),
+          models: apiModels,
           timezone: undefined,
           timeSpec: undefined,
           timeRangeFraction: undefined,
-          // rangeOpen: undefined,
-          // rangeClose: undefined,
           rangeStart: undefined,
           rangeEnd: undefined,
           metricsStartDateYYYYMMDD: undefined,
@@ -166,19 +173,7 @@ export class GetReportsController {
           isTimeColumnsLimitExceeded: false
         })
       ),
-      storeModels: models
-        .filter(model => model.type === ModelTypeEnum.Store)
-        // .filter(model => model.isStoreModel === true)
-        .map(model =>
-          this.wrapToApiService.wrapEnxToApiModel({
-            model: model,
-            hasAccess: checkAccess({
-              userAlias: user.alias,
-              member: userMember,
-              entity: model
-            })
-          })
-        )
+      storeModels: apiModels.filter(model => model.type === ModelTypeEnum.Store)
     };
 
     return payload;

@@ -3,19 +3,17 @@ import { Throttle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/branches.service';
-import { BridgesService } from '~backend/services/bridges.service';
-import { EnvsService } from '~backend/services/envs.service';
-import { MembersService } from '~backend/services/members.service';
-import { ProjectsService } from '~backend/services/projects.service';
+import { BranchesService } from '~backend/services/db/branches.service';
+import { BridgesService } from '~backend/services/db/bridges.service';
+import { EnvsService } from '~backend/services/db/envs.service';
+import { MembersService } from '~backend/services/db/members.service';
+import { ProjectsService } from '~backend/services/db/projects.service';
+import { ReportsService } from '~backend/services/db/reports.service';
+import { StructsService } from '~backend/services/db/structs.service';
 import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportRowService } from '~backend/services/report-row.service';
-import { ReportsService } from '~backend/services/reports.service';
-import { StructsService } from '~backend/services/structs.service';
-import { WrapEnxToApiService } from '~backend/services/wrap-to-api.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -39,7 +37,6 @@ export class EditDraftReportController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private wrapToApiService: WrapEnxToApiService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -121,24 +118,6 @@ export class EditDraftReportController {
         });
     }
 
-    let models: ModelEnt[] = [];
-
-    // if (
-    //   changeType === ChangeTypeEnum.ConvertToMetric &&
-    //   isDefined(rowChange?.metricId)
-    // ) {
-    //   let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
-
-    //   let model = await this.db.drizzle.query.modelsTable.findFirst({
-    //     where: and(
-    //       eq(modelsTable.structId, struct.structId),
-    //       eq(modelsTable.modelId, metric.modelId)
-    //     )
-    //   });
-
-    //   models.push(model);
-    // }
-
     let processedRows = this.reportRowService.getProcessedRows({
       rows: report.rows,
       rowChange: rowChange,
@@ -148,7 +127,6 @@ export class EditDraftReportController {
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       metrics: struct.metrics,
-      models: models,
       struct: struct,
       newReportFields: newReportFields,
       listeners: listeners
@@ -168,13 +146,13 @@ export class EditDraftReportController {
         a.dataRowId > b.dataRowId ? 1 : b.dataRowId > a.dataRowId ? -1 : 0
       );
 
-    let userMemberApi = this.wrapToApiService.wrapToApiMember(userMember);
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let repApi = await this.reportDataService.getReportData({
       report: report,
       traceId: traceId,
       project: project,
-      userMemberApi: userMemberApi,
+      apiUserMember: apiUserMember,
       userMember: userMember,
       user: user,
       envId: envId,
@@ -189,7 +167,7 @@ export class EditDraftReportController {
     let payload: ToBackendEditDraftReportResponsePayload = {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({ struct: struct }),
-      userMember: userMemberApi,
+      userMember: apiUserMember,
       report: repApi
     };
 
