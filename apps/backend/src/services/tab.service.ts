@@ -18,24 +18,6 @@ export class TabService {
     this.keyBuffer = Buffer.from(keyBase64, 'base64');
   }
 
-  createGitKeyPair() {
-    let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem',
-        cipher: 'aes-256-cbc',
-        passphrase: GIT_KEY_PASS_PHRASE
-      }
-    });
-
-    return { publicKey, privateKey };
-  }
-
   encrypt(item: { data: any }) {
     return encryptData({
       data: item.data,
@@ -52,5 +34,23 @@ export class TabService {
           keyBuffer: this.keyBuffer
         })
       : ({} as T);
+  }
+
+  createGitKeyPair() {
+    let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 4096,
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem'
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem',
+        cipher: 'aes-256-cbc',
+        passphrase: GIT_KEY_PASS_PHRASE
+      }
+    });
+
+    return { publicKey, privateKey };
   }
 }
