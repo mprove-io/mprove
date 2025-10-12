@@ -73,7 +73,7 @@ export class RegisterUserController {
 
     let newUser: UserTab;
 
-    let { salt, hash } = await this.usersService.makeSaltAndHash(password);
+    let { salt, hash } = await this.hashService.createSaltAndHash(password);
 
     let emailHash = this.hashService.makeHash(email);
 

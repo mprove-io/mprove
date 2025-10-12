@@ -64,7 +64,7 @@ export class UpdateUserPasswordController {
       });
     }
 
-    let { salt, hash } = await this.usersService.makeSaltAndHash(newPassword);
+    let { salt, hash } = await this.hashService.createSaltAndHash(newPassword);
 
     user.hash = hash;
     user.salt = salt;
