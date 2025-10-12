@@ -1,6 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as bcrypt from 'bcrypt';
 import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
@@ -146,23 +145,10 @@ export class UsersService {
     return user;
   }
 
-  async makeSaltAndHash(password: string) {
-    // TODO: check algo
-    // let salt = crypto.randomBytes(16).toString('hex');
-    // let hash = crypto
-    //   .pbkdf2Sync(password, salt, 1000, 64, 'sha512')
-    //   .toString('hex');
-
-    let salt = await bcrypt.genSalt();
-    let hash = await bcrypt.hash(password, salt);
-
-    return { salt, hash };
-  }
-
   async addMproveAdminUser(item: { email: string; password: string }) {
     let { email, password } = item;
 
-    let { salt, hash } = await this.makeSaltAndHash(password);
+    let { salt, hash } = await this.hashService.createSaltAndHash(password);
 
     let alias = await this.makeAlias(email);
 

@@ -1,10 +1,24 @@
 import * as crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { isUndefined } from '~common/functions/is-undefined';
 
 @Injectable()
 export class HashService {
   constructor() {}
+
+  async createSaltAndHash(password: string) {
+    let salt = await bcrypt.genSalt();
+    let hash = await bcrypt.hash(password, salt);
+
+    return { salt, hash };
+  }
+
+  async createHash(item: { salt: string; password: string }) {
+    let { salt, password } = item;
+
+    return await bcrypt.hash(password, salt);
+  }
 
   makeHash(text: string) {
     if (isUndefined(text)) {

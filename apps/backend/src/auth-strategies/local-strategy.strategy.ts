@@ -1,14 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import * as bcrypt from 'bcrypt';
 import { Strategy } from 'passport-local';
 import { UsersService } from '~backend/services/db/users.service';
+import { HashService } from '~backend/services/hash.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
-  constructor(private usersService: UsersService) {
+  constructor(
+    private hashService: HashService,
+    private usersService: UsersService
+  ) {
     super({
       usernameField: 'payload[]email',
       passwordField: 'payload[]password'
@@ -22,7 +25,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     this.usersService.checkUserHashIsDefined({ user: user });
 
-    let hash = await bcrypt.hash(password, user.salt);
+    let hash = await this.hashService.createHash({
+      salt: user.salt,
+      password: password
+    });
 
     if (hash !== user.hash) {
       throw new ServerError({

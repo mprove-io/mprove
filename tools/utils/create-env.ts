@@ -9,6 +9,7 @@ function makeRandomString(length: number): string {
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
   let randomValues: Uint8Array = new Uint8Array(length);
+
   crypto.getRandomValues(randomValues);
 
   for (let i = 0; i < length; i++) {

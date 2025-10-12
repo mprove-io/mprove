@@ -1,4 +1,3 @@
-import * as crypto from 'crypto';
 import {
   Controller,
   Inject,
@@ -18,6 +17,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/db/orgs.service';
+import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
 import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -36,6 +36,7 @@ let retry = require('async-retry');
 export class GenerateProjectRemoteKeyController {
   constructor(
     private tabService: TabService,
+    private hashService: HashService,
     private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -56,19 +57,7 @@ export class GenerateProjectRemoteKeyController {
       userId: user.userId
     });
 
-    let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-      modulusLength: 4096,
-      publicKeyEncoding: {
-        type: 'spki',
-        format: 'pem'
-      },
-      privateKeyEncoding: {
-        type: 'pkcs8',
-        format: 'pem',
-        cipher: 'aes-256-cbc',
-        passphrase: GIT_KEY_PASS_PHRASE
-      }
-    });
+    let { publicKey, privateKey } = this.tabService.createGitKeyPair();
 
     let sshPublicKey = parseKey(publicKey, 'pem', {
       passphrase: GIT_KEY_PASS_PHRASE
