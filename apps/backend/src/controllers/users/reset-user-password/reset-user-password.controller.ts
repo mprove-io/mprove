@@ -74,7 +74,7 @@ export class ResetUserPasswordController {
       });
     }
 
-    this.usersService.checkUserHashIsDefined({ user: user });
+    this.usersService.checkUserPasswordHashIsDefined({ user: user });
 
     user.passwordResetToken = makeId();
 

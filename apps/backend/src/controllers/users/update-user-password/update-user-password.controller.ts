@@ -64,10 +64,10 @@ export class UpdateUserPasswordController {
       });
     }
 
-    let { salt, hash } = await this.hashService.createSaltAndHash(newPassword);
+    let passwordHS = await this.hashService.createSaltAndHash(newPassword);
 
-    user.hash = hash;
-    user.salt = salt;
+    user.passwordHash = passwordHS.hash;
+    user.passwordSalt = passwordHS.salt;
     user.passwordResetExpiresTs = 1;
     user.jwtMinIat = makeTsNumber();
 

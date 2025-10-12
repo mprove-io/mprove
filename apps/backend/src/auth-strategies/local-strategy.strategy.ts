@@ -23,14 +23,14 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       email: email
     });
 
-    this.usersService.checkUserHashIsDefined({ user: user });
+    this.usersService.checkUserPasswordHashIsDefined({ user: user });
 
-    let hash = await this.hashService.createHashUsingSalt({
-      salt: user.salt,
+    let passwordHash = await this.hashService.createHashUsingSalt({
+      salt: user.passwordSalt,
       password: password
     });
 
-    if (hash !== user.hash) {
+    if (passwordHash !== user.passwordHash) {
       throw new ServerError({
         message: ErEnum.BACKEND_WRONG_PASSWORD
       });

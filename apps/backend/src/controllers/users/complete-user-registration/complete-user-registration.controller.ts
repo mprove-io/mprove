@@ -69,7 +69,7 @@ export class CompleteUserRegistrationController {
       });
     }
 
-    if (isDefined(user.hash) || user.isEmailVerified === true) {
+    if (isDefined(user.passwordHash) || user.isEmailVerified === true) {
       throw new ServerError({
         message: ErEnum.BACKEND_USER_ALREADY_REGISTERED
       });
@@ -84,10 +84,10 @@ export class CompleteUserRegistrationController {
 
     user.isEmailVerified = true;
 
-    let { salt, hash } = await this.hashService.createSaltAndHash(newPassword);
+    let newPasswordHS = await this.hashService.createSaltAndHash(newPassword);
 
-    user.hash = hash;
-    user.salt = salt;
+    user.passwordHash = newPasswordHS.hash;
+    user.passwordSalt = newPasswordHS.salt;
     user.passwordResetExpiresTs = 1;
 
     await retry(

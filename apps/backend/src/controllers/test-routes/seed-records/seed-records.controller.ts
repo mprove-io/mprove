@@ -149,7 +149,8 @@ export class SeedRecordsController {
         payloadUsers,
         async (x: ToBackendSeedRecordsRequestPayloadUsersItem) => {
           let alias = await this.usersService.makeAlias(x.email);
-          let { salt, hash } = isDefined(x.password)
+
+          let passwordHS = isDefined(x.password)
             ? await this.hashService.createSaltAndHash(x.password)
             : { salt: undefined, hash: undefined };
 
@@ -165,8 +166,8 @@ export class SeedRecordsController {
               : isDefined(x.passwordResetToken)
                 ? makeTsUsingOffsetFromNow(PASSWORD_EXPIRES_OFFSET)
                 : undefined,
-            hash: hash,
-            salt: salt,
+            passwordHash: passwordHS.hash,
+            passwordSalt: passwordHS.salt,
             jwtMinIat: undefined,
             firstName: undefined,
             lastName: undefined,

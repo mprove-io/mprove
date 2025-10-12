@@ -97,10 +97,10 @@ export class UsersService {
     return apiUser;
   }
 
-  checkUserHashIsDefined(item: { user: UserTab }) {
+  checkUserPasswordHashIsDefined(item: { user: UserTab }) {
     let { user } = item;
 
-    if (isUndefined(user.hash)) {
+    if (isUndefined(user.passwordHash)) {
       throw new ServerError({
         message: ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
       });
@@ -148,7 +148,7 @@ export class UsersService {
   async addMproveAdminUser(item: { email: string; password: string }) {
     let { email, password } = item;
 
-    let { salt, hash } = await this.hashService.createSaltAndHash(password);
+    let passwordHS = await this.hashService.createSaltAndHash(password);
 
     let alias = await this.makeAlias(email);
 
@@ -157,8 +157,8 @@ export class UsersService {
     let user: UserTab = {
       userId: makeId(),
       isEmailVerified: true,
-      hash: hash,
-      salt: salt,
+      passwordHash: passwordHS.hash,
+      passwordSalt: passwordHS.salt,
       jwtMinIat: undefined,
       email: email,
       alias: alias,

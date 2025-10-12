@@ -14,8 +14,8 @@ export const usersTable = pgTable(
   {
     userId: varchar('user_id', { length: 32 }).notNull().primaryKey(),
     isEmailVerified: boolean('is_email_verified').notNull(),
-    hash: varchar('hash'),
-    salt: varchar('salt'),
+    passwordHash: varchar('password_hash'),
+    passwordSalt: varchar('password_salt'),
     jwtMinIat: bigint('jwt_min_iat', { mode: 'number' }),
     st: text('st'),
     lt: text('lt'),

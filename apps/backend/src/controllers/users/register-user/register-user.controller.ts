@@ -73,7 +73,7 @@ export class RegisterUserController {
 
     let newUser: UserTab;
 
-    let { salt, hash } = await this.hashService.createSaltAndHash(password);
+    let passwordHS = await this.hashService.createSaltAndHash(password);
 
     let emailHash = this.hashService.makeHash(email);
 
@@ -84,13 +84,13 @@ export class RegisterUserController {
       .then(x => this.usersService.entToTab(x));
 
     if (isDefined(user)) {
-      if (isDefined(user.hash) && user.isEmailVerified === true) {
+      if (isDefined(user.passwordHash) && user.isEmailVerified === true) {
         throw new ServerError({
           message: ErEnum.BACKEND_USER_ALREADY_REGISTERED
         });
       } else {
-        user.hash = hash;
-        user.salt = salt;
+        user.passwordHash = passwordHS.hash;
+        user.passwordSalt = passwordHS.salt;
 
         newUser = user;
       }
@@ -115,8 +115,8 @@ export class RegisterUserController {
           passwordResetExpiresTs: undefined,
           isEmailVerified: false,
           emailVerificationToken: makeId(),
-          hash: hash,
-          salt: salt,
+          passwordHash: passwordHS.hash,
+          passwordSalt: passwordHS.salt,
           jwtMinIat: undefined,
           alias: alias,
           firstName: undefined,
