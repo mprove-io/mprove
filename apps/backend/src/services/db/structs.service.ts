@@ -94,6 +94,7 @@ export class StructsService {
       },
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
+      keyTag: undefined,
       serverTs: undefined
     };
 
