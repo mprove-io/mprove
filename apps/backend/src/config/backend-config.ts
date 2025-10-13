@@ -8,6 +8,9 @@ export class BackendConfig {
   @IsEnum(BackendEnvEnum)
   backendEnv?: BackendEnvEnum;
 
+  @IsEnum(BoolEnum)
+  isDbEncryptionEnabled?: BoolEnum;
+
   @IsString()
   aesKey?: string;
 

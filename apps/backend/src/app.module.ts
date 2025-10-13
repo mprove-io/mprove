@@ -309,6 +309,36 @@ export class AppModule implements OnModuleInit {
           migrationsFolder: 'apps/backend/src/drizzle/postgres/migrations'
         });
 
+        let isDbEncryptionEnabled = this.cs.get<
+          BackendConfig['isDbEncryptionEnabled']
+        >('isDbEncryptionEnabled');
+
+        let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
+        let keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
+
+        let prevKeyBase64 =
+          this.cs.get<BackendConfig['prevAesKey']>('prevAesKey');
+        let prevKeyTag =
+          this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
+
+        if (isDbEncryptionEnabled === BoolEnum.TRUE && isUndefined(keyBase64)) {
+          // throw error
+        }
+
+        if (isDbEncryptionEnabled === BoolEnum.TRUE) {
+          // encrypt all records that are without keytag
+          // decrypt and encrypt records that use prevkey keytag
+          // throw error if there are records with other keytags
+        }
+
+        if (isDbEncryptionEnabled === BoolEnum.FALSE) {
+          // decrypt all records by key
+          // decrypt all records by prevkey
+          // throw error if there are records with other keytag
+        }
+
+        // if dconfig keytag is not equal to main keytag - rotate hashes and set dconfig keytag to main keytag
+
         let mproveAdminEmail =
           this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail');
 
