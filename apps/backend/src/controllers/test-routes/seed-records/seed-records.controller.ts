@@ -151,7 +151,7 @@ export class SeedRecordsController {
           let alias = await this.usersService.makeAlias(x.email);
 
           let passwordHS = isDefined(x.password)
-            ? await this.hashService.createSaltAndHash(x.password)
+            ? await this.hashService.createSaltAndHash({ input: x.password })
             : { salt: undefined, hash: undefined };
 
           let newUser: UserTab = {

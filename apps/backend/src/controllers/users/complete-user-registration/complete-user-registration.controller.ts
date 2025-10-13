@@ -84,7 +84,9 @@ export class CompleteUserRegistrationController {
 
     user.isEmailVerified = true;
 
-    let newPasswordHS = await this.hashService.createSaltAndHash(newPassword);
+    let newPasswordHS = await this.hashService.createSaltAndHash({
+      input: newPassword
+    });
 
     user.passwordHash = newPasswordHS.hash;
     user.passwordSalt = newPasswordHS.salt;

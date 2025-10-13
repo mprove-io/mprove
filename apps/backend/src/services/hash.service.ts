@@ -7,17 +7,19 @@ import { isUndefined } from '~common/functions/is-undefined';
 export class HashService {
   constructor() {}
 
-  async createSaltAndHash(password: string) {
+  async createSaltAndHash(item: { input: string }) {
+    let { input } = item;
+
     let salt = await bcrypt.genSalt();
-    let hash = await bcrypt.hash(password, salt);
+    let hash = await bcrypt.hash(input, salt);
 
     return { salt, hash };
   }
 
-  async createHashUsingSalt(item: { salt: string; password: string }) {
-    let { salt, password } = item;
+  async createHashUsingSalt(item: { salt: string; input: string }) {
+    let { salt, input } = item;
 
-    return await bcrypt.hash(password, salt);
+    return await bcrypt.hash(input, salt);
   }
 
   makeHash(text: string) {

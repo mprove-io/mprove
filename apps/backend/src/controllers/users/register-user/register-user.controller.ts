@@ -73,7 +73,9 @@ export class RegisterUserController {
 
     let newUser: UserTab;
 
-    let passwordHS = await this.hashService.createSaltAndHash(password);
+    let passwordHS = await this.hashService.createSaltAndHash({
+      input: password
+    });
 
     let emailHash = this.hashService.makeHash(email);
 

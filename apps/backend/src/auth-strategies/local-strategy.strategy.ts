@@ -27,7 +27,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
     let passwordHash = await this.hashService.createHashUsingSalt({
       salt: user.passwordSalt,
-      password: password
+      input: password
     });
 
     if (passwordHash !== user.passwordHash) {

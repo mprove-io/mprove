@@ -142,7 +142,9 @@ export class UsersService {
   async addMproveAdminUser(item: { email: string; password: string }) {
     let { email, password } = item;
 
-    let passwordHS = await this.hashService.createSaltAndHash(password);
+    let passwordHS = await this.hashService.createSaltAndHash({
+      input: password
+    });
 
     let alias = await this.makeAlias(email);
 
