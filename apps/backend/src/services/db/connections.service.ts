@@ -255,7 +255,7 @@ export class ConnectionsService {
   }) {
     let { projectId, envId, connectionId } = item;
 
-    let connectionEnt = await this.db.drizzle.query.connectionsTable.findFirst({
+    let connection = await this.db.drizzle.query.connectionsTable.findFirst({
       where: and(
         eq(connectionsTable.connectionId, connectionId),
         eq(connectionsTable.envId, envId),
@@ -263,7 +263,7 @@ export class ConnectionsService {
       )
     });
 
-    if (isDefined(connectionEnt)) {
+    if (isDefined(connection)) {
       throw new ServerError({
         message: ErEnum.BACKEND_CONNECTION_ALREADY_EXISTS
       });

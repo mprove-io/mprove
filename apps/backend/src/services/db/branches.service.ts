@@ -89,7 +89,7 @@ export class BranchesService {
   }) {
     let { projectId, repoId, branchId } = item;
 
-    let branchEnt = await this.db.drizzle.query.branchesTable.findFirst({
+    let branch = await this.db.drizzle.query.branchesTable.findFirst({
       where: and(
         eq(branchesTable.projectId, projectId),
         eq(branchesTable.repoId, repoId),
@@ -97,7 +97,7 @@ export class BranchesService {
       )
     });
 
-    if (isDefined(branchEnt)) {
+    if (isDefined(branch)) {
       throw new ServerError({
         message: ErEnum.BACKEND_BRANCH_ALREADY_EXISTS
       });

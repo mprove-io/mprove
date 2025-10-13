@@ -147,11 +147,11 @@ export class EnvsService {
   async checkEnvDoesNotExist(item: { projectId: string; envId: string }) {
     let { projectId, envId } = item;
 
-    let envEnt = await this.db.drizzle.query.envsTable.findFirst({
+    let env = await this.db.drizzle.query.envsTable.findFirst({
       where: and(eq(envsTable.envId, envId), eq(envsTable.projectId, projectId))
     });
 
-    if (isDefined(envEnt)) {
+    if (isDefined(env)) {
       throw new ServerError({
         message: ErEnum.BACKEND_ENV_ALREADY_EXISTS
       });
