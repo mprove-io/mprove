@@ -1,12 +1,24 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import {
+  bigint,
+  index,
+  json,
+  pgTable,
+  text,
+  varchar
+} from 'drizzle-orm/pg-core';
+import { AvatarLt, AvatarSt } from '~common/interfaces/st-lt';
 
 export const avatarsTable = pgTable(
   'avatars',
   {
     userId: varchar('user_id', { length: 32 }).notNull().primaryKey(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: AvatarSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: AvatarLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

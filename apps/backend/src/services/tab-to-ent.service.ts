@@ -43,6 +43,7 @@ import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
+import { BoolEnum } from '~common/enums/bool.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
   AvatarLt,
@@ -90,6 +91,7 @@ import { TabService } from './tab.service';
 @Injectable()
 export class TabToEntService {
   private aesKeyTag: string;
+  private isEncryption: boolean;
 
   constructor(
     private hashService: HashService,
@@ -97,6 +99,11 @@ export class TabToEntService {
     private cs: ConfigService<BackendConfig>
   ) {
     this.aesKeyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
+
+    this.isEncryption =
+      this.cs.get<BackendConfig['isDbEncryptionEnabled']>(
+        'isDbEncryptionEnabled'
+      ) === BoolEnum.TRUE;
   }
 
   tabsPackToEntsPack(tabsPack: DbTabsPack) {
@@ -192,8 +199,7 @@ export class TabToEntService {
 
     let avatarEnt: AvatarEnt = {
       userId: avatar.userId,
-      st: this.tabService.encrypt({ data: avatarSt }),
-      lt: this.tabService.encrypt({ data: avatarLt }),
+      ...this.tabService.getEntProps({ dataSt: avatarSt, dataLt: avatarLt }),
       keyTag: this.aesKeyTag,
       serverTs: avatar.serverTs
     };
