@@ -17,6 +17,7 @@ import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
@@ -57,6 +58,7 @@ let retry = require('async-retry');
 @Controller()
 export class RegisterUserController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private usersService: UsersService,
     private emailService: EmailService,
@@ -77,8 +79,11 @@ export class RegisterUserController {
       input: password
     });
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let emailHash = this.hashService.makeHash({
-      input: email
+      input: email,
+      hashSecret: hashSecret
     });
 
     let user = await this.db.drizzle.query.usersTable
@@ -130,6 +135,7 @@ export class RegisterUserController {
           aliasHash: undefined, // tab-to-ent
           passwordResetTokenHash: undefined, // tab-to-ent
           emailVerificationTokenHash: undefined, // tab-to-ent
+          keyTag: undefined,
           serverTs: undefined
         };
       }

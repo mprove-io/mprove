@@ -9,6 +9,7 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { HashService } from '~backend/services/hash.service';
 import { DEMO_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
@@ -28,6 +29,7 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class CreateOrgController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
@@ -62,8 +64,11 @@ export class CreateOrgController {
 
     let { name } = reqValid.payload;
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let nameHash = this.hashService.makeHash({
-      input: name
+      input: name,
+      hashSecret: hashSecret
     });
 
     let org = await this.db.drizzle.query.orgsTable.findFirst({

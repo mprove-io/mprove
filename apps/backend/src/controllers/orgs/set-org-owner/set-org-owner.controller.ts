@@ -17,6 +17,7 @@ import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
@@ -37,6 +38,7 @@ let retry = require('async-retry');
 @Controller()
 export class SetOrgOwnerController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,
     private usersService: UsersService,
@@ -58,8 +60,11 @@ export class SetOrgOwnerController {
       userId: user.userId
     });
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let ownerEmailHash = this.hashService.makeHash({
-      input: ownerEmail
+      input: ownerEmail,
+      hashSecret: hashSecret
     });
 
     let newOwner = await this.db.drizzle.query.usersTable

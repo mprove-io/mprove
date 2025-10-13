@@ -16,6 +16,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
 import { ErEnum } from '~common/enums/er.enum';
@@ -31,6 +32,7 @@ let retry = require('async-retry');
 @Controller()
 export class UpdateUserPasswordController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
@@ -44,8 +46,11 @@ export class UpdateUserPasswordController {
 
     let { passwordResetToken, newPassword } = reqValid.payload;
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let passwordResetTokenHash = this.hashService.makeHash({
-      input: passwordResetToken
+      input: passwordResetToken,
+      hashSecret: hashSecret
     });
 
     let user = await this.db.drizzle.query.usersTable

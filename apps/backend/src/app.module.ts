@@ -318,6 +318,8 @@ export class AppModule implements OnModuleInit {
           migrationsFolder: 'apps/backend/src/drizzle/postgres/migrations'
         });
 
+        // TODO: seed dconfig
+
         // encryption
 
         await this.checkEncryption();
@@ -337,8 +339,11 @@ export class AppModule implements OnModuleInit {
           isDefinedAndNotEmpty(mproveAdminEmail) &&
           isDefinedAndNotEmpty(mproveAdminInitialPassword)
         ) {
+          let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
           let mproveAdminEmailHash = this.hashService.makeHash({
-            input: mproveAdminEmail
+            input: mproveAdminEmail,
+            hashSecret: hashSecret
           });
 
           mproveAdminUser = await this.db.drizzle.query.usersTable

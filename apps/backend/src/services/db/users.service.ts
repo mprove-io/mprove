@@ -17,12 +17,14 @@ import { MyRegex } from '~common/models/my-regex';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
+import { DconfigsService } from './dconfigs.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class UsersService {
   constructor(
+    private dconfigsService: DconfigsService,
     private tabService: TabService,
     private hashService: HashService,
     private cs: ConfigService<BackendConfig>,
@@ -122,8 +124,11 @@ export class UsersService {
   async getUserByEmailCheckExists(item: { email: string }) {
     let { email } = item;
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let emailHash = this.hashService.makeHash({
-      input: email
+      input: email,
+      hashSecret: hashSecret
     });
 
     let user = await this.db.drizzle.query.usersTable
@@ -170,6 +175,7 @@ export class UsersService {
       aliasHash: undefined, // tab-to-ent
       emailVerificationTokenHash: undefined, // tab-to-ent
       passwordResetTokenHash: undefined, // tab-to-ent
+      keyTag: undefined,
       serverTs: undefined
     };
 
@@ -202,13 +208,16 @@ export class UsersService {
       });
     }
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let count = 2;
 
     let restart = true;
 
     while (restart) {
       let aliasHash = this.hashService.makeHash({
-        input: alias
+        input: alias,
+        hashSecret: hashSecret
       });
 
       let aliasUser = await this.db.drizzle.query.usersTable.findFirst({

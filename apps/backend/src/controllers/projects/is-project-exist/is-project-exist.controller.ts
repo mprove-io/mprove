@@ -6,6 +6,7 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { HashService } from '~backend/services/hash.service';
@@ -20,6 +21,7 @@ import {
 @Controller()
 export class IsProjectExistController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private projectsService: ProjectsService,
     private orgsService: OrgsService,
@@ -34,8 +36,11 @@ export class IsProjectExistController {
 
     await this.orgsService.getOrgCheckExists({ orgId: orgId });
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let nameHash = this.hashService.makeHash({
-      input: name
+      input: name,
+      hashSecret: hashSecret
     });
 
     let project = await this.db.drizzle.query.projectsTable.findFirst({

@@ -29,6 +29,7 @@ import { BlockmlService } from '~backend/services/blockml.service';
 import { AvatarsService } from '~backend/services/db/avatars.service';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { UsersService } from '~backend/services/db/users.service';
@@ -87,6 +88,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateMemberController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rabbitService: RabbitService,
     private avatarsService: AvatarsService,
@@ -118,8 +120,11 @@ export class CreateMemberController {
       projectId: projectId
     });
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let emailHash = this.hashService.makeHash({
-      input: email
+      input: email,
+      hashSecret: hashSecret
     });
 
     let invitedUser = await this.db.drizzle.query.usersTable
@@ -153,6 +158,7 @@ export class CreateMemberController {
         aliasHash: undefined, // tab-to-ent
         passwordResetTokenHash: undefined, // tab-to-ent
         emailVerificationTokenHash: undefined, // tab-to-ent
+        keyTag: undefined,
         serverTs: undefined
       };
     }

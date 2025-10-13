@@ -18,6 +18,7 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { NotesService } from '~backend/services/db/notes.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
@@ -42,6 +43,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateProjectController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private projectsService: ProjectsService,
     private notesService: NotesService,
@@ -73,8 +75,11 @@ export class CreateProjectController {
       });
     }
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let nameHash = this.hashService.makeHash({
-      input: name
+      input: name,
+      hashSecret: hashSecret
     });
 
     let project = await this.db.drizzle.query.projectsTable.findFirst({

@@ -4,6 +4,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { HashService } from '~backend/services/hash.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -16,6 +17,7 @@ import {
 @Controller()
 export class IsOrgExistController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -26,8 +28,11 @@ export class IsOrgExistController {
 
     let { name } = reqValid.payload;
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     let nameHash = this.hashService.makeHash({
-      input: name
+      input: name,
+      hashSecret: hashSecret
     });
 
     let org = await this.db.drizzle.query.orgsTable.findFirst({

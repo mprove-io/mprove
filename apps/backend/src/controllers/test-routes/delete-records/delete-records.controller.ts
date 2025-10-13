@@ -32,6 +32,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { HashService } from '~backend/services/hash.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -54,6 +55,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteRecordsController {
   constructor(
+    private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rabbitService: RabbitService,
     private cs: ConfigService<BackendConfig>,
@@ -75,10 +77,13 @@ export class DeleteRecordsController {
     let structIds: string[] = [];
     let userIds: string[] = [];
 
+    let hashSecret = await this.dconfigsService.getDconfigHashSecret();
+
     if (isDefined(projectNames) && projectNames.length > 0) {
-      let projectNameHashes = projectNames.map(x =>
+      let projectNameHashes = projectNames.map(projectName =>
         this.hashService.makeHash({
-          input: x
+          input: projectName,
+          hashSecret: hashSecret
         })
       );
 
@@ -95,9 +100,10 @@ export class DeleteRecordsController {
     }
 
     if (isDefined(orgNames) && orgNames.length > 0) {
-      let orgNameHashes = orgNames.map(x =>
+      let orgNameHashes = orgNames.map(orgName =>
         this.hashService.makeHash({
-          input: x
+          input: orgName,
+          hashSecret: hashSecret
         })
       );
 
@@ -136,7 +142,8 @@ export class DeleteRecordsController {
     if (emails.length > 0) {
       await asyncPool(1, emails, async (email: string) => {
         let emailHash = this.hashService.makeHash({
-          input: email
+          input: email,
+          hashSecret: hashSecret
         });
 
         let user = await this.db.drizzle.query.usersTable.findFirst({
