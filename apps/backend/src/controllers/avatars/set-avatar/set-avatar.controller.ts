@@ -65,6 +65,7 @@ export class SetAvatarController {
         userId: user.userId,
         avatarSmall: avatarSmall,
         avatarBig: avatarBig,
+        keyTag: undefined,
         serverTs: undefined
       };
     }

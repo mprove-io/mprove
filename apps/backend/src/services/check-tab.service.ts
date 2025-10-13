@@ -103,7 +103,6 @@ export class CheckTabService {
     await this.checkCharts();
     await this.checkConnections();
     await this.checkDashboards();
-    await this.checkDconfigs();
     await this.checkEnvs();
     await this.checkKits();
     await this.checkMconfigs();
@@ -116,6 +115,7 @@ export class CheckTabService {
     await this.checkReports();
     await this.checkStructs();
     await this.checkUsers();
+    await this.checkDconfigs(); // last
   }
 
   async checkAvatars() {

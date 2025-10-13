@@ -59,96 +59,81 @@ import { StructEnt } from './structs';
 import { UserEnt } from './users';
 
 export interface AvatarTab
-  extends Omit<AvatarEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<AvatarEnt, 'st' | 'lt'>,
     AvatarSt,
     AvatarLt {}
 
 export interface BranchTab
-  extends Omit<BranchEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<BranchEnt, 'st' | 'lt'>,
     BranchSt,
     BranchLt {}
 
 export interface BridgeTab
-  extends Omit<BridgeEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<BridgeEnt, 'st' | 'lt'>,
     BridgeSt,
     BridgeLt {}
 
 export interface ChartTab
-  extends Omit<ChartEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<ChartEnt, 'st' | 'lt'>,
     ChartSt,
     ChartLt {}
 
 export interface ConnectionTab
-  extends Omit<ConnectionEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<ConnectionEnt, 'st' | 'lt'>,
     ConnectionSt,
     ConnectionLt {}
 
 export interface DashboardTab
-  extends Omit<DashboardEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<DashboardEnt, 'st' | 'lt'>,
     DashboardSt,
     DashboardLt {}
 
-export interface EnvTab
-  extends Omit<EnvEnt, 'st' | 'lt' | 'keyTag'>,
-    EnvSt,
-    EnvLt {}
+export interface EnvTab extends Omit<EnvEnt, 'st' | 'lt'>, EnvSt, EnvLt {}
 
 export interface DconfigTab
-  extends Omit<DconfigEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<DconfigEnt, 'st' | 'lt'>,
     DconfigSt,
     DconfigLt {}
 
-export interface KitTab
-  extends Omit<KitEnt, 'st' | 'lt' | 'keyTag'>,
-    KitSt,
-    KitLt {}
+export interface KitTab extends Omit<KitEnt, 'st' | 'lt'>, KitSt, KitLt {}
 
 export interface MconfigTab
-  extends Omit<MconfigEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<MconfigEnt, 'st' | 'lt'>,
     MconfigSt,
     MconfigLt {}
 
 export interface MemberTab
-  extends Omit<MemberEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<MemberEnt, 'st' | 'lt'>,
     MemberSt,
     MemberLt {}
 
 export interface ModelTab
-  extends Omit<ModelEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<ModelEnt, 'st' | 'lt'>,
     ModelSt,
     ModelLt {}
 
-export interface NoteTab
-  extends Omit<NoteEnt, 'st' | 'lt' | 'keyTag'>,
-    NoteSt,
-    NoteLt {}
+export interface NoteTab extends Omit<NoteEnt, 'st' | 'lt'>, NoteSt, NoteLt {}
 
-export interface OrgTab
-  extends Omit<OrgEnt, 'st' | 'lt' | 'keyTag'>,
-    OrgSt,
-    OrgLt {}
+export interface OrgTab extends Omit<OrgEnt, 'st' | 'lt'>, OrgSt, OrgLt {}
 
 export interface ProjectTab
-  extends Omit<ProjectEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<ProjectEnt, 'st' | 'lt'>,
     ProjectSt,
     ProjectLt {}
 
 export interface QueryTab
-  extends Omit<QueryEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<QueryEnt, 'st' | 'lt'>,
     QuerySt,
     QueryLt {}
 
 export interface ReportTab
-  extends Omit<ReportEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<ReportEnt, 'st' | 'lt'>,
     ReportSt,
     ReportLt {}
 
 export interface StructTab
-  extends Omit<StructEnt, 'st' | 'lt' | 'keyTag'>,
+  extends Omit<StructEnt, 'st' | 'lt'>,
     StructSt,
     StructLt {}
 
-export interface UserTab
-  extends Omit<UserEnt, 'st' | 'lt' | 'keyTag'>,
-    UserSt,
-    UserLt {}
+export interface UserTab extends Omit<UserEnt, 'st' | 'lt'>, UserSt, UserLt {}

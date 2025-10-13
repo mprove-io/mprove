@@ -106,197 +106,229 @@ export class TabToEntService {
       ) === BoolEnum.TRUE;
   }
 
-  tabsPackToEntsPack(tabsPack: DbTabsPack) {
+  tabsPackToEntsPack(item: { tabsPack: DbTabsPack; hashSecret: string }) {
+    let { tabsPack, hashSecret } = item;
+
     let entsPack: DbEntsPack = {
       avatars:
         tabsPack.avatars
           ?.filter(x => isDefined(x))
-          .map(x => this.avatarTabToEnt(x)) ?? [],
+          .map(x => this.avatarTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       branches:
         tabsPack.branches
           ?.filter(x => isDefined(x))
-          .map(x => this.branchTabToEnt(x)) ?? [],
+          .map(x => this.branchTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       bridges:
         tabsPack.bridges
           ?.filter(x => isDefined(x))
-          .map(x => this.bridgeTabToEnt(x)) ?? [],
+          .map(x => this.bridgeTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       charts:
         tabsPack.charts
           ?.filter(x => isDefined(x))
-          .map(x => this.chartTabToEnt(x)) ?? [],
+          .map(x => this.chartTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       connections:
         tabsPack.connections
           ?.filter(x => isDefined(x))
-          .map(x => this.connectionTabToEnt(x)) ?? [],
+          .map(x =>
+            this.connectionTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
       dashboards:
         tabsPack.dashboards
           ?.filter(x => isDefined(x))
-          .map(x => this.dashboardTabToEnt(x)) ?? [],
+          .map(x =>
+            this.dashboardTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
       dconfigs:
         tabsPack.dconfigs
           ?.filter(x => isDefined(x))
-          .map(x => this.dconfigTabToEnt(x)) ?? [],
+          .map(x => this.dconfigTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       envs:
         tabsPack.envs
           ?.filter(x => isDefined(x))
-          .map(x => this.envTabToEnt(x)) ?? [],
+          .map(x => this.envTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
       kits:
         tabsPack.kits
           ?.filter(x => isDefined(x))
-          .map(x => this.kitTabToEnt(x)) ?? [],
+          .map(x => this.kitTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
       mconfigs:
         tabsPack.mconfigs
           ?.filter(x => isDefined(x))
-          .map(x => this.mconfigTabToEnt(x)) ?? [],
+          .map(x => this.mconfigTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       members:
         tabsPack.members
           ?.filter(x => isDefined(x))
-          .map(x => this.memberTabToEnt(x)) ?? [],
+          .map(x => this.memberTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       models:
         tabsPack.models
           ?.filter(x => isDefined(x))
-          .map(x => this.modelTabToEnt(x)) ?? [],
+          .map(x => this.modelTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       notes:
         tabsPack.notes
           ?.filter(x => isDefined(x))
-          .map(x => this.noteTabToEnt(x)) ?? [],
+          .map(x => this.noteTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       orgs:
         tabsPack.orgs
           ?.filter(x => isDefined(x))
-          .map(x => this.orgTabToEnt(x)) ?? [],
+          .map(x => this.orgTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
       projects:
         tabsPack.projects
           ?.filter(x => isDefined(x))
-          .map(x => this.projectTabToEnt(x)) ?? [],
+          .map(x => this.projectTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       queries:
         tabsPack.queries
           ?.filter(x => isDefined(x))
-          .map(x => this.queryTabToEnt(x)) ?? [],
+          .map(x => this.queryTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       reports:
         tabsPack.reports
           ?.filter(x => isDefined(x))
-          .map(x => this.reportTabToEnt(x)) ?? [],
+          .map(x => this.reportTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       structs:
         tabsPack.structs
           ?.filter(x => isDefined(x))
-          .map(x => this.structTabToEnt(x)) ?? [],
+          .map(x => this.structTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       users:
         tabsPack.users
           ?.filter(x => isDefined(x))
-          .map(x => this.userTabToEnt(x)) ?? []
+          .map(x => this.userTabToEnt({ tab: x, hashSecret: hashSecret })) ?? []
     };
 
     return entsPack;
   }
 
-  avatarTabToEnt(avatar: AvatarTab): AvatarEnt {
+  avatarTabToEnt(item: { tab: AvatarTab; hashSecret: string }): AvatarEnt {
+    let { tab, hashSecret } = item;
+
     let avatarSt: AvatarSt = {
-      avatarSmall: avatar.avatarSmall
+      avatarSmall: tab.avatarSmall
     };
     let avatarLt: AvatarLt = {
-      avatarBig: avatar.avatarBig
+      avatarBig: tab.avatarBig
     };
 
     let avatarEnt: AvatarEnt = {
-      userId: avatar.userId,
+      userId: tab.userId,
       ...this.tabService.getEntProps({ dataSt: avatarSt, dataLt: avatarLt }),
       keyTag: this.aesKeyTag,
-      serverTs: avatar.serverTs
+      serverTs: tab.serverTs
     };
 
     return avatarEnt;
   }
 
-  branchTabToEnt(branch: BranchTab): BranchEnt {
+  branchTabToEnt(item: { tab: BranchTab; hashSecret: string }): BranchEnt {
+    let { tab, hashSecret } = item;
+
     let branchSt: BranchSt = {};
     let branchLt: BranchLt = {};
 
     let branchEnt: BranchEnt = {
       branchFullId: this.hashService.makeBranchFullId({
-        projectId: branch.projectId,
-        repoId: branch.repoId,
-        branchId: branch.branchId
+        projectId: tab.projectId,
+        repoId: tab.repoId,
+        branchId: tab.branchId
       }),
-      projectId: branch.projectId,
-      repoId: branch.repoId,
-      branchId: branch.branchId,
+      projectId: tab.projectId,
+      repoId: tab.repoId,
+      branchId: tab.branchId,
       ...this.tabService.getEntProps({ dataSt: branchSt, dataLt: branchLt }),
       keyTag: this.aesKeyTag,
-      serverTs: branch.serverTs
+      serverTs: tab.serverTs
     };
 
     return branchEnt;
   }
 
-  bridgeTabToEnt(bridge: BridgeTab): BridgeEnt {
+  bridgeTabToEnt(item: { tab: BridgeTab; hashSecret: string }): BridgeEnt {
+    let { tab, hashSecret } = item;
+
     let bridgeSt: BridgeSt = {};
     let bridgeLt: BridgeLt = {};
 
     let bridgeEnt: BridgeEnt = {
       bridgeFullId: this.hashService.makeBridgeFullId({
-        projectId: bridge.projectId,
-        repoId: bridge.repoId,
-        branchId: bridge.branchId,
-        envId: bridge.envId
+        projectId: tab.projectId,
+        repoId: tab.repoId,
+        branchId: tab.branchId,
+        envId: tab.envId
       }),
-      projectId: bridge.projectId,
-      repoId: bridge.repoId,
-      branchId: bridge.branchId,
-      envId: bridge.envId,
-      structId: bridge.structId,
-      needValidate: bridge.needValidate,
+      projectId: tab.projectId,
+      repoId: tab.repoId,
+      branchId: tab.branchId,
+      envId: tab.envId,
+      structId: tab.structId,
+      needValidate: tab.needValidate,
       ...this.tabService.getEntProps({ dataSt: bridgeSt, dataLt: bridgeLt }),
       keyTag: this.aesKeyTag,
-      serverTs: bridge.serverTs
+      serverTs: tab.serverTs
     };
 
     return bridgeEnt;
   }
 
-  chartTabToEnt(chart: ChartTab): ChartEnt {
+  chartTabToEnt(item: { tab: ChartTab; hashSecret: string }): ChartEnt {
+    let { tab, hashSecret } = item;
+
     let chartSt: ChartSt = {
-      title: chart.title,
-      modelLabel: chart.modelLabel,
-      filePath: chart.filePath,
-      accessRoles: chart.accessRoles,
-      tiles: chart.tiles
+      title: tab.title,
+      modelLabel: tab.modelLabel,
+      filePath: tab.filePath,
+      accessRoles: tab.accessRoles,
+      tiles: tab.tiles
     };
 
     let chartLt: ChartLt = {};
 
     let chartEnt: ChartEnt = {
       chartFullId: this.hashService.makeChartFullId({
-        structId: chart.structId,
-        chartId: chart.chartId
+        structId: tab.structId,
+        chartId: tab.chartId
       }),
-      structId: chart.structId,
-      chartId: chart.chartId,
-      modelId: chart.modelId,
-      creatorId: chart.creatorId,
-      chartType: chart.chartType,
-      draft: chart.draft,
+      structId: tab.structId,
+      chartId: tab.chartId,
+      modelId: tab.modelId,
+      creatorId: tab.creatorId,
+      chartType: tab.chartType,
+      draft: tab.draft,
       ...this.tabService.getEntProps({ dataSt: chartSt, dataLt: chartLt }),
       keyTag: this.aesKeyTag,
-      serverTs: chart.serverTs
+      serverTs: tab.serverTs
     };
 
     return chartEnt;
   }
 
-  connectionTabToEnt(connection: ConnectionTab): ConnectionEnt {
-    let connectionSt: ConnectionSt = { options: connection.options };
+  connectionTabToEnt(item: {
+    tab: ConnectionTab;
+    hashSecret: string;
+  }): ConnectionEnt {
+    let { tab, hashSecret } = item;
+
+    let connectionSt: ConnectionSt = { options: tab.options };
     let connectionLt: ConnectionLt = {};
 
     let connectionEnt: ConnectionEnt = {
       connectionFullId: this.hashService.makeConnectionFullId({
-        projectId: connection.projectId,
-        envId: connection.envId,
-        connectionId: connection.connectionId
+        projectId: tab.projectId,
+        envId: tab.envId,
+        connectionId: tab.connectionId
       }),
-      projectId: connection.projectId,
-      envId: connection.envId,
-      connectionId: connection.connectionId,
-      type: connection.type,
+      projectId: tab.projectId,
+      envId: tab.envId,
+      connectionId: tab.connectionId,
+      type: tab.type,
       ...this.tabService.getEntProps({
         dataSt: connectionSt,
         dataLt: connectionLt
@@ -308,400 +340,451 @@ export class TabToEntService {
     return connectionEnt;
   }
 
-  dashboardTabToEnt(dashboard: DashboardTab): DashboardEnt {
+  dashboardTabToEnt(item: {
+    tab: DashboardTab;
+    hashSecret: string;
+  }): DashboardEnt {
+    let { tab, hashSecret } = item;
+
     let dashboardSt: DashboardSt = {
-      title: dashboard.title,
-      filePath: dashboard.filePath,
-      accessRoles: dashboard.accessRoles,
-      tiles: dashboard.tiles,
-      fields: dashboard.fields
+      title: tab.title,
+      filePath: tab.filePath,
+      accessRoles: tab.accessRoles,
+      tiles: tab.tiles,
+      fields: tab.fields
     };
-    let dashboardLt: DashboardLt = { content: dashboard.content };
+    let dashboardLt: DashboardLt = { content: tab.content };
 
     let dashboardEnt: DashboardEnt = {
       dashboardFullId: this.hashService.makeDashboardFullId({
-        structId: dashboard.structId,
-        dashboardId: dashboard.dashboardId
+        structId: tab.structId,
+        dashboardId: tab.dashboardId
       }),
-      structId: dashboard.structId,
-      dashboardId: dashboard.dashboardId,
-      creatorId: dashboard.creatorId,
-      draft: dashboard.draft,
+      structId: tab.structId,
+      dashboardId: tab.dashboardId,
+      creatorId: tab.creatorId,
+      draft: tab.draft,
       ...this.tabService.getEntProps({
         dataSt: dashboardSt,
         dataLt: dashboardLt
       }),
       keyTag: this.aesKeyTag,
-      serverTs: dashboard.serverTs
+      serverTs: tab.serverTs
     };
 
     return dashboardEnt;
   }
 
-  dconfigTabToEnt(dconfig: DconfigTab): DconfigEnt {
+  dconfigTabToEnt(item: {
+    tab: DconfigTab;
+    hashSecret: string;
+  }): DconfigEnt {
+    let { tab, hashSecret } = item;
+
     let dconfigSt: DconfigSt = {
-      hashSecret: dconfig.hashSecret
+      hashSecret: tab.hashSecret
     };
     let dconfigLt: DconfigLt = {};
 
     let dconfigEnt: DconfigEnt = {
-      dconfigId: dconfig.dconfigId,
+      dconfigId: tab.dconfigId,
       ...this.tabService.getEntProps({ dataSt: dconfigSt, dataLt: dconfigLt }),
       keyTag: this.aesKeyTag,
-      serverTs: dconfig.serverTs
+      serverTs: tab.serverTs
     };
 
     return dconfigEnt;
   }
 
-  envTabToEnt(env: EnvTab): EnvEnt {
-    let envSt: EnvSt = { evs: env.evs };
+  envTabToEnt(item: { tab: EnvTab; hashSecret: string }): EnvEnt {
+    let { tab, hashSecret } = item;
+
+    let envSt: EnvSt = { evs: tab.evs };
     let envLt: EnvLt = {};
 
     let envEnt: EnvEnt = {
       envFullId: this.hashService.makeEnvFullId({
-        projectId: env.projectId,
-        envId: env.envId
+        projectId: tab.projectId,
+        envId: tab.envId
       }),
-      projectId: env.projectId,
-      envId: env.envId,
-      memberIds: env.memberIds,
-      isFallbackToProdConnections: env.isFallbackToProdConnections,
-      isFallbackToProdVariables: env.isFallbackToProdVariables,
+      projectId: tab.projectId,
+      envId: tab.envId,
+      memberIds: tab.memberIds,
+      isFallbackToProdConnections: tab.isFallbackToProdConnections,
+      isFallbackToProdVariables: tab.isFallbackToProdVariables,
       ...this.tabService.getEntProps({ dataSt: envSt, dataLt: envLt }),
       keyTag: this.aesKeyTag,
-      serverTs: env.serverTs
+      serverTs: tab.serverTs
     };
 
     return envEnt;
   }
 
-  kitTabToEnt(kit: KitTab): KitEnt {
+  kitTabToEnt(item: { tab: KitTab; hashSecret: string }): KitEnt {
+    let { tab, hashSecret } = item;
+
     let kitSt: KitSt = {};
     let kitLt: KitLt = {
-      data: kit.data
+      data: tab.data
     };
 
     let kitEnt: KitEnt = {
-      kitId: kit.kitId,
-      structId: kit.structId,
-      reportId: kit.reportId,
+      kitId: tab.kitId,
+      structId: tab.structId,
+      reportId: tab.reportId,
       ...this.tabService.getEntProps({ dataSt: kitSt, dataLt: kitLt }),
       keyTag: this.aesKeyTag,
-      serverTs: kit.serverTs
+      serverTs: tab.serverTs
     };
 
     return kitEnt;
   }
 
-  mconfigTabToEnt(mconfig: MconfigTab): MconfigEnt {
+  mconfigTabToEnt(item: {
+    tab: MconfigTab;
+    hashSecret: string;
+  }): MconfigEnt {
+    let { tab, hashSecret } = item;
+
     let mconfigSt: MconfigSt = {};
 
     let mconfigLt: MconfigLt = {
-      dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
-      storePart: mconfig.storePart,
-      modelLabel: mconfig.modelLabel,
-      modelFilePath: mconfig.modelFilePath,
-      malloyQueryStable: mconfig.malloyQueryStable,
-      malloyQueryExtra: mconfig.malloyQueryExtra,
-      compiledQuery: mconfig.compiledQuery,
-      select: mconfig.select,
-      sortings: mconfig.sortings,
-      sorts: mconfig.sorts,
-      timezone: mconfig.timezone,
-      limit: mconfig.limit,
-      filters: mconfig?.filters,
-      chart: mconfig.chart
+      dateRangeIncludesRightSide: tab.dateRangeIncludesRightSide,
+      storePart: tab.storePart,
+      modelLabel: tab.modelLabel,
+      modelFilePath: tab.modelFilePath,
+      malloyQueryStable: tab.malloyQueryStable,
+      malloyQueryExtra: tab.malloyQueryExtra,
+      compiledQuery: tab.compiledQuery,
+      select: tab.select,
+      sortings: tab.sortings,
+      sorts: tab.sorts,
+      timezone: tab.timezone,
+      limit: tab.limit,
+      filters: tab.filters,
+      chart: tab.chart
     };
 
     let mconfigEnt: MconfigEnt = {
-      mconfigId: mconfig.mconfigId,
-      structId: mconfig.structId,
-      queryId: mconfig.queryId,
-      modelId: mconfig.modelId,
-      modelType: mconfig.modelType,
+      mconfigId: tab.mconfigId,
+      structId: tab.structId,
+      queryId: tab.queryId,
+      modelId: tab.modelId,
+      modelType: tab.modelType,
       ...this.tabService.getEntProps({ dataSt: mconfigSt, dataLt: mconfigLt }),
       keyTag: this.aesKeyTag,
-      serverTs: mconfig.serverTs
+      serverTs: tab.serverTs
     };
 
     return mconfigEnt;
   }
 
-  memberTabToEnt(member: MemberTab): MemberEnt {
+  memberTabToEnt(item: { tab: MemberTab; hashSecret: string }): MemberEnt {
+    let { tab, hashSecret } = item;
+
     let memberSt: MemberSt = {
-      email: member.email,
-      alias: member.alias,
-      firstName: member.firstName,
-      lastName: member.lastName,
-      roles: member.roles
+      email: tab.email,
+      alias: tab.alias,
+      firstName: tab.firstName,
+      lastName: tab.lastName,
+      roles: tab.roles
     };
 
     let memberLt: MemberLt = {};
 
     let memberEnt: MemberEnt = {
       memberFullId: this.hashService.makeMemberFullId({
-        projectId: member.projectId,
-        memberId: member.memberId
+        projectId: tab.projectId,
+        memberId: tab.memberId
       }),
-      projectId: member.projectId,
-      memberId: member.memberId,
-      isAdmin: member.isAdmin,
-      isEditor: member.isEditor,
-      isExplorer: member.isExplorer,
+      projectId: tab.projectId,
+      memberId: tab.memberId,
+      isAdmin: tab.isAdmin,
+      isEditor: tab.isEditor,
+      isExplorer: tab.isExplorer,
       ...this.tabService.getEntProps({ dataSt: memberSt, dataLt: memberLt }),
       keyTag: this.aesKeyTag,
       emailHash: this.hashService.makeHash({
-        input: member.emailHash
+        input: tab.emailHash,
+        hashSecret: hashSecret
       }),
       aliasHash: this.hashService.makeHash({
-        input: member.aliasHash
+        input: tab.aliasHash,
+        hashSecret: hashSecret
       }),
-      serverTs: member.serverTs
+      serverTs: tab.serverTs
     };
 
     return memberEnt;
   }
 
-  modelTabToEnt(model: ModelTab): ModelEnt {
+  modelTabToEnt(item: { tab: ModelTab; hashSecret: string }): ModelEnt {
+    let { tab, hashSecret } = item;
+
     let modelSt: ModelSt = {
-      accessRoles: model.accessRoles
+      accessRoles: tab.accessRoles
     };
 
     let modelLt: ModelLt = {
-      source: model.source,
-      malloyModelDef: model.malloyModelDef,
-      filePath: model.filePath,
-      fileText: model.fileText,
-      storeContent: model.storeContent,
-      dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
-      label: model.label,
-      fields: model.fields,
-      nodes: model.nodes
+      source: tab.source,
+      malloyModelDef: tab.malloyModelDef,
+      filePath: tab.filePath,
+      fileText: tab.fileText,
+      storeContent: tab.storeContent,
+      dateRangeIncludesRightSide: tab.dateRangeIncludesRightSide,
+      label: tab.label,
+      fields: tab.fields,
+      nodes: tab.nodes
     };
 
     let modelEnt: ModelEnt = {
       modelFullId: this.hashService.makeModelFullId({
-        structId: model.structId,
-        modelId: model.modelId
+        structId: tab.structId,
+        modelId: tab.modelId
       }),
-      structId: model.structId,
-      modelId: model.modelId,
-      type: model.type,
-      connectionId: model.connectionId,
-      connectionType: model.connectionType,
+      structId: tab.structId,
+      modelId: tab.modelId,
+      type: tab.type,
+      connectionId: tab.connectionId,
+      connectionType: tab.connectionType,
       ...this.tabService.getEntProps({ dataSt: modelSt, dataLt: modelLt }),
       keyTag: this.aesKeyTag,
-      serverTs: model.serverTs
+      serverTs: tab.serverTs
     };
 
     return modelEnt;
   }
 
-  noteTabToEnt(note: NoteTab): NoteEnt {
+  noteTabToEnt(item: { tab: NoteTab; hashSecret: string }): NoteEnt {
+    let { tab, hashSecret } = item;
+
     let noteSt: NoteSt = {};
     let noteLt: NoteLt = {
-      privateKey: note.privateKey,
-      publicKey: note.publicKey
+      privateKey: tab.privateKey,
+      publicKey: tab.publicKey
     };
 
     let noteEnt: NoteEnt = {
-      noteId: note.noteId,
+      noteId: tab.noteId,
       ...this.tabService.getEntProps({ dataSt: noteSt, dataLt: noteLt }),
       keyTag: this.aesKeyTag,
-      serverTs: note.serverTs
+      serverTs: tab.serverTs
     };
 
     return noteEnt;
   }
 
-  orgTabToEnt(org: OrgTab): OrgEnt {
+  orgTabToEnt(item: { tab: OrgTab; hashSecret: string }): OrgEnt {
+    let { tab, hashSecret } = item;
+
     let orgSt: OrgSt = {
-      name: org.name,
-      ownerEmail: org.ownerEmail
+      name: tab.name,
+      ownerEmail: tab.ownerEmail
     };
 
     let orgLt: OrgLt = {};
 
     let orgEnt: OrgEnt = {
-      orgId: org.orgId,
-      ownerId: org.ownerId,
+      orgId: tab.orgId,
+      ownerId: tab.ownerId,
       ...this.tabService.getEntProps({ dataSt: orgSt, dataLt: orgLt }),
       keyTag: this.aesKeyTag,
       nameHash: this.hashService.makeHash({
-        input: org.name
+        input: tab.name,
+        hashSecret: hashSecret
       }),
       ownerEmailHash: this.hashService.makeHash({
-        input: org.ownerEmail
+        input: tab.ownerEmail,
+        hashSecret: hashSecret
       }),
-      serverTs: org.serverTs
+      serverTs: tab.serverTs
     };
 
     return orgEnt;
   }
 
-  projectTabToEnt(project: ProjectTab): ProjectEnt {
+  projectTabToEnt(item: {
+    tab: ProjectTab;
+    hashSecret: string;
+  }): ProjectEnt {
+    let { tab, hashSecret } = item;
+
     let projectSt: ProjectSt = {
-      name: project.name
+      name: tab.name
     };
 
     let projectLt: ProjectLt = {
-      defaultBranch: project.defaultBranch,
-      gitUrl: project.gitUrl,
-      privateKey: project.privateKey,
-      publicKey: project.publicKey
+      defaultBranch: tab.defaultBranch,
+      gitUrl: tab.gitUrl,
+      privateKey: tab.privateKey,
+      publicKey: tab.publicKey
     };
 
     let projectEnt: ProjectEnt = {
-      projectId: project.projectId,
-      orgId: project.orgId,
-      remoteType: project.remoteType,
+      projectId: tab.projectId,
+      orgId: tab.orgId,
+      remoteType: tab.remoteType,
       ...this.tabService.getEntProps({ dataSt: projectSt, dataLt: projectLt }),
       keyTag: this.aesKeyTag,
       nameHash: this.hashService.makeHash({
-        input: project.name
+        input: tab.name,
+        hashSecret: hashSecret
       }),
       gitUrlHash: this.hashService.makeHash({
-        input: project.gitUrl
+        input: tab.gitUrl,
+        hashSecret: hashSecret
       }),
-      serverTs: project.serverTs
+      serverTs: tab.serverTs
     };
 
     return projectEnt;
   }
 
-  queryTabToEnt(query: QueryTab): QueryEnt {
+  queryTabToEnt(item: { tab: QueryTab; hashSecret: string }): QueryEnt {
+    let { tab, hashSecret } = item;
+
     let querySt: QuerySt = {
-      sql: query.sql,
-      apiMethod: query.apiMethod,
-      apiUrl: query.apiUrl,
-      apiBody: query.apiBody,
-      lastErrorMessage: query.lastErrorMessage
+      sql: tab.sql,
+      apiMethod: tab.apiMethod,
+      apiUrl: tab.apiUrl,
+      apiBody: tab.apiBody,
+      lastErrorMessage: tab.lastErrorMessage
     };
 
     let queryLt: QueryLt = {
-      data: query.data
+      data: tab.data
     };
 
     let queryEnt: QueryEnt = {
-      projectId: query.projectId,
-      envId: query.envId,
-      connectionId: query.connectionId,
-      connectionType: query.connectionType,
-      queryId: query.queryId,
-      status: query.status,
-      lastRunBy: query.lastRunBy,
-      lastRunTs: query.lastRunTs,
-      lastCancelTs: query.lastCancelTs,
-      lastCompleteTs: query.lastCompleteTs,
-      lastCompleteDuration: query.lastCompleteDuration,
-      lastErrorTs: query.lastErrorTs,
-      queryJobId: query.queryJobId,
-      bigqueryQueryJobId: query.bigqueryQueryJobId,
-      bigqueryConsecutiveErrorsGetJob: query.bigqueryConsecutiveErrorsGetJob,
+      projectId: tab.projectId,
+      envId: tab.envId,
+      connectionId: tab.connectionId,
+      connectionType: tab.connectionType,
+      queryId: tab.queryId,
+      status: tab.status,
+      lastRunBy: tab.lastRunBy,
+      lastRunTs: tab.lastRunTs,
+      lastCancelTs: tab.lastCancelTs,
+      lastCompleteTs: tab.lastCompleteTs,
+      lastCompleteDuration: tab.lastCompleteDuration,
+      lastErrorTs: tab.lastErrorTs,
+      queryJobId: tab.queryJobId,
+      bigqueryQueryJobId: tab.bigqueryQueryJobId,
+      bigqueryConsecutiveErrorsGetJob: tab.bigqueryConsecutiveErrorsGetJob,
       bigqueryConsecutiveErrorsGetResults:
-        query.bigqueryConsecutiveErrorsGetResults,
+        tab.bigqueryConsecutiveErrorsGetResults,
       ...this.tabService.getEntProps({ dataSt: querySt, dataLt: queryLt }),
       keyTag: this.aesKeyTag,
       apiUrlHash: this.hashService.makeHash({
-        input: query.apiUrl
+        input: tab.apiUrl,
+        hashSecret: hashSecret
       }),
-      serverTs: query.serverTs
+      serverTs: tab.serverTs
     };
 
     return queryEnt;
   }
 
-  reportTabToEnt(report: ReportTab): ReportEnt {
+  reportTabToEnt(item: { tab: ReportTab; hashSecret: string }): ReportEnt {
+    let { tab, hashSecret } = item;
+
     let reportSt: ReportSt = {
-      filePath: report.filePath,
-      fields: report.fields,
-      accessRoles: report.accessRoles,
-      title: report.title,
-      chart: report.chart
+      filePath: tab.filePath,
+      fields: tab.fields,
+      accessRoles: tab.accessRoles,
+      title: tab.title,
+      chart: tab.chart
     };
 
     let reportLt: ReportLt = {
-      rows: report.rows
+      rows: tab.rows
     };
 
     let reportEnt: ReportEnt = {
       reportFullId: this.hashService.makeReportFullId({
-        structId: report.structId,
-        reportId: report.reportId
+        structId: tab.structId,
+        reportId: tab.reportId
       }),
-      projectId: report.projectId,
-      structId: report.structId,
-      reportId: report.reportId,
-      creatorId: report.creatorId,
-      draft: report.draft,
-      draftCreatedTs: report.draftCreatedTs,
+      projectId: tab.projectId,
+      structId: tab.structId,
+      reportId: tab.reportId,
+      creatorId: tab.creatorId,
+      draft: tab.draft,
+      draftCreatedTs: tab.draftCreatedTs,
       ...this.tabService.getEntProps({ dataSt: reportSt, dataLt: reportLt }),
       keyTag: this.aesKeyTag,
-      serverTs: report.serverTs
+      serverTs: tab.serverTs
     };
 
     return reportEnt;
   }
 
-  structTabToEnt(struct: StructTab): StructEnt {
+  structTabToEnt(item: { tab: StructTab; hashSecret: string }): StructEnt {
+    let { tab, hashSecret } = item;
+
     let structSt: StructSt = {};
 
     let structLt: StructLt = {
-      errors: struct.errors,
-      metrics: struct.metrics,
-      presets: struct.presets,
-      mproveConfig: struct.mproveConfig
+      errors: tab.errors,
+      metrics: tab.metrics,
+      presets: tab.presets,
+      mproveConfig: tab.mproveConfig
     };
 
     let structEnt: StructEnt = {
-      structId: struct.structId,
-      projectId: struct.projectId,
-      mproveVersion: struct.mproveVersion,
+      structId: tab.structId,
+      projectId: tab.projectId,
+      mproveVersion: tab.mproveVersion,
       ...this.tabService.getEntProps({ dataSt: structSt, dataLt: structLt }),
       keyTag: this.aesKeyTag,
-      serverTs: struct.serverTs
+      serverTs: tab.serverTs
     };
 
     return structEnt;
   }
 
-  userTabToEnt(user: UserTab): UserEnt {
+  userTabToEnt(item: { tab: UserTab; hashSecret: string }): UserEnt {
+    let { tab, hashSecret } = item;
+
     let userSt: UserSt = {};
 
     let userLt: UserLt = {
-      email: user.email,
-      alias: user.alias,
-      passwordHash: user.passwordHash,
-      passwordSalt: user.passwordSalt,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      emailVerificationToken: user.emailVerificationToken,
-      passwordResetToken: user.passwordResetToken,
-      passwordResetExpiresTs: user.passwordResetExpiresTs,
-      ui: user.ui
+      email: tab.email,
+      alias: tab.alias,
+      passwordHash: tab.passwordHash,
+      passwordSalt: tab.passwordSalt,
+      firstName: tab.firstName,
+      lastName: tab.lastName,
+      emailVerificationToken: tab.emailVerificationToken,
+      passwordResetToken: tab.passwordResetToken,
+      passwordResetExpiresTs: tab.passwordResetExpiresTs,
+      ui: tab.ui
     };
 
     let userEnt: UserEnt = {
-      userId: user.userId,
-      isEmailVerified: user.isEmailVerified,
-      jwtMinIat: user.jwtMinIat,
+      userId: tab.userId,
+      isEmailVerified: tab.isEmailVerified,
+      jwtMinIat: tab.jwtMinIat,
       ...this.tabService.getEntProps({ dataSt: userSt, dataLt: userLt }),
       keyTag: this.aesKeyTag,
       emailHash: this.hashService.makeHash({
-        input: user.email
+        input: tab.email,
+        hashSecret: hashSecret
       }),
       aliasHash: this.hashService.makeHash({
-        input: user.alias
+        input: tab.alias,
+        hashSecret: hashSecret
       }),
       emailVerificationTokenHash: this.hashService.makeHash({
-        input: user.emailVerificationToken
+        input: tab.emailVerificationToken,
+        hashSecret: hashSecret
       }),
       passwordResetTokenHash: this.hashService.makeHash({
-        input: user.passwordResetToken
+        input: tab.passwordResetToken,
+        hashSecret: hashSecret
       }),
 
-      serverTs: user.serverTs
+      serverTs: tab.serverTs
     };
 
     return userEnt;

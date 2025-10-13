@@ -244,6 +244,7 @@ export class CreateDraftChartController {
       filePath: undefined,
       accessRoles: [],
       tiles: [tile],
+      keyTag: undefined,
       serverTs: undefined
     };
 

@@ -7,8 +7,6 @@ import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class HashService {
-  private hashSecret: string;
-
   constructor() {}
 
   async createSaltAndHash(item: { input: string }) {
@@ -30,22 +28,21 @@ export class HashService {
     return crypto.randomBytes(32).toString('hex');
   }
 
-  setHashSecret(item: { hashSecret: string }) {
-    let { hashSecret } = item;
-    this.hashSecret = hashSecret;
-  }
+  makeHash(item: { input: string; hashSecret: string }) {
+    let { input, hashSecret } = item;
 
-  makeHash(item: { input: string }) {
-    let { input } = item;
+    if (isUndefined(input)) {
+      return;
+    }
 
-    if (isUndefined(this.hashSecret)) {
+    if (isUndefined(hashSecret)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_HASH_SERVICE_SECRET_IS_NOT_DEFINED
+        message: ErEnum.BACKEND_HASH_SECRET_IS_NOT_DEFINED
       });
     }
 
     let hash = crypto
-      .createHmac('sha256', this.hashSecret)
+      .createHmac('sha256', hashSecret)
       .update(input)
       .digest('hex');
 

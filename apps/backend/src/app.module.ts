@@ -8,7 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule, seconds } from '@nestjs/throttler';
-import { DefaultLogger, and, eq } from 'drizzle-orm';
+import { DefaultLogger, and, eq, isNotNull } from 'drizzle-orm';
 import {
   NodePgDatabase,
   drizzle as drizzlePg
@@ -41,6 +41,7 @@ import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
 import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
 import { ConnectionTab, UserTab } from './drizzle/postgres/schema/_tabs';
 import { connectionsTable } from './drizzle/postgres/schema/connections';
+import { dconfigsTable } from './drizzle/postgres/schema/dconfigs';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
 import { projectsTable } from './drizzle/postgres/schema/projects';
 import { usersTable } from './drizzle/postgres/schema/users';
@@ -50,6 +51,7 @@ import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CheckTabService } from './services/check-tab.service';
 import { ConnectionsService } from './services/db/connections.service';
+import { DconfigsService } from './services/db/dconfigs.service';
 import { OrgsService } from './services/db/orgs.service';
 import { ProjectsService } from './services/db/projects.service';
 import { UsersService } from './services/db/users.service';
@@ -243,6 +245,7 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
 export class AppModule implements OnModuleInit {
   constructor(
     private usersService: UsersService,
+    private dconfigsService: DconfigsService,
     private orgsService: OrgsService,
     private checkTabService: CheckTabService,
     private projectsService: ProjectsService,
@@ -377,11 +380,6 @@ export class AppModule implements OnModuleInit {
   }
 
   async checkEncryption() {
-    let isDbEncryptionEnabled =
-      this.cs.get<BackendConfig['isDbEncryptionEnabled']>(
-        'isDbEncryptionEnabled'
-      ) === BoolEnum.TRUE;
-
     let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
     let keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
 
@@ -408,9 +406,51 @@ export class AppModule implements OnModuleInit {
       });
     }
 
+    let dconfig = await this.db.drizzle.query.dconfigsTable
+      .findFirst({
+        where: isNotNull(dconfigsTable.dconfigId)
+      })
+      .then(x => this.dconfigsService.entToTab(x));
+
+    if (isUndefined(dconfig)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_DCONFIG_IS_NOT_DEFINED
+      });
+    }
+
+    let isUpdateHashSecret = false;
+
+    if (dconfig.keyTag !== keyTag) {
+      isUpdateHashSecret = true;
+    }
+
     await this.checkTabService.checkRecords();
 
-    // if dconfig keytag is not equal to main keytag - rotate hashes and set dconfig keytag to main keytag
+    if (isUpdateHashSecret === true) {
+      let dconfigChecked = await this.db.drizzle.query.dconfigsTable
+        .findFirst({
+          where: isNotNull(dconfigsTable.dconfigId)
+        })
+        .then(x => this.dconfigsService.entToTab(x));
+
+      dconfigChecked.hashSecret = this.hashService.createHashSecret();
+
+      // TODO: records - update all hashes
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  dconfigs: [dconfigChecked] // tab-to-ent sets keyTag
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
   }
 
   async seedDemoOrgAndProject(item: {

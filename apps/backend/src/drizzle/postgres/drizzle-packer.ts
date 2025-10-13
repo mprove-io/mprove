@@ -1,4 +1,10 @@
-import { ExtractTablesWithRelations, SQLWrapper, eq } from 'drizzle-orm';
+import { Inject } from '@nestjs/common';
+import {
+  ExtractTablesWithRelations,
+  SQLWrapper,
+  eq,
+  isNotNull
+} from 'drizzle-orm';
 import { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import { forEachSeries } from 'p-iteration';
@@ -6,8 +12,10 @@ import { schemaPostgres } from '~backend/drizzle/postgres/schema/_schema-postgre
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
+import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { isDefined } from '~common/functions/is-defined';
+import { DRIZZLE, Db } from '../drizzle.module';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
 import { avatarsTable } from './schema/avatars';
@@ -54,7 +62,11 @@ export interface PackerOutput {
 }
 
 export class DrizzlePacker {
-  constructor(private tabToEntService: TabToEntService) {}
+  constructor(
+    private tabToEntService: TabToEntService,
+    private dconfigsService: DconfigsService,
+    @Inject(DRIZZLE) private db: Db
+  ) {}
 
   private refreshServerTs<T extends { serverTs: number }>(item: {
     elements: T[];
@@ -78,24 +90,42 @@ export class DrizzlePacker {
       serverTs
     } = item;
 
+    let dconfig = await this.db.drizzle.query.dconfigsTable
+      .findFirst({
+        where: isNotNull(dconfigsTable.dconfigId)
+      })
+      .then(x => this.dconfigsService.entToTab(x));
+
     let insertEnts =
       isDefined(insert) && Object.keys(insert).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack(insert)
+        ? this.tabToEntService.tabsPackToEntsPack({
+            tabsPack: insert,
+            hashSecret: dconfig.hashSecret
+          })
         : undefined;
 
     let updateEnts =
       isDefined(update) && Object.keys(update).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack(update)
+        ? this.tabToEntService.tabsPackToEntsPack({
+            tabsPack: update,
+            hashSecret: dconfig.hashSecret
+          })
         : undefined;
 
     let insOrUpdEnts =
       isDefined(insertOrUpdate) && Object.keys(insertOrUpdate).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack(insertOrUpdate)
+        ? this.tabToEntService.tabsPackToEntsPack({
+            tabsPack: insertOrUpdate,
+            hashSecret: dconfig.hashSecret
+          })
         : undefined;
 
     let insOrDoNothingEnts =
       isDefined(insertOrDoNothing) && Object.keys(insertOrDoNothing).length > 0
-        ? this.tabToEntService.tabsPackToEntsPack(insertOrDoNothing)
+        ? this.tabToEntService.tabsPackToEntsPack({
+            tabsPack: insertOrDoNothing,
+            hashSecret: dconfig.hashSecret
+          })
         : undefined;
 
     let newServerTs = isDefined(serverTs) ? serverTs : makeTsNumber();
