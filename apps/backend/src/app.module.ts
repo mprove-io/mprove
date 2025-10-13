@@ -407,7 +407,7 @@ export class AppModule implements OnModuleInit {
       });
     }
 
-    await this.checkTabService.checkAvatars();
+    await this.checkTabService.checkRecords();
 
     // if dconfig keytag is not equal to main keytag - rotate hashes and set dconfig keytag to main keytag
   }
