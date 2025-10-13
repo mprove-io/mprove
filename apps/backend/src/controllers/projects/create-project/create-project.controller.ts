@@ -73,7 +73,9 @@ export class CreateProjectController {
       });
     }
 
-    let nameHash = this.hashService.makeHash(name);
+    let nameHash = this.hashService.makeHash({
+      input: name
+    });
 
     let project = await this.db.drizzle.query.projectsTable.findFirst({
       where: and(

@@ -49,9 +49,11 @@ export class ConfirmUserEmailController {
     let reqValid: ToBackendConfirmUserEmailRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { emailVerificationToken: token } = reqValid.payload;
+    let { emailVerificationToken } = reqValid.payload;
 
-    let emailVerificationTokenHash = this.hashService.makeHash(token);
+    let emailVerificationTokenHash = this.hashService.makeHash({
+      input: emailVerificationToken
+    });
 
     let user = await this.db.drizzle.query.usersTable
       .findFirst({
@@ -68,7 +70,7 @@ export class ConfirmUserEmailController {
       });
     }
 
-    if (isUndefined(user.hash)) {
+    if (isUndefined(user.passwordHash)) {
       throw new ServerError({
         message: ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
       });

@@ -44,7 +44,9 @@ export class UpdateUserPasswordController {
 
     let { passwordResetToken, newPassword } = reqValid.payload;
 
-    let passwordResetTokenHash = this.hashService.makeHash(passwordResetToken);
+    let passwordResetTokenHash = this.hashService.makeHash({
+      input: passwordResetToken
+    });
 
     let user = await this.db.drizzle.query.usersTable
       .findFirst({

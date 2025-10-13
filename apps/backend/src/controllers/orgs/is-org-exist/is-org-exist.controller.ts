@@ -26,7 +26,9 @@ export class IsOrgExistController {
 
     let { name } = reqValid.payload;
 
-    let nameHash = this.hashService.makeHash(name);
+    let nameHash = this.hashService.makeHash({
+      input: name
+    });
 
     let org = await this.db.drizzle.query.orgsTable.findFirst({
       where: eq(orgsTable.nameHash, nameHash)

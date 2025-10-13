@@ -122,7 +122,9 @@ export class UsersService {
   async getUserByEmailCheckExists(item: { email: string }) {
     let { email } = item;
 
-    let emailHash = this.hashService.makeHash(email);
+    let emailHash = this.hashService.makeHash({
+      input: email
+    });
 
     let user = await this.db.drizzle.query.usersTable
       .findFirst({
@@ -205,7 +207,9 @@ export class UsersService {
     let restart = true;
 
     while (restart) {
-      let aliasHash = this.hashService.makeHash(alias);
+      let aliasHash = this.hashService.makeHash({
+        input: alias
+      });
 
       let aliasUser = await this.db.drizzle.query.usersTable.findFirst({
         where: eq(usersTable.aliasHash, aliasHash)

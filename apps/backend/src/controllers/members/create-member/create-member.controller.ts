@@ -118,7 +118,9 @@ export class CreateMemberController {
       projectId: projectId
     });
 
-    let emailHash = this.hashService.makeHash(email);
+    let emailHash = this.hashService.makeHash({
+      input: email
+    });
 
     let invitedUser = await this.db.drizzle.query.usersTable
       .findFirst({
@@ -140,8 +142,8 @@ export class CreateMemberController {
         passwordResetExpiresTs: undefined,
         isEmailVerified: false,
         emailVerificationToken: emailVerificationToken,
-        hash: undefined,
-        salt: undefined,
+        passwordHash: undefined,
+        passwordSalt: undefined,
         jwtMinIat: undefined,
         alias: alias,
         firstName: undefined,

@@ -77,7 +77,9 @@ export class RegisterUserController {
       input: password
     });
 
-    let emailHash = this.hashService.makeHash(email);
+    let emailHash = this.hashService.makeHash({
+      input: email
+    });
 
     let user = await this.db.drizzle.query.usersTable
       .findFirst({

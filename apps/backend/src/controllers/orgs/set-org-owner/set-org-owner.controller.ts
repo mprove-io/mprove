@@ -58,7 +58,9 @@ export class SetOrgOwnerController {
       userId: user.userId
     });
 
-    let ownerEmailHash = this.hashService.makeHash(ownerEmail);
+    let ownerEmailHash = this.hashService.makeHash({
+      input: ownerEmail
+    });
 
     let newOwner = await this.db.drizzle.query.usersTable
       .findFirst({

@@ -1,10 +1,14 @@
 import * as crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class HashService {
+  private hashSecret: string;
+
   constructor() {}
 
   async createSaltAndHash(item: { input: string }) {
@@ -22,12 +26,29 @@ export class HashService {
     return await bcrypt.hash(input, salt);
   }
 
-  makeHash(text: string) {
-    if (isUndefined(text)) {
-      return;
+  createHashSecret() {
+    return crypto.randomBytes(32).toString('hex');
+  }
+
+  setHashSecret(item: { hashSecret: string }) {
+    let { hashSecret } = item;
+    this.hashSecret = hashSecret;
+  }
+
+  makeHash(item: { input: string }) {
+    let { input } = item;
+
+    if (isUndefined(this.hashSecret)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_HASH_SERVICE_SECRET_IS_NOT_DEFINED
+      });
     }
 
-    let hash = crypto.createHash('sha256').update(text).digest('hex');
+    let hash = crypto
+      .createHmac('sha256', this.hashSecret)
+      .update(input)
+      .digest('hex');
+
     return hash;
   }
 

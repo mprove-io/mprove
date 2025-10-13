@@ -340,7 +340,7 @@ export class TabToEntService {
 
   dconfigTabToEnt(dconfig: DconfigTab): DconfigEnt {
     let dconfigSt: DconfigSt = {
-      salt: dconfig.salt
+      hashSecret: dconfig.hashSecret
     };
     let dconfigLt: DconfigLt = {};
 
@@ -451,8 +451,12 @@ export class TabToEntService {
       isExplorer: member.isExplorer,
       ...this.tabService.getEntProps({ dataSt: memberSt, dataLt: memberLt }),
       keyTag: this.aesKeyTag,
-      emailHash: this.hashService.makeHash(member.emailHash),
-      aliasHash: this.hashService.makeHash(member.aliasHash),
+      emailHash: this.hashService.makeHash({
+        input: member.emailHash
+      }),
+      aliasHash: this.hashService.makeHash({
+        input: member.aliasHash
+      }),
       serverTs: member.serverTs
     };
 
@@ -524,8 +528,12 @@ export class TabToEntService {
       ownerId: org.ownerId,
       ...this.tabService.getEntProps({ dataSt: orgSt, dataLt: orgLt }),
       keyTag: this.aesKeyTag,
-      nameHash: this.hashService.makeHash(org.name),
-      ownerEmailHash: this.hashService.makeHash(org.ownerEmail),
+      nameHash: this.hashService.makeHash({
+        input: org.name
+      }),
+      ownerEmailHash: this.hashService.makeHash({
+        input: org.ownerEmail
+      }),
       serverTs: org.serverTs
     };
 
@@ -550,8 +558,12 @@ export class TabToEntService {
       remoteType: project.remoteType,
       ...this.tabService.getEntProps({ dataSt: projectSt, dataLt: projectLt }),
       keyTag: this.aesKeyTag,
-      nameHash: this.hashService.makeHash(project.name),
-      gitUrlHash: this.hashService.makeHash(project.gitUrl),
+      nameHash: this.hashService.makeHash({
+        input: project.name
+      }),
+      gitUrlHash: this.hashService.makeHash({
+        input: project.gitUrl
+      }),
       serverTs: project.serverTs
     };
 
@@ -591,7 +603,9 @@ export class TabToEntService {
         query.bigqueryConsecutiveErrorsGetResults,
       ...this.tabService.getEntProps({ dataSt: querySt, dataLt: queryLt }),
       keyTag: this.aesKeyTag,
-      apiUrlHash: this.hashService.makeHash(query.apiUrl),
+      apiUrlHash: this.hashService.makeHash({
+        input: query.apiUrl
+      }),
       serverTs: query.serverTs
     };
 
@@ -674,14 +688,18 @@ export class TabToEntService {
       jwtMinIat: user.jwtMinIat,
       ...this.tabService.getEntProps({ dataSt: userSt, dataLt: userLt }),
       keyTag: this.aesKeyTag,
-      emailHash: this.hashService.makeHash(user.email),
-      aliasHash: this.hashService.makeHash(user.alias),
-      emailVerificationTokenHash: this.hashService.makeHash(
-        user.emailVerificationToken
-      ),
-      passwordResetTokenHash: this.hashService.makeHash(
-        user.passwordResetToken
-      ),
+      emailHash: this.hashService.makeHash({
+        input: user.email
+      }),
+      aliasHash: this.hashService.makeHash({
+        input: user.alias
+      }),
+      emailVerificationTokenHash: this.hashService.makeHash({
+        input: user.emailVerificationToken
+      }),
+      passwordResetTokenHash: this.hashService.makeHash({
+        input: user.passwordResetToken
+      }),
 
       serverTs: user.serverTs
     };

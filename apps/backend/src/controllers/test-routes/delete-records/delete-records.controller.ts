@@ -77,7 +77,9 @@ export class DeleteRecordsController {
 
     if (isDefined(projectNames) && projectNames.length > 0) {
       let projectNameHashes = projectNames.map(x =>
-        this.hashService.makeHash(x)
+        this.hashService.makeHash({
+          input: x
+        })
       );
 
       let projects = await this.db.drizzle.query.projectsTable.findMany({
@@ -93,7 +95,11 @@ export class DeleteRecordsController {
     }
 
     if (isDefined(orgNames) && orgNames.length > 0) {
-      let orgNameHashes = orgNames.map(x => this.hashService.makeHash(x));
+      let orgNameHashes = orgNames.map(x =>
+        this.hashService.makeHash({
+          input: x
+        })
+      );
 
       let orgs = await this.db.drizzle.query.orgsTable.findMany({
         where: inArray(orgsTable.nameHash, orgNameHashes)
@@ -129,7 +135,9 @@ export class DeleteRecordsController {
 
     if (emails.length > 0) {
       await asyncPool(1, emails, async (email: string) => {
-        let emailHash = this.hashService.makeHash(email);
+        let emailHash = this.hashService.makeHash({
+          input: email
+        });
 
         let user = await this.db.drizzle.query.usersTable.findFirst({
           where: eq(usersTable.emailHash, emailHash)

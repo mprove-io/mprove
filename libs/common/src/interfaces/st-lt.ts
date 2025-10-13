@@ -91,7 +91,7 @@ export class EnvLt {
 //
 
 export class DconfigSt {
-  salt: string;
+  hashSecret: string;
 }
 export class DconfigLt {
   emptyData?: number;

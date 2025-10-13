@@ -50,9 +50,9 @@ export class CompleteUserRegistrationController {
     let { traceId } = reqValid.info;
     let { emailVerificationToken, newPassword } = reqValid.payload;
 
-    let emailVerificationTokenHash = this.hashService.makeHash(
-      emailVerificationToken
-    );
+    let emailVerificationTokenHash = this.hashService.makeHash({
+      input: emailVerificationToken
+    });
 
     let user = await this.db.drizzle.query.usersTable
       .findFirst({

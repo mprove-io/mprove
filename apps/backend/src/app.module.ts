@@ -334,8 +334,9 @@ export class AppModule implements OnModuleInit {
           isDefinedAndNotEmpty(mproveAdminEmail) &&
           isDefinedAndNotEmpty(mproveAdminInitialPassword)
         ) {
-          let mproveAdminEmailHash =
-            this.hashService.makeHash(mproveAdminEmail);
+          let mproveAdminEmailHash = this.hashService.makeHash({
+            input: mproveAdminEmail
+          });
 
           mproveAdminUser = await this.db.drizzle.query.usersTable
             .findFirst({
