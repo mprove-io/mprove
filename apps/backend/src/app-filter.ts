@@ -13,7 +13,7 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
 import { ServerError } from '~common/models/server-error';
-import { UserEnt } from './drizzle/postgres/schema/users';
+import { UserTab } from './drizzle/postgres/schema/_tabs';
 import { logResponseBackend } from './functions/log-response-backend';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { makeErrorResponseBackend } from './functions/make-error-response-backend';
@@ -66,7 +66,7 @@ export class AppFilter implements ExceptionFilter {
 
       if (isDefined(iKey)) {
         try {
-          let user: UserEnt = request.user;
+          let user: UserTab = request.user;
           // let sessionStId: string = request.session?.getUserId();
 
           let idemp: Idemp = {

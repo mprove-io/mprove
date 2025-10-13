@@ -26,7 +26,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
 import { WrappedError } from '~node-common/functions/wrap-error';
-import { UserEnt } from './drizzle/postgres/schema/users';
+import { UserTab } from './drizzle/postgres/schema/_tabs';
 
 let retry = require('async-retry');
 
@@ -51,7 +51,7 @@ export class AppInterceptor implements NestInterceptor {
     request.start_ts = Date.now();
 
     let req: ToBackendRequest = request.body;
-    let user: UserEnt = request.user;
+    let user: UserTab = request.user;
     // let sessionStId: string = request.session?.getUserId();
 
     let iKey = req?.info?.idempotencyKey;

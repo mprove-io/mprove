@@ -658,6 +658,8 @@ export class TabToEntService {
     let userLt: UserLt = {
       email: user.email,
       alias: user.alias,
+      passwordHash: user.passwordHash,
+      passwordSalt: user.passwordSalt,
       firstName: user.firstName,
       lastName: user.lastName,
       emailVerificationToken: user.emailVerificationToken,
@@ -669,8 +671,6 @@ export class TabToEntService {
     let userEnt: UserEnt = {
       userId: user.userId,
       isEmailVerified: user.isEmailVerified,
-      passwordHash: user.passwordHash,
-      passwordSalt: user.passwordSalt,
       jwtMinIat: user.jwtMinIat,
       ...this.tabService.getEntProps({ dataSt: userSt, dataLt: userLt }),
       keyTag: this.aesKeyTag,

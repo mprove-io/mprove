@@ -236,6 +236,8 @@ export class UserSt {
 export class UserLt {
   email: string;
   alias: string;
+  passwordHash: string;
+  passwordSalt: string;
   firstName: string;
   lastName: string;
   emailVerificationToken: string;
