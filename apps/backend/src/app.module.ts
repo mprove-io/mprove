@@ -22,6 +22,7 @@ import { DEMO_ORG_NAME, PROJECT_ENV_PROD } from '~common/constants/top';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
+import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -29,6 +30,7 @@ import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
+import { ServerError } from '~common/models/server-error';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
@@ -46,6 +48,7 @@ import { getRetryOption } from './functions/get-retry-option';
 import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CheckTabService } from './services/check-tab.service';
 import { ConnectionsService } from './services/db/connections.service';
 import { OrgsService } from './services/db/orgs.service';
 import { ProjectsService } from './services/db/projects.service';
@@ -241,6 +244,7 @@ export class AppModule implements OnModuleInit {
   constructor(
     private usersService: UsersService,
     private orgsService: OrgsService,
+    private checkTabService: CheckTabService,
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private hashService: HashService,
@@ -313,35 +317,7 @@ export class AppModule implements OnModuleInit {
 
         // encryption
 
-        let isDbEncryptionEnabled = this.cs.get<
-          BackendConfig['isDbEncryptionEnabled']
-        >('isDbEncryptionEnabled');
-
-        let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
-        let keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
-
-        let prevKeyBase64 =
-          this.cs.get<BackendConfig['prevAesKey']>('prevAesKey');
-        let prevKeyTag =
-          this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
-
-        if (isDbEncryptionEnabled === BoolEnum.TRUE && isUndefined(keyBase64)) {
-          // throw error
-        }
-
-        if (isDbEncryptionEnabled === BoolEnum.TRUE) {
-          // encrypt all records that are without keytag
-          // decrypt and encrypt records that use prevkey keytag
-          // throw error if there are records with other keytags
-        }
-
-        if (isDbEncryptionEnabled === BoolEnum.FALSE) {
-          // decrypt all records by key
-          // decrypt all records by prevkey
-          // throw error if there are records with other keytag
-        }
-
-        // if dconfig keytag is not equal to main keytag - rotate hashes and set dconfig keytag to main keytag
+        await this.checkEncryption();
 
         // admin
 
@@ -397,6 +373,43 @@ export class AppModule implements OnModuleInit {
 
       process.exit(1);
     }
+  }
+
+  async checkEncryption() {
+    let isDbEncryptionEnabled =
+      this.cs.get<BackendConfig['isDbEncryptionEnabled']>(
+        'isDbEncryptionEnabled'
+      ) === BoolEnum.TRUE;
+
+    let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
+    let keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
+
+    let prevKeyBase64 = this.cs.get<BackendConfig['prevAesKey']>('prevAesKey');
+    let prevKeyTag =
+      this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
+
+    if (isUndefined(keyBase64)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AES_KEY_IS_NOT_DEFINED
+      });
+    }
+
+    if (isUndefined(keyTag)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AES_KEY_TAG_IS_NOT_DEFINED
+      });
+    }
+
+    if (isDefined(prevKeyBase64) && isUndefined(prevKeyTag)) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_PREV_AES_KEY_IS_DEFINED_BUT_PREV_AES_KEY_TAG_IS_NOT_DEFINED
+      });
+    }
+
+    await this.checkTabService.checkAvatars();
+
+    // if dconfig keytag is not equal to main keytag - rotate hashes and set dconfig keytag to main keytag
   }
 
   async seedDemoOrgAndProject(item: {

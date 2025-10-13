@@ -1,4 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { AvatarTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { AvatarEnt } from '~backend/drizzle/postgres/schema/avatars';
@@ -9,6 +11,8 @@ import { TabService } from '../tab.service';
 export class AvatarsService {
   constructor(
     private tabService: TabService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

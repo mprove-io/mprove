@@ -5,6 +5,7 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { isScheduler } from './functions/is-scheduler';
 import { BlockmlService } from './services/blockml.service';
+import { CheckTabService } from './services/check-tab.service';
 import { BranchesService } from './services/db/branches.service';
 import { BridgesService } from './services/db/bridges.service';
 import { ChartsService } from './services/db/charts.service';
@@ -54,6 +55,7 @@ export const appProviders = [
   OrgsService,
   ProjectsService,
   TabService,
+  CheckTabService,
   ConnectionsService,
   BranchesService,
   ModelsService,
