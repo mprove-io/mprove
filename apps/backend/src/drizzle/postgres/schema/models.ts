@@ -2,6 +2,7 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
@@ -9,6 +10,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ModelLt, ModelSt } from '~common/interfaces/st-lt';
 
 export const modelsTable = pgTable(
   'models',
@@ -31,8 +33,8 @@ export const modelsTable = pgTable(
     // label: varchar('label').notNull(),
     // fields: json('fields').$type<ModelField[]>().notNull(),
     // nodes: json('nodes').$type<ModelNode[]>().notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st').$type<{ encrypted: string; decrypted: ModelSt }>().notNull(),
+    lt: json('lt').$type<{ encrypted: string; decrypted: ModelLt }>().notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

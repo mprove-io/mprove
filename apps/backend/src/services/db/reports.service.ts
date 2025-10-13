@@ -30,7 +30,6 @@ import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { Report } from '~common/interfaces/blockml/report';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { Row } from '~common/interfaces/blockml/row';
-import { ReportLt, ReportSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -54,12 +53,7 @@ export class ReportsService {
 
     let report: ReportTab = {
       ...reportEnt,
-      ...this.tabService.decrypt<ReportSt>({
-        encryptedString: reportEnt.st
-      }),
-      ...this.tabService.decrypt<ReportLt>({
-        encryptedString: reportEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: reportEnt })
     };
 
     return report;

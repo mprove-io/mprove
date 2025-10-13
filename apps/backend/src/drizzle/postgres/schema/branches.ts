@@ -2,11 +2,13 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { BranchLt, BranchSt } from '~common/interfaces/st-lt';
 
 export const branchesTable = pgTable(
   'branches',
@@ -17,8 +19,12 @@ export const branchesTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull(),
     repoId: varchar('repo_id', { length: 32 }).notNull(),
     branchId: varchar('branch_id', { length: 32 }).notNull(), // name
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: BranchSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: BranchLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

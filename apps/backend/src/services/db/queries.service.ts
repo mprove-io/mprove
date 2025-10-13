@@ -23,7 +23,6 @@ import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Query } from '~common/interfaces/blockml/query';
-import { QueryLt, QuerySt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -51,12 +50,7 @@ export class QueriesService {
 
     let query: QueryTab = {
       ...queryEnt,
-      ...this.tabService.decrypt<QuerySt>({
-        encryptedString: queryEnt.st
-      }),
-      ...this.tabService.decrypt<QueryLt>({
-        encryptedString: queryEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: queryEnt })
     };
 
     return query;

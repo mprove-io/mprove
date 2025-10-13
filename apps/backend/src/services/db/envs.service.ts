@@ -15,7 +15,6 @@ import { Env } from '~common/interfaces/backend/env';
 import { EnvUser } from '~common/interfaces/backend/env-user';
 import { EnvsItem } from '~common/interfaces/backend/envs-item';
 import { Ev } from '~common/interfaces/backend/ev';
-import { EnvLt, EnvSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -39,12 +38,7 @@ export class EnvsService {
 
     let env: EnvTab = {
       ...envEnt,
-      ...this.tabService.decrypt<EnvSt>({
-        encryptedString: envEnt.st
-      }),
-      ...this.tabService.decrypt<EnvLt>({
-        encryptedString: envEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: envEnt })
     };
 
     return env;

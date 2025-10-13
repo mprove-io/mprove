@@ -3,11 +3,13 @@ import {
   bigint,
   boolean,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { MemberLt, MemberSt } from '~common/interfaces/st-lt';
 
 export const membersTable = pgTable(
   'members',
@@ -20,8 +22,12 @@ export const membersTable = pgTable(
     isAdmin: boolean('is_admin').notNull(),
     isEditor: boolean('is_editor').notNull(),
     isExplorer: boolean('is_explorer').notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: MemberSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: MemberLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     emailHash: varchar('email_hash').notNull(),
     aliasHash: varchar('alias_hash'),

@@ -8,7 +8,6 @@ import {
 } from '~backend/drizzle/postgres/schema/bridges';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { BridgeLt, BridgeSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -28,12 +27,7 @@ export class BridgesService {
 
     let bridge: BridgeTab = {
       ...bridgeEnt,
-      ...this.tabService.decrypt<BridgeSt>({
-        encryptedString: bridgeEnt.st
-      }),
-      ...this.tabService.decrypt<BridgeLt>({
-        encryptedString: bridgeEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: bridgeEnt })
     };
 
     return bridge;

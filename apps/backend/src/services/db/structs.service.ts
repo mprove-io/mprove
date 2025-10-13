@@ -25,7 +25,6 @@ import { ErEnum } from '~common/enums/er.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Struct } from '~common/interfaces/backend/struct';
-import { StructLt, StructSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -46,12 +45,7 @@ export class StructsService {
 
     let struct: StructTab = {
       ...structEnt,
-      ...this.tabService.decrypt<StructSt>({
-        encryptedString: structEnt.st
-      }),
-      ...this.tabService.decrypt<StructLt>({
-        encryptedString: structEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: structEnt })
     };
 
     return struct;

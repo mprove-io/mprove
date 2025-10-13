@@ -15,7 +15,6 @@ import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Chart } from '~common/interfaces/blockml/chart';
 import { Query } from '~common/interfaces/blockml/query';
-import { ChartLt, ChartSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -35,12 +34,7 @@ export class ChartsService {
 
     let chart: ChartTab = {
       ...chartEnt,
-      ...this.tabService.decrypt<ChartSt>({
-        encryptedString: chartEnt.st
-      }),
-      ...this.tabService.decrypt<ChartLt>({
-        encryptedString: chartEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: chartEnt })
     };
 
     return chart;

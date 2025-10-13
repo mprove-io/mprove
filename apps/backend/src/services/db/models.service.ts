@@ -8,7 +8,6 @@ import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Model } from '~common/interfaces/blockml/model';
-import { ModelLt, ModelSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -28,12 +27,7 @@ export class ModelsService {
 
     let model: ModelTab = {
       ...modelEnt,
-      ...this.tabService.decrypt<ModelSt>({
-        encryptedString: modelEnt.st
-      }),
-      ...this.tabService.decrypt<ModelLt>({
-        encryptedString: modelEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: modelEnt })
     };
 
     return model;

@@ -3,12 +3,14 @@ import {
   bigint,
   boolean,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ChartLt, ChartSt } from '~common/interfaces/st-lt';
 
 export const chartsTable = pgTable(
   'charts',
@@ -27,8 +29,8 @@ export const chartsTable = pgTable(
     // filePath: varchar('file_path'),
     // accessRoles: json('access_roles').$type<string[]>().notNull(),
     // tiles: json('tiles').$type<Tile[]>().notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st').$type<{ encrypted: string; decrypted: ChartSt }>().notNull(),
+    lt: json('lt').$type<{ encrypted: string; decrypted: ChartLt }>().notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

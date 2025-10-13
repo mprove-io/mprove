@@ -3,11 +3,13 @@ import {
   bigint,
   boolean,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { UserLt, UserSt } from '~common/interfaces/st-lt';
 
 export const usersTable = pgTable(
   'users',
@@ -17,8 +19,8 @@ export const usersTable = pgTable(
     passwordHash: varchar('password_hash'),
     passwordSalt: varchar('password_salt'),
     jwtMinIat: bigint('jwt_min_iat', { mode: 'number' }),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st').$type<{ encrypted: string; decrypted: UserSt }>().notNull(),
+    lt: json('lt').$type<{ encrypted: string; decrypted: UserLt }>().notNull(),
     keyTag: text('key_tag'),
     emailHash: varchar('email_hash').notNull(),
     aliasHash: varchar('alias_hash'),

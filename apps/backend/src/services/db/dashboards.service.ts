@@ -27,7 +27,6 @@ import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
 import { Query } from '~common/interfaces/blockml/query';
-import { DashboardLt, DashboardSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -55,12 +54,7 @@ export class DashboardsService {
 
     let dashboard: DashboardTab = {
       ...dashboardEnt,
-      ...this.tabService.decrypt<DashboardSt>({
-        encryptedString: dashboardEnt.st
-      }),
-      ...this.tabService.decrypt<DashboardLt>({
-        encryptedString: dashboardEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: dashboardEnt })
     };
 
     return dashboard;

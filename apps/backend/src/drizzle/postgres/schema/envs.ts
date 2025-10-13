@@ -9,6 +9,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { EnvLt, EnvSt } from '~common/interfaces/st-lt';
 
 export const envsTable = pgTable(
   'envs',
@@ -23,8 +24,8 @@ export const envsTable = pgTable(
     isFallbackToProdVariables: boolean('is_fallback_to_prod_variables').default(
       false
     ),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st').$type<{ encrypted: string; decrypted: EnvSt }>().notNull(),
+    lt: json('lt').$type<{ encrypted: string; decrypted: EnvLt }>().notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

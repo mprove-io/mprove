@@ -3,7 +3,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { KitTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
 import { isUndefined } from '~common/functions/is-undefined';
-import { KitLt, KitSt } from '~common/interfaces/st-lt';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -22,12 +21,7 @@ export class KitsService {
 
     let kit: KitTab = {
       ...kitEnt,
-      ...this.tabService.decrypt<KitSt>({
-        encryptedString: kitEnt.st
-      }),
-      ...this.tabService.decrypt<KitLt>({
-        encryptedString: kitEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: kitEnt })
     };
 
     return kit;

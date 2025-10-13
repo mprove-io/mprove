@@ -2,12 +2,14 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ConnectionLt, ConnectionSt } from '~common/interfaces/st-lt';
 
 export const connectionsTable = pgTable(
   'connections',
@@ -19,8 +21,12 @@ export const connectionsTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     connectionId: varchar('connection_id', { length: 32 }).notNull(), // name
     type: varchar('type').$type<ConnectionTypeEnum>().notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: ConnectionSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: ConnectionLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

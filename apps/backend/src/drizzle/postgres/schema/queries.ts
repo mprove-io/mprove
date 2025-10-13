@@ -3,12 +3,14 @@ import {
   bigint,
   index,
   integer,
+  json,
   pgTable,
   text,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
+import { QueryLt, QuerySt } from '~common/interfaces/st-lt';
 
 export const queriesTable = pgTable(
   'queries',
@@ -35,8 +37,8 @@ export const queriesTable = pgTable(
     bigqueryConsecutiveErrorsGetResults: integer(
       'bigquery_consecutive_errors_get_results'
     ),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st').$type<{ encrypted: string; decrypted: QuerySt }>().notNull(),
+    lt: json('lt').$type<{ encrypted: string; decrypted: QueryLt }>().notNull(),
     keyTag: text('key_tag'),
     apiUrlHash: varchar('api_url_hash'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()

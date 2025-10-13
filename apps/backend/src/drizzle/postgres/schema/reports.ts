@@ -3,11 +3,13 @@ import {
   bigint,
   boolean,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { ReportLt, ReportSt } from '~common/interfaces/st-lt';
 
 export const reportsTable = pgTable(
   'reports',
@@ -27,8 +29,12 @@ export const reportsTable = pgTable(
     // fields: json('fields').$type<ReportField[]>(),
     // rows: json('rows').$type<Row[]>().notNull(),
     // chart: json('chart').$type<MconfigChart>(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: ReportSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: ReportLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

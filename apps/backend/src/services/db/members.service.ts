@@ -30,7 +30,6 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Member } from '~common/interfaces/backend/member';
-import { MemberLt, MemberSt } from '~common/interfaces/st-lt';
 import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
@@ -68,12 +67,7 @@ export class MembersService {
 
     let member: MemberTab = {
       ...memberEnt,
-      ...this.tabService.decrypt<MemberSt>({
-        encryptedString: memberEnt.st
-      }),
-      ...this.tabService.decrypt<MemberLt>({
-        encryptedString: memberEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: memberEnt })
     };
 
     return member;

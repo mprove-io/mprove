@@ -64,12 +64,7 @@ export class ProjectsService {
 
     let project: ProjectTab = {
       ...projectEnt,
-      ...this.tabService.decrypt<ProjectSt>({
-        encryptedString: projectEnt.st
-      }),
-      ...this.tabService.decrypt<ProjectLt>({
-        encryptedString: projectEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: projectEnt })
     };
 
     return project;

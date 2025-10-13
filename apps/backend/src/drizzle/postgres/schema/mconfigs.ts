@@ -1,6 +1,14 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import {
+  bigint,
+  index,
+  json,
+  pgTable,
+  text,
+  varchar
+} from 'drizzle-orm/pg-core';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { MconfigLt, MconfigSt } from '~common/interfaces/st-lt';
 
 export const mconfigsTable = pgTable(
   'mconfigs',
@@ -24,8 +32,12 @@ export const mconfigsTable = pgTable(
     // limit: integer('limit').notNull(),
     // filters: json('filters').$type<Filter[]>().notNull(),
     // chart: json('chart').$type<MconfigChart>().notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: MconfigSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: MconfigLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

@@ -3,11 +3,13 @@ import {
   bigint,
   boolean,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { BridgeLt, BridgeSt } from '~common/interfaces/st-lt';
 
 export const bridgesTable = pgTable(
   'bridges',
@@ -21,8 +23,12 @@ export const bridgesTable = pgTable(
     envId: varchar('env_id', { length: 32 }).notNull(), // name
     structId: varchar('struct_id', { length: 32 }).notNull(),
     needValidate: boolean('need_validate').notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: BridgeSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: BridgeLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

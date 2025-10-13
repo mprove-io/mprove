@@ -27,7 +27,6 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { ModelField } from '~common/interfaces/blockml/model-field';
-import { MconfigLt, MconfigSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { makeQueryId } from '~node-common/functions/make-query-id';
 import { HashService } from '../hash.service';
@@ -55,12 +54,7 @@ export class MconfigsService {
 
     let mconfig: MconfigTab = {
       ...mconfigEnt,
-      ...this.tabService.decrypt<MconfigSt>({
-        encryptedString: mconfigEnt.st
-      }),
-      ...this.tabService.decrypt<MconfigLt>({
-        encryptedString: mconfigEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: mconfigEnt })
     };
 
     return mconfig;

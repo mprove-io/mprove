@@ -9,7 +9,6 @@ import {
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { BranchLt, BranchSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -29,12 +28,7 @@ export class BranchesService {
 
     let branch: BranchTab = {
       ...branchEnt,
-      ...this.tabService.decrypt<BranchSt>({
-        encryptedString: branchEnt.st
-      }),
-      ...this.tabService.decrypt<BranchLt>({
-        encryptedString: branchEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: branchEnt })
     };
 
     return branch;

@@ -1,5 +1,13 @@
 import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-import { bigint, index, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import {
+  bigint,
+  index,
+  json,
+  pgTable,
+  text,
+  varchar
+} from 'drizzle-orm/pg-core';
+import { StructLt, StructSt } from '~common/interfaces/st-lt';
 
 export const structsTable = pgTable(
   'structs',
@@ -11,8 +19,12 @@ export const structsTable = pgTable(
     // presets: json('presets').$type<Preset[]>().default([]),
     // mproveConfig: json('mprove_config').$type<MproveConfig>(),
     mproveVersion: varchar('mprove_version'),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: StructSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: StructLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

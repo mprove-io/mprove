@@ -32,12 +32,7 @@ export class ConnectionsService {
 
     let connection: ConnectionTab = {
       ...connectionEnt,
-      ...this.tabService.decrypt<ConnectionSt>({
-        encryptedString: connectionEnt.st
-      }),
-      ...this.tabService.decrypt<ConnectionLt>({
-        encryptedString: connectionEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: connectionEnt })
     };
 
     return connection;

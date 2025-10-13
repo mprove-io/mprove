@@ -2,12 +2,14 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   bigint,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 
 export const projectsTable = pgTable(
   'projects',
@@ -15,8 +17,12 @@ export const projectsTable = pgTable(
     projectId: varchar('project_id', { length: 32 }).notNull().primaryKey(),
     orgId: varchar('org_id', { length: 128 }).notNull(),
     remoteType: varchar('remote_type').$type<ProjectRemoteTypeEnum>().notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: ProjectSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: ProjectLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     nameHash: varchar('name_hash').notNull(), // name is unique across org projects
     gitUrlHash: varchar('git_url_hash'),

@@ -13,7 +13,6 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
 import { User } from '~common/interfaces/backend/user';
-import { UserLt, UserSt } from '~common/interfaces/st-lt';
 import { MyRegex } from '~common/models/my-regex';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
@@ -38,12 +37,7 @@ export class UsersService {
 
     let user: UserTab = {
       ...userEnt,
-      ...this.tabService.decrypt<UserSt>({
-        encryptedString: userEnt.st
-      }),
-      ...this.tabService.decrypt<UserLt>({
-        encryptedString: userEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: userEnt })
     };
 
     return user;

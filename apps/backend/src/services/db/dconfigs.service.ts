@@ -3,7 +3,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { DconfigTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { DconfigEnt } from '~backend/drizzle/postgres/schema/dconfigs';
 import { isUndefined } from '~common/functions/is-undefined';
-import { DconfigLt, DconfigSt } from '~common/interfaces/st-lt';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -22,12 +21,7 @@ export class DconfigsService {
 
     let dconfig: DconfigTab = {
       ...dconfigEnt,
-      ...this.tabService.decrypt<DconfigSt>({
-        encryptedString: dconfigEnt.st
-      }),
-      ...this.tabService.decrypt<DconfigLt>({
-        encryptedString: dconfigEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: dconfigEnt })
     };
 
     return dconfig;

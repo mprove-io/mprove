@@ -3,11 +3,13 @@ import {
   bigint,
   boolean,
   index,
+  json,
   pgTable,
   text,
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
+import { DashboardLt, DashboardSt } from '~common/interfaces/st-lt';
 
 export const dashboardsTable = pgTable(
   'dashboards',
@@ -25,8 +27,12 @@ export const dashboardsTable = pgTable(
     // accessRoles: json('access_roles').$type<string[]>().notNull(),
     // fields: json('fields').$type<DashboardField[]>().notNull(),
     // tiles: json('tiles').$type<Tile[]>().notNull(),
-    st: text('st'),
-    lt: text('lt'),
+    st: json('st')
+      .$type<{ encrypted: string; decrypted: DashboardSt }>()
+      .notNull(),
+    lt: json('lt')
+      .$type<{ encrypted: string; decrypted: DashboardLt }>()
+      .notNull(),
     keyTag: text('key_tag'),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },

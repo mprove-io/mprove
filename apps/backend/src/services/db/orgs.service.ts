@@ -13,7 +13,6 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Org } from '~common/interfaces/backend/org';
 import { OrgsItem } from '~common/interfaces/backend/orgs-item';
-import { OrgLt, OrgSt } from '~common/interfaces/st-lt';
 import {
   ToDiskCreateOrgRequest,
   ToDiskCreateOrgResponse
@@ -43,12 +42,7 @@ export class OrgsService {
 
     let org: OrgTab = {
       ...orgEnt,
-      ...this.tabService.decrypt<OrgSt>({
-        encryptedString: orgEnt.st
-      }),
-      ...this.tabService.decrypt<OrgLt>({
-        encryptedString: orgEnt.lt
-      })
+      ...this.tabService.getTabProps({ ent: orgEnt })
     };
 
     return org;
