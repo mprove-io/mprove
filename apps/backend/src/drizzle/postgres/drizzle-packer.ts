@@ -16,6 +16,7 @@ import { bridgesTable } from './schema/bridges';
 import { chartsTable } from './schema/charts';
 import { connectionsTable } from './schema/connections';
 import { dashboardsTable } from './schema/dashboards';
+import { dconfigsTable } from './schema/dconfigs';
 import { envsTable } from './schema/envs';
 import { kitsTable } from './schema/kits';
 import { mconfigsTable } from './schema/mconfigs';
@@ -157,6 +158,10 @@ export class DrizzlePacker {
         await tx.insert(dashboardsTable).values(insertEnts.dashboards);
       }
 
+      if (insertEnts.dconfigs.length > 0) {
+        await tx.insert(dconfigsTable).values(insertEnts.dconfigs);
+      }
+
       if (insertEnts.envs.length > 0) {
         await tx.insert(envsTable).values(insertEnts.envs);
       }
@@ -282,6 +287,20 @@ export class DrizzlePacker {
             .update(dashboardsTable)
             .set(x)
             .where(eq(dashboardsTable.dashboardFullId, x.dashboardFullId));
+        });
+      }
+
+      if (updateEnts.dconfigs.length > 0) {
+        updateEnts.dconfigs = setUndefinedToNull({
+          ents: updateEnts.dconfigs,
+          table: dconfigsTable
+        });
+
+        await forEachSeries(updateEnts.dconfigs, async x => {
+          await tx
+            .update(dconfigsTable)
+            .set(x)
+            .where(eq(dconfigsTable.dconfigId, x.dconfigId));
         });
       }
 
@@ -563,6 +582,25 @@ export class DrizzlePacker {
           .onConflictDoUpdate({
             target: dashboardsTable.dashboardFullId,
             set: drizzleSetAllColumnsFull({ table: dashboardsTable })
+          });
+      }
+
+      if (insOrUpdEnts.dconfigs.length > 0) {
+        insOrUpdEnts.dconfigs = Array.from(
+          new Set(insOrUpdEnts.dconfigs.map(x => x.dconfigId))
+        ).map(id => insOrUpdEnts.dconfigs.find(x => x.dconfigId === id));
+
+        insOrUpdEnts.dconfigs = setUndefinedToNull({
+          ents: insOrUpdEnts.dconfigs,
+          table: dconfigsTable
+        });
+
+        await tx
+          .insert(dconfigsTable)
+          .values(insOrUpdEnts.dconfigs)
+          .onConflictDoUpdate({
+            target: dconfigsTable.dconfigId,
+            set: drizzleSetAllColumnsFull({ table: dconfigsTable })
           });
       }
 

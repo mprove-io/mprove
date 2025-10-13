@@ -11,6 +11,8 @@ import {
   ConnectionSt,
   DashboardLt,
   DashboardSt,
+  DconfigLt,
+  DconfigSt,
   EnvLt,
   EnvSt,
   KitLt,
@@ -42,6 +44,7 @@ import { BridgeEnt } from './bridges';
 import { ChartEnt } from './charts';
 import { ConnectionEnt } from './connections';
 import { DashboardEnt } from './dashboards';
+import { DconfigEnt } from './dconfigs';
 import { EnvEnt } from './envs';
 import { KitEnt } from './kits';
 import { MconfigEnt } from './mconfigs';
@@ -89,6 +92,11 @@ export interface EnvTab
   extends Omit<EnvEnt, 'st' | 'lt' | 'keyTag'>,
     EnvSt,
     EnvLt {}
+
+export interface DconfigTab
+  extends Omit<DconfigEnt, 'st' | 'lt' | 'keyTag'>,
+    DconfigSt,
+    DconfigLt {}
 
 export interface KitTab
   extends Omit<KitEnt, 'st' | 'lt' | 'keyTag'>,

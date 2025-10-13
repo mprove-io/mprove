@@ -4,6 +4,7 @@ import * as bridges from '~backend/drizzle/postgres/schema/bridges';
 import * as charts from '~backend/drizzle/postgres/schema/charts';
 import * as connections from '~backend/drizzle/postgres/schema/connections';
 import * as dashboards from '~backend/drizzle/postgres/schema/dashboards';
+import * as dconfigs from '~backend/drizzle/postgres/schema/dconfigs';
 import * as envs from '~backend/drizzle/postgres/schema/envs';
 import * as kits from '~backend/drizzle/postgres/schema/kits';
 import * as mconfigs from '~backend/drizzle/postgres/schema/mconfigs';
@@ -24,6 +25,7 @@ export const schemaPostgres = {
   ...charts,
   ...connections,
   ...dashboards,
+  ...dconfigs,
   ...envs,
   ...kits,
   ...mconfigs,
@@ -37,27 +39,3 @@ export const schemaPostgres = {
   ...structs,
   ...users
 };
-
-// import * as schemaPostgres from '~backend/drizzle/postgres/schema/_index';
-// export { schemaPostgres };
-
-// apps/backend/src/drizzle/postgres/schema/_index.ts
-
-// export * from './avatars';
-// export * from './branches';
-// export * from './bridges';
-// export * from './charts';
-// export * from './connections';
-// export * from './dashboards';
-// export * from './envs';
-// export * from './kits';
-// export * from './mconfigs';
-// export * from './members';
-// export * from './models';
-// export * from './notes';
-// export * from './orgs';
-// export * from './projects';
-// export * from './queries';
-// export * from './reports';
-// export * from './structs';
-// export * from './users';

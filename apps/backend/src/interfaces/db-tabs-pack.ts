@@ -5,6 +5,7 @@ import {
   ChartTab,
   ConnectionTab,
   DashboardTab,
+  DconfigTab,
   EnvTab,
   KitTab,
   MconfigTab,
@@ -25,6 +26,7 @@ export class DbTabsPack {
   bridges?: BridgeTab[];
   connections?: ConnectionTab[];
   dashboards?: DashboardTab[];
+  dconfigs?: DconfigTab[];
   envs?: EnvTab[];
   kits?: KitTab[];
   mconfigs?: MconfigTab[];

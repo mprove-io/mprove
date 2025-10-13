@@ -8,6 +8,7 @@ import {
   ChartTab,
   ConnectionTab,
   DashboardTab,
+  DconfigTab,
   EnvTab,
   KitTab,
   MconfigTab,
@@ -27,6 +28,7 @@ import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
 import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
+import { DconfigEnt } from '~backend/drizzle/postgres/schema/dconfigs';
 import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
 import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -55,6 +57,8 @@ import {
   ConnectionSt,
   DashboardLt,
   DashboardSt,
+  DconfigLt,
+  DconfigSt,
   EnvLt,
   EnvSt,
   KitLt,
@@ -121,6 +125,10 @@ export class TabToEntService {
         tabsPack.dashboards
           ?.filter(x => isDefined(x))
           .map(x => this.dashboardTabToEnt(x)) ?? [],
+      dconfigs:
+        tabsPack.dconfigs
+          ?.filter(x => isDefined(x))
+          .map(x => this.dconfigTabToEnt(x)) ?? [],
       envs:
         tabsPack.envs
           ?.filter(x => isDefined(x))
@@ -321,6 +329,23 @@ export class TabToEntService {
     };
 
     return dashboardEnt;
+  }
+
+  dconfigTabToEnt(dconfig: DconfigTab): DconfigEnt {
+    let dconfigSt: DconfigSt = {
+      salt: dconfig.salt
+    };
+    let dconfigLt: DconfigLt = {};
+
+    let dconfigEnt: DconfigEnt = {
+      dconfigId: dconfig.dconfigId,
+      st: this.tabService.encrypt({ data: dconfigSt }),
+      lt: this.tabService.encrypt({ data: dconfigLt }),
+      keyTag: this.aesKeyTag,
+      serverTs: dconfig.serverTs
+    };
+
+    return dconfigEnt;
   }
 
   envTabToEnt(env: EnvTab): EnvEnt {
@@ -649,8 +674,8 @@ export class TabToEntService {
     let userEnt: UserEnt = {
       userId: user.userId,
       isEmailVerified: user.isEmailVerified,
-      hash: user.hash,
-      salt: user.salt,
+      passwordHash: user.passwordHash,
+      passwordSalt: user.passwordSalt,
       jwtMinIat: user.jwtMinIat,
       st: this.tabService.encrypt({ data: userSt }),
       lt: this.tabService.encrypt({ data: userLt }),

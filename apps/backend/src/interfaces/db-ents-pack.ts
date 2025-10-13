@@ -4,6 +4,7 @@ import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
 import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
 import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
+import { DconfigEnt } from '~backend/drizzle/postgres/schema/dconfigs';
 import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
 import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
@@ -23,6 +24,7 @@ export class DbEntsPack {
   bridges?: BridgeEnt[];
   connections?: ConnectionEnt[];
   dashboards?: DashboardEnt[];
+  dconfigs?: DconfigEnt[];
   envs?: EnvEnt[];
   kits?: KitEnt[];
   mconfigs?: MconfigEnt[];

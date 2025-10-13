@@ -10,6 +10,7 @@ import { BridgesService } from './services/db/bridges.service';
 import { ChartsService } from './services/db/charts.service';
 import { ConnectionsService } from './services/db/connections.service';
 import { DashboardsService } from './services/db/dashboards.service';
+import { DconfigsService } from './services/db/dconfigs.service';
 import { EnvsService } from './services/db/envs.service';
 import { MconfigsService } from './services/db/mconfigs.service';
 import { MembersService } from './services/db/members.service';
@@ -71,6 +72,7 @@ export const appProviders = [
   QueriesService,
   ChartsService,
   DashboardsService,
+  DconfigsService,
   ReportsService,
   ReportDataService,
   ReportRowService,

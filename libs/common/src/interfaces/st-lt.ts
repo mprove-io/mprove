@@ -90,6 +90,15 @@ export class EnvLt {
 
 //
 
+export class DconfigSt {
+  salt: string;
+}
+export class DconfigLt {
+  emptyData?: number;
+}
+
+//
+
 export class KitSt {
   emptyData?: number;
 }
