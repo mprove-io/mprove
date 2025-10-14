@@ -1,1 +1,0 @@
-ALTER TABLE "mconfigs" ADD COLUMN "compiled_query" json;

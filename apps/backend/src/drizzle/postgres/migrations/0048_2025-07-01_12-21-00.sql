@@ -1,1 +1,0 @@
-ALTER TABLE "models" ADD COLUMN "file_text" varchar;

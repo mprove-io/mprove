@@ -1,1 +1,0 @@
-ALTER TABLE "models" DROP COLUMN IF EXISTS "file_store";

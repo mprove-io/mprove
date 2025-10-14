@@ -5076,7 +5076,7 @@
     "@emnapi/runtime" "^1.1.0"
     "@tybys/wasm-util" "^0.9.0"
 
-"@nest-lab/throttler-storage-redis@^1.1.0":
+"@nest-lab/throttler-storage-redis@1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@nest-lab/throttler-storage-redis/-/throttler-storage-redis-1.1.0.tgz#78f3dad83dbf6f890f27ce3f323b4a1e5f33e227"
   integrity sha512-7DW8MuqoB+ubu8cWby9Vw56eAFqsHFfowEflHbmmAF2sNByRdzcR4ddcyoYLwL3zG53nLmvzUa4EXoHKB4RoaQ==

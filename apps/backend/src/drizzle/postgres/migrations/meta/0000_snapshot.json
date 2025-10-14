@@ -1,5 +1,5 @@
 {
-  "id": "6fe7c244-f98e-4e1a-a0a7-57a27b9b8f9d",
+  "id": "7c080b02-7c75-4df0-902a-34b7d53cb529",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -14,14 +14,20 @@
           "primaryKey": true,
           "notNull": true
         },
-        "avatar_small": {
-          "name": "avatar_small",
-          "type": "text",
+        "st": {
+          "name": "st",
+          "type": "json",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "avatar_big": {
-          "name": "avatar_big",
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -39,6 +45,21 @@
           "columns": [
             {
               "expression": "server_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_avatars_key_tag": {
+          "name": "idx_avatars_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -84,6 +105,24 @@
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "server_ts": {
           "name": "server_ts",
@@ -143,6 +182,21 @@
           "columns": [
             {
               "expression": "branch_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_branches_key_tag": {
+          "name": "idx_branches_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -233,6 +287,24 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": true
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "server_ts": {
           "name": "server_ts",
@@ -332,6 +404,21 @@
           "method": "btree",
           "with": {}
         },
+        "idx_bridges_key_tag": {
+          "name": "idx_bridges_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "uidx_bridges_project_id_repo_id_branch_id_env_id": {
           "name": "uidx_bridges_project_id_repo_id_branch_id_env_id",
           "columns": [
@@ -355,6 +442,182 @@
             },
             {
               "expression": "env_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.charts": {
+      "name": "charts",
+      "schema": "",
+      "columns": {
+        "chart_full_id": {
+          "name": "chart_full_id",
+          "type": "varchar(64)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "struct_id": {
+          "name": "struct_id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chart_id": {
+          "name": "chart_id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "model_id": {
+          "name": "model_id",
+          "type": "varchar(64)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "creator_id": {
+          "name": "creator_id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chart_type": {
+          "name": "chart_type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "draft": {
+          "name": "draft",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "server_ts": {
+          "name": "server_ts",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "idx_charts_server_ts": {
+          "name": "idx_charts_server_ts",
+          "columns": [
+            {
+              "expression": "server_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_charts_struct_id": {
+          "name": "idx_charts_struct_id",
+          "columns": [
+            {
+              "expression": "struct_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_charts_chart_id": {
+          "name": "idx_charts_chart_id",
+          "columns": [
+            {
+              "expression": "chart_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_charts_model_id": {
+          "name": "idx_charts_model_id",
+          "columns": [
+            {
+              "expression": "model_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_charts_key_tag": {
+          "name": "idx_charts_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uidx_charts_struct_id_chart_id": {
+          "name": "uidx_charts_struct_id_chart_id",
+          "columns": [
+            {
+              "expression": "struct_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "chart_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -407,75 +670,21 @@
           "primaryKey": false,
           "notNull": true
         },
-        "bigquery_query_size_limit_gb": {
-          "name": "bigquery_query_size_limit_gb",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "bigquery_credentials": {
-          "name": "bigquery_credentials",
+        "st": {
+          "name": "st",
           "type": "json",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "bigquery_project": {
-          "name": "bigquery_project",
-          "type": "varchar",
+        "lt": {
+          "name": "lt",
+          "type": "json",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "bigquery_client_email": {
-          "name": "bigquery_client_email",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "account": {
-          "name": "account",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "warehouse": {
-          "name": "warehouse",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "host": {
-          "name": "host",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "port": {
-          "name": "port",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "database": {
-          "name": "database",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "username": {
-          "name": "username",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "password": {
-          "name": "password",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "is_ssl": {
-          "name": "is_ssl",
-          "type": "boolean",
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -547,6 +756,21 @@
           "method": "btree",
           "with": {}
         },
+        "idx_connections_key_tag": {
+          "name": "idx_connections_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "uidx_connections_project_id_env_id_connection_id": {
           "name": "uidx_connections_project_id_env_id_connection_id",
           "columns": [
@@ -604,69 +828,33 @@
           "primaryKey": false,
           "notNull": true
         },
-        "file_path": {
-          "name": "file_path",
-          "type": "varchar",
+        "creator_id": {
+          "name": "creator_id",
+          "type": "varchar(32)",
           "primaryKey": false,
           "notNull": false
         },
-        "content": {
-          "name": "content",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "access_users": {
-          "name": "access_users",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "access_roles": {
-          "name": "access_roles",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "gr": {
-          "name": "gr",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hidden": {
-          "name": "hidden",
+        "draft": {
+          "name": "draft",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true
         },
-        "fields": {
-          "name": "fields",
+        "st": {
+          "name": "st",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "tiles": {
-          "name": "tiles",
+        "lt": {
+          "name": "lt",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "temp": {
-          "name": "temp",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "varchar",
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -723,6 +911,21 @@
           "method": "btree",
           "with": {}
         },
+        "idx_dashboards_key_tag": {
+          "name": "idx_dashboards_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "uidx_dashboards_struct_id_dashboard_id": {
           "name": "uidx_dashboards_struct_id_dashboard_id",
           "columns": [
@@ -740,6 +943,80 @@
             }
           ],
           "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.dconfigs": {
+      "name": "dconfigs",
+      "schema": "",
+      "columns": {
+        "dconfig_id": {
+          "name": "dconfig_id",
+          "type": "varchar(32)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "server_ts": {
+          "name": "server_ts",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "idx_dconfigs_server_ts": {
+          "name": "idx_dconfigs_server_ts",
+          "columns": [
+            {
+              "expression": "server_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_dconfigs_key_tag": {
+          "name": "idx_dconfigs_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
           "concurrently": false,
           "method": "btree",
           "with": {}
@@ -773,6 +1050,45 @@
           "type": "varchar(32)",
           "primaryKey": false,
           "notNull": true
+        },
+        "member_ids": {
+          "name": "member_ids",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::json"
+        },
+        "is_fallback_to_prod_connections": {
+          "name": "is_fallback_to_prod_connections",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "is_fallback_to_prod_variables": {
+          "name": "is_fallback_to_prod_variables",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "server_ts": {
           "name": "server_ts",
@@ -827,6 +1143,21 @@
           "method": "btree",
           "with": {}
         },
+        "idx_envs_key_tag": {
+          "name": "idx_envs_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "uidx_envs_project_id_env_id": {
           "name": "uidx_envs_project_id_env_id",
           "columns": [
@@ -838,143 +1169,6 @@
             },
             {
               "expression": "env_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.evs": {
-      "name": "evs",
-      "schema": "",
-      "columns": {
-        "ev_full_id": {
-          "name": "ev_full_id",
-          "type": "varchar(64)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "project_id": {
-          "name": "project_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "env_id": {
-          "name": "env_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "ev_id": {
-          "name": "ev_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "val": {
-          "name": "val",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "server_ts": {
-          "name": "server_ts",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "idx_evs_server_ts": {
-          "name": "idx_evs_server_ts",
-          "columns": [
-            {
-              "expression": "server_ts",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_evs_project_id": {
-          "name": "idx_evs_project_id",
-          "columns": [
-            {
-              "expression": "project_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_evs_env_id": {
-          "name": "idx_evs_env_id",
-          "columns": [
-            {
-              "expression": "env_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_evs_ev_id": {
-          "name": "idx_evs_ev_id",
-          "columns": [
-            {
-              "expression": "ev_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "uidx_evs_project_id_env_id_ev_id": {
-          "name": "uidx_evs_project_id_env_id_ev_id",
-          "columns": [
-            {
-              "expression": "project_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "env_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "ev_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1015,9 +1209,21 @@
           "primaryKey": false,
           "notNull": true
         },
-        "data": {
-          "name": "data",
+        "st": {
+          "name": "st",
           "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -1073,6 +1279,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "idx_kits_key_tag": {
+          "name": "idx_kits_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -1106,63 +1327,33 @@
         },
         "model_id": {
           "name": "model_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
         },
-        "model_label": {
-          "name": "model_label",
+        "model_type": {
+          "name": "model_type",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
-        "select": {
-          "name": "select",
+        "st": {
+          "name": "st",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "sortings": {
-          "name": "sortings",
+        "lt": {
+          "name": "lt",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "sorts": {
-          "name": "sorts",
-          "type": "varchar",
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "timezone": {
-          "name": "timezone",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "limit": {
-          "name": "limit",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "filters": {
-          "name": "filters",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "chart": {
-          "name": "chart",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "temp": {
-          "name": "temp",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
         },
         "server_ts": {
           "name": "server_ts",
@@ -1216,6 +1407,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "idx_mconfigs_key_tag": {
+          "name": "idx_mconfigs_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -1247,48 +1453,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "email": {
-          "name": "email",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "alias": {
-          "name": "alias",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "roles": {
-          "name": "roles",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "envs": {
-          "name": "envs",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "first_name": {
-          "name": "first_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "last_name": {
-          "name": "last_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "timezone": {
-          "name": "timezone",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
         "is_admin": {
           "name": "is_admin",
           "type": "boolean",
@@ -1306,6 +1470,36 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": true
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email_hash": {
+          "name": "email_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alias_hash": {
+          "name": "alias_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
         },
         "server_ts": {
           "name": "server_ts",
@@ -1360,6 +1554,51 @@
           "method": "btree",
           "with": {}
         },
+        "idx_members_email_hash": {
+          "name": "idx_members_email_hash",
+          "columns": [
+            {
+              "expression": "email_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_members_alias_hash": {
+          "name": "idx_members_alias_hash",
+          "columns": [
+            {
+              "expression": "alias_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_members_key_tag": {
+          "name": "idx_members_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "uidx_members_project_id_member_id": {
           "name": "uidx_members_project_id_member_id",
           "columns": [
@@ -1371,254 +1610,6 @@
             },
             {
               "expression": "member_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.metrics": {
-      "name": "metrics",
-      "schema": "",
-      "columns": {
-        "metric_full_id": {
-          "name": "metric_full_id",
-          "type": "varchar(64)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "struct_id": {
-          "name": "struct_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "metric_id": {
-          "name": "metric_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "top_node": {
-          "name": "top_node",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "part_id": {
-          "name": "part_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "file_path": {
-          "name": "file_path",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "type": {
-          "name": "type",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "label": {
-          "name": "label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "top_label": {
-          "name": "top_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "part_node_label": {
-          "name": "part_node_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "part_field_label": {
-          "name": "part_field_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "part_label": {
-          "name": "part_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "time_node_label": {
-          "name": "time_node_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "time_field_label": {
-          "name": "time_field_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "time_label": {
-          "name": "time_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "params": {
-          "name": "params",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "model_id": {
-          "name": "model_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "timefield_id": {
-          "name": "timefield_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "field_id": {
-          "name": "field_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "field_class": {
-          "name": "field_class",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "formula": {
-          "name": "formula",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "sql": {
-          "name": "sql",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "connection_id": {
-          "name": "connection_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "description": {
-          "name": "description",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "format_number": {
-          "name": "format_number",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "currency_prefix": {
-          "name": "currency_prefix",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "currency_suffix": {
-          "name": "currency_suffix",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "server_ts": {
-          "name": "server_ts",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "idx_metrics_server_ts": {
-          "name": "idx_metrics_server_ts",
-          "columns": [
-            {
-              "expression": "server_ts",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_metrics_struct_id": {
-          "name": "idx_metrics_struct_id",
-          "columns": [
-            {
-              "expression": "struct_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "idx_metrics_metric_id": {
-          "name": "idx_metrics_metric_id",
-          "columns": [
-            {
-              "expression": "metric_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "uidx_metrics_struct_id_metric_id": {
-          "name": "uidx_metrics_struct_id_metric_id",
-          "columns": [
-            {
-              "expression": "struct_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "metric_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1655,9 +1646,15 @@
         },
         "model_id": {
           "name": "model_id",
-          "type": "varchar(32)",
+          "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
         },
         "connection_id": {
           "name": "connection_id",
@@ -1665,63 +1662,27 @@
           "primaryKey": false,
           "notNull": false
         },
-        "file_path": {
-          "name": "file_path",
+        "connection_type": {
+          "name": "connection_type",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
-        "content": {
-          "name": "content",
+        "st": {
+          "name": "st",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "access_users": {
-          "name": "access_users",
+        "lt": {
+          "name": "lt",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "access_roles": {
-          "name": "access_roles",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "label": {
-          "name": "label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "gr": {
-          "name": "gr",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hidden": {
-          "name": "hidden",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "fields": {
-          "name": "fields",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "nodes": {
-          "name": "nodes",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "varchar",
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
@@ -1778,6 +1739,21 @@
           "method": "btree",
           "with": {}
         },
+        "idx_models_key_tag": {
+          "name": "idx_models_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "uidx_models_struct_id_model_id": {
           "name": "uidx_models_struct_id_model_id",
           "columns": [
@@ -1817,17 +1793,23 @@
           "primaryKey": true,
           "notNull": true
         },
-        "public_key": {
-          "name": "public_key",
-          "type": "text",
+        "st": {
+          "name": "st",
+          "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "private_key": {
-          "name": "private_key",
-          "type": "text",
+        "lt": {
+          "name": "lt",
+          "type": "json",
           "primaryKey": false,
           "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "server_ts": {
           "name": "server_ts",
@@ -1836,7 +1818,38 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "idx_notes_server_ts": {
+          "name": "idx_notes_server_ts",
+          "columns": [
+            {
+              "expression": "server_ts",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_notes_key_tag": {
+          "name": "idx_notes_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -1854,21 +1867,39 @@
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "owner_id": {
           "name": "owner_id",
-          "type": "text",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "owner_email": {
-          "name": "owner_email",
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name_hash": {
+          "name": "name_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner_email_hash": {
+          "name": "owner_email_hash",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -1895,11 +1926,11 @@
           "method": "btree",
           "with": {}
         },
-        "idx_orgs_owner_email": {
-          "name": "idx_orgs_owner_email",
+        "idx_orgs_owner_email_hash": {
+          "name": "idx_orgs_owner_email_hash",
           "columns": [
             {
-              "expression": "owner_email",
+              "expression": "owner_email_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1910,11 +1941,26 @@
           "method": "btree",
           "with": {}
         },
-        "uidx_orgs_name": {
-          "name": "uidx_orgs_name",
+        "idx_orgs_key_tag": {
+          "name": "idx_orgs_key_tag",
           "columns": [
             {
-              "expression": "name",
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uidx_orgs_name_hash": {
+          "name": "uidx_orgs_name_hash",
+          "columns": [
+            {
+              "expression": "name_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1949,41 +1995,39 @@
           "primaryKey": false,
           "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "default_branch": {
-          "name": "default_branch",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'master'"
-        },
         "remote_type": {
           "name": "remote_type",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'Managed'"
+          "notNull": true
         },
-        "git_url": {
-          "name": "git_url",
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name_hash": {
+          "name": "name_hash",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "public_key": {
-          "name": "public_key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "private_key": {
-          "name": "private_key",
-          "type": "text",
+        "git_url_hash": {
+          "name": "git_url_hash",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -2010,8 +2054,53 @@
           "method": "btree",
           "with": {}
         },
-        "uidx_projects_org_id_name": {
-          "name": "uidx_projects_org_id_name",
+        "idx_projects_name_hash": {
+          "name": "idx_projects_name_hash",
+          "columns": [
+            {
+              "expression": "name_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_projects_git_url_hash": {
+          "name": "idx_projects_git_url_hash",
+          "columns": [
+            {
+              "expression": "git_url_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_projects_key_tag": {
+          "name": "idx_projects_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "uidx_projects_org_id_name_hash": {
+          "name": "uidx_projects_org_id_name_hash",
           "columns": [
             {
               "expression": "org_id",
@@ -2020,7 +2109,7 @@
               "nulls": "last"
             },
             {
-              "expression": "name",
+              "expression": "name_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -2085,23 +2174,11 @@
           "primaryKey": false,
           "notNull": false
         },
-        "sql": {
-          "name": "sql",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "status": {
           "name": "status",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
-        },
-        "data": {
-          "name": "data",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": false
         },
         "last_run_by": {
           "name": "last_run_by",
@@ -2139,12 +2216,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "last_error_message": {
-          "name": "last_error_message",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "bigquery_consecutive_errors_get_job": {
           "name": "bigquery_consecutive_errors_get_job",
           "type": "integer",
@@ -2154,6 +2225,30 @@
         "bigquery_consecutive_errors_get_results": {
           "name": "bigquery_consecutive_errors_get_results",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "api_url_hash": {
+          "name": "api_url_hash",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -2254,6 +2349,36 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "idx_queries_api_url_hash": {
+          "name": "idx_queries_api_url_hash",
+          "columns": [
+            {
+              "expression": "api_url_hash",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_queries_key_tag": {
+          "name": "idx_queries_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -2297,36 +2422,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "file_path": {
-          "name": "file_path",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "access_users": {
-          "name": "access_users",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "access_roles": {
-          "name": "access_roles",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "rows": {
-          "name": "rows",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
         "draft": {
           "name": "draft",
           "type": "boolean",
@@ -2338,6 +2433,24 @@
           "type": "bigint",
           "primaryKey": false,
           "notNull": true
+        },
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "server_ts": {
           "name": "server_ts",
@@ -2407,6 +2520,21 @@
           "method": "btree",
           "with": {}
         },
+        "idx_reports_key_tag": {
+          "name": "idx_reports_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "uidx_reports_struct_id_report_id": {
           "name": "uidx_reports_struct_id_report_id",
           "columns": [
@@ -2452,65 +2580,29 @@
           "primaryKey": false,
           "notNull": true
         },
-        "mprove_dir_value": {
-          "name": "mprove_dir_value",
+        "mprove_version": {
+          "name": "mprove_version",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
-        "week_start": {
-          "name": "week_start",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "allow_timezones": {
-          "name": "allow_timezones",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "default_timezone": {
-          "name": "default_timezone",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "format_number": {
-          "name": "format_number",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "currency_prefix": {
-          "name": "currency_prefix",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "currency_suffix": {
-          "name": "currency_suffix",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "errors": {
-          "name": "errors",
+        "st": {
+          "name": "st",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "views": {
-          "name": "views",
+        "lt": {
+          "name": "lt",
           "type": "json",
           "primaryKey": false,
           "notNull": true
         },
-        "udfs_dict": {
-          "name": "udfs_dict",
-          "type": "json",
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "server_ts": {
           "name": "server_ts",
@@ -2549,6 +2641,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "idx_structs_key_tag": {
+          "name": "idx_structs_key_tag",
+          "columns": [
+            {
+              "expression": "key_tag",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -2568,53 +2675,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "email": {
-          "name": "email",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "alias": {
-          "name": "alias",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
         "is_email_verified": {
           "name": "is_email_verified",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true
-        },
-        "email_verification_token": {
-          "name": "email_verification_token",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "password_reset_token": {
-          "name": "password_reset_token",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "password_reset_expires_ts": {
-          "name": "password_reset_expires_ts",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hash": {
-          "name": "hash",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "salt": {
-          "name": "salt",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
         },
         "jwt_min_iat": {
           "name": "jwt_min_iat",
@@ -2622,27 +2687,45 @@
           "primaryKey": false,
           "notNull": false
         },
-        "first_name": {
-          "name": "first_name",
-          "type": "varchar",
+        "st": {
+          "name": "st",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lt": {
+          "name": "lt",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_tag": {
+          "name": "key_tag",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "last_name": {
-          "name": "last_name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "timezone": {
-          "name": "timezone",
+        "email_hash": {
+          "name": "email_hash",
           "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
-        "ui": {
-          "name": "ui",
-          "type": "json",
+        "alias_hash": {
+          "name": "alias_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email_verification_token_hash": {
+          "name": "email_verification_token_hash",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password_reset_token_hash": {
+          "name": "password_reset_token_hash",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -2669,163 +2752,11 @@
           "method": "btree",
           "with": {}
         },
-        "uidx_users_email": {
-          "name": "uidx_users_email",
+        "idx_users_key_tag": {
+          "name": "idx_users_key_tag",
           "columns": [
             {
-              "expression": "email",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "uidx_users_alias": {
-          "name": "uidx_users_alias",
-          "columns": [
-            {
-              "expression": "alias",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "uidx_users_email_verification_token": {
-          "name": "uidx_users_email_verification_token",
-          "columns": [
-            {
-              "expression": "email_verification_token",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "uidx_users_password_reset_token": {
-          "name": "uidx_users_password_reset_token",
-          "columns": [
-            {
-              "expression": "password_reset_token",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": true,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.vizs": {
-      "name": "vizs",
-      "schema": "",
-      "columns": {
-        "viz_full_id": {
-          "name": "viz_full_id",
-          "type": "varchar(64)",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "struct_id": {
-          "name": "struct_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "viz_id": {
-          "name": "viz_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "title": {
-          "name": "title",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "model_id": {
-          "name": "model_id",
-          "type": "varchar(32)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "model_label": {
-          "name": "model_label",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "file_path": {
-          "name": "file_path",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "access_users": {
-          "name": "access_users",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "access_roles": {
-          "name": "access_roles",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "gr": {
-          "name": "gr",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "hidden": {
-          "name": "hidden",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "tiles": {
-          "name": "tiles",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "server_ts": {
-          "name": "server_ts",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "idx_vizs_server_ts": {
-          "name": "idx_vizs_server_ts",
-          "columns": [
-            {
-              "expression": "server_ts",
+              "expression": "key_tag",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -2836,62 +2767,56 @@
           "method": "btree",
           "with": {}
         },
-        "idx_vizs_struct_id": {
-          "name": "idx_vizs_struct_id",
+        "uidx_users_email_hash": {
+          "name": "uidx_users_email_hash",
           "columns": [
             {
-              "expression": "struct_id",
+              "expression": "email_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             }
           ],
-          "isUnique": false,
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}
         },
-        "idx_vizs_viz_id": {
-          "name": "idx_vizs_viz_id",
+        "uidx_users_alias_hash": {
+          "name": "uidx_users_alias_hash",
           "columns": [
             {
-              "expression": "viz_id",
+              "expression": "alias_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             }
           ],
-          "isUnique": false,
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}
         },
-        "idx_vizs_model_id": {
-          "name": "idx_vizs_model_id",
+        "uidx_users_email_verification_token_hash": {
+          "name": "uidx_users_email_verification_token_hash",
           "columns": [
             {
-              "expression": "model_id",
+              "expression": "email_verification_token_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             }
           ],
-          "isUnique": false,
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}
         },
-        "uidx_vizs_struct_id_viz_id": {
-          "name": "uidx_vizs_struct_id_viz_id",
+        "uidx_users_password_reset_token_hash": {
+          "name": "uidx_users_password_reset_token_hash",
           "columns": [
             {
-              "expression": "struct_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "viz_id",
+              "expression": "password_reset_token_hash",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

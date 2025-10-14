@@ -1,1 +1,0 @@
-ALTER TABLE "structs" ADD COLUMN "presets" json DEFAULT '[]'::json;

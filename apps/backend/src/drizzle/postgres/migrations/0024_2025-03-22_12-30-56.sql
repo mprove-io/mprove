@@ -1,1 +1,0 @@
-ALTER TABLE "connections" ADD COLUMN "google_auth_scopes" json;

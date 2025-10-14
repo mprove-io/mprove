@@ -1,1 +1,0 @@
-ALTER TABLE "mconfigs" ADD COLUMN "model_file_path" varchar;

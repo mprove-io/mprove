@@ -1,1 +1,0 @@
-ALTER TABLE "models" ADD COLUMN "is_view_model" boolean;

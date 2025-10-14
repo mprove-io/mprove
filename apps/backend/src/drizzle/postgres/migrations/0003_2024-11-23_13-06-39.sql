@@ -1,1 +1,0 @@
-ALTER TABLE "structs" ADD COLUMN "case_sensitive_string_filters" boolean;

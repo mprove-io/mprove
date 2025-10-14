@@ -1,1 +1,0 @@
-ALTER TABLE "dashboards" ADD COLUMN "creator_id" varchar(32);

@@ -1,1 +1,0 @@
-ALTER TABLE "models" ADD COLUMN "source" varchar;

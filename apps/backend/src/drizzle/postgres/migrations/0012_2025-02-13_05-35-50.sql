@@ -1,2 +1,0 @@
-ALTER TABLE "connections" RENAME COLUMN "bigquery_project" TO "google_cloud_project";--> statement-breakpoint
-ALTER TABLE "connections" RENAME COLUMN "bigquery_client_email" TO "google_cloud_client_email";

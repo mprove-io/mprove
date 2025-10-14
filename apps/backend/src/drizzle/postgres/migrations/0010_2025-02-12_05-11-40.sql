@@ -1,1 +1,0 @@
-ALTER TABLE "models" ADD COLUMN "is_store_model" boolean;

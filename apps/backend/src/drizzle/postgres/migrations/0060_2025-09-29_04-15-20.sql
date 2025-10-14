@@ -1,1 +1,0 @@
-ALTER TABLE "models" RENAME COLUMN "content" TO "store_content";
