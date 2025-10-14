@@ -1,4 +1,3 @@
-import { Inject } from '@nestjs/common';
 import {
   ExtractTablesWithRelations,
   SQLWrapper,
@@ -12,12 +11,12 @@ import { schemaPostgres } from '~backend/drizzle/postgres/schema/_schema-postgre
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
-import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { TabToEntService } from '~backend/services/tab-to-ent.service';
+import { TabService } from '~backend/services/tab.service';
 import { isDefined } from '~common/functions/is-defined';
-import { DRIZZLE, Db } from '../drizzle.module';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
+import { DconfigTab } from './schema/_tabs';
 import { avatarsTable } from './schema/avatars';
 import { branchesTable } from './schema/branches';
 import { bridgesTable } from './schema/bridges';
@@ -63,9 +62,8 @@ export interface PackerOutput {
 
 export class DrizzlePacker {
   constructor(
-    private tabToEntService: TabToEntService,
-    private dconfigsService: DconfigsService,
-    @Inject(DRIZZLE) private db: Db
+    private tabService: TabService,
+    private tabToEntService: TabToEntService
   ) {}
 
   private refreshServerTs<T extends { serverTs: number }>(item: {
@@ -90,11 +88,18 @@ export class DrizzlePacker {
       serverTs
     } = item;
 
-    let dconfig = await this.db.drizzle.query.dconfigsTable
+    let dconfig = await tx.query.dconfigsTable
       .findFirst({
         where: isNotNull(dconfigsTable.dconfigId)
       })
-      .then(x => this.dconfigsService.entToTab(x));
+      .then(x => {
+        let dconfigTab: DconfigTab = {
+          ...x,
+          ...this.tabService.getTabProps({ ent: x })
+        };
+
+        return dconfigTab;
+      });
 
     let insertEnts =
       isDefined(insert) && Object.keys(insert).length > 0

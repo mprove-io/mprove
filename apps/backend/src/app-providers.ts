@@ -6,6 +6,7 @@ import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { isScheduler } from './functions/is-scheduler';
 import { BlockmlService } from './services/blockml.service';
 import { CheckTabService } from './services/check-tab.service';
+import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
 import { BridgesService } from './services/db/bridges.service';
 import { ChartsService } from './services/db/charts.service';
@@ -13,9 +14,11 @@ import { ConnectionsService } from './services/db/connections.service';
 import { DashboardsService } from './services/db/dashboards.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { EnvsService } from './services/db/envs.service';
+import { KitsService } from './services/db/kits.service';
 import { MconfigsService } from './services/db/mconfigs.service';
 import { MembersService } from './services/db/members.service';
 import { ModelsService } from './services/db/models.service';
+import { NotesService } from './services/db/notes.service';
 import { OrgsService } from './services/db/orgs.service';
 import { ProjectsService } from './services/db/projects.service';
 import { QueriesService } from './services/db/queries.service';
@@ -40,49 +43,59 @@ import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { StoreService } from './services/store.service';
+import { TabToEntService } from './services/tab-to-ent.service';
 import { TabService } from './services/tab.service';
 import { TasksService } from './services/tasks.service';
 import { UserCodeService } from './services/user-code.service';
 
 export const appProviders = [
-  HashService,
-  RedisService,
-  RabbitService,
-  EmailService,
-  BlockmlService,
-  UserCodeService,
-  UsersService,
-  OrgsService,
-  ProjectsService,
-  TabService,
-  CheckTabService,
-  ConnectionsService,
+  LocalStrategy,
+  JwtStrategy,
+  //
   BranchesService,
-  ModelsService,
-  MconfigsService,
-  MalloyService,
-  PgService,
-  MysqlService,
-  TrinoService,
-  PrestoService,
-  DuckDbService,
-  ClickHouseService,
-  BigQueryService,
-  SnowFlakeService,
-  StoreService,
-  StructsService,
-  QueriesService,
+  AvatarsService,
+  BridgesService,
+  BranchesService,
   ChartsService,
+  ConnectionsService,
   DashboardsService,
   DconfigsService,
+  EnvsService,
+  KitsService,
+  MconfigsService,
+  MembersService,
+  ModelsService,
+  NotesService,
+  OrgsService,
+  ProjectsService,
+  QueriesService,
   ReportsService,
+  StructsService,
+  UsersService,
+  //
+  BigQueryService,
+  ClickHouseService,
+  DuckDbService,
+  MysqlService,
+  PgService,
+  PrestoService,
+  SnowFlakeService,
+  TrinoService,
+  //
+  BlockmlService,
+  CheckTabService,
+  DocService,
+  EmailService,
+  HashService,
+  MalloyService,
+  RabbitService,
+  RedisService,
   ReportDataService,
   ReportRowService,
   ReportTimeColumnsService,
-  MembersService,
-  EnvsService,
-  DocService,
-  BridgesService,
+  StoreService,
+  TabToEntService,
+  TabService,
   {
     provide: TasksService,
     useFactory: (
@@ -96,6 +109,5 @@ export const appProviders = [
         : {},
     inject: [ConfigService, QueriesService, StructsService]
   },
-  LocalStrategy,
-  JwtStrategy
+  UserCodeService
 ];

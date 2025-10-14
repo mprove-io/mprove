@@ -1,13 +1,13 @@
 import * as crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { isUndefined } from 'cypress/types/lodash';
 import { BackendConfig } from '~backend/config/backend-config';
 import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { isUndefined } from '~common/functions/is-undefined';
 import { ServerError } from '~common/models/server-error';
 import {
   decryptData,
