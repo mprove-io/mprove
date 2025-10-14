@@ -113,7 +113,7 @@ export class TabService {
     }
 
     if (
-      isUndefined(ent.keyTag) &&
+      isDefined(ent.keyTag) &&
       (isDefined(ent.st.decrypted) || isDefined(ent.lt.decrypted))
     ) {
       throw new ServerError({
