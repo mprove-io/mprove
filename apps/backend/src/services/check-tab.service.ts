@@ -28,25 +28,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ServerError } from '~common/models/server-error';
-import { AvatarsService } from './db/avatars.service';
-import { BranchesService } from './db/branches.service';
-import { BridgesService } from './db/bridges.service';
-import { ChartsService } from './db/charts.service';
-import { ConnectionsService } from './db/connections.service';
-import { DashboardsService } from './db/dashboards.service';
-import { DconfigsService } from './db/dconfigs.service';
-import { EnvsService } from './db/envs.service';
-import { KitsService } from './db/kits.service';
-import { MconfigsService } from './db/mconfigs.service';
-import { MembersService } from './db/members.service';
-import { ModelsService } from './db/models.service';
-import { NotesService } from './db/notes.service';
-import { OrgsService } from './db/orgs.service';
-import { ProjectsService } from './db/projects.service';
-import { QueriesService } from './db/queries.service';
-import { ReportsService } from './db/reports.service';
-import { StructsService } from './db/structs.service';
-import { UsersService } from './db/users.service';
+import { TabService } from './tab.service';
 
 let retry = require('async-retry');
 
@@ -58,25 +40,7 @@ export class CheckTabService {
   private isEncryption: boolean;
 
   constructor(
-    private avatarsService: AvatarsService,
-    private branchesService: BranchesService,
-    private bridgesService: BridgesService,
-    private chartsService: ChartsService,
-    private connectionsService: ConnectionsService,
-    private dashboardsService: DashboardsService,
-    private dconfigsService: DconfigsService,
-    private envsService: EnvsService,
-    private kitsService: KitsService,
-    private mconfigsService: MconfigsService,
-    private membersService: MembersService,
-    private modelsService: ModelsService,
-    private notesService: NotesService,
-    private orgsService: OrgsService,
-    private projectsService: ProjectsService,
-    private queriesService: QueriesService,
-    private reportsService: ReportsService,
-    private structsService: StructsService,
-    private usersService: UsersService,
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -133,7 +97,7 @@ export class CheckTabService {
     while (true) {
       let avatar = await this.db.drizzle.query.avatarsTable
         .findFirst({ where: where })
-        .then(x => this.avatarsService.entToTab(x));
+        .then(x => this.tabService.avatarEntToTab(x));
 
       if (isUndefined(avatar)) {
         break;
@@ -194,7 +158,7 @@ export class CheckTabService {
     while (true) {
       let branch = await this.db.drizzle.query.branchesTable
         .findFirst({ where: where })
-        .then(x => this.branchesService.entToTab(x));
+        .then(x => this.tabService.branchEntToTab(x));
 
       if (isUndefined(branch)) {
         break;
@@ -255,7 +219,7 @@ export class CheckTabService {
     while (true) {
       let bridge = await this.db.drizzle.query.bridgesTable
         .findFirst({ where: where })
-        .then(x => this.bridgesService.entToTab(x));
+        .then(x => this.tabService.bridgeEntToTab(x));
 
       if (isUndefined(bridge)) {
         break;
@@ -316,7 +280,7 @@ export class CheckTabService {
     while (true) {
       let chart = await this.db.drizzle.query.chartsTable
         .findFirst({ where: where })
-        .then(x => this.chartsService.entToTab(x));
+        .then(x => this.tabService.chartEntToTab(x));
 
       if (isUndefined(chart)) {
         break;
@@ -377,7 +341,7 @@ export class CheckTabService {
     while (true) {
       let connection = await this.db.drizzle.query.connectionsTable
         .findFirst({ where: where })
-        .then(x => this.connectionsService.entToTab(x));
+        .then(x => this.tabService.connectionEntToTab(x));
 
       if (isUndefined(connection)) {
         break;
@@ -438,7 +402,7 @@ export class CheckTabService {
     while (true) {
       let dashboard = await this.db.drizzle.query.dashboardsTable
         .findFirst({ where: where })
-        .then(x => this.dashboardsService.entToTab(x));
+        .then(x => this.tabService.dashboardEntToTab(x));
 
       if (isUndefined(dashboard)) {
         break;
@@ -499,7 +463,7 @@ export class CheckTabService {
     while (true) {
       let dconfig = await this.db.drizzle.query.dconfigsTable
         .findFirst({ where: where })
-        .then(x => this.dconfigsService.entToTab(x));
+        .then(x => this.tabService.dconfigEntToTab(x));
 
       if (isUndefined(dconfig)) {
         break;
@@ -557,7 +521,7 @@ export class CheckTabService {
     while (true) {
       let env = await this.db.drizzle.query.envsTable
         .findFirst({ where: where })
-        .then(x => this.envsService.entToTab(x));
+        .then(x => this.tabService.envEntToTab(x));
 
       if (isUndefined(env)) {
         break;
@@ -615,7 +579,7 @@ export class CheckTabService {
     while (true) {
       let kit = await this.db.drizzle.query.kitsTable
         .findFirst({ where: where })
-        .then(x => this.kitsService.entToTab(x));
+        .then(x => this.tabService.kitEntToTab(x));
 
       if (isUndefined(kit)) {
         break;
@@ -676,7 +640,7 @@ export class CheckTabService {
     while (true) {
       let mconfig = await this.db.drizzle.query.mconfigsTable
         .findFirst({ where: where })
-        .then(x => this.mconfigsService.entToTab(x));
+        .then(x => this.tabService.mconfigEntToTab(x));
 
       if (isUndefined(mconfig)) {
         break;
@@ -737,7 +701,7 @@ export class CheckTabService {
     while (true) {
       let member = await this.db.drizzle.query.membersTable
         .findFirst({ where: where })
-        .then(x => this.membersService.entToTab(x));
+        .then(x => this.tabService.memberEntToTab(x));
 
       if (isUndefined(member)) {
         break;
@@ -798,7 +762,7 @@ export class CheckTabService {
     while (true) {
       let model = await this.db.drizzle.query.modelsTable
         .findFirst({ where: where })
-        .then(x => this.modelsService.entToTab(x));
+        .then(x => this.tabService.modelEntToTab(x));
 
       if (isUndefined(model)) {
         break;
@@ -856,7 +820,7 @@ export class CheckTabService {
     while (true) {
       let note = await this.db.drizzle.query.notesTable
         .findFirst({ where: where })
-        .then(x => this.notesService.entToTab(x));
+        .then(x => this.tabService.noteEntToTab(x));
 
       if (isUndefined(note)) {
         break;
@@ -914,7 +878,7 @@ export class CheckTabService {
     while (true) {
       let org = await this.db.drizzle.query.orgsTable
         .findFirst({ where: where })
-        .then(x => this.orgsService.entToTab(x));
+        .then(x => this.tabService.orgEntToTab(x));
 
       if (isUndefined(org)) {
         break;
@@ -975,7 +939,7 @@ export class CheckTabService {
     while (true) {
       let project = await this.db.drizzle.query.projectsTable
         .findFirst({ where: where })
-        .then(x => this.projectsService.entToTab(x));
+        .then(x => this.tabService.projectEntToTab(x));
 
       if (isUndefined(project)) {
         break;
@@ -1036,7 +1000,7 @@ export class CheckTabService {
     while (true) {
       let query = await this.db.drizzle.query.queriesTable
         .findFirst({ where: where })
-        .then(x => this.queriesService.entToTab(x));
+        .then(x => this.tabService.queryEntToTab(x));
 
       if (isUndefined(query)) {
         break;
@@ -1097,7 +1061,7 @@ export class CheckTabService {
     while (true) {
       let report = await this.db.drizzle.query.reportsTable
         .findFirst({ where: where })
-        .then(x => this.reportsService.entToTab(x));
+        .then(x => this.tabService.reportEntToTab(x));
 
       if (isUndefined(report)) {
         break;
@@ -1158,7 +1122,7 @@ export class CheckTabService {
     while (true) {
       let struct = await this.db.drizzle.query.structsTable
         .findFirst({ where: where })
-        .then(x => this.structsService.entToTab(x));
+        .then(x => this.tabService.structEntToTab(x));
 
       if (isUndefined(struct)) {
         break;
@@ -1216,7 +1180,7 @@ export class CheckTabService {
     while (true) {
       let user = await this.db.drizzle.query.usersTable
         .findFirst({ where: where })
-        .then(x => this.usersService.entToTab(x));
+        .then(x => this.tabService.userEntToTab(x));
 
       if (isUndefined(user)) {
         break;

@@ -12,6 +12,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { HashService } from '~backend/services/hash.service';
+import { TabService } from '~backend/services/tab.service';
 import { DEMO_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { BoolEnum } from '~common/enums/bool.enum';
@@ -29,6 +30,7 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class CreateOrgController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,

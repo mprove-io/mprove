@@ -11,13 +11,12 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { AvatarsService } from '~backend/services/db/avatars.service';
 import { MembersService } from '~backend/services/db/members.service';
-import { OrgsService } from '~backend/services/db/orgs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
@@ -38,9 +37,8 @@ import {
 @Controller()
 export class GetNavController {
   constructor(
-    private orgsService: OrgsService,
+    private tabService: TabService,
     private rabbitService: RabbitService,
-    private avatarsService: AvatarsService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private structsService: StructsService,
@@ -67,7 +65,7 @@ export class GetNavController {
             .findMany({
               where: inArray(projectsTable.projectId, projectIds)
             })
-            .then(xs => xs.map(x => this.projectsService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
 
     let orgIds = projects.map(x => x.orgId);
 
@@ -78,13 +76,13 @@ export class GetNavController {
             .findMany({
               where: inArray(orgsTable.orgId, orgIds)
             })
-            .then(xs => xs.map(x => this.orgsService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.orgEntToTab(x)));
 
     let ownerOrgs = await this.db.drizzle.query.orgsTable
       .findMany({
         where: eq(orgsTable.ownerId, user.userId)
       })
-      .then(xs => xs.map(x => this.orgsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.orgEntToTab(x)));
 
     let orgIdsWithDuplicates = [...orgs, ...ownerOrgs].map(x => x.orgId);
 
@@ -125,7 +123,7 @@ export class GetNavController {
       .findFirst({
         where: eq(avatarsTable.userId, user.userId)
       })
-      .then(x => this.avatarsService.entToTab(x));
+      .then(x => this.tabService.avatarEntToTab(x));
 
     let apiMember: Member;
     let apiStruct: Struct;

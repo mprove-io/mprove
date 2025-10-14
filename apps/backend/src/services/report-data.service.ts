@@ -49,7 +49,6 @@ import { RowRecord } from '~common/interfaces/blockml/row-record';
 import { Rq } from '~common/interfaces/blockml/rq';
 import { Sorting } from '~common/interfaces/blockml/sorting';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { KitsService } from './db/kits.service';
 import { MconfigsService } from './db/mconfigs.service';
 import { ModelsService } from './db/models.service';
 import { QueriesService } from './db/queries.service';
@@ -57,19 +56,20 @@ import { ReportsService } from './db/reports.service';
 import { DocService } from './doc.service';
 import { MalloyService } from './malloy.service';
 import { ReportTimeColumnsService } from './report-time-columns.service';
+import { TabService } from './tab.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class ReportDataService {
   constructor(
+    private tabService: TabService,
     private docService: DocService,
     private malloyService: MalloyService,
     private modelsService: ModelsService,
     private reportsService: ReportsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
-    private kitsService: KitsService,
     private reportTimeColumnsService: ReportTimeColumnsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -170,7 +170,7 @@ export class ReportDataService {
           eq(modelsTable.structId, struct.structId)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     report.rows
       .filter(row => isDefined(row.parameters))
@@ -587,7 +587,7 @@ export class ReportDataService {
             eq(mconfigsTable.structId, struct.structId)
           )
         })
-        .then(xs => xs.map(x => this.mconfigsService.entToTab(x)));
+        .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
     }
 
     let queries: QueryTab[] = [];
@@ -599,7 +599,7 @@ export class ReportDataService {
             eq(queriesTable.projectId, project.projectId)
           )
         })
-        .then(xs => xs.map(x => this.queriesService.entToTab(x)));
+        .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
     }
 
     let kits: KitTab[] = [];
@@ -611,7 +611,7 @@ export class ReportDataService {
             eq(kitsTable.structId, report.structId)
           )
         })
-        .then(xs => xs.map(x => this.kitsService.entToTab(x)));
+        .then(xs => xs.map(x => this.tabService.kitEntToTab(x)));
     }
 
     let queriesApi = queries.map(x =>

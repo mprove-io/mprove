@@ -12,14 +12,14 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { QueriesService } from '../db/queries.service';
+import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class TrinoService {
   constructor(
-    private queriesService: QueriesService,
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -64,7 +64,7 @@ export class TrinoService {
               eq(queriesTable.projectId, projectId)
             )
           })
-          .then(x => this.queriesService.entToTab(x));
+          .then(x => this.tabService.queryEntToTab(x));
 
         if (isDefined(q) || isUndefined(queryResult?.value)) {
           if (
@@ -155,7 +155,7 @@ export class TrinoService {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.queriesService.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

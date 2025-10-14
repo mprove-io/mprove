@@ -32,7 +32,6 @@ import { BridgesService } from '~backend/services/db/bridges.service';
 import { ConnectionsService } from '~backend/services/db/connections.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { BigQueryService } from '~backend/services/dwh/bigquery.service';
@@ -44,6 +43,7 @@ import { PrestoService } from '~backend/services/dwh/presto.service';
 import { SnowFlakeService } from '~backend/services/dwh/snowflake.service';
 import { TrinoService } from '~backend/services/dwh/trino.service';
 import { StoreService } from '~backend/services/store.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -67,13 +67,13 @@ let retry = require('async-retry');
 @Controller()
 export class RunQueriesController {
   constructor(
+    private tabService: TabService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private queriesService: QueriesService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
-    private modelsService: ModelsService,
     private pgService: PgService,
     private mysqlService: MysqlService,
     private duckdbService: DuckDbService,
@@ -141,7 +141,7 @@ export class RunQueriesController {
           inArray(modelsTable.modelId, modelIds)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
 
@@ -178,7 +178,7 @@ export class RunQueriesController {
             )
           )
         })
-        .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
+        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
 
     await forEachSeries(
       uniqueGoogleApiConnectionsWithAnyEnvId,

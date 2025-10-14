@@ -11,14 +11,14 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { QueriesService } from '../db/queries.service';
+import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class PgService {
   constructor(
-    private queriesService: QueriesService,
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -61,7 +61,7 @@ export class PgService {
               eq(queriesTable.projectId, projectId)
             )
           })
-          .then(x => this.queriesService.entToTab(x));
+          .then(x => this.tabService.queryEntToTab(x));
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
@@ -115,7 +115,7 @@ export class PgService {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.queriesService.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

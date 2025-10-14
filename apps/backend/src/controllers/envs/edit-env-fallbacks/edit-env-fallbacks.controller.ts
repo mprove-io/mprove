@@ -21,6 +21,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -37,6 +38,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditEnvFallbacksController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private membersService: MembersService,

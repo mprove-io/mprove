@@ -6,6 +6,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { HashService } from '~backend/services/hash.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
@@ -17,6 +18,7 @@ import {
 @Controller()
 export class IsOrgExistController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db

@@ -20,9 +20,9 @@ import {
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { AvatarsService } from '~backend/services/db/avatars.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -40,8 +40,8 @@ let retry = require('async-retry');
 @Controller()
 export class EditMemberController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
-    private avatarsService: AvatarsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -101,7 +101,7 @@ export class EditMemberController {
       })
       .from(avatarsTable)
       .where(eq(avatarsTable.userId, member.memberId))
-      .then(xs => xs.map(x => this.avatarsService.entToTab(x as AvatarEnt)));
+      .then(xs => xs.map(x => this.tabService.avatarEntToTab(x as AvatarEnt)));
 
     let avatar = avatars.length > 0 ? avatars[0] : undefined;
 

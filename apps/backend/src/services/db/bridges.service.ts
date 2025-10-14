@@ -2,10 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { BridgeTab } from '~backend/drizzle/postgres/schema/_tabs';
-import {
-  BridgeEnt,
-  bridgesTable
-} from '~backend/drizzle/postgres/schema/bridges';
+import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ServerError } from '~common/models/server-error';
@@ -19,19 +16,6 @@ export class BridgesService {
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(bridgeEnt: BridgeEnt): BridgeTab {
-    if (isUndefined(bridgeEnt)) {
-      return;
-    }
-
-    let bridge: BridgeTab = {
-      ...bridgeEnt,
-      ...this.tabService.getTabProps({ ent: bridgeEnt })
-    };
-
-    return bridge;
-  }
 
   makeBridge(item: {
     projectId: string;
@@ -80,7 +64,7 @@ export class BridgesService {
           eq(bridgesTable.envId, envId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.bridgeEntToTab(x));
 
     if (isUndefined(bridge)) {
       throw new ServerError({

@@ -39,8 +39,8 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
-import { MalloyService } from '~backend/services/malloy.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -71,7 +71,7 @@ let retry = require('async-retry');
 @Controller()
 export class SaveModifyChartController {
   constructor(
-    private malloyService: MalloyService,
+    private tabService: TabService,
     private branchesService: BranchesService,
     private mconfigsService: MconfigsService,
     private rabbitService: RabbitService,
@@ -296,7 +296,7 @@ export class SaveModifyChartController {
           inArray(modelsTable.modelId, modelIds)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
       struct: apiStruct,
@@ -444,7 +444,7 @@ export class SaveModifyChartController {
           eq(queriesTable.projectId, newQuery.projectId)
         )
       })
-      .then(x => this.queriesService.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 

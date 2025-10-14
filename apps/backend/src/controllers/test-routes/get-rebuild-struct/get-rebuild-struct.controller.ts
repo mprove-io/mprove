@@ -12,6 +12,7 @@ import { ConnectionsService } from '~backend/services/db/connections.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
@@ -35,6 +36,7 @@ import {
 @Controller()
 export class GetRebuildStructController {
   constructor(
+    private tabService: TabService,
     private rabbitService: RabbitService,
     private projectsService: ProjectsService,
     private envsService: EnvsService,

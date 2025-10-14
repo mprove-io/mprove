@@ -14,14 +14,14 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { ServerError } from '~common/models/server-error';
-import { QueriesService } from '../db/queries.service';
+import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
 
 @Injectable()
 export class SnowFlakeService {
   constructor(
-    private queriesService: QueriesService,
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -105,7 +105,7 @@ export class SnowFlakeService {
               eq(queriesTable.projectId, projectId)
             )
           })
-          .then(x => this.queriesService.entToTab(x));
+          .then(x => this.tabService.queryEntToTab(x));
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
@@ -189,7 +189,7 @@ export class SnowFlakeService {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.queriesService.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;

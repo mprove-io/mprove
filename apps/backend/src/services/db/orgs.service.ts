@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { OrgTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { OrgEnt, orgsTable } from '~backend/drizzle/postgres/schema/orgs';
+import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ErEnum } from '~common/enums/er.enum';
@@ -34,19 +34,6 @@ export class OrgsService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(orgEnt: OrgEnt): OrgTab {
-    if (isUndefined(orgEnt)) {
-      return;
-    }
-
-    let org: OrgTab = {
-      ...orgEnt,
-      ...this.tabService.getTabProps({ ent: orgEnt })
-    };
-
-    return org;
-  }
 
   tabToApi(item: { org: OrgTab }): Org {
     let { org } = item;
@@ -80,7 +67,7 @@ export class OrgsService {
       .findFirst({
         where: eq(orgsTable.orgId, orgId)
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.orgEntToTab(x));
 
     if (isUndefined(org)) {
       throw new ServerError({

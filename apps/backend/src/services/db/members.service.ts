@@ -11,10 +11,7 @@ import {
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import {
-  MemberEnt,
-  membersTable
-} from '~backend/drizzle/postgres/schema/members';
+import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeFullName } from '~backend/functions/make-full-name';
@@ -59,19 +56,6 @@ export class MembersService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(memberEnt: MemberEnt): MemberTab {
-    if (isUndefined(memberEnt)) {
-      return;
-    }
-
-    let member: MemberTab = {
-      ...memberEnt,
-      ...this.tabService.getTabProps({ ent: memberEnt })
-    };
-
-    return member;
-  }
 
   makeMember(item: {
     projectId: string;
@@ -142,7 +126,7 @@ export class MembersService {
           eq(membersTable.projectId, projectId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.memberEntToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -172,7 +156,7 @@ export class MembersService {
           eq(membersTable.projectId, projectId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.memberEntToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -199,7 +183,7 @@ export class MembersService {
           eq(membersTable.projectId, projectId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.memberEntToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -226,7 +210,7 @@ export class MembersService {
           eq(membersTable.projectId, projectId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.memberEntToTab(x));
 
     if (isUndefined(member)) {
       throw new ServerError({
@@ -268,7 +252,7 @@ export class MembersService {
         .findFirst({
           where: eq(projectsTable.projectId, demoProjectId)
         })
-        .then(x => this.projectsService.entToTab(x));
+        .then(x => this.tabService.projectEntToTab(x));
 
       if (isDefined(project)) {
         let member = await this.db.drizzle.query.membersTable
@@ -278,7 +262,7 @@ export class MembersService {
               eq(membersTable.projectId, demoProjectId)
             )
           })
-          .then(x => this.entToTab(x));
+          .then(x => this.tabService.memberEntToTab(x));
 
         if (isUndefined(member)) {
           let newMember: MemberTab = this.makeMember({

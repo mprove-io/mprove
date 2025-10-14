@@ -2,10 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { BranchTab } from '~backend/drizzle/postgres/schema/_tabs';
-import {
-  BranchEnt,
-  branchesTable
-} from '~backend/drizzle/postgres/schema/branches';
+import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -20,19 +17,6 @@ export class BranchesService {
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(branchEnt: BranchEnt): BranchTab {
-    if (isUndefined(branchEnt)) {
-      return;
-    }
-
-    let branch: BranchTab = {
-      ...branchEnt,
-      ...this.tabService.getTabProps({ ent: branchEnt })
-    };
-
-    return branch;
-  }
 
   makeBranch(item: {
     projectId: string;
@@ -72,7 +56,7 @@ export class BranchesService {
           eq(branchesTable.branchId, branchId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.branchEntToTab(x));
 
     if (isUndefined(branch)) {
       throw new ServerError({

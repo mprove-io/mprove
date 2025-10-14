@@ -35,6 +35,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { HashService } from '~backend/services/hash.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -55,6 +56,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteRecordsController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rabbitService: RabbitService,

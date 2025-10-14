@@ -17,7 +17,6 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/db/orgs.service';
-import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
 import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -36,7 +35,6 @@ let retry = require('async-retry');
 export class GenerateProjectRemoteKeyController {
   constructor(
     private tabService: TabService,
-    private hashService: HashService,
     private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

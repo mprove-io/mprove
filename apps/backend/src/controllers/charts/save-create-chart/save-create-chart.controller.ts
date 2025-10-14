@@ -35,6 +35,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -66,6 +67,7 @@ let retry = require('async-retry');
 @Controller()
 export class SaveCreateChartController {
   constructor(
+    private tabService: TabService,
     private chartsService: ChartsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
@@ -284,7 +286,7 @@ export class SaveCreateChartController {
           inArray(modelsTable.modelId, modelIds)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
       charts: apiCharts,
@@ -395,7 +397,7 @@ export class SaveCreateChartController {
       })
       .from(modelsTable)
       .where(eq(modelsTable.structId, bridge.structId))
-      .then(xs => xs.map(x => this.modelsService.entToTab(x as ModelEnt)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
 
     let payload: ToBackendSaveCreateChartResponsePayload = {
       chart: this.chartsService.tabToApi({

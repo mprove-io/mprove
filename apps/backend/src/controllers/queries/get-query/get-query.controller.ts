@@ -16,6 +16,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -47,6 +48,7 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class GetQueryController {
   constructor(
+    private tabService: TabService,
     private queriesService: QueriesService,
     private modelsService: ModelsService,
     private chartsService: ChartsService,

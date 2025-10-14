@@ -9,6 +9,7 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/db/orgs.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetOrgsListRequest,
@@ -19,6 +20,7 @@ import {
 @Controller()
 export class GetOrgsListController {
   constructor(
+    private tabService: TabService,
     private orgsService: OrgsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -49,13 +51,13 @@ export class GetOrgsListController {
             .findMany({
               where: inArray(orgsTable.orgId, userOrgIds)
             })
-            .then(xs => xs.map(x => this.orgsService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.orgEntToTab(x)));
 
     let ownerOrgs = await this.db.drizzle.query.orgsTable
       .findMany({
         where: eq(orgsTable.ownerId, user.userId)
       })
-      .then(xs => xs.map(x => this.orgsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.orgEntToTab(x)));
 
     let orgs = [...userOrgs];
 

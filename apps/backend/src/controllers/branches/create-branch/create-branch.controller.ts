@@ -25,6 +25,7 @@ import { BridgesService } from '~backend/services/db/bridges.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -47,6 +48,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateBranchController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
     private branchesService: BranchesService,

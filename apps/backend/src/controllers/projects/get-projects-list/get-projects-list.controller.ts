@@ -17,6 +17,7 @@ import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
 import {
@@ -28,6 +29,7 @@ import {
 @Controller()
 export class GetProjectsListController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -56,7 +58,7 @@ export class GetProjectsListController {
                 eq(projectsTable.orgId, orgId)
               )
             })
-            .then(xs => xs.map(x => this.projectsService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
 
     let sortedProjects = projects.sort((a, b) =>
       a.name > b.name ? 1 : b.name > a.name ? -1 : 0

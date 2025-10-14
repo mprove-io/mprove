@@ -44,13 +44,13 @@ import { EnvsService } from '~backend/services/db/envs.service';
 import { MconfigsService } from '~backend/services/db/mconfigs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
-import { OrgsService } from '~backend/services/db/orgs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import {
   DEFAULT_SRV_UI,
@@ -87,6 +87,7 @@ let retry = require('async-retry');
 @Controller()
 export class SeedRecordsController {
   constructor(
+    private tabService: TabService,
     private hashService: HashService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -98,7 +99,6 @@ export class SeedRecordsController {
     private chartsService: ChartsService,
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
-    private orgsService: OrgsService,
     private projectsService: ProjectsService,
     private queriesService: QueriesService,
     private reportsService: ReportsService,

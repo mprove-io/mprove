@@ -6,9 +6,9 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/db/branches.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -20,7 +20,7 @@ import {
 @Controller()
 export class GetBranchesListController {
   constructor(
-    private branchesService: BranchesService,
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     @Inject(DRIZZLE) private db: Db

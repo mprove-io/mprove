@@ -9,7 +9,6 @@ import {
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
-import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '~backend/functions/check-access';
 import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
@@ -45,19 +44,6 @@ export class ReportsService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(reportEnt: ReportEnt): ReportTab {
-    if (isUndefined(reportEnt)) {
-      return;
-    }
-
-    let report: ReportTab = {
-      ...reportEnt,
-      ...this.tabService.getTabProps({ ent: reportEnt })
-    };
-
-    return report;
-  }
 
   makeReport(item: {
     structId: string;
@@ -255,7 +241,7 @@ export class ReportsService {
           eq(reportsTable.reportId, reportId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.reportEntToTab(x));
 
     if (isUndefined(report)) {
       throw new ServerError({
@@ -322,7 +308,7 @@ export class ReportsService {
                 eq(reportsTable.reportId, reportId)
               )
             })
-            .then(x => this.entToTab(x));
+            .then(x => this.tabService.reportEntToTab(x));
 
     if (isCheckExist === true && isUndefined(report)) {
       throw new ServerError({

@@ -21,6 +21,7 @@ import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
+import { TabService } from '~backend/services/tab.service';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -58,6 +59,7 @@ let retry = require('async-retry');
 @Controller()
 export class RegisterUserController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private usersService: UsersService,
@@ -90,7 +92,7 @@ export class RegisterUserController {
       .findFirst({
         where: eq(usersTable.emailHash, emailHash)
       })
-      .then(x => this.usersService.entToTab(x));
+      .then(x => this.tabService.userEntToTab(x));
 
     if (isDefined(user)) {
       if (isDefined(user.passwordHash) && user.isEmailVerified === true) {

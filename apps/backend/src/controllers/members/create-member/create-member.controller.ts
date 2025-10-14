@@ -26,7 +26,6 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { AvatarsService } from '~backend/services/db/avatars.service';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
@@ -36,6 +35,7 @@ import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_REPORT_ID,
   EMPTY_STRUCT_ID,
@@ -88,10 +88,10 @@ let retry = require('async-retry');
 @Controller()
 export class CreateMemberController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private rabbitService: RabbitService,
-    private avatarsService: AvatarsService,
     private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -131,7 +131,7 @@ export class CreateMemberController {
       .findFirst({
         where: eq(usersTable.emailHash, emailHash)
       })
-      .then(x => this.usersService.entToTab(x));
+      .then(x => this.tabService.userEntToTab(x));
 
     let newUser: UserTab;
 
@@ -287,7 +287,7 @@ export class CreateMemberController {
       })
       .from(avatarsTable)
       .where(eq(avatarsTable.userId, newMember.memberId))
-      .then(xs => xs.map(x => this.avatarsService.entToTab(x as AvatarEnt)));
+      .then(xs => xs.map(x => this.tabService.avatarEntToTab(x as AvatarEnt)));
 
     let avatar = avatars.length > 0 ? avatars[0] : undefined;
 

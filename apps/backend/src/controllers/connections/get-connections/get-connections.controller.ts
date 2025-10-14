@@ -10,6 +10,7 @@ import { ConnectionsService } from '~backend/services/db/connections.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -22,6 +23,7 @@ import {
 @Controller()
 export class GetConnectionsController {
   constructor(
+    private tabService: TabService,
     private connectionsService: ConnectionsService,
     private projectsService: ProjectsService,
     private membersService: MembersService,

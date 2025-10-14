@@ -20,6 +20,7 @@ import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
+import { TabService } from '~backend/services/tab.service';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -36,6 +37,7 @@ let retry = require('async-retry');
 @Controller()
 export class ConfirmUserEmailController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private jwtService: JwtService,
     private hashService: HashService,
@@ -67,7 +69,7 @@ export class ConfirmUserEmailController {
           emailVerificationTokenHash
         )
       })
-      .then(x => this.usersService.entToTab(x));
+      .then(x => this.tabService.userEntToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({

@@ -7,6 +7,7 @@ import { LocalAuthGuard } from '~backend/guards/local-auth.guard';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendLoginUserRequest,
@@ -18,6 +19,7 @@ import {
 @Controller()
 export class LoginUserController {
   constructor(
+    private tabService: TabService,
     private jwtService: JwtService,
     private usersService: UsersService
   ) {}

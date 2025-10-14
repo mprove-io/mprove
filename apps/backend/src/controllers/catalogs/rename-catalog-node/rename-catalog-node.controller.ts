@@ -21,12 +21,12 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/db/branches.service';
-import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -48,12 +48,12 @@ let retry = require('async-retry');
 @Controller()
 export class RenameCatalogNodeController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
-    private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,

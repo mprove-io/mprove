@@ -2,6 +2,7 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
+import { TabService } from '~backend/services/tab.service';
 
 @SkipJwtCheck()
 @UseGuards(ThrottlerIpGuard)
@@ -21,7 +22,7 @@ import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 })
 @Controller('*')
 export class CheckController {
-  constructor() {}
+  constructor(private tabService: TabService) {}
 
   @Get()
   async check() {

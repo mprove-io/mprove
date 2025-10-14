@@ -17,6 +17,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -28,6 +29,7 @@ import {
 @Controller()
 export class GetChartsController {
   constructor(
+    private tabService: TabService,
     private chartsService: ChartsService,
     private branchesService: BranchesService,
     private membersService: MembersService,
@@ -77,7 +79,7 @@ export class GetChartsController {
       .findMany({
         where: eq(chartsTable.structId, bridge.structId)
       })
-      .then(xs => xs.map(x => this.chartsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
 
     let chartsGrantedAccess = charts.filter(x => {
       return checkAccess({
@@ -98,7 +100,7 @@ export class GetChartsController {
       })
       .from(modelsTable)
       .where(eq(modelsTable.structId, bridge.structId))
-      .then(xs => xs.map(x => this.modelsService.entToTab(x as ModelEnt)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 

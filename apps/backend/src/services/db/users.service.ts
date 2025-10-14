@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { UserEnt, usersTable } from '~backend/drizzle/postgres/schema/users';
+import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -31,19 +31,6 @@ export class UsersService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(userEnt: UserEnt): UserTab {
-    if (isUndefined(userEnt)) {
-      return;
-    }
-
-    let user: UserTab = {
-      ...userEnt,
-      ...this.tabService.getTabProps({ ent: userEnt })
-    };
-
-    return user;
-  }
 
   tabToApi(item: { user: UserTab }): User {
     let { user } = item;
@@ -110,7 +97,7 @@ export class UsersService {
       .findFirst({
         where: eq(usersTable.userId, userId)
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.userEntToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({
@@ -135,7 +122,7 @@ export class UsersService {
       .findFirst({
         where: eq(usersTable.emailHash, emailHash)
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.userEntToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({

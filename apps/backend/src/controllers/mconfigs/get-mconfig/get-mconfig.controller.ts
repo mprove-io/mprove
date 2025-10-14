@@ -10,6 +10,7 @@ import { MconfigsService } from '~backend/services/db/mconfigs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -21,6 +22,7 @@ import {
 @Controller()
 export class GetMconfigController {
   constructor(
+    private tabService: TabService,
     private mconfigsService: MconfigsService,
     private modelsService: ModelsService,
     private branchesService: BranchesService,

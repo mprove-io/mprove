@@ -35,6 +35,7 @@ import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { HashService } from '~backend/services/hash.service';
 import { MalloyService } from '~backend/services/malloy.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -57,6 +58,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateDraftChartController {
   constructor(
+    private tabService: TabService,
     private hashService: HashService,
     private malloyService: MalloyService,
     private projectsService: ProjectsService,
@@ -269,7 +271,7 @@ export class CreateDraftChartController {
           eq(queriesTable.projectId, newQuery.projectId)
         )
       })
-      .then(x => this.queriesService.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 

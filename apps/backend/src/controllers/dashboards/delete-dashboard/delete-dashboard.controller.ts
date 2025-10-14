@@ -20,7 +20,6 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BlockmlService } from '~backend/services/blockml.service';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { DashboardsService } from '~backend/services/db/dashboards.service';
@@ -28,6 +27,7 @@ import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -51,11 +51,11 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteDashboardController {
   constructor(
+    private tabService: TabService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
-    private blockmlService: BlockmlService,
     private dashboardsService: DashboardsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,

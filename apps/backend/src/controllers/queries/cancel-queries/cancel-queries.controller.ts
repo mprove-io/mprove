@@ -28,12 +28,12 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
-import { ConnectionsService } from '~backend/services/db/connections.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -55,11 +55,11 @@ let retry = require('async-retry');
 @Controller()
 export class CancelQueriesController {
   constructor(
+    private tabService: TabService,
     private structsService: StructsService,
     private branchesService: BranchesService,
-    private projectsService: ProjectsService,
     private bridgesService: BridgesService,
-    private connectionsService: ConnectionsService,
+    private projectsService: ProjectsService,
     private membersService: MembersService,
     private queriesService: QueriesService,
     private envsService: EnvsService,
@@ -135,7 +135,7 @@ export class CancelQueriesController {
             )
           )
         })
-        .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
+        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
 
     await asyncPool(
       8,

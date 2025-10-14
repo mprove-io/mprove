@@ -12,7 +12,6 @@ import {
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
 import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
 import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
@@ -32,7 +31,6 @@ import { makeQueryId } from '~node-common/functions/make-query-id';
 import { HashService } from '../hash.service';
 import { StoreService } from '../store.service';
 import { TabService } from '../tab.service';
-import { ConnectionsService } from './connections.service';
 import { EnvsService } from './envs.service';
 
 @Injectable()
@@ -41,24 +39,10 @@ export class MconfigsService {
     private tabService: TabService,
     private hashService: HashService,
     private envsService: EnvsService,
-    private connectionsService: ConnectionsService,
     private storeService: StoreService,
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(mconfigEnt: MconfigEnt): MconfigTab {
-    if (isUndefined(mconfigEnt)) {
-      return;
-    }
-
-    let mconfig: MconfigTab = {
-      ...mconfigEnt,
-      ...this.tabService.getTabProps({ ent: mconfigEnt })
-    };
-
-    return mconfig;
-  }
 
   tabToApi(item: {
     mconfig: MconfigTab;
@@ -146,7 +130,7 @@ export class MconfigsService {
           eq(mconfigsTable.structId, structId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.mconfigEntToTab(x));
 
     if (isUndefined(mconfig)) {
       throw new ServerError({
@@ -229,7 +213,7 @@ export class MconfigsService {
           eq(connectionsTable.connectionId, model.connectionId)
         )
       })
-      .then(x => this.connectionsService.entToTab(x));
+      .then(x => this.tabService.connectionEntToTab(x));
 
     let processedRequest = await this.storeService.transformStoreRequest({
       input: model.storeContent.request,

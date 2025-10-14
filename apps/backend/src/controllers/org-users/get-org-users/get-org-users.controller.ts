@@ -13,10 +13,8 @@ import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { AvatarsService } from '~backend/services/db/avatars.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { UsersService } from '~backend/services/db/users.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   OrgUsersItem,
@@ -28,10 +26,8 @@ import {
 @Controller()
 export class GetOrgUsersController {
   constructor(
-    private projectsService: ProjectsService,
+    private tabService: TabService,
     private orgsService: OrgsService,
-    private usersService: UsersService,
-    private avatarsService: AvatarsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -52,7 +48,7 @@ export class GetOrgUsersController {
       .findMany({
         where: eq(projectsTable.orgId, orgId)
       })
-      .then(xs => xs.map(x => this.projectsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
 
     let projectIds = projects.map(x => x.projectId);
 
@@ -82,7 +78,7 @@ export class GetOrgUsersController {
       })
       .then(xs =>
         xs
-          .map(x => this.usersService.entToTab(x))
+          .map(x => this.tabService.userEntToTab(x))
           .sort((a, b) => (a.email > b.email ? 1 : b.email > a.email ? -1 : 0))
       );
 
@@ -113,7 +109,7 @@ export class GetOrgUsersController {
             .from(avatarsTable)
             .where(inArray(avatarsTable.userId, userIds))
             .then(xs =>
-              xs.map(x => this.avatarsService.entToTab(x as AvatarEnt))
+              xs.map(x => this.tabService.avatarEntToTab(x as AvatarEnt))
             );
 
     users.forEach(x => {

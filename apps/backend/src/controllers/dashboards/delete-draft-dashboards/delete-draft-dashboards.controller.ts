@@ -22,6 +22,7 @@ import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -36,6 +37,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteDraftDashboardsController {
   constructor(
+    private tabService: TabService,
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,

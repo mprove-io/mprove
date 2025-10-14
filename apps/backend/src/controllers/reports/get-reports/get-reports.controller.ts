@@ -17,6 +17,7 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -30,6 +31,7 @@ import {
 @Controller()
 export class GetReportsController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
@@ -83,7 +85,7 @@ export class GetReportsController {
           eq(reportsTable.structId, bridge.structId)
         )
       })
-      .then(xs => xs.map(x => this.reportsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
 
     let structReports = await this.db.drizzle.query.reportsTable
       .findMany({
@@ -92,7 +94,7 @@ export class GetReportsController {
           eq(reportsTable.structId, bridge.structId)
         )
       })
-      .then(xs => xs.map(x => this.reportsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.reportEntToTab(x)));
 
     let reportsGrantedAccess = structReports.filter(x =>
       checkAccess({
@@ -136,7 +138,7 @@ export class GetReportsController {
           eq(modelsTable.structId, struct.structId)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 

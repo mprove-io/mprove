@@ -16,7 +16,7 @@ import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { AvatarsService } from '~backend/services/db/avatars.service';
+import { TabService } from '~backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -33,7 +33,7 @@ let retry = require('async-retry');
 @Controller()
 export class SetAvatarController {
   constructor(
-    private avatarsService: AvatarsService,
+    private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -55,7 +55,7 @@ export class SetAvatarController {
       .findFirst({
         where: eq(avatarsTable.userId, user.userId)
       })
-      .then(x => this.avatarsService.entToTab(x));
+      .then(x => this.tabService.avatarEntToTab(x));
 
     if (isDefined(avatar)) {
       avatar.avatarSmall = avatarSmall;

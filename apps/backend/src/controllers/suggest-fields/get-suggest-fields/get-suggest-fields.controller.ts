@@ -11,9 +11,9 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
@@ -29,7 +29,7 @@ import {
 @Controller()
 export class GetSuggestFieldsController {
   constructor(
-    private modelsService: ModelsService,
+    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private branchesService: BranchesService,
@@ -82,7 +82,7 @@ export class GetSuggestFieldsController {
       .findMany({
         where: eq(modelsTable.structId, bridge.structId)
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let modelsGrantedAccess = models
       .filter(model =>

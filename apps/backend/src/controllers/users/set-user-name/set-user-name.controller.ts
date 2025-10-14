@@ -17,8 +17,8 @@ import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/db/members.service';
 import { UsersService } from '~backend/services/db/users.service';
+import { TabService } from '~backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -36,8 +36,8 @@ let retry = require('async-retry');
 @Controller()
 export class SetUserNameController {
   constructor(
+    private tabService: TabService,
     private usersService: UsersService,
-    private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -62,7 +62,7 @@ export class SetUserNameController {
       .findMany({
         where: eq(membersTable.memberId, user.userId)
       })
-      .then(xs => xs.map(x => this.membersService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.memberEntToTab(x)));
 
     userMembers.map(member => {
       member.firstName = firstName;

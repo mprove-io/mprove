@@ -9,10 +9,7 @@ import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
-import {
-  StructEnt,
-  structsTable
-} from '~backend/drizzle/postgres/schema/structs';
+import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import {
   EMPTY_STRUCT_ID,
   PROJECT_CONFIG_CURRENCY_PREFIX,
@@ -37,19 +34,6 @@ export class StructsService {
     private cs: ConfigService<BackendConfig>,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(structEnt: StructEnt): StructTab {
-    if (isUndefined(structEnt)) {
-      return;
-    }
-
-    let struct: StructTab = {
-      ...structEnt,
-      ...this.tabService.getTabProps({ ent: structEnt })
-    };
-
-    return struct;
-  }
 
   tabToApi(item: { struct: StructTab }): Struct {
     let { struct } = item;
@@ -110,7 +94,7 @@ export class StructsService {
             eq(structsTable.projectId, projectId)
           )
         })
-        .then(x => this.entToTab(x));
+        .then(x => this.tabService.structEntToTab(x));
 
       if (isUndefined(struct)) {
         if (isGetEmptyStructOnError === true) {

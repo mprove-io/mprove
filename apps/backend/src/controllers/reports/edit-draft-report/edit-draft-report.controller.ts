@@ -14,6 +14,7 @@ import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportRowService } from '~backend/services/report-row.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -28,6 +29,7 @@ import {
 @Controller()
 export class EditDraftReportController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,

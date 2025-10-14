@@ -35,6 +35,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -67,6 +68,7 @@ let retry = require('async-retry');
 @Controller()
 export class SaveModifyDashboardController {
   constructor(
+    private tabService: TabService,
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rabbitService: RabbitService,
@@ -360,7 +362,7 @@ export class SaveModifyDashboardController {
           inArray(modelsTable.modelId, modelIds)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
       struct: apiStruct,

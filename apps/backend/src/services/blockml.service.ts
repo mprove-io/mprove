@@ -33,6 +33,7 @@ import { ModelsService } from './db/models.service';
 import { QueriesService } from './db/queries.service';
 import { ReportsService } from './db/reports.service';
 import { RabbitService } from './rabbit.service';
+import { TabService } from './tab.service';
 
 let retry = require('async-retry');
 
@@ -40,6 +41,7 @@ let retry = require('async-retry');
 export class BlockmlService {
   constructor(
     private rabbitService: RabbitService,
+    private tabService: TabService,
     private envsService: EnvsService,
     private connectionsService: ConnectionsService,
     private modelsService: ModelsService,
@@ -108,7 +110,7 @@ export class BlockmlService {
             )
           )
         })
-        .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
+        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
     }
 
     let connectionsToUse = isDefined(connections)

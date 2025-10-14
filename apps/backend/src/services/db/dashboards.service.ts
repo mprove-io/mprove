@@ -47,19 +47,6 @@ export class DashboardsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  entToTab(dashboardEnt: DashboardEnt): DashboardTab {
-    if (isUndefined(dashboardEnt)) {
-      return;
-    }
-
-    let dashboard: DashboardTab = {
-      ...dashboardEnt,
-      ...this.tabService.getTabProps({ ent: dashboardEnt })
-    };
-
-    return dashboard;
-  }
-
   tabToApi(item: {
     dashboard: DashboardTab;
     mconfigs: MconfigX[];
@@ -182,7 +169,7 @@ export class DashboardsService {
           eq(dashboardsTable.dashboardId, dashboardId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.dashboardEntToTab(x));
 
     if (isUndefined(dashboard)) {
       throw new ServerError({
@@ -226,7 +213,7 @@ export class DashboardsService {
             .findMany({
               where: inArray(mconfigsTable.mconfigId, mconfigIds)
             })
-            .then(xs => xs.map(x => this.mconfigsService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
 
     let queryIds = dashboard.tiles.map(x => x.queryId);
     let queries =
@@ -239,13 +226,13 @@ export class DashboardsService {
                 eq(queriesTable.projectId, projectId)
               )
             })
-            .then(xs => xs.map(x => this.queriesService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
 
     let models = await this.db.drizzle.query.modelsTable
       .findMany({
         where: eq(modelsTable.structId, structId)
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let apiModels = models.map(model =>
       this.modelsService.tabToApi({
@@ -304,9 +291,9 @@ export class DashboardsService {
             : eq(dashboardsTable.draft, false)
         )
       )
-      .then(xs => xs.map(x => this.entToTab(x as DashboardEnt)));
-
-    // let dashboardTabParts = dashboardParts.map(x => this.entToTab(x));
+      .then(xs =>
+        xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
+      );
 
     let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
       checkAccess({
@@ -333,7 +320,7 @@ export class DashboardsService {
           inArray(modelsTable.modelId, uniqueModelIds)
         )
       )
-      .then(xs => xs.map(x => this.modelsService.entToTab(x as ModelEnt)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
 
     let apiModels = models.map(model =>
       this.modelsService.tabToApi({

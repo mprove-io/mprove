@@ -17,6 +17,7 @@ import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   PATH_UPDATE_PASSWORD,
   RESTRICTED_USER_ALIAS
@@ -51,6 +52,7 @@ let retry = require('async-retry');
 @Controller()
 export class ResetUserPasswordController {
   constructor(
+    private tabService: TabService,
     private emailService: EmailService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,

@@ -7,6 +7,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetEnvsRequest,
@@ -17,6 +18,7 @@ import {
 @Controller()
 export class GetEnvsController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,

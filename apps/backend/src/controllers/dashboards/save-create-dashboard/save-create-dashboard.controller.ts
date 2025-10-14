@@ -29,11 +29,11 @@ import { DashboardsService } from '~backend/services/db/dashboards.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MconfigsService } from '~backend/services/db/mconfigs.service';
 import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -69,7 +69,7 @@ let retry = require('async-retry');
 @Controller()
 export class SaveCreateDashboardController {
   constructor(
-    private modelsService: ModelsService,
+    private tabService: TabService,
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rabbitService: RabbitService,
@@ -338,7 +338,7 @@ export class SaveCreateDashboardController {
           inArray(modelsTable.modelId, modelIds)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
       dashboards: apiDashboards,

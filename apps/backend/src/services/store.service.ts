@@ -30,7 +30,7 @@ import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
 import { MyRegex } from '~common/models/my-regex';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
-import { QueriesService } from './db/queries.service';
+import { TabService } from './tab.service';
 import { UserCodeService } from './user-code.service';
 
 let retry = require('async-retry');
@@ -45,7 +45,7 @@ export interface StoreUserCodeReturn {
 @Injectable()
 export class StoreService {
   constructor(
-    private queriesService: QueriesService,
+    private tabService: TabService,
     private userCodeService: UserCodeService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -465,7 +465,7 @@ ${inputSub}
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.queriesService.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     try {
       let body = queryStart.apiBody;
@@ -520,7 +520,7 @@ ${inputSub}
             eq(queriesTable.projectId, projectId)
           )
         })
-        .then(x => this.queriesService.entToTab(x));
+        .then(x => this.tabService.queryEntToTab(x));
 
       if (isDefined(q)) {
         if (response.status !== 200 && response.status !== 201) {
@@ -584,7 +584,7 @@ ${inputSub}
             eq(queriesTable.projectId, projectId)
           )
         })
-        .then(x => this.queriesService.entToTab(x));
+        .then(x => this.tabService.queryEntToTab(x));
 
       if (isDefined(q)) {
         q.status = QueryStatusEnum.Error;

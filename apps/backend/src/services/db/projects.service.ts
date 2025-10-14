@@ -8,10 +8,7 @@ import {
   ProjectTab,
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
-import {
-  ProjectEnt,
-  projectsTable
-} from '~backend/drizzle/postgres/schema/projects';
+import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
@@ -56,19 +53,6 @@ export class ProjectsService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(projectEnt: ProjectEnt): ProjectTab {
-    if (isUndefined(projectEnt)) {
-      return;
-    }
-
-    let project: ProjectTab = {
-      ...projectEnt,
-      ...this.tabService.getTabProps({ ent: projectEnt })
-    };
-
-    return project;
-  }
 
   wrapToApiProjectsItem(item: {
     project: ProjectTab;
@@ -139,7 +123,7 @@ export class ProjectsService {
       .findFirst({
         where: eq(projectsTable.projectId, projectId)
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.projectEntToTab(x));
 
     if (isUndefined(project)) {
       throw new ServerError({

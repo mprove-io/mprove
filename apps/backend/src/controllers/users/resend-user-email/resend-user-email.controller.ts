@@ -6,8 +6,8 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
+import { TabService } from '~backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -39,8 +39,8 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class ResendUserEmailController {
   constructor(
+    private tabService: TabService,
     private emailService: EmailService,
-    private usersService: UsersService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -54,7 +54,7 @@ export class ResendUserEmailController {
       .findFirst({
         where: eq(usersTable.userId, userId)
       })
-      .then(x => this.usersService.entToTab(x));
+      .then(x => this.tabService.userEntToTab(x));
 
     if (isUndefined(user)) {
       throw new ServerError({

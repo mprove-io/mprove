@@ -23,15 +23,13 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
-import { KitsService } from '~backend/services/db/kits.service';
-import { MconfigsService } from '~backend/services/db/mconfigs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
-import { QueriesService } from '~backend/services/db/queries.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { ReportDataService } from '~backend/services/report-data.service';
 import { ReportRowService } from '~backend/services/report-row.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
@@ -52,6 +50,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateDraftReportController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
@@ -61,9 +60,6 @@ export class CreateDraftReportController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private envsService: EnvsService,
-    private mconfigsService: MconfigsService,
-    private queriesService: QueriesService,
-    private kitsService: KitsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -216,7 +212,7 @@ export class CreateDraftReportController {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(xs => xs.map(x => this.queriesService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
 
     let copyMconfigs = await this.db.drizzle.query.mconfigsTable
       .findMany({
@@ -225,7 +221,7 @@ export class CreateDraftReportController {
           eq(mconfigsTable.structId, struct.structId)
         )
       })
-      .then(xs => xs.map(x => this.mconfigsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
 
     let copyKits = await this.db.drizzle.query.kitsTable
       .findMany({
@@ -235,7 +231,7 @@ export class CreateDraftReportController {
           eq(kitsTable.reportId, fromReportId)
         )
       })
-      .then(xs => xs.map(x => this.kitsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.kitEntToTab(x)));
 
     copyQueries.forEach(x => {
       x.queryId = copyQueriesMap.find(

@@ -19,10 +19,10 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
-import { NotesService } from '~backend/services/db/notes.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { HashService } from '~backend/services/hash.service';
+import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
@@ -43,10 +43,10 @@ let retry = require('async-retry');
 @Controller()
 export class CreateProjectController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private projectsService: ProjectsService,
-    private notesService: NotesService,
     private orgsService: OrgsService,
     private logger: Logger,
     private cs: ConfigService<BackendConfig>,
@@ -102,7 +102,7 @@ export class CreateProjectController {
         .findFirst({
           where: eq(notesTable.noteId, noteId)
         })
-        .then(x => this.notesService.entToTab(x));
+        .then(x => this.tabService.noteEntToTab(x));
 
       if (isUndefined(note)) {
         throw new ServerError({

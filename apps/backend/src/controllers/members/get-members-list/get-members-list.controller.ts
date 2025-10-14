@@ -11,6 +11,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetMembersListRequest,
@@ -21,6 +22,7 @@ import {
 @Controller()
 export class GetMembersListController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
@@ -47,7 +49,7 @@ export class GetMembersListController {
       .findMany({
         where: eq(membersTable.projectId, projectId)
       })
-      .then(xs => xs.map(x => this.membersService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.memberEntToTab(x)));
 
     let payload: ToBackendGetMembersListResponsePayload = {
       userMember: this.membersService.tabToApi({ member: userMember }),

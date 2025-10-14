@@ -6,7 +6,7 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { AvatarsService } from '~backend/services/db/avatars.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetAvatarBigRequest,
@@ -17,7 +17,7 @@ import {
 @Controller()
 export class GetAvatarBigController {
   constructor(
-    private avatarsService: AvatarsService,
+    private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -31,7 +31,7 @@ export class GetAvatarBigController {
       .findFirst({
         where: eq(avatarsTable.userId, avatarUserId)
       })
-      .then(x => this.avatarsService.entToTab(x));
+      .then(x => this.tabService.avatarEntToTab(x));
 
     let payload: ToBackendGetAvatarBigResponsePayload = {
       avatarSmall: avatar?.avatarSmall,

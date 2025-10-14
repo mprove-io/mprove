@@ -13,9 +13,9 @@ import {
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { AvatarsService } from '~backend/services/db/avatars.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -31,7 +31,7 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class GetMembersController {
   constructor(
-    private avatarsService: AvatarsService,
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
@@ -81,7 +81,7 @@ export class GetMembersController {
       })
       .then(xs =>
         xs
-          .map(x => this.membersService.entToTab(x))
+          .map(x => this.tabService.memberEntToTab(x))
           .sort((a, b) => (a.email > b.email ? 1 : b.email > a.email ? -1 : 0))
       );
 
@@ -102,7 +102,7 @@ export class GetMembersController {
             .from(avatarsTable)
             .where(inArray(avatarsTable.userId, memberIds))
             .then(xs =>
-              xs.map(x => this.avatarsService.entToTab(x as AvatarEnt))
+              xs.map(x => this.tabService.avatarEntToTab(x as AvatarEnt))
             );
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });

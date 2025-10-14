@@ -27,12 +27,12 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { ReportDataService } from '~backend/services/report-data.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -64,11 +64,11 @@ let retry = require('async-retry');
 @Controller()
 export class SaveModifyReportController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private structsService: StructsService,
     private reportsService: ReportsService,
-    private modelsService: ModelsService,
     private reportDataService: ReportDataService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
@@ -202,7 +202,7 @@ export class SaveModifyReportController {
                 inArray(modelsTable.modelId, modelIds)
               )
             })
-            .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let repFileText = makeReportFileText({
       reportId: modReportId,

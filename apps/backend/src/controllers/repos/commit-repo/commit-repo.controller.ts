@@ -11,6 +11,7 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -31,6 +32,7 @@ import { ServerError } from '~common/models/server-error';
 @Controller()
 export class CommitRepoController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,

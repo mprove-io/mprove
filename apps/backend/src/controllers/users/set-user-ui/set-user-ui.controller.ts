@@ -16,6 +16,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
+import { TabService } from '~backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -33,6 +34,7 @@ let retry = require('async-retry');
 @Controller()
 export class SetUserUiController {
   constructor(
+    private tabService: TabService,
     private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

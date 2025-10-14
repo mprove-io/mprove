@@ -27,6 +27,7 @@ import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -50,6 +51,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteChartController {
   constructor(
+    private tabService: TabService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,

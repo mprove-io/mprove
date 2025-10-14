@@ -33,6 +33,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { MalloyService } from '~backend/services/malloy.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
@@ -51,6 +52,7 @@ let retry = require('async-retry');
 @Controller()
 export class GetChartController {
   constructor(
+    private tabService: TabService,
     private malloyService: MalloyService,
     private branchesService: BranchesService,
     private membersService: MembersService,
@@ -204,7 +206,7 @@ export class GetChartController {
           eq(queriesTable.projectId, newQuery.projectId)
         )
       })
-      .then(x => this.queriesService.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     chart.tiles[0].mconfigId = newMconfig.mconfigId;
     chart.tiles[0].queryId = newMconfig.queryId;

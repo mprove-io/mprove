@@ -3,7 +3,6 @@ import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ModelX } from '~common/interfaces/backend/model-x';
@@ -19,19 +18,6 @@ export class ModelsService {
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(modelEnt: ModelEnt): ModelTab {
-    if (isUndefined(modelEnt)) {
-      return;
-    }
-
-    let model: ModelTab = {
-      ...modelEnt,
-      ...this.tabService.getTabProps({ ent: modelEnt })
-    };
-
-    return model;
-  }
 
   tabToApi(item: {
     model: ModelTab;
@@ -111,7 +97,7 @@ export class ModelsService {
           eq(modelsTable.modelId, modelId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.modelEntToTab(x));
 
     if (isUndefined(model)) {
       throw new ServerError({

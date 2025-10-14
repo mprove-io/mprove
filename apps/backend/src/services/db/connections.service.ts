@@ -3,7 +3,6 @@ import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ConnectionTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
 import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -24,19 +23,6 @@ export class ConnectionsService {
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(connectionEnt: ConnectionEnt): ConnectionTab {
-    if (isUndefined(connectionEnt)) {
-      return;
-    }
-
-    let connection: ConnectionTab = {
-      ...connectionEnt,
-      ...this.tabService.getTabProps({ ent: connectionEnt })
-    };
-
-    return connection;
-  }
 
   makeConnection(item: {
     projectId: string;
@@ -286,7 +272,7 @@ export class ConnectionsService {
           eq(connectionsTable.projectId, projectId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.connectionEntToTab(x));
 
     if (isUndefined(connection)) {
       throw new ServerError({

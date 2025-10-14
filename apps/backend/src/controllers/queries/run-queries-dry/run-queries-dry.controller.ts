@@ -26,6 +26,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { BigQueryService } from '~backend/services/dwh/bigquery.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -43,6 +44,7 @@ let retry = require('async-retry');
 @Controller()
 export class RunQueriesDryController {
   constructor(
+    private tabService: TabService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,

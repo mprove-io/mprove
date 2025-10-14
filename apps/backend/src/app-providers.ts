@@ -54,8 +54,8 @@ export const appProviders = [
   //
   BranchesService,
   AvatarsService,
-  BridgesService,
   BranchesService,
+  BridgesService,
   ChartsService,
   ConnectionsService,
   DashboardsService,

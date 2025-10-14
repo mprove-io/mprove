@@ -23,6 +23,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { ReportDataService } from '~backend/services/report-data.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -54,6 +55,7 @@ let retry = require('async-retry');
 @Controller()
 export class GetReportController {
   constructor(
+    private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,

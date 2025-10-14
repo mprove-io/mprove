@@ -24,6 +24,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -41,6 +42,7 @@ let retry = require('async-retry');
 @Controller()
 export class CreateTempMconfigController {
   constructor(
+    private tabService: TabService,
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
     private membersService: MembersService,

@@ -26,7 +26,6 @@ import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
-import { ConnectionsService } from './connections.service';
 import { EnvsService } from './envs.service';
 
 let retry = require('async-retry');
@@ -37,24 +36,10 @@ export class QueriesService {
     private tabService: TabService,
     private hashService: HashService,
     private envsService: EnvsService,
-    private connectionsService: ConnectionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(queryEnt: QueryEnt): QueryTab {
-    if (isUndefined(queryEnt)) {
-      return;
-    }
-
-    let query: QueryTab = {
-      ...queryEnt,
-      ...this.tabService.getTabProps({ ent: queryEnt })
-    };
-
-    return query;
-  }
 
   tabToApi(item: { query: QueryTab }): Query {
     let { query } = item;
@@ -171,7 +156,7 @@ export class QueriesService {
           eq(queriesTable.projectId, projectId)
         )
       )
-      .then(xs => xs.map(x => this.entToTab(x as QueryEnt)));
+      .then(xs => xs.map(x => this.tabService.queryEntToTab(x as QueryEnt)));
 
     let query = queries.length < 0 ? undefined : queries[0];
 
@@ -194,7 +179,7 @@ export class QueriesService {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.queryEntToTab(x));
 
     if (isUndefined(query)) {
       throw new ServerError({
@@ -241,7 +226,7 @@ export class QueriesService {
           eq(queriesTable.projectId, projectId)
         )
       )
-      .then(xs => xs.map(x => this.entToTab(x as QueryEnt)));
+      .then(xs => xs.map(x => this.tabService.queryEntToTab(x as QueryEnt)));
 
     let notFoundQueryIds: string[] = [];
 
@@ -276,7 +261,7 @@ export class QueriesService {
           eq(queriesTable.projectId, projectId)
         )
       })
-      .then(xs => xs.map(x => this.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
 
     let notFoundQueryIds: string[] = [];
 
@@ -332,7 +317,7 @@ WHERE m.mconfig_id is NULL
           eq(queriesTable.connectionType, ConnectionTypeEnum.BigQuery)
         )
       })
-      .then(xs => xs.map(x => this.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.queryEntToTab(x)));
 
     await asyncPool(8, queries, async (query: QueryTab) => {
       try {
@@ -355,7 +340,7 @@ WHERE m.mconfig_id is NULL
               eq(connectionsTable.connectionId, query.connectionId)
             )
           })
-          .then(x => this.connectionsService.entToTab(x));
+          .then(x => this.tabService.connectionEntToTab(x));
 
         if (isUndefined(connection)) {
           query.status = QueryStatusEnum.Error;

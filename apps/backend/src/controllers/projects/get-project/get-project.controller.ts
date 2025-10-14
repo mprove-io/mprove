@@ -5,6 +5,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetProjectRequest,
@@ -15,6 +16,7 @@ import {
 @Controller()
 export class GetProjectController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService
   ) {}

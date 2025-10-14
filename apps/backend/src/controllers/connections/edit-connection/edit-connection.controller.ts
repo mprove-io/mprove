@@ -18,10 +18,10 @@ import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BridgesService } from '~backend/services/db/bridges.service';
 import { ConnectionsService } from '~backend/services/db/connections.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   DEFAULT_QUERY_SIZE_LIMIT,
   THROTTLE_CUSTOM
@@ -43,7 +43,7 @@ let retry = require('async-retry');
 @Controller()
 export class EditConnectionController {
   constructor(
-    private bridgesService: BridgesService,
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,

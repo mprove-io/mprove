@@ -22,9 +22,9 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
-import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
@@ -65,8 +65,8 @@ let retry = require('async-retry');
 @Controller()
 export class SpecialRebuildStructsController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
-    private membersService: MembersService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private cs: ConfigService<BackendConfig>,
@@ -98,7 +98,7 @@ export class SpecialRebuildStructsController {
         .findMany({
           where: inArray(membersTable.memberId, userIds)
         })
-        .then(xs => xs.map(x => this.membersService.entToTab(x)));
+        .then(xs => xs.map(x => this.tabService.memberEntToTab(x)));
 
       projectIds = members.map(x => x.projectId);
     }
@@ -109,11 +109,11 @@ export class SpecialRebuildStructsController {
             .findMany({
               where: inArray(projectsTable.projectId, projectIds)
             })
-            .then(xs => xs.map(x => this.projectsService.entToTab(x)))
+            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)))
         : await this.db.drizzle
             .select()
             .from(projectsTable)
-            .then(xs => xs.map(x => this.projectsService.entToTab(x)));
+            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
 
     let bridges: BridgeTab[];
 

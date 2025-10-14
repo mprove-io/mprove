@@ -22,6 +22,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -41,6 +42,7 @@ let retry = require('async-retry');
 @Controller()
 export class DeleteBranchController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private rabbitService: RabbitService,
     private membersService: MembersService,

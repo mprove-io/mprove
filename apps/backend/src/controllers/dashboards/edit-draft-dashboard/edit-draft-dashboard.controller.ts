@@ -34,8 +34,7 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
-import { MalloyService } from '~backend/services/malloy.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
@@ -65,10 +64,9 @@ let retry = require('async-retry');
 @Controller()
 export class EditDraftDashboardController {
   constructor(
-    private malloyService: MalloyService,
+    private tabService: TabService,
     private branchesService: BranchesService,
     private modelsService: ModelsService,
-    private rabbitService: RabbitService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private blockmlService: BlockmlService,
@@ -268,7 +266,7 @@ export class EditDraftDashboardController {
           inArray(modelsTable.modelId, modelIds)
         )
       })
-      .then(xs => xs.map(x => this.modelsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
       struct: apiStruct,

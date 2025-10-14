@@ -415,7 +415,7 @@ export class AppModule implements OnModuleInit {
       .findFirst({
         where: isNotNull(dconfigsTable.dconfigId)
       })
-      .then(x => this.dconfigsService.entToTab(x));
+      .then(x => this.tabService.dconfigEntToTab(x));
 
     if (isUndefined(dconfig)) {
       throw new ServerError({
@@ -436,7 +436,7 @@ export class AppModule implements OnModuleInit {
         .findFirst({
           where: isNotNull(dconfigsTable.dconfigId)
         })
-        .then(x => this.dconfigsService.entToTab(x));
+        .then(x => this.tabService.dconfigEntToTab(x));
 
       dconfigChecked.hashSecret = this.hashService.createHashSecret();
 
@@ -480,7 +480,7 @@ export class AppModule implements OnModuleInit {
         .findFirst({
           where: eq(orgsTable.orgId, demoOrgId)
         })
-        .then(x => this.orgsService.entToTab(x));
+        .then(x => this.tabService.orgEntToTab(x));
 
       if (isUndefined(firstOrg)) {
         firstOrg = await this.orgsService.addOrg({
@@ -878,7 +878,7 @@ export class AppModule implements OnModuleInit {
         .findFirst({
           where: eq(projectsTable.projectId, demoProjectId)
         })
-        .then(x => this.projectsService.entToTab(x));
+        .then(x => this.tabService.projectEntToTab(x));
 
       if (isUndefined(demoProject)) {
         let demoProjectRemoteType = this.cs.get<

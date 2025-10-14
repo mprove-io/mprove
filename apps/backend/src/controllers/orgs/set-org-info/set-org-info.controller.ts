@@ -16,6 +16,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/db/orgs.service';
+import { TabService } from '~backend/services/tab.service';
 import { DEMO_ORG_NAME } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -34,6 +35,7 @@ let retry = require('async-retry');
 @Controller()
 export class SetOrgInfoController {
   constructor(
+    private tabService: TabService,
     private orgsService: OrgsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,

@@ -5,6 +5,7 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
+import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -16,7 +17,10 @@ import {
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetUserProfileController {
-  constructor(private usersService: UsersService) {}
+  constructor(
+    private tabService: TabService,
+    private usersService: UsersService
+  ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetUserProfile)
   async getUserProfile(@AttachUser() user: UserTab, @Req() request: any) {

@@ -19,8 +19,8 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
-import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
+import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -38,10 +38,10 @@ let retry = require('async-retry');
 @Controller()
 export class SetOrgOwnerController {
   constructor(
+    private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,
-    private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -74,7 +74,7 @@ export class SetOrgOwnerController {
           eq(usersTable.isEmailVerified, true)
         )
       })
-      .then(x => this.usersService.entToTab(x));
+      .then(x => this.tabService.userEntToTab(x));
 
     if (isUndefined(newOwner)) {
       throw new ServerError({

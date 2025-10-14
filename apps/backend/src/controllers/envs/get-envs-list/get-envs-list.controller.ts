@@ -9,6 +9,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { TabService } from '~backend/services/tab.service';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -20,6 +21,7 @@ import {
 @Controller()
 export class GetEnvsListController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private envsService: EnvsService,
@@ -45,7 +47,7 @@ export class GetEnvsListController {
       .findMany({
         where: eq(envsTable.projectId, projectId)
       })
-      .then(xs => xs.map(x => this.envsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.envEntToTab(x)));
 
     if (isFilter === true) {
       envs = envs.filter(

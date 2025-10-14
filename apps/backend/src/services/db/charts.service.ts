@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ChartTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { ChartEnt, chartsTable } from '~backend/drizzle/postgres/schema/charts';
+import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
@@ -26,19 +26,6 @@ export class ChartsService {
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(chartEnt: ChartEnt): ChartTab {
-    if (isUndefined(chartEnt)) {
-      return;
-    }
-
-    let chart: ChartTab = {
-      ...chartEnt,
-      ...this.tabService.getTabProps({ ent: chartEnt })
-    };
-
-    return chart;
-  }
 
   tabToApi(item: {
     chart: ChartTab;
@@ -140,7 +127,7 @@ export class ChartsService {
           eq(chartsTable.chartId, chartId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.chartEntToTab(x));
 
     if (isUndefined(chart)) {
       throw new ServerError({

@@ -28,6 +28,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
+import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -52,6 +53,7 @@ let retry = require('async-retry');
 @Controller()
 export class PushRepoController {
   constructor(
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private rabbitService: RabbitService,
@@ -151,7 +153,7 @@ export class PushRepoController {
           eq(branchesTable.branchId, branchId)
         )
       })
-      .then(x => this.branchesService.entToTab(x));
+      .then(x => this.tabService.branchEntToTab(x));
 
     let prodBranchBridges = await this.db.drizzle.query.bridgesTable
       .findMany({
@@ -161,7 +163,7 @@ export class PushRepoController {
           eq(bridgesTable.branchId, branch.branchId)
         )
       })
-      .then(xs => xs.map(x => this.bridgesService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.bridgeEntToTab(x)));
 
     if (isUndefined(prodBranch)) {
       prodBranch = this.branchesService.makeBranch({
