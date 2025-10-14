@@ -16,7 +16,6 @@ import { TabService } from '~backend/services/tab.service';
 import { isDefined } from '~common/functions/is-defined';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
-import { DconfigTab } from './schema/_tabs';
 import { avatarsTable } from './schema/avatars';
 import { branchesTable } from './schema/branches';
 import { bridgesTable } from './schema/bridges';
@@ -92,14 +91,7 @@ export class DrizzlePacker {
       .findFirst({
         where: isNotNull(dconfigsTable.dconfigId)
       })
-      .then(x => {
-        let dconfigTab: DconfigTab = {
-          ...x,
-          ...this.tabService.getTabProps({ ent: x })
-        };
-
-        return dconfigTab;
-      });
+      .then(x => this.tabService.dconfigEntToTab(x));
 
     let insertEnts =
       isDefined(insert) && Object.keys(insert).length > 0

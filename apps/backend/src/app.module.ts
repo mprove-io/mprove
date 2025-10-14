@@ -350,7 +350,7 @@ export class AppModule implements OnModuleInit {
             .findFirst({
               where: eq(usersTable.emailHash, mproveAdminEmailHash)
             })
-            .then(x => this.usersService.entToTab(x));
+            .then(x => this.tabService.userEntToTab(x));
 
           if (isUndefined(mproveAdminUser)) {
             mproveAdminUser = await this.usersService.addMproveAdminUser({

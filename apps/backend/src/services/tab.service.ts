@@ -2,6 +2,46 @@ import * as crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
+import {
+  AvatarTab,
+  BranchTab,
+  BridgeTab,
+  ChartTab,
+  ConnectionTab,
+  DashboardTab,
+  DconfigTab,
+  EnvTab,
+  KitTab,
+  MconfigTab,
+  MemberTab,
+  ModelTab,
+  NoteTab,
+  OrgTab,
+  ProjectTab,
+  QueryTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
+import { AvatarEnt } from '~backend/drizzle/postgres/schema/avatars';
+import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
+import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
+import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
+import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
+import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
+import { DconfigEnt } from '~backend/drizzle/postgres/schema/dconfigs';
+import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
+import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
+import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
+import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
+import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
+import { NoteEnt } from '~backend/drizzle/postgres/schema/notes';
+import { OrgEnt } from '~backend/drizzle/postgres/schema/orgs';
+import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
+import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
+import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
+import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
+import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -180,5 +220,252 @@ export class TabService {
     });
 
     return { publicKey, privateKey };
+  }
+
+  avatarEntToTab(avatarEnt: AvatarEnt): AvatarTab {
+    if (isUndefined(avatarEnt)) {
+      return;
+    }
+
+    let avatar: AvatarTab = {
+      ...avatarEnt,
+      ...this.getTabProps({ ent: avatarEnt })
+    };
+
+    return avatar;
+  }
+
+  branchEntToTab(branchEnt: BranchEnt): BranchTab {
+    if (isUndefined(branchEnt)) {
+      return;
+    }
+
+    let branch: BranchTab = {
+      ...branchEnt,
+      ...this.getTabProps({ ent: branchEnt })
+    };
+
+    return branch;
+  }
+
+  bridgeEntToTab(bridgeEnt: BridgeEnt): BridgeTab {
+    if (isUndefined(bridgeEnt)) {
+      return;
+    }
+
+    let bridge: BridgeTab = {
+      ...bridgeEnt,
+      ...this.getTabProps({ ent: bridgeEnt })
+    };
+
+    return bridge;
+  }
+
+  chartEntToTab(chartEnt: ChartEnt): ChartTab {
+    if (isUndefined(chartEnt)) {
+      return;
+    }
+
+    let chart: ChartTab = {
+      ...chartEnt,
+      ...this.getTabProps({ ent: chartEnt })
+    };
+
+    return chart;
+  }
+
+  connectionEntToTab(connectionEnt: ConnectionEnt): ConnectionTab {
+    if (isUndefined(connectionEnt)) {
+      return;
+    }
+
+    let connection: ConnectionTab = {
+      ...connectionEnt,
+      ...this.getTabProps({ ent: connectionEnt })
+    };
+
+    return connection;
+  }
+
+  dashboardEntToTab(dashboardEnt: DashboardEnt): DashboardTab {
+    if (isUndefined(dashboardEnt)) {
+      return;
+    }
+
+    let dashboard: DashboardTab = {
+      ...dashboardEnt,
+      ...this.getTabProps({ ent: dashboardEnt })
+    };
+
+    return dashboard;
+  }
+
+  dconfigEntToTab(dconfigEnt: DconfigEnt): DconfigTab {
+    if (isUndefined(dconfigEnt)) {
+      return;
+    }
+
+    let dconfig: DconfigTab = {
+      ...dconfigEnt,
+      ...this.getTabProps({ ent: dconfigEnt })
+    };
+
+    return dconfig;
+  }
+
+  envEntToTab(envEnt: EnvEnt): EnvTab {
+    if (isUndefined(envEnt)) {
+      return;
+    }
+
+    let env: EnvTab = {
+      ...envEnt,
+      ...this.getTabProps({ ent: envEnt })
+    };
+
+    return env;
+  }
+
+  kitEntToTab(kitEnt: KitEnt): KitTab {
+    if (isUndefined(kitEnt)) {
+      return;
+    }
+
+    let kit: KitTab = {
+      ...kitEnt,
+      ...this.getTabProps({ ent: kitEnt })
+    };
+
+    return kit;
+  }
+
+  mconfigEntToTab(mconfigEnt: MconfigEnt): MconfigTab {
+    if (isUndefined(mconfigEnt)) {
+      return;
+    }
+
+    let mconfig: MconfigTab = {
+      ...mconfigEnt,
+      ...this.getTabProps({ ent: mconfigEnt })
+    };
+
+    return mconfig;
+  }
+
+  memberEntToTab(memberEnt: MemberEnt): MemberTab {
+    if (isUndefined(memberEnt)) {
+      return;
+    }
+
+    let member: MemberTab = {
+      ...memberEnt,
+      ...this.getTabProps({ ent: memberEnt })
+    };
+
+    return member;
+  }
+
+  modelEntToTab(modelEnt: ModelEnt): ModelTab {
+    if (isUndefined(modelEnt)) {
+      return;
+    }
+
+    let model: ModelTab = {
+      ...modelEnt,
+      ...this.getTabProps({ ent: modelEnt })
+    };
+
+    return model;
+  }
+
+  noteEntToTab(noteEnt: NoteEnt): NoteTab {
+    if (isUndefined(noteEnt)) {
+      return;
+    }
+
+    let note: NoteTab = {
+      ...noteEnt,
+      ...this.getTabProps({ ent: noteEnt })
+    };
+
+    return note;
+  }
+
+  orgEntToTab(orgEnt: OrgEnt): OrgTab {
+    if (isUndefined(orgEnt)) {
+      return;
+    }
+
+    let org: OrgTab = {
+      ...orgEnt,
+      ...this.getTabProps({ ent: orgEnt })
+    };
+
+    return org;
+  }
+
+  projectEntToTab(projectEnt: ProjectEnt): ProjectTab {
+    if (isUndefined(projectEnt)) {
+      return;
+    }
+
+    let project: ProjectTab = {
+      ...projectEnt,
+      ...this.getTabProps({ ent: projectEnt })
+    };
+
+    return project;
+  }
+
+  queryEntToTab(queryEnt: QueryEnt): QueryTab {
+    if (isUndefined(queryEnt)) {
+      return;
+    }
+
+    let query: QueryTab = {
+      ...queryEnt,
+      ...this.getTabProps({ ent: queryEnt })
+    };
+
+    return query;
+  }
+
+  reportEntToTab(reportEnt: ReportEnt): ReportTab {
+    if (isUndefined(reportEnt)) {
+      return;
+    }
+
+    let report: ReportTab = {
+      ...reportEnt,
+      ...this.getTabProps({ ent: reportEnt })
+    };
+
+    return report;
+  }
+
+  structEntToTab(structEnt: StructEnt): StructTab {
+    if (isUndefined(structEnt)) {
+      return;
+    }
+
+    let struct: StructTab = {
+      ...structEnt,
+      ...this.getTabProps({ ent: structEnt })
+    };
+
+    return struct;
+  }
+
+  userEntToTab(userEnt: UserEnt): UserTab {
+    if (isUndefined(userEnt)) {
+      return;
+    }
+
+    let user: UserTab = {
+      ...userEnt,
+      ...this.getTabProps({ ent: userEnt })
+    };
+
+    return user;
   }
 }

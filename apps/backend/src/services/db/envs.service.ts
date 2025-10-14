@@ -4,7 +4,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { EnvTab, MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
-import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { makeFullName } from '~backend/functions/make-full-name';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
@@ -18,31 +17,14 @@ import { Ev } from '~common/interfaces/backend/ev';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
-import { ConnectionsService } from './connections.service';
-import { MembersService } from './members.service';
 
 @Injectable()
 export class EnvsService {
   constructor(
-    private connectionsService: ConnectionsService,
-    private membersService: MembersService,
     private tabService: TabService,
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  entToTab(envEnt: EnvEnt): EnvTab {
-    if (isUndefined(envEnt)) {
-      return;
-    }
-
-    let env: EnvTab = {
-      ...envEnt,
-      ...this.tabService.getTabProps({ ent: envEnt })
-    };
-
-    return env;
-  }
 
   makeEnv(item: { projectId: string; envId: string; evs: Ev[] }): EnvTab {
     let { projectId, envId, evs } = item;
@@ -173,7 +155,7 @@ export class EnvsService {
           eq(envsTable.projectId, projectId)
         )
       })
-      .then(x => this.entToTab(x));
+      .then(x => this.tabService.envEntToTab(x));
 
     if (isUndefined(env)) {
       throw new ServerError({
@@ -201,7 +183,7 @@ export class EnvsService {
       .findMany({
         where: eq(connectionsTable.projectId, projectId)
       })
-      .then(xs => xs.map(x => this.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.envEntToTab(x)));
 
     let connections = await this.db.drizzle.query.connectionsTable
       .findMany({
@@ -213,13 +195,13 @@ export class EnvsService {
           )
         )
       })
-      .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
 
     let members = await this.db.drizzle.query.membersTable
       .findMany({
         where: eq(membersTable.projectId, projectId)
       })
-      .then(xs => xs.map(x => this.membersService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.memberEntToTab(x)));
 
     let prodEnv = envs.find(x => x.envId === PROJECT_ENV_PROD);
 
@@ -293,7 +275,7 @@ export class EnvsService {
           )
         )
       })
-      .then(xs => xs.map(x => this.connectionsService.entToTab(x)));
+      .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
 
     return {
       apiEnv,
