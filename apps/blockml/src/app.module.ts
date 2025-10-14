@@ -75,17 +75,6 @@ export class AppModule implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    setTimeout(() => {
-      let blockmlEnv = this.cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv');
-
-      logToConsoleBlockml({
-        log: `NODE_ENV "${process.env.NODE_ENV}", BLOCKML_ENV "${blockmlEnv}"`,
-        logLevel: LogLevelEnum.Info,
-        logger: this.logger,
-        cs: this.cs
-      });
-    }, 1000);
-
     try {
       let errors: BmError[] = [];
 
@@ -181,5 +170,16 @@ export class AppModule implements OnModuleInit {
 
       process.exit(1);
     }
+
+    setTimeout(() => {
+      let blockmlEnv = this.cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv');
+
+      logToConsoleBlockml({
+        log: `NODE_ENV "${process.env.NODE_ENV}", BLOCKML_ENV "${blockmlEnv}"`,
+        logLevel: LogLevelEnum.Info,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }, 1000);
   }
 }

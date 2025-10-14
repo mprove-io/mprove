@@ -97,7 +97,7 @@ export class DrizzlePacker {
       isDefined(insert) && Object.keys(insert).length > 0
         ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: insert,
-            hashSecret: dconfig.hashSecret
+            hashSecret: dconfig?.hashSecret
           })
         : undefined;
 
@@ -105,7 +105,7 @@ export class DrizzlePacker {
       isDefined(update) && Object.keys(update).length > 0
         ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: update,
-            hashSecret: dconfig.hashSecret
+            hashSecret: dconfig?.hashSecret
           })
         : undefined;
 
@@ -113,7 +113,7 @@ export class DrizzlePacker {
       isDefined(insertOrUpdate) && Object.keys(insertOrUpdate).length > 0
         ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: insertOrUpdate,
-            hashSecret: dconfig.hashSecret
+            hashSecret: dconfig?.hashSecret
           })
         : undefined;
 
@@ -121,7 +121,7 @@ export class DrizzlePacker {
       isDefined(insertOrDoNothing) && Object.keys(insertOrDoNothing).length > 0
         ? this.tabToEntService.tabsPackToEntsPack({
             tabsPack: insertOrDoNothing,
-            hashSecret: dconfig.hashSecret
+            hashSecret: dconfig?.hashSecret
           })
         : undefined;
 

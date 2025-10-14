@@ -39,7 +39,11 @@ import { getConfig } from './config/get.config';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
 import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
 import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
-import { ConnectionTab, UserTab } from './drizzle/postgres/schema/_tabs';
+import {
+  ConnectionTab,
+  DconfigTab,
+  UserTab
+} from './drizzle/postgres/schema/_tabs';
 import { connectionsTable } from './drizzle/postgres/schema/connections';
 import { dconfigsTable } from './drizzle/postgres/schema/dconfigs';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
@@ -259,19 +263,6 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      setTimeout(() => {
-        let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
-
-        if (backendEnv !== BackendEnvEnum.TEST) {
-          logToConsoleBackend({
-            log: `NODE_ENV "${process.env.NODE_ENV}", BACKEND_ENV "${backendEnv}"`,
-            logLevel: LogLevelEnum.Info,
-            logger: this.logger,
-            cs: this.cs
-          });
-        }
-      }, 1000);
-
       if (isScheduler(this.cs)) {
         // migrations
 
@@ -318,11 +309,43 @@ export class AppModule implements OnModuleInit {
           migrationsFolder: 'apps/backend/src/drizzle/postgres/migrations'
         });
 
-        // TODO: seed dconfig
+        // dconfig
+
+        let dconfig = await this.db.drizzle.query.dconfigsTable
+          .findFirst({
+            where: isNotNull(dconfigsTable.dconfigId)
+          })
+          .then(x => this.tabService.dconfigEntToTab(x));
+
+        if (isUndefined(dconfig)) {
+          let hashSecret = this.hashService.createHashSecret();
+
+          let newDconfig: DconfigTab = {
+            dconfigId: makeId(),
+            hashSecret: hashSecret,
+            hashSecretCheck: undefined, // set in checkEncryption
+            keyTag: undefined, // tab-to-ent sets keyTag
+            serverTs: undefined
+          };
+
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insert: {
+                      dconfigs: [newDconfig]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+        }
 
         // encryption
 
-        await this.checkEncryption();
+        await this.checkRecordsEncryption();
 
         // admin
 
@@ -382,9 +405,22 @@ export class AppModule implements OnModuleInit {
 
       process.exit(1);
     }
+
+    setTimeout(() => {
+      let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+      if (backendEnv !== BackendEnvEnum.TEST) {
+        logToConsoleBackend({
+          log: `NODE_ENV "${process.env.NODE_ENV}", BACKEND_ENV "${backendEnv}"`,
+          logLevel: LogLevelEnum.Info,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+    }, 1000);
   }
 
-  async checkEncryption() {
+  async checkRecordsEncryption() {
     let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
     let keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
 
@@ -411,13 +447,13 @@ export class AppModule implements OnModuleInit {
       });
     }
 
-    let dconfig = await this.db.drizzle.query.dconfigsTable
+    let dconfigA = await this.db.drizzle.query.dconfigsTable
       .findFirst({
         where: isNotNull(dconfigsTable.dconfigId)
       })
       .then(x => this.tabService.dconfigEntToTab(x));
 
-    if (isUndefined(dconfig)) {
+    if (isUndefined(dconfigA)) {
       throw new ServerError({
         message: ErEnum.BACKEND_DCONFIG_IS_NOT_DEFINED
       });
@@ -425,22 +461,15 @@ export class AppModule implements OnModuleInit {
 
     let isUpdateHashSecret = false;
 
-    if (dconfig.keyTag !== keyTag) {
+    if (
+      dconfigA.keyTag !== keyTag ||
+      dconfigA.hashSecret !== dconfigA.hashSecretCheck
+    ) {
       isUpdateHashSecret = true;
     }
 
-    await this.checkTabService.checkRecords();
-
     if (isUpdateHashSecret === true) {
-      let dconfigChecked = await this.db.drizzle.query.dconfigsTable
-        .findFirst({
-          where: isNotNull(dconfigsTable.dconfigId)
-        })
-        .then(x => this.tabService.dconfigEntToTab(x));
-
-      dconfigChecked.hashSecret = this.hashService.createHashSecret();
-
-      // TODO: records - update all hashes
+      dconfigA.hashSecret = this.hashService.createHashSecret(); // hashSecretCheck is prev value
 
       await retry(
         async () =>
@@ -449,13 +478,39 @@ export class AppModule implements OnModuleInit {
               await this.db.packer.write({
                 tx: tx,
                 update: {
-                  dconfigs: [dconfigChecked] // tab-to-ent sets keyTag
+                  dconfigs: [dconfigA] // tab-to-ent sets keyTag
                 }
               })
           ),
         getRetryOption(this.cs, this.logger)
       );
     }
+
+    await this.checkTabService.checkReadWriteRecords({
+      isAllRecords: isUpdateHashSecret
+    });
+
+    let dconfigB = await this.db.drizzle.query.dconfigsTable
+      .findFirst({
+        where: isNotNull(dconfigsTable.dconfigId)
+      })
+      .then(x => this.tabService.dconfigEntToTab(x));
+
+    dconfigB.hashSecretCheck = dconfigB.hashSecret;
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              update: {
+                dconfigs: [dconfigB] // tab-to-ent sets keyTag
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
   }
 
   async seedDemoOrgAndProject(item: {

@@ -1,6 +1,16 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq, isNotNull, isNull, notInArray, or, sql } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  eq,
+  isNotNull,
+  isNull,
+  lte,
+  notInArray,
+  or,
+  sql
+} from 'drizzle-orm';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
@@ -23,8 +33,10 @@ import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ServerError } from '~common/models/server-error';
@@ -60,39 +72,71 @@ export class CheckTabService {
       ) === BoolEnum.TRUE;
   }
 
-  async checkRecords() {
-    await this.checkAvatars();
-    await this.checkBranches();
-    await this.checkBridges();
-    await this.checkCharts();
-    await this.checkConnections();
-    await this.checkDashboards();
-    await this.checkEnvs();
-    await this.checkKits();
-    await this.checkMconfigs();
-    await this.checkMembers();
-    await this.checkModels();
-    await this.checkNotes();
-    await this.checkOrgs();
-    await this.checkProjects();
-    await this.checkQueries();
-    await this.checkReports();
-    await this.checkStructs();
-    await this.checkUsers();
-    await this.checkDconfigs(); // last
+  async checkReadWriteRecords(item: { isAllRecords: boolean }) {
+    let { isAllRecords } = item;
+
+    logToConsoleBackend({
+      log: `checkReadWriteRecords start (isAllRecords: ${isAllRecords})`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+
+    let startMs = Date.now();
+
+    await this.checkAvatars(isAllRecords);
+    await this.checkBranches(isAllRecords);
+    await this.checkBridges(isAllRecords);
+    await this.checkCharts(isAllRecords);
+    await this.checkConnections(isAllRecords);
+    await this.checkDashboards(isAllRecords);
+    await this.checkDconfigs(isAllRecords);
+    await this.checkEnvs(isAllRecords);
+    await this.checkKits(isAllRecords);
+    await this.checkMconfigs(isAllRecords);
+    await this.checkMembers(isAllRecords);
+    await this.checkModels(isAllRecords);
+    await this.checkNotes(isAllRecords);
+    await this.checkOrgs(isAllRecords);
+    await this.checkProjects(isAllRecords);
+    await this.checkQueries(isAllRecords);
+    await this.checkReports(isAllRecords);
+    await this.checkStructs(isAllRecords);
+    await this.checkUsers(isAllRecords);
+
+    let durationMs = Date.now() - startMs;
+
+    logToConsoleBackend({
+      log: `checkReadWriteRecords end, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
-  async checkAvatars() {
+  async checkAvatars(isAllRecords: boolean) {
+    let avatarMaxServerTs = await this.db.drizzle.query.avatarsTable
+      .findFirst({
+        orderBy: desc(avatarsTable.serverTs)
+      })
+      .then(x => this.tabService.avatarEntToTab(x));
+
+    if (isUndefined(avatarMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(avatarsTable.keyTag),
-            eq(avatarsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(avatarsTable.keyTag, this.keyTag),
-            eq(avatarsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(avatarsTable.serverTs, avatarMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(avatarsTable.keyTag),
+              eq(avatarsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(avatarsTable.keyTag, this.keyTag),
+              eq(avatarsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let avatar = await this.db.drizzle.query.avatarsTable
@@ -143,17 +187,29 @@ export class CheckTabService {
     }
   }
 
-  async checkBranches() {
+  async checkBranches(isAllRecords: boolean) {
+    let branchMaxServerTs = await this.db.drizzle.query.branchesTable
+      .findFirst({
+        orderBy: desc(branchesTable.serverTs)
+      })
+      .then(x => this.tabService.branchEntToTab(x));
+
+    if (isUndefined(branchMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(branchesTable.keyTag),
-            eq(branchesTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(branchesTable.keyTag, this.keyTag),
-            eq(branchesTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(branchesTable.serverTs, branchMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(branchesTable.keyTag),
+              eq(branchesTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(branchesTable.keyTag, this.keyTag),
+              eq(branchesTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let branch = await this.db.drizzle.query.branchesTable
@@ -204,17 +260,29 @@ export class CheckTabService {
     }
   }
 
-  async checkBridges() {
+  async checkBridges(isAllRecords: boolean) {
+    let bridgeMaxServerTs = await this.db.drizzle.query.bridgesTable
+      .findFirst({
+        orderBy: desc(bridgesTable.serverTs)
+      })
+      .then(x => this.tabService.bridgeEntToTab(x));
+
+    if (isUndefined(bridgeMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(bridgesTable.keyTag),
-            eq(bridgesTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(bridgesTable.keyTag, this.keyTag),
-            eq(bridgesTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(bridgesTable.serverTs, bridgeMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(bridgesTable.keyTag),
+              eq(bridgesTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(bridgesTable.keyTag, this.keyTag),
+              eq(bridgesTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let bridge = await this.db.drizzle.query.bridgesTable
@@ -265,17 +333,29 @@ export class CheckTabService {
     }
   }
 
-  async checkCharts() {
+  async checkCharts(isAllRecords: boolean) {
+    let chartMaxServerTs = await this.db.drizzle.query.chartsTable
+      .findFirst({
+        orderBy: desc(chartsTable.serverTs)
+      })
+      .then(x => this.tabService.chartEntToTab(x));
+
+    if (isUndefined(chartMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(chartsTable.keyTag),
-            eq(chartsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(chartsTable.keyTag, this.keyTag),
-            eq(chartsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(chartsTable.serverTs, chartMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(chartsTable.keyTag),
+              eq(chartsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(chartsTable.keyTag, this.keyTag),
+              eq(chartsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let chart = await this.db.drizzle.query.chartsTable
@@ -326,17 +406,29 @@ export class CheckTabService {
     }
   }
 
-  async checkConnections() {
+  async checkConnections(isAllRecords: boolean) {
+    let connectionMaxServerTs = await this.db.drizzle.query.connectionsTable
+      .findFirst({
+        orderBy: desc(connectionsTable.serverTs)
+      })
+      .then(x => this.tabService.connectionEntToTab(x));
+
+    if (isUndefined(connectionMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(connectionsTable.keyTag),
-            eq(connectionsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(connectionsTable.keyTag, this.keyTag),
-            eq(connectionsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(connectionsTable.serverTs, connectionMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(connectionsTable.keyTag),
+              eq(connectionsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(connectionsTable.keyTag, this.keyTag),
+              eq(connectionsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let connection = await this.db.drizzle.query.connectionsTable
@@ -387,17 +479,29 @@ export class CheckTabService {
     }
   }
 
-  async checkDashboards() {
+  async checkDashboards(isAllRecords: boolean) {
+    let dashboardMaxServerTs = await this.db.drizzle.query.dashboardsTable
+      .findFirst({
+        orderBy: desc(dashboardsTable.serverTs)
+      })
+      .then(x => this.tabService.dashboardEntToTab(x));
+
+    if (isUndefined(dashboardMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(dashboardsTable.keyTag),
-            eq(dashboardsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(dashboardsTable.keyTag, this.keyTag),
-            eq(dashboardsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(dashboardsTable.serverTs, dashboardMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(dashboardsTable.keyTag),
+              eq(dashboardsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(dashboardsTable.keyTag, this.keyTag),
+              eq(dashboardsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let dashboard = await this.db.drizzle.query.dashboardsTable
@@ -448,17 +552,29 @@ export class CheckTabService {
     }
   }
 
-  async checkDconfigs() {
+  async checkDconfigs(isAllRecords: boolean) {
+    let dconfigMaxServerTs = await this.db.drizzle.query.dconfigsTable
+      .findFirst({
+        orderBy: desc(dconfigsTable.serverTs)
+      })
+      .then(x => this.tabService.dconfigEntToTab(x));
+
+    if (isUndefined(dconfigMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(dconfigsTable.keyTag),
-            eq(dconfigsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(dconfigsTable.keyTag, this.keyTag),
-            eq(dconfigsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(dconfigsTable.serverTs, dconfigMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(dconfigsTable.keyTag),
+              eq(dconfigsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(dconfigsTable.keyTag, this.keyTag),
+              eq(dconfigsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let dconfig = await this.db.drizzle.query.dconfigsTable
@@ -509,14 +625,26 @@ export class CheckTabService {
     }
   }
 
-  async checkEnvs() {
+  async checkEnvs(isAllRecords: boolean) {
+    let envMaxServerTs = await this.db.drizzle.query.envsTable
+      .findFirst({
+        orderBy: desc(envsTable.serverTs)
+      })
+      .then(x => this.tabService.envEntToTab(x));
+
+    if (isUndefined(envMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(isNull(envsTable.keyTag), eq(envsTable.keyTag, this.prevKeyTag))
-        : or(
-            eq(envsTable.keyTag, this.keyTag),
-            eq(envsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(envsTable.serverTs, envMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(isNull(envsTable.keyTag), eq(envsTable.keyTag, this.prevKeyTag))
+          : or(
+              eq(envsTable.keyTag, this.keyTag),
+              eq(envsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let env = await this.db.drizzle.query.envsTable
@@ -567,14 +695,26 @@ export class CheckTabService {
     }
   }
 
-  async checkKits() {
+  async checkKits(isAllRecords: boolean) {
+    let kitMaxServerTs = await this.db.drizzle.query.kitsTable
+      .findFirst({
+        orderBy: desc(kitsTable.serverTs)
+      })
+      .then(x => this.tabService.kitEntToTab(x));
+
+    if (isUndefined(kitMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(isNull(kitsTable.keyTag), eq(kitsTable.keyTag, this.prevKeyTag))
-        : or(
-            eq(kitsTable.keyTag, this.keyTag),
-            eq(kitsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(kitsTable.serverTs, kitMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(isNull(kitsTable.keyTag), eq(kitsTable.keyTag, this.prevKeyTag))
+          : or(
+              eq(kitsTable.keyTag, this.keyTag),
+              eq(kitsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let kit = await this.db.drizzle.query.kitsTable
@@ -625,17 +765,29 @@ export class CheckTabService {
     }
   }
 
-  async checkMconfigs() {
+  async checkMconfigs(isAllRecords: boolean) {
+    let mconfigMaxServerTs = await this.db.drizzle.query.mconfigsTable
+      .findFirst({
+        orderBy: desc(mconfigsTable.serverTs)
+      })
+      .then(x => this.tabService.mconfigEntToTab(x));
+
+    if (isUndefined(mconfigMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(mconfigsTable.keyTag),
-            eq(mconfigsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(mconfigsTable.keyTag, this.keyTag),
-            eq(mconfigsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(mconfigsTable.serverTs, mconfigMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(mconfigsTable.keyTag),
+              eq(mconfigsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(mconfigsTable.keyTag, this.keyTag),
+              eq(mconfigsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let mconfig = await this.db.drizzle.query.mconfigsTable
@@ -686,17 +838,29 @@ export class CheckTabService {
     }
   }
 
-  async checkMembers() {
+  async checkMembers(isAllRecords: boolean) {
+    let memberMaxServerTs = await this.db.drizzle.query.membersTable
+      .findFirst({
+        orderBy: desc(membersTable.serverTs)
+      })
+      .then(x => this.tabService.memberEntToTab(x));
+
+    if (isUndefined(memberMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(membersTable.keyTag),
-            eq(membersTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(membersTable.keyTag, this.keyTag),
-            eq(membersTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(membersTable.serverTs, memberMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(membersTable.keyTag),
+              eq(membersTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(membersTable.keyTag, this.keyTag),
+              eq(membersTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let member = await this.db.drizzle.query.membersTable
@@ -747,17 +911,29 @@ export class CheckTabService {
     }
   }
 
-  async checkModels() {
+  async checkModels(isAllRecords: boolean) {
+    let modelMaxServerTs = await this.db.drizzle.query.modelsTable
+      .findFirst({
+        orderBy: desc(modelsTable.serverTs)
+      })
+      .then(x => this.tabService.modelEntToTab(x));
+
+    if (isUndefined(modelMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(modelsTable.keyTag),
-            eq(modelsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(modelsTable.keyTag, this.keyTag),
-            eq(modelsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(modelsTable.serverTs, modelMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(modelsTable.keyTag),
+              eq(modelsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(modelsTable.keyTag, this.keyTag),
+              eq(modelsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let model = await this.db.drizzle.query.modelsTable
@@ -808,14 +984,29 @@ export class CheckTabService {
     }
   }
 
-  async checkNotes() {
+  async checkNotes(isAllRecords: boolean) {
+    let noteMaxServerTs = await this.db.drizzle.query.notesTable
+      .findFirst({
+        orderBy: desc(notesTable.serverTs)
+      })
+      .then(x => this.tabService.noteEntToTab(x));
+
+    if (isUndefined(noteMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(isNull(notesTable.keyTag), eq(notesTable.keyTag, this.prevKeyTag))
-        : or(
-            eq(notesTable.keyTag, this.keyTag),
-            eq(notesTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(notesTable.serverTs, noteMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(notesTable.keyTag),
+              eq(notesTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(notesTable.keyTag, this.keyTag),
+              eq(notesTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let note = await this.db.drizzle.query.notesTable
@@ -866,14 +1057,26 @@ export class CheckTabService {
     }
   }
 
-  async checkOrgs() {
+  async checkOrgs(isAllRecords: boolean) {
+    let orgMaxServerTs = await this.db.drizzle.query.orgsTable
+      .findFirst({
+        orderBy: desc(orgsTable.serverTs)
+      })
+      .then(x => this.tabService.orgEntToTab(x));
+
+    if (isUndefined(orgMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(isNull(orgsTable.keyTag), eq(orgsTable.keyTag, this.prevKeyTag))
-        : or(
-            eq(orgsTable.keyTag, this.keyTag),
-            eq(orgsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(orgsTable.serverTs, orgMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(isNull(orgsTable.keyTag), eq(orgsTable.keyTag, this.prevKeyTag))
+          : or(
+              eq(orgsTable.keyTag, this.keyTag),
+              eq(orgsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let org = await this.db.drizzle.query.orgsTable
@@ -924,17 +1127,29 @@ export class CheckTabService {
     }
   }
 
-  async checkProjects() {
+  async checkProjects(isAllRecords: boolean) {
+    let projectMaxServerTs = await this.db.drizzle.query.projectsTable
+      .findFirst({
+        orderBy: desc(projectsTable.serverTs)
+      })
+      .then(x => this.tabService.projectEntToTab(x));
+
+    if (isUndefined(projectMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(projectsTable.keyTag),
-            eq(projectsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(projectsTable.keyTag, this.keyTag),
-            eq(projectsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(projectsTable.serverTs, projectMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(projectsTable.keyTag),
+              eq(projectsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(projectsTable.keyTag, this.keyTag),
+              eq(projectsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let project = await this.db.drizzle.query.projectsTable
@@ -985,17 +1200,29 @@ export class CheckTabService {
     }
   }
 
-  async checkQueries() {
+  async checkQueries(isAllRecords: boolean) {
+    let queryMaxServerTs = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        orderBy: desc(queriesTable.serverTs)
+      })
+      .then(x => this.tabService.queryEntToTab(x));
+
+    if (isUndefined(queryMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(queriesTable.keyTag),
-            eq(queriesTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(queriesTable.keyTag, this.keyTag),
-            eq(queriesTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(queriesTable.serverTs, queryMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(queriesTable.keyTag),
+              eq(queriesTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(queriesTable.keyTag, this.keyTag),
+              eq(queriesTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let query = await this.db.drizzle.query.queriesTable
@@ -1046,17 +1273,29 @@ export class CheckTabService {
     }
   }
 
-  async checkReports() {
+  async checkReports(isAllRecords: boolean) {
+    let reportMaxServerTs = await this.db.drizzle.query.reportsTable
+      .findFirst({
+        orderBy: desc(reportsTable.serverTs)
+      })
+      .then(x => this.tabService.reportEntToTab(x));
+
+    if (isUndefined(reportMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(reportsTable.keyTag),
-            eq(reportsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(reportsTable.keyTag, this.keyTag),
-            eq(reportsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(reportsTable.serverTs, reportMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(reportsTable.keyTag),
+              eq(reportsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(reportsTable.keyTag, this.keyTag),
+              eq(reportsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let report = await this.db.drizzle.query.reportsTable
@@ -1107,17 +1346,29 @@ export class CheckTabService {
     }
   }
 
-  async checkStructs() {
+  async checkStructs(isAllRecords: boolean) {
+    let structMaxServerTs = await this.db.drizzle.query.structsTable
+      .findFirst({
+        orderBy: desc(structsTable.serverTs)
+      })
+      .then(x => this.tabService.structEntToTab(x));
+
+    if (isUndefined(structMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(
-            isNull(structsTable.keyTag),
-            eq(structsTable.keyTag, this.prevKeyTag)
-          )
-        : or(
-            eq(structsTable.keyTag, this.keyTag),
-            eq(structsTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(structsTable.serverTs, structMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(structsTable.keyTag),
+              eq(structsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(structsTable.keyTag, this.keyTag),
+              eq(structsTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let struct = await this.db.drizzle.query.structsTable
@@ -1168,14 +1419,29 @@ export class CheckTabService {
     }
   }
 
-  async checkUsers() {
+  async checkUsers(isAllRecords: boolean) {
+    let userMaxServerTs = await this.db.drizzle.query.usersTable
+      .findFirst({
+        orderBy: desc(usersTable.serverTs)
+      })
+      .then(x => this.tabService.userEntToTab(x));
+
+    if (isUndefined(userMaxServerTs)) {
+      return;
+    }
+
     let where =
-      this.isEncryption === true
-        ? or(isNull(usersTable.keyTag), eq(usersTable.keyTag, this.prevKeyTag))
-        : or(
-            eq(usersTable.keyTag, this.keyTag),
-            eq(usersTable.keyTag, this.prevKeyTag)
-          );
+      isAllRecords === true
+        ? lte(usersTable.serverTs, userMaxServerTs.serverTs)
+        : this.isEncryption === true
+          ? or(
+              isNull(usersTable.keyTag),
+              eq(usersTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(usersTable.keyTag, this.keyTag),
+              eq(usersTable.keyTag, this.prevKeyTag)
+            );
 
     while (true) {
       let user = await this.db.drizzle.query.usersTable

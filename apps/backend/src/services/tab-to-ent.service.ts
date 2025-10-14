@@ -382,7 +382,8 @@ export class TabToEntService {
     let { tab, hashSecret } = item;
 
     let dconfigSt: DconfigSt = {
-      hashSecret: tab.hashSecret
+      hashSecret: tab.hashSecret,
+      hashSecretCheck: tab.hashSecretCheck
     };
     let dconfigLt: DconfigLt = {};
 
@@ -505,11 +506,11 @@ export class TabToEntService {
       ...this.tabService.getEntProps({ dataSt: memberSt, dataLt: memberLt }),
       keyTag: this.aesKeyTag,
       emailHash: this.hashService.makeHash({
-        input: tab.emailHash,
+        input: tab.email,
         hashSecret: hashSecret
       }),
       aliasHash: this.hashService.makeHash({
-        input: tab.aliasHash,
+        input: tab.alias,
         hashSecret: hashSecret
       }),
       serverTs: tab.serverTs

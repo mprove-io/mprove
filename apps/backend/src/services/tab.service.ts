@@ -73,6 +73,11 @@ export class TabService {
     let prevKeyBase64 = this.cs.get<BackendConfig['prevAesKey']>('prevAesKey');
     this.prevKeyBuffer = Buffer.from(prevKeyBase64, 'base64');
 
+    this.keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
+
+    this.prevKeyTag =
+      this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
+
     this.isEncryption =
       this.cs.get<BackendConfig['isDbEncryptionEnabled']>(
         'isDbEncryptionEnabled'
@@ -94,8 +99,7 @@ export class TabService {
     ) {
       throw new ServerError({
         message:
-          ErEnum.BACKEND_DB_RECORD_HAS_NO_DECRYPTED_AND_NO_ENCRYPTED_PROPS,
-        customData: ent
+          ErEnum.BACKEND_DB_RECORD_HAS_NO_DECRYPTED_AND_NO_ENCRYPTED_PROPS
       });
     }
 
@@ -104,9 +108,7 @@ export class TabService {
       (isDefined(ent.st.decrypted) || isDefined(ent.lt.decrypted))
     ) {
       throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORD_HAS_BOTH_DECRYPTED_AND_ENCRYPTED_PROPS,
-        customData: ent
+        message: ErEnum.BACKEND_DB_RECORD_HAS_BOTH_DECRYPTED_AND_ENCRYPTED_PROPS
       });
     }
 
@@ -115,8 +117,7 @@ export class TabService {
       (isDefined(ent.st.decrypted) || isDefined(ent.lt.decrypted))
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DB_RECORD_IS_DECRYPTED_BUT_HAS_KEY_TAG,
-        customData: ent
+        message: ErEnum.BACKEND_DB_RECORD_IS_DECRYPTED_BUT_HAS_KEY_TAG
       });
     }
 
@@ -125,9 +126,7 @@ export class TabService {
       [this.keyTag, this.prevKeyTag].indexOf(ent.keyTag) < 0
     ) {
       throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORD_KEY_TAG_DOES_NOT_MATCH_CURRENT_OR_PREV,
-        customData: ent
+        message: ErEnum.BACKEND_DB_RECORD_KEY_TAG_DOES_NOT_MATCH_CURRENT_OR_PREV
       });
     }
 
