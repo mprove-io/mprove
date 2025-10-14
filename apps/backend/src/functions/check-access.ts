@@ -1,7 +1,8 @@
 import { MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { Member } from '~common/interfaces/backend/member';
 
 export function checkAccess(item: {
-  member: MemberTab;
+  member: MemberTab | Member;
   accessRoles: string[];
 }): boolean {
   let { member, accessRoles } = item;

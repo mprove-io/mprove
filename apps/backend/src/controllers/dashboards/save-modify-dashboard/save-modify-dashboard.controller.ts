@@ -123,6 +123,8 @@ export class SaveModifyDashboardController {
       memberId: user.userId
     });
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
     if (userMember.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
@@ -171,7 +173,7 @@ export class SaveModifyDashboardController {
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: fromDashboardId,
         structId: bridge.structId,
-        userMember: userMember,
+        apiUserMember: apiUserMember,
         projectId: projectId
       });
 
@@ -484,14 +486,14 @@ export class SaveModifyDashboardController {
       newDashboard: newDashboard,
       structId: bridge.structId,
       user: user,
-      userMember: userMember
+      apiUserMember: apiUserMember
     });
 
     let apiFinalDashboardX =
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: newDashboard.dashboardId,
         structId: bridge.structId,
-        userMember: userMember,
+        apiUserMember: apiUserMember,
         projectId: projectId
       });
 

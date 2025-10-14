@@ -96,6 +96,8 @@ export class GetDashboardController {
       memberId: user.userId
     });
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
@@ -128,7 +130,7 @@ export class GetDashboardController {
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: dashboardId,
         structId: bridge.structId,
-        userMember: userMember,
+        apiUserMember: apiUserMember,
         projectId: projectId
       });
 
@@ -403,10 +405,8 @@ export class GetDashboardController {
         dashboardId: newDashboard.dashboardId,
         projectId: projectId,
         structId: bridge.structId,
-        userMember: userMember
+        apiUserMember: apiUserMember
       });
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,

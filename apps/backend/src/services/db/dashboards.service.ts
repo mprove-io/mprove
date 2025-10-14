@@ -1,11 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import {
-  DashboardTab,
-  MemberTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
+import { DashboardTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   DashboardEnt,
   dashboardsTable
@@ -31,7 +27,6 @@ import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 import { MconfigsService } from './mconfigs.service';
-import { MembersService } from './members.service';
 import { ModelsService } from './models.service';
 import { QueriesService } from './queries.service';
 
@@ -41,7 +36,6 @@ export class DashboardsService {
     private tabService: TabService,
     private modelsService: ModelsService,
     private mconfigsService: MconfigsService,
-    private membersService: MembersService,
     private queriesService: QueriesService,
     private hashService: HashService,
     @Inject(DRIZZLE) private db: Db
@@ -184,9 +178,9 @@ export class DashboardsService {
     dashboardId: string;
     structId: string;
     projectId: string;
-    userMember: MemberTab;
+    apiUserMember: Member; // to not use membersService inside dashboardsService (circular dep with blockmlService)
   }): Promise<DashboardX> {
-    let { projectId, dashboardId, structId, userMember } = item;
+    let { projectId, dashboardId, structId, apiUserMember } = item;
 
     let dashboard = await this.getDashboardCheckExists({
       structId: structId,
@@ -194,7 +188,7 @@ export class DashboardsService {
     });
 
     let isAccessGranted = checkAccess({
-      member: userMember,
+      member: apiUserMember,
       accessRoles: dashboard.accessRoles
     });
 
@@ -238,7 +232,7 @@ export class DashboardsService {
       this.modelsService.tabToApi({
         model: model,
         hasAccess: checkModelAccess({
-          member: userMember,
+          member: apiUserMember,
           modelAccessRoles: model.accessRoles
         })
       })
@@ -253,7 +247,7 @@ export class DashboardsService {
         })
       ),
       queries: queries.map(x => this.queriesService.tabToApi({ query: x })),
-      member: this.membersService.tabToApi({ member: userMember }),
+      member: apiUserMember,
       models: apiModels,
       isAddMconfigAndQuery: true
     });
@@ -264,10 +258,10 @@ export class DashboardsService {
   async getDashboardParts(item: {
     structId: string;
     user: UserTab;
-    userMember: MemberTab;
+    apiUserMember: Member;
     newDashboard: DashboardTab;
   }): Promise<any> {
-    let { structId, user, userMember, newDashboard } = item;
+    let { structId, user, apiUserMember, newDashboard } = item;
 
     let dashboardParts = await this.db.drizzle
       .select({
@@ -297,7 +291,7 @@ export class DashboardsService {
 
     let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
       checkAccess({
-        member: userMember,
+        member: apiUserMember,
         accessRoles: x.accessRoles
       })
     );
@@ -326,7 +320,7 @@ export class DashboardsService {
       this.modelsService.tabToApi({
         model: model,
         hasAccess: checkModelAccess({
-          member: userMember,
+          member: apiUserMember,
           modelAccessRoles: model.accessRoles
         })
       })
@@ -337,7 +331,7 @@ export class DashboardsService {
         dashboard: x,
         mconfigs: [],
         queries: [],
-        member: this.membersService.tabToApi({ member: userMember }),
+        member: apiUserMember,
         models: apiModels,
         isAddMconfigAndQuery: false
       })

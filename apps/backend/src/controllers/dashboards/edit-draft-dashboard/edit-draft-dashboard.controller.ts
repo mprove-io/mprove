@@ -108,6 +108,8 @@ export class EditDraftDashboardController {
       memberId: user.userId
     });
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: repoId,
@@ -136,7 +138,7 @@ export class EditDraftDashboardController {
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: oldDashboardId,
         structId: bridge.structId,
-        userMember: userMember,
+        apiUserMember: apiUserMember,
         projectId: projectId
       });
 
@@ -408,7 +410,7 @@ export class EditDraftDashboardController {
         dashboardId: newDashboard.dashboardId,
         projectId: projectId,
         structId: bridge.structId,
-        userMember: userMember
+        apiUserMember: apiUserMember
       });
 
     let payload: ToBackendEditDraftDashboardResponsePayload = {
