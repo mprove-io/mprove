@@ -176,6 +176,7 @@ export class SeedRecordsController {
             aliasHash: undefined, // tab-to-ent
             emailVerificationTokenHash: undefined, // tab-to-ent
             passwordResetTokenHash: undefined, // tab-to-ent
+            keyTag: undefined,
             serverTs: undefined
           };
 
@@ -196,6 +197,7 @@ export class SeedRecordsController {
             ownerId: users.find(u => u.email === x.ownerEmail).userId,
             nameHash: undefined, // tab-to-ent
             ownerEmailHash: undefined, // tab-to-ent
+            keyTag: undefined,
             serverTs: undefined
           };
 
@@ -265,6 +267,7 @@ export class SeedRecordsController {
             publicKey: x.publicKey,
             nameHash: undefined, // tab-to-ent
             gitUrlHash: undefined, // tab-to-ent
+            keyTag: undefined,
             serverTs: undefined
           };
 

@@ -711,7 +711,7 @@ export async function makeMalloyQuery(item: {
   return {
     isError: isError,
     errorMessage: errorMessage,
-    newMconfig: newMconfig,
-    newQuery: newQuery
+    apiNewMconfig: newMconfig,
+    apiNewQuery: newQuery
   };
 }

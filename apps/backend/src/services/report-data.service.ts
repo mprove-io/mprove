@@ -452,6 +452,7 @@ export class ReportDataService {
                 : timeColumnsLimit,
             filters: model.type === ModelTypeEnum.Malloy ? [] : filters,
             chart: makeCopy(DEFAULT_CHART),
+            keyTag: undefined,
             serverTs: 1
             // fields: [],
             // extendedFilters: [],
@@ -543,9 +544,7 @@ export class ReportDataService {
               });
 
             newMconfig = editMalloyQueryResult.newMconfig;
-            newQuery = this.queriesService.apiToTab({
-              apiQuery: editMalloyQueryResult.newQuery
-            });
+            newQuery = editMalloyQueryResult.newQuery;
             isError = editMalloyQueryResult.isError;
 
             // console.log('newMconfig');

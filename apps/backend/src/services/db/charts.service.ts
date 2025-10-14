@@ -120,6 +120,7 @@ export class ChartsService {
       filePath: apiChart.filePath,
       accessRoles: apiChart.accessRoles,
       tiles: apiChart.tiles,
+      keyTag: undefined,
       serverTs: apiChart.serverTs
     };
 

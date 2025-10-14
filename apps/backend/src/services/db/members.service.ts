@@ -100,6 +100,7 @@ export class MembersService {
       roles: roles || [],
       emailHash: undefined, // tab-to-ent
       aliasHash: undefined, // tab-to-ent
+      keyTag: undefined,
       serverTs: undefined
     };
 

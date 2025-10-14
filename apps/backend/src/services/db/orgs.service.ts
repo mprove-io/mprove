@@ -122,6 +122,7 @@ export class OrgsService {
       ownerEmail: ownerEmail,
       nameHash: undefined, // tab-to-ent
       ownerEmailHash: undefined, // tab-to-ent
+      keyTag: undefined,
       serverTs: undefined
     };
 

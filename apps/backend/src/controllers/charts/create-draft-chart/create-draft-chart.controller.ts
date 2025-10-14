@@ -80,7 +80,7 @@ export class CreateDraftChartController {
 
     let { traceId } = reqValid.info;
     let {
-      mconfig,
+      mconfig: apiMconfig,
       isKeepQueryId,
       projectId,
       isRepoProd,
@@ -128,10 +128,10 @@ export class CreateDraftChartController {
 
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
-      modelId: mconfig.modelId
+      modelId: apiMconfig.modelId
     });
 
-    if (mconfig.structId !== bridge.structId) {
+    if (apiMconfig.structId !== bridge.structId) {
       throw new ServerError({
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
@@ -159,49 +159,41 @@ export class CreateDraftChartController {
         project: project,
         envId: envId,
         model: model,
-        mconfig: mconfig,
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: isDefined(cellMetricsStartDateMs)
           ? getYYYYMMDDFromEpochUtcByTimezone({
-              timezone: mconfig.timezone,
+              timezone: apiMconfig.timezone,
               secondsEpochUTC: cellMetricsStartDateMs / 1000
             })
           : undefined,
         metricsEndDateYYYYMMDD: isDefined(cellMetricsEndDateMs)
           ? getYYYYMMDDFromEpochUtcByTimezone({
-              timezone: mconfig.timezone,
+              timezone: apiMconfig.timezone,
               secondsEpochUTC: cellMetricsEndDateMs / 1000
             })
           : undefined
       });
 
-      isError = mqs.isError;
-
       newMconfig = mqs.newMconfig;
-
       newQuery = mqs.newQuery;
+      isError = mqs.isError;
     } else if (model.type === ModelTypeEnum.Malloy) {
       let editMalloyQueryResult = await this.malloyService.editMalloyQuery({
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
         model: model,
-        mconfig: mconfig,
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: isDefined(queryOperation) ? [queryOperation] : []
       });
 
+      newMconfig = editMalloyQueryResult.newMconfig;
+      newQuery = editMalloyQueryResult.newQuery;
       isError = editMalloyQueryResult.isError;
-
-      newMconfig = this.mconfigsService.apiToTab({
-        apiMconfig: editMalloyQueryResult.newMconfig
-      });
-
-      newQuery = this.queriesService.apiToTab({
-        apiQuery: editMalloyQueryResult.newQuery
-      });
     }
 
     if (isKeepQueryId === true && isError === false) {
-      newMconfig.queryId = mconfig.queryId;
+      newMconfig.queryId = apiMconfig.queryId;
 
       newQuery = await this.queriesService.getQueryCheckExists({
         queryId: newMconfig.queryId,

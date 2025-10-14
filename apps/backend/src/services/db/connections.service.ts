@@ -79,6 +79,7 @@ export class ConnectionsService {
       connectionId: connectionId,
       type: type,
       options: options,
+      keyTag: undefined,
       serverTs: undefined
     };
 

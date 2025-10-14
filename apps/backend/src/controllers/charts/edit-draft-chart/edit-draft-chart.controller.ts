@@ -79,7 +79,7 @@ export class EditDraftChartController {
 
     let { traceId } = reqValid.info;
     let {
-      mconfig,
+      mconfig: apiMconfig,
       projectId,
       isRepoProd,
       branchId,
@@ -125,10 +125,10 @@ export class EditDraftChartController {
 
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
-      modelId: mconfig.modelId
+      modelId: apiMconfig.modelId
     });
 
-    if (mconfig.structId !== bridge.structId) {
+    if (apiMconfig.structId !== bridge.structId) {
       throw new ServerError({
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
@@ -173,7 +173,7 @@ export class EditDraftChartController {
         project: project,
         envId: envId,
         model: model,
-        mconfig: mconfig,
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: undefined,
         metricsEndDateYYYYMMDD: undefined
       });
@@ -187,18 +187,12 @@ export class EditDraftChartController {
         envId: envId,
         structId: struct.structId,
         model: model,
-        mconfig: mconfig,
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: [queryOperation]
       });
 
-      newMconfig = this.mconfigsService.apiToTab({
-        apiMconfig: editMalloyQueryResult.newMconfig
-      });
-
-      newQuery = this.queriesService.apiToTab({
-        apiQuery: editMalloyQueryResult.newQuery
-      });
-
+      newMconfig = editMalloyQueryResult.newMconfig;
+      newQuery = editMalloyQueryResult.newQuery;
       isError = editMalloyQueryResult.isError;
     }
 
@@ -235,6 +229,7 @@ export class EditDraftChartController {
       filePath: undefined,
       accessRoles: [],
       tiles: [tile],
+      keyTag: undefined,
       serverTs: undefined
     };
 

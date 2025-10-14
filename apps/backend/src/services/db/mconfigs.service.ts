@@ -129,6 +129,7 @@ export class MconfigsService {
       limit: apiMconfig.limit,
       filters: apiMconfig.filters,
       chart: apiMconfig.chart,
+      keyTag: undefined,
       serverTs: apiMconfig.serverTs
     };
 
@@ -299,6 +300,7 @@ export class MconfigsService {
       bigqueryConsecutiveErrorsGetJob: 0,
       bigqueryConsecutiveErrorsGetResults: 0,
       apiUrlHash: undefined, // tab-to-ent
+      keyTag: undefined,
       serverTs: 1
     };
 

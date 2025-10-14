@@ -154,6 +154,7 @@ export class DashboardsService {
       fields: apiDashboard.fields,
       tiles: apiDashboard.tiles,
       content: apiDashboard.content,
+      keyTag: undefined,
       serverTs: apiDashboard.serverTs
     };
 

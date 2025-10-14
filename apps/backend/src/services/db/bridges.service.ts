@@ -56,6 +56,7 @@ export class BridgesService {
       envId: envId,
       structId: structId,
       needValidate: needValidate,
+      keyTag: undefined,
       serverTs: undefined
     };
 

@@ -50,6 +50,7 @@ export class BranchesService {
       projectId: projectId,
       repoId: repoId,
       branchId: branchId,
+      keyTag: undefined,
       serverTs: undefined
     };
 

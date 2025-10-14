@@ -172,14 +172,8 @@ export class GetChartController {
         queryOperations: [queryOperation]
       });
 
-      newMconfig = this.mconfigsService.apiToTab({
-        apiMconfig: editMalloyQueryResult.newMconfig
-      });
-
-      newQuery = this.queriesService.apiToTab({
-        apiQuery: editMalloyQueryResult.newQuery
-      });
-
+      newMconfig = editMalloyQueryResult.newMconfig;
+      newQuery = editMalloyQueryResult.newQuery;
       isError = editMalloyQueryResult.isError;
     }
 

@@ -190,6 +190,7 @@ export class ProjectsService {
       publicKey: publicKey,
       nameHash: undefined, // tab-to-ent
       gitUrlHash: undefined, // tab-to-ent
+      keyTag: undefined,
       serverTs: undefined
     };
 

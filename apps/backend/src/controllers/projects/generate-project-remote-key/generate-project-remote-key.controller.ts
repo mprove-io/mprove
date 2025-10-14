@@ -71,6 +71,7 @@ export class GenerateProjectRemoteKeyController {
       noteId: makeId(),
       publicKey: sshPublicKey,
       privateKey: sshPrivateKey,
+      keyTag: undefined,
       serverTs: undefined
     };
 

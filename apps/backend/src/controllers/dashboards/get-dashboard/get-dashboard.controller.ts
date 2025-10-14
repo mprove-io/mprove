@@ -341,20 +341,20 @@ export class GetDashboardController {
       mconfig => mconfig.modelType === ModelTypeEnum.Store
     );
 
-    await forEachSeries(dashboardStoreMconfigs, async mconfig => {
+    await forEachSeries(dashboardStoreMconfigs, async apiMconfig => {
       let newMconfig: MconfigTab;
       let newQuery: QueryTab;
       let isError = false;
 
-      let apiModel = apiModels.find(y => y.modelId === mconfig.modelId);
+      let apiModel = apiModels.find(y => y.modelId === apiMconfig.modelId);
 
-      if (mconfig.modelType === ModelTypeEnum.Store) {
+      if (apiMconfig.modelType === ModelTypeEnum.Store) {
         let mqe = await this.mconfigsService.prepStoreMconfigQuery({
           struct: apiStruct,
           project: project,
           envId: envId,
           model: this.modelsService.apiToTab({ apiModel: apiModel }),
-          mconfig: mconfig,
+          mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
           metricsStartDateYYYYMMDD: undefined,
           metricsEndDateYYYYMMDD: undefined
         });
@@ -364,7 +364,7 @@ export class GetDashboardController {
         isError = mqe.isError;
 
         let newDashboardTile = newDashboard.tiles.find(
-          tile => tile.mconfigId === mconfig.mconfigId
+          tile => tile.mconfigId === apiMconfig.mconfigId
         );
         newDashboardTile.queryId = newMconfig.queryId;
         newDashboardTile.mconfigId = newMconfig.mconfigId;

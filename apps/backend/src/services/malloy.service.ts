@@ -13,11 +13,15 @@ import { makeMalloyConnections } from '~node-common/functions/make-malloy-connec
 import { makeMalloyQuery } from '~node-common/functions/make-malloy-query';
 import { ConnectionsService } from './db/connections.service';
 import { EnvsService } from './db/envs.service';
+import { MconfigsService } from './db/mconfigs.service';
+import { QueriesService } from './db/queries.service';
 
 @Injectable()
 export class MalloyService {
   constructor(
     private envsService: EnvsService,
+    private mconfigsService: MconfigsService,
+    private queriesService: QueriesService,
     private connectionsService: ConnectionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -53,8 +57,8 @@ export class MalloyService {
       connections: [projectConnection]
     });
 
-    let { isError, errorMessage, newMconfig, newQuery } = await makeMalloyQuery(
-      {
+    let { isError, errorMessage, apiNewMconfig, apiNewQuery } =
+      await makeMalloyQuery({
         projectId: projectId,
         envId: envId,
         structId: structId,
@@ -62,8 +66,12 @@ export class MalloyService {
         mconfig: mconfig,
         queryOperations: queryOperations,
         malloyConnections: malloyConnections
-      }
-    );
+      });
+
+    let newMconfig = this.mconfigsService.apiToTab({
+      apiMconfig: apiNewMconfig
+    });
+    let newQuery = this.queriesService.apiToTab({ apiQuery: apiNewQuery });
 
     malloyConnections.forEach(connection =>
       connection.close().catch(er => {

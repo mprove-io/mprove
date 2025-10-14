@@ -105,6 +105,7 @@ export class ReportsService {
       fields: fields,
       chart: chart,
       rows: rows,
+      keyTag: undefined,
       serverTs: undefined
     };
 
@@ -237,6 +238,7 @@ export class ReportsService {
       title: apiReport.title,
       chart: apiReport.chart,
       rows: apiReport.rows,
+      keyTag: undefined,
       serverTs: apiReport.serverTs
     };
 

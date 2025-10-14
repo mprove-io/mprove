@@ -347,6 +347,7 @@ FROM main;`;
             kitId: rq.kitId,
             reportId: report.reportId,
             data: row.records,
+            keyTag: undefined,
             serverTs: undefined
           };
 

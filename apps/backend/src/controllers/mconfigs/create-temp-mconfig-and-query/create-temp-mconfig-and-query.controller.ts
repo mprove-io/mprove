@@ -76,7 +76,7 @@ export class CreateTempMconfigAndQueryController {
 
     let { traceId } = reqValid.info;
     let {
-      mconfig,
+      mconfig: apiMconfig,
       projectId,
       isRepoProd,
       branchId,
@@ -123,10 +123,10 @@ export class CreateTempMconfigAndQueryController {
 
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
-      modelId: mconfig.modelId
+      modelId: apiMconfig.modelId
     });
 
-    if (mconfig.structId !== bridge.structId) {
+    if (apiMconfig.structId !== bridge.structId) {
       throw new ServerError({
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
@@ -153,16 +153,16 @@ export class CreateTempMconfigAndQueryController {
         project: project,
         envId: envId,
         model: model,
-        mconfig: mconfig,
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: isDefined(cellMetricsStartDateMs)
           ? getYYYYMMDDFromEpochUtcByTimezone({
-              timezone: mconfig.timezone,
+              timezone: apiMconfig.timezone,
               secondsEpochUTC: cellMetricsStartDateMs / 1000
             })
           : undefined,
         metricsEndDateYYYYMMDD: isDefined(cellMetricsEndDateMs)
           ? getYYYYMMDDFromEpochUtcByTimezone({
-              timezone: mconfig.timezone,
+              timezone: apiMconfig.timezone,
               secondsEpochUTC: cellMetricsEndDateMs / 1000
             })
           : undefined
@@ -177,16 +177,12 @@ export class CreateTempMconfigAndQueryController {
         envId: envId,
         structId: struct.structId,
         model: model,
-        mconfig: mconfig,
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: queryOperations
       });
 
-      newMconfig = this.mconfigsService.apiToTab({
-        apiMconfig: editMalloyQueryResult.newMconfig
-      });
-      newQuery = this.queriesService.apiToTab({
-        apiQuery: editMalloyQueryResult.newQuery
-      });
+      newMconfig = editMalloyQueryResult.newMconfig;
+      newQuery = editMalloyQueryResult.newQuery;
       isError = editMalloyQueryResult.isError;
     }
 

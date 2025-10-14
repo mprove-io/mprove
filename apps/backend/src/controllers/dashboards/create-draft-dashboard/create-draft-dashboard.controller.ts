@@ -363,19 +363,19 @@ export class CreateDraftDashboardController {
       mconfig => mconfig.modelType === ModelTypeEnum.Store
     );
 
-    await forEachSeries(dashboardStoreMconfigs, async mconfig => {
+    await forEachSeries(dashboardStoreMconfigs, async apiMconfig => {
       let newMconfig: MconfigTab;
       let newQuery: QueryTab;
       let isError = false;
 
-      let apiModel = apiModels.find(y => y.modelId === mconfig.modelId);
+      let apiModel = apiModels.find(y => y.modelId === apiMconfig.modelId);
 
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: apiStruct,
         project: project,
         envId: envId,
         model: this.modelsService.apiToTab({ apiModel: apiModel }),
-        mconfig: mconfig,
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: undefined,
         metricsEndDateYYYYMMDD: undefined
       });
@@ -385,7 +385,7 @@ export class CreateDraftDashboardController {
       isError = mqe.isError;
 
       let newDashboardTile = newApiDashboard.tiles.find(
-        tile => tile.mconfigId === mconfig.mconfigId
+        tile => tile.mconfigId === apiMconfig.mconfigId
       );
       newDashboardTile.queryId = newMconfig.queryId;
       newDashboardTile.mconfigId = newMconfig.mconfigId;

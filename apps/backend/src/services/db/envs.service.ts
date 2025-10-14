@@ -58,6 +58,7 @@ export class EnvsService {
       isFallbackToProdConnections: true,
       isFallbackToProdVariables: true,
       evs: evs,
+      keyTag: undefined,
       serverTs: undefined
     };
 

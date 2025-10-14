@@ -158,6 +158,7 @@ export class BlockmlService {
       presets: rs.presets,
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),
+      keyTag: undefined,
       serverTs: undefined
     };
 

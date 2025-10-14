@@ -199,8 +199,8 @@ export async function fetchSql<T extends dcType>(
         ]
       });
 
-      let newMconfig = editMalloyQueryResult.newMconfig;
-      let newQuery = editMalloyQueryResult.newQuery;
+      let newMconfig = editMalloyQueryResult.apiNewMconfig;
+      let newQuery = editMalloyQueryResult.apiNewQuery;
       let isError = editMalloyQueryResult.isError;
 
       // let { preparedResult, filtersFractions, newMalloyQuery } =

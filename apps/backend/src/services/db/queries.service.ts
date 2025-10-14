@@ -128,6 +128,7 @@ export class QueriesService {
       lastErrorMessage: apiQuery.lastErrorMessage,
       data: apiQuery.data,
       apiUrlHash: undefined, // tab-to-ent
+      keyTag: undefined,
       serverTs: apiQuery.serverTs
     };
 

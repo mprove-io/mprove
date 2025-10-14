@@ -91,6 +91,7 @@ export class ModelsService {
       label: apiModel.label,
       fields: apiModel.fields,
       nodes: apiModel.nodes,
+      keyTag: undefined,
       serverTs: apiModel.serverTs
     };
 
