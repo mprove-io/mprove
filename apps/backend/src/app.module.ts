@@ -320,7 +320,7 @@ export class AppModule implements OnModuleInit {
         if (isUndefined(dconfig)) {
           let hashSecret = this.hashService.createHashSecret();
 
-          let newDconfig: DconfigTab = {
+          let dconfigInit: DconfigTab = {
             dconfigId: makeId(),
             hashSecret: hashSecret,
             hashSecretCheck: undefined, // set in checkEncryption
@@ -335,7 +335,7 @@ export class AppModule implements OnModuleInit {
                   await this.db.packer.write({
                     tx: tx,
                     insert: {
-                      dconfigs: [newDconfig]
+                      dconfigs: [dconfigInit]
                     }
                   })
               ),
