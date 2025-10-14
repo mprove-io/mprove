@@ -273,7 +273,7 @@ export class SaveCreateDashboardController {
       // secondFileContent = malloyFileText;
     }
 
-    let baseProject = this.projectsService.tabToBaseProject({
+    let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
 

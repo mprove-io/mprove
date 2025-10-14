@@ -38,7 +38,6 @@ import { RabbitService } from '../rabbit.service';
 import { TabService } from '../tab.service';
 import { BranchesService } from './branches.service';
 import { BridgesService } from './bridges.service';
-import { ProjectsService } from './projects.service';
 
 let retry = require('async-retry');
 
@@ -49,7 +48,6 @@ export class MembersService {
     private hashService: HashService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
-    private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
@@ -273,7 +271,7 @@ export class MembersService {
             isExplorer: true
           });
 
-          let baseProject = this.projectsService.tabToBaseProject({
+          let baseProject = this.tabService.projectTabToBaseProject({
             project: project
           });
 

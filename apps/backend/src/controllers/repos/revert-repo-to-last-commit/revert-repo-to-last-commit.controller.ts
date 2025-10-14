@@ -94,7 +94,7 @@ export class RevertRepoToLastCommitController {
       member: member
     });
 
-    let baseProject = this.projectsService.tabToBaseProject({
+    let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
 

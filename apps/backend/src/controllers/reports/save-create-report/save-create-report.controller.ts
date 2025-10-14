@@ -226,7 +226,7 @@ export class SaveCreateReportController {
 
     let fileName = `${newReportId}${FileExtensionEnum.Report}`;
 
-    let baseProject = this.projectsService.tabToBaseProject({
+    let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
 

@@ -149,7 +149,7 @@ export class GetNavController {
 
       apiStruct = this.structsService.tabToApi({ struct: struct });
 
-      let apiResultBaseProject = this.projectsService.tabToBaseProject({
+      let apiResultBaseProject = this.tabService.projectTabToBaseProject({
         project: resultProject
       });
 

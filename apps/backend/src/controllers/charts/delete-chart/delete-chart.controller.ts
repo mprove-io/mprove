@@ -148,7 +148,7 @@ export class DeleteChartController {
     //   secondFileNodeId = pathParts.join('.');
     // }
 
-    let baseProject = this.projectsService.tabToBaseProject({
+    let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
 

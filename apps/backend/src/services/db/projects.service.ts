@@ -17,11 +17,9 @@ import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
-import { BaseProject } from '~common/interfaces/backend/base-project';
 import { Ev } from '~common/interfaces/backend/ev';
 import { Project } from '~common/interfaces/backend/project';
 import { ProjectsItem } from '~common/interfaces/backend/projects-item';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import {
   ToDiskCreateProjectRequest,
   ToDiskCreateProjectResponse
@@ -89,33 +87,6 @@ export class ProjectsService {
     return apiProject;
   }
 
-  tabToBaseProject(item: {
-    project: ProjectTab;
-  }): BaseProject {
-    let { project } = item;
-
-    let projectSt: ProjectSt = {
-      name: project.name
-    };
-
-    let projectLt: ProjectLt = {
-      defaultBranch: project.defaultBranch,
-      gitUrl: project.gitUrl,
-      privateKey: project.privateKey,
-      publicKey: project.publicKey
-    };
-
-    let apiBaseProject: BaseProject = {
-      orgId: project.orgId,
-      projectId: project.projectId,
-      remoteType: project.remoteType,
-      st: this.tabService.encrypt({ data: projectSt }),
-      lt: this.tabService.encrypt({ data: projectLt })
-    };
-
-    return apiBaseProject;
-  }
-
   async getProjectCheckExists(item: { projectId: string }) {
     let { projectId } = item;
 
@@ -178,7 +149,9 @@ export class ProjectsService {
       serverTs: undefined
     };
 
-    let baseProject = this.tabToBaseProject({ project: newProject });
+    let baseProject = this.tabService.projectTabToBaseProject({
+      project: newProject
+    });
 
     let toDiskCreateProjectRequest: ToDiskCreateProjectRequest = {
       info: {

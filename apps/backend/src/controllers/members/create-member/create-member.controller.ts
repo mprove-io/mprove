@@ -178,7 +178,7 @@ export class CreateMemberController {
       isExplorer: true
     });
 
-    let baseProject = this.projectsService.tabToBaseProject({
+    let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
 

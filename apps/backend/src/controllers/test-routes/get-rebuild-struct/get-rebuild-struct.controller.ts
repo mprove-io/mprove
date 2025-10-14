@@ -69,7 +69,7 @@ export class GetRebuildStructController {
 
     // to disk
 
-    let baseProject = this.projectsService.tabToBaseProject({
+    let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
 

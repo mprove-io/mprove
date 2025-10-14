@@ -48,6 +48,8 @@ import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
+import { BaseProject } from '~common/interfaces/backend/base-project';
+import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import {
   decryptData,
@@ -220,6 +222,34 @@ export class TabService {
     });
 
     return { publicKey, privateKey };
+  }
+
+  projectTabToBaseProject(item: {
+    // tabService (no circular deps - membersService, projectsService)
+    project: ProjectTab;
+  }): BaseProject {
+    let { project } = item;
+
+    let projectSt: ProjectSt = {
+      name: project.name
+    };
+
+    let projectLt: ProjectLt = {
+      defaultBranch: project.defaultBranch,
+      gitUrl: project.gitUrl,
+      privateKey: project.privateKey,
+      publicKey: project.publicKey
+    };
+
+    let apiBaseProject: BaseProject = {
+      orgId: project.orgId,
+      projectId: project.projectId,
+      remoteType: project.remoteType,
+      st: this.encrypt({ data: projectSt }),
+      lt: this.encrypt({ data: projectLt })
+    };
+
+    return apiBaseProject;
   }
 
   avatarEntToTab(avatarEnt: AvatarEnt): AvatarTab {

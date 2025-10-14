@@ -12,7 +12,12 @@ import { isDefined } from '~common/functions/is-defined';
 import { parseTags } from '~common/functions/parse-tags';
 import { ModelField } from '~common/interfaces/blockml/model-field';
 import { ModelNode } from '~common/interfaces/blockml/model-node';
-import { FieldItemX } from './wrap-models';
+import { FieldItem } from '../extra/get-field-items';
+
+export interface FieldItemX extends FieldItem {
+  filePath: string;
+  lineNum: number;
+}
 
 export function wrapFieldItem(item: {
   topNode: ModelNode;

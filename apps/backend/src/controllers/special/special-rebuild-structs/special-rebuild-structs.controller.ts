@@ -148,7 +148,7 @@ export class SpecialRebuildStructsController {
       };
 
       if (skipRebuild === false) {
-        let baseProject = this.projectsService.tabToBaseProject({
+        let baseProject = this.tabService.projectTabToBaseProject({
           project: project
         });
 

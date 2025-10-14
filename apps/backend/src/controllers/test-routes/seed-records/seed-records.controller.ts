@@ -271,9 +271,10 @@ export class SeedRecordsController {
             serverTs: undefined
           };
 
-          let baseProject: BaseProject = this.projectsService.tabToBaseProject({
-            project: newProject
-          });
+          let baseProject: BaseProject =
+            this.tabService.projectTabToBaseProject({
+              project: newProject
+            });
 
           let prodEnv = this.envsService.makeEnv({
             projectId: baseProject.projectId,
