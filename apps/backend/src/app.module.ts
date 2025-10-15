@@ -428,6 +428,21 @@ export class AppModule implements OnModuleInit {
     let prevKeyTag =
       this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
 
+    let isEncryptDb =
+      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
+      BoolEnum.TRUE;
+
+    let isEncryptMetadata =
+      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata') ===
+      BoolEnum.TRUE;
+
+    if (isEncryptMetadata === true && isEncryptDb === false) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_ENCRYPT_METADATA_DOES_NOT_WORK_WITHOUT_ENCRYPT_DB
+      });
+    }
+
     if (isUndefined(keyBase64)) {
       throw new ServerError({
         message: ErEnum.BACKEND_AES_KEY_IS_NOT_DEFINED
