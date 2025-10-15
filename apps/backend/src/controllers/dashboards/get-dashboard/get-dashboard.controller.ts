@@ -401,8 +401,10 @@ export class GetDashboardController {
     );
 
     let newDashboardX =
-      await this.dashboardsService.getDashboardXCheckExistsAndAccess({
-        dashboardId: newDashboard.dashboardId,
+      await this.dashboardsService.getDashboardXUsingDashboardTab({
+        dashboard: this.dashboardsService.apiToTab({
+          apiDashboard: newDashboard
+        }),
         projectId: projectId,
         structId: bridge.structId,
         apiUserMember: apiUserMember

@@ -178,7 +178,7 @@ export class DashboardsService {
     dashboardId: string;
     structId: string;
     projectId: string;
-    apiUserMember: Member; // to not use membersService inside dashboardsService (circular dep with blockmlService)
+    apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
   }): Promise<DashboardX> {
     let { projectId, dashboardId, structId, apiUserMember } = item;
 
@@ -197,6 +197,24 @@ export class DashboardsService {
         message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD
       });
     }
+
+    let dashboardX = this.getDashboardXUsingDashboardTab({
+      dashboard: dashboard,
+      structId: structId,
+      projectId: projectId,
+      apiUserMember: apiUserMember
+    });
+
+    return dashboardX;
+  }
+
+  async getDashboardXUsingDashboardTab(item: {
+    dashboard: DashboardTab;
+    structId: string;
+    projectId: string;
+    apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
+  }): Promise<DashboardX> {
+    let { dashboard, structId, projectId, apiUserMember } = item;
 
     let mconfigIds = dashboard.tiles.map(x => x.mconfigId);
 
