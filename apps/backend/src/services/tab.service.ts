@@ -43,7 +43,6 @@ import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
 import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
@@ -51,41 +50,31 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { BaseProject } from '~common/interfaces/backend/base-project';
 import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
-import {
-  decryptData,
-  encryptData
-} from '~node-common/functions/encrypt-decrypt';
+import { decryptData } from '~node-common/functions/encrypt-decrypt';
+import { TabToEntService } from './tab-to-ent.service';
 
 @Injectable()
 export class TabService {
   private keyBuffer: Buffer;
-  private prevKeyBuffer: Buffer;
-
   private keyTag: string;
+
+  private prevKeyBuffer: Buffer;
   private prevKeyTag: string;
 
-  private isEncryptDb: boolean;
-  private isEncryptMetadata: boolean;
-
-  constructor(private cs: ConfigService<BackendConfig>) {
+  constructor(
+    private tabToEntService: TabToEntService,
+    private cs: ConfigService<BackendConfig>
+  ) {
     let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
     this.keyBuffer = Buffer.from(keyBase64, 'base64');
+
+    this.keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
 
     let prevKeyBase64 = this.cs.get<BackendConfig['prevAesKey']>('prevAesKey');
     this.prevKeyBuffer = Buffer.from(prevKeyBase64, 'base64');
 
-    this.keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
-
     this.prevKeyTag =
       this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
-
-    this.isEncryptDb =
-      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
-      BoolEnum.TRUE;
-
-    this.isEncryptMetadata =
-      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata') ===
-      BoolEnum.TRUE;
   }
 
   getTabProps<ST, LT>(item: {
@@ -158,52 +147,6 @@ export class TabService {
         };
   }
 
-  getEntProps<DataSt, DataLt>(item: {
-    dataSt: DataSt;
-    dataLt: DataLt;
-    isMetadata: boolean;
-  }) {
-    let { dataSt, dataLt, isMetadata } = item;
-
-    let isEncrypt =
-      isMetadata === true
-        ? this.isEncryptDb === true && this.isEncryptMetadata === true
-        : this.isEncryptDb === true;
-
-    return isEncrypt === true
-      ? {
-          st: {
-            encrypted: this.encrypt({ data: dataSt }),
-            decrypted: undefined as DataSt
-          },
-          lt: {
-            encrypted: this.encrypt({ data: dataLt }),
-            decrypted: undefined as DataLt
-          },
-          keyTag: this.keyTag
-        }
-      : {
-          st: {
-            encrypted: undefined as string,
-            decrypted: dataSt
-          },
-          lt: {
-            encrypted: undefined as string,
-            decrypted: dataLt
-          },
-          keyTag: undefined
-        };
-  }
-
-  encrypt(item: { data: any }) {
-    let { data } = item;
-
-    return encryptData({
-      data: data,
-      keyBuffer: this.keyBuffer
-    });
-  }
-
   decrypt<T>(item: {
     encryptedString: string;
     keyBuffer: Buffer<ArrayBufferLike>;
@@ -257,8 +200,8 @@ export class TabService {
       orgId: project.orgId,
       projectId: project.projectId,
       remoteType: project.remoteType,
-      st: this.encrypt({ data: projectSt }),
-      lt: this.encrypt({ data: projectLt })
+      st: this.tabToEntService.encrypt({ data: projectSt }),
+      lt: this.tabToEntService.encrypt({ data: projectLt })
     };
 
     return apiBaseProject;
