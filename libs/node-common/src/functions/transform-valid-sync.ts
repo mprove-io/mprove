@@ -4,10 +4,8 @@ import {
   TransformValidationOptions,
   transformAndValidateSync
 } from 'class-transformer-validator';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
 import { ServerError } from '~common/models/server-error';
 import { getConstraintsRecursive } from './get-constraints-recursive';
@@ -18,7 +16,7 @@ export function transformValidSync<T extends object>(item: {
   object: object;
   options?: TransformValidationOptions;
   errorMessage: any;
-  logIsJson: BoolEnum;
+  logIsJson: boolean;
   logger: Logger;
 }) {
   let { classType, object, options, errorMessage, logIsJson, logger } = item;
@@ -49,7 +47,7 @@ export function transformValidSync<T extends object>(item: {
     ) {
       logToConsole({
         log: serverError,
-        logIsJson: isDefined(logIsJson) ? enumToBoolean(logIsJson) : false,
+        logIsJson: isDefined(logIsJson) ? logIsJson : false,
         logger: logger,
         logLevel: LogLevelEnum.Error,
         useLoggerOnlyForErrorLevel: false // not need because logLevel is LogLevelEnum.Error

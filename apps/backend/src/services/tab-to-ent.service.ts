@@ -43,7 +43,6 @@ import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
   AvatarLt,
@@ -104,13 +103,10 @@ export class TabToEntService {
 
     this.keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
 
-    this.isEncryptDb =
-      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
-      BoolEnum.TRUE;
+    this.isEncryptDb = this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb');
 
     this.isEncryptMetadata =
-      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata') ===
-      BoolEnum.TRUE;
+      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata');
   }
 
   tabsPackToEntsPack(item: { tabsPack: DbTabsPack; hashSecret: string }) {

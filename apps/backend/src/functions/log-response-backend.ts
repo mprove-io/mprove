@@ -1,11 +1,9 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { logToConsole } from '~node-common/functions/log-to-console';
@@ -22,13 +20,12 @@ export function logResponseBackend(item: {
 
   let isLogOk =
     cs.get<BackendConfig['backendLogResponseOk']>('backendLogResponseOk') ===
-      BoolEnum.TRUE && response.info.status === ResponseInfoStatusEnum.Ok;
+      true && response.info.status === ResponseInfoStatusEnum.Ok;
 
   let isLogError =
     cs.get<BackendConfig['backendLogResponseError']>(
       'backendLogResponseError'
-    ) === BoolEnum.TRUE &&
-    response.info.status === ResponseInfoStatusEnum.Error;
+    ) === true && response.info.status === ResponseInfoStatusEnum.Error;
 
   if (isLogOk === true || isLogError === true) {
     let log = {
@@ -41,9 +38,7 @@ export function logResponseBackend(item: {
 
     logToConsole({
       log: log,
-      logIsJson: enumToBoolean(
-        cs.get<BackendConfig['backendLogIsJson']>('backendLogIsJson')
-      ),
+      logIsJson: cs.get<BackendConfig['backendLogIsJson']>('backendLogIsJson'),
       logger: logger,
       logLevel: logLevel,
       useLoggerOnlyForErrorLevel:

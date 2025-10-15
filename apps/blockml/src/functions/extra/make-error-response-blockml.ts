@@ -2,7 +2,6 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
-import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { makeErrorResponse } from '~node-common/functions/make-error-response';
 
 export function makeErrorResponseBlockml(item: {
@@ -23,14 +22,10 @@ export function makeErrorResponseBlockml(item: {
     method: method,
     duration: duration,
     isRemoveErrorData: false,
-    logResponseError: enumToBoolean(
-      cs.get<BlockmlConfig['blockmlLogResponseError']>(
-        'blockmlLogResponseError'
-      )
+    logResponseError: cs.get<BlockmlConfig['blockmlLogResponseError']>(
+      'blockmlLogResponseError'
     ),
-    logIsJson: enumToBoolean(
-      cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson')
-    ),
+    logIsJson: cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson'),
     logger: logger,
     useLoggerOnlyForErrorLevel:
       cs.get<BlockmlConfig['blockmlEnv']>('blockmlEnv') !== BlockmlEnvEnum.PROD

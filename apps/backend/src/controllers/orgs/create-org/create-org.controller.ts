@@ -15,7 +15,6 @@ import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
 import { DEMO_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -56,7 +55,7 @@ export class CreateOrgController {
       this.cs.get<BackendConfig['mproveAdminEmail']>('mproveAdminEmail');
 
     if (
-      allowUsersToCreateOrganizations !== BoolEnum.TRUE &&
+      allowUsersToCreateOrganizations === false &&
       user.email !== mproveAdminEmail
     ) {
       throw new ServerError({

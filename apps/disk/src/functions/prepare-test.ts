@@ -4,7 +4,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '~common/constants/top-disk';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 import { appServices } from '~disk/app-services';
 import { DiskConfig } from '~disk/config/disk-config';
@@ -20,8 +19,8 @@ export async function prepareTest(
 ) {
   let extraOverride: DiskConfig = {
     diskEnv: DiskEnvEnum.TEST,
-    // diskLogResponseOk: BoolEnum.TRUE,
-    diskLogResponseError: BoolEnum.TRUE
+    // diskLogResponseOk: true,
+    diskLogResponseError: true
   };
 
   let config = getConfig();
@@ -37,7 +36,7 @@ export async function prepareTest(
       WinstonModule.forRoot(
         getLoggerOptions({
           appName: APP_NAME_DISK,
-          isJson: config.diskLogIsJson === BoolEnum.TRUE
+          isJson: config.diskLogIsJson
         })
       )
     ],

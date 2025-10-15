@@ -5,7 +5,6 @@ import {
   APP_NAME_BACKEND,
   APP_NAME_SCHEDULER
 } from '~common/constants/top-backend';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { getLoggerOptions } from '~node-common/functions/get-logger-options';
 import { listenProcessEvents } from '~node-common/functions/listen-process-events';
@@ -28,11 +27,9 @@ async function bootstrap() {
     logger: WinstonModule.createLogger(
       getLoggerOptions({
         appName:
-          config.isScheduler === BoolEnum.TRUE
-            ? APP_NAME_SCHEDULER
-            : APP_NAME_BACKEND,
+          config.isScheduler === true ? APP_NAME_SCHEDULER : APP_NAME_BACKEND,
 
-        isJson: config.backendLogIsJson === BoolEnum.TRUE
+        isJson: config.backendLogIsJson
       })
     )
   });

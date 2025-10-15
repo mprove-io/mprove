@@ -3,9 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
-import { isScheduler } from './functions/is-scheduler';
 import { BlockmlService } from './services/blockml.service';
-import { CheckTabService } from './services/check-tab.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
 import { BridgesService } from './services/db/bridges.service';
@@ -43,6 +41,7 @@ import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { StoreService } from './services/store.service';
+import { TabCheckerService } from './services/tab-checker.service';
 import { TabToEntService } from './services/tab-to-ent.service';
 import { TabService } from './services/tab.service';
 import { TasksService } from './services/tasks.service';
@@ -83,7 +82,7 @@ export const appProviders = [
   TrinoService,
   //
   BlockmlService,
-  CheckTabService,
+  TabCheckerService,
   DocService,
   EmailService,
   HashService,
@@ -104,7 +103,7 @@ export const appProviders = [
       structsService: StructsService,
       logger: Logger
     ) =>
-      isScheduler(cs)
+      cs.get<BackendConfig['isScheduler']>('isScheduler') === true
         ? new TasksService(cs, queriesService, structsService, logger)
         : {},
     inject: [ConfigService, QueriesService, StructsService]

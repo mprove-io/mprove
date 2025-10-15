@@ -1,13 +1,13 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { isDefined } from '~common/functions/is-defined';
 
 import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
+import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { DiskConfig } from '~disk/config/disk-config';
 
 export function getDevConfig(envFilePath: any) {
-  let envFile: any = {};
+  let envFile: { [name: string]: string } = {};
 
   if (isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));
@@ -28,15 +28,19 @@ export function getDevConfig(envFilePath: any) {
     diskOrganizationsPath:
       process.env.DISK_ORGANIZATIONS_PATH || envFile.DISK_ORGANIZATIONS_PATH,
 
-    diskLogIsJson: <BoolEnum>(
-      (process.env.DISK_LOG_IS_JSON || envFile.DISK_LOG_IS_JSON)
-    ),
-    diskLogResponseError: <BoolEnum>(
-      (process.env.DISK_LOG_RESPONSE_ERROR || envFile.DISK_LOG_RESPONSE_ERROR)
-    ),
-    diskLogResponseOk: <BoolEnum>(
-      (process.env.DISK_LOG_RESPONSE_OK || envFile.DISK_LOG_RESPONSE_OK)
-    )
+    diskLogIsJson: enumToBoolean({
+      value: process.env.DISK_LOG_IS_JSON || envFile.DISK_LOG_IS_JSON,
+      name: 'DISK_LOG_IS_JSON'
+    }),
+    diskLogResponseError: enumToBoolean({
+      value:
+        process.env.DISK_LOG_RESPONSE_ERROR || envFile.DISK_LOG_RESPONSE_ERROR,
+      name: 'DISK_LOG_RESPONSE_ERROR'
+    }),
+    diskLogResponseOk: enumToBoolean({
+      value: process.env.DISK_LOG_RESPONSE_OK || envFile.DISK_LOG_RESPONSE_OK,
+      name: 'DISK_LOG_RESPONSE_OK'
+    })
   };
   return devConfig;
 }

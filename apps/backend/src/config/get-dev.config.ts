@@ -1,14 +1,14 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
 import { BackendConfig } from '~backend/config/backend-config';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { EmailTransportEnum } from '~common/enums/email-transport.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
 
 export function getDevConfig(envFilePath: any) {
-  let envFile: any = {};
+  let envFile: { [name: string]: string } = {};
 
   if (isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));
@@ -23,14 +23,17 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_ENV || envFile.BACKEND_ENV)
     ),
 
-    isEncryptDb: <BoolEnum>(
-      (process.env.BACKEND_IS_ENCRYPT_DB || envFile.BACKEND_IS_ENCRYPT_DB)
-    ),
+    isEncryptDb: enumToBoolean({
+      value: process.env.BACKEND_IS_ENCRYPT_DB || envFile.BACKEND_IS_ENCRYPT_DB,
+      name: 'BACKEND_IS_ENCRYPT_DB'
+    }),
 
-    isEncryptMetadata: <BoolEnum>(
-      (process.env.BACKEND_IS_ENCRYPT_METADATA ||
-        envFile.BACKEND_IS_ENCRYPT_METADATA)
-    ),
+    isEncryptMetadata: enumToBoolean({
+      value:
+        process.env.BACKEND_IS_ENCRYPT_METADATA ||
+        envFile.BACKEND_IS_ENCRYPT_METADATA,
+      name: 'BACKEND_IS_ENCRYPT_METADATA'
+    }),
 
     aesKey: process.env.BACKEND_AES_KEY || envFile.BACKEND_AES_KEY,
 
@@ -42,9 +45,10 @@ export function getDevConfig(envFilePath: any) {
     prevAesKeyTag:
       process.env.BACKEND_PREV_AES_KEY_TAG || envFile.BACKEND_PREV_AES_KEY_TAG,
 
-    isScheduler: <BoolEnum>(
-      (process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER)
-    ),
+    isScheduler: enumToBoolean({
+      value: process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER,
+      name: 'BACKEND_IS_SCHEDULER'
+    }),
 
     demoProjectDwhBigqueryCredentialsPath:
       process.env.BACKEND_DEMO_PROJECT_DWH_BIGQUERY_CREDENTIALS_PATH ||
@@ -58,10 +62,12 @@ export function getDevConfig(envFilePath: any) {
 
     specialKey: process.env.BACKEND_SPECIAL_KEY || envFile.BACKEND_SPECIAL_KEY,
 
-    allowTestRoutes: <BoolEnum>(
-      (process.env.BACKEND_ALLOW_TEST_ROUTES ||
-        envFile.BACKEND_ALLOW_TEST_ROUTES)
-    ),
+    allowTestRoutes: enumToBoolean({
+      value:
+        process.env.BACKEND_ALLOW_TEST_ROUTES ||
+        envFile.BACKEND_ALLOW_TEST_ROUTES,
+      name: 'BACKEND_ALLOW_TEST_ROUTES'
+    }),
 
     mproveAdminEmail:
       process.env.BACKEND_MPROVE_ADMIN_EMAIL ||
@@ -97,10 +103,12 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH ||
       envFile.BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH,
 
-    seedDemoOrgAndProject: <BoolEnum>(
-      (process.env.BACKEND_SEED_DEMO_ORG_AND_PROJECT ||
-        envFile.BACKEND_SEED_DEMO_ORG_AND_PROJECT)
-    ),
+    seedDemoOrgAndProject: enumToBoolean({
+      value:
+        process.env.BACKEND_SEED_DEMO_ORG_AND_PROJECT ||
+        envFile.BACKEND_SEED_DEMO_ORG_AND_PROJECT,
+      name: 'BACKEND_SEED_DEMO_ORG_AND_PROJECT'
+    }),
 
     demoProjectDwhPostgresHost:
       process.env.BACKEND_DEMO_PROJECT_DWH_POSTGRES_HOST ||
@@ -190,15 +198,19 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_CALC_POSTGRES_PASSWORD ||
       envFile.BACKEND_CALC_POSTGRES_PASSWORD,
 
-    allowUsersToCreateOrganizations: <BoolEnum>(
-      (process.env.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS ||
-        envFile.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS)
-    ),
+    allowUsersToCreateOrganizations: enumToBoolean({
+      value:
+        process.env.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS ||
+        envFile.BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS,
+      name: 'BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS'
+    }),
 
-    registerOnlyInvitedUsers: <BoolEnum>(
-      (process.env.BACKEND_REGISTER_ONLY_INVITED_USERS ||
-        envFile.BACKEND_REGISTER_ONLY_INVITED_USERS)
-    ),
+    registerOnlyInvitedUsers: enumToBoolean({
+      value:
+        process.env.BACKEND_REGISTER_ONLY_INVITED_USERS ||
+        envFile.BACKEND_REGISTER_ONLY_INVITED_USERS,
+      name: 'BACKEND_REGISTER_ONLY_INVITED_USERS'
+    }),
 
     hostUrl: process.env.BACKEND_HOST_URL || envFile.BACKEND_HOST_URL,
 
@@ -222,9 +234,10 @@ export function getDevConfig(envFilePath: any) {
         : envFile.BACKEND_SMTP_PORT
     ),
 
-    smtpSecure: <BoolEnum>(
-      (process.env.BACKEND_SMTP_SECURE || envFile.BACKEND_SMTP_SECURE)
-    ),
+    smtpSecure: enumToBoolean({
+      value: process.env.BACKEND_SMTP_SECURE || envFile.BACKEND_SMTP_SECURE,
+      name: 'BACKEND_SMTP_SECURE'
+    }),
 
     smtpAuthUser:
       process.env.BACKEND_SMTP_AUTH_USER || envFile.BACKEND_SMTP_AUTH_USER,
@@ -260,37 +273,50 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_POSTGRES_DATABASE_URL ||
       envFile.BACKEND_POSTGRES_DATABASE_URL,
 
-    backendIsPostgresTls: <BoolEnum>(
-      (process.env.BACKEND_IS_POSTGRES_TLS || envFile.BACKEND_IS_POSTGRES_TLS)
-    ),
+    backendIsPostgresTls: enumToBoolean({
+      value:
+        process.env.BACKEND_IS_POSTGRES_TLS || envFile.BACKEND_IS_POSTGRES_TLS,
+      name: 'BACKEND_IS_POSTGRES_TLS'
+    }),
 
-    backendThrottlePublicRoutesByIp: <BoolEnum>(
-      (process.env.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP ||
-        envFile.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP)
-    ),
+    backendThrottlePublicRoutesByIp: enumToBoolean({
+      value:
+        process.env.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP ||
+        envFile.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP,
+      name: 'BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP'
+    }),
 
-    backendThrottlePrivateRoutesByUserId: <BoolEnum>(
-      (process.env.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID ||
-        envFile.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID)
-    ),
+    backendThrottlePrivateRoutesByUserId: enumToBoolean({
+      value:
+        process.env.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID ||
+        envFile.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID,
+      name: 'BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID'
+    }),
 
-    backendLogDrizzlePostgres: <BoolEnum>(
-      (process.env.BACKEND_LOG_DRIZZLE_POSTGRES ||
-        envFile.BACKEND_LOG_DRIZZLE_POSTGRES)
-    ),
+    backendLogDrizzlePostgres: enumToBoolean({
+      value:
+        process.env.BACKEND_LOG_DRIZZLE_POSTGRES ||
+        envFile.BACKEND_LOG_DRIZZLE_POSTGRES,
+      name: 'BACKEND_LOG_DRIZZLE_POSTGRES'
+    }),
 
-    backendLogIsJson: <BoolEnum>(
-      (process.env.BACKEND_LOG_IS_JSON || envFile.BACKEND_LOG_IS_JSON)
-    ),
+    backendLogIsJson: enumToBoolean({
+      value: process.env.BACKEND_LOG_IS_JSON || envFile.BACKEND_LOG_IS_JSON,
+      name: 'BACKEND_LOG_IS_JSON'
+    }),
 
-    backendLogResponseError: <BoolEnum>(
-      (process.env.BACKEND_LOG_RESPONSE_ERROR ||
-        envFile.BACKEND_LOG_RESPONSE_ERROR)
-    ),
+    backendLogResponseError: enumToBoolean({
+      value:
+        process.env.BACKEND_LOG_RESPONSE_ERROR ||
+        envFile.BACKEND_LOG_RESPONSE_ERROR,
+      name: 'BACKEND_LOG_RESPONSE_ERROR'
+    }),
 
-    backendLogResponseOk: <BoolEnum>(
-      (process.env.BACKEND_LOG_RESPONSE_OK || envFile.BACKEND_LOG_RESPONSE_OK)
-    )
+    backendLogResponseOk: enumToBoolean({
+      value:
+        process.env.BACKEND_LOG_RESPONSE_OK || envFile.BACKEND_LOG_RESPONSE_OK,
+      name: 'BACKEND_LOG_RESPONSE_OK'
+    })
   };
 
   return devConfig;

@@ -7,7 +7,6 @@ import {
   ThrottlerStorage
 } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
-import { BoolEnum } from '~common/enums/bool.enum';
 
 @Injectable()
 export class ThrottlerIpGuard extends ThrottlerGuard {
@@ -25,7 +24,7 @@ export class ThrottlerIpGuard extends ThrottlerGuard {
       BackendConfig['backendThrottlePublicRoutesByIp']
     >('backendThrottlePublicRoutesByIp');
 
-    let isSkip = isThrottleByIp === BoolEnum.FALSE;
+    let isSkip = isThrottleByIp === false;
 
     return isSkip;
   }

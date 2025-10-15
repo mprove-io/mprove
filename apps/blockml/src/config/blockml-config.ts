@@ -1,5 +1,4 @@
-import { IsEnum, IsInt, IsString } from 'class-validator';
-import { BoolEnum } from '~common/enums/bool.enum';
+import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
 import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 
@@ -10,14 +9,14 @@ export class BlockmlConfig {
   @IsString()
   aesKey?: string;
 
-  @IsEnum(BoolEnum)
-  logIO?: BoolEnum;
+  @IsBoolean()
+  logIO?: boolean;
 
   @IsEnum(FuncEnum)
   logFunc?: FuncEnum;
 
-  @IsEnum(BoolEnum)
-  copyLogsToModels?: BoolEnum;
+  @IsBoolean()
+  copyLogsToModels?: boolean;
 
   @IsString()
   logsPath?: string;
@@ -58,12 +57,12 @@ export class BlockmlConfig {
   @IsString()
   blockmlTestsDwhPostgresDatabaseName?: string;
 
-  @IsEnum(BoolEnum)
-  blockmlLogIsJson?: BoolEnum;
+  @IsBoolean()
+  blockmlLogIsJson?: boolean;
 
-  @IsEnum(BoolEnum)
-  blockmlLogResponseError?: BoolEnum;
+  @IsBoolean()
+  blockmlLogResponseError?: boolean;
 
-  @IsEnum(BoolEnum)
-  blockmlLogResponseOk?: BoolEnum;
+  @IsBoolean()
+  blockmlLogResponseOk?: boolean;
 }

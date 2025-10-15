@@ -11,7 +11,6 @@ import { getConfig } from '~backend/config/get.config';
 import { HashService } from '~backend/services/hash.service';
 import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { TabService } from '~backend/services/tab.service';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { DrizzleLogWriter } from './drizzle-log-writer';
 import { DrizzlePacker } from './postgres/drizzle-packer';
 import { schemaPostgres } from './postgres/schema/_schema-postgres';
@@ -52,7 +51,7 @@ export interface Db {
           ssl:
             cs.get<BackendConfig['backendIsPostgresTls']>(
               'backendIsPostgresTls'
-            ) === BoolEnum.TRUE
+            ) === true
               ? {
                   rejectUnauthorized: false
                 }
@@ -68,7 +67,7 @@ export interface Db {
         if (
           cs.get<BackendConfig['backendLogDrizzlePostgres']>(
             'backendLogDrizzlePostgres'
-          ) === BoolEnum.TRUE
+          ) === true
         ) {
           let prefixPostgres = 'POSTGRES';
 

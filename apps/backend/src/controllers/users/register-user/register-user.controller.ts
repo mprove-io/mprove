@@ -23,7 +23,6 @@ import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -108,11 +107,11 @@ export class RegisterUserController {
     }
 
     if (isUndefined(user)) {
-      let onlyInv = this.cs.get<BackendConfig['registerOnlyInvitedUsers']>(
-        'registerOnlyInvitedUsers'
-      );
+      let isRegisterOnlyInvitedUsers = this.cs.get<
+        BackendConfig['registerOnlyInvitedUsers']
+      >('registerOnlyInvitedUsers');
 
-      if (onlyInv === BoolEnum.TRUE) {
+      if (isRegisterOnlyInvitedUsers === true) {
         throw new ServerError({
           message: ErEnum.BACKEND_USER_IS_NOT_INVITED
         });

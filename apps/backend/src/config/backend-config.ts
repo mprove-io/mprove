@@ -1,5 +1,4 @@
-import { IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
-import { BoolEnum } from '~common/enums/bool.enum';
+import { IsBoolean, IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
 import { EmailTransportEnum } from '~common/enums/email-transport.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
@@ -8,11 +7,11 @@ export class BackendConfig {
   @IsEnum(BackendEnvEnum)
   backendEnv?: BackendEnvEnum;
 
-  @IsEnum(BoolEnum)
-  isEncryptDb?: BoolEnum;
+  @IsBoolean()
+  isEncryptDb?: boolean;
 
-  @IsEnum(BoolEnum)
-  isEncryptMetadata?: BoolEnum;
+  @IsBoolean()
+  isEncryptMetadata?: boolean;
 
   @IsString()
   aesKey?: string;
@@ -29,8 +28,8 @@ export class BackendConfig {
   @IsString()
   mproveReleaseTag?: string;
 
-  @IsEnum(BoolEnum)
-  isScheduler?: BoolEnum;
+  @IsBoolean()
+  isScheduler?: boolean;
 
   @IsString()
   demoProjectDwhBigqueryCredentialsPath?: string;
@@ -44,8 +43,8 @@ export class BackendConfig {
   @IsString()
   specialKey?: string;
 
-  @IsEnum(BoolEnum)
-  allowTestRoutes?: BoolEnum;
+  @IsBoolean()
+  allowTestRoutes?: boolean;
 
   @IsString()
   mproveAdminEmail?: string;
@@ -53,8 +52,8 @@ export class BackendConfig {
   @IsString()
   mproveAdminInitialPassword?: string;
 
-  @IsEnum(BoolEnum)
-  seedDemoOrgAndProject?: BoolEnum;
+  @IsBoolean()
+  seedDemoOrgAndProject?: boolean;
 
   @IsString()
   demoOrgId?: string;
@@ -140,16 +139,16 @@ export class BackendConfig {
   @IsString()
   calcPostgresPassword?: string;
 
-  @IsEnum(BoolEnum)
-  allowUsersToCreateOrganizations?: BoolEnum;
+  @IsBoolean()
+  allowUsersToCreateOrganizations?: boolean;
 
-  @IsEnum(BoolEnum)
-  registerOnlyInvitedUsers?: BoolEnum;
+  @IsBoolean()
+  registerOnlyInvitedUsers?: boolean;
 
   //
 
-  // @IsEnum(BoolEnum)
-  // sendEmail?: BoolEnum;
+  // @IsEnum(boolean)
+  // sendEmail?: boolean;
 
   @IsString()
   hostUrl?: string;
@@ -170,8 +169,8 @@ export class BackendConfig {
   @IsInt()
   smtpPort?: number;
 
-  @IsEnum(BoolEnum)
-  smtpSecure?: BoolEnum;
+  @IsBoolean()
+  smtpSecure?: boolean;
 
   @IsString()
   smtpAuthUser?: string;
@@ -205,24 +204,24 @@ export class BackendConfig {
   @IsString()
   backendPostgresDatabaseUrl?: string;
 
-  @IsEnum(BoolEnum)
-  backendIsPostgresTls?: BoolEnum;
+  @IsBoolean()
+  backendIsPostgresTls?: boolean;
 
-  @IsEnum(BoolEnum)
-  backendThrottlePublicRoutesByIp?: BoolEnum;
+  @IsBoolean()
+  backendThrottlePublicRoutesByIp?: boolean;
 
-  @IsEnum(BoolEnum)
-  backendThrottlePrivateRoutesByUserId?: BoolEnum;
+  @IsBoolean()
+  backendThrottlePrivateRoutesByUserId?: boolean;
 
-  @IsEnum(BoolEnum)
-  backendLogDrizzlePostgres?: BoolEnum;
+  @IsBoolean()
+  backendLogDrizzlePostgres?: boolean;
 
-  @IsEnum(BoolEnum)
-  backendLogIsJson?: BoolEnum;
+  @IsBoolean()
+  backendLogIsJson?: boolean;
 
-  @IsEnum(BoolEnum)
-  backendLogResponseError?: BoolEnum;
+  @IsBoolean()
+  backendLogResponseError?: boolean;
 
-  @IsEnum(BoolEnum)
-  backendLogResponseOk?: BoolEnum;
+  @IsBoolean()
+  backendLogResponseOk?: boolean;
 }

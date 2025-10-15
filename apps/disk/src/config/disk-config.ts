@@ -1,5 +1,4 @@
-import { IsEnum, IsString } from 'class-validator';
-import { BoolEnum } from '~common/enums/bool.enum';
+import { IsBoolean, IsEnum, IsString } from 'class-validator';
 import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 
 export class DiskConfig {
@@ -27,12 +26,12 @@ export class DiskConfig {
   @IsString()
   diskOrganizationsPath?: string;
 
-  @IsEnum(BoolEnum)
-  diskLogIsJson?: BoolEnum;
+  @IsBoolean()
+  diskLogIsJson?: boolean;
 
-  @IsEnum(BoolEnum)
-  diskLogResponseError?: BoolEnum;
+  @IsBoolean()
+  diskLogResponseError?: boolean;
 
-  @IsEnum(BoolEnum)
-  diskLogResponseOk?: BoolEnum;
+  @IsBoolean()
+  diskLogResponseOk?: boolean;
 }

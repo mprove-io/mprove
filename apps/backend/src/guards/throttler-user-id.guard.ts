@@ -7,7 +7,6 @@ import {
   ThrottlerStorage
 } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ServerError } from '~common/models/server-error';
@@ -28,7 +27,7 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
       BackendConfig['backendThrottlePrivateRoutesByUserId']
     >('backendThrottlePrivateRoutesByUserId');
 
-    let isSkip = isThrottleByUserId === BoolEnum.FALSE;
+    let isSkip = isThrottleByUserId === false;
 
     return isSkip;
   }

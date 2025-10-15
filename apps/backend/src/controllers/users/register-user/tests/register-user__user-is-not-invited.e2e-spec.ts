@@ -3,7 +3,6 @@ import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 import { sendToBackend } from '~backend/functions/send-to-backend';
 import { Prep } from '~backend/interfaces/prep';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -32,7 +31,7 @@ test('1', async t => {
         emails: [email]
       },
       overrideConfigOptions: {
-        registerOnlyInvitedUsers: BoolEnum.TRUE
+        registerOnlyInvitedUsers: true
       }
     });
 

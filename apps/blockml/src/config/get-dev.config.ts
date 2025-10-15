@@ -1,13 +1,13 @@
 import { parse } from 'dotenv';
 import * as fse from 'fs-extra';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
+import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { isDefined } from '~common/functions/is-defined';
 
 export function getDevConfig(envFilePath: any) {
-  let envFile: any = {};
+  let envFile: { [name: string]: string } = {};
 
   if (isDefined(envFilePath)) {
     envFile = parse(fse.readFileSync(envFilePath));
@@ -20,17 +20,20 @@ export function getDevConfig(envFilePath: any) {
 
     aesKey: process.env.BLOCKML_AES_KEY || envFile.BLOCKML_AES_KEY,
 
-    logIO: <BoolEnum>(process.env.BLOCKML_LOG_IO || envFile.BLOCKML_LOG_IO),
+    logIO: enumToBoolean({
+      value: process.env.BLOCKML_LOG_IO || envFile.BLOCKML_LOG_IO,
+      name: 'BLOCKML_LOG_IO'
+    }),
     logFunc: <FuncEnum>(
       (process.env.BLOCKML_LOG_FUNC || envFile.BLOCKML_LOG_FUNC)
     ),
-    copyLogsToModels: <BoolEnum>(
-      (process.env.BLOCKML_COPY_LOGS_TO_MODELS ||
-        envFile.BLOCKML_COPY_LOGS_TO_MODELS)
-    ),
-    logsPath: <BoolEnum>(
-      (process.env.BLOCKML_LOGS_PATH || envFile.BLOCKML_LOGS_PATH)
-    ),
+    copyLogsToModels: enumToBoolean({
+      value:
+        process.env.BLOCKML_COPY_LOGS_TO_MODELS ||
+        envFile.BLOCKML_COPY_LOGS_TO_MODELS,
+      name: 'BLOCKML_COPY_LOGS_TO_MODELS'
+    }),
+    logsPath: process.env.BLOCKML_LOGS_PATH || envFile.BLOCKML_LOGS_PATH,
     concurrencyLimit: Number(
       isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
         ? process.env.BLOCKML_CONCURRENCY_LIMIT
@@ -70,16 +73,21 @@ export function getDevConfig(envFilePath: any) {
       process.env.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME ||
       envFile.BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME,
 
-    blockmlLogIsJson: <BoolEnum>(
-      (process.env.BLOCKML_LOG_IS_JSON || envFile.BLOCKML_LOG_IS_JSON)
-    ),
-    blockmlLogResponseError: <BoolEnum>(
-      (process.env.BLOCKML_LOG_RESPONSE_ERROR ||
-        envFile.BLOCKML_LOG_RESPONSE_ERROR)
-    ),
-    blockmlLogResponseOk: <BoolEnum>(
-      (process.env.BLOCKML_LOG_RESPONSE_OK || envFile.BLOCKML_LOG_RESPONSE_OK)
-    )
+    blockmlLogIsJson: enumToBoolean({
+      value: process.env.BLOCKML_LOG_IS_JSON || envFile.BLOCKML_LOG_IS_JSON,
+      name: 'BLOCKML_LOG_IS_JSON'
+    }),
+    blockmlLogResponseError: enumToBoolean({
+      value:
+        process.env.BLOCKML_LOG_RESPONSE_ERROR ||
+        envFile.BLOCKML_LOG_RESPONSE_ERROR,
+      name: 'BLOCKML_LOG_RESPONSE_ERROR'
+    }),
+    blockmlLogResponseOk: enumToBoolean({
+      value:
+        process.env.BLOCKML_LOG_RESPONSE_OK || envFile.BLOCKML_LOG_RESPONSE_OK,
+      name: 'BLOCKML_LOG_RESPONSE_OK'
+    })
   };
   return devConfig;
 }

@@ -9,7 +9,6 @@ import { getConfig } from '~blockml/config/get.config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from '~blockml/services/consumer-main.service';
 import { APP_NAME_BLOCKML, SRC_PATH } from '~common/constants/top-blockml';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
@@ -26,8 +25,8 @@ export async function prepareTest(
 ) {
   let extraOverride: BlockmlConfig = {
     blockmlEnv: BlockmlEnvEnum.TEST,
-    // blockmlLogResponseOk: BoolEnum.TRUE,
-    blockmlLogResponseError: BoolEnum.TRUE
+    // blockmlLogResponseOk: true,
+    blockmlLogResponseError: true
   };
 
   let config = getConfig();
@@ -58,7 +57,7 @@ export async function prepareTest(
       WinstonModule.forRoot(
         getLoggerOptions({
           appName: APP_NAME_BLOCKML,
-          isJson: config.blockmlLogIsJson === BoolEnum.TRUE
+          isJson: config.blockmlLogIsJson
         })
       )
     ],
@@ -104,7 +103,7 @@ export async function prepareTest(
   let dataDir = `${SRC_PATH}/functions/${pack}/tests/${f}/data/${testId}`;
 
   let toDir =
-    copyLogsToModels === BoolEnum.FALSE
+    copyLogsToModels === false
       ? null
       : isDefined(connection)
         ? `${SRC_PATH}/functions/${pack}/tests/${f}/logs/${testId}/${connection.type}`

@@ -19,7 +19,6 @@ import Redis from 'ioredis';
 import { Client, ClientConfig } from 'pg';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DEMO_ORG_NAME, PROJECT_ENV_PROD } from '~common/constants/top';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -50,16 +49,15 @@ import { orgsTable } from './drizzle/postgres/schema/orgs';
 import { projectsTable } from './drizzle/postgres/schema/projects';
 import { usersTable } from './drizzle/postgres/schema/users';
 import { getRetryOption } from './functions/get-retry-option';
-import { isScheduler } from './functions/is-scheduler';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CheckTabService } from './services/check-tab.service';
 import { ConnectionsService } from './services/db/connections.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { OrgsService } from './services/db/orgs.service';
 import { ProjectsService } from './services/db/projects.service';
 import { UsersService } from './services/db/users.service';
 import { HashService } from './services/hash.service';
+import { TabCheckerService } from './services/tab-checker.service';
 import { TabService } from './services/tab.service';
 
 let retry = require('async-retry');
@@ -131,10 +129,7 @@ let mailerModule = MailerModule.forRootAsync({
     transport = {
       host: cs.get<BackendConfig['smtpHost']>('smtpHost'),
       port: cs.get<BackendConfig['smtpPort']>('smtpPort'),
-      secure:
-        cs.get<BackendConfig['smtpSecure']>('smtpSecure') === BoolEnum.TRUE
-          ? true
-          : false,
+      secure: cs.get<BackendConfig['smtpSecure']>('smtpSecure'),
       auth: {
         user: cs.get<BackendConfig['smtpAuthUser']>('smtpAuthUser'),
         pass: cs.get<BackendConfig['smtpAuthPassword']>('smtpAuthPassword')
@@ -251,7 +246,7 @@ export class AppModule implements OnModuleInit {
     private usersService: UsersService,
     private dconfigsService: DconfigsService,
     private orgsService: OrgsService,
-    private checkTabService: CheckTabService,
+    private checkTabService: TabCheckerService,
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
     private hashService: HashService,
@@ -263,7 +258,7 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      if (isScheduler(this.cs)) {
+      if (this.cs.get<BackendConfig['isScheduler']>('isScheduler') === true) {
         // migrations
 
         let clientConfig: ClientConfig = {
@@ -273,7 +268,7 @@ export class AppModule implements OnModuleInit {
           ssl:
             this.cs.get<BackendConfig['backendIsPostgresTls']>(
               'backendIsPostgresTls'
-            ) === BoolEnum.TRUE
+            ) === true
               ? {
                   rejectUnauthorized: false
                 }
@@ -284,10 +279,9 @@ export class AppModule implements OnModuleInit {
 
         await postgresSingleClient.connect();
 
-        let isLogDrizzlePostgres =
-          this.cs.get<BackendConfig['backendLogDrizzlePostgres']>(
-            'backendLogDrizzlePostgres'
-          ) === BoolEnum.TRUE;
+        let isLogDrizzlePostgres = this.cs.get<
+          BackendConfig['backendLogDrizzlePostgres']
+        >('backendLogDrizzlePostgres');
 
         let prefixPostgres = 'POSTGRES';
 
@@ -389,7 +383,7 @@ export class AppModule implements OnModuleInit {
           BackendConfig['seedDemoOrgAndProject']
         >('seedDemoOrgAndProject');
 
-        if (seedDemoOrgAndProject === BoolEnum.TRUE) {
+        if (seedDemoOrgAndProject === true) {
           await this.seedDemoOrgAndProject({
             mproveAdminUser: mproveAdminUser
           });
@@ -428,13 +422,10 @@ export class AppModule implements OnModuleInit {
     let prevKeyTag =
       this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
 
-    let isEncryptDb =
-      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
-      BoolEnum.TRUE;
+    let isEncryptDb = this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb');
 
     let isEncryptMetadata =
-      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata') ===
-      BoolEnum.TRUE;
+      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata');
 
     if (isEncryptMetadata === true && isEncryptDb === false) {
       throw new ServerError({
@@ -501,7 +492,7 @@ export class AppModule implements OnModuleInit {
       );
     }
 
-    await this.checkTabService.checkReadWriteRecords({
+    await this.checkTabService.readWriteRecords({
       isAllRecords: isUpdateHashSecret
     });
 

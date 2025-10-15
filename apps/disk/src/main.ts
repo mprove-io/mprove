@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '~common/constants/top-disk';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { getLoggerOptions } from '~node-common/functions/get-logger-options';
 import { listenProcessEvents } from '~node-common/functions/listen-process-events';
@@ -24,7 +23,7 @@ async function bootstrap() {
     logger: WinstonModule.createLogger(
       getLoggerOptions({
         appName: APP_NAME_DISK,
-        isJson: config.diskLogIsJson === BoolEnum.TRUE
+        isJson: config.diskLogIsJson
       })
     )
   });

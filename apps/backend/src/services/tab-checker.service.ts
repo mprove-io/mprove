@@ -34,7 +34,6 @@ import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -45,7 +44,7 @@ import { TabService } from './tab.service';
 let retry = require('async-retry');
 
 @Injectable()
-export class CheckTabService {
+export class TabCheckerService {
   private keyTag: string;
   private prevKeyTag: string;
   private keyTags: string[];
@@ -67,51 +66,49 @@ export class CheckTabService {
       ? [this.keyTag, this.prevKeyTag]
       : [this.keyTag];
 
-    this.isEncryptDb =
-      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
-      BoolEnum.TRUE;
+    this.isEncryptDb = this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb');
 
     this.isEncryptMetadata =
-      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata') ===
-      BoolEnum.TRUE;
+      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata');
   }
 
-  async checkReadWriteRecords(item: { isAllRecords: boolean }) {
+  async readWriteRecords(item: { isAllRecords: boolean }) {
     let { isAllRecords } = item;
 
     logToConsoleBackend({
-      log: `checkReadWriteRecords start (isAllRecords: ${isAllRecords})`,
+      log: `TabChecker Started, isAllRecords: ${isAllRecords} ...`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs
     });
 
-    let startMs = Date.now();
+    let startTs = Date.now();
 
     await this.checkAvatars(isAllRecords);
     await this.checkBranches(isAllRecords);
     await this.checkBridges(isAllRecords);
-    await this.checkCharts(isAllRecords);
     await this.checkConnections(isAllRecords);
-    await this.checkDashboards(isAllRecords);
     await this.checkDconfigs(isAllRecords);
     await this.checkEnvs(isAllRecords);
     await this.checkKits(isAllRecords);
-    await this.checkMconfigs(isAllRecords);
     await this.checkMembers(isAllRecords);
-    await this.checkModels(isAllRecords);
     await this.checkNotes(isAllRecords);
     await this.checkOrgs(isAllRecords);
     await this.checkProjects(isAllRecords);
     await this.checkQueries(isAllRecords);
-    await this.checkReports(isAllRecords);
-    await this.checkStructs(isAllRecords);
     await this.checkUsers(isAllRecords);
+    //
+    await this.checkStructsMetadata(isAllRecords);
+    await this.checkModelsMetadata(isAllRecords);
+    await this.checkMconfigsMetadata(isAllRecords);
+    await this.checkChartsMetadata(isAllRecords);
+    await this.checkReportsMetadata(isAllRecords);
+    await this.checkDashboardsMetadata(isAllRecords);
 
-    let durationMs = Date.now() - startMs;
+    let durationMs = Date.now() - startTs;
 
     logToConsoleBackend({
-      log: `checkReadWriteRecords end, ${durationMs} ms`,
+      log: `TabChecker Completed, total ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs
@@ -119,6 +116,8 @@ export class CheckTabService {
   }
 
   async checkAvatars(isAllRecords: boolean) {
+    let startTs = Date.now();
+
     let avatarLatest = await this.db.drizzle.query.avatarsTable
       .findFirst({
         orderBy: desc(avatarsTable.serverTs)
@@ -189,9 +188,19 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Avatars, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkBranches(isAllRecords: boolean) {
+    let startTs = Date.now();
     let branchLatest = await this.db.drizzle.query.branchesTable
       .findFirst({
         orderBy: desc(branchesTable.serverTs)
@@ -262,9 +271,19 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Branches, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkBridges(isAllRecords: boolean) {
+    let startTs = Date.now();
     let bridgeLatest = await this.db.drizzle.query.bridgesTable
       .findFirst({
         orderBy: desc(bridgesTable.serverTs)
@@ -335,94 +354,19 @@ export class CheckTabService {
         }
       });
     }
-  }
 
-  async checkCharts(isAllRecords: boolean) {
-    if (this.isEncryptMetadata === false) {
-      let chartEncrypted = await this.db.drizzle.query.chartsTable
-        .findFirst({
-          where: isNotNull(chartsTable.keyTag)
-        })
-        .then(x => this.tabService.chartEntToTab(x));
+    let durationMs = Date.now() - startTs;
 
-      if (isDefined(chartEncrypted)) {
-        isAllRecords = true;
-      }
-    }
-
-    let chartLatest = await this.db.drizzle.query.chartsTable
-      .findFirst({
-        orderBy: desc(chartsTable.serverTs)
-      })
-      .then(x => this.tabService.chartEntToTab(x));
-
-    if (isUndefined(chartLatest)) {
-      return;
-    }
-
-    let where =
-      isAllRecords === true
-        ? lte(chartsTable.serverTs, chartLatest.serverTs)
-        : this.isEncryptDb === true
-          ? or(
-              isNull(chartsTable.keyTag),
-              eq(chartsTable.keyTag, this.prevKeyTag)
-            )
-          : or(
-              eq(chartsTable.keyTag, this.keyTag),
-              eq(chartsTable.keyTag, this.prevKeyTag)
-            );
-
-    while (true) {
-      let chart = await this.db.drizzle.query.chartsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.chartEntToTab(x));
-
-      if (isUndefined(chart)) {
-        break;
-      }
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                update: {
-                  charts: [chart]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let chartsResult = await this.db.drizzle
-      .select({
-        record: chartsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(chartsTable)
-      .where(
-        and(
-          isNotNull(chartsTable.keyTag),
-          notInArray(chartsTable.keyTag, this.keyTags)
-        )
-      );
-
-    if (chartsResult.length > 0 && chartsResult[0].total > 0) {
-      throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
-        customData: {
-          table: 'charts',
-          count: chartsResult[0].total
-        }
-      });
-    }
+    logToConsoleBackend({
+      log: `TabChecker - Bridges, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkConnections(isAllRecords: boolean) {
+    let startTs = Date.now();
     let connectionLatest = await this.db.drizzle.query.connectionsTable
       .findFirst({
         orderBy: desc(connectionsTable.serverTs)
@@ -493,94 +437,19 @@ export class CheckTabService {
         }
       });
     }
-  }
 
-  async checkDashboards(isAllRecords: boolean) {
-    if (this.isEncryptMetadata === false) {
-      let dashboardEncrypted = await this.db.drizzle.query.dashboardsTable
-        .findFirst({
-          where: isNotNull(dashboardsTable.keyTag)
-        })
-        .then(x => this.tabService.dashboardEntToTab(x));
+    let durationMs = Date.now() - startTs;
 
-      if (isDefined(dashboardEncrypted)) {
-        isAllRecords = true;
-      }
-    }
-
-    let dashboardLatest = await this.db.drizzle.query.dashboardsTable
-      .findFirst({
-        orderBy: desc(dashboardsTable.serverTs)
-      })
-      .then(x => this.tabService.dashboardEntToTab(x));
-
-    if (isUndefined(dashboardLatest)) {
-      return;
-    }
-
-    let where =
-      isAllRecords === true
-        ? lte(dashboardsTable.serverTs, dashboardLatest.serverTs)
-        : this.isEncryptDb === true
-          ? or(
-              isNull(dashboardsTable.keyTag),
-              eq(dashboardsTable.keyTag, this.prevKeyTag)
-            )
-          : or(
-              eq(dashboardsTable.keyTag, this.keyTag),
-              eq(dashboardsTable.keyTag, this.prevKeyTag)
-            );
-
-    while (true) {
-      let dashboard = await this.db.drizzle.query.dashboardsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.dashboardEntToTab(x));
-
-      if (isUndefined(dashboard)) {
-        break;
-      }
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                update: {
-                  dashboards: [dashboard]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let dashboardsResult = await this.db.drizzle
-      .select({
-        record: dashboardsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(dashboardsTable)
-      .where(
-        and(
-          isNotNull(dashboardsTable.keyTag),
-          notInArray(dashboardsTable.keyTag, this.keyTags)
-        )
-      );
-
-    if (dashboardsResult.length > 0 && dashboardsResult[0].total > 0) {
-      throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
-        customData: {
-          table: 'dashboards',
-          count: dashboardsResult[0].total
-        }
-      });
-    }
+    logToConsoleBackend({
+      log: `TabChecker - Connections, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkDconfigs(isAllRecords: boolean) {
+    let startTs = Date.now();
     let dconfigLatest = await this.db.drizzle.query.dconfigsTable
       .findFirst({
         orderBy: desc(dconfigsTable.serverTs)
@@ -651,9 +520,19 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Dconfigs, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkEnvs(isAllRecords: boolean) {
+    let startTs = Date.now();
     let envLatest = await this.db.drizzle.query.envsTable
       .findFirst({
         orderBy: desc(envsTable.serverTs)
@@ -721,9 +600,19 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Envs, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkKits(isAllRecords: boolean) {
+    let startTs = Date.now();
     let kitLatest = await this.db.drizzle.query.kitsTable
       .findFirst({
         orderBy: desc(kitsTable.serverTs)
@@ -791,94 +680,19 @@ export class CheckTabService {
         }
       });
     }
-  }
 
-  async checkMconfigs(isAllRecords: boolean) {
-    if (this.isEncryptMetadata === false) {
-      let mconfigEncrypted = await this.db.drizzle.query.mconfigsTable
-        .findFirst({
-          where: isNotNull(mconfigsTable.keyTag)
-        })
-        .then(x => this.tabService.mconfigEntToTab(x));
+    let durationMs = Date.now() - startTs;
 
-      if (isDefined(mconfigEncrypted)) {
-        isAllRecords = true;
-      }
-    }
-
-    let mconfigLatest = await this.db.drizzle.query.mconfigsTable
-      .findFirst({
-        orderBy: desc(mconfigsTable.serverTs)
-      })
-      .then(x => this.tabService.mconfigEntToTab(x));
-
-    if (isUndefined(mconfigLatest)) {
-      return;
-    }
-
-    let where =
-      isAllRecords === true
-        ? lte(mconfigsTable.serverTs, mconfigLatest.serverTs)
-        : this.isEncryptDb === true
-          ? or(
-              isNull(mconfigsTable.keyTag),
-              eq(mconfigsTable.keyTag, this.prevKeyTag)
-            )
-          : or(
-              eq(mconfigsTable.keyTag, this.keyTag),
-              eq(mconfigsTable.keyTag, this.prevKeyTag)
-            );
-
-    while (true) {
-      let mconfig = await this.db.drizzle.query.mconfigsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.mconfigEntToTab(x));
-
-      if (isUndefined(mconfig)) {
-        break;
-      }
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                update: {
-                  mconfigs: [mconfig]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let mconfigsResult = await this.db.drizzle
-      .select({
-        record: mconfigsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(mconfigsTable)
-      .where(
-        and(
-          isNotNull(mconfigsTable.keyTag),
-          notInArray(mconfigsTable.keyTag, this.keyTags)
-        )
-      );
-
-    if (mconfigsResult.length > 0 && mconfigsResult[0].total > 0) {
-      throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
-        customData: {
-          table: 'mconfigs',
-          count: mconfigsResult[0].total
-        }
-      });
-    }
+    logToConsoleBackend({
+      log: `TabChecker - Kits, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkMembers(isAllRecords: boolean) {
+    let startTs = Date.now();
     let memberLatest = await this.db.drizzle.query.membersTable
       .findFirst({
         orderBy: desc(membersTable.serverTs)
@@ -949,94 +763,19 @@ export class CheckTabService {
         }
       });
     }
-  }
 
-  async checkModels(isAllRecords: boolean) {
-    if (this.isEncryptMetadata === false) {
-      let modelEncrypted = await this.db.drizzle.query.modelsTable
-        .findFirst({
-          where: isNotNull(modelsTable.keyTag)
-        })
-        .then(x => this.tabService.modelEntToTab(x));
+    let durationMs = Date.now() - startTs;
 
-      if (isDefined(modelEncrypted)) {
-        isAllRecords = true;
-      }
-    }
-
-    let modelLatest = await this.db.drizzle.query.modelsTable
-      .findFirst({
-        orderBy: desc(modelsTable.serverTs)
-      })
-      .then(x => this.tabService.modelEntToTab(x));
-
-    if (isUndefined(modelLatest)) {
-      return;
-    }
-
-    let where =
-      isAllRecords === true
-        ? lte(modelsTable.serverTs, modelLatest.serverTs)
-        : this.isEncryptDb === true
-          ? or(
-              isNull(modelsTable.keyTag),
-              eq(modelsTable.keyTag, this.prevKeyTag)
-            )
-          : or(
-              eq(modelsTable.keyTag, this.keyTag),
-              eq(modelsTable.keyTag, this.prevKeyTag)
-            );
-
-    while (true) {
-      let model = await this.db.drizzle.query.modelsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.modelEntToTab(x));
-
-      if (isUndefined(model)) {
-        break;
-      }
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                update: {
-                  models: [model]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let modelsResult = await this.db.drizzle
-      .select({
-        record: modelsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(modelsTable)
-      .where(
-        and(
-          isNotNull(modelsTable.keyTag),
-          notInArray(modelsTable.keyTag, this.keyTags)
-        )
-      );
-
-    if (modelsResult.length > 0 && modelsResult[0].total > 0) {
-      throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
-        customData: {
-          table: 'models',
-          count: modelsResult[0].total
-        }
-      });
-    }
+    logToConsoleBackend({
+      log: `TabChecker - Members, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkNotes(isAllRecords: boolean) {
+    let startTs = Date.now();
     let noteLatest = await this.db.drizzle.query.notesTable
       .findFirst({
         orderBy: desc(notesTable.serverTs)
@@ -1107,9 +846,19 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Notes, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkOrgs(isAllRecords: boolean) {
+    let startTs = Date.now();
     let orgLatest = await this.db.drizzle.query.orgsTable
       .findFirst({
         orderBy: desc(orgsTable.serverTs)
@@ -1177,9 +926,19 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Orgs, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkProjects(isAllRecords: boolean) {
+    let startTs = Date.now();
     let projectLatest = await this.db.drizzle.query.projectsTable
       .findFirst({
         orderBy: desc(projectsTable.serverTs)
@@ -1250,9 +1009,19 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Projects, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkQueries(isAllRecords: boolean) {
+    let startTs = Date.now();
     let queryLatest = await this.db.drizzle.query.queriesTable
       .findFirst({
         orderBy: desc(queriesTable.serverTs)
@@ -1323,179 +1092,19 @@ export class CheckTabService {
         }
       });
     }
-  }
 
-  async checkReports(isAllRecords: boolean) {
-    if (this.isEncryptMetadata === false) {
-      let reportEncrypted = await this.db.drizzle.query.reportsTable
-        .findFirst({
-          where: isNotNull(reportsTable.keyTag)
-        })
-        .then(x => this.tabService.reportEntToTab(x));
+    let durationMs = Date.now() - startTs;
 
-      if (isDefined(reportEncrypted)) {
-        isAllRecords = true;
-      }
-    }
-
-    let reportLatest = await this.db.drizzle.query.reportsTable
-      .findFirst({
-        orderBy: desc(reportsTable.serverTs)
-      })
-      .then(x => this.tabService.reportEntToTab(x));
-
-    if (isUndefined(reportLatest)) {
-      return;
-    }
-
-    let where =
-      isAllRecords === true
-        ? lte(reportsTable.serverTs, reportLatest.serverTs)
-        : this.isEncryptDb === true
-          ? or(
-              isNull(reportsTable.keyTag),
-              eq(reportsTable.keyTag, this.prevKeyTag)
-            )
-          : or(
-              eq(reportsTable.keyTag, this.keyTag),
-              eq(reportsTable.keyTag, this.prevKeyTag)
-            );
-
-    while (true) {
-      let report = await this.db.drizzle.query.reportsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.reportEntToTab(x));
-
-      if (isUndefined(report)) {
-        break;
-      }
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                update: {
-                  reports: [report]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let reportsResult = await this.db.drizzle
-      .select({
-        record: reportsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(reportsTable)
-      .where(
-        and(
-          isNotNull(reportsTable.keyTag),
-          notInArray(reportsTable.keyTag, this.keyTags)
-        )
-      );
-
-    if (reportsResult.length > 0 && reportsResult[0].total > 0) {
-      throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
-        customData: {
-          table: 'reports',
-          count: reportsResult[0].total
-        }
-      });
-    }
-  }
-
-  async checkStructs(isAllRecords: boolean) {
-    if (this.isEncryptMetadata === false) {
-      let structEncrypted = await this.db.drizzle.query.structsTable
-        .findFirst({
-          where: isNotNull(structsTable.keyTag)
-        })
-        .then(x => this.tabService.structEntToTab(x));
-
-      if (isDefined(structEncrypted)) {
-        isAllRecords = true;
-      }
-    }
-
-    let structLatest = await this.db.drizzle.query.structsTable
-      .findFirst({
-        orderBy: desc(structsTable.serverTs)
-      })
-      .then(x => this.tabService.structEntToTab(x));
-
-    if (isUndefined(structLatest)) {
-      return;
-    }
-
-    let where =
-      isAllRecords === true
-        ? lte(structsTable.serverTs, structLatest.serverTs)
-        : this.isEncryptDb === true
-          ? or(
-              isNull(structsTable.keyTag),
-              eq(structsTable.keyTag, this.prevKeyTag)
-            )
-          : or(
-              eq(structsTable.keyTag, this.keyTag),
-              eq(structsTable.keyTag, this.prevKeyTag)
-            );
-
-    while (true) {
-      let struct = await this.db.drizzle.query.structsTable
-        .findFirst({ where: where })
-        .then(x => this.tabService.structEntToTab(x));
-
-      if (isUndefined(struct)) {
-        break;
-      }
-
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                update: {
-                  structs: [struct]
-                }
-              })
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
-    }
-
-    let structsResult = await this.db.drizzle
-      .select({
-        record: structsTable,
-        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-      })
-      .from(structsTable)
-      .where(
-        and(
-          isNotNull(structsTable.keyTag),
-          notInArray(structsTable.keyTag, this.keyTags)
-        )
-      );
-
-    if (structsResult.length > 0 && structsResult[0].total > 0) {
-      throw new ServerError({
-        message:
-          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
-        customData: {
-          table: 'structs',
-          count: structsResult[0].total
-        }
-      });
-    }
+    logToConsoleBackend({
+      log: `TabChecker - Queries, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 
   async checkUsers(isAllRecords: boolean) {
+    let startTs = Date.now();
     let userLatest = await this.db.drizzle.query.usersTable
       .findFirst({
         orderBy: desc(usersTable.serverTs)
@@ -1566,5 +1175,588 @@ export class CheckTabService {
         }
       });
     }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Users, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  //
+  // metadata
+  //
+
+  async checkStructsMetadata(isAllRecords: boolean) {
+    let startTs = Date.now();
+    if (this.isEncryptMetadata === false) {
+      let structEncrypted = await this.db.drizzle.query.structsTable
+        .findFirst({
+          where: isNotNull(structsTable.keyTag)
+        })
+        .then(x => this.tabService.structEntToTab(x));
+
+      if (isDefined(structEncrypted)) {
+        isAllRecords = true;
+      }
+    }
+
+    let structLatest = await this.db.drizzle.query.structsTable
+      .findFirst({
+        orderBy: desc(structsTable.serverTs)
+      })
+      .then(x => this.tabService.structEntToTab(x));
+
+    if (isUndefined(structLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(structsTable.serverTs, structLatest.serverTs)
+        : this.isEncryptDb === true && this.isEncryptMetadata === true
+          ? or(
+              isNull(structsTable.keyTag),
+              eq(structsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(structsTable.keyTag, this.keyTag),
+              eq(structsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let struct = await this.db.drizzle.query.structsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.structEntToTab(x));
+
+      if (isUndefined(struct)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  structs: [struct]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let structsResult = await this.db.drizzle
+      .select({
+        record: structsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(structsTable)
+      .where(
+        and(
+          isNotNull(structsTable.keyTag),
+          notInArray(structsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (structsResult.length > 0 && structsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'structs',
+          count: structsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Structs, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkModelsMetadata(isAllRecords: boolean) {
+    let startTs = Date.now();
+    if (this.isEncryptMetadata === false) {
+      let modelEncrypted = await this.db.drizzle.query.modelsTable
+        .findFirst({
+          where: isNotNull(modelsTable.keyTag)
+        })
+        .then(x => this.tabService.modelEntToTab(x));
+
+      if (isDefined(modelEncrypted)) {
+        isAllRecords = true;
+      }
+    }
+
+    let modelLatest = await this.db.drizzle.query.modelsTable
+      .findFirst({
+        orderBy: desc(modelsTable.serverTs)
+      })
+      .then(x => this.tabService.modelEntToTab(x));
+
+    if (isUndefined(modelLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(modelsTable.serverTs, modelLatest.serverTs)
+        : this.isEncryptDb === true && this.isEncryptMetadata === true
+          ? or(
+              isNull(modelsTable.keyTag),
+              eq(modelsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(modelsTable.keyTag, this.keyTag),
+              eq(modelsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let model = await this.db.drizzle.query.modelsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.modelEntToTab(x));
+
+      if (isUndefined(model)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  models: [model]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let modelsResult = await this.db.drizzle
+      .select({
+        record: modelsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(modelsTable)
+      .where(
+        and(
+          isNotNull(modelsTable.keyTag),
+          notInArray(modelsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (modelsResult.length > 0 && modelsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'models',
+          count: modelsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Models, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkMconfigsMetadata(isAllRecords: boolean) {
+    let startTs = Date.now();
+    if (this.isEncryptMetadata === false) {
+      let mconfigEncrypted = await this.db.drizzle.query.mconfigsTable
+        .findFirst({
+          where: isNotNull(mconfigsTable.keyTag)
+        })
+        .then(x => this.tabService.mconfigEntToTab(x));
+
+      if (isDefined(mconfigEncrypted)) {
+        isAllRecords = true;
+      }
+    }
+
+    let mconfigLatest = await this.db.drizzle.query.mconfigsTable
+      .findFirst({
+        orderBy: desc(mconfigsTable.serverTs)
+      })
+      .then(x => this.tabService.mconfigEntToTab(x));
+
+    if (isUndefined(mconfigLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(mconfigsTable.serverTs, mconfigLatest.serverTs)
+        : this.isEncryptDb === true && this.isEncryptMetadata === true
+          ? or(
+              isNull(mconfigsTable.keyTag),
+              eq(mconfigsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(mconfigsTable.keyTag, this.keyTag),
+              eq(mconfigsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let mconfig = await this.db.drizzle.query.mconfigsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.mconfigEntToTab(x));
+
+      if (isUndefined(mconfig)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  mconfigs: [mconfig]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let mconfigsResult = await this.db.drizzle
+      .select({
+        record: mconfigsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(mconfigsTable)
+      .where(
+        and(
+          isNotNull(mconfigsTable.keyTag),
+          notInArray(mconfigsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (mconfigsResult.length > 0 && mconfigsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'mconfigs',
+          count: mconfigsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Mconfigs, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkChartsMetadata(isAllRecords: boolean) {
+    let startTs = Date.now();
+    if (this.isEncryptMetadata === false) {
+      let chartEncrypted = await this.db.drizzle.query.chartsTable
+        .findFirst({
+          where: isNotNull(chartsTable.keyTag)
+        })
+        .then(x => this.tabService.chartEntToTab(x));
+
+      if (isDefined(chartEncrypted)) {
+        isAllRecords = true;
+      }
+    }
+
+    let chartLatest = await this.db.drizzle.query.chartsTable
+      .findFirst({
+        orderBy: desc(chartsTable.serverTs)
+      })
+      .then(x => this.tabService.chartEntToTab(x));
+
+    if (isUndefined(chartLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(chartsTable.serverTs, chartLatest.serverTs)
+        : this.isEncryptDb === true && this.isEncryptMetadata === true
+          ? or(
+              isNull(chartsTable.keyTag),
+              eq(chartsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(chartsTable.keyTag, this.keyTag),
+              eq(chartsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let chart = await this.db.drizzle.query.chartsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.chartEntToTab(x));
+
+      if (isUndefined(chart)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  charts: [chart]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let chartsResult = await this.db.drizzle
+      .select({
+        record: chartsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(chartsTable)
+      .where(
+        and(
+          isNotNull(chartsTable.keyTag),
+          notInArray(chartsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (chartsResult.length > 0 && chartsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'charts',
+          count: chartsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Charts, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkReportsMetadata(isAllRecords: boolean) {
+    let startTs = Date.now();
+    if (this.isEncryptMetadata === false) {
+      let reportEncrypted = await this.db.drizzle.query.reportsTable
+        .findFirst({
+          where: isNotNull(reportsTable.keyTag)
+        })
+        .then(x => this.tabService.reportEntToTab(x));
+
+      if (isDefined(reportEncrypted)) {
+        isAllRecords = true;
+      }
+    }
+
+    let reportLatest = await this.db.drizzle.query.reportsTable
+      .findFirst({
+        orderBy: desc(reportsTable.serverTs)
+      })
+      .then(x => this.tabService.reportEntToTab(x));
+
+    if (isUndefined(reportLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(reportsTable.serverTs, reportLatest.serverTs)
+        : this.isEncryptDb === true && this.isEncryptMetadata === true
+          ? or(
+              isNull(reportsTable.keyTag),
+              eq(reportsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(reportsTable.keyTag, this.keyTag),
+              eq(reportsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let report = await this.db.drizzle.query.reportsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.reportEntToTab(x));
+
+      if (isUndefined(report)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  reports: [report]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let reportsResult = await this.db.drizzle
+      .select({
+        record: reportsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(reportsTable)
+      .where(
+        and(
+          isNotNull(reportsTable.keyTag),
+          notInArray(reportsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (reportsResult.length > 0 && reportsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'reports',
+          count: reportsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Reports, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkDashboardsMetadata(isAllRecords: boolean) {
+    let startTs = Date.now();
+    if (this.isEncryptMetadata === false) {
+      let dashboardEncrypted = await this.db.drizzle.query.dashboardsTable
+        .findFirst({
+          where: isNotNull(dashboardsTable.keyTag)
+        })
+        .then(x => this.tabService.dashboardEntToTab(x));
+
+      if (isDefined(dashboardEncrypted)) {
+        isAllRecords = true;
+      }
+    }
+
+    let dashboardLatest = await this.db.drizzle.query.dashboardsTable
+      .findFirst({
+        orderBy: desc(dashboardsTable.serverTs)
+      })
+      .then(x => this.tabService.dashboardEntToTab(x));
+
+    if (isUndefined(dashboardLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(dashboardsTable.serverTs, dashboardLatest.serverTs)
+        : this.isEncryptDb === true && this.isEncryptMetadata === true
+          ? or(
+              isNull(dashboardsTable.keyTag),
+              eq(dashboardsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(dashboardsTable.keyTag, this.keyTag),
+              eq(dashboardsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let dashboard = await this.db.drizzle.query.dashboardsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.dashboardEntToTab(x));
+
+      if (isUndefined(dashboard)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  dashboards: [dashboard]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let dashboardsResult = await this.db.drizzle
+      .select({
+        record: dashboardsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(dashboardsTable)
+      .where(
+        and(
+          isNotNull(dashboardsTable.keyTag),
+          notInArray(dashboardsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (dashboardsResult.length > 0 && dashboardsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'dashboards',
+          count: dashboardsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Dashboards, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
   }
 }

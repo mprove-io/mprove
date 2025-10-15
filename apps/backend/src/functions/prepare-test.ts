@@ -8,7 +8,6 @@ import { getConfig } from '~backend/config/get.config';
 import { Prep } from '~backend/interfaces/prep';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabToEntService } from '~backend/services/tab-to-ent.service';
-import { BoolEnum } from '~common/enums/bool.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -37,8 +36,8 @@ export async function prepareTest(item: {
 
   let extraOverride: BackendConfig = {
     backendEnv: BackendEnvEnum.TEST,
-    backendLogResponseOk: BoolEnum.FALSE,
-    backendLogResponseError: BoolEnum.FALSE
+    backendLogResponseOk: false,
+    backendLogResponseError: false
   };
 
   let config = getConfig();

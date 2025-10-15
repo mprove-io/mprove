@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
-import { enumToBoolean } from '~common/functions/enum-to-boolean';
 import { DiskConfig } from '~disk/config/disk-config';
 import { makeOkResponse } from '~node-common/functions/make-ok-response';
 
@@ -22,12 +21,8 @@ export function makeOkResponseDisk(item: {
     path: path,
     method: method,
     duration: duration,
-    logResponseOk: enumToBoolean(
-      cs.get<DiskConfig['diskLogResponseOk']>('diskLogResponseOk')
-    ),
-    logIsJson: enumToBoolean(
-      cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson')
-    ),
+    logResponseOk: cs.get<DiskConfig['diskLogResponseOk']>('diskLogResponseOk'),
+    logIsJson: cs.get<DiskConfig['diskLogIsJson']>('diskLogIsJson'),
     logger: logger,
     useLoggerOnlyForErrorLevel:
       cs.get<DiskConfig['diskEnv']>('diskEnv') !== DiskEnvEnum.PROD
