@@ -86,9 +86,21 @@ export class TabService {
   }) {
     let { ent } = item;
 
+    let isDefinedStAndUndefinedEncrypted =
+      isDefined(ent.st) && isUndefined(ent.st.encrypted);
+
+    let isDefinedStAndUndefinedDecrypted =
+      isDefined(ent.st) && isUndefined(ent.st.decrypted);
+
+    let isDefinedLtAndUndefinedEncrypted =
+      isDefined(ent.lt) && isUndefined(ent.lt.encrypted);
+
+    let isDefinedLtAndUndefinedDecrypted =
+      isDefined(ent.lt) && isUndefined(ent.lt.decrypted);
+
     if (
-      (isUndefined(ent.st.encrypted) || isUndefined(ent.lt.encrypted)) &&
-      (isUndefined(ent.st.decrypted) || isUndefined(ent.lt.decrypted))
+      (isDefinedStAndUndefinedEncrypted || isDefinedLtAndUndefinedEncrypted) &&
+      (isDefinedStAndUndefinedDecrypted || isDefinedLtAndUndefinedDecrypted)
     ) {
       throw new ServerError({
         message:
@@ -97,8 +109,8 @@ export class TabService {
     }
 
     if (
-      (isDefined(ent.st.encrypted) || isDefined(ent.lt.encrypted)) &&
-      (isDefined(ent.st.decrypted) || isDefined(ent.lt.decrypted))
+      (isDefined(ent.st?.encrypted) || isDefined(ent.lt?.encrypted)) &&
+      (isDefined(ent.st?.decrypted) || isDefined(ent.lt?.decrypted))
     ) {
       throw new ServerError({
         message: ErEnum.BACKEND_DB_RECORD_HAS_BOTH_DECRYPTED_AND_ENCRYPTED_PROPS
@@ -107,7 +119,7 @@ export class TabService {
 
     if (
       isDefined(ent.keyTag) &&
-      (isDefined(ent.st.decrypted) || isDefined(ent.lt.decrypted))
+      (isDefined(ent.st?.decrypted) || isDefined(ent.lt?.decrypted))
     ) {
       throw new ServerError({
         message: ErEnum.BACKEND_DB_RECORD_IS_DECRYPTED_BUT_HAS_KEY_TAG
@@ -133,17 +145,17 @@ export class TabService {
     return isDefined(ent.keyTag)
       ? {
           ...this.decrypt<ST>({
-            encryptedString: ent.st.encrypted,
+            encryptedString: ent.st?.encrypted,
             keyBuffer: keyBuffer
           }),
           ...this.decrypt<LT>({
-            encryptedString: ent.lt.encrypted,
+            encryptedString: ent.lt?.encrypted,
             keyBuffer: keyBuffer
           })
         }
       : {
-          ...ent.st.decrypted,
-          ...ent.lt.decrypted
+          ...(ent.st?.decrypted ?? ({} as ST)),
+          ...(ent.lt?.decrypted ?? ({} as LT))
         };
   }
 
@@ -155,7 +167,7 @@ export class TabService {
 
     return isDefinedAndNotEmpty(encryptedString)
       ? decryptData({
-          encryptedString: item.encryptedString,
+          encryptedString: encryptedString,
           keyBuffer: keyBuffer
         })
       : ({} as T);

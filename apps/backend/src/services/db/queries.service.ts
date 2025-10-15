@@ -147,6 +147,7 @@ export class QueriesService {
         bigqueryConsecutiveErrorsGetResults:
           queriesTable.bigqueryConsecutiveErrorsGetResults,
         st: queriesTable.st,
+        // lt: {},
         serverTs: queriesTable.serverTs
       })
       .from(queriesTable)
@@ -217,6 +218,7 @@ export class QueriesService {
         bigqueryConsecutiveErrorsGetResults:
           queriesTable.bigqueryConsecutiveErrorsGetResults,
         st: queriesTable.st,
+        // lt: {},
         serverTs: queriesTable.serverTs
       })
       .from(queriesTable)

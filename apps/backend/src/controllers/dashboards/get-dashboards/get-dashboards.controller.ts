@@ -84,6 +84,7 @@ export class GetDashboardsController {
         draft: dashboardsTable.draft,
         creatorId: dashboardsTable.creatorId,
         st: dashboardsTable.st
+        // lt: {},
       })
       .from(dashboardsTable)
       .where(

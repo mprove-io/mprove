@@ -98,6 +98,7 @@ export class EditMemberController {
       .select({
         userId: avatarsTable.userId,
         st: avatarsTable.st
+        // lt: {},
       })
       .from(avatarsTable)
       .where(eq(avatarsTable.userId, member.memberId))

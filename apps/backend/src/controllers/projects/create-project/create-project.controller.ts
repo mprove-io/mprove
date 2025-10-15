@@ -82,12 +82,14 @@ export class CreateProjectController {
       hashSecret: hashSecret
     });
 
-    let project = await this.db.drizzle.query.projectsTable.findFirst({
-      where: and(
-        eq(projectsTable.orgId, orgId),
-        eq(projectsTable.nameHash, nameHash)
-      )
-    });
+    let project = await this.db.drizzle.query.projectsTable
+      .findFirst({
+        where: and(
+          eq(projectsTable.orgId, orgId),
+          eq(projectsTable.nameHash, nameHash)
+        )
+      })
+      .then(x => this.tabService.projectEntToTab(x));
 
     if (isDefined(project)) {
       throw new ServerError({
@@ -120,8 +122,8 @@ export class CreateProjectController {
       remoteType: remoteType,
       projectId: makeId(),
       gitUrl: gitUrl,
-      privateKey: note.privateKey,
-      publicKey: note.publicKey,
+      privateKey: note?.privateKey, // note is undefined for ProjectRemoteTypeEnum.Managed
+      publicKey: note?.publicKey, // note is undefined for ProjectRemoteTypeEnum.Managed
       evs: [],
       connections: []
     });

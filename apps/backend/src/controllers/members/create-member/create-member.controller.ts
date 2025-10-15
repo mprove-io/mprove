@@ -284,6 +284,7 @@ export class CreateMemberController {
       .select({
         userId: avatarsTable.userId,
         st: avatarsTable.st
+        // lt: {},
       })
       .from(avatarsTable)
       .where(eq(avatarsTable.userId, newMember.memberId))

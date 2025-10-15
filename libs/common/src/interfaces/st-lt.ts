@@ -60,7 +60,7 @@ export class ChartLt {
 //
 
 export class ConnectionSt {
-  options?: ConnectionOptions;
+  options: ConnectionOptions;
 }
 export class ConnectionLt {
   emptyData?: number;

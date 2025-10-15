@@ -394,6 +394,7 @@ export class SaveCreateChartController {
         connectionId: modelsTable.connectionId,
         connectionType: modelsTable.connectionType,
         st: modelsTable.st
+        // lt: {},
       })
       .from(modelsTable)
       .where(eq(modelsTable.structId, bridge.structId))

@@ -2,7 +2,7 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { ConnectionTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -46,7 +46,7 @@ export class GetConnectionsController {
       projectId: projectId
     });
 
-    let connections;
+    let connections: ConnectionTab[];
 
     if (isDefined(envId)) {
       let apiEnvs = await this.envsService.getApiEnvs({
@@ -55,25 +55,29 @@ export class GetConnectionsController {
 
       let apiEnv = apiEnvs.find(x => x.envId === envId);
 
-      connections = await this.db.drizzle.query.connectionsTable.findMany({
-        where: and(
-          eq(connectionsTable.projectId, projectId),
-          or(
-            eq(connectionsTable.envId, envId),
-            and(
-              eq(connectionsTable.envId, PROJECT_ENV_PROD),
-              inArray(
-                connectionsTable.connectionId,
-                apiEnv.fallbackConnectionIds
+      connections = await this.db.drizzle.query.connectionsTable
+        .findMany({
+          where: and(
+            eq(connectionsTable.projectId, projectId),
+            or(
+              eq(connectionsTable.envId, envId),
+              and(
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                inArray(
+                  connectionsTable.connectionId,
+                  apiEnv.fallbackConnectionIds
+                )
               )
             )
           )
-        )
-      });
+        })
+        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
     } else {
-      connections = await this.db.drizzle.query.connectionsTable.findMany({
-        where: eq(connectionsTable.projectId, projectId)
-      });
+      connections = await this.db.drizzle.query.connectionsTable
+        .findMany({
+          where: eq(connectionsTable.projectId, projectId)
+        })
+        .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
     }
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });

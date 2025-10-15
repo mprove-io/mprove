@@ -269,6 +269,7 @@ export class DashboardsService {
         draft: dashboardsTable.draft,
         creatorId: dashboardsTable.creatorId,
         st: dashboardsTable.st
+        // lt: {},
         // filePath: dashboardsTable.filePath,
         // accessRoles: dashboardsTable.accessRoles,
         // title: dashboardsTable.title,
@@ -305,6 +306,7 @@ export class DashboardsService {
         connectionId: modelsTable.connectionId,
         connectionType: modelsTable.connectionType,
         st: modelsTable.st
+        // lt: {},
         // accessRoles: modelsTable.accessRoles,
       })
       .from(modelsTable)
