@@ -64,7 +64,8 @@ export class TabService {
   private keyTag: string;
   private prevKeyTag: string;
 
-  private isEncryption: boolean;
+  private isEncryptDb: boolean;
+  private isEncryptMetadata: boolean;
 
   constructor(private cs: ConfigService<BackendConfig>) {
     let keyBase64 = this.cs.get<BackendConfig['aesKey']>('aesKey');
@@ -78,10 +79,13 @@ export class TabService {
     this.prevKeyTag =
       this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
 
-    this.isEncryption =
-      this.cs.get<BackendConfig['isDbEncryptionEnabled']>(
-        'isDbEncryptionEnabled'
-      ) === BoolEnum.TRUE;
+    this.isEncryptDb =
+      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
+      BoolEnum.TRUE;
+
+    this.isEncryptMetadata =
+      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata') ===
+      BoolEnum.TRUE;
   }
 
   getTabProps<ST, LT>(item: {
@@ -154,10 +158,19 @@ export class TabService {
         };
   }
 
-  getEntProps<DataSt, DataLt>(item: { dataSt: DataSt; dataLt: DataLt }) {
-    let { dataSt, dataLt } = item;
+  getEntProps<DataSt, DataLt>(item: {
+    dataSt: DataSt;
+    dataLt: DataLt;
+    isMetadata: boolean;
+  }) {
+    let { dataSt, dataLt, isMetadata } = item;
 
-    return this.isEncryption === true
+    let isEncrypt =
+      isMetadata === true
+        ? this.isEncryptDb === true && this.isEncryptMetadata === true
+        : this.isEncryptDb === true;
+
+    return isEncrypt === true
       ? {
           st: {
             encrypted: this.encrypt({ data: dataSt }),

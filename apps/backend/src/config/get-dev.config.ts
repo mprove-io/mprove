@@ -23,9 +23,13 @@ export function getDevConfig(envFilePath: any) {
       (process.env.BACKEND_ENV || envFile.BACKEND_ENV)
     ),
 
-    isDbEncryptionEnabled: <BoolEnum>(
-      (process.env.BACKEND_IS_DB_ENCRYPTION_ENABLED ||
-        envFile.BACKEND_IS_DB_ENCRYPTION_ENABLED)
+    isEncryptDb: <BoolEnum>(
+      (process.env.BACKEND_IS_ENCRYPT_DB || envFile.BACKEND_IS_ENCRYPT_DB)
+    ),
+
+    isEncryptMetadata: <BoolEnum>(
+      (process.env.BACKEND_IS_ENCRYPT_METADATA ||
+        envFile.BACKEND_IS_ENCRYPT_METADATA)
     ),
 
     aesKey: process.env.BACKEND_AES_KEY || envFile.BACKEND_AES_KEY,

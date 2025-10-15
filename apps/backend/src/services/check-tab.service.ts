@@ -49,7 +49,8 @@ export class CheckTabService {
   private keyTag: string;
   private prevKeyTag: string;
   private keyTags: string[];
-  private isEncryption: boolean;
+  private isEncryptDb: boolean;
+  private isEncryptMetadata: boolean;
 
   constructor(
     private tabService: TabService,
@@ -66,10 +67,13 @@ export class CheckTabService {
       ? [this.keyTag, this.prevKeyTag]
       : [this.keyTag];
 
-    this.isEncryption =
-      this.cs.get<BackendConfig['isDbEncryptionEnabled']>(
-        'isDbEncryptionEnabled'
-      ) === BoolEnum.TRUE;
+    this.isEncryptDb =
+      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
+      BoolEnum.TRUE;
+
+    this.isEncryptMetadata =
+      this.cs.get<BackendConfig['isEncryptMetadata']>('isEncryptMetadata') ===
+      BoolEnum.TRUE;
   }
 
   async checkReadWriteRecords(item: { isAllRecords: boolean }) {
@@ -128,7 +132,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(avatarsTable.serverTs, avatarMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(avatarsTable.keyTag),
               eq(avatarsTable.keyTag, this.prevKeyTag)
@@ -201,7 +205,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(branchesTable.serverTs, branchMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(branchesTable.keyTag),
               eq(branchesTable.keyTag, this.prevKeyTag)
@@ -274,7 +278,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(bridgesTable.serverTs, bridgeMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(bridgesTable.keyTag),
               eq(bridgesTable.keyTag, this.prevKeyTag)
@@ -347,7 +351,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(chartsTable.serverTs, chartMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(chartsTable.keyTag),
               eq(chartsTable.keyTag, this.prevKeyTag)
@@ -420,7 +424,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(connectionsTable.serverTs, connectionMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(connectionsTable.keyTag),
               eq(connectionsTable.keyTag, this.prevKeyTag)
@@ -493,7 +497,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(dashboardsTable.serverTs, dashboardMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(dashboardsTable.keyTag),
               eq(dashboardsTable.keyTag, this.prevKeyTag)
@@ -566,7 +570,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(dconfigsTable.serverTs, dconfigMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(dconfigsTable.keyTag),
               eq(dconfigsTable.keyTag, this.prevKeyTag)
@@ -639,7 +643,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(envsTable.serverTs, envMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(isNull(envsTable.keyTag), eq(envsTable.keyTag, this.prevKeyTag))
           : or(
               eq(envsTable.keyTag, this.keyTag),
@@ -709,7 +713,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(kitsTable.serverTs, kitMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(isNull(kitsTable.keyTag), eq(kitsTable.keyTag, this.prevKeyTag))
           : or(
               eq(kitsTable.keyTag, this.keyTag),
@@ -779,7 +783,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(mconfigsTable.serverTs, mconfigMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(mconfigsTable.keyTag),
               eq(mconfigsTable.keyTag, this.prevKeyTag)
@@ -852,7 +856,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(membersTable.serverTs, memberMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(membersTable.keyTag),
               eq(membersTable.keyTag, this.prevKeyTag)
@@ -925,7 +929,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(modelsTable.serverTs, modelMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(modelsTable.keyTag),
               eq(modelsTable.keyTag, this.prevKeyTag)
@@ -998,7 +1002,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(notesTable.serverTs, noteMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(notesTable.keyTag),
               eq(notesTable.keyTag, this.prevKeyTag)
@@ -1071,7 +1075,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(orgsTable.serverTs, orgMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(isNull(orgsTable.keyTag), eq(orgsTable.keyTag, this.prevKeyTag))
           : or(
               eq(orgsTable.keyTag, this.keyTag),
@@ -1141,7 +1145,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(projectsTable.serverTs, projectMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(projectsTable.keyTag),
               eq(projectsTable.keyTag, this.prevKeyTag)
@@ -1214,7 +1218,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(queriesTable.serverTs, queryMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(queriesTable.keyTag),
               eq(queriesTable.keyTag, this.prevKeyTag)
@@ -1287,7 +1291,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(reportsTable.serverTs, reportMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(reportsTable.keyTag),
               eq(reportsTable.keyTag, this.prevKeyTag)
@@ -1360,7 +1364,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(structsTable.serverTs, structMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(structsTable.keyTag),
               eq(structsTable.keyTag, this.prevKeyTag)
@@ -1433,7 +1437,7 @@ export class CheckTabService {
     let where =
       isAllRecords === true
         ? lte(usersTable.serverTs, userMaxServerTs.serverTs)
-        : this.isEncryption === true
+        : this.isEncryptDb === true
           ? or(
               isNull(usersTable.keyTag),
               eq(usersTable.keyTag, this.prevKeyTag)

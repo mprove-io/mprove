@@ -91,7 +91,7 @@ import { TabService } from './tab.service';
 @Injectable()
 export class TabToEntService {
   private aesKeyTag: string;
-  private isEncryption: boolean;
+  private isEncryptDb: boolean;
 
   constructor(
     private hashService: HashService,
@@ -100,10 +100,9 @@ export class TabToEntService {
   ) {
     this.aesKeyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
 
-    this.isEncryption =
-      this.cs.get<BackendConfig['isDbEncryptionEnabled']>(
-        'isDbEncryptionEnabled'
-      ) === BoolEnum.TRUE;
+    this.isEncryptDb =
+      this.cs.get<BackendConfig['isEncryptDb']>('isEncryptDb') ===
+      BoolEnum.TRUE;
   }
 
   tabsPackToEntsPack(item: { tabsPack: DbTabsPack; hashSecret: string }) {
@@ -220,8 +219,12 @@ export class TabToEntService {
 
     let avatarEnt: AvatarEnt = {
       userId: tab.userId,
-      ...this.tabService.getEntProps({ dataSt: avatarSt, dataLt: avatarLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: avatarSt,
+        dataLt: avatarLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -243,8 +246,12 @@ export class TabToEntService {
       projectId: tab.projectId,
       repoId: tab.repoId,
       branchId: tab.branchId,
-      ...this.tabService.getEntProps({ dataSt: branchSt, dataLt: branchLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: branchSt,
+        dataLt: branchLt,
+        isMetadata: true
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -270,8 +277,12 @@ export class TabToEntService {
       envId: tab.envId,
       structId: tab.structId,
       needValidate: tab.needValidate,
-      ...this.tabService.getEntProps({ dataSt: bridgeSt, dataLt: bridgeLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: bridgeSt,
+        dataLt: bridgeLt,
+        isMetadata: true
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -302,8 +313,12 @@ export class TabToEntService {
       creatorId: tab.creatorId,
       chartType: tab.chartType,
       draft: tab.draft,
-      ...this.tabService.getEntProps({ dataSt: chartSt, dataLt: chartLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: chartSt,
+        dataLt: chartLt,
+        isMetadata: true
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -331,9 +346,10 @@ export class TabToEntService {
       type: tab.type,
       ...this.tabService.getEntProps({
         dataSt: connectionSt,
-        dataLt: connectionLt
+        dataLt: connectionLt,
+        isMetadata: false
       }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: undefined
     };
 
@@ -366,9 +382,10 @@ export class TabToEntService {
       draft: tab.draft,
       ...this.tabService.getEntProps({
         dataSt: dashboardSt,
-        dataLt: dashboardLt
+        dataLt: dashboardLt,
+        isMetadata: true
       }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -389,8 +406,12 @@ export class TabToEntService {
 
     let dconfigEnt: DconfigEnt = {
       dconfigId: tab.dconfigId,
-      ...this.tabService.getEntProps({ dataSt: dconfigSt, dataLt: dconfigLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: dconfigSt,
+        dataLt: dconfigLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -413,8 +434,12 @@ export class TabToEntService {
       memberIds: tab.memberIds,
       isFallbackToProdConnections: tab.isFallbackToProdConnections,
       isFallbackToProdVariables: tab.isFallbackToProdVariables,
-      ...this.tabService.getEntProps({ dataSt: envSt, dataLt: envLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: envSt,
+        dataLt: envLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -433,8 +458,12 @@ export class TabToEntService {
       kitId: tab.kitId,
       structId: tab.structId,
       reportId: tab.reportId,
-      ...this.tabService.getEntProps({ dataSt: kitSt, dataLt: kitLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: kitSt,
+        dataLt: kitLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -472,8 +501,12 @@ export class TabToEntService {
       queryId: tab.queryId,
       modelId: tab.modelId,
       modelType: tab.modelType,
-      ...this.tabService.getEntProps({ dataSt: mconfigSt, dataLt: mconfigLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: mconfigSt,
+        dataLt: mconfigLt,
+        isMetadata: true
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -503,8 +536,12 @@ export class TabToEntService {
       isAdmin: tab.isAdmin,
       isEditor: tab.isEditor,
       isExplorer: tab.isExplorer,
-      ...this.tabService.getEntProps({ dataSt: memberSt, dataLt: memberLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: memberSt,
+        dataLt: memberLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       emailHash: this.hashService.makeHash({
         input: tab.email,
         hashSecret: hashSecret
@@ -548,8 +585,12 @@ export class TabToEntService {
       type: tab.type,
       connectionId: tab.connectionId,
       connectionType: tab.connectionType,
-      ...this.tabService.getEntProps({ dataSt: modelSt, dataLt: modelLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: modelSt,
+        dataLt: modelLt,
+        isMetadata: true
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -567,8 +608,12 @@ export class TabToEntService {
 
     let noteEnt: NoteEnt = {
       noteId: tab.noteId,
-      ...this.tabService.getEntProps({ dataSt: noteSt, dataLt: noteLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: noteSt,
+        dataLt: noteLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -588,8 +633,12 @@ export class TabToEntService {
     let orgEnt: OrgEnt = {
       orgId: tab.orgId,
       ownerId: tab.ownerId,
-      ...this.tabService.getEntProps({ dataSt: orgSt, dataLt: orgLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: orgSt,
+        dataLt: orgLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       nameHash: this.hashService.makeHash({
         input: tab.name,
         hashSecret: hashSecret
@@ -625,8 +674,12 @@ export class TabToEntService {
       projectId: tab.projectId,
       orgId: tab.orgId,
       remoteType: tab.remoteType,
-      ...this.tabService.getEntProps({ dataSt: projectSt, dataLt: projectLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: projectSt,
+        dataLt: projectLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       nameHash: this.hashService.makeHash({
         input: tab.name,
         hashSecret: hashSecret
@@ -674,8 +727,12 @@ export class TabToEntService {
       bigqueryConsecutiveErrorsGetJob: tab.bigqueryConsecutiveErrorsGetJob,
       bigqueryConsecutiveErrorsGetResults:
         tab.bigqueryConsecutiveErrorsGetResults,
-      ...this.tabService.getEntProps({ dataSt: querySt, dataLt: queryLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: querySt,
+        dataLt: queryLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       apiUrlHash: this.hashService.makeHash({
         input: tab.apiUrl,
         hashSecret: hashSecret
@@ -712,8 +769,12 @@ export class TabToEntService {
       creatorId: tab.creatorId,
       draft: tab.draft,
       draftCreatedTs: tab.draftCreatedTs,
-      ...this.tabService.getEntProps({ dataSt: reportSt, dataLt: reportLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: reportSt,
+        dataLt: reportLt,
+        isMetadata: true
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -736,8 +797,12 @@ export class TabToEntService {
       structId: tab.structId,
       projectId: tab.projectId,
       mproveVersion: tab.mproveVersion,
-      ...this.tabService.getEntProps({ dataSt: structSt, dataLt: structLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: structSt,
+        dataLt: structLt,
+        isMetadata: true
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -766,8 +831,12 @@ export class TabToEntService {
       userId: tab.userId,
       isEmailVerified: tab.isEmailVerified,
       jwtMinIat: tab.jwtMinIat,
-      ...this.tabService.getEntProps({ dataSt: userSt, dataLt: userLt }),
-      keyTag: this.isEncryption === true ? this.aesKeyTag : undefined,
+      ...this.tabService.getEntProps({
+        dataSt: userSt,
+        dataLt: userLt,
+        isMetadata: false
+      }),
+      keyTag: this.isEncryptDb === true ? this.aesKeyTag : undefined,
       emailHash: this.hashService.makeHash({
         input: tab.email,
         hashSecret: hashSecret
