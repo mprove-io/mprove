@@ -38,9 +38,7 @@ export class Query {
   @IsString()
   apiUrl: string;
 
-  @IsOptional()
-  @IsString()
-  apiBody: string;
+  apiBody: any;
 
   @IsEnum(QueryStatusEnum)
   status: QueryStatusEnum;

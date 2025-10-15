@@ -131,6 +131,7 @@ test('1', async t => {
     let fromDashboard = resp1.payload.dashboard;
 
     let newTile = makeCopy(fromDashboard.tiles[0]);
+
     newTile.title = 'new title';
 
     let req: ToBackendSaveModifyDashboardRequest = {
