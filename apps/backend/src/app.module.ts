@@ -477,7 +477,7 @@ export class AppModule implements OnModuleInit {
     let isUpdateHashSecret = false;
 
     if (
-      dconfigA.keyTag !== keyTag ||
+      (isEncryptDb === true && dconfigA.keyTag !== keyTag) ||
       dconfigA.hashSecret !== dconfigA.hashSecretCheck
     ) {
       isUpdateHashSecret = true;
