@@ -109,8 +109,8 @@ test('1', async t => {
       orgId: orgId,
       projectId: projectId,
       remoteType: ProjectRemoteTypeEnum.Managed,
-      st: prep.tabService.encrypt({ data: projectSt }),
-      lt: prep.tabService.encrypt({ data: projectLt })
+      st: prep.tabToEntService.encrypt({ data: projectSt }),
+      lt: prep.tabToEntService.encrypt({ data: projectLt })
     };
 
     let toDiskSeedProjectReq: ToDiskSeedProjectRequest = {

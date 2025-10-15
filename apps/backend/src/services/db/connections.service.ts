@@ -14,6 +14,7 @@ import { ProjectConnection } from '~common/interfaces/backend/project-connection
 import { ConnectionLt, ConnectionSt } from '~common/interfaces/st-lt';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
+import { TabToEntService } from '../tab-to-ent.service';
 import { TabService } from '../tab.service';
 
 @Injectable()
@@ -21,6 +22,7 @@ export class ConnectionsService {
   constructor(
     private hashService: HashService,
     private tabService: TabService,
+    private tabToEntService: TabToEntService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -228,8 +230,8 @@ export class ConnectionsService {
       projectId: connection.projectId,
       envId: connection.envId,
       type: connection.type,
-      st: this.tabService.encrypt({ data: connectionSt }),
-      lt: this.tabService.encrypt({ data: connectionLt })
+      st: this.tabToEntService.encrypt({ data: connectionSt }),
+      lt: this.tabToEntService.encrypt({ data: connectionLt })
     };
 
     return apiBaseConnection;
