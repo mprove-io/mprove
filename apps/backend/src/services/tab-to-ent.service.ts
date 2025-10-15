@@ -278,7 +278,6 @@ export class TabToEntService {
         dataLt: avatarLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -305,7 +304,6 @@ export class TabToEntService {
         dataLt: branchLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -336,7 +334,6 @@ export class TabToEntService {
         dataLt: bridgeLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -372,7 +369,6 @@ export class TabToEntService {
         dataLt: chartLt,
         isMetadata: true
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -403,7 +399,6 @@ export class TabToEntService {
         dataLt: connectionLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: undefined
     };
 
@@ -439,7 +434,6 @@ export class TabToEntService {
         dataLt: dashboardLt,
         isMetadata: true
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -465,7 +459,6 @@ export class TabToEntService {
         dataLt: dconfigLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -493,7 +486,6 @@ export class TabToEntService {
         dataLt: envLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -517,7 +509,6 @@ export class TabToEntService {
         dataLt: kitLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -560,7 +551,6 @@ export class TabToEntService {
         dataLt: mconfigLt,
         isMetadata: true
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -595,7 +585,6 @@ export class TabToEntService {
         dataLt: memberLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       emailHash: this.hashService.makeHash({
         input: tab.email,
         hashSecret: hashSecret
@@ -644,7 +633,6 @@ export class TabToEntService {
         dataLt: modelLt,
         isMetadata: true
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -667,7 +655,6 @@ export class TabToEntService {
         dataLt: noteLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -692,7 +679,6 @@ export class TabToEntService {
         dataLt: orgLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       nameHash: this.hashService.makeHash({
         input: tab.name,
         hashSecret: hashSecret
@@ -733,7 +719,6 @@ export class TabToEntService {
         dataLt: projectLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       nameHash: this.hashService.makeHash({
         input: tab.name,
         hashSecret: hashSecret
@@ -786,7 +771,6 @@ export class TabToEntService {
         dataLt: queryLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       apiUrlHash: this.hashService.makeHash({
         input: tab.apiUrl,
         hashSecret: hashSecret
@@ -828,7 +812,6 @@ export class TabToEntService {
         dataLt: reportLt,
         isMetadata: true
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -856,7 +839,6 @@ export class TabToEntService {
         dataLt: structLt,
         isMetadata: true
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       serverTs: tab.serverTs
     };
 
@@ -890,7 +872,6 @@ export class TabToEntService {
         dataLt: userLt,
         isMetadata: false
       }),
-      keyTag: this.isEncryptDb === true ? this.keyTag : undefined,
       emailHash: this.hashService.makeHash({
         input: tab.email,
         hashSecret: hashSecret
