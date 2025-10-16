@@ -50,6 +50,7 @@ import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
@@ -388,6 +389,8 @@ export class SaveModifyChartController {
         struct: apiStruct,
         project: project,
         envId: envId,
+        queryParentType: QueryParentTypeEnum.Chart,
+        queryParentId: chartId,
         model: model,
         mconfig: newMconfig,
         metricsStartDateYYYYMMDD: undefined,

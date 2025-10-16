@@ -12,6 +12,7 @@ import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -37,11 +38,23 @@ export function wrapTiles(item: {
   projectId: string;
   envId: string;
   tiles: FilePartTile[];
+  queryParentType: QueryParentTypeEnum;
+  queryParentId: string;
   apiModels: Model[];
   stores: FileStore[];
   timezone: string;
 }) {
-  let { structId, projectId, apiModels, stores, tiles, envId, timezone } = item;
+  let {
+    structId,
+    projectId,
+    apiModels,
+    stores,
+    tiles,
+    queryParentType,
+    queryParentId,
+    envId,
+    timezone
+  } = item;
 
   let apiTiles: Tile[] = [];
   let mconfigs: Mconfig[] = [];
@@ -75,9 +88,11 @@ export function wrapTiles(item: {
             projectId: projectId,
             connectionId: apiModel.connectionId,
             envId: envId,
+            queryParentType: queryParentType,
+            queryParentId: queryParentId,
             sql: tile.sql.join('\n'),
-            store: undefined, // isStore false
-            storeTransformedRequestString: undefined // isStore false
+            storeTransformedRequestString: undefined, // isStore false
+            store: undefined // isStore false
           });
 
     let query: Query = {

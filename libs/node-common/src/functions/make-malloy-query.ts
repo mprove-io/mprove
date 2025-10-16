@@ -29,6 +29,7 @@ import { DOUBLE_UNDERSCORE } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -52,6 +53,8 @@ export async function makeMalloyQuery(item: {
   projectId: string;
   envId: string;
   structId: string;
+  queryParentType: QueryParentTypeEnum;
+  queryParentId: string;
   model: Model;
   mconfig: Mconfig;
   queryOperations: QueryOperation[];
@@ -61,6 +64,8 @@ export async function makeMalloyQuery(item: {
     projectId,
     envId,
     structId,
+    queryParentType,
+    queryParentId,
     model,
     mconfig,
     queryOperations,
@@ -530,6 +535,8 @@ export async function makeMalloyQuery(item: {
     projectId: projectId,
     envId: envId,
     connectionId: model.connectionId,
+    queryParentType: queryParentType,
+    queryParentId: queryParentId,
     sql: pr.sql,
     store: undefined,
     storeTransformedRequestString: undefined

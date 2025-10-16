@@ -19,6 +19,7 @@ import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
 import { ErEnum } from '~common/enums/er.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -145,6 +146,8 @@ export class MconfigsService {
     struct: StructTab;
     project: ProjectTab;
     envId: string;
+    queryParentType: QueryParentTypeEnum;
+    queryParentId: string;
     model: ModelTab;
     mconfig: MconfigTab;
     metricsStartDateYYYYMMDD: string;
@@ -160,6 +163,8 @@ export class MconfigsService {
       mconfig,
       project,
       envId,
+      queryParentType,
+      queryParentId,
       metricsStartDateYYYYMMDD,
       metricsEndDateYYYYMMDD
     } = item;
@@ -253,8 +258,10 @@ export class MconfigsService {
 
     let queryId = makeQueryId({
       projectId: project.projectId,
-      envId: envId,
       connectionId: model.connectionId,
+      envId: envId,
+      queryParentType: queryParentType,
+      queryParentId: queryParentId,
       sql: undefined, // isStore true
       store: model.storeContent,
       storeTransformedRequestString: processedRequest.result

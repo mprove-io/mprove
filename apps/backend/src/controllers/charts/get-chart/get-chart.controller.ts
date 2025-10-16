@@ -38,6 +38,7 @@ import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import {
@@ -150,6 +151,8 @@ export class GetChartController {
         struct: struct,
         project: project,
         envId: envId,
+        queryParentType: QueryParentTypeEnum.Chart,
+        queryParentId: chartId,
         model: model,
         mconfig: newMconfig,
         metricsStartDateYYYYMMDD: undefined,
@@ -169,6 +172,8 @@ export class GetChartController {
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
+        queryParentType: QueryParentTypeEnum.Chart,
+        queryParentId: chartId,
         model: model,
         mconfig: chartMconfig,
         queryOperations: [queryOperation]

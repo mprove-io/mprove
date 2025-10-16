@@ -28,6 +28,7 @@ import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
@@ -491,6 +492,8 @@ export class ReportDataService {
               struct: struct,
               project: project,
               envId: envId,
+              queryParentType: QueryParentTypeEnum.Report,
+              queryParentId: report.reportId,
               model: model,
               mconfig: mconfig,
               metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
@@ -514,6 +517,8 @@ export class ReportDataService {
                 projectId: project.projectId,
                 envId: envId,
                 structId: struct.structId,
+                queryParentType: QueryParentTypeEnum.Report,
+                queryParentId: report.reportId,
                 model: model,
                 mconfig: mconfig,
                 queryOperations: [

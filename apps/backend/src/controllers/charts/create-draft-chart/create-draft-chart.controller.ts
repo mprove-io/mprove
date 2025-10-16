@@ -40,6 +40,7 @@ import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
@@ -150,6 +151,8 @@ export class CreateDraftChartController {
       });
     }
 
+    let chartId = makeId();
+
     let newMconfig: MconfigTab;
     let newQuery: QueryTab;
 
@@ -160,6 +163,8 @@ export class CreateDraftChartController {
         struct: struct,
         project: project,
         envId: envId,
+        queryParentType: QueryParentTypeEnum.Chart,
+        queryParentId: chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: isDefined(cellMetricsStartDateMs)
@@ -184,6 +189,8 @@ export class CreateDraftChartController {
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
+        queryParentType: QueryParentTypeEnum.Chart,
+        queryParentId: chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: isDefined(queryOperation) ? [queryOperation] : []
@@ -202,8 +209,6 @@ export class CreateDraftChartController {
         projectId: projectId
       });
     }
-
-    let chartId = makeId();
 
     let tile: Tile = {
       modelId: newMconfig.modelId,

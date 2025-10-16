@@ -6,6 +6,7 @@ import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
@@ -14,6 +15,8 @@ import { makeId } from '~common/functions/make-id';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import { Fraction } from '~common/interfaces/blockml/fraction';
+import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
+import { FileDashboard } from '~common/interfaces/blockml/internal/file-dashboard';
 import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
@@ -26,8 +29,9 @@ import { log } from '../extra/log';
 let func = FuncEnum.FetchSql;
 
 interface FilePartTileExtra extends FilePartTile {
-  filePath?: string;
-  fileName?: string;
+  queryParentId: string;
+  filePath: string;
+  fileName: string;
 }
 
 export async function fetchSql<T extends dcType>(
@@ -36,6 +40,7 @@ export async function fetchSql<T extends dcType>(
     envId: string;
     projectId: string;
     entities: T[];
+    queryParentType: QueryParentTypeEnum;
     // mods: FileMod[];
     apiModels: Model[];
     malloyConnections: MalloyConnection[];
@@ -56,14 +61,18 @@ export async function fetchSql<T extends dcType>(
   let tiles: FilePartTileExtra[] = [];
 
   item.entities.forEach(x => {
-    tiles = [
-      ...tiles,
-      ...x.tiles.map(tile => {
-        (tile as FilePartTileExtra).filePath = x.filePath;
-        (tile as FilePartTileExtra).fileName = x.fileName;
-        return tile;
-      })
-    ];
+    x.tiles.forEach(tile => {
+      (tile as FilePartTileExtra).queryParentId =
+        item.queryParentType === QueryParentTypeEnum.Chart
+          ? (x as FileChart).chart
+          : item.queryParentType === QueryParentTypeEnum.Dashboard
+            ? (x as FileDashboard).dashboard
+            : undefined;
+      (tile as FilePartTileExtra).filePath = x.filePath;
+      (tile as FilePartTileExtra).fileName = x.fileName;
+    });
+
+    tiles = [...tiles, ...(x.tiles as FilePartTileExtra[])];
   });
 
   let concurrencyLimit =
@@ -157,6 +166,8 @@ export async function fetchSql<T extends dcType>(
         projectId: projectId,
         envId: envId,
         structId: structId,
+        queryParentType: item.queryParentType,
+        queryParentId: tile.queryParentId,
         model: apiModel,
         mconfig: mconfig,
         malloyConnections: item.malloyConnections,
