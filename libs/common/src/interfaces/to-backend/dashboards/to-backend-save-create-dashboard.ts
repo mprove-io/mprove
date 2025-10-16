@@ -5,7 +5,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -52,8 +52,8 @@ export class ToBackendSaveCreateDashboardRequest extends ToBackendRequest {
 
 export class ToBackendSaveCreateDashboardResponsePayload {
   @ValidateNested()
-  @Type(() => DashboardX)
-  newDashboardPart: DashboardX;
+  @Type(() => DashboardPart)
+  newDashboardPart: DashboardPart;
 }
 
 export class ToBackendSaveCreateDashboardResponse extends MyResponse {

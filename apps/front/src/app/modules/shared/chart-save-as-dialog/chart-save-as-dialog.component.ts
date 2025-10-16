@@ -30,6 +30,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { ChartX } from '~common/interfaces/backend/chart-x';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { Chart } from '~common/interfaces/blockml/chart';
@@ -38,6 +39,10 @@ import {
   ToBackendSaveCreateChartRequestPayload,
   ToBackendSaveCreateChartResponse
 } from '~common/interfaces/to-backend/charts/to-backend-save-create-chart';
+import {
+  ToBackendGetDashboardRequestPayload,
+  ToBackendGetDashboardResponse
+} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
 import {
   ToBackendGetDashboardsRequestPayload,
   ToBackendGetDashboardsResponse
@@ -130,7 +135,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   selectedTileTitle: any; // string
 
-  dashboards: DashboardX[];
+  dashboardParts: DashboardPart[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -202,7 +207,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.dashboards = resp.payload.dashboards.map(x => {
+            this.dashboardParts = resp.payload.dashboardParts.map(x => {
               (x as any).disabled = !x.canEditOrDeleteDashboard;
               return x;
             });
@@ -308,21 +313,61 @@ export class ChartSaveAsDialogComponent implements OnInit {
   }
 
   setSelectedDashboard() {
-    if (isUndefined(this.selectedDashboardId) || isUndefined(this.dashboards)) {
+    if (
+      isUndefined(this.selectedDashboardId) ||
+      isUndefined(this.dashboardParts)
+    ) {
       return;
     }
 
-    this.selectedDashboard = this.dashboards.find(
-      x => x.dashboardId === this.selectedDashboardId
-    );
+    // this.storeModelsLoading = true;
+
+    let nav: NavState = this.navQuery.getValue();
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    // this.spinner.show(this.storeModelsSpinnerName);
+
+    let payload: ToBackendGetDashboardRequestPayload = {
+      projectId: nav.projectId,
+      isRepoProd: nav.isRepoProd,
+      branchId: nav.branchId,
+      envId: nav.envId,
+      dashboardId: this.selectedDashboardId,
+      timezone: 'UTC' // does not matter
+    };
+
+    apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboard,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendGetDashboardResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.selectedDashboard = resp.payload.dashboard;
+
+            // this.storeModelsLoading = false;
+            // this.storeModelsLoaded = true;
+
+            // this.spinner.hide(this.storeModelsSpinnerName);
+
+            this.cd.detectChanges();
+          }
+        })
+      )
+      .toPromise();
   }
 
   makePath() {
-    if (isUndefined(this.selectedDashboardId) || isUndefined(this.dashboards)) {
+    if (
+      isUndefined(this.selectedDashboardId) ||
+      isUndefined(this.dashboardParts)
+    ) {
       return;
     }
 
-    let selectedDashboard = this.dashboards.find(
+    let selectedDashboard = this.dashboardParts.find(
       x => x.dashboardId === this.selectedDashboardId
     );
 

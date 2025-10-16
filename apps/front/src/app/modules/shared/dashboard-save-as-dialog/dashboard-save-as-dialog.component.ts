@@ -18,6 +18,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
 import {
@@ -33,7 +34,7 @@ import {
   ToBackendSaveModifyDashboardResponse
 } from '~common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
+import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -96,7 +97,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   selectedDashboardId: any; // string
   selectedDashboardPath: string;
 
-  dashboards: DashboardX[];
+  dashboardParts: DashboardPart[];
 
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
@@ -121,7 +122,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
-    private dashboardsQuery: DashboardsQuery,
+    private dashboardPartsQuery: DashboardPartsQuery,
     private spinner: NgxSpinnerService,
     private cd: ChangeDetectorRef
   ) {}
@@ -170,7 +171,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendGetDashboardsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.dashboards = resp.payload.dashboards
+            this.dashboardParts = resp.payload.dashboardParts
               .filter(d => d.draft === false)
               .map(x => {
                 (x as any).disabled = x.canEditOrDeleteDashboard === false;
@@ -266,11 +267,12 @@ export class DashboardSaveAsDialogComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
             if (isDefined(dashboardPart)) {
-              let dashboards = this.dashboardsQuery.getValue().dashboards;
+              let dashboardParts =
+                this.dashboardPartsQuery.getValue().dashboardParts;
 
-              let newDashboards = [
+              let newDashboardParts = [
                 dashboardPart,
-                ...dashboards.filter(
+                ...dashboardParts.filter(
                   d =>
                     d.dashboardId !== dashboardPart.dashboardId &&
                     !(
@@ -280,7 +282,9 @@ export class DashboardSaveAsDialogComponent implements OnInit {
                 )
               ];
 
-              this.dashboardsQuery.update({ dashboards: newDashboards });
+              this.dashboardPartsQuery.update({
+                dashboardParts: newDashboardParts
+              });
 
               this.navigateService.navigateToDashboard({
                 dashboardId: this.newDashboardId
@@ -330,11 +334,12 @@ export class DashboardSaveAsDialogComponent implements OnInit {
             let dashboardPart = resp.payload.newDashboardPart;
 
             if (isDefined(dashboardPart)) {
-              let dashboards = this.dashboardsQuery.getValue().dashboards;
+              let dashboardParts =
+                this.dashboardPartsQuery.getValue().dashboardParts;
 
-              let newDashboards = [
+              let newDashboardParts = [
                 dashboardPart,
-                ...dashboards.filter(
+                ...dashboardParts.filter(
                   d =>
                     d.dashboardId !== dashboardPart.dashboardId &&
                     !(
@@ -344,7 +349,9 @@ export class DashboardSaveAsDialogComponent implements OnInit {
                 )
               ];
 
-              this.dashboardsQuery.update({ dashboards: newDashboards });
+              this.dashboardPartsQuery.update({
+                dashboardParts: newDashboardParts
+              });
 
               this.navigateService.navigateToDashboard({
                 dashboardId: this.selectedDashboardId
@@ -364,11 +371,14 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   }
 
   makePathAndSetValues() {
-    if (isUndefined(this.selectedDashboardId) || isUndefined(this.dashboards)) {
+    if (
+      isUndefined(this.selectedDashboardId) ||
+      isUndefined(this.dashboardParts)
+    ) {
       return;
     }
 
-    let selectedDashboard = this.dashboards.find(
+    let selectedDashboard = this.dashboardParts.find(
       x => x.dashboardId === this.selectedDashboardId
     );
 

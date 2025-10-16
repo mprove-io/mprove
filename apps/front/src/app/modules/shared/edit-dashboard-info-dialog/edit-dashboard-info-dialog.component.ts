@@ -20,15 +20,14 @@ import { APP_SPINNER_NAME } from '~common/constants/top-front';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
-import { makeCopy } from '~common/functions/make-copy';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
 } from '~common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
+import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -41,7 +40,7 @@ export interface EditDashboardInfoDialogData {
   isRepoProd: boolean;
   branchId: string;
   envId: string;
-  dashboard: DashboardX;
+  dashboardPart: DashboardPart;
 }
 
 @Component({
@@ -87,7 +86,7 @@ export class EditDashboardInfoDialogComponent implements OnInit {
     public ref: DialogRef<EditDashboardInfoDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
-    private dashboardsQuery: DashboardsQuery,
+    private dashboardPartsQuery: DashboardPartsQuery,
     private dashboardQuery: DashboardQuery,
     private spinner: NgxSpinnerService,
     private structQuery: StructQuery,
@@ -98,11 +97,11 @@ export class EditDashboardInfoDialogComponent implements OnInit {
   ngOnInit() {
     setValueAndMark({
       control: this.titleForm.controls['title'],
-      value: this.ref.data.dashboard.title
+      value: this.ref.data.dashboardPart.title
     });
     setValueAndMark({
       control: this.rolesForm.controls['roles'],
-      value: this.ref.data.dashboard.accessRoles?.join(', ')
+      value: this.ref.data.dashboardPart.accessRoles?.join(', ')
     });
 
     setTimeout(() => {
@@ -129,16 +128,11 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         isRepoProd: this.ref.data.isRepoProd,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
-        fromDashboardId: this.ref.data.dashboard.dashboardId,
-        toDashboardId: this.ref.data.dashboard.dashboardId,
+        fromDashboardId: this.ref.data.dashboardPart.dashboardId,
+        toDashboardId: this.ref.data.dashboardPart.dashboardId,
         dashboardTitle: newTitle.trim(),
         accessRoles: roles,
-        tilesGrid: this.ref.data.dashboard.tiles.map(x => {
-          let y = makeCopy(x);
-          delete y.mconfig;
-          delete y.query;
-          return y;
-        })
+        tilesGrid: undefined
       };
 
       let apiService: ApiService = this.ref.data.apiService;
@@ -153,20 +147,23 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         .pipe(
           tap(async (resp: ToBackendSaveModifyDashboardResponse) => {
             if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-              let newDashboard = resp.payload.dashboard;
               let newDashboardPart = resp.payload.newDashboardPart;
+              let newDashboard = resp.payload.dashboard;
 
               if (isDefined(newDashboard)) {
-                let dashboards = this.dashboardsQuery.getValue().dashboards;
+                let dashboardParts =
+                  this.dashboardPartsQuery.getValue().dashboardParts;
 
-                let newDashboards = [
+                let newDashboardParts = [
                   newDashboardPart,
-                  ...dashboards.filter(
+                  ...dashboardParts.filter(
                     x => x.dashboardId !== newDashboardPart.dashboardId
                   )
                 ];
 
-                this.dashboardsQuery.update({ dashboards: newDashboards });
+                this.dashboardPartsQuery.update({
+                  dashboardParts: newDashboardParts
+                });
 
                 let currentDashboard = this.dashboardQuery.getValue();
 

@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
 import { Tile } from '~common/interfaces/blockml/tile';
@@ -45,8 +46,8 @@ export class ToBackendCreateDraftDashboardRequest extends ToBackendRequest {
 
 export class ToBackendCreateDraftDashboardResponsePayload {
   @ValidateNested()
-  @Type(() => DashboardX)
-  newDashboardPart: DashboardX;
+  @Type(() => DashboardPart)
+  newDashboardPart: DashboardPart;
 
   @ValidateNested()
   @Type(() => DashboardX)

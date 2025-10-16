@@ -47,7 +47,9 @@
 
       <div
         class="relative mx-5 flex h-2 w-9 flex-shrink-0"
-        *ngIf="!dashboards && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD"
+        *ngIf="
+          !dashboardParts && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
+        "
       >
         <ngx-spinner
           [ngClass]="{
@@ -71,10 +73,10 @@
         [fixNgSelectBottom]="chartSaveAsDialogDashboardSelect"
         data-cy="chartSaveAsDialogDashboardSelect"
         *ngIf="
-          !!dashboards && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
+          !!dashboardParts && chartSaveAs === chartSaveAsEnum.TILE_OF_DASHBOARD
         "
         class="w-[500px] flex-shrink-0 text-base"
-        [items]="dashboards"
+        [items]="dashboardParts"
         [searchable]="false"
         [clearable]="false"
         [(ngModel)]="selectedDashboardId"

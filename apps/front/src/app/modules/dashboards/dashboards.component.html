@@ -453,8 +453,11 @@
                       <div class="h-[12px]"></div>
 
                       <div
-                        *ngFor="let d of filteredDashboards; let i = index"
-                        [attr.dashboardId]="d.dashboardId"
+                        *ngFor="
+                          let dPart of dashboardPartsFiltered;
+                          let i = index
+                        "
+                        [attr.dashboardId]="dPart.dashboardId"
                       >
                         <div
                           *ngIf="filteredDraftsLength > 0 && i === 0"
@@ -472,21 +475,25 @@
 
                         <div
                           class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
-                          (click)="navToDashboard(d.dashboardId)"
+                          (click)="navToDashboard(dPart.dashboardId)"
                           [ngClass]="{
                             'mt-4': i === 0,
-                            'mb-5': i === filteredDashboards.length - 1
+                            'mb-5': i === dashboardPartsFiltered.length - 1
                           }"
                         >
                           <div class="ml-4 mr-3 flex h-2 items-center">
                             <div
-                              *ngIf="d.dashboardId === dashboard?.dashboardId"
+                              *ngIf="
+                                dPart.dashboardId === dashboard?.dashboardId
+                              "
                               data-cy="dashboardsSelectedSymbol"
                               class="bg-m600 text-m0 h-9 w-[6px] focus:outline-none"
                             ></div>
 
                             <div
-                              *ngIf="d.dashboardId !== dashboard?.dashboardId"
+                              *ngIf="
+                                dPart.dashboardId !== dashboard?.dashboardId
+                              "
                               class="h-9 w-[6px]"
                             ></div>
                           </div>
@@ -495,12 +502,12 @@
                             class="ml-1 select-none truncate"
                             [ngClass]="{
                               'text-m600 font-semibold':
-                                d.dashboardId === dashboard?.dashboardId,
+                                dPart.dashboardId === dashboard?.dashboardId,
                               'text-s1':
-                                d.dashboardId !== dashboard?.dashboardId
+                                dPart.dashboardId !== dashboard?.dashboardId
                             }"
                           >
-                            {{ d.title | capitalize }}
+                            {{ dPart.title | capitalize }}
                           </div>
 
                           <div class="flex flex-grow"></div>
@@ -508,7 +515,7 @@
                           <button
                             *ngIf="
                               dashboard?.draft === true &&
-                              d.dashboardId === dashboard?.dashboardId
+                              dPart.dashboardId === dashboard?.dashboardId
                             "
                             data-cy="dashboardsSaveDraftButton"
                             class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
@@ -524,21 +531,21 @@
                           <button
                             *ngIf="
                               dashboard?.draft === true &&
-                              d.dashboardId === dashboard?.dashboardId
+                              dPart.dashboardId === dashboard?.dashboardId
                             "
                             data-cy="dashboardsDeleteDraftButton"
                             class="hover:bg-m200 text-s500 ml-3 flex h-9 flex-shrink-0 items-center justify-center rounded px-2 focus:outline-none"
-                            (click)="deleteDraftDashboard($event, d)"
+                            (click)="deleteDraftDashboard($event, dPart)"
                           >
                             <m-trash-icon></m-trash-icon>
                           </button>
 
                           <div
-                            *ngIf="d.draft === false"
+                            *ngIf="dPart.draft === false"
                             class="invisible ml-2 flex group-hover:visible"
                           >
                             <m-dashboard-options
-                              [dashboard]="d"
+                              [dashboardPart]="dPart"
                               [isHoverM]="false"
                             ></m-dashboard-options>
                           </div>
@@ -631,7 +638,7 @@
       <div *ngIf="routerEvents$ | async"></div>
       <div *ngIf="showDashboardsLeftPanel$ | async"></div>
       <div *ngIf="showTileParameters$ | async"></div>
-      <div *ngIf="dashboards$ | async"></div>
+      <div *ngIf="dashboardParts$ | async"></div>
       <div *ngIf="dashboard$ | async"></div>
       <div *ngIf="nav$ | async"></div>
       <div *ngIf="member$ | async"></div>

@@ -29,6 +29,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeTrackChangeId } from '~common/functions/make-track-change-id';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
@@ -42,9 +43,9 @@ import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
 } from '~common/interfaces/to-backend/queries/to-backend-run-queries';
+import { DashboardPartsFilteredQuery } from '~front/app/queries/dashboard-parts-filtered.query';
+import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
-import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -137,13 +138,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   filteredDraftsLength: number;
 
-  dashboards: DashboardX[];
-  dashboardsFilteredByWord: DashboardX[];
-  filteredDashboards: DashboardX[];
+  dashboardParts: DashboardPart[];
+  dashboardPartsFilteredByWord: DashboardPart[];
+  dashboardPartsFiltered: DashboardPart[];
 
-  dashboards$ = this.dashboardsQuery.select().pipe(
+  dashboardParts$ = this.dashboardPartsQuery.select().pipe(
     tap(x => {
-      this.dashboards = x.dashboards;
+      this.dashboardParts = x.dashboardParts;
 
       this.makeFilteredDashboards();
       this.cd.detectChanges();
@@ -243,8 +244,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private dashboardsQuery: DashboardsQuery,
-    private filteredDashboardsQuery: FilteredDashboardsQuery,
+    private dashboardPartsQuery: DashboardPartsQuery,
+    private dashboardPartsFilteredQuery: DashboardPartsFilteredQuery,
     private dashboardQuery: DashboardQuery,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
@@ -333,8 +334,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   makeFilteredDashboards() {
     let idxs;
 
-    let draftDashboards = this.dashboards.filter(x => x.draft === true);
-    let nonDraftDashboards = this.dashboards.filter(x => x.draft === false);
+    let draftDashboards = this.dashboardParts.filter(x => x.draft === true);
+    let nonDraftDashboards = this.dashboardParts.filter(x => x.draft === false);
 
     if (isDefinedAndNotEmpty(this.word)) {
       let haystack = nonDraftDashboards.map(x =>
@@ -345,18 +346,18 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       idxs = uf.filter(haystack, this.word);
     }
 
-    this.dashboardsFilteredByWord = isDefinedAndNotEmpty(this.word)
+    this.dashboardPartsFilteredByWord = isDefinedAndNotEmpty(this.word)
       ? idxs != null && idxs.length > 0
-        ? idxs.map((idx: number): DashboardX => nonDraftDashboards[idx])
+        ? idxs.map((idx: number): DashboardPart => nonDraftDashboards[idx])
         : []
       : nonDraftDashboards;
 
-    this.filteredDashboards = [
+    this.dashboardPartsFiltered = [
       ...draftDashboards,
-      ...this.dashboardsFilteredByWord
+      ...this.dashboardPartsFilteredByWord
     ];
 
-    this.filteredDashboards = this.filteredDashboards.sort((a, b) => {
+    this.dashboardPartsFiltered = this.dashboardPartsFiltered.sort((a, b) => {
       let aTitle = a.title || a.dashboardId;
       let bTitle = b.title || b.dashboardId;
 
@@ -371,11 +372,11 @@ export class DashboardsComponent implements OnInit, OnDestroy {
               : 0;
     });
 
-    this.filteredDashboardsQuery.update({
-      filteredDashboards: this.filteredDashboards
+    this.dashboardPartsFilteredQuery.update({
+      dashboardPartsFiltered: this.dashboardPartsFiltered
     });
 
-    this.filteredDraftsLength = this.filteredDashboards.filter(
+    this.filteredDraftsLength = this.dashboardPartsFiltered.filter(
       y => y.draft === true
     ).length;
   }
@@ -402,17 +403,17 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
   deleteDrafts() {
     this.dashboardService.deleteDraftDashboards({
-      dashboardIds: this.filteredDashboards
-        .filter(d => d.draft === true)
-        .map(d => d.dashboardId)
+      dashboardIds: this.dashboardPartsFiltered
+        .filter(x => x.draft === true)
+        .map(x => x.dashboardId)
     });
   }
 
-  deleteDraftDashboard(event: any, dashboard: DashboardX) {
+  deleteDraftDashboard(event: any, dashboardPart: DashboardPart) {
     event.stopPropagation();
 
     this.dashboardService.deleteDraftDashboards({
-      dashboardIds: [dashboard.dashboardId]
+      dashboardIds: [dashboardPart.dashboardId]
     });
   }
 

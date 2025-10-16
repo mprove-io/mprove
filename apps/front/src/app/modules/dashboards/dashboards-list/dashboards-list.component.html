@@ -14,28 +14,30 @@
       </div>
 
       <div
-        *ngIf="filteredDashboards?.length > 0"
+        *ngIf="dashboardPartsFiltered?.length > 0"
         class="h-2 flex-1 overflow-y-auto"
       >
         <div
           *ngFor="
-            let item of filteredDashboards;
+            let item of dashboardPartsFiltered;
             let i = index;
             trackBy: trackByFn
           "
           class="hover:bg-m50 bg-m0 flex flex-row hover:cursor-pointer"
           [ngStyle]="
             item.dashboardId !==
-              filteredDashboards[filteredDashboards.length - 1].dashboardId && {
+              dashboardPartsFiltered[dashboardPartsFiltered.length - 1]
+                .dashboardId && {
               'border-bottom-width': '1px'
             }
           "
           [ngClass]="{
             'mt-2': i === 0,
-            'mb-5': i === filteredDashboards.length - 1,
+            'mb-5': i === dashboardPartsFiltered.length - 1,
             'border-s300':
               item.dashboardId !==
-              filteredDashboards[filteredDashboards.length - 1].dashboardId
+              dashboardPartsFiltered[dashboardPartsFiltered.length - 1]
+                .dashboardId
           }"
         >
           <div class="flex-grow flex-col text-base">
@@ -46,7 +48,7 @@
               <div class="flex w-12 pl-3">
                 <div class="invisible flex group-hover:visible">
                   <m-dashboard-options
-                    [dashboard]="item"
+                    [dashboardPart]="item"
                     [isHoverM]="false"
                   ></m-dashboard-options>
                 </div>
@@ -95,7 +97,7 @@
 
       <div
         class="text-s1 flex h-full w-full select-none items-center justify-center text-xl"
-        *ngIf="filteredDashboards?.length === 0"
+        *ngIf="dashboardPartsFiltered?.length === 0"
         >No Dashboards</div
       >
     </div>
@@ -104,4 +106,4 @@
 
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="isExplorer$ | async"></div>
-<div *ngIf="filteredDashboards$ | async"></div>
+<div *ngIf="dashboardPartsFiltered$ | async"></div>

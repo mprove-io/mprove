@@ -259,27 +259,32 @@ export class SaveModifyDashboardController {
       // secondFileContent = malloyFileText;
     } else {
       // dashboard save as - replace existing
-      let yTiles: TileX[] = [];
 
-      tilesGrid.forEach(freshTile => {
-        let yTile = fromDashboardX.tiles.find(y => freshTile.title === y.title);
+      if (isDefined(tilesGrid)) {
+        let yTiles: TileX[] = [];
 
-        yTile.plateX = freshTile.plateX;
-        yTile.plateY = freshTile.plateY;
-        yTile.plateWidth = freshTile.plateWidth;
-        yTile.plateHeight = freshTile.plateHeight;
+        tilesGrid.forEach(freshTile => {
+          let yTile = fromDashboardX.tiles.find(
+            y => freshTile.title === y.title
+          );
 
-        yTile.listen = freshTile.listen;
-        yTile.mconfig.filters = yTile.mconfig.filters.filter(
-          k =>
-            isUndefined(freshTile.deletedFilterFieldIds) ||
-            freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
-        );
+          yTile.plateX = freshTile.plateX;
+          yTile.plateY = freshTile.plateY;
+          yTile.plateWidth = freshTile.plateWidth;
+          yTile.plateHeight = freshTile.plateHeight;
 
-        yTiles.push(yTile);
-      });
+          yTile.listen = freshTile.listen;
+          yTile.mconfig.filters = yTile.mconfig.filters.filter(
+            k =>
+              isUndefined(freshTile.deletedFilterFieldIds) ||
+              freshTile.deletedFilterFieldIds.indexOf(k.fieldId) < 0
+          );
 
-      fromDashboardX.tiles = yTiles;
+          yTiles.push(yTile);
+        });
+
+        fromDashboardX.tiles = yTiles;
+      }
 
       let {
         dashboardFileText
@@ -353,9 +358,7 @@ export class SaveModifyDashboardController {
       )
     ];
 
-    let modelIds = (
-      (isDefined(newTile) ? fromDashboardX?.tiles : tilesGrid) ?? []
-    ).map(tile => tile.modelId);
+    let modelIds = (fromDashboardX?.tiles ?? []).map(tile => tile.modelId);
 
     let cachedModels = await this.db.drizzle.query.modelsTable
       .findMany({
@@ -498,9 +501,9 @@ export class SaveModifyDashboardController {
       });
 
     let payload: ToBackendSaveModifyDashboardResponsePayload = {
-      dashboard: apiFinalDashboardX,
       newDashboardPart:
-        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
+        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined,
+      dashboard: apiFinalDashboardX
     };
 
     return payload;

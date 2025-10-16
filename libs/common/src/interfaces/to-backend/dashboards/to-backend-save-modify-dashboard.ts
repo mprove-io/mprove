@@ -5,6 +5,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { MyResponse } from '~common/interfaces/to/my-response';
@@ -72,8 +73,8 @@ export class ToBackendSaveModifyDashboardResponsePayload {
   dashboard: DashboardX;
 
   @ValidateNested()
-  @Type(() => DashboardX)
-  newDashboardPart: DashboardX;
+  @Type(() => DashboardPart)
+  newDashboardPart: DashboardPart;
 }
 
 export class ToBackendSaveModifyDashboardResponse extends MyResponse {

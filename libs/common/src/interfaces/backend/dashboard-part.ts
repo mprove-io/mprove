@@ -1,6 +1,8 @@
-import { IsBoolean, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { Tile } from '../blockml/tile';
 
-export class DashboardPartX {
+export class DashboardPart {
   @IsString()
   structId: string;
 
@@ -21,6 +23,10 @@ export class DashboardPartX {
 
   @IsString({ each: true })
   accessRoles: string[];
+
+  @ValidateNested()
+  @Type(() => Tile)
+  tiles: Tile[]; // for mcli
 
   //
 

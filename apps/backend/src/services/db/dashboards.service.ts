@@ -17,7 +17,7 @@ import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { DashboardPartX } from '~common/interfaces/backend/dashboard-part-x';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Member } from '~common/interfaces/backend/member';
@@ -114,10 +114,10 @@ export class DashboardsService {
     return dashboardX;
   }
 
-  tabToDashboardPartX(item: {
+  tabToDashboardPart(item: {
     dashboard: DashboardTab;
     member: Member;
-  }): DashboardPartX {
+  }): DashboardPart {
     let { dashboard, member } = item;
 
     let filePathArray = dashboard.filePath.split('/');
@@ -134,7 +134,7 @@ export class DashboardsService {
     let canEditOrDeleteDashboard =
       member.isEditor || member.isAdmin || author === member.alias;
 
-    let dashboardPartX: DashboardPartX = {
+    let dashboardPart: DashboardPart = {
       structId: dashboard.structId,
       dashboardId: dashboard.dashboardId,
       draft: dashboard.draft,
@@ -142,11 +142,12 @@ export class DashboardsService {
       title: dashboard.title,
       filePath: dashboard.filePath,
       accessRoles: dashboard.accessRoles,
+      tiles: dashboard.tiles,
       author: author,
       canEditOrDeleteDashboard: canEditOrDeleteDashboard
     };
 
-    return dashboardPartX;
+    return dashboardPart;
   }
 
   apiToTab(item: { apiDashboard: Dashboard }): DashboardTab {
@@ -314,7 +315,7 @@ export class DashboardsService {
     user: UserTab;
     apiUserMember: Member;
     newDashboard: DashboardTab;
-  }): Promise<any> {
+  }): Promise<DashboardPart[]> {
     let { structId, user, apiUserMember, newDashboard } = item;
 
     let dashboardParts = await this.db.drizzle
@@ -368,24 +369,10 @@ export class DashboardsService {
       )
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
 
-    let apiModels = models.map(model =>
-      this.modelsService.tabToApi({
-        model: model,
-        hasAccess: checkModelAccess({
-          member: apiUserMember,
-          modelAccessRoles: model.accessRoles
-        })
-      })
-    );
-
     let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
-      this.tabToApi({
+      this.tabToDashboardPart({
         dashboard: x,
-        mconfigs: [],
-        queries: [],
-        member: apiUserMember,
-        models: apiModels,
-        isAddMconfigAndQuery: false
+        member: apiUserMember
       })
     );
 

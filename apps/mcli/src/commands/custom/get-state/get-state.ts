@@ -217,7 +217,7 @@ export class GetStateCommand extends CustomCommand {
     let log: any = {
       validationErrorsTotal: getRepoResp.payload.struct.errors.length,
       modelsTotal: getModelsResp.payload.models.length,
-      dashboardsTotal: getDashboardsResp.payload.dashboards.length,
+      dashboardsTotal: getDashboardsResp.payload.dashboardParts.length,
       chartsTotal: getChartsResp.payload.charts.length,
       needValidate: getRepoResp.payload.needValidate,
       structId: getRepoResp.payload.struct.structId
@@ -281,7 +281,7 @@ export class GetStateCommand extends CustomCommand {
     }
 
     if (this.getDashboards === true) {
-      log.dashboards = getDashboardsResp.payload.dashboards.map(x => {
+      log.dashboards = getDashboardsResp.payload.dashboardParts.map(x => {
         let url = getDashboardUrl({
           host: this.context.config.mproveCliHost,
           orgId: getRepoResp.payload.repo.orgId,

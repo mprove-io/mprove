@@ -25,8 +25,8 @@ import {
   ToBackendGetDashboardResponse
 } from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
+import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { DashboardQuery } from '../queries/dashboard.query';
-import { DashboardsQuery } from '../queries/dashboards.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
@@ -43,7 +43,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private dashboardsQuery: DashboardsQuery,
+    private dashboardPartsQuery: DashboardPartsQuery,
     private dashboardQuery: DashboardQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -116,7 +116,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       : route?.params[PARAMETER_DASHBOARD_ID];
 
     if (parametersDashboardId === LAST_SELECTED_DASHBOARD_ID) {
-      let dashboards = this.dashboardsQuery.getValue().dashboards;
+      let dashboardParts = this.dashboardPartsQuery.getValue().dashboardParts;
       let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
 
       let pLink = projectDashboardLinks.find(
@@ -124,7 +124,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       );
 
       if (isDefined(pLink)) {
-        let pDashboard = dashboards.find(
+        let pDashboard = dashboardParts.find(
           r => r.dashboardId === pLink.dashboardId
         );
 

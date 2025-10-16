@@ -28,7 +28,7 @@ import {
   ToBackendSaveCreateDashboardRequestPayload,
   ToBackendSaveCreateDashboardResponse
 } from '~common/interfaces/to-backend/dashboards/to-backend-save-create-dashboard';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
+import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UserQuery } from '~front/app/queries/user.query';
@@ -98,7 +98,7 @@ export class CreateDashboardDialogComponent implements OnInit {
     private fb: FormBuilder,
     private userQuery: UserQuery,
     private navigateService: NavigateService,
-    private dashboardsQuery: DashboardsQuery,
+    private dashboardPartsQuery: DashboardPartsQuery,
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
@@ -161,11 +161,12 @@ export class CreateDashboardDialogComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let dashboardPart = resp.payload.newDashboardPart;
             if (isDefined(dashboardPart)) {
-              let dashboards = this.dashboardsQuery.getValue().dashboards;
+              let dashboardParts =
+                this.dashboardPartsQuery.getValue().dashboardParts;
 
-              let newDashboards = [
+              let newDashboardParts = [
                 dashboardPart,
-                ...dashboards.filter(
+                ...dashboardParts.filter(
                   d =>
                     d.dashboardId !== dashboardPart.dashboardId &&
                     !(
@@ -175,7 +176,9 @@ export class CreateDashboardDialogComponent implements OnInit {
                 )
               ];
 
-              this.dashboardsQuery.update({ dashboards: newDashboards });
+              this.dashboardPartsQuery.update({
+                dashboardParts: newDashboardParts
+              });
 
               this.navigateService.navigateToDashboard({
                 dashboardId: this.newDashboardId

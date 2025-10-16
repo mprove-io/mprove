@@ -12,19 +12,19 @@ import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '~common/constants/top-front';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import {
   ToBackendDeleteDashboardRequestPayload,
   ToBackendDeleteDashboardResponse
 } from '~common/interfaces/to-backend/dashboards/to-backend-delete-dashboard';
+import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { DashboardsQuery } from '~front/app/queries/dashboards.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 
 export interface DeleteDashboardDialogData {
   apiService: ApiService;
-  dashboard: Dashboard;
+  dashboardPart: DashboardPart;
   projectId: string;
   branchId: string;
   envId: string;
@@ -49,7 +49,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
     public ref: DialogRef<DeleteDashboardDialogData>,
     private spinner: NgxSpinnerService,
     private router: Router,
-    private dashboardsQuery: DashboardsQuery,
+    private dashboardPartsQuery: DashboardPartsQuery,
     private dashboardQuery: DashboardQuery,
     private navigateService: NavigateService
   ) {}
@@ -69,7 +69,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
 
     let { projectId, branchId, isRepoProd } = this.ref.data;
 
-    let dashboard: Dashboard = this.ref.data.dashboard;
+    let dashboardPart: DashboardPart = this.ref.data.dashboardPart;
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: ToBackendDeleteDashboardRequestPayload = {
@@ -77,7 +77,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
       branchId: branchId,
       envId: this.ref.data.envId,
       isRepoProd: isRepoProd,
-      dashboardId: dashboard.dashboardId
+      dashboardId: dashboardPart.dashboardId
     };
 
     apiService
@@ -89,17 +89,18 @@ export class DeleteDashboardDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendDeleteDashboardResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let dashboards = this.dashboardsQuery.getValue().dashboards;
+            let dashboardParts =
+              this.dashboardPartsQuery.getValue().dashboardParts;
 
-            this.dashboardsQuery.update({
-              dashboards: dashboards.filter(
-                d => d.dashboardId !== dashboard.dashboardId
+            this.dashboardPartsQuery.update({
+              dashboardParts: dashboardParts.filter(
+                d => d.dashboardId !== dashboardPart.dashboardId
               )
             });
 
             let currentDashboard = this.dashboardQuery.getValue();
 
-            if (currentDashboard.dashboardId === dashboard.dashboardId) {
+            if (currentDashboard.dashboardId === dashboardPart.dashboardId) {
               this.navigateService.navigateToDashboards();
             }
           }

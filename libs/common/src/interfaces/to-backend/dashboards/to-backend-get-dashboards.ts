@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Struct } from '~common/interfaces/backend/struct';
@@ -44,8 +44,8 @@ export class ToBackendGetDashboardsResponsePayload {
   models: ModelX[];
 
   @ValidateNested()
-  @Type(() => DashboardX)
-  dashboards: DashboardX[];
+  @Type(() => DashboardPart)
+  dashboardParts: DashboardPart[];
 }
 
 export class ToBackendGetDashboardsResponse extends MyResponse {

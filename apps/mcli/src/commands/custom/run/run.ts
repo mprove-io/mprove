@@ -43,23 +43,23 @@ import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';
 import { CustomCommand } from '~mcli/models/custom-command';
 
-interface ChartPart {
+interface McliChartPart {
   title: string;
   chartId: string;
   url: string;
   query: Query;
 }
 
-interface TilePart {
+interface McliTilePart {
   title: string;
   query: Query;
 }
 
-interface DashboardPart {
+interface McliDashboardPart {
   title: string;
   dashboardId: string;
   url: string;
-  tiles: TilePart[];
+  tiles: McliTilePart[];
 }
 
 export class RunCommand extends CustomCommand {
@@ -246,7 +246,7 @@ export class RunCommand extends CustomCommand {
       queryId: string;
     }[] = [];
 
-    let chartParts: ChartPart[] = [];
+    let chartParts: McliChartPart[] = [];
 
     if (this.noCharts === false) {
       let getChartsReqPayload: ToBackendGetChartsRequestPayload = {
@@ -299,7 +299,7 @@ export class RunCommand extends CustomCommand {
             timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
           });
 
-          let chartPart: ChartPart = {
+          let chartPart: McliChartPart = {
             title: x.title,
             chartId: x.chartId,
             url: url,
@@ -316,7 +316,7 @@ export class RunCommand extends CustomCommand {
         });
     }
 
-    let dashboardParts: DashboardPart[] = [];
+    let dashboardParts: McliDashboardPart[] = [];
 
     if (this.noDashboards === false) {
       let getDashboardsReqPayload: ToBackendGetDashboardsRequestPayload = {
@@ -338,7 +338,7 @@ export class RunCommand extends CustomCommand {
       if (isDefined(dashboardIds)) {
         dashboardIds.forEach(dashboardId => {
           if (
-            getDashboardsResp.payload.dashboards
+            getDashboardsResp.payload.dashboardParts
               .map(dashboard => dashboard.dashboardId)
               .indexOf(dashboardId) < 0
           ) {
@@ -352,17 +352,17 @@ export class RunCommand extends CustomCommand {
         });
       }
 
-      dashboardParts = getDashboardsResp.payload.dashboards
+      dashboardParts = getDashboardsResp.payload.dashboardParts
         .filter(
           dashboard =>
             isUndefined(dashboardIds) ||
             dashboardIds.indexOf(dashboard.dashboardId) > -1
         )
         .map(dashboard => {
-          let tileParts: TilePart[] = [];
+          let tileParts: McliTilePart[] = [];
 
           dashboard.tiles.forEach(tile => {
-            let tilePart: TilePart = {
+            let tilePart: McliTilePart = {
               title: tile.title,
               query: {
                 queryId: tile.queryId
@@ -388,7 +388,7 @@ export class RunCommand extends CustomCommand {
             timezone: getRepoResp.payload.struct.mproveConfig.defaultTimezone
           });
 
-          let dashboardPart: DashboardPart = {
+          let dashboardPart: McliDashboardPart = {
             title: dashboard.title,
             dashboardId: dashboard.dashboardId,
             url: url,
@@ -531,7 +531,7 @@ export class RunCommand extends CustomCommand {
         this.wait === true ? 0 : runQueriesResp.payload.startedQueryIds.length
     });
 
-    let errorCharts: ChartPart[] =
+    let errorCharts: McliChartPart[] =
       queriesStats.error === 0
         ? []
         : chartParts
@@ -547,7 +547,7 @@ export class RunCommand extends CustomCommand {
               } as Query
             }));
 
-    let errorDashboards: DashboardPart[] =
+    let errorDashboards: McliDashboardPart[] =
       queriesStats.error === 0
         ? []
         : dashboardParts

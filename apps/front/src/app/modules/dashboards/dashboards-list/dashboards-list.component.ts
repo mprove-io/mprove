@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
-import { FilteredDashboardsQuery } from '~front/app/queries/filtered-dashboards.query';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
+import { DashboardPartsFilteredQuery } from '~front/app/queries/dashboard-parts-filtered.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -28,10 +28,10 @@ export class DashboardsListComponent {
     })
   );
 
-  filteredDashboards: DashboardX[];
-  filteredDashboards$ = this.filteredDashboardsQuery.select().pipe(
+  dashboardPartsFiltered: DashboardPart[];
+  dashboardPartsFiltered$ = this.dashboardPartsFilteredQuery.select().pipe(
     tap(x => {
-      this.filteredDashboards = x.filteredDashboards.filter(
+      this.dashboardPartsFiltered = x.dashboardPartsFiltered.filter(
         d => d.draft === false
       );
       this.cd.detectChanges();
@@ -41,7 +41,7 @@ export class DashboardsListComponent {
   constructor(
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
-    private filteredDashboardsQuery: FilteredDashboardsQuery,
+    private dashboardPartsFilteredQuery: DashboardPartsFilteredQuery,
     private memberQuery: MemberQuery,
     private navigateService: NavigateService
   ) {}
@@ -50,7 +50,7 @@ export class DashboardsListComponent {
     this.navigateService.navigateToDashboard({ dashboardId: dashboardId });
   }
 
-  trackByFn(index: number, item: DashboardX) {
+  trackByFn(index: number, item: DashboardPart) {
     return item.dashboardId;
   }
 }

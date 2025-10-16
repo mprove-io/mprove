@@ -16,7 +16,7 @@ import {
   ToBackendGetDashboardsResponse
 } from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { DashboardsQuery } from '../queries/dashboards.query';
+import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -31,7 +31,7 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private apiService: ApiService,
-    private dashboardsQuery: DashboardsQuery,
+    private dashboardPartsQuery: DashboardPartsQuery,
     private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -89,8 +89,8 @@ export class StructDashboardsResolver implements Resolve<Observable<boolean>> {
             });
             this.modelsQuery.update({ models: resp.payload.models });
 
-            this.dashboardsQuery.update({
-              dashboards: resp.payload.dashboards
+            this.dashboardPartsQuery.update({
+              dashboardParts: resp.payload.dashboardParts
             });
 
             return true;

@@ -78,7 +78,7 @@ export class GetDashboardsController {
       envId: envId
     });
 
-    let dashboards = await this.db.drizzle
+    let dashboardParts = await this.db.drizzle
       .select({
         keyTag: dashboardsTable.keyTag,
         dashboardId: dashboardsTable.dashboardId,
@@ -101,7 +101,7 @@ export class GetDashboardsController {
         xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
       );
 
-    let dashboardsGrantedAccess = dashboards.filter(x =>
+    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
       checkAccess({
         member: userMember,
         accessRoles: x.accessRoles
@@ -147,14 +147,10 @@ export class GetDashboardsController {
       models: apiModels.sort((a, b) =>
         a.label > b.label ? 1 : b.label > a.label ? -1 : 0
       ),
-      dashboards: dashboardsGrantedAccess.map(x =>
-        this.dashboardsService.tabToApi({
+      dashboardParts: dashboardPartsGrantedAccess.map(x =>
+        this.dashboardsService.tabToDashboardPart({
           dashboard: x,
-          mconfigs: [],
-          queries: [],
-          member: apiUserMember,
-          models: apiModels,
-          isAddMconfigAndQuery: false
+          member: apiUserMember
         })
       )
     };

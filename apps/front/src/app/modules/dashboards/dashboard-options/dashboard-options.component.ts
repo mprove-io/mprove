@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { PanelEnum } from '~common/enums/panel.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -16,7 +16,7 @@ import { NavigateService } from '~front/app/services/navigate.service';
 })
 export class DashboardOptionsComponent {
   @Input()
-  dashboard: DashboardX;
+  dashboardPart: DashboardPart;
 
   @Input()
   isHoverM: boolean;
@@ -43,7 +43,7 @@ export class DashboardOptionsComponent {
 
     event.stopPropagation();
 
-    let fileIdAr = this.dashboard.filePath.split('/');
+    let fileIdAr = this.dashboardPart.filePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');
@@ -54,7 +54,7 @@ export class DashboardOptionsComponent {
     });
   }
 
-  async editDashboardInfo(event: MouseEvent, item: DashboardX) {
+  async editDashboardInfo(event: MouseEvent, item: DashboardPart) {
     event.stopPropagation();
 
     let nav = this.navQuery.getValue();
@@ -65,7 +65,7 @@ export class DashboardOptionsComponent {
       branchId: nav.branchId,
       envId: nav.envId,
       isRepoProd: nav.isRepoProd,
-      dashboard: item
+      dashboardPart: item
     });
   }
 
@@ -75,7 +75,7 @@ export class DashboardOptionsComponent {
     let nav = this.navQuery.getValue();
 
     this.myDialogService.showDeleteDashboard({
-      dashboard: this.dashboard,
+      dashboardPart: this.dashboardPart,
       apiService: this.apiService,
       projectId: nav.projectId,
       branchId: nav.branchId,
@@ -83,7 +83,7 @@ export class DashboardOptionsComponent {
       isRepoProd: nav.isRepoProd,
       isStartSpinnerUntilNavEnd:
         this.dashboardQuery.getValue().dashboardId ===
-        this.dashboard.dashboardId
+        this.dashboardPart.dashboardId
     });
   }
 }
