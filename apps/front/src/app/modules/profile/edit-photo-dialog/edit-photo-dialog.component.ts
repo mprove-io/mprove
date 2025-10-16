@@ -63,18 +63,20 @@ export class EditPhotoDialogComponent implements OnInit {
     this.croppedImage = event.base64;
     // this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl);
 
-    // let sizeBefore = this.imageCompressService.byteCount(this.croppedImage);
-    // console.log('sizeBefore:', sizeBefore);
+    let croppedImageSize = this.imageCompressService.byteCount(
+      this.croppedImage
+    );
+    console.log('croppedImageSize:', croppedImageSize);
 
     await this.imageCompressService
       .compressFile(this.croppedImage, -2, 25, 100)
       .then(result => {
         this.compressedImage = result;
 
-        // let sizeAfter = this.imageCompressService.byteCount(
-        //   this.compressedImage
-        // );
-        // console.log('sizeAfter:', sizeAfter);
+        let compressedImageSize = this.imageCompressService.byteCount(
+          this.compressedImage
+        );
+        console.log('compressedImageSize:', compressedImageSize);
       });
   }
 

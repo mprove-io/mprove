@@ -15,8 +15,8 @@ import {
   ToBackendResetUserPasswordRequestPayload,
   ToBackendResetUserPasswordResponse
 } from '~common/interfaces/to-backend/users/to-backend-reset-user-password';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { UserQuery } from '~front/app/queries/user.query';
+import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { UserQuery, UserState } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 
@@ -38,9 +38,41 @@ export class ProfileComponent implements OnInit {
     })
   );
 
+  nav: NavState;
+  nav$ = this.navQuery.select().pipe(
+    tap(x => {
+      this.nav = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  user: UserState;
+  user$ = this.userQuery.select().pipe(
+    tap(x => {
+      this.user = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  userFullName: string;
+  userFullName$ = this.userQuery.fullName$.pipe(
+    tap(x => {
+      this.userFullName = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  userInitials: string;
+  userInitials$ = this.userQuery.initials$.pipe(
+    tap(x => {
+      this.userInitials = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
-    public userQuery: UserQuery,
-    public navQuery: NavQuery,
+    private userQuery: UserQuery,
+    private navQuery: NavQuery,
     private apiService: ApiService,
     private spinner: NgxSpinnerService,
     private router: Router,
