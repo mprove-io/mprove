@@ -13,7 +13,7 @@
     [disabled]="needSave === true"
   >
     <m-avatar
-      [avatar]="navQuery.avatarBig$ | async"
+      [avatar]="navQuery.avatarSmall$ | async"
       [initials]="userQuery.initials$ | async"
     ></m-avatar>
   </button>

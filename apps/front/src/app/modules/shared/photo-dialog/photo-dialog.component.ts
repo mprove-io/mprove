@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { SharedModule } from '../shared.module';
 
 export interface PhotoDialogData {
-  avatarBig: string;
+  avatar: string;
   initials: string;
 }
 

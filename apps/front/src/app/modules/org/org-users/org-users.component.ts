@@ -1,14 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { take, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ORGANIZATION_USERS_PAGE_TITLE } from '~common/constants/page-titles';
 import { USERS_PER_PAGE } from '~common/constants/top-front';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetAvatarBigRequestPayload,
-  ToBackendGetAvatarBigResponse
-} from '~common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import {
   OrgUsersItem,
   ToBackendGetOrgUsersRequestPayload,
@@ -108,39 +104,47 @@ export class OrgUsersComponent implements OnInit {
       .subscribe();
   }
 
-  showPhoto(
-    memberId: string,
-    firstName: string,
-    lastName: string,
-    alias: string
-  ) {
+  showPhoto(item: {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    alias: string;
+    avatarSmall: string;
+  }) {
+    let { userId, firstName, lastName, alias, avatarSmall } = item;
+
     let initials = makeInitials({
       firstName: firstName,
       lastName: lastName,
       alias: alias
     });
 
-    let payload: ToBackendGetAvatarBigRequestPayload = {
-      avatarUserId: memberId
-    };
+    this.myDialogService.showPhoto({
+      avatar: avatarSmall,
+      initials: initials
+    });
 
-    this.apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
-        payload: payload,
-        showSpinner: true
-      })
-      .pipe(
-        tap((resp: ToBackendGetAvatarBigResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.myDialogService.showPhoto({
-              avatarBig: resp.payload.avatarBig,
-              initials: initials
-            });
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
+    // let payload: ToBackendGetAvatarBigRequestPayload = {
+    //   avatarUserId: userId
+    // };
+
+    // this.apiService
+    //   .req({
+    //     pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
+    //     payload: payload,
+    //     showSpinner: true
+    //   })
+    //   .pipe(
+    //     tap((resp: ToBackendGetAvatarBigResponse) => {
+    //       if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+    //         this.myDialogService.showPhoto({
+    //           avatar: resp.payload.avatarBig,
+    //           initials: initials
+    //         });
+    //       }
+    //     }),
+    //     take(1)
+    //   )
+    //   .subscribe();
   }
 }

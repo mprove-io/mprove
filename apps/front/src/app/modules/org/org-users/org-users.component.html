@@ -57,12 +57,13 @@
                         'cursor-default': !user.avatarSmall
                       }"
                       (click)="
-                        showPhoto(
-                          user.userId,
-                          user.firstName,
-                          user.lastName,
-                          user.alias
-                        )
+                        showPhoto({
+                          userId: user.userId,
+                          firstName: user.firstName,
+                          lastName: user.lastName,
+                          alias: user.alias,
+                          avatarSmall: user.avatarSmall
+                        })
                       "
                       [disabled]="!user.avatarSmall"
                     >

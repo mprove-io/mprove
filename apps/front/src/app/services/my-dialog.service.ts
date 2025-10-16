@@ -271,7 +271,9 @@ export class MyDialogService {
     this.dialogService.open(PhotoDialogComponent, {
       enableClose: false,
       closeButton: true,
-      data: item
+      data: item,
+      width: 200,
+      height: 200
     });
   }
 

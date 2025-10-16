@@ -115,12 +115,13 @@
                         'cursor-default': !member.avatarSmall
                       }"
                       (click)="
-                        showPhoto(
-                          member.memberId,
-                          member.firstName,
-                          member.lastName,
-                          member.alias
-                        )
+                        showPhoto({
+                          memberId: member.memberId,
+                          firstName: member.firstName,
+                          lastName: member.lastName,
+                          alias: member.alias,
+                          avatarSmall: member.avatarSmall
+                        })
                       "
                       [disabled]="!member.avatarSmall"
                     >

@@ -113,26 +113,9 @@ export class ProfileComponent implements OnInit {
   }
 
   showPhoto() {
-    let avatarBig: string;
-
-    this.navQuery.avatarBig$
-      .pipe(
-        tap(x => (avatarBig = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let initials: string;
-    this.userQuery.initials$
-      .pipe(
-        tap(x => (initials = x)),
-        take(1)
-      )
-      .subscribe();
-
     this.myDialogService.showPhoto({
-      avatarBig: avatarBig,
-      initials: initials
+      avatar: this.navQuery.getValue().avatarBig,
+      initials: this.userInitials
     });
   }
 
