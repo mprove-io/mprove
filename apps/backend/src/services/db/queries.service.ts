@@ -128,6 +128,7 @@ export class QueriesService {
 
     let queries = await this.db.drizzle
       .select({
+        keyTag: queriesTable.keyTag,
         projectId: queriesTable.projectId,
         envId: queriesTable.envId,
         connectionId: queriesTable.connectionId,
@@ -199,6 +200,7 @@ export class QueriesService {
 
     let queries = await this.db.drizzle
       .select({
+        keyTag: queriesTable.keyTag,
         projectId: queriesTable.projectId,
         envId: queriesTable.envId,
         connectionId: queriesTable.connectionId,

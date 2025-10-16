@@ -103,6 +103,7 @@ export class GetOrgUsersController {
         ? []
         : await this.db.drizzle
             .select({
+              keyTag: avatarsTable.keyTag,
               userId: avatarsTable.userId,
               st: avatarsTable.st
             })

@@ -282,6 +282,7 @@ export class CreateMemberController {
 
     let avatars = await this.db.drizzle
       .select({
+        keyTag: avatarsTable.keyTag,
         userId: avatarsTable.userId,
         st: avatarsTable.st
         // lt: {},

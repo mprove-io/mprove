@@ -390,6 +390,7 @@ export class SaveCreateChartController {
 
     let models = await this.db.drizzle
       .select({
+        keyTag: modelsTable.keyTag,
         modelId: modelsTable.modelId,
         connectionId: modelsTable.connectionId,
         connectionType: modelsTable.connectionType,

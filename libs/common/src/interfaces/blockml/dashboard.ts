@@ -17,23 +17,23 @@ export class Dashboard {
   creatorId: string;
 
   @IsString()
-  filePath: string;
+  title: string;
 
-  content: any;
+  @IsString()
+  filePath: string;
 
   @IsString({ each: true })
   accessRoles: string[];
 
-  @IsString()
-  title: string;
+  @ValidateNested()
+  @Type(() => Tile)
+  tiles: Tile[];
 
   @ValidateNested()
   @Type(() => DashboardField)
   fields: DashboardField[];
 
-  @ValidateNested()
-  @Type(() => Tile)
-  tiles: Tile[];
+  content: any;
 
   @IsInt()
   serverTs: number;

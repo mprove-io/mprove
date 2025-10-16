@@ -94,6 +94,7 @@ export class GetModelsController {
             .then(xs => xs.map(x => this.tabService.modelEntToTab(x)))
         : await this.db.drizzle
             .select({
+              keyTag: modelsTable.keyTag,
               structId: modelsTable.structId,
               modelId: modelsTable.modelId,
               type: modelsTable.type,

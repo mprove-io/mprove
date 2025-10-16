@@ -80,6 +80,7 @@ export class GetDashboardsController {
 
     let dashboards = await this.db.drizzle
       .select({
+        keyTag: dashboardsTable.keyTag,
         dashboardId: dashboardsTable.dashboardId,
         draft: dashboardsTable.draft,
         creatorId: dashboardsTable.creatorId,
@@ -109,6 +110,7 @@ export class GetDashboardsController {
 
     let models = await this.db.drizzle
       .select({
+        keyTag: modelsTable.keyTag,
         structId: modelsTable.structId,
         modelId: modelsTable.modelId,
         type: modelsTable.type,

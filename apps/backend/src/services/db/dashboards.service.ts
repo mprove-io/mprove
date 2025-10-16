@@ -17,6 +17,7 @@ import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { DashboardPartX } from '~common/interfaces/backend/dashboard-part-x';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Member } from '~common/interfaces/backend/member';
@@ -111,6 +112,41 @@ export class DashboardsService {
     };
 
     return dashboardX;
+  }
+
+  tabToDashboardPartX(item: {
+    dashboard: DashboardTab;
+    member: Member;
+  }): DashboardPartX {
+    let { dashboard, member } = item;
+
+    let filePathArray = dashboard.filePath.split('/');
+
+    let usersFolderIndex = filePathArray.findIndex(
+      x => x === MPROVE_USERS_FOLDER
+    );
+
+    let author =
+      usersFolderIndex > -1 && filePathArray.length > usersFolderIndex + 1
+        ? filePathArray[usersFolderIndex + 1]
+        : undefined;
+
+    let canEditOrDeleteDashboard =
+      member.isEditor || member.isAdmin || author === member.alias;
+
+    let dashboardPartX: DashboardPartX = {
+      structId: dashboard.structId,
+      dashboardId: dashboard.dashboardId,
+      draft: dashboard.draft,
+      creatorId: dashboard.creatorId,
+      title: dashboard.title,
+      filePath: dashboard.filePath,
+      accessRoles: dashboard.accessRoles,
+      author: author,
+      canEditOrDeleteDashboard: canEditOrDeleteDashboard
+    };
+
+    return dashboardPartX;
   }
 
   apiToTab(item: { apiDashboard: Dashboard }): DashboardTab {
@@ -283,16 +319,12 @@ export class DashboardsService {
 
     let dashboardParts = await this.db.drizzle
       .select({
+        keyTag: dashboardsTable.keyTag,
         dashboardId: dashboardsTable.dashboardId,
         draft: dashboardsTable.draft,
         creatorId: dashboardsTable.creatorId,
         st: dashboardsTable.st
         // lt: {},
-        // filePath: dashboardsTable.filePath,
-        // accessRoles: dashboardsTable.accessRoles,
-        // title: dashboardsTable.title,
-        // fields: dashboardsTable.fields,
-        // tiles: dashboardsTable.tiles
       })
       .from(dashboardsTable)
       .where(
@@ -320,12 +352,12 @@ export class DashboardsService {
 
     let models = await this.db.drizzle
       .select({
+        keyTag: modelsTable.keyTag,
         modelId: modelsTable.modelId,
         connectionId: modelsTable.connectionId,
         connectionType: modelsTable.connectionType,
         st: modelsTable.st
         // lt: {},
-        // accessRoles: modelsTable.accessRoles,
       })
       .from(modelsTable)
       .where(
