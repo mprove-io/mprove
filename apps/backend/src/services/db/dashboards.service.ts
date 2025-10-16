@@ -7,7 +7,7 @@ import {
   dashboardsTable
 } from '~backend/drizzle/postgres/schema/dashboards';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
@@ -347,27 +347,6 @@ export class DashboardsService {
         accessRoles: x.accessRoles
       })
     );
-
-    let modelIdsWithDuplicates = newDashboard.tiles.map(tile => tile.modelId);
-    let uniqueModelIds = [...new Set(modelIdsWithDuplicates)];
-
-    let models = await this.db.drizzle
-      .select({
-        keyTag: modelsTable.keyTag,
-        modelId: modelsTable.modelId,
-        connectionId: modelsTable.connectionId,
-        connectionType: modelsTable.connectionType,
-        st: modelsTable.st
-        // lt: {},
-      })
-      .from(modelsTable)
-      .where(
-        and(
-          eq(modelsTable.structId, structId),
-          inArray(modelsTable.modelId, uniqueModelIds)
-        )
-      )
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
 
     let newDashboardParts = dashboardPartsGrantedAccess.map(x =>
       this.tabToDashboardPart({

@@ -97,8 +97,9 @@ export class EditPhotoDialogComponent implements OnInit {
     this.ref.close();
 
     let payload: ToBackendSetAvatarRequestPayload = {
-      avatarBig: this.croppedImage,
-      avatarSmall: this.compressedImage
+      avatarSmall: this.compressedImage,
+      avatarBig: undefined
+      // avatarBig: this.croppedImage,
     };
 
     let apiService: ApiService = this.ref.data.apiService;

@@ -51,7 +51,7 @@ test('1', async t => {
         idempotencyKey: makeId()
       },
       payload: {
-        avatarBig: '123',
+        avatarBig: undefined,
         avatarSmall: '123'
       }
     };
