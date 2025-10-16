@@ -94,6 +94,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
     // this.ref.close();
   }
 
+  selectedDashboardSpinnerName = 'chartSaveAsDashboardSpinnerName';
+
+  selectedDashboardLoaded = false;
+
   usersFolder = MPROVE_USERS_FOLDER;
 
   chartSaveAsEnum = ChartSaveAsEnum;
@@ -320,13 +324,13 @@ export class ChartSaveAsDialogComponent implements OnInit {
       return;
     }
 
-    // this.storeModelsLoading = true;
+    this.selectedDashboardLoaded = false;
 
     let nav: NavState = this.navQuery.getValue();
 
     let apiService: ApiService = this.ref.data.apiService;
 
-    // this.spinner.show(this.storeModelsSpinnerName);
+    this.spinner.show(this.selectedDashboardSpinnerName);
 
     let payload: ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
@@ -334,7 +338,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       branchId: nav.branchId,
       envId: nav.envId,
       dashboardId: this.selectedDashboardId,
-      timezone: 'UTC' // does not matter
+      timezone: 'UTC'
     };
 
     apiService
@@ -347,10 +351,9 @@ export class ChartSaveAsDialogComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.selectedDashboard = resp.payload.dashboard;
 
-            // this.storeModelsLoading = false;
-            // this.storeModelsLoaded = true;
+            this.selectedDashboardLoaded = true;
 
-            // this.spinner.hide(this.storeModelsSpinnerName);
+            this.spinner.hide(this.selectedDashboardSpinnerName);
 
             this.cd.detectChanges();
           }

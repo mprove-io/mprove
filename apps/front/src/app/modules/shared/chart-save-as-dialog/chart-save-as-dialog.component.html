@@ -164,11 +164,35 @@
         <div class="ml-5 mr-5 flex flex-shrink-0 text-base"
           >Replace Existing Tile</div
         >
+
+        <div
+          class="relative flex h-9 w-9 flex-shrink-0"
+          *ngIf="
+            !selectedDashboardLoaded &&
+            tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
+          "
+        >
+          <ngx-spinner
+            [name]="selectedDashboardSpinnerName"
+            color="#0084d1"
+            bdColor="#00000000"
+            size="default"
+            type="ball-clip-rotate"
+            [fullScreen]="false"
+            [disableAnimation]="true"
+            [zIndex]="99998"
+          >
+          </ngx-spinner>
+        </div>
+
         <ng-select
           #chartSaveAsDialogTileSelect
           [fixNgSelectBottom]="chartSaveAsDialogTileSelect"
           data-cy="chartSaveAsDialogTileSelect"
-          *ngIf="tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE"
+          *ngIf="
+            !!selectedDashboardLoaded &&
+            tileSaveAs === tileSaveAsEnum.REPLACE_EXISTING_TILE
+          "
           class="w-[500px] flex-shrink-0 text-base"
           [items]="selectedDashboard?.tiles || []"
           [searchable]="false"
