@@ -138,12 +138,14 @@ export class DuplicateMconfigAndQueryController {
       });
     }
 
-    let oldQuery = await this.db.drizzle.query.queriesTable.findFirst({
-      where: and(
-        eq(queriesTable.queryId, oldMconfig.queryId),
-        eq(queriesTable.projectId, projectId)
-      )
-    });
+    let oldQuery = await this.db.drizzle.query.queriesTable
+      .findFirst({
+        where: and(
+          eq(queriesTable.queryId, oldMconfig.queryId),
+          eq(queriesTable.projectId, projectId)
+        )
+      })
+      .then(x => this.tabService.queryEntToTab(x));
 
     let newMconfigId = makeId();
     let newQueryId = makeId();
