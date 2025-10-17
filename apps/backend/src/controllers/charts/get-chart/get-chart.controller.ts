@@ -174,7 +174,7 @@ export class GetChartController {
         queryParentType: QueryParentTypeEnum.Chart,
         queryParentId: chartId,
         model: model,
-        mconfig: newMconfig,
+        mconfig: chartMconfig,
         queryOperations: [queryOperation]
       });
 
