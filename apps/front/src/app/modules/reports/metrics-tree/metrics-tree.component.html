@@ -21,8 +21,10 @@
           >
             <div
               data-cy="metricsTreeItem"
-              class="hover:bg-m50 flex w-full cursor-pointer select-none flex-row rounded pr-5"
+              class="flex w-full cursor-pointer select-none flex-row rounded pr-5"
               [ngClass]="{
+                'hover:bg-green-50': node.data.isField === true,
+                'hover:bg-m50': node.data.isField === false,
                 'pl-6': node.data.isField === true,
                 'pl-2': node.data.isField === false
               }"
