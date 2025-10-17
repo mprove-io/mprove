@@ -44,10 +44,8 @@ import { ToBackendSaveFileRequest } from '~common/interfaces/to-backend/files/to
 import { ToBackendValidateFilesRequest } from '~common/interfaces/to-backend/files/to-backend-validate-files';
 import { ToBackendCreateFolderRequest } from '~common/interfaces/to-backend/folders/to-backend-create-folder';
 import { ToBackendDeleteFolderRequest } from '~common/interfaces/to-backend/folders/to-backend-delete-folder';
-import { ToBackendCreateTempMconfigRequest } from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig';
 import { ToBackendCreateTempMconfigAndQueryRequest } from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
 import { ToBackendDuplicateMconfigAndQueryRequest } from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
-import { ToBackendGetMconfigRequest } from '~common/interfaces/to-backend/mconfigs/to-backend-get-mconfig';
 import { ToBackendCreateMemberRequest } from '~common/interfaces/to-backend/members/to-backend-create-member';
 import { ToBackendDeleteMemberRequest } from '~common/interfaces/to-backend/members/to-backend-delete-member';
 import { ToBackendEditMemberRequest } from '~common/interfaces/to-backend/members/to-backend-edit-member';
@@ -320,10 +318,6 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport]:
     ToBackendSaveModifyReportRequest,
   //
-  [ToBackendRequestInfoNameEnum.ToBackendGetMconfig]:
-    ToBackendGetMconfigRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig]:
-    ToBackendCreateTempMconfigRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery]:
     ToBackendCreateTempMconfigAndQueryRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery]:

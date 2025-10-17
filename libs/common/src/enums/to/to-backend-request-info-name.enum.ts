@@ -122,8 +122,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendSaveCreateReport = 'api/ToBackendSaveCreateReport',
   ToBackendSaveModifyReport = 'api/ToBackendSaveModifyReport',
   //
-  ToBackendGetMconfig = 'api/ToBackendGetMconfig',
-  ToBackendCreateTempMconfig = 'api/ToBackendCreateTempMconfig',
   ToBackendCreateTempMconfigAndQuery = 'api/ToBackendCreateTempMconfigAndQuery',
   ToBackendDuplicateMconfigAndQuery = 'api/ToBackendDuplicateMconfigAndQuery',
   //

@@ -108,44 +108,4 @@ export class MconfigService {
 
     return newMconfig;
   }
-
-  // navCreateTempMconfig(item: { newMconfig: MconfigX }) {
-  //   this.spinner.show(APP_SPINNER_NAME);
-
-  //   let { newMconfig } = item;
-
-  //   newMconfig.queryId = this.chartQuery.getValue().tiles[0].query.queryId;
-
-  //   let payload: ToBackendCreateTempMconfigRequestPayload = {
-  //     projectId: this.nav.projectId,
-  //     isRepoProd: this.nav.isRepoProd,
-  //     branchId: this.nav.branchId,
-  //     envId: this.nav.envId,
-  //     oldMconfigId: this.chartQuery.getValue().tiles[0].mconfig.mconfigId,
-  //     mconfig: newMconfig
-  //   };
-
-  //   this.apiService
-  //     .req({
-  //       pathInfoName:
-  //         ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfig,
-  //       payload: payload
-  //     })
-  //     .pipe(
-  //       tap((resp: ToBackendCreateTempMconfigResponse) => {
-  //         if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-  //           let { mconfig } = resp.payload;
-
-  //           // this.chartQuery.updatePart({ mconfig: mconfig });
-
-  //           this.navigateService.navigateMconfigQuery({
-  //             mconfigId: mconfig.mconfigId,
-  //             queryId: mconfig.queryId
-  //           });
-  //         }
-  //       }),
-  //       take(1)
-  //     )
-  //     .subscribe();
-  // }
 }

@@ -89,47 +89,6 @@ export class ChartsListComponent {
   //   });
   // }
 
-  // async editChartInfo(event: MouseEvent, item: ChartX) {
-  //   event.stopPropagation();
-
-  //   let payloadGetMconfig: ToBackendGetMconfigRequestPayload = {
-  //     projectId: this.nav.projectId,
-  //     branchId: this.nav.branchId,
-  //     envId: this.nav.envId,
-  //     isRepoProd: this.nav.isRepoProd,
-  //     mconfigId: item.tiles[0].mconfigId
-  //   };
-
-  //   let mconfig: MconfigX = await this.apiService
-  //     .req({
-  //       pathInfoName:
-  //         ToBackendRequestInfoNameEnum.ToBackendGetMconfig,
-  //       payload: payloadGetMconfig
-  //     })
-  //     .pipe(
-  //       map((resp: ToBackendGetMconfigResponse) => {
-  //         if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-  //           return resp.payload.mconfig;
-  //         }
-  //       })
-  //     )
-  //     .toPromise();
-
-  //   if (isUndefined(mconfig)) {
-  //     return;
-  //   }
-
-  //   this.myDialogService.showEditChartInfo({
-  //     apiService: this.apiService,
-  //     projectId: this.nav.projectId,
-  //     branchId: this.nav.branchId,
-  //     envId: this.nav.envId,
-  //     isRepoProd: this.nav.isRepoProd,
-  //     chart: item,
-  //     mconfig: mconfig
-  //   });
-  // }
-
   // deleteChart(event: MouseEvent, item: ChartX) {
   //   event.stopPropagation();
 
