@@ -47,6 +47,9 @@
               <div
                 *ngFor="let fileItem of filteredFileItems"
                 class="hover:bg-m50 group flex flex-row items-center rounded py-2 pl-3 pr-3 hover:cursor-pointer"
+                [ngClass]="{
+                  'bg-m50': fileId === fileItem.fileId
+                }"
                 (click)="fileItemOnClick(fileItem.fileId)"
               >
                 <div class="flex flex-col">
@@ -111,7 +114,7 @@
                     (click)="nodeOnClick(node)"
                     class="hover:bg-m50 mycls group flex w-full cursor-pointer select-none flex-row"
                     [ngClass]="{
-                      'text-m600 font-semibold':
+                      'text-m600 bg-m50 font-semibold':
                         !!fileNodeId && node.data.id === fileNodeId
                     }"
                   >
@@ -256,6 +259,9 @@
             <div
               *ngFor="let change of repo.changesToCommit"
               class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
+              [ngClass]="{
+                'bg-m50': fileId === change.fileId
+              }"
               (click)="changeToCommitOnClick(change.fileId)"
             >
               <div class="flex flex-col">
@@ -306,6 +312,9 @@
             <div
               *ngFor="let change of repo.changesToPush"
               class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
+              [ngClass]="{
+                'bg-m50': fileId === change.fileId
+              }"
               (click)="changeToPushOnClick(change.fileId)"
             >
               <div class="flex w-full flex-col">
