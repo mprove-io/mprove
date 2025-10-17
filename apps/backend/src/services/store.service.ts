@@ -422,27 +422,34 @@ ${inputSub}
     // console.log('inputSub');
     // console.log(inputSub);
 
+    let dataResult: StoreUserCodeReturn;
+
     if (isDefined(refError)) {
-      return {
+      dataResult = {
         result: 'Error',
         errorMessage: refError,
         userCode: inputSub
       };
+    } else {
+      let userCode = `JSON.stringify((function() {
+        ${inputSub}
+        })())`;
+
+      let userCodeResult = await this.userCodeService.runOnly({
+        userCode: userCode
+      });
+
+      dataResult = {
+        result: userCodeResult.outValue,
+        errorMessage: userCodeResult.outError,
+        userCode: inputSub
+      };
     }
 
-    let userCode = `JSON.stringify((function() {
-${inputSub}
-})())`;
+    // console.log('dataResult');
+    // console.log(dataResult);
 
-    let userCodeResult = await this.userCodeService.runOnly({
-      userCode: userCode
-    });
-
-    return {
-      result: userCodeResult.outValue,
-      errorMessage: userCodeResult.outError,
-      userCode: inputSub
-    };
+    return dataResult;
   }
 
   async runQuery(item: {
@@ -536,10 +543,11 @@ ${inputSub}
           q.lastErrorMessage = `response has no data`;
           q.lastErrorTs = makeTsNumber();
         } else {
-          let dataResult = await this.transformStoreResponseData({
-            storeModel: model,
-            respData: response.data
-          });
+          let dataResult: StoreUserCodeReturn =
+            await this.transformStoreResponseData({
+              storeModel: model,
+              respData: response.data
+            });
 
           if (isDefined(dataResult.errorMessage)) {
             q.status = QueryStatusEnum.Error;
@@ -550,7 +558,9 @@ ${inputSub}
           } else {
             q.status = QueryStatusEnum.Completed;
             q.queryJobId = undefined; // null;
-            q.data = dataResult.result || [];
+            q.data = isDefined(dataResult.result)
+              ? JSON.parse(dataResult.result) || []
+              : [];
             q.lastCompleteTs = makeTsNumber();
             q.lastCompleteDuration = Math.floor(
               (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000

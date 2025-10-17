@@ -141,11 +141,10 @@ export class GetChartController {
 
     let newMconfig: MconfigTab;
     let newQuery: QueryTab;
-
     let isError = false;
 
     if (model.type === ModelTypeEnum.Store) {
-      newMconfig.timezone = timezone;
+      chartMconfig.timezone = timezone;
 
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
         struct: struct,
@@ -154,7 +153,7 @@ export class GetChartController {
         queryParentType: QueryParentTypeEnum.Chart,
         queryParentId: chartId,
         model: model,
-        mconfig: newMconfig,
+        mconfig: chartMconfig,
         metricsStartDateYYYYMMDD: undefined,
         metricsEndDateYYYYMMDD: undefined
       });
@@ -175,7 +174,7 @@ export class GetChartController {
         queryParentType: QueryParentTypeEnum.Chart,
         queryParentId: chartId,
         model: model,
-        mconfig: chartMconfig,
+        mconfig: newMconfig,
         queryOperations: [queryOperation]
       });
 

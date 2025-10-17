@@ -35,6 +35,7 @@ import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
+import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import {
@@ -42,6 +43,7 @@ import {
   ToBackendDuplicateMconfigAndQueryResponsePayload
 } from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
 import { ServerError } from '~common/models/server-error';
+import { makeQueryId } from '~node-common/functions/make-query-id';
 
 let retry = require('async-retry');
 
@@ -148,7 +150,17 @@ export class DuplicateMconfigAndQueryController {
       .then(x => this.tabService.queryEntToTab(x));
 
     let newMconfigId = makeId();
-    let newQueryId = makeId();
+
+    let newQueryId = makeQueryId({
+      projectId: project.projectId,
+      connectionId: model.connectionId,
+      envId: envId,
+      queryParentType: QueryParentTypeEnum.Chart,
+      queryParentId: undefined,
+      sql: oldQuery.sql,
+      store: model.storeContent,
+      storeTransformedRequestString: oldMconfig.storePart?.reqJsonParts
+    });
 
     let newMconfig = Object.assign({}, oldMconfig, <MconfigTab>{
       mconfigId: newMconfigId,

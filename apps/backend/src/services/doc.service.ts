@@ -392,6 +392,9 @@ FROM main;`;
           isDefined(row.query?.data)
       )
       .forEach(row => {
+        // console.log('row');
+        // console.log(row);
+
         row.query.data =
           row.mconfig?.modelType === ModelTypeEnum.Malloy &&
           row.query.connectionType === ConnectionTypeEnum.PostgreSQL
