@@ -336,7 +336,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     if (newMconfig.modelType === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
         mconfig: newMconfig,
-        isKeepQueryId: true,
+        // isKeepQueryId: true,
         isDraft: false,
         chartId: undefined,
         queryOperation: {
@@ -347,7 +347,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     } else {
       this.chartService.editChart({
         mconfig: newMconfig,
-        isKeepQueryId: true,
+        // isKeepQueryId: true,
         isDraft: false,
         chartId: undefined
       });

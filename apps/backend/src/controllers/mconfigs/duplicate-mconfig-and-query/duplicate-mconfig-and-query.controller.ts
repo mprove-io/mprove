@@ -180,7 +180,7 @@ export class DuplicateMconfigAndQueryController {
               insert: {
                 mconfigs: [newMconfig]
               },
-              insertOrDoNothing: {
+              insertOrUpdate: {
                 queries: [newQuery]
               }
             })

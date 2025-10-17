@@ -84,7 +84,7 @@ export class CreateDraftChartController {
     let { traceId } = reqValid.info;
     let {
       mconfig: apiMconfig,
-      isKeepQueryId,
+      // isKeepQueryId,
       projectId,
       isRepoProd,
       branchId,
@@ -201,14 +201,14 @@ export class CreateDraftChartController {
       isError = editMalloyQueryResult.isError;
     }
 
-    if (isKeepQueryId === true && isError === false) {
-      newMconfig.queryId = apiMconfig.queryId;
+    // if (isKeepQueryId === true && isError === false) {
+    //   newMconfig.queryId = apiMconfig.queryId;
 
-      newQuery = await this.queriesService.getQueryCheckExists({
-        queryId: newMconfig.queryId,
-        projectId: projectId
-      });
-    }
+    //   newQuery = await this.queriesService.getQueryCheckExists({
+    //     queryId: newMconfig.queryId,
+    //     projectId: projectId
+    //   });
+    // }
 
     let tile: Tile = {
       modelId: newMconfig.modelId,
@@ -262,7 +262,10 @@ export class CreateDraftChartController {
               },
               insertOrDoNothing: {
                 queries:
-                  isError === true || isKeepQueryId === true ? [] : [newQuery]
+                  isError === true
+                    ? // || isKeepQueryId === true
+                      []
+                    : [newQuery]
               }
             })
         ),
