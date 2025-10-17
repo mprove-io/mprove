@@ -701,7 +701,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
                 tap((resp: ToBackendGetQueryResponse) => {
                   if (
                     resp.info?.status === ResponseInfoStatusEnum.Ok &&
-                    this.isQueryIdTheSameAndServerTsChanged(resp.payload.query)
+                    this.isQueryIdTheSameAndStatusOrServerTsChanged(
+                      resp.payload.query
+                    )
                   ) {
                     let newTile = Object.assign({}, this.chart.tiles[0], {
                       query: resp.payload.query
@@ -1118,7 +1120,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { runningQueries } = resp.payload;
 
-            if (this.isQueryIdTheSameAndServerTsChanged(runningQueries[0])) {
+            if (
+              this.isQueryIdTheSameAndStatusOrServerTsChanged(runningQueries[0])
+            ) {
               let query = Object.assign(runningQueries[0], {
                 sql: this.query.sql,
                 data: this.query.data
@@ -1169,7 +1173,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
             let { validQueryEstimates, errorQueries } = resp.payload;
 
             if (errorQueries.length > 0) {
-              if (this.isQueryIdTheSameAndServerTsChanged(errorQueries[0])) {
+              if (
+                this.isQueryIdTheSameAndStatusOrServerTsChanged(errorQueries[0])
+              ) {
                 // this.chartQuery.updatePart({ query: errorQueries[0] });
 
                 let newTile = Object.assign({}, this.chart.tiles[0], {
@@ -1219,7 +1225,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
             let { queries } = resp.payload;
             if (
               queries.length > 0 &&
-              this.isQueryIdTheSameAndServerTsChanged(queries[0])
+              this.isQueryIdTheSameAndStatusOrServerTsChanged(queries[0])
             ) {
               // this.chartQuery.updatePart({ query: queries[0] });
 
@@ -1350,22 +1356,11 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
-  isQueryIdTheSameAndServerTsChanged(respQuery: Query) {
-    // let query: Query;
-
-    // this.chartQuery
-    //   .select()
-    //   .pipe(
-    //     tap(x => {
-    //       query = x.tiles[0].query;
-    //     }),
-    //     take(1)
-    //   )
-    //   .subscribe();
-
+  isQueryIdTheSameAndStatusOrServerTsChanged(respQuery: Query) {
     return (
       respQuery.queryId === this.chart.tiles[0].query.queryId &&
-      respQuery.serverTs !== this.chart.tiles[0].query.serverTs
+      (respQuery.status !== this.chart.tiles[0].query.status ||
+        respQuery.serverTs !== this.chart.tiles[0].query.serverTs) // serverTs can be prev when New->Running
     );
   }
 
