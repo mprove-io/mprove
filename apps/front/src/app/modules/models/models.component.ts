@@ -409,9 +409,13 @@ export class ModelsComponent implements OnInit, OnDestroy {
         this.prevChartId !== this.chart.chartId &&
         this.isInitialScrollCompleted === true
       ) {
-        this.scrollToSelectedChart({ isSmooth: true });
+        if (this.manualNavToChart === false) {
+          this.scrollToSelectedChart({ isSmooth: true });
+        }
         this.prevChartId = this.chart.chartId;
       }
+
+      this.manualNavToChart = false;
 
       if (isDefined(this.chart?.chartId)) {
         this.title.setTitle(
@@ -538,6 +542,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   isSelectValid = false;
   errorMessage = '';
+
+  manualNavToChart = false;
 
   limitForm: FormGroup = this.fb.group({
     limit: [
@@ -1516,10 +1522,14 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   navToChart(chart: ChartX) {
-    this.navigateService.navigateToChart({
-      modelId: chart.modelId,
-      chartId: chart.chartId
-    });
+    if (this.chart.chartId !== chart.chartId) {
+      this.manualNavToChart = true;
+
+      this.navigateService.navigateToChart({
+        modelId: chart.modelId,
+        chartId: chart.chartId
+      });
+    }
   }
 
   deleteDrafts() {
