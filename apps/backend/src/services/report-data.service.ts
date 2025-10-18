@@ -26,9 +26,9 @@ import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { TimeSpecEnum } from '~common/enums/timespec.enum';
@@ -433,6 +433,8 @@ export class ReportDataService {
             queryId: newQueryId,
             modelId: model.modelId,
             modelType: model.type,
+            parentType: MconfigParentTypeEnum.Report,
+            parentId: report.reportId,
             dateRangeIncludesRightSide: model.dateRangeIncludesRightSide,
             storePart: undefined,
             modelLabel: model.label,
@@ -492,10 +494,10 @@ export class ReportDataService {
               struct: struct,
               project: project,
               envId: envId,
-              queryParentType: QueryParentTypeEnum.Report,
-              queryParentId: report.reportId,
               model: model,
               mconfig: mconfig,
+              mconfigParentType: MconfigParentTypeEnum.Report,
+              mconfigParentId: report.reportId,
               metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
               metricsEndDateYYYYMMDD:
                 mconfig.dateRangeIncludesRightSide === true
@@ -517,8 +519,8 @@ export class ReportDataService {
                 projectId: project.projectId,
                 envId: envId,
                 structId: struct.structId,
-                queryParentType: QueryParentTypeEnum.Report,
-                queryParentId: report.reportId,
+                mconfigParentType: MconfigParentTypeEnum.Report,
+                mconfigParentId: report.reportId,
                 model: model,
                 mconfig: mconfig,
                 queryOperations: [

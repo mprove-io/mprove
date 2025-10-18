@@ -8,6 +8,7 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD, UTC } from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
@@ -55,6 +56,8 @@ test('1', async t => {
     queryId: queryId,
     modelId: 'abc',
     modelType: ModelTypeEnum.Malloy,
+    parentType: MconfigParentTypeEnum.Chart,
+    parentId: undefined,
     // isStoreModel: false,
     dateRangeIncludesRightSide: false,
     storePart: undefined,

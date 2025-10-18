@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
 
@@ -7,8 +7,8 @@ export function makeQueryId(item: {
   projectId: string;
   connectionId: string;
   envId: string;
-  queryParentType: QueryParentTypeEnum;
-  queryParentId: string;
+  mconfigParentType: MconfigParentTypeEnum;
+  mconfigParentId: string;
   sql: string;
   storeTransformedRequestString: string;
   store: FileStore;
@@ -17,21 +17,24 @@ export function makeQueryId(item: {
     projectId,
     envId,
     connectionId,
-    queryParentType,
-    queryParentId,
+    mconfigParentType,
+    mconfigParentId,
     sql,
     storeTransformedRequestString,
     store
   } = item;
 
-  let text = projectId + envId + connectionId + queryParentType;
+  let text = projectId + envId + connectionId + mconfigParentType;
 
   if (
-    [QueryParentTypeEnum.Dashboard, QueryParentTypeEnum.Report].indexOf(
-      queryParentType
-    ) > -1
+    [
+      MconfigParentTypeEnum.Dashboard,
+      MconfigParentTypeEnum.Report,
+      MconfigParentTypeEnum.ChartDialogDashboard,
+      MconfigParentTypeEnum.ChartDialogReport
+    ].indexOf(mconfigParentType) > -1
   ) {
-    text = text + queryParentId;
+    text = text + mconfigParentId;
   }
 
   let postText = isDefined(sql)

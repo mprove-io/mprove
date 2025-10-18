@@ -1,4 +1,4 @@
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { Chart } from '~common/interfaces/blockml/chart';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
@@ -30,8 +30,8 @@ export function wrapCharts(item: {
       apiModels: apiModels,
       stores: stores,
       tiles: x.tiles,
-      queryParentType: QueryParentTypeEnum.Chart,
-      queryParentId: x.chart,
+      mconfigParentType: MconfigParentTypeEnum.Chart,
+      mconfigParentId: x.chart,
       envId: envId,
       timezone: timezone
     });

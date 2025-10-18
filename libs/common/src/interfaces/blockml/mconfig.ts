@@ -9,6 +9,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Filter } from './filter';
@@ -31,6 +32,13 @@ export class Mconfig {
 
   @IsEnum(ModelTypeEnum)
   modelType: ModelTypeEnum;
+
+  @IsEnum(MconfigParentTypeEnum)
+  parentType: MconfigParentTypeEnum;
+
+  @IsOptional()
+  @IsString()
+  parentId: string;
 
   @IsOptional()
   @IsBoolean()

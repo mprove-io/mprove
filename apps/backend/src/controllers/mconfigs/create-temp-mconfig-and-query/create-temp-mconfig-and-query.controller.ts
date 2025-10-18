@@ -36,8 +36,8 @@ import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
@@ -156,8 +156,8 @@ export class CreateTempMconfigAndQueryController {
         project: project,
         envId: envId,
         model: model,
-        queryParentType: QueryParentTypeEnum.Chart,
-        queryParentId: undefined,
+        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentId: undefined,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: isDefined(cellMetricsStartDateMs)
           ? getYYYYMMDDFromEpochUtcByTimezone({
@@ -181,8 +181,8 @@ export class CreateTempMconfigAndQueryController {
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
-        queryParentType: QueryParentTypeEnum.Chart,
-        queryParentId: undefined,
+        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentId: undefined,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: queryOperations

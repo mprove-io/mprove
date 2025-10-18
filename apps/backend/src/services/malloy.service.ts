@@ -6,7 +6,7 @@ import { MconfigTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import { Model } from '~common/interfaces/blockml/model';
 import { ServerError } from '~common/models/server-error';
@@ -33,8 +33,8 @@ export class MalloyService {
     projectId: string;
     envId: string;
     structId: string;
-    queryParentType: QueryParentTypeEnum;
-    queryParentId: string;
+    mconfigParentType: MconfigParentTypeEnum;
+    mconfigParentId: string;
     model: Model;
     mconfig: MconfigTab;
     queryOperations: QueryOperation[];
@@ -43,12 +43,15 @@ export class MalloyService {
       projectId,
       envId,
       structId,
-      queryParentType,
-      queryParentId,
+      mconfigParentType,
+      mconfigParentId,
       model,
       mconfig,
       queryOperations
     } = item;
+
+    mconfig.parentType = mconfigParentType;
+    mconfig.parentId = mconfigParentId;
 
     let { apiEnv, connectionsWithFallback } =
       await this.envsService.getApiEnvConnectionsWithFallback({
@@ -74,8 +77,8 @@ export class MalloyService {
         projectId: projectId,
         envId: envId,
         structId: structId,
-        queryParentType: queryParentType,
-        queryParentId: queryParentId,
+        mconfigParentType: mconfigParentType,
+        mconfigParentId: mconfigParentId,
         model: model,
         mconfig: mconfig,
         queryOperations: queryOperations,

@@ -29,9 +29,9 @@ export class ToBackendCreateDraftChartRequestPayload {
   @Type(() => MconfigX)
   mconfig: MconfigX;
 
-  // @IsOptional()
-  // @IsBoolean()
-  // isKeepQueryId: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isKeepQueryId: boolean;
 
   @IsOptional()
   @IsNumber()

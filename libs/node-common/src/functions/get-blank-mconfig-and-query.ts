@@ -1,5 +1,5 @@
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
@@ -21,8 +21,8 @@ export function getBlankMconfigAndQuery(item: {
     projectId: projectId,
     envId: envId,
     connectionId: model.connectionId,
-    queryParentType: QueryParentTypeEnum.Blank,
-    queryParentId: undefined,
+    mconfigParentType: MconfigParentTypeEnum.Blank,
+    mconfigParentId: undefined,
     sql: '',
     store: undefined,
     storeTransformedRequestString: undefined
@@ -60,6 +60,8 @@ export function getBlankMconfigAndQuery(item: {
     queryId: queryId,
     modelId: model.modelId,
     modelType: model.type,
+    parentType: MconfigParentTypeEnum.Blank,
+    parentId: undefined,
     dateRangeIncludesRightSide: false,
     storePart: undefined,
     modelLabel: model.label,

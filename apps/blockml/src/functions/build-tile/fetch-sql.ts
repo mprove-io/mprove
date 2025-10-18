@@ -3,10 +3,10 @@ import asyncPool from 'tiny-async-pool';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 import { LogTypeEnum } from '~common/enums/special/log-type.enum';
@@ -29,7 +29,7 @@ import { log } from '../extra/log';
 let func = FuncEnum.FetchSql;
 
 interface FilePartTileExtra extends FilePartTile {
-  queryParentId: string;
+  mconfigParentId: string;
   filePath: string;
   fileName: string;
 }
@@ -40,7 +40,7 @@ export async function fetchSql<T extends dcType>(
     envId: string;
     projectId: string;
     entities: T[];
-    queryParentType: QueryParentTypeEnum;
+    mconfigParentType: MconfigParentTypeEnum;
     // mods: FileMod[];
     apiModels: Model[];
     malloyConnections: MalloyConnection[];
@@ -55,17 +55,18 @@ export async function fetchSql<T extends dcType>(
   },
   cs: ConfigService<BlockmlConfig>
 ) {
-  let { caller, structId, timezone, envId, projectId } = item;
+  let { caller, structId, timezone, envId, projectId, mconfigParentType } =
+    item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let tiles: FilePartTileExtra[] = [];
 
   item.entities.forEach(x => {
     x.tiles.forEach(tile => {
-      (tile as FilePartTileExtra).queryParentId =
-        item.queryParentType === QueryParentTypeEnum.Chart
+      (tile as FilePartTileExtra).mconfigParentId =
+        mconfigParentType === MconfigParentTypeEnum.Chart
           ? (x as FileChart).chart
-          : item.queryParentType === QueryParentTypeEnum.Dashboard
+          : mconfigParentType === MconfigParentTypeEnum.Dashboard
             ? (x as FileDashboard).dashboard
             : undefined;
       (tile as FilePartTileExtra).filePath = x.filePath;
@@ -113,6 +114,8 @@ export async function fetchSql<T extends dcType>(
         queryId: newQueryId,
         modelId: apiModel.modelId,
         modelType: apiModel.type,
+        parentType: mconfigParentType,
+        parentId: tile.mconfigParentId,
         dateRangeIncludesRightSide: undefined,
         storePart: undefined,
         modelLabel: apiModel.label,
@@ -166,8 +169,8 @@ export async function fetchSql<T extends dcType>(
         projectId: projectId,
         envId: envId,
         structId: structId,
-        queryParentType: item.queryParentType,
-        queryParentId: tile.queryParentId,
+        mconfigParentType: mconfigParentType,
+        mconfigParentId: tile.mconfigParentId,
         model: apiModel,
         mconfig: mconfig,
         malloyConnections: item.malloyConnections,

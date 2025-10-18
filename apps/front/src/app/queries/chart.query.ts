@@ -6,6 +6,7 @@ import {
   EMPTY_QUERY_ID
 } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { makeId } from '~common/functions/make-id';
 import { ChartX } from '~common/interfaces/backend/chart-x';
@@ -22,6 +23,8 @@ export const emptyMconfig: MconfigX = {
   queryId: undefined,
   modelId: undefined,
   modelType: undefined,
+  parentType: MconfigParentTypeEnum.Chart,
+  parentId: undefined,
   // isStoreModel: undefined,
   dateRangeIncludesRightSide: undefined,
   storePart: undefined,

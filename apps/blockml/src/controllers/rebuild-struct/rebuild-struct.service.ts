@@ -42,8 +42,8 @@ import {
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
 import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
@@ -604,7 +604,7 @@ export class RebuildStructService {
         projectId: item.projectId,
         envId: item.envId,
         entities: dashboards,
-        queryParentType: QueryParentTypeEnum.Dashboard,
+        mconfigParentType: MconfigParentTypeEnum.Dashboard,
         // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
@@ -629,7 +629,7 @@ export class RebuildStructService {
         projectId: item.projectId,
         envId: item.envId,
         entities: charts,
-        queryParentType: QueryParentTypeEnum.Chart,
+        mconfigParentType: MconfigParentTypeEnum.Chart,
         // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,

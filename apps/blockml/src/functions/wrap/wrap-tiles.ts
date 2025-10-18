@@ -11,8 +11,8 @@ import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -38,8 +38,8 @@ export function wrapTiles(item: {
   projectId: string;
   envId: string;
   tiles: FilePartTile[];
-  queryParentType: QueryParentTypeEnum;
-  queryParentId: string;
+  mconfigParentType: MconfigParentTypeEnum;
+  mconfigParentId: string;
   apiModels: Model[];
   stores: FileStore[];
   timezone: string;
@@ -50,8 +50,8 @@ export function wrapTiles(item: {
     apiModels,
     stores,
     tiles,
-    queryParentType,
-    queryParentId,
+    mconfigParentType,
+    mconfigParentId,
     envId,
     timezone
   } = item;
@@ -88,8 +88,8 @@ export function wrapTiles(item: {
             projectId: projectId,
             connectionId: apiModel.connectionId,
             envId: envId,
-            queryParentType: queryParentType,
-            queryParentId: queryParentId,
+            mconfigParentType: mconfigParentType,
+            mconfigParentId: mconfigParentId,
             sql: tile.sql.join('\n'),
             storeTransformedRequestString: undefined, // isStore false
             store: undefined // isStore false
@@ -252,6 +252,8 @@ export function wrapTiles(item: {
       queryId: queryId,
       modelId: tile.model,
       modelType: apiModel.type,
+      parentType: mconfigParentType,
+      parentId: mconfigParentId,
       dateRangeIncludesRightSide:
         apiModel.type === ModelTypeEnum.Store &&
         (isUndefined(store.date_range_includes_right_side) ||

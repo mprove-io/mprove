@@ -19,7 +19,7 @@ import { PROJECT_ENV_PROD } from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
 import { ErEnum } from '~common/enums/er.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -57,6 +57,8 @@ export class MconfigsService {
       queryId: mconfig.queryId,
       modelId: mconfig.modelId,
       modelType: mconfig.modelType,
+      parentType: mconfig.parentType,
+      parentId: mconfig.parentId,
       dateRangeIncludesRightSide: mconfig.dateRangeIncludesRightSide,
       storePart: mconfig.storePart,
       modelLabel: mconfig.modelLabel,
@@ -100,6 +102,8 @@ export class MconfigsService {
       mconfigId: apiMconfig.mconfigId,
       modelId: apiMconfig.modelId,
       modelType: apiMconfig.modelType,
+      parentType: apiMconfig.parentType,
+      parentId: apiMconfig.parentId,
       dateRangeIncludesRightSide: apiMconfig.dateRangeIncludesRightSide,
       storePart: apiMconfig.storePart,
       modelLabel: apiMconfig.modelLabel,
@@ -146,8 +150,8 @@ export class MconfigsService {
     struct: StructTab;
     project: ProjectTab;
     envId: string;
-    queryParentType: QueryParentTypeEnum;
-    queryParentId: string;
+    mconfigParentType: MconfigParentTypeEnum;
+    mconfigParentId: string;
     model: ModelTab;
     mconfig: MconfigTab;
     metricsStartDateYYYYMMDD: string;
@@ -163,11 +167,14 @@ export class MconfigsService {
       mconfig,
       project,
       envId,
-      queryParentType,
-      queryParentId,
+      mconfigParentType,
+      mconfigParentId,
       metricsStartDateYYYYMMDD,
       metricsEndDateYYYYMMDD
     } = item;
+
+    mconfig.parentType = mconfigParentType;
+    mconfig.parentId = mconfigParentId;
 
     let isError = false;
     let errorMessage: string;
@@ -260,8 +267,8 @@ export class MconfigsService {
       projectId: project.projectId,
       connectionId: model.connectionId,
       envId: envId,
-      queryParentType: queryParentType,
-      queryParentId: queryParentId,
+      mconfigParentType: mconfigParentType,
+      mconfigParentId: mconfigParentId,
       sql: undefined, // isStore true
       store: model.storeContent,
       storeTransformedRequestString: processedRequest.result

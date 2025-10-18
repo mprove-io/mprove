@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { FileStore } from '~common/interfaces/blockml/internal/file-store';
@@ -24,7 +24,7 @@ export async function buildTile<T extends dcType>(
     envId: string;
     projectId: string;
     entities: T[];
-    queryParentType: QueryParentTypeEnum;
+    mconfigParentType: MconfigParentTypeEnum;
     stores: FileStore[];
     // mods: FileMod[];
     apiModels: Model[];
@@ -126,7 +126,7 @@ export async function buildTile<T extends dcType>(
     {
       traceId: item.traceId,
       entities: entities,
-      queryParentType: item.queryParentType,
+      mconfigParentType: item.mconfigParentType,
       // mods: item.mods,
       apiModels: item.apiModels,
       malloyConnections: item.malloyConnections,

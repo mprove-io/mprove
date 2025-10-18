@@ -335,10 +335,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     if (newMconfig.modelType === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
-        mconfig: newMconfig,
-        // isKeepQueryId: true,
+        isKeepQueryId: true,
         isDraft: false,
         chartId: undefined,
+        mconfig: newMconfig,
         queryOperation: {
           type: QueryOperationTypeEnum.Get,
           timezone: newMconfig.timezone
@@ -346,10 +346,10 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       });
     } else {
       this.chartService.editChart({
-        mconfig: newMconfig,
-        // isKeepQueryId: true,
+        isKeepQueryId: true,
         isDraft: false,
-        chartId: undefined
+        chartId: undefined,
+        mconfig: newMconfig
       });
     }
 

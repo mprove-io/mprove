@@ -49,18 +49,18 @@ export class ChartService {
   }
 
   editChart(item: {
-    isDraft: boolean;
+    isKeepQueryId?: boolean;
     mconfig: MconfigX;
-    // isKeepQueryId?: boolean;
+    isDraft: boolean;
     chartId: string;
     cellMetricsStartDateMs?: number;
     cellMetricsEndDateMs?: number;
     queryOperation?: QueryOperation;
   }) {
     let {
-      isDraft,
+      isKeepQueryId,
       mconfig,
-      // isKeepQueryId,
+      isDraft,
       chartId,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs,
@@ -76,7 +76,7 @@ export class ChartService {
     } else {
       this.navCreateDraftChart({
         mconfig: mconfig,
-        // isKeepQueryId: isKeepQueryId,
+        isKeepQueryId: isKeepQueryId,
         cellMetricsStartDateMs: cellMetricsStartDateMs,
         cellMetricsEndDateMs: cellMetricsEndDateMs,
         queryOperation: queryOperation
@@ -86,7 +86,7 @@ export class ChartService {
 
   navCreateDraftChart(item: {
     mconfig: MconfigX;
-    // isKeepQueryId: boolean;
+    isKeepQueryId: boolean;
     cellMetricsStartDateMs: number;
     cellMetricsEndDateMs: number;
     queryOperation: QueryOperation;
@@ -95,7 +95,7 @@ export class ChartService {
 
     let {
       mconfig,
-      // isKeepQueryId,
+      isKeepQueryId,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs,
       queryOperation
@@ -107,7 +107,7 @@ export class ChartService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       mconfig: mconfig,
-      // isKeepQueryId: isKeepQueryId,
+      isKeepQueryId: isKeepQueryId,
       cellMetricsStartDateMs: cellMetricsStartDateMs,
       cellMetricsEndDateMs: cellMetricsEndDateMs,
       queryOperation: queryOperation

@@ -39,8 +39,8 @@ import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
@@ -84,7 +84,7 @@ export class CreateDraftChartController {
     let { traceId } = reqValid.info;
     let {
       mconfig: apiMconfig,
-      // isKeepQueryId,
+      isKeepQueryId,
       projectId,
       isRepoProd,
       branchId,
@@ -163,8 +163,8 @@ export class CreateDraftChartController {
         struct: struct,
         project: project,
         envId: envId,
-        queryParentType: QueryParentTypeEnum.Chart,
-        queryParentId: chartId,
+        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentId: chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: isDefined(cellMetricsStartDateMs)
@@ -189,8 +189,8 @@ export class CreateDraftChartController {
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
-        queryParentType: QueryParentTypeEnum.Chart,
-        queryParentId: chartId,
+        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentId: chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: isDefined(queryOperation) ? [queryOperation] : []
@@ -201,14 +201,14 @@ export class CreateDraftChartController {
       isError = editMalloyQueryResult.isError;
     }
 
-    // if (isKeepQueryId === true && isError === false) {
-    //   newMconfig.queryId = apiMconfig.queryId;
+    if (isKeepQueryId === true && isError === false) {
+      newMconfig.queryId = apiMconfig.queryId;
 
-    //   newQuery = await this.queriesService.getQueryCheckExists({
-    //     queryId: newMconfig.queryId,
-    //     projectId: projectId
-    //   });
-    // }
+      newQuery = await this.queriesService.getQueryCheckExists({
+        queryId: newMconfig.queryId,
+        projectId: projectId
+      });
+    }
 
     let tile: Tile = {
       modelId: newMconfig.modelId,
@@ -261,11 +261,7 @@ export class CreateDraftChartController {
                 queries: isError === true ? [newQuery] : []
               },
               insertOrDoNothing: {
-                queries:
-                  isError === true
-                    ? // || isKeepQueryId === true
-                      []
-                    : [newQuery]
+                queries: isError === true ? [] : [newQuery]
               }
             })
         ),

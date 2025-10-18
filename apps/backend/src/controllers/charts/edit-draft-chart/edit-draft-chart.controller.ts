@@ -39,8 +39,8 @@ import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { makeId } from '~common/functions/make-id';
@@ -175,8 +175,8 @@ export class EditDraftChartController {
         struct: struct,
         project: project,
         envId: envId,
-        queryParentType: QueryParentTypeEnum.Chart,
-        queryParentId: chartId,
+        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentId: chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: undefined,
@@ -191,8 +191,8 @@ export class EditDraftChartController {
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
-        queryParentType: QueryParentTypeEnum.Chart,
-        queryParentId: chartId,
+        mconfigParentType: MconfigParentTypeEnum.Chart,
+        mconfigParentId: chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: [queryOperation]

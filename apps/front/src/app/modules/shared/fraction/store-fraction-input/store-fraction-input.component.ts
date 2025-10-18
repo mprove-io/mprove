@@ -26,6 +26,7 @@ import { UTC } from '~common/constants/top';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
@@ -151,6 +152,8 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                 queryId: makeId(),
                 modelId: modelId,
                 modelType: ModelTypeEnum.Store,
+                parentType: MconfigParentTypeEnum.SuggestDimension,
+                parentId: undefined,
                 // isStoreModel:
                 //   this.fraction.type === FractionTypeEnum.StoreFraction,
                 dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it

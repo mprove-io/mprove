@@ -7,6 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { MconfigLt, MconfigSt } from '~common/interfaces/st-lt';
 
@@ -18,6 +19,8 @@ export const mconfigsTable = pgTable(
     queryId: varchar('query_id', { length: 64 }).notNull(),
     modelId: varchar('model_id', { length: 64 }).notNull(),
     modelType: varchar('model_type').$type<ModelTypeEnum>(),
+    parentType: varchar('parent_type').$type<MconfigParentTypeEnum>(),
+    parentId: varchar('parent_id', { length: 32 }),
     // dateRangeIncludesRightSide: boolean('date_range_includes_right_side'),
     // storePart: json('store_part').$type<StorePart>(),
     // modelLabel: varchar('model_label'),

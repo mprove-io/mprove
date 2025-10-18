@@ -542,6 +542,8 @@ export class TabToEntService {
       queryId: tab.queryId,
       modelId: tab.modelId,
       modelType: tab.modelType,
+      parentType: tab.parentType,
+      parentId: tab.parentId,
       ...this.getEntProps({
         dataSt: mconfigSt,
         dataLt: mconfigLt,

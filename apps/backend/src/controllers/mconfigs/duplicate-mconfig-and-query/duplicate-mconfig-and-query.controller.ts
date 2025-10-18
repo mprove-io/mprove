@@ -35,7 +35,7 @@ import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import {
@@ -155,8 +155,13 @@ export class DuplicateMconfigAndQueryController {
       projectId: project.projectId,
       connectionId: model.connectionId,
       envId: envId,
-      queryParentType: QueryParentTypeEnum.Chart,
-      queryParentId: undefined,
+      mconfigParentType:
+        oldMconfig.parentType === MconfigParentTypeEnum.Dashboard
+          ? MconfigParentTypeEnum.ChartDialogDashboard
+          : oldMconfig.parentType === MconfigParentTypeEnum.Report
+            ? MconfigParentTypeEnum.ChartDialogReport
+            : oldMconfig.parentType,
+      mconfigParentId: oldMconfig.parentId,
       sql: oldQuery.sql,
       store: model.storeContent,
       storeTransformedRequestString: oldMconfig.storePart?.reqJsonParts

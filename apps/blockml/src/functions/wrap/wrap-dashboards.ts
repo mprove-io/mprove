@@ -3,7 +3,7 @@ import { ControlClassEnum } from '~common/enums/control-class.enum';
 import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { QueryParentTypeEnum } from '~common/enums/query-parent-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
@@ -188,8 +188,8 @@ export function wrapDashboards(item: {
       apiModels: apiModels,
       stores: stores,
       tiles: x.tiles,
-      queryParentType: QueryParentTypeEnum.Dashboard,
-      queryParentId: x.dashboard,
+      mconfigParentType: MconfigParentTypeEnum.Dashboard,
+      mconfigParentId: x.dashboard,
       envId: envId,
       timezone: timezone
     });

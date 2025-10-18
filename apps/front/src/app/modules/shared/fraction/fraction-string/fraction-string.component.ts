@@ -30,6 +30,7 @@ import {
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
@@ -239,6 +240,8 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 queryId: makeId(),
                 modelId: modelId,
                 modelType: ModelTypeEnum.Malloy,
+                parentType: MconfigParentTypeEnum.SuggestDimension,
+                parentId: undefined,
                 dateRangeIncludesRightSide: undefined,
                 storePart: undefined,
                 modelLabel: 'empty',
