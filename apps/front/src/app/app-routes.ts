@@ -265,6 +265,7 @@ export const appRoutes: Routes = [
                             component: ModelsComponent,
                             path: PATH_MODELS,
                             resolve: [StructChartsResolver],
+                            canDeactivate: [DeactivateGuard],
                             children: [
                               {
                                 component: ChartsListComponent,

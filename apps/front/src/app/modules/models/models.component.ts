@@ -232,23 +232,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   filteredModels: ModelX[];
 
   models: ModelX[];
-  models$ = this.modelsQuery.select().pipe(
-    tap(ml => {
-      this.models = ml.models;
-      this.filteredModels = this.models.filter(model => model.hasAccess);
-
-      let selectedModel = this.modelQuery.getValue();
-
-      if (
-        isDefined(selectedModel.modelId) &&
-        this.models.map(x => x.modelId).indexOf(selectedModel.modelId) < 0
-      ) {
-        this.modelQuery.reset();
-      }
-
-      this.cd.detectChanges();
-    })
-  );
+  modelsSubscription: Subscription;
 
   sortedFieldsList: ModelFieldY[] = [];
   sortedNotHiddenFieldsList: ModelFieldY[] = [];
@@ -682,6 +666,27 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     // this.searchChartsWordChange();
     // this.searchSchemaWordChange();
+
+    this.modelsSubscription = this.modelsQuery
+      .select()
+      .pipe(
+        tap(ml => {
+          this.models = ml.models;
+          this.filteredModels = this.models.filter(model => model.hasAccess);
+
+          let selectedModel = this.modelQuery.getValue();
+
+          if (
+            isDefined(selectedModel.modelId) &&
+            this.models.map(x => x.modelId).indexOf(selectedModel.modelId) < 0
+          ) {
+            this.modelQuery.reset();
+          }
+
+          this.cd.detectChanges();
+        })
+      )
+      .subscribe();
 
     this.checkRunning$ = interval(3000)
       .pipe(
@@ -1790,8 +1795,16 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
   }
 
+  canDeactivate(): boolean {
+    this.modelsSubscription?.unsubscribe();
+    this.modelsSubscription = undefined;
+
+    return true;
+  }
+
   ngOnDestroy() {
-    // console.log('charts ngOnDestroy');
+    // console.log('models ngOnDestroy');
+
     this.chartQuery.reset();
     this.modelQuery.reset();
 
