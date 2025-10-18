@@ -163,8 +163,11 @@ export class CreateDraftChartController {
         struct: struct,
         project: project,
         envId: envId,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
-        mconfigParentId: chartId,
+        mconfigParentType:
+          isKeepQueryId === true
+            ? apiMconfig.parentType
+            : MconfigParentTypeEnum.Chart,
+        mconfigParentId: isKeepQueryId === true ? apiMconfig.parentId : chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         metricsStartDateYYYYMMDD: isDefined(cellMetricsStartDateMs)
@@ -189,8 +192,11 @@ export class CreateDraftChartController {
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
-        mconfigParentId: chartId,
+        mconfigParentType:
+          isKeepQueryId === true
+            ? apiMconfig.parentType
+            : MconfigParentTypeEnum.Chart,
+        mconfigParentId: isKeepQueryId === true ? apiMconfig.parentId : chartId,
         model: model,
         mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
         queryOperations: isDefined(queryOperation) ? [queryOperation] : []

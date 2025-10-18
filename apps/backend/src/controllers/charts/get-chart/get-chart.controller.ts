@@ -36,7 +36,6 @@ import { MalloyService } from '~backend/services/malloy.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -150,8 +149,8 @@ export class GetChartController {
         struct: struct,
         project: project,
         envId: envId,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
-        mconfigParentId: chartId,
+        mconfigParentType: chartMconfig.parentType,
+        mconfigParentId: chartMconfig.parentId,
         model: model,
         mconfig: chartMconfig,
         metricsStartDateYYYYMMDD: undefined,
@@ -171,8 +170,8 @@ export class GetChartController {
         projectId: projectId,
         envId: envId,
         structId: struct.structId,
-        mconfigParentType: MconfigParentTypeEnum.Chart,
-        mconfigParentId: chartId,
+        mconfigParentType: chartMconfig.parentType,
+        mconfigParentId: chartMconfig.parentId,
         model: model,
         mconfig: chartMconfig,
         queryOperations: [queryOperation]

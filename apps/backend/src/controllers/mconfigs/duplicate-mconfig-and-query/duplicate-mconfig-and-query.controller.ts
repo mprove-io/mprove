@@ -151,16 +151,18 @@ export class DuplicateMconfigAndQueryController {
 
     let newMconfigId = makeId();
 
+    let newMconfigParentType =
+      oldMconfig.parentType === MconfigParentTypeEnum.Dashboard
+        ? MconfigParentTypeEnum.ChartDialogDashboard
+        : oldMconfig.parentType === MconfigParentTypeEnum.Report
+          ? MconfigParentTypeEnum.ChartDialogReport
+          : oldMconfig.parentType;
+
     let newQueryId = makeQueryId({
       projectId: project.projectId,
       connectionId: model.connectionId,
       envId: envId,
-      mconfigParentType:
-        oldMconfig.parentType === MconfigParentTypeEnum.Dashboard
-          ? MconfigParentTypeEnum.ChartDialogDashboard
-          : oldMconfig.parentType === MconfigParentTypeEnum.Report
-            ? MconfigParentTypeEnum.ChartDialogReport
-            : oldMconfig.parentType,
+      mconfigParentType: newMconfigParentType,
       mconfigParentId: oldMconfig.parentId,
       sql: oldQuery.sql,
       store: model.storeContent,
@@ -169,7 +171,8 @@ export class DuplicateMconfigAndQueryController {
 
     let newMconfig = Object.assign({}, oldMconfig, <MconfigTab>{
       mconfigId: newMconfigId,
-      queryId: newQueryId
+      queryId: newQueryId,
+      parentType: newMconfigParentType
     });
 
     let newQuery = Object.assign({}, oldQuery, <QueryTab>{
