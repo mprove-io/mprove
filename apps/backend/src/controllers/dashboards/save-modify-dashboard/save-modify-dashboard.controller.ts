@@ -45,6 +45,7 @@ import {
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
@@ -447,6 +448,27 @@ export class SaveModifyDashboardController {
     let dashboardQueries = apiQueries.filter(
       x => dashboardQueryIds.indexOf(x.queryId) > -1
     );
+
+    newApiDashboard.tiles.forEach(tile => {
+      let query = apiQueries.find(q => q.queryId === tile.queryId);
+
+      // prev query and new query has different queryId (dashboardId)
+      let prevTile = fromDashboardX.tiles.find(y => y.title === tile.title);
+
+      let prevQuery = prevTile?.query;
+
+      if (isDefined(prevQuery) && prevQuery.status !== QueryStatusEnum.Error) {
+        query.data = prevTile?.query?.data;
+        query.status = prevTile?.query?.status;
+        query.lastRunBy = prevTile?.query?.lastRunBy;
+        query.lastRunTs = prevTile?.query?.lastRunTs;
+        query.lastCancelTs = prevTile?.query?.lastCancelTs;
+        query.lastCompleteTs = prevTile?.query?.lastCompleteTs;
+        query.lastCompleteDuration = prevTile?.query?.lastCompleteDuration;
+        query.lastErrorMessage = prevTile?.query?.lastErrorMessage;
+        query.lastErrorTs = prevTile?.query?.lastErrorTs;
+      }
+    });
 
     let newDashboard = this.dashboardsService.apiToTab({
       apiDashboard: newApiDashboard
