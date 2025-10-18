@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import { isDefined } from 'class-validator';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -46,6 +47,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
 import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -356,6 +358,25 @@ export class CreateDraftDashboardController {
       );
 
       let query = this.queriesService.apiToTab({ apiQuery: apiQuery });
+
+      // prev query and new query has different queryId (dashboardId)
+      let prevTile = fromDashboardX.tiles.find(
+        y => y.title === mconfig.chart.title
+      );
+
+      let prevQuery = prevTile?.query;
+
+      if (isDefined(prevQuery) && prevQuery.status !== QueryStatusEnum.Error) {
+        query.data = prevTile?.query?.data;
+        query.status = prevTile?.query?.status;
+        query.lastRunBy = prevTile?.query?.lastRunBy;
+        query.lastRunTs = prevTile?.query?.lastRunTs;
+        query.lastCancelTs = prevTile?.query?.lastCancelTs;
+        query.lastCompleteTs = prevTile?.query?.lastCompleteTs;
+        query.lastCompleteDuration = prevTile?.query?.lastCompleteDuration;
+        query.lastErrorMessage = prevTile?.query?.lastErrorMessage;
+        query.lastErrorTs = prevTile?.query?.lastErrorTs;
+      }
 
       insertOrDoNothingQueries.push(query);
     });
