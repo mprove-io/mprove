@@ -568,8 +568,8 @@ export class ReportDataService {
           newQuery.reportId = report.reportId;
           newQuery.reportStructId = report.structId;
 
-          console.log('newQuery');
-          console.log(newQuery);
+          // console.log('newQuery');
+          // console.log(newQuery);
 
           newMconfigs.push(newMconfig);
           newQueries.push(newQuery);

@@ -296,12 +296,19 @@ export class QueriesService {
   }
 
   async removeQueries() {
+    //     let rawData = await this.db.drizzle.execute(sql`
+    // SELECT
+    //   q.query_id
+    // FROM queries as q
+    // LEFT JOIN mconfigs as m ON q.query_id=m.query_id
+    // WHERE m.mconfig_id is NULL AND q.report_id is NULL AND to_timestamp(q.server_ts/1000) < (NOW() - INTERVAL '7 days')
+    // `);
+
     let rawData = await this.db.drizzle.execute(sql`
 SELECT
   q.query_id
 FROM queries as q
-LEFT JOIN mconfigs as m ON q.query_id=m.query_id
-WHERE m.mconfig_id is NULL AND q.report_id is NULL AND to_timestamp(q.server_ts/1000) < (NOW() - INTERVAL '7 days')
+WHERE q.report_id is NULL AND to_timestamp(q.server_ts/1000) < (NOW() - INTERVAL '7 days')
 `);
 
     let queryIds: string[] = rawData.rows.map((x: any) => x.query_id) || [];
