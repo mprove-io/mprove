@@ -58,7 +58,8 @@ export class DeleteFolderService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKey, publicKey } = projectLt;
+    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
+      projectLt;
 
     let orgDir = `${orgPath}/${orgId}`;
     let projectDir = `${orgDir}/${projectId}`;
@@ -108,8 +109,9 @@ export class DeleteFolderService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     await checkoutBranch({

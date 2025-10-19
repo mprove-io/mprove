@@ -263,8 +263,11 @@ export class SeedRecordsController {
             name: x.name,
             defaultBranch: x.defaultBranch,
             gitUrl: x.gitUrl,
-            privateKey: x.privateKey,
             publicKey: x.publicKey,
+            privateKey: x.privateKey,
+            publicKeyEncrypted: x.publicKeyEncrypted,
+            privateKeyEncrypted: x.privateKeyEncrypted,
+            passPhrase: x.passPhrase,
             nameHash: undefined, // tab-to-ent
             gitUrlHash: undefined, // tab-to-ent
             keyTag: undefined,

@@ -15,7 +15,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { NoteTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { notesTable } from '~backend/drizzle/postgres/schema/notes';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
@@ -122,19 +121,18 @@ export class CreateProjectController {
       remoteType: remoteType,
       projectId: makeId(),
       gitUrl: gitUrl,
-      privateKey: note?.privateKey, // note is undefined for ProjectRemoteTypeEnum.Managed
       publicKey: note?.publicKey, // note is undefined for ProjectRemoteTypeEnum.Managed
+      privateKey: note?.privateKey,
+      publicKeyEncrypted: note?.publicKeyEncrypted,
+      privateKeyEncrypted: note?.privateKeyEncrypted,
+      passPhrase: note?.passPhrase,
       evs: [],
       connections: []
     });
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(async tx => {
-          await tx.delete(notesTable).where(eq(notesTable.noteId, noteId));
-        }),
-      getRetryOption(this.cs, this.logger)
-    );
+    await this.db.drizzle
+      .delete(notesTable)
+      .where(eq(notesTable.noteId, noteId));
 
     let payload: ToBackendCreateProjectResponsePayload = {
       project: this.projectsService.tabToApiProject({

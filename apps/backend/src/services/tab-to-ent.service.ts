@@ -642,8 +642,11 @@ export class TabToEntService {
 
     let noteSt: NoteSt = {};
     let noteLt: NoteLt = {
+      publicKey: tab.publicKey,
       privateKey: tab.privateKey,
-      publicKey: tab.publicKey
+      publicKeyEncrypted: tab.publicKeyEncrypted,
+      privateKeyEncrypted: tab.privateKeyEncrypted,
+      passPhrase: tab.passPhrase
     };
 
     let noteEnt: NoteEnt = {
@@ -704,8 +707,11 @@ export class TabToEntService {
     let projectLt: ProjectLt = {
       defaultBranch: tab.defaultBranch,
       gitUrl: tab.gitUrl,
+      publicKey: tab.publicKey,
       privateKey: tab.privateKey,
-      publicKey: tab.publicKey
+      publicKeyEncrypted: tab.publicKeyEncrypted,
+      privateKeyEncrypted: tab.privateKeyEncrypted,
+      passPhrase: tab.passPhrase
     };
 
     let projectEnt: ProjectEnt = {

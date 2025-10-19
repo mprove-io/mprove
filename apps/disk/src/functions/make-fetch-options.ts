@@ -1,6 +1,5 @@
 import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
-import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 
 export function makeFetchOptions(item: {
@@ -8,18 +7,28 @@ export function makeFetchOptions(item: {
   keyDir: string;
   gitUrl: string;
   publicKey: string;
-  privateKey: string;
+  privateKeyEncrypted: string;
+  passPhrase: string;
 }) {
-  let pubKeyPath = `${item.keyDir}/id_rsa.pub`;
-  let privateKeyPath = `${item.keyDir}/id_rsa`;
+  let {
+    remoteType,
+    keyDir,
+    gitUrl,
+    publicKey,
+    privateKeyEncrypted,
+    passPhrase
+  } = item;
 
-  if (item.remoteType === ProjectRemoteTypeEnum.GitClone) {
-    fse.writeFileSync(pubKeyPath, item.publicKey);
-    fse.writeFileSync(privateKeyPath, item.privateKey);
+  let pubKeyPath = `${keyDir}/id_rsa.pub`;
+  let privateKeyPath = `${keyDir}/id_rsa`;
+
+  if (remoteType === ProjectRemoteTypeEnum.GitClone) {
+    fse.writeFileSync(pubKeyPath, publicKey);
+    fse.writeFileSync(privateKeyPath, privateKeyEncrypted);
   }
 
   let fetchOptions: nodegit.FetchOptions =
-    item.remoteType === ProjectRemoteTypeEnum.GitClone
+    remoteType === ProjectRemoteTypeEnum.GitClone
       ? {
           callbacks: {
             certificateCheck: () => 0,
@@ -28,7 +37,7 @@ export function makeFetchOptions(item: {
                 'git',
                 pubKeyPath,
                 privateKeyPath,
-                GIT_KEY_PASS_PHRASE
+                passPhrase
               );
             }
           },

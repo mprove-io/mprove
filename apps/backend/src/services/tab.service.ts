@@ -42,7 +42,6 @@ import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
 import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
-import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
@@ -173,7 +172,29 @@ export class TabService {
       : ({} as T);
   }
 
+  makePassPhrase(): string {
+    let length = 32;
+
+    let output = '';
+
+    let charset: string =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+    let randomValues: Uint8Array = new Uint8Array(length);
+
+    crypto.getRandomValues(randomValues);
+
+    for (let i = 0; i < length; i++) {
+      let randomIndex: number = randomValues[i] % charset.length;
+      output += charset[randomIndex];
+    }
+
+    return output;
+  }
+
   createGitKeyPair() {
+    let passPhrase = this.makePassPhrase();
+
     let { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
       modulusLength: 4096,
       publicKeyEncoding: {
@@ -184,11 +205,15 @@ export class TabService {
         type: 'pkcs8',
         format: 'pem',
         cipher: 'aes-256-cbc',
-        passphrase: GIT_KEY_PASS_PHRASE
+        passphrase: passPhrase
       }
     });
 
-    return { publicKey, privateKey };
+    return {
+      publicKeyEncrypted: publicKey,
+      privateKeyEncrypted: privateKey,
+      passPhrase
+    };
   }
 
   projectTabToBaseProject(item: {
@@ -204,8 +229,11 @@ export class TabService {
     let projectLt: ProjectLt = {
       defaultBranch: project.defaultBranch,
       gitUrl: project.gitUrl,
+      publicKey: project.publicKey,
       privateKey: project.privateKey,
-      publicKey: project.publicKey
+      publicKeyEncrypted: project.publicKey,
+      privateKeyEncrypted: project.privateKeyEncrypted,
+      passPhrase: project.passPhrase
     };
 
     let apiBaseProject: BaseProject = {

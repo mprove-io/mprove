@@ -66,7 +66,8 @@ export class SaveFileService {
     let { projectId, remoteType } = baseProject;
 
     let { name: projectName } = projectSt;
-    let { gitUrl, defaultBranch, privateKey, publicKey } = projectLt;
+    let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
+      projectLt;
 
     let orgPath = this.cs.get<DiskConfig['diskOrganizationsPath']>(
       'diskOrganizationsPath'
@@ -83,8 +84,9 @@ export class SaveFileService {
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
-      privateKey: privateKey,
-      publicKey: publicKey
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     let isOrgExist = await isPathExist(orgDir);

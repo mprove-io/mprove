@@ -18,7 +18,6 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { TabService } from '~backend/services/tab.service';
-import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
@@ -55,20 +54,24 @@ export class GenerateProjectRemoteKeyController {
       userId: user.userId
     });
 
-    let { publicKey, privateKey } = this.tabService.createGitKeyPair();
+    let { publicKeyEncrypted, privateKeyEncrypted, passPhrase } =
+      this.tabService.createGitKeyPair();
 
-    let sshPublicKey = parseKey(publicKey, 'pem', {
-      passphrase: GIT_KEY_PASS_PHRASE
+    let publicKey = parseKey(publicKeyEncrypted, 'pem', {
+      passphrase: passPhrase
     }).toString('ssh');
 
-    let sshPrivateKey = parsePrivateKey(privateKey, 'pem', {
-      passphrase: GIT_KEY_PASS_PHRASE
+    let privateKey = parsePrivateKey(privateKeyEncrypted, 'pem', {
+      passphrase: passPhrase
     }).toString('ssh');
 
     let note: NoteTab = {
       noteId: makeId(),
-      publicKey: sshPublicKey,
-      privateKey: sshPrivateKey,
+      publicKey: publicKey,
+      privateKey: privateKey,
+      publicKeyEncrypted: publicKeyEncrypted,
+      privateKeyEncrypted: privateKeyEncrypted,
+      passPhrase: passPhrase,
       keyTag: undefined,
       serverTs: undefined
     };

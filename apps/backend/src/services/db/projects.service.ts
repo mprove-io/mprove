@@ -111,8 +111,11 @@ export class ProjectsService {
     remoteType: ProjectRemoteTypeEnum;
     name: string;
     gitUrl?: string;
-    privateKey?: string;
     publicKey?: string;
+    privateKey?: string;
+    publicKeyEncrypted?: string;
+    privateKeyEncrypted?: string;
+    passPhrase?: string;
     testProjectId: string;
     user: UserTab;
     evs: Ev[];
@@ -125,8 +128,11 @@ export class ProjectsService {
       remoteType,
       name,
       gitUrl,
-      privateKey,
       publicKey,
+      privateKey,
+      publicKeyEncrypted,
+      privateKeyEncrypted,
+      passPhrase,
       testProjectId,
       user,
       evs,
@@ -141,8 +147,11 @@ export class ProjectsService {
       remoteType: remoteType,
       defaultBranch: undefined, // set based on remoteType in Disk service
       gitUrl: gitUrl,
-      privateKey: privateKey,
       publicKey: publicKey,
+      privateKey: privateKey,
+      publicKeyEncrypted: publicKeyEncrypted,
+      privateKeyEncrypted: privateKeyEncrypted,
+      passPhrase: passPhrase,
       nameHash: undefined, // tab-to-ent
       gitUrlHash: undefined, // tab-to-ent
       keyTag: undefined,

@@ -1,15 +1,22 @@
 import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
-import { GIT_KEY_PASS_PHRASE } from '~common/constants/top';
 
 export async function cloneRepo(item: {
   repoPath: string;
   gitUrl: string;
   publicKeyPath?: string;
   privateKeyPath?: string;
+  passPhrase?: string;
   withKeys?: boolean;
 }) {
-  let { repoPath, gitUrl, withKeys, publicKeyPath, privateKeyPath } = item;
+  let {
+    repoPath,
+    gitUrl,
+    withKeys,
+    publicKeyPath,
+    privateKeyPath,
+    passPhrase
+  } = item;
 
   let parentPath = repoPath.split('/').slice(0, -1).join('/');
 
@@ -25,7 +32,7 @@ export async function cloneRepo(item: {
             'git',
             publicKeyPath,
             privateKeyPath,
-            GIT_KEY_PASS_PHRASE
+            passPhrase
           );
         }
       },

@@ -93,6 +93,18 @@ export class ToBackendSeedRecordsRequestPayloadProjectsItem {
   @IsOptional()
   @IsString()
   privateKey?: string;
+
+  @IsOptional()
+  @IsString()
+  publicKeyEncrypted?: string;
+
+  @IsOptional()
+  @IsString()
+  privateKeyEncrypted?: string;
+
+  @IsOptional()
+  @IsString()
+  passPhrase?: string;
 }
 
 export class ToBackendSeedRecordsRequestPayloadMembersItem {

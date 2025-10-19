@@ -57,8 +57,11 @@ test('1', async t => {
     let projectLt: ProjectLt = {
       defaultBranch: BRANCH_MAIN,
       gitUrl: undefined,
+      publicKey: undefined,
       privateKey: undefined,
-      publicKey: undefined
+      publicKeyEncrypted: undefined,
+      privateKeyEncrypted: undefined,
+      passPhrase: undefined
     };
 
     let baseProject: BaseProject = {

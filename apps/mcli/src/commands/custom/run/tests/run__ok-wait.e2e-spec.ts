@@ -91,7 +91,10 @@ test('1', async t => {
               remoteType: ProjectRemoteTypeEnum.Managed,
               gitUrl: undefined,
               publicKey: undefined,
-              privateKey: undefined
+              privateKey: undefined,
+              publicKeyEncrypted: undefined,
+              privateKeyEncrypted: undefined,
+              passPhrase: undefined
             }
           ],
           members: [

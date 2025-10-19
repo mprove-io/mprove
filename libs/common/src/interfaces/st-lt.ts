@@ -165,8 +165,11 @@ export class NoteSt {
   emptyData?: number;
 }
 export class NoteLt {
-  privateKey: string;
   publicKey: string;
+  privateKey: string;
+  publicKeyEncrypted: string;
+  privateKeyEncrypted: string;
+  passPhrase: string;
 }
 
 //
@@ -187,8 +190,11 @@ export class ProjectSt {
 export class ProjectLt {
   gitUrl: string;
   defaultBranch: string;
-  privateKey: string;
   publicKey: string;
+  privateKey: string;
+  publicKeyEncrypted: string;
+  privateKeyEncrypted: string;
+  passPhrase: string;
 }
 
 //
