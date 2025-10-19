@@ -280,6 +280,14 @@ export class MconfigsService {
       envId: envId,
       connectionId: model.connectionId,
       connectionType: model.connectionType,
+      reportId:
+        mconfig.parentType === MconfigParentTypeEnum.Report
+          ? mconfig.parentId
+          : undefined,
+      reportStructId:
+        mconfig.parentType === MconfigParentTypeEnum.Report
+          ? mconfig.structId
+          : undefined,
       sql: undefined,
       apiMethod: model.storeContent.method as StoreMethodEnum,
       apiUrl: apiUrl,

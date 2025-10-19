@@ -9,6 +9,7 @@ import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import {
@@ -111,7 +112,7 @@ export class StructsService {
     return struct;
   }
 
-  async removeOrphanedStructs() {
+  async removeStructs() {
     let rawData: any = await this.db.drizzle.execute(sql`
 SELECT
   s.struct_id,
@@ -125,41 +126,42 @@ LEFT JOIN branches AS c ON b.branch_id = c.branch_id
 WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL '15 seconds');
 `);
 
-    let orphanedStructIds: string[] =
-      rawData.rows.map((x: any) => x.struct_id) || [];
+    let structIds: string[] = rawData.rows.map((x: any) => x.struct_id) || [];
 
-    orphanedStructIds = orphanedStructIds.filter(
-      x => [EMPTY_STRUCT_ID].indexOf(x) < 0
-    );
+    structIds = structIds.filter(x => [EMPTY_STRUCT_ID].indexOf(x) < 0);
 
-    if (orphanedStructIds.length > 0) {
+    if (structIds.length > 0) {
       await this.db.drizzle
         .delete(structsTable)
-        .where(inArray(structsTable.structId, orphanedStructIds));
+        .where(inArray(structsTable.structId, structIds));
 
       await this.db.drizzle
         .delete(modelsTable)
-        .where(inArray(modelsTable.structId, orphanedStructIds));
+        .where(inArray(modelsTable.structId, structIds));
 
       await this.db.drizzle
         .delete(chartsTable)
-        .where(inArray(chartsTable.structId, orphanedStructIds));
+        .where(inArray(chartsTable.structId, structIds));
 
       await this.db.drizzle
         .delete(dashboardsTable)
-        .where(inArray(dashboardsTable.structId, orphanedStructIds));
+        .where(inArray(dashboardsTable.structId, structIds));
 
       await this.db.drizzle
         .delete(reportsTable)
-        .where(inArray(reportsTable.structId, orphanedStructIds));
+        .where(inArray(reportsTable.structId, structIds));
 
       await this.db.drizzle
         .delete(kitsTable)
-        .where(inArray(kitsTable.structId, orphanedStructIds));
+        .where(inArray(kitsTable.structId, structIds));
 
       await this.db.drizzle
         .delete(mconfigsTable)
-        .where(inArray(mconfigsTable.structId, orphanedStructIds));
+        .where(inArray(mconfigsTable.structId, structIds));
+
+      await this.db.drizzle
+        .delete(queriesTable)
+        .where(inArray(queriesTable.reportStructId, structIds));
     }
   }
 }

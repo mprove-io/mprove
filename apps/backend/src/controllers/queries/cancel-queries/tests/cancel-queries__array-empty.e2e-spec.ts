@@ -85,6 +85,8 @@ test('1', async t => {
     connectionId: connectionId,
     connectionType: connectionType,
     queryId: queryId,
+    reportId: undefined,
+    reportStructId: undefined,
     sql: '123',
     apiMethod: undefined,
     apiUrl: undefined,

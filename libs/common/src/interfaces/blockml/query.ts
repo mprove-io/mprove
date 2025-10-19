@@ -28,6 +28,14 @@ export class Query {
 
   @IsOptional()
   @IsString()
+  reportId: string;
+
+  @IsOptional()
+  @IsString()
+  reportStructId: string;
+
+  @IsOptional()
+  @IsString()
   sql: string;
 
   @IsOptional()

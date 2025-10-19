@@ -101,12 +101,19 @@ export const appProviders = [
       cs: ConfigService<BackendConfig>,
       queriesService: QueriesService,
       structsService: StructsService,
+      notesService: NotesService,
       logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
-        ? new TasksService(cs, queriesService, structsService, logger)
+        ? new TasksService(
+            cs,
+            queriesService,
+            structsService,
+            notesService,
+            logger
+          )
         : {},
-    inject: [ConfigService, QueriesService, StructsService]
+    inject: [ConfigService, QueriesService, StructsService, NotesService]
   },
   UserCodeService
 ];

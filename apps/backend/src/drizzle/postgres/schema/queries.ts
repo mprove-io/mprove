@@ -22,6 +22,8 @@ export const queriesTable = pgTable(
     connectionType: varchar('connection_type')
       .$type<ConnectionTypeEnum>()
       .notNull(),
+    reportId: varchar('report_id', { length: 32 }),
+    reportStructId: varchar('report_struct_id', { length: 32 }),
     queryJobId: varchar('query_job_id'),
     bigqueryQueryJobId: varchar('bigquery_query_job_id'),
     status: varchar('status').$type<QueryStatusEnum>().notNull(),

@@ -50,6 +50,8 @@ export class QueriesService {
       connectionId: query.connectionId,
       connectionType: query.connectionType,
       queryId: query.queryId,
+      reportId: query.reportId,
+      reportStructId: query.reportStructId,
       sql: query.sql,
       apiMethod: query.apiMethod as StoreMethodEnum,
       apiUrl: query.apiUrl,
@@ -87,6 +89,8 @@ export class QueriesService {
       connectionId: apiQuery.connectionId,
       connectionType: apiQuery.connectionType,
       queryId: apiQuery.queryId,
+      reportId: apiQuery.reportId,
+      reportStructId: apiQuery.reportStructId,
       status: apiQuery.status,
       lastRunBy: apiQuery.lastRunBy,
       lastRunTs: apiQuery.lastRunTs,
@@ -134,6 +138,8 @@ export class QueriesService {
         connectionId: queriesTable.connectionId,
         connectionType: queriesTable.connectionType,
         queryId: queriesTable.queryId,
+        reportId: queriesTable.reportId,
+        reportStructId: queriesTable.reportStructId,
         status: queriesTable.status,
         lastRunBy: queriesTable.lastRunBy,
         lastRunTs: queriesTable.lastRunTs,
@@ -206,6 +212,8 @@ export class QueriesService {
         connectionId: queriesTable.connectionId,
         connectionType: queriesTable.connectionType,
         queryId: queriesTable.queryId,
+        reportId: queriesTable.reportId,
+        reportStructId: queriesTable.reportStructId,
         status: queriesTable.status,
         lastRunBy: queriesTable.lastRunBy,
         lastRunTs: queriesTable.lastRunTs,
@@ -287,29 +295,21 @@ export class QueriesService {
     return queries;
   }
 
-  async removeOrphanedQueries() {
+  async removeQueries() {
     let rawData = await this.db.drizzle.execute(sql`
 SELECT
   q.query_id
 FROM queries as q
 LEFT JOIN mconfigs as m ON q.query_id=m.query_id
-WHERE m.mconfig_id is NULL
-      `);
+WHERE m.mconfig_id is NULL AND q.report_id is NULL AND to_timestamp(q.server_ts/1000) < (NOW() - INTERVAL '7 days')
+`);
 
-    let orphanedQueryIds: string[] =
-      rawData.rows.map((x: any) => x.query_id) || [];
+    let queryIds: string[] = rawData.rows.map((x: any) => x.query_id) || [];
 
-    if (orphanedQueryIds.length > 0) {
-      await retry(
-        async () =>
-          await this.db.drizzle.transaction(
-            async tx =>
-              await tx
-                .delete(queriesTable)
-                .where(inArray(queriesTable.queryId, orphanedQueryIds))
-          ),
-        getRetryOption(this.cs, this.logger)
-      );
+    if (queryIds.length > 0) {
+      await this.db.drizzle
+        .delete(queriesTable)
+        .where(inArray(queriesTable.queryId, queryIds));
     }
   }
 

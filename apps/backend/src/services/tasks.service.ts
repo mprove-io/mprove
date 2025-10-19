@@ -12,7 +12,8 @@ import { StructsService } from './db/structs.service';
 @Injectable()
 export class TasksService {
   private isRunningCheckQueries = false;
-  private isRunningRemoveOrphans = false;
+  private isRunningRemoveStructs = false;
+  private isRunningRemoveQueries = false;
   private isRunningRemoveNotes = false;
 
   constructor(
@@ -23,12 +24,7 @@ export class TasksService {
     private logger: Logger
   ) {}
 
-  // // Called every 10 seconds
-  // @Cron(CronExpression.EVERY_10_SECONDS)
-  // handleCron() {
-  // }
-
-  @Cron('*/3 * * * * *')
+  @Cron('*/3 * * * * *') // EVERY_3_SECONDS
   async loopCheckQueries() {
     if (this.isRunningCheckQueries === false) {
       this.isRunningCheckQueries = true;
@@ -50,14 +46,14 @@ export class TasksService {
   }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
-  async loopRemoveOrphans() {
-    if (this.isRunningRemoveOrphans === false) {
-      this.isRunningRemoveOrphans = true;
+  async loopRemoveStructs() {
+    if (this.isRunningRemoveStructs === false) {
+      this.isRunningRemoveStructs = true;
 
-      await this.structsService.removeOrphanedStructs().catch(e => {
+      await this.structsService.removeStructs().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_STRUCTS,
+            message: ErEnum.BACKEND_SCHEDULER_REMOVE_STRUCTS,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,
@@ -66,10 +62,18 @@ export class TasksService {
         });
       });
 
-      await this.queriesService.removeOrphanedQueries().catch(e => {
+      this.isRunningRemoveStructs = false;
+    }
+  }
+  @Cron(CronExpression.EVERY_10_SECONDS) // TODO: increase value queries
+  async loopRemoveQueries() {
+    if (this.isRunningRemoveQueries === false) {
+      this.isRunningRemoveQueries = true;
+
+      await this.queriesService.removeQueries().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_REMOVE_ORPHANED_QUERIES,
+            message: ErEnum.BACKEND_SCHEDULER_REMOVE_QUERIES,
             originalError: e
           }),
           logLevel: LogLevelEnum.Error,
@@ -78,16 +82,16 @@ export class TasksService {
         });
       });
 
-      this.isRunningRemoveOrphans = false;
+      this.isRunningRemoveQueries = false;
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS) // increase value
+  @Cron(CronExpression.EVERY_10_SECONDS) // TODO: increase value notes
   async loopRemoveNotes() {
     if (this.isRunningRemoveNotes === false) {
       this.isRunningRemoveNotes = true;
 
-      await this.notesService.removeUnusedNotes().catch(e => {
+      await this.notesService.removeNotes().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_SCHEDULER_REMOVE_NOTES,

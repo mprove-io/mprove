@@ -34,6 +34,8 @@ export function getBlankMconfigAndQuery(item: {
     envId: envId,
     connectionId: model.connectionId,
     connectionType: model.connectionType,
+    reportId: undefined,
+    reportStructId: undefined,
     sql: undefined,
     apiMethod: undefined,
     apiUrl: undefined,

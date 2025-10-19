@@ -551,6 +551,14 @@ export async function makeMalloyQuery(item: {
     envId: envId,
     connectionId: model.connectionId,
     connectionType: model.connectionType,
+    reportId:
+      mconfig.parentType === MconfigParentTypeEnum.Report
+        ? mconfig.parentId
+        : undefined,
+    reportStructId:
+      mconfig.parentType === MconfigParentTypeEnum.Report
+        ? mconfig.structId
+        : undefined,
     sql: pr.sql,
     apiMethod: undefined,
     apiUrl: undefined,

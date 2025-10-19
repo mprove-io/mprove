@@ -752,6 +752,8 @@ export class TabToEntService {
       connectionId: tab.connectionId,
       connectionType: tab.connectionType,
       queryId: tab.queryId,
+      reportId: tab.reportId,
+      reportStructId: tab.reportStructId,
       status: tab.status,
       lastRunBy: tab.lastRunBy,
       lastRunTs: tab.lastRunTs,

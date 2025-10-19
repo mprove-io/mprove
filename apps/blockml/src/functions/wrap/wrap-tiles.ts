@@ -101,6 +101,8 @@ export function wrapTiles(item: {
       envId: envId,
       connectionId: apiModel.connectionId,
       connectionType: apiModel.connectionType,
+      reportId: undefined,
+      reportStructId: undefined,
       sql:
         apiModel.type === ModelTypeEnum.Store ? undefined : tile.sql.join('\n'),
       apiMethod: undefined,

@@ -54,6 +54,8 @@ export const emptyQuery: Query = {
   connectionId: undefined,
   connectionType: undefined,
   queryId: EMPTY_QUERY_ID,
+  reportId: undefined,
+  reportStructId: undefined,
   sql: undefined,
   apiMethod: undefined,
   apiUrl: undefined,

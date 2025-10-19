@@ -7,7 +7,7 @@ import { notesTable } from '~backend/drizzle/postgres/schema/notes';
 export class NotesService {
   constructor(@Inject(DRIZZLE) private db: Db) {}
 
-  async removeUnusedNotes() {
+  async removeNotes() {
     let rawData: any = await this.db.drizzle.execute(sql`
 SELECT
   n.note_id
@@ -15,12 +15,12 @@ FROM notes AS n
 WHERE to_timestamp(n.server_ts/1000) < (NOW() - INTERVAL '2 days');
 `);
 
-    let unusedNoteIds: string[] = rawData.rows.map((x: any) => x.note_id) || [];
+    let noteIds: string[] = rawData.rows.map((x: any) => x.note_id) || [];
 
-    if (unusedNoteIds.length > 0) {
+    if (noteIds.length > 0) {
       await this.db.drizzle
         .delete(notesTable)
-        .where(inArray(notesTable.noteId, unusedNoteIds));
+        .where(inArray(notesTable.noteId, noteIds));
     }
   }
 }

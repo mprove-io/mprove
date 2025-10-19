@@ -154,6 +154,7 @@ export class CreateDraftReportController {
         row.rowType === RowTypeEnum.Metric ||
         row.rowType === RowTypeEnum.Formula
       ) {
+        // copy to draft current rq only (not all rqs)
         let rq: Rq = row.rqs.find(
           y =>
             y.fractionBrick === timeRangeFractionBrick &&
@@ -237,6 +238,9 @@ export class CreateDraftReportController {
       x.queryId = copyQueriesMap.find(
         y => y.fromQueryId === x.queryId
       ).toQueryId;
+
+      x.reportId = reportId;
+      x.reportStructId = bridge.structId;
     });
 
     copyMconfigs.forEach(x => {
