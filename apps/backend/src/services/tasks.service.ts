@@ -5,18 +5,21 @@ import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ServerError } from '~common/models/server-error';
+import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
 
 @Injectable()
 export class TasksService {
-  private isRunningLoopCheckQueries = false;
-  private isRunningLoopRemoveOrphans = false;
+  private isRunningCheckQueries = false;
+  private isRunningRemoveOrphans = false;
+  private isRunningRemoveNotes = false;
 
   constructor(
     private cs: ConfigService,
     private queriesService: QueriesService,
     private structsService: StructsService,
+    private notesService: NotesService,
     private logger: Logger
   ) {}
 
@@ -27,8 +30,8 @@ export class TasksService {
 
   @Cron('*/3 * * * * *')
   async loopCheckQueries() {
-    if (this.isRunningLoopCheckQueries === false) {
-      this.isRunningLoopCheckQueries = true;
+    if (this.isRunningCheckQueries === false) {
+      this.isRunningCheckQueries = true;
 
       await this.queriesService.checkBigqueryRunningQueries().catch(e => {
         logToConsoleBackend({
@@ -42,14 +45,14 @@ export class TasksService {
         });
       });
 
-      this.isRunningLoopCheckQueries = false;
+      this.isRunningCheckQueries = false;
     }
   }
 
   @Cron(CronExpression.EVERY_10_SECONDS)
   async loopRemoveOrphans() {
-    if (this.isRunningLoopRemoveOrphans === false) {
-      this.isRunningLoopRemoveOrphans = true;
+    if (this.isRunningRemoveOrphans === false) {
+      this.isRunningRemoveOrphans = true;
 
       await this.structsService.removeOrphanedStructs().catch(e => {
         logToConsoleBackend({
@@ -75,7 +78,28 @@ export class TasksService {
         });
       });
 
-      this.isRunningLoopRemoveOrphans = false;
+      this.isRunningRemoveOrphans = false;
+    }
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS) // increase value
+  async loopRemoveNotes() {
+    if (this.isRunningRemoveNotes === false) {
+      this.isRunningRemoveNotes = true;
+
+      await this.notesService.removeUnusedNotes().catch(e => {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_REMOVE_NOTES,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      });
+
+      this.isRunningRemoveNotes = false;
     }
   }
 }

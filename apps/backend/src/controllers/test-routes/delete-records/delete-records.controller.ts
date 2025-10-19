@@ -20,12 +20,14 @@ import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { envsTable } from '~backend/drizzle/postgres/schema/envs';
+import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
+import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
@@ -174,31 +176,29 @@ export class DeleteRecordsController {
             await tx
               .delete(usersTable)
               .where(inArray(usersTable.userId, userIds));
-          }
-          if (orgIds.length > 0) {
-            await tx.delete(orgsTable).where(inArray(orgsTable.orgId, orgIds));
-          }
-          if (projectIds.length > 0) {
+
             await tx
-              .delete(projectsTable)
-              .where(inArray(projectsTable.projectId, projectIds));
-          }
-          if (userIds.length > 0) {
+              .delete(avatarsTable)
+              .where(inArray(avatarsTable.userId, userIds));
+
             await tx
               .delete(membersTable)
               .where(inArray(membersTable.memberId, userIds));
           }
+
+          if (orgIds.length > 0) {
+            await tx.delete(orgsTable).where(inArray(orgsTable.orgId, orgIds));
+          }
+
           if (projectIds.length > 0) {
+            await tx
+              .delete(projectsTable)
+              .where(inArray(projectsTable.projectId, projectIds));
+
             await tx
               .delete(connectionsTable)
               .where(inArray(connectionsTable.projectId, projectIds));
-          }
-          if (structIds.length > 0) {
-            await tx
-              .delete(structsTable)
-              .where(inArray(structsTable.structId, structIds));
-          }
-          if (projectIds.length > 0) {
+
             await tx
               .delete(branchesTable)
               .where(inArray(branchesTable.projectId, projectIds));
@@ -210,13 +210,7 @@ export class DeleteRecordsController {
             await tx
               .delete(envsTable)
               .where(inArray(envsTable.projectId, projectIds));
-          }
-          if (structIds.length > 0) {
-            await tx
-              .delete(chartsTable)
-              .where(inArray(chartsTable.structId, structIds));
-          }
-          if (projectIds.length > 0) {
+
             await tx
               .delete(queriesTable)
               .where(inArray(queriesTable.projectId, projectIds));
@@ -224,22 +218,32 @@ export class DeleteRecordsController {
 
           if (structIds.length > 0) {
             await tx
+              .delete(structsTable)
+              .where(inArray(structsTable.structId, structIds));
+
+            await tx
               .delete(modelsTable)
               .where(inArray(modelsTable.structId, structIds));
 
             await tx
-              .delete(mconfigsTable)
-              .where(inArray(mconfigsTable.structId, structIds));
+              .delete(chartsTable)
+              .where(inArray(chartsTable.structId, structIds));
 
             await tx
               .delete(dashboardsTable)
               .where(inArray(dashboardsTable.structId, structIds));
-          }
 
-          if (userIds.length > 0) {
+            await this.db.drizzle
+              .delete(reportsTable)
+              .where(inArray(reportsTable.structId, structIds));
+
+            await this.db.drizzle
+              .delete(kitsTable)
+              .where(inArray(kitsTable.structId, structIds));
+
             await tx
-              .delete(avatarsTable)
-              .where(inArray(avatarsTable.userId, userIds));
+              .delete(mconfigsTable)
+              .where(inArray(mconfigsTable.structId, structIds));
           }
         }),
       getRetryOption(this.cs, this.logger)

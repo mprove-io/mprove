@@ -6,6 +6,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { StructTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
+import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
@@ -137,24 +138,28 @@ WHERE c.branch_id IS NULL AND to_timestamp(s.server_ts/1000) < (NOW() - INTERVAL
         .where(inArray(structsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
+        .delete(modelsTable)
+        .where(inArray(modelsTable.structId, orphanedStructIds));
+
+      await this.db.drizzle
         .delete(chartsTable)
         .where(inArray(chartsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
-        .delete(modelsTable)
-        .where(inArray(modelsTable.structId, orphanedStructIds));
+        .delete(dashboardsTable)
+        .where(inArray(dashboardsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
         .delete(reportsTable)
         .where(inArray(reportsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
-        .delete(mconfigsTable)
-        .where(inArray(mconfigsTable.structId, orphanedStructIds));
+        .delete(kitsTable)
+        .where(inArray(kitsTable.structId, orphanedStructIds));
 
       await this.db.drizzle
-        .delete(dashboardsTable)
-        .where(inArray(dashboardsTable.structId, orphanedStructIds));
+        .delete(mconfigsTable)
+        .where(inArray(mconfigsTable.structId, orphanedStructIds));
     }
   }
 }
