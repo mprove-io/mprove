@@ -47,9 +47,9 @@ export function getConfig(envPath?: string) {
       process.env.MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL ||
       envFile.MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL,
 
-    mproveCliTestPrivateKeyPath:
-      process.env.MPROVE_CLI_TEST_PRIVATE_KEY_PATH ||
-      envFile.MPROVE_CLI_TEST_PRIVATE_KEY_PATH,
+    mproveCliTestPrivateKeyEncryptedPath:
+      process.env.MPROVE_CLI_TEST_PRIVATE_KEY_ENCRYPTED_PATH ||
+      envFile.MPROVE_CLI_TEST_PRIVATE_KEY_ENCRYPTED_PATH,
 
     mproveCliTestPublicKeyPath:
       process.env.MPROVE_CLI_TEST_PUBLIC_KEY_PATH ||

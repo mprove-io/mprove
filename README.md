@@ -39,7 +39,7 @@ yarn clean:mprove_data
 ```
 mkdir secrets \
   && echo {} > secrets/demo-project-bigquery-credentials.json \
-  && echo '' > secrets/demo-project-remote-private-key.pem \
+  && echo '' > secrets/demo-project-remote-private-key-encrypted.pem \
   && echo '' > secrets/demo-project-remote-public-key.pem \
   && echo '' > secrets/presto/catalog/pgs.properties \
   && echo '' > secrets/presto/config.properties \

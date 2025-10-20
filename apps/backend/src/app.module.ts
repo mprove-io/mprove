@@ -950,23 +950,27 @@ export class AppModule implements OnModuleInit {
           BackendConfig['demoProjectRemoteGitUrl']
         >('demoProjectRemoteGitUrl');
 
-        let demoProjectRemotePrivateKeyPath = this.cs.get<
-          BackendConfig['demoProjectRemotePrivateKeyPath']
-        >('demoProjectRemotePrivateKeyPath');
+        let demoProjectRemotePrivateKeyEncryptedPath = this.cs.get<
+          BackendConfig['demoProjectRemotePrivateKeyEncryptedPath']
+        >('demoProjectRemotePrivateKeyEncryptedPath');
 
         let demoProjectRemotePublicKeyPath = this.cs.get<
           BackendConfig['demoProjectRemotePublicKeyPath']
         >('demoProjectRemotePublicKeyPath');
 
-        let privateKey;
+        let demoProjectRemotePassPhrase = this.cs.get<
+          BackendConfig['demoProjectRemotePassPhrase']
+        >('demoProjectRemotePassPhrase');
+
+        let privateKeyEncrypted;
         let publicKey;
 
         if (
-          isDefinedAndNotEmpty(demoProjectRemotePrivateKeyPath) &&
+          isDefinedAndNotEmpty(demoProjectRemotePrivateKeyEncryptedPath) &&
           isDefinedAndNotEmpty(demoProjectRemotePublicKeyPath)
         ) {
-          privateKey = fse
-            .readFileSync(demoProjectRemotePrivateKeyPath)
+          privateKeyEncrypted = fse
+            .readFileSync(demoProjectRemotePrivateKeyEncryptedPath)
             .toString();
 
           publicKey = fse
@@ -988,8 +992,11 @@ export class AppModule implements OnModuleInit {
           testProjectId: 'demo-project',
           remoteType: demoProjectRemoteType,
           gitUrl: demoProjectRemoteGitUrl,
-          privateKey: privateKey,
           publicKey: publicKey,
+          publicKeyEncrypted: undefined,
+          privateKey: undefined,
+          privateKeyEncrypted: privateKeyEncrypted,
+          passPhrase: demoProjectRemotePassPhrase,
           evs: [ev1],
           connections: connections
         });

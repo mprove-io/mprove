@@ -109,7 +109,7 @@ test('1', async t => {
                 .readFileSync(config.mproveCliTestPublicKeyPath)
                 .toString(),
               privateKey: fse
-                .readFileSync(config.mproveCliTestPrivateKeyPath)
+                .readFileSync(config.mproveCliTestPrivateKeyEncryptedPath)
                 .toString()
             }
           ],

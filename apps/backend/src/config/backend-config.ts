@@ -71,10 +71,13 @@ export class BackendConfig {
   demoProjectRemoteGitUrl?: string;
 
   @IsString()
-  demoProjectRemotePrivateKeyPath?: string;
+  demoProjectRemotePrivateKeyEncryptedPath?: string;
 
   @IsString()
   demoProjectRemotePublicKeyPath?: string;
+
+  @IsString()
+  demoProjectRemotePassPhrase?: string;
 
   @IsString()
   demoProjectDwhPostgresHost?: string;

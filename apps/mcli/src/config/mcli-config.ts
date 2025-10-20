@@ -28,7 +28,7 @@ export class McliConfig {
 
   @IsString()
   @IsOptional()
-  mproveCliTestPrivateKeyPath?: string;
+  mproveCliTestPrivateKeyEncryptedPath?: string;
 
   @IsString()
   @IsOptional()

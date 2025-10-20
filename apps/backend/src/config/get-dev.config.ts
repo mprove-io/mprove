@@ -95,13 +95,17 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_GIT_URL ||
       envFile.BACKEND_DEMO_PROJECT_GIT_URL,
 
-    demoProjectRemotePrivateKeyPath:
-      process.env.BACKEND_DEMO_PROJECT_PRIVATE_KEY_PATH ||
-      envFile.BACKEND_DEMO_PROJECT_PRIVATE_KEY_PATH,
+    demoProjectRemotePrivateKeyEncryptedPath:
+      process.env.BACKEND_DEMO_PROJECT_PRIVATE_KEY_ENCRYPTED_PATH ||
+      envFile.BACKEND_DEMO_PROJECT_PRIVATE_KEY_ENCRYPTED_PATH,
 
     demoProjectRemotePublicKeyPath:
       process.env.BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH ||
       envFile.BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH,
+
+    demoProjectRemotePassPhrase:
+      process.env.BACKEND_DEMO_PROJECT_PASS_PHRASE ||
+      envFile.BACKEND_DEMO_PROJECT_PASS_PHRASE,
 
     seedDemoOrgAndProject: enumToBoolean({
       value:

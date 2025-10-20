@@ -83,8 +83,8 @@ COMPOSE_RABBITMQ_ERLANG_COOKIE=${rabbitCookie}
 COMPOSE_BACKEND_DEMO_PROJECT_BIGQUERY_CREDENTIALS_SOURCE_PATH=secrets/demo-project-bigquery-credentials.json
 COMPOSE_BACKEND_DEMO_PROJECT_BIGQUERY_CREDENTIALS_PATH=/usr/src/app/secrets/demo-project-bigquery-credentials.json
 
-COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_SOURCE_PATH=secrets/demo-project-remote-private-key.pem
-COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_PATH=/usr/src/app/secrets/demo-project-remote-private-key.pem
+COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_SOURCE_PATH=secrets/demo-project-remote-private-key-encrypted.pem
+COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_PATH=/usr/src/app/secrets/demo-project-remote-private-key-encrypted.pem
 
 COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH=secrets/demo-project-remote-public-key.pem
 COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_PATH=/usr/src/app/secrets/demo-project-remote-public-key.pem
@@ -164,8 +164,9 @@ BACKEND_DEMO_PROJECT_ID=DXYE72ODCP5LWPWH2EXQ
 BACKEND_DEMO_PROJECT_NAME=p1
 BACKEND_DEMO_PROJECT_REMOTE_TYPE=Managed
 BACKEND_DEMO_PROJECT_GIT_URL=
-BACKEND_DEMO_PROJECT_PRIVATE_KEY_PATH=secrets/demo-project-remote-private-key.pem
+BACKEND_DEMO_PROJECT_PRIVATE_KEY_ENCRYPTED_PATH=secrets/demo-project-remote-private-key-encrypted.pem
 BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH=secrets/demo-project-remote-public-key.pem
+BACKEND_DEMO_PROJECT_PASS_PHRASE=
 BACKEND_DEMO_PROJECT_DWH_POSTGRES_HOST=dwh-postgres
 BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
 BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD=
@@ -235,7 +236,7 @@ MPROVE_CLI_TEST_REMOTE_GIT_URL=https://github.com/mprove-io/mp6.git
 MPROVE_CLI_TEST_DESTINATION_URL=/mprove/mprove_data/mcli-repos/mp6
 MPROVE_CLI_TEST_LOCAL_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
 MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
-MPROVE_CLI_TEST_PRIVATE_KEY_PATH=secrets/demo-project-remote-private-key.pem
+MPROVE_CLI_TEST_PRIVATE_KEY_ENCRYPTED_PATH=secrets/demo-project-remote-private-key-encrypted.pem
 MPROVE_CLI_TEST_PUBLIC_KEY_PATH=secrets/demo-project-remote-public-key.pem
 MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
 `.trim();

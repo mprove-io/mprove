@@ -86,7 +86,7 @@ test('1', async t => {
                 .readFileSync(config.mproveCliTestPublicKeyPath)
                 .toString(),
               privateKey: fse
-                .readFileSync(config.mproveCliTestPrivateKeyPath)
+                .readFileSync(config.mproveCliTestPrivateKeyEncryptedPath)
                 .toString()
             }
           ],
@@ -131,7 +131,7 @@ test('1', async t => {
         repoPath: repoPath,
         gitUrl: config.mproveCliTestLocalSourceGitUrl,
         publicKeyPath: config.mproveCliTestPublicKeyPath,
-        privateKeyPath: config.mproveCliTestPrivateKeyPath
+        privateKeyPath: config.mproveCliTestPrivateKeyEncryptedPath
       });
 
       let syncConfig = await writeSyncConfig({
