@@ -18,21 +18,8 @@ services:
     ports:
       - 6379:6379
 
-  # redis:
-  #   image: bitnami/redis:$REDIS_RELEASE_TAG
-  #   environment:
-  #     - REDIS_PASSWORD=$COMPOSE_REDIS_PASSWORD
-  #     - REDIS_AOF_ENABLED=yes
-  #   command: ["/opt/bitnami/scripts/redis/run.sh", "--maxmemory-policy", "volatile-lru", "--appendfsync", "everysec"]
-  #   ports:
-  #     - 6379:6379
-  #   volumes:
-  #     - type: bind
-  #       source: $COMPOSE_REDIS_VOLUME_SOURCE_PATH
-  #       target: /bitnami/redis/data
-
   rabbit:
-    image: rabbitmq:$RABBIT_RELEASE_TAG
+    image: rabbitmq:3.10.6-management
     environment:
       - RABBITMQ_DEFAULT_USER=$COMPOSE_RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS=$COMPOSE_RABBITMQ_DEFAULT_PASS
