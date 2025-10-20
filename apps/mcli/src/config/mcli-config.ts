@@ -28,11 +28,15 @@ export class McliConfig {
 
   @IsString()
   @IsOptional()
+  mproveCliTestPublicKeyPath?: string;
+
+  @IsString()
+  @IsOptional()
   mproveCliTestPrivateKeyEncryptedPath?: string;
 
   @IsString()
   @IsOptional()
-  mproveCliTestPublicKeyPath?: string;
+  mproveCliTestPassPhrase?: string;
 
   @IsString()
   @IsOptional()

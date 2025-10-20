@@ -99,9 +99,10 @@ test('1', async t => {
               publicKey: fse
                 .readFileSync(config.mproveCliTestPublicKeyPath)
                 .toString(),
-              privateKey: fse
+              privateKeyEncrypted: fse
                 .readFileSync(config.mproveCliTestPrivateKeyEncryptedPath)
-                .toString()
+                .toString(),
+              passPhrase: config.mproveCliTestPassPhrase
             }
           ],
           members: [
