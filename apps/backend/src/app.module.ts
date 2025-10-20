@@ -162,18 +162,18 @@ let mailerModule = MailerModule.forRootAsync({
 let customThrottlerModule = ThrottlerModule.forRootAsync({
   inject: [ConfigService],
   useFactory: (cs: ConfigService<BackendConfig>) => {
-    let redisHost =
-      cs.get<BackendConfig['backendRedisHost']>('backendRedisHost');
+    let valkeyHost =
+      cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
 
-    let redisPassword = cs.get<BackendConfig['backendRedisPassword']>(
-      'backendRedisPassword'
+    let valkeyPassword = cs.get<BackendConfig['backendValkeyPassword']>(
+      'backendValkeyPassword'
     );
 
     // the same as apps/backend/src/services/redis.service.ts
     let redisClient = new Redis({
-      host: redisHost,
+      host: valkeyHost,
       port: 6379,
-      password: redisPassword
+      password: valkeyPassword
       // ,
       // tls: {
       //   rejectUnauthorized: false

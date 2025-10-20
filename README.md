@@ -84,7 +84,7 @@ BACKEND_SMTP_AUTH_PASSWORD=
 #### 8. Run docker images
 
 ```
-docker-compose up --pull db calc-postgres rabbit redis backend blockml disk front
+docker-compose up --pull db calc-postgres rabbit valkey backend blockml disk front
 ```
 
 #### 9. Login

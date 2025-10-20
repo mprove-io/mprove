@@ -183,10 +183,10 @@ export class BackendConfig {
 
   //
   @IsString()
-  backendRedisHost?: string;
+  backendValkeyHost?: string;
 
   @IsString()
-  backendRedisPassword?: string;
+  backendValkeyPassword?: string;
 
   //
   @IsString()

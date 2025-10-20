@@ -10,18 +10,18 @@ export class RedisService {
   private client: Redis;
 
   constructor(private cs: ConfigService<BackendConfig>) {
-    let redisHost =
-      this.cs.get<BackendConfig['backendRedisHost']>('backendRedisHost');
+    let valkeyHost =
+      this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
 
-    let redisPassword = this.cs.get<BackendConfig['backendRedisPassword']>(
-      'backendRedisPassword'
+    let valkeyPassword = this.cs.get<BackendConfig['backendValkeyPassword']>(
+      'backendValkeyPassword'
     );
 
     // the same as apps/backend/src/app.module.ts -> customThrottlerModule
     this.client = new Redis({
-      host: redisHost,
+      host: valkeyHost,
       port: 6379,
-      password: redisPassword
+      password: valkeyPassword
       // ,
       // tls: {
       //   rejectUnauthorized: false

@@ -1,30 +1,35 @@
 services:
   db:
-    image: docker.io/bitnami/postgresql:17.0.0-debian-12-r9
+    image: postgres:18.0
     environment:
-      POSTGRESQL_DATABASE: $COMPOSE_DB_PG_POSTGRESQL_DATABASE
-      POSTGRESQL_USERNAME: $COMPOSE_DB_PG_POSTGRESQL_USERNAME
-      POSTGRESQL_PASSWORD: $COMPOSE_DB_PG_POSTGRESQL_PASSWORD
-      POSTGRESQL_POSTGRES_PASSWORD: $COMPOSE_DB_PG_POSTGRESQL_POSTGRES_PASSWORD
+      POSTGRES_DB: $COMPOSE_DB_POSTGRES_DB
+      POSTGRES_USER: $COMPOSE_DB_POSTGRES_USER
+      POSTGRES_PASSWORD: $COMPOSE_DB_POSTGRES_PASSWORD
     ports:
       - 5432:5432
     volumes:
       - type: bind
-        source: $COMPOSE_DB_PG_VOLUME_SOURCE_PATH
-        target: /bitnami/postgresql
+        source: $COMPOSE_DB_VOLUME_SOURCE_PATH
+        target: /var/lib/postgresql/18/docker
 
-  redis:
-    image: bitnami/redis:$REDIS_RELEASE_TAG
-    environment:
-      - REDIS_PASSWORD=$COMPOSE_REDIS_PASSWORD
-      - REDIS_AOF_ENABLED=yes
-    command: ["/opt/bitnami/scripts/redis/run.sh", "--maxmemory-policy", "volatile-lru", "--appendfsync", "everysec"]
+  valkey:
+    image: valkey/valkey:8.1.4
+    command: valkey-server --requirepass ${COMPOSE_VALKEY_PASSWORD} --save "" --appendonly no
     ports:
       - 6379:6379
-    volumes:
-      - type: bind
-        source: $COMPOSE_REDIS_VOLUME_SOURCE_PATH
-        target: /bitnami/redis/data
+
+  # redis:
+  #   image: bitnami/redis:$REDIS_RELEASE_TAG
+  #   environment:
+  #     - REDIS_PASSWORD=$COMPOSE_REDIS_PASSWORD
+  #     - REDIS_AOF_ENABLED=yes
+  #   command: ["/opt/bitnami/scripts/redis/run.sh", "--maxmemory-policy", "volatile-lru", "--appendfsync", "everysec"]
+  #   ports:
+  #     - 6379:6379
+  #   volumes:
+  #     - type: bind
+  #       source: $COMPOSE_REDIS_VOLUME_SOURCE_PATH
+  #       target: /bitnami/redis/data
 
   rabbit:
     image: rabbitmq:$RABBIT_RELEASE_TAG
@@ -83,7 +88,7 @@ services:
     depends_on:
       - db
       - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'     
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -137,8 +142,7 @@ services:
     image: ghcr.io/mprove-io/mprove-dwh-mysql:$MPROVE_DWH_MYSQL_TAG
     environment:
       - MYSQL_ROOT_PASSWORD=$COMPOSE_DWH_MYSQL_ROOT_PASSWORD
-    command:
-      [
+    command: [
         # '--default-authentication-plugin=mysql_native_password',
         '--max_allowed_packet=128M',
         '--innodb-buffer-pool-size=1G'
@@ -200,7 +204,7 @@ services:
       dockerfile: tools/docker/mcli.Dockerfile
     image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
     env_file:
-      - $ENV_FILE_PATH    
+      - $ENV_FILE_PATH
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -210,7 +214,7 @@ services:
         target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_PATH
       - type: bind
         source: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
-        target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_PATH        
+        target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_PATH
 
   # integra:
   #   build:

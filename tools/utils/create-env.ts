@@ -30,15 +30,16 @@ async function createEnvFile(): Promise<void> {
 
   let aes256KeyBase64 = crypto.randomBytes(32).toString('base64');
 
-  let dbPgUserPass = makeRandomString(32);
-  let dbPgPostgresPass = makeRandomString(32);
+  let dbDb = 'mprove_main';
+  let dbUser = 'mprove_user';
+  let dbPassword = makeRandomString(32);
 
   let calcPostgresPass = makeRandomString(32);
   let dwhPostgresPass = makeRandomString(32);
   let dwhMysqlRootPass = makeRandomString(32);
   let dwhClickHousePass = makeRandomString(32);
 
-  let redisPass = makeRandomString(32);
+  let valkeyPass = makeRandomString(32);
   let rabbitPass = makeRandomString(32);
   let rabbitCookie = makeRandomString(32);
 
@@ -59,7 +60,6 @@ MPROVE_DWH_POSTGRES_TAG=9.0.87
 MPROVE_DWH_MYSQL_TAG=9.0.87
 MPROVE_DWH_CLICKHOUSE_TAG=9.0.87
 
-REDIS_RELEASE_TAG=7.2.4
 RABBIT_RELEASE_TAG=3.10.6-management
 
 DOCKER_CLIENT_TIMEOUT=180
@@ -67,14 +67,12 @@ COMPOSE_HTTP_TIMEOUT=180
 
 NODE_ENV=production
 
-COMPOSE_DB_PG_POSTGRESQL_DATABASE=mprove_main
-COMPOSE_DB_PG_POSTGRESQL_USERNAME=mprove_user
-COMPOSE_DB_PG_POSTGRESQL_PASSWORD=${dbPgUserPass}
-COMPOSE_DB_PG_POSTGRESQL_POSTGRES_PASSWORD=${dbPgPostgresPass}
-COMPOSE_DB_PG_VOLUME_SOURCE_PATH=mprove_data/db-main
+COMPOSE_DB_POSTGRES_DB=${dbDb}
+COMPOSE_DB_POSTGRES_USER=${dbUser}
+COMPOSE_DB_POSTGRES_PASSWORD=${dbPassword}
+COMPOSE_DB_VOLUME_SOURCE_PATH=mprove_data/db-main
 
-COMPOSE_REDIS_PASSWORD=${redisPass}
-COMPOSE_REDIS_VOLUME_SOURCE_PATH=mprove_data/redis
+COMPOSE_VALKEY_PASSWORD=${valkeyPass}
 
 COMPOSE_RABBITMQ_DEFAULT_USER=rabbituser
 COMPOSE_RABBITMQ_DEFAULT_PASS=${rabbitPass}
@@ -125,8 +123,8 @@ BACKEND_AES_KEY="${aes256KeyBase64}"
 BACKEND_AES_KEY_TAG=1
 BACKEND_PREV_AES_KEY=
 BACKEND_PREV_AES_KEY_TAG=
-BACKEND_REDIS_HOST=localhost
-BACKEND_REDIS_PASSWORD=${redisPass}
+BACKEND_VALKEY_HOST=localhost
+BACKEND_VALKEY_PASSWORD=${valkeyPass}
 BACKEND_RABBIT_PROTOCOL=amqp
 BACKEND_RABBIT_USER=rabbituser
 BACKEND_RABBIT_PASS=${rabbitPass}
@@ -142,7 +140,7 @@ BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS=FALSE
 BACKEND_MPROVE_ADMIN_EMAIL=${userEmail}
 # set password that will be used for Mprove Login
 BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD=${userPass}
-BACKEND_POSTGRES_DATABASE_URL=postgres://mprove_user:${dbPgUserPass}@db:5432/mprove_main
+BACKEND_POSTGRES_DATABASE_URL=postgres://${dbUser}:${dbPassword}@db:5432/${dbDb}
 BACKEND_IS_POSTGRES_TLS=FALSE
 BACKEND_CALC_POSTGRES_HOST=calc-postgres
 BACKEND_CALC_POSTGRES_PORT=5437

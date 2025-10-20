@@ -251,11 +251,11 @@ export function getDevConfig(envFilePath: any) {
       envFile.BACKEND_SMTP_AUTH_PASSWORD,
 
     //
-    backendRedisHost:
-      process.env.BACKEND_REDIS_HOST || envFile.BACKEND_REDIS_HOST,
+    backendValkeyHost:
+      process.env.BACKEND_VALKEY_HOST || envFile.BACKEND_VALKEY_HOST,
 
-    backendRedisPassword:
-      process.env.BACKEND_REDIS_PASSWORD || envFile.BACKEND_REDIS_PASSWORD,
+    backendValkeyPassword:
+      process.env.BACKEND_VALKEY_PASSWORD || envFile.BACKEND_VALKEY_PASSWORD,
 
     //
     backendRabbitUser:

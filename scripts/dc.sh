@@ -5,7 +5,7 @@
 # Check if at least one service is provided as an argument
 if [ $# -eq 0 ]; then
   echo "Usage: $0 <service1> <service2> <service3> ..."
-  echo "Example: $0 db rabbit redis dwh-postgres"
+  echo "Example: $0 db rabbit valkey dwh-postgres"
   exit 1
 fi
 
