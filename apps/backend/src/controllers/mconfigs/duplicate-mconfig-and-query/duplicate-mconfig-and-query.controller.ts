@@ -18,7 +18,6 @@ import {
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -129,16 +128,18 @@ export class DuplicateMconfigAndQueryController {
       });
     }
 
-    let isModelAccessGranted = checkModelAccess({
-      member: member,
-      modelAccessRoles: model.accessRoles
-    });
+    // user can see dashboard tile or report metric without model access
 
-    if (isModelAccessGranted === false) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_MODEL
-      });
-    }
+    // let isModelAccessGranted = checkModelAccess({
+    //   member: member,
+    //   modelAccessRoles: model.accessRoles
+    // });
+
+    // if (isModelAccessGranted === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.BACKEND_FORBIDDEN_MODEL
+    //   });
+    // }
 
     let oldQuery = await this.db.drizzle.query.queriesTable
       .findFirst({
