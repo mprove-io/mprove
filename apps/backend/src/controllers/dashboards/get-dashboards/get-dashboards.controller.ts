@@ -7,7 +7,7 @@ import {
   DashboardEnt,
   dashboardsTable
 } from '~backend/drizzle/postgres/schema/dashboards';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -108,20 +108,9 @@ export class GetDashboardsController {
       })
     );
 
-    let models = await this.db.drizzle
-      .select({
-        keyTag: modelsTable.keyTag,
-        structId: modelsTable.structId,
-        modelId: modelsTable.modelId,
-        type: modelsTable.type,
-        connectionId: modelsTable.connectionId,
-        connectionType: modelsTable.connectionType,
-        st: modelsTable.st,
-        lt: modelsTable.lt
-      })
-      .from(modelsTable)
-      .where(eq(modelsTable.structId, bridge.structId))
-      .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({ where: eq(modelsTable.structId, bridge.structId) })
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
