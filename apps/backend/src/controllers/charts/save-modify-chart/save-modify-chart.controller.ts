@@ -168,10 +168,19 @@ export class SaveModifyChartController {
       });
     }
 
-    let existingChart = await this.chartsService.getChartCheckExists({
+    let existingChart = await this.chartsService.getChartCheckExistsAndAccess({
       structId: bridge.structId,
-      chartId: chartId
+      chartId: chartId,
+      userMember: userMember,
+      user: user
     });
+
+    if (userMember.isAdmin === false && userMember.isEditor === false) {
+      this.chartsService.checkChartPath({
+        userAlias: user.alias,
+        filePath: existingChart.filePath
+      });
+    }
 
     let mconfig = await this.mconfigsService.getMconfigCheckExists({
       structId: bridge.structId,
@@ -185,13 +194,6 @@ export class SaveModifyChartController {
       structId: bridge.structId,
       modelId: mconfig.modelId
     });
-
-    if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.chartsService.checkChartPath({
-        userAlias: user.alias,
-        filePath: existingChart.filePath
-      });
-    }
 
     let mconfigModel = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,

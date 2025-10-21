@@ -148,20 +148,16 @@ export class EditDraftChartController {
       });
     }
 
-    let chart = await this.chartsService.getChartCheckExists({
+    let chart = await this.chartsService.getChartCheckExistsAndAccess({
       structId: bridge.structId,
-      chartId: chartId
+      chartId: chartId,
+      userMember: userMember,
+      user: user
     });
 
     if (chart.draft === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_CHART_IS_NOT_DRAFT
-      });
-    }
-
-    if (chart.creatorId !== user.userId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_CHART_CREATOR_ID_MISMATCH
       });
     }
 

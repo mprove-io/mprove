@@ -82,7 +82,7 @@ export class GetQueryController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
@@ -96,7 +96,7 @@ export class GetQueryController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -124,9 +124,11 @@ export class GetQueryController {
 
     let chart;
     if (isDefined(chartId)) {
-      chart = await this.chartsService.getChartCheckExists({
+      chart = await this.chartsService.getChartCheckExistsAndAccess({
         structId: bridge.structId,
-        chartId: chartId
+        chartId: chartId,
+        userMember: userMember,
+        user: user
       });
     }
 
@@ -140,16 +142,16 @@ export class GetQueryController {
 
     let isAccessGranted = isDefined(chart)
       ? checkAccess({
-          member: member,
+          member: userMember,
           accessRoles: chart.accessRoles
         })
       : isDefined(dashboard)
         ? checkAccess({
-            member: member,
+            member: userMember,
             accessRoles: dashboard.accessRoles
           })
         : checkModelAccess({
-            member: member,
+            member: userMember,
             modelAccessRoles: model.accessRoles
           });
 

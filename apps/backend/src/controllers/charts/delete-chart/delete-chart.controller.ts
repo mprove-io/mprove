@@ -83,7 +83,7 @@ export class DeleteChartController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
@@ -97,7 +97,7 @@ export class DeleteChartController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -111,7 +111,7 @@ export class DeleteChartController {
       this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
     if (
-      member.isAdmin === false &&
+      userMember.isAdmin === false &&
       projectId === demoProjectId &&
       repoId === PROD_REPO_ID
     ) {
@@ -120,12 +120,14 @@ export class DeleteChartController {
       });
     }
 
-    let existingChart = await this.chartsService.getChartCheckExists({
+    let existingChart = await this.chartsService.getChartCheckExistsAndAccess({
       structId: bridge.structId,
-      chartId: chartId
+      chartId: chartId,
+      userMember: userMember,
+      user: user
     });
 
-    if (member.isAdmin === false && member.isEditor === false) {
+    if (userMember.isAdmin === false && userMember.isEditor === false) {
       this.chartsService.checkChartPath({
         userAlias: user.alias,
         filePath: existingChart.filePath

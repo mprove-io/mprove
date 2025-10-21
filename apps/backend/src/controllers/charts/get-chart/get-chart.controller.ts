@@ -17,7 +17,6 @@ import {
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -35,7 +34,6 @@ import { StructsService } from '~backend/services/db/structs.service';
 import { MalloyService } from '~backend/services/malloy.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -44,7 +42,6 @@ import {
   ToBackendGetChartRequest,
   ToBackendGetChartResponsePayload
 } from '~common/interfaces/to-backend/charts/to-backend-get-chart';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -110,21 +107,12 @@ export class GetChartController {
       projectId: projectId
     });
 
-    let chart = await this.chartsService.getChartCheckExists({
+    let chart = await this.chartsService.getChartCheckExistsAndAccess({
       structId: bridge.structId,
-      chartId: chartId
+      chartId: chartId,
+      userMember: userMember,
+      user: user
     });
-
-    let isAccessGranted = checkAccess({
-      member: userMember,
-      accessRoles: chart.accessRoles
-    });
-
-    if (isAccessGranted === false) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_CHART
-      });
-    }
 
     let chartMconfig = await this.mconfigsService.getMconfigCheckExists({
       structId: bridge.structId,

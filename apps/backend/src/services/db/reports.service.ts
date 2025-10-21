@@ -322,7 +322,7 @@ export class ReportsService {
       report.creatorId !== user.userId
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_DRAFT_REPORT_IS_AVAILABLE_ONLY_TO_ITS_CREATOR
+        message: ErEnum.BACKEND_REPORT_CREATOR_ID_MISMATCH
       });
     }
 

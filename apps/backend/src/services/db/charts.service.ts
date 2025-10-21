@@ -1,8 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ChartTab } from '~backend/drizzle/postgres/schema/_tabs';
+import {
+  ChartTab,
+  MemberTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
+import { checkAccess } from '~backend/functions/check-access';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
@@ -114,11 +119,13 @@ export class ChartsService {
     return chart;
   }
 
-  async getChartCheckExists(item: {
+  async getChartCheckExistsAndAccess(item: {
     chartId: string;
     structId: string;
+    userMember: MemberTab;
+    user: UserTab;
   }): Promise<ChartTab> {
-    let { chartId, structId } = item;
+    let { chartId, structId, userMember, user } = item;
 
     let chart = await this.db.drizzle.query.chartsTable
       .findFirst({
@@ -133,6 +140,25 @@ export class ChartsService {
       throw new ServerError({
         message: ErEnum.BACKEND_CHART_DOES_NOT_EXIST
       });
+    }
+
+    if (chart.draft === true && chart.creatorId !== user.userId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_CHART_CREATOR_ID_MISMATCH
+      });
+    }
+
+    if (chart.draft === false) {
+      let isAccessGranted = checkAccess({
+        member: userMember,
+        accessRoles: chart.accessRoles
+      });
+
+      if (isAccessGranted === false) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_FORBIDDEN_CHART
+        });
+      }
     }
 
     return chart;
