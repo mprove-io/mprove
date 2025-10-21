@@ -7,15 +7,6 @@ export function checkAccess(item: {
 }): boolean {
   let { member, accessRoles } = item;
 
-  // TODO: check edit draft Report and edit draft Dashboard controllers
-  // if (
-  //   (entity as ChartEnt | DashboardEnt | ReportEnt).draft === true &&
-  //   member.memberId !==
-  //     (entity as ChartEnt | DashboardEnt | ReportEnt).creatorId
-  // ) {
-  //   return false;
-  // }
-
   if (member.isAdmin === true || member.isEditor === true) {
     return true;
   }
