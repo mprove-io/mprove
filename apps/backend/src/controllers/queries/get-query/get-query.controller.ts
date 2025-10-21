@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle, seconds } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -117,52 +116,36 @@ export class GetQueryController {
       });
     }
 
-    let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.structId,
-      modelId: mconfig.modelId
-    });
-
-    let chart;
     if (isDefined(chartId)) {
-      chart = await this.chartsService.getChartCheckExistsAndAccess({
+      await this.chartsService.getChartCheckExistsAndAccess({
         structId: bridge.structId,
         chartId: chartId,
         userMember: userMember,
         user: user
       });
-    }
-
-    let dashboard;
-    if (isDefined(dashboardId)) {
-      dashboard = await this.dashboardsService.getDashboardCheckExists({
+    } else if (isDefined(dashboardId)) {
+      await this.dashboardsService.getDashboardCheckExistsAndAccess({
         structId: bridge.structId,
-        dashboardId: dashboardId
+        dashboardId: dashboardId,
+        userMember: userMember,
+        user: user
       });
-    }
-
-    let isAccessGranted = isDefined(chart)
-      ? checkAccess({
-          member: userMember,
-          accessRoles: chart.accessRoles
-        })
-      : isDefined(dashboard)
-        ? checkAccess({
-            member: userMember,
-            accessRoles: dashboard.accessRoles
-          })
-        : checkModelAccess({
-            member: userMember,
-            modelAccessRoles: model.accessRoles
-          });
-
-    if (isAccessGranted === false) {
-      throw new ServerError({
-        message: isDefined(chart)
-          ? ErEnum.BACKEND_FORBIDDEN_CHART
-          : isDefined(dashboard)
-            ? ErEnum.BACKEND_FORBIDDEN_DASHBOARD
-            : ErEnum.BACKEND_FORBIDDEN_MODEL
+    } else {
+      let model = await this.modelsService.getModelCheckExists({
+        structId: bridge.structId,
+        modelId: mconfig.modelId
       });
+
+      let isAccessGranted = checkModelAccess({
+        member: userMember,
+        modelAccessRoles: model.accessRoles
+      });
+
+      if (isAccessGranted === false) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_FORBIDDEN_MODEL
+        });
+      }
     }
 
     let query = await this.queriesService.getQueryCheckExists({

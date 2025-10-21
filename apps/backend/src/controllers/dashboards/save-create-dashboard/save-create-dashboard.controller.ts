@@ -198,7 +198,8 @@ export class SaveCreateDashboardController {
           dashboardId: fromDashboardId,
           structId: bridge.structId,
           apiUserMember: apiUserMember,
-          projectId: projectId
+          projectId: projectId,
+          user: user
         });
 
       let yTiles: TileX[] = [];

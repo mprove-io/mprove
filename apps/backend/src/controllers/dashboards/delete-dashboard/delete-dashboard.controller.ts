@@ -84,7 +84,7 @@ export class DeleteDashboardController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
@@ -98,7 +98,7 @@ export class DeleteDashboardController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -112,7 +112,7 @@ export class DeleteDashboardController {
       this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
 
     if (
-      member.isAdmin === false &&
+      userMember.isAdmin === false &&
       projectId === demoProjectId &&
       repoId === PROD_REPO_ID
     ) {
@@ -122,12 +122,14 @@ export class DeleteDashboardController {
     }
 
     let existingDashboard =
-      await this.dashboardsService.getDashboardCheckExists({
+      await this.dashboardsService.getDashboardCheckExistsAndAccess({
         structId: bridge.structId,
-        dashboardId: dashboardId
+        dashboardId: dashboardId,
+        userMember: userMember,
+        user: user
       });
 
-    if (member.isAdmin === false && member.isEditor === false) {
+    if (userMember.isAdmin === false && userMember.isEditor === false) {
       this.dashboardsService.checkDashboardPath({
         userAlias: user.alias,
         filePath: existingDashboard.filePath

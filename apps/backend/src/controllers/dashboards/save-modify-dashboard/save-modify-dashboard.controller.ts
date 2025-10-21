@@ -175,13 +175,17 @@ export class SaveModifyDashboardController {
         dashboardId: fromDashboardId,
         structId: bridge.structId,
         apiUserMember: apiUserMember,
-        projectId: projectId
+        projectId: projectId,
+        user: user
       });
 
-    let toDashboard = await this.dashboardsService.getDashboardCheckExists({
-      structId: bridge.structId,
-      dashboardId: toDashboardId
-    });
+    let toDashboard =
+      await this.dashboardsService.getDashboardCheckExistsAndAccess({
+        structId: bridge.structId,
+        dashboardId: toDashboardId,
+        userMember: userMember,
+        user: user
+      });
 
     if (userMember.isAdmin === false && userMember.isEditor === false) {
       this.dashboardsService.checkDashboardPath({
@@ -512,7 +516,8 @@ export class SaveModifyDashboardController {
         dashboardId: newDashboard.dashboardId,
         structId: bridge.structId,
         apiUserMember: apiUserMember,
-        projectId: projectId
+        projectId: projectId,
+        user: user
       });
 
     let newDashboardPart = await this.dashboardsService.getDashboardPart({

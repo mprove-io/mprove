@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray, or } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { DashboardTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import {
+  DashboardTab,
+  MemberTab,
+  UserTab
+} from '~backend/drizzle/postgres/schema/_tabs';
 import {
   DashboardEnt,
   dashboardsTable
@@ -197,11 +201,13 @@ export class DashboardsService {
     }
   }
 
-  async getDashboardCheckExists(item: {
+  async getDashboardCheckExistsAndAccess(item: {
     dashboardId: string;
     structId: string;
+    userMember: MemberTab | Member;
+    user: UserTab;
   }): Promise<DashboardTab> {
-    let { dashboardId, structId } = item;
+    let { dashboardId, structId, userMember, user } = item;
 
     let dashboard = await this.db.drizzle.query.dashboardsTable
       .findFirst({
@@ -218,6 +224,25 @@ export class DashboardsService {
       });
     }
 
+    if (dashboard.draft === true && dashboard.creatorId !== user.userId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_DASHBOARD_CREATOR_ID_MISMATCH
+      });
+    }
+
+    if (dashboard.draft === false) {
+      let isAccessGranted = checkAccess({
+        member: userMember,
+        accessRoles: dashboard.accessRoles
+      });
+
+      if (isAccessGranted === false) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD
+        });
+      }
+    }
+
     return dashboard;
   }
 
@@ -225,25 +250,17 @@ export class DashboardsService {
     dashboardId: string;
     structId: string;
     projectId: string;
+    user: UserTab;
     apiUserMember: Member; // do not use membersService inside dashboardsService (circular dep with blockmlService)
   }): Promise<DashboardX> {
-    let { projectId, dashboardId, structId, apiUserMember } = item;
+    let { projectId, dashboardId, structId, apiUserMember, user } = item;
 
-    let dashboard = await this.getDashboardCheckExists({
+    let dashboard = await this.getDashboardCheckExistsAndAccess({
       structId: structId,
-      dashboardId: dashboardId
+      dashboardId: dashboardId,
+      userMember: apiUserMember,
+      user: user
     });
-
-    let isAccessGranted = checkAccess({
-      member: apiUserMember,
-      accessRoles: dashboard.accessRoles
-    });
-
-    if (isAccessGranted === false) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD
-      });
-    }
 
     let dashboardX = this.getDashboardXUsingDashboardTab({
       dashboard: dashboard,

@@ -143,7 +143,8 @@ export class CreateDraftDashboardController {
         dashboardId: oldDashboardId,
         structId: bridge.structId,
         apiUserMember: apiUserMember,
-        projectId: projectId
+        projectId: projectId,
+        user: user
       });
 
     let yTiles: TileX[] = [];
@@ -454,7 +455,8 @@ export class CreateDraftDashboardController {
         dashboardId: newDashboard.dashboardId,
         projectId: projectId,
         structId: bridge.structId,
-        apiUserMember: apiUserMember
+        apiUserMember: apiUserMember,
+        user: user
       });
 
     let newDashboardPart = await this.dashboardsService.getDashboardPart({

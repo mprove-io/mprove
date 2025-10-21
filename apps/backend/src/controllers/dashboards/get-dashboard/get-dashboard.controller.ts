@@ -132,7 +132,8 @@ export class GetDashboardController {
         dashboardId: dashboardId,
         structId: bridge.structId,
         apiUserMember: apiUserMember,
-        projectId: projectId
+        projectId: projectId,
+        user: user
       });
 
     let newDashboardId = fromDashboardX.dashboardId;
