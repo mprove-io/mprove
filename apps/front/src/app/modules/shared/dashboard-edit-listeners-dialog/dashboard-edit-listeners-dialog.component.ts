@@ -116,7 +116,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      addFields: true,
       filterByModelIds: (this.dashboard as DashboardX2).tiles.map(
         tile => tile.modelId
       )

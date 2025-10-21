@@ -27,10 +27,6 @@ export class ToBackendGetModelsRequestPayload {
   @IsOptional()
   @IsString({ each: true })
   filterByModelIds?: string[];
-
-  @IsOptional()
-  @IsBoolean()
-  addFields?: boolean;
 }
 
 export class ToBackendGetModelsRequest extends ToBackendRequest {

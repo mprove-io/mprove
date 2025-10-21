@@ -124,7 +124,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
       isRepoProd: nav.isRepoProd,
       branchId: nav.branchId,
       envId: nav.envId,
-      addFields: true,
       filterByModelIds: this.reportRows.map(row => row.mconfig.modelId)
     };
 

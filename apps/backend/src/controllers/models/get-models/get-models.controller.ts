@@ -2,8 +2,8 @@ import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ModelTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -42,14 +42,8 @@ export class GetModelsController {
   async getModels(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetModelsRequest = request.body;
 
-    let {
-      projectId,
-      isRepoProd,
-      branchId,
-      envId,
-      filterByModelIds,
-      addFields
-    } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, filterByModelIds } =
+      reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -85,29 +79,11 @@ export class GetModelsController {
       where = [...where, inArray(modelsTable.modelId, filterByModelIds)];
     }
 
-    let models: ModelTab[] =
-      addFields === true
-        ? await this.db.drizzle.query.modelsTable
-            .findMany({
-              where: and(...where)
-            })
-            .then(xs => xs.map(x => this.tabService.modelEntToTab(x)))
-        : await this.db.drizzle
-            .select({
-              keyTag: modelsTable.keyTag,
-              structId: modelsTable.structId,
-              modelId: modelsTable.modelId,
-              type: modelsTable.type,
-              connectionId: modelsTable.connectionId,
-              connectionType: modelsTable.connectionType,
-              st: modelsTable.st,
-              lt: modelsTable.lt
-            })
-            .from(modelsTable)
-            .where(and(...where))
-            .then(xs =>
-              xs.map(x => this.tabService.modelEntToTab(x as ModelEnt))
-            );
+    let models = await this.db.drizzle.query.modelsTable
+      .findMany({
+        where: and(...where)
+      })
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
