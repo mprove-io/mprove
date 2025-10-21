@@ -137,12 +137,10 @@ export class SaveModifyReportController {
       envId: envId
     });
 
-    let fromReport = await this.reportsService.getReport({
+    let fromReport = await this.reportsService.getReportCheckExistsAndAccess({
       projectId: projectId,
       reportId: fromReportId,
       structId: bridge.structId,
-      isCheckExist: true,
-      isCheckAccess: true,
       user: user,
       userMember: userMember
     });

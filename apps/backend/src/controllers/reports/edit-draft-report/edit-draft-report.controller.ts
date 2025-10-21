@@ -98,12 +98,10 @@ export class EditDraftReportController {
       // skipMetrics: false
     });
 
-    let report = await this.reportsService.getReport({
+    let report = await this.reportsService.getReportCheckExistsAndAccess({
       projectId: projectId,
       reportId: reportId,
       structId: bridge.structId,
-      isCheckExist: true,
-      isCheckAccess: true,
       user: user,
       userMember: userMember
     });

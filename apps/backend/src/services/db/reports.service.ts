@@ -270,24 +270,14 @@ export class ReportsService {
     }
   }
 
-  async getReport(item: {
+  async getReportCheckExistsAndAccess(item: {
     projectId: string;
     reportId: string;
     structId: string;
     user: UserTab;
     userMember: MemberTab;
-    isCheckExist: boolean;
-    isCheckAccess: boolean;
   }) {
-    let {
-      projectId,
-      reportId,
-      structId,
-      isCheckExist,
-      isCheckAccess,
-      user,
-      userMember
-    } = item;
+    let { projectId, reportId, structId, user, userMember } = item;
 
     let chart = makeCopy(DEFAULT_CHART);
 
@@ -320,7 +310,7 @@ export class ReportsService {
             })
             .then(x => this.tabService.reportEntToTab(x));
 
-    if (isCheckExist === true && isUndefined(report)) {
+    if (isUndefined(report)) {
       throw new ServerError({
         message: ErEnum.BACKEND_REPORT_NOT_FOUND
       });
@@ -336,7 +326,7 @@ export class ReportsService {
       });
     }
 
-    if (isCheckAccess === true && report.draft === false) {
+    if (report.draft === false) {
       let isAccessGranted = checkAccess({
         member: userMember,
         accessRoles: report.accessRoles

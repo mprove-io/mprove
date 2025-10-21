@@ -119,19 +119,17 @@ export class GetReportController {
       // skipMetrics: false
     });
 
-    let report = await this.reportsService.getReport({
+    let report = await this.reportsService.getReportCheckExistsAndAccess({
       projectId: projectId,
       reportId: reportId,
       structId: bridge.structId,
-      isCheckExist: true,
-      isCheckAccess: true,
       user: user,
       userMember: userMember
     });
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
-    let repApi = await this.reportDataService.getReportData({
+    let apiReport = await this.reportDataService.getReportData({
       report: report,
       traceId: traceId,
       project: project,
@@ -149,7 +147,7 @@ export class GetReportController {
     user.ui = user.ui || makeCopy(DEFAULT_SRV_UI);
     user.ui.timezone = timezone;
     user.ui.timeSpec = timeSpec;
-    user.ui.timeRangeFraction = repApi.timeRangeFraction;
+    user.ui.timeRangeFraction = apiReport.timeRangeFraction;
 
     await retry(
       async () =>
@@ -169,7 +167,7 @@ export class GetReportController {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({ struct: struct }),
       userMember: apiUserMember,
-      report: repApi
+      report: apiReport
     };
 
     return payload;
