@@ -13,6 +13,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ChangeTypeEnum } from '~common/enums/change-type.enum';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { PanelEnum } from '~common/enums/panel.enum';
@@ -33,6 +34,7 @@ export class MetricNode {
   id: string;
   isTop: boolean;
   topLabel: string;
+  connectionType: ConnectionTypeEnum;
   partNodeLabel: string;
   partFieldLabel: string;
   timeLabel: string;
@@ -52,6 +54,15 @@ export class MetricsTreeComponent implements AfterViewInit {
   nodeClassMeasure = FieldClassEnum.Measure;
 
   metrics: ModelMetric[];
+
+  // showMetricsModelName = false;
+
+  // uiQuery$ = this.uiQuery.select().pipe(
+  //   tap(x => {
+  //     this.showMetricsModelName = x.showMetricsModelName;
+  //     this.cd.detectChanges();
+  //   })
+  // );
 
   metricNodes: MetricNode[] = [];
   metricNodes$ = combineLatest([
@@ -124,6 +135,7 @@ export class MetricsTreeComponent implements AfterViewInit {
         id: metric.metricId,
         isTop: false,
         topLabel: metric.topLabel,
+        connectionType: metric.connectionType,
         partNodeLabel: metric.partNodeLabel,
         partFieldLabel: metric.partFieldLabel,
         timeLabel: metric.timeLabel,
@@ -148,6 +160,7 @@ export class MetricsTreeComponent implements AfterViewInit {
           id: topNodeId,
           isTop: true,
           topLabel: metric.topLabel,
+          connectionType: metric.connectionType,
           partNodeLabel: metric.partNodeLabel,
           partFieldLabel: metric.partFieldLabel,
           timeLabel: metric.timeLabel,

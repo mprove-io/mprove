@@ -77,9 +77,15 @@
                           <span *ngIf="node.data.isField === false" class="">
                             <span class="">{{ node.data.topLabel }}</span>
 
-                            <!-- <span class="ml-3 font-semibold text-s400"
-                          >by {{ node.data.timeLabel }}</span
-                        > -->
+                            <!-- <span
+                              *ngIf="showMetricsModelName === true"
+                              class="ml-[5px]"
+                              >- {{ node.data.connectionType }}</span
+                            > -->
+
+                            <span class="ml-[5px]"
+                              >- {{ node.data.connectionType }}</span
+                            >
                           </span>
                         </span>
                       </div>
@@ -117,4 +123,5 @@
   </div>
 </div>
 
+<!-- <div *ngIf="uiQuery$ | async"></div> -->
 <div *ngIf="metricNodes$ | async"></div>
