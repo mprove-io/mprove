@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 
 @Component({
   standalone: false,
@@ -29,6 +30,9 @@ export class RowMetricLabelComponent {
 
   @Input()
   partNodeLabel: string;
+
+  @Input()
+  connectionType: ConnectionTypeEnum;
 
   @Input()
   partFieldLabel: string;
