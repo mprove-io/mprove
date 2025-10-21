@@ -172,7 +172,7 @@ export class SaveModifyReportController {
     });
 
     if (userMember.isAdmin === false && userMember.isEditor === false) {
-      this.reportsService.checkRepPath({
+      this.reportsService.checkReportPath({
         userAlias: user.alias,
         filePath: existingModReport.filePath
       });

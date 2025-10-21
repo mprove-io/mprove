@@ -180,7 +180,17 @@ export class DashboardsService {
   }
 
   checkDashboardPath(item: { filePath: string; userAlias: string }) {
-    if (item.filePath.split('/')[2] !== item.userAlias) {
+    let filePathArray = item.filePath.split('/');
+
+    let usersFolderIndex = filePathArray.findIndex(
+      x => x === MPROVE_USERS_FOLDER
+    );
+
+    if (
+      usersFolderIndex < 0 ||
+      filePathArray.length === usersFolderIndex + 1 ||
+      filePathArray[usersFolderIndex + 1] !== item.userAlias
+    ) {
       throw new ServerError({
         message: ErEnum.BACKEND_FORBIDDEN_DASHBOARD_PATH
       });

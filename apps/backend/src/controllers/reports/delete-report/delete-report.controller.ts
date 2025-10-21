@@ -116,7 +116,7 @@ export class DeleteReportController {
     });
 
     if (member.isAdmin === false && member.isEditor === false) {
-      this.reportsService.checkRepPath({
+      this.reportsService.checkReportPath({
         userAlias: user.alias,
         filePath: existingReport.filePath
       });
