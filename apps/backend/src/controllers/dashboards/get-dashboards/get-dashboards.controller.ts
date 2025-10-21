@@ -1,14 +1,9 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
-import { and, eq, or } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import {
-  DashboardEnt,
-  dashboardsTable
-} from '~backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -78,41 +73,9 @@ export class GetDashboardsController {
       envId: envId
     });
 
-    let dashboardParts = await this.db.drizzle
-      .select({
-        keyTag: dashboardsTable.keyTag,
-        dashboardId: dashboardsTable.dashboardId,
-        draft: dashboardsTable.draft,
-        creatorId: dashboardsTable.creatorId,
-        st: dashboardsTable.st
-        // lt: {},
-      })
-      .from(dashboardsTable)
-      .where(
-        and(
-          eq(dashboardsTable.structId, bridge.structId),
-          or(
-            eq(dashboardsTable.draft, false),
-            eq(dashboardsTable.creatorId, user.userId)
-          )
-        )
-      )
-      .then(xs =>
-        xs.map(x => this.tabService.dashboardEntToTab(x as DashboardEnt))
-      );
-
-    let dashboardPartsGrantedAccess = dashboardParts.filter(x =>
-      checkAccess({
-        member: userMember,
-        accessRoles: x.accessRoles
-      })
-    );
-
     let models = await this.db.drizzle.query.modelsTable
       .findMany({ where: eq(modelsTable.structId, bridge.structId) })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let apiModels = models.map(model =>
       this.modelsService.tabToApi({
@@ -123,6 +86,14 @@ export class GetDashboardsController {
         })
       })
     );
+
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let dashboardParts = await this.dashboardsService.getDashboardParts({
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember
+    });
 
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
@@ -136,12 +107,7 @@ export class GetDashboardsController {
       models: apiModels.sort((a, b) =>
         a.label > b.label ? 1 : b.label > a.label ? -1 : 0
       ),
-      dashboardParts: dashboardPartsGrantedAccess.map(x =>
-        this.dashboardsService.tabToDashboardPart({
-          dashboard: x,
-          member: apiUserMember
-        })
-      )
+      dashboardParts: dashboardParts
     };
 
     return payload;

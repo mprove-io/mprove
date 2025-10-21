@@ -507,13 +507,6 @@ export class SaveModifyDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let newDashboardParts = await this.dashboardsService.getDashboardParts({
-      newDashboard: newDashboard,
-      structId: bridge.structId,
-      user: user,
-      apiUserMember: apiUserMember
-    });
-
     let apiFinalDashboardX =
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: newDashboard.dashboardId,
@@ -522,10 +515,16 @@ export class SaveModifyDashboardController {
         projectId: projectId
       });
 
+    let newDashboardPart = await this.dashboardsService.getDashboardPart({
+      newDashboard: newDashboard,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendSaveModifyDashboardResponsePayload = {
-      newDashboardPart:
-        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined,
-      dashboard: apiFinalDashboardX
+      dashboard: apiFinalDashboardX,
+      newDashboardPart: newDashboardPart
     };
 
     return payload;

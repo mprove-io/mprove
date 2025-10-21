@@ -449,13 +449,6 @@ export class CreateDraftDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let newDashboardParts = await this.dashboardsService.getDashboardParts({
-      newDashboard: newDashboard,
-      structId: bridge.structId,
-      user: user,
-      apiUserMember: apiUserMember
-    });
-
     let newDashboardX =
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: newDashboard.dashboardId,
@@ -464,10 +457,16 @@ export class CreateDraftDashboardController {
         apiUserMember: apiUserMember
       });
 
+    let newDashboardPart = await this.dashboardsService.getDashboardPart({
+      newDashboard: newDashboard,
+      structId: bridge.structId,
+      user: user,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendCreateDraftDashboardResponsePayload = {
-      newDashboardPart:
-        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined,
-      dashboard: newDashboardX
+      dashboard: newDashboardX,
+      newDashboardPart: newDashboardPart
     };
 
     return payload;

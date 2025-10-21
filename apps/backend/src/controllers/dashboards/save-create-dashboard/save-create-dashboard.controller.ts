@@ -464,7 +464,7 @@ export class SaveCreateDashboardController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let newDashboardParts = await this.dashboardsService.getDashboardParts({
+    let newDashboardPart = await this.dashboardsService.getDashboardPart({
       newDashboard: newDashboard,
       structId: bridge.structId,
       user: user,
@@ -472,8 +472,7 @@ export class SaveCreateDashboardController {
     });
 
     let payload: ToBackendSaveCreateDashboardResponsePayload = {
-      newDashboardPart:
-        newDashboardParts.length > 0 ? newDashboardParts[0] : undefined
+      newDashboardPart: newDashboardPart
     };
 
     return payload;
