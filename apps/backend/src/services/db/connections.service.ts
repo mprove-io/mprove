@@ -205,7 +205,14 @@ export class ConnectionsService {
               googleCloudProject: options.storeGoogleApi.googleCloudProject,
               googleCloudClientEmail:
                 options.storeGoogleApi.googleCloudClientEmail,
-              googleAccessToken: options.storeGoogleApi.googleAccessToken
+              googleAccessToken:
+                isIncludePasswords === true
+                  ? options.storeGoogleApi.googleAccessToken
+                  : undefined,
+              googleAccessTokenExpiryDate:
+                isIncludePasswords === true
+                  ? options.storeGoogleApi.googleAccessTokenExpiryDate
+                  : undefined
             }
           : undefined
       },

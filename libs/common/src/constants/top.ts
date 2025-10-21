@@ -45,7 +45,8 @@ export const EMPTY_STORE_GOOGLE_API_OPTIONS: OptionsStoreGoogleApi = {
   serviceAccountCredentials: undefined,
   googleCloudProject: undefined,
   googleCloudClientEmail: undefined,
-  googleAccessToken: undefined
+  googleAccessToken: undefined,
+  googleAccessTokenExpiryDate: undefined
 };
 
 export const REPORT_ROW_DEFAULT_SHOW_CHART = false;

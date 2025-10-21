@@ -832,7 +832,8 @@ export class AppModule implements OnModuleInit {
               serviceAccountCredentials: googleApiTestCredentials,
               googleCloudProject: googleApiTestCredentials?.project_id,
               googleCloudClientEmail: googleApiTestCredentials?.client_email,
-              googleAccessToken: undefined
+              googleAccessToken: undefined,
+              googleAccessTokenExpiryDate: undefined
             }
           }
         });

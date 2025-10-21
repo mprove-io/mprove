@@ -535,6 +535,7 @@ export class EditConnectionDialogComponent implements OnInit {
           cType === ConnectionTypeEnum.GoogleApi
             ? {
                 googleAccessToken: undefined,
+                googleAccessTokenExpiryDate: undefined,
                 googleCloudProject: undefined,
                 googleCloudClientEmail: undefined,
                 serviceAccountCredentials: googleApiCredentials,

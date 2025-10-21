@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { ApiHeader } from './api-header';
 
 export class OptionsStoreGoogleApi {
@@ -30,4 +35,8 @@ export class OptionsStoreGoogleApi {
   @IsOptional()
   @IsString()
   googleAccessToken: string;
+
+  @IsOptional()
+  @IsNumber()
+  googleAccessTokenExpiryDate: number;
 }

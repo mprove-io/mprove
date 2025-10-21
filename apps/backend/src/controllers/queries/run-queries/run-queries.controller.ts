@@ -52,6 +52,7 @@ import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import {
   ToBackendRunQueriesRequest,
@@ -183,39 +184,52 @@ export class RunQueriesController {
     await forEachSeries(
       uniqueGoogleApiConnectionsWithAnyEnvId,
       async connection => {
-        // console.log('googleApiConnections start');
-        // let tsStart = Date.now();
+        let currentTimeMs = Date.now();
 
-        let authClient = new JWT({
-          email:
-            connection.options.storeGoogleApi.serviceAccountCredentials
-              .client_email,
-          key: connection.options.storeGoogleApi.serviceAccountCredentials
-            .private_key,
-          scopes: connection.options.storeGoogleApi.googleAuthScopes
-        });
+        if (
+          isUndefined(
+            connection.options.storeGoogleApi.googleAccessTokenExpiryDate
+          ) ||
+          connection.options.storeGoogleApi.googleAccessTokenExpiryDate <
+            currentTimeMs + 60 * 1000
+        ) {
+          // console.log('googleApiConnections start');
+          // let tsStart = Date.now();
 
-        let tokens = await authClient.authorize();
+          let authClient = new JWT({
+            email:
+              connection.options.storeGoogleApi.serviceAccountCredentials
+                .client_email,
+            key: connection.options.storeGoogleApi.serviceAccountCredentials
+              .private_key,
+            scopes: connection.options.storeGoogleApi.googleAuthScopes
+          });
 
-        connection.options.storeGoogleApi.googleAccessToken =
-          tokens.access_token;
+          let tokens = await authClient.authorize();
 
-        // console.log(Date.now() - tsStart);
-        // console.log('googleApiConnections end');
+          connection.options.storeGoogleApi.googleAccessToken =
+            tokens.access_token;
 
-        await retry(
-          async () =>
-            await this.db.drizzle.transaction(
-              async tx =>
-                await this.db.packer.write({
-                  tx: tx,
-                  insertOrUpdate: {
-                    connections: [connection]
-                  }
-                })
-            ),
-          getRetryOption(this.cs, this.logger)
-        );
+          connection.options.storeGoogleApi.googleAccessTokenExpiryDate =
+            tokens.expiry_date; // ms
+
+          // console.log(Date.now() - tsStart);
+          // console.log('googleApiConnections end');
+
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      connections: [connection]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+        }
       }
     );
 
