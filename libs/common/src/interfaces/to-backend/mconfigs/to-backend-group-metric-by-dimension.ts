@@ -34,18 +34,6 @@ export class ToBackendGroupMetricByDimensionRequestPayload {
   @IsString()
   groupByFieldId: string;
 
-  // @IsString()
-  // metricId: string;
-
-  // @ValidateNested()
-  // @Type(() => Mconfig)
-  // mconfig: Mconfig;
-
-  // @IsOptional()
-  // @ValidateNested()
-  // @Type(() => QueryOperation)
-  // queryOperations: QueryOperation[];
-
   @IsOptional()
   @IsNumber()
   cellMetricsStartDateMs: number;
