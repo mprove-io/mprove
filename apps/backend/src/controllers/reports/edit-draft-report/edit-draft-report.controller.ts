@@ -9,6 +9,7 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
@@ -30,6 +31,7 @@ import {
 export class EditDraftReportController {
   constructor(
     private tabService: TabService,
+    private modelsService: ModelsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
@@ -105,6 +107,19 @@ export class EditDraftReportController {
       user: user,
       userMember: userMember
     });
+
+    if (
+      isDefined(rowChange.metricId) &&
+      report.rows.map(row => row.metricId).indexOf(rowChange.metricId) < 0
+    ) {
+      let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
+
+      await this.modelsService.getModelCheckExistsAndAccess({
+        structId: bridge.structId,
+        modelId: metric.modelId,
+        userMember: userMember
+      });
+    }
 
     if (isDefined(newReportFields)) {
       report.rows
