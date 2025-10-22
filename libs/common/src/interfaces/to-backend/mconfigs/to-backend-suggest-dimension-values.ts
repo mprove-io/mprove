@@ -7,13 +7,11 @@ import {
   ValidateNested
 } from 'class-validator';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { QueryOperation } from '~common/interfaces/backend/query-operation';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Query } from '~common/interfaces/blockml/query';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
-export class ToBackendCreateTempMconfigAndQueryRequestPayload {
+export class ToBackendSuggestDimensionValuesRequestPayload {
   @IsString()
   projectId: string;
 
@@ -26,14 +24,18 @@ export class ToBackendCreateTempMconfigAndQueryRequestPayload {
   @IsString()
   envId: string;
 
-  @ValidateNested()
-  @Type(() => Mconfig)
-  mconfig: Mconfig;
+  @IsString()
+  structId: string;
+
+  @IsString()
+  modelId: string;
+
+  @IsString()
+  fieldId: string;
 
   @IsOptional()
-  @ValidateNested()
-  @Type(() => QueryOperation)
-  queryOperations: QueryOperation[];
+  @IsString()
+  term: string;
 
   @IsOptional()
   @IsNumber()
@@ -44,13 +46,13 @@ export class ToBackendCreateTempMconfigAndQueryRequestPayload {
   cellMetricsEndDateMs: number;
 }
 
-export class ToBackendCreateTempMconfigAndQueryRequest extends ToBackendRequest {
+export class ToBackendSuggestDimensionValuesRequest extends ToBackendRequest {
   @ValidateNested()
-  @Type(() => ToBackendCreateTempMconfigAndQueryRequestPayload)
-  payload: ToBackendCreateTempMconfigAndQueryRequestPayload;
+  @Type(() => ToBackendSuggestDimensionValuesRequestPayload)
+  payload: ToBackendSuggestDimensionValuesRequestPayload;
 }
 
-export class ToBackendCreateTempMconfigAndQueryResponsePayload {
+export class ToBackendSuggestDimensionValuesResponsePayload {
   @ValidateNested()
   @Type(() => MconfigX)
   mconfig: MconfigX;
@@ -60,8 +62,8 @@ export class ToBackendCreateTempMconfigAndQueryResponsePayload {
   query: Query;
 }
 
-export class ToBackendCreateTempMconfigAndQueryResponse extends MyResponse {
+export class ToBackendSuggestDimensionValuesResponse extends MyResponse {
   @ValidateNested()
-  @Type(() => ToBackendCreateTempMconfigAndQueryResponsePayload)
-  payload: ToBackendCreateTempMconfigAndQueryResponsePayload;
+  @Type(() => ToBackendSuggestDimensionValuesResponsePayload)
+  payload: ToBackendSuggestDimensionValuesResponsePayload;
 }

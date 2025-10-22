@@ -31,17 +31,28 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { MalloyService } from '~backend/services/malloy.service';
+import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
-import { PROD_REPO_ID } from '~common/constants/top';
+import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { PROD_REPO_ID, UTC } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
+import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
+import { makeCopy } from '~common/functions/make-copy';
+import { makeId } from '~common/functions/make-id';
+import { QueryOperation } from '~common/interfaces/backend/query-operation';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import {
-  ToBackendCreateTempMconfigAndQueryRequest,
-  ToBackendCreateTempMconfigAndQueryResponsePayload
-} from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
+  ToBackendSuggestDimensionValuesRequest,
+  ToBackendSuggestDimensionValuesResponsePayload
+} from '~common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
 import { ServerError } from '~common/models/server-error';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
@@ -50,9 +61,10 @@ let retry = require('async-retry');
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class CreateTempMconfigAndQueryController {
+export class SuggestDimensionValuesController {
   constructor(
     private tabService: TabService,
+    private parentService: ParentService,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private membersService: MembersService,
@@ -68,23 +80,25 @@ export class CreateTempMconfigAndQueryController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery)
-  async createTempMconfigAndQuery(
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSuggestDimensionValues)
+  async suggestDimensionValues(
     @AttachUser() user: UserTab,
     @Req() request: any
   ) {
-    let reqValid: ToBackendCreateTempMconfigAndQueryRequest = request.body;
+    let reqValid: ToBackendSuggestDimensionValuesRequest = request.body;
 
     let { traceId } = reqValid.info;
     let {
-      mconfig: apiMconfig,
       projectId,
       isRepoProd,
       branchId,
       envId,
+      structId,
+      modelId,
+      fieldId,
+      term,
       cellMetricsStartDateMs,
-      cellMetricsEndDateMs,
-      queryOperations
+      cellMetricsEndDateMs
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
@@ -117,23 +131,148 @@ export class CreateTempMconfigAndQueryController {
       envId: envId
     });
 
+    // let oldMconfig = await this.mconfigsService.getMconfigCheckExists({
+    //   mconfigId: mconfigId,
+    //   structId: bridge.structId
+    // });
+
+    // await this.parentService.checkAccess({
+    //   mconfig: oldMconfig,
+    //   user: user,
+    //   userMember: userMember,
+    //   structId: bridge.structId,
+    //   projectId: projectId
+    // });
+
+    // if (oldMconfig.structId !== bridge.structId) {
+    //   throw new ServerError({
+    //     message: ErEnum.BACKEND_STRUCT_ID_CHANGED
+    //   });
+    // }
+
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
     });
 
-    if (apiMconfig.structId !== bridge.structId) {
+    if (structId !== bridge.structId) {
       throw new ServerError({
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    // TODO: check model access
-    let model = await this.modelsService.getModelCheckExistsAndAccess({
+    // user can get suggest fields without model access - OK
+    let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
-      modelId: apiMconfig.modelId,
-      userMember: userMember
+      modelId: modelId
     });
+
+    // let apiMconfig = this.mconfigsService.tabToApi({
+    //   mconfig: oldMconfig,
+    //   modelFields: model.fields
+    // });
+
+    let apiMconfig: Mconfig;
+
+    let queryOperations: QueryOperation[];
+
+    if (model.type === ModelTypeEnum.Store) {
+      apiMconfig = {
+        structId: bridge.structId,
+        mconfigId: makeId(),
+        queryId: makeId(),
+        modelId: modelId,
+        modelType: ModelTypeEnum.Store,
+        parentType: MconfigParentTypeEnum.SuggestDimension,
+        parentId: undefined,
+        dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
+        storePart: undefined,
+        modelLabel: model.label,
+        modelFilePath: model.filePath,
+        malloyQueryStable: undefined,
+        malloyQueryExtra: undefined,
+        compiledQuery: undefined,
+        select: [fieldId],
+        sortings: [],
+        sorts: `${fieldId}`,
+        timezone: UTC,
+        limit: 500,
+        filters: isDefinedAndNotEmpty(term)
+          ? [
+              {
+                fieldId: fieldId,
+                fractions: [
+                  {
+                    brick: `%${term}%`,
+                    type: FractionTypeEnum.StringContains,
+                    operator: FractionOperatorEnum.Or
+                  }
+                ]
+              }
+            ]
+          : [],
+        chart: makeCopy(DEFAULT_CHART),
+        serverTs: 1
+      };
+    } else if (model.type === ModelTypeEnum.Malloy) {
+      apiMconfig = {
+        structId: bridge.structId,
+        mconfigId: makeId(),
+        queryId: makeId(),
+        modelId: modelId,
+        modelType: ModelTypeEnum.Malloy,
+        parentType: MconfigParentTypeEnum.SuggestDimension,
+        parentId: undefined,
+        dateRangeIncludesRightSide: undefined,
+        storePart: undefined,
+        modelLabel: model.label,
+        modelFilePath: model.filePath,
+        malloyQueryStable: undefined,
+        malloyQueryExtra: undefined,
+        compiledQuery: undefined,
+        select: [],
+        sortings: [],
+        sorts: undefined,
+        timezone: UTC,
+        limit: 500,
+        filters: [],
+        chart: makeCopy(DEFAULT_CHART),
+        serverTs: 1
+      };
+
+      let queryOperation1: QueryOperation = {
+        type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+        fieldId: fieldId,
+        sortFieldId: fieldId,
+        desc: false,
+        timezone: apiMconfig.timezone
+      };
+
+      let queryOperation2: QueryOperation = isDefinedAndNotEmpty(term)
+        ? {
+            type: QueryOperationTypeEnum.WhereOrHaving,
+            timezone: apiMconfig.timezone,
+            filters: [
+              {
+                fieldId: fieldId,
+                fractions: [
+                  {
+                    brick: `f\`%${term}%\``,
+                    parentBrick: `f\`%${term}%\``,
+                    type: FractionTypeEnum.StringContains,
+                    operator: FractionOperatorEnum.Or,
+                    stringValue: term
+                  }
+                ]
+              }
+            ]
+          }
+        : undefined;
+
+      queryOperations = isDefined(queryOperation2)
+        ? [queryOperation1, queryOperation2]
+        : [queryOperation1];
+    }
 
     let newMconfig: MconfigTab;
     let newQuery: QueryTab;
@@ -211,7 +350,7 @@ export class CreateTempMconfigAndQueryController {
       })
       .then(x => this.tabService.queryEntToTab(x));
 
-    let payload: ToBackendCreateTempMconfigAndQueryResponsePayload = {
+    let payload: ToBackendSuggestDimensionValuesResponsePayload = {
       mconfig: this.mconfigsService.tabToApi({
         mconfig: newMconfig,
         modelFields: model.fields

@@ -75,6 +75,8 @@
           <m-fraction
             [suggestModelDimension]="filter.field.suggestModelDimension"
             [structId]="mconfig.structId"
+            [reportId]="report.reportId"
+            [rowId]="reportSelectedNode?.data?.rowId"
             [fieldResult]="filter.field.result"
             [fieldTimeframe]="filter.field.timeframe"
             [storeContent]="getStoreContent()"

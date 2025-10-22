@@ -30,6 +30,10 @@
       *ngSwitchCase="fieldResultEnum.String"
       [suggestModelDimension]="suggestModelDimension"
       [structId]="structId"
+      [chartId]="chartId"
+      [dashboardId]="dashboardId"
+      [reportId]="reportId"
+      [rowId]="rowId"
       [fraction]="fraction"
       [isFirst]="isFirst"
       [fractionIndex]="fractionIndex"
@@ -137,6 +141,12 @@
 
       <m-store-fraction-input
         *ngIf="fractionControl.controlClass === controlClassInput"
+        [suggestModelDimension]="suggestModelDimension"
+        [structId]="structId"
+        [chartId]="chartId"
+        [dashboardId]="dashboardId"
+        [reportId]="reportId"
+        [rowId]="rowId"
         [fraction]="fraction"
         [isFirst]="isFirst"
         [fractionIndex]="fractionIndex"

@@ -21,35 +21,23 @@ import {
   take,
   tap
 } from 'rxjs';
-import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
-import {
-  DOUBLE_UNDERSCORE,
-  MALLOY_FILTER_ANY,
-  UTC
-} from '~common/constants/top';
+import { DOUBLE_UNDERSCORE, MALLOY_FILTER_ANY } from '~common/constants/top';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
-import { makeCopy } from '~common/functions/make-copy';
-import { makeId } from '~common/functions/make-id';
 import { sleep } from '~common/functions/sleep';
-import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import { Fraction } from '~common/interfaces/blockml/fraction';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 import {
-  ToBackendCreateTempMconfigAndQueryRequestPayload,
-  ToBackendCreateTempMconfigAndQueryResponse
-} from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
+  ToBackendSuggestDimensionValuesRequestPayload,
+  ToBackendSuggestDimensionValuesResponse
+} from '~common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
 import {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
@@ -90,6 +78,10 @@ export class FractionStringComponent implements OnInit, OnDestroy {
 
   @Input() suggestModelDimension: string;
   @Input() structId: string;
+  @Input() chartId: string;
+  @Input() dashboardId: string;
+  @Input() reportId: string;
+  @Input() rowId: string;
 
   @Input() isDisabled: boolean;
   @Input() fraction: Fraction;
@@ -234,88 +226,90 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               this.loading = true;
               this.cd.detectChanges();
 
-              let newMconfig: Mconfig = {
-                structId: this.structId,
-                mconfigId: makeId(),
-                queryId: makeId(),
-                modelId: modelId,
-                modelType: ModelTypeEnum.Malloy,
-                parentType: MconfigParentTypeEnum.SuggestDimension,
-                parentId: undefined,
-                dateRangeIncludesRightSide: undefined,
-                storePart: undefined,
-                modelLabel: 'empty',
-                modelFilePath: undefined,
-                malloyQueryStable: undefined,
-                malloyQueryExtra: undefined,
-                compiledQuery: undefined,
-                select: [],
-                // unsafeSelect: [],
-                // warnSelect: [],
-                // joinAggregations: [],
-                sortings: [],
-                sorts: undefined,
-                timezone: UTC,
-                limit: 500,
-                filters: [],
-                chart: makeCopy(DEFAULT_CHART),
-                serverTs: 1
-              };
+              // let newMconfig: Mconfig = {
+              //   structId: this.structId,
+              //   mconfigId: makeId(),
+              //   queryId: makeId(),
+              //   modelId: modelId,
+              //   modelType: ModelTypeEnum.Malloy,
+              //   parentType: MconfigParentTypeEnum.SuggestDimension,
+              //   parentId: undefined,
+              //   dateRangeIncludesRightSide: undefined,
+              //   storePart: undefined,
+              //   modelLabel: 'empty',
+              //   modelFilePath: undefined,
+              //   malloyQueryStable: undefined,
+              //   malloyQueryExtra: undefined,
+              //   compiledQuery: undefined,
+              //   select: [],
+              //   // unsafeSelect: [],
+              //   // warnSelect: [],
+              //   // joinAggregations: [],
+              //   sortings: [],
+              //   sorts: undefined,
+              //   timezone: UTC,
+              //   limit: 500,
+              //   filters: [],
+              //   chart: makeCopy(DEFAULT_CHART),
+              //   serverTs: 1
+              // };
+
+              // let query;
+
+              // let queryOperation1: QueryOperation = {
+              //   type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,
+              //   fieldId: fieldId,
+              //   sortFieldId: fieldId,
+              //   desc: false,
+              //   timezone: newMconfig.timezone
+              // };
+
+              // let queryOperation2: QueryOperation = {
+              //   type: QueryOperationTypeEnum.WhereOrHaving,
+              //   timezone: newMconfig.timezone,
+              //   filters: [
+              //     {
+              //       fieldId: fieldId,
+              //       fractions: [
+              //         {
+              //           brick: `f\`%${term}%\``,
+              //           parentBrick: `f\`%${term}%\``,
+              //           type: FractionTypeEnum.StringContains,
+              //           operator: FractionOperatorEnum.Or,
+              //           stringValue: term
+              //         }
+              //       ]
+              //     }
+              //   ]
+              // };
+
+              // let queryOperations: QueryOperation[] = isDefined(queryOperation2)
+              //   ? [queryOperation1, queryOperation2]
+              //   : [queryOperation1];
 
               let nav = this.navQuery.getValue();
 
-              let query;
-
-              let queryOperation1: QueryOperation = {
-                type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-                fieldId: fieldId,
-                sortFieldId: fieldId,
-                desc: false,
-                timezone: newMconfig.timezone
-              };
-
-              let queryOperation2: QueryOperation = {
-                type: QueryOperationTypeEnum.WhereOrHaving,
-                timezone: newMconfig.timezone,
-                filters: [
-                  {
-                    fieldId: fieldId,
-                    fractions: [
-                      {
-                        brick: `f\`%${term}%\``,
-                        parentBrick: `f\`%${term}%\``,
-                        type: FractionTypeEnum.StringContains,
-                        operator: FractionOperatorEnum.Or,
-                        stringValue: term
-                      }
-                    ]
-                  }
-                ]
-              };
-
-              let queryOperations: QueryOperation[] = isDefined(queryOperation2)
-                ? [queryOperation1, queryOperation2]
-                : [queryOperation1];
-
-              let payload: ToBackendCreateTempMconfigAndQueryRequestPayload = {
+              let payload: ToBackendSuggestDimensionValuesRequestPayload = {
                 projectId: nav.projectId,
                 isRepoProd: nav.isRepoProd,
                 branchId: nav.branchId,
                 envId: nav.envId,
-                mconfig: newMconfig,
+                structId: this.structId,
+                modelId: modelId,
+                fieldId: fieldId,
+                term: term,
                 cellMetricsStartDateMs: undefined,
-                cellMetricsEndDateMs: undefined,
-                queryOperations: queryOperations
+                cellMetricsEndDateMs: undefined
               };
 
               let q1Resp = await this.apiService
                 .req({
                   pathInfoName:
-                    ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery,
+                    ToBackendRequestInfoNameEnum.ToBackendSuggestDimensionValues,
                   payload: payload
                 })
                 .pipe(
-                  tap((resp: ToBackendCreateTempMconfigAndQueryResponse) => {
+                  tap((resp: ToBackendSuggestDimensionValuesResponse) => {
                     if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
                       return resp;
                     }

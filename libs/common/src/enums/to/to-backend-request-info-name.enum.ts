@@ -124,7 +124,7 @@ export enum ToBackendRequestInfoNameEnum {
   //
   ToBackendDuplicateMconfigAndQuery = 'api/ToBackendDuplicateMconfigAndQuery',
   ToBackendGroupMetricByDimension = 'api/ToBackendGroupMetricByDimension',
-  ToBackendCreateTempMconfigAndQuery = 'api/ToBackendCreateTempMconfigAndQuery',
+  ToBackendSuggestDimensionValues = 'api/ToBackendSuggestDimensionValues',
   //
   ToBackendGetQueries = 'api/ToBackendGetQueries',
   ToBackendGetQuery = 'api/ToBackendGetQuery',

@@ -86,9 +86,14 @@ export class FractionComponent {
   controlClassSwitch = ControlClassEnum.Switch;
   controlClassDatePicker = ControlClassEnum.DatePicker;
 
+  @Input() storeContent: FileStore;
+
   @Input() suggestModelDimension: string;
   @Input() structId: string;
-  @Input() storeContent: FileStore;
+  @Input() chartId: string;
+  @Input() dashboardId: string;
+  @Input() reportId: string;
+  @Input() rowId: string;
 
   @Input() metricsStartDateYYYYMMDD: string;
   @Input() metricsEndDateYYYYMMDD: string;

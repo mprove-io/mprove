@@ -21,13 +21,8 @@ import {
   take,
   tap
 } from 'rxjs';
-import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
-import { UTC } from '~common/constants/top';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -35,16 +30,14 @@ import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
-import { makeId } from '~common/functions/make-id';
 import { sleep } from '~common/functions/sleep';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 import {
-  ToBackendCreateTempMconfigAndQueryRequestPayload,
-  ToBackendCreateTempMconfigAndQueryResponse
-} from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
+  ToBackendSuggestDimensionValuesRequestPayload,
+  ToBackendSuggestDimensionValuesResponse
+} from '~common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
 import {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
@@ -77,6 +70,15 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
   fractionTypeEnum = FractionTypeEnum;
   fieldClassEnum = FieldClassEnum;
 
+  isStoreSuggestEnabled = false; // experimental
+
+  @Input() suggestModelDimension: string;
+  @Input() structId: string;
+  @Input() chartId: string;
+  @Input() dashboardId: string;
+  @Input() reportId: string;
+  @Input() rowId: string;
+
   @Input() fraction: Fraction;
   @Input() isFirst: boolean;
   @Input() fractionIndex: number;
@@ -84,9 +86,6 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
   @Input() fractionControl: FractionControl;
 
   @Output() fractionUpdate = new EventEmitter<EventFractionUpdate>();
-
-  @Input() suggestModelDimension: string;
-  @Input() structId: string;
 
   fractionForm: FormGroup;
 
@@ -126,6 +125,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
 
   onOpenSelect() {
     if (
+      this.isStoreSuggestEnabled === true &&
       isDefined(this.suggestModelDimension) &&
       (this.fraction.type === FractionTypeEnum.StringIsEqualTo ||
         this.fraction.type === FractionTypeEnum.StringIsNotEqualTo)
@@ -146,67 +146,70 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
               this.loading = true;
               this.cd.detectChanges();
 
-              let newMconfig: Mconfig = {
-                structId: this.structId,
-                mconfigId: makeId(),
-                queryId: makeId(),
-                modelId: modelId,
-                modelType: ModelTypeEnum.Store,
-                parentType: MconfigParentTypeEnum.SuggestDimension,
-                parentId: undefined,
-                // isStoreModel:
-                //   this.fraction.type === FractionTypeEnum.StoreFraction,
-                dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
-                storePart: undefined,
-                modelLabel: 'empty',
-                modelFilePath: undefined,
-                malloyQueryStable: undefined,
-                malloyQueryExtra: undefined,
-                compiledQuery: undefined,
-                select: [fieldId],
-                // unsafeSelect: [],
-                // warnSelect: [],
-                // joinAggregations: [],
-                sortings: [],
-                sorts: `${fieldId}`,
-                timezone: UTC,
-                limit: 500,
-                filters: isDefinedAndNotEmpty(term)
-                  ? [
-                      {
-                        fieldId: fieldId,
-                        fractions: [
-                          {
-                            brick: `%${term}%`,
-                            type: FractionTypeEnum.StringContains,
-                            operator: FractionOperatorEnum.Or
-                          }
-                        ]
-                      }
-                    ]
-                  : [],
-                chart: makeCopy(DEFAULT_CHART),
-                serverTs: 1
-              };
+              // let newMconfig: Mconfig = {
+              //   structId: this.structId,
+              //   mconfigId: makeId(),
+              //   queryId: makeId(),
+              //   modelId: modelId,
+              //   modelType: ModelTypeEnum.Store,
+              //   parentType: MconfigParentTypeEnum.SuggestDimension,
+              //   parentId: undefined,
+              //   // isStoreModel:
+              //   //   this.fraction.type === FractionTypeEnum.StoreFraction,
+              //   dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
+              //   storePart: undefined,
+              //   modelLabel: 'empty',
+              //   modelFilePath: undefined,
+              //   malloyQueryStable: undefined,
+              //   malloyQueryExtra: undefined,
+              //   compiledQuery: undefined,
+              //   select: [fieldId],
+              //   // unsafeSelect: [],
+              //   // warnSelect: [],
+              //   // joinAggregations: [],
+              //   sortings: [],
+              //   sorts: `${fieldId}`,
+              //   timezone: UTC,
+              //   limit: 500,
+              //   filters: isDefinedAndNotEmpty(term)
+              //     ? [
+              //         {
+              //           fieldId: fieldId,
+              //           fractions: [
+              //             {
+              //               brick: `%${term}%`,
+              //               type: FractionTypeEnum.StringContains,
+              //               operator: FractionOperatorEnum.Or
+              //             }
+              //           ]
+              //         }
+              //       ]
+              //     : [],
+              //   chart: makeCopy(DEFAULT_CHART),
+              //   serverTs: 1
+              // };
 
               let nav = this.navQuery.getValue();
 
               let q1Resp = await this.apiService
                 .req({
                   pathInfoName:
-                    ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery,
+                    ToBackendRequestInfoNameEnum.ToBackendSuggestDimensionValues,
                   payload: {
                     projectId: nav.projectId,
                     isRepoProd: nav.isRepoProd,
                     branchId: nav.branchId,
                     envId: nav.envId,
-                    mconfig: newMconfig,
+                    structId: this.structId,
+                    modelId: modelId,
+                    fieldId: fieldId,
+                    term: term,
                     cellMetricsStartDateMs: undefined,
                     cellMetricsEndDateMs: undefined
-                  } as ToBackendCreateTempMconfigAndQueryRequestPayload
+                  } as ToBackendSuggestDimensionValuesRequestPayload
                 })
                 .pipe(
-                  tap((resp: ToBackendCreateTempMconfigAndQueryResponse) => {
+                  tap((resp: ToBackendSuggestDimensionValuesResponse) => {
                     if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
                       return resp;
                     }
