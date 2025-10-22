@@ -46,6 +46,7 @@ import { CreateFolderController } from './controllers/folders/create-folder/crea
 import { DeleteFolderController } from './controllers/folders/delete-folder/delete-folder.controller';
 import { CreateTempMconfigAndQueryController } from './controllers/mconfigs/create-temp-mconfig-and-query/create-temp-mconfig-and-query.controller';
 import { DuplicateMconfigAndQueryController } from './controllers/mconfigs/duplicate-mconfig-and-query/duplicate-mconfig-and-query.controller';
+import { GroupMetricByDimensionController } from './controllers/mconfigs/group-metric-by-dimension/group-metric-by-dimension.controller';
 import { CreateMemberController } from './controllers/members/create-member/create-member.controller';
 import { DeleteMemberController } from './controllers/members/delete-member/delete-member.controller';
 import { EditMemberController } from './controllers/members/edit-member/edit-member.controller';
@@ -135,8 +136,9 @@ export const appControllers = [
   CreateFolderController,
   DeleteFolderController,
 
-  CreateTempMconfigAndQueryController,
   DuplicateMconfigAndQueryController,
+  GroupMetricByDimensionController,
+  CreateTempMconfigAndQueryController,
 
   CreateMemberController,
   DeleteMemberController,

@@ -187,9 +187,6 @@ export class SaveModifyChartController {
       mconfigId: existingChart.tiles[0].mconfigId
     });
 
-    // console.log('saveModifyChart mconfigEnt.select');
-    // console.log(mconfigEnt.select);
-
     // user can save modify chart without model access - OK
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,

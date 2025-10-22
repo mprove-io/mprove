@@ -32,23 +32,18 @@ import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { makeCopy } from '~common/functions/make-copy';
 import { makeId } from '~common/functions/make-id';
-import { setChartFields } from '~common/functions/set-chart-fields';
-import { setChartTitleOnSelectChange } from '~common/functions/set-chart-title-on-select-change';
-import { sortChartFieldsOnSelectChange } from '~common/functions/sort-chart-fields-on-select-change';
-import { sortFieldsOnSelectChange } from '~common/functions/sort-fields-on-select-change';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import { Model } from '~common/interfaces/blockml/model';
 import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
 import { Query } from '~common/interfaces/blockml/query';
 import {
-  ToBackendCreateTempMconfigAndQueryRequestPayload,
-  ToBackendCreateTempMconfigAndQueryResponse
-} from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
-import {
   ToBackendDuplicateMconfigAndQueryRequestPayload,
   ToBackendDuplicateMconfigAndQueryResponse
 } from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+import {
+  ToBackendGroupMetricByDimensionRequestPayload,
+  ToBackendGroupMetricByDimensionResponse
+} from '~common/interfaces/to-backend/mconfigs/to-backend-group-metric-by-dimension';
 import {
   ToBackendGetModelRequestPayload,
   ToBackendGetModelResponse
@@ -529,70 +524,19 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   groupMetricByChange() {
     (document.activeElement as HTMLElement).blur();
 
-    let metric = this.structQuery
-      .getValue()
-      .metrics.find(y => y.metricId === this.ref.data.metricId);
-
     let nav = this.navQuery.getValue();
 
     let groupByFieldId = this.groupByFieldForm.controls['groupByField'].value;
 
     if (isDefined(groupByFieldId)) {
-      let newMconfigId = makeId();
-      let newQueryId = makeId();
-
-      let mconfigCopy = makeCopy(this.emptyGroupMconfig);
-
-      let newMconfig = Object.assign(mconfigCopy, <MconfigX>{
-        mconfigId: newMconfigId,
-        queryId: newQueryId,
-        serverTs: 1
-      });
-
-      let queryOperation: QueryOperation;
-
-      if (metric.modelType === ModelTypeEnum.Malloy) {
-        let { queryOperationType, sortFieldId, desc } =
-          sortFieldsOnSelectChange({
-            mconfig: newMconfig,
-            selectFieldId: groupByFieldId,
-            modelFields: this.model.fields,
-            mconfigFields: this.emptyGroupMconfig.fields
-          });
-
-        queryOperation = {
-          type: queryOperationType,
-          fieldId: groupByFieldId,
-          sortFieldId: sortFieldId,
-          desc: desc,
-          timezone: newMconfig.timezone
-        };
-      } else {
-        newMconfig.select = [...newMconfig.select, groupByFieldId];
-
-        newMconfig = setChartTitleOnSelectChange({
-          mconfig: newMconfig,
-          fields: this.model.fields
-        });
-
-        newMconfig = setChartFields({
-          mconfig: newMconfig,
-          fields: this.model.fields
-        });
-
-        newMconfig = sortChartFieldsOnSelectChange({
-          mconfig: newMconfig,
-          fields: this.model.fields
-        });
-      }
-
-      let payload: ToBackendCreateTempMconfigAndQueryRequestPayload = {
+      let payload: ToBackendGroupMetricByDimensionRequestPayload = {
         projectId: nav.projectId,
         isRepoProd: nav.isRepoProd,
         branchId: nav.branchId,
         envId: nav.envId,
-        mconfig: newMconfig,
-        queryOperations: [queryOperation],
+        timezone: this.emptyGroupMconfig.timezone,
+        mconfigId: this.emptyGroupMconfig.mconfigId,
+        groupByFieldId: groupByFieldId,
         cellMetricsStartDateMs: undefined,
         cellMetricsEndDateMs: undefined
       };
@@ -602,11 +546,11 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       apiService
         .req({
           pathInfoName:
-            ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery,
+            ToBackendRequestInfoNameEnum.ToBackendGroupMetricByDimension,
           payload: payload
         })
         .pipe(
-          tap((resp: ToBackendCreateTempMconfigAndQueryResponse) => {
+          tap((resp: ToBackendGroupMetricByDimensionResponse) => {
             if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               let { mconfig, query } = resp.payload;
 

@@ -46,6 +46,7 @@ import { ToBackendCreateFolderRequest } from '~common/interfaces/to-backend/fold
 import { ToBackendDeleteFolderRequest } from '~common/interfaces/to-backend/folders/to-backend-delete-folder';
 import { ToBackendCreateTempMconfigAndQueryRequest } from '~common/interfaces/to-backend/mconfigs/to-backend-create-temp-mconfig-and-query';
 import { ToBackendDuplicateMconfigAndQueryRequest } from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+import { ToBackendGroupMetricByDimensionRequest } from '~common/interfaces/to-backend/mconfigs/to-backend-group-metric-by-dimension';
 import { ToBackendCreateMemberRequest } from '~common/interfaces/to-backend/members/to-backend-create-member';
 import { ToBackendDeleteMemberRequest } from '~common/interfaces/to-backend/members/to-backend-delete-member';
 import { ToBackendEditMemberRequest } from '~common/interfaces/to-backend/members/to-backend-edit-member';
@@ -318,10 +319,12 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendSaveModifyReport]:
     ToBackendSaveModifyReportRequest,
   //
-  [ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery]:
-    ToBackendCreateTempMconfigAndQueryRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDuplicateMconfigAndQuery]:
     ToBackendDuplicateMconfigAndQueryRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGroupMetricByDimension]:
+    ToBackendGroupMetricByDimensionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateTempMconfigAndQuery]:
+    ToBackendCreateTempMconfigAndQueryRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetQueries]:
     ToBackendGetQueriesRequest,
