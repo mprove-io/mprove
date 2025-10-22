@@ -178,7 +178,10 @@ export class SaveCreateReportController {
     );
 
     let modelIds = [
-      ...new Set(cachedMetrics.map(x => x.modelId).filter(x => isDefined(x)))
+      ...new Set(cachedMetrics.map(x => x.modelId).filter(x => isDefined(x))),
+      ...fromReport.fields
+        .filter(x => isDefined(x.storeModel))
+        .map(x => x.storeModel)
     ];
 
     let cachedModels =

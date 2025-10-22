@@ -82,7 +82,7 @@ export function makeReportFileText(item: {
                 ? field.description
                 : undefined,
             result: field.result,
-            store: field.storeModel,
+            store_model: field.storeModel,
             store_result: field.storeResult,
             store_filter: field.storeFilter,
             fractions: isUndefined(field.storeModel)

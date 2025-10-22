@@ -132,7 +132,7 @@ export class CreateDraftReportController {
     });
 
     if (
-      isDefined(rowChange.metricId) &&
+      isDefined(rowChange?.metricId) &&
       fromReport.rows.map(row => row.metricId).indexOf(rowChange.metricId) < 0
     ) {
       let metric = struct.metrics.find(x => x.metricId === rowChange.metricId);
