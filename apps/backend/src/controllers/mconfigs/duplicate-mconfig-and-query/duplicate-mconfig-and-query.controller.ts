@@ -30,6 +30,7 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -52,6 +53,7 @@ let retry = require('async-retry');
 export class DuplicateMconfigAndQueryController {
   constructor(
     private tabService: TabService,
+    private parentService: ParentService,
     private projectsService: ProjectsService,
     private modelsService: ModelsService,
     private membersService: MembersService,
@@ -83,7 +85,7 @@ export class DuplicateMconfigAndQueryController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
@@ -94,10 +96,10 @@ export class DuplicateMconfigAndQueryController {
       branchId: branchId
     });
 
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
+    await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -107,7 +109,7 @@ export class DuplicateMconfigAndQueryController {
       envId: envId
     });
 
-    let struct = await this.structsService.getStructCheckExists({
+    await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
     });
@@ -117,6 +119,15 @@ export class DuplicateMconfigAndQueryController {
       mconfigId: oldMconfigId
     });
 
+    await this.parentService.checkAccess({
+      mconfig: oldMconfig,
+      user: user,
+      userMember: userMember,
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
+    // user can see dashboard tile or report metric without model access - OK
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
       modelId: oldMconfig.modelId
@@ -127,19 +138,6 @@ export class DuplicateMconfigAndQueryController {
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
-
-    // user can see dashboard tile or report metric without model access
-
-    // let isModelAccessGranted = checkModelAccess({
-    //   member: member,
-    //   modelAccessRoles: model.accessRoles
-    // });
-
-    // if (isModelAccessGranted === false) {
-    //   throw new ServerError({
-    //     message: ErEnum.BACKEND_FORBIDDEN_MODEL
-    //   });
-    // }
 
     let oldQuery = await this.db.drizzle.query.queriesTable
       .findFirst({
