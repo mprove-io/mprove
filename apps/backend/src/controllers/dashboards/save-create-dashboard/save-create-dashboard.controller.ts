@@ -331,9 +331,16 @@ export class SaveCreateDashboardController {
       )
     ];
 
-    let modelIds = (
-      (isDefined(fromDashboardId) ? fromDashboardX?.tiles : tilesGrid) ?? []
-    ).map(tile => tile.modelId);
+    let modelIds = [
+      ...(
+        (isDefined(fromDashboardId) ? fromDashboardX?.tiles : tilesGrid) ?? []
+      ).map(tile => tile.modelId),
+      ...(isDefined(fromDashboardId)
+        ? fromDashboardX.fields
+            .filter(x => isDefined(x.storeModel))
+            .map(x => x.storeModel)
+        : [])
+    ];
 
     let cachedModels = await this.db.drizzle.query.modelsTable
       .findMany({

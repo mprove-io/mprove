@@ -48,6 +48,7 @@ import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
+import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { TileX } from '~common/interfaces/backend/tile-x';
@@ -261,7 +262,12 @@ export class EditDraftDashboardController {
     //   diskFiles.push(secondTempFile);
     // }
 
-    let modelIds = (tiles ?? []).map(tile => tile.modelId);
+    let modelIds = [
+      ...(tiles ?? []).map(tile => tile.modelId),
+      ...newDashboardFields
+        .filter(x => isDefined(x.storeModel))
+        .map(x => x.storeModel)
+    ];
 
     let cachedModels = await this.db.drizzle.query.modelsTable
       .findMany({

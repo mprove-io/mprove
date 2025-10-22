@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { isDefined } from 'class-validator';
 import { and, eq, inArray } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
@@ -50,6 +49,7 @@ import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
+import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { TileX } from '~common/interfaces/backend/tile-x';
@@ -283,7 +283,12 @@ export class CreateDraftDashboardController {
     //   diskFiles.push(secondTempFile);
     // }
 
-    let modelIds = (tiles ?? []).map(tile => tile.modelId);
+    let modelIds = [
+      ...(tiles ?? []).map(tile => tile.modelId),
+      ...newDashboardFields
+        .filter(x => isDefined(x.storeModel))
+        .map(x => x.storeModel)
+    ];
 
     let cachedModels = await this.db.drizzle.query.modelsTable
       .findMany({
