@@ -2,24 +2,20 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle, seconds } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
-import { ChartsService } from '~backend/services/db/charts.service';
-import { DashboardsService } from '~backend/services/db/dashboards.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MconfigsService } from '~backend/services/db/mconfigs.service';
 import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
+import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendGetQueryRequest,
   ToBackendGetQueryResponsePayload
@@ -49,9 +45,7 @@ export class GetQueryController {
   constructor(
     private tabService: TabService,
     private queriesService: QueriesService,
-    private modelsService: ModelsService,
-    private chartsService: ChartsService,
-    private dashboardsService: DashboardsService,
+    private parentService: ParentService,
     private membersService: MembersService,
     private branchesService: BranchesService,
     private projectsService: ProjectsService,
@@ -64,20 +58,12 @@ export class GetQueryController {
   async getQuery(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetQueryRequest = request.body;
 
-    let {
-      queryId,
-      mconfigId,
-      chartId,
-      dashboardId,
-      projectId,
-      isRepoProd,
-      branchId,
-      envId
-    } = reqValid.payload;
+    let { queryId, mconfigId, projectId, isRepoProd, branchId, envId } =
+      reqValid.payload;
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
-    let project = await this.projectsService.getProjectCheckExists({
+    await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
 
@@ -92,7 +78,7 @@ export class GetQueryController {
       branchId: branchId
     });
 
-    let env = await this.envsService.getEnvCheckExistsAndAccess({
+    await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
       member: userMember
@@ -116,37 +102,13 @@ export class GetQueryController {
       });
     }
 
-    if (isDefined(chartId)) {
-      await this.chartsService.getChartCheckExistsAndAccess({
-        structId: bridge.structId,
-        chartId: chartId,
-        userMember: userMember,
-        user: user
-      });
-    } else if (isDefined(dashboardId)) {
-      await this.dashboardsService.getDashboardCheckExistsAndAccess({
-        structId: bridge.structId,
-        dashboardId: dashboardId,
-        userMember: userMember,
-        user: user
-      });
-    } else {
-      let model = await this.modelsService.getModelCheckExists({
-        structId: bridge.structId,
-        modelId: mconfig.modelId
-      });
-
-      let isAccessGranted = checkModelAccess({
-        member: userMember,
-        modelAccessRoles: model.accessRoles
-      });
-
-      if (isAccessGranted === false) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_FORBIDDEN_MODEL
-        });
-      }
-    }
+    await this.parentService.checkAccess({
+      mconfig: mconfig,
+      user: user,
+      userMember: userMember,
+      structId: bridge.structId,
+      projectId: projectId
+    });
 
     let query = await this.queriesService.getQueryCheckExists({
       queryId: queryId,

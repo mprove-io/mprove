@@ -78,8 +78,6 @@ export interface ChartDialogData {
   qData: QDataRow[];
   canAccessModel: boolean;
   showNav: boolean;
-  chartId: string;
-  dashboardId: string;
   isToDuplicateQuery: boolean;
   metricId?: string;
   listen?: { [a: string]: string };
@@ -262,9 +260,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               envId: nav.envId,
               isRepoProd: nav.isRepoProd,
               mconfigId: this.mconfig.mconfigId,
-              queryId: this.query.queryId,
-              chartId: this.ref.data.chartId,
-              dashboardId: this.ref.data.dashboardId
+              queryId: this.query.queryId
             };
 
             let apiService = this.ref.data.apiService;
@@ -642,9 +638,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         envId: nav.envId,
         isRepoProd: nav.isRepoProd,
         mconfigId: newMconfig.mconfigId,
-        queryId: newMconfig.queryId,
-        chartId: undefined,
-        dashboardId: undefined
+        queryId: newMconfig.queryId
       };
 
       let apiService = this.ref.data.apiService;

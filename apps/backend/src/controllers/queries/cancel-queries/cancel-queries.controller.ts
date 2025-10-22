@@ -10,6 +10,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
+import { forEachSeries } from 'p-iteration';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
@@ -33,6 +34,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -56,6 +58,7 @@ let retry = require('async-retry');
 export class CancelQueriesController {
   constructor(
     private tabService: TabService,
+    private parentService: ParentService,
     private structsService: StructsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -81,7 +84,7 @@ export class CancelQueriesController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
       projectId: projectId,
       memberId: user.userId
     });
@@ -95,7 +98,7 @@ export class CancelQueriesController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -110,11 +113,27 @@ export class CancelQueriesController {
       projectId: projectId
     });
 
-    let mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
-      where: and(
-        eq(mconfigsTable.structId, bridge.structId),
-        inArray(mconfigsTable.mconfigId, mconfigIds)
-      )
+    let mconfigs = await this.db.drizzle.query.mconfigsTable
+      .findMany({
+        where: and(
+          eq(mconfigsTable.structId, bridge.structId),
+          inArray(mconfigsTable.mconfigId, mconfigIds)
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
+
+    let uniqueParentIds = [...new Set(mconfigs.map(x => x.parentId))];
+
+    await forEachSeries(uniqueParentIds, async parentId => {
+      let mconfig = mconfigs.find(x => x.parentId === parentId);
+
+      await this.parentService.checkAccess({
+        mconfig: mconfig,
+        user: user,
+        userMember: userMember,
+        structId: bridge.structId,
+        projectId: projectId
+      });
     });
 
     let queryIds = [...new Set(mconfigs.map(x => x.queryId))];

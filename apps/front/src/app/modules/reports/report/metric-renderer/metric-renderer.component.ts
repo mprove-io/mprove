@@ -166,8 +166,6 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
         canAccessModel: this.params.data.hasAccessToModel,
         showNav: this.params.data.rowType === RowTypeEnum.Metric,
         isSelectValid: selectValidResult.isSelectValid,
-        dashboardId: undefined,
-        chartId: undefined,
         metricId: this.params.data.metricId,
         isToDuplicateQuery: true
       });

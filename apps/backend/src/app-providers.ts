@@ -35,6 +35,7 @@ import { TrinoService } from './services/dwh/trino.service';
 import { EmailService } from './services/email.service';
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';
+import { ParentService } from './services/parent.service';
 import { RabbitService } from './services/rabbit.service';
 import { RedisService } from './services/redis.service';
 import { ReportDataService } from './services/report-data.service';
@@ -87,6 +88,7 @@ export const appProviders = [
   EmailService,
   HashService,
   MalloyService,
+  ParentService,
   RabbitService,
   RedisService,
   ReportDataService,

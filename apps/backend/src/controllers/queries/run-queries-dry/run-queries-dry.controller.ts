@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
+import { forEachSeries } from 'p-iteration';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
@@ -26,6 +27,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { BigQueryService } from '~backend/services/dwh/bigquery.service';
+import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -45,6 +47,7 @@ let retry = require('async-retry');
 export class RunQueriesDryController {
   constructor(
     private tabService: TabService,
+    private parentService: ParentService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -89,16 +92,32 @@ export class RunQueriesDryController {
       envId: envId
     });
 
-    let struct = await this.structsService.getStructCheckExists({
+    await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
     });
 
-    let mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
-      where: and(
-        eq(mconfigsTable.structId, bridge.structId),
-        inArray(mconfigsTable.mconfigId, mconfigIds)
-      )
+    let mconfigs = await this.db.drizzle.query.mconfigsTable
+      .findMany({
+        where: and(
+          eq(mconfigsTable.structId, bridge.structId),
+          inArray(mconfigsTable.mconfigId, mconfigIds)
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
+
+    let uniqueParentIds = [...new Set(mconfigs.map(x => x.parentId))];
+
+    await forEachSeries(uniqueParentIds, async parentId => {
+      let mconfig = mconfigs.find(x => x.parentId === parentId);
+
+      await this.parentService.checkAccess({
+        mconfig: mconfig,
+        user: user,
+        userMember: userMember,
+        structId: bridge.structId,
+        projectId: projectId
+      });
     });
 
     let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
@@ -110,11 +129,6 @@ export class RunQueriesDryController {
       let query = await this.queriesService.getQueryCheckExistsSkipData({
         projectId: projectId,
         queryId: queryId
-      });
-
-      let member = await this.membersService.getMemberCheckExists({
-        projectId: query.projectId,
-        memberId: user.userId
       });
 
       let apiEnvs = await this.envsService.getApiEnvs({

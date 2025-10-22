@@ -1326,8 +1326,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       canAccessModel: true,
       showNav: false,
       isSelectValid: this.isSelectValid,
-      dashboardId: undefined,
-      chartId: undefined,
       isToDuplicateQuery: false
     });
   }

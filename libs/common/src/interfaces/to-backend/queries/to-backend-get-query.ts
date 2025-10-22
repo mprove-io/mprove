@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { Query } from '~common/interfaces/blockml/query';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -27,14 +22,6 @@ export class ToBackendGetQueryRequestPayload {
 
   @IsString()
   queryId: string;
-
-  @IsOptional()
-  @IsString()
-  chartId?: string;
-
-  @IsOptional()
-  @IsString()
-  dashboardId?: string;
 }
 
 export class ToBackendGetQueryRequest extends ToBackendRequest {

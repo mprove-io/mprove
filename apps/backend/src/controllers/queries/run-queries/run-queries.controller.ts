@@ -42,6 +42,7 @@ import { PgService } from '~backend/services/dwh/pg.service';
 import { PrestoService } from '~backend/services/dwh/presto.service';
 import { SnowFlakeService } from '~backend/services/dwh/snowflake.service';
 import { TrinoService } from '~backend/services/dwh/trino.service';
+import { ParentService } from '~backend/services/parent.service';
 import { StoreService } from '~backend/services/store.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
@@ -69,6 +70,7 @@ let retry = require('async-retry');
 export class RunQueriesController {
   constructor(
     private tabService: TabService,
+    private parentService: ParentService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private structsService: StructsService,
@@ -126,11 +128,34 @@ export class RunQueriesController {
       projectId: projectId
     });
 
-    let mconfigs = await this.db.drizzle.query.mconfigsTable.findMany({
-      where: and(
-        eq(mconfigsTable.structId, bridge.structId),
-        inArray(mconfigsTable.mconfigId, mconfigIds)
-      )
+    let mconfigs = await this.db.drizzle.query.mconfigsTable
+      .findMany({
+        where: and(
+          eq(mconfigsTable.structId, bridge.structId),
+          inArray(mconfigsTable.mconfigId, mconfigIds)
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
+
+    let uniqueParentIds = [...new Set(mconfigs.map(x => x.parentId))];
+
+    await forEachSeries(uniqueParentIds, async parentId => {
+      let mconfig = mconfigs.find(x => x.parentId === parentId);
+
+      await this.parentService.checkAccess({
+        mconfig: mconfig,
+        user: user,
+        userMember: userMember,
+        structId: bridge.structId,
+        projectId: projectId
+      });
+    });
+
+    let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
+
+    let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
+      queryIds: queryIds,
+      projectId: projectId
     });
 
     let modelIds = [...new Set(mconfigs.map(x => x.modelId))];
@@ -143,13 +168,6 @@ export class RunQueriesController {
         )
       })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
-
-    let queryIds = [...new Set(mconfigs.map(x => x.queryId))];
-
-    let queries = await this.queriesService.getQueriesCheckExistSkipSqlData({
-      queryIds: queryIds,
-      projectId: projectId
-    });
 
     let runningQueries: QueryTab[] = [];
     let startedQueryIds: string[] = [];

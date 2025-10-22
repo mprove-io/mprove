@@ -153,8 +153,6 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
       canAccessModel: this.tile.hasAccessToModel,
       showNav: true,
       isSelectValid: this.isSelectValid,
-      dashboardId: this.dashboard.dashboardId,
-      chartId: undefined,
       listen: this.tile.listen,
       isToDuplicateQuery: true
     });

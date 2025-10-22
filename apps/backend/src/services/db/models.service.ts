@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { MemberTab, ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ModelX } from '~common/interfaces/backend/model-x';
@@ -102,6 +103,42 @@ export class ModelsService {
     if (isUndefined(model)) {
       throw new ServerError({
         message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
+      });
+    }
+
+    return model;
+  }
+
+  async getModelCheckExistsAndAccess(item: {
+    modelId: string;
+    structId: string;
+    userMember: MemberTab;
+  }): Promise<ModelTab> {
+    let { modelId, structId, userMember } = item;
+
+    let model = await this.db.drizzle.query.modelsTable
+      .findFirst({
+        where: and(
+          eq(modelsTable.structId, structId),
+          eq(modelsTable.modelId, modelId)
+        )
+      })
+      .then(x => this.tabService.modelEntToTab(x));
+
+    if (isUndefined(model)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MODEL_DOES_NOT_EXIST
+      });
+    }
+
+    let isAccessGranted = checkModelAccess({
+      member: userMember,
+      modelAccessRoles: model.accessRoles
+    });
+
+    if (isAccessGranted === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_FORBIDDEN_MODEL
       });
     }
 
