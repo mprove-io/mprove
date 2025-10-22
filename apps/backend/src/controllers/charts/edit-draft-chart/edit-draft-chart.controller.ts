@@ -126,27 +126,17 @@ export class EditDraftChartController {
       projectId: projectId
     });
 
-    let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.structId,
-      modelId: apiMconfig.modelId
-    });
-
     if (apiMconfig.structId !== bridge.structId) {
       throw new ServerError({
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    let isAccessGrantedForModel = checkModelAccess({
-      member: userMember,
-      modelAccessRoles: model.accessRoles
+    let model = await this.modelsService.getModelCheckExistsAndAccess({
+      structId: bridge.structId,
+      modelId: apiMconfig.modelId,
+      userMember: userMember
     });
-
-    if (isAccessGrantedForModel === false) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_MODEL
-      });
-    }
 
     let chart = await this.chartsService.getChartCheckExistsAndAccess({
       structId: bridge.structId,

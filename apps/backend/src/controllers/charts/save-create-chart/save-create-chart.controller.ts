@@ -166,21 +166,11 @@ export class SaveCreateChartController {
       });
     }
 
-    let mconfigModel = await this.modelsService.getModelCheckExists({
+    let model = await this.modelsService.getModelCheckExistsAndAccess({
       structId: bridge.structId,
-      modelId: mconfig.modelId
+      modelId: mconfig.modelId,
+      userMember: userMember
     });
-
-    let isAccessGranted = checkModelAccess({
-      member: userMember,
-      modelAccessRoles: mconfigModel.accessRoles
-    });
-
-    if (isAccessGranted === false) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_MODEL
-      });
-    }
 
     let mdir = currentStruct.mproveConfig.mproveDirValue;
 
@@ -216,8 +206,8 @@ export class SaveCreateChartController {
       tileTitle: tileTitle,
       roles: accessRoles,
       chartId: newChartId,
-      modelId: mconfigModel.modelId,
-      modelFilePath: mconfigModel.filePath
+      modelId: model.modelId,
+      modelFilePath: model.filePath
       // malloyChartFilePath: malloyChartFilePath
     });
 

@@ -17,7 +17,6 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
 import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
@@ -203,21 +202,11 @@ export class SaveModifyDashboardController {
     // let secondFileContent: string;
 
     if (isDefined(newTile)) {
-      let mconfigModel = await this.modelsService.getModelCheckExists({
+      await this.modelsService.getModelCheckExistsAndAccess({
         structId: bridge.structId,
-        modelId: newTile.mconfig.modelId
+        modelId: newTile.mconfig.modelId,
+        userMember: userMember
       });
-
-      let isModelAccessGranted = checkModelAccess({
-        member: userMember,
-        modelAccessRoles: mconfigModel.accessRoles
-      });
-
-      if (isModelAccessGranted === false) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_FORBIDDEN_MODEL
-        });
-      }
 
       newTile.mconfig.chart.title = newTile.title;
 

@@ -119,6 +119,7 @@ export class GetChartController {
       mconfigId: chart.tiles[0].mconfigId
     });
 
+    // user can access chart without model access - OK
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
       modelId: chartMconfig.modelId

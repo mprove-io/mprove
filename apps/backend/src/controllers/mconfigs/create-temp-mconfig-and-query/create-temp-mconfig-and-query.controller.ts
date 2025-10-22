@@ -18,7 +18,6 @@ import {
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -94,7 +93,7 @@ export class CreateTempMconfigAndQueryController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
@@ -108,7 +107,7 @@ export class CreateTempMconfigAndQueryController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -123,27 +122,18 @@ export class CreateTempMconfigAndQueryController {
       projectId: projectId
     });
 
-    let model = await this.modelsService.getModelCheckExists({
-      structId: bridge.structId,
-      modelId: apiMconfig.modelId
-    });
-
     if (apiMconfig.structId !== bridge.structId) {
       throw new ServerError({
         message: ErEnum.BACKEND_STRUCT_ID_CHANGED
       });
     }
 
-    let isModelAccessGranted = checkModelAccess({
-      member: member,
-      modelAccessRoles: model.accessRoles
+    // TODO: check model access
+    let model = await this.modelsService.getModelCheckExistsAndAccess({
+      structId: bridge.structId,
+      modelId: apiMconfig.modelId,
+      userMember: userMember
     });
-
-    if (isModelAccessGranted === false) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_MODEL
-      });
-    }
 
     let newMconfig: MconfigTab;
     let newQuery: QueryTab;

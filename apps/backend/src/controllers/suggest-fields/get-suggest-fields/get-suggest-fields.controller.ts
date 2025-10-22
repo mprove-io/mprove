@@ -84,6 +84,7 @@ export class GetSuggestFieldsController {
       })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
+    // TODO: check model access
     let modelsGrantedAccess = models
       .filter(model =>
         checkModelAccess({

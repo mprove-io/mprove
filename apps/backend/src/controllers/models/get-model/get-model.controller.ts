@@ -67,6 +67,7 @@ export class GetModelController {
       envId: envId
     });
 
+    // user can get model to add dashboard or report filters without model access - OK
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
       modelId: modelId

@@ -190,26 +190,11 @@ export class SaveModifyChartController {
     // console.log('saveModifyChart mconfigEnt.select');
     // console.log(mconfigEnt.select);
 
+    // user can save modify chart without model access - OK
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
       modelId: mconfig.modelId
     });
-
-    let mconfigModel = await this.modelsService.getModelCheckExists({
-      structId: bridge.structId,
-      modelId: mconfig.modelId
-    });
-
-    let isAccessGranted = checkModelAccess({
-      member: userMember,
-      modelAccessRoles: mconfigModel.accessRoles
-    });
-
-    if (isAccessGranted === false) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_FORBIDDEN_MODEL
-      });
-    }
 
     let pathParts = existingChart.filePath.split('.');
     pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
@@ -230,8 +215,8 @@ export class SaveModifyChartController {
       tileTitle: tileTitle,
       roles: accessRoles,
       chartId: chartId,
-      modelId: mconfigModel.modelId,
-      modelFilePath: mconfigModel.filePath
+      modelId: model.modelId,
+      modelFilePath: model.filePath
       // malloyChartFilePath: secondFileNodeId
     });
 
