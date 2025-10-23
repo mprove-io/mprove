@@ -22,8 +22,10 @@ import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { makeCopy } from '~common/functions/make-copy';
+import { ModelX } from '~common/interfaces/backend/model-x';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { RowChange } from '~common/interfaces/blockml/row-change';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -66,15 +68,25 @@ export class MetricsTreeComponent implements AfterViewInit {
 
   metricNodes: MetricNode[] = [];
   metricNodes$ = combineLatest([
+    this.modelsQuery.models$,
     this.structQuery.metrics$,
     this.uiQuery.searchMetricsWord$
   ]).pipe(
-    tap(([metrics, searchMetricsWord]: [ModelMetric[], string]) => {
-      this.metrics = metrics;
+    tap(
+      ([models, metrics, searchMetricsWord]: [
+        ModelX[],
+        ModelMetric[],
+        string
+      ]) => {
+        this.metrics = metrics.filter(metric => {
+          let model = models.find(y => y.modelId === metric.modelId);
+          return model?.hasAccess === true;
+        });
 
-      this.makeMetricNodes({ searchMetricsWord: searchMetricsWord });
-      this.cd.detectChanges();
-    })
+        this.makeMetricNodes({ searchMetricsWord: searchMetricsWord });
+        this.cd.detectChanges();
+      }
+    )
   );
 
   // mconfig: MconfigX;
@@ -99,6 +111,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
   constructor(
+    private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
     private cd: ChangeDetectorRef,
     private reportQuery: ReportQuery,
