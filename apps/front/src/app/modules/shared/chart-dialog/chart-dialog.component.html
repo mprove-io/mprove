@@ -203,7 +203,7 @@
       isSelectValid === true &&
       mconfig?.chart.isValid === true
     "
-    class="flex h-full flex-grow flex-row overflow-auto"
+    class="flex h-full w-full flex-grow flex-row overflow-auto"
     [ngClass]="{
       'justify-center':
         mconfig?.chart.type !== chartTypeEnumTable ||
@@ -213,7 +213,7 @@
     }"
   >
     <m-chart-view
-      class="h-full overflow-auto rounded pb-6 pt-5"
+      class="h-full w-full overflow-auto rounded pb-6 pt-5"
       [ngClass]="{
         'border-s300 aspect-[3/1] border':
           mconfig?.chart.type !== chartTypeEnumTable
