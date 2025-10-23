@@ -96,6 +96,10 @@ export class SuggestDimensionValuesController {
       structId,
       modelId,
       fieldId,
+      chartId,
+      dashboardId,
+      reportId,
+      rowId,
       term,
       cellMetricsStartDateMs,
       cellMetricsEndDateMs
@@ -131,25 +135,6 @@ export class SuggestDimensionValuesController {
       envId: envId
     });
 
-    // let oldMconfig = await this.mconfigsService.getMconfigCheckExists({
-    //   mconfigId: mconfigId,
-    //   structId: bridge.structId
-    // });
-
-    // await this.parentService.checkAccess({
-    //   mconfig: oldMconfig,
-    //   user: user,
-    //   userMember: userMember,
-    //   structId: bridge.structId,
-    //   projectId: projectId
-    // });
-
-    // if (oldMconfig.structId !== bridge.structId) {
-    //   throw new ServerError({
-    //     message: ErEnum.BACKEND_STRUCT_ID_CHANGED
-    //   });
-    // }
-
     let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
@@ -161,16 +146,40 @@ export class SuggestDimensionValuesController {
       });
     }
 
-    // user can get suggest fields without model access - OK
+    let parentId = isDefined(dashboardId)
+      ? dashboardId
+      : isDefined(reportId)
+        ? reportId
+        : isDefined(chartId)
+          ? chartId
+          : undefined;
+
+    let parentType = isDefined(dashboardId)
+      ? MconfigParentTypeEnum.SuggestDimensionDashboard
+      : isDefined(reportId)
+        ? MconfigParentTypeEnum.SuggestDimensionReport
+        : isDefined(chartId)
+          ? MconfigParentTypeEnum.SuggestDimensionChart
+          : MconfigParentTypeEnum.SuggestDimensionModel;
+
     let model = await this.modelsService.getModelCheckExists({
       structId: bridge.structId,
       modelId: modelId
     });
 
-    // let apiMconfig = this.mconfigsService.tabToApi({
-    //   mconfig: oldMconfig,
-    //   modelFields: model.fields
-    // });
+    await this.parentService.checkAccess({
+      parentId: parentId,
+      parentType: parentType,
+      modelId: modelId,
+      user: user,
+      userMember: userMember,
+      structId: bridge.structId,
+      projectId: projectId,
+      isCheckSuggest: true,
+      suggestFieldId: fieldId,
+      suggestRowId: rowId,
+      model: model
+    });
 
     let apiMconfig: Mconfig;
 
@@ -183,8 +192,8 @@ export class SuggestDimensionValuesController {
         queryId: makeId(),
         modelId: modelId,
         modelType: ModelTypeEnum.Store,
-        parentType: MconfigParentTypeEnum.SuggestDimension,
-        parentId: undefined,
+        parentType: parentType,
+        parentId: parentId,
         dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
         storePart: undefined,
         modelLabel: model.label,
@@ -221,8 +230,8 @@ export class SuggestDimensionValuesController {
         queryId: makeId(),
         modelId: modelId,
         modelType: ModelTypeEnum.Malloy,
-        parentType: MconfigParentTypeEnum.SuggestDimension,
-        parentId: undefined,
+        parentType: parentType,
+        parentId: parentId,
         dateRangeIncludesRightSide: undefined,
         storePart: undefined,
         modelLabel: model.label,

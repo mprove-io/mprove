@@ -109,18 +109,26 @@ export class DuplicateMconfigAndQueryController {
       envId: envId
     });
 
-    await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
-    });
-
     let oldMconfig = await this.mconfigsService.getMconfigCheckExists({
       structId: bridge.structId,
       mconfigId: oldMconfigId
     });
 
+    await this.structsService.getStructCheckExists({
+      structId: bridge.structId,
+      projectId: projectId
+    });
+
+    if (oldMconfig.structId !== bridge.structId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
+      });
+    }
+
     await this.parentService.checkAccess({
-      mconfig: oldMconfig,
+      parentId: oldMconfig.parentId,
+      parentType: oldMconfig.parentType,
+      modelId: oldMconfig.modelId,
       user: user,
       userMember: userMember,
       structId: bridge.structId,
@@ -132,12 +140,6 @@ export class DuplicateMconfigAndQueryController {
       structId: bridge.structId,
       modelId: oldMconfig.modelId
     });
-
-    if (oldMconfig.structId !== bridge.structId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
-      });
-    }
 
     let oldQuery = await this.db.drizzle.query.queriesTable
       .findFirst({

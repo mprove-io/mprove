@@ -35,6 +35,22 @@ export class ToBackendSuggestDimensionValuesRequestPayload {
 
   @IsOptional()
   @IsString()
+  chartId: string;
+
+  @IsOptional()
+  @IsString()
+  dashboardId: string;
+
+  @IsOptional()
+  @IsString()
+  reportId: string;
+
+  @IsOptional()
+  @IsString()
+  rowId: string;
+
+  @IsOptional()
+  @IsString()
   term: string;
 
   @IsOptional()

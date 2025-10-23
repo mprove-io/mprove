@@ -297,6 +297,10 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                 structId: this.structId,
                 modelId: modelId,
                 fieldId: fieldId,
+                chartId: this.chartId,
+                dashboardId: this.dashboardId,
+                reportId: this.reportId,
+                rowId: this.rowId,
                 term: term,
                 cellMetricsStartDateMs: undefined,
                 cellMetricsEndDateMs: undefined

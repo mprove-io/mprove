@@ -3,19 +3,25 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import {
-  MconfigTab,
   MemberTab,
+  ModelTab,
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
+import { ErEnum } from '~common/enums/er.enum';
 import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
+import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { ServerError } from '~common/models/server-error';
 import { ChartsService } from './db/charts.service';
 import { DashboardsService } from './db/dashboards.service';
+import { MconfigsService } from './db/mconfigs.service';
 import { ModelsService } from './db/models.service';
 import { ReportsService } from './db/reports.service';
 
 @Injectable()
 export class ParentService {
   constructor(
+    private mconfigsService: MconfigsService,
     private chartsService: ChartsService,
     private dashboardsService: DashboardsService,
     private reportsService: ReportsService,
@@ -25,48 +31,133 @@ export class ParentService {
   ) {}
 
   async checkAccess(item: {
-    mconfig: MconfigTab;
     user: UserTab;
     userMember: MemberTab;
     structId: string;
     projectId: string;
+    parentType: MconfigParentTypeEnum;
+    parentId: string;
+    modelId: string;
+    isCheckSuggest?: boolean;
+    suggestFieldId?: string;
+    suggestRowId?: string;
+    model?: ModelTab;
   }) {
-    let { mconfig, user, userMember, structId, projectId } = item;
+    let {
+      user,
+      userMember,
+      structId,
+      projectId,
+      parentType,
+      parentId,
+      modelId,
+      isCheckSuggest,
+      suggestFieldId,
+      suggestRowId,
+      model
+    } = item;
 
-    if (mconfig.parentType === MconfigParentTypeEnum.Chart) {
-      await this.chartsService.getChartCheckExistsAndAccess({
-        structId: structId,
-        chartId: mconfig.parentId,
-        userMember: userMember,
-        user: user
-      });
-    } else if (
-      mconfig.parentType === MconfigParentTypeEnum.Dashboard ||
-      mconfig.parentType === MconfigParentTypeEnum.ChartDialogDashboard
+    if (
+      parentType === MconfigParentTypeEnum.Dashboard ||
+      parentType === MconfigParentTypeEnum.ChartDialogDashboard ||
+      parentType === MconfigParentTypeEnum.SuggestDimensionDashboard
     ) {
-      await this.dashboardsService.getDashboardCheckExistsAndAccess({
-        structId: structId,
-        dashboardId: mconfig.parentId,
-        userMember: userMember,
-        user: user
-      });
+      let dashboard =
+        await this.dashboardsService.getDashboardCheckExistsAndAccess({
+          structId: structId,
+          dashboardId: parentId,
+          userMember: userMember,
+          user: user
+        });
+
+      if (isCheckSuggest === true) {
+        let field = dashboard.fields.find(
+          field =>
+            field.suggestModelDimension === `${modelId}.${suggestFieldId}`
+        );
+
+        if (isUndefined(field)) {
+          throw new ServerError({
+            message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+          });
+        }
+      }
     } else if (
-      mconfig.parentType === MconfigParentTypeEnum.Report ||
-      mconfig.parentType === MconfigParentTypeEnum.ChartDialogReport
+      parentType === MconfigParentTypeEnum.Report ||
+      parentType === MconfigParentTypeEnum.ChartDialogReport ||
+      parentType === MconfigParentTypeEnum.SuggestDimensionReport
     ) {
-      await this.reportsService.getReportCheckExistsAndAccess({
+      let report = await this.reportsService.getReportCheckExistsAndAccess({
         projectId: projectId,
         structId: structId,
-        reportId: mconfig.parentId,
+        reportId: parentId,
         userMember: userMember,
         user: user
       });
-      // } else if (mconfig.parentType === MconfigParentTypeEnum.SuggestDimension) {
-      // } else if (mconfig.parentType === MconfigParentTypeEnum.Blank) {
+
+      if (isCheckSuggest === true) {
+        let field;
+
+        if (isDefined(suggestRowId)) {
+          let row = report.rows.find(x => x.rowId === suggestRowId);
+
+          let rowFilterFields = row.mconfig.filters.map(x =>
+            model.fields.find(y => y.id === x.fieldId)
+          );
+
+          field = rowFilterFields.find(
+            x => x.suggestModelDimension === `${modelId}.${suggestFieldId}`
+          );
+        } else {
+          field = report.fields.find(
+            field =>
+              field.suggestModelDimension === `${modelId}.${suggestFieldId}`
+          );
+        }
+
+        if (isUndefined(field)) {
+          throw new ServerError({
+            message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+          });
+        }
+      }
+    } else if (
+      parentType === MconfigParentTypeEnum.Chart ||
+      parentType === MconfigParentTypeEnum.SuggestDimensionChart
+    ) {
+      let chart = await this.chartsService.getChartCheckExistsAndAccess({
+        structId: structId,
+        chartId: parentId,
+        userMember: userMember,
+        user: user
+      });
+
+      if (isCheckSuggest === true) {
+        let field;
+
+        let mconfig = await this.mconfigsService.getMconfigCheckExists({
+          mconfigId: chart.tiles[0].mconfigId,
+          structId: chart.structId
+        });
+
+        let chartFilterFields = mconfig.filters.map(x =>
+          model.fields.find(y => y.id === x.fieldId)
+        );
+
+        field = chartFilterFields.find(
+          x => x.suggestModelDimension === `${modelId}.${suggestFieldId}`
+        );
+
+        if (isUndefined(field)) {
+          throw new ServerError({
+            message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+          });
+        }
+      }
     } else {
       await this.modelsService.getModelCheckExistsAndAccess({
         structId: structId,
-        modelId: mconfig.modelId,
+        modelId: modelId,
         userMember: userMember
       });
     }

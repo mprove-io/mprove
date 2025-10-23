@@ -103,7 +103,9 @@ export class GetQueryController {
     }
 
     await this.parentService.checkAccess({
-      mconfig: mconfig,
+      parentId: mconfig.parentId,
+      parentType: mconfig.parentType,
+      modelId: mconfig.modelId,
       user: user,
       userMember: userMember,
       structId: bridge.structId,

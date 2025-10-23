@@ -191,22 +191,28 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
 
               let nav = this.navQuery.getValue();
 
+              let payload: ToBackendSuggestDimensionValuesRequestPayload = {
+                projectId: nav.projectId,
+                isRepoProd: nav.isRepoProd,
+                branchId: nav.branchId,
+                envId: nav.envId,
+                structId: this.structId,
+                modelId: modelId,
+                fieldId: fieldId,
+                chartId: this.chartId,
+                dashboardId: this.dashboardId,
+                reportId: this.reportId,
+                rowId: this.rowId,
+                term: term,
+                cellMetricsStartDateMs: undefined,
+                cellMetricsEndDateMs: undefined
+              };
+
               let q1Resp = await this.apiService
                 .req({
                   pathInfoName:
                     ToBackendRequestInfoNameEnum.ToBackendSuggestDimensionValues,
-                  payload: {
-                    projectId: nav.projectId,
-                    isRepoProd: nav.isRepoProd,
-                    branchId: nav.branchId,
-                    envId: nav.envId,
-                    structId: this.structId,
-                    modelId: modelId,
-                    fieldId: fieldId,
-                    term: term,
-                    cellMetricsStartDateMs: undefined,
-                    cellMetricsEndDateMs: undefined
-                  } as ToBackendSuggestDimensionValuesRequestPayload
+                  payload: payload
                 })
                 .pipe(
                   tap((resp: ToBackendSuggestDimensionValuesResponse) => {

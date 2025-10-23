@@ -130,10 +130,7 @@ export class GroupMetricByDimensionController {
       structId: bridge.structId
     });
 
-    await this.parentService.checkAccess({
-      mconfig: oldMconfig,
-      user: user,
-      userMember: userMember,
+    let struct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
     });
@@ -144,7 +141,12 @@ export class GroupMetricByDimensionController {
       });
     }
 
-    let struct = await this.structsService.getStructCheckExists({
+    await this.parentService.checkAccess({
+      parentId: oldMconfig.parentId,
+      parentType: oldMconfig.parentType,
+      modelId: oldMconfig.modelId,
+      user: user,
+      userMember: userMember,
       structId: bridge.structId,
       projectId: projectId
     });
