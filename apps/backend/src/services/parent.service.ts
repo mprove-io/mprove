@@ -96,29 +96,33 @@ export class ParentService {
       });
 
       if (isCheckSuggest === true) {
-        let field;
-
         if (isDefined(suggestRowId)) {
           let row = report.rows.find(x => x.rowId === suggestRowId);
 
-          let rowFilterFields = row.mconfig.filters.map(x =>
+          let rowParameters = row.parametersFiltersWithExcludedTime.map(x =>
             model.fields.find(y => y.id === x.fieldId)
           );
 
-          field = rowFilterFields.find(
+          let parameter = rowParameters.find(
             x => x.suggestModelDimension === `${modelId}.${suggestFieldId}`
           );
+
+          if (isUndefined(parameter)) {
+            throw new ServerError({
+              message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+            });
+          }
         } else {
-          field = report.fields.find(
+          let field = report.fields.find(
             field =>
               field.suggestModelDimension === `${modelId}.${suggestFieldId}`
           );
-        }
 
-        if (isUndefined(field)) {
-          throw new ServerError({
-            message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
-          });
+          if (isUndefined(field)) {
+            throw new ServerError({
+              message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
+            });
+          }
         }
       }
     } else if (
