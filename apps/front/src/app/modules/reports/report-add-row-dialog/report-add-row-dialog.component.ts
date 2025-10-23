@@ -9,12 +9,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
+import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ChangeTypeEnum } from '~common/enums/change-type.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { ModelX } from '~common/interfaces/backend/model-x';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { RowChange } from '~common/interfaces/blockml/row-change';
+import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
@@ -53,9 +56,16 @@ export class ReportAddRowDialogComponent implements OnInit {
   });
 
   metrics: ModelMetric[];
-  metrics$ = this.structQuery.select().pipe(
-    tap(x => {
-      this.metrics = x.metrics;
+  metricsHasAccess$ = combineLatest([
+    this.modelsQuery.models$,
+    this.structQuery.metrics$
+  ]).pipe(
+    tap(([models, metrics]: [ModelX[], ModelMetric[]]) => {
+      this.metrics = metrics.filter(metric => {
+        let model = models.find(y => y.modelId === metric.modelId);
+        return model?.hasAccess === true;
+      });
+
       this.cd.detectChanges();
     })
   );
@@ -68,6 +78,7 @@ export class ReportAddRowDialogComponent implements OnInit {
     private reportService: ReportService,
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
+    private modelsQuery: ModelsQuery,
     private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef
   ) {}
