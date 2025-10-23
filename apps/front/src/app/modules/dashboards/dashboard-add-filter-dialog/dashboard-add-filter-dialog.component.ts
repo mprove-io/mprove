@@ -193,6 +193,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   emptySuggestField = Object.assign({}, makeCopy(EMPTY_MCONFIG_FIELD), {
     modelFieldRef: undefined,
+    connectionType: undefined,
     topLabel: 'Empty',
     partNodeLabel: undefined,
     partFieldLabel: undefined,
@@ -770,7 +771,7 @@ export class DashboardAddFilterDialogComponent implements OnInit {
 
   searchFn(term: string, suggestField: SuggestField) {
     let haystack = [
-      `${suggestField.topLabel} - ${suggestField.partNodeLabel} ${suggestField.partFieldLabel}`
+      `${suggestField.topLabel} - ${suggestField.partNodeLabel} ${suggestField.partFieldLabel} ${suggestField.connectionType}`
     ];
 
     let opts = {};

@@ -111,6 +111,7 @@ export class GetSuggestFieldsController {
 
           let suggestField: SuggestField = {
             modelFieldRef: `${x.modelId}.${field.id}`,
+            connectionType: x.connectionType,
             topLabel: x.label,
             partNodeLabel: field.topLabel,
             partFieldLabel: partFieldLabel,
