@@ -248,6 +248,7 @@ export function wrapReports(item: {
           timeLabel:
             row.type === RowTypeEnum.Metric ? metric.timeLabel : undefined,
           metricId: row.metric,
+          modelId: row.model,
           showChart: toBooleanFromLowercaseString(row.show_chart),
           formula: row.formula,
           rqs: [],

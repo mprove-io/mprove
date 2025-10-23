@@ -8,7 +8,7 @@
     suggestField.partFieldLabel | capitalize
   }}</span>
 
-  <span class="text-s400">
+  <span class="text-s400" *ngIf="!!suggestField.connectionType">
     <span class="ml-[5px]">- {{ suggestField.connectionType }}</span>
   </span>
 </div>

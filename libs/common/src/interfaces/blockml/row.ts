@@ -22,6 +22,9 @@ export class Row {
   metricId: string;
 
   @IsString()
+  modelId: string;
+
+  @IsString()
   topLabel: string;
 
   @IsString()

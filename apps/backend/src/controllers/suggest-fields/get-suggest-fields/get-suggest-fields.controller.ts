@@ -9,14 +9,17 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
+import { DashboardsService } from '~backend/services/db/dashboards.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { SuggestField } from '~common/interfaces/backend/suggest-field';
@@ -31,6 +34,8 @@ export class GetSuggestFieldsController {
   constructor(
     private tabService: TabService,
     private membersService: MembersService,
+    private dashboardsService: DashboardsService,
+    private reportsService: ReportsService,
     private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -43,7 +48,8 @@ export class GetSuggestFieldsController {
   async getSuggestFields(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetSuggestFieldsRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
+    let { projectId, isRepoProd, branchId, envId, parentId, parentType } =
+      reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -84,19 +90,44 @@ export class GetSuggestFieldsController {
       })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
-    // TODO: check model access
-    let modelsGrantedAccess = models
-      .filter(model =>
-        checkModelAccess({
-          member: userMember,
-          modelAccessRoles: model.accessRoles
-        })
+    let extraModelIds: string[] = [];
+
+    if (parentType === MconfigParentTypeEnum.Dashboard) {
+      let dashboard =
+        await this.dashboardsService.getDashboardCheckExistsAndAccess({
+          dashboardId: parentId,
+          structId: bridge.structId,
+          userMember: userMember,
+          user: user
+        });
+
+      extraModelIds = dashboard.tiles.map(x => x.modelId);
+    } else if (parentType === MconfigParentTypeEnum.Report) {
+      let report = await this.reportsService.getReportCheckExistsAndAccess({
+        projectId: projectId,
+        reportId: parentId,
+        structId: bridge.structId,
+        userMember: userMember,
+        user: user
+      });
+
+      extraModelIds = report.rows.map(x => x.modelId).filter(y => isDefined(y));
+    }
+
+    let modelsForSuggest = models
+      .filter(
+        model =>
+          extraModelIds.indexOf(model.modelId) > -1 ||
+          checkModelAccess({
+            member: userMember,
+            modelAccessRoles: model.accessRoles
+          })
       )
       .sort((a, b) => (a.label > b.label ? 1 : b.label > a.label ? -1 : 0));
 
     let suggestFields: SuggestField[] = [];
 
-    modelsGrantedAccess.forEach(x => {
+    modelsForSuggest.forEach(x => {
       x.fields
         .filter(
           y =>

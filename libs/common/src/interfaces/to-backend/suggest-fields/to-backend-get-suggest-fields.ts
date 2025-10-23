@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { Member } from '~common/interfaces/backend/member';
 import { Struct } from '~common/interfaces/backend/struct';
 import { SuggestField } from '~common/interfaces/backend/suggest-field';
@@ -18,6 +19,12 @@ export class ToBackendGetSuggestFieldsRequestPayload {
 
   @IsString()
   envId: string;
+
+  @IsString()
+  parentId: string;
+
+  @IsEnum(MconfigParentTypeEnum)
+  parentType: MconfigParentTypeEnum;
 }
 
 export class ToBackendGetSuggestFieldsRequest extends ToBackendRequest {

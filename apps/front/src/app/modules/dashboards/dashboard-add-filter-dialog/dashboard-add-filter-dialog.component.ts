@@ -29,6 +29,7 @@ import { FieldResultEnum } from '~common/enums/field-result.enum';
 import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { StoreFilterForEnum } from '~common/enums/store-filter-for.enum';
@@ -503,7 +504,9 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       projectId: nav.projectId,
       branchId: nav.branchId,
       isRepoProd: nav.isRepoProd,
-      envId: nav.envId
+      envId: nav.envId,
+      parentId: this.dashboard.dashboardId,
+      parentType: MconfigParentTypeEnum.Dashboard
     };
 
     let apiService: ApiService = this.ref.data.apiService;
