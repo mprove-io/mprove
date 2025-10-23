@@ -28,7 +28,8 @@ export class ErrorDialogComponent implements OnInit {
   originalErrorMessage: string;
   message: string;
   description: string;
-  buttonText: string;
+  leftButtonText: string;
+  rightButtonText: string;
   path: string;
   traceId: string;
 
@@ -50,7 +51,8 @@ export class ErrorDialogComponent implements OnInit {
     }
 
     this.description = this.ref.data.description;
-    this.buttonText = this.ref.data.buttonText;
+    this.leftButtonText = this.ref.data.leftButtonText;
+    this.rightButtonText = this.ref.data.rightButtonText;
 
     this.message = transformErrorMessage(
       this.ref.data?.response?.body?.info?.error?.message ||
@@ -70,9 +72,16 @@ export class ErrorDialogComponent implements OnInit {
     }, 0);
   }
 
-  onOk() {
-    if (isDefined(this.ref.data.onClickFnBindThis)) {
-      this.ref.data.onClickFnBindThis();
+  leftButtonClick() {
+    if (isDefined(this.ref.data.leftOnClickFnBindThis)) {
+      this.ref.data.leftOnClickFnBindThis();
+    }
+    this.ref.close();
+  }
+
+  rightButtonClick() {
+    if (isDefined(this.ref.data.rightOnClickFnBindThis)) {
+      this.ref.data.rightOnClickFnBindThis();
     }
     this.ref.close();
   }

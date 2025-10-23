@@ -262,8 +262,8 @@ export class ApiService {
         [ErEnum.BACKEND_FORBIDDEN_DASHBOARD].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Check dashboard access rules`;
-        errorData.buttonText = 'Ok, go to dashboards';
-        errorData.onClickFnBindThis = (() => {
+        errorData.leftButtonText = 'Go to dashboards';
+        errorData.leftOnClickFnBindThis = (() => {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
@@ -276,8 +276,8 @@ export class ApiService {
         [ErEnum.BACKEND_FORBIDDEN_MODEL].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Check model access rules`;
-        errorData.buttonText = 'Ok, go to charts';
-        errorData.onClickFnBindThis = (() => {
+        errorData.leftButtonText = 'Go to charts';
+        errorData.leftOnClickFnBindThis = (() => {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
@@ -303,9 +303,9 @@ export class ApiService {
           ErEnum.BACKEND_REPORT_NOT_FOUND
         ].indexOf(infoErrorMessage) > -1
       ) {
-        errorData.description = `This typically happens if a user with the editor role has recently made new changes to files in the current branch.`;
-        errorData.buttonText = 'Ok, get changes';
-        errorData.onClickFnBindThis = (() => {
+        errorData.description = `This usually happens if a user with the editor role has recently made new changes to files in the current branch.`;
+        errorData.leftButtonText = 'Get changes';
+        errorData.leftOnClickFnBindThis = (() => {
           if (
             [
               ErEnum.BACKEND_REPORT_DOES_NOT_EXIST,
@@ -412,6 +412,14 @@ export class ApiService {
               });
           }
         }).bind(this);
+        errorData.rightButtonText = 'Get changes, go to files';
+        errorData.rightOnClickFnBindThis = (() => {
+          this.router
+            .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+            .then(() => {
+              this.navigateService.navigateToFiles(nav.branchId);
+            });
+        }).bind(this);
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (infoErrorMessage === ErEnum.BACKEND_RESTRICTED_USER) {
@@ -440,8 +448,8 @@ export class ApiService {
         ].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `The changes were saved to the file, but it failed the validation. It's probably a bug.`;
-        errorData.buttonText = 'Ok, go to file';
-        errorData.onClickFnBindThis = (() => {
+        errorData.leftButtonText = 'Go to file';
+        errorData.leftOnClickFnBindThis = (() => {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {

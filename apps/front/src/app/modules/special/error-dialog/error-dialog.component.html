@@ -28,11 +28,18 @@
     </div>
   </div>
 
-  <div class="mt-8">
+  <div class="mt-8 flex flex-row">
     <button
-      class="bg-m600 text-m0 rounded px-5 py-3 text-base font-medium focus:outline-none"
-      (click)="onOk()"
-      >{{ buttonText || 'Ok' }}</button
+      class="bg-m600 text-m0 flex rounded px-5 py-3 text-base font-medium focus:outline-none"
+      (click)="leftButtonClick()"
+      >{{ leftButtonText || 'Ok' }}</button
+    >
+
+    <button
+      *ngIf="!!rightButtonText"
+      class="bg-m600 text-m0 ml-5 flex rounded px-5 py-3 text-base font-medium focus:outline-none"
+      (click)="rightButtonClick()"
+      >{{ rightButtonText || 'Ok' }}</button
     >
   </div>
 </div>

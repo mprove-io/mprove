@@ -1,8 +1,10 @@
 export class ErrorData {
   message?: any;
   description?: string;
-  buttonText?: string;
-  onClickFnBindThis?: () => any;
+  leftButtonText?: string;
+  rightButtonText?: string;
+  leftOnClickFnBindThis?: () => any;
+  rightOnClickFnBindThis?: () => any;
   originalError?: any;
   reqUrl?: string;
   reqHeaders?: any;
