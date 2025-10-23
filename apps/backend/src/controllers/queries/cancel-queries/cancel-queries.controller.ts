@@ -84,7 +84,7 @@ export class CancelQueriesController {
       projectId: projectId
     });
 
-    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });

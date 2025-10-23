@@ -69,7 +69,7 @@ export class GetQueriesController {
       projectId: projectId
     });
 
-    let userMember = await this.membersService.getMemberCheckIsEditorOrAdmin({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
