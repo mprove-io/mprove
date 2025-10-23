@@ -195,7 +195,7 @@ export class ReportAddRowDialogComponent implements OnInit {
 
   newMetricSearchFn(term: string, metric: ModelMetric) {
     let haystack = [
-      `${metric.topLabel} ${metric.partNodeLabel} ${metric.partFieldLabel} by ${metric.timeNodeLabel} ${metric.timeFieldLabel}`
+      `${metric.topLabel} ${metric.partNodeLabel} ${metric.partFieldLabel} by ${metric.timeNodeLabel} ${metric.timeFieldLabel} ${metric.connectionType}`
     ];
 
     let opts = {};
