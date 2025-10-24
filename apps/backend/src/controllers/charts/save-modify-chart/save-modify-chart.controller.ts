@@ -109,7 +109,7 @@ export class SaveModifyChartController {
       fromChartId,
       chartId,
       tileTitle,
-      accessRoles,
+      // accessRoles,
       timezone
     } = reqValid.payload;
 
@@ -168,7 +168,7 @@ export class SaveModifyChartController {
       });
     }
 
-    let existingChart = await this.chartsService.getChartCheckExistsAndAccess({
+    let existingChart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId,
       userMember: userMember,
@@ -187,10 +187,10 @@ export class SaveModifyChartController {
       mconfigId: existingChart.tiles[0].mconfigId
     });
 
-    // user can save modify chart without model access - OK
-    let model = await this.modelsService.getModelCheckExists({
+    let model = await this.modelsService.getModelCheckExistsAndAccess({
       structId: bridge.structId,
-      modelId: mconfig.modelId
+      modelId: mconfig.modelId,
+      userMember: userMember
     });
 
     let pathParts = existingChart.filePath.split('.');
@@ -210,7 +210,7 @@ export class SaveModifyChartController {
         modelFields: model.fields
       }),
       tileTitle: tileTitle,
-      roles: accessRoles,
+      // roles: accessRoles,
       chartId: chartId,
       modelId: model.modelId,
       modelFilePath: model.filePath

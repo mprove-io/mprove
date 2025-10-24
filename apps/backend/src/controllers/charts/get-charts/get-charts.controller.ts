@@ -5,7 +5,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -81,16 +80,18 @@ export class GetChartsController {
       })
       .then(xs => xs.map(x => this.tabService.chartEntToTab(x)));
 
-    let chartsGrantedAccess = charts.filter(x => {
-      return checkAccess({
-        member: userMember,
-        accessRoles: x.accessRoles
-      });
-    });
-
     let models = await this.db.drizzle.query.modelsTable
       .findMany({ where: eq(modelsTable.structId, bridge.structId) })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
+
+    let chartsGrantedAccess = charts.filter(x => {
+      let model = models.find(y => y.modelId === x.modelId);
+
+      return checkModelAccess({
+        member: userMember,
+        modelAccessRoles: model.accessRoles
+      });
+    });
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 

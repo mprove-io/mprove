@@ -3,7 +3,6 @@ import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
-import { checkChartAccess } from './check-chart-access';
 import { checkChartTilesExist } from './check-chart-tiles-exist';
 
 export function buildChart(
@@ -16,16 +15,6 @@ export function buildChart(
   cs: ConfigService<BlockmlConfig>
 ) {
   let charts = item.charts;
-
-  charts = checkChartAccess(
-    {
-      charts: charts,
-      structId: item.structId,
-      errors: item.errors,
-      caller: item.caller
-    },
-    cs
-  );
 
   charts = checkChartTilesExist(
     {

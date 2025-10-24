@@ -343,7 +343,7 @@ export class TabToEntService {
       title: tab.title,
       modelLabel: tab.modelLabel,
       filePath: tab.filePath,
-      accessRoles: tab.accessRoles,
+      // accessRoles: tab.accessRoles,
       tiles: tab.tiles
     };
 

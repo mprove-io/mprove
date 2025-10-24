@@ -25,6 +25,7 @@ import { BridgesService } from '~backend/services/db/bridges.service';
 import { ChartsService } from '~backend/services/db/charts.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
@@ -52,6 +53,7 @@ let retry = require('async-retry');
 export class DeleteChartController {
   constructor(
     private tabService: TabService,
+    private modelsService: ModelsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
@@ -120,11 +122,17 @@ export class DeleteChartController {
       });
     }
 
-    let existingChart = await this.chartsService.getChartCheckExistsAndAccess({
+    let existingChart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId,
       userMember: userMember,
       user: user
+    });
+
+    await this.modelsService.getModelCheckExistsAndAccess({
+      structId: bridge.structId,
+      modelId: existingChart.modelId,
+      userMember: userMember
     });
 
     if (userMember.isAdmin === false && userMember.isEditor === false) {

@@ -55,7 +55,7 @@ export function wrapCharts(item: {
       modelLabel: apiModel.label,
       // store?.label || mod?.label || model?.label,
       filePath: x.filePath,
-      accessRoles: x.access_roles || [],
+      // accessRoles: x.access_roles || [],
       tiles: apiTiles,
       serverTs: 1
     });

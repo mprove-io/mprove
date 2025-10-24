@@ -7,7 +7,6 @@ import {
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
-import { checkAccess } from '~backend/functions/check-access';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
 import { MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
@@ -71,7 +70,7 @@ export class ChartsService {
       modelId: chart.modelId,
       modelLabel: chart.modelLabel,
       filePath: chart.filePath,
-      accessRoles: chart.accessRoles,
+      // accessRoles: chart.accessRoles,
       tiles: makeTilesX({
         tiles: chart.tiles,
         mconfigs: mconfigs,
@@ -110,7 +109,7 @@ export class ChartsService {
       title: apiChart.title,
       modelLabel: apiChart.modelLabel,
       filePath: apiChart.filePath,
-      accessRoles: apiChart.accessRoles,
+      // accessRoles: apiChart.accessRoles,
       tiles: apiChart.tiles,
       keyTag: undefined,
       serverTs: apiChart.serverTs
@@ -119,7 +118,7 @@ export class ChartsService {
     return chart;
   }
 
-  async getChartCheckExistsAndAccess(item: {
+  async getChartCheckExists(item: {
     chartId: string;
     structId: string;
     userMember: MemberTab;
@@ -146,19 +145,6 @@ export class ChartsService {
       throw new ServerError({
         message: ErEnum.BACKEND_CHART_CREATOR_ID_MISMATCH
       });
-    }
-
-    if (chart.draft === false) {
-      let isAccessGranted = checkAccess({
-        member: userMember,
-        accessRoles: chart.accessRoles
-      });
-
-      if (isAccessGranted === false) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_FORBIDDEN_CHART
-        });
-      }
     }
 
     return chart;

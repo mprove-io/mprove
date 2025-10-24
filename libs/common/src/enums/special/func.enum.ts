@@ -1,7 +1,6 @@
 export enum FuncEnum {
   ALL = 'ALL',
 
-  CheckChartAccess = 'build-chart/check-chart-access',
   CheckChartTilesExist = 'build-chart/check-chart-tiles-exist',
 
   CheckDashboardAccess = 'build-dashboard/check-dashboard-access',

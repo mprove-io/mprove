@@ -138,7 +138,7 @@ export class EditDraftChartController {
       userMember: userMember
     });
 
-    let chart = await this.chartsService.getChartCheckExistsAndAccess({
+    let chart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId,
       userMember: userMember,
@@ -220,7 +220,7 @@ export class EditDraftChartController {
       modelId: tile.modelId,
       modelLabel: tile.modelLabel,
       filePath: undefined,
-      accessRoles: [],
+      // accessRoles: [],
       tiles: [tile],
       keyTag: undefined,
       serverTs: undefined

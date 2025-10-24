@@ -121,7 +121,7 @@ export function checkTopUnknownParameters(
                 ParameterEnum.Chart.toString(),
                 // ParameterEnum.Group.toString(),
                 // ParameterEnum.Hidden.toString(),
-                ParameterEnum.AccessRoles.toString(),
+                // ParameterEnum.AccessRoles.toString(),
                 ParameterEnum.Tiles.toString()
               ].indexOf(parameter) < 0
             ) {

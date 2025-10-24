@@ -107,7 +107,7 @@ export class GetChartController {
       projectId: projectId
     });
 
-    let chart = await this.chartsService.getChartCheckExistsAndAccess({
+    let chart = await this.chartsService.getChartCheckExists({
       structId: bridge.structId,
       chartId: chartId,
       userMember: userMember,
@@ -119,10 +119,10 @@ export class GetChartController {
       mconfigId: chart.tiles[0].mconfigId
     });
 
-    // user can access chart without model access - OK
-    let model = await this.modelsService.getModelCheckExists({
+    let model = await this.modelsService.getModelCheckExistsAndAccess({
       structId: bridge.structId,
-      modelId: chartMconfig.modelId
+      modelId: chartMconfig.modelId,
+      userMember: userMember
     });
 
     let query: QueryTab;

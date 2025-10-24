@@ -1,4 +1,3 @@
-import { isDefined } from '~common/functions/is-defined';
 import { prepareTile } from '~common/functions/prepare-tile';
 import { toYaml } from '~common/functions/to-yaml';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
@@ -8,7 +7,7 @@ export function makeChartFileText(item: {
   mconfig: MconfigX;
   chartId: string;
   tileTitle: string;
-  roles: string;
+  // roles: string;
   // malloyChartFilePath: string;
   modelFilePath: string;
   modelId: string;
@@ -17,7 +16,7 @@ export function makeChartFileText(item: {
     mconfig,
     chartId,
     tileTitle,
-    roles,
+    // roles,
     // malloyChartFilePath,
     modelFilePath,
     modelId
@@ -33,10 +32,10 @@ export function makeChartFileText(item: {
 
   let chartFileText = toYaml({
     chart: chartId,
-    access_roles:
-      isDefined(roles) && roles.trim().length > 0
-        ? roles.split(',').map(x => x.trim())
-        : undefined,
+    // access_roles:
+    //   isDefined(roles) && roles.trim().length > 0
+    //     ? roles.split(',').map(x => x.trim())
+    //     : undefined,
     tiles: [filePartTile]
   });
 

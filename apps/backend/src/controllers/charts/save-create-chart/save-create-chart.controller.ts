@@ -103,7 +103,7 @@ export class SaveCreateChartController {
       fromChartId,
       newChartId,
       tileTitle,
-      accessRoles,
+      // accessRoles,
       mconfig,
       envId
     } = reqValid.payload;
@@ -204,7 +204,7 @@ export class SaveCreateChartController {
     } = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
-      roles: accessRoles,
+      // roles: accessRoles,
       chartId: newChartId,
       modelId: model.modelId,
       modelFilePath: model.filePath

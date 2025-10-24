@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 
 import { IsTimezone } from '~common/functions/is-timezone';
 import { ChartX } from '~common/interfaces/backend/chart-x';
@@ -36,9 +31,9 @@ export class ToBackendSaveModifyChartRequestPayload {
   @IsTimezone()
   timezone: string;
 
-  @IsOptional()
-  @IsString()
-  accessRoles?: string;
+  // @IsOptional()
+  // @IsString()
+  // accessRoles?: string;
 }
 
 export class ToBackendSaveModifyChartRequest extends ToBackendRequest {

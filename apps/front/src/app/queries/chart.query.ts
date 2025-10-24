@@ -107,7 +107,7 @@ export const emptyChart: ChartState = {
   modelId: undefined,
   modelLabel: undefined,
   filePath: undefined,
-  accessRoles: [],
+  // accessRoles: [],
   serverTs: undefined,
   //
   tiles: [emptyTile],

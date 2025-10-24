@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { ChartX } from '~common/interfaces/backend/chart-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { MyResponse } from '~common/interfaces/to/my-response';
@@ -32,9 +27,9 @@ export class ToBackendSaveCreateChartRequestPayload {
   @IsString()
   tileTitle: string;
 
-  @IsOptional()
-  @IsString()
-  accessRoles?: string;
+  // @IsOptional()
+  // @IsString()
+  // accessRoles?: string;
 
   @ValidateNested()
   @Type(() => MconfigX)
