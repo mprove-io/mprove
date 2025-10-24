@@ -39,7 +39,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
   models$ = this.modelsQuery.select().pipe(
     tap(ml => {
-      this.models = ml.models;
+      this.models = ml.models.filter(x => x.hasAccess === true);
 
       // let allGroups = this.vizs.map(v => v.gr);
       // let definedGroups = allGroups.filter(y => isDefined(y));
