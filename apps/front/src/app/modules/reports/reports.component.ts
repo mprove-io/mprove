@@ -954,6 +954,10 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   setShowMetrics() {
+    if (this.alias === this.restrictedUserAlias || this.isExplorer === false) {
+      return;
+    }
+
     if (this.showMetrics === true) {
       return;
     }

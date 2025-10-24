@@ -5,12 +5,9 @@
 >
   <button
     data-cy="metricsAddRowButton"
-    class="hover:bg-m0 ml-[12px] rounded border px-2 py-[4px] font-normal focus:outline-none"
+    class="hover:bg-m0 border-s400 text-s500 ml-[12px] rounded border px-2 py-[4px] font-normal focus:outline-none"
     [ngClass]="{
-      'border-s400 text-s500':
-        alias !== restrictedUserAlias && isExplorer === true,
-      'border-s300 text-s400 cursor-default':
-        alias === restrictedUserAlias || isExplorer === false
+      'cursor-default': alias === restrictedUserAlias || isExplorer === false
     }"
     type="button"
     (click)="addRow()"

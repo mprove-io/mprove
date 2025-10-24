@@ -1,4 +1,14 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
+  <ng-template #templateExplorer>
+    <div *ngIf="alias === restrictedUserAlias"
+      >User is restricted. Sign Up at https://mprove.io to get full access.</div
+    >
+
+    <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+      >Explorer role required</div
+    >
+  </ng-template>
+
   <div class="flex h-2 flex-1 flex-row">
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div
@@ -54,7 +64,7 @@
               </div>
 
               <div
-                [tp]="templateNewReport"
+                [tp]="templateExplorer"
                 [tpIsEnabled]="
                   alias === restrictedUserAlias || isExplorer === false
                 "
@@ -76,20 +86,6 @@
                   "
                   >New Report</button
                 >
-
-                <ng-template #templateNewReport>
-                  <div *ngIf="alias === restrictedUserAlias"
-                    >User is restricted. Sign Up at https://mprove.io to get
-                    full access.</div
-                  >
-
-                  <div
-                    *ngIf="
-                      alias !== restrictedUserAlias && isExplorer === false
-                    "
-                    >Explorer role required</div
-                  >
-                </ng-template>
               </div>
             </div>
 
@@ -461,16 +457,25 @@
                 </div>
 
                 <div
-                  (click)="setShowMetrics()"
-                  class="ml-2 flex cursor-pointer select-none flex-row items-center pl-2 text-lg"
+                  class="ml-2 flex select-none flex-row items-center text-lg"
+                  [tp]="templateExplorer"
+                  [tpIsEnabled]="
+                    alias === restrictedUserAlias || isExplorer === false
+                  "
                 >
                   <div
-                    class="flex w-[94px] flex-row items-center justify-center"
+                    class="flex w-[94px] flex-row items-center justify-center pl-2"
+                    (click)="setShowMetrics()"
                   >
                     <div
                       [ngClass]="{
+                        'cursor-pointer':
+                          alias !== restrictedUserAlias && isExplorer !== false,
                         'text-s400': showMetrics === false,
-                        'font-semibold': showMetrics === true
+                        'font-semibold':
+                          alias !== restrictedUserAlias &&
+                          isExplorer !== false &&
+                          showMetrics === true
                       }"
                     >
                       METRICS
