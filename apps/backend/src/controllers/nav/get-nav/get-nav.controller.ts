@@ -163,7 +163,7 @@ export class GetNavController {
           baseProject: apiResultBaseProject,
           repoId: bridge.repoId,
           branch: bridge.branchId,
-          isFetch: true
+          isFetch: false
         }
       };
 

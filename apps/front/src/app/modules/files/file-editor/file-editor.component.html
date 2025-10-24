@@ -17,13 +17,11 @@
         }"
         *ngIf="
           showGoTo === true &&
-          ((file?.name | goFromFileExt) === 'chart' ||
+          ((member?.isExplorer === true &&
+            ((file?.name | goFromFileExt) === 'chart' ||
+              (file?.name | goFromFileExt) === 'model' ||
+              (file?.name | goFromFileExt) === 'store')) ||
             (file?.name | goFromFileExt) === 'dashboard' ||
-            (member?.isExplorer === true &&
-              ((file?.name | goFromFileExt) === 'view' ||
-                (file?.name | goFromFileExt) === 'store')) ||
-            (member?.isExplorer === true &&
-              (file?.name | goFromFileExt) === 'model') ||
             (file?.name | goFromFileExt) === 'report')
         "
         (click)="goTo()"

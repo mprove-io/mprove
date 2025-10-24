@@ -115,14 +115,12 @@
           }"
           *ngIf="
             showGoTo === true &&
-            ((secondFileName | goFromFileExt) === 'chart' ||
-              (secondFileName | goFromFileExt) === 'dashboard' ||
-              (isExplorer === true &&
-                ((secondFileName | goFromFileExt) === 'view' ||
-                  (secondFileName | goFromFileExt) === 'store')) ||
-              (isExplorer === true &&
-                (secondFileName | goFromFileExt) === 'model') ||
-              (secondFileName | goFromFileExt) === 'report')
+            ((isExplorer === true &&
+              ((secondFileName | goFromFileExt) === 'chart' ||
+                (secondFileName | goFromFileExt) === 'store' ||
+                (secondFileName | goFromFileExt) === 'model')) ||
+              (secondFileName | goFromFileExt) === 'report' ||
+              (secondFileName | goFromFileExt) === 'dashboard')
           "
           (click)="goTo()"
           [disabled]="isSecondFileValid === false"

@@ -71,17 +71,30 @@
             *ngIf="!!nav && !!nav.projectId"
             class="flex flex-row items-center space-x-5"
           >
-            <button
-              class="text-s1 ml-5 flex h-10 w-[80px] select-none items-center justify-center text-left text-base focus:outline-none"
-              [ngClass]="{
-                'text-s400 cursor-default':
-                  !nav || !nav.projectId || needSave === true,
-                'font-semibold': isModelsRouteActive === true
-              }"
-              (click)="navigateCharts()"
-              [disabled]="!nav || !nav.projectId || needSave === true"
-              >Models</button
+            <div
+              tp="Explorer role required"
+              [tpIsEnabled]="member.isExplorer === false"
             >
+              <button
+                class="text-s1 ml-5 flex h-10 w-[80px] select-none items-center justify-center text-left text-base focus:outline-none"
+                [ngClass]="{
+                  'text-s400 cursor-default':
+                    !nav ||
+                    !nav.projectId ||
+                    needSave === true ||
+                    member.isExplorer === false,
+                  'font-semibold': isModelsRouteActive === true
+                }"
+                (click)="navigateCharts()"
+                [disabled]="
+                  !nav ||
+                  !nav.projectId ||
+                  needSave === true ||
+                  member.isExplorer === false
+                "
+                >Models</button
+              >
+            </div>
 
             <button
               class="text-s1 flex h-10 w-[90px] select-none items-center justify-center text-left text-base focus:outline-none"

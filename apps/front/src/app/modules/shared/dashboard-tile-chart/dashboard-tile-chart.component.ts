@@ -79,13 +79,13 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
 
   isSelectValid = false;
 
-  isExplorer = false;
-  isExplorer$ = this.memberQuery.isExplorer$.pipe(
-    tap(x => {
-      this.isExplorer = x;
-      this.cd.detectChanges();
-    })
-  );
+  // isExplorer = false;
+  // isExplorer$ = this.memberQuery.isExplorer$.pipe(
+  //   tap(x => {
+  //     this.isExplorer = x;
+  //     this.cd.detectChanges();
+  //   })
+  // );
 
   constructor(
     private apiService: ApiService,

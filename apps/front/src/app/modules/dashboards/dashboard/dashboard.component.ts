@@ -148,13 +148,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
-  isExplorer = false;
-  isExplorer$ = this.memberQuery.isExplorer$.pipe(
-    tap(x => {
-      this.isExplorer = x;
-      this.cd.detectChanges();
-    })
-  );
+  // isExplorer = false;
+  // isExplorer$ = this.memberQuery.isExplorer$.pipe(
+  //   tap(x => {
+  //     this.isExplorer = x;
+  //     this.cd.detectChanges();
+  //   })
+  // );
 
   compactType: any = 'vertical';
   preventCollision = false;

@@ -7,10 +7,6 @@ export function checkModelAccess(item: {
 }): boolean {
   let { member, modelAccessRoles } = item;
 
-  if (member.isExplorer === false) {
-    return false;
-  }
-
   if (member.isAdmin === true || member.isEditor === true) {
     return true;
   }
