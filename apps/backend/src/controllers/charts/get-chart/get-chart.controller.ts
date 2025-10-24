@@ -34,6 +34,7 @@ import { StructsService } from '~backend/services/db/structs.service';
 import { MalloyService } from '~backend/services/malloy.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -42,6 +43,7 @@ import {
   ToBackendGetChartRequest,
   ToBackendGetChartResponsePayload
 } from '~common/interfaces/to-backend/charts/to-backend-get-chart';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -82,6 +84,12 @@ export class GetChartController {
       projectId: projectId,
       memberId: user.userId
     });
+
+    if (userMember.isExplorer === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

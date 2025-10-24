@@ -18,11 +18,13 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
+import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetChartsRequest,
   ToBackendGetChartsResponsePayload
 } from '~common/interfaces/to-backend/charts/to-backend-get-charts';
+import { ServerError } from '~common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
@@ -54,6 +56,12 @@ export class GetChartsController {
       projectId: projectId,
       memberId: user.userId
     });
+
+    if (userMember.isExplorer === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

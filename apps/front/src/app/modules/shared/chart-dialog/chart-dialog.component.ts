@@ -307,7 +307,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   }
 
   explore(event?: MouseEvent) {
-    if (this.canAccessModel === false) {
+    if (this.isExplorer === false || this.canAccessModel === false) {
       return;
     }
 

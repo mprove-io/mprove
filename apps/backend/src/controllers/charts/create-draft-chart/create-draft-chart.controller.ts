@@ -105,6 +105,12 @@ export class CreateDraftChartController {
       memberId: user.userId
     });
 
+    if (userMember.isExplorer === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
+
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: repoId,

@@ -67,10 +67,16 @@ export class DeleteDraftChartsController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
     });
+
+    if (userMember.isExplorer === false) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
+      });
+    }
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
@@ -81,7 +87,7 @@ export class DeleteDraftChartsController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({

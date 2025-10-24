@@ -123,13 +123,13 @@ export class SaveModifyDashboardController {
       memberId: user.userId
     });
 
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
     if (userMember.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
+
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
