@@ -1,10 +1,34 @@
-<div class="custom-header flex flex-row items-center">
+<div
+  class="custom-header flex flex-row items-center"
+  [tp]="templateAddRow"
+  [tpIsEnabled]="alias === restrictedUserAlias || isExplorer === false"
+>
   <button
     data-cy="metricsAddRowButton"
-    class="border-s400 text-s500 hover:bg-m0 ml-[12px] rounded border px-2 py-[4px] font-normal focus:outline-none"
+    class="hover:bg-m0 ml-[12px] rounded border px-2 py-[4px] font-normal focus:outline-none"
+    [ngClass]="{
+      'border-s400 text-s500':
+        alias !== restrictedUserAlias && isExplorer === true,
+      'border-s300 text-s400 cursor-default':
+        alias === restrictedUserAlias || isExplorer === false
+    }"
     type="button"
     (click)="addRow()"
+    [disabled]="alias === restrictedUserAlias || isExplorer === false"
   >
     <m-add-icon></m-add-icon>
   </button>
+
+  <ng-template #templateAddRow>
+    <div *ngIf="alias === restrictedUserAlias"
+      >User is restricted. Sign Up at https://mprove.io to get full access.</div
+    >
+
+    <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+      >Explorer role required</div
+    >
+  </ng-template>
 </div>
+
+<div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="alias$ | async"></div>
