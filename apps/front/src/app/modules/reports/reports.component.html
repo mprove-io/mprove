@@ -53,14 +53,43 @@
                 </div>
               </div>
 
-              <div class="ml-5">
+              <div
+                [tp]="templateNewReport"
+                [tpIsEnabled]="
+                  alias === restrictedUserAlias || isExplorer === false
+                "
+                class="ml-5"
+              >
                 <button
                   type="button"
                   data-cy="metricsNewReportButton"
-                  class="bg-m600 text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
+                  class="text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
+                  [ngClass]="{
+                    'bg-m600':
+                      alias !== restrictedUserAlias && isExplorer === true,
+                    'bg-s400 cursor-default':
+                      alias === restrictedUserAlias || isExplorer === false
+                  }"
                   (click)="newReport()"
+                  [disabled]="
+                    alias === restrictedUserAlias || isExplorer === false
+                  "
                   >New Report</button
                 >
+
+                <ng-template #templateNewReport>
+                  <div *ngIf="alias === restrictedUserAlias"
+                    >User is restricted. Sign Up at https://mprove.io to get
+                    full access.</div
+                  >
+
+                  <div
+                    *ngIf="
+                      alias !== restrictedUserAlias && isExplorer === false
+                    "
+                    >Explorer role required</div
+                  >
+                </ng-template>
               </div>
             </div>
 
@@ -585,21 +614,32 @@
 
                           <div class="flex flex-grow"></div>
 
-                          <button
-                            *ngIf="
-                              report.draft === true &&
-                              r.reportId === report.reportId
-                            "
-                            data-cy="reportsSaveDraftButton"
-                            class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
-                            (click)="reportSaveAs($event)"
+                          <div
+                            tp="Explorer role required"
+                            [tpIsEnabled]="isExplorer === false"
                           >
-                            <div
-                              class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                            <button
+                              *ngIf="
+                                report.draft === true &&
+                                r.reportId === report.reportId
+                              "
+                              data-cy="reportsSaveDraftButton"
+                              class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
+                              (click)="reportSaveAs($event)"
+                              [disabled]="isExplorer === false"
                             >
-                              <m-save-icon class="text-s500"></m-save-icon>
-                            </div>
-                          </button>
+                              <div
+                                class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                              >
+                                <m-save-icon
+                                  [ngClass]="{
+                                    'text-s500': isExplorer === true,
+                                    'text-s400': isExplorer === false
+                                  }"
+                                ></m-save-icon>
+                              </div>
+                            </button>
+                          </div>
 
                           <button
                             *ngIf="
@@ -966,6 +1006,8 @@
 
 <div *ngIf="routerEvents$ | async"></div>
 <div *ngIf="isAutoRun$ | async"></div>
+<div *ngIf="isExplorer$ | async"></div>
+<div *ngIf="alias$ | async"></div>
 <div *ngIf="report$ | async"></div>
 <div *ngIf="reports$ | async"></div>
 <div *ngIf="reportChartData$ | async"></div>

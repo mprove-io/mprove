@@ -514,21 +514,32 @@
 
                           <div class="flex flex-grow"></div>
 
-                          <button
-                            *ngIf="
-                              dashboard?.draft === true &&
-                              dPart.dashboardId === dashboard?.dashboardId
-                            "
-                            data-cy="dashboardsSaveDraftButton"
-                            class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
-                            (click)="dashboardSaveAs($event)"
+                          <div
+                            tp="Explorer role required"
+                            [tpIsEnabled]="isExplorer === false"
                           >
-                            <div
-                              class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                            <button
+                              *ngIf="
+                                dashboard?.draft === true &&
+                                dPart.dashboardId === dashboard?.dashboardId
+                              "
+                              data-cy="dashboardsSaveDraftButton"
+                              class="ml-3 flex h-11 items-center justify-center rounded focus:outline-none"
+                              (click)="dashboardSaveAs($event)"
+                              [disabled]="isExplorer === false"
                             >
-                              <m-save-icon class="text-s500"></m-save-icon>
-                            </div>
-                          </button>
+                              <div
+                                class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded px-2"
+                              >
+                                <m-save-icon
+                                  [ngClass]="{
+                                    'text-s500': isExplorer === true,
+                                    'text-s400': isExplorer === false
+                                  }"
+                                ></m-save-icon>
+                              </div>
+                            </button>
+                          </div>
 
                           <button
                             *ngIf="

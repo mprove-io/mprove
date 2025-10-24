@@ -31,7 +31,8 @@ import {
   EMPTY_REPORT_ID,
   MALLOY_FILTER_ANY,
   PATH_REPORTS,
-  PATH_REPORTS_LIST
+  PATH_REPORTS_LIST,
+  RESTRICTED_USER_ALIAS
 } from '~common/constants/top';
 import { REFRESH_LIST } from '~common/constants/top-front';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
@@ -73,6 +74,7 @@ import { ReportQuery } from '~front/app/queries/report.query';
 import { ReportsQuery } from '~front/app/queries/reports.query';
 import { StructQuery } from '~front/app/queries/struct.query';
 import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
+import { UserQuery } from '~front/app/queries/user.query';
 import { StructReportResolver } from '~front/app/resolvers/struct-report.resolver';
 import { ApiService } from '~front/app/services/api.service';
 import { DataService } from '~front/app/services/data.service';
@@ -103,6 +105,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   isInitialScrollCompleted = false;
+
+  restrictedUserAlias = RESTRICTED_USER_ALIAS;
 
   pageTitle = REPORTS_PAGE_TITLE;
 
@@ -626,6 +630,22 @@ export class ReportsComponent implements OnInit, OnDestroy {
     })
   );
 
+  isExplorer = false;
+  isExplorer$ = this.memberQuery.isExplorer$.pipe(
+    tap(x => {
+      this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.cd.detectChanges();
+    })
+  );
+
   constructor(
     private fb: FormBuilder,
     private cd: ChangeDetectorRef,
@@ -634,6 +654,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     private reportQuery: ReportQuery,
     private uiQuery: UiQuery,
     private memberQuery: MemberQuery,
+    private userQuery: UserQuery,
     private structQuery: StructQuery,
     private location: Location,
     private router: Router,
