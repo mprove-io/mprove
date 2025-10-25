@@ -69,8 +69,8 @@
 
                 <ng-template #templateNewDashboard>
                   <div *ngIf="alias === restrictedUserAlias"
-                    >User is restricted. Sign Up at https://mprove.io to get
-                    full access.</div
+                    >Demo user is restricted. Sign Up at https://mprove.io to
+                    get full access.</div
                   >
 
                   <div
@@ -94,14 +94,27 @@
             }}</div> -->
 
             <ng-template #templateAddTile>
-              <div *ngIf="isExplorer === false">Explorer role required</div>
+              <div *ngIf="alias === restrictedUserAlias"
+                >Demo user is restricted. Sign Up at https://mprove.io to get
+                full access.</div
+              >
 
-              <div *ngIf="isExplorer === true && dashboard.draft === true"
+              <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
+                >Explorer role required</div
+              >
+
+              <div
+                *ngIf="
+                  alias !== restrictedUserAlias &&
+                  isExplorer === true &&
+                  dashboard.draft === true
+                "
                 >Save changes to be able to add tiles</div
               >
 
               <div
                 *ngIf="
+                  alias !== restrictedUserAlias &&
                   isExplorer === true &&
                   dashboard.draft === false &&
                   dashboard.canEditOrDeleteDashboard === false
@@ -225,7 +238,7 @@
 
                 <div
                   *ngIf="isExplorer === true && alias === restrictedUserAlias"
-                  >User is restricted. Sign Up at https://mprove.io to get full
+                  >Demo user is restricted. Sign Up at https://mprove.io to get full
                   access.</div
                 >
               </ng-template> -->
@@ -417,7 +430,10 @@
                     <div class="flex flex-grow"></div>
 
                     <button
-                      *ngIf="filteredDraftsLength > 0"
+                      *ngIf="
+                        filteredDraftsLength > 0 &&
+                        alias !== restrictedUserAlias
+                      "
                       class="ml-3 mr-10 flex select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
                       [ngClass]="{
                         'border-s400 text-s500 hover:bg-s100':
@@ -461,19 +477,36 @@
                       >
                         <div
                           *ngIf="filteredDraftsLength > 0 && i === 0"
-                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                          class="mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                          [ngClass]="{
+                            'text-s400': alias === restrictedUserAlias,
+                            'text-s500': alias !== restrictedUserAlias
+                          }"
                         >
-                          Drafts
+                          {{
+                            alias === restrictedUserAlias
+                              ? 'Drafts are hidden for Demo User'
+                              : 'Drafts'
+                          }}
                         </div>
 
                         <div
-                          *ngIf="i === filteredDraftsLength"
+                          *ngIf="
+                            i ===
+                            (alias === restrictedUserAlias
+                              ? 0
+                              : filteredDraftsLength)
+                          "
                           class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                         >
                           Saved Dashboards
                         </div>
 
                         <div
+                          *ngIf="
+                            alias !== restrictedUserAlias ||
+                            dPart.draft === false
+                          "
                           class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                           (click)="navToDashboard(dPart.dashboardId)"
                           [ngClass]="{

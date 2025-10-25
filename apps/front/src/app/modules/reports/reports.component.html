@@ -1,12 +1,6 @@
 <div class="bg-m1 flex h-full cursor-default flex-col">
   <ng-template #templateExplorer>
-    <div *ngIf="alias === restrictedUserAlias"
-      >User is restricted. Sign Up at https://mprove.io to get full access.</div
-    >
-
-    <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
-      >Explorer role required</div
-    >
+    <div *ngIf="isExplorer === false">Explorer role required</div>
   </ng-template>
 
   <div class="flex h-2 flex-1 flex-row">
@@ -65,9 +59,7 @@
 
               <div
                 [tp]="templateExplorer"
-                [tpIsEnabled]="
-                  alias === restrictedUserAlias || isExplorer === false
-                "
+                [tpIsEnabled]="isExplorer === false"
                 class="ml-5"
               >
                 <button
@@ -75,15 +67,11 @@
                   data-cy="metricsNewReportButton"
                   class="text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
                   [ngClass]="{
-                    'bg-m600':
-                      alias !== restrictedUserAlias && isExplorer === true,
-                    'bg-s400 cursor-default':
-                      alias === restrictedUserAlias || isExplorer === false
+                    'bg-m600': isExplorer === true,
+                    'bg-s400 cursor-default': isExplorer === false
                   }"
                   (click)="newReport()"
-                  [disabled]="
-                    alias === restrictedUserAlias || isExplorer === false
-                  "
+                  [disabled]="isExplorer === false"
                   >New Report</button
                 >
               </div>
@@ -459,9 +447,7 @@
                 <div
                   class="ml-2 flex select-none flex-row items-center text-lg"
                   [tp]="templateExplorer"
-                  [tpIsEnabled]="
-                    alias === restrictedUserAlias || isExplorer === false
-                  "
+                  [tpIsEnabled]="isExplorer === false"
                 >
                   <div
                     class="flex w-[94px] flex-row items-center justify-center pl-2"
@@ -469,13 +455,10 @@
                   >
                     <div
                       [ngClass]="{
-                        'cursor-pointer':
-                          alias !== restrictedUserAlias && isExplorer !== false,
+                        'cursor-pointer': isExplorer !== false,
                         'text-s400': showMetrics === false,
                         'font-semibold':
-                          alias !== restrictedUserAlias &&
-                          isExplorer !== false &&
-                          showMetrics === true
+                          isExplorer !== false && showMetrics === true
                       }"
                     >
                       METRICS
@@ -527,7 +510,9 @@
                   <div class="flex flex-grow"></div>
 
                   <button
-                    *ngIf="filteredDraftsLength > 0"
+                    *ngIf="
+                      filteredDraftsLength > 0 && alias !== restrictedUserAlias
+                    "
                     class="ml-3 mr-10 flex select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
                     [ngClass]="{
                       'border-s400 text-s500 hover:bg-s100':
@@ -572,19 +557,35 @@
                       >
                         <div
                           *ngIf="filteredDraftsLength > 0 && i === 0"
-                          class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                          class="mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                          [ngClass]="{
+                            'text-s400': alias === restrictedUserAlias,
+                            'text-s500': alias !== restrictedUserAlias
+                          }"
                         >
-                          Drafts
+                          {{
+                            alias === restrictedUserAlias
+                              ? 'Drafts are hidden for Demo User'
+                              : 'Drafts'
+                          }}
                         </div>
 
                         <div
-                          *ngIf="i === filteredDraftsLength"
+                          *ngIf="
+                            i ===
+                            (alias === restrictedUserAlias
+                              ? 0
+                              : filteredDraftsLength)
+                          "
                           class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                         >
                           Saved Reports
                         </div>
 
                         <div
+                          *ngIf="
+                            alias !== restrictedUserAlias || r.draft === false
+                          "
                           class="hover:bg-m50 group ml-6 mr-5 flex h-11 flex-row items-center rounded pr-2 hover:cursor-pointer"
                           (click)="navToReport(r)"
                           [ngClass]="{
