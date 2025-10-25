@@ -533,7 +533,11 @@
               <div class="flex flex-grow"></div>
 
               <button
-                *ngIf="showSchema === false && filteredDraftsLength > 0"
+                *ngIf="
+                  showSchema === false &&
+                  filteredDraftsLength > 0 &&
+                  alias !== restrictedUserAlias
+                "
                 class="ml-5 mr-10 flex flex-shrink-0 select-none flex-row items-center rounded border px-4 py-2 focus:outline-none"
                 [ngClass]="{
                   'border-s400 text-s500 hover:bg-s100':
@@ -568,26 +572,35 @@
               <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
                 <div class="h-[12px]"></div>
 
-                <div
-                  *ngFor="
-                    let c of filteredCharts | slice: 0 : filteredDraftsLength;
-                    let i = index
-                  "
-                >
+                <div *ngIf="alias !== restrictedUserAlias">
                   <div
-                    *ngIf="filteredDraftsLength > 0 && i === 0"
-                    class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
-                  >
-                    Drafts
-                  </div>
-
-                  <ng-container
-                    *ngTemplateOutlet="
-                      chartsItem;
-                      context: { i: i, c: c, isDraft: true }
+                    *ngFor="
+                      let c of filteredCharts | slice: 0 : filteredDraftsLength;
+                      let i = index
                     "
-                  ></ng-container>
+                  >
+                    <div
+                      *ngIf="filteredDraftsLength > 0 && i === 0"
+                      class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                    >
+                      Drafts
+                    </div>
+
+                    <ng-container
+                      *ngTemplateOutlet="
+                        chartsItem;
+                        context: { i: i, c: c, isDraft: true }
+                      "
+                    ></ng-container>
+                  </div>
                 </div>
+
+                <div
+                  *ngIf="alias === restrictedUserAlias"
+                  class="text-s400 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
+                >
+                  Drafts are hidden for Demo User</div
+                >
 
                 <div
                   *ngIf="
