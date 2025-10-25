@@ -572,7 +572,11 @@
               <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
                 <div class="h-[12px]"></div>
 
-                <div *ngIf="alias !== restrictedUserAlias">
+                <div
+                  *ngIf="
+                    filteredDraftsLength > 0 && alias !== restrictedUserAlias
+                  "
+                >
                   <div
                     *ngFor="
                       let c of filteredCharts | slice: 0 : filteredDraftsLength;
@@ -580,7 +584,7 @@
                     "
                   >
                     <div
-                      *ngIf="filteredDraftsLength > 0 && i === 0"
+                      *ngIf="i === 0"
                       class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                     >
                       Drafts
@@ -596,7 +600,9 @@
                 </div>
 
                 <div
-                  *ngIf="alias === restrictedUserAlias"
+                  *ngIf="
+                    filteredDraftsLength > 0 && alias === restrictedUserAlias
+                  "
                   class="text-s400 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                 >
                   Drafts are hidden for Demo User</div
