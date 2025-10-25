@@ -194,6 +194,56 @@ export class UsersService {
     return user;
   }
 
+  async addDemoUser(item: { email: string; password: string }) {
+    let { email, password } = item;
+
+    let passwordHS = await this.hashService.createSaltAndHash({
+      input: password
+    });
+
+    let alias = await this.makeAlias(email);
+
+    let emailVerificationToken = makeId();
+
+    let user: UserTab = {
+      userId: makeId(),
+      isEmailVerified: true,
+      passwordHash: passwordHS.hash,
+      passwordSalt: passwordHS.salt,
+      jwtMinIat: undefined,
+      email: email,
+      alias: alias,
+      firstName: 'Demo',
+      lastName: 'User',
+      emailVerificationToken: emailVerificationToken,
+      passwordResetToken: undefined,
+      passwordResetExpiresTs: undefined,
+      ui: makeCopy(DEFAULT_SRV_UI),
+      emailHash: undefined, // tab-to-ent
+      aliasHash: undefined, // tab-to-ent
+      emailVerificationTokenHash: undefined, // tab-to-ent
+      passwordResetTokenHash: undefined, // tab-to-ent
+      keyTag: undefined,
+      serverTs: undefined
+    };
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                users: [user]
+              }
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    return user;
+  }
+
   async makeAlias(email: string) {
     let reg = MyRegex.CAPTURE_ALIAS();
     let r = reg.exec(email);

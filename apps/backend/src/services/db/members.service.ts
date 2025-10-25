@@ -376,4 +376,56 @@ export class MembersService {
       }
     }
   }
+
+  async addDemoMemberToDemoProject(item: {
+    user: UserTab;
+  }) {
+    let { user } = item;
+
+    let demoProjectId =
+      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
+
+    if (isDefined(demoProjectId)) {
+      let project = await this.db.drizzle.query.projectsTable
+        .findFirst({
+          where: eq(projectsTable.projectId, demoProjectId)
+        })
+        .then(x => this.tabService.projectEntToTab(x));
+
+      if (isDefined(project)) {
+        let member = await this.db.drizzle.query.membersTable
+          .findFirst({
+            where: and(
+              eq(membersTable.memberId, user.userId),
+              eq(membersTable.projectId, demoProjectId)
+            )
+          })
+          .then(x => this.tabService.memberEntToTab(x));
+
+        if (isUndefined(member)) {
+          let newMember: MemberTab = this.makeMember({
+            projectId: demoProjectId,
+            user: user,
+            isAdmin: false,
+            isEditor: false,
+            isExplorer: true
+          });
+
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insertOrUpdate: {
+                      members: [newMember]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+        }
+      }
+    }
+  }
 }
