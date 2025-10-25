@@ -49,6 +49,13 @@ import { MalloyConnection } from './make-malloy-connections';
 import { makeQueryId } from './make-query-id';
 import { processMalloyWhereOrHaving } from './process-malloy-where-or-having';
 
+export interface MalloyQueryResult {
+  isError: boolean;
+  errorMessage: string;
+  apiNewMconfig: Mconfig;
+  apiNewQuery: Query;
+}
+
 export async function makeMalloyQuery(item: {
   projectId: string;
   envId: string;
@@ -95,7 +102,14 @@ export async function makeMalloyQuery(item: {
       mconfig: mconfig
     });
 
-    return { isError: false, newMconfig: blankMconfig, newQuery: blankQuery };
+    let result: MalloyQueryResult = {
+      isError: false,
+      errorMessage: undefined,
+      apiNewMconfig: blankMconfig,
+      apiNewQuery: blankQuery
+    };
+
+    return result;
   }
 
   // console.log('modelDefToModelInfo');
@@ -728,10 +742,12 @@ export async function makeMalloyQuery(item: {
   console.log('makeMalloyQuery:');
   console.log(Date.now() - startMakeMalloyQuery);
 
-  return {
+  let result: MalloyQueryResult = {
     isError: isError,
     errorMessage: errorMessage,
     apiNewMconfig: newMconfig,
     apiNewQuery: newQuery
   };
+
+  return result;
 }
