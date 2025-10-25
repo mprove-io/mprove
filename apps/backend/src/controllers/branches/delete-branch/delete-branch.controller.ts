@@ -63,27 +63,20 @@ export class DeleteBranchController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditor({
+    let userMember = await this.membersService.getMemberCheckIsEditor({
       memberId: user.userId,
       projectId: projectId
+    });
+
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
     });
 
     if (branchId === project.defaultBranch) {
       throw new ServerError({
         message: ErEnum.BACKEND_DEFAULT_BRANCH_CANNOT_BE_DELETED
-      });
-    }
-
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      member.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
       });
     }
 

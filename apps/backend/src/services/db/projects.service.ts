@@ -5,6 +5,7 @@ import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import {
   ConnectionTab,
+  MemberTab,
   ProjectTab,
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
@@ -103,6 +104,27 @@ export class ProjectsService {
     }
 
     return project;
+  }
+
+  async checkProjectIsNotRestricted(item: {
+    projectId: string;
+    userMember: MemberTab;
+    repoId: string;
+  }) {
+    let { projectId, userMember, repoId } = item;
+
+    let demoProjectId =
+      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
+
+    if (
+      userMember.isAdmin === false &&
+      projectId === demoProjectId &&
+      (isUndefined(repoId) || repoId === PROD_REPO_ID)
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_PROJECT
+      });
+    }
   }
 
   async addProject(item: {

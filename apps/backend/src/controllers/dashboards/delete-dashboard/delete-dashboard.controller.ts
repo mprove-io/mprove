@@ -89,6 +89,12 @@ export class DeleteDashboardController {
       memberId: user.userId
     });
 
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
+    });
+
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: repoId,
@@ -107,19 +113,6 @@ export class DeleteDashboardController {
       branchId: branch.branchId,
       envId: envId
     });
-
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      userMember.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
 
     let existingDashboard =
       await this.dashboardsService.getDashboardCheckExistsAndAccess({

@@ -29,7 +29,6 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
@@ -41,7 +40,6 @@ import {
   ToDiskPullRepoRequest,
   ToDiskPullRepoResponse
 } from '~common/interfaces/to-disk/03-repos/to-disk-pull-repo';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -76,23 +74,16 @@ export class PullRepoController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditor({
+    let userMember = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.userId
     });
 
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      member.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
+    });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
@@ -103,7 +94,7 @@ export class PullRepoController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let baseProject = this.tabService.projectTabToBaseProject({

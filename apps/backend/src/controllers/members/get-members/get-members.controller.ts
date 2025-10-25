@@ -17,14 +17,12 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendGetMembersRequest,
   ToBackendGetMembersResponsePayload
 } from '~common/interfaces/to-backend/members/to-backend-get-members';
-import { ServerError } from '~common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -53,14 +51,11 @@ export class GetMembersController {
       projectId: projectId
     });
 
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (userMember.isAdmin === false && projectId === demoProjectId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: undefined
+    });
 
     // let membersResult = await this.db.drizzle
     //   .select({

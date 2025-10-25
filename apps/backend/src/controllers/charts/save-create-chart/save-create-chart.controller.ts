@@ -122,6 +122,12 @@ export class SaveCreateChartController {
       memberId: user.userId
     });
 
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
+    });
+
     if (userMember.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
@@ -152,19 +158,6 @@ export class SaveCreateChartController {
       projectId: projectId
       // skipMetrics: false
     });
-
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      userMember.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
 
     let model = await this.modelsService.getModelCheckExistsAndAccess({
       structId: bridge.structId,

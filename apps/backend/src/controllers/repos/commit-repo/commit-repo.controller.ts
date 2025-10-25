@@ -12,7 +12,6 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
-import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -60,23 +59,16 @@ export class CommitRepoController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditor({
+    let userMember = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.userId
     });
 
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      member.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
+    });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

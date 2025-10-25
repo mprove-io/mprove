@@ -64,14 +64,11 @@ export class CreateEnvVarController {
       projectId: projectId
     });
 
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (userMember.isAdmin === false && projectId === demoProjectId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: undefined
+    });
 
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,

@@ -30,7 +30,6 @@ import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { ToBackendDeleteReportRequest } from '~common/interfaces/to-backend/reports/to-backend-delete-report';
@@ -38,7 +37,6 @@ import {
   ToDiskDeleteFileRequest,
   ToDiskDeleteFileResponse
 } from '~common/interfaces/to-disk/07-files/to-disk-delete-file';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -73,9 +71,15 @@ export class DeleteReportController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckExists({
+    let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
       memberId: user.userId
+    });
+
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
     });
 
     let branch = await this.branchesService.getBranchCheckExists({
@@ -87,7 +91,7 @@ export class DeleteReportController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -97,25 +101,12 @@ export class DeleteReportController {
       envId: envId
     });
 
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      member.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
-
     let existingReport = await this.reportsService.getReportCheckExists({
       structId: bridge.structId,
       reportId: reportId
     });
 
-    if (member.isAdmin === false && member.isEditor === false) {
+    if (userMember.isAdmin === false && userMember.isEditor === false) {
       this.reportsService.checkReportPath({
         userAlias: user.alias,
         filePath: existingReport.filePath

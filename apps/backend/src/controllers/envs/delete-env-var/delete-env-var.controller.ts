@@ -23,13 +23,11 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendDeleteEnvVarRequest,
   ToBackendDeleteEnvVarResponsePayload
 } from '~common/interfaces/to-backend/envs/to-backend-delete-env-var';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -62,14 +60,11 @@ export class DeleteEnvVarController {
       projectId: projectId
     });
 
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (userMember.isAdmin === false && projectId === demoProjectId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: undefined
+    });
 
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,

@@ -123,13 +123,19 @@ export class SaveModifyDashboardController {
       memberId: user.userId
     });
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
+    });
+
     if (userMember.isExplorer === false) {
       throw new ServerError({
         message: ErEnum.BACKEND_MEMBER_IS_NOT_EXPLORER
       });
     }
-
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
@@ -155,19 +161,6 @@ export class SaveModifyDashboardController {
       projectId: projectId
       // skipMetrics: false
     });
-
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      userMember.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
 
     let fromDashboardX =
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({

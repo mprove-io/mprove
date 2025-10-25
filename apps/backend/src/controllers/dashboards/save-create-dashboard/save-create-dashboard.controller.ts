@@ -129,6 +129,12 @@ export class SaveCreateDashboardController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
+    await this.projectsService.checkProjectIsNotRestricted({
+      projectId: projectId,
+      userMember: userMember,
+      repoId: repoId
+    });
+
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
       repoId: repoId,
@@ -153,19 +159,6 @@ export class SaveCreateDashboardController {
       projectId: projectId
       // skipMetrics: false
     });
-
-    let demoProjectId =
-      this.cs.get<BackendConfig['demoProjectId']>('demoProjectId');
-
-    if (
-      userMember.isAdmin === false &&
-      projectId === demoProjectId &&
-      repoId === PROD_REPO_ID
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_PROJECT
-      });
-    }
 
     let mdir = currentStruct.mproveConfig.mproveDirValue;
 

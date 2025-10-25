@@ -425,17 +425,8 @@ export class ApiService {
       } else if (infoErrorMessage === ErEnum.BACKEND_RESTRICTED_USER) {
         errorData.description = `This user is restricted for Demo purposes. Sign Up at https://mprove.io to get full access.`;
         this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (
-        infoErrorMessage === ErEnum.BACKEND_RESTRICTED_PROJECT &&
-        pathInfoName === ToBackendRequestInfoNameEnum.ToBackendPushRepo
-      ) {
-        errorData.description = `Some actions of this project is restricted for Demo purposes. Switch organization/project to remove restrictions and be able to push to remote.`;
-        this.myDialogService.showError({ errorData, isThrow: false });
-      } else if (
-        infoErrorMessage === ErEnum.BACKEND_RESTRICTED_PROJECT &&
-        pathInfoName !== ToBackendRequestInfoNameEnum.ToBackendPushRepo
-      ) {
-        errorData.description = `Some actions of this project is restricted for Demo purposes. Switch organization/project to remove restrictions.`;
+      } else if (infoErrorMessage === ErEnum.BACKEND_RESTRICTED_PROJECT) {
+        errorData.description = `Some actions of Demo project are restricted. Switch organization project to remove restrictions.`;
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
         [
