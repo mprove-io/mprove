@@ -22,6 +22,7 @@ import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
+import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -117,6 +118,12 @@ export class RegisterUserController {
         });
       } else {
         let alias = await this.usersService.makeAlias(email);
+
+        if (alias === RESTRICTED_USER_ALIAS) {
+          throw new ServerError({
+            message: ErEnum.BACKEND_RESTRICTED_USER
+          });
+        }
 
         newUser = {
           userId: makeId(),

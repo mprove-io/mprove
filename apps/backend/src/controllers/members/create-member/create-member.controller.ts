@@ -48,9 +48,11 @@ import {
   PATH_REPORT,
   PATH_REPORTS,
   PROD_REPO_ID,
-  PROJECT_ENV_PROD
+  PROJECT_ENV_PROD,
+  RESTRICTED_USER_ALIAS
 } from '~common/constants/top';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
+import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -65,6 +67,7 @@ import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
 } from '~common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
+import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -137,6 +140,12 @@ export class CreateMemberController {
 
     if (isUndefined(invitedUser)) {
       let alias = await this.usersService.makeAlias(email);
+
+      if (alias === RESTRICTED_USER_ALIAS) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_RESTRICTED_USER
+        });
+      }
 
       let emailVerificationToken = makeId();
 
