@@ -17,6 +17,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
 import { TabService } from '~backend/services/tab.service';
+import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -42,25 +43,25 @@ export class SetUserUiController {
   async setUserUi(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSetUserUiRequest = request.body;
 
-    this.usersService.checkUserIsNotRestricted({ user: user }); // TODO: check set user ui
-
     let { ui } = reqValid.payload;
 
-    user.ui = ui;
+    if (user.alias !== RESTRICTED_USER_ALIAS) {
+      user.ui = ui;
 
-    await retry(
-      async () =>
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                users: [user]
-              }
-            })
-        ),
-      getRetryOption(this.cs, this.logger)
-    );
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  users: [user]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
 
     let payload: ToBackendSetUserUiResponsePayload = {
       user: this.usersService.tabToApi({ user: user })
