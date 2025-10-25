@@ -94,30 +94,21 @@
 
           <div
             *ngIf="!!model?.modelId"
-            [tp]="templateNewChart"
-            [tpIsEnabled]="
-              alias === restrictedUserAlias ||
-              isExplorer === false ||
-              !model?.modelId
-            "
+            [tp]="templateClearQuery"
+            [tpIsEnabled]="isExplorer === false || !model?.modelId"
             class="ml-[44px] h-11 flex-shrink-0"
           >
             <button
               type="button"
-              data-cy="chartsNewChartButton"
+              data-cy="chartsClearQueryButton"
               class="border-s400 text-s500 hover:bg-m0 h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-base font-medium focus:outline-none"
               (click)="clearQuery()"
-              [disabled]="alias === restrictedUserAlias || isExplorer === false"
+              [disabled]="isExplorer === false"
               >Clear Query</button
             >
           </div>
 
-          <ng-template #templateNewChart>
-            <div *ngIf="alias === restrictedUserAlias"
-              >Demo user is restricted. Sign Up at https://mprove.io to get full
-              access.</div
-            >
-
+          <ng-template #templateClearQuery>
             <div *ngIf="alias !== restrictedUserAlias && isExplorer === false"
               >Explorer role required</div
             >
