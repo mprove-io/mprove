@@ -27,13 +27,10 @@ import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
-import {
-  EMPTY_STRUCT_ID,
-  PROD_REPO_ID,
-  RESTRICTED_USER_ALIAS
-} from '~common/constants/top';
+import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -53,6 +50,7 @@ let retry = require('async-retry');
 export class DeleteChartController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private modelsService: ModelsService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
@@ -70,14 +68,10 @@ export class DeleteChartController {
   async deleteChart(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteChartRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
-
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, chartId } = reqValid.payload;
+
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 

@@ -26,15 +26,11 @@ import { DashboardsService } from '~backend/services/db/dashboards.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
-import {
-  EMPTY_STRUCT_ID,
-  PROD_REPO_ID,
-  RESTRICTED_USER_ALIAS
-} from '~common/constants/top';
+import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { ToBackendDeleteDashboardRequest } from '~common/interfaces/to-backend/dashboards/to-backend-delete-dashboard';
@@ -42,7 +38,6 @@ import {
   ToDiskDeleteFileRequest,
   ToDiskDeleteFileResponse
 } from '~common/interfaces/to-disk/07-files/to-disk-delete-file';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -52,6 +47,7 @@ let retry = require('async-retry');
 export class DeleteDashboardController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private branchesService: BranchesService,
     private rabbitService: RabbitService,
     private membersService: MembersService,
@@ -68,11 +64,7 @@ export class DeleteDashboardController {
   async createEmptyDashboard(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteDashboardRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, dashboardId } =

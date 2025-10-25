@@ -6,9 +6,9 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { TabService } from '~backend/services/tab.service';
-import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -40,6 +40,7 @@ import { ServerError } from '~common/models/server-error';
 export class ResendUserEmailController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private emailService: EmailService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -62,11 +63,7 @@ export class ResendUserEmailController {
       });
     }
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     if (user.isEmailVerified === true) {
       let payload: ToBackendResendUserEmailResponsePayload = {

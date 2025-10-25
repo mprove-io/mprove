@@ -22,13 +22,12 @@ import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { TabService } from '~backend/services/tab.service';
-import { PROD_REPO_ID, RESTRICTED_USER_ALIAS } from '~common/constants/top';
+import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendDeleteDraftDashboardsRequest } from '~common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -38,6 +37,7 @@ let retry = require('async-retry');
 export class DeleteDraftDashboardsController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -52,11 +52,7 @@ export class DeleteDraftDashboardsController {
   async createEmptyDashboard(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteDraftDashboardsRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let { traceId } = reqValid.info;
     let { projectId, isRepoProd, branchId, envId, dashboardIds } =

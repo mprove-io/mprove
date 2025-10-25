@@ -18,16 +18,11 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { TabService } from '~backend/services/tab.service';
-import {
-  PATH_UPDATE_PASSWORD,
-  RESTRICTED_USER_ALIAS
-} from '~common/constants/top';
+import { PATH_UPDATE_PASSWORD } from '~common/constants/top';
 import { PASSWORD_EXPIRES_OFFSET } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import { ToBackendResetUserPasswordRequest } from '~common/interfaces/to-backend/users/to-backend-reset-user-password';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -70,11 +65,7 @@ export class ResetUserPasswordController {
       email: email
     });
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     this.usersService.checkUserPasswordHashIsDefined({ user: user });
 

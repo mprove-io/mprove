@@ -6,6 +6,7 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
+import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -106,6 +107,16 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  checkUserIsNotRestricted(item: { user: UserTab }) {
+    let { user } = item;
+
+    if (user.alias === RESTRICTED_USER_ALIAS) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_RESTRICTED_USER
+      });
+    }
   }
 
   async getUserByEmailCheckExists(item: { email: string }) {

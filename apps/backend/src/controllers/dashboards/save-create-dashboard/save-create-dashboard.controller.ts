@@ -32,6 +32,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
 import {
@@ -39,7 +40,6 @@ import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
   PROD_REPO_ID,
-  RESTRICTED_USER_ALIAS,
   UTC
 } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -71,6 +71,7 @@ let retry = require('async-retry');
 export class SaveCreateDashboardController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rabbitService: RabbitService,
@@ -91,11 +92,7 @@ export class SaveCreateDashboardController {
   async saveCreateDashboard(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSaveCreateDashboardRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let { traceId } = reqValid.info;
     let {

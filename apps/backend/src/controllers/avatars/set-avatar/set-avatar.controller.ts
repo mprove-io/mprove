@@ -16,16 +16,14 @@ import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
+import { UsersService } from '~backend/services/db/users.service';
 import { TabService } from '~backend/services/tab.service';
-import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import {
   ToBackendSetAvatarRequest,
   ToBackendSetAvatarResponsePayload
 } from '~common/interfaces/to-backend/avatars/to-backend-set-avatar';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -34,6 +32,7 @@ let retry = require('async-retry');
 export class SetAvatarController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -43,13 +42,9 @@ export class SetAvatarController {
   async setAvatar(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSetAvatarRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
-
     let { avatarSmall, avatarBig } = reqValid.payload;
+
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let avatar = await this.db.drizzle.query.avatarsTable
       .findFirst({

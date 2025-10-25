@@ -19,15 +19,12 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
 import { TabService } from '~backend/services/tab.service';
-import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendSetUserNameRequest,
   ToBackendSetUserNameResponsePayload
 } from '~common/interfaces/to-backend/users/to-backend-set-user-name';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 
@@ -47,11 +44,7 @@ export class SetUserNameController {
   async setUserName(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSetUserNameRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let { firstName, lastName } = reqValid.payload;
 

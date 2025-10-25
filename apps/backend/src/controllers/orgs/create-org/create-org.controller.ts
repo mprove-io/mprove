@@ -11,9 +11,10 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
-import { DEMO_ORG_NAME, RESTRICTED_USER_ALIAS } from '~common/constants/top';
+import { DEMO_ORG_NAME } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -30,6 +31,7 @@ import { ServerError } from '~common/models/server-error';
 export class CreateOrgController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
     private orgsService: OrgsService,
@@ -41,11 +43,7 @@ export class CreateOrgController {
   async createOrg(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateOrgRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let allowUsersToCreateOrganizations = this.cs.get<
       BackendConfig['allowUsersToCreateOrganizations']

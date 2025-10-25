@@ -33,14 +33,10 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { UsersService } from '~backend/services/db/users.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
-import {
-  EMPTY_STRUCT_ID,
-  PROD_REPO_ID,
-  RESTRICTED_USER_ALIAS,
-  UTC
-} from '~common/constants/top';
+import { EMPTY_STRUCT_ID, PROD_REPO_ID, UTC } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
@@ -69,6 +65,7 @@ let retry = require('async-retry');
 export class SaveModifyDashboardController {
   constructor(
     private tabService: TabService,
+    private usersService: UsersService,
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rabbitService: RabbitService,
@@ -90,11 +87,7 @@ export class SaveModifyDashboardController {
   async saveModifyDashboard(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSaveModifyDashboardRequest = request.body;
 
-    if (user.alias === RESTRICTED_USER_ALIAS) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_RESTRICTED_USER
-      });
-    }
+    this.usersService.checkUserIsNotRestricted({ user: user });
 
     let { traceId } = reqValid.info;
     let {
