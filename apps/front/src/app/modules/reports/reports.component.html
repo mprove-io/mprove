@@ -296,14 +296,29 @@
                 >
               </div>
 
+              <ng-template #templateAutoRunSelector>
+                <div *ngIf="alias === restrictedUserAlias"
+                  >Demo user is restricted. Sign Up at https://mprove.io to get
+                  full access.</div
+                >
+
+                <div
+                  *ngIf="alias !== restrictedUserAlias && isAutoRun === false"
+                  >Enable Auto Run to use selector</div
+                >
+              </ng-template>
+
               <div
                 class="ml-5 flex flex-col items-stretch"
-                tp="Enable Auto Run to use selector"
-                [tpIsEnabled]="isAutoRun === false"
+                [tp]="templateAutoRunSelector"
+                [tpIsEnabled]="
+                  alias === restrictedUserAlias || isAutoRun === false
+                "
               >
                 <div
                   *ngIf="
                     isAutoRun === true &&
+                    alias !== restrictedUserAlias &&
                     refreshForm.controls['refresh'].value !== 0
                   "
                   class="h-[6px] w-full"
@@ -331,7 +346,9 @@
                     formControlName="refresh"
                   >
                     <ng-template ng-label-tmp let-item="item">
-                      <div class="ml-1 truncate">{{ item.label }}</div>
+                      <div class="ml-1 truncate">{{
+                        alias !== restrictedUserAlias ? item.label : ''
+                      }}</div>
                     </ng-template>
 
                     <ng-template ng-option-tmp let-item="item">
@@ -343,6 +360,7 @@
                 <div
                   *ngIf="
                     isAutoRun === true &&
+                    alias !== restrictedUserAlias &&
                     refreshForm.controls['refresh'].value !== 0
                   "
                   class="bg-s200 h-[6px] w-full overflow-hidden rounded-full"

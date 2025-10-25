@@ -167,7 +167,15 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     tap(x => {
       this.isAutoRun = x;
       this.checkRefreshSelector();
+      this.cd.detectChanges();
+    })
+  );
 
+  alias: string;
+  alias$ = this.userQuery.alias$.pipe(
+    tap(x => {
+      this.alias = x;
+      this.checkRefreshSelector();
       this.cd.detectChanges();
     })
   );
@@ -200,14 +208,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   );
 
   word: string;
-
-  alias: string;
-  alias$ = this.userQuery.alias$.pipe(
-    tap(x => {
-      this.alias = x;
-      this.cd.detectChanges();
-    })
-  );
 
   lastUrl: string;
 
@@ -560,8 +560,13 @@ export class DashboardsComponent implements OnInit, OnDestroy {
         this.refreshForm.controls.refresh.setValue(0);
       }
 
-      if (this.refreshForm.controls.refresh.disabled) {
+      if (
+        this.refreshForm.controls.refresh.disabled &&
+        this.alias !== this.restrictedUserAlias
+      ) {
         this.refreshForm.controls.refresh.enable();
+      } else if (this.alias === this.restrictedUserAlias) {
+        this.refreshForm.controls.refresh.disable();
       }
     }
   }
