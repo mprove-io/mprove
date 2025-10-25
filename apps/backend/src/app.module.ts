@@ -18,7 +18,12 @@ import * as fse from 'fs-extra';
 import Redis from 'ioredis';
 import { Client, ClientConfig } from 'pg';
 import { BackendConfig } from '~backend/config/backend-config';
-import { DEMO_ORG_NAME, PROJECT_ENV_PROD } from '~common/constants/top';
+import {
+  DEMO_ORG_NAME,
+  PROJECT_ENV_PROD,
+  RESTRICTED_USER_EMAIL,
+  RESTRICTED_USER_PASSWORD
+} from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -628,8 +633,8 @@ export class AppModule implements OnModuleInit {
 
       let hashSecret = await this.dconfigsService.getDconfigHashSecret();
 
-      let demoUserEmail = 'demo-user@mprove.io';
-      let demoUserInitialPassword = '123456';
+      let demoUserEmail = RESTRICTED_USER_EMAIL;
+      let demoUserInitialPassword = RESTRICTED_USER_PASSWORD;
 
       let demoUserEmailHash = this.hashService.makeHash({
         input: demoUserEmail,
