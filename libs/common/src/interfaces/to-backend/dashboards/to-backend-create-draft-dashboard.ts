@@ -1,5 +1,10 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
@@ -36,6 +41,10 @@ export class ToBackendCreateDraftDashboardRequestPayload {
 
   @IsString()
   timezone: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isQueryCache?: boolean;
 }
 
 export class ToBackendCreateDraftDashboardRequest extends ToBackendRequest {

@@ -417,7 +417,7 @@ export class SaveModifyDashboardController {
     newApiDashboard.tiles.forEach(tile => {
       let query = apiQueries.find(q => q.queryId === tile.queryId);
 
-      // prev query and new query has different queryId (dashboardId)
+      // prev query and new query has different queryId (different parent dashboardId)
       let prevTile = fromDashboardX.tiles.find(y => y.title === tile.title);
 
       let prevQuery = prevTile?.query;

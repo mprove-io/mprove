@@ -98,7 +98,8 @@ export class CreateDraftDashboardController {
       newDashboardId,
       newDashboardFields,
       tiles,
-      timezone
+      timezone,
+      isQueryCache
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
@@ -298,14 +299,18 @@ export class CreateDraftDashboardController {
 
       let query = this.queriesService.apiToTab({ apiQuery: apiQuery });
 
-      // prev query and new query has different queryId (dashboardId)
+      // prev query and new query has different queryId (different parent dashboardId)
       let prevTile = fromDashboardX.tiles.find(
         y => y.title === mconfig.chart.title
       );
 
       let prevQuery = prevTile?.query;
 
-      if (isDefined(prevQuery) && prevQuery.status !== QueryStatusEnum.Error) {
+      if (
+        isDefined(prevQuery) &&
+        prevQuery.status !== QueryStatusEnum.Error &&
+        isQueryCache === true
+      ) {
         query.data = prevTile?.query?.data;
         query.status = prevTile?.query?.status;
         query.lastRunBy = prevTile?.query?.lastRunBy;
