@@ -10,7 +10,6 @@ import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { File3 } from '~common/interfaces/blockml/internal/file-3';
 import { Preset } from '~common/interfaces/blockml/preset';
-import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { makeLineNumbers } from './functions/build-yaml/make-line-numbers';
@@ -64,7 +63,7 @@ import { PresetsService } from './services/presets.service';
       inject: [ConfigService]
     })
   ],
-  controllers: appControllers,
+  controllers: [], // rabbit instead of appControllers (secure)
   providers: [Logger, ...appServices]
 })
 export class AppModule implements OnModuleInit {

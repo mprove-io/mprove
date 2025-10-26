@@ -4,7 +4,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { DiskConfig } from '~disk/config/disk-config';
-import { appControllers } from './app-controllers';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
@@ -48,7 +47,7 @@ import { logToConsoleDisk } from './functions/log-to-console-disk';
       inject: [ConfigService]
     })
   ],
-  controllers: appControllers,
+  controllers: [], // rabbit instead of appControllers (secure)
   providers: [Logger, ...appServices]
 })
 export class AppModule implements OnModuleInit {
