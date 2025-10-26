@@ -396,7 +396,11 @@ export class SaveCreateDashboardController {
 
       let prevQuery = prevTile?.query;
 
-      if (isDefined(prevQuery) && prevQuery.status !== QueryStatusEnum.Error) {
+      if (
+        isDefined(prevQuery) &&
+        prevQuery.status === QueryStatusEnum.Completed &&
+        query.status !== QueryStatusEnum.Error
+      ) {
         query.data = prevTile?.query?.data;
         query.status = prevTile?.query?.status;
         query.lastRunBy = prevTile?.query?.lastRunBy;

@@ -358,7 +358,7 @@ export class CreateDraftDashboardController {
 
       if (
         isDefined(prevQuery) &&
-        prevQuery.status !== QueryStatusEnum.Error &&
+        prevQuery.status === QueryStatusEnum.Completed &&
         query.status !== QueryStatusEnum.Error &&
         isQueryCache === true
       ) {
