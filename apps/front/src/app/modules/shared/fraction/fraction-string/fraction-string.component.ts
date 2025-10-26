@@ -226,67 +226,6 @@ export class FractionStringComponent implements OnInit, OnDestroy {
               this.loading = true;
               this.cd.detectChanges();
 
-              // let newMconfig: Mconfig = {
-              //   structId: this.structId,
-              //   mconfigId: makeId(),
-              //   queryId: makeId(),
-              //   modelId: modelId,
-              //   modelType: ModelTypeEnum.Malloy,
-              //   parentType: MconfigParentTypeEnum.SuggestDimension,
-              //   parentId: undefined,
-              //   dateRangeIncludesRightSide: undefined,
-              //   storePart: undefined,
-              //   modelLabel: 'empty',
-              //   modelFilePath: undefined,
-              //   malloyQueryStable: undefined,
-              //   malloyQueryExtra: undefined,
-              //   compiledQuery: undefined,
-              //   select: [],
-              //   // unsafeSelect: [],
-              //   // warnSelect: [],
-              //   // joinAggregations: [],
-              //   sortings: [],
-              //   sorts: undefined,
-              //   timezone: UTC,
-              //   limit: 500,
-              //   filters: [],
-              //   chart: makeCopy(DEFAULT_CHART),
-              //   serverTs: 1
-              // };
-
-              // let query;
-
-              // let queryOperation1: QueryOperation = {
-              //   type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-              //   fieldId: fieldId,
-              //   sortFieldId: fieldId,
-              //   desc: false,
-              //   timezone: newMconfig.timezone
-              // };
-
-              // let queryOperation2: QueryOperation = {
-              //   type: QueryOperationTypeEnum.WhereOrHaving,
-              //   timezone: newMconfig.timezone,
-              //   filters: [
-              //     {
-              //       fieldId: fieldId,
-              //       fractions: [
-              //         {
-              //           brick: `f\`%${term}%\``,
-              //           parentBrick: `f\`%${term}%\``,
-              //           type: FractionTypeEnum.StringContains,
-              //           operator: FractionOperatorEnum.Or,
-              //           stringValue: term
-              //         }
-              //       ]
-              //     }
-              //   ]
-              // };
-
-              // let queryOperations: QueryOperation[] = isDefined(queryOperation2)
-              //   ? [queryOperation1, queryOperation2]
-              //   : [queryOperation1];
-
               let nav = this.navQuery.getValue();
 
               let payload: ToBackendSuggestDimensionValuesRequestPayload = {
@@ -332,7 +271,6 @@ export class FractionStringComponent implements OnInit, OnDestroy {
                     branchId: nav.branchId,
                     envId: nav.envId,
                     mconfigIds: [q1Resp.payload.mconfig.mconfigId]
-                    // queryIds: [q1Resp.payload.query.queryId]
                   } as ToBackendRunQueriesRequestPayload
                 })
                 .pipe(

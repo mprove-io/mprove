@@ -59,7 +59,6 @@ export class ReportSaveAsDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.reportSaveAsDialogExistingReportSelectElement?.close();
-    // this.ref.close();
   }
 
   usersFolder = MPROVE_USERS_FOLDER;

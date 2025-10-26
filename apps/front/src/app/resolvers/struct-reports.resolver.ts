@@ -44,9 +44,6 @@ export class StructReportsResolver implements Resolve<Observable<boolean>> {
 
     let loadDiff = Date.now() - this.uiQuery.getValue().metricsLoadedTs;
 
-    // console.log('loadDiff');
-    // console.log(loadDiff);
-
     if (loadDiff < 100) {
       return of(true);
     }

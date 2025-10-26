@@ -79,14 +79,6 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
 
   isSelectValid = false;
 
-  // isExplorer = false;
-  // isExplorer$ = this.memberQuery.isExplorer$.pipe(
-  //   tap(x => {
-  //     this.isExplorer = x;
-  //     this.cd.detectChanges();
-  //   })
-  // );
-
   constructor(
     private apiService: ApiService,
     private navQuery: NavQuery,
@@ -99,8 +91,6 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
   ) {}
 
   async ngOnInit() {
-    // console.log(this.mconfig.queryId === this.query.queryId);
-
     this.qData =
       this.mconfig.queryId === this.query.queryId
         ? this.dataService.makeQData({
@@ -113,11 +103,9 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
       chart: this.mconfig.chart,
       mconfigFields: this.mconfig.fields,
       isStoreModel: this.mconfig.modelType === ModelTypeEnum.Store
-      // isStoreModel: this.mconfig.isStoreModel
     });
 
     this.isSelectValid = checkSelectResult.isSelectValid;
-    // this.errorMessage = checkSelectResult.errorMessage;
 
     this.cd.detectChanges();
   }
@@ -145,7 +133,6 @@ export class DashboardTileChartComponent implements OnInit, OnChanges {
 
   showChart() {
     this.myDialogService.showChart({
-      // updateQueryFn: this.updateQuery.bind(this),
       apiService: this.apiService,
       mconfig: this.mconfig,
       query: this.query,

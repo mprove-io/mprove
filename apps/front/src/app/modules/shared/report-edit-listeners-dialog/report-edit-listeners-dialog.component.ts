@@ -66,8 +66,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
     this.fieldSelectElements.forEach(element => {
       element?.close();
     });
-
-    // this.ref.close();
   }
 
   rowTypeMetric = RowTypeEnum.Metric;
@@ -146,7 +144,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
 
               let swap: { [a: string]: string[] } = {};
 
-              // Object.keys(x.listen).forEach(modelFieldId => {
               x.parameters
                 .filter(p => isDefined(p.listen))
                 .forEach(p => {
@@ -189,7 +186,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
                           )
                         ]
                       : model.type !== ModelTypeEnum.Store &&
-                          // model.isStoreModel === false &&
                           isUndefined(reportField.storeModel)
                         ? [
                             emptyField,
@@ -216,12 +212,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
                   );
                 });
               });
-
-              // console.log('modelFields');
-              // console.log(modelFields);
-
-              // console.log('swap');
-              // console.log(swap);
             });
 
             this.cd.detectChanges();
@@ -243,8 +233,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
     items: any;
     selected: any;
   }) {
-    // console.log(item);
-
     let { reportFieldId, row, rowIndex, i, items, selected } = item;
 
     row.mconfigListenSwap[reportFieldId][i] =

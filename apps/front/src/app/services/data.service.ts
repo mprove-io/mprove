@@ -388,21 +388,6 @@ export class DataService {
   }) {
     let { query, mconfig } = item;
 
-    // ---mconfigField
-    // description: "The date of the event, formatted as YYYYMMDD"
-    // fieldClass: "dimension"
-    // hidden: false
-    // id: "time.date"
-    // isHideColumn: false
-    // label: "Date"
-    // result: "string"
-    // sorting: {fieldId: 'time.date', desc: false}
-    // sortingNumber: 0
-    // sqlName: "time_date"
-    // topId: "time"
-    // topLabel: "time"
-    // type: "custom"
-
     let data: SourceDataRow[] = query.data;
 
     let isStore = mconfig.modelType === ModelTypeEnum.Store;
@@ -511,9 +496,6 @@ export class DataService {
                                 ? TimeSpecEnum.Years
                                 : undefined;
 
-          // console.log('field');
-          // console.log(field);
-
           let cell: QCell = {
             name: key.toLowerCase(),
             value:
@@ -549,9 +531,6 @@ export class DataService {
       qData.push(r);
     });
 
-    // console.log('qData');
-    // console.log(qData);
-
     return qData;
   }
 
@@ -579,9 +558,6 @@ export class DataService {
     } = item;
 
     let struct = this.structQuery.getValue();
-
-    // console.log('makeSeriesData item');
-    // console.log(item);
 
     let xField = selectFields.find(f => f.id === xFieldId);
 
@@ -746,9 +722,6 @@ export class DataService {
         }
       });
     });
-
-    // console.log('ySeries');
-    // console.log(ySeries);
 
     let sortedDaysOfWeek =
       struct.mproveConfig.weekStart === ProjectWeekStartEnum.Monday
@@ -1031,12 +1004,6 @@ export class DataService {
   private getMsFromT(item: { value: string; timezone: string }) {
     let { value, timezone } = item;
 
-    // console.log('timezone');
-    // console.log(timezone);
-
-    // console.log('value');
-    // console.log(value);
-
     let regEx = /(\d\d\d\d)[-](\d\d)[-](\d\d)[T|\s](\d\d)[:](\d\d)[:](\d\d)/g;
 
     let r = regEx.exec(value);
@@ -1060,9 +1027,6 @@ export class DataService {
 
     let dateMs = date.getTime();
 
-    // console.log('dateMs');
-    // console.log(dateMs);
-
     // packages/malloy-render/src/html/utils.ts -> normalizeToTimezone
 
     let dateTime = DateTime.fromMillis(dateMs, {
@@ -1080,14 +1044,6 @@ export class DataService {
         dateTime.millisecond
       )
     );
-
-    // console.log('dateTZ');
-    // console.log(dateTZ);
-
-    // let dateTzMs = dateTZ.getTime();
-
-    // console.log('dateTzMs');
-    // console.log(dateTzMs);
 
     return dateTZ.getTime();
   }
@@ -1161,8 +1117,6 @@ export class DataService {
 
   private getDateFromTimestamp(rValue: string) {
     let data = rValue;
-
-    // let date = new Date(data); can be used if offset specified
 
     let regEx =
       /^(\d\d\d\d)[-](\d\d)[-](\d\d)[T](\d\d)[:](\d\d)[:](\d\d)\.(\d\d\d)/g;
@@ -1294,22 +1248,17 @@ export class DataService {
     let seriesOption: SeriesOption;
 
     if (isMiniChart === true) {
-      // console.log('row');
-      // console.log(row);
-
       seriesOption = {
         type: 'bar',
         barWidth: '90%',
         itemStyle: {
           color: '#0084d1',
           borderRadius: [0, 0, 0, 0]
-          // borderRadius: [2, 2, 0, 0]
         },
         showBackground: true,
         backgroundStyle: {
           color: '#cdecfe'
         },
-        //
         yAxisIndex: chartSeriesElement?.yAxisIndex,
         cursor: 'default',
         emphasis: {
@@ -1331,11 +1280,8 @@ export class DataService {
         lineStyle: {
           width: 3
         },
-        //
         yAxisIndex: chartSeriesElement?.yAxisIndex,
         cursor: 'default',
-        // legendHoverLink: true,
-        // areaStyle: {},
         emphasis: {
           disabled: true
         },
@@ -1345,15 +1291,11 @@ export class DataService {
           value: [dataPoint.columnId * 1000, dataPoint[rowName]]
         })),
         tooltip: {
-          // position: 'top',
           borderWidth: 2,
           textStyle: {
             fontSize: 16
           },
-          // valueFormatter: ...
           formatter: (p: any) => {
-            // console.log(p);
-
             let timeSpec = this.uiQuery.getValue().timeSpec;
 
             let columnLabel = frontFormatTsUnix({
@@ -1374,7 +1316,6 @@ export class DataService {
 
             return `${p.name}<br/><strong>${formattedValue}</strong><br/>${columnLabel}`;
           }
-          // textStyle: {}
         }
       };
     }

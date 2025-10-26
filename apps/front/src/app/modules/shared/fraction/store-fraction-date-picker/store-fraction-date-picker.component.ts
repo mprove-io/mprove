@@ -24,7 +24,6 @@ import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-upd
   styleUrls: ['store-fraction-date-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-// implements OnInit
 export class StoreFractionDatePickerComponent {
   @Input() metricsStartDateYYYYMMDD: string;
   @Input() metricsEndDateYYYYMMDD: string;

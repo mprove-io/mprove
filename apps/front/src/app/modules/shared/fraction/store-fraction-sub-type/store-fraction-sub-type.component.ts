@@ -27,7 +27,6 @@ import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-upd
   templateUrl: 'store-fraction-sub-type.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-// implements OnInit
 export class StoreFractionSubTypeComponent {
   @ViewChild('fractionSubTypeSelect', { static: false })
   fractionSubTypeSelect: NgSelectComponent;

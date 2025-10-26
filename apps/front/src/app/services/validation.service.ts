@@ -134,30 +134,6 @@ export class ValidationService {
       ) {
         return null;
       } else {
-        // console.log('year');
-        // console.log(year);
-        // console.log(yearCheck);
-
-        // console.log('month');
-        // console.log(month);
-        // console.log(monthCheck);
-
-        // console.log('day');
-        // console.log(day);
-        // console.log(dayCheck);
-
-        // console.log('hour');
-        // console.log(hour);
-        // console.log(hourCheck);
-
-        // console.log('minute');
-        // console.log(minute);
-        // console.log(minuteCheck);
-
-        // console.log('second');
-        // console.log(second);
-        // console.log(secondCheck);
-
         return { wrongTimestamp: true };
       }
     } else {
@@ -291,18 +267,6 @@ export class ValidationService {
     }
   }
 
-  // static doesNotContainThreeUnderscores(control: FormControl) {
-  //   if (control.value === null) {
-  //     return null;
-  //   }
-
-  //   if (!control.value.match(/___/)) {
-  //     return null;
-  //   } else {
-  //     return { containsThreeUnderscores: true };
-  //   }
-  // }
-
   static checkTextSize(control: FormControl) {
     if (isUndefined(control.value) || control.value === '') {
       return null;
@@ -312,42 +276,6 @@ export class ValidationService {
       ? null
       : { moreThenOneMB: true };
   }
-
-  // projectNameCheck(control: FormControl) {
-  //   const q = new Promise((resolve, reject) => {
-  //     if (control.value === null || control.value === '') {
-  //       resolve(null);
-  //     } else {
-  //       this.backendService
-  //         .checkProjectIdUnique({ project_id: control.value })
-  //         .pipe(
-  //           map(body => {
-  //             if (!body.payload.is_unique) {
-  //               resolve({ projectNameIsNotUnique: true });
-  //             } else if (!body.payload.is_valid) {
-  //               resolve({ projectNameIsNotValid: true });
-  //             } else {
-  //               resolve(null);
-  //             }
-  //             return of(1);
-  //           }),
-  //           catchError(e => {
-  //             this.printer.log(
-  //               busEnum.VALIDATION_SERVICE,
-  //               `caught error accessing API`
-  //             );
-  //             this.router.navigate(['/404']);
-
-  //             return e;
-  //           }),
-  //           take(1)
-  //         )
-  //         .subscribe();
-  //     }
-  //   });
-
-  //   return q;
-  // }
 
   static motherduckDatabaseWrongChars(control: FormControl) {
     let wrongChars: string[] = getMotherduckDatabaseWrongChars({

@@ -15,7 +15,6 @@ export class PrettyJsonPipe implements PipeTransform {
       );
     } catch (e) {
       return value;
-      // return this.applyColors({ error: 'Invalid JSON' }, args[0], args[1]);
     }
   }
 

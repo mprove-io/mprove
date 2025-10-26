@@ -6,7 +6,6 @@ import { ModelMetric } from '~common/interfaces/blockml/model-metric';
   selector: 'm-metric-field-label',
   templateUrl: './metric-field-label.component.html'
 })
-// implements OnChanges
 export class MetricFieldLabelComponent {
   @Input()
   metric: ModelMetric;
@@ -18,8 +17,4 @@ export class MetricFieldLabelComponent {
   isShowTime: boolean;
 
   constructor() {}
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   console.log(changes);
-  // }
 }

@@ -13,11 +13,5 @@ export class LogoComponent {
     private auth: AuthService
   ) {}
 
-  goTo() {
-    // if (this.auth.authenticated()) {
-    //   this.navigateService.navigateToProductionDefaultBranchProdMetrics();
-    // } else {
-    //   window.open('https://mprove.io');
-    // }
-  }
+  goTo() {}
 }

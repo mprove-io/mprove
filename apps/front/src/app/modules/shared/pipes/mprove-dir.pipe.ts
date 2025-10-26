@@ -10,7 +10,7 @@ export class MproveDirPipe implements PipeTransform {
     }
 
     if (
-      (mdir.length > 2 || mdir.length === 2) && // === 2
+      (mdir.length > 2 || mdir.length === 2) &&
       mdir.substring(0, 2) === MPROVE_CONFIG_DIR_DOT_SLASH
     ) {
       mdir = mdir.substring(2);

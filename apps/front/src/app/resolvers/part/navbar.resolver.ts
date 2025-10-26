@@ -60,9 +60,6 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
       routerStateSnapshot.url.split('/').findIndex(el => el === PATH_REPO) ===
       5;
 
-    // console.log('stopWatch from NavBarResolver');
-    // this.authService.stopWatch();
-
     this.userQuery
       .select()
       .pipe(take(1))
@@ -73,12 +70,7 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
 
     this.tokenUserId = this.authService.getTokenUserId();
 
-    if (
-      this.tokenUserId === undefined
-      // ||
-      // (isDefined(this.userUserId) &&
-      //   this.userUserId !== this.tokenUserId)
-    ) {
+    if (this.tokenUserId === undefined) {
       this.authService.logout();
       return of(false);
     }
@@ -154,8 +146,6 @@ export class NavBarResolver implements Resolve<Observable<boolean>> {
             }
 
             if (user.isEmailVerified === true) {
-              // console.log('startWatch from NavBarResolver');
-              // this.authService.startWatch();
               return true;
             } else {
               this.router.navigate([PATH_VERIFY_EMAIL]);

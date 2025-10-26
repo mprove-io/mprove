@@ -19,7 +19,6 @@ import { EventChartYAxisElementUpdate } from '~common/interfaces/front/event-cha
   templateUrl: './chart-editor-y-axis-element.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-// implements OnChanges
 export class ChartEditorYAxisElementComponent {
   @Input()
   yAxisIndex: number;
@@ -45,9 +44,6 @@ export class ChartEditorYAxisElementComponent {
   uiChartTypes = UI_CHART_TYPES;
 
   constructor(private fb: FormBuilder) {}
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  // }
 
   emitChartToggleYAxisElement() {
     let event: EventChartToggleYAxisElement = {

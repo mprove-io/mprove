@@ -56,7 +56,6 @@ import { ApiService } from '~front/app/services/api.service';
   templateUrl: 'store-fraction-input.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-// implements OnInit
 export class StoreFractionInputComponent implements OnInit, OnDestroy {
   @ViewChild('fractioInputValueSelect', { static: false })
   fractioInputValueSelectElement: NgSelectComponent;
@@ -146,49 +145,6 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
               this.loading = true;
               this.cd.detectChanges();
 
-              // let newMconfig: Mconfig = {
-              //   structId: this.structId,
-              //   mconfigId: makeId(),
-              //   queryId: makeId(),
-              //   modelId: modelId,
-              //   modelType: ModelTypeEnum.Store,
-              //   parentType: MconfigParentTypeEnum.SuggestDimension,
-              //   parentId: undefined,
-              //   // isStoreModel:
-              //   //   this.fraction.type === FractionTypeEnum.StoreFraction,
-              //   dateRangeIncludesRightSide: undefined, // adjustMconfig overrides it
-              //   storePart: undefined,
-              //   modelLabel: 'empty',
-              //   modelFilePath: undefined,
-              //   malloyQueryStable: undefined,
-              //   malloyQueryExtra: undefined,
-              //   compiledQuery: undefined,
-              //   select: [fieldId],
-              //   // unsafeSelect: [],
-              //   // warnSelect: [],
-              //   // joinAggregations: [],
-              //   sortings: [],
-              //   sorts: `${fieldId}`,
-              //   timezone: UTC,
-              //   limit: 500,
-              //   filters: isDefinedAndNotEmpty(term)
-              //     ? [
-              //         {
-              //           fieldId: fieldId,
-              //           fractions: [
-              //             {
-              //               brick: `%${term}%`,
-              //               type: FractionTypeEnum.StringContains,
-              //               operator: FractionOperatorEnum.Or
-              //             }
-              //           ]
-              //         }
-              //       ]
-              //     : [],
-              //   chart: makeCopy(DEFAULT_CHART),
-              //   serverTs: 1
-              // };
-
               let nav = this.navQuery.getValue();
 
               let payload: ToBackendSuggestDimensionValuesRequestPayload = {
@@ -234,7 +190,6 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                     branchId: nav.branchId,
                     envId: nav.envId,
                     mconfigIds: [q1Resp.payload.mconfig.mconfigId]
-                    // queryIds: [q1Resp.payload.query.queryId]
                   } as ToBackendRunQueriesRequestPayload
                 })
                 .pipe(

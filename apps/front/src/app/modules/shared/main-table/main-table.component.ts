@@ -48,9 +48,6 @@ export class MainTableComponent {
   @Input()
   mconfigFields: MconfigField[];
 
-  // mconfigDimensions: MconfigField[] = [];
-  // mconfigNotDimensions: MconfigField[] = [];
-
   @Input()
   qData: QDataRow[];
 
@@ -80,29 +77,7 @@ export class MainTableComponent {
     private cd: ChangeDetectorRef
   ) {}
 
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   console.log('changes');
-  //   console.log(changes);
-
-  //   if (isDefined(changes.mconfigFields?.currentValue)) {
-  //     this.mconfigDimensions = (
-  //       changes.mconfigFields.currentValue as any
-  //     ).filter(
-  //       (x: MconfigField) =>
-  //         x.fieldClass === FieldClassEnum.Dimension
-  //     );
-
-  //     this.mconfigNotDimensions = (
-  //       changes.mconfigFields.currentValue as any
-  //     ).filter(
-  //       (x: MconfigField) =>
-  //         x.fieldClass !== FieldClassEnum.Dimension
-  //     );
-  //   }
-  // }
-
   sort(fieldId: string, desc: boolean) {
-    // const { fieldId, desc } = params;
     let newMconfig = this.structService.makeMconfig();
 
     if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
@@ -178,10 +153,6 @@ export class MainTableComponent {
         isDraft: this.chart.draft,
         chartId: this.chart.chartId
       });
-
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
     }
   }
 
@@ -245,100 +216,10 @@ export class MainTableComponent {
         isDraft: this.chart.draft,
         chartId: this.chart.chartId
       });
-
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
     }
   }
 
-  // moveLeft(columnId: string) {
-  //   let sortedSelect = this.mconfigFields.map(x => x.id);
-  //   let index = sortedSelect.indexOf(columnId);
-
-  //   let newColumnsOrder = Array.from(sortedSelect);
-
-  //   let toIndex: number = index - 1;
-
-  //   newColumnsOrder[index] = newColumnsOrder[toIndex];
-  //   newColumnsOrder[toIndex] = columnId;
-
-  //   let newMconfig = this.structService.makeMconfig();
-
-  //   if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
-  //     let queryOperation: QueryOperation = {
-  //       type: QueryOperationTypeEnum.Move,
-  //       moveFieldIds: newColumnsOrder,
-  //       timezone: newMconfig.timezone
-  //     };
-
-  //     this.chartService.editChart({
-  //       mconfig: newMconfig,
-  //       isDraft: this.chart.draft,
-  //       chartId: this.chart.chartId,
-  //       queryOperation: queryOperation
-  //     });
-  //   } else {
-  //     newMconfig.select = newColumnsOrder;
-
-  //     this.chartService.editChart({
-  //       mconfig: newMconfig,
-  //       isDraft: this.chart.draft,
-  //       chartId: this.chart.chartId
-  //     });
-
-  //     // this.mconfigService.navCreateTempMconfigAndQuery({
-  //     //   newMconfig: newMconfig
-  //     // });
-  //   }
-  // }
-
-  // moveRight(columnId: string) {
-  //   let sortedSelect = this.mconfigFields.map(x => x.id);
-  //   let index = sortedSelect.indexOf(columnId);
-
-  //   let newColumnsOrder = Array.from(sortedSelect);
-
-  //   let toIndex: number = index + 1;
-
-  //   newColumnsOrder[index] = sortedSelect[toIndex];
-  //   newColumnsOrder[toIndex] = columnId;
-
-  //   let newMconfig = this.structService.makeMconfig();
-
-  //   if (this.mconfig.modelType === ModelTypeEnum.Malloy) {
-  //     let queryOperation: QueryOperation = {
-  //       type: QueryOperationTypeEnum.Move,
-  //       moveFieldIds: newColumnsOrder,
-  //       timezone: newMconfig.timezone
-  //     };
-
-  //     this.chartService.editChart({
-  //       mconfig: newMconfig,
-  //       isDraft: this.chart.draft,
-  //       chartId: this.chart.chartId,
-  //       queryOperation: queryOperation
-  //     });
-  //   } else {
-  //     newMconfig.select = newColumnsOrder;
-
-  //     this.chartService.editChart({
-  //       mconfig: newMconfig,
-  //       isDraft: this.chart.draft,
-  //       chartId: this.chart.chartId
-  //     });
-
-  //     // this.mconfigService.navCreateTempMconfigAndQuery({
-  //     //   newMconfig: newMconfig
-  //     // });
-  //   }
-  // }
-
   drop(event: CdkDragDrop<string[]>) {
-    // console.log('drop event');
-    // console.log(event.previousIndex);
-    // console.log(event.currentIndex);
-
     let previousFieldIds = this.mconfigFields.map(x => x.id);
 
     let newColumnsOrder = [...this.mconfigFields.map(x => x.id)];
@@ -388,21 +269,15 @@ export class MainTableComponent {
         isDraft: this.chart.draft,
         chartId: this.chart.chartId
       });
-
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
     }
   }
 
   onDragStart() {
-    // console.log('dragStarted')
     this.isDrag = true;
     document.body.classList.add('force-cursor-grabbing');
   }
 
   onDragEnd() {
-    // console.log('dragEnded')
     this.isDrag = false;
     document.body.classList.remove('force-cursor-grabbing');
   }

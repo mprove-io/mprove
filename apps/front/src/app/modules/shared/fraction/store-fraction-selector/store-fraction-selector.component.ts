@@ -20,7 +20,6 @@ import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-upd
   templateUrl: 'store-fraction-selector.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-// implements OnInit
 export class StoreFractionSelectorComponent {
   @ViewChild('fractionSelectorSelect', { static: false })
   fractionSelectorSelect: NgSelectComponent;

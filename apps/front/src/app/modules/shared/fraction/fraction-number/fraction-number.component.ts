@@ -106,7 +106,7 @@ export class FractionNumberComponent implements OnInit {
       value: FractionTypeEnum.NumberIsNotEqualTo,
       operator: FractionOperatorEnum.And
     },
-    // {
+    // { // TODO: check malloy progress
     //   label: 'is not greater than',
     //   value: FractionTypeEnum.NumberIsNotGreaterThan, // not supported (malloy issue)
     //   operator: FractionOperatorEnum.And
@@ -212,17 +212,6 @@ export class FractionNumberComponent implements OnInit {
     });
   }
 
-  // getValueBrick(fractionType: FractionTypeEnum, value: string) {
-  //   let newBrick =
-  //     fractionType === FractionTypeEnum.NumberIsEqualTo
-  //       ? value
-  //       : fractionType === FractionTypeEnum.NumberIsNotEqualTo
-  //         ? `not ${value}`
-  //         : '';
-
-  //   return newBrick;
-  // }
-
   getChangedValueFraction(item: { value: string }) {
     let { value } = item;
 
@@ -252,21 +241,6 @@ export class FractionNumberComponent implements OnInit {
 
     return newFraction;
   }
-
-  // getSingleBrick(fractionType: FractionTypeEnum, value: number) {
-  //   let newBrick =
-  //     fractionType === FractionTypeEnum.NumberIsGreaterThan
-  //       ? `> ${value}`
-  //       : fractionType === FractionTypeEnum.NumberIsGreaterThanOrEqualTo
-  //         ? `>= ${value}`
-  //         : fractionType === FractionTypeEnum.NumberIsLessThan
-  //           ? `< ${value}`
-  //           : fractionType === FractionTypeEnum.NumberIsLessThanOrEqualTo
-  //             ? `<= ${value}`
-  //             : '';
-
-  //   return newBrick;
-  // }
 
   getChangedSingleFraction(item: { value: number }) {
     let { value } = item;
@@ -305,33 +279,6 @@ export class FractionNumberComponent implements OnInit {
 
     return newFraction;
   }
-
-  // getBetweenBrick(
-  //   fractionType: FractionTypeEnum,
-  //   option: FractionNumberBetweenOptionEnum,
-  //   n1: number,
-  //   n2: number
-  // ) {
-  //   let content =
-  //     option === FractionNumberBetweenOptionEnum.Inclusive
-  //       ? `[${n1}, ${n2}]`
-  //       : option === FractionNumberBetweenOptionEnum.LeftInclusive
-  //         ? `[${n1}, ${n2})`
-  //         : option === FractionNumberBetweenOptionEnum.RightInclusive
-  //           ? `(${n1}, ${n2}]`
-  //           : option === FractionNumberBetweenOptionEnum.Exclusive
-  //             ? `(${n1}, ${n2})`
-  //             : '';
-
-  //   let newBrick =
-  //     fractionType === FractionTypeEnum.NumberIsBetween
-  //       ? content
-  //       : fractionType === FractionTypeEnum.NumberIsNotBetween
-  //         ? `not ${content}`
-  //         : '';
-
-  //   return newBrick;
-  // }
 
   getChangedBetweenFraction(item: {
     fractionOperator: FractionOperatorEnum;
@@ -567,22 +514,6 @@ export class FractionNumberComponent implements OnInit {
         let newNumberValue1 = this.defaultNumberValue1;
         let newNumberValue2 = this.defaultNumberValue2;
 
-        // let newBrick = this.getBetweenBrick(
-        //   fractionType,
-        //   newBetweenOption,
-        //   newNumberValue1,
-        //   newNumberValue2
-        // );
-
-        // this.fraction = {
-        //   brick: newBrick,
-        //   operator: FractionOperatorEnum.Or,
-        //   type: fractionType,
-        //   numberBetweenOption: newBetweenOption,
-        //   numberValue1: newNumberValue1,
-        //   numberValue2: newNumberValue2
-        // };
-
         this.fraction = this.getChangedBetweenFraction({
           fractionOperator: FractionOperatorEnum.Or,
           fractionType: fractionType,
@@ -625,22 +556,6 @@ export class FractionNumberComponent implements OnInit {
         let newNumberValue1 = this.defaultNumberValue1;
         let newNumberValue2 = this.defaultNumberValue2;
 
-        // let newBrick = this.getBetweenBrick(
-        //   fractionType,
-        //   newBetweenOption,
-        //   newNumberValue1,
-        //   newNumberValue2
-        // );
-
-        // this.fraction = {
-        //   brick: newBrick,
-        //   operator: FractionOperatorEnum.And,
-        //   type: fractionType,
-        //   numberBetweenOption: newBetweenOption,
-        //   numberValue1: newNumberValue1,
-        //   numberValue2: newNumberValue2
-        // };
-
         this.fraction = this.getChangedBetweenFraction({
           fractionOperator: FractionOperatorEnum.And,
           fractionType: fractionType,
@@ -681,22 +596,6 @@ export class FractionNumberComponent implements OnInit {
     let newNumberValue1 = this.defaultNumberValue1;
     let newNumberValue2 = this.defaultNumberValue2;
 
-    // let newBrick = this.getBetweenBrick(
-    //   this.fraction.type,
-    //   fractionBetweenOption,
-    //   newNumberValue1,
-    //   newNumberValue2
-    // );
-
-    // this.fraction = {
-    //   brick: newBrick,
-    //   operator: this.fraction.operator,
-    //   type: this.fraction.type,
-    //   numberBetweenOption: fractionBetweenOption,
-    //   numberValue1: newNumberValue1,
-    //   numberValue2: newNumberValue2
-    // };
-
     this.fraction = this.getChangedBetweenFraction({
       fractionOperator: this.fraction.operator,
       fractionType: this.fraction.type,
@@ -714,15 +613,6 @@ export class FractionNumberComponent implements OnInit {
     let value = this.numberValuesForm.controls['numberValues'].value;
 
     if (value !== this.fraction.numberValues) {
-      // let newBrick = this.getValueBrick(this.fraction.type, value);
-
-      // this.fraction = {
-      //   brick: newBrick,
-      //   operator: this.fraction.operator,
-      //   type: this.fraction.type,
-      //   numberValues: value
-      // };
-
       this.fraction = this.getChangedValueFraction({
         value: value
       });
@@ -737,15 +627,6 @@ export class FractionNumberComponent implements OnInit {
     let value = this.numberSingleValueForm.controls['numberValue1'].value;
 
     if (value !== this.fraction.numberValue1) {
-      // let newBrick = this.getSingleBrick(this.fraction.type, value);
-
-      // this.fraction = {
-      //   brick: newBrick,
-      //   operator: this.fraction.operator,
-      //   type: this.fraction.type,
-      //   numberValue1: Number(value)
-      // };
-
       this.fraction = this.getChangedSingleFraction({
         value: value
       });
@@ -763,22 +644,6 @@ export class FractionNumberComponent implements OnInit {
     if (value === this.fraction.numberValue1) {
       return;
     }
-
-    // let newBrick = this.getBetweenBrick(
-    //   this.fraction.type,
-    //   this.fraction.numberBetweenOption,
-    //   value,
-    //   this.fraction.numberValue2
-    // );
-
-    // this.fraction = {
-    //   brick: newBrick,
-    //   operator: this.fraction.operator,
-    //   type: this.fraction.type,
-    //   numberBetweenOption: this.fraction.numberBetweenOption,
-    //   numberValue1: Number(value),
-    //   numberValue2: this.fraction.numberValue2
-    // };
 
     this.fraction = this.getChangedBetweenFraction({
       fractionOperator: this.fraction.operator,
@@ -800,22 +665,6 @@ export class FractionNumberComponent implements OnInit {
     if (value === this.fraction.numberValue2) {
       return;
     }
-
-    // let newBrick = this.getBetweenBrick(
-    //   this.fraction.type,
-    //   this.fraction.numberBetweenOption,
-    //   this.fraction.numberValue1,
-    //   value
-    // );
-
-    // this.fraction = {
-    //   brick: newBrick,
-    //   operator: this.fraction.operator,
-    //   type: this.fraction.type,
-    //   numberBetweenOption: this.fraction.numberBetweenOption,
-    //   numberValue1: this.fraction.numberValue1,
-    //   numberValue2: Number(value)
-    // };
 
     this.fraction = this.getChangedBetweenFraction({
       fractionOperator: this.fraction.operator,

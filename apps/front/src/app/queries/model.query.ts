@@ -16,7 +16,6 @@ let modelState: ModelState = {
   fileText: undefined,
   storeContent: undefined,
   malloyModelDef: undefined,
-  // isStoreModel: undefined,
   dateRangeIncludesRightSide: undefined,
   accessRoles: [],
   label: undefined,

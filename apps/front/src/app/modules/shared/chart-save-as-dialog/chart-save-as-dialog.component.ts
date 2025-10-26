@@ -91,7 +91,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
   onEscKeyUp() {
     this.chartSaveAsDialogDashboardSelectElement?.close();
     this.chartSaveAsDialogTileSelectElement?.close();
-    // this.ref.close();
   }
 
   selectedDashboardSpinnerName = 'chartSaveAsDashboardSpinnerName';
@@ -117,10 +116,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
       validator: this.titleValidator.bind(this)
     }
   );
-
-  // rolesForm: FormGroup = this.fb.group({
-  //   roles: [undefined, [Validators.maxLength(255)]]
-  // });
 
   chartSaveAs: ChartSaveAsEnum = ChartSaveAsEnum.NEW_CHART;
   tileSaveAs: TileSaveAsEnum = TileSaveAsEnum.NEW_TILE;
@@ -176,10 +171,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
       control: this.titleForm.controls['title'],
       value: this.chart.tiles[0].mconfig.chart.title
     });
-    // setValueAndMark({
-    //   control: this.rolesForm.controls['roles'],
-    //   value: this.ref.data.model.accessRoles?.join(', ')
-    // });
 
     let nav: NavState;
     this.navQuery
@@ -267,17 +258,11 @@ export class ChartSaveAsDialogComponent implements OnInit {
     if (this.titleForm.controls['title'].valid) {
       let newTitle = this.titleForm.controls['title'].value;
 
-      if (
-        this.chartSaveAs === ChartSaveAsEnum.NEW_CHART
-        //  &&
-        // this.rolesForm.controls['roles'].valid
-      ) {
+      if (this.chartSaveAs === ChartSaveAsEnum.NEW_CHART) {
         this.ref.close();
-        // let roles = this.rolesForm.controls['roles'].value;
 
         this.saveAsNewChart({
           newTitle: newTitle
-          // roles: roles
         });
       } else if (this.chartSaveAs === ChartSaveAsEnum.TILE_OF_DASHBOARD) {
         this.ref.close();
@@ -386,14 +371,10 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
   saveAsNewChart(item: {
     newTitle: string;
-    // roles: string
   }) {
     this.spinner.show(APP_SPINNER_NAME);
 
-    let {
-      newTitle
-      // , roles
-    } = item;
+    let { newTitle } = item;
 
     let payload: ToBackendSaveCreateChartRequestPayload = {
       projectId: this.nav.projectId,
@@ -403,7 +384,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
       fromChartId: this.chart.chartId,
       newChartId: this.newChartId,
       tileTitle: newTitle.trim(),
-      // accessRoles: roles,
       mconfig: this.chart.tiles[0].mconfig
     };
 
@@ -462,7 +442,6 @@ export class ChartSaveAsDialogComponent implements OnInit {
       mconfigId: this.chart.tiles[0].mconfig.mconfigId,
       queryId: this.chart.tiles[0].mconfig.queryId,
       trackChangeId: makeId(),
-      // malloyQueryId: undefined,
       listen: {},
       deletedFilterFieldIds: undefined,
       hasAccessToModel: true,

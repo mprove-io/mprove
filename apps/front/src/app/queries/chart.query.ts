@@ -25,7 +25,6 @@ export const emptyMconfig: MconfigX = {
   modelType: undefined,
   parentType: MconfigParentTypeEnum.Chart,
   parentId: undefined,
-  // isStoreModel: undefined,
   dateRangeIncludesRightSide: undefined,
   storePart: undefined,
   modelLabel: undefined,
@@ -34,9 +33,6 @@ export const emptyMconfig: MconfigX = {
   malloyQueryExtra: undefined,
   compiledQuery: undefined,
   select: [],
-  // unsafeSelect: [],
-  // warnSelect: [],
-  // joinAggregations: [],
   sortings: [],
   sorts: undefined,
   timezone: undefined,
@@ -83,7 +79,6 @@ let emptyTile: TileX = {
   queryId: emptyQuery.queryId,
   mconfigId: emptyMconfig.mconfigId,
   trackChangeId: makeId(),
-  // malloyQueryId: undefined,
   listen: undefined,
   deletedFilterFieldIds: undefined,
   title: 'New Chart',
@@ -91,7 +86,6 @@ let emptyTile: TileX = {
   plateHeight: undefined,
   plateX: undefined,
   plateY: undefined,
-  //
   mconfig: emptyMconfig,
   query: emptyQuery,
   hasAccessToModel: true
@@ -107,9 +101,7 @@ export const emptyChart: ChartState = {
   modelId: undefined,
   modelLabel: undefined,
   filePath: undefined,
-  // accessRoles: [],
   serverTs: undefined,
-  //
   tiles: [emptyTile],
   author: undefined,
   canEditOrDeleteChart: undefined

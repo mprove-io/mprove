@@ -156,9 +156,6 @@ export class DashboardService {
               .createUrlTree([], { relativeTo: this.route })
               .toString();
 
-            // console.log('url');
-            // console.log(url);
-
             let urlArray = url.split('/');
             urlArray.pop();
             urlArray.push(resp.payload.dashboard.dashboardId);

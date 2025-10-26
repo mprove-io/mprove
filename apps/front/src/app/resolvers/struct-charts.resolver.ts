@@ -64,8 +64,6 @@ export class StructChartsResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    // let urlParts = routerStateSnapshot.url.split('/');
-
     let payload: ToBackendGetChartsRequestPayload = {
       projectId: nav.projectId,
       isRepoProd: nav.isRepoProd,

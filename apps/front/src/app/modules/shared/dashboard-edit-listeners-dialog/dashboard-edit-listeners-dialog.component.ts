@@ -64,8 +64,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     this.fieldSelectElements.forEach(element => {
       element?.close();
     });
-
-    // this.ref.close();
   }
 
   spinnerName = 'dashboardEditListen';
@@ -178,7 +176,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                           )
                         ]
                       : model.type !== ModelTypeEnum.Store &&
-                          // model.isStoreModel === false &&
                           isUndefined(dashField.storeModel)
                         ? [
                             emptyField,
@@ -205,12 +202,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
                   );
                 });
               });
-
-              // console.log('modelFields');
-              // console.log(modelFields);
-
-              // console.log('swap');
-              // console.log(swap);
             });
 
             this.cd.detectChanges();
@@ -232,8 +223,6 @@ export class DashboardEditListenersDialogComponent implements OnInit {
     items: any;
     selected: any;
   }) {
-    // console.log(item);
-
     let { dashboardFieldId, tile, tileIndex, i, items, selected } = item;
 
     tile.mconfigListenSwap[dashboardFieldId][i] =

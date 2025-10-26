@@ -17,7 +17,6 @@ import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-upd
   templateUrl: 'store-fraction-switch.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-// implements OnInit
 export class StoreFractionSwitchComponent {
   @Input() fraction: Fraction;
   @Input() isFirst: boolean;

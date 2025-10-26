@@ -63,7 +63,6 @@ export class DashboardSaveAsDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.dashboardSaveAsDialogExistingDashboardSelectElement?.close();
-    // this.ref.close();
   }
 
   usersFolder = MPROVE_USERS_FOLDER;

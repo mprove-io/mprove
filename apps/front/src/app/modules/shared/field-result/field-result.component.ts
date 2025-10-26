@@ -19,7 +19,6 @@ export class FieldResultComponent {
   fieldResultMonthName = FieldResultEnum.MonthName;
   fieldResultQuarterOfYear = FieldResultEnum.QuarterOfYear;
   fieldResultTs = FieldResultEnum.Ts;
-  // fieldResultTimestamp = FieldResultEnum.Timestamp;
   fieldResultYesno = FieldResultEnum.Yesno;
   fieldResultString = FieldResultEnum.String;
   fieldResultNumber = FieldResultEnum.Number;

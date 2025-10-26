@@ -5,7 +5,6 @@ import {
   OnChanges,
   SimpleChanges
 } from '@angular/core';
-import { formatLocale } from 'd3-format';
 import {
   BarSeriesOption,
   EChartsInitOpts,
@@ -16,10 +15,6 @@ import {
   SeriesOption
 } from 'echarts';
 import { YAXisOption } from 'echarts/types/dist/shared';
-import {
-  FORMAT_NUMBER_DECIMAL,
-  FORMAT_NUMBER_GROUPING
-} from '~common/constants/top-front';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
 import { FieldResultEnum } from '~common/enums/field-result.enum';
@@ -111,23 +106,16 @@ export class ChartViewComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log('chart-view ngOnChanges');
-    // console.log(changes);
     this.chartViewUpdateChart();
   }
 
   chartViewUpdateChart() {
-    // console.log('this.chart');
-    // console.log(this.chart);
-
     let eChartInitOpts = {
       renderer: 'svg'
-      // renderer: 'canvas'
     } as EChartsInitOpts;
 
     let eChartOptions: EChartsOption = {
       animation: this.isAnimation,
-      // transitionDuration: 0,
       useUTC: true,
       grid: {
         left: 100,
@@ -191,14 +179,6 @@ export class ChartViewComponent implements OnChanges {
         ? this.mconfigFields.find(v => v.id === this.chart.xField)
         : undefined;
 
-      // let yField = isDefined(this.chart.yField)
-      //   ? this.mconfigFields.find(v => v.id === this.chart.yField)
-      //   : undefined;
-
-      // let sizeField = isDefined(this.chart.sizeField)
-      //   ? this.mconfigFields.find(v => v.id === this.chart.sizeField)
-      //   : undefined;
-
       if (
         this.chart.type === ChartTypeEnum.Single &&
         this.chart.yFields.length > 0
@@ -211,24 +191,6 @@ export class ChartViewComponent implements OnChanges {
       // echarts - data
 
       if (this.eChartsTypes.indexOf(this.chart.type) > -1) {
-        // console.log('this.qData');
-        // console.log(this.qData);
-
-        //   [
-        //     {
-        //         "order_items.total_sale_price": {
-        //             "name": "order_items_total_sale_price",
-        //             "value": 92.9,
-        //             "valueFmt": "92.9"
-        //         },
-        //         "orders.created___hour": {
-        //             "name": "orders_created___hour",
-        //             "value": "2025-08-05 09",
-        //             "valueFmt": "09:00 05 Aug 2025"
-        //         }
-        //     }
-        // ]
-
         this.seriesData =
           this.qData?.length > 0 &&
           isDefined(this.chart.xField) &&
@@ -246,25 +208,6 @@ export class ChartViewComponent implements OnChanges {
                 chartType: this.chart.type
               })
             : [];
-
-        // console.log('this.seriesData');
-        // console.log(this.seriesData);
-
-        //   [
-        //     {
-        //         "seriesName": "Order Items Total Sale Price",
-        //         "seriesId": "order_items.total_sale_price",
-        //         "seriesPoints": [
-        //             {
-        //                 "xValue": 1754384400000,
-        //                 "xValueFmt": "09:00 05 Aug 2025",
-        //                 "yValue": 92.9,
-        //                 "yValueFmt": "92.9",
-        //                 "sizeValueMod": 1
-        //             },
-        //         ]
-        //     }
-        // ]
       }
 
       // echarts - axes
@@ -392,8 +335,6 @@ export class ChartViewComponent implements OnChanges {
           formatter:
             this.chart.type === ChartTypeEnum.Pie
               ? (p: any) => {
-                  // console.log(p);
-
                   let xValueFmt = isDefined(p.data.pXValueFmt)
                     ? p.data.pXValueFmt
                     : 'null';
@@ -405,8 +346,6 @@ export class ChartViewComponent implements OnChanges {
                   return `${xValueFmt}<br/><strong>${sValueFmt}</strong>`;
                 }
               : (p: any) => {
-                  // console.log(p);
-
                   let xValueFmt = isDefined(p.data.pXValueFmt)
                     ? p.data.pXValueFmt
                     : 'null';
@@ -451,7 +390,6 @@ export class ChartViewComponent implements OnChanges {
                 lineStyle: {
                   width: 2.5
                 },
-                // areaStyle: {},
                 name: seriesDataElement?.seriesName,
                 data: seriesDataElement?.seriesPoints.map(x => ({
                   name: seriesDataElement?.seriesName,
@@ -501,7 +439,6 @@ export class ChartViewComponent implements OnChanges {
                 type: 'pie',
                 name: seriesDataElement?.seriesName,
                 data: seriesDataElement?.seriesPoints.map(x => ({
-                  // name: x.xValue,
                   name: x.xValueFmt,
                   value: x.yValue,
                   pXValueFmt: x.xValueFmt,
@@ -545,217 +482,6 @@ export class ChartViewComponent implements OnChanges {
     this.eChartInitOpts = eChartInitOpts;
     this.eChartOptions = eChartOptions;
 
-    // console.log('chart-view eChartInitOpts');
-    // console.log(eChartInitOpts);
-
-    // console.log('chart-view eChartOptions');
-    // console.log(eChartOptions);
-
     this.cd.detectChanges();
   }
-
-  onSelect(event: any) {}
-
-  dataLabelFormatting(value: any) {
-    let { field, formatNumber } =
-      this.formatNumberService.getFormatNumberDataLabel({
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      });
-
-    let struct = this.structQuery.getValue();
-
-    let locale = formatLocale({
-      decimal: FORMAT_NUMBER_DECIMAL,
-      thousands: struct.mproveConfig.thousandsSeparator,
-      grouping: FORMAT_NUMBER_GROUPING,
-      currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
-    });
-
-    //
-    if (isDefined(value.value)) {
-      value = value.value;
-    }
-
-    if (isNaN(value) === true) {
-      value = value.split(',').join('');
-    }
-
-    if (isNaN(value) === false && isDefined(formatNumber)) {
-      value = locale.format(formatNumber)(Number(value));
-    }
-
-    return value;
-  }
-
-  labelFormatting(value: any) {
-    // let {
-    //   field,
-    //   formatNumber
-    // } = this.formatNumberService.getFormatNumberDataLabel({
-    //   chart: this.chart,
-    //   mconfigFields: this.mconfigFields
-    // });
-
-    // let locale = formatLocale({
-    //   decimal: FORMAT_NUMBER_DECIMAL,
-    //   thousands: struct.mproveConfig.thousandsSeparator,
-    //   grouping: FORMAT_NUMBER_GROUPING,
-    //   currency: [field.currencyPrefix, field.currencySuffix]
-    // });
-
-    //
-    if (isDefined(value.label)) {
-      let num = value.label.split(',').join('');
-      if (isNaN(num) === false) {
-        value = num;
-      } else {
-        value = value.label;
-      }
-    }
-
-    // if (isNaN(value) === true) {
-    //   value = value.split(',').join('');
-    // }
-
-    // if (isNaN(value) === false && isDefined(formatNumber)) {
-    //   value = locale.format(formatNumber)(Number(value));
-    // }
-
-    return value;
-  }
-
-  // valueFormatting(value: any) {
-  //   let { field, formatNumber } = this.formatNumberService.getFormatNumberValue(
-  //     {
-  //       chart: this.chart,
-  //       mconfigFields: this.mconfigFields
-  //     }
-  //   );
-
-  //   let locale = formatLocale({
-  //     decimal: FORMAT_NUMBER_DECIMAL,
-  //     thousands: struct.mproveConfig.thousandsSeparator,
-  //     grouping: FORMAT_NUMBER_GROUPING,
-  //     currency: [field.currencyPrefix, field.currencySuffix]
-  //   });
-
-  //   // ngx-charts-number-card passes data instead of value
-  //   if (isDefined(value.value)) {
-  //     value = value.value;
-  //   }
-
-  //   if (isNaN(value) === true) {
-  //     value = value.split(',').join('');
-  //   }
-
-  //   if (isNaN(value) === false && isDefined(formatNumber)) {
-  //     value = locale.format(formatNumber)(Number(value));
-  //   }
-
-  //   return value;
-  // }
-
-  // axisTickFormatting(value: any) {
-  //   let { field, formatNumber } =
-  //     this.formatNumberService.getFormatNumberAxisTick({
-  //       chart: this.chart,
-  //       mconfigFields: this.mconfigFields
-  //     });
-
-  //   let locale = formatLocale({
-  //     decimal: FORMAT_NUMBER_DECIMAL,
-  //     thousands: struct.mproveConfig.thousandsSeparator,
-  //     grouping: FORMAT_NUMBER_GROUPING,
-  //     currency: [field.currencyPrefix, field.currencySuffix]
-  //   });
-
-  //   // ngx-charts-gauge passes string with commas instead of number
-  //   if (isNaN(value) === true) {
-  //     value = value.split(',').join('');
-  //   }
-
-  //   if (isNaN(value) === false && isDefined(formatNumber)) {
-  //     value = locale.format(formatNumber)(Number(value));
-  //   }
-
-  //   return value;
-  // }
-
-  yAxisTickFormatting(value: any) {
-    let { field, formatNumber } =
-      this.formatNumberService.getFormatNumberYAxisTick({
-        chart: this.chart,
-        mconfigFields: this.mconfigFields
-      });
-
-    let struct = this.structQuery.getValue();
-
-    let locale = formatLocale({
-      decimal: FORMAT_NUMBER_DECIMAL,
-      thousands: struct.mproveConfig.thousandsSeparator,
-      grouping: FORMAT_NUMBER_GROUPING,
-      currency: [field.currencyPrefix ?? '', field.currencySuffix ?? '']
-    });
-
-    // ngx charts horizontal passes data instead of value
-    if (isDefined(value.value)) {
-      value = value.value;
-    }
-
-    if (isNaN(value) === false && isDefined(formatNumber)) {
-      value = locale.format(formatNumber)(Number(value));
-    }
-
-    return value;
-  }
-
-  // xAxisTickFormatting(value: any) {
-  //   let { field, formatNumber } =
-  //     this.formatNumberService.getFormatNumberXAxisTick({
-  //       chart: this.chart,
-  //       mconfigFields: this.mconfigFields
-  //     });
-
-  //   let locale = formatLocale({
-  //     decimal: FORMAT_NUMBER_DECIMAL,
-  //     thousands: struct.mproveConfig.thousandsSeparator,
-  //     grouping: FORMAT_NUMBER_GROUPING,
-  //     currency: [field.currencyPrefix, field.currencySuffix]
-  //   });
-
-  //   if (isDefined(value.value)) {
-  //     value = value.value;
-  //   }
-
-  //   if (isNaN(value) === false && isDefined(formatNumber)) {
-  //     value = locale.format(formatNumber)(Number(value));
-  //   }
-
-  //   return value;
-  // }
 }
-
-//
-//
-//
-
-// timeline = CHART_DEFAULT_TIMELINE;
-// rangeFillOpacity = CHART_DEFAULT_RANGE_FILL_OPACITY;
-// legendForHeatMap = false;
-
-// labelFormattingFn = this.labelFormatting.bind(this);
-// dataLabelFormattingFn = this.dataLabelFormatting.bind(this);
-// valueFormattingFn = this.valueFormatting.bind(this);
-// axisTickFormattingFn = this.axisTickFormatting.bind(this);
-// yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
-// xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
-
-// xAxisTickFormattingForLinearFn = this.xAxisTickFormattingForLinear.bind(this);
-
-// dataLabelFormattingFn = (value: any) => this.dataLabelFormatting(value);
-// valueFormattingFn = (value: any) => this.valueFormatting(value);
-// axisTickFormattingFn = (value: any) => this.axisTickFormatting(value);
-// yAxisTickFormattingFn = (value: any) => this.yAxisTickFormatting(value);
-// xAxisTickFormattingFn = (value: any) => this.xAxisTickFormatting(value);
-// xAxisTickFormattingForLinearFn = (value: any) => this.xAxisTickFormattingForLinear(value);

@@ -69,13 +69,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
       timeSpec: isDefined(timeSpecParam) ? timeSpecParam : uiState.timeSpec,
       timeRangeFractionBrick: isDefined(timeRangeParam)
         ? timeRangeParam
-        : // .split('-')
-          // .join('/')
-          // .split('_')
-          // .join(' ')
-          // .split('~')
-          // .join(':')
-          uiState.timeRangeFraction.brick
+        : uiState.timeRangeFraction.brick
     });
   }
 

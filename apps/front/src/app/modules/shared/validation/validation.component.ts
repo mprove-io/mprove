@@ -6,9 +6,6 @@ import { ValidationService } from '~front/app/services/validation.service';
   standalone: false,
   selector: 'm-validation',
   templateUrl: './validation.component.html'
-  // ,
-  // standalone: true,
-  // imports: [CommonModule]
 })
 export class ValidationComponent {
   @Input() control: AbstractControl;

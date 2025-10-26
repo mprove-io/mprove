@@ -64,10 +64,6 @@ export class EditChartInfoDialogComponent implements OnInit {
     title: [undefined, [Validators.required, Validators.maxLength(255)]]
   });
 
-  // rolesForm: FormGroup = this.fb.group({
-  //   roles: [undefined, [Validators.maxLength(255)]]
-  // });
-
   alias: string;
   alias$ = this.userQuery.alias$.pipe(
     tap(x => {
@@ -103,10 +99,6 @@ export class EditChartInfoDialogComponent implements OnInit {
       control: this.titleForm.controls['title'],
       value: this.ref.data.chart.title
     });
-    // setValueAndMark({
-    //   control: this.rolesForm.controls['roles'],
-    //   value: this.ref.data.chart.accessRoles?.join(', ')
-    // });
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
@@ -114,17 +106,12 @@ export class EditChartInfoDialogComponent implements OnInit {
   }
 
   save() {
-    if (
-      this.titleForm.controls['title'].valid
-      // &&
-      // this.rolesForm.controls['roles'].valid
-    ) {
+    if (this.titleForm.controls['title'].valid) {
       this.spinner.show(APP_SPINNER_NAME);
 
       this.ref.close();
 
       let newTitle: string = this.titleForm.controls['title'].value;
-      // let roles: string = this.rolesForm.controls['roles'].value;
 
       let uiState = this.uiQuery.getValue();
 
@@ -137,7 +124,6 @@ export class EditChartInfoDialogComponent implements OnInit {
         chartId: this.ref.data.chart.chartId,
         tileTitle: newTitle.trim(),
         timezone: uiState.timezone
-        // accessRoles: roles
       };
 
       let apiService: ApiService = this.ref.data.apiService;

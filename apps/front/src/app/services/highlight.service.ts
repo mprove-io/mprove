@@ -277,13 +277,6 @@ export class HighLightService {
       place.shikiLanguage = shikiLanguage;
       place.shikiTheme = shikiTheme;
 
-      // console.log('docText');
-      // console.log(place.docText);
-      // console.log('shikiLanguage');
-      // console.log(place.shikiLanguage);
-      // console.log('shikiTheme');
-      // console.log(place.shikiTheme);
-
       let startParseShikiTokens = Date.now();
       let fullResult = this.parseShikiTokens({
         input: place.docText,
@@ -295,13 +288,6 @@ export class HighLightService {
       place.fullHtml = fullResult.html;
       place.fullTokenLines = fullResult.tokenLines;
       place.fullTokens = fullResult.tokens;
-
-      // console.log('place.fullHtml');
-      // console.log(place.fullHtml);
-      // console.log('place.fullTokenLines');
-      // console.log(place.fullTokenLines);
-      // console.log('place.fullTokens');
-      // console.log(place.fullTokens);
     }
   }
 
@@ -318,10 +304,6 @@ export class HighLightService {
     if (!this.highlighter.getLoadedLanguages().includes(shikiLanguage as any)) {
       console.log('parseShikiTokens - unknown language');
     } else {
-      // let startCodeToHtml = Date.now();
-      // html = highlighter.codeToHtml(input, shikiLanguage, shikiTheme);
-      // console.log('startCodeToHtml: ', Date.now() - startCodeToHtml);
-
       tokenLines = this.highlighter
         .codeToThemedTokens(input, shikiLanguage, shikiTheme, {
           includeExplanation: true
@@ -344,11 +326,6 @@ export class HighLightService {
     for (let tLine of tokenLines) {
       let tIndex = 0;
       for (let tItem of tLine) {
-        // if (tItem.explanation.length > 1) {
-        // console.log('tItem.explanation');
-        // console.log(tItem.explanation);
-        // }
-
         for (let explanation of tItem.explanation) {
           let text = explanation.content;
 
@@ -408,10 +385,6 @@ export class HighLightService {
           );
           return null;
         }
-
-        // if (!!state.lineNumber) {
-        //   console.log('CHUNK');
-        // }
 
         let line = stream.string;
 
@@ -477,9 +450,6 @@ export class HighLightService {
           }
 
           let cmStyle: any = tagName;
-
-          // console.log('cmStyle');
-          // console.log(cmStyle);
 
           return cmStyle;
         }

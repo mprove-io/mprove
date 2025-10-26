@@ -192,7 +192,6 @@ export class TimeService {
     } = item;
 
     let dateSeparator = '-';
-    // let dateSeparator = isDefined(fraction.parentBrick) ? '-' : '/';
 
     let dateMinuteStr =
       momentUnit === 'year'
@@ -608,9 +607,6 @@ export class TimeService {
       fractionOperator === FractionOperatorEnum.Or ? '' : 'not ';
 
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
-
-    // console.log('mBrick');
-    // console.log(mBrick);
 
     let newFraction: Fraction = {
       brick: isDefined(fraction.parentBrick) ? mBrick : `any`,

@@ -25,7 +25,6 @@ import { NavigateService } from '~front/app/services/navigate.service';
   selector: 'm-login-success',
   templateUrl: './login-success.component.html'
 })
-// , OnDestroy
 export class LoginSuccessComponent implements OnInit {
   pageTitle = LOGIN_SUCCESS_PAGE_TITLE;
 
@@ -44,9 +43,6 @@ export class LoginSuccessComponent implements OnInit {
     console.log('ngOnInit from LoginSuccessComponent');
 
     this.title.setTitle(this.pageTitle);
-
-    // console.log('startWatch from LoginSuccessComponent');
-    // this.authService.startWatch();
 
     let userId: string;
     this.userQuery
@@ -107,8 +103,4 @@ export class LoginSuccessComponent implements OnInit {
       )
       .subscribe();
   }
-
-  // ngOnDestroy() {
-  //   this.spinner.hide(this.spinnerName);
-  // }
 }

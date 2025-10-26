@@ -22,8 +22,6 @@ export const emptyReport: ReportState = {
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
-  // rangeOpen: undefined,
-  // rangeClose: undefined,
   rangeStart: undefined,
   rangeEnd: undefined,
   metricsStartDateYYYYMMDD: undefined,

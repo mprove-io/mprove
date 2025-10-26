@@ -79,15 +79,7 @@ export class ApiService {
   }): Observable<any> {
     let { pathInfoName, payload, showSpinner } = item;
 
-    let bypassAuth = [
-      ToBackendRequestInfoNameEnum.ToBackendLoginUser
-      // api.PATH_REGISTER_USER,
-      // api.PATH_VERIFY_USER_EMAIL,
-      // api.PATH_CONFIRM_USER_EMAIL,
-      // api.PATH_LOGIN_USER,
-      // api.PATH_RESET_USER_PASSWORD,
-      // api.PATH_UPDATE_USER_PASSWORD
-    ];
+    let bypassAuth = [ToBackendRequestInfoNameEnum.ToBackendLoginUser];
 
     let headers: HttpHeaders = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -97,11 +89,7 @@ export class ApiService {
           : ''
     });
 
-    let url =
-      environment.httpUrl +
-      '/' +
-      // + commonAPI_PATH + '/'
-      pathInfoName;
+    let url = environment.httpUrl + '/' + pathInfoName;
 
     let body: ToBackendRequest = {
       info: {
@@ -116,7 +104,6 @@ export class ApiService {
       headers: headers,
       body: body, // https://github.com/angular/angular/issues/10612
       observe: <any>'response'
-      // responseType: 'json',
     };
 
     if (showSpinner === true) {
@@ -166,7 +153,6 @@ export class ApiService {
 
     let errorData: ErrorData = {
       reqUrl: req.url,
-      // reqHeaders: req.headers,
       reqBody: isDefined(req.body?.payload?.password)
         ? Object.assign({}, req.body, {
             payload: Object.assign({}, req.body.payload, {
@@ -281,7 +267,6 @@ export class ApiService {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              // this.navigateService.navigateToModels();
               this.navigateService.navigateToChart({
                 modelId: LAST_SELECTED_MODEL_ID,
                 chartId: LAST_SELECTED_CHART_ID
@@ -318,17 +303,6 @@ export class ApiService {
               uiState.gridApi.deselectAll();
             }
 
-            // this.resolveReportsRoute({
-            //   showSpinner: true
-            // })
-            //   .pipe(
-            //     tap(x => {
-            //       this.navigateService.navigateToReports();
-            //     }),
-            //     take(1)
-            //   )
-            //   .subscribe();
-
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
@@ -340,7 +314,6 @@ export class ApiService {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                // this.navigateService.navigateToModels();
                 this.navigateService.navigateToChart({
                   modelId: LAST_SELECTED_MODEL_ID,
                   chartId: LAST_SELECTED_CHART_ID
@@ -362,7 +335,6 @@ export class ApiService {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                // this.navigateService.navigateToModels();
                 this.navigateService.navigateToChart({
                   modelId: LAST_SELECTED_MODEL_ID,
                   chartId: LAST_SELECTED_CHART_ID
@@ -380,10 +352,6 @@ export class ApiService {
               this.router
                 .navigateByUrl(orgProjectPath, { skipLocationChange: true })
                 .then(() => {
-                  // this.navigateService.navigateToChart({
-                  //   modelId: model.modelId,
-                  //   chartId: EMPTY_CHART_ID
-                  // });
                   this.navigateService.navigateToChart({
                     modelId: LAST_SELECTED_MODEL_ID,
                     chartId: LAST_SELECTED_CHART_ID
@@ -393,7 +361,6 @@ export class ApiService {
               this.router
                 .navigateByUrl(orgProjectPath, { skipLocationChange: true })
                 .then(() => {
-                  // this.navigateService.navigateToModels();
                   this.navigateService.navigateToChart({
                     modelId: LAST_SELECTED_MODEL_ID,
                     chartId: LAST_SELECTED_CHART_ID
@@ -404,7 +371,6 @@ export class ApiService {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                // this.navigateService.navigateToModels();
                 this.navigateService.navigateToChart({
                   modelId: LAST_SELECTED_MODEL_ID,
                   chartId: LAST_SELECTED_CHART_ID
