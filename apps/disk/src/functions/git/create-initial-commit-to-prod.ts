@@ -24,9 +24,6 @@ export async function createInitialCommitToProd(item: {
 
   let isSourceExist = await isPathExist(sourceDir);
 
-  // console.log('isSourceExist');
-  // console.log(isSourceExist);
-
   if (isDefined(item.testProjectId) && isSourceExist) {
     await copyPath({
       sourcePath: sourceDir,
@@ -71,8 +68,9 @@ currency_suffix: ''
 
   let message = 'init';
 
-  // // Since we're creating an initial commit, it has no parents. Note that unlike
-  // // normal we don't get the head either, because there isn't one yet.
+  // Since we're creating an initial commit, it has no parents. Note that unlike
+  // normal we don't get the head either, because there isn't one yet.
+  // createCommit('HEAD', author, committer, message, oid, []);
   let commitOid = await gitRepo.createCommit(
     null,
     author,
@@ -81,7 +79,6 @@ currency_suffix: ''
     oid,
     []
   );
-  // await gitRepo.createCommit('HEAD', author, committer, message, oid, []);
 
   await gitRepo.createBranch(BRANCH_MAIN, commitOid, false);
 

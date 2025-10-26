@@ -160,8 +160,6 @@ test('1', async t => {
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
 
-    // await helper.delay(1000);
-
     await messageService.processMessage(saveFileRequest);
     await messageService.processMessage(commitRepoRequest);
     await messageService.processMessage(pushRepoRequest);

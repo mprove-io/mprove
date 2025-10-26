@@ -46,15 +46,8 @@ export class DeleteFileService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      fileNodeId,
-      // secondFileNodeId,
-      userAlias
-    } = requestValid.payload;
+    let { orgId, baseProject, repoId, branch, fileNodeId, userAlias } =
+      requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -143,15 +136,6 @@ export class DeleteFileService {
     //
 
     await removePath(filePath);
-
-    // if (isDefined(secondFileNodeId)) {
-    //   let secondRelativeFilePath = secondFileNodeId.substring(
-    //     projectId.length + 1
-    //   );
-    //   let secondFilePath = repoDir + '/' + secondRelativeFilePath;
-
-    //   await removePath(secondFilePath);
-    // }
 
     await addChangesToStage({ repoDir: repoDir });
 

@@ -72,15 +72,6 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   let nodes: DiskCatalogNode[] = [];
 
   let folderNodes: DiskCatalogNode[] = [];
-  // let viewNodes: DiskCatalogNode[] = [];
-  // let storeNodes: DiskCatalogNode[] = [];
-  // let modelNodes: DiskCatalogNode[] = [];
-  // let reportNodes: DiskCatalogNode[] = [];
-  // let dashboardNodes: DiskCatalogNode[] = [];
-  // let chartNodes: DiskCatalogNode[] = [];
-  // let udfNodes: DiskCatalogNode[] = [];
-  // let ymlNodes: DiskCatalogNode[] = [];
-  // let mdNodes: DiskCatalogNode[] = [];
   let otherNodes: DiskCatalogNode[] = [];
 
   let dirents: Dirent[] = <Dirent[]>await fse.readdir(item.dir, {
@@ -106,8 +97,6 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             repoDir: item.repoDir
           })
         );
-
-        // add dirNodes to children
 
         files = [...files, ...itemDir.files];
 
@@ -138,33 +127,6 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
         let ext: any = r ? r[1] : '';
 
         switch (ext) {
-          // case FileExtensionEnum.View:
-          //   viewNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Store:
-          //   storeNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Model:
-          //   modelNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Report:
-          //   reportNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Dashboard:
-          //   dashboardNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Chart:
-          //   chartNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Udf:
-          //   udfNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Yml:
-          //   ymlNodes.push(node);
-          //   break;
-          // case FileExtensionEnum.Md:
-          //   mdNodes.push(node);
-          //   break;
           default:
             otherNodes.push(node);
         }
@@ -210,19 +172,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
   const sortNodes = (elements: DiskCatalogNode[]) =>
     elements.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
 
-  nodes = [
-    ...sortNodes(folderNodes),
-    // ...sortNodes(viewNodes),
-    // ...sortNodes(storeNodes),
-    // ...sortNodes(modelNodes),
-    // ...sortNodes(reportNodes),
-    // ...sortNodes(dashboardNodes),
-    // ...sortNodes(chartNodes),
-    // ...sortNodes(udfNodes),
-    // ...sortNodes(ymlNodes),
-    // ...sortNodes(mdNodes),
-    ...sortNodes(otherNodes)
-  ];
+  nodes = [...sortNodes(folderNodes), ...sortNodes(otherNodes)];
 
   return { nodes: nodes, files: files };
 }

@@ -19,7 +19,6 @@ export async function prepareTest(
 ) {
   let extraOverride: DiskConfig = {
     diskEnv: DiskEnvEnum.TEST,
-    // diskLogResponseOk: true,
     diskLogResponseError: true
   };
 
@@ -47,9 +46,6 @@ export async function prepareTest(
     .overrideProvider(ConsumerService)
     .useValue({})
     .compile();
-
-  // let app: INestApplication = moduleRef.createNestApplication();
-  // await app.init();
 
   let cs = moduleRef.get<ConfigService<DiskConfig>>(ConfigService);
 

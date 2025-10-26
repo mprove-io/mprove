@@ -1,5 +1,4 @@
 import * as nodegit from '@figma/nodegit';
-// import { FetchOptions, Remote, Repository } from '@figma/nodegit';
 
 import { ErEnum } from '~common/enums/er.enum';
 import { RepoStatusEnum } from '~common/enums/repo-status.enum';

@@ -42,18 +42,8 @@ export class SaveFileService {
       logger: this.logger
     });
 
-    let {
-      orgId,
-      baseProject,
-      repoId,
-      branch,
-      fileNodeId,
-      content,
-      // secondFileNodeId,
-      // secondFileContent,
-      // isDeleteSecondFile,
-      userAlias
-    } = requestValid.payload;
+    let { orgId, baseProject, repoId, branch, fileNodeId, content, userAlias } =
+      requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -144,39 +134,6 @@ export class SaveFileService {
       filePath: filePath,
       content: content
     });
-
-    // if (
-    //   isDefined(secondFileNodeId) &&
-    //   isDefinedAndNotEmpty(secondFileContent)
-    // ) {
-    //   let relativeSecondFilePath = secondFileNodeId.substring(
-    //     projectId.length + 1
-    //   );
-    //   let secondFilePath = repoDir + '/' + relativeSecondFilePath;
-
-    //   // malloy file may not exist when adding to a tile to dashboard
-
-    //   // let isSecondFileExist = await isPathExist(secondFilePath);
-    //   // if (isSecondFileExist === false) {
-    //   //   throw new ServerError({
-    //   //     message: ErEnum.DISK_FILE_IS_NOT_EXIST
-    //   //   });
-    //   // }
-
-    //   await writeToFile({
-    //     filePath: secondFilePath,
-    //     content: secondFileContent
-    //   });
-    // }
-
-    // if (isDefined(secondFileNodeId) && isDeleteSecondFile === true) {
-    //   let secondRelativeFilePath = secondFileNodeId.substring(
-    //     projectId.length + 1
-    //   );
-    //   let secondFilePath = repoDir + '/' + secondRelativeFilePath;
-
-    //   await removePath(secondFilePath);
-    // }
 
     await addChangesToStage({ repoDir: repoDir });
 

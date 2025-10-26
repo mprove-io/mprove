@@ -182,8 +182,6 @@ test('1', async t => {
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
 
-    // await helper.delay(1000);
-
     await messageService.processMessage(r1_master_saveFileRequest_1);
     await messageService.processMessage(r1_master_commitRepoRequest_1);
     await messageService.processMessage(r1_master_pushRepoRequest);

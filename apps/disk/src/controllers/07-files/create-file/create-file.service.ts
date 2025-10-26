@@ -55,8 +55,6 @@ export class CreateFileService {
       branch,
       fileName,
       fileText,
-      // secondFileName,
-      // secondFileText,
       parentNodeId,
       userAlias
     } = requestValid.payload;
@@ -156,24 +154,6 @@ export class CreateFileService {
       filePath: filePath,
       content: content
     });
-
-    // if (isDefinedAndNotEmpty(secondFileName)) {
-    //   let secondFilePath = parentPath + secondFileName;
-    //   let secondContent =
-    //     secondFileText || getContentFromFileName({ fileName: secondFileName });
-
-    //   let isSecondFileExist = await isPathExist(secondFilePath);
-    //   if (isSecondFileExist === true) {
-    //     throw new ServerError({
-    //       message: ErEnum.DISK_FILE_ALREADY_EXIST
-    //     });
-    //   }
-
-    //   await writeToFile({
-    //     filePath: secondFilePath,
-    //     content: secondContent
-    //   });
-    // }
 
     await addChangesToStage({ repoDir: repoDir });
 

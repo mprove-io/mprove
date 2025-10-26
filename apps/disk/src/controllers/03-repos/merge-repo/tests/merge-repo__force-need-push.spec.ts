@@ -180,8 +180,6 @@ test('1', async t => {
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
 
-    // await helper.delay(1000);
-
     await messageService.processMessage(createBranchRequest);
 
     await messageService.processMessage(r1_master_saveFileRequest);
