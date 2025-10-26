@@ -166,8 +166,6 @@ test('1', async t => {
       req: req2
     });
 
-    // console.log(resp2);
-
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({

@@ -67,16 +67,10 @@ export class StoreService {
       metricsEndDateYYYYMMDD
     } = item;
 
-    // console.log('item.metricsStartDateYYYYMMDD');
-    // console.log(item.metricsStartDateYYYYMMDD);
-    // console.log('item.metricsEndDateYYYYMMDD');
-    // console.log(item.metricsEndDateYYYYMMDD);
-
     let newMconfig = makeCopy(mconfig);
 
     newMconfig.mconfigId = makeId();
 
-    //
     newMconfig.dateRangeIncludesRightSide =
       isUndefined(model.storeContent.date_range_includes_right_side) ||
       toBooleanFromLowercaseString(
@@ -134,22 +128,8 @@ export class StoreService {
         }
       });
 
-    // console.log('newMconfig.filters');
-    // console.log(newMconfig.filters);
-
     newMconfig.filters.forEach(filter => {
-      // console.log('filter.fieldId');
-      // console.log(filter.fieldId);
-
-      if (isUndefined(filter.fieldId)) {
-        // console.log('___filter___');
-        // console.log(filter);
-      }
-
       filter.fractions.forEach(fraction => {
-        // console.log('fraction');
-        // console.log(fraction);
-
         fraction.controls
           .filter(
             control =>
@@ -157,17 +137,11 @@ export class StoreService {
               typeof control.value === 'string'
           )
           .forEach(control => {
-            // console.log('control');
-            // console.log(control);
-
             let storeFilt = model.storeContent.fields
               .filter(
                 storeField => storeField.fieldClass === FieldClassEnum.Filter
               )
               .find(storeField => storeField.name === filter.fieldId);
-
-            // console.log('storeFilt');
-            // console.log(storeFilt);
 
             let newValue =
               control.isMetricsDate === true &&
@@ -180,8 +154,6 @@ export class StoreService {
 
             let reg = MyRegex.CAPTURE_S_REF();
             let r;
-
-            // let refError;
 
             while ((r = reg.exec(newValue))) {
               let reference = r[1];
@@ -217,8 +189,6 @@ export class StoreService {
                 target = caseSensitiveStringFilters;
               } else {
                 target = null;
-                // refError = `Unknown reference in store.${storeParam}: $${reference}`;
-                // break;
               }
 
               newValue = MyRegex.replaceSRefs(newValue, reference, target);
@@ -229,8 +199,6 @@ export class StoreService {
               typeof newValue === 'string'
                 ? toBooleanFromLowercaseString(newValue)
                 : newValue;
-            // console.log('control.value');
-            // console.log(control.value);
           });
       });
     });
@@ -382,9 +350,6 @@ ${inputSub}
   }): Promise<StoreUserCodeReturn> {
     let { storeModel, respData } = item;
 
-    // console.log('respData');
-    // console.log(respData);
-
     let store = storeModel.storeContent;
 
     let inputSub = store.response;
@@ -419,9 +384,6 @@ ${inputSub}
       inputSub = MyRegex.replaceSRefs(inputSub, reference, target);
     }
 
-    // console.log('inputSub');
-    // console.log(inputSub);
-
     let dataResult: StoreUserCodeReturn;
 
     if (isDefined(refError)) {
@@ -446,9 +408,6 @@ ${inputSub}
       };
     }
 
-    // console.log('dataResult');
-    // console.log(dataResult);
-
     return dataResult;
   }
 
@@ -460,9 +419,6 @@ ${inputSub}
     queryJobId: string;
   }): Promise<void> {
     let { connection, queryJobId, queryId, projectId, model } = item;
-
-    // console.log('store runQuery start');
-    // let tsStart = Date.now();
 
     let queryStart = await this.db.drizzle.query.queriesTable
       .findFirst({
@@ -505,20 +461,6 @@ ${inputSub}
             ? await axios.get(url, body, { headers: headers })
             : { message: 'method must be POST or GET' };
 
-      // console.log(Date.now() - tsStart);
-      // console.log('store runquery end');
-
-      // console.log('response.data');
-      // console.log(response.data);
-
-      // console.log('response.data.rows');
-      // console.log(response.data.rows);
-
-      // console.log('response.data.rows[0]');
-      // console.log(
-      //   response.data.rows.length > 0 ? response.data.rows[0] : undefined
-      // );
-
       let q = await this.db.drizzle.query.queriesTable
         .findFirst({
           where: and(
@@ -533,13 +475,13 @@ ${inputSub}
         if (response.status !== 200 && response.status !== 201) {
           q.status = QueryStatusEnum.Error;
           q.data = [];
-          q.queryJobId = undefined; // null
+          q.queryJobId = undefined;
           q.lastErrorMessage = `response status code "${response.code}" is not 200 or 201`;
           q.lastErrorTs = makeTsNumber();
         } else if (isUndefined(response.data)) {
           q.status = QueryStatusEnum.Error;
           q.data = [];
-          q.queryJobId = undefined; // null
+          q.queryJobId = undefined;
           q.lastErrorMessage = `response has no data`;
           q.lastErrorTs = makeTsNumber();
         } else {
@@ -552,12 +494,12 @@ ${inputSub}
           if (isDefined(dataResult.errorMessage)) {
             q.status = QueryStatusEnum.Error;
             q.data = [];
-            q.queryJobId = undefined; // null
+            q.queryJobId = undefined;
             q.lastErrorMessage = `store response data processing Error: ${dataResult.errorMessage}`;
             q.lastErrorTs = makeTsNumber();
           } else {
             q.status = QueryStatusEnum.Completed;
-            q.queryJobId = undefined; // null;
+            q.queryJobId = undefined;
             q.data = isDefined(dataResult.result)
               ? JSON.parse(dataResult.result) || []
               : [];
@@ -583,9 +525,6 @@ ${inputSub}
         );
       }
     } catch (e: any) {
-      // console.log('errr:');
-      // console.log(e);
-
       let q = await this.db.drizzle.query.queriesTable
         .findFirst({
           where: and(
@@ -599,7 +538,7 @@ ${inputSub}
       if (isDefined(q)) {
         q.status = QueryStatusEnum.Error;
         q.data = [];
-        q.queryJobId = undefined; // null
+        q.queryJobId = undefined;
         q.lastErrorMessage = isDefined(e?.response?.data)
           ? e.message + JSON.stringify(e?.response?.data)
           : e.message;

@@ -100,13 +100,9 @@ export class SaveCreateChartController {
       fromChartId,
       newChartId,
       tileTitle,
-      // accessRoles,
       mconfig,
       envId
     } = reqValid.payload;
-
-    // console.log('saveCreateChart mconfig.select');
-    // console.log(mconfig.select);
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
 
@@ -153,7 +149,6 @@ export class SaveCreateChartController {
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
-      // skipMetrics: false
     });
 
     let model = await this.modelsService.getModelCheckExistsAndAccess({
@@ -178,27 +173,12 @@ export class SaveCreateChartController {
 
     let fileName = `${newChartId}${FileExtensionEnum.Chart}`;
 
-    // let malloyQueryFileName =
-    //   mconfig.modelType === ModelTypeEnum.Malloy
-    //     ? `${newChartId}${FileExtensionEnum.Malloy}`
-    //     : undefined;
-
-    // let malloyChartFilePath =
-    //   mconfig.modelType === ModelTypeEnum.Malloy
-    //     ? `${parentNodeId}/${malloyQueryFileName}`
-    //     : undefined;
-
-    let {
-      chartFileText
-      // , malloyFileText
-    } = makeChartFileText({
+    let { chartFileText } = makeChartFileText({
       mconfig: mconfig,
       tileTitle: tileTitle,
-      // roles: accessRoles,
       chartId: newChartId,
       modelId: model.modelId,
       modelFilePath: model.filePath
-      // malloyChartFilePath: malloyChartFilePath
     });
 
     let baseProject = this.tabService.projectTabToBaseProject({
@@ -219,10 +199,6 @@ export class SaveCreateChartController {
         parentNodeId: parentNodeId,
         fileName: fileName,
         fileText: chartFileText
-        // secondFileName: isDefined(malloyFileText)
-        //   ? malloyQueryFileName
-        //   : undefined,
-        // secondFileText: malloyFileText,
       }
     };
 

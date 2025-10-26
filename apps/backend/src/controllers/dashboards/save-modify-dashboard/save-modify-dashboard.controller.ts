@@ -152,7 +152,6 @@ export class SaveModifyDashboardController {
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
-      // skipMetrics: false
     });
 
     let fromDashboardX =
@@ -182,10 +181,7 @@ export class SaveModifyDashboardController {
     let pathParts = toDashboard.filePath.split('.');
     pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
 
-    // let secondFileNodeId = pathParts.join('.');
-
     let dashFileText: string;
-    // let secondFileContent: string;
 
     if (isDefined(newTile)) {
       await this.modelsService.getModelCheckExistsAndAccess({
@@ -221,10 +217,7 @@ export class SaveModifyDashboardController {
         fromDashboardX.tiles = [...fromDashboardX.tiles, newTile];
       }
 
-      let {
-        dashboardFileText
-        // , malloyFileText
-      } = makeDashboardFileText({
+      let { dashboardFileText } = makeDashboardFileText({
         dashboard: fromDashboardX,
         newDashboardId: fromDashboardX.dashboardId,
         newTitle: fromDashboardX.title,
@@ -232,14 +225,10 @@ export class SaveModifyDashboardController {
         caseSensitiveStringFilters:
           currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
-        // malloyDashboardFilePath: secondFileNodeId
       });
 
       dashFileText = dashboardFileText;
-      // secondFileContent = malloyFileText;
     } else {
-      // dashboard save as - replace existing
-
       if (isDefined(tilesGrid)) {
         let yTiles: TileX[] = [];
 
@@ -266,10 +255,7 @@ export class SaveModifyDashboardController {
         fromDashboardX.tiles = yTiles;
       }
 
-      let {
-        dashboardFileText
-        // malloyFileText
-      } = makeDashboardFileText({
+      let { dashboardFileText } = makeDashboardFileText({
         dashboard: fromDashboardX,
         newDashboardId: toDashboardId,
         newTitle: dashboardTitle,
@@ -277,11 +263,9 @@ export class SaveModifyDashboardController {
         caseSensitiveStringFilters:
           currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
-        // malloyDashboardFilePath: secondFileNodeId
       });
 
       dashFileText = dashboardFileText;
-      // secondFileContent = malloyFileText;
     }
 
     let baseProject = this.tabService.projectTabToBaseProject({
@@ -301,9 +285,6 @@ export class SaveModifyDashboardController {
         fileNodeId: toDashboard.filePath,
         userAlias: user.alias,
         content: dashFileText
-        // secondFileNodeId: secondFileNodeId,
-        // secondFileContent: secondFileContent,
-        // isDeleteSecondFile: isUndefinedOrEmpty(secondFileContent),
       }
     };
 

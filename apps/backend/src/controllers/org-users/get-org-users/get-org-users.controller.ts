@@ -61,17 +61,6 @@ export class GetOrgUsersController {
 
     let userIds = memberParts.map(x => x.memberId);
 
-    // let usersResult = await this.db.drizzle
-    //   .select({
-    //     record: usersTable,
-    //     total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-    //   })
-    //   .from(usersTable)
-    //   .where(inArray(usersTable.userId, userIds))
-    //   .orderBy(asc(usersTable.email))
-    //   .limit(perPage)
-    //   .offset((pageNum - 1) * perPage);
-
     let sortedUsers = await this.db.drizzle.query.usersTable
       .findMany({
         where: and(inArray(usersTable.userId, userIds))

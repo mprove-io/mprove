@@ -17,11 +17,6 @@ export function clearRowsCache(item: {
     timeRangeFractionBrick
   } = item;
 
-  // processedRows = processRowIds({
-  //   rows: processedRows,
-  //   targetRowIds: processedRows.map(pRow => pRow.rowId)
-  // });
-
   processedRows.forEach(row => {
     if (
       changedRowIds.length === 0 ||

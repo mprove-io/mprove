@@ -18,6 +18,7 @@ export class RedisService {
     );
 
     // the same as apps/backend/src/app.module.ts -> customThrottlerModule
+    // TODO: check rejectUnauthorized redis
     this.client = new Redis({
       host: valkeyHost,
       port: 6379,

@@ -125,39 +125,6 @@ export class ParentService {
           }
         }
       }
-      // } else if (
-      //   parentType === MconfigParentTypeEnum.Chart ||
-      //   parentType === MconfigParentTypeEnum.SuggestDimensionChart
-      // ) {
-      //   let chart = await this.chartsService.getChartCheckExistsAndAccess({
-      //     structId: structId,
-      //     chartId: parentId,
-      //     userMember: userMember,
-      //     user: user
-      //   });
-
-      //   if (isCheckSuggest === true) {
-      //     let field;
-
-      //     let mconfig = await this.mconfigsService.getMconfigCheckExists({
-      //       mconfigId: chart.tiles[0].mconfigId,
-      //       structId: chart.structId
-      //     });
-
-      //     let chartFilterFields = mconfig.filters.map(x =>
-      //       model.fields.find(y => y.id === x.fieldId)
-      //     );
-
-      //     field = chartFilterFields.find(
-      //       x => x.suggestModelDimension === `${modelId}.${suggestFieldId}`
-      //     );
-
-      //     if (isUndefined(field)) {
-      //       throw new ServerError({
-      //         message: ErEnum.BACKEND_SUGGEST_FIELD_NOT_FOUND
-      //       });
-      //     }
-      //   }
     } else {
       await this.modelsService.getModelCheckExistsAndAccess({
         structId: structId,

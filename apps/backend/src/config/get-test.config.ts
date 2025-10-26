@@ -3,7 +3,5 @@ import { BackendConfig } from '~backend/config/backend-config';
 export function getTestConfig(devConfig: BackendConfig) {
   let testConfig = Object.assign({}, devConfig);
 
-  // testConfig.backendLogIsJson = false;
-
   return testConfig;
 }

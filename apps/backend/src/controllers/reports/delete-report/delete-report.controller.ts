@@ -171,7 +171,6 @@ export class DeleteReportController {
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              // structs: [struct],
               bridges: [...branchBridges]
             }
           });

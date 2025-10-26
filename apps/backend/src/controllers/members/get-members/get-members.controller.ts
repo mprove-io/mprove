@@ -57,19 +57,6 @@ export class GetMembersController {
       repoId: undefined
     });
 
-    // let membersResult = await this.db.drizzle
-    //   .select({
-    //     record: membersTable,
-    //     total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
-    //   })
-    //   .from(membersTable)
-    //   .where(eq(membersTable.projectId, projectId))
-    //   .orderBy(asc(membersTable.email))
-    //   .limit(perPage)
-    //   .offset((pageNum - 1) * perPage);
-
-    // let members = membersResult.map(x => x.record);
-
     let sortedMembers = await this.db.drizzle.query.membersTable
       .findMany({
         where: and(eq(membersTable.projectId, projectId))

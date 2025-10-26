@@ -73,7 +73,6 @@ export class ClickHouseService {
       clickhouse.query(querySql).subscribe({
         next: (row: any) => {
           // called for each row
-
           data.push(row);
         },
         complete: async () => {
@@ -89,7 +88,7 @@ export class ClickHouseService {
 
           if (isDefined(q)) {
             q.status = QueryStatusEnum.Completed;
-            q.queryJobId = undefined; // null
+            q.queryJobId = undefined;
             q.data = data;
             q.lastCompleteTs = makeTsNumber();
             q.lastCompleteDuration = Math.floor(
@@ -128,7 +127,7 @@ export class ClickHouseService {
           if (isDefined(q)) {
             q.status = QueryStatusEnum.Error;
             q.data = [];
-            q.queryJobId = undefined; // null
+            q.queryJobId = undefined;
             q.lastErrorMessage = e.message
               ? e.message
               : JSON.stringify(e, Object.getOwnPropertyNames(e));

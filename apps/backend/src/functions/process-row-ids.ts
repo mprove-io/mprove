@@ -24,12 +24,6 @@ export function processRowIds(item: {
     targets[rowId] = rowIdNumberToLetter(targetIndex);
   });
 
-  // rows = rows.map(row => {
-  //   row.rowId = targets[row.rowId];
-  //   row.deps = [];
-  //   return row;
-  // });
-
   rows.forEach(row => {
     row.rowId = targets[row.rowId];
     row.deps = [];
@@ -37,10 +31,6 @@ export function processRowIds(item: {
 
   rows.forEach(row => {
     if (row.rowType === RowTypeEnum.Formula) {
-      //
-      // console.log('row.formula:');
-      // console.log(row.formula);
-
       let newFormula = row.formula;
       let formulaDeps: string[] = [];
       let reg = MyRegex.CAPTURE_ROW_REF();
@@ -122,12 +112,6 @@ export function processRowIds(item: {
     }
 
     row.deps = endDeps;
-
-    // console.log('row:');
-    // console.log(row);
-
-    // console.log('row.parameters:');
-    // console.log(row.parameters);
   });
 
   return newRows;

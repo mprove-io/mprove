@@ -70,7 +70,6 @@ export class ChartsService {
       modelId: chart.modelId,
       modelLabel: chart.modelLabel,
       filePath: chart.filePath,
-      // accessRoles: chart.accessRoles,
       tiles: makeTilesX({
         tiles: chart.tiles,
         mconfigs: mconfigs,
@@ -109,7 +108,6 @@ export class ChartsService {
       title: apiChart.title,
       modelLabel: apiChart.modelLabel,
       filePath: apiChart.filePath,
-      // accessRoles: apiChart.accessRoles,
       tiles: apiChart.tiles,
       keyTag: undefined,
       serverTs: apiChart.serverTs

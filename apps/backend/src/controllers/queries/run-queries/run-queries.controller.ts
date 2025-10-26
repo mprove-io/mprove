@@ -178,15 +178,9 @@ export class RunQueriesController {
       .filter(query => query.connectionType === ConnectionTypeEnum.GoogleApi)
       .map(query => query.connectionId);
 
-    // console.log('googleApiConnectionIds');
-    // console.log(googleApiConnectionIds);
-
     let uniqueGoogleApiConnectionIdsWithAnyEnvId = [
       ...new Set(googleApiConnectionIds)
     ];
-
-    // console.log('uniqueGoogleApiConnectionIds');
-    // console.log(uniqueGoogleApiConnectionIds);
 
     let uniqueGoogleApiConnectionsWithAnyEnvId =
       await this.db.drizzle.query.connectionsTable
@@ -213,9 +207,6 @@ export class RunQueriesController {
           connection.options.storeGoogleApi.googleAccessTokenExpiryDate <
             currentTimeMs + 60 * 1000
         ) {
-          // console.log('googleApiConnections start');
-          // let tsStart = Date.now();
-
           let authClient = new JWT({
             email:
               connection.options.storeGoogleApi.serviceAccountCredentials
@@ -232,9 +223,6 @@ export class RunQueriesController {
 
           connection.options.storeGoogleApi.googleAccessTokenExpiryDate =
             tokens.expiry_date; // ms
-
-          // console.log(Date.now() - tsStart);
-          // console.log('googleApiConnections end');
 
           await retry(
             async () =>

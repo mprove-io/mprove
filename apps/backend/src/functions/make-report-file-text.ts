@@ -136,8 +136,6 @@ export function makeReportFileText(item: {
                           ? toBooleanFromLowercaseString(newValue)
                           : newValue;
 
-                      // newFileControl.value = mconfigControl.value;
-
                       return newFileControl;
                     }
                   );
@@ -156,25 +154,14 @@ export function makeReportFileText(item: {
     access_roles:
       accessRoles.length > 0 ? accessRoles.map(x => x.trim()) : undefined,
     rows: rows.map(x => {
-      // console.log('x');
-      // console.log(x);
-
       let metric =
         x.rowType === RowTypeEnum.Metric
           ? metrics.find(m => m.metricId === x.metricId)
           : undefined;
 
-      // console.log('metric');
-      // console.log(metric);
-
       let model = isDefined(metric)
         ? models.find(m => m.modelId === metric.modelId)
         : undefined;
-
-      // console.log('model.modelId');
-      // console.log(model?.modelId);
-      // console.log('model.isStoreModel');
-      // console.log(model?.isStoreModel);
 
       let row: FileReportRow = {
         row_id: x.rowId,
@@ -218,24 +205,18 @@ export function makeReportFileText(item: {
               ? x.parameters.map(parameter => {
                   let p: FileReportRowParameter = {
                     apply_to: parameter.apply_to,
-                    // result: parameter.result,
                     conditions:
                       isDefined(parameter.listen) ||
                       model?.type === ModelTypeEnum.Store
-                        ? // model?.isStoreModel === true
-                          undefined
+                        ? undefined
                         : isDefined(parameter.fractions) &&
                             parameter.fractions.length > 0
                           ? parameter.fractions.map(fraction => fraction.brick)
                           : undefined,
                     fractions:
                       model?.type === ModelTypeEnum.Store &&
-                      // model?.isStoreModel === true &&
                       isUndefined(parameter.listen)
                         ? parameter.fractions.map(apiFraction => {
-                            // console.log('apiFraction');
-                            // console.log(apiFraction);
-
                             let fileFraction: FileFraction = {};
 
                             if (isDefined(apiFraction.logicGroup)) {

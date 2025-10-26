@@ -135,22 +135,6 @@ export class DeleteChartController {
       });
     }
 
-    // let chartMconfig = await this.mconfigsService.getMconfigCheckExists({
-    //   structId: bridge.structId,
-    //   mconfigId: existingChart.tiles[0].mconfigId
-    // });
-
-    // let secondFileNodeId;
-
-    // if (chartMconfig.modelType === ModelTypeEnum.Malloy) {
-    //   let pathParts = existingChart.filePath.split('.');
-
-    //   pathParts[pathParts.length - 1] =
-    //     FileExtensionEnum.Malloy.slice(1);
-
-    //   secondFileNodeId = pathParts.join('.');
-    // }
-
     let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
@@ -167,7 +151,6 @@ export class DeleteChartController {
         branch: branchId,
         fileNodeId: existingChart.filePath,
         userAlias: user.alias
-        // secondFileNodeId: secondFileNodeId,
       }
     };
 
@@ -210,7 +193,6 @@ export class DeleteChartController {
           await this.db.packer.write({
             tx: tx,
             insertOrUpdate: {
-              // structs: [struct],
               bridges: [...branchBridges]
             }
           });

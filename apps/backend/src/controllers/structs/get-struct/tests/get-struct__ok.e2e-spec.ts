@@ -65,7 +65,6 @@ test('1', async t => {
           {
             orgId,
             projectId,
-            // testProjectId,
             name: projectName,
             remoteType: ProjectRemoteTypeEnum.Managed,
             defaultBranch: BRANCH_MAIN
@@ -113,9 +112,6 @@ test('1', async t => {
       loginToken: prep.loginToken,
       req: req
     });
-
-    // console.log('struct');
-    // console.log(resp.payload.struct);
 
     await prep.app.close();
   } catch (e) {

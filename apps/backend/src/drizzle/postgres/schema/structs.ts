@@ -14,10 +14,6 @@ export const structsTable = pgTable(
   {
     structId: varchar('struct_id', { length: 32 }).notNull().primaryKey(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
-    // errors: json('errors').$type<BmlError[]>().notNull(),
-    // metrics: json('metrics').$type<ModelMetric[]>().default([]),
-    // presets: json('presets').$type<Preset[]>().default([]),
-    // mproveConfig: json('mprove_config').$type<MproveConfig>(),
     mproveVersion: varchar('mprove_version'),
     st: json('st')
       .$type<{ encrypted: string; decrypted: StructSt }>()

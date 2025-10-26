@@ -103,7 +103,6 @@ export class SaveModifyChartController {
       fromChartId,
       chartId,
       tileTitle,
-      // accessRoles,
       timezone
     } = reqValid.payload;
 
@@ -152,7 +151,6 @@ export class SaveModifyChartController {
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
-      // skipMetrics: false
     });
 
     let existingChart = await this.chartsService.getChartCheckExists({
@@ -183,25 +181,15 @@ export class SaveModifyChartController {
     let pathParts = existingChart.filePath.split('.');
     pathParts[pathParts.length - 1] = FileExtensionEnum.Malloy.slice(1);
 
-    // let secondFileNodeId =
-    //   mconfig.modelType === ModelTypeEnum.Malloy
-    //     ? pathParts.join('.')
-    //     : undefined;
-
-    let {
-      chartFileText
-      // malloyFileText
-    } = makeChartFileText({
+    let { chartFileText } = makeChartFileText({
       mconfig: this.mconfigsService.tabToApi({
         mconfig: mconfig,
         modelFields: model.fields
       }),
       tileTitle: tileTitle,
-      // roles: accessRoles,
       chartId: chartId,
       modelId: model.modelId,
       modelFilePath: model.filePath
-      // malloyChartFilePath: secondFileNodeId
     });
 
     let baseProject = this.tabService.projectTabToBaseProject({
@@ -221,10 +209,6 @@ export class SaveModifyChartController {
         fileNodeId: existingChart.filePath,
         userAlias: user.alias,
         content: chartFileText
-        // secondFileNodeId: isDefined(malloyFileText)
-        //   ? secondFileNodeId
-        //   : undefined,
-        // secondFileContent: malloyFileText,
       }
     };
 

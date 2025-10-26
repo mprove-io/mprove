@@ -44,21 +44,13 @@ export class AppInterceptor implements NestInterceptor {
   ): Promise<Observable<MyResponse>> {
     let request = context.switchToHttp().getRequest();
 
-    // if (ToBackendRequestInfoNameEnum.ToBackendWebhookAnalyticsEvents) {
-    //   return next.handle();
-    // }
-
     request.start_ts = Date.now();
 
     let req: ToBackendRequest = request.body;
     let user: UserTab = request.user;
-    // let sessionStId: string = request.session?.getUserId();
 
     let iKey = req?.info?.idempotencyKey;
     let stId = isDefined(user?.userId) ? user.userId : UNK_ST_ID;
-    // let stId = isDefined(sessionStId)
-    // ? sessionStId
-    // : ST_ID_UNK;
 
     let idemp = isUndefined(iKey)
       ? undefined

@@ -250,14 +250,12 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_SMTP_AUTH_PASSWORD ||
       envFile.BACKEND_SMTP_AUTH_PASSWORD,
 
-    //
     backendValkeyHost:
       process.env.BACKEND_VALKEY_HOST || envFile.BACKEND_VALKEY_HOST,
 
     backendValkeyPassword:
       process.env.BACKEND_VALKEY_PASSWORD || envFile.BACKEND_VALKEY_PASSWORD,
 
-    //
     backendRabbitUser:
       process.env.BACKEND_RABBIT_USER || envFile.BACKEND_RABBIT_USER,
 

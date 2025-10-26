@@ -188,24 +188,6 @@ export class MconfigsService {
       metricsEndDateYYYYMMDD: metricsEndDateYYYYMMDD
     });
 
-    // console.log('newMconfig:');
-    // console.log(newMconfig);
-
-    // newMconfig.filters.forEach((filter, filterIndex) => {
-    //   console.log(`Filter ${filterIndex} fractions:`);
-    //   console.log(filter.fractions);
-    //   filter.fractions.forEach((fraction, frIndex) => {
-    //     console.log(`Filter ${filterIndex} Fraction ${frIndex} controls:`);
-    //     console.log(fraction.controls);
-    //     fraction.controls.forEach((control, cIndex) => {
-    //       console.log(
-    //         `Filter ${filterIndex} Fraction ${frIndex} Control ${cIndex} options:`
-    //       );
-    //       console.log(control?.options);
-    //     });
-    //   });
-    // });
-
     let apiEnvs = await this.envsService.getApiEnvs({
       projectId: project.projectId
     });
@@ -269,7 +251,7 @@ export class MconfigsService {
       envId: envId,
       mconfigParentType: mconfigParentType,
       mconfigParentId: mconfigParentId,
-      sql: undefined, // isStore true
+      sql: undefined,
       store: model.storeContent,
       storeTransformedRequestString: processedRequest.result
     });

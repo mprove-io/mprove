@@ -55,13 +55,11 @@ export class SetAvatarController {
     if (isDefined(avatar)) {
       avatar.avatarSmall = avatarSmall;
       avatar.avatarBig = undefined; // do not use avatarBig (encryption time)
-      // avatar.avatarBig = avatarBig;
     } else {
       avatar = {
         userId: user.userId,
         avatarSmall: avatarSmall,
         avatarBig: undefined, // do not use avatarBig (encryption time)
-        // avatarBig: avatarBig,
         keyTag: undefined,
         serverTs: undefined
       };

@@ -71,7 +71,6 @@ export class ReportTimeColumnsService {
     let fractions: Fraction[] = [];
 
     let p = bricksToFractions({
-      // caseSensitiveStringFilters: caseSensitiveStringFilters,
       filterBricks: [timeRangeFractionBrick],
       result: FieldResultEnum.Ts,
       fractions: fractions,
@@ -332,12 +331,9 @@ export class ReportTimeColumnsService {
 
     let columns = timeColumns.map(x => {
       let unixTimeZoned = getUnixTime(x);
-      // let unixDateZoned = new Date(unixTimeZoned * 1000);
-      // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
       let column: Column = {
         columnId: unixTimeZoned,
-        // tsUTC: tsUTC,
         label: nodeFormatTsUnix({
           timeSpec: timeSpec,
           unixTimeZoned: unixTimeZoned

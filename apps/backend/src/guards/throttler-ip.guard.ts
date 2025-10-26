@@ -32,9 +32,6 @@ export class ThrottlerIpGuard extends ThrottlerGuard {
   protected async getTracker(req: Record<string, any>): Promise<string> {
     let ip = req.ip || req.ips?.[0] || 'unknown';
 
-    // console.log('ip');
-    // console.log(ip);
-
     return ip;
   }
 }

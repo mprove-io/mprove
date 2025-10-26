@@ -104,9 +104,6 @@ export class GetRebuildStructController {
 
     // to blockml
 
-    // console.log('connectionsWithFallback');
-    // console.log(connectionsWithFallback);
-
     let rebuildStructRequest: ToBlockmlRebuildStructRequest = {
       info: {
         name: ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct,

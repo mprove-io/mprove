@@ -127,9 +127,6 @@ test('1', async t => {
       req: req1
     });
 
-    // console.log('resp1');
-    // console.log(resp1);
-
     let req: ToBackendCreateDraftDashboardRequest = {
       info: {
         name: ToBackendRequestInfoNameEnum.ToBackendCreateDraftDashboard,
@@ -154,9 +151,6 @@ test('1', async t => {
       loginToken: prep.loginToken,
       req: req
     });
-
-    // console.log('resp');
-    // console.log(resp);
 
     await prep.app.close();
   } catch (e) {

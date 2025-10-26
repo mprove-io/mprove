@@ -35,11 +35,6 @@ export class AppFilter implements ExceptionFilter {
       const response = ctx.getResponse();
       const request = ctx.getRequest();
 
-      // const status =
-      //   exception instanceof HttpException
-      //     ? exception.getStatus()
-      //     : HttpStatus.INTERNAL_SERVER_ERROR;
-
       let e =
         (exception as any).message === 'Unauthorized'
           ? new ServerError({
@@ -67,14 +62,10 @@ export class AppFilter implements ExceptionFilter {
       if (isDefined(iKey)) {
         try {
           let user: UserTab = request.user;
-          // let sessionStId: string = request.session?.getUserId();
 
           let idemp: Idemp = {
             idempotencyKey: iKey,
             stId: isDefined(user?.userId) ? user.userId : UNK_ST_ID,
-            // stId: isDefined(sessionStId)
-            //   ? sessionStId
-            //   : UNK_ST_ID,
             req: req,
             resp: resp,
             serverTs: makeTsNumber()

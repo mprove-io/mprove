@@ -120,8 +120,6 @@ test('1', async t => {
       req: req
     });
 
-    // console.log(resp);
-
     await prep.app.close();
   } catch (e) {
     logToConsoleBackend({

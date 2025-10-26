@@ -193,25 +193,7 @@ export class EditDraftDashboardController {
 
     let fileId = encodeFilePath({ filePath: relativePath });
 
-    // second
-
-    // let secondFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
-
-    // let secondRelativePath =
-    //   currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
-    //     ? `${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
-    //     : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
-
-    // let secondFileNodeId = `${projectId}/${secondRelativePath}`;
-
-    // let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
-
-    // let secondFileId = encodeFilePath({ filePath: secondRelativePath });
-
-    let {
-      dashboardFileText
-      // , malloyFileText
-    } = makeDashboardFileText({
+    let { dashboardFileText } = makeDashboardFileText({
       dashboard: fromDashboardX,
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
@@ -219,7 +201,6 @@ export class EditDraftDashboardController {
       caseSensitiveStringFilters:
         currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
-      // malloyDashboardFilePath: secondFileNodeId
     });
 
     // add dashboard file
@@ -234,33 +215,7 @@ export class EditDraftDashboardController {
       content: dashboardFileText
     };
 
-    // let secondTempFile: DiskCatalogFile = {
-    //   projectId: projectId,
-    //   repoId: repoId,
-    //   fileId: secondFileId,
-    //   pathString: secondPathString,
-    //   fileNodeId: secondFileNodeId,
-    //   name: secondFileName,
-    //   content: malloyFileText
-    // };
-
-    let diskFiles = [
-      tempFile
-      // ...diskResponse.payload.files.filter(x => {
-      //   let ar = x.name.split('.');
-      //   let ext = ar[ar.length - 1];
-      //   let allow =
-      //     // x.fileNodeId !== secondFileNodeId &&
-      //     [FileExtensionEnum.Chart, FileExtensionEnum.Dashboard].indexOf(
-      //       `.${ext}` as FileExtensionEnum
-      //     ) < 0;
-      //   return allow;
-      // })
-    ];
-
-    // if (isDefined(malloyFileText)) {
-    //   diskFiles.push(secondTempFile);
-    // }
+    let diskFiles = [tempFile];
 
     let modelIds = [
       ...(tiles ?? []).map(tile => tile.modelId),

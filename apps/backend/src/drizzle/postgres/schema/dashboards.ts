@@ -21,12 +21,6 @@ export const dashboardsTable = pgTable(
     dashboardId: varchar('dashboard_id', { length: 32 }).notNull(), // name
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     draft: boolean('draft').notNull(),
-    // title: varchar('title'),
-    // filePath: varchar('file_path'),
-    // content: json('content').notNull(),
-    // accessRoles: json('access_roles').$type<string[]>().notNull(),
-    // fields: json('fields').$type<DashboardField[]>().notNull(),
-    // tiles: json('tiles').$type<Tile[]>().notNull(),
     st: json('st')
       .$type<{ encrypted: string; decrypted: DashboardSt }>()
       .notNull(),

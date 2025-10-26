@@ -51,9 +51,7 @@ export class CommitRepoController {
       });
     }
 
-    let repoId =
-      // isRepoProd === true ? PROD_REPO_ID :
-      user.userId;
+    let repoId = user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

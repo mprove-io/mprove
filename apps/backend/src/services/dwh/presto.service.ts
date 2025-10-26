@@ -78,7 +78,7 @@ export class PrestoService {
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
-          q.queryJobId = undefined; // null;
+          q.queryJobId = undefined;
           q.data = data;
           q.lastCompleteTs = makeTsNumber();
           q.lastCompleteDuration = Math.floor(
@@ -118,10 +118,6 @@ export class PrestoService {
   }) {
     let { e, queryId, queryJobId, projectId } = item;
 
-    // console.log(e);
-    // console.log(e.cause);
-    // console.log(e.cause.message);
-
     let q = await this.db.drizzle.query.queriesTable
       .findFirst({
         where: and(
@@ -135,7 +131,7 @@ export class PrestoService {
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;
       q.data = [];
-      q.queryJobId = undefined; // null
+      q.queryJobId = undefined;
       q.lastErrorMessage = e.cause?.message ?? e.message; // presto specific
       q.lastErrorTs = makeTsNumber();
 

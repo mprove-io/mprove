@@ -22,7 +22,7 @@ let password = '123456';
 let orgId = testId;
 let orgName = testId;
 
-let projectName = testId; // testId
+let projectName = testId;
 
 let prep: Prep;
 

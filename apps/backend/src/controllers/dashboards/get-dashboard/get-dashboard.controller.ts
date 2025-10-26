@@ -124,10 +124,6 @@ export class GetDashboardController {
       projectId: projectId
     });
 
-    //
-    //
-    //
-
     let fromDashboardX =
       await this.dashboardsService.getDashboardXCheckExistsAndAccess({
         dashboardId: dashboardId,
@@ -150,15 +146,6 @@ export class GetDashboardController {
       mdir = mdir.substring(2);
     }
 
-    // let dashboardFile = diskResponse.payload.files.find(
-    //   x =>
-    //     x.name === `${fromDashboard.dashboardId}${FileExtensionEnum.Dashboard}`
-    // );
-
-    // let malloyFile = diskResponse.payload.files.find(
-    //   x => x.name === `${fromDashboard.dashboardId}${FileExtensionEnum.Malloy}`
-    // );
-
     let relativePath =
       fromDashboardX.draft === true
         ? currentStruct.mproveConfig.mproveDirValue ===
@@ -171,25 +158,7 @@ export class GetDashboardController {
     let fileNodeId = `${projectId}/${relativePath}`;
     let pathString = JSON.stringify(fileNodeId.split('/'));
 
-    // second
-
-    // let secondFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
-
-    // let secondRelativePath =
-    //   currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
-    //     ? `${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
-    //     : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
-
-    // let secondFileNodeId = `${projectId}/${secondRelativePath}`;
-
-    // let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
-
-    // let secondFileId = encodeFilePath({ filePath: secondRelativePath });
-
-    let {
-      dashboardFileText
-      // , malloyFileText
-    } = makeDashboardFileText({
+    let { dashboardFileText } = makeDashboardFileText({
       dashboard: fromDashboardX,
       newDashboardId: newDashboardId,
       newTitle: fromDashboardX.title,
@@ -197,24 +166,7 @@ export class GetDashboardController {
       caseSensitiveStringFilters:
         currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
-      // malloyDashboardFilePath: secondFileNodeId
     });
-
-    // console.log('fromDashboard?.filePath');
-    // console.log(fromDashboard?.filePath);
-    // DXYE72ODCP5LWPWH2EXQ/data/c1_postgres/dashboards/c1_d1.dashboard
-
-    // console.log('dashboardFile?.fileId');
-    // console.log(dashboardFile?.fileId);
-    // data%2Fc1_postgres%2Fdashboards%2Fc1_d1_DOT_dashboard
-
-    // console.log('dashboardFile?.pathString');
-    // console.log(dashboardFile?.pathString);
-    // ["DXYE72ODCP5LWPWH2EXQ","data","c1_postgres","dashboards","c1_d1.dashboard"]
-
-    // console.log('dashboardFile?.fileNodeId');
-    // console.log(dashboardFile?.fileNodeId);
-    // DXYE72ODCP5LWPWH2EXQ/data/c1_postgres/dashboards/c1_d1.dashboard
 
     // add dashboard file
 
@@ -228,37 +180,7 @@ export class GetDashboardController {
       content: dashboardFileText
     };
 
-    // let secondTempFile: DiskCatalogFile = {
-    //   projectId: projectId,
-    //   repoId: repoId,
-    //   fileId: fromDashboard.draft === true ? secondFileId : malloyFile?.fileId,
-    //   pathString:
-    //     fromDashboard.draft === true
-    //       ? secondPathString
-    //       : malloyFile?.pathString,
-    //   fileNodeId:
-    //     fromDashboard.draft === true
-    //       ? secondFileNodeId
-    //       : malloyFile?.fileNodeId,
-    //   name: secondFileName,
-    //   content: malloyFileText
-    // };
-
-    let diskFiles = [
-      tempFile
-      // ...diskResponse.payload.files.filter(x => {
-      //   let ar = x.name.split('.');
-      //   let ext = ar[ar.length - 1];
-      //   let allow =
-      //     // x.fileNodeId !== secondFileNodeId &&
-      //     [FileExtensionEnum.Yml].indexOf(`.${ext}` as FileExtensionEnum) > -1;
-      //   return allow;
-      // })
-    ];
-
-    // if (isDefined(malloyFileText)) {
-    //   diskFiles.push(secondTempFile);
-    // }
+    let diskFiles = [tempFile];
 
     let modelIds = [
       ...(fromDashboardX?.tiles ?? []).map(tile => tile.modelId),

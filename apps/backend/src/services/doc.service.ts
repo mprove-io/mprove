@@ -138,8 +138,6 @@ export class DocService {
         x => x.fields['timestamp'] * 1000
       );
 
-      // console.log(timestampValues);
-
       let mainSelect = [
         `unnest(ARRAY[${timestampValues}]::bigint[]) AS timestamp`,
         ...report.rows
@@ -209,9 +207,6 @@ SELECT
 ${outerSelectReady}
 FROM main;`;
 
-      // console.log('querySql:');
-      // console.log(querySql);
-
       let pgp = pgPromise({ noWarnings: true });
       let pgDb = pgp(cn);
 
@@ -231,9 +226,6 @@ FROM main;`;
         .catch(async (errr: any) => {
           topQueryError = errr.message;
         });
-
-      // console.log('topQueryData');
-      // console.log(topQueryData);
     }
 
     let lastCalculatedTs = Number(makeTs());
@@ -254,14 +246,11 @@ FROM main;`;
           row.topQueryError = row.formulaError;
           row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = y.fields['timestamp'];
-            // let unixDateZoned = new Date(unixTimeZoned * 1000);
-            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              // tsUTC: tsUTC,
               value: undefined,
               error: undefined
             };
@@ -275,14 +264,11 @@ FROM main;`;
           row.topQueryError = topQueryError;
           row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = y.fields['timestamp'];
-            // let unixDateZoned = new Date(unixTimeZoned * 1000);
-            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              // tsUTC: tsUTC,
               value: undefined,
               error: undefined
             };
@@ -297,14 +283,11 @@ FROM main;`;
 
           row.records = reportDataColumns.map((y: any, index) => {
             let unixTimeZoned = y.fields['timestamp'];
-            // let unixDateZoned = new Date(unixTimeZoned * 1000);
-            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              // tsUTC: tsUTC,
               value: y.fields[row.rowId],
               error: undefined
             };
@@ -316,14 +299,11 @@ FROM main;`;
 
           row.records = topQueryData.map((y: any, index) => {
             let unixTimeZoned = y.timestamp / 1000;
-            // let unixDateZoned = new Date(unixTimeZoned * 1000);
-            // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
             let record: RowRecord = {
               columnLabel: undefined,
               id: index + 1,
               key: unixTimeZoned,
-              // tsUTC: tsUTC,
               value: y[row.rowId.toLowerCase()],
               error: undefined
             };
@@ -392,9 +372,6 @@ FROM main;`;
           isDefined(row.query?.data)
       )
       .forEach(row => {
-        // console.log('row');
-        // console.log(row);
-
         row.query.data =
           row.mconfig?.modelType === ModelTypeEnum.Malloy &&
           row.query.connectionType === ConnectionTypeEnum.PostgreSQL
@@ -451,9 +428,6 @@ FROM main;`;
             } else {
               let tsDate = fromUnixTime(column.columnId);
 
-              // console.log('tsDate.toISOString().slice(0, 19)');
-              // console.log(tsDate.toISOString().slice(0, 19));
-
               let zonedDate = DateTime.fromJSDate(tsDate, {
                 zone: 'utc'
               }).setZone(row.mconfig.timezone);
@@ -474,13 +448,9 @@ FROM main;`;
                 zone: 'utc'
               });
 
-              // let zonedTimeValue = tsDate.toISOString().slice(0, 19)
               let zonedTimeValue = inverseZonedDate.toFormat(
                 'yyyy-MM-dd HH:mm:ss'
               );
-
-              // console.log('zonedTimeValue');
-              // console.log(zonedTimeValue);
 
               let timeValue =
                 row.mconfig?.modelType === ModelTypeEnum.Malloy
@@ -499,9 +469,7 @@ FROM main;`;
                               ? format(tsDate, 'yyyy-MM-dd HH')
                               : timeSpec === TimeSpecEnum.Minutes
                                 ? format(tsDate, 'yyyy-MM-dd HH:mm')
-                                : // : timeSpec === TimeSpecEnum.Timestamps
-                                  // ? format(tsDate, 'yyyy-MM-dd HH:mm:ss.SSS')
-                                  undefined;
+                                : undefined;
 
               let normalizeTimeValue = (v: string) => {
                 const match = v?.match(
@@ -598,7 +566,6 @@ FROM main;`;
             if (isUndefined(reportColumn)) {
               reportColumn = {
                 columnId: columnId,
-                // tsUTC: undefined,
                 label: nodeFormatTsUnix({
                   timeSpec: timeSpec,
                   unixTimeZoned: columnId

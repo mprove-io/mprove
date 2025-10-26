@@ -129,9 +129,6 @@ let mailerModule = MailerModule.forRootAsync({
   useFactory: (cs: ConfigService<BackendConfig>) => {
     let transport;
 
-    // let emailTransport =
-    //   cs.get<BackendConfig['emailTransport']>('emailTransport');
-
     transport = {
       host: cs.get<BackendConfig['smtpHost']>('smtpHost'),
       port: cs.get<BackendConfig['smtpPort']>('smtpPort'),

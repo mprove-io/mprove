@@ -81,9 +81,6 @@ export class MysqlService {
       .then(async (result: [MYSQL.QueryResult, MYSQL.FieldPacket[]]) => {
         let data = result[0];
 
-        // console.log('data');
-        // console.log(data);
-
         let q = await this.db.drizzle.query.queriesTable
           .findFirst({
             where: and(
@@ -96,7 +93,7 @@ export class MysqlService {
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
-          q.queryJobId = undefined; // null;
+          q.queryJobId = undefined;
           q.data = data;
           q.lastCompleteTs = makeTsNumber();
           q.lastCompleteDuration = Math.floor(
@@ -161,7 +158,7 @@ export class MysqlService {
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;
       q.data = [];
-      q.queryJobId = undefined; // null
+      q.queryJobId = undefined;
       q.lastErrorMessage = e.message;
       q.lastErrorTs = makeTsNumber();
 

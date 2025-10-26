@@ -154,7 +154,6 @@ export class SaveCreateDashboardController {
     let currentStruct = await this.structsService.getStructCheckExists({
       structId: bridge.structId,
       projectId: projectId
-      // skipMetrics: false
     });
 
     let mdir = currentStruct.mproveConfig.mproveDirValue;
@@ -173,12 +172,7 @@ export class SaveCreateDashboardController {
 
     let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
 
-    // let malloyFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
-
-    // let malloyDashboardFilePath = `${parentNodeId}/${malloyFileName}`;
-
     let dashFileText: string;
-    // let secondFileContent: string;
 
     let fromDashboardX: DashboardX;
 
@@ -214,10 +208,7 @@ export class SaveCreateDashboardController {
 
       fromDashboardX.tiles = yTiles;
 
-      let {
-        dashboardFileText
-        // , malloyFileText
-      } = makeDashboardFileText({
+      let { dashboardFileText } = makeDashboardFileText({
         dashboard: fromDashboardX,
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
@@ -225,11 +216,9 @@ export class SaveCreateDashboardController {
         caseSensitiveStringFilters:
           currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
-        // malloyDashboardFilePath: malloyDashboardFilePath
       });
 
       dashFileText = dashboardFileText;
-      // secondFileContent = malloyFileText;
     } else {
       let newDashboard: DashboardX = {
         structId: undefined,
@@ -249,10 +238,7 @@ export class SaveCreateDashboardController {
         fields: []
       };
 
-      let {
-        dashboardFileText
-        // , malloyFileText
-      } = makeDashboardFileText({
+      let { dashboardFileText } = makeDashboardFileText({
         dashboard: newDashboard,
         newDashboardId: newDashboardId,
         newTitle: dashboardTitle,
@@ -260,11 +246,9 @@ export class SaveCreateDashboardController {
         caseSensitiveStringFilters:
           currentStruct.mproveConfig.caseSensitiveStringFilters,
         timezone: UTC
-        // malloyDashboardFilePath: malloyDashboardFilePath
       });
 
       dashFileText = dashboardFileText;
-      // secondFileContent = malloyFileText;
     }
 
     let baseProject = this.tabService.projectTabToBaseProject({
@@ -285,8 +269,6 @@ export class SaveCreateDashboardController {
         fileName: fileName,
         fileText: dashFileText,
         userAlias: user.alias
-        // secondFileName: malloyFileName,
-        // secondFileText: secondFileContent,
       }
     };
 

@@ -152,10 +152,6 @@ export class CreateDraftDashboardController {
     tiles.forEach(freshTile => {
       let yTile = fromDashboardX.tiles.find(y => freshTile.title === y.title);
 
-      // if (isDefined(yTile.malloyQueryId)) {
-      //   yTile.malloyQueryId = makeId();
-      // }
-
       yTile.plateX = freshTile.plateX;
       yTile.plateY = freshTile.plateY;
       yTile.plateWidth = freshTile.plateWidth;
@@ -173,20 +169,6 @@ export class CreateDraftDashboardController {
 
     fromDashboardX.tiles = yTiles;
     fromDashboardX.fields = newDashboardFields;
-
-    // console.log('newDashboardFields');
-    // newDashboardFields.forEach(dashboardField => {
-    //   console.log('dashboardField');
-    //   console.log(dashboardField);
-    //   dashboardField.fractions.forEach(fraction => {
-    //     console.log('fraction');
-    //     console.log(fraction);
-    //     fraction.controls.forEach(control => {
-    //       console.log('control');
-    //       console.log(control);
-    //     });
-    //   });
-    // });
 
     let fileName = `${newDashboardId}${FileExtensionEnum.Dashboard}`;
 
@@ -210,25 +192,7 @@ export class CreateDraftDashboardController {
 
     let fileId = encodeFilePath({ filePath: relativePath });
 
-    // second
-
-    // let secondFileName = `${newDashboardId}${FileExtensionEnum.Malloy}`;
-
-    // let secondRelativePath =
-    //   currentStruct.mproveConfig.mproveDirValue === MPROVE_CONFIG_DIR_DOT_SLASH
-    //     ? `${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`
-    //     : `${mdir}/${MPROVE_USERS_FOLDER}/${user.alias}/${secondFileName}`;
-
-    // let secondFileNodeId = `${projectId}/${secondRelativePath}`;
-
-    // let secondPathString = JSON.stringify(secondFileNodeId.split('/'));
-
-    // let secondFileId = encodeFilePath({ filePath: secondRelativePath });
-
-    let {
-      dashboardFileText
-      // , malloyFileText
-    } = makeDashboardFileText({
+    let { dashboardFileText } = makeDashboardFileText({
       dashboard: fromDashboardX,
       newDashboardId: newDashboardId,
       newTitle: newDashboardId,
@@ -236,14 +200,7 @@ export class CreateDraftDashboardController {
       caseSensitiveStringFilters:
         currentStruct.mproveConfig.caseSensitiveStringFilters,
       timezone: UTC
-      // malloyDashboardFilePath: secondFileNodeId
     });
-
-    // console.log('dashboardFileText');
-    // console.log(dashboardFileText);
-
-    // console.log('malloyFileText');
-    // console.log(malloyFileText);
 
     // add dashboard file
 
@@ -257,31 +214,7 @@ export class CreateDraftDashboardController {
       content: dashboardFileText
     };
 
-    // let secondTempFile: DiskCatalogFile = {
-    //   projectId: projectId,
-    //   repoId: repoId,
-    //   fileId: secondFileId,
-    //   pathString: secondPathString,
-    //   fileNodeId: secondFileNodeId,
-    //   name: secondFileName,
-    //   content: malloyFileText
-    // };
-
-    let diskFiles = [
-      tempFile
-      // ...diskResponse.payload.files.filter(x => {
-      //   let ar = x.name.split('.');
-      //   let ext = ar[ar.length - 1];
-      //   let allow =
-      //     // x.fileNodeId !== secondFileNodeId &&
-      //     [FileExtensionEnum.Yml].indexOf(`.${ext}` as FileExtensionEnum) > -1;
-      //   return allow;
-      // })
-    ];
-
-    // if (isDefined(malloyFileText)) {
-    //   diskFiles.push(secondTempFile);
-    // }
+    let diskFiles = [tempFile];
 
     let modelIds = [
       ...(tiles ?? []).map(tile => tile.modelId),

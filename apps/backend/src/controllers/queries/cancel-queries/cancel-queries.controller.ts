@@ -207,7 +207,7 @@ export class CancelQueriesController {
         query.status = QueryStatusEnum.Canceled;
         query.data = [];
         query.lastCancelTs = makeTsNumber();
-        query.queryJobId = undefined; // null;
+        query.queryJobId = undefined;
       }
     );
 

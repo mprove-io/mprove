@@ -42,17 +42,6 @@ export class SnowFlakeService {
       database: connection.options.snowflake.database,
       username: connection.options.snowflake.username,
       password: connection.options.snowflake.password
-      //  schema?: string | undefined;
-      //  role?: string | undefined;
-      //  clientSessionKeepAlive?: boolean | undefined;
-      //  clientSessionKeepAliveHeartbeatFrequency?: number | undefined;
-      //  jsTreatIntegerAsBigInt?: boolean | undefined;
-      //  application?: string;
-      //  authenticator?: string;
-      //  token?: string;
-      //  privateKey?: string | Buffer;
-      //  privateKeyPath?: string;
-      //  privateKeyPass?: string;
     };
 
     let snowflakeConnection = snowflake.createConnection(options);
@@ -93,8 +82,6 @@ export class SnowFlakeService {
 
     await this.snowflakeConnectionExecute(snowflakeConnection, {
       sqlText: querySql
-      // ,
-      // fetchAsString: ['Number', 'Date']
     })
       .then(async (data: any) => {
         let q = await this.db.drizzle.query.queriesTable
@@ -109,7 +96,7 @@ export class SnowFlakeService {
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
-          q.queryJobId = undefined; // null;
+          q.queryJobId = undefined;
           q.data = data.rows;
           q.lastCompleteTs = makeTsNumber();
           q.lastCompleteDuration = Math.floor(
@@ -194,7 +181,7 @@ export class SnowFlakeService {
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;
       q.data = [];
-      q.queryJobId = undefined; // null
+      q.queryJobId = undefined;
       q.lastErrorMessage = e.message;
       q.lastErrorTs = makeTsNumber();
 

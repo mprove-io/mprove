@@ -148,11 +148,6 @@ export class BackendConfig {
   @IsBoolean()
   registerOnlyInvitedUsers?: boolean;
 
-  //
-
-  // @IsEnum(boolean)
-  // sendEmail?: boolean;
-
   @IsString()
   hostUrl?: string;
 
@@ -165,7 +160,6 @@ export class BackendConfig {
   @IsEnum(EmailTransportEnum)
   emailTransport?: EmailTransportEnum;
 
-  //
   @IsString()
   smtpHost?: string;
 
@@ -181,14 +175,12 @@ export class BackendConfig {
   @IsString()
   smtpAuthPassword?: string;
 
-  //
   @IsString()
   backendValkeyHost?: string;
 
   @IsString()
   backendValkeyPassword?: string;
 
-  //
   @IsString()
   backendRabbitUser?: string;
 

@@ -219,7 +219,6 @@ export class CreateDraftChartController {
       mconfigId: newMconfig.mconfigId,
       queryId: newMconfig.queryId,
       trackChangeId: makeId(),
-      // malloyQueryId: undefined,
       listen: undefined,
       deletedFilterFieldIds: undefined,
       title: undefined,
@@ -243,7 +242,6 @@ export class CreateDraftChartController {
       modelId: tile.modelId,
       modelLabel: tile.modelLabel,
       filePath: undefined,
-      // accessRoles: [],
       tiles: [tile],
       keyTag: undefined,
       serverTs: undefined

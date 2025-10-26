@@ -85,7 +85,6 @@ export class ReportDataService {
     struct: StructTab;
     metrics: ModelMetric[];
     report: ReportTab;
-    // queryOperation?: QueryOperation;
     project: ProjectTab;
     envId: string;
     apiUserMember: Member;
@@ -100,7 +99,6 @@ export class ReportDataService {
       struct,
       metrics,
       report,
-      // queryOperation,
       timezone,
       project,
       envId,
@@ -110,16 +108,11 @@ export class ReportDataService {
       isSaveToDb
     } = item;
 
-    // console.log('timeRangeFractionBrick');
-    // console.log(timeRangeFractionBrick);
-
     let {
       columns,
       isTimeColumnsLimitExceeded,
       timeColumnsLimit,
       timeRangeFraction,
-      // rangeOpen,
-      // rangeClose,
       rangeStart,
       rangeEnd
     } = await this.reportTimeColumnsService.getTimeColumns({
@@ -136,7 +129,6 @@ export class ReportDataService {
       : getYYYYMMDDFromEpochUtcByTimezone({
           timezone: timezone,
           secondsEpochUTC: rangeStart
-          // secondsEpochUTC: columns[0].columnId
         });
 
     let metricsEndDateExcludedYYYYMMDD = isUndefined(rangeEnd)
@@ -155,10 +147,6 @@ export class ReportDataService {
               ? rangeEnd - 24 * 60 * 60
               : rangeEnd
         });
-
-    // let metricIds = report.rows
-    //   .map(x => x.metricId)
-    //   .filter(x => isDefined(x));
 
     let modelIds = metrics
       .filter(m => isDefined(m.modelId))
@@ -282,27 +270,6 @@ export class ReportDataService {
           y.timezone === timezone
       );
 
-      // if (isDefined(rq)) {
-      //   console.log('===')
-      //   console.log('rq');
-      //   console.log(rq);
-      //   if (
-      //     rq.timeStartTs !== columns[0].columnId ||
-      //     rq.timeEndTs !== columns[columns.length - 1].columnId
-      //   ) {
-      //     console.log('filtered')
-      //     x.rqs = x.rqs.filter(
-      //       y =>
-      //         !(
-      //           y.fractionBrick === timeRangeFraction.brick &&
-      //           y.timeSpec === timeSpec &&
-      //           y.timezone === timezone
-      //         )
-      //     );
-      //     rq = undefined;
-      //   }
-      // }
-
       if (isDefined(rq)) {
         if (x.rowType === RowTypeEnum.Metric) {
           queryIds.push(rq.queryId);
@@ -357,20 +324,6 @@ export class ReportDataService {
                     : `${metric.timeFieldId}_${timeSpecDetail.slice(0, -1)}`;
 
               return field.id === fieldId;
-
-              // timeSpecDetail === DetailUnitEnum.Timestamps
-              //   ? field.id === `${metric.timeFieldId}_ts`
-              //   : field.id === `${metric.timeFieldId}_${field.timeframe}` &&
-              //     (([
-              //       DetailUnitEnum.WeeksSunday,
-              //       DetailUnitEnum.WeeksMonday
-              //     ].indexOf(timeSpecDetail) > -1 &&
-              //       `${field.timeframe}s` === 'weeks') ||
-              //       ([
-              //         DetailUnitEnum.WeeksSunday,
-              //         DetailUnitEnum.WeeksMonday
-              //       ].indexOf(timeSpecDetail) < 0 &&
-              //         `${field.timeframe}s` === timeSpecDetail));
             });
 
             timeFieldIdSpec = mField?.id;
@@ -383,23 +336,19 @@ export class ReportDataService {
               ? true
               : false;
 
-          let timeSorting: Sorting =
-            // model.type === ModelTypeEnum.Store &&
-            isUndefined(timeFieldIdSpec)
-              ? undefined
-              : {
-                  desc: isDesc,
-                  fieldId: timeFieldIdSpec
-                };
+          let timeSorting: Sorting = isUndefined(timeFieldIdSpec)
+            ? undefined
+            : {
+                desc: isDesc,
+                fieldId: timeFieldIdSpec
+              };
 
-          let timeFilter: Filter =
-            // model.type === ModelTypeEnum.Store &&
-            isUndefined(timeFieldIdSpec)
-              ? undefined
-              : {
-                  fieldId: timeFieldIdSpec,
-                  fractions: [timeRangeFraction]
-                };
+          let timeFilter: Filter = isUndefined(timeFieldIdSpec)
+            ? undefined
+            : {
+                fieldId: timeFieldIdSpec,
+                fractions: [timeRangeFraction]
+              };
 
           let filters: Filter[] =
             model.type === ModelTypeEnum.Store
@@ -411,9 +360,6 @@ export class ReportDataService {
                   (a, b) =>
                     a.fieldId > b.fieldId ? 1 : b.fieldId > a.fieldId ? -1 : 0
                 );
-
-          // console.log('filters');
-          // console.log(filters);
 
           let select = isUndefined(timeFieldIdSpec)
             ? []
@@ -443,9 +389,6 @@ export class ReportDataService {
             malloyQueryExtra: undefined,
             compiledQuery: undefined,
             select: model.type === ModelTypeEnum.Malloy ? [] : select,
-            // unsafeSelect: [],
-            // warnSelect: [],
-            // joinAggregations: [],
             sortings: model.type === ModelTypeEnum.Malloy ? [] : sortings,
             sorts: model.type === ModelTypeEnum.Malloy ? undefined : sorts,
             timezone: timezone,
@@ -457,8 +400,6 @@ export class ReportDataService {
             chart: makeCopy(DEFAULT_CHART),
             keyTag: undefined,
             serverTs: 1
-            // fields: [],
-            // extendedFilters: [],
           };
 
           mconfig.chart.type = ChartTypeEnum.Line;
@@ -473,23 +414,9 @@ export class ReportDataService {
             fields: model.fields
           });
 
-          // console.log('mconfig');
-          // console.log(mconfig);
-
-          // console.log('mconfig.filters');
-          // console.log(mconfig.filters);
-
-          // console.log('mconfig.filters[0]');
-          // console.log(mconfig.filters[0]);
-
           let isError = false;
 
           if (model.type === ModelTypeEnum.Store) {
-            // console.log('columns[0].columnId');
-            // console.log(columns[0].columnId);
-
-            // console.log('getRepData prepStoreMconfigQuery');
-
             let mqe = await this.mconfigsService.prepStoreMconfigQuery({
               struct: struct,
               project: project,
@@ -544,7 +471,6 @@ export class ReportDataService {
                   {
                     type: QueryOperationTypeEnum.WhereOrHaving,
                     timezone: timezone,
-                    // fieldId: filter.fieldId,
                     filters: filters
                   }
                 ]
@@ -553,13 +479,6 @@ export class ReportDataService {
             newMconfig = editMalloyQueryResult.newMconfig;
             newQuery = editMalloyQueryResult.newQuery;
             isError = editMalloyQueryResult.isError;
-
-            // console.log('newMconfig');
-            // console.log(newMconfig);
-            // console.log('newQuery');
-            // console.log(newQuery);
-            // console.log('isError');
-            // console.log(isError);
           }
 
           newMconfig.queryId = newQueryId;
@@ -567,9 +486,6 @@ export class ReportDataService {
           newQuery.queryId = newQueryId;
           newQuery.reportId = report.reportId;
           newQuery.reportStructId = report.structId;
-
-          // console.log('newQuery');
-          // console.log(newQuery);
 
           newMconfigs.push(newMconfig);
           newQueries.push(newQuery);
@@ -657,10 +573,6 @@ export class ReportDataService {
       );
 
       if (x.rowType === RowTypeEnum.Metric) {
-        // let newMconfigsEnts = newMconfigs.map(m =>
-        //   this.mconfigsService.wrapToEntityMconfig(m)
-        // );
-
         let newMconfigsApi = newMconfigs.map(y =>
           this.mconfigsService.tabToApi({
             mconfig: y,
@@ -692,8 +604,6 @@ export class ReportDataService {
       timezone: timezone,
       timeSpec: timeSpec,
       timeRangeFraction: timeRangeFraction,
-      // rangeOpen: rangeOpen,
-      // rangeClose: rangeClose,
       rangeStart: rangeStart,
       rangeEnd: rangeEnd,
       metricsStartDateYYYYMMDD: metricsStartDateYYYYMMDD,
@@ -745,8 +655,6 @@ export class ReportDataService {
         formulaRows.length !== formulaRowsCalculated.length);
 
     if (isCalculateData === true) {
-      // console.log('isCalculateData true');
-
       reportApi = await this.docService.calculateData({
         report: reportApi,
         timezone: timezone,
@@ -755,8 +663,6 @@ export class ReportDataService {
         traceId: traceId
       });
     } else {
-      // console.log('isCalculateData false');
-
       let reportDataColumns = this.docService.makeReportDataColumns({
         report: reportApi,
         timeSpec: timeSpec
@@ -773,20 +679,13 @@ export class ReportDataService {
         row.records = isDefined(row.query)
           ? reportDataColumns.map(y => {
               let unixTimeZoned = y.fields.timestamp;
-              // let unixDateZoned = new Date(unixTimeZoned * 1000);
-              // let tsUTC = getUnixTime(fromZonedTime(unixDateZoned, timezone));
 
               let record: RowRecord = {
                 id: y.id,
                 columnLabel: undefined,
                 key: unixTimeZoned,
-                // tsUTC: tsUTC,
                 value: isDefined(y.fields) ? y.fields[row.rowId] : undefined,
-                error:
-                  // isDefined(y.errors)
-                  //   ? y.errors[row.rowId]
-                  //   :
-                  undefined
+                error: undefined
               };
 
               return record;

@@ -15,9 +15,7 @@ export function setUndefinedToNull<
 
     for (const [key, value] of Object.entries(obj)) {
       if (schemaColumns.has(key)) {
-        (result as any)[key] = isUndefined(value) // value === undefined
-          ? null
-          : value;
+        (result as any)[key] = isUndefined(value) ? null : value;
       } else {
         (result as any)[key] = value;
       }

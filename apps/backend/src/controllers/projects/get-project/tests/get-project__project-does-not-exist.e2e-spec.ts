@@ -54,24 +54,6 @@ test('1', async t => {
             ownerEmail: email
           }
         ]
-        // ,
-        // projects: [
-        //   {
-        //     orgId,
-        //     projectId,
-        //     name: projectName
-        //   }
-        // ],
-        // members: [
-        //   {
-        //     memberId: userId,
-        //     email,
-        //     projectId,
-        //     isAdmin: false,
-        //     isEditor: true,
-        //     isExplorer: true
-        //   }
-        // ]
       },
       loginUserPayload: { email, password }
     });

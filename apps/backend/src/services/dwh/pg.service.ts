@@ -65,7 +65,7 @@ export class PgService {
 
         if (isDefined(q)) {
           q.status = QueryStatusEnum.Completed;
-          q.queryJobId = undefined; // null;
+          q.queryJobId = undefined;
           q.data = data;
           q.lastCompleteTs = makeTsNumber();
           q.lastCompleteDuration = Math.floor(
@@ -120,7 +120,7 @@ export class PgService {
     if (isDefined(q)) {
       q.status = QueryStatusEnum.Error;
       q.data = [];
-      q.queryJobId = undefined; // null
+      q.queryJobId = undefined;
       q.lastErrorMessage = e.message;
       q.lastErrorTs = makeTsNumber();
 

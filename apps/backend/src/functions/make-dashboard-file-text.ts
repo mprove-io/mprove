@@ -15,21 +15,13 @@ import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile
 import { MyRegex } from '~common/models/my-regex';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
 
-// interface MalloyPart {
-//   modelId: string;
-//   malloyQueryText: string;
-//   modelRelativePath: string;
-// }
-
 export function makeDashboardFileText(item: {
   dashboard: DashboardX;
   newDashboardId: string;
   newTitle: string;
-  // group: string;
   roles: string;
   timezone: string;
   caseSensitiveStringFilters: boolean;
-  // malloyDashboardFilePath: string;
 }) {
   let {
     dashboard,
@@ -38,10 +30,7 @@ export function makeDashboardFileText(item: {
     roles,
     timezone,
     caseSensitiveStringFilters
-    // malloyDashboardFilePath
   } = item;
-
-  // let malloyParts: MalloyPart[] = [];
 
   let dashboardFile: FileDashboard = {
     fileName: undefined,
@@ -127,8 +116,6 @@ export function makeDashboardFileText(item: {
 
                         let r;
 
-                        // let refError;
-
                         while ((r = reg.exec(newValue))) {
                           let reference = r[1];
 
@@ -155,8 +142,6 @@ export function makeDashboardFileText(item: {
                             target = caseSensitiveStringFilters;
                           } else {
                             target = null;
-                            // refError = `Unknown reference in store.${storeParam}: $${reference}`;
-                            // break;
                           }
 
                           newValue = MyRegex.replaceSRefs(
@@ -172,8 +157,6 @@ export function makeDashboardFileText(item: {
                           typeof newValue === 'string'
                             ? toBooleanFromLowercaseString(newValue)
                             : newValue;
-
-                        // newFileControl.value = mconfigControl.value;
 
                         return newFileControl;
                       }
@@ -198,31 +181,11 @@ export function makeDashboardFileText(item: {
         ? dashboard.tiles.map((x, tileIndex) => {
             let newMconfig = makeCopy(x.mconfig);
 
-            // if (isUndefined(x.malloyQueryId)) {
-            //   x.malloyQueryId = makeId();
-            // }
-
             let filePartTile: FilePartTile = prepareTile({
               tile: x,
               isForDashboard: true,
               mconfig: newMconfig
-              // malloyQueryId: x.malloyQueryId
             });
-
-            // if (newMconfig.modelType === ModelTypeEnum.Malloy) {
-            //   let modelRelativePath = path.relative(
-            //     `/${path.dirname(malloyDashboardFilePath)}`,
-            //     `/${newMconfig.modelFilePath}`
-            //   );
-
-            //   let malloyPart: MalloyPart = {
-            //     modelId: newMconfig.modelId,
-            //     modelRelativePath: modelRelativePath,
-            //     malloyQueryText: `query: ${x.malloyQueryId} is ${newMconfig.malloyQuery.substring(5)}`
-            //   };
-
-            //   malloyParts.push(malloyPart);
-            // }
 
             return filePartTile;
           })
@@ -231,33 +194,7 @@ export function makeDashboardFileText(item: {
 
   let dashboardFileText = toYaml(dashboardFile);
 
-  // console.log('dashboardFileText');
-  // console.log(dashboardFileText);
-
-  // let malloyFileText: string;
-
-  // if (malloyParts.length > 0) {
-  //   malloyFileText = '';
-
-  //   let uniqueModelIds = [
-  //     ...new Set(malloyParts.map(malloyPart => malloyPart.modelId))
-  //   ];
-
-  //   malloyFileText = uniqueModelIds
-  //     .map(modelId => {
-  //       let malloyPart = malloyParts.find(y => y.modelId === modelId);
-  //       return `import { ${modelId} } from '${malloyPart.modelRelativePath}';`;
-  //     })
-  //     .join('\n');
-
-  //   malloyFileText = [
-  //     `${malloyFileText}\n`,
-  //     ...malloyParts.map(x => x.malloyQueryText)
-  //   ].join('\n');
-  // }
-
   return {
     dashboardFileText: dashboardFileText
-    // malloyFileText: malloyFileText
   };
 }

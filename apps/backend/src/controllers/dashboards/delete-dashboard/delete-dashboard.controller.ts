@@ -121,25 +121,6 @@ export class DeleteDashboardController {
       });
     }
 
-    // let secondFileNodeId;
-
-    // let mconfigIds = existingDashboard.tiles.map(x => x.mconfigId);
-    // let mconfigs =
-    //   mconfigIds.length === 0
-    //     ? []
-    //     : await this.db.drizzle.query.mconfigsTable.findMany({
-    //         where: inArray(mconfigsTable.mconfigId, mconfigIds)
-    //       });
-
-    // if (mconfigs.some(x => x.modelType === ModelTypeEnum.Malloy)) {
-    //   let pathParts = existingDashboard.filePath.split('.');
-
-    //   pathParts[pathParts.length - 1] =
-    //     FileExtensionEnum.Malloy.slice(1);
-
-    //   secondFileNodeId = pathParts.join('.');
-    // }
-
     let baseProject = this.tabService.projectTabToBaseProject({
       project: project
     });
@@ -156,7 +137,6 @@ export class DeleteDashboardController {
         branch: branchId,
         fileNodeId: existingDashboard.filePath,
         userAlias: user.alias
-        // secondFileNodeId: secondFileNodeId,
       }
     };
 

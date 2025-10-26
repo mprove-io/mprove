@@ -24,11 +24,6 @@ export const chartsTable = pgTable(
     creatorId: varchar('creator_id', { length: 32 }), // user_id
     chartType: varchar('chart_type').$type<ChartTypeEnum>(),
     draft: boolean('draft'),
-    // title: varchar('title').notNull(),
-    // modelLabel: varchar('model_label').notNull(),
-    // filePath: varchar('file_path'),
-    // accessRoles: json('access_roles').$type<string[]>().notNull(),
-    // tiles: json('tiles').$type<Tile[]>().notNull(),
     st: json('st').$type<{ encrypted: string; decrypted: ChartSt }>().notNull(),
     lt: json('lt').$type<{ encrypted: string; decrypted: ChartLt }>().notNull(),
     keyTag: text('key_tag'),
