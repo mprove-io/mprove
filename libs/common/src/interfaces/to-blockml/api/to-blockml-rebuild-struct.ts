@@ -37,7 +37,7 @@ export class ToBlockmlRebuildStructRequestPayload {
 
   @IsOptional()
   @IsString()
-  mproveDir: string; // IsOptional is only for validator, not for type checks
+  mproveDir: string;
 
   @ValidateNested()
   @Type(() => BmlFile)

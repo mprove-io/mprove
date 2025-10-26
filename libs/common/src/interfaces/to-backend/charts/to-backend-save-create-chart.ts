@@ -27,10 +27,6 @@ export class ToBackendSaveCreateChartRequestPayload {
   @IsString()
   tileTitle: string;
 
-  // @IsOptional()
-  // @IsString()
-  // accessRoles?: string;
-
   @ValidateNested()
   @Type(() => MconfigX)
   mconfig: MconfigX;

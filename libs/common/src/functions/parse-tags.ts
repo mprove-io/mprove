@@ -41,13 +41,7 @@ export function parseTags(item: {
     let lines = inputs.filter(l => l.startsWith(x.prefix));
 
     if (lines.length > 0) {
-      // console.log('lines');
-      // console.log(lines);
-
       let t1: Tag = Tag.fromTagLines(lines).tag;
-
-      // console.log('t');
-      // console.log(t1);
 
       if (isDefined(t1?.properties)) {
         Object.keys(t1.properties).forEach(key1 => {
@@ -74,26 +68,6 @@ export function parseTags(item: {
   malloyFlags.forEach(malloyFlag =>
     malloySimpleTags.push({ key: malloyFlag, value: undefined })
   );
-
-  // if (mproveSimpleTags.length > 0) {
-  //   console.log('mproveSimpleTags');
-  //   console.log(mproveSimpleTags);
-  // }
-
-  // if (malloySimpleTags.length > 0) {
-  //   console.log('malloySimpleTags');
-  //   console.log(malloySimpleTags);
-  // }
-
-  // if (mproveComplexTags.length > 0) {
-  //   console.log('mproveComplexTags');
-  //   console.log(mproveComplexTags);
-  // }
-
-  // if (malloyComplexTags.length > 0) {
-  //   console.log('malloyComplexTags');
-  //   console.log(malloyComplexTags);
-  // }
 
   return {
     mproveTags: mproveSimpleTags,

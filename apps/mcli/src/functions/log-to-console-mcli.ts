@@ -34,14 +34,6 @@ export function logToConsoleMcli(item: {
       numberColor: 'yellow',
       multilineStringColor: 'cyan'
     });
-
-    // log = util.inspect(log, {
-    //   showHidden: false,
-    //   depth: null,
-    //   colors: true,
-    //   breakLength: Infinity,
-    //   compact: true
-    // });
   }
 
   log = `${log}\n`;

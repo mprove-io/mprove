@@ -33,31 +33,4 @@ export class Struct {
 
   @IsInt()
   serverTs: number;
-
-  // @IsString()
-  // mproveDirValue: string;
-
-  // @IsEnum(ProjectWeekStartEnum)
-  // weekStart: ProjectWeekStartEnum;
-
-  // @IsBoolean()
-  // allowTimezones: boolean;
-
-  // @IsTimezone()
-  // defaultTimezone: string;
-
-  // @IsString()
-  // formatNumber: string;
-
-  // @IsString()
-  // currencyPrefix: string;
-
-  // @IsString()
-  // currencySuffix: string;
-
-  // @IsString()
-  // thousandsSeparator: string;
-
-  // @IsBoolean()
-  // caseSensitiveStringFilters: boolean;
 }

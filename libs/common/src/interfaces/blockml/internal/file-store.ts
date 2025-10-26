@@ -68,6 +68,4 @@ export interface FileStore extends FileBasic {
       [depName: string]: number;
     };
   };
-
-  // filters?: FilterBricksDictionary; // only for types
 }

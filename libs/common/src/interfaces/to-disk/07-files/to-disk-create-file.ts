@@ -32,14 +32,6 @@ export class ToDiskCreateFileRequestPayload {
   @IsOptional()
   @IsString()
   fileText?: string;
-
-  // @IsOptional()
-  // @IsString()
-  // secondFileName?: string;
-
-  // @IsOptional()
-  // @IsString()
-  // secondFileText?: string;
 }
 
 export class ToDiskCreateFileRequest extends ToDiskRequest {

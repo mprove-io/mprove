@@ -28,6 +28,4 @@ export interface FileDashboard extends FileBasic {
   tiles_line_num?: number;
 
   //
-
-  // filters?: FilterBricksDictionary;
 }

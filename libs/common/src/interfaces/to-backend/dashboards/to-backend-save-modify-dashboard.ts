@@ -30,8 +30,6 @@ export class ToBackendSaveModifyDashboardRequestPayload {
   @IsString()
   fromDashboardId: string;
 
-  // for add or replace tile
-
   @IsOptional()
   @ValidateNested()
   @Type(() => TileX)
@@ -44,8 +42,6 @@ export class ToBackendSaveModifyDashboardRequestPayload {
   @IsOptional()
   @IsString()
   selectedTileTitle?: string;
-
-  // for dashboard
 
   @IsOptional()
   @IsString()

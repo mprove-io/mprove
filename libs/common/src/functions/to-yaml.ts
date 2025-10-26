@@ -13,7 +13,6 @@ export function toYaml(x: any) {
         .replace(/^[-]\srow_id:/g, '\n- row_id:')
         .replace(/^[-]\sfilter:/g, '\n- filter:')
         .replace(/^\s\s[-]\sfilter:/g, '\n  - filter:')
-        // .replace(/^\s\s[-]\sapply_to:/g, '\n  - apply_to:')
         .replace(/'''/g, `'`)
     )
     .join('\n')

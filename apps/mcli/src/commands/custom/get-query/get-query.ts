@@ -79,8 +79,6 @@ interface RowPartQ {
 }
 
 interface QueryPartQ {
-  // projectId: string;
-  // envId: string;
   connectionId: string;
   connectionType: ConnectionTypeEnum;
   queryId: string;
@@ -92,11 +90,6 @@ interface QueryPartQ {
   lastCompleteDuration: number;
   lastErrorMessage: string;
   lastErrorTs: number;
-  // queryJobId: string;
-  // bigqueryQueryJobId: string;
-  // bigqueryConsecutiveErrorsGetJob: number;
-  // bigqueryConsecutiveErrorsGetResults: number;
-  // serverTs: number;
   data: any;
   sql: string;
   sqlArray: string[];

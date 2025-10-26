@@ -1,14 +1,11 @@
 import { PATH_REGISTER } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
-import { transformErrorMessage } from '~common/functions/transform-error-message';
 
 let testId = '_register__user-already-registered';
 
 let email = `${testId}@example.com`;
 let password = '123123';
-let errorMessage = transformErrorMessage(
-  ErEnum.BACKEND_USER_ALREADY_REGISTERED
-);
+let errorMessage = ErEnum.BACKEND_USER_ALREADY_REGISTERED;
 
 describe('integra', () => {
   it(testId, () => {

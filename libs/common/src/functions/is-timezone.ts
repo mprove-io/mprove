@@ -14,7 +14,6 @@ export class IsTimezoneConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(args: ValidationArguments) {
-    // here you can provide default error message if validation failed
     return 'Wrong timezone';
   }
 }

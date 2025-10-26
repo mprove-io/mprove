@@ -27,9 +27,6 @@ export class Chart {
   @IsString()
   filePath: string;
 
-  // @IsString({ each: true })
-  // accessRoles: string[];
-
   @ValidateNested()
   @Type(() => Tile)
   tiles: Tile[];

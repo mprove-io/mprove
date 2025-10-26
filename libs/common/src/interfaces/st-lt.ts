@@ -50,7 +50,6 @@ export class ChartSt {
   title: string;
   modelLabel: string;
   filePath: string;
-  // accessRoles: string[];
   tiles: Tile[];
 }
 export class ChartLt {

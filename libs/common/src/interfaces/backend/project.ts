@@ -22,10 +22,6 @@ export class Project {
   @IsString()
   defaultBranch: string;
 
-  // @IsOptional()
-  // @IsString()
-  // privateKey: string;
-
   @IsOptional()
   @IsString()
   publicKey: string;

@@ -1,12 +1,11 @@
 import { PATH_LOGIN } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
-import { transformErrorMessage } from '~common/functions/transform-error-message';
 
 let testId = '_login__user-does-not-exist';
 
 let email = `${testId}@example.com`;
 let password = '123123';
-let errorMessage = transformErrorMessage(ErEnum.BACKEND_USER_DOES_NOT_EXIST);
+let errorMessage = ErEnum.BACKEND_USER_DOES_NOT_EXIST;
 
 describe('integra', () => {
   it(testId, () => {

@@ -1,7 +1,6 @@
 import { PATH_UPDATE_PASSWORD } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { makeId } from '~common/functions/make-id';
-import { transformErrorMessage } from '~common/functions/transform-error-message';
 
 let testId = '_update-password__wrong-token';
 
@@ -12,9 +11,7 @@ let newPassword = '456456';
 let passwordResetToken = makeId();
 let wrongPasswordResetToken = makeId();
 
-let errorMessage = transformErrorMessage(
-  ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN
-);
+let errorMessage = ErEnum.BACKEND_UPDATE_PASSWORD_WRONG_TOKEN;
 
 describe('integra', () => {
   it(testId, () => {

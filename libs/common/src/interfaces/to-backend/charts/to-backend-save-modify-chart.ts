@@ -30,10 +30,6 @@ export class ToBackendSaveModifyChartRequestPayload {
 
   @IsTimezone()
   timezone: string;
-
-  // @IsOptional()
-  // @IsString()
-  // accessRoles?: string;
 }
 
 export class ToBackendSaveModifyChartRequest extends ToBackendRequest {

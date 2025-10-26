@@ -9,7 +9,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { APP_SPINNER_NAME } from '~common/constants/top-front';
 import { isDefined } from '~common/functions/is-defined';
-import { transformErrorMessage } from '~common/functions/transform-error-message';
+
 import { ErrorData } from '~common/interfaces/front/error-data';
 
 @Component({
@@ -54,15 +54,13 @@ export class ErrorDialogComponent implements OnInit {
     this.leftButtonText = this.ref.data.leftButtonText;
     this.rightButtonText = this.ref.data.rightButtonText;
 
-    this.message = transformErrorMessage(
+    this.message =
       this.ref.data?.response?.body?.info?.error?.message ||
-        this.ref.data?.message ||
-        this.ref.data
-    );
+      this.ref.data?.message ||
+      this.ref.data;
 
-    this.originalErrorMessage = transformErrorMessage(
-      this.ref.data?.response?.body?.info?.error?.originalError?.message
-    );
+    this.originalErrorMessage =
+      this.ref.data?.response?.body?.info?.error?.originalError?.message;
 
     this.path = this.ref.data?.reqBody?.info?.name;
     this.traceId = this.ref.data?.reqBody?.info?.traceId;

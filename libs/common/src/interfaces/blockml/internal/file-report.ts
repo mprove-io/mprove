@@ -30,6 +30,4 @@ export interface FileReport extends FileBasic {
   tiles?: {
     options?: FileChartOptions;
   }[];
-
-  // filters?: FilterBricksDictionary;
 }

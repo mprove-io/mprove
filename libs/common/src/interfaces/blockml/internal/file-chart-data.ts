@@ -10,7 +10,4 @@ export interface FileChartData {
 
   multi_field?: string;
   multi_field_line_num?: number;
-
-  // hide_columns?: string[];
-  // hide_columns_line_num?: number;
 }

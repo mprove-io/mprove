@@ -14,9 +14,6 @@ export interface FieldDimension {
   sql?: string;
   sql_line_num?: number;
 
-  // type?: FieldTypeEnum;
-  // type_line_num?: number;
-
   result?: FieldResultEnum;
   result_line_num?: number;
 

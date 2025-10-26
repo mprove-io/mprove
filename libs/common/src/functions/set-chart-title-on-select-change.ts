@@ -50,9 +50,6 @@ export function setChartTitleOnSelectChange<T extends Mconfig>(item: {
 }
 
 function getCompLabel(x: ModelField) {
-  // let topLabelPrefix =
-  //   x.topLabel === ModelNodeLabelEnum.ModelFields ? '' : `${x.topLabel} `;
-
   let topLabelPrefix = `${x.topLabel} `;
 
   let groupLabel = isDefined(x.groupLabel) ? `${x.groupLabel} ` : '';

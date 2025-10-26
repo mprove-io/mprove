@@ -4,7 +4,7 @@ import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 export class DiskCatalogNode {
   @IsString()
   id: string;
-  // "p1/ec/s.view"
+  // "p1/ec/s.store"
 
   @IsBoolean()
   isFolder: boolean;
@@ -12,11 +12,11 @@ export class DiskCatalogNode {
 
   @IsString()
   name: string;
-  // s.view"
+  // s.store"
 
   @IsString()
   fileId?: string;
-  // "ec___s.view"
+  // "ec___s.store"
 
   @ValidateNested()
   @Type(() => DiskCatalogNode)

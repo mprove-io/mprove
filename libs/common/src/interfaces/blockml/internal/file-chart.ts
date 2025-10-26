@@ -11,9 +11,6 @@ export interface FileChart extends FileBasic {
   group?: string;
   group_line_num?: number;
 
-  // access_roles?: string[];
-  // access_roles_line_num?: number;
-
   tiles?: FilePartTile[];
   tiles_line_num?: number;
 }

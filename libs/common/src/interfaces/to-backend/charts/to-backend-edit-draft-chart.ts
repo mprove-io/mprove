@@ -35,14 +35,6 @@ export class ToBackendEditDraftChartRequestPayload {
   @ValidateNested()
   @Type(() => QueryOperation)
   queryOperation: QueryOperation;
-
-  // @IsOptional()
-  // @IsNumber()
-  // cellMetricsStartDateMs: number;
-
-  // @IsOptional()
-  // @IsNumber()
-  // cellMetricsEndDateMs: number;
 }
 
 export class ToBackendEditDraftChartRequest extends ToBackendRequest {

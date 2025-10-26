@@ -240,7 +240,6 @@ export class RunCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    // let queryIdsWithDuplicates: string[] = [];
     let mconfigParts: {
       mconfigId: string;
       queryId: string;
@@ -310,7 +309,6 @@ export class RunCommand extends CustomCommand {
             mconfigId: x.tiles[0].mconfigId,
             queryId: x.tiles[0].queryId
           });
-          // queryIdsWithDuplicates.push(x.tiles[0].queryId);
 
           return chartPart;
         });
@@ -374,7 +372,6 @@ export class RunCommand extends CustomCommand {
               mconfigId: tile.mconfigId,
               queryId: tile.queryId
             });
-            // queryIdsWithDuplicates.push(tile.queryId);
           });
 
           let url = getDashboardUrl({
@@ -398,8 +395,6 @@ export class RunCommand extends CustomCommand {
           return dashboardPart;
         });
     }
-
-    // let uniqueQueryIds = [...new Set(queryIdsWithDuplicates)];
 
     //
     let getQueriesReqPayloadStart: ToBackendGetQueriesRequestPayload = {
@@ -427,7 +422,6 @@ export class RunCommand extends CustomCommand {
       branchId: this.branch,
       envId: this.env,
       mconfigIds: mconfigParts.map(x => x.mconfigId),
-      // queryIds: uniqueQueryIds,
       poolSize: this.concurrency
     };
 
@@ -458,7 +452,6 @@ export class RunCommand extends CustomCommand {
       });
     }
 
-    // let queryIdsToGet: string[] = [...uniqueQueryIds];
     let mconfigPartsToGet = [...mconfigParts];
 
     let waitQueries: Query[] = [];
@@ -468,7 +461,6 @@ export class RunCommand extends CustomCommand {
 
       await sleep(this.sleep * 1000);
 
-      // while (queryIdsToGet.length > 0) {
       while (mconfigPartsToGet.length > 0) {
         let getQueriesReqPayload: ToBackendGetQueriesRequestPayload = {
           projectId: this.projectId,
@@ -512,7 +504,6 @@ export class RunCommand extends CustomCommand {
             mconfigPartsToGet = mconfigPartsToGet.filter(
               x => x.queryId !== query.queryId
             );
-            // queryIdsToGet = queryIdsToGet.filter(id => id !== query.queryId);
           }
         });
 

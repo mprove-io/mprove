@@ -10,7 +10,4 @@ export class MconfigField extends ModelField {
 
   @IsNumber()
   sortingNumber: number;
-
-  // @IsBoolean()
-  // isHideColumn: boolean;
 }

@@ -6,8 +6,6 @@ import { FieldStoreFilter } from './field-store-filter';
 import { FieldStoreMeasure } from './field-store-measure';
 import { FieldTime } from './field-time';
 
-// TODO: FieldAny types
-
 export interface FieldAny
   extends FieldDimension,
     FieldStoreDimension,

@@ -9,9 +9,6 @@ export interface FieldStoreFilter {
   description?: string;
   description_line_num?: number;
 
-  // result?: FieldResultEnum;
-  // result_line_num?: number;
-
   max_fractions?: number;
   max_fractions_line_num?: number;
 

@@ -36,21 +36,7 @@ export function toFileChartOptions(item: {
     UI_CHART_TYPES.seriesGroup.indexOf(chart.type) > -1 &&
     isDefined(chart.series)
   ) {
-    // console.log('chart.series');
-    // console.log(chart.series);
-
     chart.series.forEach(chartSeriesElement => {
-      // let defaultSeries =
-      //   chartSeriesElement.type === ChartTypeEnum.Line
-      //     ? DEFAULT_CHART_SERIES_LINE
-      //     : chartSeriesElement.type === ChartTypeEnum.Bar
-      //     ? DEFAULT_CHART_SERIES_BAR
-      //     : chartSeriesElement.type === ChartTypeEnum.Scatter
-      //     ? DEFAULT_CHART_SERIES_SCATTER
-      //     : chartSeriesElement.type === ChartTypeEnum.Pie
-      //     ? DEFAULT_CHART_SERIES_PIE
-      //     : DEFAULT_CHART_SERIES_LINE;
-
       let partSeriesElement: FileChartOptionsSeriesElement = {};
 
       if (isReport === true) {
@@ -140,13 +126,6 @@ export function toFileChartOptions(item: {
             ? (chartYAxisElement.scale as unknown as string)
             : (DEFAULT_CHART_Y_AXIS.scale as unknown as string)
         };
-
-        // if (
-        //   isDefined(chartYAxisElement.name) &&
-        //   chartYAxisElement.name !== DEFAULT_CHART_Y_AXIS.name
-        // ) {
-        //   yAxisElement.name = chartYAxisElement.name;
-        // }
 
         partYAxis.push(partYAxisElement);
       });

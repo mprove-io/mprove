@@ -24,9 +24,6 @@ export function parseTsLiteral(item: {
           ? input.slice(0, -3)
           : input;
 
-    // console.log('literalToParse');
-    // console.log(literalToParse);
-
     let r;
 
     if ((r = MyRegex.BRICK_TS_LITERAL().exec(literalToParse))) {

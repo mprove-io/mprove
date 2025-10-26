@@ -19,10 +19,6 @@ export class Tile {
   @IsString()
   trackChangeId: string;
 
-  // @IsOptional()
-  // @IsString()
-  // malloyQueryId: string;
-
   listen: { [a: string]: string };
 
   @IsOptional()
