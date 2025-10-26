@@ -20,20 +20,6 @@ import { getMalloyFilterNumberFractions } from './get-malloy-filter-number-fract
 import { getMalloyFilterStringFractions } from './get-malloy-filter-string-fractions';
 import { getMalloyFilterTsFractions } from './get-malloy-filter-ts-fractions';
 
-// packages/malloy-filter/src/clause_utils.ts
-
-// export function malloyUnescape(str: string) {
-//   return str.replace(/\\(.)/g, '$1');
-// }
-
-// export function malloyEscape(str: string) {
-//   const lstr = str.toLowerCase();
-//   if (lstr === 'null' || lstr === 'empty') {
-//     return '\\' + str;
-//   }
-//   return str.replace(/([,; |()\\%_-])/g, '\\$1');
-// }
-
 export function getMalloyFiltersFractions(item: {
   segment: ASTSegmentViewDefinition;
   apiModel: Model;
@@ -53,9 +39,6 @@ export function getMalloyFiltersFractions(item: {
         operation instanceof ASTHavingViewOperation
     )
     .map((op: ASTWhereViewOperation | ASTHavingViewOperation) => {
-      // console.log('op');
-      // console.dir(op, { depth: null });
-
       let astFilter: ASTFilter = op.filter;
 
       let parsedFilter: ParsedFilter = (
@@ -63,9 +46,6 @@ export function getMalloyFiltersFractions(item: {
       ).getFilter();
 
       parsedFilters.push(parsedFilter); // for logs
-
-      // console.log('parsedFilter');
-      // console.dir(parsedFilter, { depth: null });
 
       let exp = op.node.filter.expression as ExpressionWithFieldReference;
 
@@ -105,9 +85,6 @@ export function getMalloyFiltersFractions(item: {
                     parentBrick: parentBrick,
                     parsed: parsedFilter.parsed,
                     isGetTimeRange: false
-                    // timezone: timezone,
-                    // weekStart: weekStart
-                    // timeSpec: timeSpec
                   }).fractions
                 : [];
 
@@ -122,30 +99,6 @@ export function getMalloyFiltersFractions(item: {
 
       return op.filter;
     });
-
-  // fse.writeFileSync(
-  //   `filters-fractions.json`,
-  //   JSON.stringify(filtersFractions, null, 2),
-  //   'utf-8'
-  // );
-
-  // fse.writeFileSync(
-  //   `parsed-filters.json`,
-  //   JSON.stringify(parsedFilters, null, 2),
-  //   'utf-8'
-  // );
-
-  // console.log('filtersFractions');
-  // console.dir(filtersFractions, { depth: null });
-
-  // Object.keys(filtersFractions).forEach(key => {
-  //   filtersFractions[key].forEach(fraction => {
-  //     if (fraction.brick !== fraction.parentBrick) {
-  //       console.log(fraction.parentBrick);
-  //       console.log(fraction.brick);
-  //     }
-  //   });
-  // });
 
   return { filtersFractions: filtersFractions, parsedFilters: parsedFilters };
 }

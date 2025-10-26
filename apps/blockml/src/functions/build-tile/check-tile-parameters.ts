@@ -20,7 +20,6 @@ import { Model } from '~common/interfaces/blockml/model';
 import { MyRegex } from '~common/models/my-regex';
 import { dcType } from '~common/types/dc-type';
 import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
-import { getTileApiModel } from '~node-common/functions/get-tile-api-model';
 import { checkStoreFraction } from '../extra/check-store-fraction';
 import { checkStoreFractionControls } from '../extra/check-store-fraction-controls';
 import { checkStoreFractionControlsUse } from '../extra/check-store-fraction-controls-use';
@@ -59,13 +58,7 @@ export function checkTileParameters<T extends dcType>(
     let errorsOnStart = item.errors.length;
 
     x.tiles.forEach(tile => {
-      let apiModel = getTileApiModel({
-        // mods: mods,
-        filePath: x.filePath,
-        apiModels: apiModels,
-        tile: tile
-        // malloyFiles: malloyFiles
-      });
+      let apiModel = apiModels.find(y => y.modelId === tile.model);
 
       if (isUndefined(tile.parameters)) {
         tile.parameters = [];
@@ -186,13 +179,7 @@ export function checkTileParameters<T extends dcType>(
 
     if (errorsOnStart === item.errors.length) {
       x.tiles.forEach(tile => {
-        let apiModel = getTileApiModel({
-          // mods: mods,
-          filePath: x.filePath,
-          apiModels: apiModels,
-          tile: tile
-          // malloyFiles: malloyFiles
-        });
+        let apiModel = apiModels.find(y => y.modelId === tile.model);
 
         if (x.fileExt === FileExtensionEnum.Dashboard) {
           tile.listen = {};

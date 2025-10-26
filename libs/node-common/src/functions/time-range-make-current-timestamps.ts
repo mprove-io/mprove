@@ -44,17 +44,11 @@ export function timeRangeMakeCurrentTimestamps(item: {
 
   let currentDateTimestamp = getUnixTime(startOfDay(currentDate));
 
-  // console.log('weekStart');
-  // console.log(weekStart);
-
   let currentWeekStartTimestamp = getUnixTime(
     startOfWeek(currentDate, {
       weekStartsOn: weekStart === ProjectWeekStartEnum.Sunday ? 0 : 1
     })
   );
-
-  // console.log('currentWeekStartTimestamp');
-  // console.log(currentWeekStartTimestamp);
 
   let currentMonthTimestamp = getUnixTime(startOfMonth(currentDate));
 

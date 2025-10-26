@@ -186,28 +186,6 @@ export const STORE_SCHEMA: JSONSchema7 = {
             type: 'boolean'
           },
           meta: {}
-          // calculation: {
-          //   type: 'string'
-          // },
-          // hidden: {
-          //   type: 'boolean'
-          // },
-          // type: {
-          //   type: 'string',
-          //   enum: FIELD_TYPE_VALUES
-          // },
-          // suggest_model_dimension: {
-          //   type: 'string'
-          // },
-          // format_number: {
-          //   type: 'string'
-          // },
-          // currency_prefix: {
-          //   type: 'string'
-          // },
-          // currency_suffix: {
-          //   type: 'string'
-          // },
         }
       }
     }

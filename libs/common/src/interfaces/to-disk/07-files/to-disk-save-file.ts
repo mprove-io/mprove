@@ -28,18 +28,6 @@ export class ToDiskSaveFileRequestPayload {
 
   @IsString()
   userAlias: string;
-
-  // @IsOptional()
-  // @IsString()
-  // secondFileNodeId?: string;
-
-  // @IsOptional()
-  // @IsString()
-  // secondFileContent?: string;
-
-  // @IsOptional()
-  // @IsBoolean()
-  // isDeleteSecondFile?: boolean;
 }
 
 export class ToDiskSaveFileRequest extends ToDiskRequest {

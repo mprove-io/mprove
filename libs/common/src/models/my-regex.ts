@@ -155,14 +155,6 @@ export class MyRegex {
   static CAPTURE_MINUS_DIGITS_START_TO_END_G(): RegExp {
     return cloneRegexp(/^([-]?\d+)$/g);
   }
-  // static CAPTURE_RGB_G(): RegExp {
-  //   return cloneRegexp(/^((?:rgb)\(\d+\,\s?\d+\,\s?\d+\))$/g);
-  // }
-  // static CAPTURE_RGBA_G(): RegExp {
-  //   return cloneRegexp(
-  //     /^((?:rgba)\(\d+\,\s?\d+\,\s?\d+\,\s?\d+(?:[.]\d+)?\))$/g
-  //   );
-  // }
   static CAPTURE_RGB_SPLIT_G(): RegExp {
     return cloneRegexp(/^((?:rgb)\((\d+)\,\s?(\d+)\,\s?(\d+)\))$/g);
   }
@@ -258,14 +250,6 @@ export class MyRegex {
   static CAPTURE_DOUBLE_REF_G(): RegExp {
     return cloneRegexp(/\$\{(\w+)[.](\w+)\}/g);
   }
-
-  // static CAPTURE_PDT_TABLE_ID(): RegExp {
-  //   return cloneRegexp(/\$\{(\w+)[.]PDT_TABLE_ID\}/g);
-  // }
-
-  // static CAPTURE_PDT_TABLE_REF(): RegExp {
-  //   return cloneRegexp(/\$\{(\w+)[.]PDT_TABLE_REF\}/g);
-  // }
 
   static CAPTURE_VIEW_REF_G(): RegExp {
     return cloneRegexp(/\$\{(\w+)\s+[Aa][Ss]\s+(\w+)\}/g);
@@ -502,10 +486,6 @@ export class MyRegex {
   }
 
   static replaceSingleRefs(input: string, ref: string, val: string): string {
-    // does not handle special characters
-    // let reg = new RegExp(`\\$\\{${ref}\\}`, 'g');
-    // return input.replace(reg, `(${val})`);
-
     return input.split(`\$\{${ref}\}`).join(`(${val})`);
   }
 
@@ -522,8 +502,6 @@ export class MyRegex {
     ref: string,
     val: string
   ): string {
-    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
-    // return input.replace(regex, `(${val})`);
     return input.split(`\$${ref}`).join(`(${val})`);
   }
 
@@ -532,30 +510,16 @@ export class MyRegex {
     ref: string,
     val: string
   ): string {
-    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
-    // return input.replace(regex, val);
     return input.split(`\$${ref}`).join(`${val}`);
   }
 
   static replaceXRefs(input: string, ref: string, val: string): string {
-    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
-    // return input.replace(regex, val);
     return input.split(`\$${ref}`).join(`${val}`);
   }
 
   static replaceSRefs(input: string, ref: string, val: string): string {
-    // const regex = new RegExp(`\\$${ref}(?![A-Z_])`);
-    // return input.replace(regex, val);
     return input.split(`\$${ref}`).join(`${val}`);
   }
-
-  // static replacePdtTableId(input: string, ref: string, val: string): string {
-  //   return input.split(`\$\{${ref}.PDT_TABLE_ID\}`).join(`${val}`);
-  // }
-
-  // static replacePdtTableRef(input: string, ref: string, val: string): string {
-  //   return input.split(`\$\{${ref}.PDT_TABLE_REF\}`).join(`${val}`);
-  // }
 
   static replaceAndConvert(
     input: string,

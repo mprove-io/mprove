@@ -1,17 +1,17 @@
 export enum FieldTypeEnum {
-  CountDistinct = 'count_distinct', // measure
+  CountDistinct = 'count_distinct',
 
-  Sum = 'sum', // measure
-  SumByKey = 'sum_by_key', // measure
+  Sum = 'sum',
+  SumByKey = 'sum_by_key',
 
-  Average = 'average', // measure
-  AverageByKey = 'average_by_key', // measure
+  Average = 'average',
+  AverageByKey = 'average_by_key',
 
-  MedianByKey = 'median_by_key', // measure
-  PercentileByKey = 'percentile_by_key', // measure
-  Min = 'min', // measure
-  Max = 'max', // measure
-  List = 'list', // measure
-  Custom = 'custom', // measure, dimension
-  YesnoIsTrue = 'yesno_is_true' // dimension
+  MedianByKey = 'median_by_key',
+  PercentileByKey = 'percentile_by_key',
+  Min = 'min',
+  Max = 'max',
+  List = 'list',
+  Custom = 'custom',
+  YesnoIsTrue = 'yesno_is_true'
 }

@@ -108,9 +108,7 @@ export function processMalloyWhereOrHaving(item: {
           ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(', ')
           : filterModelField.result === FieldResultEnum.Number
             ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
-            : // : filterModelField.result === FieldResultEnum.Boolean
-              //   ? ORs.map(y => y.brick.slice(2, -1)).join(' or ')
-              filterModelField.result === FieldResultEnum.Ts
+            : filterModelField.result === FieldResultEnum.Ts
               ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
               : filterModelField.result === FieldResultEnum.Date
                 ? ORs.map(fraction => fraction.brick.slice(2, -1)).join(' or ')
@@ -129,9 +127,7 @@ export function processMalloyWhereOrHaving(item: {
           ? ANDs.map(y => y.brick.slice(2, -1)).join(', ')
           : filterModelField.result === FieldResultEnum.Number
             ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-            : // : filterModelField.result === FieldResultEnum.Boolean
-              //   ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-              filterModelField.result === FieldResultEnum.Ts
+            : filterModelField.result === FieldResultEnum.Ts
               ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
               : filterModelField.result === FieldResultEnum.Date
                 ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')

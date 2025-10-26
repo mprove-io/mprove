@@ -1,15 +1,14 @@
 export enum FieldResultEnum {
-  DayOfWeek = 'day_of_week', // dimension_time
-  DayOfWeekIndex = 'day_of_week_index', // dimension_time
-  MonthName = 'month_name', // dimension_time
-  QuarterOfYear = 'quarter_of_year', // dimension_time
-  Ts = 'ts', // dimension_time
-  Yesno = 'yesno', // dimension_time, dimension_yesno_is_true
+  DayOfWeek = 'day_of_week',
+  DayOfWeekIndex = 'day_of_week_index',
+  MonthName = 'month_name',
+  QuarterOfYear = 'quarter_of_year',
+  Ts = 'ts',
+  Yesno = 'yesno',
   //
-  String = 'string', // dimension, dimension_time, measure, calculation, filter
-  Number = 'number', // dimension, dimension_time, measure, calculation, filter
+  String = 'string',
+  Number = 'number',
   //
-  // Timestamp = 'timestamp',
   Date = 'date',
   Boolean = 'boolean',
   Array = 'array',

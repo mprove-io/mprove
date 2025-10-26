@@ -138,12 +138,6 @@ export async function makeMalloyQuery(item: {
 
   let q1: MalloyQuery = malloyToQueryResult?.query;
 
-  // fse.writeFileSync(
-  //   'malloy-query.json',
-  //   JSON.stringify(q1, null, 2),
-  //   'utf-8'
-  // );
-
   let malloyEntryValueWithSource = malloyModelInfo.entries.find(
     y => y.kind === 'source' && y.name === model.modelId
   ) as ModelEntryValueWithSource;
@@ -154,9 +148,6 @@ export async function makeMalloyQuery(item: {
   });
 
   let segment0: ASTSegmentViewDefinition = astQuery.getOrAddDefaultSegment();
-
-  // console.log('segment0');
-  // console.dir(segment0, { depth: null });
 
   queryOperations.forEach(queryOperation => {
     if (
@@ -176,9 +167,6 @@ export async function makeMalloyQuery(item: {
         isError = true;
         errorMessage = `modelField is not defined (queryOperation.fieldId: ${queryOperation.fieldId})`;
       }
-
-      // console.log('modelField');
-      // console.log(modelField);
 
       let fieldName = modelField.malloyFieldName;
       let fieldPath: string[] = modelField.malloyFieldPath;
@@ -496,14 +484,6 @@ export async function makeMalloyQuery(item: {
     `  timezone: '${timezone}'
 }`;
 
-  // console.log('newMalloyQueryStable');
-  // console.log(Date.now());
-  // console.log(newMalloyQueryStable);
-
-  // console.log('newMalloyQueryExtra');
-  // console.log(Date.now());
-  // console.log(newMalloyQueryExtra);
-
   let runtime = new MalloyRuntime({
     urlReader: {
       readURL: async (url: URL) => await fse.readFile(url, 'utf8')
@@ -515,36 +495,14 @@ export async function makeMalloyQuery(item: {
     }
   });
 
-  // console.log('_loadModelFromModelDef');
-  // let startLoadModelFromModelDef = Date.now();
   let mm: ModelMaterializer = runtime._loadModelFromModelDef(
     model.malloyModelDef
   );
-  // console.log(Date.now() - startLoadModelFromModelDef);
-
-  // let malloyModel = await mm.getModel();
-
-  // let queryMalloyModel: MalloyModel = await Malloy.compile({
-  //   urlReader: runtime.urlReader,
-  //   connections: runtime.connections,
-  //   model: malloyModel,
-  //   parse: Malloy.parse({ source: mconfig.malloyQuery })
-  // });
 
   let qm: QueryMaterializer = mm.loadQuery(newMalloyQueryExtra); // 0 ms
 
-  // console.log('await qm.getPreparedQuery()');
-  // let startGetPreparedQuery = Date.now();
   let pq: PreparedQuery = await qm.getPreparedQuery();
-  // console.log(Date.now() - startGetPreparedQuery);
-
-  // console.log('pq.getPreparedResult()');
-  // let startGetPreparedResult = Date.now();
   let pr: PreparedResult = pq.getPreparedResult();
-  // console.log(Date.now() - startGetPreparedResult);
-
-  // console.log('pr.sql');
-  // console.log(pr.sql);
 
   //
 
@@ -674,9 +632,6 @@ export async function makeMalloyQuery(item: {
     malloyQueryExtra: newMalloyQueryExtra,
     compiledQuery: compiledQuery,
     select: compiledQuerySelect,
-    // unsafeSelect: [],
-    // warnSelect: [],
-    // joinAggregations: [],
     sortings: sortings,
     sorts: newSorts.length > 0 ? newSorts.join(', ') : null,
     timezone:
@@ -685,7 +640,7 @@ export async function makeMalloyQuery(item: {
         : mconfig.timezone,
     limit: compiledQuery.structs[0].resultMetadata.limit,
     filters: mconfig.filters,
-    chart: mconfig.chart, // previous mconfig chart
+    chart: mconfig.chart,
     serverTs: 1
   };
 

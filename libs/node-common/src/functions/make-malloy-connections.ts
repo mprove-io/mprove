@@ -24,18 +24,6 @@ export function makeMalloyConnections(item: {
   let malloyConnections: MalloyConnection[] = [];
 
   item.connections.forEach(x => {
-    // node_modules/@malloydata/db-bigquery/dist/bigquery_connection.d.ts
-    //   interface BigQueryConnectionConfiguration {
-    //     /** This ID is used for Bigquery Table Normalization */
-    //     projectId?: string;
-    //     serviceAccountKeyPath?: string;
-    //     location?: string;
-    //     maximumBytesBilled?: string;
-    //     timeoutMs?: string;
-    //     billingProjectId?: string;
-    //     credentials?: CredentialBody;
-    // }
-
     let mConnection =
       x.type === ConnectionTypeEnum.PostgreSQL
         ? new PostgresConnection(x.connectionId, () => ({}), {
@@ -98,17 +86,6 @@ export function makeMalloyConnections(item: {
                         database: x.options.snowflake?.database,
                         username: x.options.snowflake?.username,
                         password: x.options.snowflake?.password
-                        //  schema?: string | undefined;
-                        //  role?: string | undefined;
-                        //  clientSessionKeepAlive?: boolean | undefined;
-                        //  clientSessionKeepAliveHeartbeatFrequency?: number | undefined;
-                        //  jsTreatIntegerAsBigInt?: boolean | undefined;
-                        //  application?: string;
-                        //  authenticator?: string;
-                        //  token?: string;
-                        //  privateKey?: string | Buffer;
-                        //  privateKeyPath?: string;
-                        //  privateKeyPass?: string;
                       }
                     })
                   : x.type === ConnectionTypeEnum.MotherDuck
@@ -118,9 +95,6 @@ export function makeMalloyConnections(item: {
                           ? `md:${x.options.motherduck?.database}`
                           : `md:`,
                         motherDuckToken: x.options.motherduck?.motherduckToken
-                        // additionalExtensions?: string[];
-                        // workingDirectory?: string;
-                        // readOnly?: boolean;
                       })
                     : undefined;
 

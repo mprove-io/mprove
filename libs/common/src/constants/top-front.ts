@@ -25,16 +25,6 @@ export const DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH = 220;
 
 export const DEFAULT_TIME_SPEC = TimeSpecEnum.Days;
 
-// export const DEFAULT_TIME_RANGE_FRACTION: Fraction = {
-//   brick: 'last 5 days',
-//   operator: FractionOperatorEnum.Or,
-//   tsLastCompleteOption:
-//     FractionTsLastCompleteOptionEnum.CompletePlusCurrent,
-//   tsLastUnit: FractionTsLastUnitEnum.Days,
-//   tsLastValue: 5,
-//   type: FractionTypeEnum.TsIsInLast
-// };
-
 export const MEMBERS_PER_PAGE = 10;
 export const USERS_PER_PAGE = 10;
 
@@ -162,7 +152,6 @@ export const EMPTY_MCONFIG_FIELD: MconfigField = {
   currencySuffix: undefined,
   sorting: undefined,
   sortingNumber: undefined
-  // isHideColumn: undefined
 };
 
 export const COMMON_I18N: DatePickerI18n = {
@@ -214,10 +203,6 @@ export const REFRESH_LIST: RefreshItem[] = [
     label: '1-time',
     value: 0
   },
-  // {
-  //   label: '1s',
-  //   value: 1
-  // },
   {
     label: '5s',
     value: 5

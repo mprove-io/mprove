@@ -10,12 +10,6 @@ export const CHART_SCHEMA: JSONSchema7 = {
     chart: {
       type: 'string'
     },
-    // access_roles: {
-    //   type: 'array',
-    //   items: {
-    //     type: 'string'
-    //   }
-    // },
     tiles: {
       type: 'array',
       items: TILE_SCHEMA

@@ -35,5 +35,3 @@ export const ORGANIZATION_DELETED_PAGE_TITLE = 'Organization Deleted';
 export const ORGANIZATION_OWNER_CHANGED_PAGE_TITLE =
   'Organization Owner Changed';
 export const PROJECT_DELETED_PAGE_TITLE = 'Project Deleted';
-
-// dynamic

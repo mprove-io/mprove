@@ -10,9 +10,6 @@ export function getUnixTimeFromDateParts(item: {
 }) {
   let { year, month, day, hour, minute } = item;
 
-  // console.log('item');
-  // console.log(item);
-
   let date = isDefined(minute)
     ? parseISO(`${year}-${month}-${day}T${hour}:${minute}:00`)
     : isDefined(hour)
@@ -24,9 +21,6 @@ export function getUnixTimeFromDateParts(item: {
           : isDefined(year)
             ? parseISO(`${year}-01-01`)
             : undefined;
-
-  // console.log('date');
-  // console.log(date);
 
   let unixTime = isDefined(date) ? getUnixTime(date) : undefined;
 

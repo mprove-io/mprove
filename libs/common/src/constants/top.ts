@@ -8,7 +8,6 @@ import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { OptionsStoreGoogleApi } from '~common/interfaces/backend/connection-parts/options-store-google-api';
 
-// export const API_PATH = 'api';
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
 export const MPROVE_CONFIG_NAME = 'mprove';
 
@@ -272,7 +271,6 @@ export const ALL_RESULT_VALUES = [
   FieldResultEnum.MonthName,
   FieldResultEnum.QuarterOfYear,
   FieldResultEnum.Ts,
-  // FieldResultEnum.Timestamp,
   FieldResultEnum.Yesno,
   FieldResultEnum.String,
   FieldResultEnum.Number,
@@ -330,64 +328,11 @@ export const PROJECT_WEEK_START_VALUES = [
   ProjectWeekStartEnum.Monday
 ];
 
-// export const CHART_COLOR_SCHEME_VALUES = [
-//   ChartColorSchemeEnum.Soft,
-//   ChartColorSchemeEnum.Air,
-//   ChartColorSchemeEnum.Aqua,
-//   ChartColorSchemeEnum.Cool,
-//   ChartColorSchemeEnum.Fire,
-//   ChartColorSchemeEnum.Flame,
-//   ChartColorSchemeEnum.Forest,
-//   ChartColorSchemeEnum.Horizon,
-//   ChartColorSchemeEnum.Natural,
-//   ChartColorSchemeEnum.Neons,
-//   ChartColorSchemeEnum.Night,
-//   ChartColorSchemeEnum.NightLights,
-//   ChartColorSchemeEnum.Ocean,
-//   ChartColorSchemeEnum.Picnic,
-//   ChartColorSchemeEnum.Solar,
-//   ChartColorSchemeEnum.Vivid
-// ];
-
-// export const CHART_SCHEME_TYPE_VALUES = [
-//   ChartSchemeTypeEnum.Linear,
-//   ChartSchemeTypeEnum.Ordinal
-// ];
-
-// export const CHART_INTERPOLATION_VALUES = [
-//   ChartInterpolationEnum.Basis,
-//   ChartInterpolationEnum.BasisClosed,
-//   ChartInterpolationEnum.Bundle,
-//   ChartInterpolationEnum.Cardinal,
-//   ChartInterpolationEnum.CardinalClosed,
-//   ChartInterpolationEnum.CatmullRomClosed,
-//   ChartInterpolationEnum.CatmullRom,
-//   ChartInterpolationEnum.Linear,
-//   ChartInterpolationEnum.LinearClosed,
-//   ChartInterpolationEnum.MonotoneX,
-//   ChartInterpolationEnum.MonotoneY,
-//   ChartInterpolationEnum.Natural,
-//   ChartInterpolationEnum.Step,
-//   ChartInterpolationEnum.StepAfter,
-//   ChartInterpolationEnum.StepBefore
-// ];
-
 export const ROW_TYPE_VALUES = [
   RowTypeEnum.Empty,
   RowTypeEnum.Header,
   RowTypeEnum.Metric,
   RowTypeEnum.Formula
-];
-
-export const SAFE_AGGREGATION_MEASURE_TYPES = [
-  FieldTypeEnum.CountDistinct,
-  FieldTypeEnum.Min,
-  FieldTypeEnum.Max,
-  // FieldTypeEnum.List,
-  FieldTypeEnum.SumByKey,
-  FieldTypeEnum.AverageByKey,
-  FieldTypeEnum.PercentileByKey,
-  FieldTypeEnum.MedianByKey
 ];
 
 export const STORE_METHOD_VALUES = [StoreMethodEnum.Get, StoreMethodEnum.Post];

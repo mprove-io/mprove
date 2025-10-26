@@ -4,7 +4,6 @@ export const UI_CHART_TYPES = {
   //
   // data
   //
-  // hideColumns: [ChartTypeEnum.Table],
   sizeField: [ChartTypeEnum.Scatter],
   xField: [
     ChartTypeEnum.Line,

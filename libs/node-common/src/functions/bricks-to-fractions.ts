@@ -29,14 +29,6 @@ export function bricksToFractions(item: {
   weekStart?: ProjectWeekStartEnum;
   timezone?: string;
   fractions?: Fraction[];
-  // caseSensitiveStringFilters: boolean;
-  // connection?: ProjectConnection;
-  // proc?: string;
-  // sqlTsSelect?: string;
-  // ors?: string[];
-  // nots?: string[];
-  // ins?: string[];
-  // notIns?: string[];
 }): {
   valid: number;
   brick?: string;
@@ -51,14 +43,6 @@ export function bricksToFractions(item: {
     timezone,
     fractions,
     isGetTimeRange
-    // caseSensitiveStringFilters,
-    // connection,
-    // proc,
-    // sqlTsSelect,
-    // ors,
-    // nots,
-    // ins,
-    // notIns,
   } = item;
 
   let rangeStart: number;

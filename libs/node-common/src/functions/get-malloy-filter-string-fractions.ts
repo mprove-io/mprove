@@ -13,10 +13,6 @@ import { Fraction } from '~common/interfaces/blockml/fraction';
 
 // packages/malloy-filter/src/clause_utils.ts
 
-// export function malloyUnescape(str: string) {
-//   return str.replace(/\\(.)/g, '$1');
-// }
-
 export function malloyEscape(str: string) {
   const lstr = str.toLowerCase();
   if (lstr === 'null' || lstr === 'empty') {

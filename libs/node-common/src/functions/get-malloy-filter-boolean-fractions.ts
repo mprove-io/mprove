@@ -30,11 +30,7 @@ export function getMalloyFilterBooleanFractions(item: {
   }
 
   booleanFilters.forEach(booleanFilter => {
-    let fractionOperator =
-      // (booleanFilter as { not: boolean })?.not === true
-      //   ? FractionOperatorEnum.And
-      //   : FractionOperatorEnum.Or;
-      FractionOperatorEnum.And;
+    let fractionOperator = FractionOperatorEnum.And;
 
     let isNot = (booleanFilter as { not: boolean })?.not === true;
 

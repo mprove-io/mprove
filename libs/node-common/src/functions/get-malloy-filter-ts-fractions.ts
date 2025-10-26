@@ -402,9 +402,6 @@ export function getMalloyFilterTsFractions(item: {
             currentTs: timestampsResult.currentTs
           });
 
-          // console.log('start');
-          // console.log(start);
-
           if (fraction.type === FractionTypeEnum.TsIsBefore) {
             rangeEnd = start.momentRangeStart;
           } else if (fraction.type === FractionTypeEnum.TsIsStarting) {
@@ -421,12 +418,6 @@ export function getMalloyFilterTsFractions(item: {
                 : start.timeSpecMomentRangeStart;
           }
         }
-
-        // console.log('rangeStart');
-        // console.log(rangeStart);
-
-        // console.log('rangeEnd');
-        // console.log(rangeEnd);
       } else if ((temporalFilter as After).operator === 'after') {
         // temporal after (after)
         let tFilter = temporalFilter as After;
@@ -499,9 +490,6 @@ export function getMalloyFilterTsFractions(item: {
             currentTs: timestampsResult.currentTs
           });
 
-          // console.log('start');
-          // console.log(start);
-
           if (fraction.type === FractionTypeEnum.TsIsAfter) {
             rangeStart = isUndefined(start.timeSpecOneUnitDuration)
               ? start.timeSpecMomentRangeStart
@@ -521,12 +509,6 @@ export function getMalloyFilterTsFractions(item: {
                   )
                 );
           }
-
-          // console.log('rangeStart');
-          // console.log(rangeStart);
-
-          // console.log('rangeEnd');
-          // console.log(rangeEnd);
         }
       } else if ((temporalFilter as To).operator === 'to') {
         // temporal to (between)
@@ -882,15 +864,9 @@ export function getMalloyFilterTsFractions(item: {
     });
 
   if (isDefined(rangeEnd) && isDefined(rangeStart) && rangeEnd < rangeStart) {
-    console.log('rangeEnd set to rangeStart');
+    // console.log('rangeEnd set to rangeStart');
     rangeEnd = rangeStart;
   }
-
-  // console.log({
-  //   fractions: fractions,
-  //   rangeStart: rangeStart,
-  //   rangeEnd: rangeEnd
-  // });
 
   return { fractions: fractions, rangeStart: rangeStart, rangeEnd: rangeEnd };
 }
@@ -949,13 +925,7 @@ function getStart(item: {
                 ? FractionTsUnitEnum.Hours
                 : (moment as TemporalLiteral).units === 'minute'
                   ? FractionTsUnitEnum.Minutes
-                  : // : moment.moment === 'literal' ||
-                    //     (moment as NowMoment).moment === 'now'
-                    //   ? fractionOperator ===
-                    //     FractionOperatorEnum.Or
-                    //     ? FractionTypeEnum.TsIsOnTimestamp
-                    //     : FractionTypeEnum.TsIsNotOnTimestamp
-                    undefined;
+                  : undefined;
 
   let timeSpecUnit: FractionTsUnitEnum =
     timeSpec === TimeSpecEnum.Years
@@ -979,12 +949,6 @@ function getStart(item: {
     timezone: timezone,
     weekStart: weekStart
   });
-
-  // let timeSpecCurrentUnitStartTs = getCurrentUnitStartTs({
-  //   unit: timeSpecUnit,
-  //   timezone: timezone,
-  //   weekStart: weekStart
-  // });
 
   let momentOneUnitDuration = getUnitDuration({
     value: 1,
