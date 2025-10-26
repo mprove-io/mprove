@@ -78,8 +78,6 @@ bootstrapApplication(AppComponent, {
       UiSwitchModule
     ),
     provideRouter(appRoutes),
-    // provideHotToastConfig(),
-    // provideTippyLoader(() => import('tippy.js')),
     provideTippyLoader(() => tippy),
     provideTippyConfig({
       defaultVariation: 'tooltip',

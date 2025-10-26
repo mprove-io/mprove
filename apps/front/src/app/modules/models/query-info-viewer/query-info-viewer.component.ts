@@ -110,8 +110,6 @@ export class QueryInfoViewerComponent implements OnChanges {
     this.languages = res.languages;
     let lightLanguage = res.lightLanguage;
 
-    // let queryInfoLanguageConf = new Compartment();
-    // this.extensions = [keymap.of(defaultKeymap), queryInfoLanguageConf.of(ls)];
     this.extensions = [
       highlightSelectionMatches(),
       keymap.of([...defaultKeymap, ...searchKeymap])
@@ -191,7 +189,6 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
       let filePartTile: FilePartTile = prepareTile({
         isForDashboard: false,
         mconfig: this.chart.tiles[0].mconfig
-        // malloyQueryId: undefined
       });
 
       this.content = toYaml({ tiles: [filePartTile] });

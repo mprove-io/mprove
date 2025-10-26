@@ -107,7 +107,6 @@ export class ReportAddFilterDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.typeSelectElement?.close();
-    //   this.ref.close();
   }
 
   @ViewChild('filterLabel') filterLabelElement: ElementRef;
@@ -401,7 +400,6 @@ export class ReportAddFilterDialogComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.storeModels = resp.payload.models.filter(
               model => model.type === ModelTypeEnum.Store
-              // model => model.isStoreModel === true
             );
 
             this.storeModelsList = this.storeModels.map(model => {

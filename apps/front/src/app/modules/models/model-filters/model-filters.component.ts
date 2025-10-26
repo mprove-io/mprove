@@ -89,7 +89,6 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });
@@ -102,10 +101,6 @@ export class ModelFiltersComponent {
         chartId: this.chart.chartId
       });
     }
-
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
   }
 
   addFraction(filterExtended: FilterX, filterIndex: number) {
@@ -116,7 +111,6 @@ export class ModelFiltersComponent {
     let newFraction: Fraction;
 
     if (newMconfig.modelType === ModelTypeEnum.Store) {
-      // if (newMconfig.isStoreModel === true) {
       let field = filterExtended.field;
 
       let storeFilter =
@@ -251,7 +245,6 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });
@@ -264,10 +257,6 @@ export class ModelFiltersComponent {
         chartId: this.chart.chartId
       });
     }
-
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
   }
 
   deleteFraction(
@@ -311,7 +300,6 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });
@@ -324,10 +312,6 @@ export class ModelFiltersComponent {
         chartId: this.chart.chartId
       });
     }
-
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
   }
 
   deleteFilter(filterExtended: FilterX) {
@@ -345,7 +329,6 @@ export class ModelFiltersComponent {
         queryOperation: {
           type: QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          // fieldId: filterExtended.fieldId,
           filters: newFilters
         }
       });
@@ -358,9 +341,5 @@ export class ModelFiltersComponent {
         chartId: this.chart.chartId
       });
     }
-
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
   }
 }

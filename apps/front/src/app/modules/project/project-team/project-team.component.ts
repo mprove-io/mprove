@@ -73,7 +73,6 @@ export class ProjectTeamComponent implements OnInit {
           })
         })
       );
-      // console.log(this.members);
       this.cd.detectChanges();
     })
   );
@@ -144,29 +143,6 @@ export class ProjectTeamComponent implements OnInit {
       avatar: avatarSmall,
       initials: initials
     });
-
-    // let payload: ToBackendGetAvatarBigRequestPayload = {
-    //   avatarUserId: memberId
-    // };
-
-    // this.apiService
-    //   .req({
-    //     pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig,
-    //     payload: payload,
-    //     showSpinner: true
-    //   })
-    //   .pipe(
-    //     tap((resp: ToBackendGetAvatarBigResponse) => {
-    //       if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-    //         this.myDialogService.showPhoto({
-    //           avatar: resp.payload.avatarBig,
-    //           initials: initials
-    //         });
-    //       }
-    //     }),
-    //     take(1)
-    //   )
-    //   .subscribe();
   }
 
   inviteMember() {

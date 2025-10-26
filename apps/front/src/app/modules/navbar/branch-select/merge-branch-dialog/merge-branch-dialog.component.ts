@@ -57,7 +57,6 @@ export class MergeBranchDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.mergeBranchSelectElement?.close();
-    // this.ref.close();
   }
 
   mergeForm: FormGroup;
@@ -83,11 +82,7 @@ export class MergeBranchDialogComponent implements OnInit {
     let branchId: string;
 
     this.mergeForm = this.fb.group({
-      branch: [
-        undefined,
-        [Validators.required]
-        // this.selectedBranchExtraId
-      ]
+      branch: [undefined, [Validators.required]]
     });
 
     this.branchesList = this.branchesList.filter(
@@ -141,7 +136,6 @@ export class MergeBranchDialogComponent implements OnInit {
       .subscribe();
   }
 
-  // branchChange(branchItem: BranchItem) {
   branchChange(branchItem: any) {
     this.selectedBranchItem = this.branchesList.find(
       x => x.extraId === (branchItem as BranchItem).extraId

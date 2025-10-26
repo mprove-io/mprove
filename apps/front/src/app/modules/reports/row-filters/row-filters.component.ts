@@ -58,9 +58,6 @@ export class RowFiltersComponent {
     filterExtended: FilterX,
     eventFractionUpdate: EventFractionUpdate
   ) {
-    // console.log('this.reportSelectedNode.data.parameters');
-    // console.log(this.reportSelectedNode.data.parameters);
-
     let newParameters = [...this.reportSelectedNode.data.parameters];
 
     let parametersIndex = newParameters.findIndex(
@@ -75,19 +72,8 @@ export class RowFiltersComponent {
       ...fractions.slice(eventFractionUpdate.fractionIndex + 1)
     ];
 
-    // let metric = this.structQuery
-    //   .getValue()
-    //   .metrics.find(y => y.metricId === this.reportSelectedNode.data.metricId);
-
-    // let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
-
     let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      // conditions:
-      //   isStore === false
-      //     ? newFractions.map(fraction => fraction.brick)
-      //     : undefined,
       fractions: newFractions
-      // fractions: isStore === true ? newFractions : undefined
     } as Parameter);
 
     newParameters = [
@@ -95,9 +81,6 @@ export class RowFiltersComponent {
       newParameter,
       ...newParameters.slice(parametersIndex + 1)
     ];
-
-    // console.log('newParameters');
-    // console.log(newParameters);
 
     let report = this.reportQuery.getValue();
 
@@ -252,10 +235,6 @@ export class RowFiltersComponent {
     let newFractions = [...fractions, newFraction];
 
     let newParameter = Object.assign({}, newParameters[parametersIndex], {
-      // conditions:
-      //   isStore === false
-      //     ? newFractions.map(fraction => fraction.brick)
-      //     : undefined,
       fractions: newFractions
     } as Parameter);
 
@@ -302,19 +281,7 @@ export class RowFiltersComponent {
         ...fractions.slice(fractionIndex + 1)
       ];
 
-      // let metric = this.structQuery
-      //   .getValue()
-      //   .metrics.find(
-      //     y => y.metricId === this.reportSelectedNode.data.metricId
-      //   );
-
-      // let isStore = metric.modelId.startsWith(STORE_MODEL_PREFIX);
-
       let newParameter = Object.assign({}, newParameters[parametersIndex], {
-        // conditions:
-        //   isStore === false
-        //     ? newFractions.map(fraction => fraction.brick)
-        //     : undefined,
         fractions: newFractions
       } as Parameter);
 

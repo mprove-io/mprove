@@ -66,8 +66,6 @@ export class DashboardAddTileDialogComponent implements OnInit {
 
     this.spinner.show(this.spinnerName);
 
-    // await sleep(5000);
-
     let apiService: ApiService = this.ref.data.apiService;
 
     let payload: ToBackendGetModelsRequestPayload = {

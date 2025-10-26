@@ -59,11 +59,6 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
   templateUrl: './report.component.html'
 })
 export class ReportComponent {
-  // @HostListener('window:keyup.esc')
-  // onEscKeyUp() {
-  //   this.agGrid.api.deselectAll();
-  // }
-
   rowSelection: MultiRowSelectionOptions<DataRow> = {
     mode: 'multiRow',
     enableSelectionWithoutKeys: false,
@@ -151,8 +146,6 @@ export class ReportComponent {
       width: 90,
       headerComponent: RowIdHeaderComponent,
       cellRenderer: RowIdRendererComponent
-      // ,
-      // cellStyle: { backgroundColor: '#f8f8f8' }
     },
     {
       field: 'name',
@@ -209,26 +202,6 @@ export class ReportComponent {
 
   agGridApi: GridApi<DataRow>;
 
-  // prevRepId: string;
-
-  // repSelectedRowIdsDistinct$ = this.uiQuery.repSelectedRowIdsDistinct$.pipe(
-  //   tap(x => {
-  //     if (isDefined(this.agGridApi)) {
-  //       let rowIdColDef = this.agGridApi.getColumn('rowId').getColDef();
-
-  //       let newColDef = Object.assign({}, rowIdColDef, {
-  //         cellStyle: (params: CellClassParams<any, any>) => x.indexOf(params.data.rowId) > -1
-  //             ? { backgroundColor: 'rgb(255, 224, 129)' }
-  //             : { backgroundColor: '#f8f8f8' }
-  //       });
-
-  //       this.agGridApi
-  //         .getColumn('rowId')
-  //         .setColDef(newColDef, { field: 'rowId' });
-  //     }
-  //   })
-  // );
-
   report: ReportX;
   report$ = combineLatest([
     this.reportQuery.select(),
@@ -246,13 +219,6 @@ export class ReportComponent {
         showMiniCharts
       ]: [ReportX, number, number, boolean, boolean]) => {
         this.report = report;
-
-        // console.log('---');
-        // console.log('this.report.fields');
-        // console.log(this.report.fields);
-
-        // console.log('this.report.rows');
-        // console.log(this.report.rows);
 
         let uiState = this.uiQuery.getValue();
 
@@ -335,15 +301,6 @@ export class ReportComponent {
             ? this.timeColumns.length - 1 - lastDataTimeColumnIndexReversed
             : -1;
 
-        // console.log('this.timeColumns.length');
-        // console.log(this.timeColumns.length);
-
-        // console.log('this.firstDataTimeColumnIndex');
-        // console.log(this.firstDataTimeColumnIndex);
-
-        // console.log('this.lastDataTimeColumnIndex');
-        // console.log(this.lastDataTimeColumnIndex);
-
         let trimmedTimeColumns = this.report.isTimeColumnsLimitExceeded
           ? this.timeColumns
           : this.firstDataTimeColumnIndex > 0
@@ -399,47 +356,8 @@ export class ReportComponent {
     });
 
     if (isDefined(this.agGridApi)) {
-      // console.log('this.agGridApi isDefined');
       this.agGridApi.setGridOption('rowData', newData);
       this.agGridApi.resetRowHeights();
-
-      // if (isUndefined(this.data)) {
-      //   console.log('data is undefined');
-      //   console.log('called setGridOption');
-      //   this.agGridApi.setGridOption('rowData', newData);
-      // } else {
-      //   console.log('data is defined');
-
-      //   if (newData.length !== this.data.length) {
-      //     console.log('newData.length !== this.data.length');
-      //     console.log('called setGridOption');
-      //     this.agGridApi.setGridOption('rowData', newData);
-      //     // this.agGridApi.applyTransaction({
-      //     //   add: result.add
-      //     // });
-      //     // this.agGridApi.applyTransaction({
-      //     //   remove: result.remove
-      //     // });
-      //   } else {
-      //     let result = this.getChangedRows({
-      //       currentData: this.data,
-      //       newData: newData
-      //     });
-
-      //     console.log('called refreshCells');
-
-      //     let resultUpdateNodes = result.update.map(x =>
-      //       this.agGridApi.getRowNode(x.rowId)
-      //     );
-
-      //     console.log('resultUpdateNodes');
-      //     console.log(resultUpdateNodes);
-
-      //     this.agGridApi.refreshCells({
-      //       rowNodes: resultUpdateNodes
-      //     });
-      //   }
-      // }
 
       this.data = newData;
 
@@ -452,43 +370,10 @@ export class ReportComponent {
 
       let sNodes = this.uiQuery.getValue().reportSelectedNodes;
       this.updateRepChartData(sNodes);
-    } else {
-      // console.log('this.agGridApi undefined');
     }
 
     this.cd.detectChanges();
   }
-
-  // queryParams$ = this.route.queryParams.pipe(
-  //   tap(queryParams => {
-  //     // console.log('queryParams - tap')
-
-  //     let selectRows = queryParams['selectRows'];
-
-  //     let nodeIds: string[] = isDefined(selectRows)
-  //       ? selectRows.split('-')
-  //       : [];
-
-  //     setTimeout(() => {
-  //       if (isUndefined(this.agGridApi)) {
-  //         return;
-  //       }
-  //       if (nodeIds.length > 0) {
-  //         nodeIds.forEach(nodeId => {
-  //           let rowNode = this.agGridApi.getRowNode(nodeId);
-  //           if (isDefined(rowNode)) {
-  //             // console.log('queryParams - set select node')
-  //             rowNode.setSelected(true);
-  //           }
-  //         });
-  //       } else {
-  //         // console.log('queryParams - deselect', nodeIds);
-  //         this.agGridApi.deselectAll();
-  //       }
-  //       this.cd.detectChanges();
-  //     }, 1);
-  //   })
-  // );
 
   lastSelectionChangedTs = 0;
   lastRowClickedTs = 0;
@@ -504,40 +389,6 @@ export class ReportComponent {
     private uiService: UiService
   ) {}
 
-  // getChangedRows(item: { currentData: DataRow[]; newData: DataRow[] }) {
-  //   let { currentData, newData } = item;
-
-  //   let newRows: DataRow[] = [];
-  //   let changedRows: DataRow[] = [];
-  //   let removeRows: DataRow[] = [];
-
-  //   newData.forEach(newRow => {
-  //     let currentRow = currentData.find(row => row.rowId === newRow.rowId);
-
-  //     if (!currentRow) {
-  //       newRows.push(newRow);
-  //     } else if (JSON.stringify(currentRow) !== JSON.stringify(newRow)) {
-  //       changedRows.push(newRow);
-  //     }
-  //   });
-
-  //   currentData.forEach(currentRow => {
-  //     let index = newData.findIndex(row => row.rowId === currentRow.rowId);
-
-  //     if (index < 0) {
-  //       removeRows.push(currentRow);
-  //     }
-  //   });
-
-  //   let result: { update: DataRow[]; add: DataRow[]; remove: DataRow[] } = {
-  //     update: changedRows,
-  //     add: newRows,
-  //     remove: removeRows
-  //   };
-
-  //   return result;
-  // }
-
   getRowId(params: GetRowIdParams<DataRow>) {
     return params.data.rowId;
   }
@@ -545,18 +396,13 @@ export class ReportComponent {
   onRowClicked(event: RowClickedEvent<DataRow>) {
     this.lastRowClickedTs = Date.now();
 
-    // console.log('onRowClicked');
-
     let isSelected = event.node.isSelected();
-    // console.log(isSelected);
 
     setTimeout(() => {
       let diffClickedToSelection = Date.now() - this.lastSelectionChangedTs;
       if (isSelected === true && diffClickedToSelection > 250) {
         event.node.setSelected(false);
       }
-      // console.log('diffClickedToSelection');
-      // console.log(diffClickedToSelection);
     }, 0);
   }
 
@@ -565,17 +411,10 @@ export class ReportComponent {
     let diffSelectionToClicked = dateNow - this.lastRowClickedTs;
     this.lastSelectionChangedTs = dateNow;
 
-    // console.log('onSelectionChanged');
-    // console.log('event');
-    // console.log(event);
-    // console.log('diffSelectionToClicked');
-    // console.log(diffSelectionToClicked);
-
     let sNodes = event.api.getSelectedNodes();
     this.updateRepChartData(sNodes);
 
     let nodeIds = sNodes.map(node => node.id);
-    // console.log('onSelectionChanged', nodeIds);
   }
 
   updateRepChartData(sNodes: IRowNode<DataRow>[]) {
@@ -591,10 +430,7 @@ export class ReportComponent {
     });
   }
 
-  onRangeSelectionChanged(event: RangeSelectionChangedEvent<DataRow>) {
-    // console.log('onRangeSelectionChanged');
-    // console.log(event);
-  }
+  onRangeSelectionChanged(event: RangeSelectionChangedEvent<DataRow>) {}
 
   onGridReady(params: GridReadyEvent<DataRow>) {
     this.agGridApi = params.api;
@@ -611,8 +447,6 @@ export class ReportComponent {
 
   onColumnResized(params: ColumnResizedEvent<DataRow>) {
     if (isDefined(params.column)) {
-      // console.log(params.column.getActualWidth());
-
       this.updateColumnSizes(params.column);
     }
   }
@@ -706,34 +540,3 @@ export class ReportComponent {
     return rowHeight;
   }
 }
-
-// function countLines(item: { input: any; lines: number }) {
-//   let { input, lines } = item;
-//   if (isUndefined(input)) {
-//     lines = lines + 1;
-//   } else if (Array.isArray(input)) {
-//     //
-//     input.forEach((x: any) => {
-//       lines = countLines({ input: x, lines: lines });
-//     });
-
-//     if (input.length > 0) {
-//       lines = lines + 2;
-//     } else {
-//       lines = lines + 1;
-//     }
-//   } else if (input.constructor === Object) {
-//     //
-//     Object.keys(input).forEach((y: any) => {
-//       lines = countLines({ input: input[y], lines: lines });
-//     });
-//     if (Object.keys(input).length > 0) {
-//       lines = lines + 2;
-//     } else {
-//       lines = lines + 1;
-//     }
-//   } else {
-//     lines = lines + 1;
-//   }
-//   return lines;
-// }

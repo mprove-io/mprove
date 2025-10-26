@@ -22,7 +22,6 @@ import { makeId } from '~common/functions/make-id';
 import { BmlError } from '~common/interfaces/blockml/bml-error';
 import { DiskFileLine } from '~common/interfaces/disk/disk-file-line';
 import { getFileExtension } from '~front/app/functions/get-file-extension';
-import { transformBlockmlErrorTitle } from '~front/app/functions/transform-blockml-error-title';
 import { FileQuery } from '~front/app/queries/file.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
@@ -69,7 +68,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
           return Object.assign({}, error, <BmlErrorExtra>{
             errorExt: errorExt,
             sortOrder: isDefined(errorExt) ? this.errorSortOrder(errorExt) : 1,
-            title: transformBlockmlErrorTitle(error.title)
+            title: error.title
           });
         })
         .sort((a, b) => {
@@ -155,14 +154,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
   );
 
   actionMapping: IActionMapping = {
-    mouse: {
-      // dragStart: () => {
-      //   this.cd.detach();
-      // },
-      // dragEnd: () => {
-      //   this.cd.reattach();
-      // }
-    }
+    mouse: {}
   };
 
   treeOptions = {
@@ -256,16 +248,6 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
   nodeOnClick(node: TreeNode) {
     node.toggleExpanded();
-    // node.toggleActivated();
-    // if (node.data.isFolder) {
-    //   if (node.hasChildren) {
-    //     node.toggleExpanded();
-    //   }
-    // } else {
-    //   this.navigateService.navigateToFileLine({
-    //     encodedFileId: node.data.fileId
-    //   });
-    // }
   }
 
   errorSortOrder(errorExt: string): number {
@@ -309,7 +291,6 @@ export class BlockmlErrorsComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyFilesTree');
     this.expandLevel$?.unsubscribe();
   }
 }

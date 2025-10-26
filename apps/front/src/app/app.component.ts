@@ -44,7 +44,6 @@ export class AppComponent implements OnInit {
 
   routerEvents$ = this.router.events.pipe(
     tap((x: any) => {
-      // console.log(x);
       switch (true) {
         case x instanceof NavigationStart: {
           let urlPart = x.url.split('?')[0];
@@ -64,13 +63,7 @@ export class AppComponent implements OnInit {
             urlPartArray.indexOf(PATH_PASSWORD_RESET_SENT) !== 1 &&
             urlPartArray.indexOf(PATH_UPDATE_PASSWORD) !== 1 &&
             urlPartArray.indexOf(PATH_NEW_PASSWORD_WAS_SET) !== 1
-
-            // urlPartArray.indexOf(PATH_PASSWORD_RESET_SENT_AUTH) !== 1 &&
           ) {
-            // console.log('NavigationStart', x.url);
-
-            // console.log('start');
-            // console.log(Date.now());
             this.isSpinnerScheduledToHide = false;
 
             this.spinner.show(APP_SPINNER_NAME);
@@ -81,29 +74,19 @@ export class AppComponent implements OnInit {
         case x instanceof NavigationEnd ||
           x instanceof NavigationCancel ||
           x instanceof NavigationError: {
-          // console.log('NavigationFinish', x.url);
-
           let navigationEndedTs = Date.now();
 
           let spinTimeAlready = navigationEndedTs - this.spinnerStartedTs;
-          // console.log('spinTimeAlready:', spinTimeAlready);
 
           let time = MIN_TIME_TO_SPIN - spinTimeAlready;
-          // console.log('time:', time);
 
           if (x.url.split('/last-selected?').length === 1) {
-            // console.log(x.url);
-
             if (time > 0) {
               setTimeout(() => this.spinner.hide(APP_SPINNER_NAME), time);
             } else {
               this.isSpinnerScheduledToHide = true;
-              // console.log('set');
-              // console.log(Date.now());
 
               setTimeout(() => {
-                // console.log('check');
-                // console.log(Date.now());
                 if (this.isSpinnerScheduledToHide === true) {
                   this.spinner.hide(APP_SPINNER_NAME);
                 }
@@ -125,7 +108,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-      // console.log('authService.runCheck() from AppComponent');
       this.authService.runCheck();
     }, 0); // setTimeout is for runCheck's this.location.path to have '/'
   }

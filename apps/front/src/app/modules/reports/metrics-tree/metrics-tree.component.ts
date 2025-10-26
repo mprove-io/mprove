@@ -57,15 +57,6 @@ export class MetricsTreeComponent implements AfterViewInit {
 
   metrics: ModelMetric[];
 
-  // showMetricsModelName = false;
-
-  // uiQuery$ = this.uiQuery.select().pipe(
-  //   tap(x => {
-  //     this.showMetricsModelName = x.showMetricsModelName;
-  //     this.cd.detectChanges();
-  //   })
-  // );
-
   metricNodes: MetricNode[] = [];
   metricNodes$ = combineLatest([
     this.modelsQuery.models$,
@@ -88,16 +79,6 @@ export class MetricsTreeComponent implements AfterViewInit {
       }
     )
   );
-
-  // mconfig: MconfigX;
-  // mconfig$ = this.mqQuery.mconfig$.pipe(
-  //   tap(x => {
-  //     this.mconfig = x;
-
-  //     this.makeNodesExtra();
-  //     this.cd.detectChanges();
-  //   })
-  // );
 
   actionMapping: IActionMapping = {
     mouse: {}
@@ -126,17 +107,9 @@ export class MetricsTreeComponent implements AfterViewInit {
     }, 0);
   }
 
-  treeOnInitialized() {
-    // if (this.model.nodes.length === 0) {
-    //   return;
-    // }
-  }
+  treeOnInitialized() {}
 
-  treeOnUpdateData() {
-    // if (this.model.nodes.length === 0) {
-    //   return;
-    // }
-  }
+  treeOnUpdateData() {}
 
   makeMetricNodes(item: { searchMetricsWord: string }) {
     let { searchMetricsWord } = item;

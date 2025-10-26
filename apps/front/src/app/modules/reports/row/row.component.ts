@@ -81,16 +81,11 @@ export class RowComponent {
 
   isShowFormatOptions = false;
 
-  // isToHeader = false;
-  // isToFormula = false;
-  // isToMetric = false;
-
   isValid = false;
 
   report: ReportX;
   report$ = this.reportQuery.select().pipe(
     tap(x => {
-      // this.resetInputs();
       this.report = x;
       this.cd.detectChanges();
     })
@@ -139,23 +134,11 @@ export class RowComponent {
         });
       }
 
-      // console.log('selectedRowNode', this.repSelectedNode);
-
       if (
         isDefined(this.reportSelectedNode) &&
         this.reportSelectedNode.data.rowType === RowTypeEnum.Metric
       ) {
         this.mconfig = this.reportSelectedNode.data.mconfig;
-
-        // let metric = this.structQuery
-        //   .getValue()
-        //   .metrics.find(y => y.metricId === this.repSelectedNode.data.metricId);
-
-        // let timeSpec = this.repQuery.getValue().timeSpec;
-
-        // let timeSpecWord = getTimeSpecWord({ timeSpec: timeSpec });
-
-        // let timeFieldIdSpec = `${metric.timeFieldId}${TRIPLE_UNDERSCORE}${timeSpecWord}`;
 
         this.parametersFilters =
           this.reportSelectedNode.data.mconfig.extendedFilters
@@ -165,8 +148,7 @@ export class RowComponent {
               ) =>
                 this.reportSelectedNode.data.mconfig.modelType ===
                 ModelTypeEnum.Store
-                  ? // this.reportSelectedNode.data.mconfig.isStoreModel === true
-                    this.reportSelectedNode.data.mconfig.filters
+                  ? this.reportSelectedNode.data.mconfig.filters
                       .map(f => f.fieldId)
                       .indexOf(filter.fieldId) > -1
                   : this.reportSelectedNode.data.parametersFiltersWithExcludedTime

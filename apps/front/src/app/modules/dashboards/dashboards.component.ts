@@ -265,8 +265,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
 
-    // this.searchWordChange();
-
     this.uiQuery.updatePart({
       showDashboardsLeftPanel: true,
       showTileParameters: false
@@ -283,8 +281,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.checkRunning$ = interval(3000)
       .pipe(
         concatMap(() => {
-          // console.log(`check ${Date.now()}`);
-
           if (this.isCompleted === false) {
             return this.getQueriesObservable();
           } else {
@@ -319,7 +315,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       this.makeFilteredDashboards();
 
       this.cd.detectChanges();
-      // this.scrollToSelectedDashboard();
     }, 600);
   }
 
@@ -328,7 +323,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     this.makeFilteredDashboards();
 
     this.cd.detectChanges();
-    // this.scrollToSelectedDashboard();
   }
 
   makeFilteredDashboards() {
@@ -530,15 +524,12 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   checkAutoRun() {
-    // console.log('checkAutoRun');
-
     let newQueries = this.dashboard.tiles.filter(
       tile => isDefined(tile.query) && tile.query.status === QueryStatusEnum.New
     );
 
     if (this.isAutoRun === true && newQueries.length > 0) {
       setTimeout(() => {
-        // console.log('checkAutoRun run');
         this.run();
       }, 0);
     }
@@ -600,9 +591,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       if (this.refreshProgress >= 100) {
         this.refreshProgress = 0;
 
-        // if (this.isRunButtonPressed === false) {
         this.run();
-        // }
       }
     });
   }
@@ -629,7 +618,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: this.dashboard.tiles.map(tile => tile.mconfigId)
-      // queryIds: this.dashboard.tiles.map(tile => tile.queryId)
     };
 
     this.apiService
@@ -780,7 +768,6 @@ export class DashboardsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyDashboards')
     if (this.timer) {
       clearTimeout(this.timer);
     }

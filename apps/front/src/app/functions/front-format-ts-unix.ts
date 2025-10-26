@@ -20,12 +20,6 @@ export function frontFormatTsUnix(item: {
 
   let date = dayjs.unix(unixTimeZoned).utc();
 
-  // console.log('timeSpec');
-  // console.log(timeSpec);
-
-  // console.log('unixTimeZoned');
-  // console.log(unixTimeZoned);
-
   return timeSpec === TimeSpecEnum.Years
     ? date.format('YYYY')
     : timeSpec === TimeSpecEnum.Quarters

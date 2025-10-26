@@ -23,8 +23,6 @@ import { NavigateService } from '~front/app/services/navigate.service';
 export class ModelsListComponent implements OnInit, OnDestroy {
   pageTitle = MODELS_LIST_PAGE_TITLE;
 
-  // groups: string[];
-
   models: ModelX[];
   modelsFilteredByWord: ModelX[];
   filteredModels: ModelX[];
@@ -40,10 +38,6 @@ export class ModelsListComponent implements OnInit, OnDestroy {
   models$ = this.modelsQuery.select().pipe(
     tap(ml => {
       this.models = ml.models.filter(x => x.hasAccess === true);
-
-      // let allGroups = this.vizs.map(v => v.gr);
-      // let definedGroups = allGroups.filter(y => isDefined(y));
-      // this.groups = [...new Set(definedGroups)];
 
       this.makeFilteredModels();
 
@@ -189,7 +183,6 @@ export class ModelsListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyModels')
     if (this.timer) {
       clearTimeout(this.timer);
     }

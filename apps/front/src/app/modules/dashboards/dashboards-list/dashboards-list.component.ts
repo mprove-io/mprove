@@ -20,14 +20,6 @@ export class DashboardsListComponent {
     })
   );
 
-  // isExplorer = false;
-  // isExplorer$ = this.memberQuery.isExplorer$.pipe(
-  //   tap(x => {
-  //     this.isExplorer = x;
-  //     this.cd.detectChanges();
-  //   })
-  // );
-
   dashboardPartsFiltered: DashboardPart[];
   dashboardPartsFiltered$ = this.dashboardPartsFilteredQuery.select().pipe(
     tap(x => {

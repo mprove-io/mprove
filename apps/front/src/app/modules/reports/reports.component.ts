@@ -216,7 +216,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.makeFilteredReports();
 
       this.cd.detectChanges();
-      // this.scrollToSelectedReport();
     })
   );
 
@@ -298,8 +297,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         boolean,
         boolean
       ]) => {
-        // console.log(repChartData);
-
         let newQueriesLength = 0;
         let runningQueriesLength = 0;
         let completedQueriesAndFormulasLength = 0;
@@ -414,15 +411,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
             [RowTypeEnum.Metric, RowTypeEnum.Formula].indexOf(row.rowType) > -1
         ).length;
 
-        // console.log('this.report.chart');
-        // console.log(this.report.chart);
-
-        // console.log('repChartData.rows');
-        // console.log(repChartData.rows);
-
         this.eChartInitOpts = {
           renderer: 'svg'
-          // renderer: 'canvas'
         } as EChartsInitOpts;
 
         this.seriesParts = [];
@@ -458,10 +448,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
               fontFamily: "'Montserrat', sans-serif"
             }
           },
-          // tooltip: {
-          //   trigger: 'item'
-          //   // , valueFormatter: (value: any) => `${isDefined(value) ? value.toFixed(2) : 'Null'}`
-          // },
           tooltip: {
             confine: true,
             trigger: 'axis',
@@ -501,12 +487,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
             repChartData.rows.length === 0
               ? []
               : this.report.chart.series.map(chartSeriesElement => {
-                  // console.log('chartSeriesElement');
-                  // console.log(chartSeriesElement);
-
-                  // console.log('repChartData.rows');
-                  // console.log(repChartData.rows);
-
                   let seriesRow = repChartData.rows
                     .filter(
                       row =>
@@ -545,9 +525,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
                   return seriesElement;
                 })
         }) as EChartsOption;
-
-        // console.log('dataPoints');
-        // console.log(dataPoints);
 
         this.dataPoints = dataPoints;
 
@@ -683,8 +660,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.timeSpecForm.controls['timeSpec'].setValue(uiState.timeSpec);
     this.fractions = [uiState.timeRangeFraction];
 
-    // this.searchWordChange();
-
     setTimeout(() => {
       this.scrollToSelectedReport({ isSmooth: false });
     });
@@ -773,11 +748,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
       mconfigIds: this.report.rows
         .filter(row => isDefined(row.query) && row.mconfig.select.length > 0)
         .map(row => row.mconfig.mconfigId)
-      // queryIds: this.report.rows
-      //   .filter(
-      //     row => isDefined(row.query) && row.mconfig.select.length > 0
-      //   )
-      //   .map(row => row.query.queryId)
     };
 
     this.apiService
@@ -822,7 +792,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
           this.isRunButtonPressed = false;
           this.cd.detectChanges();
         }),
-        // delay(1000),
         tap(() => this.startCheckRunning()),
         take(1)
       )
@@ -1050,7 +1019,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
       this.makeFilteredReports();
 
       this.cd.detectChanges();
-      // this.scrollToSelectedReport();
     }, 600);
   }
 
@@ -1066,7 +1034,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.makeFilteredReports();
 
     this.cd.detectChanges();
-    // this.scrollToSelectedReport();
   }
 
   makeFilteredReports() {
@@ -1128,8 +1095,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   checkAutoRun() {
-    // console.log('checkAutoRun');
-
     let newQueries = this.report.rows.filter(
       row => isDefined(row.query) && row.query.status === QueryStatusEnum.New
     );
@@ -1141,7 +1106,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.report?.rangeStart < this.report?.rangeEnd)
     ) {
       setTimeout(() => {
-        // console.log('checkAutoRun run');
         this.run();
       }, 0);
     }
@@ -1204,7 +1168,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
         this.refreshProgress = 0;
 
         if (
-          // this.isRunButtonPressed === false &&
           this.notEmptySelectQueriesLength > 0 &&
           (this.report?.timeRangeFraction.type !==
             FractionTypeEnum.TsIsBetween ||
@@ -1231,13 +1194,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.cd.detectChanges();
   }
 
-  refreshShow() {
-    // this.isShow = false;
-    // setTimeout(() => {
-    //   this.isShow = true;
-    //   this.cd.detectChanges();
-    // });
-  }
+  refreshShow() {}
 
   navToReportsList() {
     if (this.lastUrl !== this.pathReportsList) {
@@ -1303,7 +1260,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('reports ngOnDestroy');
     this.refreshSubscription?.unsubscribe();
 
     this.stopCheckRunning();

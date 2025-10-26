@@ -9,9 +9,6 @@ import { isDefined } from '~common/functions/is-defined';
   templateUrl: './chart-box.component.html'
 })
 export class ChartBoxComponent implements OnChanges {
-  // @ViewChild('chartBoxEcharts', { static: false })
-  // chartBoxEchartsElement: any;
-
   echartsApiInstance: any;
 
   @Input()
@@ -29,20 +26,12 @@ export class ChartBoxComponent implements OnChanges {
 
   constructor() {}
 
-  // ngOnInit(): void {
-  //   console.log('onInit');
-  // }
-
   ngOnChanges(changes: SimpleChanges): void {
-    // console.log('chart-box onChanges');
-    // console.log(changes);
-
     if (
       isDefined(changes.chartInstanceId) &&
       changes.chartInstanceId.currentValue !==
         changes.chartInstanceId.previousValue
     ) {
-      // console.log('set localChartInstanceId');
       this.localChartInstanceId = changes.chartInstanceId.currentValue;
     }
 
@@ -53,14 +42,6 @@ export class ChartBoxComponent implements OnChanges {
         JSON.stringify(changes.eChartInitOpts.previousValue)
       ) === false
     ) {
-      // console.log('set localInitOpts');
-
-      // console.log('changes.eChartInitOpts.currentValue');
-      // console.log(changes.eChartInitOpts.currentValue);
-
-      // console.log('changes.eChartInitOpts.previousValue');
-      // console.log(changes.eChartInitOpts.previousValue);
-
       this.localInitOpts = changes.eChartInitOpts.currentValue;
     }
 
@@ -71,27 +52,11 @@ export class ChartBoxComponent implements OnChanges {
         JSON.stringify(changes.eChartOptions.previousValue)
       ) === false
     ) {
-      // console.log('set localOptions');
-
-      // console.log('changes.eChartOptions.currentValue');
-      // console.log(changes.eChartOptions.currentValue);
-
-      // console.log('changes.eChartOptions.previousValue');
-      // console.log(changes.eChartOptions.previousValue);
-
       this.localOptions = changes.eChartOptions.currentValue;
     }
-
-    // if (isDefined(this.echartsInstance)) {
-    //   this.echartsInstance.setOption(this.eChartOptions);
-    // } else {
-    //   this.localInitOpts = this.eChartInitOpts;
-    //   this.localOptions = this.eChartOptions;
-    // }
   }
 
   onChartInit(ec: any) {
-    // console.log('onChartInit');
     this.echartsApiInstance = ec;
 
     ec.getZr().on('mousemove', function (params: any) {

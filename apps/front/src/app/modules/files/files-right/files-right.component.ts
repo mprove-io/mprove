@@ -205,8 +205,6 @@ export class FilesRightComponent {
     this.languages = res.languages;
     let lightLanguage = res.lightLanguage;
 
-    // let filesRightLanguageConf = new Compartment();
-    // this.extensions = [keymap.of(defaultKeymap), filesRightLanguageConf.of(ls)];
     this.extensions = [
       highlightSelectionMatches(),
       keymap.of([...defaultKeymap, ...searchKeymap])

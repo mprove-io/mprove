@@ -5,7 +5,6 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-// import { DomSanitizer } from '@angular/platform-browser';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperComponent } from 'ngx-image-cropper';
@@ -44,7 +43,6 @@ export class EditPhotoDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<EditPhotoDialogData>,
     private navQuery: NavQuery,
-    // private sanitizer: DomSanitizer,
     private imageCompressService: NgxImageCompressService
   ) {}
 
@@ -59,9 +57,7 @@ export class EditPhotoDialogComponent implements OnInit {
   }
 
   async imageCropped(event: any) {
-    // console.log('event:', event);
     this.croppedImage = event.base64;
-    // this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl);
 
     let croppedImageSize = this.imageCompressService.byteCount(
       this.croppedImage
@@ -82,12 +78,9 @@ export class EditPhotoDialogComponent implements OnInit {
 
   imageLoaded() {
     this.showCropper = true;
-    // console.log('Image loaded');
   }
 
-  cropperReady(sourceImageDimensions: any) {
-    // console.log('Cropper ready', sourceImageDimensions);
-  }
+  cropperReady(sourceImageDimensions: any) {}
 
   loadImageFailed() {
     console.log('Image load failed');
@@ -99,7 +92,6 @@ export class EditPhotoDialogComponent implements OnInit {
     let payload: ToBackendSetAvatarRequestPayload = {
       avatarSmall: this.compressedImage,
       avatarBig: undefined
-      // avatarBig: this.croppedImage,
     };
 
     let apiService: ApiService = this.ref.data.apiService;

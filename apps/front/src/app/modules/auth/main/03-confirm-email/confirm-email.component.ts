@@ -44,8 +44,6 @@ export class ConfirmEmailComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
 
     this.authService.clearLocalStorage();
-    // console.log('stopWatch from ConfirmEmailComponent');
-    // this.authService.stopWatch();
 
     this.emailVerificationToken =
       this.route.snapshot.queryParamMap.get('token');
@@ -71,8 +69,6 @@ export class ConfirmEmailComponent implements OnInit {
                 // first email verification
                 this.myDialogService.showEmailConfirmed();
                 this.userQuery.update(user);
-                // console.log('stopWatch from ConfirmEmailComponent - 2');
-                // this.authService.stopWatch();
                 localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
                 this.router.navigate([PATH_LOGIN_SUCCESS]);
               } else {

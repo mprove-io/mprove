@@ -245,8 +245,6 @@ export class ProjectEnvironmentsComponent implements OnInit {
       apiService: this.apiService,
       projectId: environment.projectId,
       envId: environment.envId
-      // pageNum: this.currentPage,
-      // getEnvsPageFn: this.getEnvsPage.bind(this)
     });
   }
 }

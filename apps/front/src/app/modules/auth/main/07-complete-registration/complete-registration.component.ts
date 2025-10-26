@@ -34,24 +34,12 @@ export class CompleteRegistrationComponent implements OnInit {
   bToken: string;
   email: string;
 
-  setPasswordForm: FormGroup = this.fb.group(
-    {
-      newPassword: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(255)
-        ]
-      ]
-      // ,
-      // confirmPassword: ['', [Validators.required]]
-    }
-    // ,
-    // {
-    //   validator: ValidationService.passwordMatchValidator
-    // }
-  );
+  setPasswordForm: FormGroup = this.fb.group({
+    newPassword: [
+      '',
+      [Validators.required, Validators.minLength(6), Validators.maxLength(255)]
+    ]
+  });
 
   constructor(
     private fb: FormBuilder,
@@ -69,8 +57,6 @@ export class CompleteRegistrationComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
 
     this.authService.clearLocalStorage();
-    // console.log('stopWatch from CompleteRegistrationComponent');
-    // this.authService.stopWatch();
 
     this.emailVerificationToken =
       this.route.snapshot.queryParamMap.get('token');
@@ -110,8 +96,6 @@ export class CompleteRegistrationComponent implements OnInit {
               // first email verification
               this.myDialogService.showEmailConfirmed();
               this.userQuery.update(user);
-              // console.log('stopWatch from CompleteRegistrationComponent - 2');
-              // this.authService.stopWatch();
               localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
               this.router.navigate([PATH_LOGIN_SUCCESS]);
             }

@@ -148,14 +148,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   );
 
-  // isExplorer = false;
-  // isExplorer$ = this.memberQuery.isExplorer$.pipe(
-  //   tap(x => {
-  //     this.isExplorer = x;
-  //     this.cd.detectChanges();
-  //   })
-  // );
-
   compactType: any = 'vertical';
   preventCollision = false;
   cols = 24;
@@ -186,7 +178,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
-    private cd: ChangeDetectorRef // @Inject(DOCUMENT) private _document: HTMLDocument,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -244,23 +236,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  onDragStarted(event: any) {
-    // console.log('onDragStarted');
-    // this.preventCollision = true;
-  }
+  onDragStarted(event: any) {}
 
-  onDragEnded(event: any) {
-    // console.log('onDragEnded');
-    // this.preventCollision = false;
-  }
+  onDragEnded(event: any) {}
 
-  onResizeEnded(event: any) {
-    // console.log('onResizeEnded');
-  }
+  onResizeEnded(event: any) {}
 
   onLayoutUpdated(layout: KtdGridLayout) {
-    // console.log('onLayoutUpdated', layout);
-
     let newDashboard = Object.assign({}, this.dashboard, {
       tiles: this.dashboard.tiles.map((tile, i: number) => {
         tile.plateX = layout[i].x;
@@ -341,7 +323,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnDestroy() {
     this.resizeSubscription?.unsubscribe();
     this.scrollSubscription?.unsubscribe();
-    //
+
     this.dashboardQuery.reset();
   }
 }

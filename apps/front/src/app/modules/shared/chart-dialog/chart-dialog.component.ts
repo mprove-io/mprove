@@ -76,7 +76,6 @@ export interface ChartDialogData {
   isToDuplicateQuery: boolean;
   metricId?: string;
   listen?: { [a: string]: string };
-  // updateQueryFn?: any;
 }
 
 @Component({
@@ -160,7 +159,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyChartDialog');
     this.runButtonTimerSubscription?.unsubscribe();
 
     if (isDefined(this.checkRunning$)) {
@@ -279,14 +277,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                         : [];
 
                     this.cd.detectChanges();
-
-                    // if (
-                    //   isDefined(this.ref.data.updateQueryFn) &&
-                    //   resp.payload.query.status !==
-                    //     QueryStatusEnum.Running
-                    // ) {
-                    //   this.ref.data.updateQueryFn(resp.payload.query);
-                    // }
                   }
                 })
               );
@@ -314,7 +304,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     this.ref.close();
 
     let newMconfigId = makeId();
-    // let newQueryId = makeId();
 
     let mconfigCopy = makeCopy(this.mconfig);
 
@@ -343,12 +332,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         mconfig: newMconfig
       });
     }
-
-    // this.navigateService.navigateMconfigQuery({
-    //   modelId: this.mconfig.modelId,
-    //   mconfigId: this.mconfig.mconfigId,
-    //   queryId: this.query.queryId
-    // });
   }
 
   run() {
@@ -371,7 +354,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: [this.mconfig.mconfigId]
-      // queryIds: [this.query.queryId]
     };
 
     let apiService = this.ref.data.apiService;
@@ -510,7 +492,6 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                 )
             ];
 
-            // console.log(this.fieldsList[0]);
             this.model = resp.payload.model;
 
             this.fieldsListLoading = false;

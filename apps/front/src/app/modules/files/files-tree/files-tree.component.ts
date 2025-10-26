@@ -83,14 +83,7 @@ export class FilesTreeComponent implements OnDestroy {
   projectName$ = this.projectQuery.name$;
 
   actionMapping: IActionMapping = {
-    mouse: {
-      // dragStart: () => {
-      //   this.cd.detach();
-      // },
-      // dragEnd: () => {
-      //   this.cd.reattach();
-      // }
-    }
+    mouse: {}
   };
 
   treeOptions = {
@@ -302,8 +295,6 @@ export class FilesTreeComponent implements OnDestroy {
   onMoveNode(event: any) {
     this.cd.detach();
 
-    // console.log(event.to.parent);
-
     let nameArray = event.to.parent.id.split('/');
     if (nameArray.length > 1) {
       nameArray.pop();
@@ -312,8 +303,6 @@ export class FilesTreeComponent implements OnDestroy {
     let parentId = event.to.parent.isFolder
       ? event.to.parent.id
       : nameArray.join('/');
-
-    // console.log(parentId);
 
     this.itemsTree.treeModel.getNodeById(parentId).expand();
 
@@ -469,7 +458,6 @@ export class FilesTreeComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('ngOnDestroyFilesTree');
     this.expandLevel$?.unsubscribe();
   }
 }

@@ -85,10 +85,6 @@ export class NewFileDialogComponent implements OnInit {
         ]
       ]
     });
-
-    // setTimeout(() => {
-    //   this.nameElement.nativeElement.focus();
-    // }, 0);
   }
 
   folderOnClick() {
@@ -117,17 +113,6 @@ export class NewFileDialogComponent implements OnInit {
     let apiService: ApiService = this.ref.data.apiService;
 
     let struct = this.structQuery.getValue();
-
-    // let part = struct.mproveConfig.mproveDirValue;
-
-    // part = part.startsWith('.') ? part.slice(1) : part;
-    // part = part.startsWith('/') ? part.slice(1) : part;
-    // part = part.endsWith('/') ? part.slice(0, -1) : part;
-
-    // let parentNodeId =
-    //   this.isFolder === true
-    //     ? struct.projectId
-    //     : [struct.projectId, part].join('/');
 
     let parentNodeId = struct.projectId;
 

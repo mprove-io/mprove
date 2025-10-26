@@ -72,9 +72,6 @@ export class ReportFiltersComponent {
       let store = this.modelsQuery
         .getValue()
         .models.find(m => m.modelId === reportField.storeModel);
-      // let store = this.dashboard.storeModels.find(
-      //   x => x.modelId === reportField.store
-      // );
 
       let storeFilter = isDefined(reportField.storeFilter)
         ? store.storeContent.fields.find(

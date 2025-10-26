@@ -21,9 +21,6 @@ export class DashboardOptionsComponent {
   @Input()
   isHoverM: boolean;
 
-  // @Output()
-  // runDryEvent = new EventEmitter();
-
   constructor(
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,

@@ -65,7 +65,6 @@ export class ModelNodeExtra extends ModelNode {
   templateUrl: './model-tree.component.html',
   styleUrls: ['model-tree.component.scss']
 })
-// implements OnDestroy
 export class ModelTreeComponent implements AfterViewInit {
   nodeClassInfo = FieldClassEnum.Info;
   nodeClassJoin = FieldClassEnum.Join;
@@ -121,30 +120,13 @@ export class ModelTreeComponent implements AfterViewInit {
   );
 
   actionMapping: IActionMapping = {
-    mouse: {
-      // dragStart: () => {
-      //   this.cd.detach();
-      // },
-      // dragEnd: () => {
-      //   this.cd.reattach();
-      // }
-    }
+    mouse: {}
   };
 
   treeOptions = {
     actionMapping: this.actionMapping,
     displayField: 'label'
   };
-
-  // nav: NavState;
-  // nav$ = this.navQuery.select().pipe(
-  //   tap(x => {
-  //     this.nav = x;
-  //     this.cd.detectChanges();
-  //   })
-  // );
-
-  // expandLevel$: Subscription;
 
   @ViewChild('itemsTree') itemsTree: TreeComponent;
 
@@ -170,45 +152,12 @@ export class ModelTreeComponent implements AfterViewInit {
     if (this.model.nodes.length === 0) {
       return;
     }
-
-    // this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
-    // this.cd.detectChanges();
-
-    // this.expandLevel$ = this.fileQuery
-    //   .select()
-    //   .pipe(
-    //     tap(x => {
-    //       let projectId: string;
-    //       this.navQuery.projectId$
-    //         .pipe(
-    //           tap(y => {
-    //             projectId = y;
-    //           }),
-    //           take(1)
-    //         )
-    //         .subscribe();
-
-    //       let levelPath: string = projectId;
-
-    //       if (isDefined(x.fileId)) {
-    //         x.fileId.split(TRIPLE_UNDERSCORE).forEach(part => {
-    //           levelPath = levelPath ? `${levelPath}/${part}` : part;
-    //           this.itemsTree.treeModel.getNodeById(levelPath).expand();
-    //         });
-    //       }
-
-    //       this.cd.detectChanges();
-    //     })
-    //   )
-    //   .subscribe();
   }
 
   treeOnUpdateData() {
     if (this.model.nodes.length === 0) {
       return;
     }
-
-    // this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
   }
 
   nodeOnClick(node: TreeNode) {
@@ -298,10 +247,6 @@ export class ModelTreeComponent implements AfterViewInit {
         isDraft: this.chart.draft,
         chartId: this.chart.chartId
       });
-
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
     }
   }
 
@@ -323,7 +268,6 @@ export class ModelTreeComponent implements AfterViewInit {
       let newFraction: Fraction;
 
       if (newMconfig.modelType === ModelTypeEnum.Store) {
-        // if (newMconfig.isStoreModel === true) {
         let field = this.model.fields.find(x => x.id === node.data.id);
 
         let storeFilter =
@@ -448,16 +392,11 @@ export class ModelTreeComponent implements AfterViewInit {
       isDraft: this.chart.draft,
       chartId: this.chart.chartId
     });
-
-    // this.mconfigService.navCreateTempMconfigAndQuery({
-    //   newMconfig: newMconfig
-    // });
   }
 
   makeNodesExtra(item: { searchSchemaWord: string }) {
     let { searchSchemaWord } = item;
 
-    // console.log('this.model.nodes', this.model.nodes);
     let nestedNodes = this.model.nodes.map(topNode => {
       topNode.children.map(middleNode => {
         middleNode.children.map(leafNode => this.updateNodeExtra(leafNode));
@@ -466,15 +405,12 @@ export class ModelTreeComponent implements AfterViewInit {
       return this.updateNodeExtra(topNode);
     });
 
-    // console.log('nodesExtra', nodesExtra);
-
     let flatNodes: ModelNodeExtra[] = [];
 
     let flatNodesFilters: ModelNodeExtra[] = [];
     let flatNodesDimensions: ModelNodeExtra[] = [];
     let flatNodesMeasures: ModelNodeExtra[] = [];
     let flatNodesCalculations: ModelNodeExtra[] = [];
-    // let flatNodesMeasuresAndCalculations: ModelNodeExtra[] = [];
 
     if (
       this.modelTreeLevels === ModelTreeLevelsEnum.Flat ||
@@ -496,10 +432,8 @@ export class ModelTreeComponent implements AfterViewInit {
                   flatNodesDimensions.push(leafNode);
                 } else if (leafNode.nodeClass === FieldClassEnum.Measure) {
                   flatNodesMeasures.push(leafNode);
-                  // flatNodesMeasuresAndCalculations.push(leafNode);
                 } else if (leafNode.nodeClass === FieldClassEnum.Calculation) {
                   flatNodesCalculations.push(leafNode);
-                  // flatNodesMeasuresAndCalculations.push(leafNode);
                 }
               }
             });
@@ -514,10 +448,8 @@ export class ModelTreeComponent implements AfterViewInit {
               flatNodesDimensions.push(middleNode);
             } else if (middleNode.nodeClass === FieldClassEnum.Measure) {
               flatNodesMeasures.push(middleNode);
-              // flatNodesMeasuresAndCalculations.push(middleNode);
             } else if (middleNode.nodeClass === FieldClassEnum.Calculation) {
               flatNodesCalculations.push(middleNode);
-              // flatNodesMeasuresAndCalculations.push(middleNode);
             }
           }
         });
@@ -556,23 +488,6 @@ export class ModelTreeComponent implements AfterViewInit {
 
         flatNodes = [...flatNodes, ...flatNodesCalculations];
       }
-
-      // if (flatNodesMeasuresAndCalculations.length > 0) {
-      //   flatNodes.push({
-      //     id: `${ModelNodeIdSuffixEnum.MeasuresAndCalculations}`,
-      //     label: ModelNodeLabelEnum.MeasuresAndCalculations,
-      //     description: undefined,
-      //     hidden: false,
-      //     required: false,
-      //     isField: false,
-      //     children: [],
-      //     nodeClass: FieldClassEnum.Info,
-      //     isSelected: false,
-      //     isFiltered: false
-      //   });
-
-      //   flatNodes = [...flatNodes, ...flatNodesMeasuresAndCalculations];
-      // }
 
       if (flatNodesDimensions.length > 0) {
         flatNodes.push({
@@ -715,13 +630,7 @@ export class ModelTreeComponent implements AfterViewInit {
               });
       });
 
-      this.nodesExtra =
-        // filteredNodesExtra.filter(
-        //   x => x.nodeClass !== FieldClassEnum.Info
-        // ).length === 0
-        //   ? []
-        //   :
-        filteredNodesExtra;
+      this.nodesExtra = filteredNodesExtra;
     } else {
       this.nodesExtra = nodesExtra;
     }
@@ -803,8 +712,4 @@ export class ModelTreeComponent implements AfterViewInit {
     this.uiQuery.updatePart({ modelTreeLevels: modelTreeLevels });
     this.uiService.setUserUi({ modelTreeLevels: modelTreeLevels });
   }
-
-  // ngOnDestroy() {
-  //   this.expandLevel$?.unsubscribe();
-  // }
 }

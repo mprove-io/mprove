@@ -23,8 +23,6 @@ export interface DeleteEnvironmentDialogData {
   apiService: ApiService;
   projectId: string;
   envId: string;
-  // pageNum: number;
-  // getEnvsPageFn?: any;
 }
 
 @Component({

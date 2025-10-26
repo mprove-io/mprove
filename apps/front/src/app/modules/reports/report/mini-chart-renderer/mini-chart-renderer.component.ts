@@ -47,7 +47,6 @@ export class MiniChartRendererComponent implements ICellRendererAngularComp {
 
       this.localInitOpts = {
         renderer: 'svg'
-        // renderer: 'canvas'
       } as EChartsInitOpts;
 
       this.localOptions = {

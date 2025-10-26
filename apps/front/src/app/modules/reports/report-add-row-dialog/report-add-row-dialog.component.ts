@@ -39,7 +39,6 @@ export class ReportAddRowDialogComponent implements OnInit {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    // this.newMetricSelectElement?.close();
     this.ref.close();
   }
 

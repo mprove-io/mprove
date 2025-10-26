@@ -14,19 +14,3 @@ export function conditionalValidator(
     return null;
   };
 }
-
-// this.editBigqueryForm = this.fb.group({
-//   bigqueryQuerySizeLimitGb: [
-//     1,
-//     [
-//       ValidationService.integerOrEmptyValidator,
-//       conditionalValidator(
-//         () =>
-//           [ConnectionTypeEnum.BigQuery].indexOf(
-//             this.addConnectionForm.get('type').value
-//           ) > -1,
-//         Validators.required
-//       )
-//     ]
-//   ]
-// });

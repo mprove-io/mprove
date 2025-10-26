@@ -65,7 +65,6 @@ export class AddConnectionDialogComponent implements OnInit {
   onEscKeyUp() {
     this.addConnectionDialogEnvSelectElement?.close();
     this.addConnectionDialogTypeSelectElement?.close();
-    // this.ref.close();
   }
 
   addForm: FormGroup;
@@ -210,20 +209,12 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addApiForm = this.fb.group({
       baseUrl: [undefined, [Validators.required]],
       headers: this.fb.array([])
-      // headers: this.fb.array([
-      //   this.fb.group({ key: 'a1', value: 'v1' }),
-      //   this.fb.group({ key: 'a2', value: 'v2' })
-      // ])
     });
 
     this.addGoogleApiForm = this.fb.group({
       serviceAccountCredentials: [undefined, [Validators.required]],
       baseUrl: ['https://analyticsdata.googleapis.com', [Validators.required]],
       headers: this.fb.array([]),
-      // headers: this.fb.array([
-      //   this.fb.group({ key: 'a1', value: 'v1' }),
-      //   this.fb.group({ key: 'a2', value: 'v2' })
-      // ])
       scopes: this.fb.array([
         this.fb.group({
           value: 'https://www.googleapis.com/auth/analytics.readonly'
@@ -346,11 +337,6 @@ export class AddConnectionDialogComponent implements OnInit {
   apiRemoveHeader(index: number) {
     this.apiGetHeaders().removeAt(index);
   }
-
-  // showLog() {
-  //   console.log(this.addConnectionForm.get('headers').value);
-  //   console.log(this.addConnectionForm.get('scopes').value);
-  // }
 
   toggleClickhouseSSL() {
     this.isClickhouseSSL = !this.isClickhouseSSL;

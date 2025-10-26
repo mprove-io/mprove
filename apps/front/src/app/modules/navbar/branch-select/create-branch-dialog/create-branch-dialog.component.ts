@@ -65,7 +65,6 @@ export class CreateBranchDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.createBranchSelectElement?.close();
-    // this.ref.close();
   }
 
   createBranchForm: FormGroup;
@@ -95,17 +94,6 @@ export class CreateBranchDialogComponent implements OnInit {
   );
 
   branchesList: BranchItem[] = [];
-  //  = common
-  //   .makeCopy<BranchItem[]>(this.ref.data.branchesList)
-  //   .filter(y => y.isRepoProd === this.nav.isRepoProd);
-  // .map(x => {
-  //   if (x.isRepoProd === true) {
-  //     let name = x.extraName.substring(10, x.extraName.length);
-
-  //     x.extraName = `remote${name}`;
-  //   }
-  //   return x;
-  // });
 
   selectedBranchItem: BranchItem = this.ref.data.selectedBranchItem;
   selectedBranchExtraId: string = this.ref.data.selectedBranchExtraId;
@@ -221,7 +209,6 @@ export class CreateBranchDialogComponent implements OnInit {
       .subscribe();
   }
 
-  // branchChange(branchItem: BranchItem) {
   branchChange(branchItem: any) {
     this.selectedBranchItem = this.branchesList.find(
       x => x.extraId === (branchItem as BranchItem).extraId

@@ -146,7 +146,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
-    // this.modelsModelSelectElement?.close();
     this.queryPartSelectElement?.close();
     this.chartTypeSelectElement?.close();
   }
@@ -226,7 +225,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.makeFilteredCharts();
 
       this.cd.detectChanges();
-      // this.scrollToSelectedChart();
     })
   );
 
@@ -316,7 +314,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.makeFilteredCharts();
 
       this.cd.detectChanges();
-      // this.scrollToSelectedChart();
 
       this.uiService.setProjectModelLink({ modelId: this.model.modelId });
     })
@@ -346,8 +343,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.cd.detectChanges();
     })
   );
-
-  // isShow = true;
 
   filtersIsExpanded = false;
   chartIsExpanded = true;
@@ -438,7 +433,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
           chart: this.mconfig.chart,
           mconfigFields: this.mconfig.fields,
           isStoreModel: this.mconfig.modelType === ModelTypeEnum.Store
-          // isStoreModel: this.mconfig.isStoreModel
         });
 
         this.isSelectValid = checkSelectResult.isSelectValid;
@@ -560,7 +554,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       value: ChartTypeEnum.Table,
       iconPath: 'assets/charts/table.svg'
     },
-    //
     {
       label: 'Line',
       value: ChartTypeEnum.Line,
@@ -586,29 +579,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       value: ChartTypeEnum.Pie,
       iconPath: 'assets/charts/pie.svg'
     }
-    //   iconPath: 'assets/charts/bubble.svg'
-    //   iconPath: 'assets/charts/heat_map.svg'
-    //   iconPath: 'assets/charts/tree_map.svg'
-    //   iconPath: 'assets/charts/gauge.svg'
-    //   iconPath: 'assets/charts/bar_vertical.svg'
-    //   iconPath: 'assets/charts/bar_vertical_grouped.svg'
-    //   iconPath: 'assets/charts/bar_vertical_stacked.svg'
-    //   iconPath: 'assets/charts/bar_vertical_normalized.svg'
-    //   iconPath: 'assets/charts/bar_horizontal.svg'
-    //   iconPath: 'assets/charts/bar_horizontal_grouped.svg'
-    //   iconPath: 'assets/charts/bar_horizontal_stacked.svg'
-    //   iconPath: 'assets/charts/bar_horizontal_normalized.svg'
-    //   iconPath: 'assets/charts/pie.svg'
-    //   iconPath: 'assets/charts/pie_advanced.svg'
-    //   iconPath: 'assets/charts/pie_grid.svg'
-    //   iconPath: 'assets/charts/area.svg'
-    //   iconPath: 'assets/charts/area_stacked.svg'
-    //   iconPath: 'assets/charts/area_normalized.svg'
-    //   iconPath: 'assets/charts/heat_map.svg'
-    //   iconPath: 'assets/charts/tree_map.svg'
-    //   iconPath: 'assets/charts/number_card.svg'
-    //   iconPath: 'assets/charts/gauge.svg'
-    //   iconPath: 'assets/charts/gauge_linear.svg'
   ];
 
   private searchSchemaTimer: any;
@@ -664,9 +634,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     let uiState = this.uiQuery.getValue();
 
     this.timezoneForm.controls['timezone'].setValue(uiState.timezone);
-
-    // this.searchChartsWordChange();
-    // this.searchSchemaWordChange();
 
     this.modelsSubscription = this.modelsQuery
       .select()
@@ -739,7 +706,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   treeOnInitialized() {
     this.scrollToSelectedChart({ isSmooth: false });
-    // console.log('treeOnInitialized');
   }
 
   treeOnUpdateData() {}
@@ -855,12 +821,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
 
     this.cd.detectChanges();
-
-    // if (this.isFilterByModel === true) {
-    //   setTimeout(() => {
-    //     this.scrollToSelectedChart({ isSmooth: true });
-    //   });
-    // }
   }
 
   toggleAutoRun() {
@@ -873,8 +833,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   checkAutoRun() {
-    // console.log('checkAutoRun');
-
     if (
       isDefined(this.query.queryId) &&
       this.query.queryId !== EMPTY_QUERY_ID &&
@@ -882,7 +840,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.isAutoRun === true
     ) {
       setTimeout(() => {
-        // console.log('checkAutoRun run');
         this.run();
       }, 0);
     }
@@ -945,7 +902,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
         this.refreshProgress = 0;
 
         if (
-          // this.isRunButtonPressed === false &&
           this.mconfig?.select.length > 0 &&
           this.query?.status !== QueryStatusEnum.Running
         ) {
@@ -1042,10 +998,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
         isDraft: this.chart.draft,
         chartId: this.chart.chartId
       });
-
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig
-      // });
     }
   }
 
@@ -1145,8 +1097,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
                 data: this.query.data
               });
 
-              // this.chartQuery.updatePart({ query: query });
-
               let newTile = Object.assign({}, this.chart.tiles[0], {
                 query: query
               });
@@ -1193,8 +1143,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
               if (
                 this.isQueryIdTheSameAndStatusOrServerTsChanged(errorQueries[0])
               ) {
-                // this.chartQuery.updatePart({ query: errorQueries[0] });
-
                 let newTile = Object.assign({}, this.chart.tiles[0], {
                   query: errorQueries[0]
                 });
@@ -1244,8 +1192,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
               queries.length > 0 &&
               this.isQueryIdTheSameAndStatusOrServerTsChanged(queries[0])
             ) {
-              // this.chartQuery.updatePart({ query: queries[0] });
-
               let newTile = Object.assign({}, this.chart.tiles[0], {
                 query: queries[0]
               });
@@ -1297,10 +1243,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     newMconfig.chart.series.forEach(s => (s.type = newChartType));
 
-    // this.mconfigService.navCreateTempMconfig({
-    //   newMconfig: newMconfig
-    // });
-
     // query not changed
     if (this.model.type === ModelTypeEnum.Malloy) {
       this.chartService.editChart({
@@ -1346,10 +1288,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     }
 
     newMconfig.chart.title = chartTitle;
-
-    // this.mconfigService.navCreateTempMconfig({
-    //   newMconfig: newMconfig
-    // });
 
     // query not changed
     if (this.model.type === ModelTypeEnum.Malloy) {
@@ -1511,7 +1449,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
       this.makeFilteredCharts();
 
       this.cd.detectChanges();
-      // this.scrollToSelectedChart();
     }, 600);
   }
 
@@ -1527,7 +1464,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.makeFilteredCharts();
 
     this.cd.detectChanges();
-    // this.scrollToSelectedChart();
   }
 
   navToChart(chart: ChartX) {
@@ -1764,9 +1700,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   async schema(node: TreeNode, event: MouseEvent) {
     event.stopPropagation();
 
-    // console.log('node.data');
-    // console.log(node.data);
-
     if (this.chart?.modelId !== node.data.id) {
       await this.navigateService.navigateToChart({
         modelId: node.data.id,
@@ -1812,8 +1745,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // console.log('models ngOnDestroy');
-
     this.chartQuery.reset();
     this.modelQuery.reset();
 

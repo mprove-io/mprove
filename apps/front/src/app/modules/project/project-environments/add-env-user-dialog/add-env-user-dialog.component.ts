@@ -51,7 +51,6 @@ export class AddEnvUserDialogComponent implements OnInit {
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.addEnvUserDialogEnvSelectElement?.close();
-    // this.ref.close();
   }
 
   addEnvUserForm: FormGroup;

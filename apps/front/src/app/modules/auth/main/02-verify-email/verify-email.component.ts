@@ -59,8 +59,6 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
     this.title.setTitle(this.pageTitle);
 
     this.authService.clearLocalStorage();
-    // console.log('startWatch from VerifyEmailComponent');
-    // this.authService.startWatch();
   }
 
   resendEmail() {

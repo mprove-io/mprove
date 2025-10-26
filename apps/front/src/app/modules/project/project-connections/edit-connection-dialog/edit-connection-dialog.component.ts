@@ -356,11 +356,6 @@ export class EditConnectionDialogComponent implements OnInit {
     this.apiGetHeaders().removeAt(index);
   }
 
-  // showLog() {
-  //   console.log(this.editConnectionForm.get('headers').value);
-  //   console.log(this.editConnectionForm.get('scopes').value);
-  // }
-
   toggleClickhouseSSL() {
     this.isClickhouseSSL = !this.isClickhouseSSL;
   }

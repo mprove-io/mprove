@@ -69,11 +69,6 @@ export interface CreateModelDialogData {
   ]
 })
 export class CreateModelDialogComponent implements OnInit {
-  // @HostListener('window:keyup.esc')
-  // onEscKeyUp() {
-  //   this.ref.close();
-  // }
-
   @ViewChild('modelName') modelNameElement: ElementRef;
 
   usersFolder = MPROVE_USERS_FOLDER;
@@ -147,10 +142,6 @@ export class CreateModelDialogComponent implements OnInit {
         this.loadConnections();
       }
     }, 0);
-
-    // setTimeout(() => {
-    //   this.modelNameElement.nativeElement.focus();
-    // }, 0);
   }
 
   loadConnections() {
@@ -387,7 +378,7 @@ export class CreateModelDialogComponent implements OnInit {
               needValidate: resp.payload.needValidate
             });
             this.modelsQuery.update({ models: resp.payload.models });
-            //
+
             this.uiQuery.updatePart({ showSchema: true });
 
             this.navigateService.navigateToChart({

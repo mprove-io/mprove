@@ -58,8 +58,6 @@ export class UpdatePasswordComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
 
     this.authService.clearLocalStorage();
-    // console.log('stopWatch from UpdatePasswordComponent');
-    // this.authService.stopWatch();
 
     this.passwordResetToken = this.route.snapshot.queryParamMap.get('token');
   }

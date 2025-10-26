@@ -49,8 +49,6 @@ export class DataRendererComponent implements ICellRendererAngularComp {
   applyFormat(params: ICellRendererParams<DataRow>) {
     this.params = params;
 
-    // console.log(this.params.data);
-
     let rowDataRecord = params.data.records.find(
       x => x.key === Number(params.colDef.field)
     );
@@ -81,16 +79,10 @@ export class DataRendererComponent implements ICellRendererAngularComp {
       this.params.data.rowType === RowTypeEnum.Metric
     ) {
       let isStore = this.params.data.mconfig.modelType === ModelTypeEnum.Store;
-      // let isStore = this.params.data.mconfig.isStoreModel;
-
-      // console.log('isStore');
-      // console.log(isStore);
 
       let rowDataRecord = this.params.data.records.find(
         x => x.key * 1000 === Number(this.params.colDef.field)
       );
-
-      // console.log(rowDataRecord.key);
 
       let tsMs = rowDataRecord.key * 1000;
 
@@ -317,11 +309,6 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         cellMetricsEndDateMs = undefined;
       }
 
-      // console.log('cellMetricsStartDateMs');
-      // console.log(cellMetricsStartDateMs);
-      // console.log('cellMetricsEndDateMs');
-      // console.log(cellMetricsEndDateMs);
-
       this.chartService.editChart({
         mconfig: newMconfig,
         isDraft: false,
@@ -329,12 +316,6 @@ export class DataRendererComponent implements ICellRendererAngularComp {
         cellMetricsStartDateMs: cellMetricsStartDateMs,
         cellMetricsEndDateMs: cellMetricsEndDateMs
       });
-
-      // this.mconfigService.navCreateTempMconfigAndQuery({
-      //   newMconfig: newMconfig,
-      //   cellMetricsStartDateMs: cellMetricsStartDateMs,
-      //   cellMetricsEndDateMs: cellMetricsEndDateMs
-      // });
     }
   }
 

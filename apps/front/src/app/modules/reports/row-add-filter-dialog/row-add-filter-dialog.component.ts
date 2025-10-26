@@ -186,7 +186,6 @@ export class RowAddFilterDialogComponent implements OnInit {
                             : 0
               );
 
-            // console.log(this.fieldsList[0]);
             this.model = resp.payload.model;
 
             this.modelLoading = false;
@@ -361,12 +360,6 @@ export class RowAddFilterDialogComponent implements OnInit {
   }
 
   searchFn(term: string, modelField: ModelField) {
-    // let haystack = [
-    //   isDefinedAndNotEmpty(modelFieldY.groupLabel)
-    //     ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
-    //     : `${modelFieldY.topLabel} ${modelFieldY.label}`
-    // ];
-
     let haystack = [
       isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`

@@ -327,7 +327,6 @@ export class RepoOptionsComponent {
         ),
         tap(x => {
           this.spinner.hide(APP_SPINNER_NAME);
-          // this.fileService.refreshSecondFile();
           this.uiQuery.updatePart({ secondFileNodeId: undefined });
         }),
         take(1)

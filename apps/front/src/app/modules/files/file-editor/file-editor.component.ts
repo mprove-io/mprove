@@ -218,8 +218,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         EditorView.scrollIntoView(undoOperation.positionToA, {
           y: 'center',
           x: 'nearest'
-          // yMargin: 50,
-          // xMargin: 20
         })
       ]
     };
@@ -339,7 +337,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       this.cd.detectChanges();
 
       if (this.panel === PanelEnum.Tree) {
-        // console.log('panel$ cleanupSyncScroll');
         this.cleanupSyncScroll();
       }
     })
@@ -452,10 +449,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           this.panel === PanelEnum.ChangesToPush) &&
         isDefined(this.file.fileId)
       ) {
-        // console.log('file$ setupDiffEditorSyncScroll');
         this.setupDiffEditorSyncScroll();
       } else {
-        // console.log('file$ cleanupSyncScroll');
         this.cleanupSyncScroll();
       }
 
@@ -477,7 +472,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   struct$ = this.structQuery.select().pipe(
     tap(x => {
       this.struct = x;
-      // console.log(this.struct.mproveConfig.mproveDirValue);
       this.refreshMarkers();
       this.checkSelectedFile();
 
@@ -550,11 +544,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     this.languages = mainLanguagesResult.languages;
     this.originalLanguages = originalLanguagesResult.languages;
 
-    // let lightLanguage = mainLanguagesResult.lightLanguage;
-
-    // let mainLanguageConf = new Compartment();
-    // this.mainPrepExtensions = [...this.baseExtensions, mainLanguageConf.of(ls)];
-
     this.mainExtensions = [...this.mainPrepExtensions];
 
     this.isEditorOptionsInitComplete = true;
@@ -565,15 +554,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // console.log('ngAfterViewInit');
     this.moveMainEditorToLine();
-    // this.setupDiffEditorSyncScroll();
   }
 
   setupDiffEditorSyncScroll() {
     setTimeout(() => {
-      // console.log('setupDiffEditorSyncScroll');
-
       if (
         this.diffEditorRef?.mergeView?.a &&
         this.diffEditorRef?.mergeView?.b
@@ -611,13 +596,11 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         editorB.scrollDOM.scrollTop = editorA.scrollDOM.scrollTop;
       } else {
         console.warn('Diff editor is not defined');
-        // setTimeout(() => this.setupDiffEditorSyncScroll(), 1000);
       }
     });
   }
 
   cleanupSyncScroll() {
-    // console.log('cleanupSyncScroll');
     this.syncScrollCleanups.forEach(cleanup => cleanup());
     this.syncScrollCleanups = [];
   }
@@ -980,9 +963,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         let lines = this.content.split('\n');
 
         if (lineNumber < 1 || lineNumber > lines.length) {
-          // console.warn(
-          //   `Invalid line number: ${lineNumber}. Must be between 1 and ${lines.length}.`
-          // );
           return;
         }
 
@@ -996,11 +976,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         } catch (error) {
           console.warn(`Failed to scroll to line ${lineNumber}:`, error);
         }
-
-        // if (this.editor) {
-        //   this.editor.revealLineInCenter(line);
-        //   this.editor.setPosition({ column: 1, lineNumber: line });
-        // }
       }
     }, 0);
   }
@@ -1067,8 +1042,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   canDeactivate(): Promise<boolean> | boolean {
-    // console.log('canDeactivate');
-
     // prevents the dialog from trigger twice after cancel clicked
     if (
       this.cachedCanDeactivateAnswerNoTimestamp > 0 &&
@@ -1097,7 +1070,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     this.fileQuery.reset();
-    // console.log('ngOnDestroy cleanupSyncScroll');
     this.cleanupSyncScroll();
   }
 }

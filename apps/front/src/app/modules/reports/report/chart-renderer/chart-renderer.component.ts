@@ -54,11 +54,6 @@ export class ChartRendererComponent implements ICellRendererAngularComp {
         newSeries.dataRowId = this.params.data.rowId;
         newChart.series.push(newSeries);
       }
-      // else {
-      //   newChart.series = newChart.series.filter( // filtered on backend
-      //     x => x.dataRowId !== this.params.data.rowId
-      //   );
-      // }
 
       let rowChange: RowChange = {
         rowId: this.params.data.rowId,

@@ -62,45 +62,11 @@ export class ChartsListComponent {
   }
 
   navigateToChart(chartItem: ChartX) {
-    // this.navigateService.navigateMconfigQuery({
-    //   modelId: chartItem.modelId,
-    //   mconfigId: chartItem.tiles[0].mconfigId,
-    //   queryId: chartItem.tiles[0].queryId
-    // });
     this.navigateService.navigateToChart({
       modelId: chartItem.modelId,
       chartId: chartItem.chartId
     });
   }
-
-  // rowMenuOnClick(event: any) {
-  //   event.stopPropagation();
-  // }
-
-  // goToChartFile(event: MouseEvent, item: ChartX) {
-  //   event.stopPropagation();
-
-  //   let fileIdAr = item.filePath.split('/');
-  //   fileIdAr.shift();
-
-  //   this.navigateService.navigateToFileLine({
-  //     panel: PanelEnum.Tree,
-  //     encodedFileId:
-  //   });
-  // }
-
-  // deleteChart(event: MouseEvent, item: ChartX) {
-  //   event.stopPropagation();
-
-  //   this.myDialogService.showDeleteChart({
-  //     chart: item,
-  //     apiService: this.apiService,
-  //     projectId: this.nav.projectId,
-  //     branchId: this.nav.branchId,
-  //     envId: this.nav.envId,
-  //     isRepoProd: this.nav.isRepoProd
-  //   });
-  // }
 
   trackByFn(index: number, item: ChartX) {
     return item.chartId;

@@ -59,8 +59,6 @@ export class LoginComponent implements OnInit {
     this.title.setTitle(this.pageTitle);
 
     this.userQuery.reset();
-    // console.log('startWatch from LoginComponent');
-    // this.authService.startWatch();
 
     let email = this.route.snapshot.queryParamMap.get('email');
     let password = this.route.snapshot.queryParamMap.get('password');
@@ -99,8 +97,6 @@ export class LoginComponent implements OnInit {
             this.userQuery.update(user);
 
             if (user.isEmailVerified === true) {
-              // console.log('stopWatch from LoginComponent');
-              // this.authService.stopWatch();
               localStorage.setItem(LOCAL_STORAGE_TOKEN, token);
               this.router.navigate([PATH_LOGIN_SUCCESS]);
             } else {

@@ -132,8 +132,6 @@ export class ChartsAddFilterDialogComponent implements OnInit {
       return;
     }
 
-    // this.filtersIsExpanded = true;
-
     let newMconfig = this.structService.makeMconfig();
 
     let newFraction: Fraction;
@@ -141,7 +139,6 @@ export class ChartsAddFilterDialogComponent implements OnInit {
     let field = this.ref.data.model.fields.find(x => x.id === this.newFieldId);
 
     if (newMconfig.modelType === ModelTypeEnum.Store) {
-      // if (newMconfig.isStoreModel === true) {
       let storeFilter =
         field.fieldClass === FieldClassEnum.Filter
           ? this.ref.data.model.storeContent.fields.find(
@@ -275,7 +272,6 @@ export class ChartsAddFilterDialogComponent implements OnInit {
         queryOperation: {
           type: QueryOperationTypeEnum.WhereOrHaving,
           timezone: newMconfig.timezone,
-          // fieldId: field.id,
           filters: newFilters
         }
       });
@@ -295,12 +291,6 @@ export class ChartsAddFilterDialogComponent implements OnInit {
   }
 
   searchFn(term: string, modelField: ModelField) {
-    // let haystack = [
-    //   isDefinedAndNotEmpty(modelFieldY.groupLabel)
-    //     ? `${modelFieldY.topLabel} ${modelFieldY.groupLabel} - ${modelFieldY.label}`
-    //     : `${modelFieldY.topLabel} ${modelFieldY.label}`
-    // ];
-
     let haystack = [
       isDefinedAndNotEmpty(modelField.groupLabel)
         ? `${modelField.topLabel} ${modelField.groupLabel} - ${modelField.label}`
