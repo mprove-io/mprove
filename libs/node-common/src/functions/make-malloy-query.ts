@@ -535,7 +535,10 @@ export async function makeMalloyQuery(item: {
     apiMethod: undefined,
     apiUrl: undefined,
     apiBody: undefined,
-    status: QueryStatusEnum.New,
+    status:
+      (isError as boolean) === true
+        ? QueryStatusEnum.Error
+        : QueryStatusEnum.New,
     lastRunBy: undefined,
     lastRunTs: undefined,
     lastCancelTs: undefined,

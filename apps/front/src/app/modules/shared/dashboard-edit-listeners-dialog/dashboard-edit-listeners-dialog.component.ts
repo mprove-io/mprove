@@ -299,7 +299,8 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
-      timezone: this.uiQuery.getValue().timezone
+      timezone: this.uiQuery.getValue().timezone,
+      isQueryCache: false
     });
   }
 

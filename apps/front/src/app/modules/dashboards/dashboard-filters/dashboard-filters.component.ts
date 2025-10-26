@@ -64,7 +64,8 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
-      timezone: this.uiQuery.getValue().timezone
+      timezone: this.uiQuery.getValue().timezone,
+      isQueryCache: false
     });
   }
 
@@ -201,7 +202,8 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
-      timezone: this.uiQuery.getValue().timezone
+      timezone: this.uiQuery.getValue().timezone,
+      isQueryCache: false
     });
   }
 
@@ -250,7 +252,8 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
-      timezone: this.uiQuery.getValue().timezone
+      timezone: this.uiQuery.getValue().timezone,
+      isQueryCache: false
     });
   }
 
@@ -276,7 +279,8 @@ export class DashboardFiltersComponent {
       oldDashboardId: this.dashboard.dashboardId,
       newDashboardId: makeId(),
       newDashboardFields: newDashboardFields,
-      timezone: this.uiQuery.getValue().timezone
+      timezone: this.uiQuery.getValue().timezone,
+      isQueryCache: false
     });
   }
 }

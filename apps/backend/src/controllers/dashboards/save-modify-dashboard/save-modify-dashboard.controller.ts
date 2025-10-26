@@ -460,9 +460,7 @@ export class SaveModifyDashboardController {
               )
             },
             insertOrUpdate: {
-              dashboards: [newDashboard]
-            },
-            insertOrDoNothing: {
+              dashboards: [newDashboard],
               queries: dashboardQueries.map(x =>
                 this.queriesService.apiToTab({ apiQuery: x })
               )

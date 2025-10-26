@@ -434,7 +434,7 @@ export class SaveCreateDashboardController {
                 this.mconfigsService.apiToTab({ apiMconfig: x })
               )
             },
-            insertOrDoNothing: {
+            insertOrUpdate: {
               queries: dashboardQueries.map(x =>
                 this.queriesService.apiToTab({ apiQuery: x })
               )

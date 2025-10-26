@@ -276,9 +276,9 @@ export class CreateDraftDashboardController {
     );
 
     let dashboardQueryIds = newApiDashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = apiQueries.filter(
-      x => dashboardQueryIds.indexOf(x.queryId) > -1
-    );
+    let dashboardQueries = apiQueries
+      .filter(x => dashboardQueryIds.indexOf(x.queryId) > -1)
+      .map(x => this.queriesService.apiToTab({ apiQuery: x }));
 
     let insertMconfigs: MconfigTab[] = [];
     let insertOrUpdateQueries: QueryTab[] = [];
@@ -288,46 +288,27 @@ export class CreateDraftDashboardController {
       mconfig => mconfig.modelType === ModelTypeEnum.Malloy
     );
 
+    let dashboardMalloyQueries: QueryTab[] = [];
+
     dashboardMalloyMconfigs.forEach(apiMconfig => {
       let mconfig = this.mconfigsService.apiToTab({ apiMconfig: apiMconfig });
 
       insertMconfigs.push(mconfig);
 
-      let apiQuery = dashboardQueries.find(
-        y => y.queryId === apiMconfig.queryId
-      );
-
-      let query = this.queriesService.apiToTab({ apiQuery: apiQuery });
-
-      // prev query and new query has different queryId (different parent dashboardId)
-      let prevTile = fromDashboardX.tiles.find(
-        y => y.title === mconfig.chart.title
-      );
-
-      let prevQuery = prevTile?.query;
+      let query = dashboardQueries.find(x => x.queryId === mconfig.queryId);
 
       if (
-        isDefined(prevQuery) &&
-        prevQuery.status !== QueryStatusEnum.Error &&
-        isQueryCache === true
+        dashboardMalloyQueries.map(x => x.queryId).indexOf(query.queryId) < 0
       ) {
-        query.data = prevTile?.query?.data;
-        query.status = prevTile?.query?.status;
-        query.lastRunBy = prevTile?.query?.lastRunBy;
-        query.lastRunTs = prevTile?.query?.lastRunTs;
-        query.lastCancelTs = prevTile?.query?.lastCancelTs;
-        query.lastCompleteTs = prevTile?.query?.lastCompleteTs;
-        query.lastCompleteDuration = prevTile?.query?.lastCompleteDuration;
-        query.lastErrorMessage = prevTile?.query?.lastErrorMessage;
-        query.lastErrorTs = prevTile?.query?.lastErrorTs;
+        dashboardMalloyQueries.push(query);
       }
-
-      insertOrDoNothingQueries.push(query);
     });
 
     let dashboardStoreMconfigs = dashboardMconfigs.filter(
       mconfig => mconfig.modelType === ModelTypeEnum.Store
     );
+
+    let storeQueries: QueryTab[] = [];
 
     await forEachSeries(dashboardStoreMconfigs, async apiMconfig => {
       let newMconfig: MconfigTab;
@@ -360,11 +341,40 @@ export class CreateDraftDashboardController {
       newDashboardTile.trackChangeId = makeId();
 
       insertMconfigs.push(newMconfig);
+      storeQueries.push(newQuery);
+    });
 
-      if (isError === true) {
-        insertOrUpdateQueries.push(newQuery);
+    let combinedQueries = [...dashboardMalloyQueries, ...storeQueries];
+
+    insertMconfigs.forEach(mconfig => {
+      // prev query and new query has different queryId (different parent dashboardId)
+      let prevTile = fromDashboardX.tiles.find(
+        y => y.title === mconfig.chart.title
+      );
+
+      let prevQuery = prevTile?.query;
+
+      let query = combinedQueries.find(y => y.queryId === mconfig.queryId);
+
+      if (
+        isDefined(prevQuery) &&
+        prevQuery.status !== QueryStatusEnum.Error &&
+        query.status !== QueryStatusEnum.Error &&
+        isQueryCache === true
+      ) {
+        query.data = prevTile?.query?.data;
+        query.status = prevTile?.query?.status;
+        query.lastRunBy = prevTile?.query?.lastRunBy;
+        query.lastRunTs = prevTile?.query?.lastRunTs;
+        query.lastCancelTs = prevTile?.query?.lastCancelTs;
+        query.lastCompleteTs = prevTile?.query?.lastCompleteTs;
+        query.lastCompleteDuration = prevTile?.query?.lastCompleteDuration;
+        query.lastErrorMessage = prevTile?.query?.lastErrorMessage;
+        query.lastErrorTs = prevTile?.query?.lastErrorTs;
+
+        insertOrUpdateQueries.push(query);
       } else {
-        insertOrDoNothingQueries.push(newQuery);
+        insertOrDoNothingQueries.push(query);
       }
     });
 
