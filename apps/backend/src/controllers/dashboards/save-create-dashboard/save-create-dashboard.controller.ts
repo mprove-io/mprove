@@ -420,15 +420,17 @@ export class SaveCreateDashboardController {
     await retry(
       async () =>
         await this.db.drizzle.transaction(async tx => {
-          await tx
-            .delete(dashboardsTable)
-            .where(
-              and(
-                eq(dashboardsTable.draft, true),
-                eq(dashboardsTable.dashboardId, fromDashboardId),
-                eq(dashboardsTable.structId, bridge.structId)
-              )
-            );
+          if (isDefined(fromDashboardId)) {
+            await tx
+              .delete(dashboardsTable)
+              .where(
+                and(
+                  eq(dashboardsTable.draft, true),
+                  eq(dashboardsTable.dashboardId, fromDashboardId),
+                  eq(dashboardsTable.structId, bridge.structId)
+                )
+              );
+          }
 
           await this.db.packer.write({
             tx: tx,
