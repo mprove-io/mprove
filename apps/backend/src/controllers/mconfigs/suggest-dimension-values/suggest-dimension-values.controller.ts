@@ -36,7 +36,6 @@ import { TabService } from '~backend/services/tab.service';
 import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
 import { PROD_REPO_ID, UTC } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
@@ -53,7 +52,6 @@ import {
   ToBackendSuggestDimensionValuesRequest,
   ToBackendSuggestDimensionValuesResponsePayload
 } from '~common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
-import { ServerError } from '~common/models/server-error';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
 let retry = require('async-retry');
@@ -135,16 +133,11 @@ export class SuggestDimensionValuesController {
       envId: envId
     });
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
+    let struct = await this.structsService.getStructCheckExistsAndNotChanged({
+      projectId: projectId,
+      bridgeStructId: bridge.structId,
+      structId: structId
     });
-
-    if (structId !== bridge.structId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
-      });
-    }
 
     let parentId = isDefined(dashboardId)
       ? dashboardId

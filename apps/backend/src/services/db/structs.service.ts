@@ -112,6 +112,27 @@ export class StructsService {
     return struct;
   }
 
+  async getStructCheckExistsAndNotChanged(item: {
+    bridgeStructId: string;
+    projectId: string;
+    structId: string;
+  }) {
+    let { bridgeStructId, projectId, structId } = item;
+
+    let struct = await this.getStructCheckExists({
+      structId: bridgeStructId,
+      projectId: projectId
+    });
+
+    if (structId !== bridgeStructId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
+      });
+    }
+
+    return struct;
+  }
+
   async removeStructs() {
     let rawData: any = await this.db.drizzle.execute(sql`
 SELECT

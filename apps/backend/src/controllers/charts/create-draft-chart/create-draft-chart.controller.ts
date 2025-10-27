@@ -130,16 +130,11 @@ export class CreateDraftChartController {
       envId: envId
     });
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
+    let struct = await this.structsService.getStructCheckExistsAndNotChanged({
+      projectId: projectId,
+      bridgeStructId: bridge.structId,
+      structId: apiMconfig.structId
     });
-
-    if (apiMconfig.structId !== bridge.structId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
-      });
-    }
 
     let model = await this.modelsService.getModelCheckExistsAndAccess({
       structId: bridge.structId,

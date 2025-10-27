@@ -35,7 +35,6 @@ import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -48,7 +47,6 @@ import {
   ToBackendGroupMetricByDimensionRequest,
   ToBackendGroupMetricByDimensionResponsePayload
 } from '~common/interfaces/to-backend/mconfigs/to-backend-group-metric-by-dimension';
-import { ServerError } from '~common/models/server-error';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '~node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
 
 let retry = require('async-retry');
@@ -130,16 +128,11 @@ export class GroupMetricByDimensionController {
       structId: bridge.structId
     });
 
-    let struct = await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
+    let struct = await this.structsService.getStructCheckExistsAndNotChanged({
+      projectId: projectId,
+      bridgeStructId: bridge.structId,
+      structId: oldMconfig.structId
     });
-
-    if (oldMconfig.structId !== bridge.structId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
-      });
-    }
 
     await this.parentService.checkAccess({
       parentId: oldMconfig.parentId,

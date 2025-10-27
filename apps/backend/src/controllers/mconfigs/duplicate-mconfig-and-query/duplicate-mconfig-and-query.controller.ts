@@ -34,7 +34,6 @@ import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
 import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
@@ -42,7 +41,6 @@ import {
   ToBackendDuplicateMconfigAndQueryRequest,
   ToBackendDuplicateMconfigAndQueryResponsePayload
 } from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
-import { ServerError } from '~common/models/server-error';
 import { makeQueryId } from '~node-common/functions/make-query-id';
 
 let retry = require('async-retry');
@@ -114,16 +112,11 @@ export class DuplicateMconfigAndQueryController {
       mconfigId: oldMconfigId
     });
 
-    await this.structsService.getStructCheckExists({
-      structId: bridge.structId,
-      projectId: projectId
+    await this.structsService.getStructCheckExistsAndNotChanged({
+      projectId: projectId,
+      bridgeStructId: bridge.structId,
+      structId: oldMconfig.structId
     });
-
-    if (oldMconfig.structId !== bridge.structId) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_STRUCT_ID_CHANGED
-      });
-    }
 
     await this.parentService.checkAccess({
       parentId: oldMconfig.parentId,
