@@ -763,7 +763,8 @@ export class DashboardAddFilterDialogComponent implements OnInit {
       newDashboardId: makeId(),
       newDashboardFields: [...this.dashboard.fields, field],
       timezone: this.uiQuery.getValue().timezone,
-      isQueryCache: false
+      isQueryCache: false,
+      cachedQueryMconfigIds: []
     });
   }
 

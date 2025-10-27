@@ -300,7 +300,8 @@ export class DashboardEditListenersDialogComponent implements OnInit {
       newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone,
-      isQueryCache: false
+      isQueryCache: false,
+      cachedQueryMconfigIds: []
     });
   }
 

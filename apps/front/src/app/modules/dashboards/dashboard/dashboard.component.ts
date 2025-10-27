@@ -263,7 +263,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone,
-      isQueryCache: true
+      isQueryCache: true,
+      cachedQueryMconfigIds: this.dashboard.tiles.map(
+        tile => tile.mconfig.mconfigId
+      )
     });
   }
 
@@ -284,7 +287,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone,
-      isQueryCache: true
+      isQueryCache: true,
+      cachedQueryMconfigIds: this.dashboard.tiles.map(
+        tile => tile.mconfig.mconfigId
+      )
     });
   }
 
@@ -315,7 +321,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       newDashboardId: makeId(),
       newDashboardFields: this.dashboard.fields,
       timezone: this.uiQuery.getValue().timezone,
-      isQueryCache: false
+      isQueryCache: false,
+      cachedQueryMconfigIds: []
     });
   }
 
