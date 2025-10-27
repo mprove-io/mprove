@@ -125,12 +125,12 @@ export class CancelQueriesController {
     let uniqueParentIds = [...new Set(mconfigs.map(x => x.parentId))];
 
     await forEachSeries(uniqueParentIds, async parentId => {
-      let mconfig = mconfigs.find(x => x.parentId === parentId);
+      let mconfig = mconfigs.find(x => x.parentId === parentId); // any mconfig
 
       await this.parentService.checkAccess({
         parentId: mconfig.parentId,
         parentType: mconfig.parentType,
-        modelId: mconfig.modelId,
+        modelId: mconfig.modelId, // for chart as parent
         user: user,
         userMember: userMember,
         structId: bridge.structId,

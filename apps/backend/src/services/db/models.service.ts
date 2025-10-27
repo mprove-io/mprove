@@ -116,6 +116,12 @@ export class ModelsService {
   }): Promise<ModelTab> {
     let { modelId, structId, userMember } = item;
 
+    if (isUndefined(modelId)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_MODEL_ID_IS_NOT_DEFINED
+      });
+    }
+
     let model = await this.db.drizzle.query.modelsTable
       .findFirst({
         where: and(

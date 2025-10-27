@@ -178,7 +178,7 @@ export class SuggestDimensionValuesController {
       isCheckSuggest: true,
       suggestFieldId: fieldId,
       suggestRowId: rowId,
-      model: model
+      suggestModel: model
     });
 
     let apiMconfig: Mconfig;

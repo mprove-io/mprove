@@ -37,11 +37,11 @@ export class ParentService {
     projectId: string;
     parentType: MconfigParentTypeEnum;
     parentId: string;
-    modelId: string;
+    modelId?: string;
     isCheckSuggest?: boolean;
     suggestFieldId?: string;
     suggestRowId?: string;
-    model?: ModelTab;
+    suggestModel?: ModelTab;
   }) {
     let {
       user,
@@ -54,7 +54,7 @@ export class ParentService {
       isCheckSuggest,
       suggestFieldId,
       suggestRowId,
-      model
+      suggestModel
     } = item;
 
     if (
@@ -100,7 +100,7 @@ export class ParentService {
           let row = report.rows.find(x => x.rowId === suggestRowId);
 
           let rowParameters = row.parametersFiltersWithExcludedTime.map(x =>
-            model.fields.find(y => y.id === x.fieldId)
+            suggestModel.fields.find(y => y.id === x.fieldId)
           );
 
           let parameter = rowParameters.find(

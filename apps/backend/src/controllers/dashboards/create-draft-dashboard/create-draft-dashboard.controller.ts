@@ -31,6 +31,7 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
+import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
@@ -68,6 +69,7 @@ export class CreateDraftDashboardController {
     private blockmlService: BlockmlService,
     private structsService: StructsService,
     private dashboardsService: DashboardsService,
+    private parentService: ParentService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
     private envsService: EnvsService,
@@ -264,8 +266,6 @@ export class CreateDraftDashboardController {
     newApiDashboard.draft = true;
     newApiDashboard.creatorId = user.userId;
 
-    // TODO: check parentId
-
     let cachedMconfigs = await this.db.drizzle.query.mconfigsTable
       .findMany({
         where: and(
@@ -274,6 +274,15 @@ export class CreateDraftDashboardController {
         )
       })
       .then(xs => xs.map(x => this.tabService.mconfigEntToTab(x)));
+
+    // access checked already for fromDashboardX
+    cachedMconfigs.forEach(x => {
+      if (x.parentId !== fromDashboardX.dashboardId) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_MCONFIG_PARENT_ID_MISMATCH
+        });
+      }
+    });
 
     let cachedQueryIds = cachedMconfigs.map(x => x.queryId);
 
