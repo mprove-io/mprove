@@ -34,7 +34,7 @@ export enum FractionTypeEnum {
   NumberIsNotGreaterThanOrEqualTo = 'NumberIsNotGreaterThanOrEqualTo', // new // not supported (malloy issue)
   NumberIsNotLessThan = 'NumberIsNotLessThan', // new // not supported (malloy issue)
   NumberIsNotLessThanOrEqualTo = 'NumberIsNotLessThanOrEqualTo', // new // not supported (malloy issue)
-  NumberIsNotBetween = 'NumberIsNotBetween',
+  NumberIsNotBetween = 'NumberIsNotBetween', // new // test combined with other NOTs
   NumberIsNotNull = 'NumberIsNotNull',
 
   BooleanIsAnyValue = 'BooleanIsAnyValue',
