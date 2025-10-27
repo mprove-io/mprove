@@ -126,11 +126,11 @@ export class FractionNumberComponent implements OnInit {
     //   value: FractionTypeEnum.NumberIsNotLessThanOrEqualTo, // not supported (malloy issue)
     //   operator: FractionOperatorEnum.And
     // },
-    // {
-    //   label: 'is not between',
-    //   value: FractionTypeEnum.NumberIsNotBetween, // not supported (malloy issue)
-    //   operator: FractionOperatorEnum.And
-    // },
+    {
+      label: 'is not between',
+      value: FractionTypeEnum.NumberIsNotBetween, // not supported (malloy issue)
+      operator: FractionOperatorEnum.And
+    },
     {
       label: 'is not null',
       value: FractionTypeEnum.NumberIsNotNull,
