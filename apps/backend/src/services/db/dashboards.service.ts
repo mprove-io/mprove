@@ -547,14 +547,8 @@ export class DashboardsService {
 
     let combinedQueries = [...dashboardMalloyQueries, ...storeQueries];
 
-    console.log('fromDashboardX.tiles');
-    console.log(fromDashboardX.tiles);
-
     insertMconfigs.forEach(mconfig => {
       let query = combinedQueries.find(y => y.queryId === mconfig.queryId);
-
-      console.log('mconfig.chart.title');
-      console.log(mconfig.chart.title);
 
       // prev query and new query has different queryId (different parent dashboardId)
       let prevTile = fromDashboardX.tiles.find(
@@ -562,9 +556,6 @@ export class DashboardsService {
       );
 
       let prevQuery = prevTile?.query;
-
-      console.log('prevQuery?.queryId');
-      console.log(prevQuery?.queryId);
 
       if (
         isQueryCache === true &&
