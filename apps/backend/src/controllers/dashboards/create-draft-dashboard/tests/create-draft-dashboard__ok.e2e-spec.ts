@@ -143,10 +143,8 @@ test('1', async t => {
         newDashboardFields: resp1.payload.dashboard.fields,
         tiles: resp1.payload.dashboard.tiles,
         timezone: 'UTC',
-        isQueryCache: true,
-        cachedQueryMconfigIds: resp1.payload.dashboard.tiles.map(
-          x => x.mconfigId
-        )
+        isQueryCache: false,
+        cachedQueryMconfigIds: []
       }
     };
 
