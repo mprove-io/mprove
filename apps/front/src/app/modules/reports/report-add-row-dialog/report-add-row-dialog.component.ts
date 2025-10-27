@@ -17,6 +17,7 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { RowChange } from '~common/interfaces/blockml/row-change';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -57,16 +58,27 @@ export class ReportAddRowDialogComponent implements OnInit {
   metrics: ModelMetric[];
   metricsHasAccess$ = combineLatest([
     this.modelsQuery.models$,
-    this.structQuery.metrics$
+    this.structQuery.metrics$,
+    this.memberQuery.isAdmin$,
+    this.memberQuery.isEditor$
   ]).pipe(
-    tap(([models, metrics]: [ModelX[], ModelMetric[]]) => {
-      this.metrics = metrics.filter(metric => {
-        let model = models.find(y => y.modelId === metric.modelId);
-        return model?.hasAccess === true;
-      });
+    tap(
+      ([models, metrics, isAdmin, isEditor]: [
+        ModelX[],
+        ModelMetric[],
+        boolean,
+        boolean
+      ]) => {
+        this.metrics = metrics.filter(metric => {
+          let model = models.find(y => y.modelId === metric.modelId);
+          return (
+            isAdmin === true || isEditor === true || model?.hasAccess === true
+          );
+        });
 
-      this.cd.detectChanges();
-    })
+        this.cd.detectChanges();
+      }
+    )
   );
 
   newMetricId: string;
@@ -77,6 +89,7 @@ export class ReportAddRowDialogComponent implements OnInit {
     private reportService: ReportService,
     private uiQuery: UiQuery,
     private structQuery: StructQuery,
+    private memberQuery: MemberQuery,
     private modelsQuery: ModelsQuery,
     private reportQuery: ReportQuery,
     private cd: ChangeDetectorRef

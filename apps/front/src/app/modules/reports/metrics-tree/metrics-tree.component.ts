@@ -25,6 +25,7 @@ import { makeCopy } from '~common/functions/make-copy';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 import { RowChange } from '~common/interfaces/blockml/row-change';
+import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { ReportQuery } from '~front/app/queries/report.query';
 import { StructQuery } from '~front/app/queries/struct.query';
@@ -61,17 +62,23 @@ export class MetricsTreeComponent implements AfterViewInit {
   metricNodes$ = combineLatest([
     this.modelsQuery.models$,
     this.structQuery.metrics$,
-    this.uiQuery.searchMetricsWord$
+    this.uiQuery.searchMetricsWord$,
+    this.memberQuery.isAdmin$,
+    this.memberQuery.isEditor$
   ]).pipe(
     tap(
-      ([models, metrics, searchMetricsWord]: [
+      ([models, metrics, searchMetricsWord, isAdmin, isEditor]: [
         ModelX[],
         ModelMetric[],
-        string
+        string,
+        boolean,
+        boolean
       ]) => {
         this.metrics = metrics.filter(metric => {
           let model = models.find(y => y.modelId === metric.modelId);
-          return model?.hasAccess === true;
+          return (
+            isAdmin === true || isEditor === true || model?.hasAccess === true
+          );
         });
 
         this.makeMetricNodes({ searchMetricsWord: searchMetricsWord });
@@ -94,6 +101,7 @@ export class MetricsTreeComponent implements AfterViewInit {
   constructor(
     private modelsQuery: ModelsQuery,
     private structQuery: StructQuery,
+    private memberQuery: MemberQuery,
     private cd: ChangeDetectorRef,
     private reportQuery: ReportQuery,
     private uiQuery: UiQuery,

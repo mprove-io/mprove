@@ -1528,8 +1528,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.filteredCharts = [...draftCharts, ...this.chartsFilteredByWord];
 
     this.filteredCharts = this.filteredCharts.sort((a, b) => {
-      let aTitle = a.title || a.chartId;
-      let bTitle = b.title || b.chartId;
+      let aTitle = (a.title || a.chartId).toUpperCase();
+      let bTitle = (b.title || b.chartId).toUpperCase();
 
       return b.draft === true && a.draft !== true
         ? 1

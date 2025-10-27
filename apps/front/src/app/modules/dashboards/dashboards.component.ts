@@ -352,8 +352,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
     ];
 
     this.dashboardPartsFiltered = this.dashboardPartsFiltered.sort((a, b) => {
-      let aTitle = a.title || a.dashboardId;
-      let bTitle = b.title || b.dashboardId;
+      let aTitle = (a.title || a.dashboardId).toUpperCase();
+      let bTitle = (b.title || b.dashboardId).toUpperCase();
 
       return b.draft === true && a.draft !== true
         ? 1

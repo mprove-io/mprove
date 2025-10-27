@@ -104,10 +104,18 @@ export class GetDashboardsController {
       needValidate: bridge.needValidate,
       struct: this.structsService.tabToApi({ struct: struct }),
       userMember: apiUserMember,
-      models: apiModels.sort((a, b) =>
-        a.label > b.label ? 1 : b.label > a.label ? -1 : 0
-      ),
-      dashboardParts: dashboardParts
+      models: apiModels.sort((a, b) => {
+        let aLabel = a.label?.toUpperCase();
+        let bLabel = b.label?.toUpperCase();
+
+        return aLabel > bLabel ? 1 : bLabel > aLabel ? -1 : 0;
+      }),
+      dashboardParts: dashboardParts.sort((a, b) => {
+        let aTitle = a.title?.toUpperCase();
+        let bTitle = b.title?.toUpperCase();
+
+        return aTitle > bTitle ? 1 : bTitle > aTitle ? -1 : 0;
+      })
     };
 
     return payload;

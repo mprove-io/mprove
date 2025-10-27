@@ -1060,8 +1060,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
     this.filteredReports = [...draftReports, ...this.reportsFilteredByWord];
 
     this.filteredReports = this.filteredReports.sort((a, b) => {
-      let aTitle = a.title || a.reportId;
-      let bTitle = b.title || b.reportId;
+      let aTitle = (a.title || a.reportId).toUpperCase();
+      let bTitle = (b.title || b.reportId).toUpperCase();
 
       return b.draft === true && a.draft !== true
         ? 1
