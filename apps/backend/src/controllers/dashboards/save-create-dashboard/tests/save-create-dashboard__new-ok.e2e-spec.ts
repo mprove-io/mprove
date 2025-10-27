@@ -6,7 +6,8 @@ import { Prep } from '~backend/interfaces/prep';
 import {
   BRANCH_MAIN,
   EMPTY_STORE_GOOGLE_API_OPTIONS,
-  PROJECT_ENV_PROD
+  PROJECT_ENV_PROD,
+  UTC
 } from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
@@ -115,7 +116,8 @@ test('1', async t => {
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
         newDashboardId: dashboardId,
-        dashboardTitle: newTitle
+        dashboardTitle: newTitle,
+        timezone: UTC
       }
     };
 

@@ -6,7 +6,8 @@ import { Prep } from '~backend/interfaces/prep';
 import {
   BRANCH_MAIN,
   EMPTY_STORE_GOOGLE_API_OPTIONS,
-  PROJECT_ENV_PROD
+  PROJECT_ENV_PROD,
+  UTC
 } from '~common/constants/top';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
@@ -144,7 +145,8 @@ test('1', async t => {
         fromDashboardId: dashboardId,
         newTile: fromDashboard.tiles[0],
         isReplaceTile: true,
-        selectedTileTitle: fromDashboard.tiles[0].title
+        selectedTileTitle: fromDashboard.tiles[0].title,
+        timezone: UTC
       }
     };
 

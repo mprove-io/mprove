@@ -248,7 +248,7 @@ export class SaveCreateChartController {
       charts: apiCharts,
       mconfigs: apiMconfigs,
       queries: apiQueries,
-      struct: apiStruct
+      struct: tempStruct
     } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       projectId: projectId,
@@ -264,7 +264,7 @@ export class SaveCreateChartController {
       cachedMetrics: []
     });
 
-    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...tempStruct.errors];
 
     await retry(
       async () =>
@@ -293,7 +293,7 @@ export class SaveCreateChartController {
         message: ErEnum.BACKEND_CREATE_CHART_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: apiStruct.errors
+          structErrors: tempStruct.errors
         }
       });
     }

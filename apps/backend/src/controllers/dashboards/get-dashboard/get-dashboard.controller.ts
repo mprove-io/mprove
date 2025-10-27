@@ -8,15 +8,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import {
-  MconfigTab,
-  QueryTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
@@ -42,13 +37,10 @@ import {
 } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import {
   ToBackendGetDashboardRequest,
@@ -199,7 +191,7 @@ export class GetDashboardController {
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
-      struct: apiStruct,
+      struct: tempStruct,
       dashboards: apiDashboards,
       mconfigs: apiMconfigs,
       models: apiModels,
@@ -219,97 +211,40 @@ export class GetDashboardController {
       cachedMetrics: []
     });
 
-    let newDashboard = apiDashboards.find(
+    let newApiDashboard = apiDashboards.find(
       x => x.dashboardId === newDashboardId
     );
 
-    if (isUndefined(newDashboard)) {
+    if (isUndefined(newApiDashboard)) {
       throw new ServerError({
         message: ErEnum.BACKEND_GET_DASHBOARD_FAIL,
         displayData: {
-          structErrors: apiStruct.errors
+          structErrors: tempStruct.errors
         }
       });
     }
 
-    newDashboard.draft = fromDashboardX.draft;
-    newDashboard.creatorId = fromDashboardX.creatorId;
+    newApiDashboard.draft = fromDashboardX.draft;
+    newApiDashboard.creatorId = fromDashboardX.creatorId;
 
-    let dashboardMconfigIds = newDashboard.tiles.map(x => x.mconfigId);
-    let dashboardMconfigs = apiMconfigs.filter(
-      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
-    );
-
-    let dashboardQueryIds = newDashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = apiQueries.filter(
-      x => dashboardQueryIds.indexOf(x.queryId) > -1
-    );
-
-    let insertMconfigs: MconfigTab[] = [];
-    let insertOrUpdateQueries: QueryTab[] = [];
-    let insertOrDoNothingQueries: QueryTab[] = [];
-
-    let dashboardMalloyMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === ModelTypeEnum.Malloy
-    );
-
-    dashboardMalloyMconfigs.forEach(apiMconfig => {
-      let mconfig = this.mconfigsService.apiToTab({ apiMconfig: apiMconfig });
-
-      insertMconfigs.push(mconfig);
-
-      let apiQuery = dashboardQueries.find(
-        y => y.queryId === apiMconfig.queryId
-      );
-
-      let query = this.queriesService.apiToTab({ apiQuery: apiQuery });
-
-      insertOrDoNothingQueries.push(query);
-    });
-
-    let dashboardStoreMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === ModelTypeEnum.Store
-    );
-
-    await forEachSeries(dashboardStoreMconfigs, async apiMconfig => {
-      let newMconfig: MconfigTab;
-      let newQuery: QueryTab;
-      let isError = false;
-
-      let apiModel = apiModels.find(y => y.modelId === apiMconfig.modelId);
-
-      if (apiMconfig.modelType === ModelTypeEnum.Store) {
-        let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-          struct: apiStruct,
-          project: project,
-          envId: envId,
-          mconfigParentType: MconfigParentTypeEnum.Dashboard,
-          mconfigParentId: newDashboardId,
-          model: this.modelsService.apiToTab({ apiModel: apiModel }),
-          mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
-          metricsStartDateYYYYMMDD: undefined,
-          metricsEndDateYYYYMMDD: undefined
-        });
-
-        newMconfig = mqe.newMconfig;
-        newQuery = mqe.newQuery;
-        isError = mqe.isError;
-
-        let newDashboardTile = newDashboard.tiles.find(
-          tile => tile.mconfigId === apiMconfig.mconfigId
-        );
-        newDashboardTile.queryId = newMconfig.queryId;
-        newDashboardTile.mconfigId = newMconfig.mconfigId;
-        newDashboardTile.trackChangeId = makeId();
-
-        insertMconfigs.push(newMconfig);
-
-        if (isError === true) {
-          insertOrUpdateQueries.push(newQuery);
-        } else {
-          insertOrDoNothingQueries.push(newQuery);
-        }
-      }
+    let {
+      newDashboard,
+      insertMconfigs,
+      insertOrUpdateQueries,
+      insertOrDoNothingQueries
+    } = await this.dashboardsService.processDashboard({
+      newApiDashboard: newApiDashboard,
+      apiMconfigs: apiMconfigs,
+      apiQueries: apiQueries,
+      apiModels: apiModels,
+      fromDashboardX: fromDashboardX,
+      isQueryCache: false,
+      cachedQueries: [],
+      cachedMconfigs: [],
+      envId: envId,
+      newDashboardId: newDashboardId,
+      tempStruct: tempStruct,
+      project: project
     });
 
     await retry(
@@ -335,7 +270,7 @@ export class GetDashboardController {
     let newDashboardX =
       await this.dashboardsService.getDashboardXUsingDashboardTab({
         dashboard: this.dashboardsService.apiToTab({
-          apiDashboard: newDashboard
+          apiDashboard: newApiDashboard
         }),
         projectId: projectId,
         structId: bridge.structId,

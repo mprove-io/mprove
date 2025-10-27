@@ -262,7 +262,7 @@ export class SaveModifyReportController {
       )
     ];
 
-    let { reports: apiReports, struct: apiStruct } =
+    let { reports: apiReports, struct: tempStruct } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         projectId: projectId,
@@ -278,7 +278,7 @@ export class SaveModifyReportController {
         cachedMetrics: cachedMetrics
       });
 
-    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...tempStruct.errors];
 
     await retry(
       async () =>
@@ -320,7 +320,7 @@ export class SaveModifyReportController {
         message: ErEnum.BACKEND_MODIFY_REPORT_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: apiStruct.errors
+          structErrors: tempStruct.errors
         }
       });
     }
@@ -363,8 +363,8 @@ export class SaveModifyReportController {
       userMember: userMember,
       user: user,
       envId: envId,
-      struct: apiStruct,
-      metrics: apiStruct.metrics,
+      struct: tempStruct,
+      metrics: tempStruct.metrics,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone

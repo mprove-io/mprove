@@ -9,15 +9,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { and, eq, inArray } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import {
-  MconfigTab,
-  QueryTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
@@ -44,13 +39,10 @@ import {
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
 import { TileX } from '~common/interfaces/backend/tile-x';
 import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
 import {
@@ -234,7 +226,7 @@ export class EditDraftDashboardController {
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
-      struct: apiStruct,
+      struct: tempStruct,
       dashboards: apiDashboards,
       mconfigs: apiMconfigs,
       models: apiModels,
@@ -262,7 +254,7 @@ export class EditDraftDashboardController {
       throw new ServerError({
         message: ErEnum.BACKEND_EDIT_DRAFT_DASHBOARD_FAILED,
         displayData: {
-          structErrors: apiStruct.errors
+          structErrors: tempStruct.errors
         }
       });
     }
@@ -270,83 +262,24 @@ export class EditDraftDashboardController {
     newApiDashboard.draft = true;
     newApiDashboard.creatorId = user.userId;
 
-    let dashboardMconfigIds = newApiDashboard.tiles.map(x => x.mconfigId);
-    let dashboardMconfigs = apiMconfigs.filter(
-      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
-    );
-
-    let dashboardQueryIds = newApiDashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = apiQueries.filter(
-      x => dashboardQueryIds.indexOf(x.queryId) > -1
-    );
-
-    let insertMconfigs: MconfigTab[] = [];
-    let insertOrUpdateQueries: QueryTab[] = [];
-    let insertOrDoNothingQueries: QueryTab[] = [];
-
-    let dashboardMalloyMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === ModelTypeEnum.Malloy
-    );
-
-    dashboardMalloyMconfigs.forEach(apiMconfig => {
-      let mconfig = this.mconfigsService.apiToTab({ apiMconfig: apiMconfig });
-
-      insertMconfigs.push(mconfig);
-
-      let apiQuery = dashboardQueries.find(
-        y => y.queryId === apiMconfig.queryId
-      );
-
-      let query = this.queriesService.apiToTab({ apiQuery: apiQuery });
-
-      insertOrDoNothingQueries.push(query);
-    });
-
-    let dashboardStoreMconfigs = dashboardMconfigs.filter(
-      mconfig => mconfig.modelType === ModelTypeEnum.Store
-    );
-
-    await forEachSeries(dashboardStoreMconfigs, async apiMconfig => {
-      let newMconfig: MconfigTab;
-      let newQuery: QueryTab;
-      let isError = false;
-
-      let apiModel = apiModels.find(y => y.modelId === apiMconfig.modelId);
-
-      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-        struct: apiStruct,
-        project: project,
-        envId: envId,
-        mconfigParentType: MconfigParentTypeEnum.Dashboard,
-        mconfigParentId: newDashboardId,
-        model: this.modelsService.apiToTab({ apiModel: apiModel }),
-        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
-        metricsStartDateYYYYMMDD: undefined,
-        metricsEndDateYYYYMMDD: undefined
-      });
-
-      newMconfig = mqe.newMconfig;
-      newQuery = mqe.newQuery;
-      isError = mqe.isError;
-
-      let newDashboardTile = newApiDashboard.tiles.find(
-        tile => tile.mconfigId === apiMconfig.mconfigId
-      );
-      newDashboardTile.queryId = newMconfig.queryId;
-      newDashboardTile.mconfigId = newMconfig.mconfigId;
-      newDashboardTile.trackChangeId = makeId();
-
-      insertMconfigs.push(newMconfig);
-
-      if (isError === true) {
-        insertOrUpdateQueries.push(newQuery);
-      } else {
-        insertOrDoNothingQueries.push(newQuery);
-      }
-    });
-
-    let newDashboard = this.dashboardsService.apiToTab({
-      apiDashboard: newApiDashboard
+    let {
+      newDashboard,
+      insertMconfigs,
+      insertOrUpdateQueries,
+      insertOrDoNothingQueries
+    } = await this.dashboardsService.processDashboard({
+      newApiDashboard: newApiDashboard,
+      apiMconfigs: apiMconfigs,
+      apiQueries: apiQueries,
+      apiModels: apiModels,
+      fromDashboardX: fromDashboardX,
+      isQueryCache: false,
+      cachedQueries: [],
+      cachedMconfigs: [],
+      envId: envId,
+      newDashboardId: newDashboardId,
+      tempStruct: tempStruct,
+      project: project
     });
 
     await retry(

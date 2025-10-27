@@ -132,7 +132,8 @@ export class EditDashboardInfoDialogComponent implements OnInit {
         toDashboardId: this.ref.data.dashboardPart.dashboardId,
         dashboardTitle: newTitle.trim(),
         accessRoles: roles,
-        tilesGrid: undefined
+        tilesGrid: undefined,
+        timezone: this.uiQuery.getValue().timezone
       };
 
       let apiService: ApiService = this.ref.data.apiService;

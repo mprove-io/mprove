@@ -37,6 +37,7 @@ import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -118,6 +119,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     public ref: DialogRef<DashboardSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private uiQuery: UiQuery,
     private navQuery: NavQuery,
     private structQuery: StructQuery,
     private navigateService: NavigateService,
@@ -251,7 +253,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         delete y.mconfig;
         delete y.query;
         return y;
-      })
+      }),
+      timezone: this.uiQuery.getValue().timezone
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -317,7 +320,8 @@ export class DashboardSaveAsDialogComponent implements OnInit {
         delete y.mconfig;
         delete y.query;
         return y;
-      })
+      }),
+      timezone: this.uiQuery.getValue().timezone
     };
 
     let apiService: ApiService = this.ref.data.apiService;

@@ -274,7 +274,7 @@ export class SaveCreateReportController {
       )
     ];
 
-    let { reports: apiReports, struct: apiStruct } =
+    let { reports: apiReports, struct: tempStruct } =
       await this.blockmlService.rebuildStruct({
         traceId: traceId,
         projectId: projectId,
@@ -290,7 +290,7 @@ export class SaveCreateReportController {
         cachedMetrics: cachedMetrics
       });
 
-    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...tempStruct.errors];
 
     await retry(
       async () =>
@@ -318,7 +318,7 @@ export class SaveCreateReportController {
         message: ErEnum.BACKEND_CREATE_REPORT_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: apiStruct.errors
+          structErrors: tempStruct.errors
         }
       });
     }
@@ -361,8 +361,8 @@ export class SaveCreateReportController {
       userMember: userMember,
       user: user,
       envId: envId,
-      struct: apiStruct,
-      metrics: apiStruct.metrics,
+      struct: tempStruct,
+      metrics: tempStruct.metrics,
       timeSpec: timeSpec,
       timeRangeFractionBrick: timeRangeFractionBrick,
       timezone: timezone

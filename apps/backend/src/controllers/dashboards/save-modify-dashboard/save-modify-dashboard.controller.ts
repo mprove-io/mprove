@@ -40,7 +40,6 @@ import { EMPTY_STRUCT_ID, PROD_REPO_ID, UTC } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
@@ -102,7 +101,8 @@ export class SaveModifyDashboardController {
       isReplaceTile,
       accessRoles,
       dashboardTitle,
-      tilesGrid
+      tilesGrid,
+      timezone
     } = reqValid.payload;
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
@@ -336,10 +336,11 @@ export class SaveModifyDashboardController {
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
-      struct: apiStruct,
+      struct: tempStruct,
       dashboards: apiDashboards,
       mconfigs: apiMconfigs,
-      queries: apiQueries
+      queries: apiQueries,
+      models: apiModels
     } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
       projectId: projectId,
@@ -348,14 +349,14 @@ export class SaveModifyDashboardController {
       mproveDir: currentStruct.mproveConfig.mproveDirValue,
       skipDb: true,
       envId: envId,
-      overrideTimezone: undefined,
+      overrideTimezone: timezone,
       isUseCache: true,
       cachedMproveConfig: currentStruct.mproveConfig,
       cachedModels: cachedModels,
       cachedMetrics: []
     });
 
-    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...tempStruct.errors];
 
     await retry(
       async () =>
@@ -399,48 +400,29 @@ export class SaveModifyDashboardController {
         message: ErEnum.BACKEND_MODIFY_DASHBOARD_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: apiStruct.errors
+          structErrors: tempStruct.errors
         }
       });
     }
 
-    let dashboardMconfigIds = newApiDashboard.tiles.map(x => x.mconfigId);
-    let dashboardMconfigs = apiMconfigs.filter(
-      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
-    );
-
-    let dashboardQueryIds = newApiDashboard.tiles.map(x => x.queryId);
-    let dashboardQueries = apiQueries.filter(
-      x => dashboardQueryIds.indexOf(x.queryId) > -1
-    );
-
-    newApiDashboard.tiles.forEach(tile => {
-      let query = apiQueries.find(q => q.queryId === tile.queryId);
-
-      // prev query and new query has different queryId (different parent dashboardId)
-      let prevTile = fromDashboardX.tiles.find(y => y.title === tile.title);
-
-      let prevQuery = prevTile?.query;
-
-      if (
-        isDefined(prevQuery) &&
-        prevQuery.status === QueryStatusEnum.Completed &&
-        query.status !== QueryStatusEnum.Error
-      ) {
-        query.data = prevTile?.query?.data;
-        query.status = prevTile?.query?.status;
-        query.lastRunBy = prevTile?.query?.lastRunBy;
-        query.lastRunTs = prevTile?.query?.lastRunTs;
-        query.lastCancelTs = prevTile?.query?.lastCancelTs;
-        query.lastCompleteTs = prevTile?.query?.lastCompleteTs;
-        query.lastCompleteDuration = prevTile?.query?.lastCompleteDuration;
-        query.lastErrorMessage = prevTile?.query?.lastErrorMessage;
-        query.lastErrorTs = prevTile?.query?.lastErrorTs;
-      }
-    });
-
-    let newDashboard = this.dashboardsService.apiToTab({
-      apiDashboard: newApiDashboard
+    let {
+      newDashboard,
+      insertMconfigs,
+      insertOrUpdateQueries,
+      insertOrDoNothingQueries
+    } = await this.dashboardsService.processDashboard({
+      newApiDashboard: newApiDashboard,
+      apiMconfigs: apiMconfigs,
+      apiQueries: apiQueries,
+      apiModels: apiModels,
+      fromDashboardX: fromDashboardX,
+      isQueryCache: true,
+      cachedQueries: [],
+      cachedMconfigs: [],
+      envId: envId,
+      newDashboardId: newApiDashboard.dashboardId,
+      tempStruct: tempStruct,
+      project: project
     });
 
     await retry(
@@ -459,15 +441,14 @@ export class SaveModifyDashboardController {
           await this.db.packer.write({
             tx: tx,
             insert: {
-              mconfigs: dashboardMconfigs.map(x =>
-                this.mconfigsService.apiToTab({ apiMconfig: x })
-              )
+              mconfigs: insertMconfigs
             },
             insertOrUpdate: {
               dashboards: [newDashboard],
-              queries: dashboardQueries.map(x =>
-                this.queriesService.apiToTab({ apiQuery: x })
-              )
+              queries: insertOrUpdateQueries
+            },
+            insertOrDoNothing: {
+              queries: insertOrDoNothingQueries
             }
           });
         }),

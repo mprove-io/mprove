@@ -39,6 +39,9 @@ export class ToBackendCreateDraftDashboardRequestPayload {
 
   @IsBoolean()
   isQueryCache: boolean;
+
+  @IsString({ each: true })
+  cachedQueryMconfigIds: string[];
 }
 
 export class ToBackendCreateDraftDashboardRequest extends ToBackendRequest {

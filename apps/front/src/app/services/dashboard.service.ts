@@ -59,6 +59,7 @@ export class DashboardService {
     newDashboardFields: DashboardField[];
     timezone: string;
     isQueryCache: boolean;
+    cachedQueryMconfigIds: string[];
   }) {
     let {
       isDraft,
@@ -67,7 +68,8 @@ export class DashboardService {
       newDashboardId,
       newDashboardFields,
       timezone,
-      isQueryCache
+      isQueryCache,
+      cachedQueryMconfigIds
     } = item;
 
     if (isDraft === true) {
@@ -85,7 +87,8 @@ export class DashboardService {
         newDashboardId: newDashboardId,
         newDashboardFields: newDashboardFields,
         timezone: timezone,
-        isQueryCache: isQueryCache
+        isQueryCache: isQueryCache,
+        cachedQueryMconfigIds: cachedQueryMconfigIds
       });
     }
   }
@@ -97,6 +100,7 @@ export class DashboardService {
     newDashboardFields: DashboardField[];
     timezone: string;
     isQueryCache: boolean;
+    cachedQueryMconfigIds: string[];
   }) {
     this.spinner.show(APP_SPINNER_NAME);
 
@@ -106,7 +110,8 @@ export class DashboardService {
       newDashboardId,
       newDashboardFields,
       timezone,
-      isQueryCache
+      isQueryCache,
+      cachedQueryMconfigIds
     } = item;
 
     let newTiles: TileX[] = [];
@@ -128,7 +133,8 @@ export class DashboardService {
       newDashboardFields: newDashboardFields,
       tiles: newTiles,
       timezone: timezone,
-      isQueryCache: isQueryCache
+      isQueryCache: isQueryCache,
+      cachedQueryMconfigIds: cachedQueryMconfigIds
     };
 
     this.apiService

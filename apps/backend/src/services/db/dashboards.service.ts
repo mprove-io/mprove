@@ -1,11 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray, or } from 'drizzle-orm';
+import { forEachSeries } from 'p-iteration';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import {
   DashboardTab,
   MemberTab,
+  ProjectTab,
+  StructTab,
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
+import { MconfigTab, QueryTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   DashboardEnt,
   dashboardsTable
@@ -17,16 +21,22 @@ import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
-import { MPROVE_USERS_FOLDER } from '~common/constants/top';
+import { EMPTY_QUERY_ID, MPROVE_USERS_FOLDER } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
+import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
+import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { makeId } from '~common/functions/make-id';
 import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
 import { DashboardX } from '~common/interfaces/backend/dashboard-x';
 import { MconfigX } from '~common/interfaces/backend/mconfig-x';
 import { Member } from '~common/interfaces/backend/member';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { Mconfig } from '~common/interfaces/blockml/mconfig';
+import { Model } from '~common/interfaces/blockml/model';
 import { Query } from '~common/interfaces/blockml/query';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
@@ -430,5 +440,182 @@ export class DashboardsService {
     );
 
     return apiDashboardParts;
+  }
+
+  async processDashboard(item: {
+    newApiDashboard: Dashboard;
+    apiMconfigs: Mconfig[];
+    apiQueries: Query[];
+    apiModels: Model[];
+    fromDashboardX: DashboardX;
+    isQueryCache: boolean;
+    cachedMconfigs: MconfigTab[];
+    cachedQueries: QueryTab[];
+    envId: string;
+    newDashboardId: string;
+    tempStruct: StructTab;
+    project: ProjectTab;
+  }) {
+    let {
+      newApiDashboard,
+      apiMconfigs,
+      apiQueries,
+      apiModels,
+      fromDashboardX,
+      isQueryCache,
+      cachedQueries,
+      cachedMconfigs,
+      envId,
+      newDashboardId,
+      tempStruct,
+      project
+    } = item;
+
+    let dashboardMconfigIds = newApiDashboard.tiles.map(x => x.mconfigId);
+    let dashboardMconfigs = apiMconfigs.filter(
+      x => dashboardMconfigIds.indexOf(x.mconfigId) > -1
+    );
+
+    let dashboardQueryIds = newApiDashboard.tiles.map(x => x.queryId);
+    let dashboardQueries = apiQueries
+      .filter(x => dashboardQueryIds.indexOf(x.queryId) > -1)
+      .map(x => this.queriesService.apiToTab({ apiQuery: x }));
+
+    let insertMconfigs: MconfigTab[] = [];
+    let insertOrUpdateQueries: QueryTab[] = [];
+    let insertOrDoNothingQueries: QueryTab[] = [];
+
+    let dashboardMalloyMconfigs = dashboardMconfigs.filter(
+      mconfig => mconfig.modelType === ModelTypeEnum.Malloy
+    );
+
+    let dashboardMalloyQueries: QueryTab[] = [];
+
+    dashboardMalloyMconfigs.forEach(apiMconfig => {
+      let mconfig = this.mconfigsService.apiToTab({ apiMconfig: apiMconfig });
+
+      insertMconfigs.push(mconfig);
+
+      let query = dashboardQueries.find(x => x.queryId === mconfig.queryId);
+
+      if (
+        dashboardMalloyQueries.map(x => x.queryId).indexOf(query.queryId) < 0
+      ) {
+        dashboardMalloyQueries.push(query);
+      }
+    });
+
+    let dashboardStoreMconfigs = dashboardMconfigs.filter(
+      mconfig => mconfig.modelType === ModelTypeEnum.Store
+    );
+
+    let storeQueries: QueryTab[] = [];
+
+    await forEachSeries(dashboardStoreMconfigs, async apiMconfig => {
+      let newMconfig: MconfigTab;
+      let newQuery: QueryTab;
+      let isError = false;
+
+      let apiModel = apiModels.find(y => y.modelId === apiMconfig.modelId);
+
+      let mqe = await this.mconfigsService.prepStoreMconfigQuery({
+        struct: tempStruct,
+        project: project,
+        envId: envId,
+        mconfigParentType: MconfigParentTypeEnum.Dashboard,
+        mconfigParentId: newDashboardId,
+        model: this.modelsService.apiToTab({ apiModel: apiModel }),
+        mconfig: this.mconfigsService.apiToTab({ apiMconfig: apiMconfig }),
+        metricsStartDateYYYYMMDD: undefined,
+        metricsEndDateYYYYMMDD: undefined
+      });
+
+      newMconfig = mqe.newMconfig;
+      newQuery = mqe.newQuery;
+      isError = mqe.isError;
+
+      let newDashboardTile = newApiDashboard.tiles.find(
+        tile => tile.mconfigId === apiMconfig.mconfigId
+      );
+      newDashboardTile.queryId = newMconfig.queryId;
+      newDashboardTile.mconfigId = newMconfig.mconfigId;
+      newDashboardTile.trackChangeId = makeId();
+
+      insertMconfigs.push(newMconfig);
+      storeQueries.push(newQuery);
+    });
+
+    let combinedQueries = [...dashboardMalloyQueries, ...storeQueries];
+
+    console.log('fromDashboardX.tiles');
+    console.log(fromDashboardX.tiles);
+
+    insertMconfigs.forEach(mconfig => {
+      let query = combinedQueries.find(y => y.queryId === mconfig.queryId);
+
+      console.log('mconfig.chart.title');
+      console.log(mconfig.chart.title);
+
+      // prev query and new query has different queryId (different parent dashboardId)
+      let prevTile = fromDashboardX.tiles.find(
+        y => y.title === mconfig.chart.title
+      );
+
+      let prevQuery = prevTile?.query;
+
+      console.log('prevQuery?.queryId');
+      console.log(prevQuery?.queryId);
+
+      if (
+        isQueryCache === true &&
+        query.status !== QueryStatusEnum.Error &&
+        isDefined(prevQuery) &&
+        prevQuery.status === QueryStatusEnum.Completed
+      ) {
+        query.data = prevQuery.data;
+        query.status = prevQuery.status;
+        query.lastCompleteTs = prevQuery.lastCompleteTs;
+        query.lastCompleteDuration = prevQuery.lastCompleteDuration;
+
+        insertOrUpdateQueries.push(query);
+      } else if (
+        isQueryCache === true &&
+        query.status !== QueryStatusEnum.Error &&
+        prevTile.queryId === EMPTY_QUERY_ID &&
+        cachedQueries.length > 0
+      ) {
+        let cachedMconfig = cachedMconfigs.find(
+          x => x.chart.title === mconfig.chart.title
+        );
+
+        let cachedQuery = cachedQueries.find(
+          x => x.queryId === cachedMconfig.queryId
+        );
+
+        if (cachedQuery.status === QueryStatusEnum.Completed) {
+          query.data = cachedQuery.data;
+          query.status = cachedQuery.status;
+          query.lastCompleteTs = cachedQuery.lastCompleteTs;
+          query.lastCompleteDuration = cachedQuery.lastCompleteDuration;
+
+          insertOrUpdateQueries.push(query);
+        } else {
+          insertOrDoNothingQueries.push(query);
+        }
+      } else {
+        insertOrDoNothingQueries.push(query);
+      }
+    });
+
+    let newDashboard = this.apiToTab({
+      apiDashboard: newApiDashboard
+    });
+
+    return {
+      newDashboard: newDashboard,
+      insertMconfigs: insertMconfigs,
+      insertOrUpdateQueries: insertOrUpdateQueries,
+      insertOrDoNothingQueries: insertOrDoNothingQueries
+    };
   }
 }

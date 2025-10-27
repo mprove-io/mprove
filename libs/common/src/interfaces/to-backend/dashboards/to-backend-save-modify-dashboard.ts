@@ -55,6 +55,9 @@ export class ToBackendSaveModifyDashboardRequestPayload {
   @ValidateNested()
   @Type(() => TileX)
   tilesGrid?: TileX[];
+
+  @IsString()
+  timezone: string;
 }
 
 export class ToBackendSaveModifyDashboardRequest extends ToBackendRequest {

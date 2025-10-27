@@ -255,7 +255,7 @@ export class SaveModifyChartController {
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
     let {
-      struct: apiStruct,
+      struct: tempStruct,
       charts: apiCharts,
       mconfigs: apiMconfigs,
       queries: apiQueries
@@ -274,7 +274,7 @@ export class SaveModifyChartController {
       cachedMetrics: []
     });
 
-    currentStruct.errors = [...currentStruct.errors, ...apiStruct.errors];
+    currentStruct.errors = [...currentStruct.errors, ...tempStruct.errors];
 
     await retry(
       async () =>
@@ -316,7 +316,7 @@ export class SaveModifyChartController {
         message: ErEnum.BACKEND_MODIFY_CHART_FAIL,
         displayData: {
           encodedFileId: encodeFilePath({ filePath: filePath }),
-          structErrors: apiStruct.errors
+          structErrors: tempStruct.errors
         }
       });
     }
@@ -341,7 +341,7 @@ export class SaveModifyChartController {
 
     if (model.type === ModelTypeEnum.Store) {
       let mqe = await this.mconfigsService.prepStoreMconfigQuery({
-        struct: apiStruct,
+        struct: tempStruct,
         project: project,
         envId: envId,
         mconfigParentType: MconfigParentTypeEnum.Chart,

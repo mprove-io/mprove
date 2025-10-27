@@ -55,6 +55,7 @@ import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
+import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
@@ -156,6 +157,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
     public ref: DialogRef<ChartSaveAsDialogData>,
     private fb: FormBuilder,
     private userQuery: UserQuery,
+    private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
     private chartsQuery: ChartsQuery,
@@ -461,7 +463,8 @@ export class ChartSaveAsDialogComponent implements OnInit {
       fromDashboardId: this.selectedDashboardId,
       selectedTileTitle: this.selectedTileTitle,
       newTile: newTile,
-      isReplaceTile: this.tileSaveAs === TileSaveAsEnum.REPLACE_EXISTING_TILE
+      isReplaceTile: this.tileSaveAs === TileSaveAsEnum.REPLACE_EXISTING_TILE,
+      timezone: this.uiQuery.getValue().timezone
     };
 
     apiService
