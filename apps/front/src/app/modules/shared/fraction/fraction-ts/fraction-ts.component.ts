@@ -342,7 +342,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       operator: FractionOperatorEnum.And,
       timeframeLevel: 0
     },
-    // { // TODO: check malloy progress
+    // {
     //   label: 'is not after',
     //   value: FractionTypeEnum.TsIsNotAfter, // is through
     //   operator: FractionOperatorEnum.And,
@@ -350,7 +350,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     // },
     // {
     //   label: 'is not starting at',
-    //   value: FractionTypeEnum.TsIsNotStarting, // is before // not supported (malloy issue)
+    //   value: FractionTypeEnum.TsIsNotStarting, // is before
     //   operator: FractionOperatorEnum.And,
     //   level: 0
     // },
@@ -360,7 +360,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
       operator: FractionOperatorEnum.And,
       timeframeLevel: 0
     },
-    // { // TODO: check malloy progress
+    // {
     //   label: 'is not before',
     //   value: FractionTypeEnum.TsIsNotBefore, // is starting
     //   operator: FractionOperatorEnum.And,
@@ -368,7 +368,7 @@ export class FractionTsComponent implements OnInit, OnChanges {
     // },
     // {
     //   label: 'is not through',
-    //   value: FractionTypeEnum.TsIsNotThrough, // is after // not supported (malloy issue)
+    //   value: FractionTypeEnum.TsIsNotThrough, // is after
     //   operator: FractionOperatorEnum.And,
     //   level: 0
     // },
