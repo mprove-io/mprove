@@ -93,6 +93,7 @@ export class StoreService {
               type: FractionTypeEnum.StoreFraction,
               controls: [] as any[],
               brick: undefined as any,
+              parentBrick: undefined as any,
               operator: undefined as any
             };
 

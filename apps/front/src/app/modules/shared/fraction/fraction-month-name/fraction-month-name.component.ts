@@ -144,7 +144,8 @@ export class FractionMonthNameComponent {
         this.fraction = {
           type: fractionType,
           operator: FractionOperatorEnum.Or,
-          brick: `any`
+          brick: `any`,
+          parentBrick: `any`
         };
 
         this.emitFractionUpdate();
@@ -158,7 +159,8 @@ export class FractionMonthNameComponent {
           type: fractionType,
           operator: FractionOperatorEnum.Or,
           monthNameValue: newMonthNameValue,
-          brick: `${newMonthNameValue}`
+          brick: `${newMonthNameValue}`,
+          parentBrick: `${newMonthNameValue}`
         };
 
         this.emitFractionUpdate();
@@ -170,7 +172,8 @@ export class FractionMonthNameComponent {
         this.fraction = {
           type: fractionType,
           operator: FractionOperatorEnum.Or,
-          brick: `null`
+          brick: `null`,
+          parentBrick: `null`
         };
 
         this.emitFractionUpdate();
@@ -185,7 +188,8 @@ export class FractionMonthNameComponent {
           type: fractionType,
           operator: FractionOperatorEnum.And,
           monthNameValue: newMonthNameValue,
-          brick: `not ${newMonthNameValue}`
+          brick: `not ${newMonthNameValue}`,
+          parentBrick: `not ${newMonthNameValue}`
         };
 
         this.emitFractionUpdate();
@@ -197,7 +201,8 @@ export class FractionMonthNameComponent {
         this.fraction = {
           type: fractionType,
           operator: FractionOperatorEnum.And,
-          brick: `not null`
+          brick: `not null`,
+          parentBrick: `not null`
         };
 
         this.emitFractionUpdate();
@@ -218,14 +223,16 @@ export class FractionMonthNameComponent {
         type: this.fraction.type,
         operator: FractionOperatorEnum.Or,
         monthNameValue: fractionMonthNameValue,
-        brick: `${fractionMonthNameValue}`
+        brick: `${fractionMonthNameValue}`,
+        parentBrick: `${fractionMonthNameValue}`
       };
     } else if (this.fraction.type === FractionTypeEnum.MonthNameIsNot) {
       this.fraction = {
         type: this.fraction.type,
         operator: FractionOperatorEnum.And,
         monthNameValue: fractionMonthNameValue,
-        brick: `not ${fractionMonthNameValue}`
+        brick: `not ${fractionMonthNameValue}`,
+        parentBrick: `not ${fractionMonthNameValue}`
       };
     }
 

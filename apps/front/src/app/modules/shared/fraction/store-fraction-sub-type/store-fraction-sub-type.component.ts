@@ -94,7 +94,8 @@ export class StoreFractionSubTypeComponent {
           };
           return newControl;
         }),
-      brick: undefined as any
+      brick: undefined as any,
+      parentBrick: undefined as any
     };
 
     this.fraction = newFraction;

@@ -12,7 +12,6 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { MALLOY_FILTER_ANY } from '~common/constants/top';
 import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { isDefined } from '~common/functions/is-defined';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
 import { FractionTypeItem } from '../fraction.component';
@@ -111,10 +110,8 @@ export class FractionBooleanComponent {
         let mBrick = MALLOY_FILTER_ANY;
 
         this.fraction = {
-          brick: isDefined(this.fraction.parentBrick) ? mBrick : `any`,
-          parentBrick: isDefined(this.fraction.parentBrick)
-            ? mBrick
-            : undefined,
+          brick: mBrick,
+          parentBrick: mBrick,
           operator: FractionOperatorEnum.And, // "And" isntead of "Or"
           type: fractionType
         };

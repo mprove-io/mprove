@@ -88,6 +88,7 @@ export class FractionYesnoComponent {
       case FractionTypeEnum.YesnoIsAnyValue: {
         this.fraction = {
           brick: `any`,
+          parentBrick: `any`,
           operator: FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -101,6 +102,7 @@ export class FractionYesnoComponent {
 
         this.fraction = {
           brick: `${newYesnoValue.toLowerCase()}`,
+          parentBrick: `${newYesnoValue.toLowerCase()}`,
           operator: FractionOperatorEnum.Or,
           type: fractionType,
           yesnoValue: newYesnoValue
@@ -123,7 +125,8 @@ export class FractionYesnoComponent {
       type: FractionTypeEnum.YesnoIs,
       operator: FractionOperatorEnum.Or,
       yesnoValue: fractionYesnoValue,
-      brick: `${fractionYesnoValue.toLowerCase()}`
+      brick: `${fractionYesnoValue.toLowerCase()}`,
+      parentBrick: `${fractionYesnoValue.toLowerCase()}`
     };
 
     this.emitFractionUpdate();

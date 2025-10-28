@@ -196,6 +196,7 @@ export function wrapTiles(item: {
                   ? undefined
                   : y.logic,
               brick: undefined,
+              parentBrick: undefined,
               type: FractionTypeEnum.StoreFraction,
               storeFractionSubTypeOptions: storeFractionSubTypeOptions,
               storeFractionSubType: storeFractionSubType,

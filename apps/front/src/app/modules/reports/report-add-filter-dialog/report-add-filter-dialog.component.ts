@@ -680,6 +680,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
             : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
+        parentBrick: undefined,
         type: FractionTypeEnum.StoreFraction,
         storeResult: this.fieldResultForm.controls['fieldResult'].value,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
@@ -709,6 +710,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
     } else {
       fraction = {
         brick: 'any',
+        parentBrick: 'any',
         operator: FractionOperatorEnum.Or,
         type: getFractionTypeForAny(
           this.fieldResultForm.controls['fieldResult'].value

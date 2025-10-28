@@ -124,7 +124,8 @@ export class FractionDayOfWeekComponent {
         this.fraction = {
           type: fractionType,
           operator: FractionOperatorEnum.Or,
-          brick: `any`
+          brick: `any`,
+          parentBrick: `any`
         };
 
         this.emitFractionUpdate();
@@ -138,7 +139,8 @@ export class FractionDayOfWeekComponent {
           type: fractionType,
           operator: FractionOperatorEnum.Or,
           dayOfWeekValue: newDayOfWeekValue,
-          brick: `${newDayOfWeekValue}`
+          brick: `${newDayOfWeekValue}`,
+          parentBrick: `${newDayOfWeekValue}`
         };
 
         this.emitFractionUpdate();
@@ -150,7 +152,8 @@ export class FractionDayOfWeekComponent {
         this.fraction = {
           type: fractionType,
           operator: FractionOperatorEnum.Or,
-          brick: `null`
+          brick: `null`,
+          parentBrick: `null`
         };
 
         this.emitFractionUpdate();
@@ -165,7 +168,8 @@ export class FractionDayOfWeekComponent {
           type: fractionType,
           operator: FractionOperatorEnum.And,
           dayOfWeekValue: newDayOfWeekValue,
-          brick: `not ${newDayOfWeekValue}`
+          brick: `not ${newDayOfWeekValue}`,
+          parentBrick: `not ${newDayOfWeekValue}`
         };
 
         this.emitFractionUpdate();
@@ -177,7 +181,8 @@ export class FractionDayOfWeekComponent {
         this.fraction = {
           type: fractionType,
           operator: FractionOperatorEnum.And,
-          brick: `not null`
+          brick: `not null`,
+          parentBrick: `not null`
         };
 
         this.emitFractionUpdate();
@@ -198,14 +203,16 @@ export class FractionDayOfWeekComponent {
         type: this.fraction.type,
         operator: FractionOperatorEnum.Or,
         dayOfWeekValue: fractionDayOfWeekValue,
-        brick: `${fractionDayOfWeekValue}`
+        brick: `${fractionDayOfWeekValue}`,
+        parentBrick: `${fractionDayOfWeekValue}`
       };
     } else if (this.fraction.type === FractionTypeEnum.DayOfWeekIsNot) {
       this.fraction = {
         type: this.fraction.type,
         operator: FractionOperatorEnum.And,
         dayOfWeekValue: fractionDayOfWeekValue,
-        brick: `not ${fractionDayOfWeekValue}`
+        brick: `not ${fractionDayOfWeekValue}`,
+        parentBrick: `not ${fractionDayOfWeekValue}`
       };
     }
 

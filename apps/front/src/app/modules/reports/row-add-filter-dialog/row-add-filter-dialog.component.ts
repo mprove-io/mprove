@@ -276,6 +276,7 @@ export class RowAddFilterDialogComponent implements OnInit {
             : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
+        parentBrick: undefined,
         type: FractionTypeEnum.StoreFraction,
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
@@ -327,6 +328,7 @@ export class RowAddFilterDialogComponent implements OnInit {
     } else {
       newFraction = {
         brick: 'any',
+        parentBrick: 'any',
         operator: FractionOperatorEnum.Or,
         type: getFractionTypeForAny(field.result)
       };

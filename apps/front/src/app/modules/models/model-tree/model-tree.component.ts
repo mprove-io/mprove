@@ -326,6 +326,7 @@ export class ModelTreeComponent implements AfterViewInit {
               : FractionOperatorEnum.And,
           logicGroup: logicGroup,
           brick: undefined,
+          parentBrick: undefined,
           type: FractionTypeEnum.StoreFraction,
           storeResult: field.result,
           storeFractionSubTypeOptions: storeFractionSubTypeOptions,
@@ -370,6 +371,7 @@ export class ModelTreeComponent implements AfterViewInit {
       } else {
         newFraction = {
           brick: 'any',
+          parentBrick: 'any',
           operator: FractionOperatorEnum.Or,
           type: getFractionTypeForAny(node.data.fieldResult)
         };

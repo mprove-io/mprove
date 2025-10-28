@@ -78,9 +78,13 @@
     [formGroup]="numberSingleValueForm"
     *ngIf="
       fraction.type === fractionTypeEnum.NumberIsGreaterThan ||
+      fraction.type === fractionTypeEnum.NumberIsNotGreaterThan ||
       fraction.type === fractionTypeEnum.NumberIsGreaterThanOrEqualTo ||
+      fraction.type === fractionTypeEnum.NumberIsNotGreaterThanOrEqualTo ||
       fraction.type === fractionTypeEnum.NumberIsLessThan ||
-      fraction.type === fractionTypeEnum.NumberIsLessThanOrEqualTo
+      fraction.type === fractionTypeEnum.NumberIsNotLessThan ||
+      fraction.type === fractionTypeEnum.NumberIsLessThanOrEqualTo ||
+      fraction.type === fractionTypeEnum.NumberIsNotLessThanOrEqualTo
     "
   >
     <div

@@ -206,6 +206,7 @@ export class SuggestDimensionValuesController {
                 fractions: [
                   {
                     brick: `%${term}%`,
+                    parentBrick: `%${term}%`,
                     type: FractionTypeEnum.StringContains,
                     operator: FractionOperatorEnum.Or
                   }

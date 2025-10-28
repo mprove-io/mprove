@@ -106,6 +106,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
       case this.fractionTypeEnum.DayOfWeekIndexIsAnyValue: {
         this.fraction = {
           brick: `any`,
+          parentBrick: `any`,
           operator: FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -119,6 +120,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
         this.fraction = {
           brick: `${dayOfWeekIndexValues}`,
+          parentBrick: `${dayOfWeekIndexValues}`,
           operator: FractionOperatorEnum.Or,
           type: fractionType,
           dayOfWeekIndexValues: dayOfWeekIndexValues
@@ -132,6 +134,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
       case this.fractionTypeEnum.DayOfWeekIndexIsNull: {
         this.fraction = {
           brick: `null`,
+          parentBrick: `null`,
           operator: FractionOperatorEnum.Or,
           type: fractionType
         };
@@ -145,6 +148,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
         this.fraction = {
           brick: `not ${dayOfWeekIndexValues}`,
+          parentBrick: `not ${dayOfWeekIndexValues}`,
           operator: FractionOperatorEnum.And,
           type: fractionType,
           dayOfWeekIndexValues: dayOfWeekIndexValues
@@ -159,6 +163,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
       case this.fractionTypeEnum.DayOfWeekIndexIsNotNull: {
         this.fraction = {
           brick: `not null`,
+          parentBrick: `not null`,
           operator: FractionOperatorEnum.And,
           type: fractionType
         };
@@ -192,6 +197,7 @@ export class FractionDayOfWeekIndexComponent implements OnInit {
 
       this.fraction = {
         brick: newBrick,
+        parentBrick: newBrick,
         operator: this.fraction.operator,
         type: this.fraction.type,
         dayOfWeekIndexValues: value

@@ -116,6 +116,7 @@ export function wrapDashboards(item: {
                     : FractionOperatorEnum.And,
                 logicGroup: isDefined(field.store_filter) ? undefined : y.logic,
                 brick: undefined,
+                parentBrick: undefined,
                 type: FractionTypeEnum.StoreFraction,
                 storeFractionSubTypeOptions: storeFractionSubTypeOptions,
                 storeFractionSubType: storeFractionSubType,

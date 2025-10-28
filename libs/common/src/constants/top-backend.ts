@@ -43,6 +43,7 @@ export const DEFAULT_SRV_UI: Ui = {
   timeSpec: TimeSpecEnum.Days,
   timeRangeFraction: {
     brick: 'f`last 5 days`',
+    parentBrick: 'f`last 5 days`',
     operator: FractionOperatorEnum.Or,
     tsLastCompleteOption: FractionTsLastCompleteOptionEnum.CompleteWithCurrent,
     tsLastUnit: FractionTsUnitEnum.Days,

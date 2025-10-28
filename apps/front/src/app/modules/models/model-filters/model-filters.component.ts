@@ -170,6 +170,7 @@ export class ModelFiltersComponent {
             : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
+        parentBrick: undefined,
         type: FractionTypeEnum.StoreFraction,
         storeResult: field.result,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
@@ -219,6 +220,7 @@ export class ModelFiltersComponent {
     } else {
       newFraction = {
         brick: 'any',
+        parentBrick: 'any',
         operator: FractionOperatorEnum.Or,
         type: getFractionTypeForAny(filterExtended.field.result)
       };

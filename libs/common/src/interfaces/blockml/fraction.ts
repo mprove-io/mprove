@@ -36,7 +36,7 @@ export class Fraction {
 
   @IsOptional()
   @IsString()
-  parentBrick?: string;
+  parentBrick: string;
 
   @IsOptional()
   @IsEnum(FractionOperatorEnum)

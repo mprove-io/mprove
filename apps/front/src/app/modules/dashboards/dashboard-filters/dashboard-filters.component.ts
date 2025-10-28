@@ -138,6 +138,7 @@ export class DashboardFiltersComponent {
             : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
+        parentBrick: undefined,
         type: FractionTypeEnum.StoreFraction,
         storeResult: dashboardField.storeResult,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
@@ -180,6 +181,7 @@ export class DashboardFiltersComponent {
     } else {
       newFraction = {
         brick: 'any',
+        parentBrick: 'any',
         operator: FractionOperatorEnum.Or,
         type: getFractionTypeForAny(dashboardField.result)
       };

@@ -131,6 +131,7 @@ export class ReportFiltersComponent {
             : FractionOperatorEnum.And,
         logicGroup: logicGroup,
         brick: undefined,
+        parentBrick: undefined,
         type: FractionTypeEnum.StoreFraction,
         storeResult: reportField.storeResult,
         storeFractionSubTypeOptions: storeFractionSubTypeOptions,
