@@ -122,22 +122,13 @@ export function processMalloyWhereOrHaving(item: {
     }
 
     if (ANDs.length > 0) {
-      let fstrANDs =
-        filterModelField.result === FieldResultEnum.String
-          ? ANDs.map(y => y.brick.slice(2, -1)).join(', ')
-          : filterModelField.result === FieldResultEnum.Number
-            ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-            : filterModelField.result === FieldResultEnum.Ts
-              ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-              : filterModelField.result === FieldResultEnum.Date
-                ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
-                : undefined;
-
-      if (modelField.fieldClass === FieldClassEnum.Dimension) {
-        segment0.addWhere(filterFieldName, filterFieldPath, fstrANDs);
-      } else {
-        segment0.addHaving(filterFieldName, filterFieldPath, fstrANDs);
-      }
+      ANDs.map(y => y.brick.slice(2, -1)).forEach(fstr => {
+        if (modelField.fieldClass === FieldClassEnum.Dimension) {
+          segment0.addWhere(filterFieldName, filterFieldPath, fstr);
+        } else {
+          segment0.addHaving(filterFieldName, filterFieldPath, fstr);
+        }
+      });
     }
 
     if (booleanValues.length > 0) {
