@@ -64,7 +64,7 @@ export class FractionBooleanComponent {
     },
     {
       operator: FractionOperatorEnum.And,
-      label: 'is false',
+      label: 'is false (not null)',
       value: FractionTypeEnum.BooleanIsFalse
     },
     {

@@ -4423,113 +4423,113 @@
   resolved "https://registry.yarnpkg.com/@lukeed/csprng/-/csprng-1.1.0.tgz#1e3e4bd05c1cc7a0b2ddbd8a03f39f6e4b5e6cfe"
   integrity sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==
 
-"@malloydata/db-bigquery@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/db-bigquery/-/db-bigquery-0.0.315.tgz#570bdc18036b6adac2657ef3603dbfda76724b27"
-  integrity sha512-73UwLBNqB8enKquOF+Oba5G5Qv6/knWWdfmLC8q8bLsZVR7REKQ387KiJfxyTYwrnj3eosFOnQkT+UpCFfv4cA==
+"@malloydata/db-bigquery@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/db-bigquery/-/db-bigquery-0.0.318.tgz#0119bc3b1259b46c89f5f6ea13ccf92a31c80fdd"
+  integrity sha512-P0Ydk1hHSR/yY7paXdU3IgAsT2Ye5K+C5+bIlyFrhHCyn/MVMREZKr7FPGWbtn99tWJ8G3JH5bdsuV6ZnLhThA==
   dependencies:
     "@google-cloud/bigquery" "^7.3.0"
     "@google-cloud/common" "^5.0.1"
     "@google-cloud/paginator" "^5.0.0"
-    "@malloydata/malloy" "0.0.315"
+    "@malloydata/malloy" "0.0.318"
     gaxios "^4.2.0"
 
-"@malloydata/db-duckdb@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/db-duckdb/-/db-duckdb-0.0.315.tgz#c8d1590fbf1c5798ae3d436aa649cde869c430a0"
-  integrity sha512-t6lqQLdlSI9Y1G5JCzJlioSTnMTYtB4pk1oL2BSaoXs4jMkdkhDAXuTBcN7rhfMURSL2a2C4i+PtrBtCJeEt3w==
+"@malloydata/db-duckdb@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/db-duckdb/-/db-duckdb-0.0.318.tgz#fb5cf33737457cbe08064a38a9e1fef70f840259"
+  integrity sha512-ycvCuSYofcNpL3sLSid1Pcrx1JqumZr3ZIWbu5yEeTjdhQ7nUyqnRhNwexq6yUAcsfBLNo6LyPhIaJd/ORyCPA==
   dependencies:
     "@duckdb/duckdb-wasm" "1.29.1-dev132.0"
-    "@malloydata/malloy" "0.0.315"
+    "@malloydata/malloy" "0.0.318"
     "@motherduck/wasm-client" "^0.6.6"
     apache-arrow "^17.0.0"
     duckdb "1.3.4"
     web-worker "^1.3.0"
 
-"@malloydata/db-mysql@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/db-mysql/-/db-mysql-0.0.315.tgz#87a64fb1abe92f38bfbcb3e10b1b8c8487800265"
-  integrity sha512-UjVrDVxDlRPKJfdHnYML96cHlCtGiEzUX+xS0VJ1YmInyrLJNXlgjcHHNHjjdAyK7oRcqsAv91cYcX7NFZ/mqg==
+"@malloydata/db-mysql@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/db-mysql/-/db-mysql-0.0.318.tgz#de251c1cc24a1a9ef9e31c0c7d7ba6bbf560ba0a"
+  integrity sha512-+AJf7SboNdqjyjsQA9iIL8ftsN5iJ/Mp5zj1veaDJTiqtAJa7UHS5wRr6DBqb9k28JRIvVLLQUDE7Cef0rc5FQ==
   dependencies:
-    "@malloydata/malloy" "0.0.315"
+    "@malloydata/malloy" "0.0.318"
     "@types/node" "^22.7.4"
     fastestsmallesttextencoderdecoder "^1.0.22"
     luxon "^3.5.0"
     mysql2 "^3.11.3"
 
-"@malloydata/db-postgres@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/db-postgres/-/db-postgres-0.0.315.tgz#dda1dcc697bd6b583c0587f5fdfd1cd0586ca2dd"
-  integrity sha512-YMvoAupl6HoDAS/KS4W69etM5FisAgaVn9KkRLQ2Zs6lXWO0eUJLNpwAZ8Fr+Gkc+qDW+N034ByLZyauefXtfw==
+"@malloydata/db-postgres@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/db-postgres/-/db-postgres-0.0.318.tgz#6fa4ad8724481d8a3da3582f605ffe120669619f"
+  integrity sha512-1yHYbTdMEvaRoaP1Jc/Srmq8yi2cgc2SUDv9qZ1hW8IqPeqSYu5lSdYnYsJvCmxVL41NDrrp/0Els/tpwrerGA==
   dependencies:
-    "@malloydata/malloy" "0.0.315"
+    "@malloydata/malloy" "0.0.318"
     "@types/pg" "^8.6.1"
     pg "^8.7.1"
     pg-query-stream "4.2.3"
 
-"@malloydata/db-snowflake@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/db-snowflake/-/db-snowflake-0.0.315.tgz#ea5154962791304648d7342a44f1cab4a355cb95"
-  integrity sha512-9K+gWvjsnB0BxG6wrW0kQHWAhnfNULPkfDJBDX/GJfeQFkhYaItHe53YLtPNL9OA4LkC63lb/sQIWEFFutogrg==
+"@malloydata/db-snowflake@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/db-snowflake/-/db-snowflake-0.0.318.tgz#65d621c7b326e5243741e0ae1a47d58aaaa71fe4"
+  integrity sha512-+PBYUweG3V4ylH62NXxSajooN87E/PKS3IHvfrc7c/n++BrgC8CqmIrIRicsavrWe3Rva1BHh/2OEqmBs6J1wA==
   dependencies:
-    "@malloydata/malloy" "0.0.315"
+    "@malloydata/malloy" "0.0.318"
     generic-pool "^3.9.0"
     snowflake-sdk "2.0.2"
     toml "^3.0.0"
 
-"@malloydata/db-trino@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/db-trino/-/db-trino-0.0.315.tgz#e19a1ca543370968da267962fe541b0f3926e643"
-  integrity sha512-BuamvJqOVselIKAhAiaQcM0wWFeaOqU1fZSaBBGA1mUYutNlXvdcOEQXRfrKTIvSAP4Vnxgf65yqIqcCOyM17g==
+"@malloydata/db-trino@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/db-trino/-/db-trino-0.0.318.tgz#98896ba7cb868f81099139da69039fa03dcd0b3d"
+  integrity sha512-/TY/XIV/eQZljiiiHr7NVE43qrrMrjSywxty6Ri0ybYWm4bDGY4CBDWrGt+71e42hoeBvaAMplA4hfq0LvC56A==
   dependencies:
-    "@malloydata/malloy" "0.0.315"
+    "@malloydata/malloy" "0.0.318"
     "@prestodb/presto-js-client" "^1.0.0"
     gaxios "^4.2.0"
     trino-client "^0.2.2"
 
-"@malloydata/malloy-filter@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/malloy-filter/-/malloy-filter-0.0.315.tgz#3989ff08d8479657c34b2bf7c52d424cce071dd2"
-  integrity sha512-38/b4PiUQaukow+WK8b19VuiCZVIv41GraLgnoa6TVAdLbnF6WePfbY2+XtLLov149EQhokG928hvrj40Agelg==
+"@malloydata/malloy-filter@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/malloy-filter/-/malloy-filter-0.0.318.tgz#ef9553d150810ed4bc23fb46e55008be06dbb9d6"
+  integrity sha512-fY1NIiLDMaWbdQVYdtJFKuPs7vsmE0bx6OOakMkHqElV3zI1eyi8w2id+GhjICDrKB7RNovFI0H3MX+baqQjPA==
   dependencies:
     jest-diff "^29.6.2"
     luxon "^3.5.0"
     moo "^0.5.2"
     nearley "^2.20.1"
 
-"@malloydata/malloy-interfaces@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/malloy-interfaces/-/malloy-interfaces-0.0.315.tgz#4d9da4862bf0762168c117dafded891615bb6209"
-  integrity sha512-DRdWn/B2gwXIpl9I2fWtEthneXDmbs4i8hRe0IrepiGOUHQJO75d99til2/cejnmD3o0EO9WmsOAXFm+Wm9aFA==
+"@malloydata/malloy-interfaces@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/malloy-interfaces/-/malloy-interfaces-0.0.318.tgz#e1f3975d6ca8cdcf30fcf4c6880410b10699f4ec"
+  integrity sha512-4tUYOhUjssaLRXHf9zgmZcxXUCMVlWeNqoYzDDrGSTfnsX6WPVzQirjXBWp1dzc+iZ054N1+ZBPKjE2okIzE1Q==
   dependencies:
     "@creditkarma/thrift-server-core" "^1.0.4"
 
-"@malloydata/malloy-query-builder@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/malloy-query-builder/-/malloy-query-builder-0.0.315.tgz#1f7562ad7916fcee2756aaeb4791964fa4127846"
-  integrity sha512-qlLNu4EV2W98CfLXs0v6AHBm2BneVox/9E1G13qYUFRfVq9ckoyK2f8OvHrDXd4uV8zKTFIAxedzGK6H1+IHhw==
+"@malloydata/malloy-query-builder@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/malloy-query-builder/-/malloy-query-builder-0.0.318.tgz#a85a70e87acdf8a999bf00624cd9919ffdeffafa"
+  integrity sha512-8KvGQWm52UypL+PLAwrHVlzakQc3nSnxVeVbs9UAFfbOPJr2wF959gm0Hwn17vxv4/nhwKfBSwAZVNLnFMaz1w==
   dependencies:
-    "@malloydata/malloy-filter" "0.0.315"
-    "@malloydata/malloy-interfaces" "0.0.315"
-    "@malloydata/malloy-tag" "0.0.315"
+    "@malloydata/malloy-filter" "0.0.318"
+    "@malloydata/malloy-interfaces" "0.0.318"
+    "@malloydata/malloy-tag" "0.0.318"
 
-"@malloydata/malloy-tag@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/malloy-tag/-/malloy-tag-0.0.315.tgz#d5b2f4b22d3411957567c93b343fa0bcf4b8d72b"
-  integrity sha512-xNqKKk9qPc6Lswzel+esZx0ewXcnId5g+NAVruzZOrG67XF7z35PG5JIUSP79z3py++I9BFOEAAMBj3NeSoZ7A==
+"@malloydata/malloy-tag@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/malloy-tag/-/malloy-tag-0.0.318.tgz#0d2163edb306d0113751959dcbf55c24fad989cb"
+  integrity sha512-enCy82nnJ0CjggCbeP6mctutUTTXP6KybCiVFUAqbSCmt/6hQ4Ic5bBc5N0YyRrrX9733kTd6E7xBHnH+k3OYw==
   dependencies:
     antlr4ts "^0.5.0-alpha.4"
     assert "^2.0.0"
     uuid "^8.3.2"
 
-"@malloydata/malloy@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/malloy/-/malloy-0.0.315.tgz#0c94fb30148bc58d139c4a0c0fd1c89bdbabe9a8"
-  integrity sha512-9rFmPD0XlCgXyYfc3fkdQ+On3OdlEADIH/flQM+mTS9t5KmVO36oTJ8MaJbQs3FEzW09r/LusXKz5Igh92TD6A==
+"@malloydata/malloy@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/malloy/-/malloy-0.0.318.tgz#3502554f2fdacd6045b649c12b9359cb5a2514f7"
+  integrity sha512-5z1Z0ZUtPvfe7WvRBXlEw2kswdqlowm5Auk1sa4elLQCYzJ5Ycif7cIeDd1xdgfNSlYxOF+eygAYbNjLEOqrEg==
   dependencies:
-    "@malloydata/malloy-filter" "0.0.315"
-    "@malloydata/malloy-interfaces" "0.0.315"
-    "@malloydata/malloy-tag" "0.0.315"
+    "@malloydata/malloy-filter" "0.0.318"
+    "@malloydata/malloy-interfaces" "0.0.318"
+    "@malloydata/malloy-tag" "0.0.318"
     antlr4ts "^0.5.0-alpha.4"
     assert "^2.0.0"
     jaro-winkler "^0.2.8"
@@ -4538,14 +4538,14 @@
     luxon "^2.4.0"
     uuid "^8.3.2"
 
-"@malloydata/render@0.0.315":
-  version "0.0.315"
-  resolved "https://registry.yarnpkg.com/@malloydata/render/-/render-0.0.315.tgz#b3832d7e5fb7217fb0fbd269f150816a94c9d9f4"
-  integrity sha512-Enw+rHRqorRtIm5qwEG9e7HcNHmxVZbNsKUFuVzJg/6/jY5PuRDGiIGKarfcLmXrzbJG5EeeOXd0S6ExSsminw==
+"@malloydata/render@0.0.318":
+  version "0.0.318"
+  resolved "https://registry.yarnpkg.com/@malloydata/render/-/render-0.0.318.tgz#506e5113cb6891e3d9fad0af4b5563fb4291f3f4"
+  integrity sha512-C8HGnr/SdxL/KtF3Wf1T9lY1oqLdq2PmKuis1V5vKgvaa00wWeRY1e1nW5fr+oTQeas2iHanfLkF1bg/rp8tyQ==
   dependencies:
-    "@malloydata/malloy" "0.0.315"
-    "@malloydata/malloy-interfaces" "0.0.315"
-    "@malloydata/malloy-tag" "0.0.315"
+    "@malloydata/malloy" "0.0.318"
+    "@malloydata/malloy-interfaces" "0.0.318"
+    "@malloydata/malloy-tag" "0.0.318"
     "@tanstack/solid-virtual" "^3.10.4"
     lodash "^4.17.20"
     luxon "^2.4.0"
