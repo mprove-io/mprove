@@ -7,7 +7,6 @@ import { FractionTsMixUnitEnum } from '~common/enums/fraction/fraction-ts-mix-un
 import { FractionTsMomentTypeEnum } from '~common/enums/fraction/fraction-ts-moment-type.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { isDefined } from '~common/functions/is-defined';
 import { Fraction } from '~common/interfaces/blockml/fraction';
 import { StructQuery } from '../queries/struct.query';
 
@@ -457,8 +456,8 @@ export class TimeService {
     let mBrick = MALLOY_FILTER_ANY;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: FractionOperatorEnum.Or,
       type: fraction.type
     };
@@ -487,8 +486,8 @@ export class TimeService {
           : MALLOY_FILTER_ANY;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsLastValue: fraction.tsLastValue,
@@ -525,8 +524,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -567,8 +566,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -609,8 +608,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -650,8 +649,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -691,8 +690,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -719,8 +718,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}next ${fraction.tsNextValue} ${fraction.tsNextUnit}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsNextValue: fraction.tsNextValue,
@@ -749,8 +748,8 @@ export class TimeService {
     let mBrick = `f\`after ${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: FractionOperatorEnum.Or,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -790,8 +789,8 @@ export class TimeService {
     let mBrick = `f\`starting ${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: FractionOperatorEnum.Or,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -839,8 +838,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr} for ${fraction.tsForValue} ${fraction.tsForUnit}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -901,8 +900,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentFromStr} to ${momentToStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -955,8 +954,8 @@ export class TimeService {
     let mBrick = `f\`before ${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: FractionOperatorEnum.Or,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -996,8 +995,8 @@ export class TimeService {
     let mBrick = `f\`through ${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: FractionOperatorEnum.Or,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -1045,8 +1044,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -1089,8 +1088,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsDateYear: Number(dateValue.split('-')[0]),
@@ -1132,8 +1131,8 @@ export class TimeService {
     let mBrick = `f\`${operatorPrefix}${momentStr}\``;
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type,
       tsTimestampValue:
@@ -1159,8 +1158,8 @@ export class TimeService {
       fractionOperator === FractionOperatorEnum.Or ? 'f`null`' : 'f`not null`';
 
     let newFraction: Fraction = {
-      brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-      parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+      brick: mBrick,
+      parentBrick: mBrick,
       operator: fractionOperator,
       type: fraction.type
     };

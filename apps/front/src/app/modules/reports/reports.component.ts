@@ -843,8 +843,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
             : MALLOY_FILTER_ANY;
 
       let newFraction: Fraction = {
-        brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-        parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+        brick: mBrick,
+        parentBrick: mBrick,
         operator: FractionOperatorEnum.Or,
         type: fraction.type,
         tsLastValue: fraction.tsLastValue,
@@ -865,8 +865,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
       let mBrick = `f\`next ${fraction.tsNextValue} ${tsNextUnit}\``;
 
       let newFraction: Fraction = {
-        brick: isDefined(fraction.parentBrick) ? mBrick : `any`,
-        parentBrick: isDefined(fraction.parentBrick) ? mBrick : undefined,
+        brick: mBrick,
+        parentBrick: mBrick,
         operator: FractionOperatorEnum.Or,
         type: fraction.type,
         tsNextValue: fraction.tsNextValue,
