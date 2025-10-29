@@ -65,7 +65,7 @@ export class TasksService {
       this.isRunningRemoveStructs = false;
     }
   }
-  @Cron(CronExpression.EVERY_10_SECONDS) // TODO: increase value queries
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async loopRemoveQueries() {
     if (this.isRunningRemoveQueries === false) {
       this.isRunningRemoveQueries = true;
@@ -86,7 +86,7 @@ export class TasksService {
     }
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS) // TODO: increase value notes
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async loopRemoveNotes() {
     if (this.isRunningRemoveNotes === false) {
       this.isRunningRemoveNotes = true;
