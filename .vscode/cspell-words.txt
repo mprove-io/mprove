@@ -36,7 +36,6 @@ datetime
 dayofweek
 dayofyear
 dbaeumer
-depyronick
 devcontainer
 devkit
 devtools

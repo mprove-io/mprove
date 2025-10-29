@@ -25,7 +25,6 @@ import { StructsService } from './services/db/structs.service';
 import { UsersService } from './services/db/users.service';
 import { DocService } from './services/doc.service';
 import { BigQueryService } from './services/dwh/bigquery.service';
-import { ClickHouseService } from './services/dwh/clickhouse.service';
 import { DuckDbService } from './services/dwh/duckdb.service';
 import { MysqlService } from './services/dwh/mysql.service';
 import { PgService } from './services/dwh/pg.service';
@@ -74,7 +73,7 @@ export const appProviders = [
   UsersService,
   //
   BigQueryService,
-  ClickHouseService,
+  // ClickHouseService,
   DuckDbService,
   MysqlService,
   PgService,

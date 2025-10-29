@@ -557,6 +557,10 @@ export class AppModule implements OnModuleInit {
         });
       }
 
+      let connections = await this.addDemoConnections({
+        demoProjectId: demoProjectId
+      });
+
       let demoProject = await this.db.drizzle.query.projectsTable
         .findFirst({
           where: eq(projectsTable.projectId, demoProjectId)
@@ -604,10 +608,6 @@ export class AppModule implements OnModuleInit {
           evId: 'MPROVE_SNOWFLAKE_DATABASE',
           val: 's_db'
         };
-
-        let connections = await this.addDemoConnections({
-          demoProjectId: demoProjectId
-        });
 
         demoProject = await this.projectsService.addProject({
           orgId: demoOrg.orgId,

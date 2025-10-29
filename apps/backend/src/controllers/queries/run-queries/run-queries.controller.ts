@@ -35,7 +35,6 @@ import { MembersService } from '~backend/services/db/members.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { BigQueryService } from '~backend/services/dwh/bigquery.service';
-import { ClickHouseService } from '~backend/services/dwh/clickhouse.service';
 import { DuckDbService } from '~backend/services/dwh/duckdb.service';
 import { MysqlService } from '~backend/services/dwh/mysql.service';
 import { PgService } from '~backend/services/dwh/pg.service';
@@ -83,7 +82,7 @@ export class RunQueriesController {
     private prestoService: PrestoService,
     private trinoService: TrinoService,
     private storeService: StoreService,
-    private clickhouseService: ClickHouseService,
+    // private clickhouseService: ClickHouseService,
     private bigqueryService: BigQueryService,
     private envsService: EnvsService,
     private snowflakeService: SnowFlakeService,
@@ -321,14 +320,14 @@ export class RunQueriesController {
               querySql: query.sql,
               projectId: projectId
             });
-          } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
-            await this.clickhouseService.runQuery({
-              connection: connection,
-              queryId: query.queryId,
-              queryJobId: query.queryJobId,
-              querySql: query.sql,
-              projectId: projectId
-            });
+            // } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
+            //   await this.clickhouseService.runQuery({
+            //     connection: connection,
+            //     queryId: query.queryId,
+            //     queryJobId: query.queryJobId,
+            //     querySql: query.sql,
+            //     projectId: projectId
+            //   });
           } else if (connection.type === ConnectionTypeEnum.PostgreSQL) {
             await this.pgService.runQuery({
               connection: connection,
@@ -490,26 +489,26 @@ export class RunQueriesController {
                   cs: this.cs
                 });
               });
-          } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
-            this.clickhouseService
-              .runQuery({
-                connection: connection,
-                queryId: query.queryId,
-                queryJobId: query.queryJobId,
-                querySql: query.sql,
-                projectId: projectId
-              })
-              .catch(e => {
-                logToConsoleBackend({
-                  log: new ServerError({
-                    message: ErEnum.BACKEND_RUN_QUERY_CLICKHOUSE_ERROR,
-                    originalError: e
-                  }),
-                  logLevel: LogLevelEnum.Error,
-                  logger: this.logger,
-                  cs: this.cs
-                });
-              });
+            // } else if (connection.type === ConnectionTypeEnum.ClickHouse) {
+            //   this.clickhouseService
+            //     .runQuery({
+            //       connection: connection,
+            //       queryId: query.queryId,
+            //       queryJobId: query.queryJobId,
+            //       querySql: query.sql,
+            //       projectId: projectId
+            //     })
+            //     .catch(e => {
+            //       logToConsoleBackend({
+            //         log: new ServerError({
+            //           message: ErEnum.BACKEND_RUN_QUERY_CLICKHOUSE_ERROR,
+            //           originalError: e
+            //         }),
+            //         logLevel: LogLevelEnum.Error,
+            //         logger: this.logger,
+            //         cs: this.cs
+            //       });
+            //     });
           } else if (connection.type === ConnectionTypeEnum.PostgreSQL) {
             this.pgService
               .runQuery({
