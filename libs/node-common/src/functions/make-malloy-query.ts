@@ -690,7 +690,7 @@ export async function makeMalloyQuery(item: {
     });
   }
 
-  // TODO: telemetry
+  // TODO: telemetry - makeMalloyQuery
   console.log('makeMalloyQuery:');
   console.log(Date.now() - startMakeMalloyQuery);
 

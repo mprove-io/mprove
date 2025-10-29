@@ -9,6 +9,6 @@ export function getChartUrl(item: {
   timezone: string;
 }) {
   let { host, orgId, projectId, repoId, branch, env, chartId, timezone } = item;
-  //TODO: mcli getChartUrl
+  // TODO: mcli getChartUrl
   return `${host}/org/${orgId}/project/${projectId}/repo/${repoId}/branch/${branch}/env/${env}/charts?search=${chartId}&timezone=${timezone}`;
 }

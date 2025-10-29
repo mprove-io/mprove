@@ -72,7 +72,7 @@ export class FractionBooleanComponent {
       value: FractionTypeEnum.BooleanIsNull
     },
     // {
-    //   operator: FractionOperatorEnum.And, // TODO: check malloy progress
+    //   operator: FractionOperatorEnum.And, // TODO: check malloy progress - boolean filters
     //   label: 'is not true',
     //   value: FractionTypeEnum.BooleanIsNotTrue // not supported (malloy issue)
     // },

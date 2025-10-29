@@ -103,7 +103,7 @@ export class MembersService {
         firstName: member.firstName,
         lastName: member.lastName
       }),
-      avatarSmall: undefined, // TODO: add avatar in this method?
+      avatarSmall: undefined, // TODO: add avatar in tabToApi method?
       isAdmin: member.isAdmin,
       isEditor: member.isEditor,
       isExplorer: member.isExplorer,

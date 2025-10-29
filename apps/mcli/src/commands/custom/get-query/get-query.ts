@@ -168,9 +168,8 @@ export class GetQueryCommand extends CustomCommand {
   });
 
   timeSpec = Option.String('--detail', 'days', {
-    // TODO: timestamps
     description:
-      '(default "days") "minutes" | "hours" | "days" | "weeks" | "months" | "quarters" | "years"'
+      '(default "days") "timestamps" | "seconds" | "minutes" | "hours" | "days" | "weeks" | "months" | "quarters" | "years"'
   });
 
   timeRange = Option.String('--range', 'f`last 5 days`', {

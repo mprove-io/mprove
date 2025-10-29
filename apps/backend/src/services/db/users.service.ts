@@ -273,7 +273,7 @@ export class UsersService {
       });
 
       if (isDefined(aliasUser)) {
-        // TODO: check logic
+        // TODO: check alias logic
         alias = `${alias}${count}`;
         count++;
       } else {
