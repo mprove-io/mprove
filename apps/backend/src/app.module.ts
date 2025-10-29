@@ -708,6 +708,7 @@ export class AppModule implements OnModuleInit {
     //       eq(connectionsTable.connectionId, 'c2_clickhouse')
     //     )
     //   });
+
     // let demoProjectDwhClickhousePassword = this.cs.get<
     //   BackendConfig['demoProjectDwhClickhousePassword']
     // >('demoProjectDwhClickhousePassword');

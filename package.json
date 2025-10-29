@@ -278,12 +278,10 @@
   },
   "lint-staged": {
     "./**/*.{css,ts,js}": [
-      "biome check --write",
-      "git add"
+      "biome check --write"
     ],
     "./**/*.{html,scss,json,jsonc,md}": [
-      "prettier --write --config .prettierrc.js",
-      "git add"
+      "prettier --write --config .prettierrc.js"
     ]
   },
   "_moduleAliases": {
