@@ -509,11 +509,6 @@ export function checkReportRowParameters(
                     filterBricks: p.conditions,
                     result: pResult,
                     isGetTimeRange: false
-                    // timezone: timezone,
-                    // weekStart: weekStart,
-                    // timeSpec: timeSpec
-                    // caseSensitiveStringFilters: caseSensitiveStringFilters,
-                    // fractions: fractions,
                   });
 
                   if (pf.valid === 0) {

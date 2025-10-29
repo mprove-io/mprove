@@ -48,7 +48,6 @@ export function checkTileUnknownParameters<T extends dcType>(
               ParameterEnum.Type.toString(),
               ParameterEnum.Parameters.toString(),
               ParameterEnum.Data.toString(),
-              // ParameterEnum.Axis.toString(),
               ParameterEnum.Options.toString(),
               ParameterEnum.Plate.toString()
             ].indexOf(parameter) < 0
@@ -100,7 +99,6 @@ export function checkTileUnknownParameters<T extends dcType>(
             tile[parameter as keyof FilePartTile]?.constructor === Object &&
             [
               ParameterEnum.Data.toString(),
-              // ParameterEnum.Axis.toString(),
               ParameterEnum.Options.toString(),
               ParameterEnum.Plate.toString()
             ].indexOf(parameter) < 0
@@ -153,7 +151,6 @@ export function checkTileUnknownParameters<T extends dcType>(
             tile[parameter as keyof FilePartTile].constructor !== Object &&
             [
               ParameterEnum.Data.toString(),
-              // ParameterEnum.Axis.toString(),
               ParameterEnum.Options.toString(),
               ParameterEnum.Plate.toString()
             ].indexOf(parameter) > -1

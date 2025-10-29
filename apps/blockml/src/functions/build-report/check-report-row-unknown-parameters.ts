@@ -89,13 +89,7 @@ export function checkReportRowUnknownParameters(
             return;
           }
 
-          if (
-            row[parameter as keyof FileReportRow]?.constructor === Object
-            //  &&
-            // [
-            //   ParameterEnum.RowId.toString()
-            // ].indexOf(parameter) < 0
-          ) {
+          if (row[parameter as keyof FileReportRow]?.constructor === Object) {
             item.errors.push(
               new BmError({
                 title: ErTitleEnum.UNEXPECTED_DICTIONARY_IN_ROW_PARAMETERS,

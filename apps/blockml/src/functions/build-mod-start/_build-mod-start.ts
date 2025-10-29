@@ -24,18 +24,6 @@ export async function buildModStart(
 ) {
   let mods = item.mods;
 
-  // let buildMalloyModel = await buildMalloyModel(
-  //   {
-  //     malloyConnections: item.malloyConnections,
-  //     tempDir: item.tempDir,
-  //     projectId: item.projectId,
-  //     structId: item.structId,
-  //     errors: item.errors,
-  //     caller: item.caller
-  //   },
-  //   cs
-  // );
-
   mods = await buildMods(
     {
       mods: mods,

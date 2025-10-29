@@ -42,7 +42,6 @@ export function checkChartData<T extends dcType>(
         .forEach(parameter => {
           if (
             [
-              // ParameterEnum.HideColumns.toString(),
               ParameterEnum.XField.toString(),
               ParameterEnum.YFields.toString(),
               ParameterEnum.SizeField.toString(),
@@ -71,10 +70,7 @@ export function checkChartData<T extends dcType>(
 
           if (
             Array.isArray(tile.data[parameter as keyof FileChartData] as any) &&
-            [
-              ParameterEnum.YFields.toString()
-              // ParameterEnum.HideColumns.toString()
-            ].indexOf(parameter) < 0
+            [ParameterEnum.YFields.toString()].indexOf(parameter) < 0
           ) {
             item.errors.push(
               new BmError({

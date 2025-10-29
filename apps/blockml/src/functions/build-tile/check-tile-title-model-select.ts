@@ -68,10 +68,7 @@ export function checkTileTitleModelSelect<T extends dcType>(
         titles[tile.title.toUpperCase()] = [tile.title_line_num];
       }
 
-      if (
-        isUndefined(tile.model)
-        // && isUndefined(tile.query)
-      ) {
+      if (isUndefined(tile.model)) {
         item.errors.push(
           new BmError({
             title: ErTitleEnum.MISSING_TILE_MODEL,
@@ -87,30 +84,6 @@ export function checkTileTitleModelSelect<T extends dcType>(
         );
         return;
       }
-
-      // if (isDefined(tile.model) && isDefined(tile.query)) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title:
-      //         ErTitleEnum
-      //           .TILE_QUERY_AND_MODEL_CANNOT_BE_SPECIFIED_AT_THE_SAME_TIME,
-      //       message: `tile must have only one of parameters:${ParameterEnum.Query}, ${ParameterEnum.Model}`,
-      //       lines: [
-      //         {
-      //           line: tile.query_line_num,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         },
-      //         {
-      //           line: tile.model_line_num,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
 
       let apiModel = item.apiModels.find(y => y.modelId === tile.model);
 
@@ -137,10 +110,7 @@ export function checkTileTitleModelSelect<T extends dcType>(
         store = item.stores.find(m => m.name === tile.model);
       }
 
-      if (
-        isUndefined(tile.select)
-        //  && isUndefined(tile.query)
-      ) {
+      if (isUndefined(tile.select)) {
         item.errors.push(
           new BmError({
             title: ErTitleEnum.MISSING_TILE_SELECT,

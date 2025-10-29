@@ -97,10 +97,7 @@ export function wrapFieldItem(item: {
 
   let fieldTimeGroupValue = fieldGroupTag?.value;
 
-  if (
-    isDefined(fieldTimeGroupValue)
-    //  && result === FieldResultEnum.Timestamp
-  ) {
+  if (isDefined(fieldTimeGroupValue)) {
     let groupNode = topNode.children.find(
       c => c.id === `${alias}.${fieldTimeGroupValue}`
     );
@@ -108,75 +105,6 @@ export function wrapFieldItem(item: {
     if (isDefined(groupNode)) {
       groupNode.children.push(fieldNode);
     } else {
-      // let fieldParts: {
-      //   id: string;
-      //   // prefix: string;
-      //   // suffix: string;
-      //   label: string;
-      //   result: FieldResultEnum;
-      //   malloyTimeframe: TimestampTimeframe;
-      // }[] = [
-      //   {
-      //     id: `${fieldId}`,
-      //     // prefix: ``,
-      //     // suffix: ``,
-      //     label: `${fieldLabel} Timestamp`,
-      //     result: FieldResultEnum.Timestamp,
-      //     malloyTimeframe: undefined
-      //   },
-      //   {
-      //     id: `${fieldId}__year`,
-      //     // prefix: ``,
-      //     // suffix: `.year`,
-      //     label: `${fieldLabel} Year`,
-      //     result: FieldResultEnum.Timestamp,
-      //     malloyTimeframe: TimestampTimeframe.Year
-      //   },
-      //   {
-      //     id: `${fieldId}__quarter`,
-      //     // prefix: ``,
-      //     // suffix: `.quarter`,
-      //     label: `${fieldLabel} Quarter`,
-      //     result: FieldResultEnum.Timestamp,
-      //     malloyTimeframe: TimestampTimeframe.Quarter
-      //   },
-      //   // {
-      //   //   id: `${fieldId}__day_of_week`,
-      //   //   prefix: `day_of_week(`,
-      //   //   suffix: `)`,
-      //   //   label: `${fieldLabel} Day of Week`,
-      //   //   result: FieldResultEnum.Number
-      //   // },
-      //   // {
-      //   //   id: `${fieldId}__day_of_year`,
-      //   //   prefix: `day_of_year(`,
-      //   //   suffix: `)`,
-      //   //   label: `${fieldLabel} Day of Year`,
-      //   //   result: FieldResultEnum.Number
-      //   // }
-      // ];
-
-      // let groupFieldNodes = [
-      //   ...fieldParts.map(part => {
-      //     let fieldNode: ModelNode = {
-      //       id: part.id,
-      //       label: part.label,
-      //       description: undefined,
-      //       hidden: false,
-      //       required: false,
-      //       isField: true,
-      //       children: [],
-      //       fieldFileName: fileName,
-      //       fieldFilePath: filePath,
-      //       fieldResult: result,
-      //       fieldLineNum: 0,
-      //       nodeClass: fieldClass
-      //     };
-
-      //     return fieldNode;
-      //   })
-      // ];
-
       let newGroupNode: ModelNode = {
         id: `${alias}.${fieldTimeGroupValue}`,
         label: fieldTimeGroupValue,
@@ -184,44 +112,11 @@ export function wrapFieldItem(item: {
         hidden: false,
         required: false,
         isField: false,
-        // children: groupFieldNodes,
         children: [fieldNode],
         nodeClass: FieldClassEnum.Dimension
       };
 
       topNode.children.push(newGroupNode);
-
-      // modelFields = fieldParts.map(fieldPart => {
-      //   let modelField: ModelField = {
-      //     id: fieldPart.id,
-      //     malloyFieldName: fieldItem.field.name,
-      //     malloyFieldPath: fieldItem.path,
-      //     // malloyTimeframe: fieldPart.malloyTimeframe,
-      //     // malloyFieldPrefix: fieldPart.prefix,
-      //     // malloyFieldSuffix: fieldPart.suffix,
-      //     hidden: false,
-      //     required: false,
-      //     maxFractions: undefined,
-      //     label: fieldPart.label,
-      //     fieldClass: FieldClassEnum.Dimension,
-      //     result: fieldPart.result,
-      //     formatNumber: undefined,
-      //     currencyPrefix: undefined,
-      //     currencySuffix: undefined,
-      //     sqlName: fieldSqlName,
-      //     topId: topNode.id,
-      //     topLabel: topNode.label,
-      //     description: undefined,
-      //     type: undefined,
-      //     groupId: fieldTimeGroupValue,
-      //     groupLabel: fieldTimeGroupValue,
-      //     groupDescription: undefined,
-      //     suggestModelDimension: undefined,
-      //     detail: undefined
-      //   };
-
-      //   return modelField;
-      // });
     }
   } else if (
     [
@@ -229,7 +124,6 @@ export function wrapFieldItem(item: {
       FieldResultEnum.Number,
       FieldResultEnum.Boolean,
       FieldResultEnum.Ts
-      // FieldResultEnum.Date
     ].indexOf(fieldNode.fieldResult) > -1
   ) {
     topNode.children.push(fieldNode);

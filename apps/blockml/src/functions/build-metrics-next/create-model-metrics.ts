@@ -78,10 +78,7 @@ export function createModelMetrics(
       store.fields
         .filter(storeField => storeField.fieldClass === FieldClassEnum.Measure)
         .forEach(storeField => {
-          // let topLabel = `Store - ${store.label}`;
           let topLabel = `${store.label}`;
-
-          // let partId = `${storeField.name}`;
 
           let partNodeLabel = isDefined(storeFieldGroup)
             ? (storeFieldGroup.label ?? storeFieldGroup.group)
@@ -95,7 +92,6 @@ export function createModelMetrics(
             metricId: `${store.name}.${storeField.name}.${METRIC_ID_BY}.${timeId}`,
             filePath: store.filePath,
             fieldLineNum: storeField.name_line_num,
-            // partId: partId,
             modelId: `${store.name}`,
             modelType: ModelTypeEnum.Store,
             connectionType: store.connectionType,
@@ -164,8 +160,6 @@ export function createModelMetrics(
               ? apiModel.nodes.find(n => n.id === x.malloyFieldPath.join('.'))
               : apiModel.nodes.find(n => n.id === MF);
 
-          // let xNode = xParentNode.children.find(n => n.id === x.id);
-
           let timeNodeLabel: string = xParentNode?.label;
 
           let timeLabel = `${timeNodeLabel} ${timeFieldLabel}`;
@@ -197,7 +191,6 @@ export function createModelMetrics(
 
             let yNode = yParentNode.children.find(n => n.id === y.id);
 
-            // let partId = y.id.split('.').join('_');
             let partNodeLabel = yParentNode.label;
             let partFieldLabel = y.label;
             let partLabel = `${partNodeLabel} ${partFieldLabel}`;
@@ -206,7 +199,6 @@ export function createModelMetrics(
               metricId: `${apiModel.modelId}.${y.id}.${METRIC_ID_BY}.${tg.timeId}`,
               filePath: yNode.fieldFilePath,
               fieldLineNum: yNode.fieldLineNum,
-              // partId: partId,
               modelId: apiModel.modelId,
               modelType: ModelTypeEnum.Malloy,
               connectionType: apiModel.connectionType,

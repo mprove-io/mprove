@@ -82,12 +82,6 @@ export function wrapModels(item: {
 
         let fieldItems = getFieldItems(malloySourceInfo);
 
-        // fse.writeFileSync(
-        //   `${(x as FileMod).source}-field-items.json`,
-        //   JSON.stringify(fieldItems, null, 2),
-        //   'utf-8'
-        // );
-
         let fieldItemXs: FieldItemX[] = [];
 
         let sourceDef: MalloySourceDef = malloyModelDef.contents[
@@ -184,7 +178,6 @@ export function wrapModels(item: {
                 FieldResultEnum.Number,
                 FieldResultEnum.Boolean,
                 FieldResultEnum.Ts
-                // FieldResultEnum.Date
               ].indexOf(apiField.result) > -1
             ) {
               apiFields.push(apiField);
@@ -196,40 +189,6 @@ export function wrapModels(item: {
           }
         });
       }
-
-      // (x as FileModel).joins.forEach(join => {
-      // join fields scope
-      // let joinHidden = toBooleanFromLowercaseString(join.hidden);
-
-      // let topNode: ModelNode = {
-      //   id: join.as,
-      //   label: join.label,
-      //   description: join.description,
-      //   hidden: joinHidden,
-      //   required: false,
-      //   isField: false,
-      //   children: [],
-      //   nodeClass: FieldClassEnum.Join,
-      //   viewFilePath: join.view.filePath,
-      //   viewName: join.view.name
-      // };
-
-      // join.view.fields.forEach(field => {
-      //   wrapField({
-      //     isStoreModel: x.fileExt === FileExtensionEnum.Store,
-      //     wrappedFields: apiFields,
-      //     field: field,
-      //     alias: join.as,
-      //     fileName: join.view.fileName,
-      //     filePath: join.view.filePath,
-      //     topNode: topNode
-      //   });
-      // });
-
-      // if (join.view.fields.length > 0) {
-      //   nodes.push(topNode);
-      // }
-      // });
     }
 
     if (modelType === ModelTypeEnum.Store) {
@@ -268,8 +227,6 @@ export function wrapModels(item: {
       }
 
       (x as FileStore).field_groups.forEach(fieldGroup => {
-        // let joinHidden = toBooleanFromLowercaseString(join.hidden);
-
         let topNode: ModelNode = {
           id: fieldGroup.group, // join.as,
           label: fieldGroup.label || fieldGroup.group, // join.label, TODO: field_group label
@@ -393,21 +350,6 @@ export function wrapModels(item: {
           sortedChildren = sortedChildren.concat(sortedCalculations);
         }
 
-        // if (sortedMeasuresAndCalculations.length > 0) {
-        //   sortedChildren.push({
-        //     id: `${node.id}.${ModelNodeIdSuffixEnum.MeasuresAndCalculations}`,
-        //     label: ModelNodeLabelEnum.MeasuresAndCalculations,
-        //     description: undefined,
-        //     hidden: false,
-        //     required: false,
-        //     isField: false,
-        //     children: [],
-        //     nodeClass: FieldClassEnum.Info
-        //   });
-
-        //   sortedChildren = sortedChildren.concat(sortedMeasuresAndCalculations);
-        // }
-
         if (sortedDimensions.length > 0) {
           sortedChildren.push({
             id: `${node.id}.${ModelNodeIdSuffixEnum.Dimensions}`,
@@ -439,30 +381,6 @@ export function wrapModels(item: {
         }
 
         node.children = sortedChildren;
-
-        node.children.forEach(nc => {
-          // if (isDefined(nc.children)) {
-          //   nc.children = nc.children.sort((a, b) => {
-          //     let timeframeIndexA = TIMEFRAME_VALUES.map(t =>
-          //       t.toString()
-          //     ).indexOf(a.id.split(TRIPLE_UNDERSCORE)[1]);
-          //     let timeframeIndexB = TIMEFRAME_VALUES.map(t =>
-          //       t.toString()
-          //     ).indexOf(b.id.split(TRIPLE_UNDERSCORE)[1]);
-          //     let labelA = a.label.toUpperCase();
-          //     let labelB = b.label.toUpperCase();
-          //     return timeframeIndexA < timeframeIndexB
-          //       ? -1
-          //       : timeframeIndexA > timeframeIndexB
-          //         ? 1
-          //         : labelA < labelB
-          //           ? -1
-          //           : labelA > labelB
-          //             ? 1
-          //             : 0;
-          //   });
-          // }
-        });
       }
     });
 

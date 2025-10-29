@@ -38,16 +38,6 @@ export async function prepareTest(
     extraOverride
   );
 
-  // let presetFiles: BmlFile[] = await barYaml.collectFiles(
-  //   {
-  //     dir: `${SRC_PATH}/presets`,
-  //     structId: undefined,
-  //     caller: CallerEnum.AppModule,
-  //     skipLog: true
-  //   },
-  //   undefined
-  // );
-
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
@@ -65,18 +55,9 @@ export async function prepareTest(
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof BlockmlConfig] })
-    // .overrideProvider(PresetsService)
-    // .useValue({
-    //   getPresets: (): BmlFile[] => {
-    //     return presetFiles;
-    //   }
-    // })
     .overrideProvider(ConsumerMainService)
     .useValue({})
     .compile();
-
-  // let app: INestApplication = moduleRef.createNestApplication();
-  // await app.init();
 
   let structService = moduleRef.get<RebuildStructService>(RebuildStructService);
   let logger = await moduleRef.resolve<Logger>(Logger);

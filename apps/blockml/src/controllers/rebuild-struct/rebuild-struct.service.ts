@@ -436,7 +436,6 @@ export class RebuildStructService {
           fileExt: `.${ext}` as FileExtensionEnum, // malloy
           filePath: relativePath,
           name: sourceName,
-          // mod: sourceName,
           location: relativePath,
           blockmlPath: file.blockmlPath,
           source: sourceName,
@@ -449,22 +448,6 @@ export class RebuildStructService {
         mods.push(mod);
       });
     });
-
-    // let mainContent = paths.map(path => `import './${path}';`).join('\n');
-    // let mainContent = [
-    //   `import './mods/c2/ec1_m2.malloy'`,
-    //   `import './mods/c3/ec1_m3.malloy'`
-    //   // `import './charts/a5a.malloy'`,
-    //   // `import './charts/a5b.malloy'`,
-    //   // `import './charts/a5c.malloy'`,
-    //   // `import './charts/a5d.malloy'`,
-    //   // `import './charts/a5.malloy'`,
-    //   // `import './charts/a6.malloy'`,
-    // ].join('\n');
-
-    // let mainPath = `${tempDir}/mprove-main.malloy`;
-
-    // await fse.writeFile(mainPath, mainContent);
 
     let malloyConnections: MalloyConnection[] = makeMalloyConnections({
       connections: item.projectConnections
@@ -591,11 +574,9 @@ export class RebuildStructService {
         envId: item.envId,
         entities: dashboards,
         mconfigParentType: MconfigParentTypeEnum.Dashboard,
-        // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
         projectConnections: item.projectConnections,
-        // malloyFiles: malloyFiles,
         stores: stores,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
@@ -616,12 +597,10 @@ export class RebuildStructService {
         envId: item.envId,
         entities: charts,
         mconfigParentType: MconfigParentTypeEnum.Chart,
-        // mods: mods,
         apiModels: apiModels,
         malloyConnections: malloyConnections,
         projectConnections: item.projectConnections,
         stores: stores,
-        // malloyFiles: malloyFiles,
         weekStart: projectConfig.week_start,
         timezone: projectConfig.default_timezone,
         caseSensitiveStringFilters: toBooleanFromLowercaseString(

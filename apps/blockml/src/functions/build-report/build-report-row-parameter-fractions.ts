@@ -46,15 +46,10 @@ export function buildReportRowParameterFractions(
             let fractions: Fraction[] = [];
 
             let r = bricksToFractions({
-              // caseSensitiveStringFilters: caseSensitiveStringFilters,
               filterBricks: bricks,
               result: rowParameter.notStoreApplyToResult,
               fractions: fractions,
               isGetTimeRange: false
-              // timezone: timezone,
-              // weekStart: weekStart,
-              // timeSpec: timeSpec
-              // fractions: fractions,
             });
 
             if (r.valid === 0) {

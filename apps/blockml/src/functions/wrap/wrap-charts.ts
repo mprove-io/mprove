@@ -39,10 +39,6 @@ export function wrapCharts(item: {
     chartMconfigs = [...chartMconfigs, ...mconfigs];
     chartQueries = [...chartQueries, ...queries];
 
-    // let mod: FileMod;
-    // let model: FileModel;
-    // let store: FileStore;
-
     let apiModel = apiModels.find(m => m.modelId === x.tiles[0].model);
 
     apiCharts.push({
@@ -53,9 +49,7 @@ export function wrapCharts(item: {
       title: x.tiles[0].title,
       modelId: x.tiles[0].model,
       modelLabel: apiModel.label,
-      // store?.label || mod?.label || model?.label,
       filePath: x.filePath,
-      // accessRoles: x.access_roles || [],
       tiles: apiTiles,
       serverTs: 1
     });

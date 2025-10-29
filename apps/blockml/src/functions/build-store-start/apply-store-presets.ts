@@ -60,8 +60,6 @@ export function applyStorePresets(
         Object.keys(preset.parsedContent).forEach(key => {
           if (isUndefined((x as any)[key])) {
             (x as any)[key] = makeCopy(preset.parsedContent[key]);
-            // let lineNumName = `${key}_line_num`;
-            // (x as any)[lineNumName] = x.preset_line_num;
           }
         });
       }

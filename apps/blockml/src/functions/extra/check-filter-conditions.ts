@@ -33,8 +33,6 @@ export function checkFilterConditions<T extends sdrType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    // x.filters = {};
-
     x.fields.forEach(field => {
       if (
         field.fieldClass !== FieldClassEnum.Filter ||
@@ -44,31 +42,16 @@ export function checkFilterConditions<T extends sdrType>(
       }
 
       if (isUndefined(field.conditions)) {
-        field.conditions = [
-          MALLOY_FILTER_ANY
-          // 'any'
-        ];
+        field.conditions = [MALLOY_FILTER_ANY];
       }
 
       field.apiFractions = [];
 
-      // let p = processFilter({
-      //   caseSensitiveStringFilters: caseSensitiveStringFilters,
-      //   filterBricks: field.conditions,
-      //   result: field.result,
-      //   fractions: field.apiFractions
-      // });
-
       let p = bricksToFractions({
-        // caseSensitiveStringFilters: caseSensitiveStringFilters,
         filterBricks: field.conditions,
         result: field.result,
         fractions: field.apiFractions,
         isGetTimeRange: false
-        // timezone: timezone,
-        // weekStart: weekStart,
-        // timeSpec: timeSpec
-        // fractions: fractions,
       });
 
       if (p.valid === 0) {
@@ -89,8 +72,6 @@ export function checkFilterConditions<T extends sdrType>(
         );
         return;
       }
-
-      // x.filters[field.name] = makeCopy(field.conditions);
     });
 
     if (errorsOnStart === item.errors.length) {

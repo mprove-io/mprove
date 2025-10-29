@@ -59,23 +59,6 @@ export function checkFieldDeclaration<T extends sdrType>(
         return;
       }
 
-      // if (declarations.length > 1) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: ErTitleEnum.TOO_MANY_DECLARATIONS_FOR_ONE_PARAMETER,
-      //       message: `parameter must contain only one of parameters: ${ParameterEnum.Filter}`,
-      //       lines: [
-      //         {
-      //           line: Math.min(...fieldKeysLineNums),
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
-
       let declaration = declarations[0];
 
       if (
@@ -103,28 +86,6 @@ export function checkFieldDeclaration<T extends sdrType>(
 
       let fieldClass = declaration;
       let fieldName = field[fieldClass as keyof FieldAny] as string;
-
-      // if (
-      //   x.fileExt === FileExtensionEnum.Dashboard &&
-      //   fieldClass !== FieldClassEnum.Filter
-      // ) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER,
-      //       message: `Found field '${fieldName}' that is ${fieldClass}`,
-      //       lines: [
-      //         {
-      //           line: field[
-      //             (declaration + LINE_NUM) as keyof FieldAny
-      //           ] as number,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
 
       let fieldNameLineNum = field[
         (fieldClass + LINE_NUM) as keyof FieldAny
@@ -236,28 +197,6 @@ export function checkFieldDeclaration<T extends sdrType>(
         );
         return;
       }
-
-      // if (
-      //   x.fileExt === FileExtensionEnum.Dashboard &&
-      //   fieldClass !== FieldClassEnum.Filter
-      // ) {
-      //   item.errors.push(
-      //     new BmError({
-      //       title: ErTitleEnum.DASHBOARD_FIELD_MUST_BE_A_FILTER,
-      //       message: `Found field '${fieldName}' that is ${fieldClass}`,
-      //       lines: [
-      //         {
-      //           line: field[
-      //             (declaration + LINE_NUM) as keyof FieldAny
-      //           ] as number,
-      //           name: x.fileName,
-      //           path: x.filePath
-      //         }
-      //       ]
-      //     })
-      //   );
-      //   return;
-      // }
 
       let fieldNameLineNum = field[
         (fieldClass + LINE_NUM) as keyof FieldAny

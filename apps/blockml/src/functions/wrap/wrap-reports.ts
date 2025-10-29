@@ -222,8 +222,6 @@ export function wrapReports(item: {
       timezone: undefined,
       timeSpec: undefined,
       timeRangeFraction: undefined,
-      // rangeOpen: undefined,
-      // rangeClose: undefined,
       rangeStart: undefined,
       rangeEnd: undefined,
       columns: [],
@@ -290,8 +288,7 @@ export function wrapReports(item: {
                     isUndefined(model) || isDefined(parameter.listen)
                       ? undefined
                       : model.type !== ModelTypeEnum.Store
-                        ? // model.isStoreModel === false
-                          parameter.apiFractions
+                        ? parameter.apiFractions
                         : parameter.fractions.map(y => {
                             let storeResultCurrentTypeFraction: FileStoreFractionType;
 

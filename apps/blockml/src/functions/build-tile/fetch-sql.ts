@@ -41,11 +41,9 @@ export async function fetchSql<T extends dcType>(
     projectId: string;
     entities: T[];
     mconfigParentType: MconfigParentTypeEnum;
-    // mods: FileMod[];
     apiModels: Model[];
     malloyConnections: MalloyConnection[];
     projectConnections: ProjectConnection[];
-    // malloyFiles: BmlFile[];
     weekStart: ProjectWeekStartEnum;
     timezone: string;
     caseSensitiveStringFilters: boolean;
@@ -109,8 +107,6 @@ export async function fetchSql<T extends dcType>(
         filters: [],
         chart: makeCopy(DEFAULT_CHART),
         serverTs: 1
-        // fields: [],
-        // extendedFilters: [],
       };
 
       let startFetchSqlMalloyQuery = Date.now();
@@ -125,7 +121,6 @@ export async function fetchSql<T extends dcType>(
         let fractions: Fraction[] = [];
 
         let pf = bricksToFractions({
-          // caseSensitiveStringFilters: caseSensitiveStringFilters,
           filterBricks: tile.combinedFilters[fieldId],
           result: modelField.result,
           isGetTimeRange: false,
@@ -150,13 +145,6 @@ export async function fetchSql<T extends dcType>(
         mconfig: mconfig,
         malloyConnections: item.malloyConnections,
         queryOperations: [
-          // {
-          //   type: QueryOperationTypeEnum.GroupOrAggregatePlusSort,
-          //   timezone: timezone,
-          //   fieldId: select[0],
-          //   sortFieldId: select[0],
-          //   desc: isDesc
-          // },
           ...tile.select.map(x => {
             let op: QueryOperation = {
               type: QueryOperationTypeEnum.GroupOrAggregate,
@@ -173,7 +161,6 @@ export async function fetchSql<T extends dcType>(
           {
             type: QueryOperationTypeEnum.WhereOrHaving,
             timezone: timezone,
-            // fieldId: filter.fieldId,
             filters: mFilters
           },
           ...tile.sortingsAry.map(x => {
@@ -192,26 +179,11 @@ export async function fetchSql<T extends dcType>(
       let newQuery = editMalloyQueryResult.apiNewQuery;
       let isError = editMalloyQueryResult.isError;
 
-      // let { preparedResult, filtersFractions, newMalloyQuery } =
-      //   await buildMalloyQuery(
-      //     {
-      //       apiModel: apiModel,
-      //       malloyConnections: item.malloyConnections,
-      //       malloyModelDef: mod.malloyModel._modelDef,
-      //       malloyQuery: malloyQuery,
-      //       malloyEntryValueWithSource: mod.valueWithSourceInfo,
-      //       combinedFilters: tile.combinedFilters
-      //     },
-      //     cs
-      //   );
-
       tile.compiledQuery = newMconfig.compiledQuery;
       tile.sql = newMconfig.compiledQuery.sql.split('\n');
       tile.malloyQueryStable = newMconfig.malloyQueryStable;
       tile.malloyQueryExtra = newMconfig.malloyQueryExtra;
       tile.filtersFractions = filtersFractions;
-      // tile.select = [];
-      // tile.model = preparedResult._rawQuery.sourceExplore;
     }
   });
 

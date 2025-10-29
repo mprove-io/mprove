@@ -53,7 +53,6 @@ export async function collectFiles(
           getStat: false
         });
 
-        // Add this file to the list of files
         files.push({
           name: stat.name.toLowerCase(),
           path: path,

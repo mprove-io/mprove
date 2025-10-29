@@ -31,25 +31,16 @@ export function checkTileParameters<T extends dcType>(
   item: {
     caseSensitiveStringFilters: boolean;
     entities: T[];
-    // mods: FileMod[];
     apiModels: Model[];
     stores: FileStore[];
-    // malloyFiles: BmlFile[];
     errors: BmError[];
     structId: string;
     caller: CallerEnum;
   },
   cs: ConfigService<BlockmlConfig>
 ) {
-  let {
-    caller,
-    structId,
-    // mods,
-    apiModels,
-    // malloyFiles,
-    stores,
-    caseSensitiveStringFilters
-  } = item;
+  let { caller, structId, apiModels, stores, caseSensitiveStringFilters } =
+    item;
   log(cs, caller, func, structId, LogTypeEnum.Input, item);
 
   let newEntities: T[] = [];
@@ -111,7 +102,6 @@ export function checkTileParameters<T extends dcType>(
         }
 
         if (
-          // isStore === true &&
           apiModel.type === ModelTypeEnum.Store &&
           isUndefined(p.listen) &&
           isUndefined(p.fractions)
@@ -244,10 +234,7 @@ export function checkTileParameters<T extends dcType>(
 
             let listener;
 
-            if (
-              // isStore === true
-              apiModel.type === ModelTypeEnum.Store
-            ) {
+            if (apiModel.type === ModelTypeEnum.Store) {
               let storeField = store.fields.find(
                 sField => sField.name === p.apply_to
               );
@@ -536,21 +523,10 @@ export function checkTileParameters<T extends dcType>(
                   return;
                 }
 
-                // let pf = processFilter({
-                //   caseSensitiveStringFilters: caseSensitiveStringFilters,
-                //   filterBricks: p.conditions,
-                //   result: pResult
-                // });
-
                 let pf = bricksToFractions({
-                  // caseSensitiveStringFilters: caseSensitiveStringFilters,
                   filterBricks: p.conditions,
                   result: pResult,
                   isGetTimeRange: false
-                  // timezone: timezone,
-                  // weekStart: weekStart,
-                  // timeSpec: timeSpec
-                  // fractions: fractions,
                 });
 
                 if (pf.valid === 0) {

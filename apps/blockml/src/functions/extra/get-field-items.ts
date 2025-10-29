@@ -112,35 +112,3 @@ function isIndexView(field: FieldInfoWithView) {
   // Complete overlap of fields
   return allFields.size === INDEX_FIELDS.length;
 }
-
-// function groupFieldItemsByPath(
-//   source: SourceInfo,
-//   items: FieldItem[]
-// ): FieldGroupByPath[] {
-//   return Object.values(
-//     items.reduce((acc: Record<string, FieldGroupByPath>, current) => {
-//       const groupKey = [source.name, ...current.path].join('.');
-//       if (!acc[groupKey]) {
-//         acc[groupKey] = {
-//           groupPath: current.path,
-//           items: []
-//         };
-//       }
-//       acc[groupKey].items.push(current);
-//       return acc;
-//     }, {})
-//   );
-// }
-
-// function groupFieldItemsByKind(items: FieldItem[]): FieldGroupByKind[] {
-//   return Object.values(
-//     items.reduce((acc: Record<string, FieldGroupByKind>, current) => {
-//       const kind = current.field.kind as 'view' | 'measure' | 'dimension';
-//       if (!acc[kind]) {
-//         acc[kind] = { group: kind, items: [] };
-//       }
-//       acc[kind].items.push(current);
-//       return acc;
-//     }, {})
-//   );
-// }

@@ -117,12 +117,6 @@ export async function buildMods(
   let uniqueModelPaths = [...new Set(modelPaths)];
 
   await forEachSeries(uniqueModelPaths, async x => {
-    // let modelPath = x.location;
-
-    // let fullModelPath = isDefined(projectId)
-    //   ? `${item.tempDir}/${projectId}/${modelPath}`
-    //   : `${item.tempDir}/${modelPath}`;
-
     let fullModelPath = x;
 
     let modelUrl = new URL('file://' + fullModelPath);
@@ -194,6 +188,7 @@ export async function buildMods(
     let malloyModelDef: MalloyModelDef = x.malloyModel._modelDef;
 
     // export type SourceDef = TableSourceDef | SQLSourceDef | QuerySourceDef | QueryResultDef | FinalizeSourceDef | NestSourceDef | CompositeSourceDef;
+
     let sourceDef: MalloySourceDef = malloyModelDef.contents[
       x.source
     ] as MalloySourceDef;

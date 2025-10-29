@@ -93,10 +93,6 @@ export function checkReportRowUnknownParams(
               if (
                 param[parameter as keyof FileReportRowParameter]
                   ?.constructor === Object
-                //  &&
-                // [
-                //   ParameterEnum.Formula.toString()
-                // ].indexOf(parameter) < 0
               ) {
                 item.errors.push(
                   new BmError({
@@ -140,32 +136,6 @@ export function checkReportRowUnknownParams(
                 );
                 return;
               }
-
-              // if (
-              //   isDefined(param[parameter as keyof FileRepRowParameter]) &&
-              //   param[parameter as keyof FileRepRowParameter].constructor !== Object &&
-              //   [
-              //     ParameterEnum.Axis.toString()
-              //   ].indexOf(parameter) > -1
-              // ) {
-              //   item.errors.push(
-              //     new BmError({
-              //       title: ErTitleEnum.PARAMETER_MUST_BE_A_DICTIONARY,
-              //       message: `parameter "${parameter}" must be a dictionary`,
-              //       lines: [
-              //         {
-              //           line: param[
-              //             (parameter +
-              //               LINE_NUM) as keyof FileRepRowParameter
-              //           ] as number,
-              //           name: x.fileName,
-              //           path: x.filePath
-              //         }
-              //       ]
-              //     })
-              //   );
-              //   return;
-              // }
             });
         });
       });

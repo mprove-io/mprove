@@ -26,11 +26,9 @@ export async function buildTile<T extends dcType>(
     entities: T[];
     mconfigParentType: MconfigParentTypeEnum;
     stores: FileStore[];
-    // mods: FileMod[];
     apiModels: Model[];
     malloyConnections: MalloyConnection[];
     projectConnections: ProjectConnection[];
-    // malloyFiles: BmlFile[];
     weekStart: ProjectWeekStartEnum;
     timezone: string;
     caseSensitiveStringFilters: boolean;
@@ -112,9 +110,7 @@ export async function buildTile<T extends dcType>(
       entities: entities,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,
       apiModels: item.apiModels,
-      // mods: item.mods,
       stores: item.stores,
-      // malloyFiles: item.malloyFiles,
       structId: item.structId,
       errors: item.errors,
       caller: item.caller
@@ -127,11 +123,9 @@ export async function buildTile<T extends dcType>(
       traceId: item.traceId,
       entities: entities,
       mconfigParentType: item.mconfigParentType,
-      // mods: item.mods,
       apiModels: item.apiModels,
       malloyConnections: item.malloyConnections,
       projectConnections: item.projectConnections,
-      // malloyFiles: item.malloyFiles,
       weekStart: item.weekStart,
       timezone: item.timezone,
       caseSensitiveStringFilters: item.caseSensitiveStringFilters,

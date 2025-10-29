@@ -31,41 +31,39 @@ export function checkLimit<T extends dcType>(
   item.entities.forEach(x => {
     let errorsOnStart = item.errors.length;
 
-    x.tiles
-      // .filter(tile => isUndefined(tile.query))
-      .forEach(tile => {
-        if (!tile.limit) {
-          tile.limit = DEFAULT_LIMIT;
-          return;
-        }
+    x.tiles.forEach(tile => {
+      if (!tile.limit) {
+        tile.limit = DEFAULT_LIMIT;
+        return;
+      }
 
-        let reg = MyRegex.CAPTURE_DIGITS_START_TO_END_G();
-        let r = reg.exec(tile.limit);
+      let reg = MyRegex.CAPTURE_DIGITS_START_TO_END_G();
+      let r = reg.exec(tile.limit);
 
-        if (isUndefined(r)) {
-          item.errors.push(
-            new BmError({
-              title: ErTitleEnum.TILE_WRONG_LIMIT,
-              message: `"${ParameterEnum.Limit}" must contain positive integer value`,
-              lines: [
-                {
-                  line: tile.limit_line_num,
-                  name: x.fileName,
-                  path: x.filePath
-                }
-              ]
-            })
-          );
-          return;
-        }
+      if (isUndefined(r)) {
+        item.errors.push(
+          new BmError({
+            title: ErTitleEnum.TILE_WRONG_LIMIT,
+            message: `"${ParameterEnum.Limit}" must contain positive integer value`,
+            lines: [
+              {
+                line: tile.limit_line_num,
+                name: x.fileName,
+                path: x.filePath
+              }
+            ]
+          })
+        );
+        return;
+      }
 
-        let limitNumber = Number(r[1]);
+      let limitNumber = Number(r[1]);
 
-        tile.limit =
-          limitNumber > Number(DEFAULT_LIMIT)
-            ? DEFAULT_LIMIT
-            : limitNumber.toString();
-      });
+      tile.limit =
+        limitNumber > Number(DEFAULT_LIMIT)
+          ? DEFAULT_LIMIT
+          : limitNumber.toString();
+    });
 
     if (errorsOnStart === item.errors.length) {
       newEntities.push(x);

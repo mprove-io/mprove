@@ -79,7 +79,6 @@ export function checkFieldUnknownParameters<T extends sdrType>(
                     ParameterEnum.TimeGroup.toString(),
                     ParameterEnum.Detail.toString(),
                     ParameterEnum.Result.toString(),
-                    // ParameterEnum.SuggestModelDimension.toString(),
                     ParameterEnum.FormatNumber.toString(),
                     ParameterEnum.CurrencyPrefix.toString(),
                     ParameterEnum.CurrencySuffix.toString(),
@@ -123,38 +122,6 @@ export function checkFieldUnknownParameters<T extends sdrType>(
               break;
             }
 
-            // case FieldClassEnum.Time: {
-            //   if (
-            //     [
-            //       ParameterEnum.Time.toString(),
-            //       ParameterEnum.Hidden.toString(),
-            //       ParameterEnum.GroupLabel.toString(),
-            //       ParameterEnum.GroupDescription.toString(),
-            //       ParameterEnum.Source.toString(),
-            //       ParameterEnum.Timeframes.toString()
-            //     ].indexOf(parameter) < 0
-            //   ) {
-            //     item.errors.push(
-            //       new BmError({
-            //         title: ErTitleEnum.UNKNOWN_TIME_PARAMETER,
-            //         message: `parameter "${parameter}" cannot be used with ${FieldClassEnum.Time}`,
-            //         lines: [
-            //           {
-            //             line: field[
-            //               (parameter +
-            //                 LINE_NUM) as keyof FieldAny
-            //             ] as number,
-            //             name: x.fileName,
-            //             path: x.filePath
-            //           }
-            //         ]
-            //       })
-            //     );
-            //     return;
-            //   }
-            //   break;
-            // }
-
             case FieldClassEnum.Measure: {
               if (
                 caller === CallerEnum.BuildStoreField &&
@@ -191,40 +158,6 @@ export function checkFieldUnknownParameters<T extends sdrType>(
               break;
             }
 
-            // case FieldClassEnum.Calculation: {
-            //   if (
-            //     [
-            //       // ParameterEnum.Calculation.toString(),
-            //       ParameterEnum.Hidden.toString(),
-            //       ParameterEnum.Label.toString(),
-            //       ParameterEnum.Description.toString(),
-            //       ParameterEnum.Result.toString(),
-            //       ParameterEnum.FormatNumber.toString(),
-            //       ParameterEnum.CurrencyPrefix.toString(),
-            //       ParameterEnum.CurrencySuffix.toString()
-            //     ].indexOf(parameter) < 0
-            //   ) {
-            //     item.errors.push(
-            //       new BmError({
-            //         title: ErTitleEnum.UNKNOWN_CALCULATION_PARAMETER,
-            //         message: `parameter "${parameter}" cannot be used with ${FieldClassEnum.Calculation}`,
-            //         lines: [
-            //           {
-            //             line: field[
-            //               (parameter +
-            //                 LINE_NUM) as keyof FieldAny
-            //             ] as number,
-            //             name: x.fileName,
-            //             path: x.filePath
-            //           }
-            //         ]
-            //       })
-            //     );
-            //     return;
-            //   }
-            //   break;
-            // }
-
             case FieldClassEnum.Filter: {
               if (
                 (caller === CallerEnum.BuildStoreField &&
@@ -235,7 +168,6 @@ export function checkFieldUnknownParameters<T extends sdrType>(
                     ParameterEnum.MaxFractions.toString(),
                     ParameterEnum.Required.toString(),
                     ParameterEnum.FractionControls.toString()
-                    // ParameterEnum.SuggestModelDimension.toString(),
                   ].indexOf(parameter) < 0) ||
                 //
                 ([CallerEnum.BuildStoreField].indexOf(caller) > -1 &&

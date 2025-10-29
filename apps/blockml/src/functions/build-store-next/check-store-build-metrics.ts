@@ -182,18 +182,6 @@ export function checkStoreBuildMetrics(
           return;
         }
 
-        // if (isUndefined(buildMetric.label)) {
-        //   buildMetric.label = MyRegex.replaceUnderscoresWithSpaces(
-        //     buildMetric.time
-        //   );
-        //   buildMetric.label = buildMetric.label
-        //     .split(' ')
-        //     .map(word => capitalizeFirstLetter(word))
-        //     .join(' ');
-
-        //   buildMetric.label_line_num = 0;
-        // }
-
         let index = timeNames.findIndex(tn => tn.timeName === buildMetric.time);
 
         if (index > -1) {

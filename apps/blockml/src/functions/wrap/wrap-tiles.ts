@@ -88,8 +88,8 @@ export function wrapTiles(item: {
             mconfigParentType: mconfigParentType,
             mconfigParentId: mconfigParentId,
             sql: tile.sql.join('\n'),
-            storeTransformedRequestString: undefined, // isStore false
-            store: undefined // isStore false
+            storeTransformedRequestString: undefined,
+            store: undefined
           });
 
     let query: Query = {
@@ -268,9 +268,6 @@ export function wrapTiles(item: {
       malloyQueryExtra: tile.malloyQueryExtra,
       compiledQuery: tile.compiledQuery,
       select: tile.select || [],
-      // unsafeSelect: tile.unsafeSelect || [],
-      // warnSelect: tile.warnSelect || [],
-      // joinAggregations: tile.joinAggregations || [],
       sortings:
         tile.sortingsAry?.map(s => ({
           fieldId: s.fieldId,
@@ -295,7 +292,6 @@ export function wrapTiles(item: {
       mconfigId: mconfigId,
       queryId: queryId,
       trackChangeId: makeId(),
-      // malloyQueryId: tile.query,
       listen: tile.listen,
       deletedFilterFieldIds: undefined,
       title: mconfigChart.title,
