@@ -175,7 +175,7 @@
     "ngx-ui-switch": "15.0.0",
     "nodemailer": "6.9.14",
     "p-iteration": "1.1.8",
-    "passport": "0.4.1",
+    "passport": "0.7.0",
     "passport-jwt": "4.0.1",
     "passport-local": "1.0.0",
     "pg": "8.13.0",
