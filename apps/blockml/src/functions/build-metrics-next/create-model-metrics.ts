@@ -140,7 +140,6 @@ export function createModelMetrics(
         .filter(
           x =>
             x.buildMetrics === true &&
-            // isDefined(x.timeframe) && // timestamp does not have timeframe
             (x.result === FieldResultEnum.Ts ||
               x.result === FieldResultEnum.Date)
         )
