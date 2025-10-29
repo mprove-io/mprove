@@ -468,12 +468,6 @@ export function checkTileParameters<T extends dcType>(
               if (isDefined(p.listen)) {
                 tile.listen[listener] = dashboardField.name;
 
-                // console.log('dashboardField.fractions');
-                // console.log(dashboardField.fractions);
-
-                // console.log('dashboardField.apiFractions');
-                // console.log(dashboardField.apiFractions);
-
                 p.fractions = dashboardField.fractions;
               }
             }

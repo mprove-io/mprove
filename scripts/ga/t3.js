@@ -979,23 +979,11 @@ function t3() {
   let mcAndNotExpressions = [];
 
   queryParameters.map(filter => {
-    console.log('filter.fieldId');
-    console.log(filter.fieldId);
     let field = storeFields.find(x => x.name === filter.fieldId);
 
-    console.log('field');
-    console.log(field);
-
-    console.log('field.name');
-    console.log(field.name);
-
     filter.fractions.forEach(fraction => {
-      console.log('fraction.type');
-      console.log(fraction.type);
       let apiFilter;
       let apiFilterType = fraction.meta?.filter_type;
-      console.log('apiFilterType');
-      console.log(apiFilterType);
 
       if (apiFilterType === 'stringFilter') {
         apiFilter = {
@@ -1010,8 +998,6 @@ function t3() {
             )?.value
           }
         };
-        console.log('apiFilter');
-        console.log(apiFilter);
       }
 
       if (apiFilterType === 'inListFilter') {
@@ -1203,7 +1189,6 @@ function t3() {
   };
 
   console.log(body);
-
   console.log(body.dimensionFilter.andGroup.expressions);
 
   return body;

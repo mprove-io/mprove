@@ -47,13 +47,6 @@ export function checkChartDataParameters<T extends dcType>(
         store = item.stores.find(m => m.name === tile.model);
       }
 
-      // if (isUndefined(model)) {
-      //   console.log('tile.model');
-      //   console.log(tile.model);
-      //   console.log('models');
-      //   console.log(models.map(y => y.model));
-      // }
-
       if (
         [
           ChartTypeEnum.Pie,

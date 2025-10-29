@@ -14,7 +14,6 @@ import {
   LIGHT_PLUS_CUSTOM_TAGS
 } from '~common/constants/code-themes/light-plus-tags';
 import { LIGHT_PLUS_LANGUAGES } from '~common/constants/top-front';
-import { isUndefined } from '~common/functions/is-undefined';
 import { makeCopy } from '~common/functions/make-copy';
 import { UiQuery } from '../queries/ui.query';
 
@@ -104,12 +103,12 @@ export class HighLightService {
   }
 
   async initHighlighter() {
-    console.log('initHighlighter');
+    // console.log('initHighlighter');
     let startInitHighlighter = Date.now();
 
     let startFetchOnig = Date.now();
     const response = await fetch('/assets/vscode-oniguruma/onig.wasm');
-    console.log(`fetch onig.wasm time, ms: ${Date.now() - startFetchOnig}`);
+    // console.log(`fetch onig.wasm time, ms: ${Date.now() - startFetchOnig}`);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch onig.wasm: ${response.statusText}`);
@@ -119,7 +118,7 @@ export class HighLightService {
 
     let startArrayBuffer = Date.now();
     const buffer = await response.arrayBuffer();
-    console.log(`arrayBuffer time, ms: ${Date.now() - startArrayBuffer}`);
+    // console.log(`arrayBuffer time, ms: ${Date.now() - startArrayBuffer}`);
 
     shiki.setWasm(buffer);
 
@@ -150,11 +149,11 @@ export class HighLightService {
         }
       ]
     });
-    console.log(`getHighlighter time, ms: ${Date.now() - startGetHighlighter}`);
+    // console.log(`getHighlighter time, ms: ${Date.now() - startGetHighlighter}`);
 
-    console.log(
-      `initHighlighter time, ms: ${Date.now() - startInitHighlighter}`
-    );
+    // console.log(
+    //   `initHighlighter time, ms: ${Date.now() - startInitHighlighter}`
+    // );
 
     this.uiQuery.updatePart({ isHighlighterReady: true });
   }
@@ -244,12 +243,12 @@ export class HighLightService {
     let place = this.getPlaceByPlaceName(placeName);
 
     if (!this.highlighter) {
-      console.log(`updateDocText - ${placeName} - highlighter undefined`);
+      // console.log(`updateDocText - ${placeName} - highlighter undefined`);
       return;
     }
 
     if (isFilter === true) {
-      console.log(`updateDocText - ${placeName} - Filter`);
+      // console.log(`updateDocText - ${placeName} - Filter`);
 
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
@@ -258,7 +257,7 @@ export class HighLightService {
       place.fullTokenLines = [];
       place.fullTokens = [];
     } else if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
-      console.log(`updateDocText - ${placeName} - Reset`);
+      // console.log(`updateDocText - ${placeName} - Reset`);
 
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
@@ -271,7 +270,7 @@ export class HighLightService {
       place.shikiLanguage !== shikiLanguage ||
       place.shikiTheme !== shikiTheme
     ) {
-      console.log('updateDocText - parse full document');
+      // console.log('updateDocText - parse full document');
 
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
@@ -283,7 +282,7 @@ export class HighLightService {
         shikiLanguage: shikiLanguage,
         shikiTheme: shikiTheme
       });
-      console.log('parseShikiTokens: ', Date.now() - startParseShikiTokens);
+      // console.log('parseShikiTokens: ', Date.now() - startParseShikiTokens);
 
       place.fullHtml = fullResult.html;
       place.fullTokenLines = fullResult.tokenLines;
@@ -302,7 +301,7 @@ export class HighLightService {
     let tokenLines;
 
     if (!this.highlighter.getLoadedLanguages().includes(shikiLanguage as any)) {
-      console.log('parseShikiTokens - unknown language');
+      // console.log('parseShikiTokens - unknown language');
     } else {
       tokenLines = this.highlighter
         .codeToThemedTokens(input, shikiLanguage, shikiTheme, {
@@ -357,11 +356,11 @@ export class HighLightService {
   createLightLanguage(item: { placeName: PlaceNameEnum }) {
     let { placeName } = item;
 
-    console.log('createLightLanguage, placeName: ', placeName);
+    // console.log('createLightLanguage, placeName: ', placeName);
 
-    if (!this.highlighter) {
-      console.log('createLightLanguage - highlighter undefined');
-    }
+    // if (!this.highlighter) {
+    // console.log('createLightLanguage - highlighter undefined');
+    // }
 
     let place = this.getPlaceByPlaceName(placeName);
 
@@ -377,19 +376,19 @@ export class HighLightService {
         }
 
         if (stream.eol()) {
-          console.log(
-            'EOL reached, line:',
-            stream.string,
-            'lineNumber:',
-            state.lineNumber
-          );
+          // console.log(
+          //   'EOL reached, line:',
+          //   stream.string,
+          //   'lineNumber:',
+          //   state.lineNumber
+          // );
           return null;
         }
 
         let line = stream.string;
 
         if (!line) {
-          console.log('No line', state.lineNumber);
+          // console.log('No line', state.lineNumber);
           stream.skipToEnd();
           return null;
         }
@@ -399,11 +398,11 @@ export class HighLightService {
         );
 
         if (lineTokens.length === 0) {
-          console.log('No tokens for line', state.lineNumber);
-          console.log('stream.pos');
-          console.log(stream.pos);
-          console.log('line');
-          console.log(line);
+          // console.log('No tokens for line', state.lineNumber);
+          // console.log('stream.pos');
+          // console.log(stream.pos);
+          // console.log('line');
+          // console.log(line);
           stream.skipToEnd();
           return null;
         }
@@ -413,16 +412,16 @@ export class HighLightService {
         );
 
         if (tokenIndex < 0) {
-          console.log(
-            'No token found at stream position',
-            stream.pos,
-            'line:',
-            line,
-            'lineNumber:',
-            state.lineNumber,
-            'tokens:',
-            lineTokens
-          );
+          // console.log(
+          //   'No token found at stream position',
+          //   stream.pos,
+          //   'line:',
+          //   line,
+          //   'lineNumber:',
+          //   state.lineNumber,
+          //   'tokens:',
+          //   lineTokens
+          // );
           stream.skipToEnd();
           return null;
         }
@@ -443,25 +442,25 @@ export class HighLightService {
         if (token.color) {
           let tagName: string = LIGHT_PLUS_COLOR_TO_TAG[token.color];
 
-          if (isUndefined(tagName)) {
-            console.log('UNDEF tagName');
-            console.log('token.color');
-            console.log(token.color);
-          }
+          // if (isUndefined(tagName)) {
+          // console.log('UNDEF tagName');
+          // console.log('token.color');
+          // console.log(token.color);
+          // }
 
           let cmStyle: any = tagName;
 
           return cmStyle;
         }
 
-        console.log(
-          'No style found for SCOPE: ',
-          token.scope,
-          'TEXT: ',
-          token.text,
-          'LINE: ',
-          line
-        );
+        // console.log(
+        //   'No style found for SCOPE: ',
+        //   token.scope,
+        //   'TEXT: ',
+        //   token.text,
+        //   'LINE: ',
+        //   line
+        // );
         return null;
       }
     };

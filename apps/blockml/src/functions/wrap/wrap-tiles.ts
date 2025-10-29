@@ -60,9 +60,6 @@ export function wrapTiles(item: {
   let mconfigs: Mconfig[] = [];
   let queries: Query[] = [];
 
-  // console.log('item');
-  // console.log(item);
-
   tiles.forEach(tile => {
     let mconfigChart = wrapMconfigChart({
       title: tile.title,
@@ -288,9 +285,6 @@ export function wrapTiles(item: {
       chart: mconfigChart,
       serverTs: 1
     };
-
-    // console.log('mconfig');
-    // console.log(mconfig);
 
     mconfigs.push(mconfig);
     queries.push(query);

@@ -238,9 +238,6 @@ export class RebuildStructService {
 
     let files: BmlFile[] = [];
 
-    // console.log('mproveDir');
-    // console.log(mproveDir);
-
     if (isDefined(mproveDir)) {
       files = await collectFiles(
         {
@@ -407,9 +404,6 @@ export class RebuildStructService {
         ? []
         : item.files.filter(y => y.name.endsWith('.malloy'));
 
-    // console.log('malloyFiles');
-    // console.log(malloyFiles);
-
     let paths: string[] = [];
 
     await forEachSeries(malloyFiles, async file => {
@@ -476,11 +470,6 @@ export class RebuildStructService {
       connections: item.projectConnections
     });
 
-    // let startBuildModStart = Date.now();
-
-    // console.log('mods');
-    // console.log(mods);
-
     mods =
       item.isUseCache === true
         ? []
@@ -500,9 +489,6 @@ export class RebuildStructService {
               this.cs
             )
           ).mods;
-
-    // console.log('diffBuildModStart');
-    // console.log(Date.now() - startBuildModStart);
 
     if (item.isUseCache === false) {
       stores = buildStoreStart(

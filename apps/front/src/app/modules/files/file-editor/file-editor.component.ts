@@ -145,8 +145,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         trackedEvents.some(event => transaction.isUserEvent(event)) &&
         transaction.docChanged
       ) {
-        console.log('beforeChangeFilter - FILTER');
-
         this.highLightService.updateDocText({
           placeName: PlaceNameEnum.Main,
           docText: this.content,
@@ -835,8 +833,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   onTextChanged(item: { isDiffEditor: boolean }) {
-    console.log('onTextChanged');
-
     if (item.isDiffEditor === true) {
       this.content = this.diffContent.modified;
     }

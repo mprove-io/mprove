@@ -35,9 +35,6 @@ export function checkFilterConditions<T extends sdrType>(
 
     // x.filters = {};
 
-    // console.log('checkFilterConditions');
-    // console.log(x);
-
     x.fields.forEach(field => {
       if (
         field.fieldClass !== FieldClassEnum.Filter ||

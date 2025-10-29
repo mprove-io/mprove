@@ -321,10 +321,8 @@ export class ReportTimeColumnsService {
           timeRangeFraction.type
         ) > -1
       ) {
-        console.log('timeColumns.shift()');
         timeColumns.shift(); // detail "years" is before calendar day "2025-01-02"
       } else {
-        console.log('timeColumns.pop()');
         timeColumns.pop(); // detail "years" is after calendar day "2025-01-02"
       }
     }

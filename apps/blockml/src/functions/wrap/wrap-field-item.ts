@@ -32,19 +32,6 @@ export function wrapFieldItem(item: {
 
   let typeKind = ((fieldItem.field as any).type as AtomicType).kind;
 
-  // if (typeKind === 'timestamp_type') {
-  //   console.log('fieldItem');
-  //   console.dir(fieldItem, { depth: null });
-  // }
-
-  //   if (fieldItem.field.name === 'actual_cost_prep'
-  // ||fieldItem.field.name === 'actual_cost'
-
-  //   ) {
-  // console.log('fieldItem');
-  // console.dir(fieldItem, { depth: null });
-  // }
-
   let result =
     typeKind === 'string_type'
       ? FieldResultEnum.String
@@ -79,12 +66,6 @@ export function wrapFieldItem(item: {
       NO_CAPITALIZE_LIST.indexOf(k) < 0 ? capitalizeFirstLetter(k) : k
     )
     .join(' ');
-
-  // console.log('filePath');
-  // console.log(filePath);
-
-  // console.log('fieldItem');
-  // console.log(fieldItem);
 
   let fieldSqlName =
     fieldItem.path.length > 0
@@ -296,17 +277,6 @@ export function wrapFieldItem(item: {
     suggestModelDimension: undefined,
     detail: undefined
   };
-
-  // if (modelField.id.includes('most_expensive_item')) {
-  //   console.log('mproveTags');
-  //   console.log(mproveTags);
-
-  //   console.log('malloyTags');
-  //   console.log(malloyTags);
-
-  //   console.log('modelField');
-  //   console.log(modelField);
-  // }
 
   return modelField;
 }

@@ -36,12 +36,6 @@ export function buildReportRowParameterFractions(
       .filter(row => isDefined(row.parameters))
       .forEach(row => {
         row.parameters.forEach(rowParameter => {
-          // console.log('rowParameter');
-          // console.log(rowParameter);
-
-          // console.log('rowParameter.listen');
-          // console.log(rowParameter.listen);
-
           if (isDefined(rowParameter.conditions)) {
             let bricks = isDefined(rowParameter.listen)
               ? x.fields.find(

@@ -297,9 +297,6 @@ export class ReportEditListenersDialogComponent implements OnInit {
           });
       });
 
-      console.log('listeners');
-      console.log(listeners);
-
       delete x.mconfigListenSwap;
       delete x.modelFields;
     });

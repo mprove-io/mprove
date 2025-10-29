@@ -112,12 +112,9 @@ export async function makeMalloyQuery(item: {
     return result;
   }
 
-  // console.log('modelDefToModelInfo');
-  // let startModelDefToModelInfo = Date.now();
   let malloyModelInfo: MalloyModelInfo = modelDefToModelInfo(
     model.malloyModelDef
   );
-  // console.log(Date.now() - startModelDefToModelInfo);
 
   let malloyToQueryResult = isDefined(mconfig.malloyQueryStable)
     ? malloyToQuery(mconfig.malloyQueryStable)
@@ -125,14 +122,10 @@ export async function makeMalloyQuery(item: {
 
   let malloyToQueryLogs: LogMessage[] = malloyToQueryResult?.logs;
 
-  if (malloyToQueryLogs?.length > 0) {
-    console.log('malloyToQueryLogs');
-    console.log(malloyToQueryLogs);
-  }
-
   if (malloyToQueryLogs?.filter(x => x.severity === 'error').length > 0) {
     throw new ServerError({
-      message: ErEnum.MALLOY_TO_QUERY_FAILED
+      message: ErEnum.MALLOY_TO_QUERY_FAILED,
+      customData: { malloyToQueryLogs: malloyToQueryLogs }
     });
   }
 
@@ -697,6 +690,7 @@ export async function makeMalloyQuery(item: {
     });
   }
 
+  // TODO: telemetry
   console.log('makeMalloyQuery:');
   console.log(Date.now() - startMakeMalloyQuery);
 

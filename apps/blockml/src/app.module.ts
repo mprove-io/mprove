@@ -3,6 +3,7 @@ import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { SRC_PATH } from '~common/constants/top-blockml';
+import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
@@ -10,6 +11,7 @@ import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { File3 } from '~common/interfaces/blockml/internal/file-3';
 import { Preset } from '~common/interfaces/blockml/preset';
+import { ServerError } from '~common/models/server-error';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { makeLineNumbers } from './functions/build-yaml/make-line-numbers';
@@ -122,8 +124,10 @@ export class AppModule implements OnModuleInit {
       let presets: Preset[] = [];
 
       if (errors.length > 0) {
-        console.log(errors);
-        throw new Error('Failed to load presets');
+        throw new ServerError({
+          message: ErEnum.BLOCKML_LOAD_PRESETS_FAILED,
+          customData: { errors: errors }
+        });
       } else {
         filesAny.forEach(x => {
           if (x.path.endsWith('.store.preset')) {
@@ -149,9 +153,6 @@ export class AppModule implements OnModuleInit {
               label: label,
               parsedContent: x
             };
-
-            // console.log('Object.keys(preset.parsedContent)');
-            // console.log(Object.keys(preset.parsedContent));
 
             presets.push(preset);
           }

@@ -62,7 +62,7 @@ export class EditPhotoDialogComponent implements OnInit {
     let croppedImageSize = this.imageCompressService.byteCount(
       this.croppedImage
     );
-    console.log('croppedImageSize:', croppedImageSize);
+    // console.log('croppedImageSize:', croppedImageSize);
 
     await this.imageCompressService
       .compressFile(this.croppedImage, -2, 25, 100)
@@ -72,7 +72,7 @@ export class EditPhotoDialogComponent implements OnInit {
         let compressedImageSize = this.imageCompressService.byteCount(
           this.compressedImage
         );
-        console.log('compressedImageSize:', compressedImageSize);
+        // console.log('compressedImageSize:', compressedImageSize);
       });
   }
 

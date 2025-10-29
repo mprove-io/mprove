@@ -40,8 +40,6 @@ export class LoginSuccessComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('ngOnInit from LoginSuccessComponent');
-
     this.title.setTitle(this.pageTitle);
 
     let userId: string;

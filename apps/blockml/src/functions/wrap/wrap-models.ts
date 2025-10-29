@@ -61,9 +61,6 @@ export function wrapModels(item: {
       {
         // model fields scope
 
-        // console.log('x');
-        // console.log(x);
-
         malloyModelDef = (x as FileMod).malloyModel._modelDef;
         malloySourceInfo = (x as FileMod).valueWithSourceInfo;
 
@@ -98,15 +95,7 @@ export function wrapModels(item: {
         ] as MalloySourceDef;
 
         fieldItems.forEach(fieldItem => {
-          // console.log('fieldItem');
-          // console.log(fieldItem);
-          // console.log('fieldItem.path');
-          // console.log(fieldItem.path);
-
           let fields = sourceDef.fields;
-
-          // console.log('sourceDef.fields?.length');
-          // console.log(sourceDef.fields?.length);
 
           fieldItem.path.forEach(path => {
             let parent = fields.find(
@@ -199,9 +188,6 @@ export function wrapModels(item: {
               ].indexOf(apiField.result) > -1
             ) {
               apiFields.push(apiField);
-            } else {
-              // console.log('apiField');
-              // console.log(apiField);
             }
           });
 
@@ -518,17 +504,8 @@ export function wrapModels(item: {
       serverTs: 1
     };
 
-    // if (modelType === ModelTypeEnum.Malloy) {
-    //   console.log('sortedNodes');
-    //   console.dir(sortedNodes, { depth: null });
-    // }
-
     apiModels.push(apiModel);
-    // }
   });
-
-  // console.log('apiModels.map(x=>x.accessRoles)');
-  // console.log(apiModels.map(x => x.accessRoles));
 
   return apiModels;
 }

@@ -83,28 +83,6 @@ export async function fetchSql<T extends dcType>(
     let apiModel = item.apiModels.find(y => y.modelId === tile.model);
 
     if (apiModel.type === ModelTypeEnum.Malloy) {
-      // console.log('tile');
-      // console.log(tile);
-
-      // let malloyFile = item.malloyFiles.find(
-      //   file =>
-      //     file.path ===
-      //     tile.filePath.substring(0, tile.filePath.lastIndexOf('.')) + '.malloy'
-      // );
-
-      // if (isUndefined(malloyFile)) {
-      //   // TODO: error
-      // }
-
-      // let { mod, malloyQuery } = getModAndMalloyQuery({
-      //   tileQuery: tile.query,
-      //   malloyFile: malloyFile,
-      //   mods: item.mods,
-      //   malloyFiles: item.malloyFiles
-      // });
-
-      // let apiModel = item.apiModels.find(y => y.modelId === mod.name);
-
       let newMconfigId = makeId();
       let newQueryId = makeId();
 
@@ -124,9 +102,6 @@ export async function fetchSql<T extends dcType>(
         malloyQueryExtra: undefined,
         compiledQuery: undefined,
         select: [],
-        // unsafeSelect: [],
-        // warnSelect: [],
-        // joinAggregations: [],
         sortings: [],
         sorts: undefined,
         timezone: timezone,
@@ -229,12 +204,6 @@ export async function fetchSql<T extends dcType>(
       //     },
       //     cs
       //   );
-
-      // console.log('filtersFractions');
-      // console.log(filtersFractions);
-
-      // console.log('fetchSqlMalloyQuery:');
-      // console.log(Date.now() - startFetchSqlMalloyQuery);
 
       tile.compiledQuery = newMconfig.compiledQuery;
       tile.sql = newMconfig.compiledQuery.sql.split('\n');

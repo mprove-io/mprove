@@ -51,12 +51,6 @@ export async function buildMods(
   let runtime = new MalloyRuntime({
     urlReader: {
       readURL: async (url: URL) => {
-        // console.log('url');
-        // console.log(url);
-
-        // console.log('projectId');
-        // console.log(projectId);
-
         if (
           url.protocol.toLowerCase().startsWith('file') === true &&
           url.pathname.endsWith('.malloy') === false
@@ -142,9 +136,6 @@ export async function buildMods(
 
   let wrapResults: WrapResult<MalloyModel>[] = await Promise.all(promises);
 
-  // console.log('wrapResults');
-  // console.dir(wrapResults, { depth: 4 });
-
   await forEachSeries(item.mods, async x => {
     let errorsOnStart = item.errors.length;
 
@@ -153,15 +144,6 @@ export async function buildMods(
     let wrapResult = wrapResults[index];
 
     if (isDefined(wrapResult.error)) {
-      // console.log('x.filePath');
-      // console.log(x.filePath);
-
-      // console.log('wrapResult.error');
-      // console.log(wrapResult.error);
-
-      // console.log('wrapResult.error.problems[0].at');
-      // console.log(wrapResult.error.problems[0].at);
-
       item.errors.push(
         new BmError({
           title: ErTitleEnum.FAILED_TO_COMPILE_MALLOY,
@@ -235,25 +217,10 @@ export async function buildMods(
       entry => entry.kind === 'source' && entry.name === x.source
     ) as ModelEntryValueWithSource;
 
-    // console.log('x.valueWithSourceInfo');
-    // console.dir(x.valueWithSourceInfo, { depth: null });
-
-    // fse.writeFileSync(
-    //   `${x.source}-source-info.json`,
-    //   JSON.stringify(x.valueWithSourceInfo, null, 2),
-    //   'utf-8'
-    // );
-
-    // let explore = x.malloyModel.getExploreByName(x.source);
-    // console.dir(explore, { depth: 3 });
-
     if (errorsOnStart === item.errors.length) {
       newMods.push(x);
     }
   });
-
-  // console.log('item.errors');
-  // console.log(item.errors);
 
   log(cs, caller, func, structId, LogTypeEnum.Errors, item.errors);
   log(cs, caller, func, structId, LogTypeEnum.Mods, newMods);

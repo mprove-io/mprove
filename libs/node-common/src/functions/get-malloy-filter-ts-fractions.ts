@@ -864,7 +864,6 @@ export function getMalloyFilterTsFractions(item: {
     });
 
   if (isDefined(rangeEnd) && isDefined(rangeStart) && rangeEnd < rangeStart) {
-    // console.log('rangeEnd set to rangeStart');
     rangeEnd = rangeStart;
   }
 

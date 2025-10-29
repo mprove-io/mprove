@@ -56,9 +56,6 @@ export class ChartFormulaDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('this.ref.data');
-    console.log(this.ref.data);
-
     let row = this.ref.data.row;
 
     this.dataPoints = this.ref.data.chartPointsData.dataPoints;

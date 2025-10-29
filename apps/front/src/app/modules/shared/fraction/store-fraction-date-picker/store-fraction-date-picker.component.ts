@@ -57,12 +57,6 @@ export class StoreFractionDatePickerComponent {
       isDefined(this.fractionControl) &&
       isDefined(this.fraction)
     ) {
-      console.log('x');
-      console.log(x);
-
-      console.log('this.fractionControl');
-      console.log(this.fractionControl);
-
       let value = vDatePicker.value;
 
       let newControl = makeCopy(this.fractionControl);
