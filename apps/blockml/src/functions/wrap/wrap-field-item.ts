@@ -247,8 +247,8 @@ export function wrapFieldItem(item: {
       FieldResultEnum.String,
       FieldResultEnum.Number,
       FieldResultEnum.Boolean,
-      FieldResultEnum.Ts,
-      FieldResultEnum.Date
+      FieldResultEnum.Ts
+      // FieldResultEnum.Date
     ].indexOf(fieldNode.fieldResult) > -1
   ) {
     topNode.children.push(fieldNode);

@@ -194,8 +194,8 @@ export function wrapModels(item: {
                 FieldResultEnum.String,
                 FieldResultEnum.Number,
                 FieldResultEnum.Boolean,
-                FieldResultEnum.Ts,
-                FieldResultEnum.Date
+                FieldResultEnum.Ts
+                // FieldResultEnum.Date
               ].indexOf(apiField.result) > -1
             ) {
               apiFields.push(apiField);

@@ -39,8 +39,8 @@ export const RESULTS_LIST: FieldResultEnum[] = [
   FieldResultEnum.String,
   FieldResultEnum.Number,
   FieldResultEnum.Boolean,
-  FieldResultEnum.Ts,
-  FieldResultEnum.Date
+  FieldResultEnum.Ts
+  // FieldResultEnum.Date
   //
   // FieldResultEnum.Array,
   // FieldResultEnum.Record,
