@@ -15,6 +15,7 @@ import {
 } from '@angular/forms';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
+import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '~common/constants/top';
@@ -22,11 +23,18 @@ import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { isUndefined } from '~common/functions/is-undefined';
+import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
 import { EnvsItem } from '~common/interfaces/backend/envs-item';
 import {
   ToBackendCreateConnectionRequestPayload,
   ToBackendCreateConnectionResponse
 } from '~common/interfaces/to-backend/connections/to-backend-create-connection';
+import {
+  TestConnectionResult,
+  ToBackendTestConnectionRequestPayload,
+  ToBackendTestConnectionResponse
+} from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import {
   ToBackendGetEnvsListRequestPayload,
   ToBackendGetEnvsListResponse
@@ -51,7 +59,8 @@ export interface AddConnectionDialogData {
     UiSwitchModule,
     ReactiveFormsModule,
     SharedModule,
-    NgSelectModule
+    NgSelectModule,
+    TippyDirective
   ]
 })
 export class AddConnectionDialogComponent implements OnInit {
@@ -112,6 +121,8 @@ export class AddConnectionDialogComponent implements OnInit {
   typeBigQuery = ConnectionTypeEnum.BigQuery;
   typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
+
+  testConnectionResult: TestConnectionResult;
 
   constructor(
     public ref: DialogRef<AddConnectionDialogData>,
@@ -382,6 +393,8 @@ export class AddConnectionDialogComponent implements OnInit {
   }
 
   changeType(type: ConnectionTypeEnum) {
+    this.testConnectionResult = undefined;
+
     if (type !== ConnectionTypeEnum.BigQuery) {
       this.addBigqueryForm.controls['serviceAccountCredentials'].reset();
       this.addBigqueryForm.controls['bigqueryQuerySizeLimitGb'].reset();
@@ -453,7 +466,7 @@ export class AddConnectionDialogComponent implements OnInit {
     }
   }
 
-  add() {
+  prep() {
     this.addForm.markAllAsTouched();
 
     this.addBigqueryForm.markAllAsTouched();
@@ -489,8 +502,6 @@ export class AddConnectionDialogComponent implements OnInit {
       return;
     }
 
-    this.ref.close();
-
     let bigqueryCredentials = isDefined(
       this.addBigqueryForm.value.serviceAccountCredentials
     )
@@ -503,134 +514,182 @@ export class AddConnectionDialogComponent implements OnInit {
       ? JSON.parse(this.addGoogleApiForm.value.serviceAccountCredentials)
       : undefined;
 
+    let options: ConnectionOptions = {
+      bigquery:
+        cType === ConnectionTypeEnum.BigQuery
+          ? {
+              googleCloudProject: undefined,
+              googleCloudClientEmail: undefined,
+              serviceAccountCredentials: bigqueryCredentials,
+              bigqueryQuerySizeLimitGb: isDefined(
+                this.addBigqueryForm.value.bigqueryQuerySizeLimitGb
+              )
+                ? Number(this.addBigqueryForm.value.bigqueryQuerySizeLimitGb)
+                : undefined
+            }
+          : undefined,
+      clickhouse:
+        cType === ConnectionTypeEnum.ClickHouse
+          ? {
+              host: this.addClickhouseForm.value.host,
+              port: isDefined(this.addClickhouseForm.value.port)
+                ? Number(this.addClickhouseForm.value.port)
+                : undefined,
+              username: this.addClickhouseForm.value.username,
+              password: this.addClickhouseForm.value.password,
+              isSSL: this.isClickhouseSSL
+            }
+          : undefined,
+      motherduck:
+        cType === ConnectionTypeEnum.MotherDuck
+          ? {
+              motherduckToken: this.addMotherduckForm.value.motherduckToken,
+              database: this.addMotherduckForm.value.database,
+              attachModeSingle:
+                this.isMotherduckAttachModeSingle &&
+                this.addMotherduckForm.controls['database'].value?.length > 0,
+              accessModeReadOnly: this.isMotherduckAccessModeReadOnly
+            }
+          : undefined,
+      postgres:
+        cType === ConnectionTypeEnum.PostgreSQL
+          ? {
+              host: this.addPostgresForm.value.host,
+              port: isDefined(this.addPostgresForm.value.port)
+                ? Number(this.addPostgresForm.value.port)
+                : undefined,
+              database: this.addPostgresForm.value.database,
+              username: this.addPostgresForm.value.username,
+              password: this.addPostgresForm.value.password,
+              isSSL: this.isPostgresSSL
+            }
+          : undefined,
+      mysql:
+        cType === ConnectionTypeEnum.MySQL
+          ? {
+              host: this.addMysqlForm.value.host,
+              port: isDefined(this.addMysqlForm.value.port)
+                ? Number(this.addMysqlForm.value.port)
+                : undefined,
+              database: this.addMysqlForm.value.database,
+              user: this.addMysqlForm.value.user,
+              password: this.addMysqlForm.value.password
+            }
+          : undefined,
+      trino:
+        cType === ConnectionTypeEnum.Trino
+          ? {
+              server: this.addTrinoForm.value.server,
+              catalog: this.addTrinoForm.value.catalog,
+              schema: this.addTrinoForm.value.schema,
+              user: this.addTrinoForm.value.user,
+              password: this.addTrinoForm.value.password
+            }
+          : undefined,
+      presto:
+        cType === ConnectionTypeEnum.Presto
+          ? {
+              server: this.addPrestoForm.value.server,
+              port: isDefined(this.addPrestoForm.value.port)
+                ? Number(this.addPrestoForm.value.port)
+                : undefined,
+              catalog: this.addPrestoForm.value.catalog,
+              schema: this.addPrestoForm.value.schema,
+              user: this.addPrestoForm.value.user,
+              password: this.addPrestoForm.value.password
+            }
+          : undefined,
+      snowflake:
+        cType === ConnectionTypeEnum.SnowFlake
+          ? {
+              account: this.addSnowflakeForm.value.account,
+              warehouse: this.addSnowflakeForm.value.warehouse,
+              database: this.addSnowflakeForm.value.database,
+              username: this.addSnowflakeForm.value.username,
+              password: this.addSnowflakeForm.value.password
+            }
+          : undefined,
+      storeApi:
+        cType === ConnectionTypeEnum.Api
+          ? {
+              baseUrl: this.addApiForm.value.baseUrl,
+              headers: this.addApiForm.value.headers
+            }
+          : undefined,
+      storeGoogleApi:
+        cType === ConnectionTypeEnum.GoogleApi
+          ? {
+              googleAccessToken: undefined,
+              googleAccessTokenExpiryDate: undefined,
+              googleCloudProject: undefined,
+              googleCloudClientEmail: undefined,
+              serviceAccountCredentials: googleApiCredentials,
+              baseUrl: this.addGoogleApiForm.value.baseUrl,
+              headers: this.addGoogleApiForm.value.headers,
+              googleAuthScopes:
+                [ConnectionTypeEnum.GoogleApi].indexOf(
+                  this.addGoogleApiForm.get('type').value
+                ) > -1
+                  ? this.addGoogleApiForm.value.scopes.map((x: any) => x.value)
+                  : []
+            }
+          : undefined
+    };
+
+    return options;
+  }
+
+  testConnection() {
+    this.testConnectionResult = undefined;
+
+    let options = this.prep();
+
+    if (isUndefined(options)) {
+      return;
+    }
+
+    let payload: ToBackendTestConnectionRequestPayload = {
+      projectId: this.ref.data.projectId,
+      connectionId: this.addForm.value.connectionId,
+      envId: this.addForm.value.envId,
+      type: this.addForm.value.type,
+      options: options
+    };
+
+    let apiService: ApiService = this.ref.data.apiService;
+
+    apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendTestConnection,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendTestConnectionResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.testConnectionResult = resp.payload.testConnectionResult;
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  add() {
+    let options = this.prep();
+
+    if (isUndefined(options)) {
+      return;
+    }
+
+    this.ref.close();
+
     let payload: ToBackendCreateConnectionRequestPayload = {
       projectId: this.ref.data.projectId,
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
       type: this.addForm.value.type,
-      options: {
-        bigquery:
-          cType === ConnectionTypeEnum.BigQuery
-            ? {
-                googleCloudProject: undefined,
-                googleCloudClientEmail: undefined,
-                serviceAccountCredentials: bigqueryCredentials,
-                bigqueryQuerySizeLimitGb: isDefined(
-                  this.addBigqueryForm.value.bigqueryQuerySizeLimitGb
-                )
-                  ? Number(this.addBigqueryForm.value.bigqueryQuerySizeLimitGb)
-                  : undefined
-              }
-            : undefined,
-        clickhouse:
-          cType === ConnectionTypeEnum.ClickHouse
-            ? {
-                host: this.addClickhouseForm.value.host,
-                port: isDefined(this.addClickhouseForm.value.port)
-                  ? Number(this.addClickhouseForm.value.port)
-                  : undefined,
-                username: this.addClickhouseForm.value.username,
-                password: this.addClickhouseForm.value.password,
-                isSSL: this.isClickhouseSSL
-              }
-            : undefined,
-        motherduck:
-          cType === ConnectionTypeEnum.MotherDuck
-            ? {
-                motherduckToken: this.addMotherduckForm.value.motherduckToken,
-                database: this.addMotherduckForm.value.database,
-                attachModeSingle:
-                  this.isMotherduckAttachModeSingle &&
-                  this.addMotherduckForm.controls['database'].value?.length > 0,
-                accessModeReadOnly: this.isMotherduckAccessModeReadOnly
-              }
-            : undefined,
-        postgres:
-          cType === ConnectionTypeEnum.PostgreSQL
-            ? {
-                host: this.addPostgresForm.value.host,
-                port: isDefined(this.addPostgresForm.value.port)
-                  ? Number(this.addPostgresForm.value.port)
-                  : undefined,
-                database: this.addPostgresForm.value.database,
-                username: this.addPostgresForm.value.username,
-                password: this.addPostgresForm.value.password,
-                isSSL: this.isPostgresSSL
-              }
-            : undefined,
-        mysql:
-          cType === ConnectionTypeEnum.MySQL
-            ? {
-                host: this.addMysqlForm.value.host,
-                port: isDefined(this.addMysqlForm.value.port)
-                  ? Number(this.addMysqlForm.value.port)
-                  : undefined,
-                database: this.addMysqlForm.value.database,
-                user: this.addMysqlForm.value.user,
-                password: this.addMysqlForm.value.password
-              }
-            : undefined,
-        trino:
-          cType === ConnectionTypeEnum.Trino
-            ? {
-                server: this.addTrinoForm.value.server,
-                catalog: this.addTrinoForm.value.catalog,
-                schema: this.addTrinoForm.value.schema,
-                user: this.addTrinoForm.value.user,
-                password: this.addTrinoForm.value.password
-              }
-            : undefined,
-        presto:
-          cType === ConnectionTypeEnum.Presto
-            ? {
-                server: this.addPrestoForm.value.server,
-                port: isDefined(this.addPrestoForm.value.port)
-                  ? Number(this.addPrestoForm.value.port)
-                  : undefined,
-                catalog: this.addPrestoForm.value.catalog,
-                schema: this.addPrestoForm.value.schema,
-                user: this.addPrestoForm.value.user,
-                password: this.addPrestoForm.value.password
-              }
-            : undefined,
-        snowflake:
-          cType === ConnectionTypeEnum.SnowFlake
-            ? {
-                account: this.addSnowflakeForm.value.account,
-                warehouse: this.addSnowflakeForm.value.warehouse,
-                database: this.addSnowflakeForm.value.database,
-                username: this.addSnowflakeForm.value.username,
-                password: this.addSnowflakeForm.value.password
-              }
-            : undefined,
-        storeApi:
-          cType === ConnectionTypeEnum.Api
-            ? {
-                baseUrl: this.addApiForm.value.baseUrl,
-                headers: this.addApiForm.value.headers
-              }
-            : undefined,
-        storeGoogleApi:
-          cType === ConnectionTypeEnum.GoogleApi
-            ? {
-                googleAccessToken: undefined,
-                googleAccessTokenExpiryDate: undefined,
-                googleCloudProject: undefined,
-                googleCloudClientEmail: undefined,
-                serviceAccountCredentials: googleApiCredentials,
-                baseUrl: this.addGoogleApiForm.value.baseUrl,
-                headers: this.addGoogleApiForm.value.headers,
-                googleAuthScopes:
-                  [ConnectionTypeEnum.GoogleApi].indexOf(
-                    this.addGoogleApiForm.get('type').value
-                  ) > -1
-                    ? this.addGoogleApiForm.value.scopes.map(
-                        (x: any) => x.value
-                      )
-                    : []
-              }
-            : undefined
-      }
+      options: options
     };
 
     let apiService: ApiService = this.ref.data.apiService;

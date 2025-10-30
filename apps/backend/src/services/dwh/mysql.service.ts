@@ -13,6 +13,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '~common/models/server-error';
 import { TabService } from '../tab.service';
 
@@ -27,14 +28,10 @@ export class MysqlService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async runQuery(item: {
+  optionsToMysqlOptions(item: {
     connection: ConnectionTab;
-    queryJobId: string;
-    queryId: string;
-    projectId: string;
-    querySql: string;
-  }): Promise<void> {
-    let { connection, queryJobId, queryId, querySql, projectId } = item;
+  }) {
+    let { connection } = item;
 
     let connectionOptions: MYSQL.ConnectionOptions = {
       host: connection.options.mysql.host,
@@ -47,13 +44,72 @@ export class MysqlService {
       timezone: '+00:00'
     };
 
-    let mc = await MYSQL.createConnection(connectionOptions).catch(async e =>
-      this.processError({
-        e: e,
-        queryId: queryId,
-        queryJobId: queryJobId,
-        projectId: projectId
-      })
+    return connectionOptions;
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    let mysqlConnectionOptions = this.optionsToMysqlOptions({
+      connection: connection
+    });
+
+    let errorMessage: string;
+
+    try {
+      let mc = await MYSQL.createConnection(mysqlConnectionOptions).catch(e => {
+        errorMessage = `Connection failed: ${e.message}`;
+      });
+
+      if (isDefined(errorMessage) === true) {
+        return {
+          isSuccess: false,
+          errorMessage: errorMessage
+        };
+      } else if (!mc) {
+        return {
+          isSuccess: false,
+          errorMessage: 'Connection failed'
+        };
+      }
+
+      await mc.ping();
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
+  async runQuery(item: {
+    connection: ConnectionTab;
+    queryJobId: string;
+    queryId: string;
+    projectId: string;
+    querySql: string;
+  }): Promise<void> {
+    let { connection, queryJobId, queryId, querySql, projectId } = item;
+
+    let mysqlConnectionOptions = this.optionsToMysqlOptions({
+      connection: connection
+    });
+
+    let mc = await MYSQL.createConnection(mysqlConnectionOptions).catch(
+      async e =>
+        this.processError({
+          e: e,
+          queryId: queryId,
+          queryJobId: queryJobId,
+          projectId: projectId
+        })
     );
 
     if (!mc) {

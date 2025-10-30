@@ -19,6 +19,7 @@ import { ToBackendCreateConnectionRequest } from '~common/interfaces/to-backend/
 import { ToBackendDeleteConnectionRequest } from '~common/interfaces/to-backend/connections/to-backend-delete-connection';
 import { ToBackendEditConnectionRequest } from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
 import { ToBackendGetConnectionsRequest } from '~common/interfaces/to-backend/connections/to-backend-get-connections';
+import { ToBackendTestConnectionRequest } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ToBackendCreateDraftDashboardRequest } from '~common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
 import { ToBackendDeleteDashboardRequest } from '~common/interfaces/to-backend/dashboards/to-backend-delete-dashboard';
 import { ToBackendDeleteDraftDashboardsRequest } from '~common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
@@ -220,6 +221,8 @@ export const nameToClass = {
     ToBackendDeleteConnectionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendEditConnection]:
     ToBackendEditConnectionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendTestConnection]:
+    ToBackendTestConnectionRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetBranchesList]:
     ToBackendGetBranchesListRequest,

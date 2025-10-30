@@ -115,9 +115,11 @@
       [tpIsEnabled]="true"
       class="bg-r100 text-r700 line-clamp-1 max-w-xl rounded px-3 py-2"
     >
-      <div class="truncate">
+      <div class="truncate break-words">
         <ng-template #t6>
-          {{ query?.lastErrorMessage | capitalize }}
+          <div class="break-words">
+            {{ query?.lastErrorMessage | capitalize }}
+          </div>
         </ng-template>
 
         <ng-container *ngTemplateOutlet="t6"></ng-container>

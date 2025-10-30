@@ -19,6 +19,7 @@ import { CreateConnectionController } from './controllers/connections/create-con
 import { DeleteConnectionController } from './controllers/connections/delete-connection/delete-connection.controller';
 import { EditConnectionController } from './controllers/connections/edit-connection/edit-connection.controller';
 import { GetConnectionsController } from './controllers/connections/get-connections/get-connections.controller';
+import { TestConnectionController } from './controllers/connections/test-connection/test-connection.controller';
 import { CreateDraftDashboardController } from './controllers/dashboards/create-draft-dashboard/create-draft-dashboard.controller';
 import { DeleteDashboardController } from './controllers/dashboards/delete-dashboard/delete-dashboard.controller';
 import { DeleteDraftDashboardsController } from './controllers/dashboards/delete-draft-dashboards/delete-draft-dashboards.controller';
@@ -122,9 +123,10 @@ export const appControllers = [
   MoveCatalogNodeController,
   RenameCatalogNodeController,
 
+  TestConnectionController,
   CreateConnectionController,
-  DeleteConnectionController,
   EditConnectionController,
+  DeleteConnectionController,
   GetConnectionsController,
 
   CreateFileController,
