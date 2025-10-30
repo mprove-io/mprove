@@ -31,7 +31,7 @@
     "got": "11.8.5",
     "js-yaml": "4.1.0",
     "module-alias": "2.2.3",
-    "nanoid": "3.3.7",
+    "nanoid": "3.3.10",
     "nest-winston": "1.9.4",
     "p-iteration": "1.1.8",
     "prettyjson": "1.2.5",
