@@ -462,13 +462,23 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addGoogleApiForm.controls['serviceAccountCredentials'].reset();
       this.addGoogleApiForm.controls['baseUrl'].reset();
       this.addGoogleApiForm.controls['headers'].reset();
-      // this.addGoogleApiForm.controls['scopes'].reset(); // do not reset
+      this.addGoogleApiForm.controls['scopes'].reset();
     }
 
     if (type === ConnectionTypeEnum.GoogleApi) {
-      this.addGoogleApiForm.controls['baseUrl'].setValue(
-        'https://analyticsdata.googleapis.com'
-      );
+      this.addGoogleApiForm = this.fb.group({
+        serviceAccountCredentials: [undefined, [Validators.required]],
+        baseUrl: [
+          'https://analyticsdata.googleapis.com',
+          [Validators.required]
+        ],
+        headers: this.fb.array([]),
+        scopes: this.fb.array([
+          this.fb.group({
+            value: 'https://www.googleapis.com/auth/analytics.readonly'
+          })
+        ])
+      });
     }
   }
 
