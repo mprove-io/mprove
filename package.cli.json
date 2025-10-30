@@ -44,7 +44,7 @@
   "devDependencies": {
     "ava": "3.15.0",
     "caxa": "3.0.1",
-    "shx": "0.3.4"
+    "shx": "0.4.0"
   },
   "_moduleAliases": {
     "~backend": "dist/tests/backend/apps/backend/src",
