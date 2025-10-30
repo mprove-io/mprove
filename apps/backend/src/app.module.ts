@@ -1,6 +1,5 @@
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { Inject, Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
@@ -124,44 +123,6 @@ let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
   }
 });
 
-let mailerModule = MailerModule.forRootAsync({
-  inject: [ConfigService],
-  useFactory: (cs: ConfigService<BackendConfig>) => {
-    let transport;
-
-    transport = {
-      host: cs.get<BackendConfig['smtpHost']>('smtpHost'),
-      port: cs.get<BackendConfig['smtpPort']>('smtpPort'),
-      secure: cs.get<BackendConfig['smtpSecure']>('smtpSecure'),
-      auth: {
-        user: cs.get<BackendConfig['smtpAuthUser']>('smtpAuthUser'),
-        pass: cs.get<BackendConfig['smtpAuthPassword']>('smtpAuthPassword')
-      }
-    };
-
-    let fromName =
-      cs.get<BackendConfig['sendEmailFromName']>('sendEmailFromName');
-
-    let fromAddress = cs.get<BackendConfig['sendEmailFromAddress']>(
-      'sendEmailFromAddress'
-    );
-
-    return {
-      transport: transport,
-      defaults: {
-        from: `"${fromName}" <${fromAddress}>`
-      }
-      // template: {
-      //   dir: __dirname + '/templates',
-      //   adapter: new EjsAdapter(),
-      //   options: {
-      //     strict: true
-      //   }
-      // }
-    };
-  }
-});
-
 let customThrottlerModule = ThrottlerModule.forRootAsync({
   inject: [ConfigService],
   useFactory: (cs: ConfigService<BackendConfig>) => {
@@ -223,7 +184,6 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     customThrottlerModule,
     PassportModule,
     rabbitModule,
-    mailerModule,
     DrizzleModule
   ],
   controllers: appControllers,

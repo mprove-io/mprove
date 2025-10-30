@@ -1,4 +1,3 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -6,6 +5,7 @@ import { AppModule } from '~backend/app.module';
 import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
 import { Prep } from '~backend/interfaces/prep';
+import { EmailService } from '~backend/services/email.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
@@ -49,7 +49,7 @@ export async function prepareTest(item: {
   })
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof BackendConfig] })
-    .overrideProvider(MailerService)
+    .overrideProvider(EmailService)
     .useValue({ sendMail: async () => {} })
     .compile();
 
