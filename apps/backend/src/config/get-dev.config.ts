@@ -107,6 +107,10 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_PASS_PHRASE ||
       envFile.BACKEND_DEMO_PROJECT_PASS_PHRASE,
 
+    storeApiBlacklistedHosts:
+      process.env.BACKEND_STORE_API_BLACKLISTED_HOSTS ||
+      envFile.BACKEND_STORE_API_BLACKLISTED_HOSTS,
+
     seedDemoOrgAndProject: enumToBoolean({
       value:
         process.env.BACKEND_SEED_DEMO_ORG_AND_PROJECT ||

@@ -14,6 +14,7 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { ControlClassEnum } from '~common/enums/control-class.enum';
 import { ParameterEnum } from '~common/enums/docs/parameter.enum';
+import { ErEnum } from '~common/enums/er.enum';
 import { FieldClassEnum } from '~common/enums/field-class.enum';
 import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
@@ -29,6 +30,7 @@ import { Fraction } from '~common/interfaces/blockml/fraction';
 import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
 import { MyRegex } from '~common/models/my-regex';
+import { ServerError } from '~common/models/server-error';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
 import { TabService } from './tab.service';
 import { UserCodeService } from './user-code.service';
@@ -44,13 +46,26 @@ export interface StoreUserCodeReturn {
 
 @Injectable()
 export class StoreService {
+  blacklistedHostsLowerCase: string[] = [];
+
   constructor(
     private tabService: TabService,
     private userCodeService: UserCodeService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
-  ) {}
+  ) {
+    let storeApiBlacklistedHosts = this.cs.get<
+      BackendConfig['storeApiBlacklistedHosts']
+    >('storeApiBlacklistedHosts');
+
+    if (isDefinedAndNotEmpty(storeApiBlacklistedHosts)) {
+      this.blacklistedHostsLowerCase = storeApiBlacklistedHosts
+        .split(',')
+        .map(x => x.trim())
+        .map(x => x.toLowerCase());
+    }
+  }
 
   async adjustMconfig(item: {
     mconfig: MconfigTab;
@@ -435,6 +450,26 @@ ${inputSub}
       let body = queryStart.apiBody;
 
       let url = queryStart.apiUrl;
+
+      let parsedUrl = new URL(url);
+
+      let hostname = parsedUrl.hostname.toLowerCase();
+
+      if (parsedUrl.protocol !== 'https:') {
+        throw new ServerError({
+          message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS
+        });
+      }
+
+      if (
+        this.blacklistedHostsLowerCase.some(
+          x => hostname === x || hostname.endsWith('.' + x)
+        )
+      ) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_STORE_API_HOST_IS_NOT_ALLOWED
+        });
+      }
 
       let headers: any = {};
 
