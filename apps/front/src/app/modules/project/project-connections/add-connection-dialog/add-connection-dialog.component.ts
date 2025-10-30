@@ -634,7 +634,7 @@ export class AddConnectionDialogComponent implements OnInit {
               headers: this.addGoogleApiForm.value.headers,
               googleAuthScopes:
                 [ConnectionTypeEnum.GoogleApi].indexOf(
-                  this.addGoogleApiForm.get('type').value
+                  this.addForm.get('type').value
                 ) > -1
                   ? this.addGoogleApiForm.value.scopes.map((x: any) => x.value)
                   : []
