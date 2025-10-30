@@ -462,11 +462,17 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addGoogleApiForm.controls['serviceAccountCredentials'].reset();
       this.addGoogleApiForm.controls['baseUrl'].reset();
       this.addGoogleApiForm.controls['headers'].reset();
-      this.addGoogleApiForm.controls['scopes'].reset();
+      // this.addGoogleApiForm.controls['scopes'].reset(); // do not reset
+    }
+
+    if (type === ConnectionTypeEnum.GoogleApi) {
+      this.addGoogleApiForm.controls['baseUrl'].setValue(
+        'https://analyticsdata.googleapis.com'
+      );
     }
   }
 
-  prep() {
+  prepareOptions() {
     this.addForm.markAllAsTouched();
 
     this.addBigqueryForm.markAllAsTouched();
@@ -642,7 +648,7 @@ export class AddConnectionDialogComponent implements OnInit {
   testConnection() {
     this.testConnectionResult = undefined;
 
-    let options = this.prep();
+    let options = this.prepareOptions();
 
     if (isUndefined(options)) {
       return;
@@ -676,7 +682,7 @@ export class AddConnectionDialogComponent implements OnInit {
   }
 
   add() {
-    let options = this.prep();
+    let options = this.prepareOptions();
 
     if (isUndefined(options)) {
       return;

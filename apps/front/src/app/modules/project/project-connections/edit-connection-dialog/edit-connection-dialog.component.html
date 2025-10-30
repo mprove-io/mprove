@@ -5,22 +5,22 @@
     >Edit Connection</div
   >
 
-  <div class="flex w-80 flex-col text-base">
-    <div class="mt-9 flex flex-row">
+  <div class="flex flex-col text-base">
+    <div class="mt-9 flex w-80 flex-row">
       <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Name</div>
       <div>
         {{ ref.data.connection.connectionId }}
       </div>
     </div>
 
-    <div class="flex flex-row">
+    <div class="flex w-80 flex-row">
       <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Env</div>
       <div>
         {{ ref.data.connection.envId }}
       </div>
     </div>
 
-    <div class="flex flex-row">
+    <div class="flex w-80 flex-row">
       <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Type</div>
       <div>
         {{ ref.data.connection.type }}
@@ -1185,7 +1185,7 @@
       </div>
     </form>
 
-    <div class="mt-9">
+    <div class="mt-9 flex flex-row">
       <button
         data-cy="editConnectionDialogSaveButton"
         class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
@@ -1199,6 +1199,43 @@
         type="button"
         (click)="cancel()"
         >Cancel</button
+      >
+
+      <div class="flex flex-1"></div>
+
+      <div
+        class="ml-5 flex h-[50px] flex-shrink-0 flex-row items-center justify-end"
+      >
+        <div
+          *ngIf="testConnectionResult?.isSuccess === true"
+          class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-green-600"
+        >
+          Connection is valid
+        </div>
+
+        <div
+          *ngIf="testConnectionResult?.isSuccess === false"
+          class="flex h-[50px] flex-shrink-0 items-center px-3 font-semibold text-red-500"
+          [tp]="errorMessageTemplate"
+        >
+          Connection failed
+        </div>
+
+        <ng-template #errorMessageTemplate>
+          <div class="break-words">{{
+            !!testConnectionResult?.errorMessage
+              ? testConnectionResult?.errorMessage
+              : 'Error message is empty'
+          }}</div>
+        </ng-template>
+      </div>
+
+      <button
+        data-cy="addConnectionDialogTestConnectionButton"
+        class="bg-m600 text-m0 ml-3 w-60 rounded py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="testConnection()"
+        >Test Connection</button
       >
     </div>
   </div>
