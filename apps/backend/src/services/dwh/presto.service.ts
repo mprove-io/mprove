@@ -10,6 +10,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
@@ -23,14 +24,10 @@ export class PrestoService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async runQuery(item: {
+  optionsToPrestoClientConfig(item: {
     connection: ConnectionTab;
-    queryJobId: string;
-    queryId: string;
-    projectId: string;
-    querySql: string;
-  }): Promise<void> {
-    let { connection, queryJobId, queryId, querySql, projectId } = item;
+  }) {
+    let { connection } = item;
 
     let prestoClientConfig: PrestoClientConfig = {
       catalog: connection.options.presto.catalog,
@@ -48,6 +45,48 @@ export class PrestoService {
           : undefined,
       extraHeaders: { 'X-Presto-Session': 'legacy_unnest=true' }
     };
+
+    return prestoClientConfig;
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    let prestoClientConfig = this.optionsToPrestoClientConfig({
+      connection: connection
+    });
+
+    try {
+      let pc = new PrestoClient(prestoClientConfig);
+
+      await pc.query('SELECT 1');
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
+  async runQuery(item: {
+    connection: ConnectionTab;
+    queryJobId: string;
+    queryId: string;
+    projectId: string;
+    querySql: string;
+  }): Promise<void> {
+    let { connection, queryJobId, queryId, querySql, projectId } = item;
+
+    let prestoClientConfig = this.optionsToPrestoClientConfig({
+      connection: connection
+    });
 
     let pc = new PrestoClient(prestoClientConfig);
 
