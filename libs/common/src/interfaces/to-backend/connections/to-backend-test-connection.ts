@@ -7,6 +7,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { StoreMethodEnum } from '~common/enums/store-method.enum';
 import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -36,6 +37,10 @@ export class ToBackendTestConnectionRequestPayload {
   @ValidateNested()
   @Type(() => ConnectionOptions)
   options: ConnectionOptions;
+
+  @IsOptional()
+  @IsEnum(StoreMethodEnum)
+  storeMethod: StoreMethodEnum;
 }
 
 export class ToBackendTestConnectionRequest extends ToBackendRequest {

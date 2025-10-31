@@ -107,8 +107,8 @@ export class AddConnectionDialogComponent implements OnInit {
     ConnectionTypeEnum.SnowFlake,
     ConnectionTypeEnum.BigQuery,
     ConnectionTypeEnum.MotherDuck,
-    ConnectionTypeEnum.GoogleApi,
-    ConnectionTypeEnum.Api
+    ConnectionTypeEnum.Api,
+    ConnectionTypeEnum.GoogleApi
   ];
 
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
@@ -119,8 +119,8 @@ export class AddConnectionDialogComponent implements OnInit {
   typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
-  typeGoogleApi = ConnectionTypeEnum.GoogleApi;
   typeApi = ConnectionTypeEnum.Api;
+  typeGoogleApi = ConnectionTypeEnum.GoogleApi;
 
   testConnectionResult: TestConnectionResult;
 
@@ -669,7 +669,12 @@ export class AddConnectionDialogComponent implements OnInit {
       connectionId: this.addForm.value.connectionId,
       envId: this.addForm.value.envId,
       type: this.addForm.value.type,
-      options: options
+      options: options,
+      storeMethod: undefined
+      // this.addForm.value.type === ConnectionTypeEnum.Api ||
+      // this.addForm.value.type === ConnectionTypeEnum.GoogleApi
+      //   ? StoreMethodEnum.Get
+      //   : undefined
     };
 
     let apiService: ApiService = this.ref.data.apiService;

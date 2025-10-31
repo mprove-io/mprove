@@ -24,6 +24,7 @@ import { PgService } from '~backend/services/dwh/pg.service';
 import { PrestoService } from '~backend/services/dwh/presto.service';
 import { SnowFlakeService } from '~backend/services/dwh/snowflake.service';
 import { TrinoService } from '~backend/services/dwh/trino.service';
+import { StoreService } from '~backend/services/store.service';
 import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -53,6 +54,7 @@ export class TestConnectionController {
     private prestoService: PrestoService,
     private bigQueryService: BigQueryService,
     private snowFlakeService: SnowFlakeService,
+    private storeService: StoreService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -62,7 +64,8 @@ export class TestConnectionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendTestConnection)
   async testConnection(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendTestConnectionRequest = request.body;
-    let { projectId, envId, connectionId, type, options } = reqValid.payload;
+    let { projectId, envId, connectionId, type, options, storeMethod } =
+      reqValid.payload;
 
     if (isDefined(options.motherduck)) {
       let wrongChars: string[] = getMotherduckDatabaseWrongChars({
@@ -124,6 +127,13 @@ export class TestConnectionController {
                         connection: testConnection
                       })
                     : undefined;
+    // testConnection.type === ConnectionTypeEnum.Api ||
+    //     testConnection.type === ConnectionTypeEnum.GoogleApi
+    //   ? await this.storeService.testConnection({
+    //       connection: testConnection,
+    //       storeMethod: storeMethod
+    //     })
+    //   : undefined;
 
     if (isUndefined(testConnectionResult)) {
       throw new ServerError({

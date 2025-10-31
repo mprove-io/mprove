@@ -544,12 +544,9 @@ export class EditConnectionDialogComponent implements OnInit {
               serviceAccountCredentials: googleApiCredentials,
               baseUrl: this.editGoogleApiForm.value.baseUrl,
               headers: this.editGoogleApiForm.value.headers,
-              googleAuthScopes:
-                [ConnectionTypeEnum.GoogleApi].indexOf(
-                  this.editGoogleApiForm.get('type').value
-                ) > -1
-                  ? this.editGoogleApiForm.value.scopes.map((x: any) => x.value)
-                  : []
+              googleAuthScopes: this.editGoogleApiForm.value.scopes.map(
+                (x: any) => x.value
+              )
             }
           : undefined
     };
@@ -571,7 +568,12 @@ export class EditConnectionDialogComponent implements OnInit {
       envId: this.dataItem.connection.envId,
       connectionId: this.dataItem.connection.connectionId,
       type: this.dataItem.connection.type,
-      options: options
+      options: options,
+      storeMethod: undefined
+      // this.dataItem.connection.type === ConnectionTypeEnum.Api ||
+      // this.dataItem.connection.type === ConnectionTypeEnum.GoogleApi
+      //   ? StoreMethodEnum.Get
+      //   : undefined
     };
 
     let apiService: ApiService = this.ref.data.apiService;

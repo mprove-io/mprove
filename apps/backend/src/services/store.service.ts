@@ -67,6 +67,99 @@ export class StoreService {
     }
   }
 
+  // async testConnection(item: {
+  //   connection: ConnectionTab;
+  //   storeMethod: StoreMethodEnum;
+  // }): Promise<TestConnectionResult> {
+  //   let { connection, storeMethod } = item;
+
+  //   try {
+  //     if (connection.type === ConnectionTypeEnum.GoogleApi) {
+  //       let authClient = new JWT({
+  //         email:
+  //           connection.options.storeGoogleApi.serviceAccountCredentials
+  //             .client_email,
+  //         key: connection.options.storeGoogleApi.serviceAccountCredentials
+  //           .private_key,
+  //         scopes: connection.options.storeGoogleApi.googleAuthScopes
+  //       });
+
+  //       let tokens = await authClient.authorize();
+
+  //       connection.options.storeGoogleApi.googleAccessToken =
+  //         tokens.access_token;
+
+  //       connection.options.storeGoogleApi.googleAccessTokenExpiryDate =
+  //         tokens.expiry_date;
+  //     }
+
+  //     let url =
+  //       connection.type === ConnectionTypeEnum.Api
+  //         ? connection.options.storeApi.baseUrl
+  //         : connection.type === ConnectionTypeEnum.GoogleApi
+  //           ? connection.options.storeGoogleApi.baseUrl
+  //           : undefined;
+
+  //     let parsedUrl = new URL(url);
+
+  //     let hostname = parsedUrl.hostname.toLowerCase();
+
+  //     if (parsedUrl.protocol !== 'https:') {
+  //       throw new ServerError({
+  //         message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS
+  //       });
+  //     }
+
+  //     if (
+  //       this.blacklistedHostsLowerCase.some(
+  //         x => hostname === x || hostname.endsWith('.' + x)
+  //       )
+  //     ) {
+  //       throw new ServerError({
+  //         message: ErEnum.BACKEND_STORE_API_HOST_IS_NOT_ALLOWED
+  //       });
+  //     }
+
+  //     let headers: any = {};
+
+  //     let response;
+
+  //     if (connection.type === ConnectionTypeEnum.Api) {
+  //       connection.options.storeApi.headers.forEach(header => {
+  //         headers[header.key] = header.value;
+  //       });
+  //     } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
+  //       connection.options.storeGoogleApi.headers.forEach(header => {
+  //         headers[header.key] = header.value;
+  //       });
+
+  //       headers['Authorization'] =
+  //         `Bearer ${connection.options.storeGoogleApi.googleAccessToken}`;
+
+  //       headers['Content-Type'] = 'application/json';
+  //     }
+
+  //     let body = {};
+
+  //     response =
+  //       storeMethod === StoreMethodEnum.Get
+  //         ? await axios.get(url, body, { headers: headers })
+  //         : storeMethod === StoreMethodEnum.Post
+  //           ? await axios.post(url, body, { headers: headers })
+  //           : undefined;
+
+  //     return {
+  //       isSuccess: true,
+  //       errorMessage: response.status
+  //     };
+  //   } catch (err: any) {
+  //     return {
+  //       isSuccess: false,
+  //       errorMessage: `Connection failed: ${err.message}`
+  //     };
+  //   }
+  // }
+
   async adjustMconfig(item: {
     mconfig: MconfigTab;
     model: ModelTab;
