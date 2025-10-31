@@ -52,13 +52,13 @@ export class MysqlService {
   }): Promise<TestConnectionResult> {
     let { connection } = item;
 
-    let mysqlConnectionOptions = this.optionsToMysqlOptions({
-      connection: connection
-    });
-
-    let errorMessage: string;
-
     try {
+      let mysqlConnectionOptions = this.optionsToMysqlOptions({
+        connection: connection
+      });
+
+      let errorMessage: string;
+
       let mc = await MYSQL.createConnection(mysqlConnectionOptions).catch(e => {
         errorMessage = `Connection failed: ${e.message}`;
       });
@@ -76,6 +76,7 @@ export class MysqlService {
       }
 
       await mc.ping();
+      await mc.end();
 
       return {
         isSuccess: true,

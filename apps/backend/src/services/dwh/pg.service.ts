@@ -11,6 +11,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
@@ -24,16 +25,12 @@ export class PgService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async runQuery(item: {
+  optionsToPostgresOptions(item: {
     connection: ConnectionTab;
-    queryJobId: string;
-    queryId: string;
-    projectId: string;
-    querySql: string;
-  }): Promise<void> {
-    let { connection, queryJobId, queryId, querySql, projectId } = item;
+  }) {
+    let { connection } = item;
 
-    let cn: pg.IConnectionParameters<pg.IClient> = {
+    let connectionOptions: pg.IConnectionParameters<pg.IClient> = {
       host: connection.options.postgres.host,
       port: connection.options.postgres.port,
       database: connection.options.postgres.database,
@@ -47,8 +44,71 @@ export class PgService {
           : false
     };
 
+    return connectionOptions;
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    try {
+      let postgresConnectionOptions: pg.IConnectionParameters<pg.IClient> =
+        this.optionsToPostgresOptions({
+          connection: connection
+        });
+
+      let errorMessage: string;
+
+      let pgp = pgPromise({ noWarnings: true });
+      let pgDb = pgp(postgresConnectionOptions);
+
+      let pc = await pgDb.connect().catch(e => {
+        errorMessage = `Connection failed: ${e.message}`;
+      });
+
+      if (isDefined(errorMessage) === true) {
+        return {
+          isSuccess: false,
+          errorMessage: errorMessage
+        };
+      } else if (!pc) {
+        return {
+          isSuccess: false,
+          errorMessage: 'Connection failed'
+        };
+      }
+
+      pgp.end();
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
+  async runQuery(item: {
+    connection: ConnectionTab;
+    queryJobId: string;
+    queryId: string;
+    projectId: string;
+    querySql: string;
+  }): Promise<void> {
+    let { connection, queryJobId, queryId, querySql, projectId } = item;
+
+    let postgresConnectionOptions: pg.IConnectionParameters<pg.IClient> =
+      this.optionsToPostgresOptions({
+        connection: connection
+      });
+
     let pgp = pgPromise({ noWarnings: true });
-    let pgDb = pgp(cn);
+    let pgDb = pgp(postgresConnectionOptions);
 
     await pgDb
       .any(querySql)
