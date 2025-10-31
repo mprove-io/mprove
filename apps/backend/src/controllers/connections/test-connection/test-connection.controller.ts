@@ -17,6 +17,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/db/connections.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { BigQueryService } from '~backend/services/dwh/bigquery.service';
 import { DuckDbService } from '~backend/services/dwh/duckdb.service';
 import { MysqlService } from '~backend/services/dwh/mysql.service';
 import { PgService } from '~backend/services/dwh/pg.service';
@@ -49,6 +50,7 @@ export class TestConnectionController {
     private duckDbService: DuckDbService,
     private trinoService: TrinoService,
     private prestoService: PrestoService,
+    private bigQueryService: BigQueryService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -111,7 +113,11 @@ export class TestConnectionController {
                 ? await this.prestoService.testConnection({
                     connection: testConnection
                   })
-                : undefined;
+                : testConnection.type === ConnectionTypeEnum.BigQuery
+                  ? await this.bigQueryService.testConnection({
+                      connection: testConnection
+                    })
+                  : undefined;
 
     if (isUndefined(testConnectionResult)) {
       throw new ServerError({

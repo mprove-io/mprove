@@ -1,4 +1,4 @@
-import { BigQuery, JobResponse } from '@google-cloud/bigquery';
+import { BigQuery, BigQueryOptions, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
 import {
   ConnectionTab,
@@ -8,10 +8,50 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
+import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 
 @Injectable()
 export class BigQueryService {
   constructor() {}
+
+  optionsToBigQueryOptions(item: {
+    connection: ConnectionTab;
+  }) {
+    let { connection } = item;
+
+    let connectionOptions: BigQueryOptions = {
+      credentials: connection.options.bigquery.serviceAccountCredentials,
+      projectId: connection.options.bigquery.googleCloudProject
+    };
+
+    return connectionOptions;
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
+      connection: connection
+    });
+
+    try {
+      let bigquery = new BigQuery(bigqueryConnectionOptions);
+
+      await bigquery.query('SELECT 1');
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
 
   async runQuery(item: {
     userId: string;
@@ -20,10 +60,11 @@ export class BigQueryService {
   }): Promise<QueryTab> {
     let { query, userId, connection } = item;
 
-    let bigquery = new BigQuery({
-      credentials: connection.options.bigquery.serviceAccountCredentials,
-      projectId: connection.options.bigquery.googleCloudProject
+    let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
+      connection: connection
     });
+
+    let bigquery = new BigQuery(bigqueryConnectionOptions);
 
     query.lastRunBy = userId;
     query.lastRunTs = makeTsNumber();
