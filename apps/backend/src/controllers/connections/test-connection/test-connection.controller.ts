@@ -22,6 +22,7 @@ import { DuckDbService } from '~backend/services/dwh/duckdb.service';
 import { MysqlService } from '~backend/services/dwh/mysql.service';
 import { PgService } from '~backend/services/dwh/pg.service';
 import { PrestoService } from '~backend/services/dwh/presto.service';
+import { SnowFlakeService } from '~backend/services/dwh/snowflake.service';
 import { TrinoService } from '~backend/services/dwh/trino.service';
 import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -51,6 +52,7 @@ export class TestConnectionController {
     private trinoService: TrinoService,
     private prestoService: PrestoService,
     private bigQueryService: BigQueryService,
+    private snowFlakeService: SnowFlakeService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -117,7 +119,11 @@ export class TestConnectionController {
                   ? await this.bigQueryService.testConnection({
                       connection: testConnection
                     })
-                  : undefined;
+                  : testConnection.type === ConnectionTypeEnum.SnowFlake
+                    ? await this.snowFlakeService.testConnection({
+                        connection: testConnection
+                      })
+                    : undefined;
 
     if (isUndefined(testConnectionResult)) {
       throw new ServerError({

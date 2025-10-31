@@ -13,6 +13,7 @@ import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '~common/models/server-error';
 import { TabService } from '../tab.service';
 
@@ -27,6 +28,87 @@ export class SnowFlakeService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  optionsToSnowFlakeOptions(item: {
+    connection: ConnectionTab;
+  }) {
+    let { connection } = item;
+
+    let connectionOptions: snowflake.ConnectionOptions = {
+      account: connection.options.snowflake.account,
+      warehouse: connection.options.snowflake.warehouse,
+      database: connection.options.snowflake.database,
+      username: connection.options.snowflake.username,
+      password: connection.options.snowflake.password,
+      sfRetryMaxLoginRetries: 1
+    };
+
+    return connectionOptions;
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    let snoflakeOptions = this.optionsToSnowFlakeOptions({
+      connection: connection
+    });
+
+    let snowflakeConnection = snowflake.createConnection(snoflakeOptions);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        snowflakeConnection.connect((err, conn) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+
+          conn.execute({
+            sqlText: 'SELECT 1',
+            complete: (err, stmt, rows) => {
+              if (err) {
+                reject(err);
+              } else {
+                conn.destroy(destroyErr => {
+                  if (destroyErr) {
+                    reject(destroyErr);
+                  } else {
+                    resolve();
+                  }
+                });
+              }
+            }
+          });
+        });
+      });
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      // snowflakeConnection?.destroy(destroyErr => {
+      //   if (destroyErr) {
+      //     logToConsoleBackend({
+      //       log: new ServerError({
+      //         message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
+      //         originalError: destroyErr
+      //       }),
+      //       logLevel: LogLevelEnum.Error,
+      //       logger: this.logger,
+      //       cs: this.cs
+      //     });
+      //   }
+      // });
+
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
   async runQuery(item: {
     connection: ConnectionTab;
     queryJobId: string;
@@ -36,15 +118,11 @@ export class SnowFlakeService {
   }): Promise<void> {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
-    let options: snowflake.ConnectionOptions = {
-      account: connection.options.snowflake.account,
-      warehouse: connection.options.snowflake.warehouse,
-      database: connection.options.snowflake.database,
-      username: connection.options.snowflake.username,
-      password: connection.options.snowflake.password
-    };
+    let snoflakeOptions = this.optionsToSnowFlakeOptions({
+      connection: connection
+    });
 
-    let snowflakeConnection = snowflake.createConnection(options);
+    let snowflakeConnection = snowflake.createConnection(snoflakeOptions);
 
     snowflakeConnection.connect((err, conn) => {
       if (err) {
