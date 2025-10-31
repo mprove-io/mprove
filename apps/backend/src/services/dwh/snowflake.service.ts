@@ -26,7 +26,9 @@ export class SnowFlakeService {
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
-  ) {}
+  ) {
+    snowflake.configure({ logLevel: 'OFF' });
+  }
 
   optionsToSnowFlakeOptions(item: {
     connection: ConnectionTab;
@@ -39,7 +41,7 @@ export class SnowFlakeService {
       database: connection.options.snowflake.database,
       username: connection.options.snowflake.username,
       password: connection.options.snowflake.password,
-      sfRetryMaxLoginRetries: 1
+      sfRetryMaxLoginRetries: 0 // also in libs/node-common/src/functions/make-malloy-connections.ts
     };
 
     return connectionOptions;

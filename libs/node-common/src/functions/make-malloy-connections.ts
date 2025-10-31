@@ -85,7 +85,8 @@ export function makeMalloyConnections(item: {
                         warehouse: x.options.snowflake?.warehouse,
                         database: x.options.snowflake?.database,
                         username: x.options.snowflake?.username,
-                        password: x.options.snowflake?.password
+                        password: x.options.snowflake?.password,
+                        sfRetryMaxLoginRetries: 0
                       }
                     })
                   : x.type === ConnectionTypeEnum.MotherDuck
