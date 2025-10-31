@@ -17,6 +17,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/db/connections.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { DuckDbService } from '~backend/services/dwh/duckdb.service';
 import { MysqlService } from '~backend/services/dwh/mysql.service';
 import { PgService } from '~backend/services/dwh/pg.service';
 import { TabService } from '~backend/services/tab.service';
@@ -43,6 +44,7 @@ export class TestConnectionController {
     private connectionsService: ConnectionsService,
     private mysqlService: MysqlService,
     private pgService: PgService,
+    private duckDbService: DuckDbService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -93,7 +95,11 @@ export class TestConnectionController {
         ? await this.mysqlService.testConnection({ connection: testConnection })
         : testConnection.type === ConnectionTypeEnum.PostgreSQL
           ? await this.pgService.testConnection({ connection: testConnection })
-          : undefined;
+          : testConnection.type === ConnectionTypeEnum.MotherDuck
+            ? await this.duckDbService.testConnection({
+                connection: testConnection
+              })
+            : undefined;
 
     if (isUndefined(testConnectionResult)) {
       throw new ServerError({

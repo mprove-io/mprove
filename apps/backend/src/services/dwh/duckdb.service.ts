@@ -11,6 +11,7 @@ import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
+import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
@@ -24,6 +25,77 @@ export class DuckDbService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  optionsToDuckDbOptions(item: {
+    connection: ConnectionTab;
+  }) {
+    let { connection } = item;
+
+    let dbPath =
+      connection.options.motherduck.attachModeSingle === true &&
+      connection.options.motherduck.database?.length > 0
+        ? `md:${connection.options.motherduck.database}?attach_mode=single&saas_mode=true`
+        : `md:${connection.options.motherduck.database}?saas_mode=true`;
+
+    let duckdbConnectionOptions: Record<string, string> = {
+      motherduck_token: connection.options.motherduck.motherduckToken
+    };
+
+    if (connection.options.motherduck.accessModeReadOnly === true) {
+      duckdbConnectionOptions.access_mode = 'READ_ONLY';
+    }
+
+    return { duckdbConnectionOptions, dbPath };
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    try {
+      let { duckdbConnectionOptions, dbPath } = this.optionsToDuckDbOptions({
+        connection: connection
+      });
+
+      await new Promise<void>((resolve, reject) => {
+        let db = new Database(dbPath, duckdbConnectionOptions, err => {
+          if (err) {
+            reject(err);
+            return;
+          }
+        });
+
+        if (!!db) {
+          db.all('SELECT 1', (queryErr: Error | null) => {
+            if (queryErr) {
+              db.close();
+              reject(queryErr);
+              return;
+            }
+
+            db.close(closeErr => {
+              if (closeErr) {
+                reject(closeErr);
+              } else {
+                resolve();
+              }
+            });
+          });
+        }
+      });
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
   async runQuery(item: {
     connection: ConnectionTab;
     queryJobId: string;
@@ -33,21 +105,11 @@ export class DuckDbService {
   }): Promise<void> {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
-    let dbPath =
-      connection.options.motherduck.attachModeSingle === true &&
-      connection.options.motherduck.database?.length > 0
-        ? `md:${connection.options.motherduck.database}?attach_mode=single&saas_mode=true`
-        : `md:${connection.options.motherduck.database}?saas_mode=true`;
+    let { duckdbConnectionOptions, dbPath } = this.optionsToDuckDbOptions({
+      connection: connection
+    });
 
-    let opts: Record<string, string> = {
-      motherduck_token: connection.options.motherduck.motherduckToken
-    };
-
-    if (connection.options.motherduck.accessModeReadOnly === true) {
-      opts.access_mode = 'READ_ONLY';
-    }
-
-    let db = new Database(dbPath, opts, async err => {
+    let db = new Database(dbPath, duckdbConnectionOptions, async err => {
       if (err) {
         this.processError({
           e: err,
@@ -59,7 +121,7 @@ export class DuckDbService {
     });
 
     let dbQuery = new Promise<TableData>((resolve, reject) => {
-      if (db) {
+      if (!!db) {
         db.all(querySql, (err: DuckDbError | null, rows: TableData) => {
           if (err) {
             reject(err);
