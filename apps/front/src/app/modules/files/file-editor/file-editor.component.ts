@@ -282,6 +282,131 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     return true;
   };
 
+  malloyKeymap: KeyBinding[] = [
+    {
+      key: 'Cmd-/',
+      run(view: EditorView) {
+        const selection = view.state.selection;
+        const changes: { from: number; to: number; insert: string }[] = [];
+
+        if (selection.ranges.length === 1 && selection.main.empty) {
+          // Single cursor: Handle as before (toggle the one line)
+          const { from } = selection.main;
+          const line = view.state.doc.lineAt(from);
+          const lineText = view.state.doc.sliceString(line.from, line.to);
+
+          const indentMatch = lineText.match(/^\s*/);
+          const indentLength = indentMatch ? indentMatch[0].length : 0;
+          const contentText = lineText.slice(indentLength);
+
+          const isCommented =
+            contentText.startsWith('-- ') || contentText.startsWith('// ');
+          let newLineText: string;
+          if (isCommented) {
+            const prefix = contentText.startsWith('-- ') ? '-- ' : '// ';
+            const prefixLength = prefix.length;
+            const newContent = contentText.slice(prefixLength);
+            newLineText = lineText.slice(0, indentLength) + newContent;
+          } else {
+            newLineText = lineText.slice(0, indentLength) + '-- ' + contentText;
+          }
+          changes.push({ from: line.from, to: line.to, insert: newLineText });
+        } else {
+          // Multi-line selection: Check if ALL lines are commented; if yes, uncomment all; else, comment all (double on already commented)
+          const ranges = selection.ranges;
+          let minLine = Infinity;
+          let maxLine = -Infinity;
+
+          // Find the overall line range
+          for (const range of ranges) {
+            const startLine = view.state.doc.lineAt(range.from).number;
+            const endLine = view.state.doc.lineAt(range.to).number;
+            minLine = Math.min(minLine, startLine);
+            maxLine = Math.max(maxLine, endLine);
+          }
+
+          // Collect lines and check if all are commented
+          let allCommented = true;
+          const lineInfos: {
+            line: any;
+            indentLength: number;
+            contentText: string;
+            isCommented: boolean;
+            prefix?: string;
+          }[] = [];
+
+          for (let lineNum = minLine; lineNum <= maxLine; lineNum++) {
+            const line = view.state.doc.line(lineNum);
+            const lineText = view.state.doc.sliceString(line.from, line.to);
+
+            const indentMatch = lineText.match(/^\s*/);
+            const indentLength = indentMatch ? indentMatch[0].length : 0;
+            const contentText = lineText.slice(indentLength);
+
+            const isCommented =
+              contentText.startsWith('-- ') || contentText.startsWith('// ');
+            const prefix = contentText.startsWith('-- ') ? '-- ' : '// ';
+
+            lineInfos.push({
+              line,
+              indentLength,
+              contentText,
+              isCommented,
+              prefix
+            });
+
+            if (!isCommented) {
+              allCommented = false;
+            }
+          }
+
+          // Apply changes based on state
+          const shouldUncomment = allCommented;
+          for (const info of lineInfos) {
+            let newLineText: string;
+            if (shouldUncomment) {
+              // Uncomment: Remove prefix
+              const prefixLength = info.prefix.length;
+              const newContent = info.contentText.slice(prefixLength);
+              newLineText =
+                view.state.doc.sliceString(
+                  info.line.from,
+                  info.line.from + info.indentLength
+                ) + newContent;
+            } else {
+              // Comment: Add "-- " after indent (double if already)
+              newLineText =
+                view.state.doc.sliceString(
+                  info.line.from,
+                  info.line.from + info.indentLength
+                ) +
+                '-- ' +
+                info.contentText;
+            }
+
+            // Only add if changed
+            if (
+              newLineText !==
+              view.state.doc.sliceString(info.line.from, info.line.to)
+            ) {
+              changes.push({
+                from: info.line.from,
+                to: info.line.to,
+                insert: newLineText
+              });
+            }
+          }
+        }
+
+        if (changes.length > 0) {
+          view.dispatch({ changes });
+        }
+
+        return true;
+      }
+    }
+  ];
+
   customHistoryKeymap: KeyBinding[] = [
     { key: 'Mod-z', run: this.customUndo, preventDefault: true },
     {
@@ -671,6 +796,18 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       this.lang = language?.name;
     }
 
+    if (
+      this.lang === 'malloy' ||
+      this.lang === 'malloysql' ||
+      this.lang === 'malloynb'
+    ) {
+      // also in createLinter()
+      this.mainExtensions = [
+        ...this.mainPrepExtensions,
+        keymap.of([...this.malloyKeymap])
+      ];
+    }
+
     let nav = this.navQuery.getValue();
 
     this.theme =
@@ -692,7 +829,16 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           : VS_LIGHT_THEME_EXTRA_DIFF;
 
     let originalExtensions = [...this.diffOriginalExtensions, themeDIff];
-    let modifiedExtensions = [...this.diffModifiedExtensions, themeDIff];
+    let modifiedExtensions =
+      this.lang === 'malloy' ||
+      this.lang === 'malloysql' ||
+      this.lang === 'malloynb'
+        ? [
+            ...this.diffModifiedExtensions,
+            themeDIff,
+            keymap.of([...this.malloyKeymap])
+          ]
+        : [...this.diffModifiedExtensions, themeDIff];
 
     if (isDefined(language)) {
       let loadedLanguage = await language.load(); // language.support
@@ -829,7 +975,18 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
   createLinter() {
     let linterExtension = linter((view: EditorView) => this.diagnostics);
-    this.mainExtensions = [...this.mainPrepExtensions, linterExtension];
+
+    // also in setLanguage()
+    this.mainExtensions =
+      this.lang === 'malloy' ||
+      this.lang === 'malloysql' ||
+      this.lang === 'malloynb'
+        ? [
+            ...this.mainPrepExtensions,
+            keymap.of([...this.malloyKeymap]),
+            linterExtension
+          ]
+        : [...this.mainPrepExtensions, linterExtension];
   }
 
   onTextChanged(item: { isDiffEditor: boolean }) {
