@@ -41,7 +41,7 @@ export class SnowFlakeService {
       database: connection.options.snowflake.database,
       username: connection.options.snowflake.username,
       password: connection.options.snowflake.password,
-      sfRetryMaxLoginRetries: 0 // also in libs/node-common/src/functions/make-malloy-connections.ts
+      sfRetryMaxLoginRetries: 1 // also in libs/node-common/src/functions/make-malloy-connections.ts
     };
 
     return connectionOptions;
