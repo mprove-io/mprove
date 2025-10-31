@@ -286,71 +286,61 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     {
       key: 'Cmd-/',
       run(view: EditorView) {
-        const selection = view.state.selection;
-        const changes: { from: number; to: number; insert: string }[] = [];
+        let selection = view.state.selection;
+        let changes: { from: number; to: number; insert: string }[] = [];
 
         if (selection.ranges.length === 1 && selection.main.empty) {
           // Single cursor: Handle as before (toggle the one line)
-          const { from } = selection.main;
-          const line = view.state.doc.lineAt(from);
-          const lineText = view.state.doc.sliceString(line.from, line.to);
+          let { from } = selection.main;
+          let line = view.state.doc.lineAt(from);
+          let lineText = view.state.doc.sliceString(line.from, line.to);
 
-          const indentMatch = lineText.match(/^\s*/);
-          const indentLength = indentMatch ? indentMatch[0].length : 0;
-          const contentText = lineText.slice(indentLength);
-
-          const isCommented =
-            contentText.startsWith('-- ') || contentText.startsWith('// ');
+          let isCommented =
+            lineText.startsWith('-- ') || lineText.startsWith('// ');
           let newLineText: string;
           if (isCommented) {
-            const prefix = contentText.startsWith('-- ') ? '-- ' : '// ';
-            const prefixLength = prefix.length;
-            const newContent = contentText.slice(prefixLength);
-            newLineText = lineText.slice(0, indentLength) + newContent;
+            let prefix = lineText.startsWith('-- ') ? '-- ' : '// ';
+            let prefixLength = prefix.length;
+            let newContent = lineText.slice(prefixLength);
+            newLineText = newContent; // Remove prefix from most left
           } else {
-            newLineText = lineText.slice(0, indentLength) + '-- ' + contentText;
+            newLineText = '-- ' + lineText; // Add at most left (column 0)
           }
           changes.push({ from: line.from, to: line.to, insert: newLineText });
         } else {
           // Multi-line selection: Check if ALL lines are commented; if yes, uncomment all; else, comment all (double on already commented)
-          const ranges = selection.ranges;
+          let ranges = selection.ranges;
           let minLine = Infinity;
           let maxLine = -Infinity;
 
           // Find the overall line range
-          for (const range of ranges) {
-            const startLine = view.state.doc.lineAt(range.from).number;
-            const endLine = view.state.doc.lineAt(range.to).number;
+          for (let range of ranges) {
+            let startLine = view.state.doc.lineAt(range.from).number;
+            let endLine = view.state.doc.lineAt(range.to).number;
             minLine = Math.min(minLine, startLine);
             maxLine = Math.max(maxLine, endLine);
           }
 
           // Collect lines and check if all are commented
           let allCommented = true;
-          const lineInfos: {
+          let lineInfos: {
             line: any;
-            indentLength: number;
-            contentText: string;
+            lineText: string;
             isCommented: boolean;
             prefix?: string;
           }[] = [];
 
           for (let lineNum = minLine; lineNum <= maxLine; lineNum++) {
-            const line = view.state.doc.line(lineNum);
-            const lineText = view.state.doc.sliceString(line.from, line.to);
+            let line = view.state.doc.line(lineNum);
+            let lineText = view.state.doc.sliceString(line.from, line.to);
 
-            const indentMatch = lineText.match(/^\s*/);
-            const indentLength = indentMatch ? indentMatch[0].length : 0;
-            const contentText = lineText.slice(indentLength);
-
-            const isCommented =
-              contentText.startsWith('-- ') || contentText.startsWith('// ');
-            const prefix = contentText.startsWith('-- ') ? '-- ' : '// ';
+            let isCommented =
+              lineText.startsWith('-- ') || lineText.startsWith('// ');
+            let prefix = lineText.startsWith('-- ') ? '-- ' : '// ';
 
             lineInfos.push({
               line,
-              indentLength,
-              contentText,
+              lineText,
               isCommented,
               prefix
             });
@@ -361,34 +351,21 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           }
 
           // Apply changes based on state
-          const shouldUncomment = allCommented;
-          for (const info of lineInfos) {
+          let shouldUncomment = allCommented;
+          for (let info of lineInfos) {
             let newLineText: string;
             if (shouldUncomment) {
-              // Uncomment: Remove prefix
-              const prefixLength = info.prefix.length;
-              const newContent = info.contentText.slice(prefixLength);
-              newLineText =
-                view.state.doc.sliceString(
-                  info.line.from,
-                  info.line.from + info.indentLength
-                ) + newContent;
+              // Uncomment: Remove prefix from most left
+              let prefixLength = info.prefix.length;
+              let newContent = info.lineText.slice(prefixLength);
+              newLineText = newContent;
             } else {
-              // Comment: Add "-- " after indent (double if already)
-              newLineText =
-                view.state.doc.sliceString(
-                  info.line.from,
-                  info.line.from + info.indentLength
-                ) +
-                '-- ' +
-                info.contentText;
+              // Comment: Add "-- " at most left (double if already)
+              newLineText = '-- ' + info.lineText;
             }
 
             // Only add if changed
-            if (
-              newLineText !==
-              view.state.doc.sliceString(info.line.from, info.line.to)
-            ) {
+            if (newLineText !== info.lineText) {
               changes.push({
                 from: info.line.from,
                 to: info.line.to,
