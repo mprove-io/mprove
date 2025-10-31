@@ -52,11 +52,11 @@ export class DuckDbService {
   }): Promise<TestConnectionResult> {
     let { connection } = item;
 
-    try {
-      let { duckdbConnectionOptions, dbPath } = this.optionsToDuckDbOptions({
-        connection: connection
-      });
+    let { duckdbConnectionOptions, dbPath } = this.optionsToDuckDbOptions({
+      connection: connection
+    });
 
+    try {
       await new Promise<void>((resolve, reject) => {
         let db = new Database(dbPath, duckdbConnectionOptions, err => {
           if (err) {

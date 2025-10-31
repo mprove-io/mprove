@@ -12,6 +12,7 @@ import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { QueryStatusEnum } from '~common/enums/query-status.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
+import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
@@ -25,6 +26,60 @@ export class TrinoService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  optionsToTrinoOptions(item: {
+    connection: ConnectionTab;
+  }) {
+    let { connection } = item;
+
+    let prepConnectionOptions: TrinoConnectionConfiguration = {
+      server: connection.options.trino.server,
+      catalog: connection.options.trino.catalog,
+      schema: connection.options.trino.schema,
+      user: connection.options.trino.user,
+      password: connection.options.trino.password,
+      extraConfig: connection.options.trino.extraConfig
+    };
+
+    let connectionOptions = {
+      server: prepConnectionOptions.server,
+      catalog: prepConnectionOptions.catalog,
+      schema: prepConnectionOptions.schema,
+      auth: new BasicAuth(
+        prepConnectionOptions.user,
+        prepConnectionOptions.password
+      ),
+      ...prepConnectionOptions.extraConfig
+    };
+
+    return connectionOptions;
+  }
+
+  async testConnection(item: {
+    connection: ConnectionTab;
+  }): Promise<TestConnectionResult> {
+    let { connection } = item;
+
+    let trinoConnectionOptions = this.optionsToTrinoOptions({
+      connection: connection
+    });
+
+    try {
+      let tc = Trino.create(trinoConnectionOptions);
+
+      await tc.query('SELECT 1');
+
+      return {
+        isSuccess: true,
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        isSuccess: false,
+        errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
   async runQuery(item: {
     connection: ConnectionTab;
     queryJobId: string;
@@ -34,22 +89,11 @@ export class TrinoService {
   }): Promise<void> {
     let { connection, queryJobId, queryId, querySql, projectId } = item;
 
-    let connectionOptions: TrinoConnectionConfiguration = {
-      server: connection.options.trino.server,
-      catalog: connection.options.trino.catalog,
-      schema: connection.options.trino.schema,
-      user: connection.options.trino.user,
-      password: connection.options.trino.password,
-      extraConfig: connection.options.trino.extraConfig
-    };
-
-    let tc = Trino.create({
-      server: connectionOptions.server,
-      catalog: connectionOptions.catalog,
-      schema: connectionOptions.schema,
-      auth: new BasicAuth(connectionOptions.user, connectionOptions.password),
-      ...connectionOptions.extraConfig
+    let trinoConnectionOptions = this.optionsToTrinoOptions({
+      connection: connection
     });
+
+    let tc = Trino.create(trinoConnectionOptions);
 
     await tc
       .query(querySql)

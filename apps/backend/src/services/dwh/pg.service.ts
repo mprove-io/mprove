@@ -52,12 +52,12 @@ export class PgService {
   }): Promise<TestConnectionResult> {
     let { connection } = item;
 
-    try {
-      let postgresConnectionOptions: pg.IConnectionParameters<pg.IClient> =
-        this.optionsToPostgresOptions({
-          connection: connection
-        });
+    let postgresConnectionOptions: pg.IConnectionParameters<pg.IClient> =
+      this.optionsToPostgresOptions({
+        connection: connection
+      });
 
+    try {
       let errorMessage: string;
 
       let pgp = pgPromise({ noWarnings: true });

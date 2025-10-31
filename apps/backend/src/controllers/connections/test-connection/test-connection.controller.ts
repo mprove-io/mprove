@@ -20,6 +20,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { DuckDbService } from '~backend/services/dwh/duckdb.service';
 import { MysqlService } from '~backend/services/dwh/mysql.service';
 import { PgService } from '~backend/services/dwh/pg.service';
+import { TrinoService } from '~backend/services/dwh/trino.service';
 import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
@@ -45,6 +46,7 @@ export class TestConnectionController {
     private mysqlService: MysqlService,
     private pgService: PgService,
     private duckDbService: DuckDbService,
+    private trinoService: TrinoService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -99,7 +101,11 @@ export class TestConnectionController {
             ? await this.duckDbService.testConnection({
                 connection: testConnection
               })
-            : undefined;
+            : testConnection.type === ConnectionTypeEnum.Trino
+              ? await this.trinoService.testConnection({
+                  connection: testConnection
+                })
+              : undefined;
 
     if (isUndefined(testConnectionResult)) {
       throw new ServerError({

@@ -52,11 +52,11 @@ export class MysqlService {
   }): Promise<TestConnectionResult> {
     let { connection } = item;
 
-    try {
-      let mysqlConnectionOptions = this.optionsToMysqlOptions({
-        connection: connection
-      });
+    let mysqlConnectionOptions = this.optionsToMysqlOptions({
+      connection: connection
+    });
 
+    try {
       let errorMessage: string;
 
       let mc = await MYSQL.createConnection(mysqlConnectionOptions).catch(e => {
