@@ -1,68 +1,18 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import {
   LanguageDescription,
   LanguageSupport,
   StreamLanguage
 } from '@codemirror/language';
 import * as languageData from '@codemirror/language-data';
-import * as shiki from 'shiki';
-import { MALLOY_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-grammar';
-import { MALLOY_NOTEBOOK_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-notebook-grammar';
-import { MALLOY_SQL_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-sql-grammar';
+import { throttle } from 'throttle-debounce';
 import {
   LIGHT_PLUS_COLOR_TO_TAG,
   LIGHT_PLUS_CUSTOM_TAGS
 } from '~common/constants/code-themes/light-plus-tags';
 import { LIGHT_PLUS_LANGUAGES } from '~common/constants/top-front';
-import { makeCopy } from '~common/functions/make-copy';
+import { getWorkerCode } from '../functions/get-worker-code';
 import { UiQuery } from '../queries/ui.query';
-
-let malloyGrammar = makeCopy(MALLOY_GRAMMAR);
-let malloyNotebookGrammar = makeCopy(MALLOY_NOTEBOOK_GRAMMAR);
-let malloySqlGrammar = makeCopy(MALLOY_SQL_GRAMMAR);
-
-malloySqlGrammar.repository['malloysql-sql'].patterns = [
-  malloySqlGrammar.repository['malloysql-sql'].patterns[0],
-  {
-    begin: '>>>malloy',
-    end: '(?=>>>)',
-    beginCaptures: {
-      '0': { name: 'entity.other.attribute.malloy-sql' }
-    },
-    endCaptures: null,
-    name: 'meta.embedded.block.malloysql.malloy',
-    patterns: [{ include: 'source.malloy' }]
-  },
-  {
-    begin: '(>>>sql)(\\s*connection:.*?(?<!\n)(?<!//))?',
-    end: '(?=>>>)',
-    endCaptures: null,
-    beginCaptures: {
-      '0': { name: 'entity.other.attribute.malloy-sql' },
-      ['1' as any]: { name: 'entity.other.attribute.malloy-sql' },
-      ['3' as any]: { name: 'comment.line.double-slash' }
-    },
-    name: 'meta.embedded.block.malloysql.sql',
-    patterns: [{ include: 'source.malloy-sql' }]
-  },
-  ...malloySqlGrammar.repository['malloysql-sql'].patterns.filter(
-    (x, index) => index !== 0
-  )
-];
-
-malloyNotebookGrammar.patterns = [
-  malloyNotebookGrammar.patterns[0],
-  {
-    begin: '>>>markdown',
-    end: '(?=>>>)',
-    beginCaptures: {
-      '0': { name: 'entity.other.attribute.markdown' }
-    },
-    name: 'meta.embedded.block.markdown',
-    patterns: [{ include: 'text.html.markdown' }]
-  } as any,
-  ...malloyNotebookGrammar.patterns.filter((x, index) => index !== 0)
-];
 
 interface FullToken {
   text: string;
@@ -74,12 +24,23 @@ interface FullToken {
 }
 
 interface Place {
+  controlDocText?: string;
+  controlShikiLanguage?: string;
+  controlShikiTheme?: string;
   docText?: string;
   shikiLanguage?: string;
   shikiTheme?: string;
   fullHtml?: string;
   fullTokenLines?: any[];
   fullTokens?: FullToken[];
+}
+
+interface WorkerTaskOptions {
+  type: string;
+  placeName: string;
+  input: string;
+  shikiLanguage: string;
+  shikiTheme: string;
 }
 
 export enum PlaceNameEnum {
@@ -91,71 +52,40 @@ export enum PlaceNameEnum {
 
 @Injectable({ providedIn: 'root' })
 export class HighLightService {
-  highlighter: any;
+  worker: Worker;
+
+  workerTaskCompleted = new EventEmitter<{ placeName: PlaceNameEnum }>();
 
   mainEditorPlace: Place = {};
   originalEditorPlace: Place = {};
   rightEditorPlace: Place = {};
   queryInfoPlace: Place = {};
 
-  constructor(private uiQuery: UiQuery) {
-    this.initHighlighter();
-  }
-
-  async initHighlighter() {
-    // console.log('initHighlighter');
-    let startInitHighlighter = Date.now();
-
-    let startFetchOnig = Date.now();
-    const response = await fetch('/assets/vscode-oniguruma/onig.wasm');
-    // console.log(`fetch onig.wasm time, ms: ${Date.now() - startFetchOnig}`);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch onig.wasm: ${response.statusText}`);
+  throttleWorkerPostMessage = throttle(
+    200,
+    (workerTaskOptions: WorkerTaskOptions) =>
+      this.worker.postMessage(workerTaskOptions),
+    {
+      debounceMode: false
     }
+  );
 
-    shiki.setCDN('/assets');
-
-    let startArrayBuffer = Date.now();
-    const buffer = await response.arrayBuffer();
-    // console.log(`arrayBuffer time, ms: ${Date.now() - startArrayBuffer}`);
-
-    shiki.setWasm(buffer);
-
-    let startGetHighlighter = Date.now();
-    this.highlighter = await shiki.getHighlighter({
-      theme: 'light-plus-extended',
-      paths: {
-        themes: '/shiki/themes/',
-        languages: '/shiki/languages/'
-      } as any,
-      langs: [
-        'sql',
-        'markdown',
-        {
-          id: 'malloy',
-          scopeName: 'source.malloy',
-          grammar: malloyGrammar as any
-        },
-        {
-          id: 'malloysql',
-          scopeName: 'source.malloy-sql',
-          grammar: malloySqlGrammar as any
-        },
-        {
-          id: 'malloynb',
-          scopeName: 'source.malloy-notebook',
-          grammar: malloyNotebookGrammar as any
-        }
-      ]
+  constructor(private uiQuery: UiQuery) {
+    let workerCode = getWorkerCode({
+      assetsPrefix: `${window.location.protocol}//${window.location.host}`
     });
-    // console.log(`getHighlighter time, ms: ${Date.now() - startGetHighlighter}`);
 
-    // console.log(
-    //   `initHighlighter time, ms: ${Date.now() - startInitHighlighter}`
-    // );
+    this.worker = new Worker(
+      URL.createObjectURL(
+        new Blob([workerCode], { type: 'application/javascript' })
+      )
+    );
 
-    this.uiQuery.updatePart({ isHighlighterReady: true });
+    this.worker.onmessage = this.handleWorkerMessage.bind(this);
+
+    let sMessage = { type: 'initHighlighter' };
+
+    this.worker.postMessage(sMessage);
   }
 
   getLanguages(item: {
@@ -236,28 +166,42 @@ export class HighLightService {
     docText: string;
     shikiLanguage: string;
     shikiTheme: string;
-    isFilter?: boolean;
+    isThrottle: boolean;
   }) {
-    let { docText, shikiLanguage, shikiTheme, placeName, isFilter } = item;
+    let { docText, shikiLanguage, shikiTheme, placeName, isThrottle } = item;
 
     let place = this.getPlaceByPlaceName(placeName);
 
-    if (!this.highlighter) {
-      // console.log(`updateDocText - ${placeName} - highlighter undefined`);
+    if (this.uiQuery.getValue().isHighlighterReady === false) {
+      console.log(`updateDocText - ${placeName} - highlighter is not ready`);
       return;
     }
 
-    if (isFilter === true) {
-      // console.log(`updateDocText - ${placeName} - Filter`);
+    if (
+      place.controlDocText === docText &&
+      place.controlShikiLanguage === shikiLanguage &&
+      place.controlShikiTheme === shikiTheme
+    ) {
+      return;
+    }
 
-      place.docText = docText;
-      place.shikiLanguage = shikiLanguage;
-      place.shikiTheme = shikiTheme;
-      place.fullHtml = undefined;
-      place.fullTokenLines = [];
-      place.fullTokens = [];
-    } else if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
-      // console.log(`updateDocText - ${placeName} - Reset`);
+    // if (isFilter === true) {
+    //   // console.log(`updateDocText - ${placeName} - Filter`);
+
+    //   console.log('isFilter');
+
+    //   // place.docText = docText;
+    //   // place.shikiLanguage = shikiLanguage;
+    //   // place.shikiTheme = shikiTheme;
+    //   // place.fullHtml = undefined;
+    //   // place.fullTokenLines = [];
+    //   // place.fullTokens = [];
+
+    // } else
+    if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
+      console.log(
+        `updateDocText - ${placeName} - LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0`
+      );
 
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
@@ -270,97 +214,56 @@ export class HighLightService {
       place.shikiLanguage !== shikiLanguage ||
       place.shikiTheme !== shikiTheme
     ) {
-      // console.log('updateDocText - parse full document');
+      console.log('updateDocText - throttleWorkerPostMessage');
 
-      place.docText = docText;
-      place.shikiLanguage = shikiLanguage;
-      place.shikiTheme = shikiTheme;
+      place.controlDocText = docText;
+      place.controlShikiLanguage = shikiLanguage;
+      place.controlShikiTheme = shikiTheme;
 
-      let startParseShikiTokens = Date.now();
-      let fullResult = this.parseShikiTokens({
-        input: place.docText,
+      let workerTaskOptions: WorkerTaskOptions = {
+        type: 'highlight',
+        placeName: placeName,
+        input: docText,
         shikiLanguage: shikiLanguage,
         shikiTheme: shikiTheme
-      });
-      // console.log('parseShikiTokens: ', Date.now() - startParseShikiTokens);
+      };
 
-      place.fullHtml = fullResult.html;
-      place.fullTokenLines = fullResult.tokenLines;
-      place.fullTokens = fullResult.tokens;
+      if (isThrottle === false) {
+        this.worker.postMessage(workerTaskOptions);
+      } else {
+        this.throttleWorkerPostMessage(workerTaskOptions);
+      }
+    } else {
+      console.log('updateDocText - skip highlight - no changes');
     }
   }
 
-  parseShikiTokens(item: {
-    input: string;
-    shikiLanguage: string;
-    shikiTheme: string;
-  }) {
-    let { input, shikiLanguage, shikiTheme } = item;
+  handleWorkerMessage(wMessage: MessageEvent) {
+    if (wMessage.data.type === 'initHighlighterCompleted') {
+      console.log('initHighlighterCompleted');
+      this.uiQuery.updatePart({ isHighlighterReady: true });
+    } else if (wMessage.data.type === 'highlightResult') {
+      console.log('highlightResult - wMessage.data');
+      console.log(wMessage.data);
 
-    let html;
-    let tokenLines;
+      let place = this.getPlaceByPlaceName(wMessage.data.placeName);
 
-    if (!this.highlighter.getLoadedLanguages().includes(shikiLanguage as any)) {
-      // console.log('parseShikiTokens - unknown language');
-    } else {
-      tokenLines = this.highlighter
-        .codeToThemedTokens(input, shikiLanguage, shikiTheme, {
-          includeExplanation: true
-        })
-        .filter((x: any) => x.length > 0);
+      place.docText = wMessage.data.docText;
+      place.shikiLanguage = wMessage.data.shikiLanguage;
+      place.shikiTheme = wMessage.data.shikiTheme;
+
+      place.fullHtml = wMessage.data.html;
+      place.fullTokenLines = wMessage.data.tokenLines;
+      place.fullTokens = wMessage.data.tokens;
+
+      this.workerTaskCompleted.emit({ placeName: wMessage.data.placeName });
     }
-
-    let tokens: {
-      text: string;
-      scope: string;
-      startIndex: number;
-      endIndex: number;
-      line: number;
-      color: string;
-    }[] = [];
-
-    let docPos = 0;
-    let docLine = 0;
-
-    for (let tLine of tokenLines) {
-      let tIndex = 0;
-      for (let tItem of tLine) {
-        for (let explanation of tItem.explanation) {
-          let text = explanation.content;
-
-          tokens.push({
-            color: tItem.color,
-            text,
-            scope:
-              explanation.scopes[explanation.scopes.length - 1]?.scopeName ||
-              'text',
-            startIndex: docPos,
-            endIndex:
-              tLine.length === tIndex + 1
-                ? docPos + text.length + 1
-                : docPos + text.length,
-            line: docLine
-          });
-
-          docPos += text.length;
-        }
-        tIndex++;
-      }
-      docPos = 0;
-      docLine++;
-    }
-
-    return { tokens: tokens, tokenLines: tokenLines, html: html };
   }
 
   createLightLanguage(item: { placeName: PlaceNameEnum }) {
     let { placeName } = item;
 
-    // console.log('createLightLanguage, placeName: ', placeName);
-
-    // if (!this.highlighter) {
-    // console.log('createLightLanguage - highlighter undefined');
-    // }
+    console.log('createLightLanguage, placeName: ', placeName);
 
     let place = this.getPlaceByPlaceName(placeName);
 
@@ -370,7 +273,7 @@ export class HighLightService {
       }),
       tokenTable: LIGHT_PLUS_CUSTOM_TAGS,
       token(stream: any, state: any): string | null {
-        if (place.fullTokens.length === 0) {
+        if (!place?.fullTokens || place.fullTokens.length === 0) {
           stream.skipToEnd();
           return null;
         }

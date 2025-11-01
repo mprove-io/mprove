@@ -26,6 +26,16 @@
           "apps/front/src/favicon.svg",
           "apps/front/src/assets",
           {
+            "glob": "**/light-plus-extended.json",
+            "input": "apps/front/src/assets/shiki-themes",
+            "output": "/assets/shiki/themes"
+          },
+          {
+            "glob": "**/*",
+            "input": "node_modules/shiki",
+            "output": "/assets/shiki"
+          },
+          {
             "glob": "**/onig.wasm",
             "input": "node_modules/vscode-oniguruma/release",
             "output": "/assets/vscode-oniguruma"

@@ -19,16 +19,16 @@ export const SKIP_JWT = 'skipJwt';
 
 export const THROTTLE_CUSTOM = {
   '1s': {
-    limit: 3 * 2
-  },
-  '5s': {
     limit: 5 * 2
   },
+  '5s': {
+    limit: 10 * 2
+  },
   '60s': {
-    limit: 20 * 2
+    limit: 60 * 2
   },
   '600s': {
-    limit: 50 * 2,
+    limit: 5 * 60 * 2,
     blockDuration: seconds(12 * 60 * 60) // 12h
   }
 };

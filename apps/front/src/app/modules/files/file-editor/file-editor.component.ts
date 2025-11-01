@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
+  OnInit,
   ViewChild
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -22,8 +23,8 @@ import {
 import { Compartment } from '@codemirror/state';
 import { EditorView, KeyBinding, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subscription } from 'rxjs';
 import { filter, map, take, tap } from 'rxjs/operators';
-import { debounce } from 'throttle-debounce';
 import {
   LIGHT_PLUS_THEME_EXTRA_DIFF,
   LIGHT_PLUS_THEME_EXTRA_DIFF_READ,
@@ -88,7 +89,7 @@ interface HistoryEntry {
   selector: 'm-file-editor',
   templateUrl: './file-editor.component.html'
 })
-export class FileEditorComponent implements OnDestroy, AfterViewInit {
+export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   isEditorOptionsInitComplete = false;
 
   panelTree = PanelEnum.Tree;
@@ -145,13 +146,7 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
         trackedEvents.some(event => transaction.isUserEvent(event)) &&
         transaction.docChanged
       ) {
-        this.highLightService.updateDocText({
-          placeName: PlaceNameEnum.Main,
-          docText: this.content,
-          shikiLanguage: this.lang?.toLowerCase(),
-          shikiTheme: 'light-plus-extended',
-          isFilter: true
-        });
+        console.log('fileEditor - beforeChangeFilter - updateDocText ');
 
         if (transaction.annotation(this.customHistoryAnnotation)) {
           return transaction;
@@ -450,46 +445,6 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     })
   );
 
-  enableDebounce = false;
-
-  debounceUpdateDoc = debounce(
-    300,
-    () => {
-      this.enableDebounce = false;
-
-      this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.Main,
-        docText: this.content,
-        shikiLanguage: this.lang?.toLowerCase(),
-        shikiTheme: 'light-plus-extended'
-      });
-
-      let editorV =
-        this.panel === PanelEnum.Tree
-          ? this.codeEditorRef.view
-          : this.diffEditorRef.mergeView.b;
-
-      let currentScrollTop = editorV.scrollDOM.scrollTop;
-
-      let transaction = editorV.state.update({
-        changes: {
-          from: 0,
-          to: editorV.state.doc.length,
-          insert: editorV.state.doc.toString()
-        },
-        selection: editorV.state.selection,
-        scrollIntoView: false
-      });
-
-      editorV.dispatch(transaction);
-
-      requestAnimationFrame(() => {
-        editorV.scrollDOM.scrollTop = currentScrollTop;
-      });
-    },
-    { atBegin: false }
-  );
-
   originalContent: string;
   content: string;
 
@@ -516,11 +471,14 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
 
       this.checkSelectedFile();
 
+      console.log('fileEditor - file$ - updateDocText ');
+
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.Main,
         docText: x.content,
         shikiLanguage: this.lang?.toLowerCase(),
-        shikiTheme: 'light-plus-extended'
+        shikiTheme: 'light-plus-extended',
+        isThrottle: false
       });
 
       if (this.panel !== PanelEnum.Tree) {
@@ -528,7 +486,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
           placeName: PlaceNameEnum.Original,
           docText: x.originalContent,
           shikiLanguage: this.lang?.toLowerCase(),
-          shikiTheme: 'light-plus-extended'
+          shikiTheme: 'light-plus-extended',
+          isThrottle: false
         });
       }
 
@@ -615,6 +574,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     })
   );
 
+  workerTaskCompletedSubscription: Subscription;
+
   constructor(
     private fileQuery: FileQuery,
     private structQuery: StructQuery,
@@ -631,6 +592,30 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
     private navigateService: NavigateService,
     private route: ActivatedRoute
   ) {}
+
+  ngOnInit(): void {
+    this.workerTaskCompletedSubscription = new Subscription();
+
+    this.workerTaskCompletedSubscription.add(
+      this.highLightService.workerTaskCompleted.subscribe(eventData => {
+        if (
+          eventData.placeName === PlaceNameEnum.Main ||
+          eventData.placeName === PlaceNameEnum.Original
+        ) {
+          this.updateDockAndDispatch();
+
+          // let prevContent = this.content;
+          // this.content = this.content + ' ';
+          // // this.cd.detectChanges();
+
+          // setTimeout(() => {
+          //   this.content = prevContent;
+          //   // this.cd.detectChanges();
+          // }, 0);
+        }
+      })
+    );
+  }
 
   initEditorOptions() {
     let mainLanguagesResult = this.highLightService.getLanguages({
@@ -967,6 +952,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   onTextChanged(item: { isDiffEditor: boolean }) {
+    console.log('fileEditor - onTextChanged');
+
     if (item.isDiffEditor === true) {
       this.content = this.diffContent.modified;
     }
@@ -983,13 +970,50 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
       this.uiQuery.updatePart({ needSave: false });
     }
 
-    if (this.enableDebounce === true) {
-      this.debounceUpdateDoc();
-    }
+    this.highLightService.updateDocText({
+      placeName: PlaceNameEnum.Main,
+      docText: this.content,
+      shikiLanguage: this.lang?.toLowerCase(),
+      shikiTheme: 'light-plus-extended',
+      isThrottle: true
+    });
 
-    this.enableDebounce = true;
+    // this.cd.detectChanges();
+  }
 
-    this.cd.detectChanges();
+  updateDockAndDispatch() {
+    console.log('fileEditor - updateDockAndDispatch - updateDocText');
+
+    this.highLightService.updateDocText({
+      placeName: PlaceNameEnum.Main,
+      docText: this.content,
+      shikiLanguage: this.lang?.toLowerCase(),
+      shikiTheme: 'light-plus-extended',
+      isThrottle: false
+    });
+
+    let editorV =
+      this.panel === PanelEnum.Tree
+        ? this.codeEditorRef.view
+        : this.diffEditorRef.mergeView.b;
+
+    let currentScrollTop = editorV.scrollDOM.scrollTop;
+
+    let transaction = editorV.state.update({
+      changes: {
+        from: 0,
+        to: editorV.state.doc.length,
+        insert: editorV.state.doc.toString()
+      },
+      selection: editorV.state.selection,
+      scrollIntoView: false
+    });
+
+    editorV.dispatch(transaction);
+
+    requestAnimationFrame(() => {
+      editorV.scrollDOM.scrollTop = currentScrollTop;
+    });
   }
 
   save() {
@@ -1058,12 +1082,14 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   cancel() {
+    console.log('fileEditor - cancel - updateDocText');
+
     this.highLightService.updateDocText({
       placeName: PlaceNameEnum.Main,
       docText: this.content,
       shikiLanguage: this.lang?.toLowerCase(),
       shikiTheme: 'light-plus-extended',
-      isFilter: true
+      isThrottle: false
     });
 
     this.undoStack = [];
@@ -1199,6 +1225,8 @@ export class FileEditorComponent implements OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.workerTaskCompletedSubscription?.unsubscribe();
+
     this.fileQuery.reset();
     this.cleanupSyncScroll();
   }

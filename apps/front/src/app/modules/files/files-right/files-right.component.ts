@@ -1,10 +1,11 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { defaultKeymap } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Subscription } from 'rxjs';
 import { finalize, map, take, tap } from 'rxjs/operators';
 import {
   LIGHT_PLUS_THEME_EXTRA_SINGLE_READ,
@@ -59,7 +60,7 @@ import { UiService } from '~front/app/services/ui.service';
   selector: 'm-files-right',
   templateUrl: './files-right.component.html'
 })
-export class FilesRightComponent {
+export class FilesRightComponent implements OnInit, OnDestroy {
   isEditorOptionsInitComplete = false;
 
   extensions: Extension[] = [];
@@ -182,6 +183,8 @@ export class FilesRightComponent {
     })
   );
 
+  workerTaskCompletedSubscription: Subscription;
+
   constructor(
     private uiQuery: UiQuery,
     private fileQuery: FileQuery,
@@ -196,6 +199,29 @@ export class FilesRightComponent {
     private cd: ChangeDetectorRef,
     private apiService: ApiService
   ) {}
+
+  ngOnInit(): void {
+    this.workerTaskCompletedSubscription = new Subscription();
+
+    this.workerTaskCompletedSubscription.add(
+      this.highLightService.workerTaskCompleted.subscribe(eventData => {
+        if (eventData.placeName === PlaceNameEnum.Right) {
+          let prevSecondFileContent = this.secondFileContent;
+          this.secondFileContent = this.secondFileContent + ' ';
+          // this.cd.detectChanges();
+
+          setTimeout(() => {
+            this.secondFileContent = prevSecondFileContent;
+            // this.cd.detectChanges();
+          }, 0);
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.workerTaskCompletedSubscription?.unsubscribe();
+  }
 
   initEditorOptions() {
     let res = this.highLightService.getLanguages({
@@ -395,7 +421,8 @@ export class FilesRightComponent {
                   placeName: PlaceNameEnum.Right,
                   docText: this.secondFileContent,
                   shikiLanguage: this.lang?.toLowerCase(),
-                  shikiTheme: 'light-plus-extended'
+                  shikiTheme: 'light-plus-extended',
+                  isThrottle: false
                 });
 
                 this.cd.detectChanges();

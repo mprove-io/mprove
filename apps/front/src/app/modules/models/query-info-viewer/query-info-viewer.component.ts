@@ -3,6 +3,8 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
+  OnInit,
   SimpleChanges
 } from '@angular/core';
 import { defaultKeymap } from '@codemirror/commands';
@@ -10,6 +12,7 @@ import { LanguageDescription } from '@codemirror/language';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import { Extension } from '@codemirror/state';
 import { keymap } from '@codemirror/view';
+import { Subscription } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import {
   LIGHT_PLUS_THEME_EXTRA_SINGLE_READ,
@@ -35,7 +38,7 @@ import {
   selector: 'm-query-info-viewer',
   templateUrl: './query-info-viewer.component.html'
 })
-export class QueryInfoViewerComponent implements OnChanges {
+export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
   @Input()
   queryPart: QueryPartEnum;
 
@@ -82,12 +85,37 @@ export class QueryInfoViewerComponent implements OnChanges {
     })
   );
 
+  workerTaskCompletedSubscription: Subscription;
+
   constructor(
     private uiQuery: UiQuery,
     private highLightService: HighLightService,
     private chartQuery: ChartQuery,
     private cd: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    this.workerTaskCompletedSubscription = new Subscription();
+
+    this.workerTaskCompletedSubscription.add(
+      this.highLightService.workerTaskCompleted.subscribe(eventData => {
+        if (eventData.placeName === PlaceNameEnum.QueryInfo) {
+          let prevContent = this.content;
+          this.content = this.content + ' ';
+          // this.cd.detectChanges();
+
+          setTimeout(() => {
+            this.content = prevContent;
+            // this.cd.detectChanges();
+          }, 0);
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.workerTaskCompletedSubscription?.unsubscribe();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (
@@ -202,11 +230,14 @@ ${this.chart.tiles[0].mconfig.storePart?.reqFunction}`;
       this.content = this.modelFileText;
     }
 
+    let docText = this.content ?? '';
+
     this.highLightService.updateDocText({
       placeName: PlaceNameEnum.QueryInfo,
-      docText: this.content ?? '',
+      docText: docText,
       shikiLanguage: this.lang.toLowerCase(),
-      shikiTheme: 'light-plus-extended'
+      shikiTheme: 'light-plus-extended',
+      isThrottle: false
     });
   }
 }
