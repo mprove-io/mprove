@@ -48,6 +48,10 @@ import {
   RenameFolderDialogData
 } from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
+  MalloyModelsDialogComponent,
+  MalloyModelsDialogData
+} from '../modules/files/malloy-models-dialog/malloy-models-dialog.component';
+import {
   ChartsAddColumnFieldDialogComponent,
   ChartsAddColumnFieldDialogData
 } from '../modules/models/charts-add-column-field-dialog/charts-add-column-field-dialog.component';
@@ -422,6 +426,15 @@ export class MyDialogService {
       closeButton: false,
       data: item,
       width: 1024
+    });
+  }
+
+  showMalloyModels(item: MalloyModelsDialogData): void {
+    this.dialogService.open(MalloyModelsDialogComponent, {
+      enableClose: false,
+      closeButton: true,
+      data: item,
+      width: 640
     });
   }
 

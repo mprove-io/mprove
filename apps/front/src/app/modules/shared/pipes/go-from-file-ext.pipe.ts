@@ -8,16 +8,16 @@ export class GoFromFileExtPipe implements PipeTransform {
       return value;
     }
 
-    const valueChunks: string[] = value.split('.');
+    let ext;
 
-    let ext = '.other';
+    let valueChunks = value.split('.');
 
     if (valueChunks.length > 1) {
-      ext = `.${valueChunks[valueChunks.length - 1]}`;
+      ext = `${valueChunks[valueChunks.length - 1]}`;
+    } else {
+      ext = 'other';
     }
 
-    ext = ['.view', '.store'].indexOf(ext) > -1 ? '.model' : ext;
-
-    return ext.substring(1);
+    return ext;
   }
 }

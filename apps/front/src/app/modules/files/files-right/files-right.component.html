@@ -117,8 +117,8 @@
             showGoTo === true &&
             ((isExplorer === true &&
               ((secondFileName | goFromFileExt) === 'chart' ||
-                (secondFileName | goFromFileExt) === 'store' ||
-                (secondFileName | goFromFileExt) === 'model')) ||
+                (secondFileName | goFromFileExt) === 'malloy' ||
+                (secondFileName | goFromFileExt) === 'store')) ||
               (secondFileName | goFromFileExt) === 'report' ||
               (secondFileName | goFromFileExt) === 'dashboard')
           "
@@ -128,7 +128,12 @@
           <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
 
           <div class="ml-2 text-lg">
-            {{ secondFileName | goFromFileExt | capitalize }}</div
+            {{
+              (secondFileName | goFromFileExt) === 'malloy' ||
+              (secondFileName | goFromFileExt) === 'store'
+                ? 'Model'
+                : (secondFileName | goFromFileExt | capitalize)
+            }}</div
           >
         </button>
       </div>

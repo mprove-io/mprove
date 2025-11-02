@@ -1,0 +1,49 @@
+<div class="bg-m0 flex h-[700px] select-none flex-col p-9">
+  <div
+    data-cy="malloyModelsDialogTitle"
+    class="text-s2 mt-5 text-left text-2xl font-semibold"
+    >Malloy File Models</div
+  >
+
+  <div *ngIf="models?.length === 0" class="text-s1 mt-9 text-lg">
+    Add " <span class="text-red-700">#(mprove) model</span>
+    " source tag to use Malloy Source as Mprove Model
+  </div>
+
+  <div
+    *ngIf="models?.length > 0"
+    class="text-s2 mb-3 mt-9 text-lg font-semibold"
+    >Models:</div
+  >
+
+  <div
+    class="flex flex-1 flex-shrink-0 flex-row items-center justify-center"
+    *ngIf="!models"
+  >
+    <div class="relative flex h-9 w-9">
+      <ngx-spinner
+        [name]="spinnerName"
+        color="#0084d1"
+        bdColor="#00000000"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+  </div>
+
+  <div class="overflow-y-auto" *ngIf="!!models">
+    <div
+      class="text-s1 hover:bg-m50 rounded py-3 pl-5 text-base hover:cursor-pointer"
+      *ngFor="let model of models"
+      (click)="navToModel(model.modelId)"
+    >
+      {{ model.label }}
+
+      <span class="text-s400 ml-[5px]">- {{ model.connectionType }}</span>
+    </div>
+  </div>
+</div>

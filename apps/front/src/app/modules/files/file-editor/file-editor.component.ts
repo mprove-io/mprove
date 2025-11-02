@@ -77,6 +77,7 @@ import {
   HighLightService,
   PlaceNameEnum
 } from '~front/app/services/highlight.service';
+import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 
 interface HistoryEntry {
@@ -473,6 +474,9 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     tap(async x => {
       this.file = x;
 
+      console.log('this.file');
+      console.log(this.file);
+
       await this.setLanguage();
 
       this.cd.detectChanges();
@@ -598,6 +602,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private highLightService: HighLightService,
     private confirmService: ConfirmService,
     private navigateService: NavigateService,
+    private myDialogService: MyDialogService,
     private route: ActivatedRoute
   ) {}
 
@@ -820,7 +825,9 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         MPROVE_CONFIG_DIR_DOT_SLASH ||
         (isDefined(mdir) &&
           this.file.fileNodeId.split(mdir)[0] === `${this.nav.projectId}/`)) &&
-        BLOCKML_EXT_LIST.map(ex => ex.toString()).indexOf(dotExt) >= 0)
+        [...BLOCKML_EXT_LIST, '.malloy']
+          .map(ex => ex.toString())
+          .indexOf(dotExt) >= 0)
     ) {
       this.showGoTo = true;
 
@@ -1186,6 +1193,11 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       this.navigateService.navigateToChart({
         modelId: id,
         chartId: EMPTY_CHART_ID
+      });
+    } else if (dotExt === FileExtensionEnum.Malloy) {
+      this.myDialogService.showMalloyModels({
+        apiService: this.apiService,
+        fileNodeId: this.file.fileNodeId
       });
     } else if (dotExt === FileExtensionEnum.Report) {
       this.navigateService.navigateToReport({ reportId: id });
