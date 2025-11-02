@@ -140,9 +140,17 @@
 
       <div class="flex flex-1"></div>
 
-      <div class="ml-5" *ngIf="secondFileNodeId !== mainFileNodeId">
+      <div
+        class="ml-5"
+        tp="Edit file in the left tab"
+        [tpIsEnabled]="secondFileNodeId === mainFileNodeId"
+      >
         <button
-          class="text-m600 flex flex-shrink-0 flex-row items-center focus:outline-none"
+          class="flex flex-shrink-0 flex-row items-center focus:outline-none"
+          [ngClass]="{
+            'text-m600': secondFileNodeId !== mainFileNodeId,
+            'text-s400 cursor-default': secondFileNodeId === mainFileNodeId
+          }"
           (click)="goToEditFile()"
         >
           <m-arrow-narrow-right-icon></m-arrow-narrow-right-icon>
