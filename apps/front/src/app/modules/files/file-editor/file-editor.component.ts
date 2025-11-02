@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { defaultKeymap } from '@codemirror/commands';
+import { indentWithTab } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
@@ -416,7 +417,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   diffModifiedExtensions: Extension[] = [
     ...this.baseExtensions,
     this.beforeChangeFilter,
-    EditorState.readOnly.of(false)
+    EditorState.readOnly.of(false),
+    keymap.of([indentWithTab])
   ];
 
   originalExtensions: Extension[];
