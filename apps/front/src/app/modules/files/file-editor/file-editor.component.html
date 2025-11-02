@@ -149,6 +149,7 @@
         [originalExtensions]="originalExtensions"
         [modifiedExtensions]="modifiedExtensions"
         [disabled]="nav?.isRepoProd === true || file?.isExist === false"
+        (originalValueChange)="onOriginalTextChanged()"
         (modifiedValueChange)="onTextChanged({ isDiffEditor: true })"
       ></diff-editor>
     </div>

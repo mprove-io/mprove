@@ -62,7 +62,7 @@ export class HighLightService {
   queryInfoPlace: Place = {};
 
   throttleWorkerPostMessage = throttle(
-    200,
+    300,
     (workerTaskOptions: WorkerTaskOptions) =>
       this.worker.postMessage(workerTaskOptions),
     {
@@ -177,45 +177,38 @@ export class HighLightService {
       return;
     }
 
-    if (
-      place.controlDocText === docText &&
-      place.controlShikiLanguage === shikiLanguage &&
-      place.controlShikiTheme === shikiTheme
-    ) {
-      return;
-    }
-
     // if (isFilter === true) {
-    //   // console.log(`updateDocText - ${placeName} - Filter`);
-
-    //   console.log('isFilter');
-
     //   // place.docText = docText;
     //   // place.shikiLanguage = shikiLanguage;
     //   // place.shikiTheme = shikiTheme;
     //   // place.fullHtml = undefined;
     //   // place.fullTokenLines = [];
     //   // place.fullTokens = [];
+    // }
 
-    // } else
-    if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
+    if (
+      place.controlDocText === docText &&
+      place.controlShikiLanguage === shikiLanguage &&
+      place.controlShikiTheme === shikiTheme
+    ) {
+      console.log(`updateDocText - ${placeName} - skip highlight - no changes`);
+      return;
+    } else if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
       console.log(
         `updateDocText - ${placeName} - LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0`
       );
 
+      place.controlDocText = docText;
+      place.controlShikiLanguage = shikiLanguage;
+      place.controlShikiTheme = shikiTheme;
+      //
       place.docText = docText;
       place.shikiLanguage = shikiLanguage;
       place.shikiTheme = shikiTheme;
       place.fullHtml = undefined;
       place.fullTokenLines = [];
       place.fullTokens = [];
-    } else if (
-      place.docText !== docText ||
-      place.shikiLanguage !== shikiLanguage ||
-      place.shikiTheme !== shikiTheme
-    ) {
-      console.log('updateDocText - throttleWorkerPostMessage');
-
+    } else {
       place.controlDocText = docText;
       place.controlShikiLanguage = shikiLanguage;
       place.controlShikiTheme = shikiTheme;
@@ -229,12 +222,12 @@ export class HighLightService {
       };
 
       if (isThrottle === false) {
+        console.log(`updateDocText - ${placeName} - workerPostMessage`);
         this.worker.postMessage(workerTaskOptions);
       } else {
+        console.log(`updateDocText - ${placeName} - throttleWorkerPostMessage`);
         this.throttleWorkerPostMessage(workerTaskOptions);
       }
-    } else {
-      console.log('updateDocText - skip highlight - no changes');
     }
   }
 

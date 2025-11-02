@@ -471,26 +471,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.checkSelectedFile();
 
-      console.log('fileEditor - file$ - updateDocText ');
-
-      this.highLightService.updateDocText({
-        placeName: PlaceNameEnum.Main,
-        docText: x.content,
-        shikiLanguage: this.lang?.toLowerCase(),
-        shikiTheme: 'light-plus-extended',
-        isThrottle: false
-      });
-
-      if (this.panel !== PanelEnum.Tree) {
-        this.highLightService.updateDocText({
-          placeName: PlaceNameEnum.Original,
-          docText: x.originalContent,
-          shikiLanguage: this.lang?.toLowerCase(),
-          shikiTheme: 'light-plus-extended',
-          isThrottle: false
-        });
-      }
-
       this.undoStack = [];
       this.redoStack = [];
 
@@ -514,6 +494,26 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       }
 
       this.cd.detectChanges();
+
+      console.log('fileEditor - file$ - updateDocText ');
+
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.Main,
+        docText: x.content,
+        shikiLanguage: this.lang?.toLowerCase(),
+        shikiTheme: 'light-plus-extended',
+        isThrottle: false
+      });
+
+      if (this.panel !== PanelEnum.Tree) {
+        this.highLightService.updateDocText({
+          placeName: PlaceNameEnum.Original,
+          docText: x.originalContent,
+          shikiLanguage: this.lang?.toLowerCase(),
+          shikiTheme: 'light-plus-extended',
+          isThrottle: false
+        });
+      }
     })
   );
 
@@ -598,20 +598,10 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.workerTaskCompletedSubscription.add(
       this.highLightService.workerTaskCompleted.subscribe(eventData => {
-        if (
-          eventData.placeName === PlaceNameEnum.Main ||
-          eventData.placeName === PlaceNameEnum.Original
-        ) {
+        if (eventData.placeName === PlaceNameEnum.Original) {
+          this.updateDockAndDispatchOriginal();
+        } else if (eventData.placeName === PlaceNameEnum.Main) {
           this.updateDockAndDispatch();
-
-          // let prevContent = this.content;
-          // this.content = this.content + ' ';
-          // // this.cd.detectChanges();
-
-          // setTimeout(() => {
-          //   this.content = prevContent;
-          //   // this.cd.detectChanges();
-          // }, 0);
         }
       })
     );
@@ -951,10 +941,26 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         : [...this.mainPrepExtensions, linterExtension];
   }
 
+  onOriginalTextChanged() {
+    console.log('fileEditor - onOriginalTextChanged');
+
+    if (this.panel !== PanelEnum.Tree) {
+      this.highLightService.updateDocText({
+        placeName: PlaceNameEnum.Original,
+        docText: this.originalContent,
+        shikiLanguage: this.lang?.toLowerCase(),
+        shikiTheme: 'light-plus-extended',
+        isThrottle: true
+      });
+    }
+  }
+
   onTextChanged(item: { isDiffEditor: boolean }) {
+    let { isDiffEditor } = item;
+
     console.log('fileEditor - onTextChanged');
 
-    if (item.isDiffEditor === true) {
+    if (isDiffEditor === true) {
       this.content = this.diffContent.modified;
     }
 
@@ -977,8 +983,32 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       shikiTheme: 'light-plus-extended',
       isThrottle: true
     });
+  }
 
-    // this.cd.detectChanges();
+  updateDockAndDispatchOriginal() {
+    console.log('fileEditor - updateDockAndDispatchOriginal - updateDocText');
+
+    this.highLightService.updateDocText({
+      placeName: PlaceNameEnum.Original,
+      docText: this.originalContent,
+      shikiLanguage: this.lang?.toLowerCase(),
+      shikiTheme: 'light-plus-extended',
+      isThrottle: false
+    });
+
+    let editorV = this.diffEditorRef.mergeView.a;
+
+    let transaction = editorV.state.update({
+      changes: {
+        from: 0,
+        to: editorV.state.doc.length,
+        insert: editorV.state.doc.toString()
+      },
+      selection: editorV.state.selection,
+      scrollIntoView: false
+    });
+
+    editorV.dispatch(transaction);
   }
 
   updateDockAndDispatch() {
