@@ -8,22 +8,15 @@ import {
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '~common/constants/top';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { Model } from '~common/interfaces/blockml/model';
-import {
-  ToBackendGetModelsRequestPayload,
-  ToBackendGetModelsResponse
-} from '~common/interfaces/to-backend/models/to-backend-get-models';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
+import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 
 export interface MalloyModelsDialogData {
   apiService: ApiService;
-  fileNodeId: string;
+  models: Model[];
 }
 
 @Component({
@@ -52,48 +45,7 @@ export class MalloyModelsDialogComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
-    this.spinner.show(this.spinnerName);
-
-    let apiService: ApiService = this.ref.data.apiService;
-
-    let payload: ToBackendGetModelsRequestPayload = {
-      projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
-      branchId: nav.branchId,
-      envId: nav.envId
-    };
-
-    apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: ToBackendGetModelsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.models = resp.payload.models.filter(
-              y =>
-                y.hasAccess === true && y.filePath === this.ref.data.fileNodeId
-            );
-
-            this.spinner.hide(this.spinnerName);
-
-            this.cd.detectChanges();
-          }
-        })
-      )
-      .toPromise();
+    this.models = this.ref.data.models;
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();

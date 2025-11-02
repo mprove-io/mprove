@@ -56,6 +56,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { Member } from '~common/interfaces/backend/member';
+import { ModelX } from '~common/interfaces/backend/model-x';
 import {
   ToBackendGetChartRequestPayload,
   ToBackendGetChartResponse
@@ -64,6 +65,10 @@ import {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
 } from '~common/interfaces/to-backend/files/to-backend-save-file';
+import {
+  ToBackendGetModelsRequestPayload,
+  ToBackendGetModelsResponse
+} from '~common/interfaces/to-backend/models/to-backend-get-models';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
@@ -1195,10 +1200,53 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         chartId: EMPTY_CHART_ID
       });
     } else if (dotExt === FileExtensionEnum.Malloy) {
-      this.myDialogService.showMalloyModels({
-        apiService: this.apiService,
-        fileNodeId: this.file.fileNodeId
-      });
+      this.spinner.show(APP_SPINNER_NAME);
+
+      let models: ModelX[] = [];
+
+      let nav = this.navQuery.getValue();
+
+      let payload: ToBackendGetModelsRequestPayload = {
+        projectId: nav.projectId,
+        isRepoProd: nav.isRepoProd,
+        branchId: nav.branchId,
+        envId: nav.envId
+      };
+
+      this.apiService
+        .req({
+          pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetModels,
+          payload: payload
+        })
+        .pipe(
+          tap((resp: ToBackendGetModelsResponse) => {
+            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+              models = resp.payload.models.filter(
+                y => y.filePath === this.file.fileNodeId
+              );
+
+              if (
+                models.length === 1 &&
+                models.filter(x => x.hasAccess === true).length === 1
+              ) {
+                this.navigateService.navigateToChart({
+                  modelId: models[0].modelId,
+                  chartId: EMPTY_CHART_ID
+                });
+              } else {
+                this.spinner.hide(APP_SPINNER_NAME);
+
+                this.myDialogService.showMalloyModels({
+                  apiService: this.apiService,
+                  models: models
+                });
+              }
+            } else {
+              this.spinner.hide(APP_SPINNER_NAME);
+            }
+          })
+        )
+        .toPromise();
     } else if (dotExt === FileExtensionEnum.Report) {
       this.navigateService.navigateToReport({ reportId: id });
     } else if (dotExt === FileExtensionEnum.Dashboard) {
