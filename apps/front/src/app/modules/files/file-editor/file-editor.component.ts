@@ -84,6 +84,8 @@ interface HistoryEntry {
   positionToB: number;
 }
 
+export const malloyCommentToggle = Annotation.define<'toggle'>();
+
 @Component({
   standalone: false,
   selector: 'm-file-editor',
@@ -143,7 +145,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       ];
 
       if (
-        trackedEvents.some(event => transaction.isUserEvent(event)) &&
+        (transaction.annotation(malloyCommentToggle) ||
+          trackedEvents.some(event => transaction.isUserEvent(event))) &&
         transaction.docChanged
       ) {
         console.log('fileEditor - beforeChangeFilter - updateDocText ');
@@ -371,7 +374,10 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         }
 
         if (changes.length > 0) {
-          view.dispatch({ changes });
+          view.dispatch({
+            changes,
+            annotations: malloyCommentToggle.of('toggle')
+          });
         }
 
         return true;
