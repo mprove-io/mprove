@@ -956,6 +956,24 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   toggleDataPanel() {}
 
+  goToModelFile(node: TreeNode, event: MouseEvent) {
+    event.stopPropagation();
+
+    this.uiQuery.updatePart({ secondFileNodeId: undefined });
+
+    let model = this.models.find(model => model.modelId === node.data.id);
+
+    let fileIdAr = model.filePath.split('/');
+    fileIdAr.shift();
+
+    let filePath = fileIdAr.join('/');
+
+    this.navigateService.navigateToFileLine({
+      panel: PanelEnum.Tree,
+      encodedFileId: encodeFilePath({ filePath: filePath })
+    });
+  }
+
   goToEditFile() {
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 

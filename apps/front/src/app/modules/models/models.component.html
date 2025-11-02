@@ -396,38 +396,8 @@
             </div>
 
             <div
-              (click)="setShowSchema()"
-              class="ml-4 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
-            >
-              <div class="flex w-[90px] flex-row items-center justify-center">
-                <div
-                  [ngClass]="{
-                    'text-s400': showSchema === false,
-                    'font-semibold': showSchema === true
-                  }"
-                >
-                  SCHEMA
-                </div>
-              </div>
-
-              <!-- <div
-                class="group-hover:bg-m200 flex h-9 w-9 flex-shrink-0 flex-row items-center justify-center rounded"
-              >
-                <div
-                  class="flex flex-shrink-0 flex-row items-center justify-center rounded"
-                  [ngClass]="{
-                    'text-s400': showSchema === false,
-                    'text-s1': showSchema === true
-                  }"
-                >
-                  <m-tree-structure-icon></m-tree-structure-icon>
-                </div>
-              </div> -->
-            </div>
-
-            <div
               (click)="setShowCharts()"
-              class="ml-2 mr-9 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
+              class="ml-4 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
             >
               <div class="flex w-[90px] flex-row items-center justify-center">
                 <div
@@ -437,6 +407,22 @@
                   }"
                 >
                   CHARTS
+                </div>
+              </div>
+            </div>
+
+            <div
+              (click)="setShowSchema()"
+              class="ml-2 mr-9 flex h-11 cursor-pointer select-none flex-row items-center pl-1 pr-1 text-lg"
+            >
+              <div class="flex w-[90px] flex-row items-center justify-center">
+                <div
+                  [ngClass]="{
+                    'text-s400': showSchema === false,
+                    'font-semibold': showSchema === true
+                  }"
+                >
+                  SCHEMA
                 </div>
               </div>
             </div>
@@ -680,7 +666,13 @@
                             </div>
                           </div>
 
-                          <div class="text-s1 ml-0 flex-grow truncate">
+                          <div
+                            class="ml-0 flex-grow truncate"
+                            [ngClass]="{
+                              'text-s1': node.data.id !== model?.modelId,
+                              'text-m600': node.data.id === model?.modelId
+                            }"
+                          >
                             <div class="flex flex-col">
                               <div class="truncate">
                                 <span
@@ -703,16 +695,32 @@
                               *ngIf="node.data.isTop === true"
                               data-cy="chartsTreeSchemaButton"
                               class="group invisible flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
+                              (click)="goToModelFile(node, $event)"
+                            >
+                              <div
+                                class="group-hover:bg-m200 flex h-9 w-[55px] flex-shrink-0 flex-row items-center justify-center rounded"
+                              >
+                                <div
+                                  class="text-s500 flex flex-shrink-0 flex-row items-center justify-center rounded"
+                                >
+                                  FILE
+                                </div>
+                              </div>
+                            </button>
+
+                            <button
+                              *ngIf="node.data.isTop === true"
+                              data-cy="chartsTreeSchemaButton"
+                              class="group invisible ml-1 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
                               (click)="schema(node, $event)"
                             >
                               <div
-                                class="group-hover:bg-m200 flex h-9 w-[100px] flex-shrink-0 flex-row items-center justify-center rounded"
+                                class="group-hover:bg-m200 flex h-9 w-[95px] flex-shrink-0 flex-row items-center justify-center rounded"
                               >
                                 <div
                                   class="text-s500 flex flex-shrink-0 flex-row items-center justify-center rounded"
                                 >
                                   SCHEMA
-                                  <!-- <m-tree-structure-icon></m-tree-structure-icon> -->
                                 </div>
                               </div>
                             </button>
