@@ -374,7 +374,7 @@
                 >
                   <ng-template ng-label-tmp let-item="item">
                     <div class="ml-1 truncate">
-                      <span>{{ item.label }}</span>
+                      <span class="font-semibold">{{ item.label }}</span>
 
                       <span class="text-s400 ml-3 mr-2">{{
                         item.connectionType
@@ -384,7 +384,7 @@
 
                   <ng-template ng-option-tmp let-item="item">
                     <div class="ml-1 truncate">
-                      <span>{{ item.label }}</span>
+                      <span class="font-semibold">{{ item.label }}</span>
 
                       <span class="text-s400 ml-3 mr-2">{{
                         item.connectionType
@@ -667,7 +667,7 @@
                             class="ml-0 flex-grow truncate"
                             [ngClass]="{
                               'text-s1': node.data.id !== model?.modelId,
-                              'text-m600': node.data.id === model?.modelId
+                              'text-orange-600': node.data.id === model?.modelId
                             }"
                           >
                             <div class="flex flex-col">
