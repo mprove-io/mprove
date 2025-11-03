@@ -690,40 +690,15 @@
 
                           <div class="flex flex-1"></div>
 
-                          <div class="ml-5 mr-2 flex flex-row items-center">
-                            <button
-                              *ngIf="node.data.isTop === true"
-                              data-cy="chartsTreeSchemaButton"
-                              class="group invisible flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
-                              (click)="goToModelFile(node, $event)"
-                            >
-                              <div
-                                class="group-hover:bg-m200 flex h-9 w-[55px] flex-shrink-0 flex-row items-center justify-center rounded"
-                              >
-                                <div
-                                  class="text-s500 flex flex-shrink-0 flex-row items-center justify-center rounded"
-                                >
-                                  FILE
-                                </div>
-                              </div>
-                            </button>
-
-                            <button
-                              *ngIf="node.data.isTop === true"
-                              data-cy="chartsTreeSchemaButton"
-                              class="group invisible ml-1 flex h-10 flex-shrink-0 items-center justify-center rounded focus:outline-none [.group-bar:hover_&]:visible"
-                              (click)="schema(node, $event)"
-                            >
-                              <div
-                                class="group-hover:bg-m200 flex h-9 w-[95px] flex-shrink-0 flex-row items-center justify-center rounded"
-                              >
-                                <div
-                                  class="text-s500 flex flex-shrink-0 flex-row items-center justify-center rounded"
-                                >
-                                  SCHEMA
-                                </div>
-                              </div>
-                            </button>
+                          <div
+                            class="invisible ml-2 mr-2 flex [.group-bar:hover_&]:visible"
+                          >
+                            <m-model-options
+                              [models]="models"
+                              [chart]="chart"
+                              [treeNode]="node"
+                              [isHoverM]="false"
+                            ></m-model-options>
                           </div>
                         </div>
                       </div>

@@ -15,6 +15,7 @@ import { ChartOptionsComponent } from './chart-options/chart-options.component';
 import { ChartComponent } from './chart/chart.component';
 import { ChartsListComponent } from './charts-list/charts-list.component';
 import { ModelFiltersComponent } from './model-filters/model-filters.component';
+import { ModelOptionsComponent } from './model-options/model-options.component';
 import { ModelTreeComponent } from './model-tree/model-tree.component';
 import { ModelComponent } from './model/model.component';
 import { ModelsListComponent } from './models-list/models-list.component';
@@ -35,7 +36,8 @@ import { QueryOptionsComponent } from './query-options/query-options.component';
     QueryInfoViewerComponent,
     ModelFiltersComponent,
     QueryOptionsComponent,
-    ChartOptionsComponent
+    ChartOptionsComponent,
+    ModelOptionsComponent
   ],
   imports: [
     CommonModule,
