@@ -110,7 +110,6 @@ export class ChartsItemNode {
   id: string;
   isTop: boolean;
   isEmpty: boolean;
-  isTopAndHasModelAccess: boolean;
   topLabel: string;
   connectionType: ConnectionTypeEnum;
   chart: ChartX;
@@ -1565,20 +1564,21 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let models = this.modelsQuery.getValue().models;
 
-    models.forEach(model => {
-      let topNode: ChartsItemNode = {
-        id: model.modelId,
-        isEmpty: false,
-        isTop: true,
-        isTopAndHasModelAccess: model.hasAccess,
-        topLabel: model.label,
-        connectionType: model.connectionType,
-        chart: undefined,
-        children: []
-      };
+    models
+      .filter(model => model.hasAccess === true)
+      .forEach(model => {
+        let topNode: ChartsItemNode = {
+          id: model.modelId,
+          isEmpty: false,
+          isTop: true,
+          topLabel: model.label,
+          connectionType: model.connectionType,
+          chart: undefined,
+          children: []
+        };
 
-      chartsItemNodes.push(topNode);
-    });
+        chartsItemNodes.push(topNode);
+      });
 
     let idxs;
 
@@ -1622,7 +1622,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
           isEmpty: false,
           isTop: false,
           topLabel: chart.modelLabel,
-          isTopAndHasModelAccess: false,
           connectionType: undefined,
           chart: chart,
           children: []
@@ -1637,18 +1636,19 @@ export class ModelsComponent implements OnInit, OnDestroy {
         } else {
           let model = models.find(x => x.modelId === chart.modelId);
 
-          topNode = {
-            id: chart.modelId,
-            isEmpty: false,
-            isTop: true,
-            topLabel: chart.modelLabel,
-            isTopAndHasModelAccess: model.hasAccess,
-            connectionType: undefined,
-            chart: undefined,
-            children: [chartsItemNode]
-          };
+          if (model.hasAccess === true) {
+            topNode = {
+              id: chart.modelId,
+              isEmpty: false,
+              isTop: true,
+              topLabel: chart.modelLabel,
+              connectionType: undefined,
+              chart: undefined,
+              children: [chartsItemNode]
+            };
 
-          chartsItemNodes.push(topNode);
+            chartsItemNodes.push(topNode);
+          }
         }
       });
 
@@ -1659,7 +1659,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
           isEmpty: true,
           isTop: false,
           topLabel: 'No charts',
-          isTopAndHasModelAccess: false,
           connectionType: undefined,
           chart: undefined,
           children: []
@@ -1669,9 +1668,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.filteredChartNodes = chartsItemNodes.filter(
-      x => x.isTopAndHasModelAccess === true || x.children.length > 0
-    );
+    this.filteredChartNodes = chartsItemNodes;
   }
 
   chartsItemModelNodeOnClick(node: TreeNode) {

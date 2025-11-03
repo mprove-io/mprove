@@ -259,6 +259,20 @@ export class ApiService {
 
         this.myDialogService.showError({ errorData, isThrow: false });
       } else if (
+        [ErEnum.BACKEND_FORBIDDEN_REPORT].indexOf(infoErrorMessage) > -1
+      ) {
+        errorData.description = `Check report access rules`;
+        errorData.leftButtonText = 'Go to reports';
+        errorData.leftOnClickFnBindThis = (() => {
+          this.router
+            .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+            .then(() => {
+              this.navigateService.navigateToReports();
+            });
+        }).bind(this);
+
+        this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
         [ErEnum.BACKEND_FORBIDDEN_MODEL].indexOf(infoErrorMessage) > -1
       ) {
         errorData.description = `Check model access rules`;

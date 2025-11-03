@@ -140,9 +140,15 @@ export class StructModelResolver implements Resolve<Observable<boolean>> {
             this.navQuery.updatePart({
               needValidate: resp.payload.needValidate
             });
-            this.modelQuery.update(resp.payload.model);
 
-            return true;
+            if (resp.payload.model.hasAccess === true) {
+              this.modelQuery.update(resp.payload.model);
+              return true;
+            } else {
+              this.navigateService.navigateToModels();
+
+              return false;
+            }
           } else if (
             resp.info?.status === ResponseInfoStatusEnum.Error &&
             resp.info.error.message === ErEnum.BACKEND_BRANCH_DOES_NOT_EXIST
