@@ -115,9 +115,10 @@ export class BranchSelectComponent {
 
       this.selectedBranchExtraId = this.selectedBranchItem?.extraId;
 
-      this.branchesList = isDefined(this.selectedBranchItem)
-        ? [this.selectedBranchItem]
-        : [];
+      this.branchesList =
+        isDefined(this.selectedBranchItem) && this.branchesList.length === 0
+          ? [this.selectedBranchItem]
+          : this.branchesList;
 
       this.cd.detectChanges();
     })
