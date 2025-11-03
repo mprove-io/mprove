@@ -613,9 +613,6 @@
                 >
 
                 <div
-                  *ngIf="
-                    (filteredCharts | slice: filteredDraftsLength).length > 0
-                  "
                   class="text-s500 mb-4 ml-[24px] mr-[36px] mt-4 flex select-none flex-row justify-start font-semibold"
                 >
                   Saved Charts by Model
@@ -704,7 +701,24 @@
                       </div>
                     </div>
 
-                    <div *ngIf="node.data.isTop === false">
+                    <div
+                      *ngIf="
+                        node.data.isTop === false && node.data.isEmpty === true
+                      "
+                      class="ml-[56px] mr-5 flex h-11 flex-row items-center rounded pr-2"
+                    >
+                      {{
+                        searchChartsWord?.length > 0
+                          ? 'No charts match the search filter'
+                          : 'No charts'
+                      }}
+                    </div>
+
+                    <div
+                      *ngIf="
+                        node.data.isTop === false && node.data.isEmpty === false
+                      "
+                    >
                       <ng-container
                         *ngTemplateOutlet="
                           chartsItem;

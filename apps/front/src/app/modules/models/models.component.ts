@@ -109,6 +109,7 @@ import { ValidationService } from '~front/app/services/validation.service';
 export class ChartsItemNode {
   id: string;
   isTop: boolean;
+  isEmpty: boolean;
   isTopAndHasModelAccess: boolean;
   topLabel: string;
   connectionType: ConnectionTypeEnum;
@@ -1567,6 +1568,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
     models.forEach(model => {
       let topNode: ChartsItemNode = {
         id: model.modelId,
+        isEmpty: false,
         isTop: true,
         isTopAndHasModelAccess: model.hasAccess,
         topLabel: model.label,
@@ -1617,6 +1619,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
       .forEach(chart => {
         let chartsItemNode: ChartsItemNode = {
           id: chart.chartId,
+          isEmpty: false,
           isTop: false,
           topLabel: chart.modelLabel,
           isTopAndHasModelAccess: false,
@@ -1636,6 +1639,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
           topNode = {
             id: chart.modelId,
+            isEmpty: false,
             isTop: true,
             topLabel: chart.modelLabel,
             isTopAndHasModelAccess: model.hasAccess,
@@ -1647,6 +1651,23 @@ export class ModelsComponent implements OnInit, OnDestroy {
           chartsItemNodes.push(topNode);
         }
       });
+
+    chartsItemNodes.forEach(topNode => {
+      if (topNode.children.length === 0) {
+        let emptyNode: ChartsItemNode = {
+          id: 'emptyChartId',
+          isEmpty: true,
+          isTop: false,
+          topLabel: 'No charts',
+          isTopAndHasModelAccess: false,
+          connectionType: undefined,
+          chart: undefined,
+          children: []
+        };
+
+        topNode.children.push(emptyNode);
+      }
+    });
 
     this.filteredChartNodes = chartsItemNodes.filter(
       x => x.isTopAndHasModelAccess === true || x.children.length > 0
