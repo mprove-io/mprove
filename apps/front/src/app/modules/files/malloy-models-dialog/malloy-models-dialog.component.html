@@ -37,7 +37,7 @@
 
   <div class="overflow-y-auto" *ngIf="!!models">
     <div
-      class="text-s1 rounded pl-5 text-base"
+      class="text-s1 rounded py-[10px] pl-5 text-base"
       [ngClass]="{
         'hover:bg-m50 hover:cursor-pointer': model.hasAccess === true
       }"
@@ -50,7 +50,7 @@
       </ng-template>
 
       <div
-        class="flex select-none flex-row pb-[9px] pt-[7px]"
+        class="flex select-none flex-row"
         [tp]="templateModelsModel"
         [tpIsEnabled]="model.hasAccess === false"
       >
