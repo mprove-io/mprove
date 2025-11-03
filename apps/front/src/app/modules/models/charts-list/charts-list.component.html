@@ -27,7 +27,6 @@
               Chart Id
             </button>
           </div>
-          <!-- <div class="flex flex-1">Access Roles</div> -->
           <div class="flex flex-1">Author</div>
         </div>
       </div>
@@ -102,23 +101,7 @@
                       {{ item.tiles[0].modelLabel | capitalize }}
                     </span>
                   </div>
-
-                  <m-lock-closed-icon
-                    class="text-s400 mb-1 ml-2"
-                    *ngIf="item.tiles[0].hasAccessToModel === false"
-                  ></m-lock-closed-icon>
                 </div>
-
-                <!-- <div
-                  class="flex flex-1 flex-wrap truncate pb-[9px] pt-[7px] text-base"
-                >
-                  <span
-                    *ngFor="let role of item.accessRoles"
-                    class="mr-2 truncate"
-                  >
-                    {{ role }}
-                  </span>
-                </div> -->
 
                 <div
                   class="flex flex-1 items-start truncate pb-[9px] pt-[7px] focus:outline-none"

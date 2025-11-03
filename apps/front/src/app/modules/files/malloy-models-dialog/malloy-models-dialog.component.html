@@ -5,10 +5,9 @@
     >Malloy File Models</div
   >
 
-  <div *ngIf="models?.length === 0" class="text-s1 mt-9 text-lg">
-    Add " <span class="text-red-700">#(mprove) model</span> " malloy source tag
-    then click <span class="font-semibold">Save File</span> to create mprove
-    Model
+  <div *ngIf="models?.length === 0" class="text-s1 mt-9 select-text text-lg">
+    Add <span class="text-red-700">#(mprove) model</span> malloy source tag then
+    click <span class="font-semibold">Save File</span> to create mprove Model
   </div>
 
   <div
@@ -38,13 +37,38 @@
 
   <div class="overflow-y-auto" *ngIf="!!models">
     <div
-      class="text-s1 hover:bg-m50 rounded py-3 pl-5 text-base hover:cursor-pointer"
+      class="text-s1 rounded pl-5 text-base"
+      [ngClass]="{
+        'hover:bg-m50 hover:cursor-pointer': model.hasAccess === true
+      }"
       *ngFor="let model of models"
       (click)="navToModel(model.modelId)"
     >
-      {{ model.label }}
+      <ng-template #templateModelsModel>
+        <div *ngIf="isExplorer === false">Explorer role required</div>
+        <div *ngIf="isExplorer === true">No access to model</div>
+      </ng-template>
 
-      <span class="text-s400 ml-[5px]">- {{ model.connectionType }}</span>
+      <div
+        class="flex select-none flex-row pb-[9px] pt-[7px]"
+        [tp]="templateModelsModel"
+        [tpIsEnabled]="model.hasAccess === false"
+      >
+        <div class="flex flex-row">
+          <div class="flex">
+            {{ model.label }}
+
+            <span class="text-s400 ml-[5px]">- {{ model.connectionType }}</span>
+          </div>
+
+          <m-lock-closed-icon
+            class="text-s400 mb-1 ml-2 mr-5"
+            *ngIf="model.hasAccess === false"
+          ></m-lock-closed-icon>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<div *ngIf="isExplorer$ | async"></div>

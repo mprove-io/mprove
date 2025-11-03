@@ -322,13 +322,25 @@
     >
       <div
         (click)="goToModel(mconfig.modelId, canAccessModel)"
-        class="select-none text-base font-semibold focus:outline-none"
+        class="group select-none text-base focus:outline-none"
         [ngClass]="{
           'hover:text-m500 cursor-pointer': canAccessModel === true,
           'cursor-default': canAccessModel === false
         }"
-        >{{ mconfig?.modelLabel | capitalize }}</div
       >
+        <span class="ml-[5px] font-semibold">{{
+          mconfig?.modelLabel | capitalize
+        }}</span>
+
+        <span
+          class="text-s400 ml-[5px]"
+          [ngClass]="{
+            'group-hover:text-m500 cursor-pointer': canAccessModel === true,
+            'cursor-default': canAccessModel === false
+          }"
+          >- {{ query?.connectionType }}</span
+        >
+      </div>
 
       <m-lock-closed-icon
         class="text-s400 mb-1 ml-2"
