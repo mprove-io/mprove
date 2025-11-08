@@ -97,4 +97,4 @@ Continue with [Quickstart Docs](https://docs.mprove.io/docs/quickstart).
 
 ## License
 
-Mprove is distributed under [Apache 2.0 License](https://github.com/mprove-io/mprove/blob/master/LICENSE).
+Mprove is distributed under various [Licenses](https://github.com/mprove-io/mprove/blob/master/LICENSE).
