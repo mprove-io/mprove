@@ -4,6 +4,8 @@ Portions of this software are licensed as follows:
 
 - All content that resides under any "enterprise/" directory of this repository, 
   if such directories exists, are licensed under the license defined in "enterprise/LICENSE".
+- All content that resides under any "cloud/" directory of this repository, 
+  if such directories exists, are licensed under the license defined in "cloud/LICENSE".
 - All third party components incorporated into the Mprove Software are licensed under the 
   original license provided by the owner of the applicable component.
 - Content outside of the above mentioned directories or restrictions above is available under 
