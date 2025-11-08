@@ -168,7 +168,21 @@ export class ChartService {
           this.spinner.hide(APP_SPINNER_NAME);
 
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.chartQuery.update(resp.payload.chart);
+            let chart = resp.payload.chart;
+
+            let charts = this.chartsQuery.getValue().charts;
+
+            let chartIndex = charts.findIndex(x => x.chartId === chart.chartId);
+
+            let newCharts = [
+              ...charts.slice(0, chartIndex),
+              chart,
+              ...charts.slice(chartIndex + 1)
+            ];
+
+            this.chartQuery.update(chart);
+
+            this.chartsQuery.update({ charts: newCharts });
           }
         }),
         take(1)
