@@ -153,7 +153,13 @@ function makeYaml(data: any): string {
     if (line.trim() === 'fields:') inFieldGroups = false;
 
     if (/^\s*- /.test(line) && !inFieldGroups) {
-      formatted.push('');
+      const trimmed = line.trimStart();
+      if (
+        trimmed.startsWith('- dimension:') ||
+        trimmed.startsWith('- measure:')
+      ) {
+        formatted.push('');
+      }
     }
     formatted.push(line);
   }
