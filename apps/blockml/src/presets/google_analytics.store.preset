@@ -16,12 +16,12 @@ request: |
 
     if (selectedDimensions.map(field => field.name).indexOf(x.field.name) > -1) {
       orderBy = {
-        dimension: { dimensionName: x.field.meta.name },
+        dimension: { dimensionName: x.field.meta.apiName },
         desc: x.desc
       }
     } else if (selectedMeasures.map(field => field.name).indexOf(x.field.name) > -1) {
       orderBy = {
-        metric: { metricName: x.field.meta.name },
+        metric: { metricName: x.field.meta.apiName },
         desc: x.desc
       } 
     }
@@ -44,7 +44,7 @@ request: |
 
       if (apiFilterType === 'stringFilter') {
         apiFilter = {
-          fieldName: field.meta.name,
+          fieldName: field.meta.apiName,
           stringFilter: {
             matchType: fraction.meta.match_type,
             value: fraction.controls.find(control => control['name'] === 'value_input')?.value,
@@ -55,7 +55,7 @@ request: |
 
       if (apiFilterType === 'inListFilter') {
         apiFilter = {
-          fieldName: field.meta.name,
+          fieldName: field.meta.apiName,
           inListFilter: {
             values: fraction.controls.find(control => control['name'] === 'values_input')?.values,
             caseSensitive: $PROJECT_CONFIG_CASE_SENSITIVE
@@ -65,7 +65,7 @@ request: |
 
       if (apiFilterType === 'numericFilter') {
         apiFilter = {
-          fieldName: field.meta.name,
+          fieldName: field.meta.apiName,
           numericFilter: {
             operation: fraction.meta.operation,
             value: {
@@ -77,7 +77,7 @@ request: |
 
       if (apiFilterType === 'betweenFilter') {
         apiFilter = {
-          fieldName: field.meta.name,
+          fieldName: field.meta.apiName,
           betweenFilter: {
             fromValue: {
               doubleValue: Number(fraction.controls.find(control => control['name'] === 'value_from_input')?.value)
@@ -152,8 +152,8 @@ request: |
   }
 
   let body = {
-    dimensions: selectedDimensions.map(x => ({ name: x.meta['name'] })), 
-    metrics: selectedMeasures.map(x => ({ name: x.meta['name'] })),
+    dimensions: selectedDimensions.map(x => ({ name: x.meta['apiName'] })), 
+    metrics: selectedMeasures.map(x => ({ name: x.meta['apiName'] })),
     dateRanges: dateRanges,
     dimensionFilter: (dimOrExpressions.length > 0 || dimAndNotExpressions.length > 0)
       ? {
@@ -248,7 +248,7 @@ response: |
         date = new Date(`${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}T${value.slice(8, 10)}:${value.slice(10, 12)}:00Z`);
       } 
 
-      let storeField = storeFields.find(x => !!x.meta && x.meta['name'] === dimensionName);
+      let storeField = storeFields.find(x => !!x.meta && x.meta['apiName'] === dimensionName);
 
       if (!!storeField) {
         let fieldId = storeField.name;
@@ -259,7 +259,7 @@ response: |
     row.metricValues?.forEach((metric, index) => {
       let metricName = metricHeaders[index];
       let value = metric.value;
-      let storeField = storeFields.find(x => !!x.meta && x.meta['name'] === metricName);
+      let storeField = storeFields.find(x => !!x.meta && x.meta['apiName'] === metricName);
       if (!!storeField) {
         let fieldId = storeField.name;
         newRow[fieldId] = value;
@@ -421,7 +421,7 @@ fields:
   detail: days
   description: 'The date of the event, formatted as YYYYMMDD'
   meta:
-    name: date
+    apiName: date
 
 - dimension: iso_year_iso_week # "202504"
   label: 'Week Monday'
@@ -430,7 +430,7 @@ fields:
   detail: weeksMonday
   description: 'The combined values of isoWeek and isoYear. Example values include 201652 & 201701'
   meta:
-    name: isoYearIsoWeek
+    apiName: isoYearIsoWeek
 
 - dimension: year_week # "202505"
   label: 'Week Sunday'
@@ -439,7 +439,7 @@ fields:
   detail: weeksSunday
   description: 'The combined values of year and week. Example values include 202253 or 202301'
   meta:
-    name: yearWeek
+    apiName: yearWeek
 
 - dimension: year_month # "202501"
   label: 'Month'
@@ -448,7 +448,7 @@ fields:
   detail: months
   description: 'The combined values of year and month. Example values include 202212 or 202301'
   meta:
-    name: yearMonth
+    apiName: yearMonth
 
 - dimension: year # "2025"
   label: 'Year'
@@ -457,7 +457,7 @@ fields:
   detail: years
   description: 'The four-digit year of the event. For example, 2020 or 2024'
   meta:
-    name: year
+    apiName: year
 
 - dimension: date_hour # "2025012722"
   label: 'Hour'
@@ -466,7 +466,7 @@ fields:
   detail: hours
   description: 'The combined values of date and hour formatted as YYYYMMDDHH'
   meta:
-    name: dateHour
+    apiName: dateHour
 
 - dimension: date_hour_minute # "202501272212"
   label: 'Minute'
@@ -475,123 +475,123 @@ fields:
   detail: minutes
   description: 'The combined values of date, hour, and minute formatted as YYYYMMDDHHMM'
   meta:
-    name: dateHourMinute
+    apiName: dateHourMinute
 
 - dimension: hour # "4"
   result: string
-  group: events
+  group: event
   description: "The two-digit hour of the day that the event was logged. This dimension ranges from 0-23 and is reported in your property's timezone"
   meta:
-    name: hour
+    apiName: hour
 
 - dimension: minute # "40"
   result: string
-  group: events
+  group: event
   description: "The two-digit minute of the hour that the event was logged. This dimension ranges from 0-59 and is reported in your property's timezone"
   meta:
-    name: minute
+    apiName: minute
 
 - dimension: day # "26"
   result: string
-  group: events
+  group: event
   description: 'The day of the month, a two-digit number from 01 to 31'
   meta:
-    name: day
+    apiName: day
 
 - dimension: day_of_week # "0"
   label: 'Day of week'
   result: string
-  group: events
+  group: event
   description: 'The integer day of the week. It returns values in the range 0 to 6 with Sunday as the first day of the week'
   meta:
-    name: dayOfWeek
+    apiName: dayOfWeek
 
 - dimension: day_of_week_name # "Sunday"
   label: 'Day of week name'
   result: string
-  group: events
+  group: event
   description: 'The day of the week in English. This dimension has values such as Sunday or Monday'
   meta:
-    name: dayOfWeekName
+    apiName: dayOfWeekName
 
 - dimension: week # "05"
   label: 'Week'
   result: string
-  group: events
+  group: event
   description: 'The week of the event, a two-digit number from 01 to 53. Each week starts on Sunday. January 1st is always in week 01. The first and last week of the year have fewer than 7 days in most years. Weeks other than the first and the last week of the year always have 7 days. For years where January 1st is a Sunday, the first week of that year and the last week of the prior year have 7 days'
   meta:
-    name: week
+    apiName: week
 
 - dimension: month # "01"
   result: string
-  group: events
+  group: event
   description: 'The month of the event, a two digit integer from 01 to 12'
   meta:
-    name: month
+    apiName: month
 
 - dimension: iso_year # "2025"
   label: 'ISO year'
   result: string
-  group: events
+  group: event
   description: 'The ISO year of the event. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 2022 & 2023'
   meta:
-    name: isoYear
+    apiName: isoYear
 
 - dimension: iso_week # "04"
   label: 'ISO week of the year'
   result: string
-  group: events
+  group: event
   description: 'ISO week number, where each week starts on Monday. For details, see http://en.wikipedia.org/wiki/ISO_week_date. Example values include 01, 02, & 53'
   meta:
-    name: isoWeek
+    apiName: isoWeek
 
 - dimension: nth_year # "0000"
   label: 'Nth year'
   result: string
   description: 'The number of years since the start of the date range. The starting year is 0000'
-  group: events
+  group: event
   meta:
-    name: nthYear
+    apiName: nthYear
 
 - dimension: nth_month # "0000"
   label: 'Nth month'
   result: string
-  group: events
+  group: event
   description: 'The number of months since the start of a date range. The starting month is 0000'
   meta:
-    name: nthMonth
+    apiName: nthMonth
 
 - dimension: nth_week # "0001"
   label: 'Nth week'
   result: string
-  group: events
+  group: event
   description: 'A number representing the number of weeks since the start of a date range'
   meta:
-    name: nthWeek
+    apiName: nthWeek
 
 - dimension: nth_day # "0004"
   label: 'Nth day'
   result: string
-  group: events
+  group: event
   description: 'The number of days since the start of the date range'
   meta:
-    name: nthDay
+    apiName: nthDay
 
 - dimension: nth_hour # "0142"
   label: 'Nth hour'
   result: string
-  group: events
+  group: event
   description: 'The number of hours since the start of the date range. The starting hour is 0000'
   meta:
-    name: nthHour
+    apiName: nthHour
 
 - dimension: nth_minute # "8532"
   label: 'Nth minute'
   result: string
-  group: events
+  group: event
   description: 'The number of minutes since the start of the date range. The starting minute is 0000'
   meta:
-    name: nthMinute
+    apiName: nthMinute
     
 # Dimensions
 
@@ -3403,7 +3403,6 @@ fields:
 
 # Measures
 
-
 - measure: "active1_day_users"
   result: "number"
   description: "The number of distinct active users on your site or app within a 1 day period. The 1 day period includes the last day in the report's date range. Note: this is the same as Active Users."
@@ -4186,7 +4185,7 @@ fields:
     uiName: "WAU / MAU"
     type: "TYPE_FLOAT"
 
-- measure: "key_events:purchase"
+- measure: "key_events_purchase"
   result: "number"
   description: "The count of a specific key event."
   group: "event"
@@ -4197,7 +4196,7 @@ fields:
     deprecatedApiNames:
       - "conversions:purchase"
 
-- measure: "session_key_event_rate:purchase"
+- measure: "session_key_event_rate_purchase"
   result: "number"
   description: "The percentage of sessions in which a specific key event was triggered."
   group: "session"
@@ -4208,7 +4207,7 @@ fields:
     deprecatedApiNames:
       - "sessionConversionRate:purchase"
 
-- measure: "user_key_event_rate:purchase"
+- measure: "user_key_event_rate_purchase"
   result: "number"
   description: "The percentage of users who triggered a specific key event."
   group: "user"

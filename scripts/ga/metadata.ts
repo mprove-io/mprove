@@ -58,11 +58,12 @@ async function metadata() {
 
 function toSnakeCase(str: string): string {
   return str
-    .replace(/[/\s]+/g, '_') // ← replace / and spaces with single _
+    .replace(/[:/\s]+/g, '_') // ← replace :, /, and spaces with _
     .replace(/([A-Z])/g, '_$1')
     .toLowerCase()
     .replace(/^_/, '')
-    .replace(/_+/g, '_'); // ← collapse multiple _ into one
+    .replace(/_+/g, '_')
+    .replace(/[^a-z0-9_]/g, '_'); // ← ensure only a-z0-9_ remain
 }
 
 function makeYaml(data: any): string {
