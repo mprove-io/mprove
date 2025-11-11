@@ -389,20 +389,34 @@ results:
     - list_input: values_input
 
 field_groups:
-- group: "other"
-- group: "publisher"
-- group: "platform_device"
-- group: "user"
-- group: "demographics"
-- group: "attribution"
-- group: "geography"
-- group: "page_screen"
-- group: "ecommerce"
-- group: "event"
-- group: "user_lifetime"
-- group: "traffic_source"
-- group: "revenue"
-- group: "session"
+  - group: "attribution"
+    label: "Attribution"
+  - group: "demographics"
+    label: "Demographics"
+  - group: "ecommerce"
+    label: "Ecommerce"
+  - group: "event"
+    label: "Event"
+  - group: "geography"
+    label: "Geography"
+  - group: "other"
+    label: "Other"
+  - group: "page_screen"
+    label: "Page Screen"
+  - group: "platform_device"
+    label: "Platform Device"
+  - group: "publisher"
+    label: "Publisher"
+  - group: "revenue"
+    label: "Revenue"
+  - group: "session"
+    label: "Session"
+  - group: "traffic_source"
+    label: "Traffic Source"
+  - group: "user"
+    label: "User"
+  - group: "user_lifetime"
+    label: "User Lifetime"
 
 field_time_groups:
 - time: event_created_at
@@ -599,6 +613,7 @@ fields:
   result: "string"
   description: "The achievement ID in a game for an event. Populated by the event parameter `achievement_id`."
   group: "other"
+  label: "Achievement ID"
   meta:
     apiName: "achievementId"
     uiName: "Achievement ID"
@@ -607,6 +622,7 @@ fields:
   result: "string"
   description: "Describes the way ads looked and where they were located. Typical formats include `Interstitial`, `Banner`, `Rewarded`, and `Native advanced`."
   group: "publisher"
+  label: "Ad Format"
   meta:
     apiName: "adFormat"
     uiName: "Ad format"
@@ -615,6 +631,7 @@ fields:
   result: "string"
   description: "The source network that served the ad. Typical sources include `AdMob Network`, `Liftoff`, `Facebook Audience Network`, and `Mediated house ads`."
   group: "publisher"
+  label: "Ad Source"
   meta:
     apiName: "adSourceName"
     uiName: "Ad source"
@@ -623,6 +640,7 @@ fields:
   result: "string"
   description: "The name you chose to describe this Ad unit. Ad units are containers you place in your apps to show ads to users."
   group: "publisher"
+  label: "Ad Unit"
   meta:
     apiName: "adUnitName"
     uiName: "Ad unit"
@@ -631,6 +649,7 @@ fields:
   result: "string"
   description: "The app's versionName (Android) or short bundle version (iOS)."
   group: "platform_device"
+  label: "App Version"
   meta:
     apiName: "appVersion"
     uiName: "App version"
@@ -639,6 +658,7 @@ fields:
   result: "string"
   description: "The numeric identifier of an Audience. Users are reported in the audiences to which they belonged during the report's date range. Current user behavior does not affect historical audience membership in reports."
   group: "user"
+  label: "Audience ID"
   meta:
     apiName: "audienceId"
     uiName: "Audience ID"
@@ -647,6 +667,7 @@ fields:
   result: "string"
   description: "The given name of an Audience. Users are reported in the audiences to which they belonged during the report's date range. Current user behavior does not affect historical audience membership in reports."
   group: "user"
+  label: "Audience Name"
   meta:
     apiName: "audienceName"
     uiName: "Audience name"
@@ -655,6 +676,7 @@ fields:
   result: "string"
   description: "The resource name of this audience. Resource names contain both collection & resource identifiers to uniquely identify a resource; to learn more, see [Resource names](//google.aip.dev/122)."
   group: "user"
+  label: "Audience Resource Name"
   meta:
     apiName: "audienceResourceName"
     uiName: "Audience resource name"
@@ -663,6 +685,7 @@ fields:
   result: "string"
   description: "Interests demonstrated by users who are higher in the shopping funnel. Users can be counted in multiple interest categories. For example, `Shoppers`, `Lifestyles & Hobbies/Pet Lovers`, or `Travel/Travel Buffs/Beachbound Travelers`."
   group: "demographics"
+  label: "Interests"
   meta:
     apiName: "brandingInterest"
     uiName: "Interests"
@@ -671,6 +694,7 @@ fields:
   result: "string"
   description: "The browsers used to view your website."
   group: "platform_device"
+  label: "Browser"
   meta:
     apiName: "browser"
     uiName: "Browser"
@@ -679,6 +703,7 @@ fields:
   result: "string"
   description: "The identifier of the marketing campaign. Present only for key events. Includes Google Ads Campaigns, Manual Campaigns, & other Campaigns."
   group: "attribution"
+  label: "Campaign ID"
   meta:
     apiName: "campaignId"
     uiName: "Campaign ID"
@@ -687,6 +712,7 @@ fields:
   result: "string"
   description: "The name of the marketing campaign. Present only for key events. Includes Google Ads Campaigns, Manual Campaigns, & other Campaigns."
   group: "attribution"
+  label: "Campaign"
   meta:
     apiName: "campaignName"
     uiName: "Campaign"
@@ -695,6 +721,7 @@ fields:
   result: "string"
   description: "The player character in a game for an event. Populated by the event parameter `character`."
   group: "other"
+  label: "Character"
   meta:
     apiName: "character"
     uiName: "Character"
@@ -703,6 +730,7 @@ fields:
   result: "string"
   description: "The city from which the user activity originated."
   group: "geography"
+  label: "City"
   meta:
     apiName: "city"
     uiName: "City"
@@ -711,6 +739,7 @@ fields:
   result: "string"
   description: "The geographic ID of the city from which the user activity originated, derived from their IP address."
   group: "geography"
+  label: "City ID"
   meta:
     apiName: "cityId"
     uiName: "City ID"
@@ -719,6 +748,7 @@ fields:
   result: "string"
   description: "The CM360 Account ID that led to the key event. Identifies the CM360 Account."
   group: "attribution"
+  label: "CM360 Account ID"
   meta:
     apiName: "cm360AccountId"
     uiName: "CM360 account ID"
@@ -727,6 +757,7 @@ fields:
   result: "string"
   description: "The CM360 Account Name that led to the key event. A CM360 account consists of advertisers, sites, campaigns, and user profiles."
   group: "attribution"
+  label: "CM360 Account Name"
   meta:
     apiName: "cm360AccountName"
     uiName: "CM360 account name"
@@ -735,6 +766,7 @@ fields:
   result: "string"
   description: "The CM360 Advertiser ID that led to the key event. A CM360 Advertiser contains a group of campaigns, creative assets, and other settings."
   group: "attribution"
+  label: "CM360 Advertiser ID"
   meta:
     apiName: "cm360AdvertiserId"
     uiName: "CM360 advertiser ID"
@@ -743,6 +775,7 @@ fields:
   result: "string"
   description: "The CM360 Advertiser Name that led to the key event. A CM360 Advertiser contains a group of campaigns, creative assets, and other settings."
   group: "attribution"
+  label: "CM360 Advertiser Name"
   meta:
     apiName: "cm360AdvertiserName"
     uiName: "CM360 advertiser name"
@@ -751,6 +784,7 @@ fields:
   result: "string"
   description: "The CM360 Campaign ID that led to the key event. A CM360 campaign can be configured to specify when your ads run, what landing pages are used, and other properties."
   group: "attribution"
+  label: "CM360 Campaign ID"
   meta:
     apiName: "cm360CampaignId"
     uiName: "CM360 campaign ID"
@@ -759,6 +793,7 @@ fields:
   result: "string"
   description: "The CM360 Campaign Name that led to the key event. A CM360 campaign can be configured to specify when your ads run, what landing pages are used, and other properties."
   group: "attribution"
+  label: "CM360 Campaign Name"
   meta:
     apiName: "cm360CampaignName"
     uiName: "CM360 campaign name"
@@ -767,6 +802,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Format that led to the key event. CM360 creative formats are also referred to as creative types."
   group: "attribution"
+  label: "CM360 Creative Format"
   meta:
     apiName: "cm360CreativeFormat"
     uiName: "CM360 creative format"
@@ -775,6 +811,7 @@ fields:
   result: "string"
   description: "The CM360 Creative ID that led to the key event. Identifies a CM360 creative."
   group: "attribution"
+  label: "CM360 Creative ID"
   meta:
     apiName: "cm360CreativeId"
     uiName: "CM360 creative ID"
@@ -783,6 +820,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Name that led to the key event. The name given to a CM360 creative."
   group: "attribution"
+  label: "CM360 Creative Name"
   meta:
     apiName: "cm360CreativeName"
     uiName: "CM360 creative name"
@@ -791,6 +829,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Type that led to the key event. A category of CM360 creatives like 'Display' or 'Tracking'. To learn more, see [manage creatives](https://support.google.com/campaignmanager/answer/3068258)"
   group: "attribution"
+  label: "CM360 Creative Type"
   meta:
     apiName: "cm360CreativeType"
     uiName: "CM360 creative type"
@@ -799,6 +838,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Type ID that led to the key event. Identifies a CM360 creative type."
   group: "attribution"
+  label: "CM360 Creative Type ID"
   meta:
     apiName: "cm360CreativeTypeId"
     uiName: "CM360 creative type ID"
@@ -807,6 +847,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Version that led to the key event. The version number helps you keep track of multiple versions of your creative in your reports. If you upload a new asset to an existing creative, the version number is increased by one."
   group: "attribution"
+  label: "CM360 Creative Version"
   meta:
     apiName: "cm360CreativeVersion"
     uiName: "CM360 creative version"
@@ -815,6 +856,7 @@ fields:
   result: "string"
   description: "The CM360 Medium that led to the key event. The CM360 medium is also referred to as the placement cost structure."
   group: "attribution"
+  label: "CM360 Medium"
   meta:
     apiName: "cm360Medium"
     uiName: "CM360 medium"
@@ -823,6 +865,7 @@ fields:
   result: "string"
   description: "The CM360 Placement Cost Structure that led to the key event. Placement cost structures regulate how media cost will be calculated. For example 'CPM'."
   group: "attribution"
+  label: "CM360 Placement Cost Structure"
   meta:
     apiName: "cm360PlacementCostStructure"
     uiName: "CM360 placement cost structure"
@@ -831,6 +874,7 @@ fields:
   result: "string"
   description: "The CM360 Placement ID that led to the key event. Identifies a CM360 placement. A placement is the part of a website where your ad appears."
   group: "attribution"
+  label: "CM360 Placement ID"
   meta:
     apiName: "cm360PlacementId"
     uiName: "CM360 placement ID"
@@ -839,6 +883,7 @@ fields:
   result: "string"
   description: "The CM360 Placement Name that led to the key event. The given name for a CM360 placement. A placement is the part of a website where your ad appears."
   group: "attribution"
+  label: "CM360 Placement Name"
   meta:
     apiName: "cm360PlacementName"
     uiName: "CM360 placement name"
@@ -847,6 +892,7 @@ fields:
   result: "string"
   description: "The CM360 Rendering ID that led to the key event. Identifies a CM360 creative."
   group: "attribution"
+  label: "CM360 Rendering ID"
   meta:
     apiName: "cm360RenderingId"
     uiName: "CM360 rendering ID"
@@ -855,6 +901,7 @@ fields:
   result: "string"
   description: "The CM360 Site ID that led to the key event. Identifies a CM360 site."
   group: "attribution"
+  label: "CM360 Site ID"
   meta:
     apiName: "cm360SiteId"
     uiName: "CM360 site ID"
@@ -863,6 +910,7 @@ fields:
   result: "string"
   description: "The CM360 Site Name that led to the key event. The CM360 Site name from which the ad space was purchased."
   group: "attribution"
+  label: "CM360 Site Name"
   meta:
     apiName: "cm360SiteName"
     uiName: "CM360 site name"
@@ -871,6 +919,7 @@ fields:
   result: "string"
   description: "The CM360 Source that led to the key event. The CM360 source is also referred to as the site name."
   group: "attribution"
+  label: "CM360 Source"
   meta:
     apiName: "cm360Source"
     uiName: "CM360 source"
@@ -879,6 +928,7 @@ fields:
   result: "string"
   description: "The CM360 Source Medium that led to the key event. A combination of the source and medium."
   group: "attribution"
+  label: "CM360 Source / Medium"
   meta:
     apiName: "cm360SourceMedium"
     uiName: "CM360 source / medium"
@@ -887,6 +937,7 @@ fields:
   result: "string"
   description: "Comparisons enable you to evaluate subsets of your data side by side. For report requests, the comparisons column is automatically added to the response. For pivot report requests, the requested dimension must be used."
   group: "other"
+  label: "Comparison"
   meta:
     apiName: "comparison"
     uiName: "Comparison"
@@ -895,6 +946,7 @@ fields:
   result: "string"
   description: "A category that applies to items of published content. Populated by the event parameter `content_group`."
   group: "page_screen"
+  label: "Content Group"
   meta:
     apiName: "contentGroup"
     uiName: "Content group"
@@ -903,6 +955,7 @@ fields:
   result: "string"
   description: "The identifier of the selected content. Populated by the event parameter `content_id`."
   group: "page_screen"
+  label: "Content ID"
   meta:
     apiName: "contentId"
     uiName: "Content ID"
@@ -911,6 +964,7 @@ fields:
   result: "string"
   description: "The category of the selected content. Populated by the event parameter `content_type`."
   group: "page_screen"
+  label: "Content Type"
   meta:
     apiName: "contentType"
     uiName: "Content type"
@@ -919,6 +973,7 @@ fields:
   result: "string"
   description: "The continent from which the user activity originated. For example, `Americas` or `Asia`."
   group: "geography"
+  label: "Continent"
   meta:
     apiName: "continent"
     uiName: "Continent"
@@ -927,6 +982,7 @@ fields:
   result: "string"
   description: "The geographic ID of the continent from which the user activity originated, derived from their IP address."
   group: "geography"
+  label: "Continent ID"
   meta:
     apiName: "continentId"
     uiName: "Continent ID"
@@ -935,6 +991,7 @@ fields:
   result: "string"
   description: "The country from which the user activity originated."
   group: "geography"
+  label: "Country"
   meta:
     apiName: "country"
     uiName: "Country"
@@ -943,6 +1000,7 @@ fields:
   result: "string"
   description: "The geographic ID of the country from which the user activity originated, derived from their IP address. Formatted according to ISO 3166-1 alpha-2 standard."
   group: "geography"
+  label: "Country ID"
   meta:
     apiName: "countryId"
     uiName: "Country ID"
@@ -953,6 +1011,7 @@ fields:
   result: "string"
   description: "The local currency code (based on ISO 4217 standard) of the eCommerce event. For example, `USD` or `GBP`. Currency is specified in tagging by the `currency` parameter. Businesses that transact in more than one currency can specify a local currency code when sending eCommerce events to Analytics, and this dimension shows those currencies. To Learn more, See [Currency reference](https://support.google.com/analytics/answer/9796179)."
   group: "ecommerce"
+  label: "Currency"
   meta:
     apiName: "currencyCode"
     uiName: "Currency"
@@ -961,6 +1020,7 @@ fields:
   result: "string"
   description: "The key event's default channel group is based primarily on source and medium. An enumeration which includes `Direct`, `Organic Search`, `Paid Social`, `Organic Social`, `Email`, `Affiliates`, `Referral`, `Paid Search`, `Video`, and `Display`."
   group: "attribution"
+  label: "Default Channel Group"
   meta:
     apiName: "defaultChannelGroup"
     uiName: "Default channel group"
@@ -971,6 +1031,7 @@ fields:
   result: "string"
   description: "The type of device: Desktop, Tablet, or Mobile."
   group: "platform_device"
+  label: "Device Category"
   meta:
     apiName: "deviceCategory"
     uiName: "Device category"
@@ -979,6 +1040,7 @@ fields:
   result: "string"
   description: "The mobile device model (example: iPhone 10,6)."
   group: "platform_device"
+  label: "Device Model"
   meta:
     apiName: "deviceModel"
     uiName: "Device model"
@@ -987,6 +1049,7 @@ fields:
   result: "string"
   description: "The DV360 Advertiser ID that led to the key event. Identifies the DV360 advertiser."
   group: "attribution"
+  label: "DV360 Advertiser ID"
   meta:
     apiName: "dv360AdvertiserId"
     uiName: "DV360 advertiser ID"
@@ -995,6 +1058,7 @@ fields:
   result: "string"
   description: "The DV360 Advertiser Name that led to the key event. DV360 advertisers represent real-life businesses that run advertising campaigns."
   group: "attribution"
+  label: "DV360 Advertiser Name"
   meta:
     apiName: "dv360AdvertiserName"
     uiName: "DV360 advertiser name"
@@ -1003,6 +1067,7 @@ fields:
   result: "string"
   description: "The DV360 Campaign ID that led to the key event. Identifies the DV360 campaign."
   group: "attribution"
+  label: "DV360 Campaign ID"
   meta:
     apiName: "dv360CampaignId"
     uiName: "DV360 campaign ID"
@@ -1011,6 +1076,7 @@ fields:
   result: "string"
   description: "The DV360 Campaign Name that led to the key event. DV360 campaigns group together related insertion orders with a common business goal."
   group: "attribution"
+  label: "DV360 Campaign Name"
   meta:
     apiName: "dv360CampaignName"
     uiName: "DV360 campaign name"
@@ -1019,6 +1085,7 @@ fields:
   result: "string"
   description: "The DV360 Creative Format that led to the key event. Also referred to as the creative type. For example, expandable, video, or native."
   group: "attribution"
+  label: "DV360 Creative Format"
   meta:
     apiName: "dv360CreativeFormat"
     uiName: "DV360 creative format"
@@ -1027,6 +1094,7 @@ fields:
   result: "string"
   description: "The DV360 Creative ID that led to the key event. Identifies the DV360 creative."
   group: "attribution"
+  label: "DV360 Creative ID"
   meta:
     apiName: "dv360CreativeId"
     uiName: "DV360 creative ID"
@@ -1035,6 +1103,7 @@ fields:
   result: "string"
   description: "The DV360 Creative Name that led to the key event. The name given to a DV360 creative."
   group: "attribution"
+  label: "DV360 Creative Name"
   meta:
     apiName: "dv360CreativeName"
     uiName: "DV360 creative name"
@@ -1043,6 +1112,7 @@ fields:
   result: "string"
   description: "The DV360 Exchange ID that led to the key event. Identifies the DV360 exchange."
   group: "attribution"
+  label: "DV360 Exchange ID"
   meta:
     apiName: "dv360ExchangeId"
     uiName: "DV360 exchange ID"
@@ -1051,6 +1121,7 @@ fields:
   result: "string"
   description: "The DV360 Exchange Name that led to the key event. The DV360 ad exchange involved in the ad click. To learn more, see [managing exchanges](https://support.google.com/displayvideo/answer/9230278)."
   group: "attribution"
+  label: "DV360 Exchange Name"
   meta:
     apiName: "dv360ExchangeName"
     uiName: "DV360 exchange name"
@@ -1059,6 +1130,7 @@ fields:
   result: "string"
   description: "The DV360 Insertion Order ID that led to the key event. Identifies the DV360 insertion order."
   group: "attribution"
+  label: "DV360 Insertion Order ID"
   meta:
     apiName: "dv360InsertionOrderId"
     uiName: "DV360 insertion order ID"
@@ -1067,6 +1139,7 @@ fields:
   result: "string"
   description: "The DV360 Insertion Order Name that led to the key event. A DV360 insertion order contains a set of line items that are related to the same advertising campaign."
   group: "attribution"
+  label: "DV360 Insertion Order Name"
   meta:
     apiName: "dv360InsertionOrderName"
     uiName: "DV360 insertion order name"
@@ -1075,6 +1148,7 @@ fields:
   result: "string"
   description: "The DV360 Line Item ID that led to the key event. Identifies the DV360 line item."
   group: "attribution"
+  label: "DV360 Line Item ID"
   meta:
     apiName: "dv360LineItemId"
     uiName: "DV360 line item ID"
@@ -1083,6 +1157,7 @@ fields:
   result: "string"
   description: "The DV360 Line Item Name that led to the key event. A DV360 line item bids on impressions and serves creatives to inventory sources."
   group: "attribution"
+  label: "DV360 Line Item Name"
   meta:
     apiName: "dv360LineItemName"
     uiName: "DV360 line item name"
@@ -1091,6 +1166,7 @@ fields:
   result: "string"
   description: "The DV360 Medium that led to the key event. The billable outcome of the insertion order. For example, `cpm`."
   group: "attribution"
+  label: "DV360 Medium"
   meta:
     apiName: "dv360Medium"
     uiName: "DV360 medium"
@@ -1099,6 +1175,7 @@ fields:
   result: "string"
   description: "The DV360 Partner ID that led to the key event. Identifies the DV360 partner."
   group: "attribution"
+  label: "DV360 Partner ID"
   meta:
     apiName: "dv360PartnerId"
     uiName: "DV360 partner ID"
@@ -1107,6 +1184,7 @@ fields:
   result: "string"
   description: "The DV360 Partner Name that led to the key event. DV360 partners represent agencies, trading desks, or large individual advertisers."
   group: "attribution"
+  label: "DV360 Partner Name"
   meta:
     apiName: "dv360PartnerName"
     uiName: "DV360 partner name"
@@ -1115,6 +1193,7 @@ fields:
   result: "string"
   description: "The DV360 Source that led to the key event. The DV360 site name where your ad was displayed."
   group: "attribution"
+  label: "DV360 Source"
   meta:
     apiName: "dv360Source"
     uiName: "DV360 source"
@@ -1123,6 +1202,7 @@ fields:
   result: "string"
   description: "The DV360 Source Medium that led to the key event. A combination of the source and medium."
   group: "attribution"
+  label: "DV360 Source / Medium"
   meta:
     apiName: "dv360SourceMedium"
     uiName: "DV360 source / medium"
@@ -1131,6 +1211,7 @@ fields:
   result: "string"
   description: "The name of the event."
   group: "event"
+  label: "Event Name"
   meta:
     apiName: "eventName"
     uiName: "Event name"
@@ -1139,6 +1220,7 @@ fields:
   result: "string"
   description: "The extension of the downloaded file (for example, `pdf` or `txt`). Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `file_extension`."
   group: "other"
+  label: "File Extension"
   meta:
     apiName: "fileExtension"
     uiName: "File extension"
@@ -1147,6 +1229,7 @@ fields:
   result: "string"
   description: "The page path of the downloaded file (for example, `/menus/dinner-menu.pdf`). Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `file_name`."
   group: "other"
+  label: "File Name"
   meta:
     apiName: "fileName"
     uiName: "File name"
@@ -1155,6 +1238,7 @@ fields:
   result: "string"
   description: "The date the user's first session occurred, formatted as YYYYMMDD."
   group: "user_lifetime"
+  label: "First Session Date"
   meta:
     apiName: "firstSessionDate"
     uiName: "First session date"
@@ -1165,6 +1249,7 @@ fields:
   result: "string"
   description: "Identifier of the marketing campaign that first acquired the user. Includes Google Ads Campaigns, Manual Campaigns, & other Campaigns."
   group: "traffic_source"
+  label: "First User Campaign ID"
   meta:
     apiName: "firstUserCampaignId"
     uiName: "First user campaign ID"
@@ -1173,6 +1258,7 @@ fields:
   result: "string"
   description: "Name of the marketing campaign that first acquired the user. Includes Google Ads Campaigns, Manual Campaigns, & other Campaigns."
   group: "traffic_source"
+  label: "First User Campaign"
   meta:
     apiName: "firstUserCampaignName"
     uiName: "First user campaign"
@@ -1181,6 +1267,7 @@ fields:
   result: "string"
   description: "The CM360 Account ID that originally acquired the user. Identifies the CM360 account."
   group: "traffic_source"
+  label: "First User CM360 Account ID"
   meta:
     apiName: "firstUserCm360AccountId"
     uiName: "First user CM360 account ID"
@@ -1189,6 +1276,7 @@ fields:
   result: "string"
   description: "The CM360 Account Name that originally acquired the user. A CM360 account consists of advertisers, sites, campaigns, and user profiles."
   group: "traffic_source"
+  label: "First User CM360 Account Name"
   meta:
     apiName: "firstUserCm360AccountName"
     uiName: "First user CM360 account name"
@@ -1197,6 +1285,7 @@ fields:
   result: "string"
   description: "The CM360 Advertiser ID that originally acquired the user. Identifies the CM360 advertiser."
   group: "traffic_source"
+  label: "First User CM360 Advertiser ID"
   meta:
     apiName: "firstUserCm360AdvertiserId"
     uiName: "First user CM360 advertiser ID"
@@ -1205,6 +1294,7 @@ fields:
   result: "string"
   description: "The CM360 Advertiser Name that originally acquired the user. A CM360 Advertiser contains a group of campaigns, creative assets, and other settings."
   group: "traffic_source"
+  label: "First User CM360 Advertiser Name"
   meta:
     apiName: "firstUserCm360AdvertiserName"
     uiName: "First user CM360 advertiser name"
@@ -1213,6 +1303,7 @@ fields:
   result: "string"
   description: "The CM360 Campaign ID that originally acquired the user. Identifies the CM360 campaign."
   group: "traffic_source"
+  label: "First User CM360 Campaign ID"
   meta:
     apiName: "firstUserCm360CampaignId"
     uiName: "First user CM360 campaign ID"
@@ -1221,6 +1312,7 @@ fields:
   result: "string"
   description: "The CM360 Campaign Name that originally acquired the user. A CM360 campaign can be configured to specify when your ads run, what landing pages are used, and other properties."
   group: "traffic_source"
+  label: "First User CM360 Campaign Name"
   meta:
     apiName: "firstUserCm360CampaignName"
     uiName: "First user CM360 campaign name"
@@ -1229,6 +1321,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Format that originally acquired the user. CM360 creative formats are also referred to as creative types."
   group: "traffic_source"
+  label: "First User CM360 Creative Format"
   meta:
     apiName: "firstUserCm360CreativeFormat"
     uiName: "First user CM360 creative format"
@@ -1237,6 +1330,7 @@ fields:
   result: "string"
   description: "The CM360 Creative ID that originally acquired the user. Identifies a CM360 creative."
   group: "traffic_source"
+  label: "First User CM360 Creative ID"
   meta:
     apiName: "firstUserCm360CreativeId"
     uiName: "First user CM360 creative ID"
@@ -1245,6 +1339,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Name that originally acquired the user. The name given to a CM360 creative."
   group: "traffic_source"
+  label: "First User CM360 Creative Name"
   meta:
     apiName: "firstUserCm360CreativeName"
     uiName: "First user CM360 creative name"
@@ -1253,6 +1348,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Type that originally acquired the user. A category of CM360 creatives like 'Display' or 'Tracking'. To learn more, see [manage creatives](https://support.google.com/campaignmanager/answer/3068258)"
   group: "traffic_source"
+  label: "First User CM360 Creative Type"
   meta:
     apiName: "firstUserCm360CreativeType"
     uiName: "First user CM360 creative type"
@@ -1261,6 +1357,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Type ID that originally acquired the user. Identifies a CM360 creative type."
   group: "traffic_source"
+  label: "First User CM360 Creative Type ID"
   meta:
     apiName: "firstUserCm360CreativeTypeId"
     uiName: "First user CM360 creative type ID"
@@ -1269,6 +1366,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Version that originally acquired the user. The version number helps you keep track of multiple versions of your creative in your reports. If you upload a new asset to an existing creative, the version number is increased by one."
   group: "traffic_source"
+  label: "First User CM360 Creative Version"
   meta:
     apiName: "firstUserCm360CreativeVersion"
     uiName: "First user CM360 creative version"
@@ -1277,6 +1375,7 @@ fields:
   result: "string"
   description: "The CM360 Medium that originally acquired the user. The CM360 medium is also referred to as the placement cost structure."
   group: "traffic_source"
+  label: "First User CM360 Medium"
   meta:
     apiName: "firstUserCm360Medium"
     uiName: "First user CM360 medium"
@@ -1285,6 +1384,7 @@ fields:
   result: "string"
   description: "The CM360 Placement Cost Structure that originally acquired the user. Placement cost structures regulate how media cost will be calculated. For example 'CPM'."
   group: "traffic_source"
+  label: "First User CM360 Placement Cost Structure"
   meta:
     apiName: "firstUserCm360PlacementCostStructure"
     uiName: "First user CM360 placement cost structure"
@@ -1293,6 +1393,7 @@ fields:
   result: "string"
   description: "The CM360 Placement ID that originally acquired the user. Identifies a CM360 placement. A placement is the part of a website where your ad appears."
   group: "traffic_source"
+  label: "First User CM360 Placement ID"
   meta:
     apiName: "firstUserCm360PlacementId"
     uiName: "First user CM360 placement ID"
@@ -1301,6 +1402,7 @@ fields:
   result: "string"
   description: "The CM360 Placement Name that originally acquired the user. The given name for a CM360 placement. A placement is the part of a website where your ad appears."
   group: "traffic_source"
+  label: "First User CM360 Placement Name"
   meta:
     apiName: "firstUserCm360PlacementName"
     uiName: "First user CM360 placement name"
@@ -1309,6 +1411,7 @@ fields:
   result: "string"
   description: "The CM360 Rendering ID that originally acquired the user. Identifies a CM360 creative."
   group: "traffic_source"
+  label: "First User CM360 Rendering ID"
   meta:
     apiName: "firstUserCm360RenderingId"
     uiName: "First user CM360 rendering ID"
@@ -1317,6 +1420,7 @@ fields:
   result: "string"
   description: "The CM360 Site ID that originally acquired the user. Identifies a CM360 site."
   group: "traffic_source"
+  label: "First User CM360 Site ID"
   meta:
     apiName: "firstUserCm360SiteId"
     uiName: "First user CM360 site ID"
@@ -1325,6 +1429,7 @@ fields:
   result: "string"
   description: "The CM360 Site Name that originally acquired the user. The CM360 Site name from which the ad space was purchased."
   group: "traffic_source"
+  label: "First User CM360 Site Name"
   meta:
     apiName: "firstUserCm360SiteName"
     uiName: "First user CM360 site name"
@@ -1333,6 +1438,7 @@ fields:
   result: "string"
   description: "The CM360 Source that originally acquired the user. The CM360 source is also referred to as the site name."
   group: "traffic_source"
+  label: "First User CM360 Source"
   meta:
     apiName: "firstUserCm360Source"
     uiName: "First user CM360 source"
@@ -1341,6 +1447,7 @@ fields:
   result: "string"
   description: "The CM360 Source Medium that originally acquired the user. A combination of the source and medium."
   group: "traffic_source"
+  label: "First User CM360 Source / Medium"
   meta:
     apiName: "firstUserCm360SourceMedium"
     uiName: "First user CM360 source / medium"
@@ -1349,6 +1456,7 @@ fields:
   result: "string"
   description: "The default channel group that first acquired the user. Default channel group is based primarily on source and medium. An enumeration which includes `Direct`, `Organic Search`, `Paid Social`, `Organic Social`, `Email`, `Affiliates`, `Referral`, `Paid Search`, `Video`, and `Display`."
   group: "traffic_source"
+  label: "First User Default Channel Group"
   meta:
     apiName: "firstUserDefaultChannelGroup"
     uiName: "First user default channel group"
@@ -1359,6 +1467,7 @@ fields:
   result: "string"
   description: "The DV360 Advertiser ID that originally acquired the user. Identifies the DV360 advertiser."
   group: "traffic_source"
+  label: "First User DV360 Advertiser ID"
   meta:
     apiName: "firstUserDv360AdvertiserId"
     uiName: "First user DV360 advertiser ID"
@@ -1367,6 +1476,7 @@ fields:
   result: "string"
   description: "The DV360 Advertiser Name that originally acquired the user. DV360 advertisers represent real-life businesses that run advertising campaigns."
   group: "traffic_source"
+  label: "First User DV360 Advertiser Name"
   meta:
     apiName: "firstUserDv360AdvertiserName"
     uiName: "First user DV360 advertiser name"
@@ -1375,6 +1485,7 @@ fields:
   result: "string"
   description: "The DV360 Campaign ID that originally acquired the user. Identifies the DV360 campaign."
   group: "traffic_source"
+  label: "First User DV360 Campaign ID"
   meta:
     apiName: "firstUserDv360CampaignId"
     uiName: "First user DV360 campaign ID"
@@ -1383,6 +1494,7 @@ fields:
   result: "string"
   description: "The DV360 Campaign Name that originally acquired the user. DV360 campaigns group together related insertion orders with a common business goal."
   group: "traffic_source"
+  label: "First User DV360 Campaign Name"
   meta:
     apiName: "firstUserDv360CampaignName"
     uiName: "First user DV360 campaign name"
@@ -1391,6 +1503,7 @@ fields:
   result: "string"
   description: "The DV360 Creative Format that originally acquired the user. Also referred to as the creative type. For example, expandable, video, or native."
   group: "traffic_source"
+  label: "First User DV360 Creative Format"
   meta:
     apiName: "firstUserDv360CreativeFormat"
     uiName: "First user DV360 creative format"
@@ -1399,6 +1512,7 @@ fields:
   result: "string"
   description: "The DV360 Creative ID that originally acquired the user. Identifies the DV360 creative."
   group: "traffic_source"
+  label: "First User DV360 Creative ID"
   meta:
     apiName: "firstUserDv360CreativeId"
     uiName: "First user DV360 creative ID"
@@ -1407,6 +1521,7 @@ fields:
   result: "string"
   description: "The DV360 Creative Name that originally acquired the user. The name given to a DV360 creative."
   group: "traffic_source"
+  label: "First User DV360 Creative Name"
   meta:
     apiName: "firstUserDv360CreativeName"
     uiName: "First user DV360 creative name"
@@ -1415,6 +1530,7 @@ fields:
   result: "string"
   description: "The DV360 Exchange ID that originally acquired the user. Identifies the DV360 exchange."
   group: "traffic_source"
+  label: "First User DV360 Exchange ID"
   meta:
     apiName: "firstUserDv360ExchangeId"
     uiName: "First user DV360 exchange ID"
@@ -1423,6 +1539,7 @@ fields:
   result: "string"
   description: "The DV360 Exchange Name that originally acquired the user. The DV360 ad exchange involved in the ad click. To learn more, see [managing exchanges](https://support.google.com/displayvideo/answer/9230278)."
   group: "traffic_source"
+  label: "First User DV360 Exchange Name"
   meta:
     apiName: "firstUserDv360ExchangeName"
     uiName: "First user DV360 exchange name"
@@ -1431,6 +1548,7 @@ fields:
   result: "string"
   description: "The DV360 Insertion Order ID that originally acquired the user. Identifies the DV360 insertion order."
   group: "traffic_source"
+  label: "First User DV360 Insertion Order ID"
   meta:
     apiName: "firstUserDv360InsertionOrderId"
     uiName: "First user DV360 insertion order ID"
@@ -1439,6 +1557,7 @@ fields:
   result: "string"
   description: "The DV360 Insertion Order Name that originally acquired the user. A DV360 insertion order contains a set of line items that are related to the same advertising campaign."
   group: "traffic_source"
+  label: "First User DV360 Insertion Order Name"
   meta:
     apiName: "firstUserDv360InsertionOrderName"
     uiName: "First user DV360 insertion order name"
@@ -1447,6 +1566,7 @@ fields:
   result: "string"
   description: "The DV360 Line Item ID that originally acquired the user. Identifies the DV360 line item."
   group: "traffic_source"
+  label: "First User DV360 Line Item ID"
   meta:
     apiName: "firstUserDv360LineItemId"
     uiName: "First user DV360 line item ID"
@@ -1455,6 +1575,7 @@ fields:
   result: "string"
   description: "The DV360 Line Item Name that originally acquired the user. A DV360 line item bids on impressions and serves creatives to inventory sources."
   group: "traffic_source"
+  label: "First User DV360 Line Item Name"
   meta:
     apiName: "firstUserDv360LineItemName"
     uiName: "First user DV360 line item name"
@@ -1465,6 +1586,7 @@ fields:
   result: "string"
   description: "The DV360 Medium that originally acquired the user. The billable outcome of the insertion order. For example, `cpm`."
   group: "traffic_source"
+  label: "First User DV360 Medium"
   meta:
     apiName: "firstUserDv360Medium"
     uiName: "First user DV360 medium"
@@ -1473,6 +1595,7 @@ fields:
   result: "string"
   description: "The DV360 Partner ID that originally acquired the user. Identifies the DV360 partner."
   group: "traffic_source"
+  label: "First User DV360 Partner ID"
   meta:
     apiName: "firstUserDv360PartnerId"
     uiName: "First user DV360 partner ID"
@@ -1481,6 +1604,7 @@ fields:
   result: "string"
   description: "The DV360 Partner Name that originally acquired the user. DV360 partners represent agencies, trading desks, or large individual advertisers."
   group: "traffic_source"
+  label: "First User DV360 Partner Name"
   meta:
     apiName: "firstUserDv360PartnerName"
     uiName: "First user DV360 partner name"
@@ -1489,6 +1613,7 @@ fields:
   result: "string"
   description: "The DV360 Source that originally acquired the user. The DV360 site name where your ad was displayed."
   group: "traffic_source"
+  label: "First User DV360 Source"
   meta:
     apiName: "firstUserDv360Source"
     uiName: "First user DV360 source"
@@ -1497,6 +1622,7 @@ fields:
   result: "string"
   description: "The DV360 Source Medium that originally acquired the user. A combination of the source and medium."
   group: "traffic_source"
+  label: "First User DV360 Source / Medium"
   meta:
     apiName: "firstUserDv360SourceMedium"
     uiName: "First user DV360 source / medium"
@@ -1505,6 +1631,7 @@ fields:
   result: "string"
   description: "The Account name from Google Ads that first acquired the user."
   group: "traffic_source"
+  label: "First User Google Ads Account Name"
   meta:
     apiName: "firstUserGoogleAdsAccountName"
     uiName: "First user Google Ads account name"
@@ -1513,6 +1640,7 @@ fields:
   result: "string"
   description: "The Ad Group Id in Google Ads that first acquired the user."
   group: "traffic_source"
+  label: "First User Google Ads Ad Group ID"
   meta:
     apiName: "firstUserGoogleAdsAdGroupId"
     uiName: "First user Google Ads ad group ID"
@@ -1521,6 +1649,7 @@ fields:
   result: "string"
   description: "The Ad Group Name in Google Ads that first acquired the user."
   group: "traffic_source"
+  label: "First User Google Ads Ad Group Name"
   meta:
     apiName: "firstUserGoogleAdsAdGroupName"
     uiName: "First user Google Ads ad group name"
@@ -1529,6 +1658,7 @@ fields:
   result: "string"
   description: "The advertising network that first acquired the user. An enumeration which includes `Google search`, `Search partners`, `Google Display Network`, `Youtube Search`, `Youtube Videos`, `Cross-network`, `Social`, and `(universal campaign)`."
   group: "traffic_source"
+  label: "First User Google Ads Ad Network Type"
   meta:
     apiName: "firstUserGoogleAdsAdNetworkType"
     uiName: "First user Google Ads ad network type"
@@ -1537,6 +1667,7 @@ fields:
   result: "string"
   description: "Identifier of the Google Ads marketing campaign that first acquired the user."
   group: "traffic_source"
+  label: "First User Google Ads Campaign ID"
   meta:
     apiName: "firstUserGoogleAdsCampaignId"
     uiName: "First user Google Ads campaign ID"
@@ -1545,6 +1676,7 @@ fields:
   result: "string"
   description: "Name of the Google Ads marketing campaign that first acquired the user."
   group: "traffic_source"
+  label: "First User Google Ads Campaign"
   meta:
     apiName: "firstUserGoogleAdsCampaignName"
     uiName: "First user Google Ads campaign"
@@ -1553,6 +1685,7 @@ fields:
   result: "string"
   description: "The campaign type of the Google Ads campaign that first acquired the user. Campaign types determine where customers see your ads and the settings and options available to you in Google Ads. Campaign type is an enumeration that includes: Search, Display, Shopping, Video, Demand Gen, App, Smart, Hotel, Local, and Performance Max. To learn more, see [Choose the right campaign type](https://support.google.com/google-ads/answer/2567043)."
   group: "traffic_source"
+  label: "First User Google Ads Campaign Type"
   meta:
     apiName: "firstUserGoogleAdsCampaignType"
     uiName: "First user Google Ads campaign type"
@@ -1561,6 +1694,7 @@ fields:
   result: "string"
   description: "The ID of the Google Ads creative that first acquired the user. Creative IDs identify individual ads."
   group: "traffic_source"
+  label: "First User Google Ads Creative ID"
   meta:
     apiName: "firstUserGoogleAdsCreativeId"
     uiName: "First user Google Ads creative ID"
@@ -1571,6 +1705,7 @@ fields:
   result: "string"
   description: "The Customer ID from Google Ads that first acquired the user. Customer IDs in Google Ads uniquely identify Google Ads accounts."
   group: "traffic_source"
+  label: "First User Google Ads Customer ID"
   meta:
     apiName: "firstUserGoogleAdsCustomerId"
     uiName: "First user Google Ads customer ID"
@@ -1579,6 +1714,7 @@ fields:
   result: "string"
   description: "First user Google Ads keyword text | The matched keyword that first acquired the user. Keywords are words or phrases describing your product or service that you choose to get your ad in front of the right customers. To learn more about Keywords, see [Keywords: Definition](https://support.google.com/google-ads/answer/6323)."
   group: "traffic_source"
+  label: "First User Google Ads Keyword Text"
   meta:
     apiName: "firstUserGoogleAdsKeyword"
     uiName: "First user Google Ads keyword text"
@@ -1587,6 +1723,7 @@ fields:
   result: "string"
   description: "The search query that first acquired the user."
   group: "traffic_source"
+  label: "First User Google Ads Query"
   meta:
     apiName: "firstUserGoogleAdsQuery"
     uiName: "First user Google Ads query"
@@ -1595,6 +1732,7 @@ fields:
   result: "string"
   description: "The ad content that first acquired the user. Populated by the utm_content parameter."
   group: "traffic_source"
+  label: "First User Manual Ad Content"
   meta:
     apiName: "firstUserManualAdContent"
     uiName: "First user manual ad content"
@@ -1603,6 +1741,7 @@ fields:
   result: "string"
   description: "The manual Campaign ID that originally acquired the user. Identifies the manual campaign. Populated by `utm_id` URL parameter."
   group: "traffic_source"
+  label: "First User Manual Campaign ID"
   meta:
     apiName: "firstUserManualCampaignId"
     uiName: "First user manual campaign ID"
@@ -1611,6 +1750,7 @@ fields:
   result: "string"
   description: "The manual Campaign Name that originally acquired the user. The name of the manual campaign. Populated by `utm_campaign` URL parameter. To learn more, see [Collect campaign data with custom URLs](https://support.google.com/analytics/answer/10917952)."
   group: "traffic_source"
+  label: "First User Manual Campaign Name"
   meta:
     apiName: "firstUserManualCampaignName"
     uiName: "First user manual campaign name"
@@ -1619,6 +1759,7 @@ fields:
   result: "string"
   description: "The manual Creative Format that originally acquired the user. Identifies the creative format used in the ad. Populated by `utm_creative_format` URL parameter."
   group: "traffic_source"
+  label: "First User Manual Creative Format"
   meta:
     apiName: "firstUserManualCreativeFormat"
     uiName: "First user manual creative format"
@@ -1627,6 +1768,7 @@ fields:
   result: "string"
   description: "The manual Marketing Tactic that originally acquired the user. The targeting criteria applied to a campaign. For example, remarketing or prospecting. Populated by `utm_marketing_tactic` URL parameter."
   group: "traffic_source"
+  label: "First User Manual Marketing Tactic"
   meta:
     apiName: "firstUserManualMarketingTactic"
     uiName: "First user manual marketing tactic"
@@ -1635,6 +1777,7 @@ fields:
   result: "string"
   description: "The manual Medium that originally acquired the user. The marketing medium used in the referral. For example, `cpc`. Populated by `utm_medium` URL parameter."
   group: "traffic_source"
+  label: "First User Manual Medium"
   meta:
     apiName: "firstUserManualMedium"
     uiName: "First user manual medium"
@@ -1643,6 +1786,7 @@ fields:
   result: "string"
   description: "The manual Source that originally acquired the user. The referrer. Populated by `utm_source` URL parameter."
   group: "traffic_source"
+  label: "First User Manual Source"
   meta:
     apiName: "firstUserManualSource"
     uiName: "First user manual source"
@@ -1651,6 +1795,7 @@ fields:
   result: "string"
   description: "The manual Source Medium that originally acquired the user. A combination of the source and medium."
   group: "traffic_source"
+  label: "First User Manual Source / Medium"
   meta:
     apiName: "firstUserManualSourceMedium"
     uiName: "First user manual source / medium"
@@ -1659,6 +1804,7 @@ fields:
   result: "string"
   description: "The manual Source Platform that originally acquired the user. The platform responsible for directing traffic to a given Analytics property. Populated by `utm_source_platform` URL parameter."
   group: "traffic_source"
+  label: "First User Manual Source Platform"
   meta:
     apiName: "firstUserManualSourcePlatform"
     uiName: "First user manual source platform"
@@ -1667,6 +1813,7 @@ fields:
   result: "string"
   description: "The term that first acquired the user. Populated by the utm_term parameter."
   group: "traffic_source"
+  label: "First User Manual Term"
   meta:
     apiName: "firstUserManualTerm"
     uiName: "First user manual term"
@@ -1675,6 +1822,7 @@ fields:
   result: "string"
   description: "The medium that first acquired the user to your website or app."
   group: "traffic_source"
+  label: "First User Medium"
   meta:
     apiName: "firstUserMedium"
     uiName: "First user medium"
@@ -1683,6 +1831,7 @@ fields:
   result: "string"
   description: "The primary channel group that originally acquired a user. Primary channel groups are the channel groups used in standard reports in Google Analytics and serve as an active record of your property's data in alignment with channel grouping over time. To learn more, see [Custom channel groups](https://support.google.com/analytics/answer/13051316)."
   group: "traffic_source"
+  label: "First User Primary Channel Group"
   meta:
     apiName: "firstUserPrimaryChannelGroup"
     uiName: "First user primary channel group"
@@ -1691,6 +1840,7 @@ fields:
   result: "string"
   description: "The SA360 Ad Group ID that originally acquired the user. Identifies the SA360 ad group."
   group: "traffic_source"
+  label: "First User SA360 Ad Group ID"
   meta:
     apiName: "firstUserSa360AdGroupId"
     uiName: "First user SA360 ad group ID"
@@ -1699,6 +1849,7 @@ fields:
   result: "string"
   description: "The SA360 Ad Group Name that originally acquired the user. SA360 Ad groups contain ads and keywords that relate to each other."
   group: "traffic_source"
+  label: "First User SA360 Ad Group Name"
   meta:
     apiName: "firstUserSa360AdGroupName"
     uiName: "First user SA360 ad group name"
@@ -1707,6 +1858,7 @@ fields:
   result: "string"
   description: "The SA360 Campaign ID that originally acquired the user. Identifies the SA360 campaign."
   group: "traffic_source"
+  label: "First User SA360 Campaign ID"
   meta:
     apiName: "firstUserSa360CampaignId"
     uiName: "First user SA360 campaign ID"
@@ -1715,6 +1867,7 @@ fields:
   result: "string"
   description: "The SA360 Campaign Name that originally acquired the user. A SA360 campaign lets you organize your ads and define a goal for your advertising."
   group: "traffic_source"
+  label: "First User SA360 Campaign"
   meta:
     apiName: "firstUserSa360CampaignName"
     uiName: "First user SA360 campaign"
@@ -1723,6 +1876,7 @@ fields:
   result: "string"
   description: "The SA360 Creative Format that originally acquired the user. The creative format is the specific layout or design of the advertisement used in a campaign."
   group: "traffic_source"
+  label: "First User SA360 Creative Format"
   meta:
     apiName: "firstUserSa360CreativeFormat"
     uiName: "First user SA360 creative format"
@@ -1731,6 +1885,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account ID that originally acquired the user. Identifies the SA360 engine account."
   group: "traffic_source"
+  label: "First User SA360 Engine Account ID"
   meta:
     apiName: "firstUserSa360EngineAccountId"
     uiName: "First user SA360 engine account ID"
@@ -1739,6 +1894,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account Name that originally acquired the user. A SA360 engine account contains campaigns, ad groups, and other items from an advertising account."
   group: "traffic_source"
+  label: "First User SA360 Engine Account Name"
   meta:
     apiName: "firstUserSa360EngineAccountName"
     uiName: "First user SA360 engine account name"
@@ -1747,6 +1903,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account Type that originally acquired the user. The type of engine used by the search engine account."
   group: "traffic_source"
+  label: "First User SA360 Engine Account Type"
   meta:
     apiName: "firstUserSa360EngineAccountType"
     uiName: "First user SA360 engine account type"
@@ -1755,6 +1912,7 @@ fields:
   result: "string"
   description: "The SA360 Keyword Text that originally acquired the user. The keywords that matched the search query."
   group: "traffic_source"
+  label: "First User SA360 Keyword Text"
   meta:
     apiName: "firstUserSa360KeywordText"
     uiName: "First user SA360 keyword text"
@@ -1763,6 +1921,7 @@ fields:
   result: "string"
   description: "The SA360 Manager Account ID that originally acquired the user. Identifies the SA360 manager account."
   group: "traffic_source"
+  label: "First User SA360 Manager Account ID"
   meta:
     apiName: "firstUserSa360ManagerAccountId"
     uiName: "First user SA360 manager account ID"
@@ -1771,6 +1930,7 @@ fields:
   result: "string"
   description: "The SA360 Manager Account Name that originally acquired the user. The top level of the Search Ads 360 account hierarchy and is used for administration and reporting across the lower-level sub-manager and client accounts."
   group: "traffic_source"
+  label: "First User SA360 Manager Account Name"
   meta:
     apiName: "firstUserSa360ManagerAccountName"
     uiName: "First user SA360 manager account name"
@@ -1779,6 +1939,7 @@ fields:
   result: "string"
   description: "The SA360 Medium that originally acquired the user. The payment mode used in ad buying. For example, `cpc`."
   group: "traffic_source"
+  label: "First User SA360 Medium"
   meta:
     apiName: "firstUserSa360Medium"
     uiName: "First user SA360 medium"
@@ -1787,6 +1948,7 @@ fields:
   result: "string"
   description: "The SA360 Query that originally acquired the user. The search query typed by the user."
   group: "traffic_source"
+  label: "First User SA360 Query"
   meta:
     apiName: "firstUserSa360Query"
     uiName: "First user SA360 query"
@@ -1795,6 +1957,7 @@ fields:
   result: "string"
   description: "The SA360 Source that originally acquired the user. The search query happened on this site."
   group: "traffic_source"
+  label: "First User SA360 Source"
   meta:
     apiName: "firstUserSa360Source"
     uiName: "First user SA360 source"
@@ -1803,6 +1966,7 @@ fields:
   result: "string"
   description: "The SA360 Source Medium that originally acquired the user. A combination of the source and medium."
   group: "traffic_source"
+  label: "First User SA360 Source / Medium"
   meta:
     apiName: "firstUserSa360SourceMedium"
     uiName: "First user SA360 source / medium"
@@ -1811,6 +1975,7 @@ fields:
   result: "string"
   description: "The source that first acquired the user to your website or app."
   group: "traffic_source"
+  label: "First User Source"
   meta:
     apiName: "firstUserSource"
     uiName: "First user source"
@@ -1819,6 +1984,7 @@ fields:
   result: "string"
   description: "The combined values of the dimensions `firstUserSource` and `firstUserMedium`."
   group: "traffic_source"
+  label: "First User Source / Medium"
   meta:
     apiName: "firstUserSourceMedium"
     uiName: "First user source / medium"
@@ -1827,6 +1993,7 @@ fields:
   result: "string"
   description: "The source platform that first acquired the user. Don't depend on this field returning `Manual` for traffic that uses UTMs; this field will update from returning `Manual` to returning `(not set)` for an upcoming feature launch."
   group: "traffic_source"
+  label: "First User Source Platform"
   meta:
     apiName: "firstUserSourcePlatform"
     uiName: "First user source platform"
@@ -1837,6 +2004,7 @@ fields:
   result: "string"
   description: "The hostname, page path, and query string for web pages visited; for example, the `fullPageUrl` portion of `https://www.example.com/store/contact-us?query_string=true` is `www.example.com/store/contact-us?query_string=true`."
   group: "page_screen"
+  label: "Full Page URL"
   meta:
     apiName: "fullPageUrl"
     uiName: "Full page URL"
@@ -1845,6 +2013,7 @@ fields:
   result: "string"
   description: "The Account name from Google Ads for the campaign that led to the key event. Corresponds to `customer.descriptive_name` in the Google Ads API."
   group: "attribution"
+  label: "Google Ads Account Name"
   meta:
     apiName: "googleAdsAccountName"
     uiName: "Google Ads account name"
@@ -1853,6 +2022,7 @@ fields:
   result: "string"
   description: "The Google Ads ad group ID attributed to the key event."
   group: "attribution"
+  label: "Google Ads Ad Group ID"
   meta:
     apiName: "googleAdsAdGroupId"
     uiName: "Google Ads ad group ID"
@@ -1861,6 +2031,7 @@ fields:
   result: "string"
   description: "The ad group name attributed to the key event."
   group: "attribution"
+  label: "Google Ads Ad Group Name"
   meta:
     apiName: "googleAdsAdGroupName"
     uiName: "Google Ads ad group name"
@@ -1869,6 +2040,7 @@ fields:
   result: "string"
   description: "The advertising network type of the key event. An enumeration which includes `Google search`, `Search partners`, `Google Display Network`, `Youtube Search`, `Youtube Videos`, `Cross-network`, `Social`, and `(universal campaign)`."
   group: "attribution"
+  label: "Google Ads Ad Network Type"
   meta:
     apiName: "googleAdsAdNetworkType"
     uiName: "Google Ads ad network type"
@@ -1877,6 +2049,7 @@ fields:
   result: "string"
   description: "The campaign ID for the Google Ads campaign attributed to the key event."
   group: "attribution"
+  label: "Google Ads Campaign ID"
   meta:
     apiName: "googleAdsCampaignId"
     uiName: "Google Ads campaign ID"
@@ -1885,6 +2058,7 @@ fields:
   result: "string"
   description: "The campaign name for the Google Ads campaign attributed to the key event."
   group: "attribution"
+  label: "Google Ads Campaign"
   meta:
     apiName: "googleAdsCampaignName"
     uiName: "Google Ads campaign"
@@ -1893,6 +2067,7 @@ fields:
   result: "string"
   description: "The campaign type for the Google Ads campaign attributed to the key event. Campaign types determine where customers see your ads and the settings and options available to you in Google Ads. Campaign type is an enumeration that includes: Search, Display, Shopping, Video, Demand Gen, App, Smart, Hotel, Local, and Performance Max. To learn more, see [Choose the right campaign type](https://support.google.com/google-ads/answer/2567043)."
   group: "attribution"
+  label: "Google Ads Campaign Type"
   meta:
     apiName: "googleAdsCampaignType"
     uiName: "Google Ads campaign type"
@@ -1901,6 +2076,7 @@ fields:
   result: "string"
   description: "The ID of the Google Ads creative attributed to the key event. Creative IDs identify individual ads."
   group: "attribution"
+  label: "Google Ads Creative ID"
   meta:
     apiName: "googleAdsCreativeId"
     uiName: "Google Ads creative ID"
@@ -1909,6 +2085,7 @@ fields:
   result: "string"
   description: "The Customer ID from Google Ads for the campaign that led to key event. Customer IDs in Google Ads uniquely identify Google Ads accounts."
   group: "attribution"
+  label: "Google Ads Customer ID"
   meta:
     apiName: "googleAdsCustomerId"
     uiName: "Google Ads customer ID"
@@ -1917,6 +2094,7 @@ fields:
   result: "string"
   description: "The matched keyword that led to the key event. Keywords are words or phrases describing your product or service that you choose to get your ad in front of the right customers. To learn more about Keywords, see [Keywords: Definition](https://support.google.com/google-ads/answer/6323)."
   group: "attribution"
+  label: "Google Ads Keyword Text"
   meta:
     apiName: "googleAdsKeyword"
     uiName: "Google Ads keyword text"
@@ -1925,6 +2103,7 @@ fields:
   result: "string"
   description: "The search query that led to the key event."
   group: "attribution"
+  label: "Google Ads Query"
   meta:
     apiName: "googleAdsQuery"
     uiName: "Google Ads query"
@@ -1933,6 +2112,7 @@ fields:
   result: "string"
   description: "The player group ID in a game for an event. Populated by the event parameter `group_id`."
   group: "other"
+  label: "Group ID"
   meta:
     apiName: "groupId"
     uiName: "Group ID"
@@ -1941,6 +2121,7 @@ fields:
   result: "string"
   description: "Includes the subdomain and domain names of a URL; for example, the Host Name of www.example.com/contact.html is www.example.com."
   group: "page_screen"
+  label: "Hostname"
   meta:
     apiName: "hostName"
     uiName: "Hostname"
@@ -1949,6 +2130,7 @@ fields:
   result: "string"
   description: "The string `true` if the event is a key event. Marking an event as a key event affects reports from time of creation. It doesn't change historic data. You can mark any event as key in Google Analytics, and some events (such as `first_open` or `purchase`) are marked as key events by default."
   group: "event"
+  label: "Is Key Event"
   meta:
     apiName: "isKeyEvent"
     uiName: "Is key event"
@@ -1959,6 +2141,7 @@ fields:
   result: "string"
   description: "The name or code of the affiliate (partner/vendor; if any) associated with an individual item. Populated by the `affiliation` item parameter."
   group: "ecommerce"
+  label: "Item Affiliation"
   meta:
     apiName: "itemAffiliation"
     uiName: "Item affiliation"
@@ -1967,6 +2150,7 @@ fields:
   result: "string"
   description: "Brand name of the item."
   group: "ecommerce"
+  label: "Item Brand"
   meta:
     apiName: "itemBrand"
     uiName: "Item brand"
@@ -1975,6 +2159,7 @@ fields:
   result: "string"
   description: "The hierarchical category in which the item is classified. For example, in Apparel/Mens/Summer/Shirts/T-shirts, Apparel is the item category."
   group: "ecommerce"
+  label: "Item Category"
   meta:
     apiName: "itemCategory"
     uiName: "Item category"
@@ -1983,6 +2168,7 @@ fields:
   result: "string"
   description: "The hierarchical category in which the item is classified. For example, in Apparel/Mens/Summer/Shirts/T-shirts, Mens is the item category 2."
   group: "ecommerce"
+  label: "Item Category 2"
   meta:
     apiName: "itemCategory2"
     uiName: "Item category 2"
@@ -1991,6 +2177,7 @@ fields:
   result: "string"
   description: "The hierarchical category in which the item is classified. For example, in Apparel/Mens/Summer/Shirts/T-shirts, Summer is the item category 3."
   group: "ecommerce"
+  label: "Item Category 3"
   meta:
     apiName: "itemCategory3"
     uiName: "Item category 3"
@@ -1999,6 +2186,7 @@ fields:
   result: "string"
   description: "The hierarchical category in which the item is classified. For example, in Apparel/Mens/Summer/Shirts/T-shirts, Shirts is the item category 4."
   group: "ecommerce"
+  label: "Item Category 4"
   meta:
     apiName: "itemCategory4"
     uiName: "Item category 4"
@@ -2007,6 +2195,7 @@ fields:
   result: "string"
   description: "The hierarchical category in which the item is classified. For example, in Apparel/Mens/Summer/Shirts/T-shirts, T-shirts is the item category 5."
   group: "ecommerce"
+  label: "Item Category 5"
   meta:
     apiName: "itemCategory5"
     uiName: "Item category 5"
@@ -2015,6 +2204,7 @@ fields:
   result: "string"
   description: "The ID of the item."
   group: "ecommerce"
+  label: "Item ID"
   meta:
     apiName: "itemId"
     uiName: "Item ID"
@@ -2023,6 +2213,7 @@ fields:
   result: "string"
   description: "The ID of the item list."
   group: "ecommerce"
+  label: "Item List ID"
   meta:
     apiName: "itemListId"
     uiName: "Item list ID"
@@ -2031,6 +2222,7 @@ fields:
   result: "string"
   description: "The name of the item list."
   group: "ecommerce"
+  label: "Item List Name"
   meta:
     apiName: "itemListName"
     uiName: "Item list name"
@@ -2039,6 +2231,7 @@ fields:
   result: "string"
   description: "The position of an item in a list. For example, a product you sell in a list. This dimension is populated in tagging by the `index` parameter in the items array."
   group: "ecommerce"
+  label: "Item List Position"
   meta:
     apiName: "itemListPosition"
     uiName: "Item list position"
@@ -2047,6 +2240,7 @@ fields:
   result: "string"
   description: "The physical location associated with the item. For example, the physical store location. It's recommended to use the [Google Place ID](https://developers.google.com/maps/documentation/places/web-service/place-id) that corresponds to the associated item. A custom location ID can also be used. This field is populated in tagging by the `location_id` parameter in the items array."
   group: "ecommerce"
+  label: "Item Location ID"
   meta:
     apiName: "itemLocationID"
     uiName: "Item location ID"
@@ -2055,6 +2249,7 @@ fields:
   result: "string"
   description: "The name of the item."
   group: "ecommerce"
+  label: "Item Name"
   meta:
     apiName: "itemName"
     uiName: "Item name"
@@ -2063,6 +2258,7 @@ fields:
   result: "string"
   description: "The name of the item-promotion creative."
   group: "ecommerce"
+  label: "Item Promotion Creative Name"
   meta:
     apiName: "itemPromotionCreativeName"
     uiName: "Item promotion creative name"
@@ -2071,6 +2267,7 @@ fields:
   result: "string"
   description: "The name of the promotional creative slot associated with the item. This dimension can be specified in tagging by the `creative_slot` parameter at the event or item level. If the parameter is specified at both the event & item level, the item-level parameter is used."
   group: "ecommerce"
+  label: "Item Promotion Creative Slot"
   meta:
     apiName: "itemPromotionCreativeSlot"
     uiName: "Item promotion creative slot"
@@ -2079,6 +2276,7 @@ fields:
   result: "string"
   description: "The ID of the item promotion."
   group: "ecommerce"
+  label: "Item Promotion ID"
   meta:
     apiName: "itemPromotionId"
     uiName: "Item promotion ID"
@@ -2087,6 +2285,7 @@ fields:
   result: "string"
   description: "The name of the promotion for the item."
   group: "ecommerce"
+  label: "Item Promotion Name"
   meta:
     apiName: "itemPromotionName"
     uiName: "Item promotion name"
@@ -2095,6 +2294,7 @@ fields:
   result: "string"
   description: "The specific variation of a product. For example, XS, S, M, or L for size; or Red, Blue, Green, or Black for color. Populated by the `item_variant` parameter."
   group: "ecommerce"
+  label: "Item Variant"
   meta:
     apiName: "itemVariant"
     uiName: "Item variant"
@@ -2103,6 +2303,7 @@ fields:
   result: "string"
   description: "The page path associated with the first pageview in a session."
   group: "page_screen"
+  label: "Landing Page"
   meta:
     apiName: "landingPage"
     uiName: "Landing page"
@@ -2111,6 +2312,7 @@ fields:
   result: "string"
   description: "The page path + query string associated with the first pageview in a session."
   group: "page_screen"
+  label: "Landing Page + Query String"
   meta:
     apiName: "landingPagePlusQueryString"
     uiName: "Landing page + query string"
@@ -2119,6 +2321,7 @@ fields:
   result: "string"
   description: "The language setting of the user's browser or device. For example, `English`."
   group: "platform_device"
+  label: "Language"
   meta:
     apiName: "language"
     uiName: "Language"
@@ -2127,6 +2330,7 @@ fields:
   result: "string"
   description: "The language setting (ISO 639) of the user's browser or device. For example, `en-us`."
   group: "platform_device"
+  label: "Language Code"
   meta:
     apiName: "languageCode"
     uiName: "Language code"
@@ -2135,6 +2339,7 @@ fields:
   result: "string"
   description: "The player's level in a game. Populated by the event parameter `level`."
   group: "other"
+  label: "Level"
   meta:
     apiName: "level"
     uiName: "Level"
@@ -2143,6 +2348,7 @@ fields:
   result: "string"
   description: "The HTML class attribute for an outbound link. For example if a user clicks a link `<a class=\"center\" href=\"www.youtube.com\">`, this dimension will return `center`. Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `link_classes`."
   group: "other"
+  label: "Link Classes"
   meta:
     apiName: "linkClasses"
     uiName: "Link classes"
@@ -2151,6 +2357,7 @@ fields:
   result: "string"
   description: "The destination domain of the outbound link. For example if a user clicks a link `<a href=\"www.youtube.com\">`, this dimension will return `youtube.com`. Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `link_domain`."
   group: "other"
+  label: "Link Domain"
   meta:
     apiName: "linkDomain"
     uiName: "Link domain"
@@ -2159,6 +2366,7 @@ fields:
   result: "string"
   description: "The HTML ID attribute for an outbound link or file download. For example if a user clicks a link `<a id=\"socialLinks\" href=\"www.youtube.com\">`, this dimension will return `socialLinks`. Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `link_id`."
   group: "other"
+  label: "Link ID"
   meta:
     apiName: "linkId"
     uiName: "Link ID"
@@ -2167,6 +2375,7 @@ fields:
   result: "string"
   description: "The link text of the file download. Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `link_text`."
   group: "other"
+  label: "Link Text"
   meta:
     apiName: "linkText"
     uiName: "Link text"
@@ -2175,6 +2384,7 @@ fields:
   result: "string"
   description: "The full URL for an outbound link or file download. For example if a user clicks a link `<a href=\"https://www.youtube.com/results?search_query=analytics\">`, this dimension will return `https://www.youtube.com/results?search_query=analytics`. Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `link_url`."
   group: "other"
+  label: "Link URL"
   meta:
     apiName: "linkUrl"
     uiName: "Link URL"
@@ -2183,6 +2393,7 @@ fields:
   result: "string"
   description: "The ad content attributed to the key event. Populated by the utm_content parameter."
   group: "attribution"
+  label: "Manual Ad Content"
   meta:
     apiName: "manualAdContent"
     uiName: "Manual ad content"
@@ -2191,6 +2402,7 @@ fields:
   result: "string"
   description: "The manual Campaign ID that led to the key event. Identifies the manual campaign. Populated by `utm_id` URL parameter."
   group: "attribution"
+  label: "Manual Campaign ID"
   meta:
     apiName: "manualCampaignId"
     uiName: "Manual campaign ID"
@@ -2199,6 +2411,7 @@ fields:
   result: "string"
   description: "The manual Campaign Name that led to the key event. The name of the manual campaign. Populated by `utm_campaign` URL parameter. To learn more, see [Collect campaign data with custom URLs](https://support.google.com/analytics/answer/10917952)."
   group: "attribution"
+  label: "Manual Campaign Name"
   meta:
     apiName: "manualCampaignName"
     uiName: "Manual campaign name"
@@ -2207,6 +2420,7 @@ fields:
   result: "string"
   description: "The manual Creative Format that led to the key event. Identifies the creative format used in the ad. Populated by `utm_creative_format` URL parameter."
   group: "attribution"
+  label: "Manual Creative Format"
   meta:
     apiName: "manualCreativeFormat"
     uiName: "Manual creative format"
@@ -2215,6 +2429,7 @@ fields:
   result: "string"
   description: "The manual Marketing Tactic that led to the key event. The targeting criteria applied to a campaign. For example, remarketing or prospecting. Populated by `utm_marketing_tactic` URL parameter."
   group: "attribution"
+  label: "Manual Marketing Tactic"
   meta:
     apiName: "manualMarketingTactic"
     uiName: "Manual marketing tactic"
@@ -2223,6 +2438,7 @@ fields:
   result: "string"
   description: "The manual Medium that led to the key event. The marketing medium used in the referral. For example, `cpc`. Populated by `utm_medium` URL parameter."
   group: "attribution"
+  label: "Manual Medium"
   meta:
     apiName: "manualMedium"
     uiName: "Manual medium"
@@ -2231,6 +2447,7 @@ fields:
   result: "string"
   description: "The manual Source that led to the key event. The referrer. Populated by `utm_source` URL parameter."
   group: "attribution"
+  label: "Manual Source"
   meta:
     apiName: "manualSource"
     uiName: "Manual source"
@@ -2239,6 +2456,7 @@ fields:
   result: "string"
   description: "The manual Source Medium that led to the key event. A combination of the source and medium."
   group: "attribution"
+  label: "Manual Source / Medium"
   meta:
     apiName: "manualSourceMedium"
     uiName: "Manual source / medium"
@@ -2247,6 +2465,7 @@ fields:
   result: "string"
   description: "The manual Source Platform that led to the key event. The platform responsible for directing traffic to a given Analytics property. Populated by `utm_source_platform` URL parameter."
   group: "attribution"
+  label: "Manual Source Platform"
   meta:
     apiName: "manualSourcePlatform"
     uiName: "Manual source platform"
@@ -2255,6 +2474,7 @@ fields:
   result: "string"
   description: "The term attributed to the key event. Populated by the utm_term parameter."
   group: "attribution"
+  label: "Manual Term"
   meta:
     apiName: "manualTerm"
     uiName: "Manual term"
@@ -2263,6 +2483,7 @@ fields:
   result: "string"
   description: "The medium attributed to the key event."
   group: "attribution"
+  label: "Medium"
   meta:
     apiName: "medium"
     uiName: "Medium"
@@ -2271,6 +2492,7 @@ fields:
   result: "string"
   description: "The method by which an event was triggered. Populated by the event parameter `method`."
   group: "other"
+  label: "Method"
   meta:
     apiName: "method"
     uiName: "Method"
@@ -2279,6 +2501,7 @@ fields:
   result: "string"
   description: "Manufacturer or branded name (examples: Samsung, HTC, Verizon, T-Mobile)."
   group: "platform_device"
+  label: "Device Brand"
   meta:
     apiName: "mobileDeviceBranding"
     uiName: "Device brand"
@@ -2287,6 +2510,7 @@ fields:
   result: "string"
   description: "The branded device name (examples: Galaxy S10 or P30 Pro)."
   group: "platform_device"
+  label: "Device"
   meta:
     apiName: "mobileDeviceMarketingName"
     uiName: "Device"
@@ -2295,6 +2519,7 @@ fields:
   result: "string"
   description: "The mobile device model name (examples: iPhone X or SM-G950F)."
   group: "platform_device"
+  label: "Mobile Model"
   meta:
     apiName: "mobileDeviceModel"
     uiName: "Mobile model"
@@ -2303,6 +2528,7 @@ fields:
   result: "string"
   description: "New users have 0 previous sessions, and returning users have 1 or more previous sessions. This dimension returns two values: `new` or `returning`."
   group: "user"
+  label: "New / Returning"
   meta:
     apiName: "newVsReturning"
     uiName: "New / returning"
@@ -2311,6 +2537,7 @@ fields:
   result: "string"
   description: "The operating systems used by visitors to your app or website. Includes desktop and mobile operating systems such as Windows and Android."
   group: "platform_device"
+  label: "Operating System"
   meta:
     apiName: "operatingSystem"
     uiName: "Operating system"
@@ -2319,6 +2546,7 @@ fields:
   result: "string"
   description: "The operating system versions used by visitors to your website or app. For example, Android 10's version is 10, and iOS 13.5.1's version is 13.5.1."
   group: "platform_device"
+  label: "OS Version"
   meta:
     apiName: "operatingSystemVersion"
     uiName: "OS version"
@@ -2327,6 +2555,7 @@ fields:
   result: "string"
   description: "The operating system and version. For example, Android 10 or Windows 7."
   group: "platform_device"
+  label: "Operating System With Version"
   meta:
     apiName: "operatingSystemWithVersion"
     uiName: "Operating system with version"
@@ -2335,6 +2564,7 @@ fields:
   result: "string"
   description: "Code for the order-level coupon."
   group: "ecommerce"
+  label: "Order Coupon"
   meta:
     apiName: "orderCoupon"
     uiName: "Order coupon"
@@ -2343,6 +2573,7 @@ fields:
   result: "string"
   description: "Returns `true` if the link led to a site that is not a part of the property's domain. Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `outbound`."
   group: "other"
+  label: "Outbound"
   meta:
     apiName: "outbound"
     uiName: "Outbound"
@@ -2351,6 +2582,7 @@ fields:
   result: "string"
   description: "The protocol, hostname, page path, and query string for web pages visited; for example, the `pageLocation` portion of `https://www.example.com/store/contact-us?query_string=true` is `https://www.example.com/store/contact-us?query_string=true`. Populated by the event parameter `page_location`."
   group: "page_screen"
+  label: "Page Location"
   meta:
     apiName: "pageLocation"
     uiName: "Page location"
@@ -2359,6 +2591,7 @@ fields:
   result: "string"
   description: "The portion of the URL between the hostname and query string for web pages visited; for example, the pagePath portion of `https://www.example.com/store/contact-us?query_string=true` is `/store/contact-us`."
   group: "page_screen"
+  label: "Page Path"
   meta:
     apiName: "pagePath"
     uiName: "Page path"
@@ -2367,6 +2600,7 @@ fields:
   result: "string"
   description: "The portion of the URL following the hostname for web pages visited; for example, the `pagePathPlusQueryString` portion of `https://www.example.com/store/contact-us?query_string=true` is `/store/contact-us?query_string=true`."
   group: "page_screen"
+  label: "Page Path + Query String"
   meta:
     apiName: "pagePathPlusQueryString"
     uiName: "Page path + query string"
@@ -2375,6 +2609,7 @@ fields:
   result: "string"
   description: "The full referring URL including the hostname and path. This referring URL is the user's previous URL and can be this website's domain or other domains. Populated by the event parameter `page_referrer`."
   group: "page_screen"
+  label: "Page Referrer"
   meta:
     apiName: "pageReferrer"
     uiName: "Page referrer"
@@ -2383,6 +2618,7 @@ fields:
   result: "string"
   description: "The web page titles used on your site."
   group: "page_screen"
+  label: "Page Title"
   meta:
     apiName: "pageTitle"
     uiName: "Page title"
@@ -2391,6 +2627,7 @@ fields:
   result: "string"
   description: "The percentage down the page that the user has scrolled (for example, `90`). Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `percent_scrolled`."
   group: "other"
+  label: "Percent Scrolled"
   meta:
     apiName: "percentScrolled"
     uiName: "Percent scrolled"
@@ -2399,6 +2636,7 @@ fields:
   result: "string"
   description: "The platform on which your app or website ran; for example, web, iOS, or Android. To determine a stream's type in a report, use both platform and streamId."
   group: "platform_device"
+  label: "Platform"
   meta:
     apiName: "platform"
     uiName: "Platform"
@@ -2407,6 +2645,7 @@ fields:
   result: "string"
   description: "The platform and type of device on which your website or mobile app ran. (example: Android / mobile)"
   group: "platform_device"
+  label: "Platform / Device Category"
   meta:
     apiName: "platformDeviceCategory"
     uiName: "Platform / device category"
@@ -2415,6 +2654,7 @@ fields:
   result: "string"
   description: "The primary channel group attributed to the key event. Primary channel groups are the channel groups used in standard reports in Google Analytics and serve as an active record of your property's data in alignment with channel grouping over time. To learn more, see [Custom channel groups](https://support.google.com/analytics/answer/13051316)."
   group: "attribution"
+  label: "Primary Channel Group"
   meta:
     apiName: "primaryChannelGroup"
     uiName: "Primary channel group"
@@ -2423,6 +2663,7 @@ fields:
   result: "string"
   description: "The geographic region from which the user activity originated, derived from their IP address."
   group: "geography"
+  label: "Region"
   meta:
     apiName: "region"
     uiName: "Region"
@@ -2431,6 +2672,7 @@ fields:
   result: "string"
   description: "The SA360 Ad Group ID that led to the key event. Identifies the SA360 ad group."
   group: "attribution"
+  label: "SA360 Ad Group ID"
   meta:
     apiName: "sa360AdGroupId"
     uiName: "SA360 ad group ID"
@@ -2439,6 +2681,7 @@ fields:
   result: "string"
   description: "The SA360 Ad Group Name that led to the key event. SA360 Ad groups contain ads and keywords that relate to each other."
   group: "attribution"
+  label: "SA360 Ad Group Name"
   meta:
     apiName: "sa360AdGroupName"
     uiName: "SA360 ad group name"
@@ -2447,6 +2690,7 @@ fields:
   result: "string"
   description: "The SA360 Campaign ID that led to the key event. Identifies the SA360 campaign."
   group: "attribution"
+  label: "SA360 Campaign ID"
   meta:
     apiName: "sa360CampaignId"
     uiName: "SA360 campaign ID"
@@ -2455,6 +2699,7 @@ fields:
   result: "string"
   description: "The SA360 Campaign Name that led to the key event. A SA360 campaign lets you organize your ads and define a goal for your advertising."
   group: "attribution"
+  label: "SA360 Campaign"
   meta:
     apiName: "sa360CampaignName"
     uiName: "SA360 campaign"
@@ -2463,6 +2708,7 @@ fields:
   result: "string"
   description: "The SA360 Creative Format that led to the key event. The creative format is the specific layout or design of the advertisement used in a campaign."
   group: "attribution"
+  label: "SA360 Creative Format"
   meta:
     apiName: "sa360CreativeFormat"
     uiName: "SA360 creative format"
@@ -2471,6 +2717,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account ID that led to the key event. Identifies the SA360 engine account."
   group: "attribution"
+  label: "SA360 Engine Account ID"
   meta:
     apiName: "sa360EngineAccountId"
     uiName: "SA360 engine account ID"
@@ -2479,6 +2726,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account Name that led to the key event. A SA360 engine account contains campaigns, ad groups, and other items from an advertising account."
   group: "attribution"
+  label: "SA360 Engine Account Name"
   meta:
     apiName: "sa360EngineAccountName"
     uiName: "SA360 engine account name"
@@ -2487,6 +2735,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account Type that led to the key event. The type of engine used by the search engine account."
   group: "attribution"
+  label: "SA360 Engine Account Type"
   meta:
     apiName: "sa360EngineAccountType"
     uiName: "SA360 engine account type"
@@ -2495,6 +2744,7 @@ fields:
   result: "string"
   description: "The SA360 Keyword Text that led to the key event. The keywords that matched the search query."
   group: "attribution"
+  label: "SA360 Keyword Text"
   meta:
     apiName: "sa360KeywordText"
     uiName: "SA360 keyword text"
@@ -2503,6 +2753,7 @@ fields:
   result: "string"
   description: "The SA360 Manager Account ID that led to the key event. Identifies the SA360 manager account."
   group: "attribution"
+  label: "SA360 Manager Account ID"
   meta:
     apiName: "sa360ManagerAccountId"
     uiName: "SA360 manager account ID"
@@ -2511,6 +2762,7 @@ fields:
   result: "string"
   description: "The SA360 Manager Account Name that led to the key event. The top level of the Search Ads 360 account hierarchy and is used for administration and reporting across the lower-level sub-manager and client accounts."
   group: "attribution"
+  label: "SA360 Manager Account Name"
   meta:
     apiName: "sa360ManagerAccountName"
     uiName: "SA360 manager account name"
@@ -2519,6 +2771,7 @@ fields:
   result: "string"
   description: "The SA360 Medium that led to the key event. The payment mode used in ad buying. For example, `cpc`."
   group: "attribution"
+  label: "SA360 Medium"
   meta:
     apiName: "sa360Medium"
     uiName: "SA360 medium"
@@ -2527,6 +2780,7 @@ fields:
   result: "string"
   description: "The SA360 Query that led to the key event. The search query typed by the user."
   group: "attribution"
+  label: "SA360 Query"
   meta:
     apiName: "sa360Query"
     uiName: "SA360 query"
@@ -2535,6 +2789,7 @@ fields:
   result: "string"
   description: "The SA360 Source that led to the key event. The search query happened on this site."
   group: "attribution"
+  label: "SA360 Source"
   meta:
     apiName: "sa360Source"
     uiName: "SA360 source"
@@ -2543,6 +2798,7 @@ fields:
   result: "string"
   description: "The SA360 Source Medium that led to the key event. A combination of the source and medium."
   group: "attribution"
+  label: "SA360 Source / Medium"
   meta:
     apiName: "sa360SourceMedium"
     uiName: "SA360 source / medium"
@@ -2551,6 +2807,7 @@ fields:
   result: "string"
   description: "The screen resolution of the user's monitor. For example, 1920x1080."
   group: "platform_device"
+  label: "Screen Resolution"
   meta:
     apiName: "screenResolution"
     uiName: "Screen resolution"
@@ -2559,6 +2816,7 @@ fields:
   result: "string"
   description: "The term searched by the user. For example if the user visits `/some-page.html?q=some-term`, this dimension returns `some-term`. Automatically populated if Enhanced Measurement is enabled. Populated by the event parameter `search_term`."
   group: "other"
+  label: "Search Term"
   meta:
     apiName: "searchTerm"
     uiName: "Search term"
@@ -2567,6 +2825,7 @@ fields:
   result: "string"
   description: "The marketing campaign ID for a session. Includes Google Ads Campaigns, Manual Campaigns, & other Campaigns."
   group: "traffic_source"
+  label: "Session Campaign ID"
   meta:
     apiName: "sessionCampaignId"
     uiName: "Session campaign ID"
@@ -2575,6 +2834,7 @@ fields:
   result: "string"
   description: "The marketing campaign name for a session. Includes Google Ads Campaigns, Manual Campaigns, & other Campaigns."
   group: "traffic_source"
+  label: "Session Campaign"
   meta:
     apiName: "sessionCampaignName"
     uiName: "Session campaign"
@@ -2583,6 +2843,7 @@ fields:
   result: "string"
   description: "The CM360 Account ID that led to the session. Identifies the CM360 account."
   group: "traffic_source"
+  label: "Session CM360 Account ID"
   meta:
     apiName: "sessionCm360AccountId"
     uiName: "Session CM360 account ID"
@@ -2591,6 +2852,7 @@ fields:
   result: "string"
   description: "The CM360 Account Name that led to the session. A CM360 account consists of advertisers, sites, campaigns, and user profiles."
   group: "traffic_source"
+  label: "Session CM360 Account Name"
   meta:
     apiName: "sessionCm360AccountName"
     uiName: "Session CM360 account name"
@@ -2599,6 +2861,7 @@ fields:
   result: "string"
   description: "The CM360 Advertiser ID that led to the session. Identifies the CM360 advertiser."
   group: "traffic_source"
+  label: "Session CM360 Advertiser ID"
   meta:
     apiName: "sessionCm360AdvertiserId"
     uiName: "Session CM360 advertiser ID"
@@ -2607,6 +2870,7 @@ fields:
   result: "string"
   description: "The CM360 Advertiser Name that led to the session. A CM360 Advertiser contains a group of campaigns, creative assets, and other settings."
   group: "traffic_source"
+  label: "Session CM360 Advertiser Name"
   meta:
     apiName: "sessionCm360AdvertiserName"
     uiName: "Session CM360 advertiser name"
@@ -2615,6 +2879,7 @@ fields:
   result: "string"
   description: "The CM360 Campaign ID that led to the session. Identifies the CM360 campaign."
   group: "traffic_source"
+  label: "Session CM360 Campaign ID"
   meta:
     apiName: "sessionCm360CampaignId"
     uiName: "Session CM360 campaign ID"
@@ -2623,6 +2888,7 @@ fields:
   result: "string"
   description: "The CM360 Campaign Name that led to the session. A CM360 campaign can be configured to specify when your ads run, what landing pages are used, and other properties."
   group: "traffic_source"
+  label: "Session CM360 Campaign Name"
   meta:
     apiName: "sessionCm360CampaignName"
     uiName: "Session CM360 campaign name"
@@ -2631,6 +2897,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Format that led to the session. CM360 creative formats are also referred to as creative types."
   group: "traffic_source"
+  label: "Session CM360 Creative Format"
   meta:
     apiName: "sessionCm360CreativeFormat"
     uiName: "Session CM360 creative format"
@@ -2639,6 +2906,7 @@ fields:
   result: "string"
   description: "The CM360 Creative ID that led to the session. Identifies a CM360 creative."
   group: "traffic_source"
+  label: "Session CM360 Creative ID"
   meta:
     apiName: "sessionCm360CreativeId"
     uiName: "Session CM360 creative ID"
@@ -2647,6 +2915,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Name that led to the session. The name given to a CM360 creative."
   group: "traffic_source"
+  label: "Session CM360 Creative Name"
   meta:
     apiName: "sessionCm360CreativeName"
     uiName: "Session CM360 creative name"
@@ -2655,6 +2924,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Type that led to the session. A category of CM360 creatives like 'Display' or 'Tracking'. To learn more, see [manage creatives](https://support.google.com/campaignmanager/answer/3068258)"
   group: "traffic_source"
+  label: "Session CM360 Creative Type"
   meta:
     apiName: "sessionCm360CreativeType"
     uiName: "Session CM360 creative type"
@@ -2663,6 +2933,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Type ID that led to the session. Identifies a CM360 creative type."
   group: "traffic_source"
+  label: "Session CM360 Creative Type ID"
   meta:
     apiName: "sessionCm360CreativeTypeId"
     uiName: "Session CM360 creative type ID"
@@ -2671,6 +2942,7 @@ fields:
   result: "string"
   description: "The CM360 Creative Version that led to the session. The version number helps you keep track of multiple versions of your creative in your reports. If you upload a new asset to an existing creative, the version number is increased by one."
   group: "traffic_source"
+  label: "Session CM360 Creative Version"
   meta:
     apiName: "sessionCm360CreativeVersion"
     uiName: "Session CM360 creative version"
@@ -2679,6 +2951,7 @@ fields:
   result: "string"
   description: "The CM360 Medium that led to the session. The CM360 medium is also referred to as the placement cost structure."
   group: "traffic_source"
+  label: "Session CM360 Medium"
   meta:
     apiName: "sessionCm360Medium"
     uiName: "Session CM360 medium"
@@ -2687,6 +2960,7 @@ fields:
   result: "string"
   description: "The CM360 Placement Cost Structure that led to the session. Placement cost structures regulate how media cost will be calculated. For example 'CPM'."
   group: "traffic_source"
+  label: "Session CM360 Placement Cost Structure"
   meta:
     apiName: "sessionCm360PlacementCostStructure"
     uiName: "Session CM360 placement cost structure"
@@ -2695,6 +2969,7 @@ fields:
   result: "string"
   description: "The CM360 Placement ID that led to the session. Identifies a CM360 placement. A placement is the part of a website where your ad appears."
   group: "traffic_source"
+  label: "Session CM360 Placement ID"
   meta:
     apiName: "sessionCm360PlacementId"
     uiName: "Session CM360 placement ID"
@@ -2703,6 +2978,7 @@ fields:
   result: "string"
   description: "The CM360 Placement Name that led to the session. The given name for a CM360 placement. A placement is the part of a website where your ad appears."
   group: "traffic_source"
+  label: "Session CM360 Placement Name"
   meta:
     apiName: "sessionCm360PlacementName"
     uiName: "Session CM360 placement name"
@@ -2711,6 +2987,7 @@ fields:
   result: "string"
   description: "The CM360 Rendering ID that led to the session. Identifies a CM360 creative."
   group: "traffic_source"
+  label: "Session CM360 Rendering ID"
   meta:
     apiName: "sessionCm360RenderingId"
     uiName: "Session CM360 rendering ID"
@@ -2719,6 +2996,7 @@ fields:
   result: "string"
   description: "The CM360 Site ID that led to the session. Identifies a CM360 site."
   group: "traffic_source"
+  label: "Session CM360 Site ID"
   meta:
     apiName: "sessionCm360SiteId"
     uiName: "Session CM360 site ID"
@@ -2727,6 +3005,7 @@ fields:
   result: "string"
   description: "The CM360 Site Name that led to the session. The CM360 Site name from which the ad space was purchased."
   group: "traffic_source"
+  label: "Session CM360 Site Name"
   meta:
     apiName: "sessionCm360SiteName"
     uiName: "Session CM360 site name"
@@ -2735,6 +3014,7 @@ fields:
   result: "string"
   description: "The CM360 Source that led to the session. The CM360 source is also referred to as the site name."
   group: "traffic_source"
+  label: "Session CM360 Source"
   meta:
     apiName: "sessionCm360Source"
     uiName: "Session CM360 source"
@@ -2743,6 +3023,7 @@ fields:
   result: "string"
   description: "The CM360 Source Medium that led to the session. A combination of the source and medium."
   group: "traffic_source"
+  label: "Session CM360 Source / Medium"
   meta:
     apiName: "sessionCm360SourceMedium"
     uiName: "Session CM360 source / medium"
@@ -2751,6 +3032,7 @@ fields:
   result: "string"
   description: "The session's default channel group is based primarily on source and medium. An enumeration which includes `Direct`, `Organic Search`, `Paid Social`, `Organic Social`, `Email`, `Affiliates`, `Referral`, `Paid Search`, `Video`, and `Display`."
   group: "traffic_source"
+  label: "Session Default Channel Group"
   meta:
     apiName: "sessionDefaultChannelGroup"
     uiName: "Session default channel group"
@@ -2761,6 +3043,7 @@ fields:
   result: "string"
   description: "The DV360 Advertiser ID that led to the session. Identifies the DV360 advertiser."
   group: "traffic_source"
+  label: "Session DV360 Advertiser ID"
   meta:
     apiName: "sessionDv360AdvertiserId"
     uiName: "Session DV360 advertiser ID"
@@ -2769,6 +3052,7 @@ fields:
   result: "string"
   description: "The DV360 Advertiser Name that led to the session. DV360 advertisers represent real-life businesses that run advertising campaigns."
   group: "traffic_source"
+  label: "Session DV360 Advertiser Name"
   meta:
     apiName: "sessionDv360AdvertiserName"
     uiName: "Session DV360 advertiser name"
@@ -2777,6 +3061,7 @@ fields:
   result: "string"
   description: "The DV360 Campaign ID that led to the session. Identifies the DV360 campaign."
   group: "traffic_source"
+  label: "Session DV360 Campaign ID"
   meta:
     apiName: "sessionDv360CampaignId"
     uiName: "Session DV360 campaign ID"
@@ -2785,6 +3070,7 @@ fields:
   result: "string"
   description: "The DV360 Campaign Name that led to the session. DV360 campaigns group together related insertion orders with a common business goal."
   group: "traffic_source"
+  label: "Session DV360 Campaign Name"
   meta:
     apiName: "sessionDv360CampaignName"
     uiName: "Session DV360 campaign name"
@@ -2793,6 +3079,7 @@ fields:
   result: "string"
   description: "The DV360 Creative Format that led to the session. Also referred to as the creative type. For example, expandable, video, or native."
   group: "traffic_source"
+  label: "Session DV360 Creative Format"
   meta:
     apiName: "sessionDv360CreativeFormat"
     uiName: "Session DV360 creative format"
@@ -2801,6 +3088,7 @@ fields:
   result: "string"
   description: "The DV360 Creative ID that led to the session. Identifies the DV360 creative."
   group: "traffic_source"
+  label: "Session DV360 Creative ID"
   meta:
     apiName: "sessionDv360CreativeId"
     uiName: "Session DV360 creative ID"
@@ -2809,6 +3097,7 @@ fields:
   result: "string"
   description: "The DV360 Creative Name that led to the session. The name given to a DV360 creative."
   group: "traffic_source"
+  label: "Session DV360 Creative Name"
   meta:
     apiName: "sessionDv360CreativeName"
     uiName: "Session DV360 creative name"
@@ -2817,6 +3106,7 @@ fields:
   result: "string"
   description: "The DV360 Exchange ID that led to the session. Identifies the DV360 exchange."
   group: "traffic_source"
+  label: "Session DV360 Exchange ID"
   meta:
     apiName: "sessionDv360ExchangeId"
     uiName: "Session DV360 exchange ID"
@@ -2825,6 +3115,7 @@ fields:
   result: "string"
   description: "The DV360 Exchange Name that led to the session. The DV360 ad exchange involved in the ad click. To learn more, see [managing exchanges](https://support.google.com/displayvideo/answer/9230278)."
   group: "traffic_source"
+  label: "Session DV360 Exchange Name"
   meta:
     apiName: "sessionDv360ExchangeName"
     uiName: "Session DV360 exchange name"
@@ -2833,6 +3124,7 @@ fields:
   result: "string"
   description: "The DV360 Insertion Order ID that led to the session. Identifies the DV360 insertion order."
   group: "traffic_source"
+  label: "Session DV360 Insertion Order ID"
   meta:
     apiName: "sessionDv360InsertionOrderId"
     uiName: "Session DV360 insertion order ID"
@@ -2841,6 +3133,7 @@ fields:
   result: "string"
   description: "The DV360 Insertion Order Name that led to the session. A DV360 insertion order contains a set of line items that are related to the same advertising campaign."
   group: "traffic_source"
+  label: "Session DV360 Insertion Order Name"
   meta:
     apiName: "sessionDv360InsertionOrderName"
     uiName: "Session DV360 insertion order name"
@@ -2849,6 +3142,7 @@ fields:
   result: "string"
   description: "The DV360 Line Item ID that led to the session. Identifies the DV360 line item."
   group: "traffic_source"
+  label: "Session DV360 Line Item ID"
   meta:
     apiName: "sessionDv360LineItemId"
     uiName: "Session DV360 line item ID"
@@ -2857,6 +3151,7 @@ fields:
   result: "string"
   description: "The DV360 Line Item Name that led to the session. A DV360 line item bids on impressions and serves creatives to inventory sources."
   group: "traffic_source"
+  label: "Session DV360 Line Item Name"
   meta:
     apiName: "sessionDv360LineItemName"
     uiName: "Session DV360 line item name"
@@ -2865,6 +3160,7 @@ fields:
   result: "string"
   description: "The DV360 Medium that led to the session. The billable outcome of the insertion order. For example, `cpm`."
   group: "traffic_source"
+  label: "Session DV360 Medium"
   meta:
     apiName: "sessionDv360Medium"
     uiName: "Session DV360 medium"
@@ -2873,6 +3169,7 @@ fields:
   result: "string"
   description: "The DV360 Partner ID that led to the session. Identifies the DV360 partner."
   group: "traffic_source"
+  label: "Session DV360 Partner ID"
   meta:
     apiName: "sessionDv360PartnerId"
     uiName: "Session DV360 partner ID"
@@ -2881,6 +3178,7 @@ fields:
   result: "string"
   description: "The DV360 Partner Name that led to the session. DV360 partners represent agencies, trading desks, or large individual advertisers."
   group: "traffic_source"
+  label: "Session DV360 Partner Name"
   meta:
     apiName: "sessionDv360PartnerName"
     uiName: "Session DV360 partner name"
@@ -2889,6 +3187,7 @@ fields:
   result: "string"
   description: "The DV360 Source that led to the session. The DV360 site name where your ad was displayed."
   group: "traffic_source"
+  label: "Session DV360 Source"
   meta:
     apiName: "sessionDv360Source"
     uiName: "Session DV360 source"
@@ -2897,6 +3196,7 @@ fields:
   result: "string"
   description: "The DV360 Source Medium that led to the session. A combination of the source and medium."
   group: "traffic_source"
+  label: "Session DV360 Source / Medium"
   meta:
     apiName: "sessionDv360SourceMedium"
     uiName: "Session DV360 source / medium"
@@ -2905,6 +3205,7 @@ fields:
   result: "string"
   description: "The Account name from Google Ads that led to the session. Corresponds to customer.descriptive_name in the Google Ads API."
   group: "traffic_source"
+  label: "Session Google Ads Account Name"
   meta:
     apiName: "sessionGoogleAdsAccountName"
     uiName: "Session Google Ads account name"
@@ -2913,6 +3214,7 @@ fields:
   result: "string"
   description: "The Ad Group Id in Google Ads for a session."
   group: "traffic_source"
+  label: "Session Google Ads Ad Group ID"
   meta:
     apiName: "sessionGoogleAdsAdGroupId"
     uiName: "Session Google Ads ad group ID"
@@ -2921,6 +3223,7 @@ fields:
   result: "string"
   description: "The Ad Group Name in Google Ads for a session."
   group: "traffic_source"
+  label: "Session Google Ads Ad Group Name"
   meta:
     apiName: "sessionGoogleAdsAdGroupName"
     uiName: "Session Google Ads ad group name"
@@ -2929,6 +3232,7 @@ fields:
   result: "string"
   description: "The advertising network that led to the session. An enumeration which includes `Google search`, `Search partners`, `Google Display Network`, `Youtube Search`, `Youtube Videos`, `Cross-network`, `Social`, and `(universal campaign)`."
   group: "traffic_source"
+  label: "Session Google Ads Ad Network Type"
   meta:
     apiName: "sessionGoogleAdsAdNetworkType"
     uiName: "Session Google Ads ad network type"
@@ -2937,6 +3241,7 @@ fields:
   result: "string"
   description: "The Campaign ID for the Google Ads Campaign that led to this session."
   group: "traffic_source"
+  label: "Session Google Ads Campaign ID"
   meta:
     apiName: "sessionGoogleAdsCampaignId"
     uiName: "Session Google Ads campaign ID"
@@ -2945,6 +3250,7 @@ fields:
   result: "string"
   description: "The Campaign name for the Google Ads Campaign that led to this session."
   group: "traffic_source"
+  label: "Session Google Ads Campaign"
   meta:
     apiName: "sessionGoogleAdsCampaignName"
     uiName: "Session Google Ads campaign"
@@ -2953,6 +3259,7 @@ fields:
   result: "string"
   description: "The campaign type for the Google Ads campaign that led to this session. Campaign types determine where customers see your ads and the settings and options available to you in Google Ads. Campaign type is an enumeration that includes: Search, Display, Shopping, Video, Demand Gen, App, Smart, Hotel, Local, and Performance Max. To learn more, see [Choose the right campaign type](https://support.google.com/google-ads/answer/2567043)."
   group: "traffic_source"
+  label: "Session Google Ads Campaign Type"
   meta:
     apiName: "sessionGoogleAdsCampaignType"
     uiName: "Session Google Ads campaign type"
@@ -2961,6 +3268,7 @@ fields:
   result: "string"
   description: "The ID of the Google Ads creative that led to a session on your website or app. Creative IDs identify individual ads."
   group: "traffic_source"
+  label: "Session Google Ads Creative ID"
   meta:
     apiName: "sessionGoogleAdsCreativeId"
     uiName: "Session Google Ads creative ID"
@@ -2969,6 +3277,7 @@ fields:
   result: "string"
   description: "The Customer ID from Google Ads that led to the session. Customer IDs in Google Ads uniquely identify Google Ads accounts."
   group: "traffic_source"
+  label: "Session Google Ads Customer ID"
   meta:
     apiName: "sessionGoogleAdsCustomerId"
     uiName: "Session Google Ads customer ID"
@@ -2977,6 +3286,7 @@ fields:
   result: "string"
   description: "The matched keyword that led to the session. Keywords are words or phrases describing your product or service that you choose to get your ad in front of the right customers. To learn more about Keywords, see [Keywords: Definition](https://support.google.com/google-ads/answer/6323)."
   group: "traffic_source"
+  label: "Session Google Ads Keyword Text"
   meta:
     apiName: "sessionGoogleAdsKeyword"
     uiName: "Session Google Ads keyword text"
@@ -2985,6 +3295,7 @@ fields:
   result: "string"
   description: "The search query that led to the session."
   group: "traffic_source"
+  label: "Session Google Ads Query"
   meta:
     apiName: "sessionGoogleAdsQuery"
     uiName: "Session Google Ads query"
@@ -2993,6 +3304,7 @@ fields:
   result: "string"
   description: "The ad content that led to a session. Populated by the utm_content parameter."
   group: "traffic_source"
+  label: "Session Manual Ad Content"
   meta:
     apiName: "sessionManualAdContent"
     uiName: "Session manual ad content"
@@ -3001,6 +3313,7 @@ fields:
   result: "string"
   description: "The manual Campaign ID that led to the session. Identifies the manual campaign. Populated by `utm_id` URL parameter."
   group: "traffic_source"
+  label: "Session Manual Campaign ID"
   meta:
     apiName: "sessionManualCampaignId"
     uiName: "Session manual campaign ID"
@@ -3009,6 +3322,7 @@ fields:
   result: "string"
   description: "The manual Campaign Name that led to the session. The name of the manual campaign. Populated by `utm_campaign` URL parameter. To learn more, see [Collect campaign data with custom URLs](https://support.google.com/analytics/answer/10917952)."
   group: "traffic_source"
+  label: "Session Manual Campaign Name"
   meta:
     apiName: "sessionManualCampaignName"
     uiName: "Session manual campaign name"
@@ -3017,6 +3331,7 @@ fields:
   result: "string"
   description: "The manual Creative Format that led to the session. Identifies the creative format used in the ad. Populated by `utm_creative_format` URL parameter."
   group: "traffic_source"
+  label: "Session Manual Creative Format"
   meta:
     apiName: "sessionManualCreativeFormat"
     uiName: "Session manual creative format"
@@ -3025,6 +3340,7 @@ fields:
   result: "string"
   description: "The manual Marketing Tactic that led to the session. The targeting criteria applied to a campaign. For example, remarketing or prospecting. Populated by `utm_marketing_tactic` URL parameter."
   group: "traffic_source"
+  label: "Session Manual Marketing Tactic"
   meta:
     apiName: "sessionManualMarketingTactic"
     uiName: "Session manual marketing tactic"
@@ -3033,6 +3349,7 @@ fields:
   result: "string"
   description: "The manual Medium that led to the session. The marketing medium used in the referral. For example, `cpc`. Populated by `utm_medium` URL parameter."
   group: "traffic_source"
+  label: "Session Manual Medium"
   meta:
     apiName: "sessionManualMedium"
     uiName: "Session manual medium"
@@ -3041,6 +3358,7 @@ fields:
   result: "string"
   description: "The manual Source that led to the session. The referrer. Populated by `utm_source` URL parameter."
   group: "traffic_source"
+  label: "Session Manual Source"
   meta:
     apiName: "sessionManualSource"
     uiName: "Session manual source"
@@ -3049,6 +3367,7 @@ fields:
   result: "string"
   description: "The manual Source Medium that led to the session. A combination of the source and medium."
   group: "traffic_source"
+  label: "Session Manual Source / Medium"
   meta:
     apiName: "sessionManualSourceMedium"
     uiName: "Session manual source / medium"
@@ -3057,6 +3376,7 @@ fields:
   result: "string"
   description: "The manual Source Platform that led to the session. The platform responsible for directing traffic to a given Analytics property. Populated by `utm_source_platform` URL parameter."
   group: "traffic_source"
+  label: "Session Manual Source Platform"
   meta:
     apiName: "sessionManualSourcePlatform"
     uiName: "Session manual source platform"
@@ -3065,6 +3385,7 @@ fields:
   result: "string"
   description: "The term that led to a session. Populated by the utm_term parameter."
   group: "traffic_source"
+  label: "Session Manual Term"
   meta:
     apiName: "sessionManualTerm"
     uiName: "Session manual term"
@@ -3073,6 +3394,7 @@ fields:
   result: "string"
   description: "The medium that initiated a session on your website or app."
   group: "traffic_source"
+  label: "Session Medium"
   meta:
     apiName: "sessionMedium"
     uiName: "Session medium"
@@ -3081,6 +3403,7 @@ fields:
   result: "string"
   description: "The primary channel group that led to the session. Primary channel groups are the channel groups used in standard reports in Google Analytics and serve as an active record of your property's data in alignment with channel grouping over time. To learn more, see [Custom channel groups](https://support.google.com/analytics/answer/13051316)."
   group: "traffic_source"
+  label: "Session Primary Channel Group"
   meta:
     apiName: "sessionPrimaryChannelGroup"
     uiName: "Session primary channel group"
@@ -3089,6 +3412,7 @@ fields:
   result: "string"
   description: "The SA360 Ad Group ID that led to the session. Identifies the SA360 ad group."
   group: "traffic_source"
+  label: "Session SA360 Ad Group ID"
   meta:
     apiName: "sessionSa360AdGroupId"
     uiName: "Session SA360 ad group ID"
@@ -3097,6 +3421,7 @@ fields:
   result: "string"
   description: "The SA360 Ad Group Name that led to the session. SA360 Ad groups contain ads and keywords that relate to each other."
   group: "traffic_source"
+  label: "Session SA360 Ad Group Name"
   meta:
     apiName: "sessionSa360AdGroupName"
     uiName: "Session SA360 ad group name"
@@ -3105,6 +3430,7 @@ fields:
   result: "string"
   description: "The SA360 Campaign ID that led to the session. Identifies the SA360 campaign."
   group: "traffic_source"
+  label: "Session SA360 Campaign ID"
   meta:
     apiName: "sessionSa360CampaignId"
     uiName: "Session SA360 campaign ID"
@@ -3113,6 +3439,7 @@ fields:
   result: "string"
   description: "The SA360 Campaign Name that led to the session. A SA360 campaign lets you organize your ads and define a goal for your advertising."
   group: "traffic_source"
+  label: "Session SA360 Campaign"
   meta:
     apiName: "sessionSa360CampaignName"
     uiName: "Session SA360 campaign"
@@ -3121,6 +3448,7 @@ fields:
   result: "string"
   description: "The SA360 Creative Format that led to the session. The creative format is the specific layout or design of the advertisement used in a campaign."
   group: "traffic_source"
+  label: "Session SA360 Creative Format"
   meta:
     apiName: "sessionSa360CreativeFormat"
     uiName: "Session SA360 creative format"
@@ -3129,6 +3457,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account ID that led to the session. Identifies the SA360 engine account."
   group: "traffic_source"
+  label: "Session SA360 Engine Account ID"
   meta:
     apiName: "sessionSa360EngineAccountId"
     uiName: "Session SA360 engine account ID"
@@ -3137,6 +3466,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account Name that led to the session. A SA360 engine account contains campaigns, ad groups, and other items from an advertising account."
   group: "traffic_source"
+  label: "Session SA360 Engine Account Name"
   meta:
     apiName: "sessionSa360EngineAccountName"
     uiName: "Session SA360 engine account name"
@@ -3145,6 +3475,7 @@ fields:
   result: "string"
   description: "The SA360 Engine Account Type that led to the session. The type of engine used by the search engine account. For example, `google ads`, `bing`, or `baidu`."
   group: "traffic_source"
+  label: "Session SA360 Engine Account Type"
   meta:
     apiName: "sessionSa360EngineAccountType"
     uiName: "Session SA360 engine account type"
@@ -3153,6 +3484,7 @@ fields:
   result: "string"
   description: "The SA360 Keyword Text that led to the session. The keywords that matched the search query."
   group: "traffic_source"
+  label: "Session SA360 Keyword Text"
   meta:
     apiName: "sessionSa360Keyword"
     uiName: "Session SA360 keyword text"
@@ -3161,6 +3493,7 @@ fields:
   result: "string"
   description: "The SA360 Manager Account ID that led to the session. Identifies the SA360 manager account."
   group: "traffic_source"
+  label: "Session SA360 Manager Account ID"
   meta:
     apiName: "sessionSa360ManagerAccountId"
     uiName: "Session SA360 manager account ID"
@@ -3169,6 +3502,7 @@ fields:
   result: "string"
   description: "The SA360 Manager Account Name that led to the session. The top level of the Search Ads 360 account hierarchy and is used for administration and reporting across the lower-level sub-manager and client accounts."
   group: "traffic_source"
+  label: "Session SA360 Manager Account Name"
   meta:
     apiName: "sessionSa360ManagerAccountName"
     uiName: "Session SA360 manager account name"
@@ -3177,6 +3511,7 @@ fields:
   result: "string"
   description: "The SA360 Medium that led to the session. The payment mode used in ad buying. For example, `cpc`."
   group: "traffic_source"
+  label: "Session SA360 Medium"
   meta:
     apiName: "sessionSa360Medium"
     uiName: "Session SA360 medium"
@@ -3185,6 +3520,7 @@ fields:
   result: "string"
   description: "The SA360 Query that led to the session. The search query typed by the user."
   group: "traffic_source"
+  label: "Session SA360 Query"
   meta:
     apiName: "sessionSa360Query"
     uiName: "Session SA360 query"
@@ -3193,6 +3529,7 @@ fields:
   result: "string"
   description: "The SA360 Source that led to the session. The search query happened on this site."
   group: "traffic_source"
+  label: "Session SA360 Source"
   meta:
     apiName: "sessionSa360Source"
     uiName: "Session SA360 source"
@@ -3201,6 +3538,7 @@ fields:
   result: "string"
   description: "The SA360 Source Medium that led to the session. A combination of the source and medium."
   group: "traffic_source"
+  label: "Session SA360 Source / Medium"
   meta:
     apiName: "sessionSa360SourceMedium"
     uiName: "Session SA360 source / medium"
@@ -3209,6 +3547,7 @@ fields:
   result: "string"
   description: "The source that initiated a session on your website or app."
   group: "traffic_source"
+  label: "Session Source"
   meta:
     apiName: "sessionSource"
     uiName: "Session source"
@@ -3217,6 +3556,7 @@ fields:
   result: "string"
   description: "The combined values of the dimensions `sessionSource` and `sessionMedium`."
   group: "traffic_source"
+  label: "Session Source / Medium"
   meta:
     apiName: "sessionSourceMedium"
     uiName: "Session source / medium"
@@ -3225,6 +3565,7 @@ fields:
   result: "string"
   description: "The source platform of the session's campaign. Don't depend on this field returning `Manual` for traffic that uses UTMs; this field will update from returning `Manual` to returning `(not set)` for an upcoming feature launch."
   group: "traffic_source"
+  label: "Session Source Platform"
   meta:
     apiName: "sessionSourcePlatform"
     uiName: "Session source platform"
@@ -3235,6 +3576,7 @@ fields:
   result: "string"
   description: "The shipping tier selected for delivery of the purchased item. For example, `Ground`, `Air`, or `Next-day`. Populated by the `shipping_tier` event parameter."
   group: "ecommerce"
+  label: "Shipping Tier"
   meta:
     apiName: "shippingTier"
     uiName: "Shipping tier"
@@ -3243,6 +3585,7 @@ fields:
   result: "string"
   description: "The string `yes` if the user signed in with the User-ID feature. To learn more about User-ID, see [Measure activity across platforms with User-ID](https://support.google.com/analytics/answer/9213390)."
   group: "user"
+  label: "Signed In With User ID"
   meta:
     apiName: "signedInWithUserId"
     uiName: "Signed in with user ID"
@@ -3251,6 +3594,7 @@ fields:
   result: "string"
   description: "The source attributed to the key event."
   group: "attribution"
+  label: "Source"
   meta:
     apiName: "source"
     uiName: "Source"
@@ -3259,6 +3603,7 @@ fields:
   result: "string"
   description: "The combined values of the dimensions `source` and `medium`."
   group: "attribution"
+  label: "Source / Medium"
   meta:
     apiName: "sourceMedium"
     uiName: "Source / medium"
@@ -3267,6 +3612,7 @@ fields:
   result: "string"
   description: "The source platform of the key event's campaign. Don't depend on this field returning `Manual` for traffic that uses UTMs; this field will update from returning `Manual` to returning `(not set)` for an upcoming feature launch."
   group: "attribution"
+  label: "Source Platform"
   meta:
     apiName: "sourcePlatform"
     uiName: "Source platform"
@@ -3277,6 +3623,7 @@ fields:
   result: "string"
   description: "The numeric data stream identifier for your app or website."
   group: "platform_device"
+  label: "Stream ID"
   meta:
     apiName: "streamId"
     uiName: "Stream ID"
@@ -3285,6 +3632,7 @@ fields:
   result: "string"
   description: "The data stream name for your app or website."
   group: "platform_device"
+  label: "Stream Name"
   meta:
     apiName: "streamName"
     uiName: "Stream name"
@@ -3293,6 +3641,7 @@ fields:
   result: "string"
   description: "The numeric identifier of a data filter in testing state. You use data filters to include or exclude event data from your reports based on event-parameter values. To learn more, see [Data filters](https://support.google.com/analytics/answer/10108813)."
   group: "other"
+  label: "Test Data Filter ID"
   meta:
     apiName: "testDataFilterId"
     uiName: "Test data filter ID"
@@ -3301,6 +3650,7 @@ fields:
   result: "string"
   description: "The name of data filters in testing state. You use data filters to include or exclude event data from your reports based on event-parameter values. To learn more, see [Data filters](https://support.google.com/analytics/answer/10108813)."
   group: "other"
+  label: "Test Data Filter Name"
   meta:
     apiName: "testDataFilterName"
     uiName: "Test data filter name"
@@ -3309,6 +3659,7 @@ fields:
   result: "string"
   description: "The ID of the ecommerce transaction."
   group: "ecommerce"
+  label: "Transaction ID"
   meta:
     apiName: "transactionId"
     uiName: "Transaction ID"
@@ -3317,6 +3668,7 @@ fields:
   result: "string"
   description: "The page path (web) or screen class (app) on which the event was logged."
   group: "page_screen"
+  label: "Page Path And Screen Class"
   meta:
     apiName: "unifiedPagePathScreen"
     uiName: "Page path and screen class"
@@ -3325,6 +3677,7 @@ fields:
   result: "string"
   description: "The page path and query string (web) or screen class (app) on which the event was logged."
   group: "page_screen"
+  label: "Page Path + Query String And Screen Class"
   meta:
     apiName: "unifiedPageScreen"
     uiName: "Page path + query string and screen class"
@@ -3333,6 +3686,7 @@ fields:
   result: "string"
   description: "The page title (web) or screen class (app) on which the event was logged."
   group: "page_screen"
+  label: "Page Title And Screen Class"
   meta:
     apiName: "unifiedScreenClass"
     uiName: "Page title and screen class"
@@ -3341,6 +3695,7 @@ fields:
   result: "string"
   description: "The page title (web) or screen name (app) on which the event was logged."
   group: "page_screen"
+  label: "Page Title And Screen Name"
   meta:
     apiName: "unifiedScreenName"
     uiName: "Page title and screen name"
@@ -3349,6 +3704,7 @@ fields:
   result: "string"
   description: "User age brackets."
   group: "demographics"
+  label: "Age"
   meta:
     apiName: "userAgeBracket"
     uiName: "Age"
@@ -3357,6 +3713,7 @@ fields:
   result: "string"
   description: "User gender."
   group: "demographics"
+  label: "Gender"
   meta:
     apiName: "userGender"
     uiName: "Gender"
@@ -3365,6 +3722,7 @@ fields:
   result: "string"
   description: "The source of the video (for example, `youtube`). Automatically populated for embedded videos if Enhanced Measurement is enabled. Populated by the event parameter `video_provider`."
   group: "other"
+  label: "Video Provider"
   meta:
     apiName: "videoProvider"
     uiName: "Video provider"
@@ -3373,6 +3731,7 @@ fields:
   result: "string"
   description: "The title of the video. Automatically populated for embedded videos if Enhanced Measurement is enabled. Populated by the event parameter `video_title`."
   group: "other"
+  label: "Video Title"
   meta:
     apiName: "videoTitle"
     uiName: "Video title"
@@ -3381,6 +3740,7 @@ fields:
   result: "string"
   description: "The URL of the video. Automatically populated for embedded videos if Enhanced Measurement is enabled. Populated by the event parameter `video_url`."
   group: "other"
+  label: "Video URL"
   meta:
     apiName: "videoUrl"
     uiName: "Video URL"
@@ -3389,6 +3749,7 @@ fields:
   result: "string"
   description: "The name of a virtual currency with which the user is interacting. Such as spending or purchasing gems in a game. Populated by the `virtual_currency_name` event parameter."
   group: "other"
+  label: "Virtual Currency Name"
   meta:
     apiName: "virtualCurrencyName"
     uiName: "Virtual currency name"
@@ -3397,6 +3758,7 @@ fields:
   result: "string"
   description: "Returns `true` if the content is visible. Automatically populated for embedded videos if Enhanced Measurement is enabled. Populated by the event parameter `visible`."
   group: "other"
+  label: "Visible"
   meta:
     apiName: "visible"
     uiName: "Visible"
@@ -3407,6 +3769,7 @@ fields:
   result: "number"
   description: "The number of distinct active users on your site or app within a 1 day period. The 1 day period includes the last day in the report's date range. Note: this is the same as Active Users."
   group: "user"
+  label: "1-day Active Users"
   meta:
     apiName: "active1DayUsers"
     uiName: "1-day active users"
@@ -3416,6 +3779,7 @@ fields:
   result: "number"
   description: "The number of distinct active users on your site or app within a 28 day period. The 28 day period includes the last day in the report's date range."
   group: "user"
+  label: "28-day Active Users"
   meta:
     apiName: "active28DayUsers"
     uiName: "28-day active users"
@@ -3425,6 +3789,7 @@ fields:
   result: "number"
   description: "The number of distinct active users on your site or app within a 7 day period. The 7 day period includes the last day in the report's date range."
   group: "user"
+  label: "7-day Active Users"
   meta:
     apiName: "active7DayUsers"
     uiName: "7-day active users"
@@ -3434,6 +3799,7 @@ fields:
   result: "number"
   description: "The number of distinct users who visited your site or app."
   group: "user"
+  label: "Active Users"
   meta:
     apiName: "activeUsers"
     uiName: "Active users"
@@ -3443,6 +3809,7 @@ fields:
   result: "number"
   description: "The number of times users added items to their shopping carts."
   group: "ecommerce"
+  label: "Add To Carts"
   meta:
     apiName: "addToCarts"
     uiName: "Add to carts"
@@ -3452,6 +3819,7 @@ fields:
   result: "number"
   description: "The time that an ad unit was exposed to a user, in milliseconds."
   group: "publisher"
+  label: "Ad Unit Exposure"
   meta:
     apiName: "adUnitExposure"
     uiName: "Ad unit exposure"
@@ -3463,6 +3831,7 @@ fields:
   result: "number"
   description: "Total number of times users have clicked on an ad to reach the property. Includes clicks from linked integrations like linked Search Ads 360 advertisers. Also includes uploaded clicks from data import."
   group: "other"
+  label: "Ads Clicks"
   meta:
     apiName: "advertiserAdClicks"
     uiName: "Ads clicks"
@@ -3472,6 +3841,7 @@ fields:
   result: "number"
   description: "The total amount you paid for your ads. Includes costs from linked integrations like linked Google Ads accounts. Also includes uploaded cost from data import; to learn more, see [Import cost data](https://support.google.com/analytics/answer/10071305)."
   group: "other"
+  label: "Ads Cost"
   meta:
     apiName: "advertiserAdCost"
     uiName: "Ads cost"
@@ -3481,6 +3851,7 @@ fields:
   result: "number"
   description: "Ads cost per click is ad cost divided by ad clicks and is often abbreviated CPC."
   group: "other"
+  label: "Ads Cost Per Click"
   meta:
     apiName: "advertiserAdCostPerClick"
     uiName: "Ads cost per click"
@@ -3490,6 +3861,7 @@ fields:
   result: "number"
   description: "Cost per key event is ad cost divided by key events."
   group: "other"
+  label: "Cost Per Key Event"
   meta:
     apiName: "advertiserAdCostPerKeyEvent"
     uiName: "Cost per key event"
@@ -3501,6 +3873,7 @@ fields:
   result: "number"
   description: "The total number of impressions. Includes impressions from linked integrations like linked Display & Video 360 advertisers. Also includes uploaded impressions from data import."
   group: "other"
+  label: "Ads Impressions"
   meta:
     apiName: "advertiserAdImpressions"
     uiName: "Ads impressions"
@@ -3510,6 +3883,7 @@ fields:
   result: "number"
   description: "The average purchase revenue in the transaction group of events."
   group: "revenue"
+  label: "Average Purchase Revenue"
   meta:
     apiName: "averagePurchaseRevenue"
     uiName: "Average purchase revenue"
@@ -3519,6 +3893,7 @@ fields:
   result: "number"
   description: "Average revenue per paying user (ARPPU) is the total purchase revenue per active user that logged a purchase event. The summary metric is for the time period selected."
   group: "revenue"
+  label: "ARPPU"
   meta:
     apiName: "averagePurchaseRevenuePerPayingUser"
     uiName: "ARPPU"
@@ -3528,6 +3903,7 @@ fields:
   result: "number"
   description: "The average purchase revenue per active user is the total purchase revenue per active user that logged any event. The summary metric is for the time period selected."
   group: "revenue"
+  label: "Average Purchase Revenue Per User"
   meta:
     apiName: "averagePurchaseRevenuePerUser"
     uiName: "Average purchase revenue per user"
@@ -3537,6 +3913,7 @@ fields:
   result: "number"
   description: "Average revenue per active user (ARPU). The summary metric is for the time period selected. ARPU uses Total Revenue and includes AdMob estimated earnings."
   group: "revenue"
+  label: "ARPU"
   meta:
     apiName: "averageRevenuePerUser"
     uiName: "ARPU"
@@ -3546,6 +3923,7 @@ fields:
   result: "number"
   description: "The average duration (in seconds) of users` sessions."
   group: "session"
+  label: "Average Session Duration"
   meta:
     apiName: "averageSessionDuration"
     uiName: "Average session duration"
@@ -3555,6 +3933,7 @@ fields:
   result: "number"
   description: "The percentage of sessions that were not engaged ((Sessions Minus Engaged sessions) divided by Sessions). This metric is returned as a fraction; for example, 0.2761 means 27.61% of sessions were bounces."
   group: "session"
+  label: "Bounce Rate"
   meta:
     apiName: "bounceRate"
     uiName: "Bounce rate"
@@ -3564,6 +3943,7 @@ fields:
   result: "number"
   description: "The number of users who added a product(s) to their cart divided by the number of users who viewed the same product(s). This metric is returned as a fraction; for example, 0.1132 means 11.32% of users who viewed a product also added the same product to their cart."
   group: "other"
+  label: "Cart-to-view Rate"
   meta:
     apiName: "cartToViewRate"
     uiName: "Cart-to-view rate"
@@ -3573,6 +3953,7 @@ fields:
   result: "number"
   description: "The number of times users started the checkout process. This metric counts the occurrence of the `begin_checkout` event."
   group: "ecommerce"
+  label: "Checkouts"
   meta:
     apiName: "checkouts"
     uiName: "Checkouts"
@@ -3582,6 +3963,7 @@ fields:
   result: "number"
   description: "The number of users that logged a crash in this row of the report. For example if the report is time series by date, this metrics reports total users with at least one crash on this date. Crashes are events with the name \"app_exception\"."
   group: "other"
+  label: "Crash-affected Users"
   meta:
     apiName: "crashAffectedUsers"
     uiName: "Crash-affected users"
@@ -3591,6 +3973,7 @@ fields:
   result: "number"
   description: "The number of users without crash events (in this row of the report) divided by the total number of users. This metric is returned as a fraction; for example, 0.9243 means 92.43% of users were crash-free."
   group: "other"
+  label: "Crash-free Users Rate"
   meta:
     apiName: "crashFreeUsersRate"
     uiName: "Crash-free users rate"
@@ -3600,6 +3983,7 @@ fields:
   result: "number"
   description: "The rolling percent of 30-day active users who are also 1-day active users. This metric is returned as a fraction; for example, 0.113 means 11.3% of 30-day active users were also 1-day active users."
   group: "user"
+  label: "DAU / MAU"
   meta:
     apiName: "dauPerMau"
     uiName: "DAU / MAU"
@@ -3609,6 +3993,7 @@ fields:
   result: "number"
   description: "The rolling percent of 7-day active users who are also 1-day active users. This metric is returned as a fraction; for example, 0.082 means 8.2% of 7-day active users were also 1-day active users."
   group: "user"
+  label: "DAU / WAU"
   meta:
     apiName: "dauPerWau"
     uiName: "DAU / WAU"
@@ -3618,6 +4003,7 @@ fields:
   result: "number"
   description: "The number of times users completed a purchase. This metric counts `purchase` events; this metric does not count `in_app_purchase` and subscription events."
   group: "ecommerce"
+  label: "Ecommerce Purchases"
   meta:
     apiName: "ecommercePurchases"
     uiName: "Ecommerce purchases"
@@ -3627,6 +4013,7 @@ fields:
   result: "number"
   description: "The number of sessions that lasted longer than 10 seconds, or had a key event, or had 2 or more screen views."
   group: "session"
+  label: "Engaged Sessions"
   meta:
     apiName: "engagedSessions"
     uiName: "Engaged sessions"
@@ -3636,6 +4023,7 @@ fields:
   result: "number"
   description: "The percentage of engaged sessions (Engaged sessions divided by Sessions). This metric is returned as a fraction; for example, 0.7239 means 72.39% of sessions were engaged sessions."
   group: "session"
+  label: "Engagement Rate"
   meta:
     apiName: "engagementRate"
     uiName: "Engagement rate"
@@ -3645,6 +4033,7 @@ fields:
   result: "number"
   description: "The count of events."
   group: "event"
+  label: "Event Count"
   meta:
     apiName: "eventCount"
     uiName: "Event count"
@@ -3654,6 +4043,7 @@ fields:
   result: "number"
   description: "The average number of events per user (Event count divided by Active users)."
   group: "event"
+  label: "Event Count Per User"
   meta:
     apiName: "eventCountPerUser"
     uiName: "Event count per user"
@@ -3663,6 +4053,7 @@ fields:
   result: "number"
   description: "The average number of events per session (Event count divided by Sessions)."
   group: "event"
+  label: "Events Per Session"
   meta:
     apiName: "eventsPerSession"
     uiName: "Events per session"
@@ -3672,6 +4063,7 @@ fields:
   result: "number"
   description: "The sum of the event parameter named `value`."
   group: "event"
+  label: "Event Value"
   meta:
     apiName: "eventValue"
     uiName: "Event value"
@@ -3681,6 +4073,7 @@ fields:
   result: "number"
   description: "The percentage of active users who made their first purchase. This metric is returned as a fraction; for example, 0.092 means 9.2% of active users were first time purchasers."
   group: "user"
+  label: "First-time Purchaser Rate"
   meta:
     apiName: "firstTimePurchaserRate"
     uiName: "First-time purchaser rate"
@@ -3692,6 +4085,7 @@ fields:
   result: "number"
   description: "The number of users that completed their first purchase event."
   group: "user"
+  label: "First Time Purchasers"
   meta:
     apiName: "firstTimePurchasers"
     uiName: "First time purchasers"
@@ -3701,6 +4095,7 @@ fields:
   result: "number"
   description: "The average number of first time purchasers per new user."
   group: "user"
+  label: "First-time Purchasers Per New User"
   meta:
     apiName: "firstTimePurchasersPerNewUser"
     uiName: "First-time purchasers per new user"
@@ -3710,6 +4105,7 @@ fields:
   result: "number"
   description: "The total revenue from items only. Gross item revenue is the product of its price and quantity. Item revenue excludes tax and shipping values; tax & shipping values are specified at the event and not item level. Gross item revenue does not include refunds."
   group: "ecommerce"
+  label: "Gross Item Revenue"
   meta:
     apiName: "grossItemRevenue"
     uiName: "Gross item revenue"
@@ -3719,6 +4115,7 @@ fields:
   result: "number"
   description: "The sum of revenue from purchases made in your app or site. Gross purchase revenue sums the revenue for these events: `purchase`, `ecommerce_purchase`, `in_app_purchase`, `app_store_subscription_convert`, and `app_store_subscription_renew`. Purchase revenue is specified by the `value` parameter in tagging."
   group: "ecommerce"
+  label: "Gross Purchase Revenue"
   meta:
     apiName: "grossPurchaseRevenue"
     uiName: "Gross purchase revenue"
@@ -3728,6 +4125,7 @@ fields:
   result: "number"
   description: "The monetary value of item discounts in eCommerce events. This metric is populated in tagging by the `discount` item parameter."
   group: "ecommerce"
+  label: "Item Discount Amount"
   meta:
     apiName: "itemDiscountAmount"
     uiName: "Item discount amount"
@@ -3737,6 +4135,7 @@ fields:
   result: "number"
   description: "The number of times users clicked an item when it appeared in a list. This metric counts the occurrence of the `select_item` event."
   group: "ecommerce"
+  label: "Item-list Click Events"
   meta:
     apiName: "itemListClickEvents"
     uiName: "Item-list click events"
@@ -3748,6 +4147,7 @@ fields:
   result: "number"
   description: "The number of users who selected a list(s) divided by the number of users who viewed the same list(s). This metric is returned as a fraction; for example, 0.2145 means 21.45% of users who viewed a list also selected the same list."
   group: "ecommerce"
+  label: "Item List Click Through Rate"
   meta:
     apiName: "itemListClickThroughRate"
     uiName: "Item list click through rate"
@@ -3757,6 +4157,7 @@ fields:
   result: "number"
   description: "The number of times the item list was viewed. This metric counts the occurrence of the `view_item_list` event."
   group: "ecommerce"
+  label: "Item-list View Events"
   meta:
     apiName: "itemListViewEvents"
     uiName: "Item-list view events"
@@ -3768,6 +4169,7 @@ fields:
   result: "number"
   description: "The number of users who selected a promotion(s) divided by the number of users who viewed the same promotion(s). This metric is returned as a fraction; for example, 0.1382 means 13.82% of users who viewed a promotion also selected the promotion."
   group: "ecommerce"
+  label: "Item Promotion Click Through Rate"
   meta:
     apiName: "itemPromotionClickThroughRate"
     uiName: "Item promotion click through rate"
@@ -3777,6 +4179,7 @@ fields:
   result: "number"
   description: "Item refund amount is the total refunded transaction revenue from items only. Item refund amount is the product of price and quantity for the `refund` event."
   group: "ecommerce"
+  label: "Item Refund Amount"
   meta:
     apiName: "itemRefundAmount"
     uiName: "Item refund amount"
@@ -3786,6 +4189,7 @@ fields:
   result: "number"
   description: "The total revenue from purchases minus refunded transaction revenue from items only. Item revenue is the product of its price and quantity. Item revenue excludes tax and shipping values; tax & shipping values are specified at the event and not item level."
   group: "ecommerce"
+  label: "Item Revenue"
   meta:
     apiName: "itemRevenue"
     uiName: "Item revenue"
@@ -3795,6 +4199,7 @@ fields:
   result: "number"
   description: "The number of units added to cart for a single item. This metric counts the quantity of items in `add_to_cart` events."
   group: "ecommerce"
+  label: "Items Added To Cart"
   meta:
     apiName: "itemsAddedToCart"
     uiName: "Items added to cart"
@@ -3804,6 +4209,7 @@ fields:
   result: "number"
   description: "The number of units checked out for a single item. This metric counts the quantity of items in `begin_checkout` events."
   group: "ecommerce"
+  label: "Items Checked Out"
   meta:
     apiName: "itemsCheckedOut"
     uiName: "Items checked out"
@@ -3813,6 +4219,7 @@ fields:
   result: "number"
   description: "The number of units clicked in list for a single item. This metric counts the quantity of items in `select_item` events."
   group: "ecommerce"
+  label: "Items Clicked In List"
   meta:
     apiName: "itemsClickedInList"
     uiName: "Items clicked in list"
@@ -3822,6 +4229,7 @@ fields:
   result: "number"
   description: "The number of units clicked in promotion for a single item. This metric counts the quantity of items in `select_promotion` events."
   group: "ecommerce"
+  label: "Items Clicked In Promotion"
   meta:
     apiName: "itemsClickedInPromotion"
     uiName: "Items clicked in promotion"
@@ -3831,6 +4239,7 @@ fields:
   result: "number"
   description: "The number of units for a single item included in purchase events. This metric counts the quantity of items in purchase events."
   group: "ecommerce"
+  label: "Items Purchased"
   meta:
     apiName: "itemsPurchased"
     uiName: "Items purchased"
@@ -3842,6 +4251,7 @@ fields:
   result: "number"
   description: "The number of units viewed for a single item. This metric counts the quantity of items in `view_item` events."
   group: "ecommerce"
+  label: "Items Viewed"
   meta:
     apiName: "itemsViewed"
     uiName: "Items viewed"
@@ -3851,6 +4261,7 @@ fields:
   result: "number"
   description: "The number of units viewed in list for a single item. This metric counts the quantity of items in `view_item_list` events."
   group: "ecommerce"
+  label: "Items Viewed In List"
   meta:
     apiName: "itemsViewedInList"
     uiName: "Items viewed in list"
@@ -3860,6 +4271,7 @@ fields:
   result: "number"
   description: "The number of units viewed in promotion for a single item. This metric counts the quantity of items in `view_promotion` events."
   group: "ecommerce"
+  label: "Items Viewed In Promotion"
   meta:
     apiName: "itemsViewedInPromotion"
     uiName: "Items viewed in promotion"
@@ -3869,6 +4281,7 @@ fields:
   result: "number"
   description: "The number of times the item details were viewed. The metric counts the occurrence of the `view_item` event."
   group: "ecommerce"
+  label: "Item View Events"
   meta:
     apiName: "itemViewEvents"
     uiName: "Item view events"
@@ -3880,6 +4293,7 @@ fields:
   result: "number"
   description: "The count of key events. Marking an event as a key event affects reports from time of creation. It doesn't change historic data. You can mark any event as key in Google Analytics, and some events (such as `first_open` or `purchase`) are marked as key events by default."
   group: "event"
+  label: "Key Events"
   meta:
     apiName: "keyEvents"
     uiName: "Key events"
@@ -3891,6 +4305,7 @@ fields:
   result: "number"
   description: "The number of users who interacted with your site or launched your app for the first time (event triggered: first_open or first_visit)."
   group: "user"
+  label: "New Users"
   meta:
     apiName: "newUsers"
     uiName: "New users"
@@ -3900,6 +4315,7 @@ fields:
   result: "number"
   description: "The average ranking of your website URLs for the query reported from Search Console. For example, if your site's URL appears at position 3 for one query and position 7 for another query, the average position would be (3+7)/2, or 5. This metric requires an active Search Console link."
   group: "other"
+  label: "Organic Google Search Average Position"
   meta:
     apiName: "organicGoogleSearchAveragePosition"
     uiName: "Organic Google Search average position"
@@ -3909,6 +4325,7 @@ fields:
   result: "number"
   description: "The number of organic Google Search clicks reported from Search Console.  This metric requires an active Search Console link."
   group: "other"
+  label: "Organic Google Search Clicks"
   meta:
     apiName: "organicGoogleSearchClicks"
     uiName: "Organic Google Search clicks"
@@ -3918,6 +4335,7 @@ fields:
   result: "number"
   description: "The organic Google Search click through rate reported from Search Console. Click through rate is clicks per impression. This metric is returned as a fraction; for example, 0.0588 means about 5.88% of impressions resulted in a click. This metric requires an active Search Console link."
   group: "other"
+  label: "Organic Google Search Click Through Rate"
   meta:
     apiName: "organicGoogleSearchClickThroughRate"
     uiName: "Organic Google Search click through rate"
@@ -3927,6 +4345,7 @@ fields:
   result: "number"
   description: "The number of organic Google Search impressions reported from Search Console. This metric requires an active Search Console link."
   group: "other"
+  label: "Organic Google Search Impressions"
   meta:
     apiName: "organicGoogleSearchImpressions"
     uiName: "Organic Google Search impressions"
@@ -3936,6 +4355,7 @@ fields:
   result: "number"
   description: "The number of times an item promotion was clicked. This metric counts the occurrence of the `select_promotion` event."
   group: "ecommerce"
+  label: "Promotion Clicks"
   meta:
     apiName: "promotionClicks"
     uiName: "Promotion clicks"
@@ -3947,6 +4367,7 @@ fields:
   result: "number"
   description: "The number of times an item promotion was viewed. This metric counts the occurrence of the `view_promotion` event."
   group: "ecommerce"
+  label: "Promotion Views"
   meta:
     apiName: "promotionViews"
     uiName: "Promotion views"
@@ -3958,6 +4379,7 @@ fields:
   result: "number"
   description: "The number of ad_click events."
   group: "other"
+  label: "Publisher Ad Clicks"
   meta:
     apiName: "publisherAdClicks"
     uiName: "Publisher ad clicks"
@@ -3967,6 +4389,7 @@ fields:
   result: "number"
   description: "The number of ad_impression events."
   group: "other"
+  label: "Publisher Ad Impressions"
   meta:
     apiName: "publisherAdImpressions"
     uiName: "Publisher ad impressions"
@@ -3976,6 +4399,7 @@ fields:
   result: "number"
   description: "The sum of revenue from purchases minus refunded transaction revenue made in your app or site. Purchase revenue sums the revenue for these events: `purchase`, `ecommerce_purchase`, `in_app_purchase`, `app_store_subscription_convert`, and `app_store_subscription_renew`. Purchase revenue is specified by the `value` parameter in tagging."
   group: "ecommerce"
+  label: "Purchase Revenue"
   meta:
     apiName: "purchaseRevenue"
     uiName: "Purchase revenue"
@@ -3985,6 +4409,7 @@ fields:
   result: "number"
   description: "The percentage of active users who made 1 or more purchase transactions. This metric is returned as a fraction; for example, 0.412 means 41.2% of users were purchasers."
   group: "user"
+  label: "Purchaser Rate"
   meta:
     apiName: "purchaserRate"
     uiName: "Purchaser rate"
@@ -3996,6 +4421,7 @@ fields:
   result: "number"
   description: "The number of users who purchased a product(s) divided by the number of users who viewed the same product(s). This metric is returned as a fraction; for example, 0.128 means 12.8% of users that viewed a product(s) also purchased the same product(s)."
   group: "other"
+  label: "Purchase-to-view Rate"
   meta:
     apiName: "purchaseToViewRate"
     uiName: "Purchase-to-view rate"
@@ -4005,6 +4431,7 @@ fields:
   result: "number"
   description: "The total refunded transaction revenues. Refund amount sums refunded revenue for the `refund` and `app_store_refund` events."
   group: "ecommerce"
+  label: "Refund Amount"
   meta:
     apiName: "refundAmount"
     uiName: "Refund amount"
@@ -4014,6 +4441,7 @@ fields:
   result: "number"
   description: "Return On Ad Spend (ROAS) is total revenue divided by advertiser ad cost."
   group: "other"
+  label: "Return On Ad Spend"
   meta:
     apiName: "returnOnAdSpend"
     uiName: "Return on ad spend"
@@ -4023,6 +4451,7 @@ fields:
   result: "number"
   description: "The number of app screens or web pages your users viewed. Repeated views of a single page or screen are counted. (screen_view + page_view events)."
   group: "page_screen"
+  label: "Views"
   meta:
     apiName: "screenPageViews"
     uiName: "Views"
@@ -4032,6 +4461,7 @@ fields:
   result: "number"
   description: "The number of app screens or web pages your users viewed per session. Repeated views of a single page or screen are counted. (screen_view + page_view events) / sessions."
   group: "page_screen"
+  label: "Views Per Session"
   meta:
     apiName: "screenPageViewsPerSession"
     uiName: "Views per session"
@@ -4041,6 +4471,7 @@ fields:
   result: "number"
   description: "The number of app screens or web pages your users viewed per active user. Repeated views of a single page or screen are counted. (screen_view + page_view events) / active users."
   group: "page_screen"
+  label: "Views Per User"
   meta:
     apiName: "screenPageViewsPerUser"
     uiName: "Views per user"
@@ -4050,6 +4481,7 @@ fields:
   result: "number"
   description: "The number of unique users who scrolled down at least 90% of the page."
   group: "other"
+  label: "Scrolled Users"
   meta:
     apiName: "scrolledUsers"
     uiName: "Scrolled users"
@@ -4059,6 +4491,7 @@ fields:
   result: "number"
   description: "The percentage of sessions in which any key event was triggered."
   group: "session"
+  label: "Session Key Event Rate"
   meta:
     apiName: "sessionKeyEventRate"
     uiName: "Session key event rate"
@@ -4070,6 +4503,7 @@ fields:
   result: "number"
   description: "The number of sessions that began on your site or app (event triggered: session_start)."
   group: "session"
+  label: "Sessions"
   meta:
     apiName: "sessions"
     uiName: "Sessions"
@@ -4079,6 +4513,7 @@ fields:
   result: "number"
   description: "The average number of sessions per user (Sessions divided by Active Users)."
   group: "session"
+  label: "Sessions Per User"
   meta:
     apiName: "sessionsPerUser"
     uiName: "Sessions per user"
@@ -4088,6 +4523,7 @@ fields:
   result: "number"
   description: "Shipping amount associated with a transaction. Populated by the `shipping` event parameter."
   group: "ecommerce"
+  label: "Shipping Amount"
   meta:
     apiName: "shippingAmount"
     uiName: "Shipping amount"
@@ -4097,6 +4533,7 @@ fields:
   result: "number"
   description: "Tax amount associated with a transaction. Populated by the `tax` event parameter."
   group: "ecommerce"
+  label: "Tax Amount"
   meta:
     apiName: "taxAmount"
     uiName: "Tax amount"
@@ -4106,6 +4543,7 @@ fields:
   result: "number"
   description: "The total advertising revenue from both Admob and third-party sources."
   group: "revenue"
+  label: "Total Ad Revenue"
   meta:
     apiName: "totalAdRevenue"
     uiName: "Total ad revenue"
@@ -4115,6 +4553,7 @@ fields:
   result: "number"
   description: "The number of users that logged purchase events for the time period selected."
   group: "user"
+  label: "Total Purchasers"
   meta:
     apiName: "totalPurchasers"
     uiName: "Total purchasers"
@@ -4124,6 +4563,7 @@ fields:
   result: "number"
   description: "The sum of revenue from purchases, subscriptions, and advertising (Purchase revenue plus Subscription revenue plus Ad revenue) minus refunded transaction revenue."
   group: "revenue"
+  label: "Total Revenue"
   meta:
     apiName: "totalRevenue"
     uiName: "Total revenue"
@@ -4133,6 +4573,7 @@ fields:
   result: "number"
   description: "The number of distinct users who have logged at least one event, regardless of whether the site or app was in use when that event was logged."
   group: "user"
+  label: "Total Users"
   meta:
     apiName: "totalUsers"
     uiName: "Total users"
@@ -4142,6 +4583,7 @@ fields:
   result: "number"
   description: "The count of transaction events with purchase revenue. Transaction events are in_app_purchase, ecommerce_purchase, purchase, app_store_subscription_renew, app_store_subscription_convert, and refund."
   group: "ecommerce"
+  label: "Transactions"
   meta:
     apiName: "transactions"
     uiName: "Transactions"
@@ -4151,6 +4593,7 @@ fields:
   result: "number"
   description: "The average number of transactions per purchaser."
   group: "ecommerce"
+  label: "Transactions Per Purchaser"
   meta:
     apiName: "transactionsPerPurchaser"
     uiName: "Transactions per purchaser"
@@ -4160,6 +4603,7 @@ fields:
   result: "number"
   description: "The total amount of time (in seconds) your website or app was in the foreground of users` devices."
   group: "user"
+  label: "User Engagement"
   meta:
     apiName: "userEngagementDuration"
     uiName: "User engagement"
@@ -4169,6 +4613,7 @@ fields:
   result: "number"
   description: "The percentage of users who triggered any key event."
   group: "user"
+  label: "User Key Event Rate"
   meta:
     apiName: "userKeyEventRate"
     uiName: "User key event rate"
@@ -4180,6 +4625,7 @@ fields:
   result: "number"
   description: "The rolling percent of 30-day active users who are also 7-day active users. This metric is returned as a fraction; for example, 0.234 means 23.4% of 30-day active users were also 7-day active users."
   group: "user"
+  label: "WAU / MAU"
   meta:
     apiName: "wauPerMau"
     uiName: "WAU / MAU"
@@ -4189,6 +4635,7 @@ fields:
   result: "number"
   description: "The count of a specific key event."
   group: "event"
+  label: "Key Event Count For Purchase"
   meta:
     apiName: "keyEvents:purchase"
     uiName: "Key event count for purchase"
@@ -4200,6 +4647,7 @@ fields:
   result: "number"
   description: "The percentage of sessions in which a specific key event was triggered."
   group: "session"
+  label: "Session Key Event Rate For Purchase"
   meta:
     apiName: "sessionKeyEventRate:purchase"
     uiName: "Session key event rate for purchase"
@@ -4211,6 +4659,7 @@ fields:
   result: "number"
   description: "The percentage of users who triggered a specific key event."
   group: "user"
+  label: "User Key Event Rate For Purchase"
   meta:
     apiName: "userKeyEventRate:purchase"
     uiName: "User key event rate for purchase"

@@ -107,8 +107,12 @@ function makeYaml(data: any): string {
       fields.push({
         dimension: toSnakeCase(apiName),
         result: 'string',
-        description,
-        group,
+        description: description,
+        group: group,
+        label: uiName
+          .split(' ')
+          .map((x: string) => capitalizeFirstLetter(x))
+          .join(' '),
         meta: { apiName, uiName, ...rest }
       });
     }
@@ -125,16 +129,28 @@ function makeYaml(data: any): string {
       fields.push({
         measure: toSnakeCase(apiName),
         result: 'number',
-        description,
-        group,
+        description: description,
+        group: group,
+        label: uiName
+          .split(' ')
+          .map((x: string) => capitalizeFirstLetter(x))
+          .join(' '),
         meta: { apiName, uiName, type, ...rest }
       });
     }
   });
 
   let output = {
-    field_groups: Array.from(groups).map((g: string) => ({ group: g })),
-    fields
+    field_groups: Array.from(groups)
+      .map((g: string) => ({
+        group: g,
+        label: g
+          .split('_')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
+      }))
+      .sort((a, b) => (a.group > b.group ? 1 : b.group > a.group ? -1 : 0)),
+    fields: fields
   };
 
   let raw = yaml.dump(output, {
@@ -166,6 +182,16 @@ function makeYaml(data: any): string {
   }
 
   return formatted.join('\n').trim() + '\n';
+}
+
+function isDefined(x: any) {
+  return typeof x !== 'undefined' && x !== null;
+}
+
+function capitalizeFirstLetter(value: string) {
+  return isDefined(value) && value.length > 0
+    ? value.charAt(0).toUpperCase() + value.slice(1)
+    : value;
 }
 
 metadata();
