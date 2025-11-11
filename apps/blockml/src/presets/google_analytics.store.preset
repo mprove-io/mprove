@@ -1,5 +1,5 @@
 label: Google Analytics
-description: '...'
+description: 'Google Analytics Reporting'
 method: POST
 request: |
   let storeFields = $STORE_FIELDS;
