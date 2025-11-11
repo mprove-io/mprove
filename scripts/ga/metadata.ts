@@ -56,7 +56,7 @@ async function metadata() {
   }
 }
 
-function toGroupName(str: string): string {
+function toSnakeCase(str: string): string {
   return str
     .replace(/[/\s]+/g, '_') // ← replace / and spaces with single _
     .replace(/([A-Z])/g, '_$1')
@@ -70,29 +70,65 @@ function makeYaml(data: any): string {
   let fields: any[] = [];
 
   data.dimensions?.forEach((dimension: any) => {
-    let group = toGroupName(dimension.category);
-    groups.add(group);
     let { apiName, uiName, description, category, ...rest } = dimension;
-    fields.push({
-      dimension: toGroupName(apiName),
-      result: 'string',
-      description,
-      group,
-      meta: { apiName, uiName, ...rest }
-    });
+
+    let group = toSnakeCase(dimension.category);
+
+    if (
+      group !== 'cohort' &&
+      [
+        'date',
+        'isoYearIsoWeek',
+        'yearWeek',
+        'yearMonth',
+        'year',
+        'dateHour',
+        'dateHourMinute',
+        'hour',
+        'minute',
+        'day',
+        'dayOfWeek',
+        'dayOfWeekName',
+        'week',
+        'month',
+        'isoYear',
+        'isoWeek',
+        'nthYear',
+        'nthMonth',
+        'nthWeek',
+        'nthDay',
+        'nthHour',
+        'nthMinute'
+      ].indexOf(apiName) < 0
+    ) {
+      groups.add(group);
+
+      fields.push({
+        dimension: toSnakeCase(apiName),
+        result: 'string',
+        description,
+        group,
+        meta: { apiName, uiName, ...rest }
+      });
+    }
   });
 
   data.metrics?.forEach((metric: any) => {
-    let group = toGroupName(metric.category);
-    groups.add(group);
     let { apiName, uiName, description, category, type, ...rest } = metric;
-    fields.push({
-      measure: toGroupName(apiName),
-      result: 'number',
-      description,
-      group,
-      meta: { apiName, uiName, type, ...rest }
-    });
+
+    let group = toSnakeCase(metric.category);
+
+    if (group !== 'cohort') {
+      groups.add(group);
+
+      fields.push({
+        measure: toSnakeCase(apiName),
+        result: 'number',
+        description,
+        group,
+        meta: { apiName, uiName, type, ...rest }
+      });
+    }
   });
 
   let output = {
