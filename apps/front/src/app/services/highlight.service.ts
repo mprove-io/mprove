@@ -173,7 +173,7 @@ export class HighLightService {
     let place = this.getPlaceByPlaceName(placeName);
 
     if (this.uiQuery.getValue().isHighlighterReady === false) {
-      console.log(`updateDocText - ${placeName} - highlighter is not ready`);
+      // console.log(`updateDocText - ${placeName} - highlighter is not ready`);
       return;
     }
 
@@ -191,12 +191,12 @@ export class HighLightService {
       place.controlShikiLanguage === shikiLanguage &&
       place.controlShikiTheme === shikiTheme
     ) {
-      console.log(`updateDocText - ${placeName} - skip highlight - no changes`);
+      // console.log(`updateDocText - ${placeName} - skip highlight - no changes`);
       return;
     } else if (LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0) {
-      console.log(
-        `updateDocText - ${placeName} - LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0`
-      );
+      // console.log(
+      //   `updateDocText - ${placeName} - LIGHT_PLUS_LANGUAGES.indexOf(shikiLanguage) < 0`
+      // );
 
       place.controlDocText = docText;
       place.controlShikiLanguage = shikiLanguage;
@@ -222,10 +222,10 @@ export class HighLightService {
       };
 
       if (isThrottle === false) {
-        console.log(`updateDocText - ${placeName} - workerPostMessage`);
+        // console.log(`updateDocText - ${placeName} - workerPostMessage`);
         this.worker.postMessage(workerTaskOptions);
       } else {
-        console.log(`updateDocText - ${placeName} - throttleWorkerPostMessage`);
+        // console.log(`updateDocText - ${placeName} - throttleWorkerPostMessage`);
         this.throttleWorkerPostMessage(workerTaskOptions);
       }
     }
@@ -233,11 +233,11 @@ export class HighLightService {
 
   handleWorkerMessage(wMessage: MessageEvent) {
     if (wMessage.data.type === 'initHighlighterCompleted') {
-      console.log('initHighlighterCompleted');
+      // console.log('initHighlighterCompleted');
       this.uiQuery.updatePart({ isHighlighterReady: true });
     } else if (wMessage.data.type === 'highlightResult') {
-      console.log('highlightResult - wMessage.data');
-      console.log(wMessage.data);
+      // console.log('highlightResult - wMessage.data');
+      // console.log(wMessage.data);
 
       let place = this.getPlaceByPlaceName(wMessage.data.placeName);
 
@@ -256,7 +256,7 @@ export class HighLightService {
   createLightLanguage(item: { placeName: PlaceNameEnum }) {
     let { placeName } = item;
 
-    console.log('createLightLanguage, placeName: ', placeName);
+    // console.log('createLightLanguage, placeName: ', placeName);
 
     let place = this.getPlaceByPlaceName(placeName);
 

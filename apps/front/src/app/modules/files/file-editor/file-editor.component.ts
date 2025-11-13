@@ -156,7 +156,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           trackedEvents.some(event => transaction.isUserEvent(event))) &&
         transaction.docChanged
       ) {
-        console.log('fileEditor - beforeChangeFilter - updateDocText ');
+        // console.log('fileEditor - beforeChangeFilter - updateDocText ');
 
         if (transaction.annotation(this.customHistoryAnnotation)) {
           return transaction;
@@ -479,8 +479,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     tap(async x => {
       this.file = x;
 
-      console.log('this.file');
-      console.log(this.file);
+      // console.log('this.file');
+      // console.log(this.file);
 
       await this.setLanguage();
 
@@ -512,7 +512,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.cd.detectChanges();
 
-      console.log('fileEditor - file$ - updateDocText ');
+      // console.log('fileEditor - file$ - updateDocText ');
 
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.Main,
@@ -962,7 +962,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onOriginalTextChanged() {
-    console.log('fileEditor - onOriginalTextChanged');
+    // console.log('fileEditor - onOriginalTextChanged');
 
     if (this.panel !== PanelEnum.Tree) {
       this.highLightService.updateDocText({
@@ -978,7 +978,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   onTextChanged(item: { isDiffEditor: boolean }) {
     let { isDiffEditor } = item;
 
-    console.log('fileEditor - onTextChanged');
+    // console.log('fileEditor - onTextChanged');
 
     if (isDiffEditor === true) {
       this.content = this.diffContent.modified;
@@ -1006,7 +1006,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateDockAndDispatchOriginal() {
-    console.log('fileEditor - updateDockAndDispatchOriginal - updateDocText');
+    // console.log('fileEditor - updateDockAndDispatchOriginal - updateDocText');
 
     this.highLightService.updateDocText({
       placeName: PlaceNameEnum.Original,
@@ -1032,7 +1032,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   updateDockAndDispatch() {
-    console.log('fileEditor - updateDockAndDispatch - updateDocText');
+    // console.log('fileEditor - updateDockAndDispatch - updateDocText');
 
     this.highLightService.updateDocText({
       placeName: PlaceNameEnum.Main,
@@ -1132,7 +1132,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   cancel() {
-    console.log('fileEditor - cancel - updateDocText');
+    // console.log('fileEditor - cancel - updateDocText');
 
     this.highLightService.updateDocText({
       placeName: PlaceNameEnum.Main,

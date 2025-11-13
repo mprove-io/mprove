@@ -109,12 +109,12 @@ self.onmessage = async (sMessage) => {
     let tokenLines = [];
 
     if (!highlighter) {
-      console.log('worker - highlighter is not defined');
+      // console.log('worker - highlighter is not defined');
       return;
     }
 
     if (!highlighter.getLoadedLanguages().includes(shikiLanguage)) {
-      console.log('worker - highlight - unknown language');
+      // console.log('worker - highlight - unknown language');
       return;
     } else {
       tokenLines = highlighter
