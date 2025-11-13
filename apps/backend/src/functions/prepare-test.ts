@@ -50,7 +50,12 @@ export async function prepareTest(item: {
     .overrideProvider(ConfigService)
     .useValue({ get: (key: any) => mockConfig[key as keyof BackendConfig] })
     .overrideProvider(EmailService)
-    .useValue({ sendMail: async () => {} })
+    .useValue({
+      sendVerification: async () => {},
+      sendResetPassword: async () => {},
+      sendInviteToVerifiedUser: async () => {},
+      sendInviteToUnverifiedUser: async () => {}
+    })
     .compile();
 
   let app: INestApplication = moduleRef.createNestApplication();
