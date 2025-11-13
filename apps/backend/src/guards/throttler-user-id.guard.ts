@@ -7,8 +7,10 @@ import {
   ThrottlerStorage
 } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
+import { RESTRICTED_USER_EMAIL } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
 import { ServerError } from '~common/models/server-error';
 
 @Injectable()
@@ -39,6 +41,31 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
       });
     }
 
-    return req.user.userId;
+    if (req.user.email === RESTRICTED_USER_EMAIL) {
+      let now = new Date();
+
+      let utc = new Date(
+        Date.UTC(
+          now.getUTCFullYear(),
+          now.getUTCMonth(),
+          now.getUTCDate(),
+          now.getUTCHours(),
+          now.getUTCMinutes(),
+          0, // seconds
+          0 // milliseconds
+        )
+      );
+
+      let currentMinuteStartTs = Math.floor(utc.getTime() / 1000);
+
+      let ip = req.ip || req.ips?.[0] || 'unknown';
+
+      let suffix =
+        isUndefinedOrEmpty(ip) || ip === 'unknown' ? currentMinuteStartTs : ip;
+
+      return `${req.user.userId}-${suffix}`;
+    } else {
+      return req.user.userId;
+    }
   }
 }
