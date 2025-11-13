@@ -1,6 +1,7 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { json, urlencoded } from 'body-parser';
 import { AppModule } from '~backend/app.module';
 import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
@@ -59,6 +60,10 @@ export async function prepareTest(item: {
     .compile();
 
   let app: INestApplication = moduleRef.createNestApplication();
+
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ limit: '50mb', extended: true }));
+
   await app.init();
 
   let httpServer = app.getHttpServer();

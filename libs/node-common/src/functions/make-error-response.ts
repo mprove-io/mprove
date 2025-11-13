@@ -42,7 +42,7 @@ export function makeErrorResponse(item: {
       method: method,
       mproveVersion: mproveVersion,
       duration: duration,
-      traceId: body.info?.traceId,
+      traceId: body?.info?.traceId,
       status: ResponseInfoStatusEnum.Error,
       error:
         isRemoveErrorData === true
