@@ -54,9 +54,9 @@ export const FIELD_SCHEMA: JSONSchema7 = {
     group_description: {
       type: 'string'
     },
-    source: {
-      type: 'string'
-    },
+    // source: {
+    //   type: 'string'
+    // },
     timeframes: {
       type: 'array',
       items: {

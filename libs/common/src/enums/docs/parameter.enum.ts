@@ -73,7 +73,6 @@ export enum ParameterEnum {
   Type = 'type',
 
   Mod = 'mod',
-  Source = 'source', // TODO: rename field.source
   Location = 'location',
 
   Store = 'store',
