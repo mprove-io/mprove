@@ -1,9 +1,10 @@
-import { TreeNode } from '@ali-hm/angular-tree-component';
 import { Component, Input } from '@angular/core';
 import { PanelEnum } from '~common/enums/panel.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';
+import { MetricNode } from '~front/app/modules/reports/metrics-tree/metrics-tree.component';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';
+import { ModelNodeExtra } from '../model-tree.component';
 
 @Component({
   standalone: false,
@@ -12,7 +13,10 @@ import { NavigateService } from '~front/app/services/navigate.service';
 })
 export class FieldOptionsComponent {
   @Input()
-  node: TreeNode;
+  modelNodeData: ModelNodeExtra;
+
+  @Input()
+  metricNodeData: MetricNode;
 
   @Input()
   isMetric: boolean;
@@ -33,8 +37,8 @@ export class FieldOptionsComponent {
 
     let fileIdAr =
       this.isMetric === true
-        ? this.node.data.metric.filePath.split('/')
-        : this.node.data.fieldFilePath.split('/');
+        ? this.metricNodeData.metric.filePath.split('/')
+        : this.modelNodeData.fieldFilePath.split('/');
     fileIdAr.shift();
 
     let filePath = fileIdAr.join('/');
@@ -44,8 +48,8 @@ export class FieldOptionsComponent {
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber:
         this.isMetric === true
-          ? this.node.data.metric.fieldLineNum
-          : this.node.data.fieldLineNum
+          ? this.metricNodeData.metric.fieldLineNum
+          : this.modelNodeData.fieldLineNum
     });
   }
 }

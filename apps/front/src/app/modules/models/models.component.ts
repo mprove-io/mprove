@@ -171,6 +171,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   isCancelButtonPressed = false;
 
   modelTreeLevelsFlat = ModelTreeLevelsEnum.Flat;
+  modelTreeLevelsFlatTime = ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsNested = ModelTreeLevelsEnum.Nested;
 
   queryStatusEnum = QueryStatusEnum;
@@ -191,7 +192,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   lastUrl: string;
 
-  modelTreeLevels = ModelTreeLevelsEnum.Flat;
+  modelTreeLevels = ModelTreeLevelsEnum.FlatTime;
   modelTreeLevels$ = this.uiQuery.modelTreeLevels$.pipe(
     tap(x => {
       this.modelTreeLevels = x;
@@ -1393,9 +1394,9 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
   toggleModelTreeLevels() {
     let newValue =
-      this.modelTreeLevels === ModelTreeLevelsEnum.Flat
+      this.modelTreeLevels === ModelTreeLevelsEnum.FlatTime
         ? ModelTreeLevelsEnum.Nested
-        : ModelTreeLevelsEnum.Flat;
+        : ModelTreeLevelsEnum.FlatTime;
 
     this.uiQuery.updatePart({ modelTreeLevels: newValue });
     this.uiService.setUserUi({ modelTreeLevels: newValue });

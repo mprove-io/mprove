@@ -160,7 +160,29 @@ export class ModelTreeComponent implements AfterViewInit {
     }
   }
 
-  nodeOnClick(node: TreeNode) {
+  flatNodeOnClick(nodeData: ModelNodeExtra) {
+    if (
+      nodeData.nodeClass === FieldClassEnum.Filter ||
+      nodeData.nodeClass === FieldClassEnum.Info
+    ) {
+      return;
+    }
+
+    if (
+      nodeData.isField === true &&
+      (nodeData.required === false ||
+        nodeData.isSelected === false ||
+        [
+          FieldClassEnum.Dimension,
+          FieldClassEnum.Measure,
+          FieldClassEnum.Calculation
+        ].indexOf(nodeData?.nodeClass) < 0)
+    ) {
+      this.selectField(nodeData);
+    }
+  }
+
+  nestedNodeOnClick(node: TreeNode) {
     if (
       node.data.nodeClass === FieldClassEnum.Filter ||
       node.data.nodeClass === FieldClassEnum.Info
@@ -182,17 +204,17 @@ export class ModelTreeComponent implements AfterViewInit {
           FieldClassEnum.Calculation
         ].indexOf(node.data?.nodeClass) < 0)
     ) {
-      this.selectField(node);
+      this.selectField(node.data);
     }
   }
 
-  selectField(node: TreeNode) {
+  selectField(nodeData: ModelNodeExtra) {
     let newMconfig = this.structService.makeMconfig();
 
     if (this.model.type === ModelTypeEnum.Malloy) {
       let { queryOperationType, sortFieldId, desc } = sortFieldsOnSelectChange({
         mconfig: newMconfig,
-        selectFieldId: node.data.id,
+        selectFieldId: nodeData.id,
         modelFields: this.model.fields,
         mconfigFields: this.mconfig.fields
       });
@@ -203,20 +225,20 @@ export class ModelTreeComponent implements AfterViewInit {
         chartId: this.chart.chartId,
         queryOperation: {
           type: queryOperationType,
-          fieldId: node.data.id,
+          fieldId: nodeData.id,
           sortFieldId: sortFieldId,
           desc: desc,
           timezone: newMconfig.timezone
         }
       });
     } else {
-      if (node.data.isSelected === true) {
+      if (nodeData.isSelected === true) {
         newMconfig = this.mconfigService.removeField({
           newMconfig,
-          fieldId: node.data.id
+          fieldId: nodeData.id
         });
       } else {
-        newMconfig.select = [...newMconfig.select, node.data.id];
+        newMconfig.select = [...newMconfig.select, nodeData.id];
       }
 
       let fields: ModelField[];
