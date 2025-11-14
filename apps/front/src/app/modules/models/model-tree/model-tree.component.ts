@@ -94,7 +94,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
   model: ModelState;
   mconfig: MconfigX;
-  modelTreeLevels = ModelTreeLevelsEnum.Flat;
+  modelTreeLevels = ModelTreeLevelsEnum.FlatTime;
 
   nodesExtra$ = combineLatest([
     this.modelQuery.select(),
