@@ -38,7 +38,7 @@ import {
   },
   '600s': {
     limit: 10 * (60 / 3) * 2 * 1.5,
-    blockDuration: seconds(12 * 60 * 60) // 12h
+    blockDuration: seconds(12 * 60 * 60)
   }
 })
 @Controller()

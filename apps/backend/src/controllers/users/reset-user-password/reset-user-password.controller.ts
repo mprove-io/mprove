@@ -35,13 +35,13 @@ let retry = require('async-retry');
   '5s': {
     limit: 3 * 2
   },
-  '60s': {
+  // '60s': {
+  //   limit: 5 * 2,
+  //   blockDuration: seconds(1 * 60 * 60)
+  // },
+  '24h': {
     limit: 10 * 2,
-    blockDuration: seconds(24 * 60 * 60) // 24h
-  },
-  '600s': {
-    limit: 30 * 2,
-    blockDuration: seconds(24 * 60 * 60) // 24h
+    blockDuration: seconds(24 * 60 * 60)
   }
 })
 @Controller()
