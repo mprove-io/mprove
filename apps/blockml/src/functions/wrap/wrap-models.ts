@@ -26,6 +26,7 @@ import { ModelNode } from '~common/interfaces/blockml/model-node';
 import { getFieldItems } from '../extra/get-field-items';
 import { wrapField } from './wrap-field';
 import { FieldItemX, wrapFieldItem } from './wrap-field-item';
+// import * as fse from 'fs-extra';
 
 export function wrapModels(item: {
   projectId: string;
@@ -387,7 +388,19 @@ export function wrapModels(item: {
     let sortedNodes = nodes;
 
     if (isDefined(malloyModelDef)) {
-      malloyModelDef.references = []; // TODO: clarify
+      // let strA = JSON.stringify(malloyModelDef);
+      // let byteCountA = new TextEncoder().encode(strA).byteLength;
+      // console.log(`${x.name}-byteCountA`);
+      // console.log(byteCountA);
+      // fse.writeFile(`${x.name}-full.json`, strA);
+
+      malloyModelDef.references = [];
+
+      // let strB = JSON.stringify(malloyModelDef);
+      // let byteCountB = new TextEncoder().encode(strB).byteLength;
+      // console.log(`${x.name}-byteCountB`);
+      // console.log(byteCountB);
+      // fse.writeFile(`${x.name}-no-refs.json`, strB);
     }
 
     let apiModel: Model = {

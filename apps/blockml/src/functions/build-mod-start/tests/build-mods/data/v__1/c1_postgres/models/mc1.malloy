@@ -210,14 +210,16 @@ query: c2 is c1_order_items -> {
 
     -- users.has_last_name ~ f``,
     
+    -- users.has_last_name ~ f`=true`,       -- operator: '=true'
+    -- users.has_last_name ~ f`=false`,      -- operator: '=false'
     -- users.has_last_name ~ f`true`,        -- operator: 'true'
-    -- users.has_last_name ~ f`=false`,      -- operator: 'false'
-    -- users.has_last_name ~ f`false`,       -- operator: 'false_or_null'
+    -- users.has_last_name ~ f`false`,       -- operator: 'false'
     -- users.has_last_name ~ f`null`,        -- operator: 'null'
     
+    -- users.has_last_name ~ f`not =true`,   -- operator: '=true', not: true
+    -- users.has_last_name ~ f`not =false`,  -- operator: '=false', not: true
     -- users.has_last_name ~ f`not true`,    -- operator: 'true', not: true
-    -- users.has_last_name ~ f`not =false`,  -- operator: 'false', not: true
-    -- users.has_last_name ~ f`not false`,   -- operator: 'false_or_null', not: true
+    -- users.has_last_name ~ f`not false`,   -- operator: 'false', not: true
     -- users.has_last_name ~ f`not null`,    -- operator: 'null', not: true
 
     -- string

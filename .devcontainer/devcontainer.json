@@ -22,6 +22,7 @@
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached",
     "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/malloy,target=${containerWorkspaceFolder}/malloy,type=bind,consistency=cached",
     "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
     "source=mprove-cypress-cache,target=/root/.cache/Cypress,type=volume"
   ],

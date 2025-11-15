@@ -41,12 +41,14 @@ export enum FractionTypeEnum {
 
   BooleanIsTrue = 'BooleanIsTrue',
   BooleanIsFalse = 'BooleanIsFalse',
-  BooleanIsFalseOrNull = 'BooleanIsFalseOrNull',
+  BooleanIsTruthy = 'BooleanIsTruthy',
+  BooleanIsFalsy = 'BooleanIsFalsy',
   BooleanIsNull = 'BooleanIsNull',
 
-  BooleanIsNotTrue = 'BooleanIsNotTrue', // not supported (malloy issue)
-  BooleanIsNotFalse = 'BooleanIsNotFalse', // not supported (malloy issue)
-  BooleanIsNotFalseOrNull = 'BooleanIsNotFalseOrNull', // not supported (malloy issue)
+  BooleanIsNotTrue = 'BooleanIsNotTrue',
+  BooleanIsNotFalse = 'BooleanIsNotFalse',
+  BooleanIsNotTruthy = 'BooleanIsNotTruthy',
+  BooleanIsNotFalsy = 'BooleanIsNotFalsy',
   BooleanIsNotNull = 'BooleanIsNotNull',
 
   TsIsAnyValue = 'TsIsAnyValue',

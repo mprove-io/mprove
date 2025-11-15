@@ -53,39 +53,49 @@ export class FractionBooleanComponent {
     },
     {
       operator: FractionOperatorEnum.And,
-      label: 'is true',
+      label: 'is =true',
       value: FractionTypeEnum.BooleanIsTrue
     },
     {
       operator: FractionOperatorEnum.And,
-      label: 'is false or null',
-      value: FractionTypeEnum.BooleanIsFalseOrNull
+      label: 'is true',
+      value: FractionTypeEnum.BooleanIsTruthy
     },
     {
       operator: FractionOperatorEnum.And,
-      label: 'is false (not null)',
+      label: 'is =false',
       value: FractionTypeEnum.BooleanIsFalse
+    },
+    {
+      operator: FractionOperatorEnum.And,
+      label: 'is false',
+      value: FractionTypeEnum.BooleanIsFalsy
     },
     {
       operator: FractionOperatorEnum.And,
       label: 'is null',
       value: FractionTypeEnum.BooleanIsNull
     },
-    // {
-    //   operator: FractionOperatorEnum.And, // TODO: check malloy progress - boolean filters
-    //   label: 'is not true',
-    //   value: FractionTypeEnum.BooleanIsNotTrue // not supported (malloy issue)
-    // },
-    // {
-    //   operator: FractionOperatorEnum.And,
-    //   label: 'is not false or null',
-    //   value: FractionTypeEnum.BooleanIsNotFalseOrNull // not supported (malloy issue)
-    // },
-    // {
-    //   operator: FractionOperatorEnum.And,
-    //   label: 'is not false',
-    //   value: FractionTypeEnum.BooleanIsNotFalse // not supported (malloy issue)
-    // },
+    {
+      operator: FractionOperatorEnum.And,
+      label: 'is not =true',
+      value: FractionTypeEnum.BooleanIsNotTrue
+    },
+    {
+      operator: FractionOperatorEnum.And,
+      label: 'is not true',
+      value: FractionTypeEnum.BooleanIsNotTruthy
+    },
+    {
+      operator: FractionOperatorEnum.And,
+      label: 'is not =false',
+      value: FractionTypeEnum.BooleanIsNotFalse
+    },
+    {
+      operator: FractionOperatorEnum.And,
+      label: 'is not false',
+      value: FractionTypeEnum.BooleanIsNotFalsy
+    },
     {
       operator: FractionOperatorEnum.And,
       label: 'is not null',
@@ -121,6 +131,21 @@ export class FractionBooleanComponent {
       }
 
       case FractionTypeEnum.BooleanIsTrue: {
+        let mBrick = 'f`=true`';
+
+        this.fraction = {
+          brick: mBrick,
+          parentBrick: mBrick,
+          operator: FractionOperatorEnum.And,
+          type: fractionType
+        };
+
+        this.emitFractionUpdate();
+
+        break;
+      }
+
+      case FractionTypeEnum.BooleanIsTruthy: {
         let mBrick = 'f`true`';
 
         this.fraction = {
@@ -150,7 +175,7 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case FractionTypeEnum.BooleanIsFalseOrNull: {
+      case FractionTypeEnum.BooleanIsFalsy: {
         let mBrick = 'f`false`';
 
         this.fraction = {
@@ -181,6 +206,21 @@ export class FractionBooleanComponent {
       }
 
       case FractionTypeEnum.BooleanIsNotTrue: {
+        let mBrick = 'f`not =true`';
+
+        this.fraction = {
+          brick: mBrick,
+          parentBrick: mBrick,
+          operator: FractionOperatorEnum.And,
+          type: fractionType
+        };
+
+        this.emitFractionUpdate();
+
+        break;
+      }
+
+      case FractionTypeEnum.BooleanIsNotTruthy: {
         let mBrick = 'f`not true`';
 
         this.fraction = {
@@ -210,7 +250,7 @@ export class FractionBooleanComponent {
         break;
       }
 
-      case FractionTypeEnum.BooleanIsNotFalseOrNull: {
+      case FractionTypeEnum.BooleanIsNotFalsy: {
         let mBrick = 'f`not false`';
 
         this.fraction = {

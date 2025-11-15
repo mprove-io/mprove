@@ -9,6 +9,7 @@
 
 apps/integra/cypress
 dist
+malloy
 node_modules
 nogit
 _nogit

@@ -55,12 +55,13 @@ export function processMalloyWhereOrHaving(item: {
       fraction =>
         [
           FractionTypeEnum.BooleanIsTrue,
+          FractionTypeEnum.BooleanIsTruthy,
           FractionTypeEnum.BooleanIsFalse,
-          FractionTypeEnum.BooleanIsFalseOrNull,
+          FractionTypeEnum.BooleanIsFalsy,
           FractionTypeEnum.BooleanIsNull,
           FractionTypeEnum.BooleanIsNotTrue,
           FractionTypeEnum.BooleanIsNotFalse,
-          FractionTypeEnum.BooleanIsNotFalseOrNull,
+          FractionTypeEnum.BooleanIsNotFalsy,
           FractionTypeEnum.BooleanIsNotNull
         ].indexOf(fraction.type) > -1
     );
@@ -71,12 +72,13 @@ export function processMalloyWhereOrHaving(item: {
         fraction.brick !== MALLOY_FILTER_ANY &&
         [
           FractionTypeEnum.BooleanIsTrue,
+          FractionTypeEnum.BooleanIsTruthy,
           FractionTypeEnum.BooleanIsFalse,
-          FractionTypeEnum.BooleanIsFalseOrNull,
+          FractionTypeEnum.BooleanIsFalsy,
           FractionTypeEnum.BooleanIsNull,
           FractionTypeEnum.BooleanIsNotTrue,
           FractionTypeEnum.BooleanIsNotFalse,
-          FractionTypeEnum.BooleanIsNotFalseOrNull,
+          FractionTypeEnum.BooleanIsNotFalsy,
           FractionTypeEnum.BooleanIsNotNull
         ].indexOf(fraction.type) < 0
     );
@@ -87,12 +89,13 @@ export function processMalloyWhereOrHaving(item: {
         fraction.brick !== MALLOY_FILTER_ANY &&
         [
           FractionTypeEnum.BooleanIsTrue,
+          FractionTypeEnum.BooleanIsTruthy,
           FractionTypeEnum.BooleanIsFalse,
-          FractionTypeEnum.BooleanIsFalseOrNull,
+          FractionTypeEnum.BooleanIsFalsy,
           FractionTypeEnum.BooleanIsNull,
           FractionTypeEnum.BooleanIsNotTrue,
           FractionTypeEnum.BooleanIsNotFalse,
-          FractionTypeEnum.BooleanIsNotFalseOrNull,
+          FractionTypeEnum.BooleanIsNotFalsy,
           FractionTypeEnum.BooleanIsNotNull
         ].indexOf(fraction.type) < 0
     );
@@ -130,6 +133,25 @@ export function processMalloyWhereOrHaving(item: {
         }
       });
     }
+
+    // if (ANDs.length > 0) {
+    //   let fstrANDs =
+    //     filterModelField.result === FieldResultEnum.String
+    //       ? ANDs.map(y => y.brick.slice(2, -1)).join(', ')
+    //       : filterModelField.result === FieldResultEnum.Number
+    //         ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
+    //         : filterModelField.result === FieldResultEnum.Ts
+    //           ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
+    //           : filterModelField.result === FieldResultEnum.Date
+    //             ? ANDs.map(y => y.brick.slice(2, -1)).join(' and ')
+    //             : undefined;
+
+    //   if (modelField.fieldClass === FieldClassEnum.Dimension) {
+    //     segment0.addWhere(filterFieldName, filterFieldPath, fstrANDs);
+    //   } else {
+    //     segment0.addHaving(filterFieldName, filterFieldPath, fstrANDs);
+    //   }
+    // }
 
     if (booleanValues.length > 0) {
       booleanValues.forEach(x => {
