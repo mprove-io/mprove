@@ -394,7 +394,7 @@ export function wrapModels(item: {
       // console.log(byteCountA);
       // fse.writeFile(`${x.name}-full.json`, strA);
 
-      malloyModelDef.references = [];
+      // malloyModelDef.references = [];
 
       // let strB = JSON.stringify(malloyModelDef);
       // let byteCountB = new TextEncoder().encode(strB).byteLength;
