@@ -19,7 +19,7 @@ services:
       - 6379:6379
 
   rabbit:
-    image: rabbitmq:3.10.6-management
+    image: rabbitmq:4.2.1-management
     environment:
       - RABBITMQ_DEFAULT_USER=$COMPOSE_RABBITMQ_DEFAULT_USER
       - RABBITMQ_DEFAULT_PASS=$COMPOSE_RABBITMQ_DEFAULT_PASS
