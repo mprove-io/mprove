@@ -1,4 +1,4 @@
-FROM node:20.19.0-bullseye
+FROM node:20.19.5-bookworm
 
 WORKDIR /usr/src/app
 # RUN npm config set scripts-prepend-node-path true
