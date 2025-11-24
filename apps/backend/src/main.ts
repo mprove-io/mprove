@@ -21,7 +21,14 @@ async function bootstrap() {
     logToConsoleFn: logToConsoleBackend
   });
 
-  let config = getConfig();
+  let config;
+
+  try {
+    config = getConfig();
+  } catch (e) {
+    console.log(e);
+    throw new Error('wrong env vars, main.ts');
+  }
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(

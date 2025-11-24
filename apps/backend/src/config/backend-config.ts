@@ -40,9 +40,11 @@ export class BackendConfig {
   @IsBoolean()
   isScheduler?: boolean;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhBigqueryCredentialsPath?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhGoogleApiCredentialsPath?: string;
 
@@ -159,9 +161,11 @@ export class BackendConfig {
   @IsString()
   demoProjectDwhSnowflakeUsername?: string;
 
+  // @IsOptional()
   @IsString()
   demoProjectDwhSnowflakePassword?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhMotherDuckToken?: string;
 
