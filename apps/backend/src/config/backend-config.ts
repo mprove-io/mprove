@@ -161,7 +161,7 @@ export class BackendConfig {
   @IsString()
   demoProjectDwhSnowflakeUsername?: string;
 
-  // @IsOptional()
+  @IsOptional()
   @IsString()
   demoProjectDwhSnowflakePassword?: string;
 
