@@ -70,7 +70,9 @@ export class TabService {
     this.keyTag = this.cs.get<BackendConfig['aesKeyTag']>('aesKeyTag');
 
     let prevKeyBase64 = this.cs.get<BackendConfig['prevAesKey']>('prevAesKey');
-    this.prevKeyBuffer = Buffer.from(prevKeyBase64, 'base64');
+    this.prevKeyBuffer = isDefined(prevKeyBase64)
+      ? Buffer.from(prevKeyBase64, 'base64')
+      : undefined;
 
     this.prevKeyTag =
       this.cs.get<BackendConfig['prevAesKeyTag']>('prevAesKeyTag');
@@ -135,9 +137,9 @@ export class TabService {
     }
 
     let keyBuffer =
-      ent.keyTag === this.keyTag
+      isDefined(ent.keyTag) && ent.keyTag === this.keyTag
         ? this.keyBuffer
-        : ent.keyTag === this.prevKeyTag
+        : isDefined(ent.keyTag) && ent.keyTag === this.prevKeyTag
           ? this.prevKeyBuffer
           : undefined;
 
