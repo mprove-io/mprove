@@ -1,4 +1,11 @@
-import { IsBoolean, IsEnum, IsInt, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString
+} from 'class-validator';
 import { EmailTransportEnum } from '~common/enums/email-transport.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
@@ -19,9 +26,11 @@ export class BackendConfig {
   @IsString()
   aesKeyTag?: string;
 
+  @IsOptional()
   @IsString()
   prevAesKey?: string;
 
+  @IsOptional()
   @IsString()
   prevAesKeyTag?: string;
 
@@ -58,72 +67,95 @@ export class BackendConfig {
   @IsBoolean()
   seedDemoOrgAndProject?: boolean;
 
+  @IsOptional()
   @IsString()
   demoOrgId?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectId?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectName?: string;
 
+  @IsOptional()
   @IsEnum(ProjectRemoteTypeEnum)
   demoProjectRemoteType?: ProjectRemoteTypeEnum;
 
+  @IsOptional()
   @IsString()
   demoProjectRemoteGitUrl?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectRemotePrivateKeyEncryptedPath?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectRemotePublicKeyPath?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectRemotePassPhrase?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhPostgresHost?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhPostgresPassword?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhClickhousePassword?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhMysqlHost?: string;
 
+  @IsOptional()
   @IsNumber()
   demoProjectDwhMysqlPort?: number;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhMysqlDatabase?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhMysqlUser?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhMysqlPassword?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhTrinoUser?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhTrinoPassword?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhPrestoUser?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhPrestoPassword?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhSnowflakeAccount?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhSnowflakeWarehouse?: string;
 
+  @IsOptional()
   @IsString()
   demoProjectDwhSnowflakeUsername?: string;
 

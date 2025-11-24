@@ -134,11 +134,11 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_HOST ||
       envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_HOST,
 
-    demoProjectDwhMysqlPort: Number(
-      isDefined(process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT)
-        ? process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT
-        : envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT
-    ),
+    demoProjectDwhMysqlPort: isDefined(
+      process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT
+    )
+      ? Number(process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT)
+      : Number(envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT),
 
     demoProjectDwhMysqlDatabase:
       process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_DATABASE ||
@@ -192,11 +192,9 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_CALC_POSTGRES_HOST ||
       envFile.BACKEND_CALC_POSTGRES_HOST,
 
-    calcPostgresPort: Number(
-      isDefined(process.env.BACKEND_CALC_POSTGRES_PORT)
-        ? process.env.BACKEND_CALC_POSTGRES_PORT
-        : envFile.BACKEND_CALC_POSTGRES_PORT
-    ),
+    calcPostgresPort: isDefined(process.env.BACKEND_CALC_POSTGRES_PORT)
+      ? Number(process.env.BACKEND_CALC_POSTGRES_PORT)
+      : Number(envFile.BACKEND_CALC_POSTGRES_PORT),
 
     calcPostgresUsername:
       process.env.BACKEND_CALC_POSTGRES_USERNAME ||
@@ -236,11 +234,9 @@ export function getDevConfig(envFilePath: any) {
 
     smtpHost: process.env.BACKEND_SMTP_HOST || envFile.BACKEND_SMTP_HOST,
 
-    smtpPort: Number(
-      isDefined(process.env.BACKEND_SMTP_PORT)
-        ? process.env.BACKEND_SMTP_PORT
-        : envFile.BACKEND_SMTP_PORT
-    ),
+    smtpPort: isDefined(process.env.BACKEND_SMTP_PORT)
+      ? Number(process.env.BACKEND_SMTP_PORT)
+      : Number(envFile.BACKEND_SMTP_PORT),
 
     smtpSecure: enumToBoolean({
       value: process.env.BACKEND_SMTP_SECURE || envFile.BACKEND_SMTP_SECURE,

@@ -34,11 +34,9 @@ export function getDevConfig(envFilePath: any) {
       name: 'BLOCKML_COPY_LOGS_TO_MODELS'
     }),
     logsPath: process.env.BLOCKML_LOGS_PATH || envFile.BLOCKML_LOGS_PATH,
-    concurrencyLimit: Number(
-      isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
-        ? process.env.BLOCKML_CONCURRENCY_LIMIT
-        : envFile.BLOCKML_CONCURRENCY_LIMIT
-    ),
+    concurrencyLimit: isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
+      ? Number(process.env.BLOCKML_CONCURRENCY_LIMIT)
+      : Number(envFile.BLOCKML_CONCURRENCY_LIMIT),
 
     blockmlRabbitUser:
       process.env.BLOCKML_RABBIT_USER || envFile.BLOCKML_RABBIT_USER,
