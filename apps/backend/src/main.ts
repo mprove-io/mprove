@@ -21,14 +21,7 @@ async function bootstrap() {
     logToConsoleFn: logToConsoleBackend
   });
 
-  let config;
-
-  try {
-    config = getConfig();
-  } catch (e) {
-    console.log(e);
-    throw new Error('wrong env vars, main.ts');
-  }
+  let config = getConfig();
 
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(
@@ -48,4 +41,8 @@ async function bootstrap() {
 
   await app.listen(process.env.LISTEN_PORT || 3000);
 }
-bootstrap();
+
+bootstrap().catch(err => {
+  console.error('Bootstrap failed:', err);
+  process.exit(1);
+});

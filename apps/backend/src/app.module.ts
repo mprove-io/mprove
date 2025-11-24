@@ -67,13 +67,6 @@ import { TabService } from './services/tab.service';
 
 let retry = require('async-retry');
 
-try {
-  let config = getConfig(); // check error once
-} catch (e) {
-  console.log(e);
-  throw new Error('wrong env vars, app.module.ts');
-}
-
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
   isGlobal: true
