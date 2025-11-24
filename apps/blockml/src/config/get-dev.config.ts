@@ -36,7 +36,9 @@ export function getDevConfig(envFilePath: any) {
     logsPath: process.env.BLOCKML_LOGS_PATH || envFile.BLOCKML_LOGS_PATH,
     concurrencyLimit: isDefined(process.env.BLOCKML_CONCURRENCY_LIMIT)
       ? Number(process.env.BLOCKML_CONCURRENCY_LIMIT)
-      : Number(envFile.BLOCKML_CONCURRENCY_LIMIT),
+      : isDefined(envFile.BLOCKML_CONCURRENCY_LIMIT)
+        ? Number(envFile.BLOCKML_CONCURRENCY_LIMIT)
+        : undefined,
 
     blockmlRabbitUser:
       process.env.BLOCKML_RABBIT_USER || envFile.BLOCKML_RABBIT_USER,

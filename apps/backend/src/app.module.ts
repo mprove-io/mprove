@@ -67,6 +67,8 @@ import { TabService } from './services/tab.service';
 
 let retry = require('async-retry');
 
+let devConfig = getConfig(); // check error once
+
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
   isGlobal: true

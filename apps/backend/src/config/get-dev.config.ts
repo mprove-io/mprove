@@ -138,7 +138,9 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT
     )
       ? Number(process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT)
-      : Number(envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT),
+      : isDefined(envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT)
+        ? Number(envFile.BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT)
+        : undefined,
 
     demoProjectDwhMysqlDatabase:
       process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_DATABASE ||
@@ -194,7 +196,9 @@ export function getDevConfig(envFilePath: any) {
 
     calcPostgresPort: isDefined(process.env.BACKEND_CALC_POSTGRES_PORT)
       ? Number(process.env.BACKEND_CALC_POSTGRES_PORT)
-      : Number(envFile.BACKEND_CALC_POSTGRES_PORT),
+      : isDefined(envFile.BACKEND_CALC_POSTGRES_PORT)
+        ? Number(envFile.BACKEND_CALC_POSTGRES_PORT)
+        : undefined,
 
     calcPostgresUsername:
       process.env.BACKEND_CALC_POSTGRES_USERNAME ||
@@ -236,7 +240,9 @@ export function getDevConfig(envFilePath: any) {
 
     smtpPort: isDefined(process.env.BACKEND_SMTP_PORT)
       ? Number(process.env.BACKEND_SMTP_PORT)
-      : Number(envFile.BACKEND_SMTP_PORT),
+      : isDefined(envFile.BACKEND_SMTP_PORT)
+        ? Number(envFile.BACKEND_SMTP_PORT)
+        : undefined,
 
     smtpSecure: enumToBoolean({
       value: process.env.BACKEND_SMTP_SECURE || envFile.BACKEND_SMTP_SECURE,

@@ -21,6 +21,8 @@ import { logToConsoleBlockml } from './functions/extra/log-to-console-blockml';
 import { BmError } from './models/bm-error';
 import { PresetsService } from './services/presets.service';
 
+let devConfig = getConfig(); // check error once
+
 @Module({
   imports: [
     ConfigModule.forRoot({

@@ -8,6 +8,8 @@ import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
 
+let devConfig = getConfig(); // check error once
+
 @Module({
   imports: [
     ConfigModule.forRoot({
