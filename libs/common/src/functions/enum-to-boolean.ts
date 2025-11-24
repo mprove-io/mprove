@@ -9,7 +9,7 @@ export function enumToBoolean(item: {
   let { value, name } = item;
 
   if ([BoolEnum.TRUE, BoolEnum.FALSE].indexOf(value as BoolEnum) < 0) {
-    console.log('ENV_VAR_VALUE_MUST_BE_TRUE_OR_FALSE');
+    console.log('ENV_VAR_VALUE_MUST_BE_TRUE_OR_FALSE - ', name);
 
     throw new ServerError({
       message: ErEnum.ENV_VAR_VALUE_MUST_BE_TRUE_OR_FALSE,
