@@ -1,12 +1,12 @@
 services:
-  disk:
-    image: ghcr.io/mprove-io/mprove-lab-disk:$MPROVE_RELEASE_TAG
+  backend:
+    image: ghcr.io/mprove-io/mprove-lab-backend:$MPROVE_RELEASE_TAG
 
   blockml:
     image: ghcr.io/mprove-io/mprove-lab-blockml:$MPROVE_RELEASE_TAG
 
-  backend:
-    image: ghcr.io/mprove-io/mprove-lab-backend:$MPROVE_RELEASE_TAG
+  disk:
+    image: ghcr.io/mprove-io/mprove-lab-disk:$MPROVE_RELEASE_TAG
 
   front:
     image: ghcr.io/mprove-io/mprove-lab-front:$MPROVE_RELEASE_TAG

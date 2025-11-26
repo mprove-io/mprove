@@ -28,38 +28,13 @@ services:
       - 5672:5672
       - 15672:15672
 
-  disk:
-    build:
-      context: ./
-      dockerfile: tools/docker/disk.Dockerfile
-    image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/disk/main.js'
-    volumes:
-      - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
-      - type: bind
-        source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
-        target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
-
-  blockml:
-    build:
-      context: ./
-      dockerfile: tools/docker/blockml.Dockerfile
-    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'
-    volumes:
-      - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
+  calc-postgres:
+    image: postgres:17.6
+    environment:
+      POSTGRES_PASSWORD: $COMPOSE_CALC_POSTGRES_PASSWORD
+      PGPORT: 5437
+    ports:
+      - 5437:5437
 
   backend:
     build:
@@ -90,6 +65,39 @@ services:
         source: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
         target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_PATH
 
+  blockml:
+    build:
+      context: ./
+      dockerfile: tools/docker/blockml.Dockerfile
+    image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH
+    depends_on:
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
+
+  disk:
+    build:
+      context: ./
+      dockerfile: tools/docker/disk.Dockerfile
+    image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH
+    depends_on:
+      - rabbit
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/disk/main.js'
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
+      - type: bind
+        source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
+        target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
+
   front:
     build:
       context: ./
@@ -97,14 +105,6 @@ services:
     image: ghcr.io/mprove-io/mprove-front:$MPROVE_RELEASE_TAG
     ports:
       - 3003:80
-
-  calc-postgres:
-    image: postgres:17.6
-    environment:
-      POSTGRES_PASSWORD: $COMPOSE_CALC_POSTGRES_PASSWORD
-      PGPORT: 5437
-    ports:
-      - 5437:5437
 
   dwh-postgres:
     build:

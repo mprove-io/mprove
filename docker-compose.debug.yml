@@ -1,12 +1,12 @@
 services:
-  disk:
+  backend:
     ports:
-      - 9230:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:disk'
+      - 9232:9229
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
     volumes:
       - type: bind
-        source: $COMPOSE_DIST_APPS_DISK_SOURCE_PATH
-        target: /usr/src/app/dist/apps/disk
+        source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
+        target: /usr/src/app/dist/apps/backend
 
   blockml:
     ports:
@@ -17,14 +17,14 @@ services:
         source: $COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH
         target: /usr/src/app/dist/apps/blockml
 
-  backend:
+  disk:
     ports:
-      - 9232:9229
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- yarn serve:backend'
+      - 9230:9229
+    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- yarn serve:disk'
     volumes:
       - type: bind
-        source: $COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH
-        target: /usr/src/app/dist/apps/backend
+        source: $COMPOSE_DIST_APPS_DISK_SOURCE_PATH
+        target: /usr/src/app/dist/apps/disk
 
   mcli:
     command: sh -c 'yarn ava:mcli'        
