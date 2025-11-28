@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import {
@@ -7,10 +7,12 @@ import {
   ThrottlerStorage
 } from '@nestjs/throttler';
 import { BackendConfig } from '~backend/config/backend-config';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { RESTRICTED_USER_EMAIL } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
+import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
-import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
 import { ServerError } from '~common/models/server-error';
 
 @Injectable()
@@ -19,7 +21,8 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
     options: ThrottlerModuleOptions,
     storageService: ThrottlerStorage,
     reflector: Reflector,
-    private cs: ConfigService<BackendConfig>
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
   ) {
     super(options, storageService, reflector);
   }
@@ -41,6 +44,8 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
       });
     }
 
+    let tracker;
+
     if (req.user.email === RESTRICTED_USER_EMAIL) {
       let now = new Date();
 
@@ -58,14 +63,36 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
 
       let currentMinuteStartTs = Math.floor(utc.getTime() / 1000);
 
-      let ip = req.ip || req.ips?.[0] || 'unknown';
+      let ipHeaderA = this.cs.get<BackendConfig['backendRequestIpHeaderA']>(
+        'backendRequestIpHeaderA'
+      );
 
-      let suffix =
-        isUndefinedOrEmpty(ip) || ip === 'unknown' ? currentMinuteStartTs : ip;
+      let ipFromHeader = isDefinedAndNotEmpty(ipHeaderA)
+        ? req.headers[ipHeaderA]
+        : undefined;
 
-      return `${req.user.userId}-${suffix}`;
+      let ip = ipFromHeader || req.ip || req.ips?.[0] || 'unknownIp';
+
+      let suffix = ip === 'unknownIp' ? currentMinuteStartTs : ip;
+
+      tracker = `${req.user.userId}-${suffix}`;
     } else {
-      return req.user.userId;
+      tracker = req.user.userId;
     }
+
+    let isLogThrottleTracker = this.cs.get<
+      BackendConfig['backendLogThrottleTracker']
+    >('backendLogThrottleTracker');
+
+    if (isLogThrottleTracker === true) {
+      logToConsoleBackend({
+        log: `ThrottlerUserIdGuard - ${req.originalUrl} - tracker is "${tracker}"`,
+        logLevel: LogLevelEnum.Info,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }
+
+    return tracker;
   }
 }

@@ -17,18 +17,20 @@ export const IDEMP_EXPIRE_SECONDS = 600;
 
 export const SKIP_JWT = 'skipJwt';
 
+export const THROTTLE_MULTIPLIER = 3;
+
 export const THROTTLE_CUSTOM = {
   '1s': {
-    limit: 5 * 2
+    limit: 5 * THROTTLE_MULTIPLIER
   },
   '5s': {
-    limit: 10 * 2
+    limit: 10 * THROTTLE_MULTIPLIER
   },
   '60s': {
-    limit: 60 * 2
+    limit: 60 * THROTTLE_MULTIPLIER
   },
   '600s': {
-    limit: 5 * 60 * 2,
+    limit: 5 * 60 * THROTTLE_MULTIPLIER,
     blockDuration: seconds(12 * 60 * 60) // 12h
   }
 };

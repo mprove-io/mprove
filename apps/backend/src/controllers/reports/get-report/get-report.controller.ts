@@ -25,7 +25,10 @@ import { StructsService } from '~backend/services/db/structs.service';
 import { ReportDataService } from '~backend/services/report-data.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
-import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
+import {
+  DEFAULT_SRV_UI,
+  THROTTLE_MULTIPLIER
+} from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '~common/functions/make-copy';
 import {
@@ -39,16 +42,16 @@ let retry = require('async-retry');
 // reports.component.ts -> startCheckRunning()
 @Throttle({
   '1s': {
-    limit: 3 * 2 * 1.5
+    limit: 3 * THROTTLE_MULTIPLIER * 1.5
   },
   '5s': {
-    limit: 5 * 2 * 1.5
+    limit: 5 * THROTTLE_MULTIPLIER * 1.5
   },
   '60s': {
-    limit: (60 / 2) * 2 * 1.5
+    limit: (60 / 2) * THROTTLE_MULTIPLIER * 1.5
   },
   '600s': {
-    limit: 10 * (60 / 2) * 2 * 1.5,
+    limit: 10 * (60 / 2) * THROTTLE_MULTIPLIER * 1.5,
     blockDuration: seconds(12 * 60 * 60)
   }
 })

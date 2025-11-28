@@ -19,7 +19,10 @@ import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { TabService } from '~backend/services/tab.service';
 import { PATH_UPDATE_PASSWORD } from '~common/constants/top';
-import { PASSWORD_EXPIRES_OFFSET } from '~common/constants/top-backend';
+import {
+  PASSWORD_EXPIRES_OFFSET,
+  THROTTLE_MULTIPLIER
+} from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '~common/functions/make-id';
 import { ToBackendResetUserPasswordRequest } from '~common/interfaces/to-backend/users/to-backend-reset-user-password';
@@ -30,17 +33,17 @@ let retry = require('async-retry');
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
 @Throttle({
   '1s': {
-    limit: 2 * 2
+    limit: 2 * THROTTLE_MULTIPLIER
   },
   '5s': {
-    limit: 3 * 2
+    limit: 3 * THROTTLE_MULTIPLIER
   },
   // '60s': {
-  //   limit: 5 * 2,
+  //   limit: 5 * THROTTLE_MULTIPLIER,
   //   blockDuration: seconds(1 * 60 * 60)
   // },
   '24h': {
-    limit: 10 * 2,
+    limit: 10 * THROTTLE_MULTIPLIER,
     blockDuration: seconds(24 * 60 * 60)
   }
 })

@@ -23,7 +23,10 @@ import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
 import { RESTRICTED_USER_ALIAS } from '~common/constants/top';
-import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
+import {
+  DEFAULT_SRV_UI,
+  THROTTLE_MULTIPLIER
+} from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
@@ -42,17 +45,17 @@ let retry = require('async-retry');
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
 @Throttle({
   '1s': {
-    limit: 2 * 2
+    limit: 2 * THROTTLE_MULTIPLIER
   },
   '5s': {
-    limit: 3 * 2
+    limit: 3 * THROTTLE_MULTIPLIER
   },
   // '60s': {
-  //   limit: 5 * 2,
+  //   limit: 5 * THROTTLE_MULTIPLIER,
   //   blockDuration: seconds(1 * 60 * 60)
   // },
   '24h': {
-    limit: 10 * 2,
+    limit: 10 * THROTTLE_MULTIPLIER,
     blockDuration: seconds(24 * 60 * 60)
   }
 })

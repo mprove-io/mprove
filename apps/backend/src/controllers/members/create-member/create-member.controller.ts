@@ -51,7 +51,10 @@ import {
   PROJECT_ENV_PROD,
   RESTRICTED_USER_ALIAS
 } from '~common/constants/top';
-import { DEFAULT_SRV_UI } from '~common/constants/top-backend';
+import {
+  DEFAULT_SRV_UI,
+  THROTTLE_MULTIPLIER
+} from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
@@ -74,21 +77,21 @@ let retry = require('async-retry');
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle({
   '1s': {
-    limit: 3 * 2
+    limit: 3 * THROTTLE_MULTIPLIER
   },
   '5s': {
-    limit: 5 * 2
+    limit: 5 * THROTTLE_MULTIPLIER
   },
   '60s': {
-    limit: 20 * 2,
+    limit: 20 * THROTTLE_MULTIPLIER,
     blockDuration: seconds(60)
   },
   '600s': {
-    limit: 100 * 2,
+    limit: 100 * THROTTLE_MULTIPLIER,
     blockDuration: seconds(1 * 60 * 60)
   },
   '1h': {
-    limit: 200 * 2,
+    limit: 200 * THROTTLE_MULTIPLIER,
     blockDuration: seconds(24 * 60 * 60)
   }
 })

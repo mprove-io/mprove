@@ -23,6 +23,7 @@ import {
   RESTRICTED_USER_EMAIL,
   RESTRICTED_USER_PASSWORD
 } from '~common/constants/top';
+import { THROTTLE_MULTIPLIER } from '~common/constants/top-backend';
 import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ErEnum } from '~common/enums/er.enum';
@@ -150,25 +151,25 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
           name: '1s',
           ttl: seconds(1),
           blockDuration: seconds(1),
-          limit: 10 * 2
+          limit: 10 * THROTTLE_MULTIPLIER
         },
         {
           name: '5s',
           ttl: seconds(5),
           blockDuration: seconds(5),
-          limit: 20 * 2
+          limit: 20 * THROTTLE_MULTIPLIER
         },
         {
           name: '60s',
           ttl: seconds(60),
           blockDuration: seconds(60),
-          limit: 100 * 2
+          limit: 100 * THROTTLE_MULTIPLIER
         },
         {
           name: '600s',
           ttl: seconds(600),
           blockDuration: seconds(12 * 60 * 60), // 12h
-          limit: 300 * 2
+          limit: 300 * THROTTLE_MULTIPLIER
         }
       ],
       storage: new ThrottlerStorageRedisService(redisClient)

@@ -26,6 +26,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
+import { THROTTLE_MULTIPLIER } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -50,16 +51,16 @@ let retry = require('async-retry');
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
 @Throttle({
   '1s': {
-    limit: 3 * 2
+    limit: 3 * THROTTLE_MULTIPLIER
   },
   '5s': {
-    limit: 5 * 2
+    limit: 5 * THROTTLE_MULTIPLIER
   },
   '60s': {
-    limit: 99999 * 2
+    limit: 99999 * THROTTLE_MULTIPLIER
   },
   '600s': {
-    limit: 99999 * 2
+    limit: 99999 * THROTTLE_MULTIPLIER
   }
 })
 @Controller()

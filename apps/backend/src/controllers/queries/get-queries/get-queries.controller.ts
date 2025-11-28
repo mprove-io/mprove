@@ -18,6 +18,7 @@ import { StructsService } from '~backend/services/db/structs.service';
 import { ParentService } from '~backend/services/parent.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
+import { THROTTLE_MULTIPLIER } from '~common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetQueriesRequest,
@@ -28,16 +29,16 @@ import {
 // dashboards.component.ts -> startCheckRunning()
 @Throttle({
   '1s': {
-    limit: 3 * 2 * 1.5
+    limit: 3 * THROTTLE_MULTIPLIER * 1.5
   },
   '5s': {
-    limit: 5 * 2 * 1.5
+    limit: 5 * THROTTLE_MULTIPLIER * 1.5
   },
   '60s': {
-    limit: (60 / 3) * 2 * 1.5
+    limit: (60 / 3) * THROTTLE_MULTIPLIER * 1.5
   },
   '600s': {
-    limit: 10 * (60 / 3) * 2 * 1.5,
+    limit: 10 * (60 / 3) * THROTTLE_MULTIPLIER * 1.5,
     blockDuration: seconds(12 * 60 * 60)
   }
 })

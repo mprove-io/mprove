@@ -241,11 +241,18 @@ export class BackendConfig {
   @IsBoolean()
   backendIsPostgresTls?: boolean;
 
+  @IsOptional()
+  @IsString()
+  backendRequestIpHeaderA?: string;
+
   @IsBoolean()
   backendThrottlePublicRoutesByIp?: boolean;
 
   @IsBoolean()
   backendThrottlePrivateRoutesByUserId?: boolean;
+
+  @IsBoolean()
+  backendLogThrottleTracker?: boolean;
 
   @IsBoolean()
   backendLogDrizzlePostgres?: boolean;

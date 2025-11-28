@@ -9,6 +9,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { TabService } from '~backend/services/tab.service';
+import { THROTTLE_MULTIPLIER } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -22,17 +23,17 @@ import { ServerError } from '~common/models/server-error';
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
 @Throttle({
   '1s': {
-    limit: 2 * 2
+    limit: 2 * THROTTLE_MULTIPLIER
   },
   '5s': {
-    limit: 3 * 2
+    limit: 3 * THROTTLE_MULTIPLIER
   },
   // '60s': {
-  //   limit: 5 * 2,
+  //   limit: 5 * THROTTLE_MULTIPLIER,
   //   blockDuration: seconds(1 * 60 * 60)
   // },
   '24h': {
-    limit: 10 * 2,
+    limit: 10 * THROTTLE_MULTIPLIER,
     blockDuration: seconds(24 * 60 * 60)
   }
 })

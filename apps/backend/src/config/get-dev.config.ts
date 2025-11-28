@@ -287,6 +287,10 @@ export function getDevConfig(envFilePath: any) {
       name: 'BACKEND_IS_POSTGRES_TLS'
     }),
 
+    backendRequestIpHeaderA:
+      process.env.BACKEND_REQUEST_IP_HEADER_A ||
+      envFile.BACKEND_REQUEST_IP_HEADER_A,
+
     backendThrottlePublicRoutesByIp: enumToBoolean({
       value:
         process.env.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP ||
@@ -299,6 +303,13 @@ export function getDevConfig(envFilePath: any) {
         process.env.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID ||
         envFile.BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID,
       name: 'BACKEND_THROTTLE_PRIVATE_ROUTES_BY_USER_ID'
+    }),
+
+    backendLogThrottleTracker: enumToBoolean({
+      value:
+        process.env.BACKEND_LOG_THROTTLE_TRACKER ||
+        envFile.BACKEND_LOG_THROTTLE_TRACKER,
+      name: 'BACKEND_LOG_THROTTLE_TRACKER'
     }),
 
     backendLogDrizzlePostgres: enumToBoolean({
