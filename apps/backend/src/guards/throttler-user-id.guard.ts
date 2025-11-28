@@ -86,7 +86,7 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
 
     if (isLogThrottleTracker === true) {
       logToConsoleBackend({
-        log: `ThrottlerUserIdGuard - ${req.originalUrl} - tracker is "${tracker}"`,
+        log: `ThrottlerUserIdGuard - ${req.originalUrl} - tracker: ${tracker}`,
         logLevel: LogLevelEnum.Info,
         logger: this.logger,
         cs: this.cs

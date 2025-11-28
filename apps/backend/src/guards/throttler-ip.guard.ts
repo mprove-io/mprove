@@ -68,7 +68,7 @@ export class ThrottlerIpGuard extends ThrottlerGuard {
 
     if (isLogThrottleTracker === true) {
       logToConsoleBackend({
-        log: `ThrottlerIpGuard - ${req.originalUrl} - tracker is "${tracker}"`,
+        log: `ThrottlerIpGuard - ${req.originalUrl} - tracker: ${tracker}`,
         logLevel: LogLevelEnum.Info,
         logger: this.logger,
         cs: this.cs
