@@ -58,11 +58,14 @@ export class ThrottlerIpGuard extends ThrottlerGuard {
       'backendRequestIpHeaderB'
     );
 
-    let ipFromHeader = isDefinedAndNotEmpty(ipHeaderA)
-      ? req.headers[ipHeaderA]
-      : isDefinedAndNotEmpty(ipHeaderB)
-        ? req.headers[ipHeaderB]
-        : undefined;
+    let ipFromHeader =
+      isDefinedAndNotEmpty(ipHeaderA) &&
+      isDefinedAndNotEmpty(req.headers[ipHeaderA])
+        ? req.headers[ipHeaderA]
+        : isDefinedAndNotEmpty(ipHeaderB) &&
+            isDefinedAndNotEmpty(req.headers[ipHeaderB])
+          ? req.headers[ipHeaderB]
+          : undefined;
 
     let ip = ipFromHeader || req.ip || req.ips?.[0] || 'unknownIp';
 
@@ -73,9 +76,6 @@ export class ThrottlerIpGuard extends ThrottlerGuard {
     >('backendLogThrottleTracker');
 
     if (isLogThrottleTracker === true) {
-      console.log('req.headers');
-      console.log(req.headers);
-
       logToConsoleBackend({
         log: `ThrottlerIpGuard - ${req.originalUrl} - tracker: ${tracker}`,
         logLevel: LogLevelEnum.Info,
