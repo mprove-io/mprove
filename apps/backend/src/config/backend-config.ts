@@ -245,6 +245,10 @@ export class BackendConfig {
   @IsString()
   backendRequestIpHeaderA?: string;
 
+  @IsOptional()
+  @IsString()
+  backendRequestIpHeaderB?: string;
+
   @IsBoolean()
   backendThrottlePublicRoutesByIp?: boolean;
 

@@ -54,9 +54,15 @@ export class ThrottlerIpGuard extends ThrottlerGuard {
       'backendRequestIpHeaderA'
     );
 
+    let ipHeaderB = this.cs.get<BackendConfig['backendRequestIpHeaderB']>(
+      'backendRequestIpHeaderB'
+    );
+
     let ipFromHeader = isDefinedAndNotEmpty(ipHeaderA)
       ? req.headers[ipHeaderA]
-      : undefined;
+      : isDefinedAndNotEmpty(ipHeaderB)
+        ? req.headers[ipHeaderB]
+        : undefined;
 
     let ip = ipFromHeader || req.ip || req.ips?.[0] || 'unknownIp';
 

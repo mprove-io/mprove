@@ -291,6 +291,10 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_REQUEST_IP_HEADER_A ||
       envFile.BACKEND_REQUEST_IP_HEADER_A,
 
+    backendRequestIpHeaderB:
+      process.env.BACKEND_REQUEST_IP_HEADER_B ||
+      envFile.BACKEND_REQUEST_IP_HEADER_B,
+
     backendThrottlePublicRoutesByIp: enumToBoolean({
       value:
         process.env.BACKEND_THROTTLE_PUBLIC_ROUTES_BY_IP ||
