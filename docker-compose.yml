@@ -12,6 +12,24 @@ services:
         source: $COMPOSE_DB_VOLUME_SOURCE_PATH
         target: /var/lib/postgresql/18/docker
 
+  clickstack:
+    image: clickhouse/clickstack-all-in-one:2.9.0
+    container_name: clickstack-all-in-one
+    ports:
+      - 8080:8080
+      - 4317:4317
+      - 4318:4318
+    volumes:
+      - type: bind
+        source: $COMPOSE_CLICKSTACK_DB_VOLUME_SOURCE_PATH
+        target: /data/db
+      - type: bind
+        source: $COMPOSE_CLICKSTACK_CH_DATA_VOLUME_SOURCE_PATH
+        target: /var/lib/clickhouse
+      - type: bind
+        source: $COMPOSE_CLICKSTACK_CH_LOGS_VOLUME_SOURCE_PATH
+        target: /var/log/clickhouse-server
+
   valkey:
     image: valkey/valkey:8.1.4
     command: valkey-server --requirepass ${COMPOSE_VALKEY_PASSWORD} --save "" --appendonly no

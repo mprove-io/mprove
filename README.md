@@ -23,37 +23,39 @@ cd mprove
 #### 3. Create `mprove_data` directory
 
 ```
-mkdir -p mprove_data
+mkdir -p mprove_data && \
+mkdir -p mprove_data/blockml-data && \
+mkdir -p mprove_data/blockml-logs && \
+mkdir -p mprove_data/clickstack-db && \
+mkdir -p mprove_data/clickstack-ch-data && \
+mkdir -p mprove_data/clickstack-ch-logs && \
+mkdir -p mprove_data/db-main && \
+mkdir -p mprove_data/dwh-mysql && \
+mkdir -p mprove_data/dwh-postgres && \
+mkdir -p mprove_data/mcli-repos && \
+mkdir -p mprove_data/organizations
 ```
 
-#### 4. Clean `mprove_data`
-
-This command deletes the contents of `mprove_data` and recreates the subdirectories.
+#### 4. Create `secrets` directory and empty files
 
 ```
-yarn clean:mprove_data
+mkdir secrets && \
+echo {} > secrets/demo-project-bigquery-credentials.json && \
+echo '' > secrets/demo-project-remote-private-key-encrypted.pem && \
+echo '' > secrets/demo-project-remote-public-key.pem && \
+echo '' > secrets/presto/catalog/pgs.properties && \
+echo '' > secrets/presto/config.properties && \
+echo '' > secrets/trino/catalog/pgs.properties && \
+echo '' > secrets/trino/config.properties
 ```
 
-#### 5. Create `secrets` directory and files
-
-```
-mkdir secrets \
-  && echo {} > secrets/demo-project-bigquery-credentials.json \
-  && echo '' > secrets/demo-project-remote-private-key-encrypted.pem \
-  && echo '' > secrets/demo-project-remote-public-key.pem \
-  && echo '' > secrets/presto/catalog/pgs.properties \
-  && echo '' > secrets/presto/config.properties \
-  && echo '' > secrets/trino/catalog/pgs.properties \
-  && echo '' > secrets/trino/config.properties
-```
-
-#### 6. Run script to create ".env" file with generated values
+#### 5. Run script to create ".env" file with generated values
 
 ```
 yarn create-env
 ```
 
-#### 7. Modify `mprove/.env`
+#### 6. Modify `mprove/.env`
 
 Set most recent Mprove release tag from https://github.com/mprove-io/mprove/releases
 
@@ -81,13 +83,13 @@ BACKEND_SMTP_AUTH_USER=
 BACKEND_SMTP_AUTH_PASSWORD=
 ```
 
-#### 8. Run docker images
+#### 7. Run docker images
 
 ```
 docker-compose up --pull db calc-postgres rabbit valkey backend blockml disk front
 ```
 
-#### 9. Login
+#### 8. Login
 
 Open `http://localhost:3003` in Chrome.
 
