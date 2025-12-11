@@ -215,6 +215,9 @@ export class BackendConfig {
   smtpAuthPassword?: string;
 
   @IsString()
+  backendHyperdxIngestionApiKey?: string;
+
+  @IsString()
   backendValkeyHost?: string;
 
   @IsString()

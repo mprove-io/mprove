@@ -1,3 +1,10 @@
+import { startTracer } from '~node-common/functions/start-tracer';
+
+let tracerNodeSdk = startTracer({
+  hyperdxIngestionApiKey: process.env.DISK_HYPERDX_INGESTION_API_KEY,
+  serviceName: 'mprove-disk'
+});
+//
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '~common/constants/top-disk';
@@ -10,6 +17,7 @@ import { logToConsoleDisk } from './functions/log-to-console-disk';
 
 async function bootstrap() {
   listenProcessEvents({
+    tracerNodeSdk: tracerNodeSdk,
     appTerminated: ErEnum.DISK_APP_TERMINATED,
     uncaughtException: ErEnum.DISK_UNCAUGHT_EXCEPTION,
     unhandledRejectionReason: ErEnum.DISK_UNHANDLED_REJECTION_REASON,

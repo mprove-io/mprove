@@ -256,6 +256,10 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_SMTP_AUTH_PASSWORD ||
       envFile.BACKEND_SMTP_AUTH_PASSWORD,
 
+    backendHyperdxIngestionApiKey:
+      process.env.BACKEND_HYPERDX_INGESTION_API_KEY ||
+      envFile.BACKEND_HYPERDX_INGESTION_API_KEY,
+
     backendValkeyHost:
       process.env.BACKEND_VALKEY_HOST || envFile.BACKEND_VALKEY_HOST,
 

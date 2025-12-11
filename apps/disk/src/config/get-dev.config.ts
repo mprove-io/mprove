@@ -18,6 +18,10 @@ export function getDevConfig(envFilePath: any) {
 
     aesKey: process.env.DISK_AES_KEY || envFile.DISK_AES_KEY,
 
+    diskHyperdxIngestionApiKey:
+      process.env.DISK_HYPERDX_INGESTION_API_KEY ||
+      envFile.DISK_HYPERDX_INGESTION_API_KEY,
+
     diskRabbitUser: process.env.DISK_RABBIT_USER || envFile.DISK_RABBIT_USER,
     diskRabbitPass: process.env.DISK_RABBIT_PASS || envFile.DISK_RABBIT_PASS,
     diskRabbitHost: process.env.DISK_RABBIT_HOST || envFile.DISK_RABBIT_HOST,

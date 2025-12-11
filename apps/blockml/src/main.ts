@@ -1,3 +1,10 @@
+import { startTracer } from '~node-common/functions/start-tracer';
+
+let tracerNodeSdk = startTracer({
+  hyperdxIngestionApiKey: process.env.BLOCKML_HYPERDX_INGESTION_API_KEY,
+  serviceName: 'mprove-blockml'
+});
+//
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_BLOCKML } from '~common/constants/top-blockml';
@@ -10,6 +17,7 @@ import { logToConsoleBlockml } from './functions/extra/log-to-console-blockml';
 
 async function bootstrap() {
   listenProcessEvents({
+    tracerNodeSdk: tracerNodeSdk,
     appTerminated: ErEnum.BLOCKML_APP_TERMINATED,
     uncaughtException: ErEnum.BLOCKML_UNCAUGHT_EXCEPTION,
     unhandledRejectionReason: ErEnum.BLOCKML_UNHANDLED_REJECTION_REASON,

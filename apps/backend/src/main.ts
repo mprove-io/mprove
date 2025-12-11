@@ -1,3 +1,13 @@
+import { startTracer } from '~node-common/functions/start-tracer';
+
+let tracerNodeSdk = startTracer({
+  hyperdxIngestionApiKey: process.env.BACKEND_HYPERDX_INGESTION_API_KEY,
+  serviceName:
+    process.env.BACKEND_IS_SCHEDULER === 'TRUE'
+      ? 'mprove-backend-scheduler'
+      : 'mprove-backend'
+});
+//
 import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'body-parser';
 import { WinstonModule } from 'nest-winston';
@@ -14,6 +24,7 @@ import { logToConsoleBackend } from './functions/log-to-console-backend';
 
 async function bootstrap() {
   listenProcessEvents({
+    tracerNodeSdk: tracerNodeSdk,
     appTerminated: ErEnum.BACKEND_APP_TERMINATED,
     uncaughtException: ErEnum.BACKEND_UNCAUGHT_EXCEPTION,
     unhandledRejectionReason: ErEnum.BACKEND_UNHANDLED_REJECTION_REASON,

@@ -15,6 +15,9 @@ export class BlockmlConfig {
   @IsString()
   aesKey?: string;
 
+  @IsString()
+  blockmlHyperdxIngestionApiKey?: string;
+
   @IsBoolean()
   logIO?: boolean;
 
