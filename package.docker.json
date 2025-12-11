@@ -72,6 +72,7 @@
     "@opentelemetry/sdk-trace-base": "2.2.0",
     "@opentelemetry/resources": "2.2.0",
     "@opentelemetry/semantic-conventions": "1.38.0",
+    "@kubiks/otel-drizzle": "2.1.0",
     "ag-grid-angular": "33.3.0",
     "ag-grid-community": "33.3.0",
     "async-retry": "1.3.3",

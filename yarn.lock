@@ -4242,6 +4242,11 @@
   dependencies:
     tslib "^2.3.1"
 
+"@kubiks/otel-drizzle@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@kubiks/otel-drizzle/-/otel-drizzle-2.1.0.tgz#f2b193a9282b1c051cfea6269b19545450a61259"
+  integrity sha512-9UHb0od3jwa6zTWMyEYPIZcUq5PDaziCmQLMLakSK2zeqy12SFZ3SAGWXJTgEr8valn/Wa+DKVs+Z3aqKQUpvg==
+
 "@leeoniya/ufuzzy@1.0.18":
   version "1.0.18"
   resolved "https://registry.yarnpkg.com/@leeoniya/ufuzzy/-/ufuzzy-1.0.18.tgz#98e38c1308208bd47524aa2c53da0fe33dbbdab8"

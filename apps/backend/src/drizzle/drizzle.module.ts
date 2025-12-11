@@ -1,3 +1,4 @@
+import { instrumentDrizzleClient } from '@kubiks/otel-drizzle';
 import { Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DefaultLogger, DrizzleConfig } from 'drizzle-orm';
@@ -78,6 +79,10 @@ export interface Db {
 
         let postgresPoolDrizzle: NodePgDatabase<typeof schemaPostgres> =
           drizzlePg(postgresPool, pgDrizzleConfig);
+
+        instrumentDrizzleClient(postgresPoolDrizzle, {
+          dbSystem: 'postgresql'
+        });
 
         let postgresPacker = new DrizzlePacker(tabService, tabToEntService);
 
