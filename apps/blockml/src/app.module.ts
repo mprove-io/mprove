@@ -30,7 +30,7 @@ let devConfig = getConfig(); // check error once
       isGlobal: true
     }),
 
-    RabbitMQModule.forRootAsync(RabbitMQModule, {
+    RabbitMQModule.forRootAsync({
       useFactory: (cs: ConfigService<BlockmlConfig>) => {
         let rabbitUser =
           cs.get<BlockmlConfig['blockmlRabbitUser']>('blockmlRabbitUser');

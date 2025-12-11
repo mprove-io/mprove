@@ -30,7 +30,7 @@
     "@codemirror/language-data": "6.5.1",
     "@codemirror/view": "6.36.7",
     "@figma/nodegit": "0.28.0-figma.8",
-    "@golevelup/nestjs-rabbitmq": "5.4.0",
+    "@golevelup/nestjs-rabbitmq": "6.1.0",
     "@google-cloud/bigquery": "5.12.0",
     "@katoid/angular-grid-layout": "3.0.2",
     "@leeoniya/ufuzzy": "1.0.18",

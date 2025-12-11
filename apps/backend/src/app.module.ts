@@ -81,7 +81,7 @@ let jwtModule = JwtModule.registerAsync({
   })
 });
 
-let rabbitModule = RabbitMQModule.forRootAsync(RabbitMQModule, {
+let rabbitModule = RabbitMQModule.forRootAsync({
   inject: [ConfigService],
   useFactory: (cs: ConfigService<BackendConfig>) => {
     let rabbitUser =

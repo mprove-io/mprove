@@ -17,7 +17,7 @@ let devConfig = getConfig(); // check error once
       isGlobal: true
     }),
 
-    RabbitMQModule.forRootAsync(RabbitMQModule, {
+    RabbitMQModule.forRootAsync({
       useFactory: (cs: ConfigService<DiskConfig>) => {
         let rabbitUser = cs.get<DiskConfig['diskRabbitUser']>('diskRabbitUser');
         let rabbitPass = cs.get<DiskConfig['diskRabbitPass']>('diskRabbitPass');
