@@ -25,18 +25,21 @@ export function startTracer(item: {
     }),
     traceExporter,
     instrumentations: [
+      // node_modules/@opentelemetry/auto-instrumentations-node/build/src/utils.d.ts
       getNodeAutoInstrumentations({
-        '@opentelemetry/instrumentation-http': { enabled: true },
-        '@opentelemetry/instrumentation-express': { enabled: true },
         '@opentelemetry/instrumentation-amqplib': { enabled: true },
+        '@opentelemetry/instrumentation-express': { enabled: true },
+        '@opentelemetry/instrumentation-http': { enabled: true },
+        '@opentelemetry/instrumentation-ioredis': { enabled: true },
+        '@opentelemetry/instrumentation-redis': { enabled: true },
+        '@opentelemetry/instrumentation-nestjs-core': { enabled: true },
         //
-        '@opentelemetry/instrumentation-winston': { enabled: false },
+        '@opentelemetry/instrumentation-dns': { enabled: false },
+        '@opentelemetry/instrumentation-fs': { enabled: false },
         '@opentelemetry/instrumentation-mysql2': { enabled: false },
         '@opentelemetry/instrumentation-mysql': { enabled: false },
         '@opentelemetry/instrumentation-pg': { enabled: false },
-        '@opentelemetry/instrumentation-nestjs-core': { enabled: false },
-        '@opentelemetry/instrumentation-fs': { enabled: false },
-        '@opentelemetry/instrumentation-dns': { enabled: false }
+        '@opentelemetry/instrumentation-winston': { enabled: false }
       })
     ]
   });
