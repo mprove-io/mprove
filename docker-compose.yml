@@ -19,6 +19,8 @@ services:
       - 8080:8080
       - 4317:4317
       - 4318:4318
+    environment:
+      HYPERDX_APP_URL: $COMPOSE_CLICKSTACK_HYPERDX_APP_URL
     volumes:
       - type: bind
         source: $COMPOSE_CLICKSTACK_DB_VOLUME_SOURCE_PATH

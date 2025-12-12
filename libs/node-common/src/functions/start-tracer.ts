@@ -30,6 +30,9 @@ export function startTracer(item: {
         '@opentelemetry/instrumentation-express': { enabled: true },
         '@opentelemetry/instrumentation-amqplib': { enabled: true },
         //
+        '@opentelemetry/instrumentation-winston': { enabled: false },
+        '@opentelemetry/instrumentation-mysql2': { enabled: false },
+        '@opentelemetry/instrumentation-mysql': { enabled: false },
         '@opentelemetry/instrumentation-pg': { enabled: false },
         '@opentelemetry/instrumentation-nestjs-core': { enabled: false },
         '@opentelemetry/instrumentation-fs': { enabled: false },
