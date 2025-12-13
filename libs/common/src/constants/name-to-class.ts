@@ -343,5 +343,12 @@ export const nameToClass = {
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig]:
     ToBackendGetAvatarBigRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest
+  [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
+  //
+  [ToBackendRequestInfoNameEnum.ToBackendGLogs]: {},
+  [ToBackendRequestInfoNameEnum.ToBackendULogs]: {},
+  [ToBackendRequestInfoNameEnum.ToBackendGMetrics]: {},
+  [ToBackendRequestInfoNameEnum.ToBackendUMetrics]: {},
+  [ToBackendRequestInfoNameEnum.ToBackendGTraces]: {},
+  [ToBackendRequestInfoNameEnum.ToBackendUTraces]: {}
 };

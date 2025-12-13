@@ -95,6 +95,12 @@ import { SyncRepoController } from './controllers/repos/sync-repo/sync-repo.cont
 import { SpecialRebuildStructsController } from './controllers/special/special-rebuild-structs/special-rebuild-structs.controller';
 import { GetStructController } from './controllers/structs/get-struct/get-struct.controller';
 import { GetSuggestFieldsController } from './controllers/suggest-fields/get-suggest-fields/get-suggest-fields.controller';
+import { GLogsController } from './controllers/telemetry/g-logs/g-logs.controller';
+import { GMetricsController } from './controllers/telemetry/g-metrics/g-metrics.controller';
+import { GTracesController } from './controllers/telemetry/g-traces/g-traces.controller';
+import { ULogsController } from './controllers/telemetry/u-logs/u-logs.controller';
+import { UMetricsController } from './controllers/telemetry/u-metrics/u-metrics.controller';
+import { UTracesController } from './controllers/telemetry/u-traces/u-traces.controller';
 import { DeleteRecordsController } from './controllers/test-routes/delete-records/delete-records.controller';
 import { GetRebuildStructController } from './controllers/test-routes/get-rebuild-struct/get-rebuild-struct.controller';
 import { SeedRecordsController } from './controllers/test-routes/seed-records/seed-records.controller';
@@ -246,6 +252,13 @@ export const appControllers = [
   GetReportsController,
   SaveCreateReportController,
   SaveModifyReportController,
+
+  GLogsController,
+  ULogsController,
+  GMetricsController,
+  UMetricsController,
+  GTracesController,
+  UTracesController,
 
   CheckController
 ];

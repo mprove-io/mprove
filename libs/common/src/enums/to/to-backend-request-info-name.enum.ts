@@ -127,6 +127,13 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGroupMetricByDimension = 'api/ToBackendGroupMetricByDimension',
   ToBackendSuggestDimensionValues = 'api/ToBackendSuggestDimensionValues',
   //
+  ToBackendGLogs = 'api/ToBackendGLogs',
+  ToBackendULogs = 'api/ToBackendULogs',
+  ToBackendGMetrics = 'api/ToBackendGMetrics',
+  ToBackendUMetrics = 'api/ToBackendUMetrics',
+  ToBackendGTraces = 'api/ToBackendGTraces',
+  ToBackendUTraces = 'api/ToBackendUTraces',
+  //
   ToBackendGetQueries = 'api/ToBackendGetQueries',
   ToBackendGetQuery = 'api/ToBackendGetQuery',
   ToBackendRunQueries = 'api/ToBackendRunQueries',

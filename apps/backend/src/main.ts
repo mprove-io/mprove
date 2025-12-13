@@ -39,7 +39,6 @@ async function bootstrap() {
       getLoggerOptions({
         appName:
           config.isScheduler === true ? APP_NAME_SCHEDULER : APP_NAME_BACKEND,
-
         isJson: config.backendLogIsJson
       })
     )
@@ -48,7 +47,16 @@ async function bootstrap() {
   app.use(json({ limit: '50mb' }));
   app.use(urlencoded({ limit: '50mb', extended: true }));
 
-  app.enableCors();
+  app.enableCors({
+    origin: config.hostUrl,
+    credentials: true,
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'traceparent',
+      'tracestate'
+    ]
+  });
 
   await app.listen(process.env.LISTEN_PORT || 3000);
 }

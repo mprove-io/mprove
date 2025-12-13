@@ -22,6 +22,7 @@ import { makeTsNumber } from './functions/make-ts-number';
 import { Idemp } from './interfaces/idemp';
 import { RedisService } from './services/redis.service';
 
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
@@ -43,6 +44,19 @@ export class AppInterceptor implements NestInterceptor {
     next: CallHandler
   ): Promise<Observable<MyResponse>> {
     let request = context.switchToHttp().getRequest();
+
+    if (
+      [
+        ToBackendRequestInfoNameEnum.ToBackendGLogs,
+        ToBackendRequestInfoNameEnum.ToBackendULogs,
+        ToBackendRequestInfoNameEnum.ToBackendGMetrics,
+        ToBackendRequestInfoNameEnum.ToBackendUMetrics,
+        ToBackendRequestInfoNameEnum.ToBackendGTraces,
+        ToBackendRequestInfoNameEnum.ToBackendUTraces
+      ].indexOf(request?.originalUrl.substring(1)) > -1
+    ) {
+      return next.handle();
+    }
 
     request.start_ts = Date.now();
 

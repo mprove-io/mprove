@@ -260,6 +260,9 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_HYPERDX_INGESTION_API_KEY ||
       envFile.BACKEND_HYPERDX_INGESTION_API_KEY,
 
+    backendOtelEndpoint:
+      process.env.BACKEND_OTEL_ENDPOINT || envFile.BACKEND_OTEL_ENDPOINT,
+
     backendValkeyHost:
       process.env.BACKEND_VALKEY_HOST || envFile.BACKEND_VALKEY_HOST,
 

@@ -33,6 +33,10 @@ export class ValidateRequestGuard implements CanActivate {
       });
     }
 
+    if (Object.keys(classType).length === 0) {
+      return true;
+    }
+
     transformValidSync({
       classType: classType,
       object: request.body,

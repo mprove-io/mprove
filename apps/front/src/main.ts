@@ -1,9 +1,13 @@
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi
+} from '@angular/common/http';
 import {
   ErrorHandler,
   enableProdMode,
   importProvidersFrom,
   inject,
+  provideAppInitializer,
   provideEnvironmentInitializer
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -41,6 +45,7 @@ import { SpecialModule } from './app/modules/special/special.module';
 import { ErrorHandlerService } from './app/services/error-handler.service';
 import { HighLightService } from './app/services/highlight.service';
 import { environment } from './environments/environment';
+import { initTelemetry } from './init-telemetry';
 
 if (environment.production) {
   enableProdMode();
@@ -50,14 +55,15 @@ if (environment.production) {
 bootstrapApplication(AppComponent, {
   providers: [
     // useClass must be last in list by order
+    provideAppInitializer(() => initTelemetry()),
     provideEnvironmentInitializer(async () => {
       // const highLightService = inject(HighLightService); // if uncomment - remove initHighlighter() call from service constructor
       // await highLightService.initHighlighter();
       inject(HighLightService);
     }),
+    provideHttpClient(withInterceptorsFromDi()),
     importProvidersFrom(
       BrowserModule,
-      HttpClientModule,
       AuthModule,
       NavModule,
       NavbarModule,

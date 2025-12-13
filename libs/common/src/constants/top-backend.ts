@@ -35,6 +35,21 @@ export const THROTTLE_CUSTOM = {
   }
 };
 
+export const THROTTLE_TELEMETRY = {
+  '1s': {
+    limit: 10 * THROTTLE_MULTIPLIER
+  },
+  '5s': {
+    limit: 20 * THROTTLE_MULTIPLIER
+  },
+  '60s': {
+    limit: 99999 * THROTTLE_MULTIPLIER
+  },
+  '600s': {
+    limit: 99999 * THROTTLE_MULTIPLIER
+  }
+};
+
 export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 
 export const UNK_ST_ID = 'unk';
