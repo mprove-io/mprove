@@ -8,7 +8,8 @@
 .envrc
 
 dist
-malloy
+malloy/
+malloy_data/
 node_modules
 nogit
 _nogit
