@@ -1,7 +1,7 @@
 # https://github.com/devcontainers/images/tree/main/src/javascript-node/history
 # previous node -v (20.18.1) https://github.com/devcontainers/images/blob/main/src/javascript-node/history/1.1.8.md#variant-20-bullseye
-# current node -v (20.19.0) https://github.com/devcontainers/images/blob/main/src/javascript-node/history/1.1.9.md#variant-20-bookworm
 # ARG VARIANT=1.1.9-20-bullseye
+# current node -v (20.19.0) https://github.com/devcontainers/images/blob/main/src/javascript-node/history/1.1.9.md#variant-20-bookworm
 ARG VARIANT=1.1.9-20-bookworm
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
 
@@ -18,11 +18,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     libxtst6 \
     xauth \
     xvfb
-
-# chrome
-# RUN curl -LO  https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-# RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
-# RUN rm google-chrome-stable_current_amd64.deb
 
 # direnv
 RUN apt-get install -y direnv

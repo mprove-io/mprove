@@ -6,15 +6,6 @@
   "features": {
     "ghcr.io/devcontainers/features/desktop-lite:1": {}
   },
-  "forwardPorts": [6080, 5901],
-  "portsAttributes": {
-    "6080": {
-      "label": "cypress web"
-    },
-    "5901": {
-      "label": "vnc"
-    }
-  },
   "remoteUser": "root",
   "workspaceFolder": "/mprove",
   "runArgs": ["--network=host"],
@@ -22,9 +13,7 @@
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached",
     "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/malloy,target=${containerWorkspaceFolder}/malloy,type=bind,consistency=cached",
-    "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
-    "source=mprove-cypress-cache,target=/root/.cache/Cypress,type=volume"
+    "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume"
   ],
   "initializeCommand": "bash .devcontainer/init.sh",
   "postCreateCommand": "bash .devcontainer/post-create.sh",

@@ -20,7 +20,7 @@
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
     "allowJs": true,
-    "types": ["node", "cypress"],
+    "types": ["node"],
     "outDir": "./dist",
     "paths": {
       "~backend/*": ["apps/backend/src/*"],
