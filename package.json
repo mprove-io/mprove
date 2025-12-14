@@ -67,6 +67,8 @@
     "clean:app": "yarn clean:blockml-data && yarn clean:blockml-logs && yarn clean:clickstack-ch-data && yarn clean:clickstack-ch-logs && yarn clean:db-main && yarn clean:dwh-mysql && yarn clean:dwh-postgres && yarn clean:mcli-repos && yarn clean:organizations",
     "clean:blockml-data": "rm -rf mprove_data/blockml-data/*",
     "clean:blockml-logs": "rm -rf mprove_data/blockml-logs/*",
+    "clean:clickstack-ch-data": "rm -rf mprove_data/clickstack-ch-data/*",
+    "clean:clickstack-ch-logs": "rm -rf mprove_data/clickstack-ch-logs/*",
     "clean:db-main": "rm -rf mprove_data/db-main/*",
     "clean:dwh-mysql": "rm -rf mprove_data/dwh-mysql/*",
     "clean:dwh-postgres": "rm -rf mprove_data/dwh-postgres/*",
