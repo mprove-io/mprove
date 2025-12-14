@@ -2,7 +2,7 @@
   "name": "mprove",
   "version": "8.2.1",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
-  "license": "Apache-2.0",
+  "license": "UNLICENSED",
   "private": false,
   "sideEffects": ["apps/front/src/polyfills.ts"],
   "repository": {

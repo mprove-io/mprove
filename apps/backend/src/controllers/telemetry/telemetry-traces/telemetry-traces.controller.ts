@@ -57,7 +57,7 @@ export class TelemetryTracesController {
 
       let backendOtelEndpoint = this.cs.get<
         BackendConfig['backendOtelForwardEndpoint']
-      >('backendOtelEndpoint');
+      >('backendOtelForwardEndpoint');
 
       await axios.post(`${backendOtelEndpoint}/v1/traces`, body, {
         headers: {
