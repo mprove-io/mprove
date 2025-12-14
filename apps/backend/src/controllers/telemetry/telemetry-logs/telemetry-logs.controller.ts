@@ -11,9 +11,11 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { BackendConfig } from '~backend/config/backend-config';
-import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { THROTTLE_TELEMETRY } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
@@ -22,18 +24,21 @@ import { ServerError } from '~common/models/server-error';
 
 let axios = require('axios');
 
-@SkipJwtCheck()
-@UseGuards(ThrottlerIpGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_TELEMETRY)
 @Controller()
-export class UMetricsController {
+export class TelemetryLogsController {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendUMetrics)
-  async uMetrics(@Req() request: any, @Res() res: Response) {
+  @Post(ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs)
+  async telemetryLogs(
+    @AttachUser() user: UserTab,
+    @Req() request: any,
+    @Res() res: Response
+  ) {
     try {
       let body = request.body;
 
@@ -42,10 +47,10 @@ export class UMetricsController {
       >('backendHyperdxIngestionApiKey');
 
       let backendOtelEndpoint = this.cs.get<
-        BackendConfig['backendOtelEndpoint']
+        BackendConfig['backendOtelForwardEndpoint']
       >('backendOtelEndpoint');
 
-      await axios.post(`${backendOtelEndpoint}/v1/metrics`, body, {
+      await axios.post(`${backendOtelEndpoint}/v1/logs`, body, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: hyperdxIngestionApiKey
@@ -58,7 +63,7 @@ export class UMetricsController {
     } catch (er) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_FORWARD_G_METRICS_ERROR,
+          message: ErEnum.BACKEND_FORWARD_TELEMETRY_LOGS_ERROR,
           originalError: er
         }),
         logLevel: LogLevelEnum.Error,

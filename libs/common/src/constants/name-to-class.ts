@@ -345,10 +345,7 @@ export const nameToClass = {
     ToBackendGetAvatarBigRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
   //
-  [ToBackendRequestInfoNameEnum.ToBackendGLogs]: {},
-  [ToBackendRequestInfoNameEnum.ToBackendULogs]: {},
-  [ToBackendRequestInfoNameEnum.ToBackendGMetrics]: {},
-  [ToBackendRequestInfoNameEnum.ToBackendUMetrics]: {},
-  [ToBackendRequestInfoNameEnum.ToBackendGTraces]: {},
-  [ToBackendRequestInfoNameEnum.ToBackendUTraces]: {}
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs]: {},
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics]: {},
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces]: {}
 };

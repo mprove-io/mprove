@@ -47,12 +47,9 @@ export class AppInterceptor implements NestInterceptor {
 
     if (
       [
-        ToBackendRequestInfoNameEnum.ToBackendGLogs,
-        ToBackendRequestInfoNameEnum.ToBackendULogs,
-        ToBackendRequestInfoNameEnum.ToBackendGMetrics,
-        ToBackendRequestInfoNameEnum.ToBackendUMetrics,
-        ToBackendRequestInfoNameEnum.ToBackendGTraces,
-        ToBackendRequestInfoNameEnum.ToBackendUTraces
+        ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs,
+        ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics,
+        ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces
       ].indexOf(request?.originalUrl.substring(1)) > -1
     ) {
       return next.handle();

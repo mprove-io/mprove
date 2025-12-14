@@ -218,7 +218,7 @@ export class BackendConfig {
   backendHyperdxIngestionApiKey?: string;
 
   @IsString()
-  backendOtelEndpoint?: string;
+  backendOtelForwardEndpoint?: string;
 
   @IsString()
   backendValkeyHost?: string;

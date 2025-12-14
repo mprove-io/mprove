@@ -31,7 +31,7 @@ export function initTelemetry(): void {
   });
 
   let traceExporter = new OTLPTraceExporter({
-    url: `${environment.httpUrl}/${ToBackendRequestInfoNameEnum.ToBackendUTraces}`,
+    url: `${environment.httpUrl}/${ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces}`,
     headers: async () => {
       let token = localStorage.getItem(LOCAL_STORAGE_TOKEN);
       return { Authorization: `Bearer ${token}` };

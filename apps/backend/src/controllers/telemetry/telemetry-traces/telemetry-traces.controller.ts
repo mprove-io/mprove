@@ -11,9 +11,11 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { BackendConfig } from '~backend/config/backend-config';
-import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
+import { AttachUser } from '~backend/decorators/attach-user.decorator';
+import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
+import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { THROTTLE_TELEMETRY } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
@@ -22,30 +24,42 @@ import { ServerError } from '~common/models/server-error';
 
 let axios = require('axios');
 
-@SkipJwtCheck()
-@UseGuards(ThrottlerIpGuard)
+@UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_TELEMETRY)
 @Controller()
-export class GMetricsController {
+export class TelemetryTracesController {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendGMetrics)
-  async gMetrics(@Req() request: any, @Res() res: Response) {
+  @Post(ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces)
+  async telemetryTraces(
+    @AttachUser() user: UserTab,
+    @Req() request: any,
+    @Res() res: Response
+  ) {
     try {
       let body = request.body;
+
+      if (body?.resourceSpans) {
+        for (const rs of body.resourceSpans) {
+          rs.resource?.attributes?.push({
+            key: 'enduser.id',
+            value: { stringValue: user.userId }
+          });
+        }
+      }
 
       let hyperdxIngestionApiKey = this.cs.get<
         BackendConfig['backendHyperdxIngestionApiKey']
       >('backendHyperdxIngestionApiKey');
 
       let backendOtelEndpoint = this.cs.get<
-        BackendConfig['backendOtelEndpoint']
+        BackendConfig['backendOtelForwardEndpoint']
       >('backendOtelEndpoint');
 
-      await axios.post(`${backendOtelEndpoint}/v1/metrics`, body, {
+      await axios.post(`${backendOtelEndpoint}/v1/traces`, body, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: hyperdxIngestionApiKey
@@ -58,7 +72,7 @@ export class GMetricsController {
     } catch (er) {
       logToConsoleBackend({
         log: new ServerError({
-          message: ErEnum.BACKEND_FORWARD_G_METRICS_ERROR,
+          message: ErEnum.BACKEND_FORWARD_TELEMETRY_TRACES_ERROR,
           originalError: er
         }),
         logLevel: LogLevelEnum.Error,
