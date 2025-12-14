@@ -1,6 +1,6 @@
-import { startTracer } from '~node-common/functions/start-tracer';
+import { startTelemetry } from '~node-common/functions/start-telemetry';
 
-let tracerNodeSdk = startTracer({
+let tracerNodeSdk = startTelemetry({
   hyperdxIngestionApiKey: process.env.BACKEND_HYPERDX_INGESTION_API_KEY,
   serviceName:
     process.env.BACKEND_IS_SCHEDULER === 'TRUE'

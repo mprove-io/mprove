@@ -21,6 +21,7 @@ import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile
 import { Mconfig } from '~common/interfaces/blockml/mconfig';
 import { Model } from '~common/interfaces/blockml/model';
 import { dcType } from '~common/types/dc-type';
+import { addTraceSpan } from '~node-common/functions/add-trace-span';
 import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 import { MalloyConnection } from '~node-common/functions/make-malloy-connections';
 import { makeMalloyQuery } from '~node-common/functions/make-malloy-query';
@@ -135,44 +136,48 @@ export async function fetchSql<T extends dcType>(
         filtersFractions[fieldId] = fractions;
       });
 
-      let editMalloyQueryResult = await makeMalloyQuery({
-        projectId: projectId,
-        envId: envId,
-        structId: structId,
-        mconfigParentType: mconfigParentType,
-        mconfigParentId: tile.mconfigParentId,
-        model: apiModel,
-        mconfig: mconfig,
-        malloyConnections: item.malloyConnections,
-        queryOperations: [
-          ...tile.select.map(x => {
-            let op: QueryOperation = {
-              type: QueryOperationTypeEnum.GroupOrAggregate,
-              timezone: timezone,
-              fieldId: x
-            };
-            return op;
-          }),
-          {
-            type: QueryOperationTypeEnum.Limit,
-            timezone: timezone,
-            limit: Number(tile.limit)
-          },
-          {
-            type: QueryOperationTypeEnum.WhereOrHaving,
-            timezone: timezone,
-            filters: mFilters
-          },
-          ...tile.sortingsAry.map(x => {
-            let op: QueryOperation = {
-              type: QueryOperationTypeEnum.Sort,
-              sortFieldId: x.fieldId,
-              desc: x.desc,
-              timezone: timezone
-            };
-            return op;
+      let editMalloyQueryResult = await addTraceSpan({
+        spanName: 'blockml.makeMalloyQuery',
+        fn: () =>
+          makeMalloyQuery({
+            projectId: projectId,
+            envId: envId,
+            structId: structId,
+            mconfigParentType: mconfigParentType,
+            mconfigParentId: tile.mconfigParentId,
+            model: apiModel,
+            mconfig: mconfig,
+            malloyConnections: item.malloyConnections,
+            queryOperations: [
+              ...tile.select.map(x => {
+                let op: QueryOperation = {
+                  type: QueryOperationTypeEnum.GroupOrAggregate,
+                  timezone: timezone,
+                  fieldId: x
+                };
+                return op;
+              }),
+              {
+                type: QueryOperationTypeEnum.Limit,
+                timezone: timezone,
+                limit: Number(tile.limit)
+              },
+              {
+                type: QueryOperationTypeEnum.WhereOrHaving,
+                timezone: timezone,
+                filters: mFilters
+              },
+              ...tile.sortingsAry.map(x => {
+                let op: QueryOperation = {
+                  type: QueryOperationTypeEnum.Sort,
+                  sortFieldId: x.fieldId,
+                  desc: x.desc,
+                  timezone: timezone
+                };
+                return op;
+              })
+            ]
           })
-        ]
       });
 
       let newMconfig = editMalloyQueryResult.apiNewMconfig;

@@ -43,8 +43,10 @@ export function listenProcessEvents(item: {
       ) {
         await tracerNodeSdk
           .shutdown()
-          .then(() => console.log('Tracing terminated'))
-          .catch(error => console.log('Error terminating tracing', error));
+          .then(() => console.log('Telemetry SDK shut down successfully'))
+          .catch(error =>
+            console.log('Error shutting down Telemetry SDK', error)
+          );
       }
 
       process.exit(0);

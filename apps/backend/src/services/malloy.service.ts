@@ -10,6 +10,7 @@ import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { QueryOperation } from '~common/interfaces/backend/query-operation';
 import { Model } from '~common/interfaces/blockml/model';
 import { ServerError } from '~common/models/server-error';
+import { addTraceSpan } from '~node-common/functions/add-trace-span';
 import { makeMalloyConnections } from '~node-common/functions/make-malloy-connections';
 import { makeMalloyQuery } from '~node-common/functions/make-malloy-query';
 import { ConnectionsService } from './db/connections.service';
@@ -73,16 +74,20 @@ export class MalloyService {
     });
 
     let { isError, errorMessage, apiNewMconfig, apiNewQuery } =
-      await makeMalloyQuery({
-        projectId: projectId,
-        envId: envId,
-        structId: structId,
-        mconfigParentType: mconfigParentType,
-        mconfigParentId: mconfigParentId,
-        model: model,
-        mconfig: mconfig,
-        queryOperations: queryOperations,
-        malloyConnections: malloyConnections
+      await addTraceSpan({
+        spanName: 'backend.makeMalloyQuery',
+        fn: () =>
+          makeMalloyQuery({
+            projectId: projectId,
+            envId: envId,
+            structId: structId,
+            mconfigParentType: mconfigParentType,
+            mconfigParentId: mconfigParentId,
+            model: model,
+            mconfig: mconfig,
+            queryOperations: queryOperations,
+            malloyConnections: malloyConnections
+          })
       });
 
     let newMconfig = this.mconfigsService.apiToTab({
