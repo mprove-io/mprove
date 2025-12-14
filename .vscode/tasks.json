@@ -18,37 +18,6 @@
         "focus": false,
         "panel": "dedicated"
       }
-    },
-    {
-      "label": "Cypress run spec file (headed)",
-      "command": "./node_modules/.bin/nx",
-      "args": [
-        "e2e",
-        "integra",
-        "--headed",
-        "--no-exit",
-        "--browser chrome",
-        "--spec=${relativeFile}"
-      ],
-      "problemMatcher": [],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "Cypress run spec file",
-      "command": "./node_modules/.bin/nx",
-      "args": ["e2e", "integra", "--browser chrome", "--spec=${relativeFile}"],
-      "problemMatcher": [],
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated"
-      }
     }
   ]
 }

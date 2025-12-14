@@ -9,7 +9,6 @@ _nogit/
 !.vscode/extensions.json
 !.vscode/tasks.json
 !.vscode/launch.json
-apps/integra/cypress/
 dist/
 malloy/
 malloy_data/

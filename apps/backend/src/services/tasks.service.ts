@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { WithTraceSpan } from '~backend/decorators/with-trace-span.decorator';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
@@ -24,6 +25,7 @@ export class TasksService {
     private logger: Logger
   ) {}
 
+  @WithTraceSpan()
   @Cron('*/3 * * * * *') // EVERY_3_SECONDS
   async loopCheckQueries() {
     if (this.isRunningCheckQueries === false) {
@@ -45,6 +47,7 @@ export class TasksService {
     }
   }
 
+  @WithTraceSpan()
   @Cron(CronExpression.EVERY_10_SECONDS)
   async loopRemoveStructs() {
     if (this.isRunningRemoveStructs === false) {
@@ -65,6 +68,8 @@ export class TasksService {
       this.isRunningRemoveStructs = false;
     }
   }
+
+  @WithTraceSpan()
   @Cron(CronExpression.EVERY_10_MINUTES)
   async loopRemoveQueries() {
     if (this.isRunningRemoveQueries === false) {
@@ -86,6 +91,7 @@ export class TasksService {
     }
   }
 
+  @WithTraceSpan()
   @Cron(CronExpression.EVERY_10_MINUTES)
   async loopRemoveNotes() {
     if (this.isRunningRemoveNotes === false) {

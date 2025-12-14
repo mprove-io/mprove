@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsOptional, ValidateNested } from 'class-validator';
 import { OptionsBigquery } from './options-bigquery';
-import { OptionsClickhouse } from './options-clickhouse';
+// import { OptionsClickhouse } from './options-clickhouse';
 import { OptionsMotherduck } from './options-motherduck';
 import { OptionsMysql } from './options-mysql';
 import { OptionsPostgres } from './options-postgres';
@@ -17,10 +17,10 @@ export class ConnectionOptions {
   @Type(() => OptionsBigquery)
   bigquery?: OptionsBigquery;
 
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => OptionsClickhouse)
-  clickhouse?: OptionsClickhouse;
+  // @IsOptional()
+  // @ValidateNested()
+  // @Type(() => OptionsClickhouse)
+  // clickhouse?: OptionsClickhouse;
 
   @IsOptional()
   @ValidateNested()

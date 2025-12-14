@@ -126,9 +126,9 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD ||
       envFile.BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD,
 
-    demoProjectDwhClickhousePassword:
-      process.env.BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD ||
-      envFile.BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD,
+    // demoProjectDwhClickhousePassword:
+    //   process.env.BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD ||
+    //   envFile.BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD,
 
     demoProjectDwhMysqlHost:
       process.env.BACKEND_DEMO_PROJECT_DWH_MYSQL_HOST ||

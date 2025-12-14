@@ -7,7 +7,6 @@
       ".angular/",
       ".nx/",
       "apps/backend/src/drizzle/postgres/migrations/",
-      "apps/integra/cypress/",
       "dist/",
       "mprove_data/",
       "node_modules/",

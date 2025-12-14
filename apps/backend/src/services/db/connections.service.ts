@@ -100,18 +100,18 @@ export class ConnectionsService {
                 options.bigquery.bigqueryQuerySizeLimitGb
             }
           : undefined,
-        clickhouse: isDefined(options.clickhouse)
-          ? {
-              host: options.clickhouse.host,
-              port: options.clickhouse.port,
-              username: options.clickhouse.username,
-              password:
-                isIncludePasswords === true
-                  ? options.clickhouse.password
-                  : undefined,
-              isSSL: options.clickhouse.isSSL
-            }
-          : undefined,
+        // clickhouse: isDefined(options.clickhouse)
+        //   ? {
+        //       host: options.clickhouse.host,
+        //       port: options.clickhouse.port,
+        //       username: options.clickhouse.username,
+        //       password:
+        //         isIncludePasswords === true
+        //           ? options.clickhouse.password
+        //           : undefined,
+        //       isSSL: options.clickhouse.isSSL
+        //     }
+        //   : undefined,
         motherduck: isDefined(options.motherduck)
           ? {
               motherduckToken:

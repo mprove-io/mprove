@@ -28,7 +28,6 @@
       "~disk/*": ["apps/disk/src/*"],
       "~mcli/*": ["apps/mcli/src/*"],
       "~front/*": ["apps/front/src/*"],
-      "~integra/*": ["apps/integra/src/*"],
       //
       "~common/*": ["libs/common/src/*"],
       "~node-common/*": ["libs/node-common/src/*"],

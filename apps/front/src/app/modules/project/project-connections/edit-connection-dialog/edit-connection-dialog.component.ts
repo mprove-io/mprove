@@ -64,7 +64,7 @@ export class EditConnectionDialogComponent implements OnInit {
   dataItem: EditConnectionDialogData = this.ref.data;
 
   editBigqueryForm: FormGroup;
-  editClickhouseForm: FormGroup;
+  // editClickhouseForm: FormGroup;
   editMotherduckForm: FormGroup;
   editPostgresForm: FormGroup;
   editMysqlForm: FormGroup;
@@ -74,14 +74,14 @@ export class EditConnectionDialogComponent implements OnInit {
   editApiForm: FormGroup;
   editGoogleApiForm: FormGroup;
 
-  isClickhouseSSL = true;
+  // isClickhouseSSL = true;
   isPostgresSSL = true;
   isMotherduckAttachModeSingle = true;
   isMotherduckAccessModeReadOnly = true;
 
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
-  typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  // typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
   typeMySQL = ConnectionTypeEnum.MySQL;
@@ -99,10 +99,10 @@ export class EditConnectionDialogComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.isClickhouseSSL =
-      this.dataItem.connection.options.clickhouse?.isSSL === true
-        ? true
-        : false;
+    // this.isClickhouseSSL =
+    //   this.dataItem.connection.options.clickhouse?.isSSL === true
+    //     ? true
+    //     : false;
 
     this.isPostgresSSL =
       this.dataItem.connection.options.postgres?.isSSL === true ? true : false;
@@ -128,24 +128,24 @@ export class EditConnectionDialogComponent implements OnInit {
       ]
     });
 
-    this.editClickhouseForm = this.fb.group({
-      host: [
-        this.dataItem.connection.options.clickhouse?.host,
-        [Validators.required]
-      ],
-      port: [
-        this.dataItem.connection.options.clickhouse?.port,
-        [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      username: [
-        this.dataItem.connection.options.clickhouse?.username,
-        [Validators.required]
-      ],
-      password: [
-        this.dataItem.connection.options.clickhouse?.password,
-        [Validators.required]
-      ]
-    });
+    // this.editClickhouseForm = this.fb.group({
+    //   host: [
+    //     this.dataItem.connection.options.clickhouse?.host,
+    //     [Validators.required]
+    //   ],
+    //   port: [
+    //     this.dataItem.connection.options.clickhouse?.port,
+    //     [ValidationService.integerOrEmptyValidator, Validators.required]
+    //   ],
+    //   username: [
+    //     this.dataItem.connection.options.clickhouse?.username,
+    //     [Validators.required]
+    //   ],
+    //   password: [
+    //     this.dataItem.connection.options.clickhouse?.password,
+    //     [Validators.required]
+    //   ]
+    // });
 
     this.editMotherduckForm = this.fb.group({
       motherduckToken: [
@@ -371,9 +371,9 @@ export class EditConnectionDialogComponent implements OnInit {
     this.apiGetHeaders().removeAt(index);
   }
 
-  toggleClickhouseSSL() {
-    this.isClickhouseSSL = !this.isClickhouseSSL;
-  }
+  // toggleClickhouseSSL() {
+  //   this.isClickhouseSSL = !this.isClickhouseSSL;
+  // }
 
   togglePostgresSSL() {
     this.isPostgresSSL = !this.isPostgresSSL;
@@ -389,7 +389,7 @@ export class EditConnectionDialogComponent implements OnInit {
 
   prepareOptions() {
     this.editBigqueryForm.markAllAsTouched();
-    this.editClickhouseForm.markAllAsTouched();
+    // this.editClickhouseForm.markAllAsTouched();
     this.editMotherduckForm.markAllAsTouched();
     this.editPostgresForm.markAllAsTouched();
     this.editMysqlForm.markAllAsTouched();
@@ -403,8 +403,8 @@ export class EditConnectionDialogComponent implements OnInit {
 
     if (
       (cType === ConnectionTypeEnum.BigQuery && !this.editBigqueryForm.valid) ||
-      (cType === ConnectionTypeEnum.ClickHouse &&
-        !this.editClickhouseForm.valid) ||
+      // (cType === ConnectionTypeEnum.ClickHouse &&
+      //   !this.editClickhouseForm.valid) ||
       (cType === ConnectionTypeEnum.MotherDuck &&
         !this.editMotherduckForm.valid) ||
       (cType === ConnectionTypeEnum.PostgreSQL &&
@@ -446,18 +446,18 @@ export class EditConnectionDialogComponent implements OnInit {
                 : undefined
             }
           : undefined,
-      clickhouse:
-        cType === ConnectionTypeEnum.ClickHouse
-          ? {
-              host: this.editClickhouseForm.value.host,
-              port: isDefined(this.editClickhouseForm.value.port)
-                ? Number(this.editClickhouseForm.value.port)
-                : undefined,
-              username: this.editClickhouseForm.value.username,
-              password: this.editClickhouseForm.value.password,
-              isSSL: this.isClickhouseSSL
-            }
-          : undefined,
+      // clickhouse:
+      //   cType === ConnectionTypeEnum.ClickHouse
+      //     ? {
+      //         host: this.editClickhouseForm.value.host,
+      //         port: isDefined(this.editClickhouseForm.value.port)
+      //           ? Number(this.editClickhouseForm.value.port)
+      //           : undefined,
+      //         username: this.editClickhouseForm.value.username,
+      //         password: this.editClickhouseForm.value.password,
+      //         isSSL: this.isClickhouseSSL
+      //       }
+      //     : undefined,
       motherduck:
         cType === ConnectionTypeEnum.MotherDuck
           ? {

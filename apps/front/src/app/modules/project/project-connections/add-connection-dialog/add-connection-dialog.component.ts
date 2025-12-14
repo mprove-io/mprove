@@ -79,7 +79,7 @@ export class AddConnectionDialogComponent implements OnInit {
   addForm: FormGroup;
 
   addBigqueryForm: FormGroup;
-  addClickhouseForm: FormGroup;
+  // addClickhouseForm: FormGroup;
   addMotherduckForm: FormGroup;
   addPostgresForm: FormGroup;
   addMysqlForm: FormGroup;
@@ -93,7 +93,7 @@ export class AddConnectionDialogComponent implements OnInit {
   envsListLoading = false;
   envsListLength = 0;
 
-  isClickhouseSSL = true;
+  // isClickhouseSSL = true;
   isPostgresSSL = true;
   isMotherduckAttachModeSingle = true;
   isMotherduckAccessModeReadOnly = true;
@@ -116,7 +116,7 @@ export class AddConnectionDialogComponent implements OnInit {
   typeTrino = ConnectionTypeEnum.Trino;
   typePresto = ConnectionTypeEnum.Presto;
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
-  typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  // typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
   typeApi = ConnectionTypeEnum.Api;
@@ -152,15 +152,15 @@ export class AddConnectionDialogComponent implements OnInit {
       ]
     });
 
-    this.addClickhouseForm = this.fb.group({
-      host: [undefined, [Validators.required]],
-      port: [
-        undefined,
-        [ValidationService.integerOrEmptyValidator, Validators.required]
-      ],
-      username: [undefined, [Validators.required]],
-      password: [undefined, [Validators.required]]
-    });
+    // this.addClickhouseForm = this.fb.group({
+    //   host: [undefined, [Validators.required]],
+    //   port: [
+    //     undefined,
+    //     [ValidationService.integerOrEmptyValidator, Validators.required]
+    //   ],
+    //   username: [undefined, [Validators.required]],
+    //   password: [undefined, [Validators.required]]
+    // });
 
     this.addMotherduckForm = this.fb.group({
       motherduckToken: [undefined, [Validators.required]],
@@ -241,10 +241,10 @@ export class AddConnectionDialogComponent implements OnInit {
         .get('bigqueryQuerySizeLimitGb')
         .updateValueAndValidity();
 
-      this.addClickhouseForm.get('host').updateValueAndValidity();
-      this.addClickhouseForm.get('port').updateValueAndValidity();
-      this.addClickhouseForm.get('username').updateValueAndValidity();
-      this.addClickhouseForm.get('password').updateValueAndValidity();
+      // this.addClickhouseForm.get('host').updateValueAndValidity();
+      // this.addClickhouseForm.get('port').updateValueAndValidity();
+      // this.addClickhouseForm.get('username').updateValueAndValidity();
+      // this.addClickhouseForm.get('password').updateValueAndValidity();
 
       this.addMotherduckForm.get('motherduckToken').updateValueAndValidity();
       this.addMotherduckForm.get('database').updateValueAndValidity();
@@ -349,9 +349,9 @@ export class AddConnectionDialogComponent implements OnInit {
     this.apiGetHeaders().removeAt(index);
   }
 
-  toggleClickhouseSSL() {
-    this.isClickhouseSSL = !this.isClickhouseSSL;
-  }
+  // toggleClickhouseSSL() {
+  //   this.isClickhouseSSL = !this.isClickhouseSSL;
+  // }
 
   togglePostgresSSL() {
     this.isPostgresSSL = !this.isPostgresSSL;
@@ -400,12 +400,12 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addBigqueryForm.controls['bigqueryQuerySizeLimitGb'].reset();
     }
 
-    if (type !== ConnectionTypeEnum.ClickHouse) {
-      this.addClickhouseForm.controls['host'].reset();
-      this.addClickhouseForm.controls['port'].reset();
-      this.addClickhouseForm.controls['username'].reset();
-      this.addClickhouseForm.controls['password'].reset();
-    }
+    // if (type !== ConnectionTypeEnum.ClickHouse) {
+    //   this.addClickhouseForm.controls['host'].reset();
+    //   this.addClickhouseForm.controls['port'].reset();
+    //   this.addClickhouseForm.controls['username'].reset();
+    //   this.addClickhouseForm.controls['password'].reset();
+    // }
 
     if (type !== ConnectionTypeEnum.MotherDuck) {
       this.addMotherduckForm.controls['motherduckToken'].reset();
@@ -486,7 +486,7 @@ export class AddConnectionDialogComponent implements OnInit {
     this.addForm.markAllAsTouched();
 
     this.addBigqueryForm.markAllAsTouched();
-    this.addClickhouseForm.markAllAsTouched();
+    // this.addClickhouseForm.markAllAsTouched();
     this.addMotherduckForm.markAllAsTouched();
     this.addPostgresForm.markAllAsTouched();
     this.addMysqlForm.markAllAsTouched();
@@ -501,8 +501,8 @@ export class AddConnectionDialogComponent implements OnInit {
     if (
       !this.addForm.valid ||
       (cType === ConnectionTypeEnum.BigQuery && !this.addBigqueryForm.valid) ||
-      (cType === ConnectionTypeEnum.ClickHouse &&
-        !this.addClickhouseForm.valid) ||
+      // (cType === ConnectionTypeEnum.ClickHouse &&
+      //   !this.addClickhouseForm.valid) ||
       (cType === ConnectionTypeEnum.MotherDuck &&
         !this.addMotherduckForm.valid) ||
       (cType === ConnectionTypeEnum.PostgreSQL &&
@@ -544,18 +544,18 @@ export class AddConnectionDialogComponent implements OnInit {
                 : undefined
             }
           : undefined,
-      clickhouse:
-        cType === ConnectionTypeEnum.ClickHouse
-          ? {
-              host: this.addClickhouseForm.value.host,
-              port: isDefined(this.addClickhouseForm.value.port)
-                ? Number(this.addClickhouseForm.value.port)
-                : undefined,
-              username: this.addClickhouseForm.value.username,
-              password: this.addClickhouseForm.value.password,
-              isSSL: this.isClickhouseSSL
-            }
-          : undefined,
+      // clickhouse:
+      //   cType === ConnectionTypeEnum.ClickHouse
+      //     ? {
+      //         host: this.addClickhouseForm.value.host,
+      //         port: isDefined(this.addClickhouseForm.value.port)
+      //           ? Number(this.addClickhouseForm.value.port)
+      //           : undefined,
+      //         username: this.addClickhouseForm.value.username,
+      //         password: this.addClickhouseForm.value.password,
+      //         isSSL: this.isClickhouseSSL
+      //       }
+      //     : undefined,
       motherduck:
         cType === ConnectionTypeEnum.MotherDuck
           ? {

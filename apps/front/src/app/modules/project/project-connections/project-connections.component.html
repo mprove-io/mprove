@@ -124,9 +124,7 @@
                       ? ''
                       : ((connection.type === typePostgreSQL
                           ? connection.options.postgres?.isSSL
-                          : connection.type === typeClickHouse
-                            ? connection.options.clickhouse?.isSSL
-                            : ''
+                          : ''
                         ).toString() | capitalize)
                   }}
                 </td>
@@ -141,9 +139,7 @@
                           ? connection.options.trino?.server
                           : connection.type === typePresto
                             ? connection.options.presto?.server
-                            : connection.type === typeClickHouse
-                              ? connection.options.clickhouse?.host
-                              : undefined) ||
+                            : undefined) ||
                       (connection.type === typeApi
                         ? connection.options.storeApi?.baseUrl
                         : connection.type === typeGoogleApi
@@ -160,9 +156,7 @@
                         ? connection.options.mysql?.port
                         : connection.type === typePresto
                           ? connection.options.presto?.port
-                          : connection.type === typeClickHouse
-                            ? connection.options.clickhouse?.port
-                            : undefined
+                          : undefined
                   }}
                 </td>
 
@@ -194,11 +188,9 @@
                           ? connection.options.trino?.user
                           : connection.type === typePresto
                             ? connection.options.presto?.user
-                            : connection.type === typeClickHouse
-                              ? connection.options.clickhouse?.username
-                              : connection.type === typeSnowFlake
-                                ? connection.options.snowflake?.username
-                                : undefined
+                            : connection.type === typeSnowFlake
+                              ? connection.options.snowflake?.username
+                              : undefined
                   }}
                 </td>
 

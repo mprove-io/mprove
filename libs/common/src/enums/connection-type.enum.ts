@@ -1,7 +1,7 @@
 export enum ConnectionTypeEnum {
   PostgreSQL = 'PostgreSQL',
   MySQL = 'MySQL',
-  ClickHouse = 'ClickHouse',
+  // ClickHouse = 'ClickHouse',
   SnowFlake = 'SnowFlake',
   BigQuery = 'BigQuery',
   MotherDuck = 'MotherDuck',

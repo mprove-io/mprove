@@ -109,9 +109,9 @@ export class BackendConfig {
   @IsString()
   demoProjectDwhPostgresPassword?: string;
 
-  @IsOptional()
-  @IsString()
-  demoProjectDwhClickhousePassword?: string;
+  // @IsOptional()
+  // @IsString()
+  // demoProjectDwhClickhousePassword?: string;
 
   @IsOptional()
   @IsString()

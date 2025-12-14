@@ -7,7 +7,6 @@
 .env
 .envrc
 
-apps/integra/cypress
 dist
 malloy
 node_modules

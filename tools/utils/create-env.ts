@@ -37,7 +37,6 @@ async function createEnvFile(): Promise<void> {
   let calcPostgresPass = makeRandomString(32);
   let dwhPostgresPass = makeRandomString(32);
   let dwhMysqlRootPass = makeRandomString(32);
-  let dwhClickHousePass = makeRandomString(32);
 
   let valkeyPass = makeRandomString(32);
   let rabbitPass = makeRandomString(32);
@@ -58,7 +57,6 @@ ENV_FILE_TARGET_PATH=/usr/src/app/.env
 MPROVE_RELEASE_TAG=9.0.87
 MPROVE_DWH_POSTGRES_TAG=9.0.87
 MPROVE_DWH_MYSQL_TAG=9.0.87
-MPROVE_DWH_CLICKHOUSE_TAG=9.0.87
 
 DOCKER_CLIENT_TIMEOUT=180
 COMPOSE_HTTP_TIMEOUT=180
@@ -111,12 +109,6 @@ COMPOSE_DWH_TRINO_CONFIG_VOLUME_SOURCE_PATH=secrets/trino/config.properties
 COMPOSE_DWH_PRESTO_CATALOG_VOLUME_SOURCE_PATH=secrets/presto/catalog
 COMPOSE_DWH_PRESTO_CONFIG_VOLUME_SOURCE_PATH=secrets/presto/config.properties
 
-COMPOSE_DWH_CLICKHOUSE_USER=c_user
-COMPOSE_DWH_CLICKHOUSE_PASSWORD=${dwhClickHousePass}
-COMPOSE_DWH_CLICKHOUSE_DB=c_db
-COMPOSE_DWH_CLICKHOUSE_VOLUME_SOURCE_PATH=mprove_data/dwh-clickhouse
-COMPOSE_DWH_CLICKHOUSE_LOGS_VOLUME_SOURCE_PATH=mprove_data/dwh-clickhouse-logs
-
 # dist paths are for docker compose debug config only
 COMPOSE_DIST_APPS_DISK_SOURCE_PATH=dist/apps/disk
 COMPOSE_DIST_APPS_BACKEND_SOURCE_PATH=dist/apps/backend
@@ -164,7 +156,7 @@ BACKEND_SMTP_SECURE=TRUE
 BACKEND_SMTP_HOST=
 BACKEND_SMTP_AUTH_USER=
 BACKEND_SMTP_AUTH_PASSWORD=
-BACKEND_STORE_API_BLACKLISTED_HOSTS=db, valkey, rabbit, disk, blockml, backend, front, calc-postgres, dwh-postgres, dwh-mysql, dwh-trino, dwh-presto, dwh-clickhouse, mcli, integra
+BACKEND_STORE_API_BLACKLISTED_HOSTS=db, clickstack, valkey, rabbit, calc-postgres, backend, blockml, disk, front, dwh-postgres, dwh-mysql, dwh-trino, dwh-presto, mcli
 BACKEND_SEED_DEMO_ORG_AND_PROJECT=FALSE
 BACKEND_DEMO_ORG_ID=
 BACKEND_DEMO_PROJECT_ID=
@@ -176,7 +168,6 @@ BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH=
 BACKEND_DEMO_PROJECT_PASS_PHRASE=
 BACKEND_DEMO_PROJECT_DWH_POSTGRES_HOST=
 BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD=
-BACKEND_DEMO_PROJECT_DWH_CLICKHOUSE_PASSWORD=
 BACKEND_DEMO_PROJECT_DWH_MYSQL_HOST=
 BACKEND_DEMO_PROJECT_DWH_MYSQL_PORT=
 BACKEND_DEMO_PROJECT_DWH_MYSQL_DATABASE=

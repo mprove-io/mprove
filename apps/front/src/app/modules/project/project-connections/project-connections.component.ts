@@ -19,7 +19,7 @@ import { MyDialogService } from '~front/app/services/my-dialog.service';
 export class ProjectConnectionsComponent implements OnInit {
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
-  typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  // typeClickHouse = ConnectionTypeEnum.ClickHouse;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typePostgreSQL = ConnectionTypeEnum.PostgreSQL;
   typeMySQL = ConnectionTypeEnum.MySQL;
@@ -30,7 +30,7 @@ export class ProjectConnectionsComponent implements OnInit {
 
   pageTitle = PROJECT_CONNECTIONS_PAGE_TITLE;
 
-  connectionTypeClickhouse = ConnectionTypeEnum.ClickHouse;
+  // connectionTypeClickhouse = ConnectionTypeEnum.ClickHouse;
 
   projectId: string;
   projectId$ = this.navQuery.projectId$.pipe(
