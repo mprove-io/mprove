@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { WithTraceSpan } from '~backend/decorators/with-trace-span.decorator';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ServerError } from '~common/models/server-error';
+import { WithTraceSpan } from '~node-common/decorators/with-trace-span.decorator';
 import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
@@ -25,8 +25,8 @@ export class TasksService {
     private logger: Logger
   ) {}
 
-  @WithTraceSpan()
   @Cron('*/3 * * * * *') // EVERY_3_SECONDS
+  @WithTraceSpan()
   async loopCheckQueries() {
     if (this.isRunningCheckQueries === false) {
       this.isRunningCheckQueries = true;
@@ -47,8 +47,8 @@ export class TasksService {
     }
   }
 
-  @WithTraceSpan()
   @Cron(CronExpression.EVERY_10_SECONDS)
+  @WithTraceSpan()
   async loopRemoveStructs() {
     if (this.isRunningRemoveStructs === false) {
       this.isRunningRemoveStructs = true;
@@ -69,8 +69,8 @@ export class TasksService {
     }
   }
 
-  @WithTraceSpan()
   @Cron(CronExpression.EVERY_10_MINUTES)
+  @WithTraceSpan()
   async loopRemoveQueries() {
     if (this.isRunningRemoveQueries === false) {
       this.isRunningRemoveQueries = true;
@@ -91,8 +91,8 @@ export class TasksService {
     }
   }
 
-  @WithTraceSpan()
   @Cron(CronExpression.EVERY_10_MINUTES)
+  @WithTraceSpan()
   async loopRemoveNotes() {
     if (this.isRunningRemoveNotes === false) {
       this.isRunningRemoveNotes = true;

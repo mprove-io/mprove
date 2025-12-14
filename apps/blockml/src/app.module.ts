@@ -12,6 +12,7 @@ import { BmlFile } from '~common/interfaces/blockml/bml-file';
 import { File3 } from '~common/interfaces/blockml/internal/file-3';
 import { Preset } from '~common/interfaces/blockml/preset';
 import { ServerError } from '~common/models/server-error';
+import { WithTraceSpan } from '~node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { makeLineNumbers } from './functions/build-yaml/make-line-numbers';
@@ -77,6 +78,7 @@ export class AppModule implements OnModuleInit {
     private cs: ConfigService
   ) {}
 
+  @WithTraceSpan()
   async onModuleInit() {
     try {
       let errors: BmError[] = [];

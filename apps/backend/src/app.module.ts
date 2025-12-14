@@ -35,6 +35,7 @@ import { isUndefined } from '~common/functions/is-undefined';
 import { makeId } from '~common/functions/make-id';
 import { Ev } from '~common/interfaces/backend/ev';
 import { ServerError } from '~common/models/server-error';
+import { WithTraceSpan } from '~node-common/decorators/with-trace-span.decorator';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
@@ -221,6 +222,7 @@ export class AppModule implements OnModuleInit {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  @WithTraceSpan()
   async onModuleInit() {
     try {
       if (this.cs.get<BackendConfig['isScheduler']>('isScheduler') === true) {

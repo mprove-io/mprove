@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { DiskConfig } from '~disk/config/disk-config';
+import { WithTraceSpan } from '~node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { logToConsoleDisk } from './functions/log-to-console-disk';
@@ -58,6 +59,7 @@ export class AppModule implements OnModuleInit {
     private cs: ConfigService
   ) {}
 
+  @WithTraceSpan()
   async onModuleInit() {
     setTimeout(() => {
       let diskEnv = this.cs.get<DiskConfig['diskEnv']>('diskEnv');

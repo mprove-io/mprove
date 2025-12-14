@@ -18,7 +18,9 @@ export const WithTraceSpan = (item?: {
 
     descriptor.value = async function (...args: any[]) {
       return await addTraceSpan({
-        fn: () => originalMethod.apply(this, args),
+        fn: () => {
+          return originalMethod.apply(this, args);
+        },
         spanName: spanName || `${className}.${propertyKey}`,
         spanOptions: spanOptions,
         spanContext: spanContext

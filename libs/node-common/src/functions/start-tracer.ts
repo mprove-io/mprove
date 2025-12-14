@@ -30,12 +30,12 @@ export function startTracer(item: {
         '@opentelemetry/instrumentation-http': { enabled: true },
         '@opentelemetry/instrumentation-ioredis': { enabled: true },
         '@opentelemetry/instrumentation-redis': { enabled: true },
-        '@opentelemetry/instrumentation-nestjs-core': { enabled: true },
         //
         '@opentelemetry/instrumentation-dns': { enabled: false },
         '@opentelemetry/instrumentation-fs': { enabled: false },
         '@opentelemetry/instrumentation-mysql2': { enabled: false },
         '@opentelemetry/instrumentation-mysql': { enabled: false },
+        '@opentelemetry/instrumentation-nestjs-core': { enabled: false },
         '@opentelemetry/instrumentation-pg': { enabled: false },
         '@opentelemetry/instrumentation-winston': { enabled: false }
       })
