@@ -51,7 +51,9 @@ export function initTelemetry(): void {
     instrumentations: [
       getWebAutoInstrumentations({
         '@opentelemetry/instrumentation-document-load': {},
-        '@opentelemetry/instrumentation-user-interaction': {},
+        '@opentelemetry/instrumentation-user-interaction': {
+          enabled: false
+        },
         '@opentelemetry/instrumentation-fetch': {
           propagateTraceHeaderCorsUrls: [new RegExp(environment.httpUrl)]
         },
