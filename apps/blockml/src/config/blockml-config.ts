@@ -12,12 +12,15 @@ export class BlockmlConfig {
   @IsBoolean()
   isTelemetryEnabled?: boolean;
 
+  @IsOptional()
   @IsString()
   telemetryEndpoint?: string;
 
+  @IsOptional()
   @IsString()
   telemetryHyperdxIngestApiKey?: string;
 
+  @IsOptional()
   @IsString()
   otelLogLevel?: string;
 

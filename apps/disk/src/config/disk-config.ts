@@ -1,16 +1,19 @@
-import { IsBoolean, IsEnum, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 
 export class DiskConfig {
   @IsBoolean()
   isTelemetryEnabled?: boolean;
 
+  @IsOptional()
   @IsString()
   telemetryEndpoint?: string;
 
+  @IsOptional()
   @IsString()
   telemetryHyperdxIngestApiKey?: string;
 
+  @IsOptional()
   @IsString()
   otelLogLevel?: string;
 
