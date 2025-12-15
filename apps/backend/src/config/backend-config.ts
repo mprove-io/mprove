@@ -11,6 +11,21 @@ import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 
 export class BackendConfig {
+  @IsString()
+  mproveReleaseTag?: string;
+
+  @IsBoolean()
+  isTelemetryEnabled?: boolean;
+
+  @IsString()
+  telemetryEndpoint?: string;
+
+  @IsString()
+  telemetryHyperdxIngestApiKey?: string;
+
+  @IsString()
+  otelLogLevel?: string;
+
   @IsEnum(BackendEnvEnum)
   backendEnv?: BackendEnvEnum;
 
@@ -33,9 +48,6 @@ export class BackendConfig {
   @IsOptional()
   @IsString()
   prevAesKeyTag?: string;
-
-  @IsString()
-  mproveReleaseTag?: string;
 
   @IsBoolean()
   isScheduler?: boolean;

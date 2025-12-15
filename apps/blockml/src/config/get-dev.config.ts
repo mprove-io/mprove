@@ -14,6 +14,20 @@ export function getDevConfig(envFilePath: any) {
   }
 
   let devConfig: BlockmlConfig = {
+    isTelemetryEnabled: enumToBoolean({
+      value: process.env.IS_TELEMETRY_ENABLED || envFile.IS_TELEMETRY_ENABLED,
+      name: 'IS_TELEMETRY_ENABLED'
+    }),
+
+    telemetryEndpoint:
+      process.env.TELEMETRY_ENDPOINT || envFile.TELEMETRY_ENDPOINT,
+
+    telemetryHyperdxIngestApiKey:
+      process.env.TELEMETRY_HYPERDX_INGEST_API_KEY ||
+      envFile.TELEMETRY_HYPERDX_INGEST_API_KEY,
+
+    otelLogLevel: process.env.OTEL_LOG_LEVEL || envFile.OTEL_LOG_LEVEL,
+
     blockmlEnv: <BlockmlEnvEnum>(
       (process.env.BLOCKML_ENV || envFile.BLOCKML_ENV)
     ),

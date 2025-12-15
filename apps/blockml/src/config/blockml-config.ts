@@ -9,6 +9,18 @@ import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
 import { FuncEnum } from '~common/enums/special/func.enum';
 
 export class BlockmlConfig {
+  @IsBoolean()
+  isTelemetryEnabled?: boolean;
+
+  @IsString()
+  telemetryEndpoint?: string;
+
+  @IsString()
+  telemetryHyperdxIngestApiKey?: string;
+
+  @IsString()
+  otelLogLevel?: string;
+
   @IsEnum(BlockmlEnvEnum)
   blockmlEnv?: BlockmlEnvEnum;
 

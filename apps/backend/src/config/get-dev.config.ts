@@ -19,6 +19,20 @@ export function getDevConfig(envFilePath: any) {
       (process.env.MPROVE_RELEASE_TAG || envFile.MPROVE_RELEASE_TAG)
     ),
 
+    isTelemetryEnabled: enumToBoolean({
+      value: process.env.IS_TELEMETRY_ENABLED || envFile.IS_TELEMETRY_ENABLED,
+      name: 'IS_TELEMETRY_ENABLED'
+    }),
+
+    telemetryEndpoint:
+      process.env.TELEMETRY_ENDPOINT || envFile.TELEMETRY_ENDPOINT,
+
+    telemetryHyperdxIngestApiKey:
+      process.env.TELEMETRY_HYPERDX_INGEST_API_KEY ||
+      envFile.TELEMETRY_HYPERDX_INGEST_API_KEY,
+
+    otelLogLevel: process.env.OTEL_LOG_LEVEL || envFile.OTEL_LOG_LEVEL,
+
     backendEnv: <BackendEnvEnum>(
       (process.env.BACKEND_ENV || envFile.BACKEND_ENV)
     ),
