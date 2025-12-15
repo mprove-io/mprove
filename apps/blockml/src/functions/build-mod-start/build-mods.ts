@@ -22,6 +22,7 @@ import { isDefined } from '~common/functions/is-defined';
 import { ProjectConnection } from '~common/interfaces/backend/project-connection';
 import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
 import { WrapResult } from '~common/interfaces/wrap-result';
+import { addTraceSpan } from '~node-common/functions/add-trace-span';
 import { errorToWrapResult } from '~node-common/functions/error-to-wrap-result';
 import { getWrapResult } from '~node-common/functions/get-wrap-result';
 import { MalloyConnection } from '~node-common/functions/make-malloy-connections';
@@ -123,7 +124,10 @@ export async function buildMods(
 
     promises.push(
       getWrapResult<MalloyModel>({
-        promise: runtime.getModel(modelUrl)
+        promise: addTraceSpan({
+          spanName: 'backend.malloy.getModel',
+          fn: () => runtime.getModel(modelUrl)
+        })
       }).catch(e => errorToWrapResult<MalloyModel>(e))
     );
   });
@@ -200,6 +204,11 @@ export async function buildMods(
     // );
 
     let modelInfo: MalloyModelInfo = modelDefToModelInfo(malloyModelDef);
+
+    // let modelInfo: MalloyModelInfo = addTraceSpanSync({
+    //   spanName: 'backend.malloy.modelDefToModelInfo',
+    //   fn: () => modelDefToModelInfo(malloyModelDef)
+    // });
 
     let projectConnection = item.connections.find(
       c => c.connectionId === sourceDef.connection

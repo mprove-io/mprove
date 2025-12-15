@@ -82,8 +82,6 @@ export async function makeMalloyQuery(item: {
   mconfig.parentType = mconfigParentType;
   mconfig.parentId = mconfigParentId;
 
-  let startMakeMalloyQuery = Date.now();
-
   let isError = false;
   let errorMessage: string;
 
