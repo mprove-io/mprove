@@ -40,10 +40,6 @@ export function getDevConfig(envFilePath: any) {
         ? Number(envFile.BLOCKML_CONCURRENCY_LIMIT)
         : undefined,
 
-    blockmlHyperdxIngestionApiKey:
-      process.env.BLOCKML_HYPERDX_INGESTION_API_KEY ||
-      envFile.BLOCKML_HYPERDX_INGESTION_API_KEY,
-
     blockmlRabbitUser:
       process.env.BLOCKML_RABBIT_USER || envFile.BLOCKML_RABBIT_USER,
     blockmlRabbitPass:

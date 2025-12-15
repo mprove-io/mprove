@@ -42,18 +42,20 @@ export class TelemetryLogsController {
     try {
       let body = request.body;
 
-      let hyperdxIngestionApiKey = this.cs.get<
-        BackendConfig['backendHyperdxIngestionApiKey']
-      >('backendHyperdxIngestionApiKey');
+      let backendIsForwardTelemetryEnabled = this.cs.get<
+        BackendConfig['backendIsForwardTelemetryEnabled']
+      >('backendIsForwardTelemetryEnabled');
 
-      let backendOtelEndpoint = this.cs.get<
-        BackendConfig['backendOtelForwardEndpoint']
-      >('backendOtelForwardEndpoint');
+      if (backendIsForwardTelemetryEnabled === false) {
+        return res
+          .status(HttpStatus.OK)
+          .json({ partialSuccess: { rejectedSpans: 0 } });
+      }
 
-      await axios.post(`${backendOtelEndpoint}/v1/logs`, body, {
+      await axios.post(`${process.env.TELEMETRY_ENDPOINT}/v1/logs`, body, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: hyperdxIngestionApiKey
+          Authorization: process.env.TELEMETRY_HYPERDX_INGEST_API_KEY
         }
       });
 

@@ -12,7 +12,12 @@ export function startTelemetry(item: {
 }) {
   let { serviceName, hyperdxIngestionApiKey } = item;
 
-  let url = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
+  let url = process.env.TELEMETRY_ENDPOINT;
+
+  if (process.env.IS_TELEMETRY_ENABLED !== 'TRUE') {
+    console.log('Telemetry disabled via IS_TELEMETRY_ENABLED env var');
+    return null;
+  }
 
   let traceExporter = new OTLPTraceExporter({
     url: `${url}/v1/traces`,

@@ -6,9 +6,6 @@ export class DiskConfig {
   diskEnv?: DiskEnvEnum;
 
   @IsString()
-  diskHyperdxIngestionApiKey?: string;
-
-  @IsString()
   aesKey?: string;
 
   @IsString()

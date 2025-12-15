@@ -214,11 +214,8 @@ export class BackendConfig {
   @IsString()
   smtpAuthPassword?: string;
 
-  @IsString()
-  backendHyperdxIngestionApiKey?: string;
-
-  @IsString()
-  backendOtelForwardEndpoint?: string;
+  @IsBoolean()
+  backendIsForwardTelemetryEnabled?: boolean;
 
   @IsString()
   backendValkeyHost?: string;

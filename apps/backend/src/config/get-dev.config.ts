@@ -256,13 +256,12 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_SMTP_AUTH_PASSWORD ||
       envFile.BACKEND_SMTP_AUTH_PASSWORD,
 
-    backendHyperdxIngestionApiKey:
-      process.env.BACKEND_HYPERDX_INGESTION_API_KEY ||
-      envFile.BACKEND_HYPERDX_INGESTION_API_KEY,
-
-    backendOtelForwardEndpoint:
-      process.env.BACKEND_OTEL_FORWARD_ENDPOINT ||
-      envFile.BACKEND_OTEL_FORWARD_ENDPOINT,
+    backendIsForwardTelemetryEnabled: enumToBoolean({
+      value:
+        process.env.BACKEND_IS_FORWARD_TELEMETRY_ENABLED ||
+        envFile.BACKEND_IS_FORWARD_TELEMETRY_ENABLED,
+      name: 'BACKEND_IS_FORWARD_TELEMETRY_ENABLED'
+    }),
 
     backendValkeyHost:
       process.env.BACKEND_VALKEY_HOST || envFile.BACKEND_VALKEY_HOST,
