@@ -8,9 +8,8 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
 export function startTelemetry(item: {
   serviceName: string;
-  hyperdxIngestionApiKey: string;
 }) {
-  let { serviceName, hyperdxIngestionApiKey } = item;
+  let { serviceName } = item;
 
   let url = process.env.TELEMETRY_ENDPOINT;
 
@@ -22,7 +21,7 @@ export function startTelemetry(item: {
   let traceExporter = new OTLPTraceExporter({
     url: `${url}/v1/traces`,
     headers: {
-      Authorization: hyperdxIngestionApiKey
+      Authorization: process.env.TELEMETRY_HYPERDX_INGEST_API_KEY
     }
   });
 
