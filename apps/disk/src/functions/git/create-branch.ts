@@ -1,4 +1,5 @@
 import * as nodegit from '@figma/nodegit';
+import { addTraceSpan } from '~node-common/functions/add-trace-span';
 
 export async function createBranch(item: {
   repoDir: string;
@@ -6,14 +7,26 @@ export async function createBranch(item: {
   newBranch: string;
   fetchOptions: nodegit.FetchOptions;
 }) {
-  let gitRepo = <nodegit.Repository>await nodegit.Repository.open(item.repoDir);
+  return await addTraceSpan({
+    spanName: 'disk.git.createBranch',
+    fn: async () => {
+      let gitRepo = <nodegit.Repository>(
+        await nodegit.Repository.open(item.repoDir)
+      );
 
-  await gitRepo.fetch('origin', item.fetchOptions);
+      await addTraceSpan({
+        spanName: 'disk.git.createBranch.gitRepo.fetch',
+        fn: () => gitRepo.fetch('origin', item.fetchOptions)
+      });
 
-  let commit = <nodegit.Commit>await gitRepo.getBranchCommit(item.fromBranch);
+      let commit = <nodegit.Commit>(
+        await gitRepo.getBranchCommit(item.fromBranch)
+      );
 
-  // do not overwrite existing branch
-  let force = 0;
+      // do not overwrite existing branch
+      let force = 0;
 
-  await nodegit.Branch.create(gitRepo, item.newBranch, commit, force);
+      await nodegit.Branch.create(gitRepo, item.newBranch, commit, force);
+    }
+  });
 }

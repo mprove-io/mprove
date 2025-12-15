@@ -97,6 +97,8 @@ export class GetCatalogNodesService {
       passPhrase: passPhrase
     });
 
+    let isFetched = false;
+
     if (branch !== null && typeof branch !== 'undefined') {
       let isBranchExist = await isLocalBranchExist({
         repoDir: repoDir,
@@ -117,6 +119,8 @@ export class GetCatalogNodesService {
         fetchOptions: fetchOptions,
         isFetch: isFetch
       });
+
+      isFetched = true;
     }
 
     //
@@ -141,7 +145,7 @@ export class GetCatalogNodesService {
       repoId: repoId,
       repoDir: repoDir,
       fetchOptions: fetchOptions,
-      isFetch: isFetch,
+      isFetch: isFetched === true ? false : isFetch,
       isCheckConflicts: true
     });
 

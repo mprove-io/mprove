@@ -26,7 +26,7 @@ export async function addTraceSpan<T>(item: {
     try {
       let result = await fn();
 
-      span.setStatus({ code: SpanStatusCode.OK });
+      // span.setStatus({ code: SpanStatusCode.OK });
       return result;
     } catch (e) {
       let message = e instanceof Error ? e.message : 'Unknown error';
