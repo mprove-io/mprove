@@ -52,7 +52,7 @@ echo '' > secrets/trino/config.properties
 #### 5. Run script to create ".env" file with generated values
 
 ```
-yarn create-env
+pnpm create-env
 ```
 
 #### 6. Modify `mprove/.env`

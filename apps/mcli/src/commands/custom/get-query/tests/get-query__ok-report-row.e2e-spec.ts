@@ -30,7 +30,7 @@ test('1', async t => {
     let reportId = '0ZN4W4XE9LQ7TSF5DQYC';
     let rowId = 'B';
 
-    // yarn mcli get-query \
+    // pnpm mcli get-query \
     // --project-id DXYE72ODCP5LWPWH2EXQ \
     // --repo dev \
     // --branch main \

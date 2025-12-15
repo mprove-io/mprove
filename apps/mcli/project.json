@@ -38,7 +38,7 @@
         "commands": [
           "rimraf \"./dist/tests/mcli\"",
           "tsc --project apps/mcli/tsconfig.test.json --outDir dist/tests/mcli",
-          "yarn pjc-to-tests"
+          "pnpm pjc-to-tests"
         ],
         "parallel": false
       }

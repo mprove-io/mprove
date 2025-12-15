@@ -1,4 +1,4 @@
-yarn serve:disk \
-  & yarn serve:blockml \
-  & yarn serve:backend \
-  & yarn serve:front:dev
+pnpm serve:disk \
+  & pnpm serve:blockml \
+  & pnpm serve:backend \
+  & pnpm serve:front:dev

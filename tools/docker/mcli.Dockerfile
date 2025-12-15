@@ -3,8 +3,8 @@ FROM node:20.19.5-bookworm
 WORKDIR /usr/src/app
 # RUN npm config set scripts-prepend-node-path true
 COPY package.docker.json package.json
-COPY yarn.lock .
-RUN yarn --frozen-lockfile
+COPY pnpm-lock.yaml .
+RUN pnpm install --frozen-lockfile
 
 COPY apps/mcli apps/mcli/
 
@@ -17,12 +17,12 @@ COPY package.cli.json .
 
 ENV NX_DAEMON=false
 
-RUN yarn build:mcli
-RUN yarn build-tests:mcli
+RUN pnpm build:mcli
+RUN pnpm build-tests:mcli
 
 RUN rm -rf node_modules
 
 COPY package.cli.json package.json
-RUN yarn --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 CMD ["sleep", "infinity"]

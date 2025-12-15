@@ -1,0 +1,17 @@
+ignoredBuiltDependencies:
+  - '@vaadin/vaadin-usage-statistics'
+
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - '@figma/nodegit'
+  - '@nestjs/core'
+  - '@parcel/watcher'
+  - bcrypt
+  - duckdb
+  - esbuild
+  - husky
+  - isolated-vm
+  - lmdb
+  - msgpackr-extract
+  - nx
+  - protobufjs

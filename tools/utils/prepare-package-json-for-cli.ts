@@ -34,6 +34,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'dependencies',
     'devDependencies',
     '_moduleAliases',
+    'vaadin',
     'resolutions'
   ];
 

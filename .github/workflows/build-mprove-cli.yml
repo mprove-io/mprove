@@ -10,24 +10,24 @@ jobs:
         os: [windows, macos, ubuntu]
         include:
           - os: ubuntu
-            build: yarn build:mcli
+            build: pnpm build:mcli
             pacx: |
-              yarn pacx:mcli
-              yarn shx mv dist/bin/mp mprove
+              pnpm pacx:mcli
+              pnpm shx mv dist/bin/mp mprove
               tar czf "mprove-cli-linux-${{ github.sha }}.tgz" "mprove"
             artifact: mprove-cli-linux-${{ github.sha }}.tgz
           - os: macos
-            build: yarn build:mcli
+            build: pnpm build:mcli
             pacx: |
-              yarn pacx:mcli
-              yarn shx mv dist/bin/mp mprove
+              pnpm pacx:mcli
+              pnpm shx mv dist/bin/mp mprove
               tar czf "mprove-cli-macos-${{ github.sha }}.tgz" "mprove"
             artifact: mprove-cli-macos-${{ github.sha }}.tgz
           - os: windows
-            build: yarn build:mcli:win
+            build: pnpm build:mcli:win
             pacx: |
-              yarn pacx:mcli:win
-              yarn shx mv dist/bin/mp.exe mprove-cli-windows-${{ github.sha }}.exe
+              pnpm pacx:mcli:win
+              pnpm shx mv dist/bin/mp.exe mprove-cli-windows-${{ github.sha }}.exe
             artifact: mprove-cli-windows-${{ github.sha }}.exe
     runs-on: ${{ matrix.os }}-latest
     steps:
@@ -38,19 +38,19 @@ jobs:
           node-version: 16.19.0
 
       - name: install using package.json
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: build
         run: ${{ matrix.build }}
 
       - name: replace package.json
-        run: yarn shx cp package.cli.json package.json
+        run: pnpm shx cp package.cli.json package.json
 
       - name: remove node_modules
-        run: yarn shx rm -rf node_modules
+        run: pnpm shx rm -rf node_modules
 
       - name: install using package.cli.json
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: pacx
         run: ${{ matrix.pacx }}
