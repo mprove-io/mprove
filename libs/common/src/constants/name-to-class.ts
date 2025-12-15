@@ -114,6 +114,8 @@ import { ToBackendSetUserNameRequest } from '~common/interfaces/to-backend/users
 import { ToBackendSetUserUiRequest } from '~common/interfaces/to-backend/users/to-backend-set-user-ui';
 import { ToBackendUpdateUserPasswordRequest } from '~common/interfaces/to-backend/users/to-backend-update-user-password';
 
+export class NoCheckParamsSchema {}
+
 export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs]:
     ToBackendSpecialRebuildStructsRequest,
@@ -345,7 +347,7 @@ export const nameToClass = {
     ToBackendGetAvatarBigRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
   //
-  [ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs]: {},
-  [ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics]: {},
-  [ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces]: {}
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs]: NoCheckParamsSchema,
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics]: NoCheckParamsSchema,
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces]: NoCheckParamsSchema
 };

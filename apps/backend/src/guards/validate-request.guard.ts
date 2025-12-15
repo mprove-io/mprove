@@ -6,7 +6,10 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
-import { nameToClass } from '~common/constants/name-to-class';
+import {
+  NoCheckParamsSchema,
+  nameToClass
+} from '~common/constants/name-to-class';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -25,7 +28,7 @@ export class ValidateRequestGuard implements CanActivate {
 
     let url: ToBackendRequestInfoNameEnum = request.url?.substring(1);
 
-    let classType: any = nameToClass[url];
+    let classType = nameToClass[url];
 
     if (isUndefined(classType)) {
       throw new ServerError({
@@ -33,7 +36,8 @@ export class ValidateRequestGuard implements CanActivate {
       });
     }
 
-    if (Object.keys(classType).length === 0) {
+    if (classType === NoCheckParamsSchema) {
+      // console.log('classType is NoCheckParamsSchema');
       return true;
     }
 
