@@ -51,8 +51,6 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedScripts.includes(key))
     .forEach(key => delete s.scripts[key]);
 
-  // s.scripts.postinstall = 'ngcc --properties es2015 browser module main';
-
   if (t === null || !deepEqual(s, t)) {
     fse.writeFileSync(tPath, JSON.stringify(s, null, 2));
     console.log(`target file "${tPath}" updated!`);
