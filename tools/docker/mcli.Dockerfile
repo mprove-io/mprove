@@ -1,9 +1,15 @@
 FROM node:20.19.5-bookworm
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
 WORKDIR /usr/src/app
-# RUN npm config set scripts-prepend-node-path true
+
 COPY package.docker.json package.json
 COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
+
 RUN pnpm install --frozen-lockfile
 
 COPY apps/mcli apps/mcli/

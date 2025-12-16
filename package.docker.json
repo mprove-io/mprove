@@ -2,6 +2,7 @@
   "name": "mprove",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
+  "packageManager": "pnpm@10.26.0",
   "private": false,
   "sideEffects": [
     "apps/front/src/polyfills.ts"
@@ -11,9 +12,7 @@
     "url": "https://github.com/mprove-io/mprove.git"
   },
   "bin": "./main.js",
-  "scripts": {
-    "postinstall": "ngcc --properties es2015 browser module main"
-  },
+  "scripts": {},
   "dependencies": {
     "@acrodata/code-editor": "0.5.1",
     "@ali-hm/angular-tree-component": "19.1.2",

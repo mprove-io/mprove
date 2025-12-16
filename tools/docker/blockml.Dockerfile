@@ -1,9 +1,15 @@
 FROM node:20.19.5-bookworm
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
 WORKDIR /usr/src/app
-# RUN npm config set scripts-prepend-node-path true
+
 COPY package.docker.json package.json
 COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
+
 RUN pnpm install --frozen-lockfile
 
 COPY scripts/wait-for-it.sh scripts/wait-for-it.sh
@@ -17,7 +23,5 @@ COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json ts
 
 RUN chmod +x scripts/wait-for-it.sh
 RUN pnpm build:blockml:prod
-
-EXPOSE 3001 9229
 
 CMD [ "node", "dist/apps/blockml/main.js" ]

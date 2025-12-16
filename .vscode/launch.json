@@ -4,7 +4,6 @@
     {
       "name": "Local App",
       "configurations": [
-        "Chrome frontnode 4200",
         "Local disk 9230",
         "Local blockml 9231",
         "Local backend 9232"
@@ -14,7 +13,6 @@
     {
       "name": "Remote App",
       "configurations": [
-        "Chrome frontnode 4200",
         "Remote disk 9230",
         "Remote blockml 9231",
         "Remote backend 9232"
@@ -35,13 +33,6 @@
         "ENV_FILE_PATH": ".env",
         "BLOCKML_LOG_IO": "TRUE"
       }
-    },
-    {
-      "name": "Chrome frontnode 4200",
-      "request": "launch",
-      "type": "chrome",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}"
     },
     {
       "name": "Local disk 9230",

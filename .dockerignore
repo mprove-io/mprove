@@ -1,23 +1,25 @@
+_nogit/
+nogit/
+
 .git
-.devcontainer
-.helm
-.vscode
-.idea
-.e-values.yml
+.angular/
+.devcontainer/
+.nx/
+.pnpm-store/
+.vscode/
+
+dist/
+malloy/
+malloy_data/
+mprove_data/
+node_modules/
+secrets/
+tmp/
+
 .env
 .envrc
 
-dist
-malloy/
-malloy_data/
-node_modules
-nogit
-_nogit
-secrets
 
-docker-compose.yml
-
-**/logs
 
 
 

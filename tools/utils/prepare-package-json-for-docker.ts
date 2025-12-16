@@ -26,6 +26,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     // 'version',
     'author',
     'license',
+    'packageManager',
     'private',
     'sideEffects',
     'repository',
@@ -42,13 +43,15 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedTop.includes(key))
     .forEach(key => delete s[key]);
 
-  let allowedScripts = ['postinstall'];
+  let allowedScripts: string[] = [
+    // 'postinstall'
+  ];
 
   Object.keys(s.scripts)
     .filter(key => !allowedScripts.includes(key))
     .forEach(key => delete s.scripts[key]);
 
-  s.scripts.postinstall = 'ngcc --properties es2015 browser module main';
+  // s.scripts.postinstall = 'ngcc --properties es2015 browser module main';
 
   if (t === null || !deepEqual(s, t)) {
     fse.writeFileSync(tPath, JSON.stringify(s, null, 2));

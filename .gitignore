@@ -1,6 +1,6 @@
-# 
-nogit/
 _nogit/
+nogit/
+
 .angular/
 .devcontainer/.zshrc
 .nx/
@@ -19,7 +19,6 @@ secrets/
 tmp/
 tools/data/
 *.env
-*.env.template
 .envrc
 
 # System Files

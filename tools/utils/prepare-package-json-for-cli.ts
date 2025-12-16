@@ -26,6 +26,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     'version',
     'author',
     'license',
+    'packageManager',
     'private',
     'sideEffects',
     'repository',
