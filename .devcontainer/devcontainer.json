@@ -12,8 +12,12 @@
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.zsh_history,target=/root/.zsh_history,type=bind,consistency=cached",
     "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind,consistency=cached",
+    "source=mprove-angular,target=${containerWorkspaceFolder}/.angular,type=volume",
+    "source=mprove-nx,target=${containerWorkspaceFolder}/.nx,type=volume",
+    "source=mprove-pnpm-store,target=${containerWorkspaceFolder}/.pnpm-store,type=volume",
+    "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume"
+    "source=mprove-tmp,target=${containerWorkspaceFolder}/tmp,type=volume"
   ],
   "initializeCommand": "bash .devcontainer/init.sh",
   "postCreateCommand": "bash .devcontainer/post-create.sh",
