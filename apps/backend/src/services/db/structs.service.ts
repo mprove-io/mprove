@@ -23,7 +23,9 @@ import {
 import { ErEnum } from '~common/enums/er.enum';
 import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { Struct } from '~common/interfaces/backend/struct';
+import { ModelMetricX } from '~common/interfaces/backend/model-metric-x';
+import { ModelPartX } from '~common/interfaces/backend/model-part-x';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
@@ -37,14 +39,20 @@ export class StructsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  tabToApi(item: { struct: StructTab }): Struct {
-    let { struct } = item;
+  tabToApi(item: { struct: StructTab; modelPartXs: ModelPartX[] }): StructX {
+    let { struct, modelPartXs } = item;
 
-    let apiStruct: Struct = {
+    let apiStruct: StructX = {
       projectId: struct.projectId,
       structId: struct.structId,
       errors: struct.errors,
-      metrics: struct.metrics,
+      metrics: struct.metrics.map(x => {
+        let modelMetricX: ModelMetricX = Object.assign({}, x, {
+          hasAccessToModel: modelPartXs.find(y => y.modelId === x.modelId)
+            .hasAccess
+        });
+        return modelMetricX;
+      }),
       presets: struct.presets,
       mproveConfig: struct.mproveConfig,
       mproveVersion: struct.mproveVersion,

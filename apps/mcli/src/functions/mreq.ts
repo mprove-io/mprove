@@ -1,4 +1,3 @@
-import got, { OptionsOfTextResponseBody } from 'got';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -7,6 +6,8 @@ import { makeId } from '~common/functions/make-id';
 import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ServerError } from '~common/models/server-error';
+let axios = require('axios');
+// import got, { OptionsOfTextResponseBody } from 'got';
 
 export async function mreq<T extends MyResponse>(item: {
   host: string;
@@ -27,23 +28,33 @@ export async function mreq<T extends MyResponse>(item: {
 
   let url = `${host}/${pathInfoName}`;
 
-  let options: OptionsOfTextResponseBody = {
-    json: body,
-    headers: {}
-  };
+  let headers: any = {};
 
   if (isDefined(loginToken)) {
-    options.headers.authorization = `Bearer ${loginToken}`;
+    headers.Authorization = `Bearer ${loginToken}`;
   }
 
-  let resp = await got.post(url, options).json<T>();
+  // console.log('url');
+  // console.log(url);
 
-  if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
+  let resp = await axios.post(url, body, { headers: headers });
+  // let options: OptionsOfTextResponseBody = {
+  //   json: body,
+  //   headers: headers
+  // };
+  // let resp = await got.post(url, options).json<T>();
+
+  // console.log('resp');
+  // console.log(resp);
+
+  if (resp.data?.info?.status !== ResponseInfoStatusEnum.Ok) {
+    // if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
     throw new ServerError({
       message: ErEnum.MCLI_ERROR_RESPONSE_FROM_BACKEND,
       originalError: resp.info?.error
     });
   }
 
-  return resp;
+  return resp.data;
+  // return resp;
 }

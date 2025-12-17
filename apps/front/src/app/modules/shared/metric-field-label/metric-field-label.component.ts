@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { ModelMetricX } from '~common/interfaces/backend/model-metric-x';
 
 @Component({
   standalone: false,
@@ -8,7 +8,7 @@ import { ModelMetric } from '~common/interfaces/blockml/model-metric';
 })
 export class MetricFieldLabelComponent {
   @Input()
-  metric: ModelMetric;
+  metric: ModelMetricX;
 
   @Input()
   isShowTop: boolean;

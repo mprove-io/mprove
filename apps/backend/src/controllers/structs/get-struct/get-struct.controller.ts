@@ -8,6 +8,7 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { TabService } from '~backend/services/tab.service';
@@ -27,6 +28,7 @@ export class GetStructController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private modelsService: ModelsService,
     private structsService: StructsService,
     private bridgesService: BridgesService,
     private branchesService: BranchesService,
@@ -74,9 +76,17 @@ export class GetStructController {
 
     let apiUserMember = this.membersService.tabToApi({ member: userMember });
 
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendGetStructResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      }),
       userMember: apiUserMember
     };
 

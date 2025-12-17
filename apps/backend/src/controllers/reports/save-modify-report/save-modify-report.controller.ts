@@ -27,6 +27,7 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
@@ -63,6 +64,7 @@ export class SaveModifyReportController {
     private tabService: TabService,
     private usersService: UsersService,
     private membersService: MembersService,
+    private modelsService: ModelsService,
     private projectsService: ProjectsService,
     private structsService: StructsService,
     private reportsService: ReportsService,
@@ -370,9 +372,17 @@ export class SaveModifyReportController {
       timezone: timezone
     });
 
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: currentStruct.structId,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendSaveModifyReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: currentStruct }),
+      struct: this.structsService.tabToApi({
+        struct: currentStruct,
+        modelPartXs: modelPartXs
+      }),
       userMember: apiUserMember,
       report: apiFinalReport,
       reportPart: apiFinalReport

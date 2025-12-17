@@ -100,9 +100,17 @@ export class GetDashboardsController {
       projectId: projectId
     });
 
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendGetDashboardsResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      }),
       userMember: apiUserMember,
       models: apiModels.sort((a, b) => {
         let aLabel = a.label?.toUpperCase();

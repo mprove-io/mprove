@@ -14,8 +14,7 @@ import { tap } from 'rxjs/operators';
 import { ChangeTypeEnum } from '~common/enums/change-type.enum';
 import { RowTypeEnum } from '~common/enums/row-type.enum';
 import { isUndefined } from '~common/functions/is-undefined';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { ModelMetricX } from '~common/interfaces/backend/model-metric-x';
 import { RowChange } from '~common/interfaces/blockml/row-change';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -55,30 +54,12 @@ export class ReportAddRowDialogComponent implements OnInit {
     formula: [undefined, [Validators.required]]
   });
 
-  metrics: ModelMetric[];
-  metricsHasAccess$ = combineLatest([
-    this.modelsQuery.models$,
-    this.structQuery.metrics$,
-    this.memberQuery.isAdmin$,
-    this.memberQuery.isEditor$
-  ]).pipe(
-    tap(
-      ([models, metrics, isAdmin, isEditor]: [
-        ModelX[],
-        ModelMetric[],
-        boolean,
-        boolean
-      ]) => {
-        this.metrics = metrics.filter(metric => {
-          let model = models.find(y => y.modelId === metric.modelId);
-          return (
-            isAdmin === true || isEditor === true || model?.hasAccess === true
-          );
-        });
-
-        this.cd.detectChanges();
-      }
-    )
+  metrics: ModelMetricX[];
+  metricsHasAccess$ = combineLatest([this.structQuery.metrics$]).pipe(
+    tap(([metrics]: [ModelMetricX[]]) => {
+      this.metrics = metrics.filter(metric => metric.hasAccessToModel === true);
+      this.cd.detectChanges();
+    })
   );
 
   newMetricId: string;
@@ -216,7 +197,7 @@ export class ReportAddRowDialogComponent implements OnInit {
     this.ref.close();
   }
 
-  newMetricSearchFn(term: string, metric: ModelMetric) {
+  newMetricSearchFn(term: string, metric: ModelMetricX) {
     let haystack = [
       `${metric.topLabel} ${metric.partNodeLabel} ${metric.partFieldLabel} by ${metric.timeNodeLabel} ${metric.timeFieldLabel} ${metric.connectionType}`
     ];

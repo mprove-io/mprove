@@ -605,7 +605,7 @@ ${inputSub}
           q.status = QueryStatusEnum.Error;
           q.data = [];
           q.queryJobId = undefined;
-          q.lastErrorMessage = `response status code "${response.code}" is not 200 or 201`;
+          q.lastErrorMessage = `response status code "${response.status}" is not 200 or 201`;
           q.lastErrorTs = makeTsNumber();
         } else if (isUndefined(response.data)) {
           q.status = QueryStatusEnum.Error;

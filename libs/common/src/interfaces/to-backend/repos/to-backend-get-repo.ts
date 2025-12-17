@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { Member } from '~common/interfaces/backend/member';
-import { Struct } from '~common/interfaces/backend/struct';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { User } from '~common/interfaces/backend/user';
 import { Repo } from '~common/interfaces/disk/repo';
 import { MyResponse } from '~common/interfaces/to/my-response';
@@ -35,8 +35,8 @@ export class ToBackendGetRepoResponsePayload {
   needValidate: boolean;
 
   @ValidateNested()
-  @Type(() => Struct)
-  struct: Struct;
+  @Type(() => StructX)
+  struct: StructX;
 
   @ValidateNested()
   @Type(() => Member)

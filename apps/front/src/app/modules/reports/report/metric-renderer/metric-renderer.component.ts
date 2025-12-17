@@ -11,7 +11,7 @@ import { getTimeSpecDetail } from '~common/functions/get-timespec-detail';
 import { getTimeSpecWord } from '~common/functions/get-timespec-word';
 import { isDefined } from '~common/functions/is-defined';
 import { FilterX } from '~common/interfaces/backend/filter-x';
-import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { ModelMetricX } from '~common/interfaces/backend/model-metric-x';
 import { DataRow } from '~common/interfaces/front/data-row';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ReportQuery } from '~front/app/queries/report.query';
@@ -33,7 +33,7 @@ export class MetricRendererComponent implements ICellRendererAngularComp {
   rowTypeMetric = RowTypeEnum.Metric;
   rowTypeFormula = RowTypeEnum.Formula;
 
-  metric: ModelMetric;
+  metric: ModelMetricX;
 
   metricTypeModel = MetricTypeEnum.Model;
 

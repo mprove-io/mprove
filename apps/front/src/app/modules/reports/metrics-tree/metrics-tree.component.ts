@@ -22,8 +22,7 @@ import { encodeFilePath } from '~common/functions/encode-file-path';
 import { isDefined } from '~common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { makeCopy } from '~common/functions/make-copy';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { ModelMetric } from '~common/interfaces/blockml/model-metric';
+import { ModelMetricX } from '~common/interfaces/backend/model-metric-x';
 import { RowChange } from '~common/interfaces/blockml/row-change';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
@@ -44,7 +43,7 @@ export class MetricNode {
   isField: boolean;
   fieldResult: FieldResultEnum;
   isSelected: boolean;
-  metric: ModelMetric;
+  metric: ModelMetricX;
   children: MetricNode[];
 }
 
@@ -56,35 +55,19 @@ export class MetricNode {
 export class MetricsTreeComponent implements AfterViewInit {
   nodeClassMeasure = FieldClassEnum.Measure;
 
-  metrics: ModelMetric[];
+  metrics: ModelMetricX[];
 
   metricNodes: MetricNode[] = [];
   metricNodes$ = combineLatest([
-    this.modelsQuery.models$,
     this.structQuery.metrics$,
-    this.uiQuery.searchMetricsWord$,
-    this.memberQuery.isAdmin$,
-    this.memberQuery.isEditor$
+    this.uiQuery.searchMetricsWord$
   ]).pipe(
-    tap(
-      ([models, metrics, searchMetricsWord, isAdmin, isEditor]: [
-        ModelX[],
-        ModelMetric[],
-        string,
-        boolean,
-        boolean
-      ]) => {
-        this.metrics = metrics.filter(metric => {
-          let model = models.find(y => y.modelId === metric.modelId);
-          return (
-            isAdmin === true || isEditor === true || model?.hasAccess === true
-          );
-        });
+    tap(([metrics, searchMetricsWord]: [ModelMetricX[], string]) => {
+      this.metrics = metrics.filter(metric => metric.hasAccessToModel === true);
 
-        this.makeMetricNodes({ searchMetricsWord: searchMetricsWord });
-        this.cd.detectChanges();
-      }
-    )
+      this.makeMetricNodes({ searchMetricsWord: searchMetricsWord });
+      this.cd.detectChanges();
+    })
   );
 
   actionMapping: IActionMapping = {

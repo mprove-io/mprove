@@ -122,7 +122,10 @@ export class GetChartsController {
 
     let payload: ToBackendGetChartsResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: apiModels
+      }),
       userMember: apiUserMember,
       models: apiModels,
       charts: chartsGrantedAccess.map(x =>

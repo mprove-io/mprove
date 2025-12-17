@@ -24,6 +24,7 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -52,6 +53,7 @@ export class DeleteFolderController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private modelsService: ModelsService,
     private rabbitService: RabbitService,
     private blockmlService: BlockmlService,
     private structsService: StructsService,
@@ -76,7 +78,7 @@ export class DeleteFolderController {
       projectId: projectId
     });
 
-    let member = await this.membersService.getMemberCheckIsEditor({
+    let userMember = await this.membersService.getMemberCheckIsEditor({
       projectId: projectId,
       memberId: user.userId
     });
@@ -90,7 +92,7 @@ export class DeleteFolderController {
     let env = await this.envsService.getEnvCheckExistsAndAccess({
       projectId: projectId,
       envId: envId,
-      member: member
+      member: userMember
     });
 
     let bridge = await this.bridgesService.getBridgeCheckExists({
@@ -179,9 +181,19 @@ export class DeleteFolderController {
       projectId: projectId
     });
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendDeleteFolderResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      }),
       needValidate: currentBridge.needValidate
     };
 

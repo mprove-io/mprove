@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { Struct } from '~common/interfaces/backend/struct';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { BaseQuery } from './base.query';
 
-export class StructState extends Struct {}
+export class StructState extends StructX {}
 
 let structState: StructState = {
   projectId: undefined,

@@ -90,12 +90,20 @@ export class GetModelsController {
       projectId: projectId
     });
 
-    let apiMember = this.membersService.tabToApi({ member: userMember });
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
 
     let payload: ToBackendGetModelsResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
-      userMember: apiMember,
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      }),
+      userMember: apiUserMember,
       models: models
         .map(model =>
           this.modelsService.tabToApi({

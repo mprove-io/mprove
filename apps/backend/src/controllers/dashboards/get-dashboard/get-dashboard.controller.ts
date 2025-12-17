@@ -282,9 +282,17 @@ export class GetDashboardController {
       projectId: projectId
     });
 
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendGetDashboardResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      }),
       userMember: apiUserMember,
       dashboard: newDashboardX
     };

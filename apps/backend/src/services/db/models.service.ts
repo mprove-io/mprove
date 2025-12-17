@@ -2,10 +2,14 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { MemberTab, ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
+import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { ErEnum } from '~common/enums/er.enum';
 import { isUndefined } from '~common/functions/is-undefined';
+import { Member } from '~common/interfaces/backend/member';
+import { ModelPart } from '~common/interfaces/backend/model-part';
+import { ModelPartX } from '~common/interfaces/backend/model-part-x';
 import { ModelX } from '~common/interfaces/backend/model-x';
 import { Model } from '~common/interfaces/blockml/model';
 import { ServerError } from '~common/models/server-error';
@@ -149,5 +153,65 @@ export class ModelsService {
     }
 
     return model;
+  }
+
+  async getModelPartXs(item: {
+    structId: string;
+    // user: UserTab;
+    apiUserMember: Member;
+  }): Promise<ModelPartX[]> {
+    let {
+      structId,
+      // , user,
+      apiUserMember
+    } = item;
+
+    let modelParts: ModelTab[] = await this.db.drizzle
+      .select({
+        keyTag: modelsTable.keyTag,
+        modelId: modelsTable.modelId,
+        st: modelsTable.st
+        // lt: {},
+      })
+      .from(modelsTable)
+      .where(
+        and(
+          // inArray(modelsTable.modelId, modelIds),
+          eq(modelsTable.structId, structId)
+        )
+      )
+      .then(xs => xs.map(x => this.tabService.modelEntToTab(x as ModelEnt)));
+
+    let apiModelParts = modelParts.map(x =>
+      this.tabToModelPart({
+        model: x
+      })
+    );
+
+    let apiModelPartXs = apiModelParts.map(x => {
+      let modelPartX: ModelPartX = Object.assign({}, x, {
+        hasAccess: checkAccess({
+          member: apiUserMember,
+          accessRoles: x.accessRoles
+        })
+      });
+      return modelPartX;
+    });
+
+    return apiModelPartXs;
+  }
+
+  tabToModelPart(item: {
+    model: ModelTab;
+  }): ModelPart {
+    let { model } = item;
+
+    let modelPart: ModelPart = {
+      structId: model.structId,
+      modelId: model.modelId,
+      accessRoles: model.accessRoles
+    };
+
+    return modelPart;
   }
 }

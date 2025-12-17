@@ -345,9 +345,17 @@ export class CreateDraftReportController {
       isSaveToDb: true
     });
 
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendCreateDraftReportResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      }),
       userMember: apiUserMember,
       report: apiReport
     };

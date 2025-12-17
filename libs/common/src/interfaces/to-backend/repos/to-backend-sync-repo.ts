@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNumber, IsString, ValidateNested } from 'class-validator';
-import { Struct } from '~common/interfaces/backend/struct';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
 import { Repo } from '~common/interfaces/disk/repo';
 import { MyResponse } from '~common/interfaces/to/my-response';
@@ -54,8 +54,8 @@ export class ToBackendSyncRepoResponsePayload {
   repo: Repo;
 
   @ValidateNested()
-  @Type(() => Struct)
-  struct: Struct;
+  @Type(() => StructX)
+  struct: StructX;
 
   @IsNumber()
   devReqReceiveTime: number;

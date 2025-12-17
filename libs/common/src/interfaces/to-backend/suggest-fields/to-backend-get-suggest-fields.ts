@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
 import { Member } from '~common/interfaces/backend/member';
-import { Struct } from '~common/interfaces/backend/struct';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { SuggestField } from '~common/interfaces/backend/suggest-field';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -38,8 +38,8 @@ export class ToBackendGetSuggestFieldsResponsePayload {
   needValidate: boolean;
 
   @ValidateNested()
-  @Type(() => Struct)
-  struct: Struct;
+  @Type(() => StructX)
+  struct: StructX;
 
   @ValidateNested()
   @Type(() => Member)

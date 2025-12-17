@@ -78,12 +78,17 @@ export class GetModelController {
       projectId: projectId
     });
 
-    let apiMember = this.membersService.tabToApi({ member: userMember });
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
 
     let payload: ToBackendGetModelResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
-      userMember: apiMember,
+      struct: this.structsService.tabToApi({ struct: struct, modelPartXs }),
+      userMember: apiUserMember,
       model: this.modelsService.tabToApi({
         model: model,
         hasAccess: checkModelAccess({

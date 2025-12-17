@@ -4,7 +4,7 @@ import { TimeSpecEnum } from '~common/enums/timespec.enum';
 import { IsTimezone } from '~common/functions/is-timezone';
 import { Member } from '~common/interfaces/backend/member';
 import { ReportX } from '~common/interfaces/backend/report-x';
-import { Struct } from '~common/interfaces/backend/struct';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
 import { ReportField } from '~common/interfaces/blockml/report-field';
 import { MyResponse } from '~common/interfaces/to/my-response';
@@ -64,8 +64,8 @@ export class ToBackendSaveModifyReportResponsePayload {
   needValidate: boolean;
 
   @ValidateNested()
-  @Type(() => Struct)
-  struct: Struct;
+  @Type(() => StructX)
+  struct: StructX;
 
   @ValidateNested()
   @Type(() => Member)

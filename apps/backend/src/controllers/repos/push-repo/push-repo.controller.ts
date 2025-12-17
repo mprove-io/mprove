@@ -25,6 +25,7 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { RabbitService } from '~backend/services/rabbit.service';
@@ -54,6 +55,7 @@ export class PushRepoController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private modelsService: ModelsService,
     private rabbitService: RabbitService,
     private structsService: StructsService,
     private branchesService: BranchesService,
@@ -222,9 +224,19 @@ export class PushRepoController {
       projectId: projectId
     });
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+    let modelPartXs = await this.modelsService.getModelPartXs({
+      structId: struct.structId,
+      apiUserMember: apiUserMember
+    });
+
     let payload: ToBackendPushRepoResponsePayload = {
       repo: diskResponse.payload.repo,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      }),
       needValidate: currentBridge.needValidate
     };
 

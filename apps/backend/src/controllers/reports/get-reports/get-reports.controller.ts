@@ -139,8 +139,6 @@ export class GetReportsController {
       })
       .then(xs => xs.map(x => this.tabService.modelEntToTab(x)));
 
-    let apiUserMember = this.membersService.tabToApi({ member: userMember });
-
     let apiModels = models.map(model =>
       this.modelsService.tabToApi({
         model: model,
@@ -151,9 +149,14 @@ export class GetReportsController {
       })
     );
 
+    let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
     let payload: ToBackendGetReportsResponsePayload = {
       needValidate: bridge.needValidate,
-      struct: this.structsService.tabToApi({ struct: struct }),
+      struct: this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: apiModels
+      }),
       userMember: apiUserMember,
       reports: reports.map(x =>
         this.reportsService.tabToApi({

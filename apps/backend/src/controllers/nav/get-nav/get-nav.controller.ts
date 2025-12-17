@@ -12,6 +12,7 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/db/members.service';
+import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
@@ -22,7 +23,7 @@ import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-reques
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { Member } from '~common/interfaces/backend/member';
-import { Struct } from '~common/interfaces/backend/struct';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { Repo } from '~common/interfaces/disk/repo';
 import {
   ToBackendGetNavRequest,
@@ -41,6 +42,7 @@ export class GetNavController {
     private rabbitService: RabbitService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private modelsService: ModelsService,
     private structsService: StructsService,
     private usersService: UsersService,
     @Inject(DRIZZLE) private db: Db
@@ -126,7 +128,7 @@ export class GetNavController {
       .then(x => this.tabService.avatarEntToTab(x));
 
     let apiMember: Member;
-    let apiStruct: Struct;
+    let apiStruct: StructX;
     let apiRepo: Repo;
 
     if (
@@ -147,7 +149,17 @@ export class GetNavController {
         projectId: resultProject.projectId
       });
 
-      apiStruct = this.structsService.tabToApi({ struct: struct });
+      let apiUserMember = this.membersService.tabToApi({ member: userMember });
+
+      let modelPartXs = await this.modelsService.getModelPartXs({
+        structId: struct.structId,
+        apiUserMember: apiUserMember
+      });
+
+      apiStruct = this.structsService.tabToApi({
+        struct: struct,
+        modelPartXs: modelPartXs
+      });
 
       let apiResultBaseProject = this.tabService.projectTabToBaseProject({
         project: resultProject

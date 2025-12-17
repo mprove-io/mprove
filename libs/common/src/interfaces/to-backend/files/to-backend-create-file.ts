@@ -6,7 +6,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { ModelInfo } from '~common/interfaces/backend/model-info';
-import { Struct } from '~common/interfaces/backend/struct';
+import { StructX } from '~common/interfaces/backend/struct-x';
 import { Repo } from '~common/interfaces/disk/repo';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -45,8 +45,8 @@ export class ToBackendCreateFileResponsePayload {
   repo: Repo;
 
   @ValidateNested()
-  @Type(() => Struct)
-  struct: Struct;
+  @Type(() => StructX)
+  struct: StructX;
 
   @IsBoolean()
   needValidate: boolean;
