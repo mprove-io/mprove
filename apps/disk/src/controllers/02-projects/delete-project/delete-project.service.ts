@@ -5,17 +5,18 @@ import {
   ToDiskDeleteProjectRequest,
   ToDiskDeleteProjectResponsePayload
 } from '~common/interfaces/to-disk/02-projects/to-disk-delete-project';
-import { ServerError } from '~common/models/server-error';
 import { DiskConfig } from '~disk/config/disk-config';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { removePath } from '~disk/functions/disk/remove-path';
 import { DiskTabService } from '~disk/services/disk-tab.service';
+import { RestoreService } from '~disk/services/restore.service';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class DeleteProjectService {
   constructor(
     private diskTabService: DiskTabService,
+    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -40,12 +41,21 @@ export class DeleteProjectService {
 
     //
 
-    let isOrgExist = await isPathExist(orgDir);
-    if (isOrgExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_ORG_IS_NOT_EXIST
-      });
-    }
+    // let isOrgExist = await isPathExist(orgDir);
+    // if (isOrgExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
+    //   });
+    // }
+
+    await this.restoreService.checkOrgProjectRepoBranch({
+      remoteType: undefined, // undefined
+      orgId: orgId,
+      projectId: undefined, // undefined
+      projectLt: undefined, // undefined
+      repoId: undefined, // undefined
+      branchId: undefined // undefined
+    });
 
     let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === true) {

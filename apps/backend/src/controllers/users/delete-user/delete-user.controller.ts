@@ -122,12 +122,18 @@ export class DeleteUserController {
     let projects =
       projectIds.length === 0
         ? []
-        : await this.db.drizzle.query.projectsTable.findMany({
-            where: inArray(projectsTable.projectId, projectIds)
-          });
+        : await this.db.drizzle.query.projectsTable
+            .findMany({
+              where: inArray(projectsTable.projectId, projectIds)
+            })
+            .then(xs => xs.map(x => this.tabService.projectEntToTab(x)));
 
     await asyncPool(1, userMembers, async (m: MemberEnt) => {
       let project = projects.find(p => p.projectId === m.projectId);
+
+      let baseProject = this.tabService.projectTabToBaseProject({
+        project: project
+      });
 
       let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
         info: {
@@ -137,6 +143,7 @@ export class DeleteUserController {
         payload: {
           orgId: project.orgId,
           projectId: project.projectId,
+          baseProject: baseProject,
           devRepoId: user.userId
         }
       };

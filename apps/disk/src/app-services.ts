@@ -30,11 +30,13 @@ import { SeedProjectService } from './controllers/08-seed/seed-project/seed-proj
 import { ConsumerService } from './services/consumer.service';
 import { DiskTabService } from './services/disk-tab.service';
 import { MessageService } from './services/message.service';
+import { RestoreService } from './services/restore.service';
 
 export const appServices = [
   DiskTabService,
   ConsumerService,
   MessageService,
+  RestoreService,
 
   CreateOrgService,
   DeleteOrgService,

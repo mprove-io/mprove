@@ -80,6 +80,10 @@ export class DeleteMemberController {
 
     let devRepoId = member.memberId;
 
+    let baseProject = this.tabService.projectTabToBaseProject({
+      project: project
+    });
+
     let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
       info: {
         name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
@@ -88,6 +92,7 @@ export class DeleteMemberController {
       payload: {
         orgId: project.orgId,
         projectId: projectId,
+        baseProject: baseProject,
         devRepoId: devRepoId
       }
     };

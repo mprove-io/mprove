@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
+import { BaseProject } from '~common/interfaces/backend/base-project';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ToDiskRequest } from '../to-disk-request';
 
@@ -9,6 +10,10 @@ export class ToDiskDeleteDevRepoRequestPayload {
 
   @IsString()
   projectId: string;
+
+  @ValidateNested()
+  @Type(() => BaseProject)
+  baseProject: BaseProject;
 
   @IsString()
   devRepoId: string;

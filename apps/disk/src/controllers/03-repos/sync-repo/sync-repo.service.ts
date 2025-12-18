@@ -24,9 +24,9 @@ import { writeToFile } from '~disk/functions/disk/write-to-file';
 import { addChangesToStage } from '~disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '~disk/functions/git/checkout-branch';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
-import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
+import { RestoreService } from '~disk/services/restore.service';
 import { getSyncFiles } from '~node-common/functions/get-sync-files';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
@@ -34,6 +34,7 @@ import { transformValidSync } from '~node-common/functions/transform-valid-sync'
 export class SyncRepoService {
   constructor(
     private diskTabService: DiskTabService,
+    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -79,11 +80,52 @@ export class SyncRepoService {
     );
 
     let orgDir = `${orgPath}/${orgId}`;
-    let keyDir = `${orgDir}/_keys/${projectId}`;
     let projectDir = `${orgDir}/${projectId}`;
     let repoDir = `${projectDir}/${repoId}`;
 
-    await ensureDir(keyDir);
+    // let keyDir = `${orgDir}/_keys/${projectId}`;
+
+    // await ensureDir(keyDir);
+
+    // let isOrgExist = await isPathExist(orgDir);
+    // if (isOrgExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
+    //   });
+    // }
+
+    // let isProjectExist = await isPathExist(projectDir);
+    // if (isProjectExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
+    //   });
+    // }
+
+    // let isRepoExist = await isPathExist(repoDir);
+    // if (isRepoExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
+    //   });
+    // }
+
+    // let isBranchExist = await isLocalBranchExist({
+    //   repoDir: repoDir,
+    //   localBranch: branch
+    // });
+    // if (isBranchExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
+    //   });
+    // }
+
+    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
+      remoteType: remoteType,
+      orgId: orgId,
+      projectId: projectId,
+      projectLt: projectLt,
+      repoId: repoId,
+      branchId: branch
+    });
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -93,37 +135,6 @@ export class SyncRepoService {
       publicKey: publicKey,
       passPhrase: passPhrase
     });
-
-    let isOrgExist = await isPathExist(orgDir);
-    if (isOrgExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_ORG_IS_NOT_EXIST
-      });
-    }
-
-    let isProjectExist = await isPathExist(projectDir);
-    if (isProjectExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-      });
-    }
-
-    let isRepoExist = await isPathExist(repoDir);
-    if (isRepoExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_REPO_IS_NOT_EXIST
-      });
-    }
-
-    let isBranchExist = await isLocalBranchExist({
-      repoDir: repoDir,
-      localBranch: branch
-    });
-    if (isBranchExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_BRANCH_IS_NOT_EXIST
-      });
-    }
 
     await checkoutBranch({
       projectId: projectId,

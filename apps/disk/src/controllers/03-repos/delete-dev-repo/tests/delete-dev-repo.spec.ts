@@ -87,6 +87,7 @@ test('1', async t => {
       payload: {
         orgId: orgId,
         projectId: projectId,
+        baseProject: baseProject,
         devRepoId: 'r1'
       }
     };

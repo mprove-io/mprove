@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PROD_REPO_ID } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
@@ -10,9 +11,7 @@ import {
 } from '~common/interfaces/to-disk/05-branches/to-disk-create-branch';
 import { ServerError } from '~common/models/server-error';
 import { DiskConfig } from '~disk/config/disk-config';
-import { ensureDir } from '~disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { checkoutBranch } from '~disk/functions/git/checkout-branch';
 import { createBranch } from '~disk/functions/git/create-branch';
 import { getRepoStatus } from '~disk/functions/git/get-repo-status';
@@ -20,12 +19,14 @@ import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '~disk/functions/git/is-remote-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
+import { RestoreService } from '~disk/services/restore.service';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class CreateBranchService {
   constructor(
     private diskTabService: DiskTabService,
+    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -67,40 +68,54 @@ export class CreateBranchService {
 
     //
 
-    let isOrgExist = await isPathExist(orgDir);
-    if (isOrgExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_ORG_IS_NOT_EXIST
-      });
-    }
+    // let isOrgExist = await isPathExist(orgDir);
+    // if (isOrgExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
+    //   });
+    // }
 
-    let isProjectExist = await isPathExist(projectDir);
-    if (isProjectExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
-      });
-    }
+    // let isProjectExist = await isPathExist(projectDir);
+    // if (isProjectExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_PROJECT_IS_NOT_EXIST
+    //   });
+    // }
 
-    let isRepoExist = await isPathExist(repoDir);
-    if (isRepoExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_REPO_IS_NOT_EXIST
-      });
-    }
+    // let isRepoExist = await isPathExist(repoDir);
+    // if (isRepoExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_REPO_IS_NOT_EXIST
+    //   });
+    // }
 
-    let isNewBranchExist = await isLocalBranchExist({
-      repoDir: repoDir,
-      localBranch: newBranch
+    // let isNewBranchExist = await isLocalBranchExist({
+    //   repoDir: repoDir,
+    //   localBranch: newBranch
+    // });
+    // if (isNewBranchExist === true) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_BRANCH_ALREADY_EXIST
+    //   });
+    // }
+
+    // let keyDir = `${orgDir}/_keys/${projectId}`;
+
+    // await ensureDir(keyDir);
+
+    let keyDir = await this.restoreService.checkOrgProjectRepoBranch({
+      remoteType: remoteType,
+      orgId: orgId,
+      projectId: projectId,
+      projectLt: projectLt,
+      repoId: repoId,
+      branchId:
+        repoId === PROD_REPO_ID
+          ? fromBranch
+          : isFromRemote === false
+            ? fromBranch
+            : undefined // undefined
     });
-    if (isNewBranchExist === true) {
-      throw new ServerError({
-        message: ErEnum.DISK_BRANCH_ALREADY_EXIST
-      });
-    }
-
-    let keyDir = `${orgDir}/_keys/${projectId}`;
-
-    await ensureDir(keyDir);
 
     let fetchOptions = makeFetchOptions({
       remoteType: remoteType,
@@ -122,6 +137,7 @@ export class CreateBranchService {
             repoDir: repoDir,
             localBranch: fromBranch
           });
+
     if (isFromBranchExist === false) {
       throw new ServerError({
         message: ErEnum.DISK_BRANCH_IS_NOT_EXIST

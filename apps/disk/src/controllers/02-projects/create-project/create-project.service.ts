@@ -20,12 +20,14 @@ import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '~disk/functions/git/prepare-remote-and-prod';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
+import { RestoreService } from '~disk/services/restore.service';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class CreateProjectService {
   constructor(
     private diskTabService: DiskTabService,
+    private restoreService: RestoreService,
     private cs: ConfigService<DiskConfig>,
     private logger: Logger
   ) {}
@@ -65,12 +67,21 @@ export class CreateProjectService {
 
     //
 
-    let isOrgExist = await isPathExist(orgDir);
-    if (isOrgExist === false) {
-      throw new ServerError({
-        message: ErEnum.DISK_ORG_IS_NOT_EXIST
-      });
-    }
+    // let isOrgExist = await isPathExist(orgDir);
+    // if (isOrgExist === false) {
+    //   throw new ServerError({
+    //     message: ErEnum.DISK_ORG_IS_NOT_EXIST
+    //   });
+    // }
+
+    await this.restoreService.checkOrgProjectRepoBranch({
+      remoteType: remoteType,
+      orgId: orgId,
+      projectId: undefined, // undefined
+      projectLt: undefined, // undefined
+      repoId: undefined, // undefined
+      branchId: undefined // undefined
+    });
 
     let isProjectExist = await isPathExist(projectDir);
     if (isProjectExist === true) {
