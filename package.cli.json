@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "11.0.20",
+  "version": "11.0.25",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "Apache-2.0",
   "packageManager": "pnpm@10.26.0",
