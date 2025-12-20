@@ -28,7 +28,11 @@ export function log(
   let funcArray = func.toString().split('/');
   let f = funcArray[1];
 
-  let str = JSON.stringify(content, null, 2);
+  let str = JSON.stringify(
+    content,
+    (key, value) => (typeof value === 'bigint' ? Number(value) : value),
+    2
+  );
 
   let logTypeString = logType.toString();
 
