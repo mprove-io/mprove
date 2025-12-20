@@ -132,7 +132,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
   timeSpecTimestamps = TimeSpecEnum.Timestamps;
 
   isShow = true;
-  showSearch = true;
 
   isShowLeft = true;
 
@@ -1181,17 +1180,6 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
   toggleShowLeft() {
     this.isShowLeft = !this.isShowLeft;
-  }
-
-  toggleSearch() {
-    this.showSearch = !this.showSearch;
-
-    if (this.showSearch === false && isDefined(this.searchReportsWord)) {
-      this.searchReportsWord = undefined;
-      this.makeFilteredReports();
-    }
-
-    this.cd.detectChanges();
   }
 
   refreshShow() {}

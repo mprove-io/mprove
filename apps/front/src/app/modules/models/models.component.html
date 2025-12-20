@@ -371,6 +371,7 @@
                   bindLabel="label"
                   bindValue="modelId"
                   formControlName="model"
+                  placeholder="Model"
                 >
                   <ng-template ng-label-tmp let-item="item">
                     <div class="ml-1 truncate">
@@ -429,13 +430,16 @@
           </div>
 
           <div class="flex flex-1 flex-col" *ngIf="showSchema === true">
-            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+            <div
+              *ngIf="!!model?.modelId"
+              class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
+            >
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
 
             <div
-              *ngIf="showSearch === true"
+              *ngIf="!!model?.modelId"
               class="mb-5 mt-5 flex h-11 flex-row items-center"
             >
               <m-search-icon class="text-s1 ml-8"></m-search-icon>
@@ -482,10 +486,7 @@
               </div>
             </div>
 
-            <div
-              *ngIf="showSearch === true"
-              class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
-            >
+            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>
@@ -496,16 +497,16 @@
             ></m-model-tree>
           </div>
 
-          <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+          <div
+            *ngIf="showSchema === false"
+            class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
+          >
             <div class="flex flex-row"></div>
             <div class="flex flex-row"></div>
           </div>
 
           <div *ngIf="showSchema === false" class="flex h-2 flex-1 flex-col">
-            <div
-              *ngIf="showSearch === true"
-              class="mb-5 mt-5 flex h-11 flex-row items-center"
-            >
+            <div class="mb-5 mt-5 flex h-11 flex-row items-center">
               <m-search-icon class="text-s1 ml-8"></m-search-icon>
 
               <input
@@ -557,10 +558,7 @@
               </button>
             </div>
 
-            <div
-              *ngIf="showSearch === true"
-              class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
-            >
+            <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
               <div class="flex flex-row"></div>
               <div class="flex flex-row"></div>
             </div>

@@ -1,5 +1,15 @@
 <div class="flex w-full flex-col">
-  <div class="flex h-2 flex-grow flex-col overflow-y-auto">
+  <div
+    *ngIf="!model?.modelId"
+    class="flex h-full w-full flex-1 flex-col items-center justify-center"
+  >
+    <div class="flex text-lg"> Select Model</div>
+  </div>
+
+  <div
+    *ngIf="!!model?.modelId"
+    class="flex h-2 flex-grow flex-col overflow-y-auto"
+  >
     <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
       <div class="h-[16px]"></div>
 

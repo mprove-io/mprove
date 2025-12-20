@@ -165,8 +165,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
   modelRunButtonSpinnerName = 'modelRunButtonSpinnerName';
   modelCancelButtonSpinnerName = 'modelCancelButtonSpinnerName';
 
-  showSearch = true;
-
   isRunButtonPressed = false;
   isCancelButtonPressed = false;
 
@@ -1703,17 +1701,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
     this.myDialogService.showCreateModel({
       apiService: this.apiService
     });
-  }
-
-  toggleSearch() {
-    this.showSearch = !this.showSearch;
-
-    if (this.showSearch === false && isDefined(this.searchChartsWord)) {
-      this.searchChartsWord = undefined;
-      this.makeFilteredCharts();
-    }
-
-    this.cd.detectChanges();
   }
 
   scrollToSelectedChart(item: { isSmooth: boolean }) {

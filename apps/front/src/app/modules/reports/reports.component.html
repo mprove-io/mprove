@@ -434,16 +434,6 @@
               <div
                 class="text-s1 mb-3 mt-5 flex h-11 w-full flex-shrink-0 flex-row items-center"
               >
-                <!-- <div
-                  class="hover:bg-m200 text-s500 ml-6 flex h-9 w-9 flex-shrink-0 cursor-pointer flex-row items-center justify-center rounded"
-                  (click)="toggleSearch()"
-                >
-                  <m-mag-glass-icon
-                    [isFilled]="showSearch === true"
-                    class="mb-1 flex h-6 w-6 flex-shrink-0"
-                  ></m-mag-glass-icon>
-                </div> -->
-
                 <div
                   (click)="setShowReports()"
                   class="ml-6 flex cursor-pointer select-none flex-row items-center pl-0 pr-2 text-lg"
@@ -494,10 +484,7 @@
                 *ngIf="showMetrics === false"
                 class="flex h-2 flex-1 flex-col"
               >
-                <div
-                  *ngIf="showSearch === true"
-                  class="mb-5 mt-5 flex h-11 flex-row items-center"
-                >
+                <div class="mb-5 mt-5 flex h-11 flex-row items-center">
                   <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
                   <input
@@ -546,10 +533,7 @@
                   </button>
                 </div>
 
-                <div
-                  *ngIf="showSearch === true"
-                  class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
-                >
+                <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
                   <div class="flex flex-row"></div>
                   <div class="flex flex-row"></div>
                 </div>
@@ -699,10 +683,7 @@
                 *ngIf="showMetrics === true"
                 class="flex h-2 flex-1 flex-col"
               >
-                <div
-                  *ngIf="showSearch === true"
-                  class="mb-5 mt-5 flex h-11 flex-row items-center"
-                >
+                <div class="mb-5 mt-5 flex h-11 flex-row items-center">
                   <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
                   <input
@@ -731,10 +712,7 @@
                   </div>
                 </div>
 
-                <div
-                  *ngIf="showSearch === true"
-                  class="divide-s300 ml-6 mr-9 flex flex-col divide-y"
-                >
+                <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
                   <div class="flex flex-row"></div>
                   <div class="flex flex-row"></div>
                 </div>
