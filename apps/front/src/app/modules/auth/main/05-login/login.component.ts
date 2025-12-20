@@ -8,7 +8,8 @@ import { LOG_IN_PAGE_TITLE } from '~common/constants/page-titles';
 import {
   PATH_FORGOT_PASSWORD,
   PATH_LOGIN_SUCCESS,
-  PATH_VERIFY_EMAIL
+  PATH_VERIFY_EMAIL,
+  RESTRICTED_USER_EMAIL
 } from '~common/constants/top';
 import {
   APP_SPINNER_NAME,
@@ -63,9 +64,10 @@ export class LoginComponent implements OnInit {
     let email = this.route.snapshot.queryParamMap.get('email');
     let password = this.route.snapshot.queryParamMap.get('password');
 
-    if (isDefined(email) && isDefined(password)) {
+    if (email === RESTRICTED_USER_EMAIL && isDefined(password)) {
       this.loginForm.controls['email'].setValue(email);
       this.loginForm.controls['password'].setValue(password);
+      this.login();
     }
   }
 
