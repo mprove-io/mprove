@@ -124,7 +124,7 @@ importers:
         version: 0.0.327
       '@nest-lab/throttler-storage-redis':
         specifier: 1.1.0
-        version: 1.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/throttler@6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2))(ioredis@5.3.2)(reflect-metadata@0.2.2)
+        version: 1.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/throttler@6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2))(ioredis@5.8.2)(reflect-metadata@0.2.2)
       '@nestjs/common':
         specifier: 11.1.0
         version: 11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -306,8 +306,8 @@ importers:
         specifier: 2.0.8
         version: 2.0.8
       ioredis:
-        specifier: 5.3.2
-        version: 5.3.2
+        specifier: 5.8.2
+        version: 5.8.2
       isolated-vm:
         specifier: 5.0.4
         version: 5.0.4
@@ -2614,8 +2614,8 @@ packages:
       '@types/node':
         optional: true
 
-  '@ioredis/commands@1.5.0':
-    resolution: {integrity: sha512-eUgLqrMf8nJkZxT24JvVRrQya1vZkQh8BBeYNwGDqa5I0VUi8ACx7uFvAaLxintokpTenkK6DASvo/bvNbBGow==}
+  '@ioredis/commands@1.4.0':
+    resolution: {integrity: sha512-aFT2yemJJo+TZCmieA7qnYGQooOS7QfNmYrzGtsYd3g9j5iDP8AimYYAesf79ohjbLG12XxC4nG5DyEnC88AsQ==}
 
   '@isaacs/balanced-match@4.0.1':
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
@@ -7761,8 +7761,8 @@ packages:
     resolution: {integrity: sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA==}
     engines: {node: '>= 0.10'}
 
-  ioredis@5.3.2:
-    resolution: {integrity: sha512-1DKMMzlIHM02eBBVOFQ1+AolGjs6+xEcM4PDL7NqOS6szq7H9jSaEkIUH6/a5Hl241LzW6JLSiAbNvTQjUupUA==}
+  ioredis@5.8.2:
+    resolution: {integrity: sha512-C6uC+kleiIMmjViJINWk80sOQw5lEzse1ZmvD+S/s8p8CWapftSaC+kocGTx6xrbrJ4WmYQGC08ffHLr6ToR6Q==}
     engines: {node: '>=12.22.0'}
 
   ip-address@10.1.0:
@@ -15228,7 +15228,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.7.5
 
-  '@ioredis/commands@1.5.0': {}
+  '@ioredis/commands@1.4.0': {}
 
   '@isaacs/balanced-match@4.0.1': {}
 
@@ -16041,12 +16041,12 @@ snapshots:
       '@tybys/wasm-util': 0.10.1
     optional: true
 
-  '@nest-lab/throttler-storage-redis@1.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/throttler@6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2))(ioredis@5.3.2)(reflect-metadata@0.2.2)':
+  '@nest-lab/throttler-storage-redis@1.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/throttler@6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2))(ioredis@5.8.2)(reflect-metadata@0.2.2)':
     dependencies:
       '@nestjs/common': 11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/throttler': 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
-      ioredis: 5.3.2
+      ioredis: 5.8.2
       reflect-metadata: 0.2.2
       tslib: 2.7.0
 
@@ -21821,9 +21821,9 @@ snapshots:
 
   interpret@1.4.0: {}
 
-  ioredis@5.3.2:
+  ioredis@5.8.2:
     dependencies:
-      '@ioredis/commands': 1.5.0
+      '@ioredis/commands': 1.4.0
       cluster-key-slot: 1.1.2
       debug: 4.4.3
       denque: 2.1.0
