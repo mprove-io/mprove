@@ -126,6 +126,24 @@ services:
     ports:
       - 3003:80
 
+  mcli:
+    build:
+      context: ./
+      dockerfile: tools/docker/mcli.Dockerfile
+    image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
+      - type: bind
+        source: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_SOURCE_PATH
+        target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_PATH
+      - type: bind
+        source: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
+        target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_PATH
+
   dwh-postgres:
     build:
       context: ./
@@ -184,24 +202,6 @@ services:
       - type: bind
         source: $COMPOSE_DWH_PRESTO_CONFIG_VOLUME_SOURCE_PATH
         target: /opt/presto-server/etc/config.properties
-
-  mcli:
-    build:
-      context: ./
-      dockerfile: tools/docker/mcli.Dockerfile
-    image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
-    env_file:
-      - $ENV_FILE_PATH
-    volumes:
-      - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_SOURCE_PATH
-        target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_PATH
-      - type: bind
-        source: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_SOURCE_PATH
-        target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_PATH
 
 networks:
   app-network:

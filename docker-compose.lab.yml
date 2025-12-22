@@ -11,12 +11,14 @@ services:
   front:
     image: ghcr.io/mprove-io/mprove-lab-front:$MPROVE_RELEASE_TAG
 
+  mcli:
+    image: ghcr.io/mprove-io/mprove-lab-mcli:$MPROVE_RELEASE_TAG
+
   dwh-postgres:
     image: ghcr.io/mprove-io/mprove-lab-dwh-postgres:$MPROVE_DWH_POSTGRES_TAG
 
   dwh-mysql:
     image: ghcr.io/mprove-io/mprove-lab-dwh-mysql:$MPROVE_DWH_MYSQL_TAG
 
-  mcli:
-    image: ghcr.io/mprove-io/mprove-lab-mcli:$MPROVE_RELEASE_TAG
+
      
