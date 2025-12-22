@@ -34,7 +34,6 @@ let NON_GLOBAL_IPV6_PREFIXES: readonly string[] = [
   'fe80::/10' // Link-local
 ];
 
-// Docker hosts
 let BLOCKED_SPEC_HOSTS: readonly string[] = [
   'host.docker.internal',
   'gateway.docker.internal',
