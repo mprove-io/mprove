@@ -31,6 +31,7 @@ import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
 import { MyRegex } from '~common/models/my-regex';
 import { ServerError } from '~common/models/server-error';
+import { checkStoreApiHost } from '~node-common/functions/check-store-api-host';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
 import { TabService } from './tab.service';
 import { UserCodeService } from './user-code.service';
@@ -159,6 +160,41 @@ export class StoreService {
   //     };
   //   }
   // }
+
+  async checkUrl(item: { urlStr: string }) {
+    let { urlStr } = item;
+
+    let protocol: string;
+    let hostname: string;
+
+    try {
+      let parsedUrl: URL = new URL(urlStr);
+      protocol = parsedUrl.protocol;
+      hostname = parsedUrl.hostname;
+    } catch (e) {
+      // console.log(e);
+
+      throw new Error(`Invalid URL - ${urlStr}`);
+    }
+
+    if (protocol !== 'https:') {
+      throw new ServerError({
+        message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS
+      });
+    }
+
+    if (
+      this.blacklistedHostsLowerCase.some(
+        x => hostname === x || hostname.endsWith('.' + x)
+      )
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_STORE_API_HOST_IS_NOT_ALLOWED
+      });
+    }
+
+    await checkStoreApiHost({ urlStr: urlStr });
+  }
 
   async adjustMconfig(item: {
     mconfig: MconfigTab;
@@ -544,25 +580,7 @@ ${inputSub}
 
       let url = queryStart.apiUrl;
 
-      let parsedUrl = new URL(url);
-
-      let hostname = parsedUrl.hostname.toLowerCase();
-
-      if (parsedUrl.protocol !== 'https:') {
-        throw new ServerError({
-          message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS
-        });
-      }
-
-      if (
-        this.blacklistedHostsLowerCase.some(
-          x => hostname === x || hostname.endsWith('.' + x)
-        )
-      ) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_STORE_API_HOST_IS_NOT_ALLOWED
-        });
-      }
+      await this.checkUrl({ urlStr: url });
 
       let headers: any = {};
 

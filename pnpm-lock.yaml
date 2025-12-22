@@ -308,6 +308,9 @@ importers:
       ioredis:
         specifier: 5.8.2
         version: 5.8.2
+      ip:
+        specifier: 2.0.1
+        version: 2.0.1
       isolated-vm:
         specifier: 5.0.4
         version: 5.0.4
@@ -326,6 +329,9 @@ importers:
       nanoid:
         specifier: 3.3.10
         version: 3.3.10
+      neoip:
+        specifier: 3.0.1
+        version: 3.0.1
       nest-winston:
         specifier: 1.9.4
         version: 1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2)
@@ -7769,6 +7775,9 @@ packages:
     resolution: {integrity: sha512-XXADHxXmvT9+CRxhXg56LJovE+bmWnEWB78LB83VZTprKTmaC5QfruXocxzTZ2Kl0DNwKuBdlIhjL8LeY8Sf8Q==}
     engines: {node: '>= 12'}
 
+  ip@2.0.1:
+    resolution: {integrity: sha512-lJUL9imLTNi1ZfXT+DU6rBBdbiKGBuay9B6xGSPVjUeQwaH1RIGqef8RZkUtHioLmSNpPR5M4HVKJGm1j8FWVQ==}
+
   ipaddr.js@1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
     engines: {node: '>= 0.10'}
@@ -8833,6 +8842,9 @@ packages:
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
+
+  neoip@3.0.1:
+    resolution: {integrity: sha512-yvMLOFvS7Tzthf9Ukl2/HrVzZqSjxm9PVOdAPLCt7pelDQ5WvJMIur1vNn3VXOL2tqrbzv6Vnal4PyoCrtRZPA==}
 
   nest-winston@1.9.4:
     resolution: {integrity: sha512-ilEmHuuYSAI6aMNR120fLBl42EdY13QI9WRggHdEizt9M7qZlmXJwpbemVWKW/tqRmULjSx/otKNQ3GMQbfoUQ==}
@@ -21837,6 +21849,8 @@ snapshots:
 
   ip-address@10.1.0: {}
 
+  ip@2.0.1: {}
+
   ipaddr.js@1.9.1: {}
 
   ipaddr.js@2.3.0: {}
@@ -22946,6 +22960,8 @@ snapshots:
   negotiator@1.0.0: {}
 
   neo-async@2.6.2: {}
+
+  neoip@3.0.1: {}
 
   nest-winston@1.9.4(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(winston@3.14.2):
     dependencies:

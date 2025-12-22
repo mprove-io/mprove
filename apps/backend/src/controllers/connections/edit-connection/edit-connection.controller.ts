@@ -21,6 +21,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/db/connections.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
+import { StoreService } from '~backend/services/store.service';
 import { TabService } from '~backend/services/tab.service';
 import {
   DEFAULT_QUERY_SIZE_LIMIT,
@@ -45,6 +46,7 @@ export class EditConnectionController {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
+    private storeService: StoreService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
@@ -56,6 +58,14 @@ export class EditConnectionController {
   async editConnection(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendEditConnectionRequest = request.body;
     let { projectId, envId, connectionId, options } = reqValid.payload;
+
+    if (isDefined(options.storeApi)) {
+      await this.storeService.checkUrl({ urlStr: options.storeApi.baseUrl });
+    }
+
+    if (isDefined(options.storeGoogleApi)) {
+      await this.storeService.checkUrl({ urlStr: options.storeApi.baseUrl });
+    }
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
