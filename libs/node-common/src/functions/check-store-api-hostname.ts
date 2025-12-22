@@ -1,9 +1,9 @@
-import { promises as dns, LookupAddress } from 'dns';
-import * as net from 'net';
+import { LookupAddress, promises as dnsPromises } from 'dns';
 import { ErEnum } from '~common/enums/er.enum';
+import { isDefined } from '~common/functions/is-defined';
 import { ServerError } from '~common/models/server-error';
 
-let ip = require('ip'); // npm install ip – extra redundant check (safe due to strict parsing)
+let ipaddr = require('ipaddr.js');
 let neoip = require('neoip');
 
 // Non-public IPv4 CIDRs (IANA special-purpose)
@@ -11,7 +11,7 @@ let NON_PUBLIC_IPV4_CIDRS: readonly string[] = [
   '0.0.0.0/8',
   '10.0.0.0/8',
   '100.64.0.0/10',
-  '127.0.0.0/8', // Loopback — comment out if you allow localhost/sidecars
+  '127.0.0.0/8',
   '169.254.0.0/16',
   '172.16.0.0/12',
   '192.0.0.0/24',
@@ -28,10 +28,10 @@ let NON_PUBLIC_IPV4_CIDRS: readonly string[] = [
 
 // Non-global IPv6 prefixes
 let NON_GLOBAL_IPV6_PREFIXES: readonly string[] = [
-  '::1/', // Loopback
-  '::ffff:0:0/', // IPv4-mapped
-  'fc00::/', // Unique Local (ULA)
-  'fe80::/' // Link-local
+  '::1/128', // Loopback
+  '::ffff:0:0/96', // IPv4-mapped
+  'fc00::/7', // Unique Local Address (ULA)
+  'fe80::/10' // Link-local
 ];
 
 // Docker hosts
@@ -51,130 +51,158 @@ let INTERNAL_DOMAIN_SUFFIXES: readonly string[] = [
   '.localhost'
 ];
 
-export async function checkStoreApiHostname(item: {
-  hostname: string;
-}) {
-  let { hostname } = item;
+export async function checkStoreApiHostname(item: { hostname: string }) {
+  let hostname = item.hostname;
 
   if (BLOCKED_SPEC_HOSTS.includes(hostname)) {
     throw new ServerError({
       message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_SPEC,
-      displayData: { hostname: hostname }
+      displayData: { hostname: hostname, tag: 'instant', type: 'spec' }
     });
   }
 
-  if (
-    INTERNAL_DOMAIN_SUFFIXES.some((s: string): boolean => hostname.endsWith(s))
-  ) {
+  if (INTERNAL_DOMAIN_SUFFIXES.some(suffix => hostname.endsWith(suffix))) {
     throw new ServerError({
       message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_SUFFIX,
-      displayData: { hostname: hostname }
+      displayData: { hostname: hostname, tag: 'instant', type: 'suffix' }
     });
   }
 
-  if (net.isIPv4(hostname)) {
-    customCheckIPv4({ hostname: hostname, tag: 'instant' });
+  let instantParsedIp = null;
+
+  try {
+    instantParsedIp = ipaddr.parse(hostname);
+  } catch (e) {
+    instantParsedIp = null; // Not a valid IP → treat as hostname
   }
 
-  if (net.isIPv6(hostname)) {
-    customCheckIPv6({ hostname: hostname, tag: 'instant' });
+  if (instantParsedIp) {
+    isPrivateIp({
+      hostname: hostname,
+      parsedIp: instantParsedIp,
+      tag: 'instant',
+      resolvedRecordAddress: undefined
+    });
   }
 
-  libsCheckIP({ hostname: hostname, tag: 'instant' });
+  if (!instantParsedIp) {
+    let records: LookupAddress[];
 
-  let records: LookupAddress[] = await dns.lookup(hostname, { all: true });
-
-  for (let r of records) {
-    if (r.family === 4) {
-      customCheckIPv4({ hostname: r.address, tag: 'resolved' });
+    try {
+      records = await dnsPromises.lookup(hostname, { all: true });
+    } catch (err) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_STORE_API_HOST_DNS_LOOKUP_FAILED,
+        displayData: { hostname: hostname },
+        originalError: err
+      });
     }
 
-    if (r.family === 6) {
-      customCheckIPv6({ hostname: r.address, tag: 'resolved' });
+    for (let record of records) {
+      let resolvedParsedIp: any;
+
+      try {
+        resolvedParsedIp = ipaddr.parse(record.address);
+      } catch {
+        // skip check of record
+      }
+
+      if (isDefined(resolvedParsedIp)) {
+        isPrivateIp({
+          hostname: hostname,
+          parsedIp: resolvedParsedIp,
+          tag: 'resolved',
+          resolvedRecordAddress: record.address
+        });
+      }
     }
-
-    libsCheckIP({ hostname: r.address, tag: 'resolved' });
   }
 }
 
-function libsCheckIP(item: { hostname: string; tag: string }) {
-  let { hostname, tag } = item;
+function isPrivateIp(item: {
+  hostname: string;
+  parsedIp: any;
+  resolvedRecordAddress: any;
+  tag: 'instant' | 'resolved';
+}) {
+  let { hostname, parsedIp, resolvedRecordAddress, tag } = item;
 
-  if (ip.isPrivate(hostname)) {
+  let kind = parsedIp.kind();
+  let range = parsedIp.range();
+
+  let ipString: string = tag === 'resolved' ? resolvedRecordAddress : hostname;
+
+  if (
+    [
+      'loopback',
+      'linkLocal',
+      'uniqueLocal',
+      'private',
+      'reserved',
+      'multicast',
+      'carrierGradeNat'
+    ].includes(range)
+  ) {
     throw new ServerError({
       message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
-      displayData: { hostname: hostname },
-      customData: { tag: tag, lib: 'ip' }
+      displayData: {
+        hostname: hostname,
+        ipString: ipString,
+        resolvedRecordAddress: resolvedRecordAddress,
+        tag: tag,
+        type: 'ipaddr'
+      }
     });
   }
 
-  if (neoip.isPrivate(hostname)) {
+  if (neoip.isPrivate(ipString)) {
     throw new ServerError({
       message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
-      displayData: { hostname: hostname },
-      customData: { tag: tag, lib: 'neoip' }
+      displayData: {
+        hostname: hostname,
+        ipString: ipString,
+        resolvedRecordAddress: resolvedRecordAddress,
+        tag: tag,
+        type: 'neoip'
+      }
     });
   }
-}
 
-function customCheckIPv4(item: { hostname: string; tag: string }) {
-  let { hostname, tag } = item;
-
-  if (isNonPublicIPv4Custom(hostname)) {
-    throw new ServerError({
-      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
-      displayData: { hostname: hostname },
-      customData: { tag: tag, lib: 'custom  IPv4' }
-    });
-  }
-}
-
-function customCheckIPv6(item: { hostname: string; tag: string }) {
-  let { hostname, tag } = item;
-
-  if (isNonGlobalIPv6Custom(hostname)) {
-    throw new ServerError({
-      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
-      displayData: { hostname: hostname },
-      customData: { tag: tag, lib: 'custom IPv6' }
-    });
-  }
-}
-
-function parseIPv4Strict(ip: string): number | null {
-  let parts: string[] = ip.split('.');
-  if (parts.length !== 4) return null;
-
-  let result: number = 0;
-  for (let part of parts) {
-    let n: number = parseInt(part, 10);
-    if (isNaN(n) || n < 0 || n > 255 || part !== n.toString(10)) {
-      return null; // Blocks octal/hex/leading zeros/malformed
+  if (kind === 'ipv4') {
+    if (
+      NON_PUBLIC_IPV4_CIDRS.some((cidr: string) => {
+        let [addr, prefix] = cidr.split('/');
+        return parsedIp.match(ipaddr.parse(addr), Number(prefix));
+      })
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
+        displayData: {
+          hostname: hostname,
+          ipString: ipString,
+          resolvedRecordAddress: resolvedRecordAddress,
+          tag: tag,
+          type: 'custom IPv4 CIDR'
+        }
+      });
     }
-    result = result * 256 + n;
+  } else if (kind === 'ipv6') {
+    if (
+      NON_GLOBAL_IPV6_PREFIXES.some((prefix: string) => {
+        let [addr, prefixLen] = prefix.split('/');
+        return parsedIp.match(ipaddr.parse(addr), Number(prefixLen));
+      })
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
+        displayData: {
+          hostname: hostname,
+          ipString: ipString,
+          resolvedRecordAddress: resolvedRecordAddress,
+          tag: tag,
+          type: 'custom IPv6 prefix'
+        }
+      });
+    }
   }
-  return result;
-}
-
-function isNonPublicIPv4Custom(ip: string): boolean {
-  let num: number | null = parseIPv4Strict(ip);
-  if (num === null) return true; // Invalid → block
-
-  return NON_PUBLIC_IPV4_CIDRS.some((cidr: string): boolean => {
-    let [netStr, prefixStr] = cidr.split('/');
-    let prefix: number = parseInt(prefixStr, 10);
-    let netNum: number | null = parseIPv4Strict(netStr);
-    if (netNum === null) return false;
-
-    let mask: number =
-      prefix === 0 ? 0 : 0xffffffff - (Math.pow(2, 32 - prefix) - 1);
-    return (num & mask) === netNum;
-  });
-}
-
-function isNonGlobalIPv6Custom(ip: string): boolean {
-  let normalized: string = ip.toLowerCase();
-  return NON_GLOBAL_IPV6_PREFIXES.some((prefix: string): boolean =>
-    normalized.startsWith(prefix)
-  );
 }
