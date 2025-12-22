@@ -78,8 +78,13 @@ export class BackendConfig {
   @IsString()
   mproveAdminInitialPassword?: string;
 
+  @IsOptional()
   @IsString()
-  storeApiBlacklistedHosts?: string;
+  storeApiBlockHosts?: string;
+
+  @IsOptional()
+  @IsString()
+  storeApiAllowHosts?: string;
 
   @IsBoolean()
   seedDemoOrgAndProject?: boolean;

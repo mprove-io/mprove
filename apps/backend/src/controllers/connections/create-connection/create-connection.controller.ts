@@ -59,11 +59,15 @@ export class CreateConnectionController {
     let { projectId, envId, connectionId, type, options } = reqValid.payload;
 
     if (isDefined(options.storeApi)) {
-      await this.storeService.checkUrl({ urlStr: options.storeApi.baseUrl });
+      await this.storeService.checkStoreApiUrl({
+        urlStr: options.storeApi.baseUrl
+      });
     }
 
     if (isDefined(options.storeGoogleApi)) {
-      await this.storeService.checkUrl({ urlStr: options.storeApi.baseUrl });
+      await this.storeService.checkStoreApiUrl({
+        urlStr: options.storeApi.baseUrl
+      });
     }
 
     if (isDefined(options.motherduck)) {

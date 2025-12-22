@@ -31,7 +31,7 @@ import { FractionControl } from '~common/interfaces/blockml/fraction-control';
 import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
 import { MyRegex } from '~common/models/my-regex';
 import { ServerError } from '~common/models/server-error';
-import { checkStoreApiHost } from '~node-common/functions/check-store-api-host';
+import { checkStoreApiHostname } from '~node-common/functions/check-store-api-hostname';
 import { getYYYYMMDDCurrentDateByTimezone } from '~node-common/functions/get-yyyymmdd-current-date-by-timezone';
 import { TabService } from './tab.service';
 import { UserCodeService } from './user-code.service';
@@ -47,7 +47,8 @@ export interface StoreUserCodeReturn {
 
 @Injectable()
 export class StoreService {
-  blacklistedHostsLowerCase: string[] = [];
+  storeApiBlockHostsLowerCase: string[] = [];
+  storeApiAllowHostsLowerCase: string[] = [];
 
   constructor(
     private tabService: TabService,
@@ -56,144 +57,67 @@ export class StoreService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {
-    let storeApiBlacklistedHosts = this.cs.get<
-      BackendConfig['storeApiBlacklistedHosts']
-    >('storeApiBlacklistedHosts');
+    let storeApiBlockHosts =
+      this.cs.get<BackendConfig['storeApiBlockHosts']>('storeApiBlockHosts');
 
-    if (isDefinedAndNotEmpty(storeApiBlacklistedHosts)) {
-      this.blacklistedHostsLowerCase = storeApiBlacklistedHosts
+    if (isDefinedAndNotEmpty(storeApiBlockHosts)) {
+      this.storeApiBlockHostsLowerCase = storeApiBlockHosts
+        .split(',')
+        .map(x => x.trim())
+        .map(x => x.toLowerCase());
+    }
+    let storeApiAllowHosts =
+      this.cs.get<BackendConfig['storeApiAllowHosts']>('storeApiAllowHosts');
+
+    if (isDefinedAndNotEmpty(storeApiAllowHosts)) {
+      this.storeApiAllowHostsLowerCase = storeApiAllowHosts
         .split(',')
         .map(x => x.trim())
         .map(x => x.toLowerCase());
     }
   }
 
-  // async testConnection(item: {
-  //   connection: ConnectionTab;
-  //   storeMethod: StoreMethodEnum;
-  // }): Promise<TestConnectionResult> {
-  //   let { connection, storeMethod } = item;
-
-  //   try {
-  //     if (connection.type === ConnectionTypeEnum.GoogleApi) {
-  //       let authClient = new JWT({
-  //         email:
-  //           connection.options.storeGoogleApi.serviceAccountCredentials
-  //             .client_email,
-  //         key: connection.options.storeGoogleApi.serviceAccountCredentials
-  //           .private_key,
-  //         scopes: connection.options.storeGoogleApi.googleAuthScopes
-  //       });
-
-  //       let tokens = await authClient.authorize();
-
-  //       connection.options.storeGoogleApi.googleAccessToken =
-  //         tokens.access_token;
-
-  //       connection.options.storeGoogleApi.googleAccessTokenExpiryDate =
-  //         tokens.expiry_date;
-  //     }
-
-  //     let url =
-  //       connection.type === ConnectionTypeEnum.Api
-  //         ? connection.options.storeApi.baseUrl
-  //         : connection.type === ConnectionTypeEnum.GoogleApi
-  //           ? connection.options.storeGoogleApi.baseUrl
-  //           : undefined;
-
-  //     let parsedUrl = new URL(url);
-
-  //     let hostname = parsedUrl.hostname.toLowerCase();
-
-  //     if (parsedUrl.protocol !== 'https:') {
-  //       throw new ServerError({
-  //         message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS
-  //       });
-  //     }
-
-  //     if (
-  //       this.blacklistedHostsLowerCase.some(
-  //         x => hostname === x || hostname.endsWith('.' + x)
-  //       )
-  //     ) {
-  //       throw new ServerError({
-  //         message: ErEnum.BACKEND_STORE_API_HOST_IS_NOT_ALLOWED
-  //       });
-  //     }
-
-  //     let headers: any = {};
-
-  //     let response;
-
-  //     if (connection.type === ConnectionTypeEnum.Api) {
-  //       connection.options.storeApi.headers.forEach(header => {
-  //         headers[header.key] = header.value;
-  //       });
-  //     } else if (connection.type === ConnectionTypeEnum.GoogleApi) {
-  //       connection.options.storeGoogleApi.headers.forEach(header => {
-  //         headers[header.key] = header.value;
-  //       });
-
-  //       headers['Authorization'] =
-  //         `Bearer ${connection.options.storeGoogleApi.googleAccessToken}`;
-
-  //       headers['Content-Type'] = 'application/json';
-  //     }
-
-  //     let body = {};
-
-  //     response =
-  //       storeMethod === StoreMethodEnum.Get
-  //         ? await axios.get(url, body, { headers: headers })
-  //         : storeMethod === StoreMethodEnum.Post
-  //           ? await axios.post(url, body, { headers: headers })
-  //           : undefined;
-
-  //     return {
-  //       isSuccess: true,
-  //       errorMessage: response.status
-  //     };
-  //   } catch (err: any) {
-  //     return {
-  //       isSuccess: false,
-  //       errorMessage: `Connection failed: ${err.message}`
-  //     };
-  //   }
-  // }
-
-  async checkUrl(item: { urlStr: string }) {
+  async checkStoreApiUrl(item: { urlStr: string }) {
     let { urlStr } = item;
 
     let protocol: string;
-    let hostname: string;
+    let hostnameLowerCase: string;
 
     try {
       let parsedUrl: URL = new URL(urlStr);
       protocol = parsedUrl.protocol;
-      hostname = parsedUrl.hostname;
+      hostnameLowerCase = parsedUrl.hostname.toLowerCase();
     } catch (e) {
-      // console.log(e);
-
-      throw new Error(`Invalid URL - ${urlStr}`);
+      throw new ServerError({
+        message: ErEnum.BACKEND_STORE_API_INVALID_URL,
+        displayData: { url: urlStr },
+        originalError: e
+      });
     }
 
     if (protocol !== 'https:') {
       throw new ServerError({
-        message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS
+        message: ErEnum.BACKEND_STORE_API_PROTOCOL_MUST_BE_HTTPS,
+        displayData: { url: urlStr }
       });
     }
 
     if (
-      this.blacklistedHostsLowerCase.some(
-        x => hostname === x || hostname.endsWith('.' + x)
+      this.storeApiBlockHostsLowerCase.some(
+        x =>
+          hostnameLowerCase === x ||
+          hostnameLowerCase.endsWith('.' + x) === true
       )
     ) {
       throw new ServerError({
-        message: ErEnum.BACKEND_STORE_API_HOST_IS_NOT_ALLOWED
+        message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_LIST,
+        displayData: { url: urlStr }
       });
     }
 
-    await checkStoreApiHost({ urlStr: urlStr });
+    if (this.storeApiAllowHostsLowerCase.indexOf(hostnameLowerCase) < 0) {
+      await checkStoreApiHostname({ hostname: hostnameLowerCase });
+    }
   }
 
   async adjustMconfig(item: {
@@ -580,7 +504,7 @@ ${inputSub}
 
       let url = queryStart.apiUrl;
 
-      await this.checkUrl({ urlStr: url });
+      await this.checkStoreApiUrl({ urlStr: url });
 
       let headers: any = {};
 

@@ -1,5 +1,7 @@
 import { promises as dns, LookupAddress } from 'dns';
 import * as net from 'net';
+import { ErEnum } from '~common/enums/er.enum';
+import { ServerError } from '~common/models/server-error';
 
 let ip = require('ip'); // npm install ip – extra redundant check (safe due to strict parsing)
 let neoip = require('neoip');
@@ -32,8 +34,8 @@ let NON_GLOBAL_IPV6_PREFIXES: readonly string[] = [
   'fe80::/' // Link-local
 ];
 
-// Docker special hosts
-let BLOCKED_SPECIAL_HOSTS: readonly string[] = [
+// Docker hosts
+let BLOCKED_SPEC_HOSTS: readonly string[] = [
   'host.docker.internal',
   'gateway.docker.internal',
   'docker.host.internal'
@@ -49,84 +51,93 @@ let INTERNAL_DOMAIN_SUFFIXES: readonly string[] = [
   '.localhost'
 ];
 
-export async function checkStoreApiHost(item: {
-  urlStr: string;
+export async function checkStoreApiHostname(item: {
+  hostname: string;
 }) {
-  let { urlStr } = item;
+  let { hostname } = item;
 
-  let hostname: string;
-
-  try {
-    let url: URL = new URL(urlStr);
-    hostname = url.hostname;
-  } catch (e) {
-    // console.log(e);
-
-    throw new Error(`Invalid URL - ${urlStr}`);
-  }
-
-  let cleanHost: string = hostname.toLowerCase();
-
-  if (BLOCKED_SPECIAL_HOSTS.includes(cleanHost)) {
-    throw new Error(`Host blocked - special hosts: ${hostname}`);
+  if (BLOCKED_SPEC_HOSTS.includes(hostname)) {
+    throw new ServerError({
+      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_SPEC,
+      displayData: { hostname: hostname }
+    });
   }
 
   if (
-    INTERNAL_DOMAIN_SUFFIXES.some((s: string): boolean => cleanHost.endsWith(s))
+    INTERNAL_DOMAIN_SUFFIXES.some((s: string): boolean => hostname.endsWith(s))
   ) {
-    throw new Error(`Host blocked - suffix: ${hostname}`);
+    throw new ServerError({
+      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_SUFFIX,
+      displayData: { hostname: hostname }
+    });
   }
 
-  if (net.isIPv4(cleanHost)) {
-    customCheckIPv4({ cleanHost: cleanHost, tag: 'instant' });
+  if (net.isIPv4(hostname)) {
+    customCheckIPv4({ hostname: hostname, tag: 'instant' });
   }
 
-  if (net.isIPv6(cleanHost)) {
-    customCheckIPv6({ cleanHost: cleanHost, tag: 'instant' });
+  if (net.isIPv6(hostname)) {
+    customCheckIPv6({ hostname: hostname, tag: 'instant' });
   }
 
-  libsCheckIP({ cleanHost: cleanHost, tag: 'instant' });
+  libsCheckIP({ hostname: hostname, tag: 'instant' });
 
-  let records: LookupAddress[] = await dns.lookup(cleanHost, { all: true });
+  let records: LookupAddress[] = await dns.lookup(hostname, { all: true });
 
   for (let r of records) {
     if (r.family === 4) {
-      customCheckIPv4({ cleanHost: r.address, tag: 'resolved' });
+      customCheckIPv4({ hostname: r.address, tag: 'resolved' });
     }
 
     if (r.family === 6) {
-      customCheckIPv6({ cleanHost: r.address, tag: 'resolved' });
+      customCheckIPv6({ hostname: r.address, tag: 'resolved' });
     }
 
-    libsCheckIP({ cleanHost: r.address, tag: 'resolved' });
+    libsCheckIP({ hostname: r.address, tag: 'resolved' });
   }
 }
 
-function libsCheckIP(item: { cleanHost: string; tag: string }) {
-  let { cleanHost, tag } = item;
+function libsCheckIP(item: { hostname: string; tag: string }) {
+  let { hostname, tag } = item;
 
-  if (ip.isPrivate(cleanHost)) {
-    throw new Error(`Host blocked - libIp - ${tag}: ${cleanHost}`);
+  if (ip.isPrivate(hostname)) {
+    throw new ServerError({
+      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
+      displayData: { hostname: hostname },
+      customData: { tag: tag, lib: 'ip' }
+    });
   }
 
-  if (neoip.isPrivate(cleanHost)) {
-    throw new Error(`Host blocked - libNeo - ${tag}: ${cleanHost}`);
+  if (neoip.isPrivate(hostname)) {
+    throw new ServerError({
+      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
+      displayData: { hostname: hostname },
+      customData: { tag: tag, lib: 'neoip' }
+    });
   }
 }
 
-function customCheckIPv4(item: { cleanHost: string; tag: string }) {
-  let { cleanHost, tag } = item;
+function customCheckIPv4(item: { hostname: string; tag: string }) {
+  let { hostname, tag } = item;
 
-  if (isNonPublicIPv4Custom(cleanHost)) {
-    throw new Error(`Host blocked - custom IPv4 - ${tag}: ${cleanHost}`);
+  if (isNonPublicIPv4Custom(hostname)) {
+    throw new ServerError({
+      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
+      displayData: { hostname: hostname },
+      customData: { tag: tag, lib: 'custom  IPv4' }
+    });
   }
 }
 
-function customCheckIPv6(item: { cleanHost: string; tag: string }) {
-  let { cleanHost, tag } = item;
+function customCheckIPv6(item: { hostname: string; tag: string }) {
+  let { hostname, tag } = item;
 
-  if (isNonGlobalIPv6Custom(cleanHost)) {
-    throw new Error(`Host blocked - custom IPv6 - ${tag}: ${cleanHost}`);
+  if (isNonGlobalIPv6Custom(hostname)) {
+    throw new ServerError({
+      message: ErEnum.BACKEND_STORE_API_HOST_IS_BLOCKED_BY_IP,
+      displayData: { hostname: hostname },
+      customData: { tag: tag, lib: 'custom IPv6' }
+    });
   }
 }
 

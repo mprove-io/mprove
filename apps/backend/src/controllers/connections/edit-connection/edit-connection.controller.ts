@@ -60,11 +60,15 @@ export class EditConnectionController {
     let { projectId, envId, connectionId, options } = reqValid.payload;
 
     if (isDefined(options.storeApi)) {
-      await this.storeService.checkUrl({ urlStr: options.storeApi.baseUrl });
+      await this.storeService.checkStoreApiUrl({
+        urlStr: options.storeApi.baseUrl
+      });
     }
 
     if (isDefined(options.storeGoogleApi)) {
-      await this.storeService.checkUrl({ urlStr: options.storeApi.baseUrl });
+      await this.storeService.checkStoreApiUrl({
+        urlStr: options.storeApi.baseUrl
+      });
     }
 
     await this.projectsService.getProjectCheckExists({

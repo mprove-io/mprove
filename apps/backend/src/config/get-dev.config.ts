@@ -121,9 +121,13 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_PASS_PHRASE ||
       envFile.BACKEND_DEMO_PROJECT_PASS_PHRASE,
 
-    storeApiBlacklistedHosts:
-      process.env.BACKEND_STORE_API_BLACKLISTED_HOSTS ||
-      envFile.BACKEND_STORE_API_BLACKLISTED_HOSTS,
+    storeApiBlockHosts:
+      process.env.BACKEND_STORE_API_BLOCK_HOSTS ||
+      envFile.BACKEND_STORE_API_BLOCK_HOSTS,
+
+    storeApiAllowHosts:
+      process.env.BACKEND_STORE_API_ALLOW_HOSTS ||
+      envFile.BACKEND_STORE_API_ALLOW_HOSTS,
 
     seedDemoOrgAndProject: enumToBoolean({
       value:
