@@ -1,4 +1,4 @@
-import * as nodegit from '@figma/nodegit';
+import * as nodegit from 'nodegit';
 
 import {
   BRANCH_MAIN,

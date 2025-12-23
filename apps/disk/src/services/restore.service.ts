@@ -1,6 +1,6 @@
-import * as nodegit from '@figma/nodegit';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodegit from 'nodegit';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { isUndefined } from '~common/functions/is-undefined';

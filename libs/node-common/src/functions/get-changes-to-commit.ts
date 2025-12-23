@@ -1,4 +1,4 @@
-import * as nodegit from '@figma/nodegit';
+import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { FileStatusEnum } from '~common/enums/file-status.enum';
 import { encodeFilePath } from '~common/functions/encode-file-path';

@@ -1,4 +1,4 @@
-import * as nodegit from '@figma/nodegit';
+import * as nodegit from 'nodegit';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { addTraceSpan } from '~node-common/functions/add-trace-span';
 

@@ -1,4 +1,4 @@
-import * as nodegit from '@figma/nodegit';
+import * as nodegit from 'nodegit';
 
 import { BRANCH_MAIN, PROD_REPO_ID } from '~common/constants/top';
 import { CENTRAL_REPO_ID } from '~common/constants/top-disk';

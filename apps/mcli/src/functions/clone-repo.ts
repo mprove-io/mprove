@@ -1,5 +1,5 @@
-import * as nodegit from '@figma/nodegit';
 import * as fse from 'fs-extra';
+import * as nodegit from 'nodegit';
 
 export async function cloneRepo(item: {
   repoPath: string;

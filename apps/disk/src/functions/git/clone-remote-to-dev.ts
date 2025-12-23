@@ -1,4 +1,4 @@
-import * as nodegit from '@figma/nodegit';
+import * as nodegit from 'nodegit';
 import { CENTRAL_REPO_ID } from '~common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
 import { addTraceSpan } from '~node-common/functions/add-trace-span';

@@ -1,4 +1,4 @@
-import * as nodegit from '@figma/nodegit';
+import * as nodegit from 'nodegit';
 
 import { ErEnum } from '~common/enums/er.enum';
 import { RepoStatusEnum } from '~common/enums/repo-status.enum';

@@ -76,6 +76,7 @@ function updateTarget(tPath: string, s: any, t: any) {
   //   'util', //
   //   'winston',
   //   '@figma/nodegit',
+  //   'nodegit',
   //   'p-iteration',
   //   //
   //   'module-alias',

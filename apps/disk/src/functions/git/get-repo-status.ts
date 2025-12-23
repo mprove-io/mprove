@@ -1,4 +1,4 @@
-import * as nodegit from '@figma/nodegit';
+import * as nodegit from 'nodegit';
 import { NODEGIT_REMOTE_BRANCH_NOT_FOUND } from '~common/constants/top';
 import { FileStatusEnum } from '~common/enums/file-status.enum';
 import { RepoStatusEnum } from '~common/enums/repo-status.enum';

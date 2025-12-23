@@ -1,6 +1,6 @@
-import * as nodegit from '@figma/nodegit';
 import { Command, Option } from 'clipanion';
 import * as fse from 'fs-extra';
+import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
 import { MPROVE_CACHE_DIR, MPROVE_SYNC_FILENAME } from '~common/constants/top';
 import { POSSIBLE_TIME_DIFF_MS } from '~common/constants/top-mcli';

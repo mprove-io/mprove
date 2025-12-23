@@ -1,3 +1,3 @@
-declare module '@figma/nodegit' {
-  export * from 'nodegit';
-}
+// declare module '@figma/nodegit' {
+//   export * from 'nodegit';
+// }

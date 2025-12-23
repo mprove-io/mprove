@@ -3,7 +3,6 @@ ignoredBuiltDependencies:
 
 onlyBuiltDependencies:
   - '@biomejs/biome'
-  - '@figma/nodegit'
   - '@nestjs/core'
   - '@parcel/watcher'
   - bcrypt
@@ -13,5 +12,6 @@ onlyBuiltDependencies:
   - isolated-vm
   - lmdb
   - msgpackr-extract
+  - nodegit
   - nx
   - protobufjs

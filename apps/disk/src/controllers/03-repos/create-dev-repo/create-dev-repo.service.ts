@@ -1,6 +1,6 @@
-import * as nodegit from '@figma/nodegit';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as nodegit from 'nodegit';
 import { ErEnum } from '~common/enums/er.enum';
 import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
