@@ -131,7 +131,8 @@ export class CreateBranchService {
         ? await isRemoteBranchExist({
             repoDir: repoDir,
             remoteBranch: fromBranch,
-            fetchOptions: fetchOptions
+            fetchOptions: fetchOptions,
+            isFetch: true
           })
         : await isLocalBranchExist({
             repoDir: repoDir,

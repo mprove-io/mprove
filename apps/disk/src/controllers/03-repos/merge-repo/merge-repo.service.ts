@@ -129,7 +129,8 @@ export class MergeRepoService {
         ? await isRemoteBranchExist({
             repoDir: repoDir,
             remoteBranch: theirBranch,
-            fetchOptions: fetchOptions
+            fetchOptions: fetchOptions,
+            isFetch: true
           })
         : await isLocalBranchExist({
             repoDir: repoDir,

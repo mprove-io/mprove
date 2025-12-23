@@ -140,7 +140,8 @@ export class RestoreService {
       let isRemoteBranchExistResult = await isRemoteBranchExist({
         repoDir: repoDir,
         remoteBranch: branchId,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       });
 
       await createBranch({

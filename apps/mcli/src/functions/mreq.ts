@@ -51,7 +51,7 @@ export async function mreq<T extends MyResponse>(item: {
     // if (resp.info?.status !== ResponseInfoStatusEnum.Ok) {
     throw new ServerError({
       message: ErEnum.MCLI_ERROR_RESPONSE_FROM_BACKEND,
-      originalError: resp.info?.error
+      originalError: resp.data?.info?.error
     });
   }
 

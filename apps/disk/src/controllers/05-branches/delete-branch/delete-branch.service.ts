@@ -132,7 +132,8 @@ export class DeleteBranchService {
       let isRemoteBranchExistResult = await isRemoteBranchExist({
         repoDir: repoDir,
         remoteBranch: branch,
-        fetchOptions: fetchOptions
+        fetchOptions: fetchOptions,
+        isFetch: true
       });
 
       if (isRemoteBranchExistResult === true) {

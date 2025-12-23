@@ -186,7 +186,48 @@ export async function getRepoStatus(item: {
         };
       }
 
-      if (item.isFetch === false) {
+      let isBranchExistRemote = await isRemoteBranchExist({
+        repoDir: item.repoDir,
+        remoteBranch: currentBranchName,
+        fetchOptions: item.fetchOptions,
+        isFetch: item.isFetch
+      });
+
+      // RETURN NeedPush
+      if (isBranchExistRemote === false) {
+        return {
+          repoStatus: RepoStatusEnum.NeedPush,
+          conflicts: conflicts,
+          currentBranch: currentBranchName,
+          changesToCommit: changesToCommit,
+          changesToPush: changesToPush
+        };
+      }
+
+      let localCommit = <nodegit.Commit>(
+        await gitRepo.getReferenceCommit(`refs/heads/${currentBranchName}`)
+      );
+
+      let localCommitOid = localCommit.id();
+      let localCommitId = localCommitOid.tostrS();
+
+      let remoteOriginCommit = <nodegit.Commit>(
+        await gitRepo.getReferenceCommit(
+          `refs/remotes/origin/${currentBranchName}`
+        )
+      );
+
+      let remoteOriginCommitOid = remoteOriginCommit.id();
+      let remoteOriginCommitId = remoteOriginCommitOid.tostrS();
+
+      //
+      let baseCommitOid = <nodegit.Oid>(
+        await nodegit.Merge.base(gitRepo, localCommitOid, remoteOriginCommitOid)
+      );
+      let baseCommitId = baseCommitOid.tostrS();
+
+      // RETURN Ok
+      if (localCommitId === remoteOriginCommitId) {
         return {
           repoStatus: RepoStatusEnum.Ok,
           conflicts: conflicts,
@@ -194,85 +235,10 @@ export async function getRepoStatus(item: {
           changesToCommit: changesToCommit,
           changesToPush: changesToPush
         };
-      } else {
-        // isRemoteBranchExist() does gitRepo.fetch()
-        let isBranchExistRemote = await isRemoteBranchExist({
-          repoDir: item.repoDir,
-          remoteBranch: currentBranchName,
-          fetchOptions: item.fetchOptions
-        });
-        // RETURN NeedPush
-        if (isBranchExistRemote === false) {
-          return {
-            repoStatus: RepoStatusEnum.NeedPush,
-            conflicts: conflicts,
-            currentBranch: currentBranchName,
-            changesToCommit: changesToCommit,
-            changesToPush: changesToPush
-          };
-        }
+      }
 
-        let localCommit = <nodegit.Commit>(
-          await gitRepo.getReferenceCommit(`refs/heads/${currentBranchName}`)
-        );
-
-        let localCommitOid = localCommit.id();
-        let localCommitId = localCommitOid.tostrS();
-
-        let remoteOriginCommit = <nodegit.Commit>(
-          await gitRepo.getReferenceCommit(
-            `refs/remotes/origin/${currentBranchName}`
-          )
-        );
-
-        let remoteOriginCommitOid = remoteOriginCommit.id();
-        let remoteOriginCommitId = remoteOriginCommitOid.tostrS();
-
-        //
-        let baseCommitOid = <nodegit.Oid>(
-          await nodegit.Merge.base(
-            gitRepo,
-            localCommitOid,
-            remoteOriginCommitOid
-          )
-        );
-        let baseCommitId = baseCommitOid.tostrS();
-
-        // RETURN Ok
-        if (localCommitId === remoteOriginCommitId) {
-          return {
-            repoStatus: RepoStatusEnum.Ok,
-            conflicts: conflicts,
-            currentBranch: currentBranchName,
-            changesToCommit: changesToCommit,
-            changesToPush: changesToPush
-          };
-        }
-
-        // RETURN NeedPull
-        if (localCommitId === baseCommitId) {
-          return {
-            repoStatus: RepoStatusEnum.NeedPull,
-            conflicts: conflicts,
-            currentBranch: currentBranchName,
-            changesToCommit: changesToCommit,
-            changesToPush: changesToPush
-          };
-        }
-
-        // RETURN NeedPush
-        if (remoteOriginCommitId === baseCommitId) {
-          return {
-            repoStatus: RepoStatusEnum.NeedPush,
-            conflicts: conflicts,
-            currentBranch: currentBranchName,
-            changesToCommit: changesToCommit,
-            changesToPush: changesToPush
-          };
-        }
-
-        // RETURN NeedPull
-        // diverged
+      // RETURN NeedPull
+      if (localCommitId === baseCommitId) {
         return {
           repoStatus: RepoStatusEnum.NeedPull,
           conflicts: conflicts,
@@ -281,6 +247,27 @@ export async function getRepoStatus(item: {
           changesToPush: changesToPush
         };
       }
+
+      // RETURN NeedPush
+      if (remoteOriginCommitId === baseCommitId) {
+        return {
+          repoStatus: RepoStatusEnum.NeedPush,
+          conflicts: conflicts,
+          currentBranch: currentBranchName,
+          changesToCommit: changesToCommit,
+          changesToPush: changesToPush
+        };
+      }
+
+      // RETURN NeedPull
+      // diverged
+      return {
+        repoStatus: RepoStatusEnum.NeedPull,
+        conflicts: conflicts,
+        currentBranch: currentBranchName,
+        changesToCommit: changesToCommit,
+        changesToPush: changesToPush
+      };
     }
   });
 }

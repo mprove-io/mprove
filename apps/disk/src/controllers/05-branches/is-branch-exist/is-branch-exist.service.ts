@@ -106,7 +106,8 @@ export class IsBranchExistService {
         ? await isRemoteBranchExist({
             repoDir: repoDir,
             remoteBranch: branch,
-            fetchOptions: fetchOptions
+            fetchOptions: fetchOptions,
+            isFetch: true
           })
         : await isLocalBranchExist({
             repoDir: repoDir,
