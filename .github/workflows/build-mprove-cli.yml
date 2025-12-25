@@ -21,6 +21,7 @@ jobs:
             build: pnpm build:mcli
             pkg: |
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public
+              bin/mprove version
               pnpm shx mv bin/mprove mprove
               tar czf "mprove-cli-macos-${{ github.sha }}.tgz" "mprove"
             artifact: mprove-cli-macos-${{ github.sha }}.tgz
@@ -60,9 +61,6 @@ jobs:
         run: ${{ matrix.pkg }}
         working-directory: dist/apps/mcli
 
-      - name: Show version
-        run: dist/apps/mcli/bin/mprove version
-
       - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact }}
@@ -72,15 +70,15 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v6
-        with:
-          name: mprove-cli-linux-${{ github.sha }}.tgz
+      # - uses: actions/download-artifact@v6
+      #   with:
+      #     name: mprove-cli-linux-${{ github.sha }}.tgz
       - uses: actions/download-artifact@v6
         with:
           name: mprove-cli-macos-${{ github.sha }}.tgz
-      - uses: actions/download-artifact@v6
-        with:
-          name: mprove-cli-windows-${{ github.sha }}.exe
+      # - uses: actions/download-artifact@v6
+      #   with:
+      #     name: mprove-cli-windows-${{ github.sha }}.exe
 
       - uses: softprops/action-gh-release@v2
         with:
