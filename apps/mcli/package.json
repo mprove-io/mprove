@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "11.0.32",
+  "version": "11.0.43",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.26.1",
@@ -69,9 +69,6 @@
     "assets": [
       "node_modules/nodegit/build/Release/**/*",
       "node_modules/axios/dist/node/axios.cjs"
-    ],
-    "targets": [
-      "node24-linux-x64"
     ],
     "outputPath": "bin",
     "compress": "GZip"
