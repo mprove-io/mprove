@@ -83,7 +83,7 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           repository: mprove-io/mprove-cli-releases
-          # token: ${{ secrets.MPROVE_FILES_GITHUB_TOKEN }}
+          token: ${{ secrets.MPROVE_CLI_RELEASES_GITHUB_TOKEN }}
           files: |
             mprove-cli-macos-${{ github.sha }}.tgz
           # files: |
