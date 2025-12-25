@@ -7,8 +7,6 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [macos]
-        # os: [windows, macos, ubuntu]
         include:
           # - os: ubuntu
           #   build: pnpm build:mcli
@@ -17,7 +15,7 @@ jobs:
           #     pnpm shx mv dist/apps/mcli/bin/mprove mprove
           #     tar czf "mprove-cli-linux-${{ github.sha }}.tgz" "mprove"
           #   artifact: mprove-cli-linux-${{ github.sha }}.tgz
-          - os: macos
+          - os: macos-15-intel
             arch: x64
             build: pnpm build:mcli
             pkg: |
@@ -31,7 +29,7 @@ jobs:
           #     pnpm pkg:mcli:win
           #     pnpm shx mv dist/apps/mcli/bin/mprove.exe mprove-cli-windows-${{ github.sha }}.exe
           #   artifact: mprove-cli-windows-${{ github.sha }}.exe
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
 
