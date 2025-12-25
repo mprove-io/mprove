@@ -21,7 +21,7 @@ jobs:
             build: pnpm build:mcli
             pkg: |
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public
-              pnpm shx mv dist/apps/mcli/bin/mprove mprove
+              pnpm shx mv bin/mprove mprove
               tar czf "mprove-cli-macos-${{ github.sha }}.tgz" "mprove"
             artifact: mprove-cli-macos-${{ github.sha }}.tgz
           # - os: windows
