@@ -1,8 +1,6 @@
 name: build-mprove-cli
 on:
   push:
-    branches:
-      - ak5
     tags:
       - prep-*
 jobs:
@@ -35,6 +33,9 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v6
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4 
 
       - uses: actions/setup-node@v6
         with:
