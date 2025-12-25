@@ -21,7 +21,7 @@ jobs:
             arch: x64
             build: pnpm build:mcli
             pkg: |
-              pnpm pkg:mcli --targets node24-macos-x64 --no-bytecode --public-packages "*" --public
+              pnpm pkg:mcli --no-bytecode --public-packages "*" --public
               pnpm shx mv bin/mprove mprove
               tar czf "mprove-cli-macos-${{ github.sha }}.tgz" "mprove"
             artifact: mprove-cli-macos-${{ github.sha }}.tgz
