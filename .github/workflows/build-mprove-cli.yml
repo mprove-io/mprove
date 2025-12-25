@@ -65,6 +65,7 @@ jobs:
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.artifact }}
+        working-directory: dist/apps/mcli
 
   upload-files:
     needs: [build]
