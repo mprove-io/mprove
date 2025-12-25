@@ -1,61 +1,68 @@
 name: build-mprove-cli
 on:
   push:
+    branches:
+      - ak5
     tags:
-      - t-*
+      - prep-*
 jobs:
   build:
     strategy:
       matrix:
-        os: [windows, macos, ubuntu]
+        os: [macos]
+        # os: [windows, macos, ubuntu]
         include:
-          - os: ubuntu
-            build: pnpm build:mcli
-            pacx: |
-              pnpm pacx:mcli
-              pnpm shx mv dist/bin/mp mprove
-              tar czf "mprove-cli-linux-${{ github.sha }}.tgz" "mprove"
-            artifact: mprove-cli-linux-${{ github.sha }}.tgz
+          # - os: ubuntu
+          #   build: pnpm build:mcli
+          #   pkg: |
+          #     pnpm pkg:mcli
+          #     pnpm shx mv dist/bin/mprove mprove
+          #     tar czf "mprove-cli-linux-${{ github.sha }}.tgz" "mprove"
+          #   artifact: mprove-cli-linux-${{ github.sha }}.tgz
           - os: macos
             build: pnpm build:mcli
-            pacx: |
-              pnpm pacx:mcli
-              pnpm shx mv dist/bin/mp mprove
+            pkg: |
+              pnpm pkg:mcli --no-bytecode --public-packages "*" --public
+              pnpm shx mv dist/bin/mprove mprove
               tar czf "mprove-cli-macos-${{ github.sha }}.tgz" "mprove"
             artifact: mprove-cli-macos-${{ github.sha }}.tgz
-          - os: windows
-            build: pnpm build:mcli:win
-            pacx: |
-              pnpm pacx:mcli:win
-              pnpm shx mv dist/bin/mp.exe mprove-cli-windows-${{ github.sha }}.exe
-            artifact: mprove-cli-windows-${{ github.sha }}.exe
+          # - os: windows
+          #   build: pnpm build:mcli:win
+          #   pkg: |
+          #     pnpm pkg:mcli:win
+          #     pnpm shx mv dist/bin/mprove.exe mprove-cli-windows-${{ github.sha }}.exe
+          #   artifact: mprove-cli-windows-${{ github.sha }}.exe
     runs-on: ${{ matrix.os }}-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16.19.0
+          node-version: 24.10.0
+          cache: pnpm
 
-      - name: install using package.json
+      - name: Install top dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: build
+      - name: Install apps/mcli dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: apps/mcli
+
+      - name: Build
         run: ${{ matrix.build }}
 
-      - name: replace package.json
-        run: pnpm shx cp package.cli.json package.json
-
-      - name: remove node_modules
-        run: pnpm shx rm -rf node_modules
-
-      - name: install using package.cli.json
+      - name: Install dist/apps/mcli dependencies
         run: pnpm install --frozen-lockfile
+        working-directory: dist/apps/mcli
 
-      - name: pacx
-        run: ${{ matrix.pacx }}
+      - name: Package with pkg
+        run: ${{ matrix.pkg }}
+        working-directory: dist/apps/mcli
 
-      - uses: actions/upload-artifact@v3
+      - name: Show version
+        run: dist/apps/mcli/bin/mprove version
+
+      - uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.artifact }}
           path: ${{ matrix.artifact }}
@@ -64,21 +71,23 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v6
         with:
           name: mprove-cli-linux-${{ github.sha }}.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v6
         with:
           name: mprove-cli-macos-${{ github.sha }}.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v6
         with:
           name: mprove-cli-windows-${{ github.sha }}.exe
 
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v2
         with:
-          repository: mprove-io/mprove-files
-          token: ${{ secrets.MPROVE_FILES_GITHUB_TOKEN }}
+          repository: mprove-io/mprove-cli-releases
+          # token: ${{ secrets.MPROVE_FILES_GITHUB_TOKEN }}
           files: |
-            mprove-cli-linux-${{ github.sha }}.tgz
             mprove-cli-macos-${{ github.sha }}.tgz
-            mprove-cli-windows-${{ github.sha }}.exe
+          # files: |
+          #   mprove-cli-linux-${{ github.sha }}.tgz
+          #   mprove-cli-macos-${{ github.sha }}.tgz
+          #   mprove-cli-windows-${{ github.sha }}.exe
