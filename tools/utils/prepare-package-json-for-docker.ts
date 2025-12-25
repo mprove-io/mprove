@@ -35,7 +35,6 @@ function updateTarget(tPath: string, s: any, t: any) {
     'dependencies',
     'devDependencies',
     // 'madge',
-    // 'husky',
     // 'lint-staged',
     // '_moduleAliases',
     // 'pkg',

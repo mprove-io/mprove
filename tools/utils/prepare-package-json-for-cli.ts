@@ -35,7 +35,6 @@ function updateTarget(tPath: string, s: any, t: any) {
     'dependencies',
     'devDependencies',
     // 'madge',
-    // 'husky',
     // 'lint-staged',
     '_moduleAliases',
     'pkg',
@@ -96,7 +95,7 @@ function updateTarget(tPath: string, s: any, t: any) {
     '@types/nodegit',
     '@yao-pkg/pkg',
     'ava',
-    'shx',
+    'shx'
   ];
 
   Object.keys(s.devDependencies)
