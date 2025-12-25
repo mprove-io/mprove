@@ -14,21 +14,21 @@ jobs:
           #   build: pnpm build:mcli
           #   pkg: |
           #     pnpm pkg:mcli
-          #     pnpm shx mv dist/bin/mprove mprove
+          #     pnpm shx mv dist/apps/mcli/bin/mprove mprove
           #     tar czf "mprove-cli-linux-${{ github.sha }}.tgz" "mprove"
           #   artifact: mprove-cli-linux-${{ github.sha }}.tgz
           - os: macos
             build: pnpm build:mcli
             pkg: |
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public
-              pnpm shx mv dist/bin/mprove mprove
+              pnpm shx mv dist/apps/mcli/bin/mprove mprove
               tar czf "mprove-cli-macos-${{ github.sha }}.tgz" "mprove"
             artifact: mprove-cli-macos-${{ github.sha }}.tgz
           # - os: windows
           #   build: pnpm build:mcli:win
           #   pkg: |
           #     pnpm pkg:mcli:win
-          #     pnpm shx mv dist/bin/mprove.exe mprove-cli-windows-${{ github.sha }}.exe
+          #     pnpm shx mv dist/apps/mcli/bin/mprove.exe mprove-cli-windows-${{ github.sha }}.exe
           #   artifact: mprove-cli-windows-${{ github.sha }}.exe
     runs-on: ${{ matrix.os }}-latest
     steps:
