@@ -6,7 +6,7 @@ import { makeId } from '~common/functions/make-id';
 import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ServerError } from '~common/models/server-error';
-let axios = require('axios');
+let axios = require('axios/dist/node/axios.cjs');
 // import got, { OptionsOfTextResponseBody } from 'got';
 
 export async function mreq<T extends MyResponse>(item: {

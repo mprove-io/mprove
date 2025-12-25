@@ -1,3 +1,6 @@
+packages:
+  - '.' 
+
 ignoredBuiltDependencies:
   - '@vaadin/vaadin-usage-statistics'
 

@@ -2,8 +2,8 @@ import * as fse from 'fs-extra';
 import { exit } from 'process';
 let deepEqual = require('fast-deep-equal');
 
-let sourcePath = './package.json';
-let targetPath = './package.cli.json';
+let sourcePath = 'package.json';
+let targetPath = 'apps/mcli/package.json';
 
 if (!fse.pathExistsSync(sourcePath)) {
   console.log(`source file "${sourcePath}" is not exist!`);
@@ -28,14 +28,18 @@ function updateTarget(tPath: string, s: any, t: any) {
     'license',
     'packageManager',
     'private',
-    'sideEffects',
+    // 'sideEffects',
     'repository',
     'bin',
     'scripts',
     'dependencies',
     'devDependencies',
+    // 'madge',
+    // 'husky',
+    // 'lint-staged',
     '_moduleAliases',
-    'vaadin',
+    'pkg',
+    // 'vaadin',
     'resolutions'
   ];
 
@@ -43,59 +47,61 @@ function updateTarget(tPath: string, s: any, t: any) {
     .filter(key => !allowedTop.includes(key))
     .forEach(key => delete s[key]);
 
-  s.license = 'Apache-2.0';
-
   let allowedScripts: string[] = [
-    'ava:mcli',
-    'clean:mcli-repos',
     'clone:mcli',
-    'pacx:mcli',
-    'pacx:mcli:win'
+    'e2e:mcli',
+    'clean:mcli-repos',
+    'clean:node_modules',
+    'pkg:mcli'
   ];
 
   Object.keys(s.scripts)
     .filter(key => !allowedScripts.includes(key))
     .forEach(key => delete s.scripts[key]);
 
-  // let allowedDependencies: string[] = [
-  //   'class-transformer',
-  //   'class-transformer-validator',
-  //   'class-validator',
-  //   'clipanion',
-  //   'date-fns',
-  //   'clone-regexp',
-  //   'dotenv',
-  //   'fs-extra',
-  //   'got',
-  //   'js-yaml', //
-  //   'nanoid',
-  //   'nest-winston',
-  //   'reflect-metadata',
-  //   'tslib',
-  //   'typanion',
-  //   'util', //
-  //   'winston',
-  //   '@figma/nodegit',
-  //   'nodegit',
-  //   'p-iteration',
-  //   //
-  //   'module-alias',
-  //   '@nestjs/common',
-  //   'rxjs',
-  //   'fast-deep-equal',
-  //   'async-retry',
-  //   'prettyjson'
-  // ];
+  let allowedDependencies: string[] = [
+    'class-transformer',
+    'class-transformer-validator',
+    'class-validator',
+    'clipanion',
+    'date-fns',
+    'dotenv',
+    'fs-extra',
+    'axios',
+    'js-yaml',
+    'nanoid',
+    'nest-winston',
+    'reflect-metadata',
+    'tslib',
+    'typanion',
+    'winston',
+    'nodegit',
+    'p-iteration',
+    'module-alias',
+    '@nestjs/common',
+    'rxjs',
+    'fast-deep-equal',
+    'async-retry',
+    'prettyjson'
+  ];
 
-  // Object.keys(s.dependencies)
-  //   .filter(key => !allowedDependencies.includes(key))
-  //   .forEach(key => delete s.dependencies[key]);
+  Object.keys(s.dependencies)
+    .filter(key => !allowedDependencies.includes(key))
+    .forEach(key => delete s.dependencies[key]);
 
-  // let allowedDevDependencies: string[] = ['ava', 'shx', 'caxa'];
+  let allowedDevDependencies: string[] = [
+    '@types/async-retry',
+    '@types/fs-extra',
+    '@types/js-yaml',
+    '@types/nodegit',
+    '@yao-pkg/pkg',
+    'ava',
+    'shx',
+  ];
 
-  // Object.keys(s.devDependencies)
-  //   .filter(key => !allowedDevDependencies.includes(key))
-  //   .forEach(key => delete s.devDependencies[key]);
+  Object.keys(s.devDependencies)
+    .filter(key => !allowedDevDependencies.includes(key))
+    .forEach(key => delete s.devDependencies[key]);
 
   if (t === null || !deepEqual(s, t)) {
     fse.writeFileSync(tPath, JSON.stringify(s, null, 2));

@@ -30,11 +30,15 @@ function updateTarget(tPath: string, s: any, t: any) {
     'private',
     'sideEffects',
     'repository',
-    'bin',
+    // 'bin',
     'scripts',
     'dependencies',
     'devDependencies',
+    // 'madge',
+    // 'husky',
+    // 'lint-staged',
     // '_moduleAliases',
+    // 'pkg',
     'vaadin',
     'resolutions'
   ];
