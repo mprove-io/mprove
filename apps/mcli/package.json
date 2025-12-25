@@ -1,0 +1,79 @@
+{
+  "name": "mprove",
+  "version": "11.0.31",
+  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@10.26.1",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mprove-io/mprove.git"
+  },
+  "bin": "main.js",
+  "scripts": {
+    "clone:mcli": "git clone $MPROVE_CLI_TEST_REMOTE_GIT_URL $MPROVE_CLI_TEST_DESTINATION_URL",
+    "e2e:mcli": "IS_TELEMETRY_ENABLED=FALSE pnpm clean:mcli-repos && pnpm clone:mcli && nx e2e mcli --verbose",
+    "clean:mcli-repos": "rm -rf mprove_data/mcli-repos/*",
+    "clean:node_modules": "rm -rf ./node_modules/* && rm -rf ./node_modules/.bin/*&& rm -rf ./node_modules/.cache/* && rm -rf ./node_modules/.pnpm/* && rm -rf ./node_modules/.tmp/* && rm -rf ./node_modules/.modules.yaml && rm -rf ./node_modules/.pnpm-workspace-state-v1.json",
+    "pkg:mcli": "pkg ."
+  },
+  "dependencies": {
+    "@nestjs/common": "11.1.0",
+    "async-retry": "1.3.3",
+    "axios": "1.13.1",
+    "class-transformer": "0.3.1",
+    "class-transformer-validator": "0.9.1",
+    "class-validator": "0.14.2",
+    "clipanion": "3.2.1",
+    "date-fns": "2.30.0",
+    "dotenv": "8.6.0",
+    "fast-deep-equal": "3.1.3",
+    "fs-extra": "11.2.0",
+    "js-yaml": "4.1.1",
+    "module-alias": "2.2.3",
+    "nanoid": "3.3.10",
+    "nest-winston": "1.9.4",
+    "nodegit": "0.28.0-alpha.36",
+    "p-iteration": "1.1.8",
+    "prettyjson": "1.2.5",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.1",
+    "tslib": "2.7.0",
+    "typanion": "3.14.0",
+    "winston": "3.14.2"
+  },
+  "devDependencies": {
+    "@types/async-retry": "1.4.9",
+    "@types/fs-extra": "9.0.13",
+    "@types/js-yaml": "4.0.9",
+    "@types/nodegit": "0.28.7",
+    "@yao-pkg/pkg": "6.11.0",
+    "ava": "3.15.0",
+    "shx": "0.4.0"
+  },
+  "_moduleAliases": {
+    "~backend": "dist/tests/backend/apps/backend/src",
+    "~blockml": "dist/tests/blockml/apps/blockml/src",
+    "~disk": "dist/tests/disk/apps/disk/src",
+    "~mcli": "dist/tests/mcli/apps/mcli/src",
+    "@mprove/common": "dist/tests/common/libs/common/src/_index",
+    "@mprove/node-common": "dist/tests/node-common/libs/node-common/src/_index",
+    "~common": "dist/tests/common/libs/common/src",
+    "~node-common": "dist/tests/node-common/libs/node-common/src"
+  },
+  "pkg": {
+    "scripts": [
+      "*.js",
+      "**/*.js"
+    ],
+    "assets": [
+      "node_modules/nodegit/build/Release/**/*",
+      "node_modules/axios/dist/node/axios.cjs"
+    ],
+    "targets": [
+      "node24-linux-x64"
+    ],
+    "outputPath": "bin",
+    "compress": "GZip"
+  }
+}
