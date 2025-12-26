@@ -137,16 +137,14 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           path: builds
+          merge-multiple: true
 
       - name: Generate Checksums
         run: |
-          # move all files from the builds subdirectories to the builds root folder
-          find ./builds/ -type f -print0 | xargs -0 mv -t ./builds/
-          # remove all (empty) subdirectories
-          find ./builds/ -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0 rm -R
           cd builds
           VERSION=$(echo "${{ github.ref_name }}" | cut -d'-' -f2-)
-          sha256sum *.{tgz,zip} > mprove-cli-${VERSION}-checksums.txt
+          # Create checksums for all files
+          sha256sum * > mprove-cli-${VERSION}-checksums.txt
 
       - name: Create Draft GitHub Release
         uses: softprops/action-gh-release@v2
