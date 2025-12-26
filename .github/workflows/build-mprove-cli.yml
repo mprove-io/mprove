@@ -19,7 +19,8 @@ jobs:
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-x64
               pnpm shx mv bin/mprove mprove
             extension: tgz
-            archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+            shell: bash
+            archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-darwin-amd64.tgz mprove
 
           # macOS Apple Silicon (arm64)
           - runner: macos-15
@@ -30,7 +31,8 @@ jobs:
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-arm64
               pnpm shx mv bin/mprove mprove
             extension: tgz
-            archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+            shell: bash
+            archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-darwin-arm64.tgz mprove
 
           # Linux amd64
           # - runner: ubuntu-latest
@@ -41,10 +43,11 @@ jobs:
           #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-x64
           #     pnpm shx mv bin/mprove mprove
           #   extension: tgz
-          #   archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+          #   shell: bash
+          #   archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-linux-amd64.tgz mprove
 
           # Linux arm64
-          # - runner: ubuntu-24.04-arm  # Valid arm64 runner label (or use ubuntu-22.04-arm)
+          # - runner: ubuntu-24.04-arm
           #   os: linux
           #   arch: arm64
           #   build: pnpm build:mcli
@@ -52,7 +55,8 @@ jobs:
           #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
           #     pnpm shx mv bin/mprove mprove
           #   extension: tgz
-          #   archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+          #   shell: bash
+          #   archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-linux-arm64.tgz mprove
 
           # Windows amd64
           # - runner: windows-latest
@@ -63,7 +67,8 @@ jobs:
           #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-win-x64
           #     pnpm shx mv bin/mprove.exe mprove.exe
           #   extension: zip
-          #   archive_cmd: Compress-Archive -Path mprove.exe -DestinationPath "${{ steps.artifact.outputs.name }}"
+          #   shell: powershell
+          #   archive_cmd: Compress-Archive -Path mprove.exe -DestinationPath mprove-cli-${{ env.VERSION }}-windows-amd64.zip
 
     runs-on: ${{ matrix.runner }}
 
@@ -102,17 +107,20 @@ jobs:
         run: |
           TAG=${GITHUB_REF#refs/tags/}
           VERSION=${TAG#prep-}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Compute artifact name
         id: artifact
         shell: bash
-        run: echo "name=mprove-cli-${{ steps.version.outputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}" >> $GITHUB_OUTPUT
+        run: |
+          ARTIFACT_NAME="mprove-cli-${{ env.VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}"
+          echo "name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
       - name: Create archive
         run: ${{ matrix.archive_cmd }}
         working-directory: dist/apps/mcli
-        shell: ${{ matrix.os == 'windows' && 'powershell' || 'bash' }}
+        shell: ${{ matrix.shell }}
 
       - uses: actions/upload-artifact@v6
         with:
