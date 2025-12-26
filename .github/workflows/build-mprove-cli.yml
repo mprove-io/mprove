@@ -97,14 +97,13 @@ jobs:
         run: |
           TAG=${GITHUB_REF#refs/tags/}
           VERSION=${TAG#prep-}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Compute artifact name
         id: artifact
         shell: bash
         run: |
-          ARTIFACT_NAME="mprove-cli-$VERSION-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}"
+          ARTIFACT_NAME="mprove-cli-${{ steps.version.outputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}"
           echo "name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
       - name: Create archive
@@ -139,12 +138,16 @@ jobs:
           path: builds
           merge-multiple: true
 
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/prep-}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Generate Checksums
         run: |
           cd builds
-          VERSION=$(echo "${{ github.ref_name }}" | cut -d'-' -f2-)
-          # Create checksums for all files
-          sha256sum * > mprove-cli-${VERSION}-checksums.txt
+          sha256sum * > mprove-cli-${{ steps.version.outputs.version }}-checksums.txt
 
       - name: Create Draft GitHub Release
         uses: softprops/action-gh-release@v2
@@ -153,7 +156,7 @@ jobs:
           draft: true
           token: ${{ secrets.MPROVE_CLI_GITHUB_TOKEN }}
           repository: mprove-io/mprove-cli
-          name: ${VERSION}
+          name: ${{ steps.version.outputs.version }}
           # tag_name: ${{ github.ref_name }}
           # generate_release_notes: true
           # prerelease: true
