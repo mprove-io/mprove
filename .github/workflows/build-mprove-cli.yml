@@ -19,8 +19,6 @@ jobs:
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-x64
               pnpm shx mv bin/mprove mprove
             extension: tgz
-            shell: bash
-            archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-darwin-amd64.tgz mprove
 
           # macOS Apple Silicon (arm64)
           - runner: macos-15
@@ -31,8 +29,6 @@ jobs:
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-arm64
               pnpm shx mv bin/mprove mprove
             extension: tgz
-            shell: bash
-            archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-darwin-arm64.tgz mprove
 
           # Linux amd64
           # - runner: ubuntu-latest
@@ -43,8 +39,6 @@ jobs:
           #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-x64
           #     pnpm shx mv bin/mprove mprove
           #   extension: tgz
-          #   shell: bash
-          #   archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-linux-amd64.tgz mprove
 
           # Linux arm64
           # - runner: ubuntu-24.04-arm
@@ -55,8 +49,6 @@ jobs:
           #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
           #     pnpm shx mv bin/mprove mprove
           #   extension: tgz
-          #   shell: bash
-          #   archive_cmd: tar czf mprove-cli-${{ env.VERSION }}-linux-arm64.tgz mprove
 
           # Windows amd64
           # - runner: windows-latest
@@ -67,8 +59,6 @@ jobs:
           #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-win-x64
           #     pnpm shx mv bin/mprove.exe mprove.exe
           #   extension: zip
-          #   shell: powershell
-          #   archive_cmd: Compress-Archive -Path mprove.exe -DestinationPath mprove-cli-${{ env.VERSION }}-windows-amd64.zip
 
     runs-on: ${{ matrix.runner }}
 
@@ -114,13 +104,21 @@ jobs:
         id: artifact
         shell: bash
         run: |
-          ARTIFACT_NAME="mprove-cli-${{ env.VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}"
+          ARTIFACT_NAME="mprove-cli-$VERSION-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}"
           echo "name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
       - name: Create archive
-        run: ${{ matrix.archive_cmd }}
+        id: create_archive
         working-directory: dist/apps/mcli
-        shell: ${{ matrix.shell }}
+        shell: bash
+        run: |
+          if [ "${{ matrix.os }}" = "darwin" ] || [ "${{ matrix.os }}" = "linux" ]; then
+            tar czf "$ARTIFACT_NAME" mprove
+          elif [ "${{ matrix.os }}" = "windows" ]; then
+            zip "$ARTIFACT_NAME" mprove.exe
+          fi
+        env:
+          ARTIFACT_NAME: ${{ steps.artifact.outputs.name }}
 
       - uses: actions/upload-artifact@v6
         with:
@@ -142,7 +140,9 @@ jobs:
 
       - name: Generate Checksums
         run: |
+          # move all files from the builds subdirectories to the builds root folder
           find ./builds/ -type f -print0 | xargs -0 mv -t ./builds/
+          # remove all (empty) subdirectories
           find ./builds/ -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0 rm -R
           cd builds
           VERSION=$(echo "${{ github.ref_name }}" | cut -d'-' -f2-)
