@@ -153,7 +153,7 @@ jobs:
           draft: true
           token: ${{ secrets.MPROVE_CLI_GITHUB_TOKEN }}
           repository: mprove-io/mprove-cli
+          name: ${VERSION}
           # tag_name: ${{ github.ref_name }}
-          # name: ${{ github.ref_name }}
           # generate_release_notes: true
           # prerelease: true
