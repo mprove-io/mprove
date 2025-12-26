@@ -1,40 +1,77 @@
 name: build-mprove-cli
+
 on:
   push:
     tags:
-      - prep-*
+      - 'prep-*'
+
 jobs:
   build:
     strategy:
       matrix:
         include:
-          # - os: ubuntu
-          #   build: pnpm build:mcli
-          #   pkg: |
-          #     pnpm pkg:mcli
-          #     pnpm shx mv dist/apps/mcli/bin/mprove mprove
-          #     tar czf "mprove-cli-linux-${{ github.sha }}.tgz" "mprove"
-          #   artifact: mprove-cli-linux-${{ github.sha }}.tgz
-          - os: macos-15-intel
-            arch: x64
+          # macOS Intel (amd64)
+          - runner: macos-15-intel
+            os: darwin
+            arch: amd64
             build: pnpm build:mcli
             pkg: |
               pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-x64
               pnpm shx mv bin/mprove mprove
-              tar czf "mprove-cli-macos-x64-${{ github.sha }}.tgz" "mprove"
-            artifact: mprove-cli-macos-x64-${{ github.sha }}.tgz
-          # - os: windows
-          #   build: pnpm build:mcli:win
+            extension: tgz
+            archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+
+          # macOS Apple Silicon (arm64)
+          - runner: macos-15
+            os: darwin
+            arch: arm64
+            build: pnpm build:mcli
+            pkg: |
+              pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-arm64
+              pnpm shx mv bin/mprove mprove
+            extension: tgz
+            archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+
+          # Linux amd64
+          # - runner: ubuntu-latest
+          #   os: linux
+          #   arch: amd64
+          #   build: pnpm build:mcli
           #   pkg: |
-          #     pnpm pkg:mcli:win
-          #     pnpm shx mv dist/apps/mcli/bin/mprove.exe mprove-cli-windows-${{ github.sha }}.exe
-          #   artifact: mprove-cli-windows-${{ github.sha }}.exe
-    runs-on: ${{ matrix.os }}
+          #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-x64
+          #     pnpm shx mv bin/mprove mprove
+          #   extension: tgz
+          #   archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+
+          # Linux arm64
+          # - runner: ubuntu-24.04-arm  # Valid arm64 runner label (or use ubuntu-22.04-arm)
+          #   os: linux
+          #   arch: arm64
+          #   build: pnpm build:mcli
+          #   pkg: |
+          #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
+          #     pnpm shx mv bin/mprove mprove
+          #   extension: tgz
+          #   archive_cmd: tar czf "${{ steps.artifact.outputs.name }}" mprove
+
+          # Windows amd64
+          # - runner: windows-latest
+          #   os: windows
+          #   arch: amd64
+          #   build: pnpm build:mcli
+          #   pkg: |
+          #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-win-x64
+          #     pnpm shx mv bin/mprove.exe mprove.exe
+          #   extension: zip
+          #   archive_cmd: Compress-Archive -Path mprove.exe -DestinationPath "${{ steps.artifact.outputs.name }}"
+
+    runs-on: ${{ matrix.runner }}
+
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4 
+        uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v6
         with:
@@ -59,32 +96,58 @@ jobs:
         run: ${{ matrix.pkg }}
         working-directory: dist/apps/mcli
 
+      - name: Extract version from tag
+        id: version
+        shell: bash
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          VERSION=${TAG#prep-}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Compute artifact name
+        id: artifact
+        shell: bash
+        run: echo "name=mprove-cli-${{ steps.version.outputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}" >> $GITHUB_OUTPUT
+
+      - name: Create archive
+        run: ${{ matrix.archive_cmd }}
+        working-directory: dist/apps/mcli
+        shell: ${{ matrix.os == 'windows' && 'powershell' || 'bash' }}
+
       - uses: actions/upload-artifact@v6
         with:
-          name: ${{ matrix.artifact }}
-          path: dist/apps/mcli/${{ matrix.artifact }}
+          name: ${{ steps.artifact.outputs.name }}
+          path: dist/apps/mcli/${{ steps.artifact.outputs.name }}
 
-  upload-files:
+  release-draft:
     needs: [build]
     runs-on: ubuntu-latest
-    steps:
-      # - uses: actions/download-artifact@v6
-      #   with:
-      #     name: mprove-cli-linux-${{ github.sha }}.tgz
-      - uses: actions/download-artifact@v6
-        with:
-          name: mprove-cli-macos-x64-${{ github.sha }}.tgz
-      # - uses: actions/download-artifact@v6
-      #   with:
-      #     name: mprove-cli-windows-${{ github.sha }}.exe
+    if: startsWith(github.ref, 'refs/tags/prep-')
+    permissions:
+      contents: write
 
-      - uses: softprops/action-gh-release@v2
+    steps:
+      - name: Download Builds
+        uses: actions/download-artifact@v7
         with:
-          repository: mprove-io/mprove-cli-releases
-          token: ${{ secrets.MPROVE_CLI_RELEASES_GITHUB_TOKEN }}
-          files: |
-            mprove-cli-macos-x64-${{ github.sha }}.tgz
-          # files: |
-          #   mprove-cli-linux-${{ github.sha }}.tgz
-          #   mprove-cli-macos-x64-${{ github.sha }}.tgz
-          #   mprove-cli-windows-${{ github.sha }}.exe
+          path: builds
+
+      - name: Generate Checksums
+        run: |
+          find ./builds/ -type f -print0 | xargs -0 mv -t ./builds/
+          find ./builds/ -mindepth 1 -maxdepth 1 -type d -print0 | xargs -r0 rm -R
+          cd builds
+          VERSION=$(echo "${{ github.ref_name }}" | cut -d'-' -f2-)
+          sha256sum *.{tgz,zip} > mprove-cli-${VERSION}-checksums.txt
+
+      - name: Create Draft GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: builds/*
+          draft: true
+          token: ${{ secrets.MPROVE_CLI_GITHUB_TOKEN }}
+          repository: mprove-io/mprove-cli
+          # tag_name: ${{ github.ref_name }}
+          # name: ${{ github.ref_name }}
+          # generate_release_notes: true
+          # prerelease: true
