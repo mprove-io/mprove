@@ -41,14 +41,14 @@ jobs:
             extension: tar.gz
 
           # Linux arm64
-          - runner: ubuntu-24.04-arm
-            os: linux
-            arch: arm64
-            build: pnpm build:mcli
-            pkg: |
-              pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
-              pnpm shx mv bin/mprove mprove
-            extension: tar.gz
+          # - runner: ubuntu-24.04-arm
+          #   os: linux
+          #   arch: arm64
+          #   build: pnpm build:mcli
+          #   pkg: |
+          #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
+          #     pnpm shx mv bin/mprove mprove
+          #   extension: tar.gz
 
           # Windows amd64
           - runner: windows-latest
@@ -106,17 +106,23 @@ jobs:
           ARTIFACT_NAME="mprove-cli-${{ steps.version.outputs.version }}-${{ matrix.os }}-${{ matrix.arch }}.${{ matrix.extension }}"
           echo "name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
 
-      - name: Create archive
-        working-directory: dist/apps/mcli
+      - name: Create archive (macOS / Linux)
+        if: matrix.os == 'darwin' || matrix.os == 'linux'
         shell: bash
-        run: |
-          if [ "${{ matrix.os }}" = "darwin" ] || [ "${{ matrix.os }}" = "linux" ]; then
-            tar czf "$ARTIFACT_NAME" mprove
-          elif [ "${{ matrix.os }}" = "windows" ]; then
-            zip "$ARTIFACT_NAME" mprove.exe
-          fi
+        working-directory: dist/apps/mcli
         env:
           ARTIFACT_NAME: ${{ steps.artifact.outputs.name }}
+        run: |
+          tar czf "$ARTIFACT_NAME" mprove
+
+      - name: Create archive (Windows)
+        if: matrix.os == 'windows'
+        shell: pwsh
+        working-directory: dist/apps/mcli
+        env:
+          ARTIFACT_NAME: ${{ steps.artifact.outputs.name }}
+        run: |
+          Compress-Archive -Path mprove.exe -DestinationPath $env:ARTIFACT_NAME
 
       - uses: actions/upload-artifact@v6
         with:
@@ -157,5 +163,3 @@ jobs:
           repository: mprove-io/mprove-cli
           name: ${{ steps.version.outputs.version }}
           tag_name: ${{ steps.version.outputs.version }}
-          # generate_release_notes: true
-          # prerelease: true
