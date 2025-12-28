@@ -8,7 +8,7 @@ on:
 env:
   IMAGE_REGISTRY: ghcr.io
   IMAGE_ORG: mprove-io
-  IMAGE_PREFIX: mprove-lab
+  IMAGE_PREFIX: ${{ github.repository }}
 
 jobs:
   build-and-push:
