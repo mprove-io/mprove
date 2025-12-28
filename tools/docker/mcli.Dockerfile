@@ -19,16 +19,17 @@ COPY libs/node-common libs/node-common/
 
 COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json tsconfig.base.json tsconfig.json ./
 
-COPY package.cli.json .
-
 ENV NX_DAEMON=false
 
 RUN pnpm build:mcli
 RUN pnpm build-tests:mcli
 
-RUN rm -rf node_modules
+# WORKDIR /usr/src/app/apps/mcli
 
-COPY package.cli.json package.json
-RUN pnpm install --frozen-lockfile
+# RUN pnpm install --frozen-lockfile
+
+# WORKDIR /usr/src/app/dist/apps/mcli
+
+# RUN pnpm install --frozen-lockfile
 
 CMD ["sleep", "infinity"]

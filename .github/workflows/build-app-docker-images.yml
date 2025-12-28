@@ -20,6 +20,7 @@ jobs:
           - tools/docker/blockml.Dockerfile
           - tools/docker/disk.Dockerfile
           - tools/docker/front.Dockerfile
+          - tools/docker/mcli.Dockerfile
       max-parallel: 1
     permissions:
       contents: read
