@@ -1,62 +1,56 @@
-import * as crypto from 'crypto';
-import { existsSync } from 'fs';
-import * as fs from 'fs/promises';
+#!/usr/bin/env bash
+set -euo pipefail
 
-function makeRandomString(length: number): string {
-  let output = '';
+trap 'echo "ERROR: Script failed at line $LINENO (exit code: $?). Command: $BASH_COMMAND" >&2; exit 1' ERR
 
-  let charset: string =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+FILE_PATH="${1:-.env}"
 
-  let randomValues: Uint8Array = new Uint8Array(length);
+if [[ -f "$FILE_PATH" ]]; then
+  echo "Error: $FILE_PATH file already exists!" >&2
+  exit 1
+fi
 
-  crypto.getRandomValues(randomValues);
-
-  for (let i = 0; i < length; i++) {
-    let randomIndex: number = randomValues[i] % charset.length;
-    output += charset[randomIndex];
-  }
-
-  return output;
+random_alnum() {
+  local length="${1:-32}"  
+  LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c "$length"
+  echo 
 }
 
-async function createEnvFile(): Promise<void> {
-  let filePath = process.argv[2] || '.env';
+# Generate 32 random bytes and encode as base64
+random_base64_32() {
+  openssl rand -base64 32 | tr -d '\n'
+}
 
-  if (existsSync(filePath)) {
-    console.error(`Error: ${filePath} file already exists!`);
-    process.exit(1);
-  }
+AES256_KEY_BASE64=$(random_base64_32)
 
-  let aes256KeyBase64 = crypto.randomBytes(32).toString('base64');
+DB_PASSWORD=$(random_alnum 32)
 
-  let dbDb = 'mprove_main';
-  let dbUser = 'mprove_user';
-  let dbPassword = makeRandomString(32);
+CALC_POSTGRES_PASS=$(random_alnum 32)
+DWH_POSTGRES_PASS=$(random_alnum 32)
+DWH_MYSQL_ROOT_PASS=$(random_alnum 32)
 
-  let calcPostgresPass = makeRandomString(32);
-  let dwhPostgresPass = makeRandomString(32);
-  let dwhMysqlRootPass = makeRandomString(32);
+VALKEY_PASS=$(random_alnum 32)
+RABBIT_PASS=$(random_alnum 32)
+RABBIT_COOKIE=$(random_alnum 32)
 
-  let valkeyPass = makeRandomString(32);
-  let rabbitPass = makeRandomString(32);
-  let rabbitCookie = makeRandomString(32);
+JWT_SECRET=$(random_alnum 32)
+SPECIAL_KEY=$(random_alnum 32)
 
-  let jwtSecret = makeRandomString(32);
-  let specialKey = makeRandomString(32);
+USER_PASS=$(random_alnum 9)
 
-  let userPass = makeRandomString(9);
-  let userEmail = 'user@example.com';
+DB_DB="mprove_main"
+DB_USER="mprove_user"
+USER_EMAIL="user@example.com"
 
-  let content = `
+cat > "$FILE_PATH" << EOF
 ENV_FILE_PATH=.env
 ENV_FILE_SOURCE_PATH=.env
 ENV_FILE_TARGET_PATH=/usr/src/app/.env
 
 # set most recent release tag from https://github.com/mprove-io/mprove/releases
-MPROVE_RELEASE_TAG=9.0.87
-MPROVE_DWH_POSTGRES_TAG=9.0.87
-MPROVE_DWH_MYSQL_TAG=9.0.87
+MPROVE_RELEASE_TAG=$(jq -r '.version' package.json)
+MPROVE_DWH_POSTGRES_TAG=17.6-m1
+MPROVE_DWH_MYSQL_TAG=8.4.6-m1
 
 IS_TELEMETRY_ENABLED=FALSE
 TELEMETRY_ENDPOINT=http://localhost:4318
@@ -68,9 +62,9 @@ COMPOSE_HTTP_TIMEOUT=180
 
 NODE_ENV=production
 
-COMPOSE_DB_POSTGRES_DB=${dbDb}
-COMPOSE_DB_POSTGRES_USER=${dbUser}
-COMPOSE_DB_POSTGRES_PASSWORD=${dbPassword}
+COMPOSE_DB_POSTGRES_DB=${DB_DB}
+COMPOSE_DB_POSTGRES_USER=${DB_USER}
+COMPOSE_DB_POSTGRES_PASSWORD=${DB_PASSWORD}
 COMPOSE_DB_VOLUME_SOURCE_PATH=mprove_data/db-main
 
 COMPOSE_CLICKSTACK_HYPERDX_APP_URL=http://localhost
@@ -78,11 +72,11 @@ COMPOSE_CLICKSTACK_DB_VOLUME_SOURCE_PATH=mprove_data/clickstack-db
 COMPOSE_CLICKSTACK_CH_DATA_VOLUME_SOURCE_PATH=mprove_data/clickstack-ch-data
 COMPOSE_CLICKSTACK_CH_LOGS_VOLUME_SOURCE_PATH=mprove_data/clickstack-ch-logs
 
-COMPOSE_VALKEY_PASSWORD=${valkeyPass}
+COMPOSE_VALKEY_PASSWORD=${VALKEY_PASS}
 
 COMPOSE_RABBITMQ_DEFAULT_USER=rabbituser
-COMPOSE_RABBITMQ_DEFAULT_PASS=${rabbitPass}
-COMPOSE_RABBITMQ_ERLANG_COOKIE=${rabbitCookie}
+COMPOSE_RABBITMQ_DEFAULT_PASS=${RABBIT_PASS}
+COMPOSE_RABBITMQ_ERLANG_COOKIE=${RABBIT_COOKIE}
 
 COMPOSE_BACKEND_DEMO_PROJECT_BIGQUERY_CREDENTIALS_SOURCE_PATH=secrets/demo-project-bigquery-credentials.json
 COMPOSE_BACKEND_DEMO_PROJECT_BIGQUERY_CREDENTIALS_PATH=/usr/src/app/secrets/demo-project-bigquery-credentials.json
@@ -96,13 +90,13 @@ COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PUBLIC_KEY_PATH=/usr/src/app/secrets/demo-pr
 COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH=mprove_data/organizations
 COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH=/usr/src/app/mprove_data/organizations
 
-COMPOSE_CALC_POSTGRES_PASSWORD=${calcPostgresPass}
+COMPOSE_CALC_POSTGRES_PASSWORD=${CALC_POSTGRES_PASS}
 
 COMPOSE_DWH_POSTGRES_PGDATA=/var/lib/postgresql/data/pgdata
-COMPOSE_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
+COMPOSE_DWH_POSTGRES_PASSWORD=${DWH_POSTGRES_PASS}
 COMPOSE_DWH_POSTGRES_VOLUME_SOURCE_PATH=mprove_data/dwh-postgres
 
-COMPOSE_DWH_MYSQL_ROOT_PASSWORD=${dwhMysqlRootPass}
+COMPOSE_DWH_MYSQL_ROOT_PASSWORD=${DWH_MYSQL_ROOT_PASS}
 COMPOSE_DWH_MYSQL_VOLUME_SOURCE_PATH=mprove_data/dwh-mysql
 
 COMPOSE_DWH_TRINO_CATALOG_VOLUME_SOURCE_PATH=secrets/trino/catalog
@@ -119,34 +113,34 @@ COMPOSE_DIST_APPS_BLOCKML_SOURCE_PATH=dist/apps/blockml
 BACKEND_ENV=PROD
 BACKEND_IS_ENCRYPT_DB=TRUE
 BACKEND_IS_ENCRYPT_METADATA=FALSE
-BACKEND_AES_KEY="${aes256KeyBase64}"
+BACKEND_AES_KEY="${AES256_KEY_BASE64}"
 BACKEND_AES_KEY_TAG=1
 BACKEND_PREV_AES_KEY=
 BACKEND_PREV_AES_KEY_TAG=
 BACKEND_IS_FORWARD_TELEMETRY_ENABLED=FALSE
 BACKEND_VALKEY_HOST=valkey
-BACKEND_VALKEY_PASSWORD=${valkeyPass}
+BACKEND_VALKEY_PASSWORD=${VALKEY_PASS}
 BACKEND_RABBIT_PROTOCOL=amqp
 BACKEND_RABBIT_USER=rabbituser
-BACKEND_RABBIT_PASS=${rabbitPass}
+BACKEND_RABBIT_PASS=${RABBIT_PASS}
 BACKEND_RABBIT_HOST=rabbit
 BACKEND_RABBIT_PORT=5672
 BACKEND_IS_SCHEDULER=FALSE
-BACKEND_JWT_SECRET=${jwtSecret}
-BACKEND_SPECIAL_KEY=${specialKey}
+BACKEND_JWT_SECRET=${JWT_SECRET}
+BACKEND_SPECIAL_KEY=${SPECIAL_KEY}
 BACKEND_ALLOW_TEST_ROUTES=FALSE
 BACKEND_REGISTER_ONLY_INVITED_USERS=TRUE
 BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS=FALSE
 # set email that will be used for Mprove Login
-BACKEND_MPROVE_ADMIN_EMAIL=${userEmail}
+BACKEND_MPROVE_ADMIN_EMAIL=${USER_EMAIL}
 # set password that will be used for Mprove Login
-BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD=${userPass}
-BACKEND_POSTGRES_DATABASE_URL=postgres://${dbUser}:${dbPassword}@db:5432/${dbDb}
+BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD=${USER_PASS}
+BACKEND_POSTGRES_DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_DB}
 BACKEND_IS_POSTGRES_TLS=FALSE
 BACKEND_CALC_POSTGRES_HOST=calc-postgres
 BACKEND_CALC_POSTGRES_PORT=5437
 BACKEND_CALC_POSTGRES_USERNAME=postgres
-BACKEND_CALC_POSTGRES_PASSWORD=${calcPostgresPass}
+BACKEND_CALC_POSTGRES_PASSWORD=${CALC_POSTGRES_PASS}
 # BACKEND_HOST_URL is used for links in transactional emails and CORS
 BACKEND_HOST_URL=http://localhost:3003
 BACKEND_SEND_EMAIL_FROM_NAME=Example
@@ -197,17 +191,17 @@ BACKEND_LOG_RESPONSE_ERROR=TRUE
 BACKEND_LOG_RESPONSE_OK=FALSE
 
 BLOCKML_ENV=PROD
-BLOCKML_AES_KEY="${aes256KeyBase64}"
+BLOCKML_AES_KEY="${AES256_KEY_BASE64}"
 BLOCKML_RABBIT_PROTOCOL=amqp
 BLOCKML_RABBIT_USER=rabbituser
-BLOCKML_RABBIT_PASS=${rabbitPass}
+BLOCKML_RABBIT_PASS=${RABBIT_PASS}
 BLOCKML_RABBIT_HOST=rabbit
 BLOCKML_RABBIT_PORT=5672
 BLOCKML_DATA=/mprove/mprove_data/blockml-data
 BLOCKML_TESTS_DWH_POSTGRES_HOST=dwh-postgres
 BLOCKML_TESTS_DWH_POSTGRES_PORT=5436
 BLOCKML_TESTS_DWH_POSTGRES_USERNAME=postgres
-BLOCKML_TESTS_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
+BLOCKML_TESTS_DWH_POSTGRES_PASSWORD=${DWH_POSTGRES_PASS}
 BLOCKML_TESTS_DWH_POSTGRES_DATABASE_NAME=p_db
 BLOCKML_LOG_IO=FALSE
 BLOCKML_LOG_FUNC=ALL
@@ -219,11 +213,11 @@ BLOCKML_LOG_RESPONSE_ERROR=FALSE
 BLOCKML_LOG_RESPONSE_OK=FALSE
 
 DISK_ENV=PROD
-DISK_AES_KEY="${aes256KeyBase64}"
+DISK_AES_KEY="${AES256_KEY_BASE64}"
 DISK_ORGANIZATIONS_PATH=mprove_data/organizations
 DISK_RABBIT_PROTOCOL=amqp
 DISK_RABBIT_USER=rabbituser
-DISK_RABBIT_PASS=${rabbitPass}
+DISK_RABBIT_PASS=${RABBIT_PASS}
 DISK_RABBIT_HOST=rabbit
 DISK_RABBIT_PORT=5672
 DISK_LOG_IS_JSON=FALSE
@@ -231,8 +225,8 @@ DISK_LOG_RESPONSE_ERROR=FALSE
 DISK_LOG_RESPONSE_OK=FALSE
 
 MPROVE_CLI_HOST=http://localhost:3000
-MPROVE_CLI_EMAIL=${userEmail}
-MPROVE_CLI_PASSWORD=${userPass}
+MPROVE_CLI_EMAIL=${USER_EMAIL}
+MPROVE_CLI_PASSWORD=${USER_PASS}
 MPROVE_CLI_PROJECT_ID=DXYE72ODCP5LWPWH2EXQ
 MPROVE_CLI_TEST_REPOS_PATH=/mprove/mprove_data/mcli-repos
 MPROVE_CLI_TEST_REMOTE_GIT_URL=https://github.com/mprove-io/mp6.git
@@ -242,19 +236,7 @@ MPROVE_CLI_TEST_DEV_SOURCE_GIT_URL=/mprove/mprove_data/mcli-repos/mp6
 MPROVE_CLI_TEST_PUBLIC_KEY_PATH=secrets/demo-project-remote-public-key.pem
 MPROVE_CLI_TEST_PRIVATE_KEY_ENCRYPTED_PATH=secrets/demo-project-remote-private-key-encrypted.pem
 MPROVE_CLI_TEST_PASS_PHRASE=
-MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD=${dwhPostgresPass}
-`.trim();
+MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD=${DWH_POSTGRES_PASS}
+EOF
 
-  try {
-    await fs.writeFile(filePath, content, 'utf8');
-    console.log(`file "${filePath}" created successfully!`);
-  } catch (e) {
-    console.error(`Error creating ${filePath} file:`, e);
-    process.exit(1);
-  }
-}
-
-createEnvFile().catch(e => {
-  console.error('Unexpected error:', e);
-  process.exit(1);
-});
+echo "file \"$FILE_PATH\" created successfully!"

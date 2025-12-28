@@ -26,14 +26,15 @@ cd mprove
 mkdir -p mprove_data && \
 mkdir -p mprove_data/blockml-data && \
 mkdir -p mprove_data/blockml-logs && \
-mkdir -p mprove_data/clickstack-ch-data && \
-mkdir -p mprove_data/clickstack-ch-logs && \
-mkdir -p mprove_data/clickstack-db && \
 mkdir -p mprove_data/db-main && \
-mkdir -p mprove_data/dwh-mysql && \
-mkdir -p mprove_data/dwh-postgres && \
-mkdir -p mprove_data/mcli-repos && \
 mkdir -p mprove_data/organizations
+
+# mkdir -p mprove_data/clickstack-ch-data && \
+# mkdir -p mprove_data/clickstack-ch-logs && \
+# mkdir -p mprove_data/clickstack-db && \
+# mkdir -p mprove_data/dwh-mysql && \
+# mkdir -p mprove_data/dwh-postgres && \
+# mkdir -p mprove_data/mcli-repos
 ```
 
 #### 4. Create `secrets` directory and empty files
@@ -56,7 +57,8 @@ echo '' > secrets/trino/config.properties
 #### 5. Run script to create ".env" file with generated values
 
 ```
-pnpm create-env
+chmod +x scripts/create-env.sh
+scripts/create-env.sh
 ```
 
 #### 6. Modify `mprove/.env`
@@ -79,7 +81,7 @@ Change your initial password if necessary. Later changes can only be done throug
 BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD=
 ```
 
-Set SMTP parameters to be able to send transactional emails (required if you need to invite more users or be able to change user passwords).
+Set SMTP parameters to be able to send transactional emails (required if you need to invite more users or change passwords).
 
 ```
 BACKEND_SMTP_HOST=
