@@ -20,9 +20,9 @@ git clone https://github.com/mprove-io/mprove.git
 cd mprove
 ```
 
-If you open directory in VS Code - it will suggest to run devcontainer.
+If you open the directory in VS Code, you will be prompted to run Devcontainer.
+If you run Devcontainer, you will not be able to run Docker and Docker Compose images inside Devcontainer.
 Devcontainer is for development only.
-It cannot run docker images for docker compose.
 
 #### 3. Create `mprove_data` directory
 
