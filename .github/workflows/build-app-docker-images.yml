@@ -15,11 +15,11 @@ jobs:
     strategy:
       matrix:
         dockerfile:
-          - tools/docker/backend.Dockerfile
-          - tools/docker/blockml.Dockerfile
-          - tools/docker/disk.Dockerfile
-          - tools/docker/front.Dockerfile
-          - tools/docker/mcli.Dockerfile
+          - setup-docker/backend.Dockerfile
+          - setup-docker/blockml.Dockerfile
+          - setup-docker/disk.Dockerfile
+          - setup-docker/front.Dockerfile
+          - setup-docker/mcli.Dockerfile
       max-parallel: 1
     permissions:
       contents: read

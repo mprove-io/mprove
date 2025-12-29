@@ -17,7 +17,7 @@ mprove_data/
 node_modules/
 secrets/
 tmp/
-tools/data/
+setup-docker/data/
 *.env
 .envrc
 

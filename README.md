@@ -20,48 +20,25 @@ git clone https://github.com/mprove-io/mprove.git
 cd mprove
 ```
 
+If you open directory in VS Code - it will suggest to run devcontainer.
+Devcontainer is for development only.
+It cannot run docker images for docker compose.
+
 #### 3. Create `mprove_data` directory
 
 ```
-mkdir -p mprove_data && \
-mkdir -p mprove_data/blockml-data && \
-mkdir -p mprove_data/blockml-logs && \
-mkdir -p mprove_data/db-main && \
-mkdir -p mprove_data/organizations
-
-# mkdir -p mprove_data/clickstack-ch-data && \
-# mkdir -p mprove_data/clickstack-ch-logs && \
-# mkdir -p mprove_data/clickstack-db && \
-# mkdir -p mprove_data/dwh-mysql && \
-# mkdir -p mprove_data/dwh-postgres && \
-# mkdir -p mprove_data/mcli-repos
+chmod +x scripts/create-mprove-data.sh
+scripts/create-mprove-data.sh
 ```
 
-#### 4. Create `secrets` directory and empty files
-
-```
-mkdir secrets && \
-mkdir secrets/presto && \
-mkdir secrets/presto/catalog && \
-mkdir secrets/trino && \
-mkdir secrets/trino/catalog && \
-echo {} > secrets/demo-project-bigquery-credentials.json && \
-echo '' > secrets/demo-project-remote-private-key-encrypted.pem && \
-echo '' > secrets/demo-project-remote-public-key.pem && \
-echo '' > secrets/presto/catalog/pgs.properties && \
-echo '' > secrets/presto/config.properties && \
-echo '' > secrets/trino/catalog/pgs.properties && \
-echo '' > secrets/trino/config.properties
-```
-
-#### 5. Run script to create ".env" file with generated values
+#### 4. Run script to create ".env" file with generated values
 
 ```
 chmod +x scripts/create-env.sh
 scripts/create-env.sh
 ```
 
-#### 6. Modify `mprove/.env`
+#### 5. Modify `.env`
 
 Set most recent Mprove release tag from https://github.com/mprove-io/mprove/releases
 
@@ -89,17 +66,20 @@ BACKEND_SMTP_AUTH_USER=
 BACKEND_SMTP_AUTH_PASSWORD=
 ```
 
-#### 7. Run docker images
+#### 6. Run docker images
 
 ```
 docker-compose up --pull db calc-postgres rabbit valkey backend blockml disk front
 ```
 
-#### 8. Login
+#### 7. Login
 
 Open `http://localhost:3003` in Chrome.
 
-Login using values from `.env` file environment variables `BACKEND_MPROVE_ADMIN_EMAIL` and `BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD`.
+Login using values from `.env` file environment variables:
+
+- `BACKEND_MPROVE_ADMIN_EMAIL`
+- `BACKEND_MPROVE_ADMIN_INITIAL_PASSWORD`
 
 Continue with [Quickstart Docs](https://docs.mprove.io/docs/quickstart).
 

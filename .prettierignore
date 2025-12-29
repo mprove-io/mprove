@@ -5,7 +5,7 @@ dist/
 mprove_data/
 node_modules/
 tmp/
-tools/data/
+setup-docker/data/
 package.docker.json
 
 coverage/

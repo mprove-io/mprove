@@ -98,22 +98,6 @@
         "commands": ["madge --circular apps/blockml"],
         "parallel": false
       }
-    },
-    "compose-up-build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "tools/deploy/base-dev",
-        "commands": ["docker-compose up --detach --build blockml"],
-        "parallel": false
-      }
-    },
-    "compose-build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "./",
-        "commands": ["docker-compose build blockml"],
-        "parallel": false
-      }
     }
   }
 }

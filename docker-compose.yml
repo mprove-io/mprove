@@ -59,7 +59,7 @@ services:
   backend:
     build:
       context: ./
-      dockerfile: tools/docker/backend.Dockerfile
+      dockerfile: setup-docker/backend.Dockerfile
     image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -88,7 +88,7 @@ services:
   blockml:
     build:
       context: ./
-      dockerfile: tools/docker/blockml.Dockerfile
+      dockerfile: setup-docker/blockml.Dockerfile
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -103,7 +103,7 @@ services:
   disk:
     build:
       context: ./
-      dockerfile: tools/docker/disk.Dockerfile
+      dockerfile: setup-docker/disk.Dockerfile
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -121,7 +121,7 @@ services:
   front:
     build:
       context: ./
-      dockerfile: tools/docker/front.Dockerfile
+      dockerfile: setup-docker/front.Dockerfile
     image: ghcr.io/mprove-io/mprove-front:$MPROVE_RELEASE_TAG
     ports:
       - 3003:80
@@ -129,7 +129,7 @@ services:
   mcli:
     build:
       context: ./
-      dockerfile: tools/docker/mcli.Dockerfile
+      dockerfile: setup-docker/mcli.Dockerfile
     image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
@@ -147,7 +147,7 @@ services:
   dwh-postgres:
     build:
       context: ./
-      dockerfile: tools/docker/dwh-postgres.Dockerfile
+      dockerfile: setup-docker/dwh-postgres.Dockerfile
     image: ghcr.io/mprove-io/mprove-dwh-postgres:$MPROVE_DWH_POSTGRES_TAG
     environment:
       POSTGRES_PASSWORD: $COMPOSE_DWH_POSTGRES_PASSWORD
@@ -163,7 +163,7 @@ services:
   dwh-mysql:
     build:
       context: ./
-      dockerfile: tools/docker/dwh-mysql.Dockerfile
+      dockerfile: setup-docker/dwh-mysql.Dockerfile
     image: ghcr.io/mprove-io/mprove-dwh-mysql:$MPROVE_DWH_MYSQL_TAG
     environment:
       MYSQL_ROOT_PASSWORD: $COMPOSE_DWH_MYSQL_ROOT_PASSWORD
