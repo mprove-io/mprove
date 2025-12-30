@@ -79,7 +79,7 @@ export class ConfirmUserEmailController {
 
     if (isUndefined(user.passwordHash)) {
       throw new ServerError({
-        message: ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD
+        message: ErEnum.BACKEND_SIGN_UP_TO_SET_PASSWORD
       });
     }
 

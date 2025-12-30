@@ -12,7 +12,7 @@ import {
   ToBackendLoginUserResponse
 } from '~common/interfaces/to-backend/users/to-backend-login-user';
 
-let testId = 'backend-login-user__register-to-set-password';
+let testId = 'backend-login-user__sign-up-to-set-password';
 
 let traceId = testId;
 
@@ -67,5 +67,5 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.info.error.message, ErEnum.BACKEND_REGISTER_TO_SET_PASSWORD);
+  t.is(resp.info.error.message, ErEnum.BACKEND_SIGN_UP_TO_SET_PASSWORD);
 });
