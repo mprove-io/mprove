@@ -1,8 +1,7 @@
-import { Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Controller, Post, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -12,10 +11,7 @@ import { ToBackendCheckSignUpResponsePayload } from '~common/interfaces/to-backe
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)
 @Controller()
 export class CheckSignUpController {
-  constructor(
-    private cs: ConfigService<BackendConfig>,
-    @Inject(DRIZZLE) private db: Db
-  ) {}
+  constructor(private cs: ConfigService<BackendConfig>) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendCheckSignUp)
   async completeUserRegistration() {
