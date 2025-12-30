@@ -40,6 +40,14 @@ export class TelemetryTracesController {
     @Res() res: Response
   ) {
     try {
+      if (!user) {
+        // console.log('skip ToBackendTelemetryTraces controller')
+
+        return res
+          .status(HttpStatus.OK)
+          .json({ partialSuccess: { rejectedSpans: 0 } });
+      }
+
       let backendIsForwardTelemetryEnabled = this.cs.get<
         BackendConfig['backendIsForwardTelemetryEnabled']
       >('backendIsForwardTelemetryEnabled');

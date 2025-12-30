@@ -40,6 +40,14 @@ export class TelemetryLogsController {
     @Res() res: Response
   ) {
     try {
+      if (!user) {
+        // console.log('skip ToBackendTelemetryLogs controller');
+
+        return res
+          .status(HttpStatus.OK)
+          .json({ partialSuccess: { rejectedSpans: 0 } });
+      }
+
       let body = request.body;
 
       let backendIsForwardTelemetryEnabled = this.cs.get<

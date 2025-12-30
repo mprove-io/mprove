@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import {
@@ -11,6 +11,7 @@ import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { RESTRICTED_USER_EMAIL } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
+import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
 import { isUndefined } from '~common/functions/is-undefined';
 import { ServerError } from '~common/models/server-error';
@@ -27,7 +28,23 @@ export class ThrottlerUserIdGuard extends ThrottlerGuard {
     super(options, storageService, reflector);
   }
 
-  protected async shouldSkip(): Promise<boolean> {
+  protected async shouldSkip(context: ExecutionContext): Promise<boolean> {
+    let request = context.switchToHttp().getRequest();
+
+    let path = request.route?.path || request.url.split('?')[0]; // Get clean path
+
+    if (
+      [
+        ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces,
+        ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics,
+        ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs
+      ].indexOf(path.slice(1)) > -1 &&
+      request.headers.authorization === 'Bearer null'
+    ) {
+      // console.log('skip ThrottlerUserIdGuard');
+      return true;
+    }
+
     let isThrottleByUserId = this.cs.get<
       BackendConfig['backendThrottlePrivateRoutesByUserId']
     >('backendThrottlePrivateRoutesByUserId');
