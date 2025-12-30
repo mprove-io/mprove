@@ -35,7 +35,7 @@ jobs:
           - platform: linux/amd64
             runner: ubuntu-latest
           - platform: linux/arm64
-            runner: r1
+            runner: r2
         dockerfile:
           - setup-docker/backend.Dockerfile
           - setup-docker/blockml.Dockerfile
