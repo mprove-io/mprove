@@ -117,9 +117,17 @@ import { ToBackendUpdateUserPasswordRequest } from '~common/interfaces/to-backen
 export class NoCheckParamsSchema {}
 
 export const nameToClass = {
+  // check
+  [ToBackendRequestInfoNameEnum.ToBackendCheck]: NoCheckParamsSchema,
+  [ToBackendRequestInfoNameEnum.ToBackendCheckSignUp]: NoCheckParamsSchema,
+  // telemetry
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs]: NoCheckParamsSchema,
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics]: NoCheckParamsSchema,
+  [ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces]: NoCheckParamsSchema,
+  // special
   [ToBackendRequestInfoNameEnum.ToBackendSpecialRebuildStructs]:
     ToBackendSpecialRebuildStructsRequest,
-  //
+  // test-routes
   [ToBackendRequestInfoNameEnum.ToBackendGetRebuildStruct]:
     ToBackendGetRebuildStructRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSeedRecords]:
@@ -345,9 +353,5 @@ export const nameToClass = {
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig]:
     ToBackendGetAvatarBigRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
-  //
-  [ToBackendRequestInfoNameEnum.ToBackendTelemetryLogs]: NoCheckParamsSchema,
-  [ToBackendRequestInfoNameEnum.ToBackendTelemetryMetrics]: NoCheckParamsSchema,
-  [ToBackendRequestInfoNameEnum.ToBackendTelemetryTraces]: NoCheckParamsSchema
+  [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest
 };

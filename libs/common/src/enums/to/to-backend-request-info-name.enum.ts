@@ -1,7 +1,14 @@
 export enum ToBackendRequestInfoNameEnum {
-  //
+  // check
+  ToBackendCheck = 'api/ToBackendCheck',
+  ToBackendCheckSignUp = 'api/ToBackendCheckSignUp',
+  // telemetry
+  ToBackendTelemetryLogs = 'api/ToBackendTelemetryLogs',
+  ToBackendTelemetryMetrics = 'api/ToBackendTelemetryMetrics',
+  ToBackendTelemetryTraces = 'api/ToBackendTelemetryTraces',
+  // special
   ToBackendSpecialRebuildStructs = 'api/ToBackendSpecialRebuildStructs',
-  //
+  // test-routes
   ToBackendGetRebuildStruct = 'api/ToBackendGetRebuildStruct',
   ToBackendSeedRecords = 'api/ToBackendSeedRecords',
   ToBackendDeleteRecords = 'api/ToBackendDeleteRecords',
@@ -126,10 +133,6 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendDuplicateMconfigAndQuery = 'api/ToBackendDuplicateMconfigAndQuery',
   ToBackendGroupMetricByDimension = 'api/ToBackendGroupMetricByDimension',
   ToBackendSuggestDimensionValues = 'api/ToBackendSuggestDimensionValues',
-  //
-  ToBackendTelemetryLogs = 'api/ToBackendTelemetryLogs',
-  ToBackendTelemetryMetrics = 'api/ToBackendTelemetryMetrics',
-  ToBackendTelemetryTraces = 'api/ToBackendTelemetryTraces',
   //
   ToBackendGetQueries = 'api/ToBackendGetQueries',
   ToBackendGetQuery = 'api/ToBackendGetQuery',

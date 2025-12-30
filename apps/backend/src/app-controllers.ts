@@ -14,6 +14,7 @@ import { GetChartController } from './controllers/charts/get-chart/get-chart.con
 import { GetChartsController } from './controllers/charts/get-charts/get-charts.controller';
 import { SaveCreateChartController } from './controllers/charts/save-create-chart/save-create-chart.controller';
 import { SaveModifyChartController } from './controllers/charts/save-modify-chart/save-modify-chart.controller';
+import { CheckSignUpController } from './controllers/check/check-sign-up/check-sign-up.controller';
 import { CheckController } from './controllers/check/check/check.controller';
 import { CreateConnectionController } from './controllers/connections/create-connection/create-connection.controller';
 import { DeleteConnectionController } from './controllers/connections/delete-connection/delete-connection.controller';
@@ -254,5 +255,6 @@ export const appControllers = [
   TelemetryMetricsController,
   TelemetryTracesController,
 
-  CheckController
+  CheckController,
+  CheckSignUpController
 ];
