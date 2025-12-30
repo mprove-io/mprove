@@ -13,6 +13,7 @@ import {
 import { APP_SPINNER_NAME } from '~common/constants/top-front';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ToBackendCheckSignUpResponse } from '~common/interfaces/to-backend/check/to-backend-check-sign-up';
 import {
   ToBackendRegisterUserRequestPayload,
   ToBackendRegisterUserResponse
@@ -45,6 +46,8 @@ export class RegisterComponent implements OnInit {
   pathLogin = PATH_LOGIN;
   lastUrl: string;
 
+  isRegisterOnlyInvitedUsers = false;
+
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
@@ -65,6 +68,22 @@ export class RegisterComponent implements OnInit {
     this.lastUrl = this.router.url.split('/')[1];
 
     this.title.setTitle(this.pageTitle);
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCheckSignUp,
+        payload: {}
+      })
+      .pipe(
+        tap((resp: ToBackendCheckSignUpResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.isRegisterOnlyInvitedUsers =
+              resp.payload.isRegisterOnlyInvitedUsers;
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   navSignUp() {
