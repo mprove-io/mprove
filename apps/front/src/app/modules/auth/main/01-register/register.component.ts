@@ -1,11 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { SIGN_UP_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_VERIFY_EMAIL } from '~common/constants/top';
+import {
+  PATH_LOGIN,
+  PATH_REGISTER,
+  PATH_VERIFY_EMAIL
+} from '~common/constants/top';
 import { APP_SPINNER_NAME } from '~common/constants/top-front';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -35,6 +39,19 @@ export class RegisterComponent implements OnInit {
     ]
   });
 
+  currentRoute: string;
+
+  pathRegister = PATH_REGISTER;
+  pathLogin = PATH_LOGIN;
+  lastUrl: string;
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      this.lastUrl = x.url.split('/')[1];
+    })
+  );
+
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
@@ -45,7 +62,17 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.lastUrl = this.router.url.split('/')[1];
+
     this.title.setTitle(this.pageTitle);
+  }
+
+  navSignUp() {
+    this.router.navigate([PATH_REGISTER]);
+  }
+
+  navLogin() {
+    this.router.navigate([PATH_LOGIN]);
   }
 
   register() {

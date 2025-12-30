@@ -7,58 +7,88 @@
       [formGroup]="loginForm"
       (ngSubmit)="login()"
     >
-      <div
+      <!-- <div
         data-cy="loginTitle"
         class="text-s2 select-none text-center text-2xl font-semibold"
         >{{ pageTitle }}</div
-      >
-      <input
-        spellcheck="false"
-        data-cy="loginEmailInput"
-        class="form-input border-s3 focus:border-m600 mt-9 rounded"
-        [ngClass]="{
-          'border-r600':
-            loginForm.controls['email'].invalid &&
-            loginForm.controls['email'].touched
-        }"
-        type="email"
-        formControlName="email"
-        placeholder="Email"
-      />
-      <m-validation [control]="loginForm.controls['email']"></m-validation>
+      > -->
 
-      <input
-        spellcheck="false"
-        data-cy="loginPasswordInput"
-        class="form-input border-s3 focus:border-m600 mt-1 rounded"
-        [ngClass]="{
-          'border-r600':
-            loginForm.controls['password'].invalid &&
-            loginForm.controls['password'].touched
-        }"
-        type="password"
-        formControlName="password"
-        placeholder="Password"
-      />
-      <m-validation [control]="loginForm.controls['password']"></m-validation>
-
-      <div class="mt-1 flex flex-row justify-between">
-        <div></div>
+      <div class="flex flex-row justify-center">
         <button
-          data-cy="loginForgotPasswordButton"
-          type="button"
-          (click)="forgotPassword()"
-          class="text-m600 w-40 text-base focus:outline-none"
-          >Forgot Password</button
+          class="h-8 w-24 text-lg focus:outline-none"
+          [ngClass]="{
+            'font-bold': lastUrl === pathLogin
+          }"
+          (click)="navLogin()"
+          >Log In</button
+        >
+
+        <div class="text-s1 flex divide-x-2">
+          <div></div>
+          <div></div>
+        </div>
+
+        <button
+          class="h-8 w-28 text-lg focus:outline-none"
+          [ngClass]="{
+            'font-bold': lastUrl === pathRegister
+          }"
+          (click)="navSignUp()"
+          >Sign Up</button
         >
       </div>
 
-      <button
-        data-cy="loginButton"
-        class="bg-m600 text-m0 mt-6 rounded py-3 text-base font-medium focus:outline-none"
-        type="submit"
-        >Log In</button
-      >
+      <div class="flex h-[300px] flex-col">
+        <input
+          spellcheck="false"
+          data-cy="loginEmailInput"
+          class="form-input border-s3 focus:border-m600 mt-9 rounded"
+          [ngClass]="{
+            'border-r600':
+              loginForm.controls['email'].invalid &&
+              loginForm.controls['email'].touched
+          }"
+          type="email"
+          formControlName="email"
+          placeholder="Email"
+        />
+        <m-validation [control]="loginForm.controls['email']"></m-validation>
+
+        <input
+          spellcheck="false"
+          data-cy="loginPasswordInput"
+          class="form-input border-s3 focus:border-m600 mt-1 rounded"
+          [ngClass]="{
+            'border-r600':
+              loginForm.controls['password'].invalid &&
+              loginForm.controls['password'].touched
+          }"
+          type="password"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <m-validation [control]="loginForm.controls['password']"></m-validation>
+
+        <div class="mt-1 flex flex-row justify-between">
+          <div></div>
+          <button
+            data-cy="loginForgotPasswordButton"
+            type="button"
+            (click)="forgotPassword()"
+            class="text-m600 w-40 text-base focus:outline-none"
+            >Forgot Password</button
+          >
+        </div>
+
+        <button
+          data-cy="loginButton"
+          class="bg-m600 text-m0 mt-6 rounded py-3 text-base font-medium focus:outline-none"
+          type="submit"
+          >Log In</button
+        >
+      </div>
     </form>
   </div>
 </div>
+
+<div *ngIf="routerEvents$ | async"></div>

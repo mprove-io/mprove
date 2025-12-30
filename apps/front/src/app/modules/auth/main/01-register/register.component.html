@@ -7,50 +7,73 @@
       [formGroup]="registerForm"
       (ngSubmit)="register()"
     >
-      <div
-        data-cy="registerTitle"
-        class="text-s2 select-none text-center text-2xl font-semibold"
-        >{{ pageTitle }}</div
-      >
+      <div class="flex flex-row justify-center">
+        <button
+          class="h-8 w-24 text-lg focus:outline-none"
+          [ngClass]="{
+            'font-bold': lastUrl === pathLogin
+          }"
+          (click)="navLogin()"
+          >Log In</button
+        >
 
-      <input
-        spellcheck="false"
-        data-cy="registerEmailInput"
-        class="form-input border-s3 focus:border-m600 mt-9 rounded"
-        [ngClass]="{
-          'border-r600':
-            registerForm.controls['email'].invalid &&
-            registerForm.controls['email'].touched
-        }"
-        type="email"
-        formControlName="email"
-        placeholder="Email"
-      />
-      <m-validation [control]="registerForm.controls['email']"></m-validation>
+        <div class="text-s1 flex divide-x-2">
+          <div></div>
+          <div></div>
+        </div>
 
-      <input
-        spellcheck="false"
-        data-cy="registerPasswordInput"
-        class="form-input border-s3 focus:border-m600 mt-1 rounded"
-        [ngClass]="{
-          'border-r600':
-            registerForm.controls['password'].invalid &&
-            registerForm.controls['password'].touched
-        }"
-        type="password"
-        formControlName="password"
-        placeholder="Password"
-      />
-      <m-validation
-        [control]="registerForm.controls['password']"
-      ></m-validation>
+        <button
+          class="h-8 w-28 text-lg focus:outline-none"
+          [ngClass]="{
+            'font-bold': lastUrl === pathRegister
+          }"
+          (click)="navSignUp()"
+          >Sign Up</button
+        >
+      </div>
 
-      <button
-        data-cy="registerSignUpButton"
-        class="bg-m600 text-m0 mt-1 rounded py-3 font-medium focus:outline-none"
-        type="submit"
-        >Sign Up</button
-      >
+      <div class="flex h-[300px] flex-col">
+        <input
+          spellcheck="false"
+          data-cy="registerEmailInput"
+          class="form-input border-s3 focus:border-m600 mt-9 rounded"
+          [ngClass]="{
+            'border-r600':
+              registerForm.controls['email'].invalid &&
+              registerForm.controls['email'].touched
+          }"
+          type="email"
+          formControlName="email"
+          placeholder="Email"
+        />
+        <m-validation [control]="registerForm.controls['email']"></m-validation>
+
+        <input
+          spellcheck="false"
+          data-cy="registerPasswordInput"
+          class="form-input border-s3 focus:border-m600 mt-1 rounded"
+          [ngClass]="{
+            'border-r600':
+              registerForm.controls['password'].invalid &&
+              registerForm.controls['password'].touched
+          }"
+          type="password"
+          formControlName="password"
+          placeholder="Password"
+        />
+        <m-validation
+          [control]="registerForm.controls['password']"
+        ></m-validation>
+
+        <button
+          data-cy="registerSignUpButton"
+          class="bg-m600 text-m0 mt-1 rounded py-3 font-medium focus:outline-none"
+          type="submit"
+          >Sign Up</button
+        >
+      </div>
     </form>
   </div>
 </div>
+
+<div *ngIf="routerEvents$ | async"></div>

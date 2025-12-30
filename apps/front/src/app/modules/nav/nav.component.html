@@ -3,31 +3,8 @@
     class="relative flex h-[72px] items-center justify-between overflow-auto px-6 shadow"
   >
     <m-logo></m-logo>
-    <div class="flex">
-      <button
-        class="h-8 w-28 text-base focus:outline-none"
-        [ngClass]="{
-          'font-bold': lastUrl === pathRegister
-        }"
-        (click)="signUp()"
-        >Sign Up</button
-      >
-      <div class="text-s1 flex divide-x-2">
-        <div></div>
-        <div></div>
-      </div>
-      <button
-        class="h-8 w-24 text-base focus:outline-none"
-        [ngClass]="{
-          'font-bold': lastUrl === pathLogin
-        }"
-        (click)="login()"
-        >Log In</button
-      >
-    </div>
   </div>
   <div class="h-2 flex-1 overflow-auto">
     <router-outlet></router-outlet>
   </div>
 </div>
-<div *ngIf="routerEvents$ | async"></div>

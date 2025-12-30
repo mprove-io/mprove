@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { take, tap } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { LOG_IN_PAGE_TITLE } from '~common/constants/page-titles';
 import {
   PATH_FORGOT_PASSWORD,
+  PATH_LOGIN,
   PATH_LOGIN_SUCCESS,
+  PATH_REGISTER,
   PATH_VERIFY_EMAIL,
   RESTRICTED_USER_EMAIL
 } from '~common/constants/top';
@@ -45,6 +47,19 @@ export class LoginComponent implements OnInit {
     ]
   });
 
+  currentRoute: string;
+
+  pathRegister = PATH_REGISTER;
+  pathLogin = PATH_LOGIN;
+  lastUrl: string;
+
+  routerEvents$ = this.router.events.pipe(
+    filter(ev => ev instanceof NavigationEnd),
+    tap((x: any) => {
+      this.lastUrl = x.url.split('/')[1];
+    })
+  );
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -57,6 +72,8 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.lastUrl = this.router.url.split('/')[1];
+
     this.title.setTitle(this.pageTitle);
 
     this.userQuery.reset();
@@ -69,6 +86,14 @@ export class LoginComponent implements OnInit {
       this.loginForm.controls['password'].setValue(password);
       this.login();
     }
+  }
+
+  navSignUp() {
+    this.router.navigate([PATH_REGISTER]);
+  }
+
+  navLogin() {
+    this.router.navigate([PATH_LOGIN]);
   }
 
   login() {
