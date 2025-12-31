@@ -38,7 +38,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "disk:build:development"
+          "buildTarget": "disk:build:development",
+          "runtimeArgs": ["--trace-warnings"]
         },
         "production": {
           "buildTarget": "disk:build:production",

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { NgxSpinnerModule } from 'ngx-spinner';
 import { SharedModule } from '../shared/shared.module';
 import { RegisterComponent } from './main/01-register/register.component';
 import { VerifyEmailComponent } from './main/02-verify-email/verify-email.component';
@@ -30,6 +31,6 @@ import { NewPasswordWasSetComponent } from './password/04-new-password-was-set/n
     UpdatePasswordComponent,
     NewPasswordWasSetComponent
   ],
-  imports: [CommonModule, ReactiveFormsModule, SharedModule]
+  imports: [CommonModule, ReactiveFormsModule, SharedModule, NgxSpinnerModule]
 })
 export class AuthModule {}

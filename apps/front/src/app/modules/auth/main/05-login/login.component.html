@@ -2,17 +2,7 @@
   <div
     class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
   >
-    <form
-      class="flex w-96 flex-col py-[50px]"
-      [formGroup]="loginForm"
-      (ngSubmit)="login()"
-    >
-      <!-- <div
-        data-cy="loginTitle"
-        class="text-s2 select-none text-center text-2xl font-semibold"
-        >{{ pageTitle }}</div
-      > -->
-
+    <div class="flex flex-col py-[50px]">
       <div class="flex flex-row justify-center">
         <button
           class="h-8 w-24 text-lg focus:outline-none"
@@ -38,56 +28,64 @@
         >
       </div>
 
-      <div class="flex h-[300px] flex-col">
-        <input
-          spellcheck="false"
-          data-cy="loginEmailInput"
-          class="form-input border-s3 focus:border-m600 mt-9 rounded"
-          [ngClass]="{
-            'border-r600':
-              loginForm.controls['email'].invalid &&
-              loginForm.controls['email'].touched
-          }"
-          type="email"
-          formControlName="email"
-          placeholder="Email"
-        />
-        <m-validation [control]="loginForm.controls['email']"></m-validation>
+      <form
+        class="flex w-[350px] flex-col"
+        [formGroup]="loginForm"
+        (ngSubmit)="login()"
+      >
+        <div class="flex h-[300px] flex-col">
+          <input
+            spellcheck="false"
+            data-cy="loginEmailInput"
+            class="form-input border-s3 focus:border-m600 mt-9 h-11 rounded"
+            [ngClass]="{
+              'border-r600':
+                loginForm.controls['email'].invalid &&
+                loginForm.controls['email'].touched
+            }"
+            type="email"
+            formControlName="email"
+            placeholder="Email"
+          />
+          <m-validation [control]="loginForm.controls['email']"></m-validation>
 
-        <input
-          spellcheck="false"
-          data-cy="loginPasswordInput"
-          class="form-input border-s3 focus:border-m600 mt-1 rounded"
-          [ngClass]="{
-            'border-r600':
-              loginForm.controls['password'].invalid &&
-              loginForm.controls['password'].touched
-          }"
-          type="password"
-          formControlName="password"
-          placeholder="Password"
-        />
-        <m-validation [control]="loginForm.controls['password']"></m-validation>
+          <input
+            spellcheck="false"
+            data-cy="loginPasswordInput"
+            class="form-input border-s3 focus:border-m600 mt-1 h-11 rounded"
+            [ngClass]="{
+              'border-r600':
+                loginForm.controls['password'].invalid &&
+                loginForm.controls['password'].touched
+            }"
+            type="password"
+            formControlName="password"
+            placeholder="Password"
+          />
+          <m-validation
+            [control]="loginForm.controls['password']"
+          ></m-validation>
 
-        <div class="mt-1 flex flex-row justify-between">
-          <div></div>
+          <div class="mt-1 flex flex-row justify-between">
+            <div></div>
+            <button
+              data-cy="loginForgotPasswordButton"
+              type="button"
+              (click)="forgotPassword()"
+              class="text-m600 w-40 text-base focus:outline-none"
+              >Forgot Password</button
+            >
+          </div>
+
           <button
-            data-cy="loginForgotPasswordButton"
-            type="button"
-            (click)="forgotPassword()"
-            class="text-m600 w-40 text-base focus:outline-none"
-            >Forgot Password</button
+            data-cy="loginButton"
+            class="bg-m600 text-m0 mt-6 rounded-md py-3 text-lg font-medium focus:outline-none"
+            type="submit"
+            >Log In</button
           >
         </div>
-
-        <button
-          data-cy="loginButton"
-          class="bg-m600 text-m0 mt-6 rounded py-3 text-base font-medium focus:outline-none"
-          type="submit"
-          >Log In</button
-        >
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 

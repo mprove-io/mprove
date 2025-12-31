@@ -2,11 +2,7 @@
   <div
     class="flex h-2 flex-1 flex-row items-center justify-center overflow-y-auto"
   >
-    <form
-      class="flex w-96 flex-col py-[50px]"
-      [formGroup]="registerForm"
-      (ngSubmit)="register()"
-    >
+    <div class="flex flex-col py-[50px]">
       <div class="flex flex-row justify-center">
         <button
           class="h-8 w-24 text-lg focus:outline-none"
@@ -32,51 +28,77 @@
         >
       </div>
 
-      <div class="flex h-[300px] flex-col">
-        <input
-          spellcheck="false"
-          data-cy="registerEmailInput"
-          class="form-input border-s3 focus:border-m600 mt-9 rounded"
-          [ngClass]="{
-            'border-r600':
-              registerForm.controls['email'].invalid &&
-              registerForm.controls['email'].touched
-          }"
-          type="email"
-          formControlName="email"
-          placeholder="Email"
-        />
-        <m-validation [control]="registerForm.controls['email']"></m-validation>
+      <form
+        class="flex w-[350px] flex-col"
+        [formGroup]="registerForm"
+        (ngSubmit)="register()"
+      >
+        <div class="flex h-[300px] flex-col">
+          <input
+            spellcheck="false"
+            data-cy="registerEmailInput"
+            class="form-input border-s3 focus:border-m600 mt-9 h-11 rounded"
+            [ngClass]="{
+              'border-r600':
+                registerForm.controls['email'].invalid &&
+                registerForm.controls['email'].touched
+            }"
+            type="email"
+            formControlName="email"
+            placeholder="Email"
+          />
+          <m-validation
+            [control]="registerForm.controls['email']"
+          ></m-validation>
 
-        <input
-          spellcheck="false"
-          data-cy="registerPasswordInput"
-          class="form-input border-s3 focus:border-m600 mt-1 rounded"
-          [ngClass]="{
-            'border-r600':
-              registerForm.controls['password'].invalid &&
-              registerForm.controls['password'].touched
-          }"
-          type="password"
-          formControlName="password"
-          placeholder="Password"
-        />
-        <m-validation
-          [control]="registerForm.controls['password']"
-        ></m-validation>
+          <input
+            spellcheck="false"
+            data-cy="registerPasswordInput"
+            class="form-input border-s3 focus:border-m600 mt-1 h-11 rounded"
+            [ngClass]="{
+              'border-r600':
+                registerForm.controls['password'].invalid &&
+                registerForm.controls['password'].touched
+            }"
+            type="password"
+            formControlName="password"
+            placeholder="Password"
+          />
+          <m-validation
+            [control]="registerForm.controls['password']"
+          ></m-validation>
 
-        <button
-          data-cy="registerSignUpButton"
-          class="bg-m600 text-m0 mt-5 rounded py-3 font-medium focus:outline-none"
-          type="submit"
-          >Sign Up</button
-        >
+          <button
+            data-cy="registerSignUpButton"
+            class="bg-m600 text-m0 mt-5 rounded-md py-3 text-lg font-medium focus:outline-none"
+            type="submit"
+            >Sign Up</button
+          >
 
-        <div class="mt-2 text-center" *ngIf="isRegisterOnlyInvitedUsers"
-          >Only for Invited Users</div
-        >
-      </div>
-    </form>
+          <div class="flex flex-row justify-center" *ngIf="!checkLoaded">
+            <div class="relative mt-2 flex h-9 w-9 flex-shrink-0">
+              <ngx-spinner
+                [name]="registerCheckSpinnerName"
+                color="#0084d1"
+                bdColor="#00000000"
+                size="default"
+                type="ball-clip-rotate"
+                [fullScreen]="false"
+                [disableAnimation]="true"
+                [zIndex]="99998"
+              >
+              </ngx-spinner>
+            </div>
+          </div>
+
+          <div
+            class="mt-2 h-9 text-center"
+            *ngIf="!!checkLoaded && isRegisterOnlyInvitedUsers"
+            >Only for Invited Users</div
+          >
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 

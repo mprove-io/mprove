@@ -55,6 +55,9 @@ export class RegisterComponent implements OnInit {
     })
   );
 
+  registerCheckSpinnerName = 'registerCheckSpinnerName';
+  checkLoaded = false;
+
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
@@ -69,6 +72,8 @@ export class RegisterComponent implements OnInit {
 
     this.title.setTitle(this.pageTitle);
 
+    this.spinner.show(this.registerCheckSpinnerName);
+
     this.apiService
       .req({
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCheckSignUp,
@@ -79,7 +84,11 @@ export class RegisterComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.isRegisterOnlyInvitedUsers =
               resp.payload.isRegisterOnlyInvitedUsers;
+
+            this.checkLoaded = true;
           }
+
+          this.spinner.hide(this.registerCheckSpinnerName);
         }),
         take(1)
       )

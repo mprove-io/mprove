@@ -38,7 +38,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "blockml:build:development"
+          "buildTarget": "blockml:build:development",
+          "runtimeArgs": ["--trace-warnings"]
         },
         "production": {
           "buildTarget": "blockml:build:production",

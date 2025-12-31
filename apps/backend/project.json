@@ -38,7 +38,8 @@
       },
       "configurations": {
         "development": {
-          "buildTarget": "backend:build:development"
+          "buildTarget": "backend:build:development",
+          "runtimeArgs": ["--trace-warnings"]
         },
         "production": {
           "buildTarget": "backend:build:production",
