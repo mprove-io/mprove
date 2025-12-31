@@ -63,8 +63,8 @@ jobs:
           file: setup-docker/${{ matrix.app }}.Dockerfile
           platforms: linux/amd64
           push: true
-          cache-from: type=gha,scope=monorepo-docker-cache-amd64-${{ matrix.app }}
-          cache-to: type=gha,mode=max,scope=monorepo-docker-cache-amd64-${{ matrix.app }}
+          cache-from: type=gha,scope=monorepo-docker-cache-amd64
+          cache-to: type=gha,mode=max,scope=monorepo-docker-cache-amd64
           tags: |
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_REPO }}-${{ matrix.app }}:sha-${{ github.sha }}-amd64
 
@@ -102,8 +102,8 @@ jobs:
           file: setup-docker/${{ matrix.app }}.Dockerfile
           platforms: linux/arm64
           push: true
-          cache-from: type=gha,scope=monorepo-docker-cache-arm64-${{ matrix.app }}
-          cache-to: type=gha,mode=max,scope=monorepo-docker-cache-arm64-${{ matrix.app }}
+          cache-from: type=gha,scope=monorepo-docker-cache-arm64
+          cache-to: type=gha,mode=max,scope=monorepo-docker-cache-arm64
           tags: |
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_REPO }}-${{ matrix.app }}:sha-${{ github.sha }}-arm64
 
