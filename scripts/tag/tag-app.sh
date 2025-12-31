@@ -1,2 +1,2 @@
 VERSION=$(jq -r '.version' package.json) && \
-git tag -a prep-$VERSION -m "prepare $VERSION"
+git tag -a app-$VERSION -m "prepare $VERSION"
