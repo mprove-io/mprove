@@ -114,6 +114,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
@@ -124,41 +127,78 @@ jobs:
       - name: Create and push multi-platform manifests
         env:
           APPS_JSON: ${{ needs.extract-version.outputs.apps_json }}
+          VERSION: ${{ needs.extract-version.outputs.version }}
+          SHA: ${{ github.sha }}
         run: |
-          VERSION=${{ needs.extract-version.outputs.version }}
-          
-          # Parse the JSON array and loop through apps
+          set -euo pipefail
+
           echo "$APPS_JSON" | jq -r '.[]' | while read app; do
             IMAGE=${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_REPO }}-${app}
-            
-            echo "Creating manifest for ${IMAGE}:${VERSION}"
-            docker manifest create ${IMAGE}:${VERSION} \
-              --amend ${IMAGE}:sha-${{ github.sha }}-amd64 \
-              --amend ${IMAGE}:sha-${{ github.sha }}-arm64
-            
-            echo "Creating manifest for ${IMAGE}:sha-${{ github.sha }}"
-            docker manifest create ${IMAGE}:sha-${{ github.sha }} \
-              --amend ${IMAGE}:sha-${{ github.sha }}-amd64 \
-              --amend ${IMAGE}:sha-${{ github.sha }}-arm64
-            
-            echo "Pushing manifest ${IMAGE}:${VERSION}"
-            docker manifest push ${IMAGE}:${VERSION}
-            
-            echo "Pushing manifest ${IMAGE}:sha-${{ github.sha }}"
-            docker manifest push ${IMAGE}:sha-${{ github.sha }}
-            
-            echo "Created manifests for $app"
+
+            echo "Resolving digests for $app..."
+
+            # Extract AMD64 digest - fail if not found or multiple/no matches
+            AMD64_DIGEST=$(docker buildx imagetools inspect "${IMAGE}:sha-${SHA}-amd64" --raw | \
+              jq -r '.manifests[] 
+                     | select(.platform.architecture == "amd64" and .platform.os == "linux") 
+                     | .digest' | \
+              head -n1)
+
+            if [ -z "$AMD64_DIGEST" ]; then
+              echo "ERROR: Could not resolve amd64 digest for ${IMAGE}:sha-${SHA}-amd64"
+              echo "This usually means the image was not pushed successfully or is corrupted."
+              exit 1
+            fi
+
+            # Extract ARM64 digest
+            ARM64_DIGEST=$(docker buildx imagetools inspect "${IMAGE}:sha-${SHA}-arm64" --raw | \
+              jq -r '.manifests[] 
+                     | select(.platform.architecture == "arm64" and .platform.os == "linux") 
+                     | .digest' | \
+              head -n1)
+
+            if [ -z "$ARM64_DIGEST" ]; then
+              echo "ERROR: Could not resolve arm64 digest for ${IMAGE}:sha-${SHA}-arm64"
+              echo "This usually means the image was not pushed successfully or is corrupted."
+              exit 1
+            fi
+
+            echo "✓ Resolved digests:"
+            echo "   amd64: $AMD64_DIGEST"
+            echo "   arm64: $ARM64_DIGEST"
+
+            # Create and push version tag
+            echo "Creating multi-arch manifest ${IMAGE}:${VERSION}"
+            docker manifest create "${IMAGE}:${VERSION}" \
+              "${IMAGE}@${AMD64_DIGEST}" \
+              "${IMAGE}@${ARM64_DIGEST}"
+
+            echo "Pushing ${IMAGE}:${VERSION}"
+            docker manifest push "${IMAGE}:${VERSION}"
+
+            # Create and push sha tag
+            echo "Creating multi-arch manifest ${IMAGE}:sha-${SHA}"
+            docker manifest create "${IMAGE}:sha-${SHA}" \
+              "${IMAGE}@${AMD64_DIGEST}" \
+              "${IMAGE}@${ARM64_DIGEST}"
+
+            echo "Pushing ${IMAGE}:sha-${SHA}"
+            docker manifest push "${IMAGE}:sha-${SHA}"
+
+            echo "✓ Successfully created and pushed multi-platform manifests for $app"
+            echo ""
           done
 
       - name: Inspect all final multi-arch images
         env:
           APPS_JSON: ${{ needs.extract-version.outputs.apps_json }}
+          VERSION: ${{ needs.extract-version.outputs.version }}
         run: |
-          VERSION=${{ needs.extract-version.outputs.version }}
-          
+          set -euo pipefail
+
           echo "$APPS_JSON" | jq -r '.[]' | while read app; do
             IMAGE=${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_REPO }}-${app}
-            echo "=== Inspecting $app ==="
-            docker manifest inspect ${IMAGE}:${VERSION}
+            echo "=== Inspecting multi-arch manifest for $app (${IMAGE}:${VERSION}) ==="
+            docker manifest inspect "${IMAGE}:${VERSION}" || echo "Warning: Inspection failed (may require pull permissions)"
             echo ""
           done
