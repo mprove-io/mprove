@@ -1,9 +1,9 @@
 {
   "name": "mprove",
-  "version": "11.0.80",
+  "version": "11.0.81",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
-  "packageManager": "pnpm@10.26.1",
+  "packageManager": "pnpm@10.27.0",
   "private": false,
   "sideEffects": [
     "apps/front/src/polyfills.ts"
