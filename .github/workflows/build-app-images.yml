@@ -8,13 +8,13 @@ on:
 env:
   IMAGE_REGISTRY: ghcr.io
   IMAGE_REPO: ${{ github.repository }}
-  APPS: '["backend", "blockml", "disk", "front", "mcli"]'
 
 jobs:
   extract-version:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      apps_json: ${{ steps.apps.outputs.apps_json }}
     steps:
       - name: Extract version from tag
         id: version
@@ -22,6 +22,12 @@ jobs:
           TAG=${GITHUB_REF#refs/tags/}
           VERSION=${TAG#app-}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Set apps JSON
+        id: apps
+        run: |
+          APPS='["backend", "blockml", "disk", "front", "mcli"]'
+          echo "apps_json=$APPS" >> $GITHUB_OUTPUT
 
   build-amd:
     needs: extract-version
@@ -29,7 +35,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        app: ${{ fromJson(env.APPS) }}
+        app: ${{ fromJson(needs.extract-version.outputs.apps_json) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -66,7 +72,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        app: ${{ fromJson(env.APPS) }}
+        app: ${{ fromJson(needs.extract-version.outputs.apps_json) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -113,7 +119,7 @@ jobs:
 
       - name: Create and push multi-platform manifests
         env:
-          APPS_JSON: ${{ env.APPS }}
+          APPS_JSON: ${{ needs.extract-version.outputs.apps_json }}
         run: |
           VERSION=${{ needs.extract-version.outputs.version }}
           
@@ -142,7 +148,7 @@ jobs:
 
       - name: Inspect all final multi-arch images
         env:
-          APPS_JSON: ${{ env.APPS }}
+          APPS_JSON: ${{ needs.extract-version.outputs.apps_json }}
         run: |
           VERSION=${{ needs.extract-version.outputs.version }}
           
