@@ -11,7 +11,7 @@ env:
 
 jobs:
   extract-version:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       version: ${{ steps.version.outputs.version }}
       apps_json: ${{ steps.apps.outputs.apps_json }}
@@ -31,7 +31,7 @@ jobs:
 
   build-amd:
     needs: extract-version
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       max-parallel: 1
       matrix:
@@ -63,6 +63,8 @@ jobs:
           file: setup-docker/${{ matrix.app }}.Dockerfile
           platforms: linux/amd64
           push: true
+          cache-from: type=gha,scope=monorepo-docker-cache-amd64-${{ matrix.app }}
+          cache-to: type=gha,mode=max,scope=monorepo-docker-cache-amd64-${{ matrix.app }}
           tags: |
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_REPO }}-${{ matrix.app }}:sha-${{ github.sha }}-amd64
 
@@ -100,12 +102,14 @@ jobs:
           file: setup-docker/${{ matrix.app }}.Dockerfile
           platforms: linux/arm64
           push: true
+          cache-from: type=gha,scope=monorepo-docker-cache-arm64-${{ matrix.app }}
+          cache-to: type=gha,mode=max,scope=monorepo-docker-cache-arm64-${{ matrix.app }}
           tags: |
             ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_REPO }}-${{ matrix.app }}:sha-${{ github.sha }}-arm64
 
   combine:
     needs: [extract-version, build-amd, build-arm]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
