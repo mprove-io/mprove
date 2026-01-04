@@ -1,8 +1,8 @@
+import { type DuckDBConnection, DuckDBInstance, Json } from '@duckdb/node-api';
+import { DuckDBResultReader } from '@duckdb/node-api/lib/DuckDBResultReader';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
-import type { DuckDbError, TableData } from 'duckdb';
-import { Database } from 'duckdb';
 import { BackendConfig } from '~backend/config/backend-config';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { ConnectionTab } from '~backend/drizzle/postgres/schema/_tabs';
@@ -57,32 +57,17 @@ export class DuckDbService {
     });
 
     try {
-      await new Promise<void>((resolve, reject) => {
-        let db = new Database(dbPath, duckdbConnectionOptions, err => {
-          if (err) {
-            reject(err);
-            return;
-          }
-        });
+      let db: DuckDBInstance = await DuckDBInstance.create(
+        dbPath,
+        duckdbConnectionOptions
+      );
 
-        if (!!db) {
-          db.all('SELECT 1', (queryErr: Error | null) => {
-            if (queryErr) {
-              db.close();
-              reject(queryErr);
-              return;
-            }
+      let dc: DuckDBConnection = await db.connect();
 
-            db.close(closeErr => {
-              if (closeErr) {
-                reject(closeErr);
-              } else {
-                resolve();
-              }
-            });
-          });
-        }
-      });
+      await dc.runAndReadAll('SELECT 1');
+
+      dc.closeSync();
+      db.closeSync();
 
       return {
         isSuccess: true,
@@ -109,41 +94,27 @@ export class DuckDbService {
       connection: connection
     });
 
-    let db = new Database(dbPath, duckdbConnectionOptions, async err => {
-      if (err) {
-        this.processError({
-          e: err,
-          queryId: queryId,
-          queryJobId: queryJobId,
-          projectId: projectId
-        });
-      }
-    });
+    let db: DuckDBInstance = await DuckDBInstance.create(
+      dbPath,
+      duckdbConnectionOptions
+    );
 
-    let dbQuery = new Promise<TableData>((resolve, reject) => {
-      if (!!db) {
-        db.all(querySql, (err: DuckDbError | null, rows: TableData) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(rows);
-          }
-        });
-      } else {
-        reject(new Error('duckdbService: db is not defined'));
-      }
-    });
+    let dc: DuckDBConnection = await db.connect();
 
-    dbQuery
-      .then(async data => {
-        data = JSON.parse(
-          JSON.stringify(data, (_key, value) => {
-            if (typeof value === 'bigint') {
-              return Number(value);
-            }
-            return value;
-          })
-        );
+    await dc
+      .runAndReadAll(querySql)
+      .then(async (reader: DuckDBResultReader) => {
+        let data: Record<string, Json>[] = reader.getRowObjectsJson();
+        // let data: Record<string, Json>[] = reader.getRowObjects();
+
+        // data = JSON.parse(
+        //   JSON.stringify(data, (_key, value) => {
+        //     if (typeof value === 'bigint') {
+        //       return Number(value);
+        //     }
+        //     return value;
+        //   })
+        // );
 
         let q = await this.db.drizzle.query.queriesTable
           .findFirst({
@@ -188,72 +159,8 @@ export class DuckDbService {
         })
       );
 
-    db.close();
-
-    // import {
-    //   type DuckDBConnection,
-    //   DuckDBInstance,
-    //   DuckDBValue
-    // } from '@duckdb/node-api';
-    // import { DuckDBResultReader } from '@duckdb/node-api/lib/DuckDBResultReader';
-
-    // let instance = await DuckDBInstance.create(dbPath, opts);
-    // let dc: DuckDBConnection = await instance.connect();
-
-    // await dc
-    //   .runAndReadAll(querySql)
-    //   .then(async (reader: DuckDBResultReader) => {
-    //     let data: Record<string, DuckDBValue>[] = reader.getRowObjects();
-
-    //     data = JSON.parse(
-    //       JSON.stringify(data, (_key, value) => {
-    //         if (typeof value === 'bigint') {
-    //           return Number(value);
-    //         }
-    //         return value;
-    //       })
-    //     );
-
-    //     let q = await this.db.drizzle.query.queriesTable.findFirst({
-    //       where: and(
-    //         eq(queriesTable.queryId, queryId),
-    //         eq(queriesTable.queryJobId, queryJobId),
-    //         eq(queriesTable.projectId, projectId)
-    //       )
-    //     });
-
-    //     if (isDefined(q)) {
-    //       q.status = QueryStatusEnum.Completed;
-    //       q.queryJobId = undefined;
-    //       q.data = data;
-    //       q.lastCompleteTs = makeTsNumber();
-    //       q.lastCompleteDuration = Math.floor(
-    //         (Number(q.lastCompleteTs) - Number(q.lastRunTs)) / 1000
-    //       );
-
-    //       await retry(
-    //         async () =>
-    //           await this.db.drizzle.transaction(
-    //             async tx =>
-    //               await this.db.packer.write({
-    //                 tx: tx,
-    //                 insertOrUpdate: {
-    //                   queries: [q]
-    //                 }
-    //               })
-    //           ),
-    //         getRetryOption(this.cs, this.logger)
-    //       );
-    //     }
-    //   })
-    //   .catch(async e =>
-    //     this.processError({
-    //       e: e,
-    //       queryId: queryId,
-    //       queryJobId: queryJobId,
-    //       projectId: projectId
-    //     })
-    //   );
+    dc.closeSync();
+    db.closeSync();
   }
 
   async processError(item: {
