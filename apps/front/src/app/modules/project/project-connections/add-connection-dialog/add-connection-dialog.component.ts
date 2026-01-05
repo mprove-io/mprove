@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   CUSTOM_ELEMENTS_SCHEMA,
+  ChangeDetectorRef,
   Component,
   HostListener,
   OnInit,
@@ -127,6 +128,7 @@ export class AddConnectionDialogComponent implements OnInit {
   constructor(
     public ref: DialogRef<AddConnectionDialogData>,
     private fb: FormBuilder,
+    private cd: ChangeDetectorRef,
     private connectionsQuery: ConnectionsQuery
   ) {}
 
@@ -386,6 +388,7 @@ export class AddConnectionDialogComponent implements OnInit {
           this.envsList = x;
           this.envsListLoading = false;
           this.envsListLength = x.length;
+          this.cd.detectChanges();
         }),
         take(1)
       )
@@ -689,6 +692,7 @@ export class AddConnectionDialogComponent implements OnInit {
         tap((resp: ToBackendTestConnectionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.testConnectionResult = resp.payload.testConnectionResult;
+            this.cd.detectChanges();
           }
         }),
         take(1)

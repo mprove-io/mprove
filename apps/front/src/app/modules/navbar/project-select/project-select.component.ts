@@ -120,6 +120,7 @@ export class ProjectSelectComponent {
           this.projectsList = x;
           this.projectsListLoading = false;
           this.projectsListLength = x.length;
+          this.cd.detectChanges();
         }),
         take(1)
       )

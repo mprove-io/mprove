@@ -189,6 +189,8 @@ export class RowAddFilterDialogComponent implements OnInit {
             this.model = resp.payload.model;
 
             this.modelLoading = false;
+
+            this.cd.detectChanges();
           }
         }),
         take(1)

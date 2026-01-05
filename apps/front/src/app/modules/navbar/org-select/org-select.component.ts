@@ -87,6 +87,7 @@ export class OrgSelectComponent {
           this.orgsList = x;
           this.orgsListLoading = false;
           this.orgsListLength = x.length;
+          this.cd.detectChanges();
         }),
         take(1)
       )
