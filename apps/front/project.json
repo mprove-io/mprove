@@ -5,22 +5,12 @@
   "sourceRoot": "apps/front/src",
   "targets": {
     "build": {
-      "executor": "@nx/angular:browser-esbuild",
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "allowedCommonJsDependencies": [
-          "fast-deep-equal",
-          "validator",
-          "class-transformer-validator",
-          "class-transformer",
-          "clone-deep",
-          "mobx",
-          "google-libphonenumber"
-        ],
-        "aot": true,
         "outputPath": "dist/apps/front",
-        "index": "apps/front/src/index.html",
-        "main": "apps/front/src/main.ts",
-        "polyfills": "apps/front/src/polyfills.ts",
+        "browser": "apps/front/src/main.ts",
+        "polyfills": ["apps/front/src/polyfills.ts"],
         "tsConfig": "apps/front/tsconfig.app.json",
         "assets": [
           "apps/front/src/favicon.svg",
@@ -58,7 +48,22 @@
           "./node_modules/ngx-spinner/animations/ball-pulse.css",
           "./node_modules/ngx-spinner/animations/line-scale.css"
         ],
-        "scripts": []
+        "outputMode": "static",
+        "scripts": [],
+        "allowedCommonJsDependencies": [
+          "fast-deep-equal",
+          "validator",
+          "class-transformer-validator",
+          "class-transformer",
+          "clone-deep",
+          "mobx",
+          "google-libphonenumber",
+          "ssf",
+          "dayjs",
+          "protobufjs/minimal"
+        ],
+        "aot": true,
+        "index": "apps/front/src/index.html"
       },
       "configurations": {
         "production": {
@@ -73,8 +78,6 @@
           "sourceMap": false,
           "namedChunks": false,
           "extractLicenses": true,
-          "vendorChunk": false,
-          "buildOptimizer": true,
           "budgets": [
             {
               "type": "initial",
@@ -89,9 +92,7 @@
           ]
         },
         "development": {
-          "buildOptimizer": false,
           "optimization": false,
-          "vendorChunk": true,
           "extractLicenses": false,
           "sourceMap": true,
           "namedChunks": true
@@ -99,7 +100,7 @@
       }
     },
     "serve": {
-      "executor": "@nx/angular:dev-server",
+      "executor": "@angular/build:dev-server",
       "options": {
         "buildTarget": "front:build"
       },

@@ -1,5 +1,4 @@
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
-import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
 import { Ev } from './backend/ev';
 import { MproveConfig } from './backend/mprove-config';
@@ -18,6 +17,7 @@ import { Row } from './blockml/row';
 import { Sorting } from './blockml/sorting';
 import { StorePart } from './blockml/store-part';
 import { Tile } from './blockml/tile';
+// import { CompiledQuery } from '@malloydata/malloy/dist/model/malloy_types';
 
 export class AvatarSt {
   avatarSmall: string;
@@ -118,7 +118,7 @@ export class MconfigLt {
   modelFilePath: string;
   malloyQueryStable: string;
   malloyQueryExtra: string;
-  compiledQuery: CompiledQuery;
+  compiledQuery: any; // CompiledQuery;
   select: string[];
   sortings: Sorting[];
   sorts: string;

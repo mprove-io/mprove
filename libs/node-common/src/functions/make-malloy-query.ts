@@ -23,7 +23,7 @@ import {
   ASTSegmentViewDefinition,
   ASTViewOperation
 } from '@malloydata/malloy-query-builder';
-import { FieldBase } from '@malloydata/malloy/dist/model';
+// import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
 import * as fse from 'fs-extra';
 import { DOUBLE_UNDERSCORE } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
@@ -551,8 +551,7 @@ export async function makeMalloyQuery(item: {
 
   if (isDefined(compiledQuery)) {
     compiledQuery.structs[0].fields.forEach(field => {
-      let drillExpression = (field as FieldBase).resultMetadata
-        ?.drillExpression;
+      let drillExpression = (field as any).resultMetadata?.drillExpression; // (field as FieldBase).resultMetadata
 
       let fieldId =
         drillExpression?.kind === 'field_reference'
@@ -579,8 +578,7 @@ export async function makeMalloyQuery(item: {
 
       if (isDefined(field)) {
         let mField = model.fields.find(f => {
-          let drillExpression = (field as FieldBase).resultMetadata
-            ?.drillExpression;
+          let drillExpression = (field as any).resultMetadata?.drillExpression; // (field as FieldBase).resultMetadata
 
           let fieldId =
             drillExpression?.kind === 'field_reference'

@@ -92,7 +92,9 @@ export class ResetUserPasswordController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let hostUrl = this.cs.get<BackendConfig['hostUrl']>('hostUrl');
+    let hostUrl = this.cs
+      .get<BackendConfig['hostUrl']>('hostUrl')
+      .split(',')[0];
 
     let urlUpdatePassword = `${hostUrl}/${PATH_UPDATE_PASSWORD}?token=${user.passwordResetToken}`;
 

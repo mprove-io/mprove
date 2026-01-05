@@ -22,7 +22,7 @@ RUN pnpm build:front:prod
 
 FROM nginx:1.21.1
 COPY --from=builder /usr/src/app/apps/front/nginx-configs/nginx.front.conf /etc/nginx/nginx.conf
-COPY --from=builder /usr/src/app/dist/apps/front /usr/share/nginx/html
+COPY --from=builder /usr/src/app/dist/apps/front/browser /usr/share/nginx/html
 
 EXPOSE 80
 

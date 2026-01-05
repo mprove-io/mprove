@@ -1,4 +1,4 @@
-import { CompiledQuery } from '@malloydata/malloy/dist/model';
+// import { CompiledQuery } from '@malloydata/malloy/dist/model/malloy_types';
 import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
@@ -44,7 +44,7 @@ export interface FilePartTile {
 
   malloyQueryExtra?: string;
 
-  compiledQuery?: CompiledQuery;
+  compiledQuery?: any; // CompiledQuery;
 
   sql?: string[];
 

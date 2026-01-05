@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { FieldBase } from '@malloydata/malloy/dist/model';
 import { formatLocale } from 'd3-format';
 import { SeriesOption } from 'echarts';
 import { DateTime } from 'luxon';
@@ -31,6 +30,7 @@ import { DataRow } from '~common/interfaces/front/data-row';
 import { frontFormatTsUnix } from '../functions/front-format-ts-unix';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
+// import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
 
 export interface SourceDataRow {
   [k: string]: string;
@@ -419,8 +419,8 @@ export class DataService {
           if (mconfig.modelType === ModelTypeEnum.Malloy) {
             let compiledQueryField =
               mconfig.compiledQuery.structs[0].fields.find(
-                x => x.name === key
-              ) as FieldBase;
+                (x: any) => x.name === key // no any
+              ) as any; // FieldBase;
 
             sqlName = compiledQueryField.name;
 

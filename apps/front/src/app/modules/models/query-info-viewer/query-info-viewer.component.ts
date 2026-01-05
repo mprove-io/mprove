@@ -75,6 +75,7 @@ export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
   isHighlighterReady$ = this.uiQuery.select().pipe(
     tap(x => {
       this.isHighlighterReady = x.isHighlighterReady;
+      this.cd.detectChanges();
 
       if (
         this.isHighlighterReady === true &&
@@ -102,11 +103,11 @@ export class QueryInfoViewerComponent implements OnChanges, OnInit, OnDestroy {
         if (eventData.placeName === PlaceNameEnum.QueryInfo) {
           let prevContent = this.content;
           this.content = this.content + ' ';
-          // this.cd.detectChanges();
+          this.cd.detectChanges();
 
           setTimeout(() => {
             this.content = prevContent;
-            // this.cd.detectChanges();
+            this.cd.detectChanges();
           }, 0);
         }
       })

@@ -14,7 +14,7 @@ import {
   SelectionChangedEvent
 } from 'ag-grid-community';
 import { themeAlpine } from 'ag-grid-community';
-import { MultiRowSelectionOptions } from 'ag-grid-community/dist/types/src/entities/gridOptions';
+// import { MultiRowSelectionOptions } from 'ag-grid-community/dist/types/src/entities/gridOptions';
 import { combineLatest, tap } from 'rxjs';
 import { debounce } from 'throttle-debounce';
 import { TRIPLE_UNDERSCORE } from '~common/constants/top';
@@ -59,7 +59,8 @@ import { StatusRendererComponent } from './status-renderer/status-renderer.compo
   templateUrl: './report.component.html'
 })
 export class ReportComponent {
-  rowSelection: MultiRowSelectionOptions<DataRow> = {
+  rowSelection: any = {
+    // MultiRowSelectionOptions<DataRow>
     mode: 'multiRow',
     enableSelectionWithoutKeys: false,
     enableClickSelection: true,

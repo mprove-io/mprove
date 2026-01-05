@@ -47,7 +47,7 @@ async function bootstrap() {
   app.use(urlencoded({ limit: '50mb', extended: true }));
 
   app.enableCors({
-    origin: config.hostUrl,
+    origin: [...config.hostUrl.split(',')],
     credentials: true,
     allowedHeaders: [
       'Content-Type',

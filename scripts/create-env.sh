@@ -141,8 +141,8 @@ BACKEND_CALC_POSTGRES_HOST=calc-postgres
 BACKEND_CALC_POSTGRES_PORT=5437
 BACKEND_CALC_POSTGRES_USERNAME=postgres
 BACKEND_CALC_POSTGRES_PASSWORD=${CALC_POSTGRES_PASS}
-# BACKEND_HOST_URL is used for links in transactional emails and CORS
-BACKEND_HOST_URL=http://localhost:3003
+# replace value of BACKEND_HOST_URL with your real host (for links in transactional emails and CORS)
+BACKEND_HOST_URL="http://localhost:3003,http://localhost:4200"
 BACKEND_SEND_EMAIL_FROM_NAME=Example
 BACKEND_SEND_EMAIL_FROM_ADDRESS=no-reply@example.com
 BACKEND_EMAIL_TRANSPORT=SMTP

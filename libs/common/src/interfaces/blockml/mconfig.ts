@@ -1,4 +1,3 @@
-import { CompiledQuery } from '@malloydata/malloy/dist/model';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
@@ -16,6 +15,9 @@ import { Filter } from './filter';
 import { MconfigChart } from './mconfig-chart';
 import { Sorting } from './sorting';
 import { StorePart } from './store-part';
+// import { CompiledQuery } from '@malloydata/malloy';
+// import { CompiledQuery } from '@malloydata/malloy/dist/model';
+// import { CompiledQuery } from '@malloydata/malloy/dist/model/malloy_types';
 
 export class Mconfig {
   @IsString()
@@ -64,7 +66,7 @@ export class Mconfig {
   @IsString()
   malloyQueryExtra: string;
 
-  compiledQuery: CompiledQuery;
+  compiledQuery: any; // CompiledQuery;
 
   @IsString({ each: true })
   select: string[];

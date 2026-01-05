@@ -43,7 +43,9 @@ export class EmailService {
   }) {
     let { email, emailVerificationToken } = item;
 
-    let hostUrl = this.cs.get<BackendConfig['hostUrl']>('hostUrl');
+    let hostUrl = this.cs
+      .get<BackendConfig['hostUrl']>('hostUrl')
+      .split(',')[0];
 
     let urlConfirmEmail = `${hostUrl}/${PATH_CONFIRM_EMAIL}?token=${emailVerificationToken}`;
 

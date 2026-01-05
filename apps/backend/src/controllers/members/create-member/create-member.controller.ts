@@ -309,7 +309,9 @@ export class CreateMemberController {
 
     let avatar = avatars.length > 0 ? avatars[0] : undefined;
 
-    let hostUrl = this.cs.get<BackendConfig['hostUrl']>('hostUrl');
+    let hostUrl = this.cs
+      .get<BackendConfig['hostUrl']>('hostUrl')
+      .split(',')[0];
 
     if (isDefined(invitedUser) && invitedUser.isEmailVerified === true) {
       let urlProjectMetrics = [
