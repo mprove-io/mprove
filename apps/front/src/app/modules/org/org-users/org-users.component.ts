@@ -98,6 +98,8 @@ export class OrgUsersComponent implements OnInit {
               total: resp.payload.total
             });
             this.currentPage = pageNum;
+
+            this.cd.detectChanges();
           }
         })
       )

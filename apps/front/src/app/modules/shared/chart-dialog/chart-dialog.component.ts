@@ -372,6 +372,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               sql: this.query.sql,
               data: this.query.data
             });
+
+            this.cd.detectChanges();
           }
         }),
         take(1)
@@ -495,6 +497,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
             this.model = resp.payload.model;
 
             this.fieldsListLoading = false;
+
+            this.cd.detectChanges();
           }
         }),
         take(1)
@@ -545,6 +549,8 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
                       mconfig: this.mconfig
                     })
                   : [];
+
+              this.cd.detectChanges();
 
               if (this.query.status !== QueryStatusEnum.Completed) {
                 this.run();

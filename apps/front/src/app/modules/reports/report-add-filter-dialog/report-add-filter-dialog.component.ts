@@ -477,6 +477,8 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
             this.selectedModelLoading = false;
             this.selectedModelLoaded = true;
+
+            this.cd.detectChanges();
           }
         }),
         take(1)

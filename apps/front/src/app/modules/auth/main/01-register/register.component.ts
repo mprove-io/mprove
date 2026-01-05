@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
@@ -64,6 +64,7 @@ export class RegisterComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private router: Router,
     private userQuery: UserQuery,
+    private cd: ChangeDetectorRef,
     private title: Title
   ) {}
 
@@ -86,6 +87,7 @@ export class RegisterComponent implements OnInit {
               resp.payload.isRegisterOnlyInvitedUsers;
 
             this.checkLoaded = true;
+            this.cd.detectChanges();
           }
 
           this.spinner.hide(this.registerCheckSpinnerName);

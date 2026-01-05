@@ -75,15 +75,11 @@ ng-scrollbar {
   outline: none;
 }
 
-// @import '~@ng-select/ng-select/themes/default.theme.css';
-@import 'node_modules/@ng-select/ng-select/themes/default.theme.css';
+@import '@ng-select/ng-select/themes/default.theme.css';
 
-// @import '~tippy.js/dist/tippy.css';
-// @import '~tippy.js/themes/light.css';
-// @import '~tippy.js/animations/scale.css';
-@import 'node_modules/tippy.js/dist/tippy.css';
-@import 'node_modules/tippy.js/themes/light.css';
-@import 'node_modules/tippy.js/animations/scale.css';
+@import 'tippy.js/dist/tippy.css';
+@import 'tippy.js/themes/light.css';
+@import 'tippy.js/animations/scale.css';
 
 .tippy-variation-menu .tippy-box {
   background-color: transparent;

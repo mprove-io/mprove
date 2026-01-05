@@ -234,6 +234,8 @@ export class BranchSelectComponent {
 
             this.branchesListLength = this.branchesList.length;
             this.branchesListLoading = false;
+
+            this.cd.detectChanges();
           }
         }),
         take(1)

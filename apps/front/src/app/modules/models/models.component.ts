@@ -1157,6 +1157,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
                 validQueryEstimates[0].estimate
               );
               this.dryQueryEstimate = validQueryEstimates[0];
+
+              this.cd.detectChanges();
             }
           }
         }),
