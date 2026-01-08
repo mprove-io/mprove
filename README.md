@@ -64,6 +64,8 @@ Set SMTP parameters to be able to send transactional emails (required if you nee
 BACKEND_SMTP_HOST=
 BACKEND_SMTP_AUTH_USER=
 BACKEND_SMTP_AUTH_PASSWORD=
+BACKEND_SEND_EMAIL_FROM_ADDRESS=
+BACKEND_SEND_EMAIL_FROM_NAME=
 ```
 
 #### 6. Run docker images
