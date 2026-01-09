@@ -46,6 +46,12 @@ export class BlockmlConfig {
   concurrencyLimit?: number;
 
   @IsString()
+  blockmlValkeyHost?: string;
+
+  @IsString()
+  blockmlValkeyPassword?: string;
+
+  @IsString()
   blockmlRabbitUser?: string;
 
   @IsString()

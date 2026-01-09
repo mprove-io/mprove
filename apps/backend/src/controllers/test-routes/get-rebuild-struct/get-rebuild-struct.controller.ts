@@ -13,7 +13,6 @@ import { EnvsService } from '~backend/services/db/envs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RabbitService } from '~backend/services/rabbit.service';
 import { TabService } from '~backend/services/tab.service';
-import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
@@ -129,7 +128,6 @@ export class GetRebuildStructController {
 
     let rebuildStructResponse =
       await this.rabbitService.sendToBlockml<ToBlockmlRebuildStructResponse>({
-        routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
         message: rebuildStructRequest,
         checkIsOk: true
       });

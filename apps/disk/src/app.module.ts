@@ -1,8 +1,6 @@
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { DiskConfig } from '~disk/config/disk-config';
 import { WithTraceSpan } from '~node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
@@ -16,39 +14,39 @@ let devConfig = getConfig(); // check error once
     ConfigModule.forRoot({
       load: [getConfig],
       isGlobal: true
-    }),
-
-    RabbitMQModule.forRootAsync({
-      useFactory: (cs: ConfigService<DiskConfig>) => {
-        let rabbitUser = cs.get<DiskConfig['diskRabbitUser']>('diskRabbitUser');
-        let rabbitPass = cs.get<DiskConfig['diskRabbitPass']>('diskRabbitPass');
-        let rabbitHost = cs.get<DiskConfig['diskRabbitHost']>('diskRabbitHost');
-        let rabbitPort = cs.get<DiskConfig['diskRabbitPort']>('diskRabbitPort');
-        let rabbitProtocol =
-          cs.get<DiskConfig['diskRabbitProtocol']>('diskRabbitProtocol');
-
-        return {
-          exchanges: [
-            {
-              name: RabbitExchangesEnum.Disk.toString(),
-              type: 'direct'
-            }
-          ],
-          uri: [
-            `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
-          ],
-          connectionInitOptions: {
-            // wait for connection on startup, but do not recover when connection lost
-            wait: false,
-            timeout: undefined
-          },
-          connectionManagerOptions: {
-            connectionOptions: { rejectUnauthorized: false }
-          }
-        };
-      },
-      inject: [ConfigService]
     })
+
+    // RabbitMQModule.forRootAsync({
+    //   useFactory: (cs: ConfigService<DiskConfig>) => {
+    //     let rabbitUser = cs.get<DiskConfig['diskRabbitUser']>('diskRabbitUser');
+    //     let rabbitPass = cs.get<DiskConfig['diskRabbitPass']>('diskRabbitPass');
+    //     let rabbitHost = cs.get<DiskConfig['diskRabbitHost']>('diskRabbitHost');
+    //     let rabbitPort = cs.get<DiskConfig['diskRabbitPort']>('diskRabbitPort');
+    //     let rabbitProtocol =
+    //       cs.get<DiskConfig['diskRabbitProtocol']>('diskRabbitProtocol');
+
+    //     return {
+    //       exchanges: [
+    //         {
+    //           name: RabbitExchangesEnum.Disk.toString(),
+    //           type: 'direct'
+    //         }
+    //       ],
+    //       uri: [
+    //         `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
+    //       ],
+    //       connectionInitOptions: {
+    //         // wait for connection on startup, but do not recover when connection lost
+    //         wait: false,
+    //         timeout: undefined
+    //       },
+    //       connectionManagerOptions: {
+    //         connectionOptions: { rejectUnauthorized: false }
+    //       }
+    //     };
+    //   },
+    //   inject: [ConfigService]
+    // })
   ],
   controllers: [], // rabbit instead of appControllers (secure)
   providers: [Logger, ...appServices]

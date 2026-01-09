@@ -24,6 +24,15 @@ export class DiskConfig {
   aesKey?: string;
 
   @IsString()
+  diskPart?: string;
+
+  @IsString()
+  diskValkeyHost?: string;
+
+  @IsString()
+  diskValkeyPassword?: string;
+
+  @IsString()
   diskRabbitUser?: string;
 
   @IsString()

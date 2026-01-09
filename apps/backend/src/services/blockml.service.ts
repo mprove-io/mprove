@@ -11,7 +11,6 @@ import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
 import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockml-files';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { processRowIds } from '~backend/functions/process-row-ids';
-import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
 import { isDefined } from '~common/functions/is-defined';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -144,7 +143,6 @@ export class BlockmlService {
 
     let blockmlRebuildStructResponse =
       await this.rabbitService.sendToBlockml<ToBlockmlRebuildStructResponse>({
-        routingKey: RabbitBlockmlRoutingEnum.RebuildStruct.toString(),
         message: toBlockmlRebuildStructRequest,
         checkIsOk: true
       });

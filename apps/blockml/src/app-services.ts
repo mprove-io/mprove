@@ -23,10 +23,10 @@ export const appServices = [
   {
     provide: ConsumerMainService,
     useFactory: (
-      cs: ConfigService<BlockmlConfig>,
       structService: RebuildStructService,
+      cs: ConfigService<BlockmlConfig>,
       logger: Logger
-    ) => new ConsumerMainService(cs, structService, logger),
-    inject: [ConfigService, RebuildStructService]
+    ) => new ConsumerMainService(structService, cs, logger),
+    inject: [RebuildStructService, ConfigService]
   }
 ];

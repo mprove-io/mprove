@@ -1,55 +1,149 @@
-import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
+// import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
+// import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Queue, Worker } from 'groupmq';
+import Redis from 'ioredis';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-response-blockml';
 import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
 import { METHOD_RABBIT } from '~common/constants/top';
-import { RabbitBlockmlRoutingEnum } from '~common/enums/rabbit-blockml-routing-keys.enum';
-import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
+import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
+import { MyResponse } from '~common/interfaces/to/my-response';
 
-let pathRebuildStruct = RabbitBlockmlRoutingEnum.RebuildStruct.toString();
+interface RpcRequest {
+  payload: any;
+  correlationId: string;
+  replyTo: string;
+}
 
 @Injectable()
 export class ConsumerMainService {
+  private redisClient: Redis;
+  private worker?: Worker;
+  private queue?: Queue;
+
   constructor(
-    private cs: ConfigService<BlockmlConfig>,
     private rebuildStructService: RebuildStructService,
+    private cs: ConfigService<BlockmlConfig>,
     private logger: Logger
-  ) {}
+  ) {
+    let valkeyHost =
+      this.cs.get<BlockmlConfig['blockmlValkeyHost']>('blockmlValkeyHost');
 
-  @RabbitRPC({
-    exchange: RabbitExchangesEnum.Blockml.toString(),
-    routingKey: pathRebuildStruct,
-    queue: pathRebuildStruct
-  })
-  async rebuildStruct(request: any, context: any) {
-    let startTs = Date.now();
-    try {
-      let payload = await this.rebuildStructService.rebuild(request);
+    let valkeyPassword = this.cs.get<BlockmlConfig['blockmlValkeyPassword']>(
+      'blockmlValkeyPassword'
+    );
 
-      return makeOkResponseBlockml({
-        payload: payload,
-        body: request,
-        path: pathRebuildStruct,
-        method: METHOD_RABBIT,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
-    } catch (e) {
-      let { resp, wrappedError } = makeErrorResponseBlockml({
-        e: e,
-        body: request,
-        path: pathRebuildStruct,
-        method: METHOD_RABBIT,
-        duration: Date.now() - startTs,
-        cs: this.cs,
-        logger: this.logger
-      });
+    // the same as apps/backend/src/app.module.ts -> customThrottlerModule
+    this.redisClient = new Redis({
+      host: valkeyHost,
+      port: 6379,
+      password: valkeyPassword
+      // ,
+      // tls: {
+      //   rejectUnauthorized: false
+      // }
+    });
+  }
 
-      return resp;
+  async onModuleInit() {
+    this.queue = new Queue({
+      redis: this.redisClient,
+      namespace: RpcNamespacesEnum.RpcBlockml
+    });
+
+    this.worker = new Worker({
+      queue: this.queue,
+      concurrency: 1,
+      handler: async job => {
+        let {
+          payload: request,
+          correlationId,
+          replyTo
+        } = job.data as RpcRequest;
+
+        let response: MyResponse;
+
+        try {
+          let startTs = Date.now();
+
+          try {
+            let payload = await this.rebuildStructService.rebuild(request);
+
+            response = makeOkResponseBlockml({
+              payload: payload,
+              body: request,
+              path: RpcNamespacesEnum.RpcBlockml,
+              method: METHOD_RABBIT,
+              duration: Date.now() - startTs,
+              cs: this.cs,
+              logger: this.logger
+            });
+          } catch (e) {
+            let { resp, wrappedError } = makeErrorResponseBlockml({
+              e,
+              body: request,
+              path: RpcNamespacesEnum.RpcBlockml,
+              method: METHOD_RABBIT,
+              duration: Date.now() - startTs,
+              cs: this.cs,
+              logger: this.logger
+            });
+
+            response = resp;
+          }
+        } catch (error: any) {
+          throw error;
+        }
+
+        if (replyTo && correlationId) {
+          await this.redisClient.publish(replyTo, JSON.stringify(response));
+        }
+      }
+    });
+
+    this.worker.run();
+  }
+
+  async onModuleDestroy() {
+    if (this.worker) {
+      await this.worker.close();
     }
   }
+
+  // @RabbitRPC({
+  //   exchange: RabbitExchangesEnum.Blockml.toString(),
+  //   routingKey: pathRebuildStruct,
+  //   queue: pathRebuildStruct
+  // })
+  // async rebuildStruct(request: any, context: any) {
+  //   let startTs = Date.now();
+  //   try {
+  //     let payload = await this.rebuildStructService.rebuild(request);
+
+  //     return makeOkResponseBlockml({
+  //       payload: payload,
+  //       body: request,
+  //       path: pathRebuildStruct,
+  //       method: METHOD_RABBIT,
+  //       duration: Date.now() - startTs,
+  //       cs: this.cs,
+  //       logger: this.logger
+  //     });
+  //   } catch (e) {
+  //     let { resp, wrappedError } = makeErrorResponseBlockml({
+  //       e: e,
+  //       body: request,
+  //       path: pathRebuildStruct,
+  //       method: METHOD_RABBIT,
+  //       duration: Date.now() - startTs,
+  //       cs: this.cs,
+  //       logger: this.logger
+  //     });
+
+  //     return resp;
+  //   }
+  // }
 }

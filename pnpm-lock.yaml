@@ -296,6 +296,9 @@ importers:
       google-auth-library:
         specifier: 9.15.1
         version: 9.15.1(encoding@0.1.13)
+      groupmq:
+        specifier: 1.1.0
+        version: 1.1.0(ioredis@5.8.2)
       hammerjs:
         specifier: 2.0.8
         version: 2.0.8
@@ -434,6 +437,9 @@ importers:
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+      uuid:
+        specifier: 11.1.0
+        version: 11.1.0
       vscode-oniguruma:
         specifier: 1.7.0
         version: 1.7.0
@@ -7884,6 +7890,12 @@ packages:
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
 
+  groupmq@1.1.0:
+    resolution: {integrity: sha512-n3+rR0O1qh/odb1dgdcoY8VX2pUn8tm8p7/JqW6CyWf+pd+tyMmXixUFgO5J+Za+IA50w6+tRPqylwsMdg62EQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      ioredis: '>=5'
+
   gtoken@5.3.2:
     resolution: {integrity: sha512-gkvEKREW7dXWF8NV8pVrKfW7WqReAmjjkMBh6lNCCGOM4ucS0r0YyXXl0r/9Yj8wcW/32ISkfc8h5mPTDbtifQ==}
     engines: {node: '>=10'}
@@ -11712,6 +11724,10 @@ packages:
 
   uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
+
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
   uuid@8.3.2:
@@ -22048,6 +22064,11 @@ snapshots:
 
   graceful-fs@4.2.11: {}
 
+  groupmq@1.1.0(ioredis@5.8.2):
+    dependencies:
+      cron-parser: 4.9.0
+      ioredis: 5.8.2
+
   gtoken@5.3.2(encoding@0.1.13):
     dependencies:
       gaxios: 4.3.3(encoding@0.1.13)
@@ -26163,6 +26184,8 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@10.0.0: {}
+
+  uuid@11.1.0: {}
 
   uuid@8.3.2: {}
 

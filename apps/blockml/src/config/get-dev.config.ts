@@ -54,6 +54,12 @@ export function getDevConfig(envFilePath: any) {
         ? Number(envFile.BLOCKML_CONCURRENCY_LIMIT)
         : undefined,
 
+    blockmlValkeyHost:
+      process.env.BLOCKML_VALKEY_HOST || envFile.BLOCKML_VALKEY_HOST,
+
+    blockmlValkeyPassword:
+      process.env.BLOCKML_VALKEY_PASSWORD || envFile.BLOCKML_VALKEY_PASSWORD,
+
     blockmlRabbitUser:
       process.env.BLOCKML_RABBIT_USER || envFile.BLOCKML_RABBIT_USER,
     blockmlRabbitPass:

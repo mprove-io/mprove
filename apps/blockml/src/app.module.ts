@@ -1,11 +1,9 @@
-import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { SRC_PATH } from '~common/constants/top-blockml';
 import { ErEnum } from '~common/enums/er.enum';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { CallerEnum } from '~common/enums/special/caller.enum';
 import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
 import { BmlFile } from '~common/interfaces/blockml/bml-file';
@@ -29,44 +27,44 @@ let devConfig = getConfig(); // check error once
     ConfigModule.forRoot({
       load: [getConfig],
       isGlobal: true
-    }),
-
-    RabbitMQModule.forRootAsync({
-      useFactory: (cs: ConfigService<BlockmlConfig>) => {
-        let rabbitUser =
-          cs.get<BlockmlConfig['blockmlRabbitUser']>('blockmlRabbitUser');
-        let rabbitPass =
-          cs.get<BlockmlConfig['blockmlRabbitPass']>('blockmlRabbitPass');
-        let rabbitPort =
-          cs.get<BlockmlConfig['blockmlRabbitPort']>('blockmlRabbitPort');
-        let rabbitHost =
-          cs.get<BlockmlConfig['blockmlRabbitHost']>('blockmlRabbitHost');
-        let rabbitProtocol = cs.get<BlockmlConfig['blockmlRabbitProtocol']>(
-          'blockmlRabbitProtocol'
-        );
-
-        return {
-          exchanges: [
-            {
-              name: RabbitExchangesEnum.Blockml.toString(),
-              type: 'direct'
-            }
-          ],
-          uri: [
-            `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
-          ],
-          connectionInitOptions: {
-            // wait for connection on startup, but do not recover when connection lost
-            wait: false,
-            timeout: undefined
-          },
-          connectionManagerOptions: {
-            connectionOptions: { rejectUnauthorized: false }
-          }
-        };
-      },
-      inject: [ConfigService]
     })
+
+    // RabbitMQModule.forRootAsync({
+    //   useFactory: (cs: ConfigService<BlockmlConfig>) => {
+    //     let rabbitUser =
+    //       cs.get<BlockmlConfig['blockmlRabbitUser']>('blockmlRabbitUser');
+    //     let rabbitPass =
+    //       cs.get<BlockmlConfig['blockmlRabbitPass']>('blockmlRabbitPass');
+    //     let rabbitPort =
+    //       cs.get<BlockmlConfig['blockmlRabbitPort']>('blockmlRabbitPort');
+    //     let rabbitHost =
+    //       cs.get<BlockmlConfig['blockmlRabbitHost']>('blockmlRabbitHost');
+    //     let rabbitProtocol = cs.get<BlockmlConfig['blockmlRabbitProtocol']>(
+    //       'blockmlRabbitProtocol'
+    //     );
+
+    //     return {
+    //       exchanges: [
+    //         {
+    //           name: RabbitExchangesEnum.Blockml.toString(),
+    //           type: 'direct'
+    //         }
+    //       ],
+    //       uri: [
+    //         `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
+    //       ],
+    //       connectionInitOptions: {
+    //         // wait for connection on startup, but do not recover when connection lost
+    //         wait: false,
+    //         timeout: undefined
+    //       },
+    //       connectionManagerOptions: {
+    //         connectionOptions: { rejectUnauthorized: false }
+    //       }
+    //     };
+    //   },
+    //   inject: [ConfigService]
+    // })
   ],
   controllers: [], // rabbit instead of appControllers (secure)
   providers: [Logger, ...appServices]
