@@ -10,7 +10,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/db/branches.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -34,7 +34,7 @@ export class CommitRepoController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private branchesService: BranchesService,
     private cs: ConfigService<BackendConfig>
   ) {}
@@ -94,7 +94,7 @@ export class CommitRepoController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskCommitRepoResponse>({
+      await this.rpcService.sendToDisk<ToDiskCommitRepoResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

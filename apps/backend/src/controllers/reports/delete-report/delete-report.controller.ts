@@ -26,7 +26,7 @@ import { EnvsService } from '~backend/services/db/envs.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { ReportsService } from '~backend/services/db/reports.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -50,7 +50,7 @@ export class DeleteReportController {
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
     private branchesService: BranchesService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
@@ -132,7 +132,7 @@ export class DeleteReportController {
       }
     };
 
-    await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
+    await this.rpcService.sendToDisk<ToDiskDeleteFileResponse>({
       routingKey: makeRoutingKeyToDisk({
         orgId: project.orgId,
         projectId: projectId

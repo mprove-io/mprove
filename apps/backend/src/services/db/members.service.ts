@@ -34,7 +34,7 @@ import {
 import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
-import { RabbitService } from '../rabbit.service';
+import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';
 import { BranchesService } from './branches.service';
 import { BridgesService } from './bridges.service';
@@ -46,7 +46,7 @@ export class MembersService {
   constructor(
     private tabService: TabService,
     private hashService: HashService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -288,7 +288,7 @@ export class MembersService {
           };
 
           let diskResponse =
-            await this.rabbitService.sendToDisk<ToDiskCreateDevRepoResponse>({
+            await this.rpcService.sendToDisk<ToDiskCreateDevRepoResponse>({
               routingKey: makeRoutingKeyToDisk({
                 orgId: project.orgId,
                 projectId: demoProjectId

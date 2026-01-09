@@ -101,15 +101,6 @@
         "explorer.confirmDelete": false,
         "workbench.settings.editor": "json",
         "editor.codeLens": false,
-        "cSpell.dictionaries": ["cspell-words"],
-        "cSpell.caseSensitive": false,
-        "cSpell.dictionaryDefinitions": [
-          {
-            "name": "cspell-words",
-            "path": "./.vscode/cspell-words.txt",
-            "addWords": true
-          }
-        ],
         "files.associations": {
           "*.view": "yaml",
           "*.model": "yaml",

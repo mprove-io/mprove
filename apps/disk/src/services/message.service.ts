@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { METHOD_RABBIT } from '~common/constants/top';
+import { METHOD_RPC } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { ServerError } from '~common/models/server-error';
@@ -90,7 +90,7 @@ export class MessageService {
         payload: payload,
         body: request,
         path: request.info.name,
-        method: METHOD_RABBIT,
+        method: METHOD_RPC,
         duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger
@@ -100,7 +100,7 @@ export class MessageService {
         e: e,
         body: request,
         path: request.info.name,
-        method: METHOD_RABBIT,
+        method: METHOD_RPC,
         duration: Date.now() - startTs,
         cs: this.cs,
         logger: this.logger

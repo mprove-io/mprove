@@ -244,21 +244,6 @@ export class BackendConfig {
   backendValkeyPassword?: string;
 
   @IsString()
-  backendRabbitUser?: string;
-
-  @IsString()
-  backendRabbitPass?: string;
-
-  @IsString()
-  backendRabbitProtocol?: string;
-
-  @IsString()
-  backendRabbitHost?: string;
-
-  @IsString()
-  backendRabbitPort?: string;
-
-  @IsString()
   backendPostgresDatabaseUrl?: string;
 
   @IsBoolean()

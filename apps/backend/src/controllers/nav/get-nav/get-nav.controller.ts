@@ -16,7 +16,7 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -39,7 +39,7 @@ import {
 export class GetNavController {
   constructor(
     private tabService: TabService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private modelsService: ModelsService,
@@ -180,7 +180,7 @@ export class GetNavController {
       };
 
       let diskResponse =
-        await this.rabbitService.sendToDisk<ToDiskGetCatalogNodesResponse>({
+        await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
           routingKey: makeRoutingKeyToDisk({
             orgId: resultProject.orgId,
             projectId: resultProject.projectId

@@ -27,7 +27,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -54,7 +54,7 @@ export class SyncRepoController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private modelsService: ModelsService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private structsService: StructsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -131,15 +131,16 @@ export class SyncRepoController {
       }
     };
 
-    let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskSyncRepoResponse>({
+    let diskResponse = await this.rpcService.sendToDisk<ToDiskSyncRepoResponse>(
+      {
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
         message: toDiskSyncRepoRequest,
         checkIsOk: true
-      });
+      }
+    );
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(

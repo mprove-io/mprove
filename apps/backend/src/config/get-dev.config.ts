@@ -287,21 +287,6 @@ export function getDevConfig(envFilePath: any) {
     backendValkeyPassword:
       process.env.BACKEND_VALKEY_PASSWORD || envFile.BACKEND_VALKEY_PASSWORD,
 
-    backendRabbitUser:
-      process.env.BACKEND_RABBIT_USER || envFile.BACKEND_RABBIT_USER,
-
-    backendRabbitPass:
-      process.env.BACKEND_RABBIT_PASS || envFile.BACKEND_RABBIT_PASS,
-
-    backendRabbitHost:
-      process.env.BACKEND_RABBIT_HOST || envFile.BACKEND_RABBIT_HOST,
-
-    backendRabbitPort:
-      process.env.BACKEND_RABBIT_PORT || envFile.BACKEND_RABBIT_PORT,
-
-    backendRabbitProtocol:
-      process.env.BACKEND_RABBIT_PROTOCOL || envFile.BACKEND_RABBIT_PROTOCOL,
-
     backendPostgresDatabaseUrl:
       process.env.BACKEND_POSTGRES_DATABASE_URL ||
       envFile.BACKEND_POSTGRES_DATABASE_URL,

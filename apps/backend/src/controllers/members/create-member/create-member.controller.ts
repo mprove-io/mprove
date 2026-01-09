@@ -34,7 +34,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_REPORT_ID,
@@ -101,7 +101,7 @@ export class CreateMemberController {
     private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -211,7 +211,7 @@ export class CreateMemberController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskCreateDevRepoResponse>({
+      await this.rpcService.sendToDisk<ToDiskCreateDevRepoResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

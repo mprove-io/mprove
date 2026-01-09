@@ -100,7 +100,6 @@
     "@codemirror/search": "6.5.11",
     "@codemirror/state": "6.5.2",
     "@codemirror/view": "6.36.7",
-    "@golevelup/nestjs-rabbitmq": "6.1.0",
     "groupmq": "1.1.0",
     "uuid": "11.1.0",
     "@google-cloud/bigquery": "5.12.0",

@@ -40,7 +40,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -73,7 +73,7 @@ export class SaveModifyChartController {
     private usersService: UsersService,
     private branchesService: BranchesService,
     private mconfigsService: MconfigsService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private structsService: StructsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -212,15 +212,16 @@ export class SaveModifyChartController {
       }
     };
 
-    let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskSaveFileResponse>({
+    let diskResponse = await this.rpcService.sendToDisk<ToDiskSaveFileResponse>(
+      {
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
         }),
         message: toDiskSaveFileRequest,
         checkIsOk: true
-      });
+      }
+    );
 
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(

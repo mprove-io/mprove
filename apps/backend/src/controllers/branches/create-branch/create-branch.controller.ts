@@ -24,7 +24,7 @@ import { BranchesService } from '~backend/services/db/branches.service';
 import { BridgesService } from '~backend/services/db/bridges.service';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
@@ -50,7 +50,7 @@ export class CreateBranchController {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private membersService: MembersService,
@@ -110,7 +110,7 @@ export class CreateBranchController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskCreateBranchResponse>({
+      await this.rpcService.sendToDisk<ToDiskCreateBranchResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

@@ -28,7 +28,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { UsersService } from '~backend/services/db/users.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -53,7 +53,7 @@ export class DeleteChartController {
     private usersService: UsersService,
     private modelsService: ModelsService,
     private branchesService: BranchesService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private chartsService: ChartsService,
@@ -154,7 +154,7 @@ export class DeleteChartController {
       }
     };
 
-    await this.rabbitService.sendToDisk<ToDiskDeleteFileResponse>({
+    await this.rpcService.sendToDisk<ToDiskDeleteFileResponse>({
       routingKey: makeRoutingKeyToDisk({
         orgId: project.orgId,
         projectId: projectId

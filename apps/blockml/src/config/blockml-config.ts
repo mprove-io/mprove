@@ -52,21 +52,6 @@ export class BlockmlConfig {
   blockmlValkeyPassword?: string;
 
   @IsString()
-  blockmlRabbitUser?: string;
-
-  @IsString()
-  blockmlRabbitPass?: string;
-
-  @IsString()
-  blockmlRabbitProtocol?: string;
-
-  @IsString()
-  blockmlRabbitHost?: string;
-
-  @IsString()
-  blockmlRabbitPort?: string;
-
-  @IsString()
   blockmlData?: string;
 
   @IsOptional()

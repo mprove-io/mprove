@@ -1,4 +1,3 @@
-// import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue } from 'groupmq';
@@ -6,7 +5,6 @@ import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '~backend/config/backend-config';
 import { ErEnum } from '~common/enums/er.enum';
-// import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -15,10 +13,10 @@ import { MyResponse } from '~common/interfaces/to/my-response';
 import { ServerError } from '~common/models/server-error';
 
 @Injectable()
-export class RabbitService {
-  private readonly queues = new Map<string, Queue>();
+export class RpcService {
+  queues = new Map<string, Queue>();
 
-  private redisClient: Redis;
+  redisClient: Redis;
 
   constructor(private cs: ConfigService<BackendConfig>) {
     let valkeyHost =
@@ -33,10 +31,7 @@ export class RabbitService {
       host: valkeyHost,
       port: 6379,
       password: valkeyPassword
-      // ,
-      // tls: {
-      //   rejectUnauthorized: false
-      // }
+      // , tls: { rejectUnauthorized: false }
     });
   }
 
@@ -45,8 +40,8 @@ export class RabbitService {
       let queue = new Queue({
         redis: this.redisClient,
         namespace: namespace,
-        keepCompleted: 2,
-        keepFailed: 2
+        keepCompleted: 0,
+        keepFailed: 0
       });
 
       this.queues.set(namespace, queue);
@@ -116,11 +111,6 @@ export class RabbitService {
   }) {
     let { routingKey, message, checkIsOk } = item;
 
-    // const namespace =
-    //   typeof repoId === 'string' && repoId.toUpperCase().charCodeAt(0) <= 'M'.charCodeAt(0)
-    //     ? 'rpc-disk-a-m'
-    //     : 'rpc-disk-n-z';
-
     let diskPart = 'part-1'; // TODO: calculate based on ordId
 
     let repoId = makeId(); // TODO: concat - ordId/projectId/repoId
@@ -133,13 +123,6 @@ export class RabbitService {
       payload: message,
       timeout: 30000
     });
-
-    // let response = await this.amqpConnection.request<MyResponse>({
-    //   exchange: RabbitExchangesEnum.Disk.toString(),
-    //   routingKey: routingKey,
-    //   payload: message,
-    //   timeout: 30000
-    // });
 
     if (
       checkIsOk === true &&
@@ -166,15 +149,8 @@ export class RabbitService {
       namespace: RpcNamespacesEnum.RpcBlockml.toString(),
       repoId: repoId,
       payload: message,
-      timeout: 30000
+      timeout: 15000
     });
-
-    // let response = await this.amqpConnection.request<MyResponse>({
-    //   exchange: RabbitExchangesEnum.Blockml.toString(),
-    //   routingKey: routingKey,
-    //   payload: message,
-    //   timeout: 30000
-    // });
 
     if (
       checkIsOk === true &&
@@ -188,58 +164,4 @@ export class RabbitService {
 
     return response as unknown as T;
   }
-
-  // async sendToDisk<T>(item: {
-  //   routingKey: string;
-  //   message: any;
-  //   checkIsOk?: boolean;
-  // }) {
-  //   let { routingKey, message, checkIsOk } = item;
-
-  //   let response = await this.amqpConnection.request<MyResponse>({
-  //     exchange: RabbitExchangesEnum.Disk.toString(),
-  //     routingKey: routingKey,
-  //     payload: message,
-  //     timeout: 30000
-  //   });
-
-  //   if (
-  //     checkIsOk === true &&
-  //     response.info?.status !== ResponseInfoStatusEnum.Ok
-  //   ) {
-  //     throw new ServerError({
-  //       message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
-  //       originalError: response.info?.error
-  //     });
-  //   }
-
-  //   return response as unknown as T;
-  // }
-
-  // async sendToBlockml<T>(item: {
-  //   routingKey: string;
-  //   message: any;
-  //   checkIsOk?: boolean;
-  // }) {
-  //   let { routingKey, message, checkIsOk } = item;
-
-  //   let response = await this.amqpConnection.request<MyResponse>({
-  //     exchange: RabbitExchangesEnum.Blockml.toString(),
-  //     routingKey: routingKey,
-  //     payload: message,
-  //     timeout: 30000
-  //   });
-
-  //   if (
-  //     checkIsOk === true &&
-  //     response.info?.status !== ResponseInfoStatusEnum.Ok
-  //   ) {
-  //     throw new ServerError({
-  //       message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
-  //       originalError: response.info?.error
-  //     });
-  //   }
-
-  //   return response as unknown as T;
-  // }
 }

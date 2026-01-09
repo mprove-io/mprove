@@ -21,7 +21,7 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/db/members.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -44,7 +44,7 @@ export class DeleteBranchController {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -98,7 +98,7 @@ export class DeleteBranchController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskDeleteBranchResponse>({
+      await this.rpcService.sendToDisk<ToDiskDeleteBranchResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

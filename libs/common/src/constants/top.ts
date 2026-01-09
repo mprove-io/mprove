@@ -214,7 +214,7 @@ export const PATH_CONNECTIONS = 'connections';
 export const PATH_ENVIRONMENTS = 'environments';
 export const PATH_TEAM = 'team';
 
-export const METHOD_RABBIT = 'RABBIT';
+export const METHOD_RPC = 'RPC';
 
 export const NO_FIELDS_SELECTED = 'no_fields_selected';
 

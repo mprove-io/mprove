@@ -32,8 +32,8 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
-import { RabbitService } from '~backend/services/rabbit.service';
 import { ReportDataService } from '~backend/services/report-data.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
@@ -75,7 +75,7 @@ export class SaveCreateReportController {
     private projectsService: ProjectsService,
     private structsService: StructsService,
     private branchesService: BranchesService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private reportsService: ReportsService,
     private reportDataService: ReportDataService,
@@ -246,7 +246,7 @@ export class SaveCreateReportController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskCreateFileResponse>({
+      await this.rpcService.sendToDisk<ToDiskCreateFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

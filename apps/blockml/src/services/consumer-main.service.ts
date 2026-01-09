@@ -1,5 +1,3 @@
-// import { RabbitRPC } from '@golevelup/nestjs-rabbitmq';
-// import { RabbitExchangesEnum } from '~common/enums/rabbit-exchanges.enum';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
@@ -8,7 +6,7 @@ import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-response-blockml';
 import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
-import { METHOD_RABBIT } from '~common/constants/top';
+import { METHOD_RPC } from '~common/constants/top';
 import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
 import { MyResponse } from '~common/interfaces/to/my-response';
 
@@ -20,9 +18,9 @@ interface RpcRequest {
 
 @Injectable()
 export class ConsumerMainService {
-  private redisClient: Redis;
-  private worker?: Worker;
-  private queue?: Queue;
+  redisClient: Redis;
+  worker: Worker;
+  queue: Queue;
 
   constructor(
     private rebuildStructService: RebuildStructService,
@@ -36,15 +34,11 @@ export class ConsumerMainService {
       'blockmlValkeyPassword'
     );
 
-    // the same as apps/backend/src/app.module.ts -> customThrottlerModule
     this.redisClient = new Redis({
       host: valkeyHost,
       port: 6379,
       password: valkeyPassword
-      // ,
-      // tls: {
-      //   rejectUnauthorized: false
-      // }
+      // , tls: { rejectUnauthorized: false }
     });
   }
 
@@ -76,7 +70,7 @@ export class ConsumerMainService {
               payload: payload,
               body: request,
               path: RpcNamespacesEnum.RpcBlockml,
-              method: METHOD_RABBIT,
+              method: METHOD_RPC,
               duration: Date.now() - startTs,
               cs: this.cs,
               logger: this.logger
@@ -86,7 +80,7 @@ export class ConsumerMainService {
               e,
               body: request,
               path: RpcNamespacesEnum.RpcBlockml,
-              method: METHOD_RABBIT,
+              method: METHOD_RPC,
               duration: Date.now() - startTs,
               cs: this.cs,
               logger: this.logger
@@ -112,38 +106,4 @@ export class ConsumerMainService {
       await this.worker.close();
     }
   }
-
-  // @RabbitRPC({
-  //   exchange: RabbitExchangesEnum.Blockml.toString(),
-  //   routingKey: pathRebuildStruct,
-  //   queue: pathRebuildStruct
-  // })
-  // async rebuildStruct(request: any, context: any) {
-  //   let startTs = Date.now();
-  //   try {
-  //     let payload = await this.rebuildStructService.rebuild(request);
-
-  //     return makeOkResponseBlockml({
-  //       payload: payload,
-  //       body: request,
-  //       path: pathRebuildStruct,
-  //       method: METHOD_RABBIT,
-  //       duration: Date.now() - startTs,
-  //       cs: this.cs,
-  //       logger: this.logger
-  //     });
-  //   } catch (e) {
-  //     let { resp, wrappedError } = makeErrorResponseBlockml({
-  //       e: e,
-  //       body: request,
-  //       path: pathRebuildStruct,
-  //       method: METHOD_RABBIT,
-  //       duration: Date.now() - startTs,
-  //       cs: this.cs,
-  //       logger: this.logger
-  //     });
-
-  //     return resp;
-  //   }
-  // }
 }

@@ -80,49 +80,6 @@ let jwtModule = JwtModule.registerAsync({
   })
 });
 
-// let rabbitModule = RabbitMQModule.forRootAsync({
-//   inject: [ConfigService],
-//   useFactory: (cs: ConfigService<BackendConfig>) => {
-//     let rabbitUser =
-//       cs.get<BackendConfig['backendRabbitUser']>('backendRabbitUser');
-//     let rabbitPass =
-//       cs.get<BackendConfig['backendRabbitPass']>('backendRabbitPass');
-//     let rabbitHost =
-//       cs.get<BackendConfig['backendRabbitHost']>('backendRabbitHost');
-//     let rabbitPort =
-//       cs.get<BackendConfig['backendRabbitPort']>('backendRabbitPort');
-//     let rabbitProtocol = cs.get<BackendConfig['backendRabbitProtocol']>(
-//       'backendRabbitProtocol'
-//     );
-
-//     let backendEnv = cs.get<BackendConfig['backendEnv']>('backendEnv');
-
-//     return {
-//       exchanges: [
-//         {
-//           name: RabbitExchangesEnum.Blockml.toString(),
-//           type: 'direct'
-//         },
-//         {
-//           name: RabbitExchangesEnum.Disk.toString(),
-//           type: 'direct'
-//         }
-//       ],
-//       uri: [
-//         `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
-//       ],
-//       connectionInitOptions: {
-//         // wait for connection on startup, but do not recover when connection lost
-//         wait: backendEnv === BackendEnvEnum.TEST ? true : false,
-//         timeout: backendEnv === BackendEnvEnum.TEST ? 75000 : undefined
-//       },
-//       connectionManagerOptions: {
-//         connectionOptions: { rejectUnauthorized: false }
-//       }
-//     };
-//   }
-// });
-
 let customThrottlerModule = ThrottlerModule.forRootAsync({
   inject: [ConfigService],
   useFactory: (cs: ConfigService<BackendConfig>) => {
@@ -183,7 +140,6 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     jwtModule,
     customThrottlerModule,
     PassportModule,
-    // rabbitModule,
     DrizzleModule
   ],
   controllers: appControllers,

@@ -31,7 +31,7 @@ import { MconfigsService } from './db/mconfigs.service';
 import { ModelsService } from './db/models.service';
 import { QueriesService } from './db/queries.service';
 import { ReportsService } from './db/reports.service';
-import { RabbitService } from './rabbit.service';
+import { RpcService } from './rpc.service';
 import { TabService } from './tab.service';
 
 let retry = require('async-retry');
@@ -39,7 +39,7 @@ let retry = require('async-retry');
 @Injectable()
 export class BlockmlService {
   constructor(
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private tabService: TabService,
     private envsService: EnvsService,
     private connectionsService: ConnectionsService,
@@ -142,7 +142,7 @@ export class BlockmlService {
     };
 
     let blockmlRebuildStructResponse =
-      await this.rabbitService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+      await this.rpcService.sendToBlockml<ToBlockmlRebuildStructResponse>({
         message: toBlockmlRebuildStructRequest,
         checkIsOk: true
       });

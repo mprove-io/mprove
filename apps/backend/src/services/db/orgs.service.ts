@@ -19,7 +19,7 @@ import {
 } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
 import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
-import { RabbitService } from '../rabbit.service';
+import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
@@ -29,7 +29,7 @@ export class OrgsService {
   constructor(
     private tabService: TabService,
     private hashService: HashService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -123,7 +123,7 @@ export class OrgsService {
       }
     };
 
-    await this.rabbitService.sendToDisk<ToDiskCreateOrgResponse>({
+    await this.rpcService.sendToDisk<ToDiskCreateOrgResponse>({
       routingKey: makeRoutingKeyToDisk({
         orgId: newOrg.orgId,
         projectId: undefined

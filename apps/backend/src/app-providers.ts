@@ -35,11 +35,11 @@ import { EmailService } from './services/email.service';
 import { HashService } from './services/hash.service';
 import { MalloyService } from './services/malloy.service';
 import { ParentService } from './services/parent.service';
-import { RabbitService } from './services/rabbit.service';
 import { RedisService } from './services/redis.service';
 import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
+import { RpcService } from './services/rpc.service';
 import { StoreService } from './services/store.service';
 import { TabCheckerService } from './services/tab-checker.service';
 import { TabToEntService } from './services/tab-to-ent.service';
@@ -88,7 +88,7 @@ export const appProviders = [
   HashService,
   MalloyService,
   ParentService,
-  RabbitService,
+  RpcService,
   RedisService,
   ReportDataService,
   ReportRowService,

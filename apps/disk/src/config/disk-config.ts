@@ -33,21 +33,6 @@ export class DiskConfig {
   diskValkeyPassword?: string;
 
   @IsString()
-  diskRabbitUser?: string;
-
-  @IsString()
-  diskRabbitPass?: string;
-
-  @IsString()
-  diskRabbitProtocol?: string;
-
-  @IsString()
-  diskRabbitHost?: string;
-
-  @IsString()
-  diskRabbitPort?: string;
-
-  @IsString()
   diskOrganizationsPath?: string;
 
   @IsBoolean()

@@ -49,7 +49,7 @@ import { QueriesService } from '~backend/services/db/queries.service';
 import { ReportsService } from '~backend/services/db/reports.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import {
@@ -91,7 +91,7 @@ export class SeedRecordsController {
     private hashService: HashService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private usersService: UsersService,
     private connectionsService: ConnectionsService,
     private envsService: EnvsService,
@@ -211,7 +211,7 @@ export class SeedRecordsController {
             }
           };
 
-          await this.rabbitService.sendToDisk<ToDiskCreateOrgResponse>({
+          await this.rpcService.sendToDisk<ToDiskCreateOrgResponse>({
             routingKey: makeRoutingKeyToDisk({
               orgId: newOrg.orgId,
               projectId: null
@@ -300,7 +300,7 @@ export class SeedRecordsController {
           };
 
           let diskResponse =
-            await this.rabbitService.sendToDisk<ToDiskSeedProjectResponse>({
+            await this.rpcService.sendToDisk<ToDiskSeedProjectResponse>({
               routingKey: makeRoutingKeyToDisk({
                 orgId: baseProject.orgId,
                 projectId: baseProject.projectId

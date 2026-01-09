@@ -28,45 +28,8 @@ let devConfig = getConfig(); // check error once
       load: [getConfig],
       isGlobal: true
     })
-
-    // RabbitMQModule.forRootAsync({
-    //   useFactory: (cs: ConfigService<BlockmlConfig>) => {
-    //     let rabbitUser =
-    //       cs.get<BlockmlConfig['blockmlRabbitUser']>('blockmlRabbitUser');
-    //     let rabbitPass =
-    //       cs.get<BlockmlConfig['blockmlRabbitPass']>('blockmlRabbitPass');
-    //     let rabbitPort =
-    //       cs.get<BlockmlConfig['blockmlRabbitPort']>('blockmlRabbitPort');
-    //     let rabbitHost =
-    //       cs.get<BlockmlConfig['blockmlRabbitHost']>('blockmlRabbitHost');
-    //     let rabbitProtocol = cs.get<BlockmlConfig['blockmlRabbitProtocol']>(
-    //       'blockmlRabbitProtocol'
-    //     );
-
-    //     return {
-    //       exchanges: [
-    //         {
-    //           name: RabbitExchangesEnum.Blockml.toString(),
-    //           type: 'direct'
-    //         }
-    //       ],
-    //       uri: [
-    //         `${rabbitProtocol}://${rabbitUser}:${rabbitPass}@${rabbitHost}:${rabbitPort}`
-    //       ],
-    //       connectionInitOptions: {
-    //         // wait for connection on startup, but do not recover when connection lost
-    //         wait: false,
-    //         timeout: undefined
-    //       },
-    //       connectionManagerOptions: {
-    //         connectionOptions: { rejectUnauthorized: false }
-    //       }
-    //     };
-    //   },
-    //   inject: [ConfigService]
-    // })
   ],
-  controllers: [], // rabbit instead of appControllers (secure)
+  controllers: [],
   providers: [Logger, ...appServices]
 })
 export class AppModule implements OnModuleInit {

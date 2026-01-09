@@ -27,7 +27,7 @@ import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-dis
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
 import { ErEnum } from '~common/enums/er.enum';
@@ -49,7 +49,7 @@ export class DeleteUserController {
   constructor(
     private tabService: TabService,
     private usersService: UsersService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -148,7 +148,7 @@ export class DeleteUserController {
         }
       };
 
-      await this.rabbitService.sendToDisk<ToDiskDeleteDevRepoResponse>({
+      await this.rpcService.sendToDisk<ToDiskDeleteDevRepoResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: project.projectId

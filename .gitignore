@@ -6,7 +6,6 @@ nogit/
 .nx/
 .pnpm-store/
 .vscode/*
-!.vscode/cspell-words.txt
 !.vscode/extensions.json
 !.vscode/tasks.json
 !.vscode/launch.json

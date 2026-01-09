@@ -60,17 +60,6 @@ export function getDevConfig(envFilePath: any) {
     blockmlValkeyPassword:
       process.env.BLOCKML_VALKEY_PASSWORD || envFile.BLOCKML_VALKEY_PASSWORD,
 
-    blockmlRabbitUser:
-      process.env.BLOCKML_RABBIT_USER || envFile.BLOCKML_RABBIT_USER,
-    blockmlRabbitPass:
-      process.env.BLOCKML_RABBIT_PASS || envFile.BLOCKML_RABBIT_PASS,
-    blockmlRabbitHost:
-      process.env.BLOCKML_RABBIT_HOST || envFile.BLOCKML_RABBIT_HOST,
-    blockmlRabbitPort:
-      process.env.BLOCKML_RABBIT_PORT || envFile.BLOCKML_RABBIT_PORT,
-    blockmlRabbitProtocol:
-      process.env.BLOCKML_RABBIT_PROTOCOL || envFile.BLOCKML_RABBIT_PROTOCOL,
-
     blockmlData: process.env.BLOCKML_DATA || envFile.BLOCKML_DATA,
 
     blockmlTestsDwhPostgresHost:

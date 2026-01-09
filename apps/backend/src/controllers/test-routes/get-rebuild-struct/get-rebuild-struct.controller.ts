@@ -11,7 +11,7 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/db/connections.service';
 import { EnvsService } from '~backend/services/db/envs.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '~common/enums/to/to-blockml-request-info-name.enum';
@@ -36,7 +36,7 @@ import {
 export class GetRebuildStructController {
   constructor(
     private tabService: TabService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private projectsService: ProjectsService,
     private envsService: EnvsService,
     private connectionsService: ConnectionsService,
@@ -86,7 +86,7 @@ export class GetRebuildStructController {
     };
 
     let getCatalogFilesResponse =
-      await this.rabbitService.sendToDisk<ToDiskGetCatalogFilesResponse>({
+      await this.rpcService.sendToDisk<ToDiskGetCatalogFilesResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: orgId,
           projectId: projectId
@@ -127,7 +127,7 @@ export class GetRebuildStructController {
     };
 
     let rebuildStructResponse =
-      await this.rabbitService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+      await this.rpcService.sendToBlockml<ToBlockmlRebuildStructResponse>({
         message: rebuildStructRequest,
         checkIsOk: true
       });

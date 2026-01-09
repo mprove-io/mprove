@@ -13,7 +13,7 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -38,7 +38,7 @@ export class GetRepoController {
     private membersService: MembersService,
     private modelsService: ModelsService,
     private usersService: UsersService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private structsService: StructsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -100,7 +100,7 @@ export class GetRepoController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskGetCatalogNodesResponse>({
+      await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId

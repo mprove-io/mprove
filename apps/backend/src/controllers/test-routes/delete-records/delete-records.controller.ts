@@ -36,7 +36,7 @@ import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { HashService } from '~backend/services/hash.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
@@ -61,7 +61,7 @@ export class DeleteRecordsController {
     private tabService: TabService,
     private dconfigsService: DconfigsService,
     private hashService: HashService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -132,7 +132,7 @@ export class DeleteRecordsController {
           }
         };
 
-        await this.rabbitService.sendToDisk<ToDiskDeleteOrgResponse>({
+        await this.rpcService.sendToDisk<ToDiskDeleteOrgResponse>({
           routingKey: makeRoutingKeyToDisk({
             orgId: x,
             projectId: null

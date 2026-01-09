@@ -130,7 +130,7 @@ test('1', async t => {
       }
     };
 
-    await prep.rabbitService.sendToDisk<ToDiskSeedProjectResponse>({
+    await prep.rpcService.sendToDisk<ToDiskSeedProjectResponse>({
       checkIsOk: true,
       routingKey: makeRoutingKeyToDisk({
         orgId: orgId,

@@ -12,41 +12,11 @@ services:
         source: $COMPOSE_DB_VOLUME_SOURCE_PATH
         target: /var/lib/postgresql/18/docker
 
-  clickstack:
-    image: clickhouse/clickstack-all-in-one:2.9.0
-    container_name: clickstack-all-in-one
-    ports:
-      - 8080:8080
-      - 4317:4317
-      - 4318:4318
-    environment:
-      HYPERDX_APP_URL: $COMPOSE_CLICKSTACK_HYPERDX_APP_URL
-    volumes:
-      - type: bind
-        source: $COMPOSE_CLICKSTACK_DB_VOLUME_SOURCE_PATH
-        target: /data/db
-      - type: bind
-        source: $COMPOSE_CLICKSTACK_CH_DATA_VOLUME_SOURCE_PATH
-        target: /var/lib/clickhouse
-      - type: bind
-        source: $COMPOSE_CLICKSTACK_CH_LOGS_VOLUME_SOURCE_PATH
-        target: /var/log/clickhouse-server
-
   valkey:
     image: valkey/valkey:8.1.4
     command: valkey-server --requirepass ${COMPOSE_VALKEY_PASSWORD} --save "" --appendonly no
     ports:
       - 6379:6379
-
-  rabbit:
-    image: rabbitmq:4.1.3-management
-    environment:
-      RABBITMQ_DEFAULT_USER: $COMPOSE_RABBITMQ_DEFAULT_USER
-      RABBITMQ_DEFAULT_PASS: $COMPOSE_RABBITMQ_DEFAULT_PASS
-      RABBITMQ_ERLANG_COOKIE: $COMPOSE_RABBITMQ_ERLANG_COOKIE
-    ports:
-      - 5672:5672
-      - 15672:15672
 
   calc-postgres:
     image: postgres:17.6
@@ -69,10 +39,9 @@ services:
       - 3000:3000
     depends_on:
       - db
-      - rabbit
       - valkey
       - calc-postgres
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'
+    command: sh -c 'scripts/wait-for-it.sh -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -94,9 +63,7 @@ services:
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/blockml/main.js'
+    command: sh -c 'scripts/wait-for-it.sh -- node dist/apps/blockml/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -109,9 +76,7 @@ services:
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
-    depends_on:
-      - rabbit
-    command: sh -c 'scripts/wait-for-it.sh rabbit:5672 --timeout=120 -- node dist/apps/disk/main.js'
+    command: sh -c 'scripts/wait-for-it.sh --timeout=120 -- node dist/apps/disk/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -204,6 +169,26 @@ services:
       - type: bind
         source: $COMPOSE_DWH_PRESTO_CONFIG_VOLUME_SOURCE_PATH
         target: /opt/presto-server/etc/config.properties
+
+  clickstack:
+    image: clickhouse/clickstack-all-in-one:2.9.0
+    container_name: clickstack-all-in-one
+    ports:
+      - 8080:8080
+      - 4317:4317
+      - 4318:4318
+    environment:
+      HYPERDX_APP_URL: $COMPOSE_CLICKSTACK_HYPERDX_APP_URL
+    volumes:
+      - type: bind
+        source: $COMPOSE_CLICKSTACK_DB_VOLUME_SOURCE_PATH
+        target: /data/db
+      - type: bind
+        source: $COMPOSE_CLICKSTACK_CH_DATA_VOLUME_SOURCE_PATH
+        target: /var/lib/clickhouse
+      - type: bind
+        source: $COMPOSE_CLICKSTACK_CH_LOGS_VOLUME_SOURCE_PATH
+        target: /var/log/clickhouse-server
 
 networks:
   app-network:

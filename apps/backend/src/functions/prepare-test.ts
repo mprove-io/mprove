@@ -7,7 +7,7 @@ import { BackendConfig } from '~backend/config/backend-config';
 import { getConfig } from '~backend/config/get.config';
 import { Prep } from '~backend/interfaces/prep';
 import { EmailService } from '~backend/services/email.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
 import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
@@ -68,7 +68,7 @@ export async function prepareTest(item: {
 
   let httpServer = app.getHttpServer();
 
-  let rabbitService = moduleRef.get<RabbitService>(RabbitService);
+  let rpcService = moduleRef.get<RpcService>(RpcService);
   let tabToEntService = moduleRef.get<TabToEntService>(TabToEntService);
   let logger = await moduleRef.resolve<Logger>(Logger);
   let cs = await moduleRef.resolve<ConfigService>(ConfigService);
@@ -78,7 +78,7 @@ export async function prepareTest(item: {
     app,
     httpServer,
     moduleRef,
-    rabbitService,
+    rpcService,
     tabToEntService,
     logger,
     cs
@@ -197,7 +197,7 @@ export async function prepareTestAndSeed(item: {
     app: prep1.app,
     httpServer: prep1.httpServer,
     moduleRef: prep1.moduleRef,
-    rabbitService: prep1.rabbitService,
+    rpcService: prep1.rpcService,
     tabToEntService: prep1.tabToEntService,
     logger: prep1.logger,
     cs: prep1.cs

@@ -12,7 +12,7 @@ import { MembersService } from '~backend/services/db/members.service';
 import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import { PROD_REPO_ID } from '~common/constants/top';
 import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
@@ -38,7 +38,7 @@ export class GetFileController {
     private modelsService: ModelsService,
     private branchesService: BranchesService,
     private structsService: StructsService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private bridgesService: BridgesService,
     private envsService: EnvsService
   ) {}
@@ -80,15 +80,14 @@ export class GetFileController {
       }
     };
 
-    let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskGetFileResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
-        message: toDiskGetFileRequest,
-        checkIsOk: true
-      });
+    let diskResponse = await this.rpcService.sendToDisk<ToDiskGetFileResponse>({
+      routingKey: makeRoutingKeyToDisk({
+        orgId: project.orgId,
+        projectId: projectId
+      }),
+      message: toDiskGetFileRequest,
+      checkIsOk: true
+    });
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,

@@ -35,7 +35,7 @@ import { ProjectsService } from '~backend/services/db/projects.service';
 import { QueriesService } from '~backend/services/db/queries.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
-import { RabbitService } from '~backend/services/rabbit.service';
+import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
 import {
   EMPTY_STRUCT_ID,
@@ -71,7 +71,7 @@ export class SaveCreateChartController {
     private usersService: UsersService,
     private chartsService: ChartsService,
     private branchesService: BranchesService,
-    private rabbitService: RabbitService,
+    private rpcService: RpcService,
     private structsService: StructsService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
@@ -203,7 +203,7 @@ export class SaveCreateChartController {
     };
 
     let diskResponse =
-      await this.rabbitService.sendToDisk<ToDiskCreateFileResponse>({
+      await this.rpcService.sendToDisk<ToDiskCreateFileResponse>({
         routingKey: makeRoutingKeyToDisk({
           orgId: project.orgId,
           projectId: projectId
