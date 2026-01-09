@@ -233,7 +233,9 @@ export class EditDraftDashboardController {
       queries: apiQueries
     } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
+      orgId: project.orgId,
       projectId: projectId,
+      repoId: repoId,
       structId: bridge.structId,
       diskFiles: diskFiles,
       mproveDir: currentStruct.mproveConfig.mproveDirValue,

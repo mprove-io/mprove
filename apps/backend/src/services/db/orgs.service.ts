@@ -6,7 +6,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { OrgTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ErEnum } from '~common/enums/er.enum';
 import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
 import { isUndefined } from '~common/functions/is-undefined';
@@ -124,10 +123,9 @@ export class OrgsService {
     };
 
     await this.rpcService.sendToDisk<ToDiskCreateOrgResponse>({
-      routingKey: makeRoutingKeyToDisk({
-        orgId: newOrg.orgId,
-        projectId: undefined
-      }),
+      orgId: newOrg.orgId,
+      projectId: undefined,
+      repoId: null,
       message: createOrgRequest,
       checkIsOk: true
     });

@@ -31,7 +31,6 @@ import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { structsTable } from '~backend/drizzle/postgres/schema/structs';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { DconfigsService } from '~backend/services/db/dconfigs.service';
@@ -133,10 +132,9 @@ export class DeleteRecordsController {
         };
 
         await this.rpcService.sendToDisk<ToDiskDeleteOrgResponse>({
-          routingKey: makeRoutingKeyToDisk({
-            orgId: x,
-            projectId: null
-          }),
+          orgId: x,
+          projectId: null,
+          repoId: null,
           message: deleteOrgRequest,
           checkIsOk: true
         });

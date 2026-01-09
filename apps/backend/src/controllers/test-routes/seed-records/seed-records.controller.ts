@@ -30,7 +30,6 @@ import {
   UserTab
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offset-from-now';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
@@ -212,10 +211,9 @@ export class SeedRecordsController {
           };
 
           await this.rpcService.sendToDisk<ToDiskCreateOrgResponse>({
-            routingKey: makeRoutingKeyToDisk({
-              orgId: newOrg.orgId,
-              projectId: null
-            }),
+            orgId: newOrg.orgId,
+            projectId: null,
+            repoId: null,
             message: createOrgRequest,
             checkIsOk: true
           });
@@ -301,10 +299,9 @@ export class SeedRecordsController {
 
           let diskResponse =
             await this.rpcService.sendToDisk<ToDiskSeedProjectResponse>({
-              routingKey: makeRoutingKeyToDisk({
-                orgId: baseProject.orgId,
-                projectId: baseProject.projectId
-              }),
+              orgId: baseProject.orgId,
+              projectId: baseProject.projectId,
+              repoId: PROD_REPO_ID,
               message: toDiskSeedProjectRequest,
               checkIsOk: true
             });
@@ -328,7 +325,9 @@ export class SeedRecordsController {
             queries: devQueriesApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
+            orgId: newProject.orgId,
             projectId: newProject.projectId,
+            repoId: users[0].userId,
             structId: devStructId,
             diskFiles: diskResponse.payload.files,
             mproveDir: diskResponse.payload.mproveDir,
@@ -350,7 +349,9 @@ export class SeedRecordsController {
             queries: prodQueriesApi
           } = await this.blockmlService.rebuildStruct({
             traceId: reqValid.info.traceId,
+            orgId: newProject.orgId,
             projectId: newProject.projectId,
+            repoId: PROD_REPO_ID,
             structId: prodStructId,
             diskFiles: diskResponse.payload.files,
             mproveDir: diskResponse.payload.mproveDir,

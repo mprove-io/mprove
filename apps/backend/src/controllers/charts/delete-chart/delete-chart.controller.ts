@@ -17,7 +17,6 @@ import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/db/branches.service';
@@ -155,10 +154,9 @@ export class DeleteChartController {
     };
 
     await this.rpcService.sendToDisk<ToDiskDeleteFileResponse>({
-      routingKey: makeRoutingKeyToDisk({
-        orgId: project.orgId,
-        projectId: projectId
-      }),
+      orgId: project.orgId,
+      projectId: projectId,
+      repoId: repoId,
       message: toDiskDeleteFileRequest,
       checkIsOk: true
     });

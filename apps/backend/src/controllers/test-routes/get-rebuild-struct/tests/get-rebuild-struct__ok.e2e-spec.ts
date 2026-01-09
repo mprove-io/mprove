@@ -1,6 +1,5 @@
 import test from 'ava';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 import { sendToBackend } from '~backend/functions/send-to-backend';
 import { Prep } from '~backend/interfaces/prep';
@@ -132,10 +131,9 @@ test('1', async t => {
 
     await prep.rpcService.sendToDisk<ToDiskSeedProjectResponse>({
       checkIsOk: true,
-      routingKey: makeRoutingKeyToDisk({
-        orgId: orgId,
-        projectId: null
-      }),
+      orgId: orgId,
+      projectId: null,
+      repoId: null,
       message: toDiskSeedProjectReq
     });
 

@@ -56,8 +56,10 @@ export class BlockmlService {
 
   async rebuildStruct(item: {
     traceId: string;
+    orgId: string;
     projectId: string;
     structId: string;
+    repoId: string;
     envId: string;
     diskFiles: DiskCatalogFile[];
     mproveDir: string;
@@ -73,6 +75,8 @@ export class BlockmlService {
     let {
       traceId,
       structId,
+      repoId,
+      orgId,
       projectId,
       envId,
       diskFiles,
@@ -143,6 +147,9 @@ export class BlockmlService {
 
     let blockmlRebuildStructResponse =
       await this.rpcService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
         message: toBlockmlRebuildStructRequest,
         checkIsOk: true
       });

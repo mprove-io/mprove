@@ -8,12 +8,8 @@ import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-re
 import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
 import { METHOD_RPC } from '~common/constants/top';
 import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
+import { RpcRequestData } from '~common/interfaces/rpc-request-data';
 import { MyResponse } from '~common/interfaces/to/my-response';
-
-interface RpcRequest {
-  message: any;
-  replyTo: string;
-}
 
 @Injectable()
 export class ConsumerMainService {
@@ -51,7 +47,7 @@ export class ConsumerMainService {
       queue: this.queue,
       concurrency: 10,
       handler: async job => {
-        let { message, replyTo } = job.data as RpcRequest;
+        let { message, replyTo } = job.data as RpcRequestData;
 
         let response: MyResponse;
 

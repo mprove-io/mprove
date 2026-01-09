@@ -11,7 +11,6 @@ import {
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
 import { ErEnum } from '~common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
@@ -200,10 +199,9 @@ export class ProjectsService {
 
     let diskResponse =
       await this.rpcService.sendToDisk<ToDiskCreateProjectResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: orgId,
-          projectId: projectId
-        }),
+        orgId: orgId,
+        projectId: projectId,
+        repoId: null,
         message: toDiskCreateProjectRequest,
         checkIsOk: true
       });
@@ -259,7 +257,9 @@ export class ProjectsService {
 
     await this.blockmlService.rebuildStruct({
       traceId,
+      orgId: newProject.orgId,
       projectId: newProject.projectId,
+      repoId: PROD_REPO_ID,
       structId: prodStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,
@@ -271,7 +271,9 @@ export class ProjectsService {
 
     await this.blockmlService.rebuildStruct({
       traceId,
+      orgId: newProject.orgId,
       projectId: newProject.projectId,
+      repoId: user.userId,
       structId: devStructId,
       diskFiles: diskResponse.payload.prodFiles,
       mproveDir: diskResponse.payload.mproveDir,

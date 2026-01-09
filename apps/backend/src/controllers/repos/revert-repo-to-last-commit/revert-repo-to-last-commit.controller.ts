@@ -16,7 +16,6 @@ import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -116,10 +115,9 @@ export class RevertRepoToLastCommitController {
 
     let diskResponse =
       await this.rpcService.sendToDisk<ToDiskRevertRepoToLastCommitResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
         message: toDiskRevertRepoToLastCommitRequest,
         checkIsOk: true
       });
@@ -138,7 +136,9 @@ export class RevertRepoToLastCommitController {
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
+          orgId: project.orgId,
           projectId: projectId,
+          repoId: repoId,
           structId: structId,
           diskFiles: diskResponse.payload.files,
           mproveDir: diskResponse.payload.mproveDir,

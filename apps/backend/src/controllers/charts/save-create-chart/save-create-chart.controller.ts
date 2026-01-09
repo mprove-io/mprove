@@ -20,7 +20,6 @@ import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '~backend/functions/check-model-access';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeChartFileText } from '~backend/functions/make-chart-file-text';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -204,10 +203,9 @@ export class SaveCreateChartController {
 
     let diskResponse =
       await this.rpcService.sendToDisk<ToDiskCreateFileResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
         message: toDiskCreateFileRequest,
         checkIsOk: true
       });
@@ -251,7 +249,9 @@ export class SaveCreateChartController {
       struct: tempStruct
     } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
+      orgId: project.orgId,
       projectId: projectId,
+      repoId: repoId,
       structId: bridge.structId,
       diskFiles: diskFiles,
       mproveDir: currentStruct.mproveConfig.mproveDirValue,

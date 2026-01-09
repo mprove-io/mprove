@@ -18,7 +18,6 @@ import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -168,10 +167,9 @@ export class SpecialRebuildStructsController {
 
         let getCatalogFilesResponse =
           await this.rpcService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-            routingKey: makeRoutingKeyToDisk({
-              orgId: project.orgId,
-              projectId: project.projectId
-            }),
+            orgId: project.orgId,
+            projectId: project.projectId,
+            repoId: bridge.repoId,
             message: toDiskGetCatalogFilesRequest,
             checkIsOk: false
           });
@@ -186,7 +184,9 @@ export class SpecialRebuildStructsController {
 
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
+          orgId: project.orgId,
           projectId: project.projectId,
+          repoId: bridge.repoId,
           structId: structId,
           diskFiles: getCatalogFilesResponse.payload.files,
           mproveDir: getCatalogFilesResponse.payload.mproveDir,

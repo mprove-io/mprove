@@ -20,7 +20,6 @@ import { envsTable } from '~backend/drizzle/postgres/schema/envs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/db/members.service';
@@ -80,10 +79,9 @@ export class DeleteProjectController {
 
     let diskResponse =
       await this.rpcService.sendToDisk<ToDiskDeleteProjectResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: null,
         message: toDiskDeleteProjectRequest,
         checkIsOk: true
       });

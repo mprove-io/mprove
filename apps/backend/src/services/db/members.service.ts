@@ -15,7 +15,6 @@ import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeFullName } from '~backend/functions/make-full-name';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -289,10 +288,9 @@ export class MembersService {
 
           let diskResponse =
             await this.rpcService.sendToDisk<ToDiskCreateDevRepoResponse>({
-              routingKey: makeRoutingKeyToDisk({
-                orgId: project.orgId,
-                projectId: demoProjectId
-              }),
+              orgId: project.orgId,
+              projectId: demoProjectId,
+              repoId: user.userId,
               message: toDiskCreateDevRepoRequest,
               checkIsOk: true
             });
@@ -341,7 +339,9 @@ export class MembersService {
 
               await this.blockmlService.rebuildStruct({
                 traceId,
+                orgId: project.orgId,
                 projectId: demoProjectId,
+                repoId: user.userId,
                 structId,
                 diskFiles: diskResponse.payload.files,
                 mproveDir: diskResponse.payload.mproveDir,

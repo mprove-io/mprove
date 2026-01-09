@@ -23,7 +23,6 @@ import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
@@ -149,10 +148,9 @@ export class DeleteUserController {
       };
 
       await this.rpcService.sendToDisk<ToDiskDeleteDevRepoResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: project.projectId
-        }),
+        orgId: project.orgId,
+        projectId: project.projectId,
+        repoId: user.userId,
         message: toDiskDeleteDevRepoRequest,
         checkIsOk: true
       });

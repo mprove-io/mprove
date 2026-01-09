@@ -3,14 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
 import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
+import { RpcRequestData } from '~common/interfaces/rpc-request-data';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { DiskConfig } from '~disk/config/disk-config';
 import { MessageService } from './message.service';
-
-interface RpcRequest {
-  message: any;
-  replyTo: string;
-}
 
 @Injectable()
 export class ConsumerService {
@@ -49,7 +45,7 @@ export class ConsumerService {
       queue: this.queue,
       concurrency: 1,
       handler: async job => {
-        let { message, replyTo } = job.data as RpcRequest;
+        let { message, replyTo } = job.data as RpcRequestData;
 
         let response: MyResponse =
           await this.messageService.processMessage(message);

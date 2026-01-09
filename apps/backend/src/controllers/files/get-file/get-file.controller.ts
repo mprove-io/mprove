@@ -2,7 +2,6 @@ import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BranchesService } from '~backend/services/db/branches.service';
@@ -81,10 +80,9 @@ export class GetFileController {
     };
 
     let diskResponse = await this.rpcService.sendToDisk<ToDiskGetFileResponse>({
-      routingKey: makeRoutingKeyToDisk({
-        orgId: project.orgId,
-        projectId: projectId
-      }),
+      orgId: project.orgId,
+      projectId: projectId,
+      repoId: repoId,
       message: toDiskGetFileRequest,
       checkIsOk: true
     });

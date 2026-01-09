@@ -8,7 +8,6 @@ import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { MembersService } from '~backend/services/db/members.service';
@@ -181,10 +180,9 @@ export class GetNavController {
 
       let diskResponse =
         await this.rpcService.sendToDisk<ToDiskGetCatalogNodesResponse>({
-          routingKey: makeRoutingKeyToDisk({
-            orgId: resultProject.orgId,
-            projectId: resultProject.projectId
-          }),
+          orgId: resultProject.orgId,
+          projectId: resultProject.projectId,
+          repoId: bridge.repoId,
           message: toDiskGetCatalogNodesRequest,
           checkIsOk: true
         });

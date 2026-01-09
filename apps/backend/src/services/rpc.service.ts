@@ -7,8 +7,7 @@ import { BackendConfig } from '~backend/config/backend-config';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
+import { RpcRequestData } from '~common/interfaces/rpc-request-data';
 import { MyResponse } from '~common/interfaces/to/my-response';
 import { ServerError } from '~common/models/server-error';
 
@@ -52,15 +51,13 @@ export class RpcService {
 
   async request<T extends MyResponse>(item: {
     namespace: string;
+    orgId: string;
+    projectId: string;
     repoId: string;
-    payload: any;
-    timeout?: number;
+    message: any;
+    timeout: number;
   }): Promise<T> {
-    let { namespace, repoId, payload, timeout } = item;
-
-    if (isUndefined(timeout)) {
-      timeout = 30000;
-    }
+    let { namespace, orgId, projectId, repoId, message, timeout } = item;
 
     let correlationId = uuidv4();
 
@@ -72,13 +69,14 @@ export class RpcService {
 
     await sub.subscribe(replyTo);
 
+    let data: RpcRequestData = {
+      message: message,
+      replyTo: replyTo
+    };
+
     await queue.add({
-      groupId: `repo:${repoId}`,
-      data: {
-        payload,
-        correlationId,
-        replyTo
-      }
+      groupId: `repo:${orgId}-${projectId}-${repoId}`,
+      data: data
     });
 
     return new Promise<T>((resolve, reject) => {
@@ -104,51 +102,21 @@ export class RpcService {
     });
   }
 
-  async sendToDisk<T>(item: {
-    routingKey: string;
-    message: any;
-    checkIsOk?: boolean;
-  }) {
-    let { routingKey, message, checkIsOk } = item;
-
-    let diskPart = 'part-1'; // TODO: calculate based on ordId
-
-    let repoId = makeId(); // TODO: concat - ordId/projectId/repoId
-
-    let namespace = `${RpcNamespacesEnum.RpcDisk}-${diskPart}`;
-
-    let response = await this.request<MyResponse>({
-      namespace: namespace,
-      repoId: repoId,
-      payload: message,
-      timeout: 30000
-    });
-
-    if (
-      checkIsOk === true &&
-      response.info?.status !== ResponseInfoStatusEnum.Ok
-    ) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
-        originalError: response.info?.error
-      });
-    }
-
-    return response as unknown as T;
-  }
-
   async sendToBlockml<T>(item: {
+    orgId: string;
+    projectId: string;
+    repoId: string;
     message: any;
     checkIsOk?: boolean;
   }) {
-    let { message, checkIsOk } = item;
-
-    let repoId = makeId(); // TODO: concat - ordId/projectId/repoId
+    let { message, orgId, projectId, repoId, checkIsOk } = item;
 
     let response = await this.request<MyResponse>({
       namespace: RpcNamespacesEnum.RpcBlockml.toString(),
+      orgId: orgId,
+      projectId: projectId,
       repoId: repoId,
-      payload: message,
+      message: message,
       timeout: 15000
     });
 
@@ -158,6 +126,41 @@ export class RpcService {
     ) {
       throw new ServerError({
         message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_BLOCKML,
+        originalError: response.info?.error
+      });
+    }
+
+    return response as unknown as T;
+  }
+
+  async sendToDisk<T>(item: {
+    orgId: string;
+    projectId: string;
+    repoId: string;
+    message: any;
+    checkIsOk?: boolean;
+  }) {
+    let { orgId, projectId, repoId, message, checkIsOk } = item;
+
+    let diskPart = 'part-1'; // TODO: calculate based on orgId
+
+    let namespace = `${RpcNamespacesEnum.RpcDisk}-${diskPart}`;
+
+    let response = await this.request<MyResponse>({
+      namespace: namespace,
+      orgId: orgId,
+      projectId: projectId,
+      repoId: repoId,
+      message: message,
+      timeout: 30000
+    });
+
+    if (
+      checkIsOk === true &&
+      response.info?.status !== ResponseInfoStatusEnum.Ok
+    ) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_ERROR_RESPONSE_FROM_DISK,
         originalError: response.info?.error
       });
     }

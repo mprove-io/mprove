@@ -5,7 +5,6 @@ import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockml-files';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { ConnectionsService } from '~backend/services/db/connections.service';
@@ -87,10 +86,9 @@ export class GetRebuildStructController {
 
     let getCatalogFilesResponse =
       await this.rpcService.sendToDisk<ToDiskGetCatalogFilesResponse>({
-        routingKey: makeRoutingKeyToDisk({
-          orgId: orgId,
-          projectId: projectId
-        }),
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
         message: toDiskGetCatalogFilesRequest,
         checkIsOk: true
       });
@@ -128,6 +126,9 @@ export class GetRebuildStructController {
 
     let rebuildStructResponse =
       await this.rpcService.sendToBlockml<ToBlockmlRebuildStructResponse>({
+        orgId: orgId,
+        projectId: projectId,
+        repoId: repoId,
         message: rebuildStructRequest,
         checkIsOk: true
       });

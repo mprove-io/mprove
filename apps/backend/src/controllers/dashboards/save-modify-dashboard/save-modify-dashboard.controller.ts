@@ -19,7 +19,6 @@ import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeDashboardFileText } from '~backend/functions/make-dashboard-file-text';
-import { makeRoutingKeyToDisk } from '~backend/functions/make-routing-key-to-disk';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { BlockmlService } from '~backend/services/blockml.service';
@@ -290,10 +289,9 @@ export class SaveModifyDashboardController {
 
     let diskResponse = await this.rpcService.sendToDisk<ToDiskSaveFileResponse>(
       {
-        routingKey: makeRoutingKeyToDisk({
-          orgId: project.orgId,
-          projectId: projectId
-        }),
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: repoId,
         message: toDiskSaveFileRequest,
         checkIsOk: true
       }
@@ -344,7 +342,9 @@ export class SaveModifyDashboardController {
       models: apiModels
     } = await this.blockmlService.rebuildStruct({
       traceId: traceId,
+      orgId: project.orgId,
       projectId: projectId,
+      repoId: repoId,
       structId: bridge.structId,
       diskFiles: diskFiles,
       mproveDir: currentStruct.mproveConfig.mproveDirValue,
