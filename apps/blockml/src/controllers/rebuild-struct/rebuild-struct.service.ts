@@ -100,9 +100,11 @@ export class RebuildStructService {
     private logger: Logger
   ) {}
 
-  async rebuild(request: any) {
+  async rebuild(item: { body: any }) {
+    let { body } = item;
+
     if (
-      request.info?.name !== ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
+      body.info?.name !== ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct
     ) {
       throw new ServerError({
         message: ErEnum.BLOCKML_WRONG_REQUEST_INFO_NAME
@@ -111,7 +113,7 @@ export class RebuildStructService {
 
     let reqValid = transformValidSync({
       classType: ToBlockmlRebuildStructRequest,
-      object: request,
+      object: body,
       errorMessage: ErEnum.BLOCKML_WRONG_REQUEST_PARAMS,
       logIsJson:
         this.cs.get<BlockmlConfig['blockmlLogIsJson']>('blockmlLogIsJson'),

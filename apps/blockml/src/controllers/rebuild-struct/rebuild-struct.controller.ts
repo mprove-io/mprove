@@ -17,8 +17,11 @@ export class RebuildStructController {
   @Post(ToBlockmlRequestInfoNameEnum.ToBlockmlRebuildStruct)
   async rebuildStruct(@Req() request: any, @Body() body: any) {
     let startTs = Date.now();
+
     try {
-      let payload = await this.structService.rebuild(body);
+      let payload = await this.structService.rebuild({
+        body: body
+      });
 
       return makeOkResponseBlockml({
         body: body,

@@ -8,8 +8,7 @@ import { DiskConfig } from '~disk/config/disk-config';
 import { MessageService } from './message.service';
 
 interface RpcRequest {
-  payload: any;
-  correlationId: string;
+  message: any;
   replyTo: string;
 }
 
@@ -50,16 +49,12 @@ export class ConsumerService {
       queue: this.queue,
       concurrency: 1,
       handler: async job => {
-        let {
-          payload: request,
-          correlationId,
-          replyTo
-        } = job.data as RpcRequest;
+        let { message, replyTo } = job.data as RpcRequest;
 
         let response: MyResponse =
-          await this.messageService.processMessage(request);
+          await this.messageService.processMessage(message);
 
-        if (replyTo && correlationId) {
+        if (replyTo) {
           await this.redisClient.publish(replyTo, JSON.stringify(response));
         }
       }

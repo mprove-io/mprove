@@ -81,15 +81,15 @@ export class MessageService {
     private logger: Logger
   ) {}
 
-  async processMessage(request: any) {
+  async processMessage(body: any) {
     let startTs = Date.now();
     try {
-      let payload = await this.processSwitch(request);
+      let payload = await this.processSwitch(body);
 
       return makeOkResponseDisk({
         payload: payload,
-        body: request,
-        path: request.info.name,
+        body: body,
+        path: body.info.name,
         method: METHOD_RPC,
         duration: Date.now() - startTs,
         cs: this.cs,
@@ -98,8 +98,8 @@ export class MessageService {
     } catch (e) {
       let { resp, wrappedError } = makeErrorResponseDisk({
         e: e,
-        body: request,
-        path: request.info.name,
+        body: body,
+        path: body.info.name,
         method: METHOD_RPC,
         duration: Date.now() - startTs,
         cs: this.cs,

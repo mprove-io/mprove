@@ -11,8 +11,7 @@ import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
 import { MyResponse } from '~common/interfaces/to/my-response';
 
 interface RpcRequest {
-  payload: any;
-  correlationId: string;
+  message: any;
   replyTo: string;
 }
 
@@ -50,13 +49,9 @@ export class ConsumerMainService {
 
     this.worker = new Worker({
       queue: this.queue,
-      concurrency: 1,
+      concurrency: 10,
       handler: async job => {
-        let {
-          payload: request,
-          correlationId,
-          replyTo
-        } = job.data as RpcRequest;
+        let { message, replyTo } = job.data as RpcRequest;
 
         let response: MyResponse;
 
@@ -64,11 +59,13 @@ export class ConsumerMainService {
           let startTs = Date.now();
 
           try {
-            let payload = await this.rebuildStructService.rebuild(request);
+            let payload = await this.rebuildStructService.rebuild({
+              body: message
+            });
 
             response = makeOkResponseBlockml({
               payload: payload,
-              body: request,
+              body: message,
               path: RpcNamespacesEnum.RpcBlockml,
               method: METHOD_RPC,
               duration: Date.now() - startTs,
@@ -78,7 +75,7 @@ export class ConsumerMainService {
           } catch (e) {
             let { resp, wrappedError } = makeErrorResponseBlockml({
               e,
-              body: request,
+              body: message,
               path: RpcNamespacesEnum.RpcBlockml,
               method: METHOD_RPC,
               duration: Date.now() - startTs,
@@ -92,7 +89,7 @@ export class ConsumerMainService {
           throw error;
         }
 
-        if (replyTo && correlationId) {
+        if (replyTo) {
           await this.redisClient.publish(replyTo, JSON.stringify(response));
         }
       }
