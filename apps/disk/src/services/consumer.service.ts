@@ -34,11 +34,11 @@ export class ConsumerService {
   }
 
   async onModuleInit() {
-    let diskPart = this.cs.get<DiskConfig['diskPart']>('diskPart');
+    let diskShard = this.cs.get<DiskConfig['diskShard']>('diskShard');
 
     this.queue = new Queue({
       redis: this.redisClient,
-      namespace: `${RpcNamespacesEnum.RpcDisk}-${diskPart}`
+      namespace: `${RpcNamespacesEnum.RpcDisk}-${diskShard}`
     });
 
     this.worker = new Worker({

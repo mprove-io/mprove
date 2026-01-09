@@ -4,6 +4,7 @@ import { Queue } from 'groupmq';
 import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '~backend/config/backend-config';
+import { calculateDiskShard } from '~backend/functions/calculate-disk-shard';
 import { ErEnum } from '~common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
 import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
@@ -13,11 +14,16 @@ import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class RpcService {
+  totalDiskShards: number;
+
   queues = new Map<string, Queue>();
 
   redisClient: Redis;
 
   constructor(private cs: ConfigService<BackendConfig>) {
+    this.totalDiskShards =
+      this.cs.get<BackendConfig['totalDiskShards']>('totalDiskShards');
+
     let valkeyHost =
       this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
 
@@ -142,9 +148,12 @@ export class RpcService {
   }) {
     let { orgId, projectId, repoId, message, checkIsOk } = item;
 
-    let diskPart = 'part-1'; // TODO: calculate based on orgId
+    let diskShard = calculateDiskShard({
+      orgId: orgId,
+      totalDiskShards: this.totalDiskShards
+    });
 
-    let namespace = `${RpcNamespacesEnum.RpcDisk}-${diskPart}`;
+    let namespace = `${RpcNamespacesEnum.RpcDisk}-${diskShard}`;
 
     let response = await this.request<MyResponse>({
       namespace: namespace,

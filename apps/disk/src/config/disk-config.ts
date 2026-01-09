@@ -24,7 +24,7 @@ export class DiskConfig {
   aesKey?: string;
 
   @IsString()
-  diskPart?: string;
+  diskShard?: string;
 
   @IsString()
   diskValkeyHost?: string;

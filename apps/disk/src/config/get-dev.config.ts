@@ -32,7 +32,7 @@ export function getDevConfig(envFilePath: any) {
 
     aesKey: process.env.DISK_AES_KEY || envFile.DISK_AES_KEY,
 
-    diskPart: process.env.DISK_PART || envFile.DISK_PART,
+    diskShard: process.env.DISK_SHARD || envFile.DISK_SHARD,
 
     diskValkeyHost: process.env.DISK_VALKEY_HOST || envFile.DISK_VALKEY_HOST,
 

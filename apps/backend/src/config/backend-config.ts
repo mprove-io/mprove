@@ -52,6 +52,9 @@ export class BackendConfig {
   @IsString()
   prevAesKeyTag?: string;
 
+  @IsNumber()
+  totalDiskShards?: number;
+
   @IsBoolean()
   isScheduler?: boolean;
 

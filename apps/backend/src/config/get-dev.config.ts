@@ -59,6 +59,12 @@ export function getDevConfig(envFilePath: any) {
     prevAesKeyTag:
       process.env.BACKEND_PREV_AES_KEY_TAG || envFile.BACKEND_PREV_AES_KEY_TAG,
 
+    totalDiskShards: isDefined(process.env.BACKEND_TOTAL_DISK_SHARDS)
+      ? Number(process.env.BACKEND_TOTAL_DISK_SHARDS)
+      : isDefined(envFile.BACKEND_TOTAL_DISK_SHARDS)
+        ? Number(envFile.BACKEND_TOTAL_DISK_SHARDS)
+        : undefined,
+
     isScheduler: enumToBoolean({
       value: process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER,
       name: 'BACKEND_IS_SCHEDULER'
