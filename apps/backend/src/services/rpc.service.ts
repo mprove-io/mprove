@@ -81,7 +81,7 @@ export class RpcService {
     };
 
     await queue.add({
-      groupId: `repo:${orgId}-${projectId}-${repoId}`,
+      groupId: `repo:${repoId}-${projectId}-${orgId}`,
       data: data
     });
 
