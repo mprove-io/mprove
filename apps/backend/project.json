@@ -71,7 +71,7 @@
       "options": {
         "commands": [
           "nx build-tests backend",
-          "ava --concurrency=4 --config=ava-js-e2e.config.js dist/tests/backend/apps/backend/**/*.e2e-spec.js"
+          "ava --concurrency=5 --config=ava-js-e2e.config.js dist/tests/backend/apps/backend/**/*.e2e-spec.js"
         ],
         "parallel": false
       }
