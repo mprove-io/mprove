@@ -88,7 +88,7 @@ export class RpcService {
     return new Promise<T>((resolve, reject) => {
       let timer = setTimeout(() => {
         sub.quit();
-        reject(new Error(`RPC timeout after ${timeout}ms`));
+        reject(new Error(`RPC timeout after ${timeout} ms`));
       }, timeout);
 
       sub.on('message', (channel, message) => {
@@ -101,7 +101,7 @@ export class RpcService {
             let response = JSON.parse(message) as T;
             resolve(response);
           } catch {
-            reject(new Error('Invalid response format'));
+            reject(new Error('RPC invalid response format'));
           }
         }
       });
