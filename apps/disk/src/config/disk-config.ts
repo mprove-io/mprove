@@ -1,4 +1,10 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString
+} from 'class-validator';
 import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
 
 export class DiskConfig {
@@ -25,6 +31,9 @@ export class DiskConfig {
 
   @IsString()
   diskShard?: string;
+
+  @IsNumber()
+  diskConcurrency?: number;
 
   @IsString()
   diskValkeyHost?: string;

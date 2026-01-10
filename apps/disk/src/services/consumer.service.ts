@@ -41,9 +41,12 @@ export class ConsumerService {
       namespace: `${RpcNamespacesEnum.RpcDisk}-${diskShard}`
     });
 
+    let diskConcurrency =
+      this.cs.get<DiskConfig['diskConcurrency']>('diskConcurrency');
+
     this.worker = new Worker({
       queue: this.queue,
-      concurrency: 1,
+      concurrency: diskConcurrency,
       handler: async job => {
         let { message, replyTo } = job.data as RpcRequestData;
 

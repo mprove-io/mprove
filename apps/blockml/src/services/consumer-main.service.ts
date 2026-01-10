@@ -45,7 +45,7 @@ export class ConsumerMainService {
 
     this.worker = new Worker({
       queue: this.queue,
-      concurrency: 10,
+      concurrency: 1,
       handler: async job => {
         let { message, replyTo } = job.data as RpcRequestData;
 

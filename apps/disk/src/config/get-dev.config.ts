@@ -34,6 +34,12 @@ export function getDevConfig(envFilePath: any) {
 
     diskShard: process.env.DISK_SHARD || envFile.DISK_SHARD,
 
+    diskConcurrency: isDefined(process.env.DISK_CONCURRENCY)
+      ? Number(process.env.DISK_CONCURRENCY)
+      : isDefined(envFile.DISK_CONCURRENCY)
+        ? Number(envFile.DISK_CONCURRENCY)
+        : undefined,
+
     diskValkeyHost: process.env.DISK_VALKEY_HOST || envFile.DISK_VALKEY_HOST,
 
     diskValkeyPassword:
