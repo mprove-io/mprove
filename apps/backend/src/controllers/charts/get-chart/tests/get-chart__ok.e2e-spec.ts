@@ -53,7 +53,9 @@ test('1', async t => {
             'demoProjectDwhPostgresHost'
           ),
           port: 5436,
-          username: 'postgres',
+          username: prepTest.cs.get<
+            BackendConfig['demoProjectDwhPostgresUser']
+          >('demoProjectDwhPostgresUser'),
           password: prepTest.cs.get<
             BackendConfig['demoProjectDwhPostgresPassword']
           >('demoProjectDwhPostgresPassword'),

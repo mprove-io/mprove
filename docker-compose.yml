@@ -122,14 +122,15 @@ services:
     image: ghcr.io/mprove-io/mprove-dwh-postgres:$MPROVE_DWH_POSTGRES_TAG
     environment:
       POSTGRES_PASSWORD: $COMPOSE_DWH_POSTGRES_PASSWORD
-      PGDATA: $COMPOSE_DWH_POSTGRES_PGDATA
+      READ_USER: $COMPOSE_DWH_POSTGRES_READ_USER
+      READ_PASSWORD: $COMPOSE_DWH_POSTGRES_READ_PASSWORD
       PGPORT: 5436
     ports:
       - 5436:5436
     volumes:
       - type: bind
         source: $COMPOSE_DWH_POSTGRES_VOLUME_SOURCE_PATH
-        target: /var/lib/postgresql/data
+        target: /var/lib/postgresql/18/docker
 
   dwh-mysql:
     build:

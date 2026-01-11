@@ -116,7 +116,7 @@ test('1', async t => {
                   host: 'dwh-postgres',
                   port: 5436,
                   database: 'p_db',
-                  username: 'postgres',
+                  username: config.mproveCliTestDwhPostgresUser,
                   password: config.mproveCliTestDwhPostgresPassword,
                   isSSL: false
                 }

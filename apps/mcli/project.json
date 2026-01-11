@@ -48,7 +48,7 @@
       "options": {
         "commands": [
           "nx build-tests mcli",
-          "ava --config=ava-js-e2e.config.js dist/tests/mcli/apps/mcli/**/*.e2e-spec.js"
+          "ava --concurrency=5 --config=ava-js-e2e.config.js dist/tests/mcli/apps/mcli/**/*.e2e-spec.js"
         ],
         "parallel": false
       }

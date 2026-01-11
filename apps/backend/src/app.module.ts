@@ -607,7 +607,9 @@ export class AppModule implements OnModuleInit {
             ),
             port: 5436,
             database: 'p_db',
-            username: 'postgres',
+            username: this.cs.get<BackendConfig['demoProjectDwhPostgresUser']>(
+              'demoProjectDwhPostgresUser'
+            ),
             password: demoProjectDwhPostgresPassword,
             isSSL: false
           }

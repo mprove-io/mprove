@@ -146,6 +146,10 @@ export function getDevConfig(envFilePath: any) {
       process.env.BACKEND_DEMO_PROJECT_DWH_POSTGRES_HOST ||
       envFile.BACKEND_DEMO_PROJECT_DWH_POSTGRES_HOST,
 
+    demoProjectDwhPostgresUser:
+      process.env.BACKEND_DEMO_PROJECT_DWH_POSTGRES_USER ||
+      envFile.BACKEND_DEMO_PROJECT_DWH_POSTGRES_USER,
+
     demoProjectDwhPostgresPassword:
       process.env.BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD ||
       envFile.BACKEND_DEMO_PROJECT_DWH_POSTGRES_PASSWORD,

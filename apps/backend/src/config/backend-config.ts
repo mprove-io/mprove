@@ -130,6 +130,10 @@ export class BackendConfig {
 
   @IsOptional()
   @IsString()
+  demoProjectDwhPostgresUser?: string;
+
+  @IsOptional()
+  @IsString()
   demoProjectDwhPostgresPassword?: string;
 
   // @IsOptional()

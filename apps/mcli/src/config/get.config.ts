@@ -59,6 +59,10 @@ export function getConfig(envPath?: string) {
       process.env.MPROVE_CLI_TEST_PASS_PHRASE ||
       envFile.MPROVE_CLI_TEST_PASS_PHRASE,
 
+    mproveCliTestDwhPostgresUser:
+      process.env.MPROVE_CLI_TEST_DWH_POSTGRES_USER ||
+      envFile.MPROVE_CLI_TEST_DWH_POSTGRES_USER,
+
     mproveCliTestDwhPostgresPassword:
       process.env.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD ||
       envFile.MPROVE_CLI_TEST_DWH_POSTGRES_PASSWORD

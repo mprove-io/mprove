@@ -40,5 +40,9 @@ export class McliConfig {
 
   @IsString()
   @IsOptional()
+  mproveCliTestDwhPostgresUser?: string;
+
+  @IsString()
+  @IsOptional()
   mproveCliTestDwhPostgresPassword?: string;
 }
