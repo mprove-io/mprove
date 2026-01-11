@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:18.0
+    image: postgres:18.1
     environment:
       POSTGRES_DB: $COMPOSE_DB_POSTGRES_DB
       POSTGRES_USER: $COMPOSE_DB_POSTGRES_USER
@@ -19,12 +19,16 @@ services:
       - 6379:6379
 
   calc-postgres:
-    image: postgres:17.6
+    image: postgres:18.1
     environment:
       POSTGRES_PASSWORD: $COMPOSE_CALC_POSTGRES_PASSWORD
+      CALC_USER: $COMPOSE_CALC_USER
+      CALC_PASSWORD: $COMPOSE_CALC_PASSWORD
       PGPORT: 5437
     ports:
       - 5437:5437
+    volumes:
+      - ./scripts/docker-compose/init-calc-user.sh:/docker-entrypoint-initdb.d/init-calc-user.sh
 
   backend:
     build:

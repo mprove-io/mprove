@@ -125,6 +125,7 @@ export class DocService {
         port: this.cs.get<BackendConfig['calcPostgresPort']>(
           'calcPostgresPort'
         ),
+        database: 'postgres',
         user: this.cs.get<BackendConfig['calcPostgresUsername']>(
           'calcPostgresUsername'
         ),
