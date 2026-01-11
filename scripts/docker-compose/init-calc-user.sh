@@ -2,14 +2,17 @@
 set -euo pipefail
 
 psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "postgres" <<-EOSQL
+    -- Create or update the restricted calculation user
     DO \$\$
     BEGIN
-        IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '$CALC_USER') THEN
-            CREATE ROLE "$CALC_USER"
-                WITH LOGIN
-                PASSWORD '$CALC_PASSWORD'
-                NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
-        END IF;
+        CREATE ROLE "$CALC_USER"
+            WITH LOGIN
+            PASSWORD '$CALC_PASSWORD'
+            NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS;
+    EXCEPTION WHEN duplicate_object THEN
+        ALTER ROLE "$CALC_USER"
+            WITH LOGIN
+            PASSWORD '$CALC_PASSWORD';
     END
     \$\$;
 
@@ -23,4 +26,4 @@ psql -v ON_ERROR_STOP=1 --username "postgres" --dbname "postgres" <<-EOSQL
     REVOKE EXECUTE ON FUNCTION pg_catalog.pg_stat_get_activity FROM "$CALC_USER";
 EOSQL
 
-echo "User '$CALC_USER' created successfully."
+echo "User '$CALC_USER' created or updated successfully."
