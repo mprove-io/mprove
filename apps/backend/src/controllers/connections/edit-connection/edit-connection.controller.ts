@@ -119,6 +119,8 @@ export class EditConnectionController {
       }
     }
 
+    connection.options = options;
+
     let branchBridges = await this.db.drizzle.query.bridgesTable.findMany({
       where: and(
         eq(bridgesTable.projectId, projectId),
