@@ -15,6 +15,8 @@ import { ServerError } from '~common/models/server-error';
 @Injectable()
 export class RpcService {
   totalDiskShards: number;
+  rpcDiskTimeoutMs: number;
+  rpcBlockmlTimeoutMs: number;
 
   queues = new Map<string, Queue>();
 
@@ -23,6 +25,13 @@ export class RpcService {
   constructor(private cs: ConfigService<BackendConfig>) {
     this.totalDiskShards =
       this.cs.get<BackendConfig['totalDiskShards']>('totalDiskShards');
+
+    this.rpcDiskTimeoutMs =
+      this.cs.get<BackendConfig['rpcDiskTimeoutMs']>('rpcDiskTimeoutMs');
+
+    this.rpcBlockmlTimeoutMs = this.cs.get<
+      BackendConfig['rpcBlockmlTimeoutMs']
+    >('rpcBlockmlTimeoutMs');
 
     let valkeyHost =
       this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
@@ -132,7 +141,7 @@ export class RpcService {
       projectId: projectId,
       repoId: repoId,
       message: message,
-      timeout: 15000
+      timeout: this.rpcBlockmlTimeoutMs
     });
 
     if (
@@ -170,7 +179,7 @@ export class RpcService {
       projectId: projectId,
       repoId: repoId,
       message: message,
-      timeout: 30000
+      timeout: this.rpcDiskTimeoutMs
     });
 
     if (

@@ -55,6 +55,12 @@ export class BackendConfig {
   @IsNumber()
   totalDiskShards?: number;
 
+  @IsNumber()
+  rpcDiskTimeoutMs?: number;
+
+  @IsNumber()
+  rpcBlockmlTimeoutMs?: number;
+
   @IsBoolean()
   isScheduler?: boolean;
 

@@ -65,6 +65,18 @@ export function getDevConfig(envFilePath: any) {
         ? Number(envFile.BACKEND_TOTAL_DISK_SHARDS)
         : undefined,
 
+    rpcDiskTimeoutMs: isDefined(process.env.BACKEND_RPC_DISK_TIMEOUT_MS)
+      ? Number(process.env.BACKEND_RPC_DISK_TIMEOUT_MS)
+      : isDefined(envFile.BACKEND_RPC_DISK_TIMEOUT_MS)
+        ? Number(envFile.BACKEND_RPC_DISK_TIMEOUT_MS)
+        : undefined,
+
+    rpcBlockmlTimeoutMs: isDefined(process.env.BACKEND_RPC_BLOCKML_TIMEOUT_MS)
+      ? Number(process.env.BACKEND_RPC_BLOCKML_TIMEOUT_MS)
+      : isDefined(envFile.BACKEND_RPC_BLOCKML_TIMEOUT_MS)
+        ? Number(envFile.BACKEND_RPC_BLOCKML_TIMEOUT_MS)
+        : undefined,
+
     isScheduler: enumToBoolean({
       value: process.env.BACKEND_IS_SCHEDULER || envFile.BACKEND_IS_SCHEDULER,
       name: 'BACKEND_IS_SCHEDULER'
