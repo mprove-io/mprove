@@ -2,11 +2,13 @@
 
 [Website](https://mprove.io) | [Docs](https://docs.mprove.io)
 
-Mprove - All Metrics in One Place.
+Mprove is an Open Source Business Intelligence with [Malloy Semantic Layer](https://www.malloydata.dev/)
 
-Mprove is a Business Intelligence tool powered by [Malloy](https://www.malloydata.dev/)
+## Deploy to Kubernetes cluster using Helm Chart
 
-## Local Deploy using docker-compose (MacOS / Windows WSL / Linux)
+See README in [mprove-helm-charts](https://github.com/mprove-io/mprove-helm-charts)
+
+## Deploy using docker-compose (MacOS / Linux / Windows WSL)
 
 #### 1. Clone github repo to local `mprove` directory
 
