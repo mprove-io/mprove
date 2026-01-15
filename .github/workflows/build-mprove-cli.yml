@@ -41,14 +41,14 @@ jobs:
             extension: tar.gz
 
           # Linux arm64
-          - runner: ubuntu-24.04-arm
-            os: linux
-            arch: arm64
-            build: pnpm build:mcli
-            pkg: |
-              pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
-              pnpm shx mv bin/mprove mprove
-            extension: tar.gz
+          # - runner: ubuntu-24.04-arm
+          #   os: linux
+          #   arch: arm64
+          #   build: pnpm build:mcli
+          #   pkg: |
+          #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
+          #     pnpm shx mv bin/mprove mprove
+          #   extension: tar.gz
 
           # Windows amd64
           - runner: windows-latest
