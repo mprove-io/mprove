@@ -70,7 +70,7 @@ jobs:
 
   build-arm:
     needs: extract-version
-    runs-on: r2
+    runs-on: ubuntu-24.04-arm
     strategy:
       max-parallel: 1
       matrix:
