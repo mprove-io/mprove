@@ -84,41 +84,41 @@ importers:
         specifier: 1.2.3
         version: 1.2.3
       '@malloydata/db-bigquery':
-        specifier: 0.0.334
-        version: 0.0.334(encoding@0.1.13)
+        specifier: 0.0.335
+        version: 0.0.335(encoding@0.1.13)
       '@malloydata/db-duckdb':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/db-mysql':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/db-postgres':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/db-snowflake':
-        specifier: 0.0.334
-        version: 0.0.334(asn1.js@5.4.1)(encoding@0.1.13)
+        specifier: 0.0.335
+        version: 0.0.335(asn1.js@5.4.1)(encoding@0.1.13)
       '@malloydata/db-trino':
-        specifier: 0.0.334
-        version: 0.0.334(encoding@0.1.13)
+        specifier: 0.0.335
+        version: 0.0.335(encoding@0.1.13)
       '@malloydata/malloy':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/malloy-filter':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/malloy-interfaces':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/malloy-query-builder':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/malloy-tag':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@malloydata/render':
-        specifier: 0.0.334
-        version: 0.0.334
+        specifier: 0.0.335
+        version: 0.0.335
       '@nest-lab/throttler-storage-redis':
         specifier: 1.1.0
         version: 1.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/throttler@6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2))(ioredis@5.8.2)(reflect-metadata@0.2.2)
@@ -2879,52 +2879,52 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@malloydata/db-bigquery@0.0.334':
-    resolution: {integrity: sha512-Uo2kyuq6rLoUM9j9/zTTnbBPAcJ67nf63kADYRtKmpuWU/WFdSQUi305ZwtJBOy2Zyl7HSCVivr/qK3kp8GNnw==}
+  '@malloydata/db-bigquery@0.0.335':
+    resolution: {integrity: sha512-uZSEzMGQaEhslRzeFL8VVtP0Cmfh4PUPKjgb9WwgAMtU+UHUV0j5X6Wg6jg4KFLSWjuC3xP3Ogj4mJcXXzQoiQ==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-duckdb@0.0.334':
-    resolution: {integrity: sha512-FrFIydFq/2tmgTzJx9eCrbiREYuOK7xDm8FPpD/oRf5ibCr6k6tXvD+qyQnBq5L++nid1wqmk3ggYODY8gHwUw==}
+  '@malloydata/db-duckdb@0.0.335':
+    resolution: {integrity: sha512-dss48bZo0NWNiWs1vPCdD/9REN/EGlXeJ82ZK8Lo6AD+cefWw09294Z8btQwtN2qL7TXjKPoS+NVKd2DWKt29Q==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-mysql@0.0.334':
-    resolution: {integrity: sha512-pU72wEXhxz4dBPLRFk/qxD5TRrqCU75hZOSB7Q4DPPwv/Mt+bJ8Bw9jh0/7mxTeEY7z2uUovrBv4KJ2x+aigZg==}
+  '@malloydata/db-mysql@0.0.335':
+    resolution: {integrity: sha512-GxpWq5+LoSlSlgzF3ISIKXtNAIn2TzwBhnom56A+V+RqO2274WSxckKgvy1RwgOP2a7ohm4MmFFQKSpgpyIlNg==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-postgres@0.0.334':
-    resolution: {integrity: sha512-8iuIFNeITYOPjXSBV7JSzAiNmXBeDofTxOM9NIJsfaj0nc6H3OPMcucuvLnKna1ie1umYJAnk3wyMxAi0HrG9g==}
+  '@malloydata/db-postgres@0.0.335':
+    resolution: {integrity: sha512-h0JDTVt6vVXR+lZyNtAJe7R5Que6NRfp9aTnaf3f022B0rmlUa0d6ZM+LYkYd1u5MHtTGpQ2a6s3+/FmxQ/BDg==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-snowflake@0.0.334':
-    resolution: {integrity: sha512-oNbKhmjVcv+WgEyDadW6NgcRkxjRlf+atg9OMlX+J6DYyrGDZFFNqnyp3QmzQrlkB0B+HAejWEaupsEzp3/B4A==}
+  '@malloydata/db-snowflake@0.0.335':
+    resolution: {integrity: sha512-alr7h5wDzRDhJi+NziEuxCILh2TZrRmQT46fDO7sm8LjTHxDJjpzS0NaD1pC4VD26FPxYJ1FZHpSlIGnbd20ug==}
     engines: {node: '>=20'}
 
-  '@malloydata/db-trino@0.0.334':
-    resolution: {integrity: sha512-YYsid2U+txYjStkM/9QVXaTkAI5in2yHPrlE4WdJDwWXPSkeoFKGD6ZruoemhZlT4TwIzFukDrnGehtrf1Ko8A==}
+  '@malloydata/db-trino@0.0.335':
+    resolution: {integrity: sha512-uik4lgsrZLiC7GiSBWRrJBC15n8x+SOVOKGQK8anqu1P+vy1gZzabrZoiONbFxr7P/DUOnyaLY7+NdAf7jZFUQ==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-filter@0.0.334':
-    resolution: {integrity: sha512-yPPrcsSKsvWQcT7bJbRS7USmNtRjFuVYVEAB2Wur4u1V47B+QSZ7rYuW6eJbRX6LkOdx+kvyHwOMiO/SI+AaAg==}
+  '@malloydata/malloy-filter@0.0.335':
+    resolution: {integrity: sha512-tHzSMGetJbPaM/gqd/E5NXbSB4fWgLzmMqArdUPpHgZPzTqzoaCAxKCj70MuRNb765NCkKQ6gl/ROWv6Du907w==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-interfaces@0.0.334':
-    resolution: {integrity: sha512-Bwud0LmMhAcp5DPlMEnIzNvtxI8PihqxJKX11vX03Hn/k5t17OUMPHxHECWpNn5fXeR56f3c5PBJkgL6lEKSWg==}
+  '@malloydata/malloy-interfaces@0.0.335':
+    resolution: {integrity: sha512-eaE9hq+Loc3YYUbF9nLDVKqhMvY6birMWR9x/jyJ4hBFZvkPwB/a1h3l2diEHTd+YZQ5BTeqWKpN8K5fqyN5xw==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-query-builder@0.0.334':
-    resolution: {integrity: sha512-mFfNgraSHvwLbUQjS5KcPz4M9HJgDM5mjR7WZWWZkpEQfGpCvXwdXQ74swOFJ6mrt0TFXuVm/nZzyHc+qKsb9A==}
+  '@malloydata/malloy-query-builder@0.0.335':
+    resolution: {integrity: sha512-xzBdw5QzeyYpxQLMTCUuIcA7ULmwXtlM+YfejbMWXI0JdDc4QcrFMbuBT4ly6hDQ9DLhA7LUATdD9tWylrY4jQ==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy-tag@0.0.334':
-    resolution: {integrity: sha512-TqbtN7Vn5VpUq1/pTd+zI81FF8b0pVrv4dhLpmb9xIFYl8qGNF56O+4Rx58r47w5iJ0mw1kZTxc2wmizwyonlQ==}
+  '@malloydata/malloy-tag@0.0.335':
+    resolution: {integrity: sha512-bYN3QVjsXTAwhyN64ZfRES0uouoz1tvuKJ3hFrrl9TDYWrQbDVlW6xGqNY+j2Mvi99M6OP14FiIMdqb9HPlizg==}
     engines: {node: '>=20'}
 
-  '@malloydata/malloy@0.0.334':
-    resolution: {integrity: sha512-Y6zSqS+OP5K7yS7VpL8syFFkM5CwG/Ai6Ddnb0PDVhKWkk8ncgGfUgCApbfi+nh2Lpdg7AOBMVjhMDebabZEFg==}
+  '@malloydata/malloy@0.0.335':
+    resolution: {integrity: sha512-9gsM27d127+uoXNly1Yh2RyHDOliAQ6kyIrsh1eS2027OIy2ozVwApkpkzrBiKOlDkNlNlz4npyCZsOFIpDohg==}
     engines: {node: '>=20'}
 
-  '@malloydata/render@0.0.334':
-    resolution: {integrity: sha512-sTA6i1SyG1CH2mdEZUR5yYhyDcV8GUwxxCR2VsTBRTkawxaI/f4iH3DMk1dYHjkl5MtvNSU2ym9mK8Dida6NqQ==}
+  '@malloydata/render@0.0.335':
+    resolution: {integrity: sha512-8SBQi+M9EDuEaKt0+74fgHVNJGR/W67TFYCD5tp3V1LhDVlwghaJnE+Ecc6/nHHTHnsYWl39n3HnQb7xeUWbXA==}
     engines: {node: '>=20'}
 
   '@mapbox/node-pre-gyp@1.0.11':
@@ -10776,6 +10776,11 @@ packages:
     peerDependencies:
       asn1.js: ^5.4.1
 
+  snowflake-sdk@2.3.3:
+    resolution: {integrity: sha512-ILuI762MUjbWZ2COzdCewtrU5ANKVWQWfJnz2UNhwgLVpbl/rHZg4ZfMTiSkcS6Qqos7qSD4FK6gORaOaCQNSQ==}
+    peerDependencies:
+      asn1.js: ^5.4.1
+
   sockjs@0.3.24:
     resolution: {integrity: sha512-GJgLTZ7vYb/JtPSSZ10hsOYIvEYsjbNU+zPdIHcUaWVNUEPivzxku31865sSSud0Da0W4lEeOPlmw93zLQchuQ==}
 
@@ -15057,48 +15062,48 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@malloydata/db-bigquery@0.0.334(encoding@0.1.13)':
+  '@malloydata/db-bigquery@0.0.335(encoding@0.1.13)':
     dependencies:
       '@google-cloud/bigquery': 7.9.4(encoding@0.1.13)
       '@google-cloud/common': 5.0.2(encoding@0.1.13)
       '@google-cloud/paginator': 5.0.2
-      '@malloydata/malloy': 0.0.334
+      '@malloydata/malloy': 0.0.335
       gaxios: 4.3.3(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
       - supports-color
 
-  '@malloydata/db-duckdb@0.0.334':
+  '@malloydata/db-duckdb@0.0.335':
     dependencies:
       '@duckdb/duckdb-wasm': 1.33.1-dev13.0
       '@duckdb/node-api': 1.4.3-r.1
-      '@malloydata/malloy': 0.0.334
+      '@malloydata/malloy': 0.0.335
       '@motherduck/wasm-client': 0.6.6(apache-arrow@17.0.0)
       apache-arrow: 17.0.0
       web-worker: 1.5.0
 
-  '@malloydata/db-mysql@0.0.334':
+  '@malloydata/db-mysql@0.0.335':
     dependencies:
-      '@malloydata/malloy': 0.0.334
+      '@malloydata/malloy': 0.0.335
       '@types/node': 22.7.5
       fastestsmallesttextencoderdecoder: 1.0.22
       luxon: 3.7.2
       mysql2: 3.11.3
 
-  '@malloydata/db-postgres@0.0.334':
+  '@malloydata/db-postgres@0.0.335':
     dependencies:
-      '@malloydata/malloy': 0.0.334
+      '@malloydata/malloy': 0.0.335
       '@types/pg': 8.11.10
       pg: 8.13.0
       pg-query-stream: 4.2.3(pg@8.13.0)
     transitivePeerDependencies:
       - pg-native
 
-  '@malloydata/db-snowflake@0.0.334(asn1.js@5.4.1)(encoding@0.1.13)':
+  '@malloydata/db-snowflake@0.0.335(asn1.js@5.4.1)(encoding@0.1.13)':
     dependencies:
-      '@malloydata/malloy': 0.0.334
+      '@malloydata/malloy': 0.0.335
       generic-pool: 3.9.0
-      snowflake-sdk: 2.3.1(asn1.js@5.4.1)(encoding@0.1.13)
+      snowflake-sdk: 2.3.3(asn1.js@5.4.1)(encoding@0.1.13)
       toml: 3.0.0
     transitivePeerDependencies:
       - asn1.js
@@ -15107,9 +15112,9 @@ snapshots:
       - encoding
       - supports-color
 
-  '@malloydata/db-trino@0.0.334(encoding@0.1.13)':
+  '@malloydata/db-trino@0.0.335(encoding@0.1.13)':
     dependencies:
-      '@malloydata/malloy': 0.0.334
+      '@malloydata/malloy': 0.0.335
       '@prestodb/presto-js-client': 1.0.1
       gaxios: 4.3.3(encoding@0.1.13)
       luxon: 3.7.2
@@ -15119,34 +15124,34 @@ snapshots:
       - encoding
       - supports-color
 
-  '@malloydata/malloy-filter@0.0.334':
+  '@malloydata/malloy-filter@0.0.335':
     dependencies:
       jest-diff: 29.7.0
       luxon: 3.7.2
       moo: 0.5.2
       nearley: 2.20.1
 
-  '@malloydata/malloy-interfaces@0.0.334':
+  '@malloydata/malloy-interfaces@0.0.335':
     dependencies:
       '@creditkarma/thrift-server-core': 1.0.4
 
-  '@malloydata/malloy-query-builder@0.0.334':
+  '@malloydata/malloy-query-builder@0.0.335':
     dependencies:
-      '@malloydata/malloy-filter': 0.0.334
-      '@malloydata/malloy-interfaces': 0.0.334
-      '@malloydata/malloy-tag': 0.0.334
+      '@malloydata/malloy-filter': 0.0.335
+      '@malloydata/malloy-interfaces': 0.0.335
+      '@malloydata/malloy-tag': 0.0.335
 
-  '@malloydata/malloy-tag@0.0.334':
+  '@malloydata/malloy-tag@0.0.335':
     dependencies:
       antlr4ts: 0.5.0-alpha.4
       assert: 2.1.0
       uuid: 8.3.2
 
-  '@malloydata/malloy@0.0.334':
+  '@malloydata/malloy@0.0.335':
     dependencies:
-      '@malloydata/malloy-filter': 0.0.334
-      '@malloydata/malloy-interfaces': 0.0.334
-      '@malloydata/malloy-tag': 0.0.334
+      '@malloydata/malloy-filter': 0.0.335
+      '@malloydata/malloy-interfaces': 0.0.335
+      '@malloydata/malloy-tag': 0.0.335
       antlr4ts: 0.5.0-alpha.4
       assert: 2.1.0
       jaro-winkler: 0.2.8
@@ -15155,11 +15160,11 @@ snapshots:
       luxon: 3.7.2
       uuid: 8.3.2
 
-  '@malloydata/render@0.0.334':
+  '@malloydata/render@0.0.335':
     dependencies:
-      '@malloydata/malloy': 0.0.334
-      '@malloydata/malloy-interfaces': 0.0.334
-      '@malloydata/malloy-tag': 0.0.334
+      '@malloydata/malloy': 0.0.335
+      '@malloydata/malloy-interfaces': 0.0.335
+      '@malloydata/malloy-tag': 0.0.335
       '@tanstack/solid-virtual': 3.13.13(solid-js@1.9.10)
       lodash: 4.17.21
       luxon: 3.7.2
@@ -24366,6 +24371,50 @@ snapshots:
       fastest-levenshtein: 1.0.16
       generic-pool: 3.9.0
       glob: 10.5.0
+      google-auth-library: 10.5.0
+      https-proxy-agent: 7.0.6
+      jsonwebtoken: 9.0.3
+      mime-types: 2.1.35
+      moment: 2.30.1
+      moment-timezone: 0.5.48
+      oauth4webapi: 3.8.3
+      open: 7.4.2
+      simple-lru-cache: 0.0.2
+      toml: 3.0.0
+      uuid: 8.3.2
+      winston: 3.14.2
+    transitivePeerDependencies:
+      - aws-crt
+      - debug
+      - encoding
+      - supports-color
+
+  snowflake-sdk@2.3.3(asn1.js@5.4.1)(encoding@0.1.13):
+    dependencies:
+      '@aws-crypto/sha256-js': 5.2.0
+      '@aws-sdk/client-s3': 3.957.0
+      '@aws-sdk/client-sts': 3.957.0
+      '@aws-sdk/credential-provider-node': 3.957.0
+      '@aws-sdk/ec2-metadata-service': 3.957.0
+      '@azure/identity': 4.13.0
+      '@azure/storage-blob': 12.26.0
+      '@google-cloud/storage': 7.18.0(encoding@0.1.13)
+      '@smithy/node-http-handler': 4.4.7
+      '@smithy/protocol-http': 5.3.7
+      '@smithy/signature-v4': 5.3.7
+      '@techteamer/ocsp': 1.0.1
+      asn1.js: 5.4.1
+      asn1.js-rfc2560: 5.0.1(asn1.js@5.4.1)
+      asn1.js-rfc5280: 3.0.0
+      axios: 1.13.1
+      big-integer: 1.6.52
+      bignumber.js: 9.3.1
+      bn.js: 5.2.2
+      browser-request: 0.3.3
+      expand-tilde: 2.0.2
+      fast-xml-parser: 4.5.3
+      fastest-levenshtein: 1.0.16
+      generic-pool: 3.9.0
       google-auth-library: 10.5.0
       https-proxy-agent: 7.0.6
       jsonwebtoken: 9.0.3
