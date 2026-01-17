@@ -97,6 +97,14 @@ services:
     ports:
       - 3003:80
 
+  maintenance:
+    build:
+      context: ./
+      dockerfile: setup-docker/maintenance.Dockerfile
+    image: ghcr.io/mprove-io/mprove-maintenance:$MPROVE_MAINTENANCE_TAG
+    ports:
+      - 3005:80
+
   mcli:
     build:
       context: ./
