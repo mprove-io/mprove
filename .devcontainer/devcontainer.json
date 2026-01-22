@@ -17,7 +17,10 @@
     "source=mprove-pnpm-store,target=${containerWorkspaceFolder}/.pnpm-store,type=volume",
     "source=mprove-dist,target=${containerWorkspaceFolder}/dist,type=volume",
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
-    "source=mprove-tmp,target=${containerWorkspaceFolder}/tmp,type=volume"
+    "source=mprove-tmp,target=${containerWorkspaceFolder}/tmp,type=volume",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude,target=/root/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude.json,target=/root/.claude.json,type=bind,consistency=cached",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.claude.json.backup,target=/root/.claude.json.backup,type=bind,consistency=cached"
   ],
   "initializeCommand": "bash .devcontainer/init.sh",
   "postCreateCommand": "bash .devcontainer/post-create.sh",

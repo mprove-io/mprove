@@ -26,3 +26,7 @@ RUN apt-get install -y sqlite3
 RUN chsh -s /bin/zsh root \
   && chsh -s /bin/zsh node    
 
+RUN npm install -g @anthropic-ai/claude-code
+
+
+
