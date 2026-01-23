@@ -73,7 +73,7 @@ BACKEND_SEND_EMAIL_FROM_NAME=
 #### 6. Run docker images
 
 ```
-docker-compose up --pull db calc-postgres valkey backend blockml disk front
+docker-compose up --no-build db calc-postgres valkey backend blockml disk front
 ```
 
 #### 7. Login

@@ -5,9 +5,6 @@
     "baseUrl": ".",
     "paths": {
       "~disk/*": ["./src/*"],
-      //
-      "@mprove/common": ["../../libs/common/src/_index.ts"],
-      "@mprove/node-common": ["../../libs/node-common/src/_index.ts"],
       // for build-tests
       "~common/*": ["../../libs/common/src/*"],
       "~node-common/*": ["../../libs/node-common/src/*"]

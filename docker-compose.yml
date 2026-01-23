@@ -45,7 +45,7 @@ services:
       - db
       - valkey
       - calc-postgres
-    command: sh -c 'scripts/wait-for-it.sh -- scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'
+    command: sh -c 'scripts/wait-for-it.sh db:5432 --timeout=120 -- node dist/apps/backend/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -67,7 +67,7 @@ services:
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
-    command: sh -c 'scripts/wait-for-it.sh -- node dist/apps/blockml/main.js'
+    command: sh -c 'node dist/apps/blockml/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH
@@ -80,7 +80,7 @@ services:
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - $ENV_FILE_PATH
-    command: sh -c 'scripts/wait-for-it.sh --timeout=120 -- node dist/apps/disk/main.js'
+    command: sh -c 'node dist/apps/disk/main.js'
     volumes:
       - type: bind
         source: $ENV_FILE_SOURCE_PATH

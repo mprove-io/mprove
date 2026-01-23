@@ -6,12 +6,8 @@
     "baseUrl": ".",
     "paths": {
       "~front/*": ["./src/*"],
-      //
       "~api-to-backend/*": ["../../libs/api-to-backend/src/*"],
-      "~common/*": ["../../libs/common/src/*"],
-      //
-      "@mprove/api-to-backend": ["../../libs/api-to-backend/src/_index.ts"],
-      "@mprove/common": ["../../libs/common/src/_index.ts"]
+      "~common/*": ["../../libs/common/src/*"]
     }
   },
   "angularCompilerOptions": {

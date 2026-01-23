@@ -36,7 +36,19 @@ cd /mprove && dist/apps/mcli/bin/mprove version
 
 # left terminal
 
-c -f docker-compose.yml -f docker-compose.lab.yml build backend && \
+c build backend && \
+c build blockml && \
+c build disk && \
+c build front && \
+c build mcli
+
+c build dwh-postgres && \
+c build dwh-mysql
+
+c push dwh-postgres && \
+c push dwh-mysql
+
+<!-- c -f docker-compose.yml -f docker-compose.lab.yml build backend && \
 c -f docker-compose.yml -f docker-compose.lab.yml build blockml && \
 c -f docker-compose.yml -f docker-compose.lab.yml build disk && \
 c -f docker-compose.yml -f docker-compose.lab.yml build front && \
@@ -52,4 +64,4 @@ c -f docker-compose.yml -f docker-compose.lab.yml build dwh-postgres && \
 c -f docker-compose.yml -f docker-compose.lab.yml build dwh-mysql
 
 c -f docker-compose.yml -f docker-compose.lab.yml push dwh-postgres
-c -f docker-compose.yml -f docker-compose.lab.yml push dwh-mysql
+c -f docker-compose.yml -f docker-compose.lab.yml push dwh-mysql -->

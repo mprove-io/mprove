@@ -5,7 +5,6 @@
     "baseUrl": ".",
     "paths": {
       "~node-common/*": ["./src/*"],
-      "@mprove/common": ["../common/src/_index.ts"],
       "~common/*": ["../common/src/*"]
     }
   },

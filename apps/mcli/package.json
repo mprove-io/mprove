@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "11.0.95",
+  "version": "11.0.96-dev",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.27.0",
@@ -56,8 +56,6 @@
     "~blockml": "dist/tests/blockml/apps/blockml/src",
     "~disk": "dist/tests/disk/apps/disk/src",
     "~mcli": "dist/tests/mcli/apps/mcli/src",
-    "@mprove/common": "dist/tests/common/libs/common/src/_index",
-    "@mprove/node-common": "dist/tests/node-common/libs/node-common/src/_index",
     "~common": "dist/tests/common/libs/common/src",
     "~node-common": "dist/tests/node-common/libs/node-common/src"
   },

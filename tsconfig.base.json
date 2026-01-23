@@ -30,10 +30,7 @@
       "~front/*": ["apps/front/src/*"],
       //
       "~common/*": ["libs/common/src/*"],
-      "~node-common/*": ["libs/node-common/src/*"],
-      //
-      "@mprove/common": ["libs/common/src/_index.ts"],
-      "@mprove/node-common": ["libs/node-common/src/_index.ts"]
+      "~node-common/*": ["libs/node-common/src/*"]
     }
   },
   "include": ["**/*.ts"],

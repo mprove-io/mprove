@@ -5,10 +5,6 @@
     "baseUrl": ".",
     "paths": {
       "~mcli/*": ["./src/*"],
-      //
-      "@mprove/api-to-backend": ["../../libs/api-to-backend/src/_index.ts"],
-      "@mprove/common": ["../../libs/common/src/_index.ts"],
-      "@mprove/node-common": ["../../libs/node-common/src/_index.ts"],
       // for build-tests
       "~api-to-backend/*": ["../../libs/api-to-backend/src/*"],
       "~common/*": ["../../libs/common/src/*"],
