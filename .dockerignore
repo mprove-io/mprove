@@ -3,6 +3,7 @@ nogit/
 
 .git
 .angular/
+.claude/
 .devcontainer/
 .nx/
 .pnpm-store/
