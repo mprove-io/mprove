@@ -161,6 +161,9 @@ importers:
       '@ngneat/overview':
         specifier: 7.0.0
         version: 7.0.0(@angular/core@21.1.0(@angular/compiler@21.1.0)(rxjs@7.8.1)(zone.js@0.16.0))
+      '@opencode-ai/sdk':
+        specifier: 1.1.35
+        version: 1.1.35
       '@opentelemetry/api':
         specifier: 1.9.0
         version: 1.9.0
@@ -3584,6 +3587,9 @@ packages:
 
   '@open-wc/dedupe-mixin@1.4.0':
     resolution: {integrity: sha512-Sj7gKl1TLcDbF7B6KUhtvr+1UCxdhMbNY5KxdU5IfMFWqL8oy1ZeAcCANjoB1TL0AJTcPmcCFsCbHf8X2jGDUA==}
+
+  '@opencode-ai/sdk@1.1.35':
+    resolution: {integrity: sha512-1RfjXvc5nguurpGXyKk8aJ4Rb3ix1IZ5V7itPB3SMq7c6OkmbE/5wzN2KUT9zATWj7ZDjmShkxEjvkRsOhodtw==}
 
   '@opentelemetry/api-logs@0.208.0':
     resolution: {integrity: sha512-CjruKY9V6NMssL/T1kAFgzosF1v9o6oeN+aX5JB/C/xPNtmgIJqcXHG7fA82Ou1zCpWGl4lROQUKwUNE1pMCyg==}
@@ -16252,6 +16258,8 @@ snapshots:
       - debug
 
   '@open-wc/dedupe-mixin@1.4.0': {}
+
+  '@opencode-ai/sdk@1.1.35': {}
 
   '@opentelemetry/api-logs@0.208.0':
     dependencies:

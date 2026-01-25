@@ -1,15 +1,18 @@
 {
+  "model": "opus",
+  "defaultMode": "plan",
+  "alwaysThinkingEnabled": true,
   "permissions": {
-    "allow": ["Read", "Edit", "Write", "Bash(git status)", "Bash(ls:*)"],
-    "ask": [
-      "Bash",
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
       "Grep",
       "Glob",
-      "NotebookEdit",
-      "WebFetch",
-      "WebSearch",
-      "Task"
+      "Bash(git status)",
+      "Bash(ls:*)"
     ],
+    "ask": ["Bash", "NotebookEdit", "WebFetch", "WebSearch", "Task"],
     "deny": [
       "Read(./_nogit/**)",
       "Read(./.angular/**)",
@@ -44,8 +47,11 @@
       "Edit(./secrets/**)",
       "Edit(./setup-docker/data/**)",
       "Edit(./tmp/**)",
+      "Edit(./.dockerignore)",
       "Edit(./.env)",
       "Edit(./.envrc)",
+      "Edit(./.gitattributes)",
+      "Edit(./.gitignore)",
 
       "Write(./_nogit/**)",
       "Write(./.angular/**)",
@@ -62,8 +68,11 @@
       "Write(./secrets/**)",
       "Write(./setup-docker/data/**)",
       "Write(./tmp/**)",
+      "Write(./.dockerignore)",
       "Write(./.env)",
-      "Write(./.envrc)"
+      "Write(./.envrc)",
+      "Write(./.gitattributes)",
+      "Write(./.gitignore)"
     ]
   }
 }

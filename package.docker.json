@@ -33,6 +33,7 @@
     "@codemirror/state": "6.5.2",
     "@codemirror/view": "6.36.7",
     "groupmq": "1.1.0",
+    "@opencode-ai/sdk": "1.1.35",
     "uuid": "11.1.0",
     "@google-cloud/bigquery": "5.12.0",
     "@katoid/angular-grid-layout": "3.1.0",
