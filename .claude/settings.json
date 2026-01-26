@@ -10,7 +10,9 @@
       "Grep",
       "Glob",
       "Bash(git status)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)"
     ],
     "ask": ["Bash", "NotebookEdit", "WebFetch", "WebSearch", "Task"],
     "deny": [
