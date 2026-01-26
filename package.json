@@ -249,6 +249,7 @@
     "@nx/js": "22.3.3",
     "@nx/webpack": "22.3.3",
     "@nx/workspace": "22.3.3",
+    "turbo": "2.7.6",
     "@schematics/angular": "21.1.0",
     "@tailwindcss/aspect-ratio": "0.4.2",
     "@tailwindcss/forms": "0.4.1",
