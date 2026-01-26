@@ -1,21 +1,23 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.12/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      ".angular/",
-      ".nx/",
-      "apps/backend/src/drizzle/postgres/migrations/",
-      "dist/",
-      "mprove_data/",
-      "node_modules/",
-      "tmp/",
-      "setup-docker/data/",
-      "package.docker.json",
-      "coverage/"
-    ],
-    "include": ["**/*.css", "**/*.ts", "**/*.js"]
+    "includes": [
+      "**/*.css",
+      "**/*.ts",
+      "**/*.js",
+      "!.angular/**",
+      "!.nx/**",
+      "!apps/backend/src/drizzle/postgres/migrations/**",
+      "!dist/**",
+      "!mprove_data/**",
+      "!node_modules/**",
+      "!tmp/**",
+      "!setup-docker/data/**",
+      "!package.docker.json",
+      "!coverage/**"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -28,7 +30,13 @@
     "attributePosition": "auto",
     "bracketSpacing": true
   },
-  "organizeImports": { "enabled": true },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -40,7 +48,7 @@
       "correctness": {
         "noPrecisionLoss": "error",
         "noUnusedVariables": "off",
-        "useArrayLiterals": "off",
+        // "useArrayLiterals": "off",
         "noUnusedImports": {
           "level": "warn",
           "fix": "safe"
@@ -79,9 +87,9 @@
     }
   },
   "overrides": [
-    // { "include": ["*.js"], "linter": { "rules": {} } },
+    // { "includes": ["*.js"], "linter": { "rules": {} } },
     {
-      "include": ["*.ts"],
+      "includes": ["**/*.ts"],
       "linter": {
         "rules": {
           "complexity": {
@@ -94,7 +102,7 @@
             "noUnusedVariables": "off",
             "noConstAssign": "off",
             "noGlobalObjectCalls": "off",
-            "noNewSymbol": "off",
+            // "noNewSymbol": "off",
             "noSetterReturn": "off",
             "noUndeclaredVariables": "off",
             "noUnreachable": "off",
@@ -104,11 +112,12 @@
           "style": {
             "noNamespace": "off",
             "noNonNullAssertion": "error",
-            "noVar": "error",
+            // "noVar": "error",
             "useConsistentBuiltinInstantiation": "error",
             "useConst": "off",
-            "useShorthandFunctionType": "error",
-            "noArguments": "error"
+            "useShorthandFunctionType": "error"
+            // ,
+            // "noArguments": "error"
           },
           "suspicious": {
             "noConsole": "off",
@@ -126,45 +135,12 @@
             "noImportAssign": "off",
             "noRedeclare": "off",
             "noUnsafeNegation": "off",
-            "useGetterReturn": "off",
-            "useValidTypeof": "off"
+            "useGetterReturn": "off"
+            // ,
+            // "useValidTypeof": "off"
           }
         }
       }
     }
-    // ,
-    // {
-    //   "include": ["*.ts", "*.tsx", "*.mts", "*.cts"],
-    //   "linter": {
-    //     "rules": {
-    //       "correctness": {
-    //         "noConstAssign": "off",
-    //         "noGlobalObjectCalls": "off",
-    //         "noInvalidConstructorSuper": "off",
-    //         "noNewSymbol": "off",
-    //         "noSetterReturn": "off",
-    //         "noUndeclaredVariables": "off",
-    //         "noUnreachable": "off",
-    //         "noUnreachableSuper": "off"
-    //       },
-    //       "style": {
-    //         "noArguments": "error",
-    //         "noVar": "error",
-    //         "useConst": "off"
-    //       },
-    //       "suspicious": {
-    //         "noDuplicateClassMembers": "off",
-    //         "noDuplicateObjectKeys": "off",
-    //         "noDuplicateParameters": "off",
-    //         "noFunctionAssign": "off",
-    //         "noImportAssign": "off",
-    //         "noRedeclare": "off",
-    //         "noUnsafeNegation": "off",
-    //         "useGetterReturn": "off",
-    //         "useValidTypeof": "off"
-    //       }
-    //     }
-    //   }
-    // }
   ]
 }

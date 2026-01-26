@@ -1,0 +1,96 @@
+{
+  "name": "chat",
+  "prefix": "chat",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/chat/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/chat",
+        "main": "apps/chat/src/main.ts",
+        "tsConfig": "apps/chat/tsconfig.app.json",
+        "assets": ["apps/chat/src/assets"],
+        "webpackConfig": "apps/chat/webpack.config.js",
+        "sourceMap": true
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "chat:build:production",
+        "host": "0.0.0.0",
+        "port": 9229,
+        "inspect": "inspect",
+        "watch": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "chat:build:development",
+          "runtimeArgs": ["--trace-warnings"]
+        },
+        "production": {
+          "buildTarget": "chat:build:production",
+          "host": "0.0.0.0",
+          "port": 9229,
+          "inspect": "inspect",
+          "watch": true
+        }
+      }
+    },
+    "build-tests": {
+      "dependsOn": [
+        {
+          "target": "build-tests",
+          "projects": "dependencies"
+        }
+      ],
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "rimraf \"./dist/tests/chat\"",
+          "tsc --project apps/chat/tsconfig.test.json --outDir dist/tests/chat"
+        ],
+        "parallel": false
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx build-tests chat",
+          "CHAT_LOG_IO=TRUE ava --config=ava-js.config.js dist/tests/chat/apps/chat/**/*.spec.js"
+        ],
+        "parallel": false
+      }
+    },
+    "fm": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "prettier \"apps/chat/**/*.{ts,js,json,scss,html,md}\" --write --config .prettierrc.js"
+        ],
+        "parallel": false
+      }
+    },
+    "circular": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["madge --circular apps/chat"],
+        "parallel": false
+      }
+    }
+  }
+}

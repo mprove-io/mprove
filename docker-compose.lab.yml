@@ -8,6 +8,9 @@ services:
   disk:
     image: ghcr.io/mprove-io/mprove-lab-disk:$MPROVE_RELEASE_TAG
 
+  chat:
+    image: ghcr.io/mprove-io/mprove-lab-chat:$MPROVE_RELEASE_TAG
+
   front:
     image: ghcr.io/mprove-io/mprove-lab-front:$MPROVE_RELEASE_TAG
 

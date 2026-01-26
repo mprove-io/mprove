@@ -89,6 +89,38 @@ services:
         source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
         target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
 
+  chat:
+    build:
+      context: ./
+      dockerfile: setup-docker/chat.Dockerfile
+    image: ghcr.io/mprove-io/mprove-chat:$MPROVE_RELEASE_TAG
+    env_file:
+      - $ENV_FILE_PATH
+    command: sh -c 'node dist/apps/chat/main.js'
+    volumes:
+      - type: bind
+        source: $ENV_FILE_SOURCE_PATH
+        target: $ENV_FILE_TARGET_PATH
+
+  opencode:
+    image: ghcr.io/anomalyco/opencode:1.1.35
+    ports:
+      - 4096:4096
+    # volumes:
+      # - type: bind
+      #   source: $COMPOSE_OPENCODE_CACHE_VOLUME_SOURCE_PATH
+      #   target: /root/.cache/opencode
+      # - type: bind
+      #   source: $COMPOSE_OPENCODE_CONFIG_VOLUME_SOURCE_PATH
+      #   target: /root/.config/opencode
+      # - type: bind
+      #   source: $COMPOSE_OPENCODE_SHARE_VOLUME_SOURCE_PATH
+      #   target: /root/.local/share/opencode
+      # - type: bind
+      #   source: $COMPOSE_OPENCODE_STATE_VOLUME_SOURCE_PATH
+      #   target: /root/.local/state/opencode
+    command: [--hostname=0.0.0.0, --port=4096]
+
   front:
     build:
       context: ./

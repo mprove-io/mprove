@@ -171,7 +171,7 @@
     "@angular/cli": "21.1.0",
     "@angular/compiler-cli": "21.1.0",
     "@angular/language-service": "21.1.0",
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.3.12",
     "@nestjs/schematics": "11.0.5",
     "@nestjs/testing": "11.1.0",
     "@nx/angular": "22.3.3",

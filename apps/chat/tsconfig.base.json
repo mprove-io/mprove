@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "~chat/*": ["./src/*"],
+      // for build-tests
+      "~common/*": ["../../libs/common/src/*"],
+      "~node-common/*": ["../../libs/node-common/src/*"]
+    }
+  },
+  "include": ["**/*.ts"]
+}

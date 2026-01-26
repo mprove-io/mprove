@@ -1,4 +1,5 @@
 export enum RpcNamespacesEnum {
   RpcBlockml = 'rpc-blockml',
-  RpcDisk = 'rpc-disk'
+  RpcDisk = 'rpc-disk',
+  RpcChat = 'rpc-chat'
 }

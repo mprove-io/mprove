@@ -25,6 +25,7 @@
     "paths": {
       "~backend/*": ["apps/backend/src/*"],
       "~blockml/*": ["apps/blockml/src/*"],
+      "~chat/*": ["apps/chat/src/*"],
       "~disk/*": ["apps/disk/src/*"],
       "~mcli/*": ["apps/mcli/src/*"],
       "~front/*": ["apps/front/src/*"],

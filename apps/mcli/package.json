@@ -54,6 +54,7 @@
   "_moduleAliases": {
     "~backend": "dist/tests/backend/apps/backend/src",
     "~blockml": "dist/tests/blockml/apps/blockml/src",
+    "~chat": "dist/tests/chat/apps/chat/src",
     "~disk": "dist/tests/disk/apps/disk/src",
     "~mcli": "dist/tests/mcli/apps/mcli/src",
     "~common": "dist/tests/common/libs/common/src",
