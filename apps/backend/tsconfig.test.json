@@ -1,6 +1,14 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/tests/backend"
-  }
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "~backend/*": ["./src/*"],
+      "~common/*": ["../../libs/common/src/*"],
+      "~node-common/*": ["../../libs/node-common/src/*"]
+    },
+    "outDir": "dist/tests"
+  },
+  "include": ["**/*.ts"]
 }

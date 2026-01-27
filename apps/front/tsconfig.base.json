@@ -6,7 +6,6 @@
     "baseUrl": ".",
     "paths": {
       "~front/*": ["./src/*"],
-      "~api-to-backend/*": ["../../libs/api-to-backend/src/*"],
       "~common/*": ["../../libs/common/src/*"]
     }
   },

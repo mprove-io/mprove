@@ -6,7 +6,6 @@
     "paths": {
       "~mcli/*": ["./src/*"],
       // for build-tests
-      "~api-to-backend/*": ["../../libs/api-to-backend/src/*"],
       "~common/*": ["../../libs/common/src/*"],
       "~node-common/*": ["../../libs/node-common/src/*"]
     }

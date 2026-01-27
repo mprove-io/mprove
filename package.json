@@ -27,6 +27,7 @@
     "bfm": "biome check --write",
     "pfm": "prettier \"**/*.{html,scss,json,jsonc,md}\" --write --config .prettierrc.js",
     "circular": "turbo run circular",
+    "circular:backend": "turbo run circular --filter=@mprove/backend",
     "circular:blockml": "turbo run circular --filter=@mprove/blockml",
     "circular:disk": "turbo run circular --filter=@mprove/disk",
     "circular:front": "turbo run circular --filter=@mprove/front",

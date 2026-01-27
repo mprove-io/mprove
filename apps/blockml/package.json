@@ -72,7 +72,6 @@
   },
   "_moduleAliases": {
     "~blockml": "dist/tests/apps/blockml/src",
-    "~api-to-blockml": "dist/tests/libs/api-to-blockml/src",
     "~common": "dist/tests/libs/common/src",
     "~node-common": "dist/tests/libs/node-common/src"
   }

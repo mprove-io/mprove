@@ -5,7 +5,6 @@
     "baseUrl": ".",
     "paths": {
       "~blockml/*": ["./src/*"],
-      "~api-to-blockml/*": ["../../libs/api-to-blockml/src/*"],
       "~common/*": ["../../libs/common/src/*"],
       "~node-common/*": ["../../libs/node-common/src/*"]
     },
