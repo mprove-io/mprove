@@ -6,7 +6,7 @@
     "build": "swc src -d dist/src --source-maps && node build.mjs",
     "build:prod": "swc src -d dist/src && node build.mjs --minify",
     "serve": "NODE_ENV=production ENV_FILE_PATH=../../.env node --enable-source-maps --inspect=0.0.0.0:9230 dist/main.js",
-    "dev": "NODE_ENV=production ENV_FILE_PATH=../../.env tsx watch src/main.ts",
+    "start": "NODE_ENV=production ENV_FILE_PATH=../../.env tsx watch src/main.ts",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
     "test": "ava --config=../../ava-js.config.js dist/tests/**/*.spec.js",
     "circular": "madge --circular ."

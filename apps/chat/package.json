@@ -6,7 +6,7 @@
     "build": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --sourcemap --packages=external",
     "build:prod": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --minify --packages=external",
     "serve": "NODE_ENV=production ENV_FILE_PATH=../../.env node --enable-source-maps --inspect=0.0.0.0:9233 dist/main.js",
-    "dev": "tsx watch src/main.ts",
+    "start": "NODE_ENV=production ENV_FILE_PATH=../../.env tsx watch src/main.ts",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
     "test": "CHAT_LOG_IO=TRUE ava --config=../../ava-js.config.js dist/tests/**/*.spec.js",
     "circular": "madge --circular ."

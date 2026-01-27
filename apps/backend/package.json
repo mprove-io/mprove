@@ -6,7 +6,7 @@
     "build": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --sourcemap --packages=external",
     "build:prod": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --minify --packages=external",
     "serve": "NODE_ENV=production ENV_FILE_PATH=../../.env BACKEND_IS_SCHEDULER=TRUE node --enable-source-maps --inspect=0.0.0.0:9232 dist/main.js",
-    "dev": "BACKEND_IS_SCHEDULER=TRUE tsx watch src/main.ts",
+    "start": "NODE_ENV=production ENV_FILE_PATH=../../.env BACKEND_IS_SCHEDULER=TRUE BACKEND_IS_SCHEDULER=TRUE tsx watch src/main.ts",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
     "e2e": "ava --concurrency=5 --config=../../ava-js-e2e.config.js dist/tests/**/*.e2e-spec.js",
     "circular": "madge --circular ."

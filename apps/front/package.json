@@ -6,7 +6,7 @@
     "build": "ng build",
     "build:prod": "ng build --configuration production",
     "serve": "ng serve",
-    "dev": "ng serve --configuration development",
+    "start": "ng serve --configuration development",
     "circular": "madge --circular ."
   },
   "dependencies": {
