@@ -63,6 +63,9 @@ catalogs:
     '@auth0/angular-jwt':
       specifier: 5.2.0
       version: 5.2.0
+    '@biomejs/biome':
+      specifier: 2.3.12
+      version: 2.3.12
     '@codemirror/commands':
       specifier: 6.10.0
       version: 6.10.0
@@ -264,6 +267,9 @@ catalogs:
     '@types/luxon':
       specifier: 2.4.0
       version: 2.4.0
+    '@types/node':
+      specifier: 22.7.5
+      version: 22.7.5
     '@types/nodegit':
       specifier: 0.28.7
       version: 0.28.7
@@ -330,6 +336,9 @@ catalogs:
     clipanion:
       specifier: 3.2.1
       version: 3.2.1
+    cross-env:
+      specifier: 7.0.3
+      version: 7.0.3
     d3-format:
       specifier: 1.4.5
       version: 1.4.5
@@ -372,15 +381,27 @@ catalogs:
     hammerjs:
       specifier: 2.0.8
       version: 2.0.8
+    husky:
+      specifier: 9.1.7
+      version: 9.1.7
     ioredis:
       specifier: 5.8.2
       version: 5.8.2
     js-yaml:
       specifier: 4.1.1
       version: 4.1.1
+    license-checker:
+      specifier: 25.0.1
+      version: 25.0.1
+    lint-staged:
+      specifier: 16.2.6
+      version: 16.2.6
     luxon:
       specifier: 2.5.2
       version: 2.5.2
+    madge:
+      specifier: 8.0.0
+      version: 8.0.0
     module-alias:
       specifier: 2.2.3
       version: 2.2.3
@@ -435,12 +456,21 @@ catalogs:
     pg:
       specifier: 8.13.0
       version: 8.13.0
+    prettier:
+      specifier: 3.3.3
+      version: 3.3.3
+    prettier-plugin-tailwindcss:
+      specifier: 0.6.11
+      version: 0.6.11
     prettyjson:
       specifier: 1.2.5
       version: 1.2.5
     reflect-metadata:
       specifier: 0.2.2
       version: 0.2.2
+    rimraf:
+      specifier: 6.0.1
+      version: 6.0.1
     shiki:
       specifier: 0.10.1
       version: 0.10.1
@@ -468,6 +498,9 @@ catalogs:
     trino-client:
       specifier: 0.2.9
       version: 0.2.9
+    ts-node:
+      specifier: 10.9.2
+      version: 10.9.2
     tsconfig-paths:
       specifier: 3.14.2
       version: 3.14.2
@@ -477,9 +510,15 @@ catalogs:
     tsx:
       specifier: 4.19.0
       version: 4.19.0
+    turbo:
+      specifier: 2.7.6
+      version: 2.7.6
     typanion:
       specifier: 3.14.0
       version: 3.14.0
+    typescript:
+      specifier: 5.9.2
+      version: 5.9.2
     vscode-oniguruma:
       specifier: 1.7.0
       version: 1.7.0
@@ -501,61 +540,61 @@ importers:
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: 2.3.12
+        specifier: 'catalog:'
         version: 2.3.12
       '@types/node':
-        specifier: 22.7.5
+        specifier: 'catalog:'
         version: 22.7.5
       ava:
-        specifier: 3.15.0
+        specifier: 'catalog:'
         version: 3.15.0
       cross-env:
-        specifier: 7.0.3
+        specifier: 'catalog:'
         version: 7.0.3
       drizzle-kit:
-        specifier: 0.27.1
+        specifier: 'catalog:'
         version: 0.27.1
       esbuild:
-        specifier: 0.24.0
+        specifier: 'catalog:'
         version: 0.24.0
       husky:
-        specifier: 9.1.7
+        specifier: 'catalog:'
         version: 9.1.7
       license-checker:
-        specifier: 25.0.1
+        specifier: 'catalog:'
         version: 25.0.1
       lint-staged:
-        specifier: 16.2.6
+        specifier: 'catalog:'
         version: 16.2.6
       madge:
-        specifier: 8.0.0
+        specifier: 'catalog:'
         version: 8.0.0(typescript@5.9.2)
       prettier:
-        specifier: 3.3.3
+        specifier: 'catalog:'
         version: 3.3.3
       prettier-plugin-tailwindcss:
-        specifier: 0.6.11
+        specifier: 'catalog:'
         version: 0.6.11(prettier@3.3.3)
       rimraf:
-        specifier: 6.0.1
+        specifier: 'catalog:'
         version: 6.0.1
       shx:
-        specifier: 0.4.0
+        specifier: 'catalog:'
         version: 0.4.0
       ts-node:
-        specifier: 10.9.2
+        specifier: 'catalog:'
         version: 10.9.2(@swc/core@1.15.10(@swc/helpers@0.5.17))(@types/node@22.7.5)(typescript@5.9.2)
       tsconfig-paths:
-        specifier: 3.14.2
+        specifier: 'catalog:'
         version: 3.14.2
       tsx:
-        specifier: 4.19.0
+        specifier: 'catalog:'
         version: 4.19.0
       turbo:
-        specifier: 2.7.6
+        specifier: 'catalog:'
         version: 2.7.6
       typescript:
-        specifier: 5.9.2
+        specifier: 'catalog:'
         version: 5.9.2
 
   apps/backend:
@@ -1083,9 +1122,6 @@ importers:
       tsconfig-paths:
         specifier: 'catalog:'
         version: 3.14.2
-      tsx:
-        specifier: 'catalog:'
-        version: 4.19.0
 
   apps/front:
     dependencies:

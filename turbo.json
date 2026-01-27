@@ -1,10 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
-    },
     "build:prod": {
       "dependsOn": ["^build:prod"],
       "outputs": ["dist/**"]
@@ -14,7 +10,7 @@
       "persistent": true
     },
     "serve": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build:prod"],
       "cache": false,
       "persistent": true
     },
