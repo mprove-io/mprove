@@ -5,10 +5,11 @@
   "scripts": {
     "build": "swc src -d dist/src --source-maps && node build.mjs",
     "build:prod": "swc src -d dist/src && node build.mjs --minify",
-    "serve": "NODE_ENV=production ENV_FILE_PATH=../../.env node --enable-source-maps --inspect=0.0.0.0:9230 dist/main.js",
-    "start": "NODE_ENV=production ENV_FILE_PATH=../../.env tsx watch src/main.ts",
+    "serve": "NODE_ENV=production ENV_FILE_PATH=../../.env node --enable-source-maps dist/main.js",
+    "start": "NODE_ENV=production ENV_FILE_PATH=../../.env node --watch -r ts-node/register -r tsconfig-paths/register src/main.ts",
+    "debug": "NODE_ENV=production ENV_FILE_PATH=../../.env node --inspect=0.0.0.0:9230 --watch -r ts-node/register -r tsconfig-paths/register src/main.ts",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
-    "test": "ava --config=../../ava-js.config.js dist/tests/**/*.spec.js",
+    "test": "IS_TELEMETRY_ENABLED=FALSE ava --config=../../ava-js.config.js dist/tests/**/*.spec.js",
     "circular": "madge --circular ."
   },
   "dependencies": {
@@ -41,8 +42,8 @@
     "winston": "catalog:"
   },
   "devDependencies": {
+    "@nestjs/testing": "catalog:",
     "@swc/cli": "catalog:",
-    "@swc/core": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/nodegit": "catalog:",
     "ava": "catalog:",

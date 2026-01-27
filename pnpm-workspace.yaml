@@ -225,10 +225,7 @@ catalog:
   tsconfig-paths: '3.14.2'
   turbo: '2.7.6'
   tsx: '4.19.0'
-  tsup: '8.3.5'
-  '@swc/core': '1.10.18'
   '@swc/cli': '0.7.10'
-  webpack: '5.101.3'
 
 ignoredBuiltDependencies:
   - '@vaadin/vaadin-usage-statistics'
@@ -237,7 +234,6 @@ onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@nestjs/core'
   - '@parcel/watcher'
-  - '@swc/core'
   - bcrypt
   - duckdb
   - esbuild

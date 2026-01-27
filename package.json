@@ -27,7 +27,7 @@
     "bfm": "biome check --write",
     "pfm": "prettier \"**/*.{html,scss,json,jsonc,md}\" --write --config .prettierrc.js",
     "circular": "turbo run circular",
-    "build": "turbo run build",
+    "circular:disk": "turbo run circular --filter=@mprove/disk",
     "build:prod": "turbo run build:prod",
     "build:backend:prod": "turbo run build:prod --filter=@mprove/backend",
     "build:blockml:prod": "turbo run build:prod --filter=@mprove/blockml",
@@ -47,8 +47,9 @@
     "start:chat": "turbo run start --filter=@mprove/chat",
     "start:disk": "turbo run start --filter=@mprove/disk",
     "start:front": "turbo run start --filter=@mprove/front",
+    "debug:disk": "turbo run debug --filter=@mprove/disk",
     "test": "turbo run test",
-    "test:disk": "IS_TELEMETRY_ENABLED=FALSE turbo run test --filter=@mprove/disk",
+    "test:disk": "turbo run test --filter=@mprove/disk",
     "test:blockml": "IS_TELEMETRY_ENABLED=FALSE turbo run test --filter=@mprove/blockml",
     "e2e": "turbo run e2e",
     "e2e:backend": "IS_TELEMETRY_ENABLED=FALSE turbo run e2e --filter=@mprove/backend",
@@ -73,9 +74,15 @@
     "clean:dist": "pnpm make:dist && rm -rf apps/disk/dist/* apps/mcli/dist/* apps/backend/dist/* apps/blockml/dist/* apps/chat/dist/* apps/front/dist/* libs/common/dist/* libs/node-common/dist/*",
     "clean:angular": "rm -rf .angular/*",
     "clean:turbo": "rm -rf .turbo/*",
-    "clean:deps": "pnpm clean:node_modules && pnpm clean:pnpm-store",
-    "clean:node_modules": "rm -rf ./node_modules/* && rm -rf ./node_modules/.bin/* && rm -rf ./node_modules/.cache/* && rm -rf ./node_modules/.pnpm/* && rm -rf ./node_modules/.tmp/* && rm -rf ./node_modules/.modules.yaml && rm -rf ./node_modules/.pnpm-workspace-state-v1.json",
+    "clean:deps": "pnpm clean:pnpm-store && pnpm clean:node_modules && pnpm clean:backend:node_modules && pnpm clean:blockml:node_modules && pnpm clean:chat:node_modules && pnpm clean:disk:node_modules && pnpm clean:front:node_modules && pnpm clean:mcli:node_modules",
     "clean:pnpm-store": "rm -rf ./.pnpm-store/*",
+    "clean:node_modules": "rm -rf ./node_modules/* && rm -rf ./node_modules/.bin/* && rm -rf ./node_modules/.cache/* && rm -rf ./node_modules/.pnpm/* && rm -rf ./node_modules/.tmp/* && rm -rf ./node_modules/.modules.yaml && rm -rf ./node_modules/.pnpm-workspace-state-v1.json",
+    "clean:backend:node_modules": "rm -rf apps/backend/node_modules/* && rm -rf apps/backend/node_modules/.bin/*",
+    "clean:blockml:node_modules": "rm -rf apps/blockml/node_modules/* && rm -rf apps/blockml/node_modules/.bin/*",
+    "clean:chat:node_modules": "rm -rf apps/chat/node_modules/* && rm -rf apps/chat/node_modules/.bin/*",
+    "clean:disk:node_modules": "rm -rf apps/disk/node_modules/* && rm -rf apps/disk/node_modules/.bin/*",
+    "clean:front:node_modules": "rm -rf apps/front/node_modules/* && rm -rf apps/front/node_modules/.bin/*",
+    "clean:mcli:node_modules": "rm -rf apps/mcli/node_modules/* && rm -rf apps/mcli/node_modules/.bin/*",
     "clean:npm": "npm cache clean --force",
     "prepare": "husky"
   },
@@ -97,10 +104,8 @@
     "ts-node": "10.9.2",
     "tsconfig-paths": "3.14.2",
     "turbo": "2.7.6",
-    "tsup": "8.3.5",
     "tsx": "4.19.0",
-    "typescript": "5.9.2",
-    "@swc/core": "1.10.18"
+    "typescript": "5.9.2"
   },
   "madge": {
     "fileExtensions": [
@@ -119,5 +124,10 @@
   },
   "vaadin": {
     "disableUsageStatistics": true
+  },
+  "pnpm": {
+    "overrides": {
+      "rxjs": "7.8.1"
+    }
   }
 }

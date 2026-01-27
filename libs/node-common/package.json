@@ -37,6 +37,7 @@
     "@malloydata/malloy-interfaces": "catalog:",
     "@malloydata/malloy-query-builder": "catalog:",
     "p-iteration": "catalog:",
+    "rxjs": "catalog:",
     "winston": "catalog:"
   },
   "devDependencies": {

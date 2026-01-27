@@ -7,10 +7,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '../..');
 const isMinify = process.argv.includes('--minify');
 
-// First, compile libs with swc (they have no decorators, so this is fine)
+// Compile libs with swc (using same config for decorator metadata)
 console.log('Compiling libs with swc...');
-execSync('swc ../../libs/common/src -d dist/libs/common --source-maps', { cwd: __dirname, stdio: 'inherit' });
-execSync('swc ../../libs/node-common/src -d dist/libs/node-common --source-maps', { cwd: __dirname, stdio: 'inherit' });
+execSync('swc ../../libs/common/src -d dist/libs/common --source-maps --config-file .swcrc', { cwd: __dirname, stdio: 'inherit' });
+execSync('swc ../../libs/node-common/src -d dist/libs/node-common --source-maps --config-file .swcrc', { cwd: __dirname, stdio: 'inherit' });
 
 // Define path aliases pointing to compiled output
 const aliases = {
