@@ -5,11 +5,11 @@ import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ThrottlerModule, seconds } from '@nestjs/throttler';
-import { DefaultLogger, and, eq, isNotNull } from 'drizzle-orm';
+import { seconds, ThrottlerModule } from '@nestjs/throttler';
+import { and, DefaultLogger, eq, isNotNull } from 'drizzle-orm';
 import {
-  NodePgDatabase,
-  drizzle as drizzlePg
+  drizzle as drizzlePg,
+  NodePgDatabase
 } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import * as fse from 'fs-extra';
@@ -39,8 +39,8 @@ import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
 import { appProviders } from './app-providers';
 import { getConfig } from './config/get.config';
+import { Db, DRIZZLE, DrizzleModule } from './drizzle/drizzle.module';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
-import { DRIZZLE, Db, DrizzleModule } from './drizzle/drizzle.module';
 import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
 import {
   ConnectionTab,
@@ -62,8 +62,8 @@ import { OrgsService } from './services/db/orgs.service';
 import { ProjectsService } from './services/db/projects.service';
 import { UsersService } from './services/db/users.service';
 import { HashService } from './services/hash.service';
-import { TabCheckerService } from './services/tab-checker.service';
 import { TabService } from './services/tab.service';
+import { TabCheckerService } from './services/tab-checker.service';
 
 let retry = require('async-retry');
 
@@ -221,7 +221,7 @@ export class AppModule implements OnModuleInit {
           });
 
         await migratePg(postgresSingleDrizzle, {
-          migrationsFolder: 'apps/backend/src/drizzle/postgres/migrations'
+          migrationsFolder: 'src/drizzle/postgres/migrations'
         });
 
         // dconfig
@@ -440,9 +440,7 @@ export class AppModule implements OnModuleInit {
     );
   }
 
-  async seedDemoOrgAndProject(item: {
-    mproveAdminUser: UserTab;
-  }) {
+  async seedDemoOrgAndProject(item: { mproveAdminUser: UserTab }) {
     let { mproveAdminUser } = item;
 
     let demoOrgId = this.cs.get<BackendConfig['demoOrgId']>('demoOrgId');
