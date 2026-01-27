@@ -42,15 +42,11 @@ var r700 = '#c10007'; // red-700
 
 // const colors = require('tailwindcss/colors');
 
-const { createGlobPatternsForDependencies } = require('@nx/angular/tailwind');
 const { join } = require('path');
 
 module.exports = {
   prefix: '',
-  content: [
-    join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}'),
-    ...createGlobPatternsForDependencies(__dirname)
-  ],
+  content: [join(__dirname, 'src/**/!(*.stories|*.spec).{ts,html}')],
   theme: {
     namedGroups: ['bar'],
     // namedGroups: ['foo', 'bar'],

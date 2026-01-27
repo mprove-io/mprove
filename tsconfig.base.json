@@ -23,13 +23,16 @@
     "types": ["node"],
     "outDir": "./dist",
     "paths": {
+      "@mprove/common": ["libs/common/src/index.ts"],
+      "@mprove/common/*": ["libs/common/src/*"],
+      "@mprove/node-common": ["libs/node-common/src/index.ts"],
+      "@mprove/node-common/*": ["libs/node-common/src/*"],
       "~backend/*": ["apps/backend/src/*"],
       "~blockml/*": ["apps/blockml/src/*"],
       "~chat/*": ["apps/chat/src/*"],
       "~disk/*": ["apps/disk/src/*"],
       "~mcli/*": ["apps/mcli/src/*"],
       "~front/*": ["apps/front/src/*"],
-      //
       "~common/*": ["libs/common/src/*"],
       "~node-common/*": ["libs/node-common/src/*"]
     }

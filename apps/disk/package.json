@@ -1,0 +1,53 @@
+{
+  "name": "@mprove/disk",
+  "version": "11.0.96-dev",
+  "private": true,
+  "scripts": {
+    "build": "swc src -d dist/src --source-maps && node build.mjs",
+    "build:prod": "swc src -d dist/src && node build.mjs --minify",
+    "serve": "NODE_ENV=production ENV_FILE_PATH=../../.env node --enable-source-maps --inspect=0.0.0.0:9230 dist/main.js",
+    "dev": "NODE_ENV=production ENV_FILE_PATH=../../.env tsx watch src/main.ts",
+    "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
+    "test": "ava --config=../../ava-js.config.js dist/tests/**/*.spec.js",
+    "circular": "madge --circular ."
+  },
+  "dependencies": {
+    "@mprove/common": "workspace:*",
+    "@mprove/node-common": "workspace:*",
+    "@nestjs/common": "catalog:",
+    "@nestjs/config": "catalog:",
+    "@nestjs/core": "catalog:",
+    "@nestjs/platform-express": "catalog:",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/auto-instrumentations-node": "catalog:",
+    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
+    "@opentelemetry/resources": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "@opentelemetry/semantic-conventions": "catalog:",
+    "class-transformer": "catalog:",
+    "class-transformer-validator": "catalog:",
+    "class-validator": "catalog:",
+    "dotenv": "catalog:",
+    "fs-extra": "catalog:",
+    "groupmq": "catalog:",
+    "ioredis": "catalog:",
+    "js-yaml": "catalog:",
+    "nest-winston": "catalog:",
+    "nodegit": "catalog:",
+    "p-iteration": "catalog:",
+    "reflect-metadata": "catalog:",
+    "rxjs": "catalog:",
+    "tslib": "catalog:",
+    "winston": "catalog:"
+  },
+  "devDependencies": {
+    "@swc/cli": "catalog:",
+    "@swc/core": "catalog:",
+    "@types/fs-extra": "catalog:",
+    "@types/nodegit": "catalog:",
+    "ava": "catalog:",
+    "esbuild": "catalog:",
+    "tsconfig-paths": "catalog:",
+    "tsx": "catalog:"
+  }
+}

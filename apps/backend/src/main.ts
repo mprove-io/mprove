@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { startTelemetry } from '~node-common/functions/start-telemetry';
 
 let tracerNodeSdk = startTelemetry({
@@ -6,6 +7,7 @@ let tracerNodeSdk = startTelemetry({
       ? 'mprove-backend-scheduler'
       : 'mprove-backend'
 });
+
 //
 import { NestFactory } from '@nestjs/core';
 import { json, urlencoded } from 'body-parser';

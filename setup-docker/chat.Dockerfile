@@ -19,9 +19,9 @@ COPY apps/chat apps/chat/
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 
-COPY ava.config.js ava-js.config.js ava-js-e2e.config.js nx.json package.json tsconfig.base.json tsconfig.json ./
+COPY ava.config.js ava-js.config.js ava-js-e2e.config.js turbo.json package.json tsconfig.base.json tsconfig.json ./
 
 RUN chmod +x scripts/wait-for-it.sh
 RUN pnpm build:chat:prod
 
-CMD [ "node", "dist/apps/chat/main.js" ]
+CMD [ "node", "apps/chat/dist/main.js" ]

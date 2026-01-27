@@ -1,85 +1,55 @@
 {
-  "name": "@mprove/mcli",
+  "name": "@mprove/chat",
   "version": "11.0.96-dev",
-  "author": "Alexander Kalitenya <akalitenya@mprove.io>",
-  "license": "UNLICENSED",
   "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mprove-io/mprove.git"
-  },
-  "bin": "dist/main.js",
   "scripts": {
     "build": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --sourcemap --packages=external",
     "build:prod": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --minify --packages=external",
+    "serve": "NODE_ENV=production ENV_FILE_PATH=../../.env node --enable-source-maps --inspect=0.0.0.0:9233 dist/main.js",
+    "dev": "tsx watch src/main.ts",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
-    "e2e": "ava --concurrency=4 --config=../../ava-js-e2e.config.js dist/tests/**/*.e2e-spec.js",
-    "circular": "madge --circular .",
-    "pkg:mcli": "pkg ."
+    "test": "CHAT_LOG_IO=TRUE ava --config=../../ava-js.config.js dist/tests/**/*.spec.js",
+    "circular": "madge --circular ."
   },
   "dependencies": {
     "@mprove/common": "workspace:*",
     "@mprove/node-common": "workspace:*",
     "@nestjs/common": "catalog:",
+    "@nestjs/config": "catalog:",
+    "@nestjs/core": "catalog:",
+    "@nestjs/platform-express": "catalog:",
+    "@opencode-ai/sdk": "catalog:",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/auto-instrumentations-node": "catalog:",
     "@opentelemetry/exporter-trace-otlp-http": "catalog:",
     "@opentelemetry/resources": "catalog:",
     "@opentelemetry/sdk-node": "catalog:",
     "@opentelemetry/semantic-conventions": "catalog:",
-    "async-retry": "catalog:",
-    "axios": "catalog:",
     "class-transformer": "catalog:",
     "class-transformer-validator": "catalog:",
     "class-validator": "catalog:",
-    "clipanion": "catalog:",
     "date-fns": "catalog:",
     "date-fns-tz": "catalog:",
     "dotenv": "catalog:",
-    "fast-deep-equal": "catalog:",
     "fs-extra": "catalog:",
+    "groupmq": "catalog:",
+    "ioredis": "catalog:",
     "js-yaml": "catalog:",
-    "module-alias": "catalog:",
-    "nanoid": "catalog:",
     "nest-winston": "catalog:",
     "nodegit": "catalog:",
     "p-iteration": "catalog:",
-    "prettyjson": "catalog:",
     "reflect-metadata": "catalog:",
     "rxjs": "catalog:",
     "tslib": "catalog:",
-    "typanion": "catalog:",
     "winston": "catalog:"
   },
   "devDependencies": {
-    "@types/async-retry": "catalog:",
+    "@nestjs/testing": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/js-yaml": "catalog:",
     "@types/nodegit": "catalog:",
-    "@yao-pkg/pkg": "catalog:",
     "ava": "catalog:",
     "esbuild": "catalog:",
-    "shx": "catalog:"
-  },
-  "_moduleAliases": {
-    "~backend": "dist/tests/backend/apps/backend/src",
-    "~blockml": "dist/tests/blockml/apps/blockml/src",
-    "~chat": "dist/tests/chat/apps/chat/src",
-    "~disk": "dist/tests/disk/apps/disk/src",
-    "~mcli": "dist/tests/mcli/apps/mcli/src",
-    "~common": "dist/tests/common/libs/common/src",
-    "~node-common": "dist/tests/node-common/libs/node-common/src"
-  },
-  "pkg": {
-    "scripts": [
-      "*.js",
-      "**/*.js"
-    ],
-    "assets": [
-      "node_modules/nodegit/build/Release/**/*",
-      "node_modules/axios/dist/node/axios.cjs"
-    ],
-    "outputPath": "bin",
-    "compress": "GZip"
+    "tsx": "catalog:"
   }
 }

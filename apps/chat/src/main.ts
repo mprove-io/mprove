@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { startTelemetry } from '~node-common/functions/start-telemetry';
 
 let tracerNodeSdk = startTelemetry({

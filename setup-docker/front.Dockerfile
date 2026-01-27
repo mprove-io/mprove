@@ -16,13 +16,13 @@ COPY apps/front apps/front/
 
 COPY libs/common libs/common/
 
-COPY nx.json package.json tsconfig.base.json tsconfig.json ./
+COPY turbo.json package.json tsconfig.base.json tsconfig.json ./
 
 RUN pnpm build:front:prod
 
 FROM nginx:1.21.1
 COPY --from=builder /usr/src/app/apps/front/nginx-configs/nginx.front.conf /etc/nginx/nginx.conf
-COPY --from=builder /usr/src/app/dist/apps/front/browser /usr/share/nginx/html
+COPY --from=builder /usr/src/app/apps/front/dist/browser /usr/share/nginx/html
 
 EXPOSE 80
 

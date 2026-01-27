@@ -1,8 +1,10 @@
+import 'reflect-metadata';
 import { startTelemetry } from '~node-common/functions/start-telemetry';
 
 let tracerNodeSdk = startTelemetry({
   serviceName: 'mprove-disk'
 });
+
 //
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';

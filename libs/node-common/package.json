@@ -1,0 +1,47 @@
+{
+  "name": "@mprove/node-common",
+  "version": "11.0.96-dev",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
+    "circular": "madge --circular ."
+  },
+  "dependencies": {
+    "@malloydata/db-bigquery": "catalog:",
+    "@malloydata/db-duckdb": "catalog:",
+    "@malloydata/db-mysql": "catalog:",
+    "@malloydata/db-postgres": "catalog:",
+    "@malloydata/db-snowflake": "catalog:",
+    "@malloydata/db-trino": "catalog:",
+    "@malloydata/malloy-filter": "catalog:",
+    "@mprove/common": "workspace:*",
+    "@nestjs/common": "catalog:",
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/auto-instrumentations-node": "catalog:",
+    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
+    "@opentelemetry/resources": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "@opentelemetry/semantic-conventions": "catalog:",
+    "class-validator": "catalog:",
+    "class-transformer-validator": "catalog:",
+    "date-fns": "catalog:",
+    "date-fns-tz": "catalog:",
+    "fs-extra": "catalog:",
+    "js-yaml": "catalog:",
+    "nodegit": "catalog:",
+    "tslib": "catalog:",
+    "nest-winston": "catalog:",
+    "@malloydata/malloy": "catalog:",
+    "@malloydata/malloy-interfaces": "catalog:",
+    "@malloydata/malloy-query-builder": "catalog:",
+    "p-iteration": "catalog:",
+    "winston": "catalog:"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "catalog:",
+    "@types/js-yaml": "catalog:",
+    "@types/nodegit": "catalog:"
+  }
+}

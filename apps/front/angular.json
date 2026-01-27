@@ -1,0 +1,128 @@
+{
+  "$schema": "../../node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "front": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "m",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist",
+            "browser": "src/main.ts",
+            "polyfills": ["src/polyfills.ts"],
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              "src/favicon.svg",
+              "src/assets",
+              {
+                "glob": "**/light-plus-extended.json",
+                "input": "src/assets/shiki-themes",
+                "output": "/assets/shiki/themes"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/shiki",
+                "output": "/assets/shiki"
+              },
+              {
+                "glob": "**/onig.wasm",
+                "input": "node_modules/vscode-oniguruma/release",
+                "output": "/assets/vscode-oniguruma"
+              },
+              {
+                "glob": "**/markdown.tmLanguage.json",
+                "input": "node_modules/shiki/languages",
+                "output": "/assets/shiki/languages"
+              },
+              {
+                "glob": "**/sql.tmLanguage.json",
+                "input": "node_modules/shiki/languages",
+                "output": "/assets/shiki/languages"
+              }
+            ],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/ngx-ui-switch/ui-switch.component.css",
+              "node_modules/ngx-spinner/animations/ball-clip-rotate.css",
+              "node_modules/ngx-spinner/animations/ball-pulse.css",
+              "node_modules/ngx-spinner/animations/line-scale.css"
+            ],
+            "outputMode": "static",
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "fast-deep-equal",
+              "validator",
+              "class-transformer-validator",
+              "class-transformer",
+              "clone-deep",
+              "mobx",
+              "google-libphonenumber",
+              "ssf",
+              "dayjs",
+              "protobufjs/minimal"
+            ],
+            "aot": true,
+            "index": "src/index.html"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "8mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "front:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "front:build:production"
+            },
+            "development": {
+              "buildTarget": "front:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}
