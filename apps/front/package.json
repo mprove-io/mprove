@@ -3,9 +3,7 @@
   "version": "11.0.96-dev",
   "private": true,
   "scripts": {
-    "build": "ng build",
     "build:prod": "ng build --configuration production",
-    "serve": "ng serve",
     "start": "ng serve --configuration development",
     "circular": "madge --circular ."
   },

@@ -28,6 +28,7 @@
     "pfm": "prettier \"**/*.{html,scss,json,jsonc,md}\" --write --config .prettierrc.js",
     "circular": "turbo run circular",
     "circular:disk": "turbo run circular --filter=@mprove/disk",
+    "circular:front": "turbo run circular --filter=@mprove/front",
     "build:prod": "turbo run build:prod",
     "build:backend:prod": "turbo run build:prod --filter=@mprove/backend",
     "build:blockml:prod": "turbo run build:prod --filter=@mprove/blockml",
