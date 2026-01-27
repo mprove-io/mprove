@@ -1,6 +1,14 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "~disk/*": ["./src/*"],
+      "~common/*": ["../../libs/common/src/*"],
+      "~node-common/*": ["../../libs/node-common/src/*"]
+    },
     "outDir": "../../dist/tests/disk"
-  }
+  },
+  "include": ["**/*.ts"]
 }
