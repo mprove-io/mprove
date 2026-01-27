@@ -3,9 +3,9 @@
   "version": "11.0.96-dev",
   "private": true,
   "scripts": {
+    "circular": "madge --circular .",
     "build:prod": "ng build --configuration production",
-    "start": "ng serve --configuration development",
-    "circular": "madge --circular ."
+    "start": "ng serve --configuration development"
   },
   "dependencies": {
     "@acrodata/code-editor": "catalog:",
