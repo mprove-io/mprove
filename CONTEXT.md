@@ -7,7 +7,7 @@ Open Source Business Intelligence with Malloy Semantic Layer.
 | Layer                                      | Technology                                      |
 | ------------------------------------------ | ----------------------------------------------- |
 | Package manager                            | pnpm                                            |
-| Build orchestration                        | Nx                                              |
+| Build orchestration                        | Turborepo                                       |
 | Backend framework                          | NestJS                                          |
 | Frontend framework                         | Angular 21                                      |
 | Database                                   | PostgreSQL + Drizzle ORM                        |
@@ -20,18 +20,18 @@ Open Source Business Intelligence with Malloy Semantic Layer.
 
 ## Application Services
 
-| App     | Purpose                                    | Framework |
-| ------- | ------------------------------------------ | --------- |
-| backend | Core API, auth, DB, DWH queries            | NestJS    |
-| blockml | Malloy and BlockML(YAML) model compilation | NestJS    |
-| disk    | File system & git repo management          | NestJS    |
-| chat    | Session management for Opencode            | NestJS    |
-| front   | Web UI                                     | Angular   |
-| mcli    | Command-line interface                     | Clipanion |
+| App     | Purpose                                     | Framework |
+| ------- | ------------------------------------------- | --------- |
+| backend | Core API, auth, DB, DWH queries             | NestJS    |
+| blockml | Malloy and BlockML (YAML) model compilation | NestJS    |
+| disk    | File system & git repo management           | NestJS    |
+| chat    | Session management for Opencode             | NestJS    |
+| front   | Web UI                                      | Angular   |
+| mcli    | Command-line interface                      | Clipanion |
 
 ## Architecture
 
-Monorepo managed with **Nx** and **pnpm**.
+Monorepo managed with **Turborepo** and **pnpm**.
 
 Apps communicate:
 
@@ -44,7 +44,7 @@ Apps communicate:
 ## Key Files
 
 - `package.json` — scripts for build, serve, test, lint, format
-- `nx.json` — Nx workspace configuration
+- `turbo.json` — Turborepo workspace configuration
 - `tsconfig.base.json` — path aliases
 - `docker-compose.yml` — local development stack
 
@@ -60,6 +60,10 @@ Apps communicate:
 Configured in root `tsconfig.base.json`:
 
 ```
+"@mprove/common": ["libs/common/src/index.ts"],
+"@mprove/common/*": ["libs/common/src/*"],
+"@mprove/node-common": ["libs/node-common/src/index.ts"],
+"@mprove/node-common/*": ["libs/node-common/src/*"],
 "~backend/*": ["apps/backend/src/*"],
 "~blockml/*": ["apps/blockml/src/*"],
 "~disk/*": ["apps/disk/src/*"],
@@ -94,7 +98,7 @@ src/
 │   └── to-disk/    # Backend→Disk DTOs
 │   └── to-chat/    # Backend→Chat DTOs
 ├── models/         # Shared models (ServerError, MyRegex)
-└── types/          # TypeScript type aliases
+└── types/          # TypeScript types
 ```
 
 **Key Enums:**
