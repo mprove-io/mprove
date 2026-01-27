@@ -1,6 +1,15 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "../../dist/tests/blockml"
-  }
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "~blockml/*": ["./src/*"],
+      "~api-to-blockml/*": ["../../libs/api-to-blockml/src/*"],
+      "~common/*": ["../../libs/common/src/*"],
+      "~node-common/*": ["../../libs/node-common/src/*"]
+    },
+    "outDir": "dist/tests"
+  },
+  "include": ["**/*.ts"]
 }

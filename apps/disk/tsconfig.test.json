@@ -8,7 +8,7 @@
       "~common/*": ["../../libs/common/src/*"],
       "~node-common/*": ["../../libs/node-common/src/*"]
     },
-    "outDir": "../../dist/tests/disk"
+    "outDir": "dist/tests"
   },
   "include": ["**/*.ts"]
 }
