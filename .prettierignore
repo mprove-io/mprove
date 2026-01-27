@@ -1,5 +1,5 @@
 .angular/
-.nx/
+.turbo/
 apps/backend/src/drizzle/postgres/migrations/
 dist/
 mprove_data/

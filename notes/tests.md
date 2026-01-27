@@ -16,13 +16,13 @@ pnpm serve:backend
 
 serve:front:dev
 
-pnpm test:disk --skip-nx-cache
-pnpm test:blockml --skip-nx-cache
+pnpm test:disk
+pnpm test:blockml
 
 # does not connect to backend (pnpm serve:backend)
 
-pnpm e2e:backend --skip-nx-cache
+pnpm e2e:backend
 
 # connects to backend (pnpm serve:backend)
 
-pnpm e2e:mcli --skip-nx-cache
+pnpm e2e:mcli

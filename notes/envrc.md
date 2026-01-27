@@ -1,6 +1,6 @@
 # .envrc example for development
 
-export NX_TUI=false
+export TURBO_TELEMETRY_DISABLED=1
 
 export CR_USERNAME=
 export CR_PAT=

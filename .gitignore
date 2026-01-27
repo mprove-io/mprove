@@ -3,7 +3,7 @@ nogit/
 
 .angular/
 .devcontainer/.zshrc
-.nx/
+.turbo/
 .pnpm-store/
 .vscode/*
 !.vscode/extensions.json
