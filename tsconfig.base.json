@@ -1,37 +1,35 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "isolatedModules": false,
     "target": "ES2022",
     "module": "ESNext",
+    "useDefineForClassFields": false,
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "baseUrl": ".",
     "removeComments": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "strict": true,
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
     "allowJs": true,
-    "types": ["node"],
-    "outDir": "./dist",
-    "paths": {
-      "~common/*": ["libs/common/src/*"],
-      "~node-common/*": ["libs/node-common/src/*"],
-      "~backend/*": ["apps/backend/src/*"],
-      "~blockml/*": ["apps/blockml/src/*"],
-      "~disk/*": ["apps/disk/src/*"],
-      "~mcli/*": ["apps/mcli/src/*"],
-      "~front/*": ["apps/front/src/*"]
-    }
+    "types": ["node"]
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "tmp"]
+  "exclude": [
+    "node_modules",
+    "**/node_modules",
+    "dist",
+    "**/dist",
+    "tmp",
+    ".turbo"
+  ]
 }

@@ -5,8 +5,8 @@
     "baseUrl": ".",
     "paths": {
       "#chat/*": ["./src/*"],
-      "~common/*": ["../../libs/common/src/*"],
-      "~node-common/*": ["../../libs/node-common/src/*"]
+      "#common/*": ["../../libs/common/src/*"],
+      "#node-common/*": ["../../libs/node-common/src/*"]
     },
     "outDir": "dist/tests"
   },

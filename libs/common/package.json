@@ -2,8 +2,9 @@
   "name": "@mprove/common",
   "version": "11.0.96-dev",
   "private": true,
+  "type": "module",
   "exports": {
-    "./*": "./src/*.ts"
+    "./*": "./src/*"
   },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -32,6 +33,7 @@
     "tslib": "catalog:"
   },
   "devDependencies": {
+    "@swc/helpers": "catalog:",
     "@types/js-yaml": "catalog:"
   }
 }

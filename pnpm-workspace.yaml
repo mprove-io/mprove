@@ -225,6 +225,9 @@ catalog:
   tsconfig-paths: '3.14.2'
   turbo: '2.7.6'
   '@swc/cli': '0.7.10'
+  '@swc/core': '1.15.11'
+  '@swc/helpers': '0.5.18'
+  '@swc-node/register': '1.11.1'
   dotenv-cli: '11.0.0'
 
 ignoredBuiltDependencies:
@@ -234,6 +237,7 @@ onlyBuiltDependencies:
   - '@biomejs/biome'
   - '@nestjs/core'
   - '@parcel/watcher'
+  - '@swc/core'
   - bcrypt
   - duckdb
   - esbuild

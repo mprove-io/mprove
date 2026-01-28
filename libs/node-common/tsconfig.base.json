@@ -4,9 +4,10 @@
     "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "~node-common/*": ["./src/*"],
-      "~common/*": ["../common/src/*"]
+      "#node-common/*": ["./src/*"],
+      "#common/*": ["../common/src/*"]
     }
   },
-  "include": ["**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -29,6 +29,7 @@
     "circular": "turbo run circular",
     "circular:backend": "turbo run circular --filter=@mprove/backend",
     "circular:blockml": "turbo run circular --filter=@mprove/blockml",
+    "circular:chat": "turbo run circular --filter=@mprove/chat",
     "circular:disk": "turbo run circular --filter=@mprove/disk",
     "circular:mcli": "turbo run circular --filter=@mprove/mcli",
     "circular:front": "turbo run circular --filter=@mprove/front",
@@ -105,6 +106,7 @@
     "shx": "catalog:",
     "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",
+    "tsx": "4.21.0",
     "turbo": "catalog:",
     "typescript": "catalog:"
   },

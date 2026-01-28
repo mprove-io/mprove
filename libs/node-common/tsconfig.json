@@ -7,9 +7,8 @@
     "baseUrl": ".",
     "outDir": "./dist",
     "paths": {
-      "#chat/*": ["./src/*"],
-      "#common/*": ["../../libs/common/src/*"],
-      "#node-common/*": ["../../libs/node-common/src/*"]
+      "#node-common/*": ["./src/*"],
+      "#common/*": ["../common/src/*"]
     }
   },
   "include": ["src/**/*.ts"],
