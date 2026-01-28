@@ -22,7 +22,7 @@
     "dz:push": "drizzle-kit push --config apps/backend/src/drizzle/postgres/drizzle.config.ts",
     "dz:upmeta": "drizzle-kit up --config apps/backend/src/drizzle/postgres/drizzle.config.ts",
     "dz:check": "drizzle-kit check --config apps/backend/src/drizzle/postgres/drizzle.config.ts",
-    "mcli": "ENV_FILE_PATH=.env pnpm node -r ts-node/register -r tsconfig-paths/register apps/mcli/src/main.ts",
+    "mcli": "pnpm node -r ts-node/register -r tsconfig-paths/register apps/mcli/src/main.ts",
     "lint": "biome lint",
     "bfm": "biome check --write",
     "pfm": "prettier \"**/*.{html,scss,json,jsonc,md}\" --write --config .prettierrc.js",
@@ -106,7 +106,6 @@
     "ts-node": "catalog:",
     "tsconfig-paths": "catalog:",
     "turbo": "catalog:",
-    "tsx": "catalog:",
     "typescript": "catalog:"
   },
   "madge": {

@@ -35,8 +35,6 @@ services:
       context: ./
       dockerfile: setup-docker/backend.Dockerfile
     image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
-    # env_file:
-    #   - $ENV_FILE_PATH
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
     ports:
@@ -48,8 +46,8 @@ services:
     command: sh -c 'scripts/wait-for-it.sh db:5432 --timeout=120 -- node apps/backend/dist/main.js'
     volumes:
       - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
+        source: $COMPOSE_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_ENV_FILE_TARGET_PATH
       - type: bind
         source: $COMPOSE_BACKEND_DEMO_PROJECT_BIGQUERY_CREDENTIALS_SOURCE_PATH
         target: $COMPOSE_BACKEND_DEMO_PROJECT_BIGQUERY_CREDENTIALS_PATH
@@ -65,26 +63,22 @@ services:
       context: ./
       dockerfile: setup-docker/blockml.Dockerfile
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
-    # env_file:
-    #   - $ENV_FILE_PATH
     command: sh -c 'node apps/blockml/dist/main.js'
     volumes:
       - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
+        source: $COMPOSE_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_ENV_FILE_TARGET_PATH
 
   disk:
     build:
       context: ./
       dockerfile: setup-docker/disk.Dockerfile
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
-    # env_file:
-    #   - $ENV_FILE_PATH
     command: sh -c 'node apps/disk/dist/main.js'
     volumes:
       - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
+        source: $COMPOSE_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_ENV_FILE_TARGET_PATH
       - type: bind
         source: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_SOURCE_PATH
         target: $COMPOSE_DISK_ORGANIZATIONS_VOLUME_PATH
@@ -94,13 +88,11 @@ services:
       context: ./
       dockerfile: setup-docker/chat.Dockerfile
     image: ghcr.io/mprove-io/mprove-chat:$MPROVE_RELEASE_TAG
-    # env_file:
-    #   - $ENV_FILE_PATH
     command: sh -c 'node apps/chat/dist/main.js'
     volumes:
       - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
+        source: $COMPOSE_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_ENV_FILE_TARGET_PATH
 
   opencode:
     image: ghcr.io/anomalyco/opencode:1.1.35
@@ -142,12 +134,10 @@ services:
       context: ./
       dockerfile: setup-docker/mcli.Dockerfile
     image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
-    # env_file:
-    #   - $ENV_FILE_PATH
     volumes:
       - type: bind
-        source: $ENV_FILE_SOURCE_PATH
-        target: $ENV_FILE_TARGET_PATH
+        source: $COMPOSE_ENV_FILE_SOURCE_PATH
+        target: $COMPOSE_ENV_FILE_TARGET_PATH
       - type: bind
         source: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_SOURCE_PATH
         target: $COMPOSE_BACKEND_DEMO_PROJECT_REMOTE_PRIVATE_KEY_ENCRYPTED_PATH

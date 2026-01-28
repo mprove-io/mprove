@@ -567,9 +567,6 @@ catalogs:
     tslib:
       specifier: 2.7.0
       version: 2.7.0
-    tsx:
-      specifier: 4.19.0
-      version: 4.19.0
     turbo:
       specifier: 2.7.6
       version: 2.7.6
@@ -653,9 +650,6 @@ importers:
       tsconfig-paths:
         specifier: 'catalog:'
         version: 3.14.2
-      tsx:
-        specifier: 'catalog:'
-        version: 4.19.0
       turbo:
         specifier: 'catalog:'
         version: 2.7.6
@@ -972,9 +966,6 @@ importers:
       tsconfig-paths:
         specifier: 'catalog:'
         version: 3.14.2
-      tsx:
-        specifier: 'catalog:'
-        version: 4.19.0
 
   apps/blockml:
     dependencies:
@@ -20550,6 +20541,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.23.1
       '@esbuild/win32-ia32': 0.23.1
       '@esbuild/win32-x64': 0.23.1
+    optional: true
 
   esbuild@0.24.0:
     optionalDependencies:
@@ -24745,6 +24737,7 @@ snapshots:
       get-tsconfig: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   tuf-js@4.1.0:
     dependencies:

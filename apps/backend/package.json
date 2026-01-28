@@ -115,8 +115,7 @@
     "esbuild": "catalog:",
     "module-alias": "catalog:",
     "supertest": "catalog:",
-    "tsconfig-paths": "catalog:",
-    "tsx": "catalog:"
+    "tsconfig-paths": "catalog:"
   },
   "_moduleAliases": {
     "~backend": "dist/tests/apps/backend/src",

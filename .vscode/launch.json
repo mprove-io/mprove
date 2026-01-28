@@ -30,7 +30,6 @@
       "console": "integratedTerminal",
       "args": ["${relativeFile}"],
       "env": {
-        "ENV_FILE_PATH": ".env",
         "BLOCKML_LOG_IO": "TRUE"
       }
     },

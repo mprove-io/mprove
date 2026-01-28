@@ -46,9 +46,8 @@ CALC_USER="calc_user"
 DWH_POSTGRES_READ_USER="dwh_postgres_read_user"
 
 cat > "$FILE_PATH" << EOF
-ENV_FILE_PATH=.env
-ENV_FILE_SOURCE_PATH=.env
-ENV_FILE_TARGET_PATH=/usr/src/app/.env
+COMPOSE_ENV_FILE_SOURCE_PATH=.env
+COMPOSE_ENV_FILE_TARGET_PATH=/usr/src/app/.env
 
 # set most recent release tag from https://github.com/mprove-io/mprove/releases
 MPROVE_RELEASE_TAG=$(jq -r '.version' package.json)
