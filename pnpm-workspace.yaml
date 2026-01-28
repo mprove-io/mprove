@@ -208,7 +208,7 @@ catalog:
   '@types/walk': '2.3.4'
   '@yao-pkg/pkg': '6.11.0'
   autoprefixer: '10.4.20'
-  ava: '3.15.0'
+  ava: '6.4.1'
   cross-env: '7.0.3'
   esbuild: '0.24.0'
   husky: '9.1.7'

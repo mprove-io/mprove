@@ -14,8 +14,7 @@
     "serve": "dotenv -e ../../.env -- node --enable-source-maps dist/main.js",
     "start": "dotenv -e ../../.env -- node --import @swc-node/register/esm-register --watch src/main.ts",
     "debug": "dotenv -e ../../.env -- node --import @swc-node/register/esm-register --inspect=0.0.0.0:9233 --watch src/main.ts",
-    "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json",
-    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=5 dist/tests/**/*.e2e-spec.js"
+    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=5"
   },
   "dependencies": {
     "@mprove/common": "workspace:*",
@@ -59,13 +58,6 @@
     "@types/js-yaml": "catalog:",
     "@types/nodegit": "catalog:",
     "ava": "catalog:",
-    "esbuild": "catalog:",
-    "module-alias": "catalog:",
-    "tsconfig-paths": "catalog:"
-  },
-  "_moduleAliases": {
-    "#chat": "dist/tests/apps/chat/src",
-    "#common": "dist/tests/libs/common/src",
-    "#node-common": "dist/tests/libs/node-common/src"
+    "esbuild": "catalog:"
   }
 }
