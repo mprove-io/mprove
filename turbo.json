@@ -32,6 +32,9 @@
     "e2e": {
       "dependsOn": ["build-tests"]
     },
+    "pack": {
+      "dependsOn": ["build:prod"]
+    },
     "lint": {},
     "circular": {}
   }

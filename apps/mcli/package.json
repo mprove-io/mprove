@@ -8,13 +8,13 @@
     "type": "git",
     "url": "https://github.com/mprove-io/mprove.git"
   },
-  "bin": "dist/main.js",
+  "bin": "main.js",
   "scripts": {
     "circular": "madge --circular .",
-    "build:prod": "swc src -d dist --source-maps && node build.mjs",
+    "build:prod": "swc src -d dist --source-maps && node build.mjs && shx cp package.json dist/src/package.json",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json",
     "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4 dist/tests/**/*.e2e-spec.js",
-    "pkg:mcli": "pkg ."
+    "pack": "pkg dist/src"
   },
   "dependencies": {
     "@mprove/common": "workspace:*",

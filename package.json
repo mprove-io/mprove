@@ -58,7 +58,7 @@
     "test:blockml": "turbo run test --filter=@mprove/blockml",
     "e2e": "turbo run e2e",
     "e2e:backend": "turbo run e2e --filter=@mprove/backend",
-    "e2e:mcli": "pnpm clean:mcli-repos && pnpm clone:mcli && turbo run e2e --filter=@mprove/mcli",
+    "pkg:mcli": "turbo run pack --filter=@mprove/mcli",
     "clone:mcli": "git clone $MPROVE_CLI_TEST_REMOTE_GIT_URL $MPROVE_CLI_TEST_DESTINATION_URL",
     "make:dist": "mkdir -p apps/disk/dist apps/backend/dist apps/blockml/dist apps/chat/dist apps/front/dist apps/mcli/dist libs/common/dist libs/node-common/dist",
     "clean": "pnpm clean:mprove_data && pnpm clean:dist && pnpm clean:angular && pnpm clean:turbo",
