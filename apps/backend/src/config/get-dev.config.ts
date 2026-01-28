@@ -1,5 +1,3 @@
-import { parse } from 'dotenv';
-import * as fse from 'fs-extra';
 import { BackendConfig } from '~backend/config/backend-config';
 import { EmailTransportEnum } from '~common/enums/email-transport.enum';
 import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
@@ -10,9 +8,9 @@ import { isDefined } from '~common/functions/is-defined';
 export function getDevConfig(envFilePath: any) {
   let envFile: { [name: string]: string } = {};
 
-  if (isDefined(envFilePath)) {
-    envFile = parse(fse.readFileSync(envFilePath));
-  }
+  // if (isDefined(envFilePath)) {
+  //   envFile = parse(fse.readFileSync(envFilePath));
+  // }
 
   let devConfig: BackendConfig = {
     mproveReleaseTag: <BackendEnvEnum>(

@@ -6,9 +6,7 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 // import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 // import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 
-export function startTelemetry(item: {
-  serviceName: string;
-}) {
+export function startTelemetry(item: { serviceName: string }) {
   let { serviceName } = item;
 
   let url = process.env.TELEMETRY_ENDPOINT;

@@ -13,7 +13,7 @@
     "build": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --sourcemap --packages=external",
     "build:prod": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --minify --packages=external",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
-    "e2e": "ava --concurrency=4 --config=../../ava-js-e2e.config.js dist/tests/**/*.e2e-spec.js",
+    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4 --config=../../ava-js-e2e.config.js dist/tests/**/*.e2e-spec.js",
     "circular": "madge --circular .",
     "pkg:mcli": "pkg ."
   },
