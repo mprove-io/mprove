@@ -9,9 +9,16 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { eq } from 'drizzle-orm';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ToBackendCompleteUserRegistrationRequest } from '#common/interfaces/to-backend/users/to-backend-complete-user-registration';
+import { ToBackendConfirmUserEmailResponsePayload } from '#common/interfaces/to-backend/users/to-backend-confirm-user-email';
+import { ServerError } from '#common/models/server-error';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { usersTable } from '~backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
@@ -21,13 +28,6 @@ import { MembersService } from '~backend/services/db/members.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
-import { ErEnum } from '~common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { ToBackendCompleteUserRegistrationRequest } from '~common/interfaces/to-backend/users/to-backend-complete-user-registration';
-import { ToBackendConfirmUserEmailResponsePayload } from '~common/interfaces/to-backend/users/to-backend-confirm-user-email';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

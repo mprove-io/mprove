@@ -7,12 +7,12 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetConnectionsRequestPayload,
   ToBackendGetConnectionsResponse
-} from '~common/interfaces/to-backend/connections/to-backend-get-connections';
+} from '#common/interfaces/to-backend/connections/to-backend-get-connections';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { ConnectionsQuery } from '../queries/connections.query';
 import { MemberQuery } from '../queries/member.query';

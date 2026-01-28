@@ -1,23 +1,23 @@
 import test from 'ava';
-import { BRANCH_MAIN } from '~common/constants/top';
-import { RETRY_OPTIONS } from '~common/constants/top-mcli';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { makeId } from '~common/functions/make-id';
+import { BRANCH_MAIN } from '#common/constants/top';
+import { RETRY_OPTIONS } from '#common/constants/top-mcli';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { makeId } from '#common/functions/make-id';
 import {
   ToBackendCreateBranchRequestPayload,
   ToBackendCreateBranchResponse
-} from '~common/interfaces/to-backend/branches/to-backend-create-branch';
+} from '#common/interfaces/to-backend/branches/to-backend-create-branch';
 import {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
-} from '~common/interfaces/to-backend/files/to-backend-save-file';
+} from '#common/interfaces/to-backend/files/to-backend-save-file';
 import {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse
-} from '~common/interfaces/to-backend/repos/to-backend-commit-repo';
+} from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
 import { getConfig } from '~mcli/config/get.config';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { mreq } from '~mcli/functions/mreq';

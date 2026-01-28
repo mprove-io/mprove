@@ -1,8 +1,22 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
+import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeId } from '#common/functions/make-id';
+import { Ev } from '#common/interfaces/backend/ev';
+import { Project } from '#common/interfaces/backend/project';
+import { ProjectsItem } from '#common/interfaces/backend/projects-item';
+import {
+  ToDiskCreateProjectRequest,
+  ToDiskCreateProjectResponse
+} from '#common/interfaces/to-disk/02-projects/to-disk-create-project';
+import { ServerError } from '#common/models/server-error';
 import { BackendConfig } from '~backend/config/backend-config';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import {
   ConnectionTab,
   MemberTab,
@@ -11,20 +25,6 @@ import {
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
-import { PROD_REPO_ID, PROJECT_ENV_PROD } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
-import { Ev } from '~common/interfaces/backend/ev';
-import { Project } from '~common/interfaces/backend/project';
-import { ProjectsItem } from '~common/interfaces/backend/projects-item';
-import {
-  ToDiskCreateProjectRequest,
-  ToDiskCreateProjectResponse
-} from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
-import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
@@ -52,9 +52,7 @@ export class ProjectsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  wrapToApiProjectsItem(item: {
-    project: ProjectTab;
-  }): ProjectsItem {
+  wrapToApiProjectsItem(item: { project: ProjectTab }): ProjectsItem {
     let { project } = item;
 
     let apiProjectItem: ProjectsItem = {

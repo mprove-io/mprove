@@ -5,9 +5,9 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
-import { Query } from '~common/interfaces/blockml/query';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
+import { Query } from '#common/interfaces/blockml/query';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendRunQueriesDryRequestPayload {

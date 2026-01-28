@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { DiskConfig } from '~disk/config/disk-config';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import {
   decryptData,
   encryptData
-} from '~node-common/functions/encrypt-decrypt';
+} from '#node-common/functions/encrypt-decrypt';
+import { DiskConfig } from '~disk/config/disk-config';
 
 @Injectable()
 export class DiskTabService {

@@ -8,20 +8,19 @@ import {
   ViewChild
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { defaultKeymap } from '@codemirror/commands';
-import { indentWithTab } from '@codemirror/commands';
+import { defaultKeymap, indentWithTab } from '@codemirror/commands';
 import { LanguageDescription } from '@codemirror/language';
 import { Diagnostic, linter } from '@codemirror/lint';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
 import {
   Annotation,
+  Compartment,
   EditorSelection,
   EditorState,
   Extension,
   Transaction,
   TransactionSpec
 } from '@codemirror/state';
-import { Compartment } from '@codemirror/state';
 import { EditorView, KeyBinding, keymap } from '@codemirror/view';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Subscription } from 'rxjs';
@@ -35,40 +34,40 @@ import {
   VS_LIGHT_THEME_EXTRA_DIFF_READ,
   VS_LIGHT_THEME_EXTRA_SINGLE,
   VS_LIGHT_THEME_EXTRA_SINGLE_READ
-} from '~common/constants/code-themes/themes';
+} from '#common/constants/code-themes/themes';
 import {
   EMPTY_CHART_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_CONFIG_FILENAME
-} from '~common/constants/top';
+} from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
-} from '~common/constants/top-front';
-import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { decodeFilePath } from '~common/functions/decode-file-path';
-import { encodeFilePath } from '~common/functions/encode-file-path';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { isUndefined } from '~common/functions/is-undefined';
-import { Member } from '~common/interfaces/backend/member';
-import { ModelX } from '~common/interfaces/backend/model-x';
+} from '#common/constants/top-front';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { decodeFilePath } from '#common/functions/decode-file-path';
+import { encodeFilePath } from '#common/functions/encode-file-path';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { Member } from '#common/interfaces/backend/member';
+import { ModelX } from '#common/interfaces/backend/model-x';
 import {
   ToBackendGetChartRequestPayload,
   ToBackendGetChartResponse
-} from '~common/interfaces/to-backend/charts/to-backend-get-chart';
+} from '#common/interfaces/to-backend/charts/to-backend-get-chart';
 import {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
-} from '~common/interfaces/to-backend/files/to-backend-save-file';
+} from '#common/interfaces/to-backend/files/to-backend-save-file';
 import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '~common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/interfaces/to-backend/models/to-backend-get-models';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

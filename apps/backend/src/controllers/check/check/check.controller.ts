@@ -1,8 +1,8 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
+import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
-import { THROTTLE_MULTIPLIER } from '~common/constants/top-backend';
 
 @SkipJwtCheck()
 @UseGuards(ThrottlerIpGuard)

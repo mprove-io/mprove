@@ -8,8 +8,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ConnectionLt, ConnectionSt } from '~common/interfaces/st-lt';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
 
 export const connectionsTable = pgTable(
   'connections',

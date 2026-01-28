@@ -10,7 +10,7 @@ import {
   startOfYear
 } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 
 interface TimestampsResult {
   currentTs: number;

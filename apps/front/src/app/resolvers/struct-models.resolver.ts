@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '~common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/interfaces/to-backend/models/to-backend-get-models';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { MemberQuery } from '../queries/member.query';
 import { ModelsQuery } from '../queries/models.query';

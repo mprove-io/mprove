@@ -1,7 +1,7 @@
 import * as nodegit from 'nodegit';
-import { NODEGIT_PATH_NOT_EXIST_IN_TREE } from '~common/constants/top';
-import { isDefined } from '~common/functions/is-defined';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+import { NODEGIT_PATH_NOT_EXIST_IN_TREE } from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function getLastCommitFileContent(item: {
   repoDir: string;

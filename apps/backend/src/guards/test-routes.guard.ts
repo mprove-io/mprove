@@ -1,8 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ErEnum } from '#common/enums/er.enum';
+import { ServerError } from '#common/models/server-error';
 import { BackendConfig } from '~backend/config/backend-config';
-import { ErEnum } from '~common/enums/er.enum';
-import { ServerError } from '~common/models/server-error';
 
 @Injectable()
 export class TestRoutesGuard implements CanActivate {

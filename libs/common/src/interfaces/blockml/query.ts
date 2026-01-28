@@ -6,9 +6,9 @@ import {
   IsOptional,
   IsString
 } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { StoreMethodEnum } from '~common/enums/store-method.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { StoreMethodEnum } from '#common/enums/store-method.enum';
 
 export class Query {
   @IsString()

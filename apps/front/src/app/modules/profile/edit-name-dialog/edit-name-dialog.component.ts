@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -13,12 +13,12 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendSetUserNameRequestPayload,
   ToBackendSetUserNameResponse
-} from '~common/interfaces/to-backend/users/to-backend-set-user-name';
+} from '#common/interfaces/to-backend/users/to-backend-set-user-name';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { SharedModule } from '../../shared/shared.module';

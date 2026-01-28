@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { DiskConfig } from '~disk/config/disk-config';
 import { makeErrorResponseDisk } from '~disk/functions/make-error-response-disk';
 import { makeOkResponseDisk } from '~disk/functions/make-ok-response-disk';

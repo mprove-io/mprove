@@ -8,8 +8,8 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { IsTimezone } from '#common/functions/is-timezone';
 import { Column } from './column';
 import { Fraction } from './fraction';
 import { MconfigChart } from './mconfig-chart';

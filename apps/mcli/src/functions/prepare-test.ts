@@ -1,18 +1,18 @@
 import { BaseContext, Cli, CommandClass } from 'clipanion';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendDeleteRecordsRequestPayload,
   ToBackendDeleteRecordsResponse
-} from '~common/interfaces/to-backend/test-routes/to-backend-delete-records';
+} from '#common/interfaces/to-backend/test-routes/to-backend-delete-records';
 import {
   ToBackendSeedRecordsRequestPayload,
   ToBackendSeedRecordsResponse
-} from '~common/interfaces/to-backend/test-routes/to-backend-seed-records';
+} from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
 import {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
-} from '~common/interfaces/to-backend/users/to-backend-login-user';
+} from '#common/interfaces/to-backend/users/to-backend-login-user';
 import { McliConfig } from '~mcli/config/mcli-config';
 import { CustomContext } from '~mcli/models/custom-command';
 import { mreq } from './mreq';

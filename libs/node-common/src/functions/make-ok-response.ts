@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { logToConsole } from './log-to-console';
 
 export function makeOkResponse(item: {

@@ -1,7 +1,7 @@
 import * as nodegit from 'nodegit';
-import { CENTRAL_REPO_ID } from '~common/constants/top-disk';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function cloneRemote(item: {
   orgId: string;

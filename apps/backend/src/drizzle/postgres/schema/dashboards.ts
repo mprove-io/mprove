@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { DashboardLt, DashboardSt } from '~common/interfaces/st-lt';
+import { DashboardLt, DashboardSt } from '#common/interfaces/st-lt';
 
 export const dashboardsTable = pgTable(
   'dashboards',

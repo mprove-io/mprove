@@ -2,19 +2,19 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription, from, of } from 'rxjs';
+import { from, of, Subscription } from 'rxjs';
 import { concatMap, delay, map, startWith, take, tap } from 'rxjs/operators';
-import { VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_LOGIN } from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
+import { VERIFY_YOUR_EMAIL_ADDRESS_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_LOGIN } from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendResendUserEmailRequestPayload,
   ToBackendResendUserEmailResponse
-} from '~common/interfaces/to-backend/users/to-backend-resend-user-email';
+} from '#common/interfaces/to-backend/users/to-backend-resend-user-email';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';

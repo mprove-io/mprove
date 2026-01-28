@@ -1,32 +1,32 @@
 import test from 'ava';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
-import { sendToBackend } from '~backend/functions/send-to-backend';
-import { Prep } from '~backend/interfaces/prep';
-import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
+import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import {
   BRANCH_MAIN,
   EMPTY_STORE_GOOGLE_API_OPTIONS,
   PROJECT_ENV_PROD
-} from '~common/constants/top';
-import { ChangeTypeEnum } from '~common/enums/change-type.enum';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { RowTypeEnum } from '~common/enums/row-type.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '~common/functions/make-copy';
-import { makeId } from '~common/functions/make-id';
+} from '#common/constants/top';
+import { ChangeTypeEnum } from '#common/enums/change-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { RowTypeEnum } from '#common/enums/row-type.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeCopy } from '#common/functions/make-copy';
+import { makeId } from '#common/functions/make-id';
 import {
   ToBackendCreateDraftReportRequest,
   ToBackendCreateDraftReportResponse
-} from '~common/interfaces/to-backend/reports/to-backend-create-draft-report';
+} from '#common/interfaces/to-backend/reports/to-backend-create-draft-report';
 import {
   ToBackendSaveModifyReportRequest,
   ToBackendSaveModifyReportResponse
-} from '~common/interfaces/to-backend/reports/to-backend-save-modify-report';
+} from '#common/interfaces/to-backend/reports/to-backend-save-modify-report';
+import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
+import { prepareTestAndSeed } from '~backend/functions/prepare-test';
+import { sendToBackend } from '~backend/functions/send-to-backend';
+import { Prep } from '~backend/interfaces/prep';
 
 let testId = 'backend-save-modify-report__ok';
 

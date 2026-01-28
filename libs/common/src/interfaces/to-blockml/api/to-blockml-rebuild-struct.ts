@@ -5,20 +5,20 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { BaseConnection } from '~common/interfaces/backend/base-connection';
-import { Ev } from '~common/interfaces/backend/ev';
-import { MproveConfig } from '~common/interfaces/backend/mprove-config';
-import { BmlError } from '~common/interfaces/blockml/bml-error';
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
-import { Chart } from '~common/interfaces/blockml/chart';
-import { Dashboard } from '~common/interfaces/blockml/dashboard';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { Model } from '~common/interfaces/blockml/model';
-import { ModelMetric } from '~common/interfaces/blockml/model-metric';
-import { Preset } from '~common/interfaces/blockml/preset';
-import { Query } from '~common/interfaces/blockml/query';
-import { Report } from '~common/interfaces/blockml/report';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { BaseConnection } from '#common/interfaces/backend/base-connection';
+import { Ev } from '#common/interfaces/backend/ev';
+import { MproveConfig } from '#common/interfaces/backend/mprove-config';
+import { BmlError } from '#common/interfaces/blockml/bml-error';
+import { BmlFile } from '#common/interfaces/blockml/bml-file';
+import { Chart } from '#common/interfaces/blockml/chart';
+import { Dashboard } from '#common/interfaces/blockml/dashboard';
+import { Mconfig } from '#common/interfaces/blockml/mconfig';
+import { Model } from '#common/interfaces/blockml/model';
+import { ModelMetric } from '#common/interfaces/blockml/model-metric';
+import { Preset } from '#common/interfaces/blockml/preset';
+import { Query } from '#common/interfaces/blockml/query';
+import { Report } from '#common/interfaces/blockml/report';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBlockmlRequest } from '../to-blockml-request';
 
 export class ToBlockmlRebuildStructRequestPayload {

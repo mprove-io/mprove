@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
-import { SPECIAL_ERROR } from '~common/constants/top-front';
-import { ErrorData } from '~common/interfaces/front/error-data';
+import { SPECIAL_ERROR } from '#common/constants/top-front';
+import { ErrorData } from '#common/interfaces/front/error-data';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
   CreateDashboardDialogComponent,

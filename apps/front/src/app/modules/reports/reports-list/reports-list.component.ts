@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { ReportX } from '~common/interfaces/backend/report-x';
+import { ReportX } from '#common/interfaces/backend/report-x';
 import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

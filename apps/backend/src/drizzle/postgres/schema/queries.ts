@@ -8,9 +8,9 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { QueryLt, QuerySt } from '~common/interfaces/st-lt';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { QueryLt, QuerySt } from '#common/interfaces/st-lt';
 
 export const queriesTable = pgTable(
   'queries',

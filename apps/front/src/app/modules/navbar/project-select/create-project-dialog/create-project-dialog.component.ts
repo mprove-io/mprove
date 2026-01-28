@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -25,19 +25,19 @@ import {
   PATH_REPO,
   PROD_REPO_ID,
   PROJECT_ENV_PROD
-} from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+} from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendCreateProjectRequestPayload,
   ToBackendCreateProjectResponse
-} from '~common/interfaces/to-backend/projects/to-backend-create-project';
+} from '#common/interfaces/to-backend/projects/to-backend-create-project';
 import {
   ToBackendGenerateProjectRemoteKeyRequestPayload,
   ToBackendGenerateProjectRemoteKeyResponse
-} from '~common/interfaces/to-backend/projects/to-backend-generate-project-remote-key';
+} from '#common/interfaces/to-backend/projects/to-backend-generate-project-remote-key';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ApiService } from '~front/app/services/api.service';
 

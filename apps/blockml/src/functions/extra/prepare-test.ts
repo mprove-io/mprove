@@ -3,18 +3,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
+import { APP_NAME_BLOCKML, SRC_PATH } from '#common/constants/top-blockml';
+import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ProjectConnection } from '#common/interfaces/backend/project-connection';
+import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 import { appServices } from '~blockml/app-services';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { getConfig } from '~blockml/config/get.config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { ConsumerMainService } from '~blockml/services/consumer-main.service';
-import { APP_NAME_BLOCKML, SRC_PATH } from '~common/constants/top-blockml';
-import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
-import { CallerEnum } from '~common/enums/special/caller.enum';
-import { FuncEnum } from '~common/enums/special/func.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
-import { getLoggerOptions } from '~node-common/functions/get-logger-options';
 
 export async function prepareTest(
   caller: CallerEnum,

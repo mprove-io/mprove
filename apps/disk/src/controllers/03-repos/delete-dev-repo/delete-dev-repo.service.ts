@@ -1,17 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErEnum } from '~common/enums/er.enum';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { ErEnum } from '#common/enums/er.enum';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import {
   ToDiskDeleteDevRepoRequest,
   ToDiskDeleteDevRepoResponsePayload
-} from '~common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
+} from '#common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { removePath } from '~disk/functions/disk/remove-path';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class DeleteDevRepoService {

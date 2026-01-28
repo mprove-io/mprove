@@ -7,10 +7,10 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FieldTypeEnum } from '~common/enums/field-type.enum';
+import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FieldTypeEnum } from '#common/enums/field-type.enum';
 import { KeyValuePair } from './key-value-pair';
 
 export class ModelField {

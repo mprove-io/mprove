@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { NEW_PASSWORD_WAS_SET_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_LOGIN } from '~common/constants/top';
+import { NEW_PASSWORD_WAS_SET_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_LOGIN } from '#common/constants/top';
 
 @Component({
   standalone: false,

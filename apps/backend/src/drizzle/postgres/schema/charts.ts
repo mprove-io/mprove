@@ -9,8 +9,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { ChartLt, ChartSt } from '~common/interfaces/st-lt';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { ChartLt, ChartSt } from '#common/interfaces/st-lt';
 
 export const chartsTable = pgTable(
   'charts',

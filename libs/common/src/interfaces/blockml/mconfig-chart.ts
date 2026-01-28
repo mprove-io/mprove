@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { MconfigChartSeries } from './mconfig-chart-series';
 import { MconfigChartXAxis } from './mconfig-chart-x-axis';
 import { MconfigChartYAxis } from './mconfig-chart-y-axis';

@@ -5,32 +5,32 @@ import {
   TILE_DEFAULT_PLATE_X,
   TILE_DEFAULT_PLATE_Y,
   TRIPLE_UNDERSCORE
-} from '~common/constants/top';
-import { ControlClassEnum } from '~common/enums/control-class.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
-import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { Filter } from '~common/interfaces/blockml/filter';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { FractionControl } from '~common/interfaces/blockml/fraction-control';
-import { FractionSubTypeOption } from '~common/interfaces/blockml/fraction-sub-type-option';
-import { FileFractionControl } from '~common/interfaces/blockml/internal/file-fraction-control';
-import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
-import { FileStoreFractionType } from '~common/interfaces/blockml/internal/file-store-fraction-type';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { Model } from '~common/interfaces/blockml/model';
-import { Query } from '~common/interfaces/blockml/query';
-import { Tile } from '~common/interfaces/blockml/tile';
-import { makeQueryId } from '~node-common/functions/make-query-id';
+} from '#common/constants/top';
+import { ControlClassEnum } from '#common/enums/control-class.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeId } from '#common/functions/make-id';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { Filter } from '#common/interfaces/blockml/filter';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { FractionControl } from '#common/interfaces/blockml/fraction-control';
+import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
+import { FileFractionControl } from '#common/interfaces/blockml/internal/file-fraction-control';
+import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
+import { FileStore } from '#common/interfaces/blockml/internal/file-store';
+import { FileStoreFractionType } from '#common/interfaces/blockml/internal/file-store-fraction-type';
+import { Mconfig } from '#common/interfaces/blockml/mconfig';
+import { Model } from '#common/interfaces/blockml/model';
+import { Query } from '#common/interfaces/blockml/query';
+import { Tile } from '#common/interfaces/blockml/tile';
+import { makeQueryId } from '#node-common/functions/make-query-id';
 import { wrapMconfigChart } from './wrap-mconfig-chart';
 
 export function wrapTiles(item: {

@@ -1,7 +1,7 @@
 import { ErrorHandler, Injectable, Injector, NgZone } from '@angular/core';
 import { DialogService } from '@ngneat/dialog';
-import { SPECIAL_ERROR } from '~common/constants/top-front';
-import { ErrorData } from '~common/interfaces/front/error-data';
+import { SPECIAL_ERROR } from '#common/constants/top-front';
+import { ErrorData } from '#common/interfaces/front/error-data';
 import { ErrorDialogComponent } from '../modules/special/error-dialog/error-dialog.component';
 
 @Injectable()

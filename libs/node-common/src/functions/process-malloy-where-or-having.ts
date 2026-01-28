@@ -4,14 +4,14 @@ import {
   ASTViewOperation,
   ASTWhereViewOperation
 } from '@malloydata/malloy-query-builder';
-import { MALLOY_FILTER_ANY } from '~common/constants/top';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { isUndefined } from '~common/functions/is-undefined';
-import { Filter } from '~common/interfaces/blockml/filter';
-import { Model } from '~common/interfaces/blockml/model';
+import { MALLOY_FILTER_ANY } from '#common/constants/top';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { isUndefined } from '#common/functions/is-undefined';
+import { Filter } from '#common/interfaces/blockml/filter';
+import { Model } from '#common/interfaces/blockml/model';
 import { getMalloyFiltersFractions } from './get-malloy-filters-fractions';
 
 export function processMalloyWhereOrHaving(item: {

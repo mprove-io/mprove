@@ -6,8 +6,8 @@ import {
   WeekdayMoment,
   WhichdayMoment
 } from '@malloydata/malloy-filter';
-import { FractionTsMomentTypeEnum } from '~common/enums/fraction/fraction-ts-moment-type.enum';
-import { isUndefined } from '~common/functions/is-undefined';
+import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-moment-type.enum';
+import { isUndefined } from '#common/functions/is-undefined';
 
 export function getMalloyMomentStr(moment: Moment) {
   let momentStr =

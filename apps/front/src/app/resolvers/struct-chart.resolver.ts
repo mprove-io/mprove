@@ -14,16 +14,16 @@ import {
   PATH_INFO,
   PATH_ORG,
   PATH_PROJECT
-} from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendGetChartRequestPayload,
   ToBackendGetChartResponse
-} from '~common/interfaces/to-backend/charts/to-backend-get-chart';
+} from '#common/interfaces/to-backend/charts/to-backend-get-chart';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
 import { ChartsQuery } from '../queries/charts.query';

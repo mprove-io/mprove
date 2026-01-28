@@ -1,7 +1,7 @@
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { PARAMETER_ORG_ID, PATH_PROFILE } from '~common/constants/top';
-import { isDefined } from '~common/functions/is-defined';
+import { PARAMETER_ORG_ID, PATH_PROFILE } from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined';
 import { NavState } from '../queries/nav.query';
 
 export function checkNavOrg(item: {

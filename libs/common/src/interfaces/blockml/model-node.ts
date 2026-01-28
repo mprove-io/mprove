@@ -7,8 +7,8 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
 
 export class ModelNode {
   @IsString()

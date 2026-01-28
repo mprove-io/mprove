@@ -1,31 +1,31 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ErEnum } from '~common/enums/er.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { RepoEnum } from '~common/enums/repo.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '~common/functions/is-undefined';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { RepoEnum } from '#common/enums/repo.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendGetChartsRequestPayload,
   ToBackendGetChartsResponse
-} from '~common/interfaces/to-backend/charts/to-backend-get-charts';
+} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
 import {
   ToBackendGetDashboardsRequestPayload,
   ToBackendGetDashboardsResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
+} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
 import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '~common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/interfaces/to-backend/models/to-backend-get-models';
 import {
   ToBackendGetReportsRequestPayload,
   ToBackendGetReportsResponse
-} from '~common/interfaces/to-backend/reports/to-backend-get-reports';
+} from '#common/interfaces/to-backend/reports/to-backend-get-reports';
 import {
   ToBackendGetRepoRequestPayload,
   ToBackendGetRepoResponse
-} from '~common/interfaces/to-backend/repos/to-backend-get-repo';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+import { ServerError } from '#common/models/server-error';
 import { getConfig } from '~mcli/config/get.config';
 import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';

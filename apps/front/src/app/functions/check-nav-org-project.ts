@@ -6,8 +6,8 @@ import {
   PATH_ACCOUNT,
   PATH_ORG,
   PATH_PROFILE
-} from '~common/constants/top';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined';
 import { NavState } from '../queries/nav.query';
 
 export function checkNavOrgProject(item: {

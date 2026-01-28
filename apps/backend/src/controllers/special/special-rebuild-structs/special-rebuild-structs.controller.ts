@@ -10,9 +10,28 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
+import { EMPTY_STRUCT_ID } from '#common/constants/top';
+import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
+import { makeId } from '#common/functions/make-id';
+import {
+  BridgeItem,
+  ToBackendSpecialRebuildStructsRequest,
+  ToBackendSpecialRebuildStructsResponsePayload
+} from '#common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
+import {
+  ToDiskGetCatalogFilesRequest,
+  ToDiskGetCatalogFilesResponse
+} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
+import { ServerError } from '#common/models/server-error';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { BridgeTab, MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
@@ -24,25 +43,6 @@ import { BlockmlService } from '~backend/services/blockml.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
-import { EMPTY_STRUCT_ID } from '~common/constants/top';
-import { THROTTLE_MULTIPLIER } from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { isUndefined } from '~common/functions/is-undefined';
-import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
-import { makeId } from '~common/functions/make-id';
-import {
-  BridgeItem,
-  ToBackendSpecialRebuildStructsRequest,
-  ToBackendSpecialRebuildStructsResponsePayload
-} from '~common/interfaces/to-backend/special/to-backend-special-rebuild-structs';
-import {
-  ToDiskGetCatalogFilesRequest,
-  ToDiskGetCatalogFilesResponse
-} from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

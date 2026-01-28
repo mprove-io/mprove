@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { Project } from '~common/interfaces/backend/project';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { Project } from '#common/interfaces/backend/project';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendCreateProjectRequestPayload {

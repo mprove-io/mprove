@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { makeCopy } from '~common/functions/make-copy';
-import { makeId } from '~common/functions/make-id';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
+import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { makeCopy } from '#common/functions/make-copy';
+import { makeId } from '#common/functions/make-id';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { ChartQuery } from '../queries/chart.query';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { StructQuery, StructState } from '../queries/struct.query';

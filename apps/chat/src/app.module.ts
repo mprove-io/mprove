@@ -1,8 +1,8 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ChatConfig } from '#chat/config/chat-config';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { WithTraceSpan } from '~node-common/decorators/with-trace-span.decorator';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { appServices } from './app-services';
 import { getConfig } from './config/get.config';
 import { logToConsoleChat } from './functions/log-to-console-chat';

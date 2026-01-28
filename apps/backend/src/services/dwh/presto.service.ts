@@ -2,15 +2,15 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrestoClient, PrestoClientConfig } from '@prestodb/presto-js-client';
 import { and, eq } from 'drizzle-orm';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { BackendConfig } from '~backend/config/backend-config';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { ConnectionTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
@@ -24,9 +24,7 @@ export class PrestoService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  optionsToPrestoClientConfig(item: {
-    connection: ConnectionTab;
-  }) {
+  optionsToPrestoClientConfig(item: { connection: ConnectionTab }) {
     let { connection } = item;
 
     let prestoClientConfig: PrestoClientConfig = {

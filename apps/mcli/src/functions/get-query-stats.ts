@@ -1,11 +1,8 @@
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { Query } from '~common/interfaces/blockml/query';
-import { McliQueriesStats } from '~common/interfaces/mcli/mcli-queries-stats';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { Query } from '#common/interfaces/blockml/query';
+import { McliQueriesStats } from '#common/interfaces/mcli/mcli-queries-stats';
 
-export function queriesToStats(item: {
-  queries: Query[];
-  started: number;
-}) {
+export function queriesToStats(item: { queries: Query[]; started: number }) {
   let { queries, started } = item;
 
   let queriesStats: McliQueriesStats = {

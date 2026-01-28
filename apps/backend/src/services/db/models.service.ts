@@ -1,18 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { ErEnum } from '#common/enums/er.enum';
+import { isUndefined } from '#common/functions/is-undefined';
+import { Member } from '#common/interfaces/backend/member';
+import { ModelPart } from '#common/interfaces/backend/model-part';
+import { ModelPartX } from '#common/interfaces/backend/model-part-x';
+import { ModelX } from '#common/interfaces/backend/model-x';
+import { Model } from '#common/interfaces/blockml/model';
+import { ServerError } from '#common/models/server-error';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { MemberTab, ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { checkAccess } from '~backend/functions/check-access';
 import { checkModelAccess } from '~backend/functions/check-model-access';
-import { ErEnum } from '~common/enums/er.enum';
-import { isUndefined } from '~common/functions/is-undefined';
-import { Member } from '~common/interfaces/backend/member';
-import { ModelPart } from '~common/interfaces/backend/model-part';
-import { ModelPartX } from '~common/interfaces/backend/model-part-x';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { Model } from '~common/interfaces/blockml/model';
-import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -24,10 +24,7 @@ export class ModelsService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  tabToApi(item: {
-    model: ModelTab;
-    hasAccess: boolean;
-  }): ModelX {
+  tabToApi(item: { model: ModelTab; hasAccess: boolean }): ModelX {
     let { model, hasAccess } = item;
 
     let apiModel: ModelX = {
@@ -53,9 +50,7 @@ export class ModelsService {
     return apiModel;
   }
 
-  apiToTab(item: {
-    apiModel: Model;
-  }): ModelTab {
+  apiToTab(item: { apiModel: Model }): ModelTab {
     let { apiModel } = item;
 
     if (isUndefined(apiModel)) {
@@ -201,9 +196,7 @@ export class ModelsService {
     return apiModelPartXs;
   }
 
-  tabToModelPart(item: {
-    model: ModelTab;
-  }): ModelPart {
+  tabToModelPart(item: { model: ModelTab }): ModelPart {
     let { model } = item;
 
     let modelPart: ModelPart = {

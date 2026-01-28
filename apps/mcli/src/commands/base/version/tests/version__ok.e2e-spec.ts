@@ -1,7 +1,7 @@
 import test from 'ava';
-import { RETRY_OPTIONS } from '~common/constants/top-mcli';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { isDefined } from '~common/functions/is-defined';
+import { RETRY_OPTIONS } from '#common/constants/top-mcli';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
 import { prepareTest } from '~mcli/functions/prepare-test';
 import { CustomContext } from '~mcli/models/custom-command';

@@ -1,6 +1,14 @@
-import * as crypto from 'crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
+import { ErEnum } from '#common/enums/er.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { BaseProject } from '#common/interfaces/backend/base-project';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
+import { ServerError } from '#common/models/server-error';
+import { decryptData } from '#node-common/functions/encrypt-decrypt';
 import { BackendConfig } from '~backend/config/backend-config';
 import {
   AvatarTab,
@@ -42,14 +50,6 @@ import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
 import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
-import { ErEnum } from '~common/enums/er.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { isUndefined } from '~common/functions/is-undefined';
-import { BaseProject } from '~common/interfaces/backend/base-project';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
-import { ServerError } from '~common/models/server-error';
-import { decryptData } from '~node-common/functions/encrypt-decrypt';
 import { TabToEntService } from './tab-to-ent.service';
 
 @Injectable()

@@ -19,13 +19,13 @@ import {
   PATH_REPORTS,
   PROD_REPO_ID,
   PROJECT_ENV_PROD
-} from '~common/constants/top';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ProjectsItem } from '~common/interfaces/backend/projects-item';
+} from '#common/constants/top';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ProjectsItem } from '#common/interfaces/backend/projects-item';
 import {
   ToBackendGetProjectsListRequestPayload,
   ToBackendGetProjectsListResponse
-} from '~common/interfaces/to-backend/projects/to-backend-get-projects-list';
+} from '#common/interfaces/to-backend/projects/to-backend-get-projects-list';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';

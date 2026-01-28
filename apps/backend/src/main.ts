@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { startTelemetry } from '~node-common/functions/start-telemetry';
+import { startTelemetry } from '#node-common/functions/start-telemetry';
 
 let tracerNodeSdk = startTelemetry({
   serviceName:
@@ -15,10 +15,10 @@ import { WinstonModule } from 'nest-winston';
 import {
   APP_NAME_BACKEND,
   APP_NAME_SCHEDULER
-} from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
-import { getLoggerOptions } from '~node-common/functions/get-logger-options';
-import { listenProcessEvents } from '~node-common/functions/listen-process-events';
+} from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { getLoggerOptions } from '#node-common/functions/get-logger-options';
+import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
 import { logToConsoleBackend } from './functions/log-to-console-backend';

@@ -5,19 +5,19 @@ import {
   DEFAULT_METRICS_COLUMN_NAME_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
-} from '~common/constants/top-front';
-import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
-import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboard-link';
-import { ProjectFileLink } from '~common/interfaces/backend/project-file-link';
-import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
-import { ProjectReportLink } from '~common/interfaces/backend/project-report-link';
-import { Column } from '~common/interfaces/blockml/column';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { ChartPointsData } from '~common/interfaces/front/chart-points-data';
-import { DataRow } from '~common/interfaces/front/data-row';
+} from '#common/constants/top-front';
+import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link';
+import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
+import { ProjectFileLink } from '#common/interfaces/backend/project-file-link';
+import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
+import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
+import { Column } from '#common/interfaces/blockml/column';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { ChartPointsData } from '#common/interfaces/front/chart-points-data';
+import { DataRow } from '#common/interfaces/front/data-row';
 import { BaseQuery } from './base.query';
 
 export interface RepChartData {

@@ -1,11 +1,11 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToBackendLogoutUserRequest } from '#common/interfaces/to-backend/users/to-backend-logout-user';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { TabService } from '~backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendLogoutUserRequest } from '~common/interfaces/to-backend/users/to-backend-logout-user';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

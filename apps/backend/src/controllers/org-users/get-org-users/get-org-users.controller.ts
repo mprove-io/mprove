@@ -1,7 +1,13 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray, sql } from 'drizzle-orm';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import {
+  OrgUsersItem,
+  ToBackendGetOrgUsersRequest,
+  ToBackendGetOrgUsersResponsePayload
+} from '#common/interfaces/to-backend/org-users/to-backend-get-org-users';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   AvatarEnt,
@@ -15,12 +21,6 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { TabService } from '~backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import {
-  OrgUsersItem,
-  ToBackendGetOrgUsersRequest,
-  ToBackendGetOrgUsersResponsePayload
-} from '~common/interfaces/to-backend/org-users/to-backend-get-org-users';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

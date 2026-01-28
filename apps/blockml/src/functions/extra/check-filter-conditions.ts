@@ -1,16 +1,16 @@
 import { ConfigService } from '@nestjs/config';
+import { MALLOY_FILTER_ANY } from '#common/constants/top';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
+import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { sdrType } from '#common/types/sdr-type';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
-import { MALLOY_FILTER_ANY } from '~common/constants/top';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { CallerEnum } from '~common/enums/special/caller.enum';
-import { ErTitleEnum } from '~common/enums/special/er-title.enum';
-import { FuncEnum } from '~common/enums/special/func.enum';
-import { LogTypeEnum } from '~common/enums/special/log-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { sdrType } from '~common/types/sdr-type';
-import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 import { log } from './log';
 
 let func = FuncEnum.CheckFilterConditions;

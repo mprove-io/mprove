@@ -1,9 +1,9 @@
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
-import { FileStatusEnum } from '~common/enums/file-status.enum';
-import { encodeFilePath } from '~common/functions/encode-file-path';
-import { isUndefined } from '~common/functions/is-undefined';
-import { DiskFileChange } from '~common/interfaces/disk/disk-file-change';
+import { FileStatusEnum } from '#common/enums/file-status.enum';
+import { encodeFilePath } from '#common/functions/encode-file-path';
+import { isUndefined } from '#common/functions/is-undefined';
+import { DiskFileChange } from '#common/interfaces/disk/disk-file-change';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getChangesToCommit(item: {

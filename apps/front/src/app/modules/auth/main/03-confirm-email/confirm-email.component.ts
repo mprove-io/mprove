@@ -2,19 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
-import { EMAIL_CONFIRMATION_PAGE_TITLE } from '~common/constants/page-titles';
+import { EMAIL_CONFIRMATION_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   PATH_EMAIL_CONFIRMED,
   PATH_LOGIN_SUCCESS
-} from '~common/constants/top';
-import { LOCAL_STORAGE_TOKEN } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top';
+import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendConfirmUserEmailRequestPayload,
   ToBackendConfirmUserEmailResponse
-} from '~common/interfaces/to-backend/users/to-backend-confirm-user-email';
+} from '#common/interfaces/to-backend/users/to-backend-confirm-user-email';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';

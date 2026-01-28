@@ -1,4 +1,4 @@
-import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { Fraction } from '../fraction';
 import { FileStoreFractionControl } from './file-store-fraction-control';
 

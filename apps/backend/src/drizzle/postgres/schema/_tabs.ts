@@ -37,7 +37,7 @@ import {
   StructSt,
   UserLt,
   UserSt
-} from '~common/interfaces/st-lt';
+} from '#common/interfaces/st-lt';
 import { AvatarEnt } from './avatars';
 import { BranchEnt } from './branches';
 import { BridgeEnt } from './bridges';

@@ -1,4 +1,4 @@
-import { MyRegex } from '~common/models/my-regex';
+import { MyRegex } from '#common/models/my-regex';
 import { isDefined } from './is-defined';
 
 export function toBooleanFromLowercaseString(x: string) {

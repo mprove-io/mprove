@@ -1,9 +1,9 @@
 import { DatePickerDate, DatePickerI18n } from '@vaadin/date-picker';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { MconfigField } from '~common/interfaces/backend/mconfig-field';
-import { RefreshItem } from '~common/interfaces/front/refresh-item';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { MconfigField } from '#common/interfaces/backend/mconfig-field';
+import { RefreshItem } from '#common/interfaces/front/refresh-item';
 
 export const SPECIAL_ERROR = 'SPECIAL_ERROR';
 export const PASSWORD_RESET_EMAIL = 'PASSWORD_RESET_EMAIL';

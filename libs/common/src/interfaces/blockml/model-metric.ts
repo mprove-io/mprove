@@ -1,9 +1,9 @@
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { MetricTypeEnum } from '~common/enums/metric-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { MetricTypeEnum } from '#common/enums/metric-type.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
 
 export class ModelMetric {
   @IsString()

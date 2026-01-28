@@ -1,18 +1,18 @@
 import test from 'ava';
-import { BRANCH_MAIN } from '~common/constants/top';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { makeId } from '~common/functions/make-id';
-import { BaseProject } from '~common/interfaces/backend/base-project';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
-import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
-import { ToDiskCreateProjectRequest } from '~common/interfaces/to-disk/02-projects/to-disk-create-project';
+import { BRANCH_MAIN } from '#common/constants/top';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { makeId } from '#common/functions/make-id';
+import { BaseProject } from '#common/interfaces/backend/base-project';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
+import { ToDiskCreateOrgRequest } from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import { ToDiskCreateProjectRequest } from '#common/interfaces/to-disk/02-projects/to-disk-create-project';
 import {
   ToDiskRenameCatalogNodeRequest,
   ToDiskRenameCatalogNodeResponse
-} from '~common/interfaces/to-disk/04-catalogs/to-disk-rename-catalog-node';
-import { ToDiskCreateFolderRequest } from '~common/interfaces/to-disk/06-folders/to-disk-create-folder';
+} from '#common/interfaces/to-disk/04-catalogs/to-disk-rename-catalog-node';
+import { ToDiskCreateFolderRequest } from '#common/interfaces/to-disk/06-folders/to-disk-create-folder';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
 

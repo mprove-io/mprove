@@ -3,15 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import * as pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { BackendConfig } from '~backend/config/backend-config';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { ConnectionTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
 let retry = require('async-retry');
@@ -25,9 +25,7 @@ export class PgService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  optionsToPostgresOptions(item: {
-    connection: ConnectionTab;
-  }) {
+  optionsToPostgresOptions(item: { connection: ConnectionTab }) {
     let { connection } = item;
 
     let connectionOptions: pg.IConnectionParameters<pg.IClient> = {

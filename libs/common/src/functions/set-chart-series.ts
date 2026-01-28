@@ -3,11 +3,11 @@ import {
   DEFAULT_CHART_SERIES_LINE,
   DEFAULT_CHART_SERIES_PIE,
   DEFAULT_CHART_SERIES_SCATTER
-} from '~common/constants/mconfig-chart';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
+} from '#common/constants/mconfig-chart';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { Mconfig } from '#common/interfaces/blockml/mconfig';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
 import { isDefined } from './is-defined';
 import { makeCopy } from './make-copy';
 

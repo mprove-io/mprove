@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { Fraction } from './fraction';
 
 export class DashboardField {

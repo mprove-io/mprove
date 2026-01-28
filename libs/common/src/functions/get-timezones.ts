@@ -1,5 +1,5 @@
-import { timezones } from '~common/constants/timezones';
-import { UTC } from '~common/constants/top';
+import { timezones } from '#common/constants/timezones';
+import { UTC } from '#common/constants/top';
 
 export function getTimezones() {
   let tzs: { value: string; label: string }[] = [

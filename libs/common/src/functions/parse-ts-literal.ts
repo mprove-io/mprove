@@ -1,12 +1,9 @@
 import { TemporalUnit } from '@malloydata/malloy-filter';
-import { MyRegex } from '~common/models/my-regex';
+import { MyRegex } from '#common/models/my-regex';
 import { isDefined } from './is-defined';
 import { isUndefined } from './is-undefined';
 
-export function parseTsLiteral(item: {
-  input: string;
-  units: TemporalUnit;
-}) {
+export function parseTsLiteral(item: { input: string; units: TemporalUnit }) {
   let { input, units } = item;
 
   let year;

@@ -16,13 +16,13 @@ import {
   PATH_REPORTS,
   PROD_REPO_ID,
   PROJECT_ENV_PROD
-} from '~common/constants/top';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { EnvsItem } from '~common/interfaces/backend/envs-item';
+} from '#common/constants/top';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { EnvsItem } from '#common/interfaces/backend/envs-item';
 import {
   ToBackendGetEnvsListRequestPayload,
   ToBackendGetEnvsListResponse
-} from '~common/interfaces/to-backend/envs/to-backend-get-envs-list';
+} from '#common/interfaces/to-backend/envs/to-backend-get-envs-list';
 import { checkNavMain } from '~front/app/functions/check-nav-main';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';

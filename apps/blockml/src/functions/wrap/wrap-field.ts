@@ -1,9 +1,9 @@
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { FieldAny } from '~common/interfaces/blockml/internal/field-any';
-import { ModelField } from '~common/interfaces/blockml/model-field';
-import { ModelNode } from '~common/interfaces/blockml/model-node';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { FieldAny } from '#common/interfaces/blockml/internal/field-any';
+import { ModelField } from '#common/interfaces/blockml/model-field';
+import { ModelNode } from '#common/interfaces/blockml/model-node';
 
 export function wrapField(item: {
   topNode: ModelNode;

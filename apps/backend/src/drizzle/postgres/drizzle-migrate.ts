@@ -2,7 +2,7 @@ import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import { Client, ClientConfig } from 'pg';
 import 'reflect-metadata';
-import { BoolEnum } from '~common/enums/bool.enum';
+import { BoolEnum } from '#common/enums/bool.enum';
 
 async function start() {
   let clientConfig: ClientConfig = {

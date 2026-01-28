@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { ProjectsItem } from '~common/interfaces/backend/projects-item';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ProjectsItem } from '#common/interfaces/backend/projects-item';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetProjectsListRequestPayload {

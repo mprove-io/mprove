@@ -1,7 +1,7 @@
-import { prepareTile } from '~common/functions/prepare-tile';
-import { toYaml } from '~common/functions/to-yaml';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { FilePartTile } from '~common/interfaces/blockml/internal/file-part-tile';
+import { prepareTile } from '#common/functions/prepare-tile';
+import { toYaml } from '#common/functions/to-yaml';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile';
 
 export function makeChartFileText(item: {
   mconfig: MconfigX;

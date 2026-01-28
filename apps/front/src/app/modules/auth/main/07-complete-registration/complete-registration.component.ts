@@ -4,19 +4,19 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { COMPLETE_REGISTRATION_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_LOGIN_SUCCESS } from '~common/constants/top';
+import { COMPLETE_REGISTRATION_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_LOGIN_SUCCESS } from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_TOKEN
-} from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendCompleteUserRegistrationRequestPayload,
   ToBackendCompleteUserRegistrationResponse
-} from '~common/interfaces/to-backend/users/to-backend-complete-user-registration';
+} from '#common/interfaces/to-backend/users/to-backend-complete-user-registration';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';

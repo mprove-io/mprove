@@ -6,9 +6,9 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { Query } from '~common/interfaces/blockml/query';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { Query } from '#common/interfaces/blockml/query';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendSuggestDimensionValuesRequestPayload {

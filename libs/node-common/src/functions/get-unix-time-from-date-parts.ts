@@ -1,5 +1,5 @@
 import { getUnixTime, parseISO } from 'date-fns';
-import { isDefined } from '~common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined';
 
 export function getUnixTimeFromDateParts(item: {
   year: string;

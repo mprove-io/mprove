@@ -1,6 +1,6 @@
-import { MALLOY_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-grammar';
-import { MALLOY_NOTEBOOK_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-notebook-grammar';
-import { MALLOY_SQL_GRAMMAR } from '~common/constants/code-themes/grammars/malloy-sql-grammar';
+import { MALLOY_GRAMMAR } from '#common/constants/code-themes/grammars/malloy-grammar';
+import { MALLOY_NOTEBOOK_GRAMMAR } from '#common/constants/code-themes/grammars/malloy-notebook-grammar';
+import { MALLOY_SQL_GRAMMAR } from '#common/constants/code-themes/grammars/malloy-sql-grammar';
 
 export const MALLOY_SQL_GRAMMAR_PATTERNS = [
   MALLOY_SQL_GRAMMAR.repository['malloysql-sql'].patterns[0],

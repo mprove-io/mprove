@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
-import { EMPTY_REPORT_ID } from '~common/constants/top';
-import { makeCopy } from '~common/functions/make-copy';
-import { ReportX } from '~common/interfaces/backend/report-x';
+import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
+import { EMPTY_REPORT_ID } from '#common/constants/top';
+import { makeCopy } from '#common/functions/make-copy';
+import { ReportX } from '#common/interfaces/backend/report-x';
 import { BaseQuery } from './base.query';
 
 export class ReportState extends ReportX {}

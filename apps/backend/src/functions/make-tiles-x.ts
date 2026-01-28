@@ -1,11 +1,11 @@
-import { isDefined } from '~common/functions/is-defined';
-import { makeId } from '~common/functions/make-id';
-import { FilterX } from '~common/interfaces/backend/filter-x';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { TileX } from '~common/interfaces/backend/tile-x';
-import { Query } from '~common/interfaces/blockml/query';
-import { Tile } from '~common/interfaces/blockml/tile';
+import { isDefined } from '#common/functions/is-defined';
+import { makeId } from '#common/functions/make-id';
+import { FilterX } from '#common/interfaces/backend/filter-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { ModelX } from '#common/interfaces/backend/model-x';
+import { TileX } from '#common/interfaces/backend/tile-x';
+import { Query } from '#common/interfaces/blockml/query';
+import { Tile } from '#common/interfaces/blockml/tile';
 
 export function makeTilesX(item: {
   tiles: Tile[];

@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsInt, IsString } from 'class-validator';
-import { ChatEnvEnum } from '~common/enums/env/chat-env.enum';
+import { ChatEnvEnum } from '#common/enums/env/chat-env.enum';
 
 export class ChatConfig {
   @IsEnum(ChatEnvEnum)

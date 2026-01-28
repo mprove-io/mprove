@@ -2,8 +2,24 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
+import {
+  EMPTY_STRUCT_ID,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
+} from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeId } from '#common/functions/make-id';
+import { Member } from '#common/interfaces/backend/member';
+import {
+  ToDiskCreateDevRepoRequest,
+  ToDiskCreateDevRepoResponse
+} from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
+import { ServerError } from '#common/models/server-error';
 import { BackendConfig } from '~backend/config/backend-config';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import {
   BridgeTab,
   MemberTab,
@@ -15,22 +31,6 @@ import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeFullName } from '~backend/functions/make-full-name';
-import {
-  EMPTY_STRUCT_ID,
-  PROD_REPO_ID,
-  PROJECT_ENV_PROD
-} from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
-import { Member } from '~common/interfaces/backend/member';
-import {
-  ToDiskCreateDevRepoRequest,
-  ToDiskCreateDevRepoResponse
-} from '~common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
-import { ServerError } from '~common/models/server-error';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
@@ -235,10 +235,7 @@ export class MembersService {
     }
   }
 
-  async addMemberToDemoProject(item: {
-    user: UserTab;
-    traceId: string;
-  }) {
+  async addMemberToDemoProject(item: { user: UserTab; traceId: string }) {
     let { user, traceId } = item;
 
     let demoProjectId =
@@ -377,9 +374,7 @@ export class MembersService {
     }
   }
 
-  async addDemoMemberToDemoProject(item: {
-    user: UserTab;
-  }) {
+  async addDemoMemberToDemoProject(item: { user: UserTab }) {
     let { user } = item;
 
     let demoProjectId =

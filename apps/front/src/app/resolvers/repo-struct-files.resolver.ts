@@ -8,14 +8,14 @@ import {
   PATH_INFO,
   PATH_ORG,
   PATH_PROJECT
-} from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+} from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetRepoRequestPayload,
   ToBackendGetRepoResponse
-} from '~common/interfaces/to-backend/repos/to-backend-get-repo';
+} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';

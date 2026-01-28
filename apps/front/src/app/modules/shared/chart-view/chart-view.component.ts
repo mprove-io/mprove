@@ -15,15 +15,15 @@ import {
   SeriesOption
 } from 'echarts';
 import { YAXisOption } from 'echarts/types/dist/shared';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { MconfigField } from '~common/interfaces/backend/mconfig-field';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { MconfigField } from '#common/interfaces/backend/mconfig-field';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
 import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { StructQuery } from '~front/app/queries/struct.query';

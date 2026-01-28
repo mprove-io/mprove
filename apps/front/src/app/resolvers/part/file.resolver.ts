@@ -10,10 +10,10 @@ import { map, take, tap } from 'rxjs/operators';
 import {
   LAST_SELECTED_FILE_ID,
   PARAMETER_FILE_ID
-} from '~common/constants/top';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { getFileIds } from '~common/functions/get-file-ids';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { getFileIds } from '#common/functions/get-file-ids';
+import { isDefined } from '#common/functions/is-defined';
 import { RepoQuery } from '~front/app/queries/repo.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { NavigateService } from '~front/app/services/navigate.service';

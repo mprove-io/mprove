@@ -1,4 +1,4 @@
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { FileBasic } from './file-basic';
 
 export interface FileProjectConf extends FileBasic {

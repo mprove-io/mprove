@@ -8,8 +8,8 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { FileStore } from './internal/file-store';
 import { ModelField } from './model-field';
 import { ModelNode } from './model-node';

@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import { Member } from '~common/interfaces/backend/member';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { Member } from '#common/interfaces/backend/member';
+import { ProjectConnection } from '#common/interfaces/backend/project-connection';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetConnectionsRequestPayload {

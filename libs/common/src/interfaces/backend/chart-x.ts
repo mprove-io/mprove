@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { Chart } from '../blockml/chart';
 import { TileX } from './tile-x';
 

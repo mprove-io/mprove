@@ -1,8 +1,8 @@
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { ErEnum } from '~common/enums/er.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { ServerError } from '~common/models/server-error';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ServerError } from '#common/models/server-error';
 
 const signalsNames: NodeJS.Signals[] = ['SIGTERM', 'SIGINT', 'SIGHUP'];
 

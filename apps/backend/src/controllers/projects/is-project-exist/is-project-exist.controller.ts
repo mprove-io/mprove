@@ -1,7 +1,13 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import {
+  ToBackendIsProjectExistRequest,
+  ToBackendIsProjectExistResponsePayload
+} from '#common/interfaces/to-backend/projects/to-backend-is-project-exist';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -10,12 +16,6 @@ import { DconfigsService } from '~backend/services/db/dconfigs.service';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { HashService } from '~backend/services/hash.service';
 import { TabService } from '~backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import {
-  ToBackendIsProjectExistRequest,
-  ToBackendIsProjectExistResponsePayload
-} from '~common/interfaces/to-backend/projects/to-backend-is-project-exist';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

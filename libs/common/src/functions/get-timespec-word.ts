@@ -1,5 +1,5 @@
-import { TimeframeEnum } from '~common/enums/timeframe.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { TimeframeEnum } from '#common/enums/timeframe.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
 export function getTimeSpecWord(item: { timeSpec: TimeSpecEnum }) {
   let { timeSpec } = item;

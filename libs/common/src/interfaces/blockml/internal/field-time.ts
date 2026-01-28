@@ -1,4 +1,4 @@
-import { FieldClassEnum } from '~common/enums/field-class.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
 
 export interface FieldTime {
   hidden?: string; // boolean

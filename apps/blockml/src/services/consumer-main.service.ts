@@ -2,14 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
+import { METHOD_RPC } from '#common/constants/top';
+import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
+import { RpcRequestData } from '#common/interfaces/rpc-request-data';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { RebuildStructService } from '~blockml/controllers/rebuild-struct/rebuild-struct.service';
 import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-response-blockml';
 import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
-import { METHOD_RPC } from '~common/constants/top';
-import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
-import { RpcRequestData } from '~common/interfaces/rpc-request-data';
-import { MyResponse } from '~common/interfaces/to/my-response';
 
 @Injectable()
 export class ConsumerMainService {

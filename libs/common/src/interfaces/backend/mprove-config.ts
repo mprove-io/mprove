@@ -1,6 +1,6 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { IsTimezone } from '#common/functions/is-timezone';
 
 export class MproveConfig {
   @IsOptional()

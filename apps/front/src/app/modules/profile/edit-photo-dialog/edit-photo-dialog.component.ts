@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -9,12 +9,12 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { ImageCropperComponent } from 'ngx-image-cropper';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendSetAvatarRequestPayload,
   ToBackendSetAvatarResponse
-} from '~common/interfaces/to-backend/avatars/to-backend-set-avatar';
+} from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 

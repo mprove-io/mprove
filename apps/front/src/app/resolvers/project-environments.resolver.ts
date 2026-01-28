@@ -7,13 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { PROJECT_ENV_PROD } from '~common/constants/top';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetEnvsRequestPayload,
   ToBackendGetEnvsResponse
-} from '~common/interfaces/to-backend/envs/to-backend-get-envs';
+} from '#common/interfaces/to-backend/envs/to-backend-get-envs';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { EnvironmentsQuery } from '../queries/environments.query';
 import { MemberQuery } from '../queries/member.query';

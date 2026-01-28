@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { NavQuery, NavState } from '../queries/nav.query';
 
 @Injectable({ providedIn: 'root' })

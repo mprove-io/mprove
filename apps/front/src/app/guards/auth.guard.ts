@@ -5,7 +5,7 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { PATH_LOGIN } from '~common/constants/top';
+import { PATH_LOGIN } from '#common/constants/top';
 import { AuthService } from '~front/app/services/auth.service';
 
 @Injectable()

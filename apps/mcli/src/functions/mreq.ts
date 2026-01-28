@@ -1,11 +1,12 @@
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { makeId } from '~common/functions/make-id';
-import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
-import { MyResponse } from '~common/interfaces/to/my-response';
-import { ServerError } from '~common/models/server-error';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { makeId } from '#common/functions/make-id';
+import { MyResponse } from '#common/interfaces/to/my-response';
+import { ToBackendRequest } from '#common/interfaces/to-backend/to-backend-request';
+import { ServerError } from '#common/models/server-error';
+
 let axios = require('axios/dist/node/axios.cjs');
 
 export async function mreq<T extends MyResponse>(item: {

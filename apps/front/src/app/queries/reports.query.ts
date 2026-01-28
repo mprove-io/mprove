@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { ReportX } from '~common/interfaces/backend/report-x';
+import { ReportX } from '#common/interfaces/backend/report-x';
 import { BaseQuery } from './base.query';
 
 export class ReportsState {

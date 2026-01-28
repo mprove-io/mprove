@@ -1,7 +1,12 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetOrgsListRequest,
+  ToBackendGetOrgsListResponsePayload
+} from '#common/interfaces/to-backend/orgs/to-backend-get-orgs-list';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { membersTable } from '~backend/drizzle/postgres/schema/members';
 import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
@@ -10,11 +15,6 @@ import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { OrgsService } from '~backend/services/db/orgs.service';
 import { TabService } from '~backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetOrgsListRequest,
-  ToBackendGetOrgsListResponsePayload
-} from '~common/interfaces/to-backend/orgs/to-backend-get-orgs-list';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

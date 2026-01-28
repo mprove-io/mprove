@@ -27,20 +27,20 @@ import {
   startOfYear,
   sub
 } from 'date-fns';
+import { TIME_COLUMNS_LIMIT } from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { Column } from '#common/interfaces/blockml/column';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { ServerError } from '#common/models/server-error';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
+import { nodeFormatTsUnix } from '#node-common/functions/node-format-ts-unix';
 import { BackendConfig } from '~backend/config/backend-config';
-import { TIME_COLUMNS_LIMIT } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { Column } from '~common/interfaces/blockml/column';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { ServerError } from '~common/models/server-error';
-import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
-import { nodeFormatTsUnix } from '~node-common/functions/node-format-ts-unix';
 
 @Injectable()
 export class ReportTimeColumnsService {

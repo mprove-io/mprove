@@ -7,12 +7,47 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Throttle, seconds } from '@nestjs/throttler';
+import { seconds, Throttle } from '@nestjs/throttler';
 import { and, eq } from 'drizzle-orm';
 import { forEachSeries } from 'p-iteration';
+import {
+  EMPTY_REPORT_ID,
+  EMPTY_STRUCT_ID,
+  PATH_BRANCH,
+  PATH_COMPLETE_REGISTRATION,
+  PATH_ENV,
+  PATH_ORG,
+  PATH_PROJECT,
+  PATH_REPO,
+  PATH_REPORT,
+  PATH_REPORTS,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD,
+  RESTRICTED_USER_ALIAS
+} from '#common/constants/top';
+import {
+  DEFAULT_SRV_UI,
+  THROTTLE_MULTIPLIER
+} from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
+import { makeId } from '#common/functions/make-id';
+import {
+  ToBackendCreateMemberRequest,
+  ToBackendCreateMemberResponsePayload
+} from '#common/interfaces/to-backend/members/to-backend-create-member';
+import {
+  ToDiskCreateDevRepoRequest,
+  ToDiskCreateDevRepoResponse
+} from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
+import { ServerError } from '#common/models/server-error';
 import { BackendConfig } from '~backend/config/backend-config';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { BridgeTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import {
   AvatarEnt,
@@ -35,41 +70,6 @@ import { EmailService } from '~backend/services/email.service';
 import { HashService } from '~backend/services/hash.service';
 import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
-import {
-  EMPTY_REPORT_ID,
-  EMPTY_STRUCT_ID,
-  PATH_BRANCH,
-  PATH_COMPLETE_REGISTRATION,
-  PATH_ENV,
-  PATH_ORG,
-  PATH_PROJECT,
-  PATH_REPO,
-  PATH_REPORT,
-  PATH_REPORTS,
-  PROD_REPO_ID,
-  PROJECT_ENV_PROD,
-  RESTRICTED_USER_ALIAS
-} from '~common/constants/top';
-import {
-  DEFAULT_SRV_UI,
-  THROTTLE_MULTIPLIER
-} from '~common/constants/top-backend';
-import { ErEnum } from '~common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeCopy } from '~common/functions/make-copy';
-import { makeId } from '~common/functions/make-id';
-import {
-  ToBackendCreateMemberRequest,
-  ToBackendCreateMemberResponsePayload
-} from '~common/interfaces/to-backend/members/to-backend-create-member';
-import {
-  ToDiskCreateDevRepoRequest,
-  ToDiskCreateDevRepoResponse
-} from '~common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
-import { ServerError } from '~common/models/server-error';
 
 let retry = require('async-retry');
 

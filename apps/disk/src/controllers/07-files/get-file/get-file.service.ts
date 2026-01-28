@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErEnum } from '~common/enums/er.enum';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { ErEnum } from '#common/enums/er.enum';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import {
   ToDiskGetFileRequest,
   ToDiskGetFileResponsePayload
-} from '~common/interfaces/to-disk/07-files/to-disk-get-file';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-disk/07-files/to-disk-get-file';
+import { ServerError } from '#common/models/server-error';
+import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
@@ -20,8 +22,6 @@ import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class GetFileService {

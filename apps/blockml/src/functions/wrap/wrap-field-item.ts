@@ -3,15 +3,15 @@ import {
   DOUBLE_UNDERSCORE,
   MPROVE_TAG_FIELD_GROUP,
   NO_CAPITALIZE_LIST
-} from '~common/constants/top';
-import { ParameterEnum } from '~common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
-import { isDefined } from '~common/functions/is-defined';
-import { parseTags } from '~common/functions/parse-tags';
-import { ModelField } from '~common/interfaces/blockml/model-field';
-import { ModelNode } from '~common/interfaces/blockml/model-node';
+} from '#common/constants/top';
+import { ParameterEnum } from '#common/enums/docs/parameter.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined';
+import { parseTags } from '#common/functions/parse-tags';
+import { ModelField } from '#common/interfaces/blockml/model-field';
+import { ModelNode } from '#common/interfaces/blockml/model-node';
 import { FieldItem } from '../extra/get-field-items';
 
 export interface FieldItemX extends FieldItem {

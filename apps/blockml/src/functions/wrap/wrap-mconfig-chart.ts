@@ -1,17 +1,17 @@
 import {
   DEFAULT_CHART,
   DEFAULT_CHART_Y_AXIS
-} from '~common/constants/mconfig-chart';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { makeCopy } from '~common/functions/make-copy';
-import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { FileChartData } from '~common/interfaces/blockml/internal/file-chart-data';
-import { FileChartOptions } from '~common/interfaces/blockml/internal/file-chart-options';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
-import { MconfigChartXAxis } from '~common/interfaces/blockml/mconfig-chart-x-axis';
-import { MconfigChartYAxis } from '~common/interfaces/blockml/mconfig-chart-y-axis';
+} from '#common/constants/mconfig-chart';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { makeCopy } from '#common/functions/make-copy';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { FileChartData } from '#common/interfaces/blockml/internal/file-chart-data';
+import { FileChartOptions } from '#common/interfaces/blockml/internal/file-chart-options';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
+import { MconfigChartXAxis } from '#common/interfaces/blockml/mconfig-chart-x-axis';
+import { MconfigChartYAxis } from '#common/interfaces/blockml/mconfig-chart-y-axis';
 
 export function wrapMconfigChart(item: {
   title: string;

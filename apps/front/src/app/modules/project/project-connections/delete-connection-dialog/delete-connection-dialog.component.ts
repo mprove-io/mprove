@@ -1,18 +1,18 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendDeleteConnectionRequestPayload,
   ToBackendDeleteConnectionResponse
-} from '~common/interfaces/to-backend/connections/to-backend-delete-connection';
+} from '#common/interfaces/to-backend/connections/to-backend-delete-connection';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';
 

@@ -5,10 +5,10 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ChartX } from '~common/interfaces/backend/chart-x';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { QueryOperation } from '~common/interfaces/backend/query-operation';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ChartX } from '#common/interfaces/backend/chart-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { QueryOperation } from '#common/interfaces/backend/query-operation';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendEditDraftChartRequestPayload {

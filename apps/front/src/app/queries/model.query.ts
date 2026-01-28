@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { Model } from '~common/interfaces/blockml/model';
+import { Model } from '#common/interfaces/blockml/model';
 import { BaseQuery } from './base.query';
 
 export class ModelState extends Model {}

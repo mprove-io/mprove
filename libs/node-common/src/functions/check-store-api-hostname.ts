@@ -1,7 +1,7 @@
-import { LookupAddress, promises as dnsPromises } from 'dns';
-import { ErEnum } from '~common/enums/er.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { ServerError } from '~common/models/server-error';
+import { promises as dnsPromises, LookupAddress } from 'dns';
+import { ErEnum } from '#common/enums/er.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ServerError } from '#common/models/server-error';
 
 let ipaddr = require('ipaddr.js');
 let neoip = require('neoip');

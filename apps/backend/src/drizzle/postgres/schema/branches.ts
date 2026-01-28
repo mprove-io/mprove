@@ -8,7 +8,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { BranchLt, BranchSt } from '~common/interfaces/st-lt';
+import { BranchLt, BranchSt } from '#common/interfaces/st-lt';
 
 export const branchesTable = pgTable(
   'branches',

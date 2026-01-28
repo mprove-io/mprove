@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
-import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { ProjectChartLink } from '~common/interfaces/backend/project-chart-link';
-import { ProjectDashboardLink } from '~common/interfaces/backend/project-dashboard-link';
-import { ProjectFileLink } from '~common/interfaces/backend/project-file-link';
-import { ProjectModelLink } from '~common/interfaces/backend/project-model-link';
-import { ProjectReportLink } from '~common/interfaces/backend/project-report-link';
-import { Ui } from '~common/interfaces/backend/ui';
+import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link';
+import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
+import { ProjectFileLink } from '#common/interfaces/backend/project-file-link';
+import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
+import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
+import { Ui } from '#common/interfaces/backend/ui';
 import {
   ToBackendSetUserUiRequestPayload,
   ToBackendSetUserUiResponse
-} from '~common/interfaces/to-backend/users/to-backend-set-user-ui';
+} from '#common/interfaces/to-backend/users/to-backend-set-user-ui';
 import { FileQuery } from '../queries/file.query';
 import { NavQuery } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';

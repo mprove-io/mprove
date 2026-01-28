@@ -6,17 +6,17 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ChangeTypeEnum } from '~common/enums/change-type.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
-import { Member } from '~common/interfaces/backend/member';
-import { ReportX } from '~common/interfaces/backend/report-x';
-import { StructX } from '~common/interfaces/backend/struct-x';
-import { Listener } from '~common/interfaces/blockml/listener';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { ReportField } from '~common/interfaces/blockml/report-field';
-import { RowChange } from '~common/interfaces/blockml/row-change';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ChangeTypeEnum } from '#common/enums/change-type.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { IsTimezone } from '#common/functions/is-timezone';
+import { Member } from '#common/interfaces/backend/member';
+import { ReportX } from '#common/interfaces/backend/report-x';
+import { StructX } from '#common/interfaces/backend/struct-x';
+import { Listener } from '#common/interfaces/blockml/listener';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import { ReportField } from '#common/interfaces/blockml/report-field';
+import { RowChange } from '#common/interfaces/blockml/row-change';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendEditDraftReportRequestPayload {

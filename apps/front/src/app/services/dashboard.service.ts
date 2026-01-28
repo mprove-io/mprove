@@ -3,27 +3,27 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '~common/functions/make-copy';
-import { makeTrackChangeId } from '~common/functions/make-track-change-id';
-import { TileX } from '~common/interfaces/backend/tile-x';
-import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeCopy } from '#common/functions/make-copy';
+import { makeTrackChangeId } from '#common/functions/make-track-change-id';
+import { TileX } from '#common/interfaces/backend/tile-x';
+import { DashboardField } from '#common/interfaces/blockml/dashboard-field';
 import {
   ToBackendCreateDraftDashboardRequestPayload,
   ToBackendCreateDraftDashboardResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
+} from '#common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
 import {
   ToBackendDeleteDraftDashboardsRequestPayload,
   ToBackendDeleteDraftDashboardsResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
+} from '#common/interfaces/to-backend/dashboards/to-backend-delete-draft-dashboards';
 import {
   ToBackendEditDraftDashboardRequestPayload,
   ToBackendEditDraftDashboardResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-edit-draft-dashboard';
-import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
+} from '#common/interfaces/to-backend/dashboards/to-backend-edit-draft-dashboard';
 import { DashboardQuery } from '../queries/dashboard.query';
+import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ApiService } from './api.service';
 import { NavigateService } from './navigate.service';

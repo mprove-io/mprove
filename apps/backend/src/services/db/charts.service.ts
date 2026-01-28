@@ -1,6 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { MPROVE_USERS_FOLDER } from '#common/constants/top';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { ErEnum } from '#common/enums/er.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ChartX } from '#common/interfaces/backend/chart-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { Member } from '#common/interfaces/backend/member';
+import { ModelX } from '#common/interfaces/backend/model-x';
+import { Chart } from '#common/interfaces/blockml/chart';
+import { Query } from '#common/interfaces/blockml/query';
+import { ServerError } from '#common/models/server-error';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import {
   ChartTab,
   MemberTab,
@@ -8,18 +20,6 @@ import {
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
 import { makeTilesX } from '~backend/functions/make-tiles-x';
-import { MPROVE_USERS_FOLDER } from '~common/constants/top';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { ErEnum } from '~common/enums/er.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { ChartX } from '~common/interfaces/backend/chart-x';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { Member } from '~common/interfaces/backend/member';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { Chart } from '~common/interfaces/blockml/chart';
-import { Query } from '~common/interfaces/blockml/query';
-import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 
@@ -84,10 +84,7 @@ export class ChartsService {
     return apiChart;
   }
 
-  apiToTab(item: {
-    apiChart: Chart;
-    chartType: ChartTypeEnum;
-  }): ChartTab {
+  apiToTab(item: { apiChart: Chart; chartType: ChartTypeEnum }): ChartTab {
     let { apiChart, chartType } = item;
 
     if (isUndefined(apiChart)) {

@@ -1,6 +1,6 @@
-import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
 export function getTimeSpecDetail(item: {
   timeSpec: TimeSpecEnum;

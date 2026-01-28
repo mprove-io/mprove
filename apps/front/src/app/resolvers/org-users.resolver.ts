@@ -7,13 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { USERS_PER_PAGE } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { USERS_PER_PAGE } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetOrgUsersRequestPayload,
   ToBackendGetOrgUsersResponse
-} from '~common/interfaces/to-backend/org-users/to-backend-get-org-users';
+} from '#common/interfaces/to-backend/org-users/to-backend-get-org-users';
 import { checkNavOrg } from '../functions/check-nav-org';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UsersQuery } from '../queries/users.query';

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit,
   ViewChild
@@ -26,16 +26,16 @@ import {
   PATH_PROJECT,
   PATH_REPO,
   PROD_REPO_ID
-} from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { makeCopy } from '~common/functions/make-copy';
-import { BranchItem } from '~common/interfaces/front/branch-item';
+} from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeCopy } from '#common/functions/make-copy';
+import { BranchItem } from '#common/interfaces/front/branch-item';
 import {
   ToBackendCreateBranchRequestPayload,
   ToBackendCreateBranchResponse
-} from '~common/interfaces/to-backend/branches/to-backend-create-branch';
+} from '#common/interfaces/to-backend/branches/to-backend-create-branch';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { UserQuery, UserState } from '~front/app/queries/user.query';

@@ -19,7 +19,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription, from, interval, of } from 'rxjs';
+import { from, interval, of, Subscription } from 'rxjs';
 import {
   concatMap,
   delay,
@@ -29,7 +29,7 @@ import {
   take,
   tap
 } from 'rxjs/operators';
-import { CHARTS_PAGE_TITLE } from '~common/constants/page-titles';
+import { CHARTS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   EMPTY_CHART_ID,
   EMPTY_MCONFIG_ID,
@@ -38,50 +38,50 @@ import {
   PATH_MODELS,
   PATH_MODELS_LIST,
   RESTRICTED_USER_ALIAS
-} from '~common/constants/top';
-import { REFRESH_LIST } from '~common/constants/top-front';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
-import { QueryPartEnum } from '~common/enums/query-part.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { encodeFilePath } from '~common/functions/encode-file-path';
-import { getTimezones } from '~common/functions/get-timezones';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
-import { setChartFields } from '~common/functions/set-chart-fields';
-import { ChartX } from '~common/interfaces/backend/chart-x';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
-import { ModelField } from '~common/interfaces/blockml/model-field';
-import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
-import { Query } from '~common/interfaces/blockml/query';
-import { RefreshItem } from '~common/interfaces/front/refresh-item';
+} from '#common/constants/top';
+import { REFRESH_LIST } from '#common/constants/top-front';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+import { QueryPartEnum } from '#common/enums/query-part.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { encodeFilePath } from '#common/functions/encode-file-path';
+import { getTimezones } from '#common/functions/get-timezones';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeId } from '#common/functions/make-id';
+import { setChartFields } from '#common/functions/set-chart-fields';
+import { ChartX } from '#common/interfaces/backend/chart-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { ModelX } from '#common/interfaces/backend/model-x';
+import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
+import { ModelField } from '#common/interfaces/blockml/model-field';
+import { ModelFieldY } from '#common/interfaces/blockml/model-field-y';
+import { Query } from '#common/interfaces/blockml/query';
+import { RefreshItem } from '#common/interfaces/front/refresh-item';
 import {
   ToBackendCancelQueriesRequestPayload,
   ToBackendCancelQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-cancel-queries';
+} from '#common/interfaces/to-backend/queries/to-backend-cancel-queries';
 import {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
-} from '~common/interfaces/to-backend/queries/to-backend-get-query';
+} from '#common/interfaces/to-backend/queries/to-backend-get-query';
 import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
+} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
 import {
   ToBackendRunQueriesDryRequestPayload,
   ToBackendRunQueriesDryResponse
-} from '~common/interfaces/to-backend/queries/to-backend-run-queries-dry';
+} from '#common/interfaces/to-backend/queries/to-backend-run-queries-dry';
 import { getSelectValid } from '~front/app/functions/get-select-valid';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
@@ -96,9 +96,8 @@ import { UserQuery } from '~front/app/queries/user.query';
 import { StructChartResolver } from '~front/app/resolvers/struct-chart.resolver';
 import { ApiService } from '~front/app/services/api.service';
 import { ChartService } from '~front/app/services/chart.service';
+import { DataService, QDataRow } from '~front/app/services/data.service';
 import { DataSizeService } from '~front/app/services/data-size.service';
-import { QDataRow } from '~front/app/services/data.service';
-import { DataService } from '~front/app/services/data.service';
 import { MyDialogService } from '~front/app/services/my-dialog.service';
 import { NavigateService } from '~front/app/services/navigate.service';
 import { StructService } from '~front/app/services/struct.service';

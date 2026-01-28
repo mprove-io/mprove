@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ConnectionOptions } from './connection-parts/connection-options';
 
 export class ProjectConnection {

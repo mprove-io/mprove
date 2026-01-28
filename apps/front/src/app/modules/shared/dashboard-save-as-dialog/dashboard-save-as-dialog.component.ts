@@ -10,29 +10,29 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { MPROVE_USERS_FOLDER } from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeCopy } from '~common/functions/make-copy';
-import { makeId } from '~common/functions/make-id';
-import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
-import { Dashboard } from '~common/interfaces/blockml/dashboard';
+import { MPROVE_USERS_FOLDER } from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
+import { makeId } from '#common/functions/make-id';
+import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
+import { DashboardX } from '#common/interfaces/backend/dashboard-x';
+import { Dashboard } from '#common/interfaces/blockml/dashboard';
 import {
   ToBackendGetDashboardsRequestPayload,
   ToBackendGetDashboardsResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
+} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
 import {
   ToBackendSaveCreateDashboardRequestPayload,
   ToBackendSaveCreateDashboardResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-save-create-dashboard';
+} from '#common/interfaces/to-backend/dashboards/to-backend-save-create-dashboard';
 import {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
+} from '#common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

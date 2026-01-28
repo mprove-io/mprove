@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -9,17 +9,17 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { PATH_PROJECT_DELETED } from '~common/constants/top';
+import { PATH_PROJECT_DELETED } from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_DELETED_PROJECT_NAME
-} from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+} from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendDeleteProjectRequestPayload,
   ToBackendDeleteProjectResponse
-} from '~common/interfaces/to-backend/projects/to-backend-delete-project';
+} from '#common/interfaces/to-backend/projects/to-backend-delete-project';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';
 import { ApiService } from '~front/app/services/api.service';

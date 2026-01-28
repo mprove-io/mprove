@@ -1,5 +1,5 @@
 import { TemporalUnit, WeekdayMoment } from '@malloydata/malloy-filter';
-import { FractionTsMixUnitEnum } from '~common/enums/fraction/fraction-ts-mix-unit.enum';
+import { FractionTsMixUnitEnum } from '#common/enums/fraction/fraction-ts-mix-unit.enum';
 
 export function getFractionTsMixUnit(
   temporalUnit: TemporalUnit | WeekdayMoment['moment']

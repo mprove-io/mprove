@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   HostListener,
   OnInit,
@@ -21,17 +21,17 @@ import {
   PATH_ACCOUNT,
   PATH_ORG,
   PROJECT_ENV_PROD
-} from '~common/constants/top';
+} from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_PROJECT_ID
-} from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+} from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendCreateOrgRequestPayload,
   ToBackendCreateOrgResponse
-} from '~common/interfaces/to-backend/orgs/to-backend-create-org';
+} from '#common/interfaces/to-backend/orgs/to-backend-create-org';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';

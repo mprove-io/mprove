@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToDiskRequest } from '../to-disk-request';
 
 export class ToDiskIsProjectExistRequestPayload {

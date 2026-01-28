@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { PATH_CONFIRM_EMAIL } from '#common/constants/top';
 import { BackendConfig } from '~backend/config/backend-config';
 import { ProjectTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { PATH_CONFIRM_EMAIL } from '~common/constants/top';
 
 @Injectable()
 export class EmailService {
@@ -56,10 +56,7 @@ export class EmailService {
     });
   }
 
-  async sendResetPassword(item: {
-    user: UserTab;
-    urlUpdatePassword: string;
-  }) {
+  async sendResetPassword(item: { user: UserTab; urlUpdatePassword: string }) {
     let { user, urlUpdatePassword } = item;
 
     await this.transporter.sendMail({

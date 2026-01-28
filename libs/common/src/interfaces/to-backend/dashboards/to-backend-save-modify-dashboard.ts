@@ -5,10 +5,10 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
-import { TileX } from '~common/interfaces/backend/tile-x';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
+import { DashboardX } from '#common/interfaces/backend/dashboard-x';
+import { TileX } from '#common/interfaces/backend/tile-x';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendSaveModifyDashboardRequestPayload {

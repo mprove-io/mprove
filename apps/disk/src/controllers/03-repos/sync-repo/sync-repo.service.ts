@@ -2,19 +2,21 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
-import { ErEnum } from '~common/enums/er.enum';
-import { FileStatusEnum } from '~common/enums/file-status.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
-import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { ErEnum } from '#common/enums/er.enum';
+import { FileStatusEnum } from '#common/enums/file-status.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
+import { DiskSyncFile } from '#common/interfaces/disk/disk-sync-file';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import {
   ToDiskSyncRepoRequest,
   ToDiskSyncRepoResponsePayload
-} from '~common/interfaces/to-disk/03-repos/to-disk-sync-repo';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-disk/03-repos/to-disk-sync-repo';
+import { ServerError } from '#common/models/server-error';
+import { getSyncFiles } from '#node-common/functions/get-sync-files';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { ensureDir } from '~disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
@@ -27,8 +29,6 @@ import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { getSyncFiles } from '~node-common/functions/get-sync-files';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class SyncRepoService {

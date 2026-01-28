@@ -1,39 +1,39 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ErEnum } from '~common/enums/er.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { RepoEnum } from '~common/enums/repo.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { sleep } from '~common/functions/sleep';
-import { Query } from '~common/interfaces/blockml/query';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { RepoEnum } from '#common/enums/repo.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { sleep } from '#common/functions/sleep';
+import { Query } from '#common/interfaces/blockml/query';
 import {
   ToBackendGetChartsRequestPayload,
   ToBackendGetChartsResponse
-} from '~common/interfaces/to-backend/charts/to-backend-get-charts';
+} from '#common/interfaces/to-backend/charts/to-backend-get-charts';
 import {
   ToBackendGetDashboardsRequestPayload,
   ToBackendGetDashboardsResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
+} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
 import {
   ToBackendGetProjectRequestPayload,
   ToBackendGetProjectResponse
-} from '~common/interfaces/to-backend/projects/to-backend-get-project';
+} from '#common/interfaces/to-backend/projects/to-backend-get-project';
 import {
   ToBackendGetQueriesRequestPayload,
   ToBackendGetQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-get-queries';
+} from '#common/interfaces/to-backend/queries/to-backend-get-queries';
 import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
+} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
 import {
   ToBackendGetRepoRequestPayload,
   ToBackendGetRepoResponse
-} from '~common/interfaces/to-backend/repos/to-backend-get-repo';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+import { ServerError } from '#common/models/server-error';
 import { getConfig } from '~mcli/config/get.config';
 import { getChartUrl } from '~mcli/functions/get-chart-url';
 import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';

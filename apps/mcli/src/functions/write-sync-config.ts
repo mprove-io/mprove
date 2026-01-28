@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
-import { MPROVE_CACHE_DIR, MPROVE_SYNC_FILENAME } from '~common/constants/top';
-import { McliSyncConfig } from '~common/interfaces/mcli/mcli-sync-config';
+import { MPROVE_CACHE_DIR, MPROVE_SYNC_FILENAME } from '#common/constants/top';
+import { McliSyncConfig } from '#common/interfaces/mcli/mcli-sync-config';
 
 export async function writeSyncConfig(item: {
   repoPath: string;

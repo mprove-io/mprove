@@ -1,4 +1,4 @@
-import { DiskCatalogNode } from '~common/interfaces/disk/disk-catalog-node';
+import { DiskCatalogNode } from '#common/interfaces/disk/disk-catalog-node';
 
 export function getFileIds(item: { nodes: DiskCatalogNode[] }): string[] {
   let { nodes } = item;

@@ -6,9 +6,9 @@ import {
   IsOptional,
   IsString
 } from 'class-validator';
-import { EmailTransportEnum } from '~common/enums/email-transport.enum';
-import { BackendEnvEnum } from '~common/enums/env/backend-env.enum';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
+import { EmailTransportEnum } from '#common/enums/email-transport.enum';
+import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 
 export class BackendConfig {
   @IsString()

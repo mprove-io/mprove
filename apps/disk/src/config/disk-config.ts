@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsString
 } from 'class-validator';
-import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
+import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
 
 export class DiskConfig {
   @IsBoolean()

@@ -7,7 +7,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
+import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { Filter } from '../blockml/filter';
 
 export class QueryOperation {

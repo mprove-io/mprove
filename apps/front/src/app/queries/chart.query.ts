@@ -4,15 +4,15 @@ import {
   EMPTY_CHART_ID,
   EMPTY_MCONFIG_ID,
   EMPTY_QUERY_ID
-} from '~common/constants/top';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { makeId } from '~common/functions/make-id';
-import { ChartX } from '~common/interfaces/backend/chart-x';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { TileX } from '~common/interfaces/backend/tile-x';
-import { Query } from '~common/interfaces/blockml/query';
+} from '#common/constants/top';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { makeId } from '#common/functions/make-id';
+import { ChartX } from '#common/interfaces/backend/chart-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { TileX } from '#common/interfaces/backend/tile-x';
+import { Query } from '#common/interfaces/blockml/query';
 import { BaseQuery } from './base.query';
 
 export class ChartState extends ChartX {}

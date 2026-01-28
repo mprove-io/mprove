@@ -7,8 +7,8 @@
 // import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
 // import { getRetryOption } from '~backend/functions/get-retry-option';
 // import { makeTsNumber } from '~backend/functions/make-ts-number';
-// import { QueryStatusEnum } from '~common/enums/query-status.enum';
-// import { isDefined } from '~common/functions/is-defined';
+// import { QueryStatusEnum } from '#common/enums/query-status.enum';
+// import { isDefined } from '#common/functions/is-defined';
 // import { TabService } from '../tab.service';
 
 // let retry = require('async-retry');

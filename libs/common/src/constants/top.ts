@@ -1,12 +1,12 @@
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FieldTypeEnum } from '~common/enums/field-type.enum';
-import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { RowTypeEnum } from '~common/enums/row-type.enum';
-import { StoreMethodEnum } from '~common/enums/store-method.enum';
-import { OptionsStoreGoogleApi } from '~common/interfaces/backend/connection-parts/options-store-google-api';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FieldTypeEnum } from '#common/enums/field-type.enum';
+import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { RowTypeEnum } from '#common/enums/row-type.enum';
+import { StoreMethodEnum } from '#common/enums/store-method.enum';
+import { OptionsStoreGoogleApi } from '#common/interfaces/backend/connection-parts/options-store-google-api';
 
 export const MPROVE_CONFIG_FILENAME = 'mprove.yml';
 export const MPROVE_CONFIG_NAME = 'mprove';

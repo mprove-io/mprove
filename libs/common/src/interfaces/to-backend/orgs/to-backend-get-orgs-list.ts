@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { OrgsItem } from '~common/interfaces/backend/orgs-item';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { OrgsItem } from '#common/interfaces/backend/orgs-item';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetOrgsListRequest extends ToBackendRequest {

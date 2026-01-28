@@ -1,6 +1,6 @@
-import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
 
 export interface FieldStoreDimension {
   label?: string;

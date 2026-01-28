@@ -1,5 +1,5 @@
-import { POSSIBLE_TIME_DIFF_MS } from '~common/constants/top-mcli';
-import { sleep } from '~common/functions/sleep';
+import { POSSIBLE_TIME_DIFF_MS } from '#common/constants/top-mcli';
+import { sleep } from '#common/functions/sleep';
 
 export async function makeSyncTime(item?: { skipDelay?: boolean }) {
   let syncTime;

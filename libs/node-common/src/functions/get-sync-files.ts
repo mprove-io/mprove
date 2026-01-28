@@ -1,8 +1,8 @@
 import * as fse from 'fs-extra';
 import * as nodegit from 'nodegit';
 import { forEachSeries } from 'p-iteration';
-import { FileStatusEnum } from '~common/enums/file-status.enum';
-import { DiskSyncFile } from '~common/interfaces/disk/disk-sync-file';
+import { FileStatusEnum } from '#common/enums/file-status.enum';
+import { DiskSyncFile } from '#common/interfaces/disk/disk-sync-file';
 import { gitLsFiles } from './git-ls-files';
 import { readFileCheckSize } from './read-file-check-size';
 

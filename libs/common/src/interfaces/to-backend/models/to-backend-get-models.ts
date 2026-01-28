@@ -5,10 +5,10 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { Member } from '~common/interfaces/backend/member';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { StructX } from '~common/interfaces/backend/struct-x';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { Member } from '#common/interfaces/backend/member';
+import { ModelX } from '#common/interfaces/backend/model-x';
+import { StructX } from '#common/interfaces/backend/struct-x';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetModelsRequestPayload {

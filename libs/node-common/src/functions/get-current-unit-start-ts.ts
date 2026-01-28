@@ -1,5 +1,5 @@
-import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
+import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { timeRangeMakeCurrentTimestamps } from './time-range-make-current-timestamps';
 
 export function getCurrentUnitStartTs(item: {

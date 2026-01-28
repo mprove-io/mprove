@@ -7,13 +7,13 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
-import { Ev } from '~common/interfaces/backend/ev';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { Query } from '~common/interfaces/blockml/query';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ConnectionOptions } from '#common/interfaces/backend/connection-parts/connection-options';
+import { Ev } from '#common/interfaces/backend/ev';
+import { Mconfig } from '#common/interfaces/blockml/mconfig';
+import { Query } from '#common/interfaces/blockml/query';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendSeedRecordsRequestPayloadUsersItem {

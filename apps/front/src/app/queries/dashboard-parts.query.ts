@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
+import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
 import { BaseQuery } from './base.query';
 
 export class DashboardPartsState {

@@ -9,8 +9,8 @@ import { throttle } from 'throttle-debounce';
 import {
   LIGHT_PLUS_COLOR_TO_TAG,
   LIGHT_PLUS_CUSTOM_TAGS
-} from '~common/constants/code-themes/light-plus-tags';
-import { LIGHT_PLUS_LANGUAGES } from '~common/constants/top-front';
+} from '#common/constants/code-themes/light-plus-tags';
+import { LIGHT_PLUS_LANGUAGES } from '#common/constants/top-front';
 import { getWorkerCode } from '../functions/get-worker-code';
 import { UiQuery } from '../queries/ui.query';
 
@@ -88,9 +88,7 @@ export class HighLightService {
     this.worker.postMessage(sMessage);
   }
 
-  getLanguages(item: {
-    placeName: PlaceNameEnum;
-  }) {
+  getLanguages(item: { placeName: PlaceNameEnum }) {
     let { placeName } = item;
 
     let lightLanguage = this.createLightLanguage({ placeName: placeName });

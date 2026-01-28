@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ORGANIZATION_OWNER_CHANGED_PAGE_TITLE } from '~common/constants/page-titles';
+import { ORGANIZATION_OWNER_CHANGED_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   LOCAL_STORAGE_CHANGED_OWNER_ORG_NAME,
   LOCAL_STORAGE_NEW_ORG_OWNER
-} from '~common/constants/top-front';
-import { isUndefined } from '~common/functions/is-undefined';
+} from '#common/constants/top-front';
+import { isUndefined } from '#common/functions/is-undefined';
 import { AuthService } from '~front/app/services/auth.service';
 
 @Component({

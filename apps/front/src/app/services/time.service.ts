@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { DatePickerDate } from '@vaadin/date-picker';
-import { MALLOY_FILTER_ANY } from '~common/constants/top';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionTsLastCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-last-complete-option.enum';
-import { FractionTsMixUnitEnum } from '~common/enums/fraction/fraction-ts-mix-unit.enum';
-import { FractionTsMomentTypeEnum } from '~common/enums/fraction/fraction-ts-moment-type.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { Fraction } from '~common/interfaces/blockml/fraction';
+import { MALLOY_FILTER_ANY } from '#common/constants/top';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fraction-ts-last-complete-option.enum';
+import { FractionTsMixUnitEnum } from '#common/enums/fraction/fraction-ts-mix-unit.enum';
+import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-moment-type.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { Fraction } from '#common/interfaces/blockml/fraction';
 import { StructQuery } from '../queries/struct.query';
 
 @Injectable({ providedIn: 'root' })
@@ -498,10 +498,7 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionOnDay(item: {
-    fraction: Fraction;
-    dateValue: string;
-  }) {
+  buildFractionOnDay(item: { fraction: Fraction; dateValue: string }) {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
@@ -540,10 +537,7 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionOnWeek(item: {
-    fraction: Fraction;
-    dateValue: string;
-  }) {
+  buildFractionOnWeek(item: { fraction: Fraction; dateValue: string }) {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
@@ -582,10 +576,7 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionOnMonth(item: {
-    fraction: Fraction;
-    dateValue: string;
-  }) {
+  buildFractionOnMonth(item: { fraction: Fraction; dateValue: string }) {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
@@ -623,10 +614,7 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionOnQuarter(item: {
-    fraction: Fraction;
-    dateValue: string;
-  }) {
+  buildFractionOnQuarter(item: { fraction: Fraction; dateValue: string }) {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
@@ -664,10 +652,7 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionOnYear(item: {
-    fraction: Fraction;
-    dateValue: string;
-  }) {
+  buildFractionOnYear(item: { fraction: Fraction; dateValue: string }) {
     let { fraction, dateValue } = item;
 
     let momentStr = this.getMomentStr({
@@ -1106,9 +1091,7 @@ export class TimeService {
     return newFraction;
   }
 
-  buildFractionOnTimestamp(item: {
-    fraction: Fraction;
-  }) {
+  buildFractionOnTimestamp(item: { fraction: Fraction }) {
     let { fraction } = item;
 
     let momentStr = this.getMomentStr({

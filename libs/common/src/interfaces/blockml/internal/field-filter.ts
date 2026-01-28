@@ -1,5 +1,5 @@
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { Fraction } from '../fraction';
 import { FileFraction } from './file-fraction';
 

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { PASSWORD_RESET_EMAIL_SENT_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_LOGIN, PATH_PROFILE } from '~common/constants/top';
+import { PASSWORD_RESET_EMAIL_SENT_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_LOGIN, PATH_PROFILE } from '#common/constants/top';
 import { AuthService } from '~front/app/services/auth.service';
 
 @Component({

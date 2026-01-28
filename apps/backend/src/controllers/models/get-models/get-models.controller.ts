@@ -1,7 +1,14 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
+import { PROD_REPO_ID } from '#common/constants/top';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import {
+  ToBackendGetModelsRequest,
+  ToBackendGetModelsResponsePayload
+} from '#common/interfaces/to-backend/models/to-backend-get-models';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { modelsTable } from '~backend/drizzle/postgres/schema/models';
 import { checkModelAccess } from '~backend/functions/check-model-access';
@@ -15,13 +22,6 @@ import { ModelsService } from '~backend/services/db/models.service';
 import { ProjectsService } from '~backend/services/db/projects.service';
 import { StructsService } from '~backend/services/db/structs.service';
 import { TabService } from '~backend/services/tab.service';
-import { PROD_REPO_ID } from '~common/constants/top';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import {
-  ToBackendGetModelsRequest,
-  ToBackendGetModelsResponsePayload
-} from '~common/interfaces/to-backend/models/to-backend-get-models';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

@@ -1,21 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { DEFAULT_QUERY_SIZE_LIMIT } from '#common/constants/top-backend';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { ErEnum } from '#common/enums/er.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { BaseConnection } from '#common/interfaces/backend/base-connection';
+import { ConnectionOptions } from '#common/interfaces/backend/connection-parts/connection-options';
+import { ProjectConnection } from '#common/interfaces/backend/project-connection';
+import { ConnectionLt, ConnectionSt } from '#common/interfaces/st-lt';
+import { ServerError } from '#common/models/server-error';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { ConnectionTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { DEFAULT_QUERY_SIZE_LIMIT } from '~common/constants/top-backend';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ErEnum } from '~common/enums/er.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { BaseConnection } from '~common/interfaces/backend/base-connection';
-import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
-import { ConnectionLt, ConnectionSt } from '~common/interfaces/st-lt';
-import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
-import { TabToEntService } from '../tab-to-ent.service';
 import { TabService } from '../tab.service';
+import { TabToEntService } from '../tab-to-ent.service';
 
 @Injectable()
 export class ConnectionsService {
@@ -222,9 +222,7 @@ export class ConnectionsService {
     return apiProjectConnection;
   }
 
-  tabToBaseConnection(item: {
-    connection: ConnectionTab;
-  }): BaseConnection {
+  tabToBaseConnection(item: { connection: ConnectionTab }): BaseConnection {
     let { connection } = item;
 
     let connectionSt: ConnectionSt = {

@@ -1,13 +1,14 @@
 import test from 'ava';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { ToDiskCreateOrgRequest } from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { ToDiskCreateOrgRequest } from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
 import {
   ToDiskIsOrgExistRequest,
   ToDiskIsOrgExistResponse
-} from '~common/interfaces/to-disk/01-orgs/to-disk-is-org-exist';
+} from '#common/interfaces/to-disk/01-orgs/to-disk-is-org-exist';
 import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
 import { prepareTest } from '~disk/functions/prepare-test';
+
 let testId = 'disk-create-org';
 
 let traceId = testId;

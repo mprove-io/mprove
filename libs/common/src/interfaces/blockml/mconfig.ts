@@ -8,9 +8,9 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
+import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { IsTimezone } from '#common/functions/is-timezone';
 import { Filter } from './filter';
 import { MconfigChart } from './mconfig-chart';
 import { Sorting } from './sorting';

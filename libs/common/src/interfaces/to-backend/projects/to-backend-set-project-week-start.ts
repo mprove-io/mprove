@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsString, ValidateNested } from 'class-validator';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { Project } from '~common/interfaces/backend/project';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { Project } from '#common/interfaces/backend/project';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendSetProjectWeekStartRequestPayload {

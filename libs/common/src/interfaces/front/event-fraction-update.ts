@@ -1,4 +1,4 @@
-import { Fraction } from '~common/interfaces/blockml/fraction';
+import { Fraction } from '#common/interfaces/blockml/fraction';
 
 export class EventFractionUpdate {
   fraction: Fraction;

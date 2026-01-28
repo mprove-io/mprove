@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
-import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { MconfigX } from '../backend/mconfig-x';
 import { Filter } from './filter';
 import { Parameter } from './parameter';

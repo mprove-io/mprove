@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit,
   ViewChild
@@ -19,27 +19,27 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { map, take, tap } from 'rxjs/operators';
-import { PROJECT_ENV_PROD } from '~common/constants/top';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
-import { EnvsItem } from '~common/interfaces/backend/envs-item';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ConnectionOptions } from '#common/interfaces/backend/connection-parts/connection-options';
+import { EnvsItem } from '#common/interfaces/backend/envs-item';
 import {
   ToBackendCreateConnectionRequestPayload,
   ToBackendCreateConnectionResponse
-} from '~common/interfaces/to-backend/connections/to-backend-create-connection';
+} from '#common/interfaces/to-backend/connections/to-backend-create-connection';
 import {
   TestConnectionResult,
   ToBackendTestConnectionRequestPayload,
   ToBackendTestConnectionResponse
-} from '~common/interfaces/to-backend/connections/to-backend-test-connection';
+} from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import {
   ToBackendGetEnvsListRequestPayload,
   ToBackendGetEnvsListResponse
-} from '~common/interfaces/to-backend/envs/to-backend-get-envs-list';
+} from '#common/interfaces/to-backend/envs/to-backend-get-envs-list';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';

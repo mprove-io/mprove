@@ -1,5 +1,5 @@
 import { IsOptional, IsString } from 'class-validator';
-import { FileStatusEnum } from '~common/enums/file-status.enum';
+import { FileStatusEnum } from '#common/enums/file-status.enum';
 
 export class DiskFileChange {
   @IsString()

@@ -8,9 +8,9 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { ModelLt, ModelSt } from '~common/interfaces/st-lt';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { ModelLt, ModelSt } from '#common/interfaces/st-lt';
 
 export const modelsTable = pgTable(
   'models',

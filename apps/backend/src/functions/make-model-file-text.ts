@@ -1,5 +1,5 @@
-import { isDefined } from '~common/functions/is-defined';
-import { toYaml } from '~common/functions/to-yaml';
+import { isDefined } from '#common/functions/is-defined';
+import { toYaml } from '#common/functions/to-yaml';
 
 export function makeModelFileText(item: {
   isStore: boolean;

@@ -4,28 +4,28 @@ import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { FILES_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_FILES } from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { RepoStatusEnum } from '~common/enums/repo-status.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { getFileIds } from '~common/functions/get-file-ids';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
+import { FILES_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_FILES } from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { RepoStatusEnum } from '#common/enums/repo-status.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { getFileIds } from '#common/functions/get-file-ids';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendGetRepoRequestPayload,
   ToBackendGetRepoResponse
-} from '~common/interfaces/to-backend/repos/to-backend-get-repo';
+} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
 import {
   ToBackendPullRepoRequestPayload,
   ToBackendPullRepoResponse
-} from '~common/interfaces/to-backend/repos/to-backend-pull-repo';
+} from '#common/interfaces/to-backend/repos/to-backend-pull-repo';
 import {
   ToBackendPushRepoRequestPayload,
   ToBackendPushRepoResponse
-} from '~common/interfaces/to-backend/repos/to-backend-push-repo';
+} from '#common/interfaces/to-backend/repos/to-backend-push-repo';
 import { FileQuery, FileState } from '~front/app/queries/file.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

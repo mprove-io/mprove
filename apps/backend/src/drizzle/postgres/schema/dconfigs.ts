@@ -7,7 +7,7 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { DconfigLt, DconfigSt } from '~common/interfaces/st-lt';
+import { DconfigLt, DconfigSt } from '#common/interfaces/st-lt';
 
 export const dconfigsTable = pgTable(
   'dconfigs',

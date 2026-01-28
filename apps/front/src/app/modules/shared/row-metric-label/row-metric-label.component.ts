@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 
 @Component({
   standalone: false,

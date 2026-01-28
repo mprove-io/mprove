@@ -1,28 +1,28 @@
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ChangeTypeEnum } from '~common/enums/change-type.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { ReportX } from '~common/interfaces/backend/report-x';
-import { Listener } from '~common/interfaces/blockml/listener';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { ReportField } from '~common/interfaces/blockml/report-field';
-import { RowChange } from '~common/interfaces/blockml/row-change';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ChangeTypeEnum } from '#common/enums/change-type.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ReportX } from '#common/interfaces/backend/report-x';
+import { Listener } from '#common/interfaces/blockml/listener';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import { ReportField } from '#common/interfaces/blockml/report-field';
+import { RowChange } from '#common/interfaces/blockml/row-change';
 import {
   ToBackendCreateDraftReportRequestPayload,
   ToBackendCreateDraftReportResponse
-} from '~common/interfaces/to-backend/reports/to-backend-create-draft-report';
+} from '#common/interfaces/to-backend/reports/to-backend-create-draft-report';
 import {
   ToBackendDeleteDraftReportsRequestPayload,
   ToBackendDeleteDraftReportsResponse
-} from '~common/interfaces/to-backend/reports/to-backend-delete-draft-reports';
+} from '#common/interfaces/to-backend/reports/to-backend-delete-draft-reports';
 import {
   ToBackendEditDraftReportRequestPayload,
   ToBackendEditDraftReportResponse
-} from '~common/interfaces/to-backend/reports/to-backend-edit-draft-report';
+} from '#common/interfaces/to-backend/reports/to-backend-edit-draft-report';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportQuery } from '../queries/report.query';

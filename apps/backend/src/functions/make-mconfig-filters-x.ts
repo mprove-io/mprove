@@ -1,8 +1,8 @@
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { FilterX } from '~common/interfaces/backend/filter-x';
-import { Filter } from '~common/interfaces/blockml/filter';
-import { ModelField } from '~common/interfaces/blockml/model-field';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { FilterX } from '#common/interfaces/backend/filter-x';
+import { Filter } from '#common/interfaces/blockml/filter';
+import { ModelField } from '#common/interfaces/blockml/model-field';
 
 export function makeMconfigFiltersX(item: {
   modelFields: ModelField[];

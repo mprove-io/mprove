@@ -1,22 +1,22 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
-import { BackendConfig } from '~backend/config/backend-config';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { OrgTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { ErEnum } from '~common/enums/er.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeId } from '~common/functions/make-id';
-import { Org } from '~common/interfaces/backend/org';
-import { OrgsItem } from '~common/interfaces/backend/orgs-item';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeId } from '#common/functions/make-id';
+import { Org } from '#common/interfaces/backend/org';
+import { OrgsItem } from '#common/interfaces/backend/orgs-item';
 import {
   ToDiskCreateOrgRequest,
   ToDiskCreateOrgResponse
-} from '~common/interfaces/to-disk/01-orgs/to-disk-create-org';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
+import { ServerError } from '#common/models/server-error';
+import { BackendConfig } from '~backend/config/backend-config';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
+import { OrgTab } from '~backend/drizzle/postgres/schema/_tabs';
+import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
+import { getRetryOption } from '~backend/functions/get-retry-option';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';
@@ -77,10 +77,7 @@ export class OrgsService {
     return org;
   }
 
-  async checkUserIsOrgOwner(item: {
-    userId: string;
-    org: OrgTab;
-  }) {
+  async checkUserIsOrgOwner(item: { userId: string; org: OrgTab }) {
     let { org, userId } = item;
 
     if (org.ownerId !== userId) {

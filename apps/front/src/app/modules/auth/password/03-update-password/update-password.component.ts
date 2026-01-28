@@ -4,15 +4,15 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { SET_NEW_PASSWORD_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_NEW_PASSWORD_WAS_SET } from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { SET_NEW_PASSWORD_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_NEW_PASSWORD_WAS_SET } from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendUpdateUserPasswordRequestPayload,
   ToBackendUpdateUserPasswordResponse
-} from '~common/interfaces/to-backend/users/to-backend-update-user-password';
+} from '#common/interfaces/to-backend/users/to-backend-update-user-password';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';
 import { ValidationService } from '~front/app/services/validation.service';

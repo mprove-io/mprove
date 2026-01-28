@@ -5,15 +5,15 @@ import type { OpencodeClient } from '@opencode-ai/sdk/client' with {
   'resolution-mode': 'import'
 };
 import { ChatConfig } from '#chat/config/chat-config';
-import { ChatMessageRoleEnum } from '~common/enums/chat-message-role.enum';
-import { ErEnum } from '~common/enums/er.enum';
-import { ChatMessage } from '~common/interfaces/chat/chat-message';
-import { ChatState } from '~common/interfaces/chat/chat-state';
+import { ChatMessageRoleEnum } from '#common/enums/chat-message-role.enum';
+import { ErEnum } from '#common/enums/er.enum';
+import { ChatMessage } from '#common/interfaces/chat/chat-message';
+import { ChatState } from '#common/interfaces/chat/chat-state';
 import {
   ToChatProcessMessageRequest,
   ToChatProcessMessageResponsePayload
-} from '~common/interfaces/to-chat/to-chat-process-message';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-chat/to-chat-process-message';
+import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class ProcessMessageService {

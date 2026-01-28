@@ -11,17 +11,17 @@ import { tap } from 'rxjs/operators';
 import {
   EMPTY_FORMAT_NUMBER,
   FORMAT_NUMBER_EXAMPLES
-} from '~common/constants/top-front';
-import { ChangeTypeEnum } from '~common/enums/change-type.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { RowTypeEnum } from '~common/enums/row-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { FilterX } from '~common/interfaces/backend/filter-x';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { ReportX } from '~common/interfaces/backend/report-x';
-import { RowChange } from '~common/interfaces/blockml/row-change';
-import { DataRow } from '~common/interfaces/front/data-row';
+} from '#common/constants/top-front';
+import { ChangeTypeEnum } from '#common/enums/change-type.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { RowTypeEnum } from '#common/enums/row-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { FilterX } from '#common/interfaces/backend/filter-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { ReportX } from '#common/interfaces/backend/report-x';
+import { RowChange } from '#common/interfaces/blockml/row-change';
+import { DataRow } from '#common/interfaces/front/data-row';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ReportQuery } from '~front/app/queries/report.query';

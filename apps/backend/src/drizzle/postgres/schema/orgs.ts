@@ -8,7 +8,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { OrgLt, OrgSt } from '~common/interfaces/st-lt';
+import { OrgLt, OrgSt } from '#common/interfaces/st-lt';
 
 export const orgsTable = pgTable(
   'orgs',

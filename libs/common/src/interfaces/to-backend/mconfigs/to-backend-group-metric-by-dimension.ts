@@ -6,10 +6,10 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { IsTimezone } from '~common/functions/is-timezone';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { Query } from '~common/interfaces/blockml/query';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { IsTimezone } from '#common/functions/is-timezone';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { Query } from '#common/interfaces/blockml/query';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGroupMetricByDimensionRequestPayload {

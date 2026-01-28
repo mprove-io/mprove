@@ -1,12 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { MALLOY_FILTER_ANY } from '~common/constants/top';
-import { ControlClassEnum } from '~common/enums/control-class.enum';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { makeCopy } from '~common/functions/make-copy';
-import { FilterX } from '~common/interfaces/backend/filter-x';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { DeleteFilterFnItem } from '~common/interfaces/front/delete-filter-fn-item';
+import { MALLOY_FILTER_ANY } from '#common/constants/top';
+import { ControlClassEnum } from '#common/enums/control-class.enum';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { makeCopy } from '#common/functions/make-copy';
+import { FilterX } from '#common/interfaces/backend/filter-x';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { DeleteFilterFnItem } from '#common/interfaces/front/delete-filter-fn-item';
 import { ModelsQuery } from '~front/app/queries/models.query';
 
 @Component({

@@ -1,16 +1,16 @@
 import test from 'ava';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '#common/functions/make-id';
+import {
+  ToBackendLogoutUserRequest,
+  ToBackendLogoutUserResponse
+} from '#common/interfaces/to-backend/users/to-backend-logout-user';
 import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '~backend/functions/prepare-test';
 import { sendToBackend } from '~backend/functions/send-to-backend';
 import { Prep } from '~backend/interfaces/prep';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '~common/functions/make-id';
-import {
-  ToBackendLogoutUserRequest,
-  ToBackendLogoutUserResponse
-} from '~common/interfaces/to-backend/users/to-backend-logout-user';
 
 let testId = 'backend-logout-user__ok';
 

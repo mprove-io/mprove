@@ -1,20 +1,20 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ControlClassEnum } from '~common/enums/control-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FractionDayOfWeekValueEnum } from '~common/enums/fraction/fraction-day-of-week-value.enum';
-import { FractionMonthNameValueEnum } from '~common/enums/fraction/fraction-month-name-value.enum';
-import { FractionNumberBetweenOptionEnum } from '~common/enums/fraction/fraction-number-between-option.enum';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionQuarterOfYearValueEnum } from '~common/enums/fraction/fraction-quarter-of-year-value.enum';
-import { FractionTsLastCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-last-complete-option.enum';
-import { FractionTsMixUnitEnum } from '~common/enums/fraction/fraction-ts-mix-unit.enum';
-import { FractionTsMomentTypeEnum } from '~common/enums/fraction/fraction-ts-moment-type.enum';
-import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { FractionYesnoValueEnum } from '~common/enums/fraction/fraction-yesno-value.enum';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
-import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
+import { ControlClassEnum } from '#common/enums/control-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FractionDayOfWeekValueEnum } from '#common/enums/fraction/fraction-day-of-week-value.enum';
+import { FractionMonthNameValueEnum } from '#common/enums/fraction/fraction-month-name-value.enum';
+import { FractionNumberBetweenOptionEnum } from '#common/enums/fraction/fraction-number-between-option.enum';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionQuarterOfYearValueEnum } from '#common/enums/fraction/fraction-quarter-of-year-value.enum';
+import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fraction-ts-last-complete-option.enum';
+import { FractionTsMixUnitEnum } from '#common/enums/fraction/fraction-ts-mix-unit.enum';
+import { FractionTsMomentTypeEnum } from '#common/enums/fraction/fraction-ts-moment-type.enum';
+import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { FractionYesnoValueEnum } from '#common/enums/fraction/fraction-yesno-value.enum';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { FileStore } from '#common/interfaces/blockml/internal/file-store';
+import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
 
 export class FractionTypeItem {
   label: string;

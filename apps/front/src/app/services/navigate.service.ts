@@ -22,9 +22,9 @@ import {
   PATH_REPORTS,
   PATH_REPORTS_LIST,
   PROD_REPO_ID
-} from '~common/constants/top';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { makeQueryParams } from '../functions/make-query-params';
 import { ModelQuery, ModelState } from '../queries/model.query';
 import { NavQuery, NavState } from '../queries/nav.query';

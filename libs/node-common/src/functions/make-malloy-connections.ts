@@ -3,11 +3,10 @@ import { DuckDBConnection } from '@malloydata/db-duckdb';
 import { MySQLConnection } from '@malloydata/db-mysql';
 import { PostgresConnection } from '@malloydata/db-postgres';
 import { SnowflakeConnection } from '@malloydata/db-snowflake';
-import { TrinoConnection } from '@malloydata/db-trino';
-import { PrestoConnection } from '@malloydata/db-trino';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { PrestoConnection, TrinoConnection } from '@malloydata/db-trino';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ProjectConnection } from '#common/interfaces/backend/project-connection';
 
 export type MalloyConnection =
   | PostgresConnection

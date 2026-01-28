@@ -10,23 +10,23 @@ import {
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { KtdGridLayout } from '@katoid/angular-grid-layout';
-import { Subscription, fromEvent, merge } from 'rxjs';
+import { fromEvent, merge, Subscription } from 'rxjs';
 import { debounceTime, filter, tap } from 'rxjs/operators';
-import { DASHBOARD_PAGE_TITLE } from '~common/constants/page-titles';
+import { DASHBOARD_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   RESTRICTED_USER_ALIAS,
   TILE_DEFAULT_PLATE_HEIGHT,
   TILE_DEFAULT_PLATE_WIDTH,
   TILE_DEFAULT_PLATE_X,
   TILE_DEFAULT_PLATE_Y
-} from '~common/constants/top';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { encodeFilePath } from '~common/functions/encode-file-path';
-import { isDefined } from '~common/functions/is-defined';
-import { makeId } from '~common/functions/make-id';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
-import { TileX } from '~common/interfaces/backend/tile-x';
-import { DeleteFilterFnItem } from '~common/interfaces/front/delete-filter-fn-item';
+} from '#common/constants/top';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { encodeFilePath } from '#common/functions/encode-file-path';
+import { isDefined } from '#common/functions/is-defined';
+import { makeId } from '#common/functions/make-id';
+import { DashboardX } from '#common/interfaces/backend/dashboard-x';
+import { TileX } from '#common/interfaces/backend/tile-x';
+import { DeleteFilterFnItem } from '#common/interfaces/front/delete-filter-fn-item';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

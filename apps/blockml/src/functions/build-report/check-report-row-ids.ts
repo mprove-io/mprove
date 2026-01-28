@@ -1,14 +1,14 @@
 import { ConfigService } from '@nestjs/config';
+import { ParameterEnum } from '#common/enums/docs/parameter.enum';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
+import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import { FileErrorLine } from '#common/interfaces/blockml/internal/file-error-line';
+import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import { MyRegex } from '#common/models/my-regex';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
-import { ParameterEnum } from '~common/enums/docs/parameter.enum';
-import { CallerEnum } from '~common/enums/special/caller.enum';
-import { ErTitleEnum } from '~common/enums/special/er-title.enum';
-import { FuncEnum } from '~common/enums/special/func.enum';
-import { LogTypeEnum } from '~common/enums/special/log-type.enum';
-import { FileErrorLine } from '~common/interfaces/blockml/internal/file-error-line';
-import { FileReport } from '~common/interfaces/blockml/internal/file-report';
-import { MyRegex } from '~common/models/my-regex';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckReportRowIds;

@@ -1,8 +1,26 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
+import { EMPTY_REPORT_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { ErEnum } from '#common/enums/er.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeCopy } from '#common/functions/make-copy';
+import { Member } from '#common/interfaces/backend/member';
+import { ModelX } from '#common/interfaces/backend/model-x';
+import { ReportX } from '#common/interfaces/backend/report-x';
+import { Column } from '#common/interfaces/blockml/column';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import { Report } from '#common/interfaces/blockml/report';
+import { ReportField } from '#common/interfaces/blockml/report-field';
+import { Row } from '#common/interfaces/blockml/row';
+import { ServerError } from '#common/models/server-error';
 import { BackendConfig } from '~backend/config/backend-config';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import {
   MemberTab,
   ReportTab,
@@ -11,25 +29,6 @@ import {
 import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
 import { checkAccess } from '~backend/functions/check-access';
 import { makeReportFiltersX } from '~backend/functions/make-report-filters-x';
-import { DEFAULT_CHART } from '~common/constants/mconfig-chart';
-import { EMPTY_REPORT_ID } from '~common/constants/top';
-import { MPROVE_USERS_FOLDER } from '~common/constants/top';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { ErEnum } from '~common/enums/er.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeCopy } from '~common/functions/make-copy';
-import { Member } from '~common/interfaces/backend/member';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { ReportX } from '~common/interfaces/backend/report-x';
-import { Column } from '~common/interfaces/blockml/column';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { Report } from '~common/interfaces/blockml/report';
-import { ReportField } from '~common/interfaces/blockml/report-field';
-import { Row } from '~common/interfaces/blockml/row';
-import { ServerError } from '~common/models/server-error';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

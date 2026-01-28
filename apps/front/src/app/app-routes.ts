@@ -8,8 +8,8 @@ import {
   PARAMETER_MODEL_ID,
   PARAMETER_ORG_ID,
   PARAMETER_PROJECT_ID,
-  PARAMETER_REPORT_ID,
   PARAMETER_REPO_ID,
+  PARAMETER_REPORT_ID,
   PATH_ACCOUNT,
   PATH_BRANCH,
   PATH_CHART,
@@ -48,10 +48,10 @@ import {
   PATH_REPORTS_LIST,
   PATH_TEAM,
   PATH_UPDATE_PASSWORD,
-  PATH_USERS,
   PATH_USER_DELETED,
+  PATH_USERS,
   PATH_VERIFY_EMAIL
-} from '~common/constants/top';
+} from '#common/constants/top';
 import { DeactivateGuard } from './guards/deactivate.guard';
 import { RegisterComponent } from './modules/auth/main/01-register/register.component';
 import { VerifyEmailComponent } from './modules/auth/main/02-verify-email/verify-email.component';
@@ -65,15 +65,15 @@ import { PasswordResetSentComponent } from './modules/auth/password/02-password-
 import { UpdatePasswordComponent } from './modules/auth/password/03-update-password/update-password.component';
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
-import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
+import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
 import { FilesComponent } from './modules/files/files.component';
 import { ChartComponent } from './modules/models/chart/chart.component';
 import { ChartsListComponent } from './modules/models/charts-list/charts-list.component';
 import { ModelComponent } from './modules/models/model/model.component';
-import { ModelsListComponent } from './modules/models/models-list/models-list.component';
 import { ModelsComponent } from './modules/models/models.component';
+import { ModelsListComponent } from './modules/models/models-list/models-list.component';
 import { NavComponent } from './modules/nav/nav.component';
 import { NavbarComponent } from './modules/navbar/navbar.component';
 import { OrgAccountComponent } from './modules/org/org-account/org-account.component';
@@ -84,27 +84,27 @@ import { ProjectEnvironmentsComponent } from './modules/project/project-environm
 import { ProjectInfoComponent } from './modules/project/project-info/project-info.component';
 import { ProjectTeamComponent } from './modules/project/project-team/project-team.component';
 import { ReportComponent } from './modules/reports/report/report.component';
-import { ReportsListComponent } from './modules/reports/reports-list/reports-list.component';
 import { ReportsComponent } from './modules/reports/reports.component';
+import { ReportsListComponent } from './modules/reports/reports-list/reports-list.component';
 import { LoginSuccessComponent } from './modules/special/login-success/login-success.component';
 import { NotFoundComponent } from './modules/special/not-found/not-found.component';
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
+import { OrgResolver } from './resolvers/org.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgUsersResolver } from './resolvers/org-users.resolver';
-import { OrgResolver } from './resolvers/org.resolver';
 import { FileResolver } from './resolvers/part/file.resolver';
 import { NavBarResolver } from './resolvers/part/navbar.resolver';
 import { ProfileResolver } from './resolvers/part/profile.resolver';
+import { ProjectResolver } from './resolvers/project.resolver';
 import { ProjectConnectionsResolver } from './resolvers/project-connections.resolver';
 import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
 import { ProjectInfoResolver } from './resolvers/project-info.resolver';
 import { ProjectTeamResolver } from './resolvers/project-team.resolver';
-import { ProjectResolver } from './resolvers/project.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
-import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
+import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
 import { StructChartResolver } from './resolvers/struct-chart.resolver';
 import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';

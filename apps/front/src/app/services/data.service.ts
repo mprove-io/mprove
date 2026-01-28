@@ -3,30 +3,30 @@ import { formatLocale } from 'd3-format';
 import { SeriesOption } from 'echarts';
 import { DateTime } from 'luxon';
 import { format } from 'ssf';
-import { NO_FIELDS_SELECTED } from '~common/constants/top';
+import { NO_FIELDS_SELECTED } from '#common/constants/top';
 import {
   FORMAT_NUMBER_DECIMAL,
   FORMAT_NUMBER_GROUPING
-} from '~common/constants/top-front';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { DetailUnitEnum } from '~common/enums/detail-unit.enum';
-import { ParameterEnum } from '~common/enums/docs/parameter.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { RowTypeEnum } from '~common/enums/row-type.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { isUndefined } from '~common/functions/is-undefined';
-import { MconfigField } from '~common/interfaces/backend/mconfig-field';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
-import { Query } from '~common/interfaces/blockml/query';
-import { DataPoint } from '~common/interfaces/front/data-point';
-import { DataRow } from '~common/interfaces/front/data-row';
+} from '#common/constants/top-front';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { DetailUnitEnum } from '#common/enums/detail-unit.enum';
+import { ParameterEnum } from '#common/enums/docs/parameter.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { RowTypeEnum } from '#common/enums/row-type.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { MconfigField } from '#common/interfaces/backend/mconfig-field';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
+import { Query } from '#common/interfaces/blockml/query';
+import { DataPoint } from '#common/interfaces/front/data-point';
+import { DataRow } from '#common/interfaces/front/data-row';
 import { frontFormatTsUnix } from '../functions/front-format-ts-unix';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
@@ -382,10 +382,7 @@ export class DataService {
     return formattedValue;
   }
 
-  makeQData(item: {
-    query: Query;
-    mconfig: MconfigX;
-  }) {
+  makeQData(item: { query: Query; mconfig: MconfigX }) {
     let { query, mconfig } = item;
 
     let data: SourceDataRow[] = query.data;
@@ -893,9 +890,7 @@ export class DataService {
                               : TimeSpecEnum.Minutes;
   }
 
-  getTimeSpecByMalloyTimeframe(item: {
-    timeframe: string;
-  }) {
+  getTimeSpecByMalloyTimeframe(item: { timeframe: string }) {
     let { timeframe } = item;
 
     // export type TimestampTimeframe = 'year' | 'quarter' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second';

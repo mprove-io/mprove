@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
+import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
+import { makeErrorResponse } from '#node-common/functions/make-error-response';
 import { DiskConfig } from '~disk/config/disk-config';
-import { makeErrorResponse } from '~node-common/functions/make-error-response';
 
 export function makeErrorResponseDisk(item: {
   body: any;

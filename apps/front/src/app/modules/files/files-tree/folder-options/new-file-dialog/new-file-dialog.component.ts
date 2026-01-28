@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   HostListener,
   OnInit,
@@ -16,18 +16,18 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { encodeFilePath } from '~common/functions/encode-file-path';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { encodeFilePath } from '#common/functions/encode-file-path';
 import {
   ToBackendCreateFileRequestPayload,
   ToBackendCreateFileResponse
-} from '~common/interfaces/to-backend/files/to-backend-create-file';
+} from '#common/interfaces/to-backend/files/to-backend-create-file';
 import {
   ToBackendCreateFolderRequestPayload,
   ToBackendCreateFolderResponse
-} from '~common/interfaces/to-backend/folders/to-backend-create-folder';
+} from '#common/interfaces/to-backend/folders/to-backend-create-folder';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { RepoQuery } from '~front/app/queries/repo.query';

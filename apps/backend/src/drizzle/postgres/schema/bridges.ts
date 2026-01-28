@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { BridgeLt, BridgeSt } from '~common/interfaces/st-lt';
+import { BridgeLt, BridgeSt } from '#common/interfaces/st-lt';
 
 export const bridgesTable = pgTable(
   'bridges',

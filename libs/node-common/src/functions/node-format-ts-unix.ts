@@ -1,5 +1,5 @@
 // function content is the same as frontFormatTsUnix
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
 let dayjs = require('dayjs');
 let utc = require('dayjs/plugin/utc');

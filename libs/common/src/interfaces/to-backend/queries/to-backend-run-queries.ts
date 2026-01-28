@@ -8,8 +8,8 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { Query } from '~common/interfaces/blockml/query';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { Query } from '#common/interfaces/blockml/query';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendRunQueriesRequestPayload {

@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ChatState } from '~common/interfaces/chat/chat-state';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ChatState } from '#common/interfaces/chat/chat-state';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToChatRequest } from './to-chat-request';
 
 export class ToChatProcessMessageRequestPayload {

@@ -8,13 +8,13 @@ import {
   TemporalFilter,
   TemporalFilterExpression
 } from '@malloydata/malloy-filter';
-import { MALLOY_FILTER_ANY } from '~common/constants/top';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { Fraction } from '~common/interfaces/blockml/fraction';
+import { MALLOY_FILTER_ANY } from '#common/constants/top';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { Fraction } from '#common/interfaces/blockml/fraction';
 import { getMalloyFilterBooleanFractions } from './get-malloy-filter-boolean-fractions';
 import { getMalloyFilterNumberFractions } from './get-malloy-filter-number-fractions';
 import { getMalloyFilterStringFractions } from './get-malloy-filter-string-fractions';

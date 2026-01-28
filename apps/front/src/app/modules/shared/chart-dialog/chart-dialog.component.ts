@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnDestroy,
   OnInit
@@ -15,47 +15,47 @@ import { TippyDirective } from '@ngneat/helipopper';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
-import { Subscription, from, interval, of } from 'rxjs';
+import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, startWith, take, tap } from 'rxjs/operators';
-import { EMPTY_CHART_ID, TRIPLE_UNDERSCORE } from '~common/constants/top';
-import { EMPTY_MCONFIG_FIELD } from '~common/constants/top-front';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { TimeframeEnum } from '~common/enums/timeframe.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { makeCopy } from '~common/functions/make-copy';
-import { makeId } from '~common/functions/make-id';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { Model } from '~common/interfaces/blockml/model';
-import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
-import { Query } from '~common/interfaces/blockml/query';
+import { EMPTY_CHART_ID, TRIPLE_UNDERSCORE } from '#common/constants/top';
+import { EMPTY_MCONFIG_FIELD } from '#common/constants/top-front';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { TimeframeEnum } from '#common/enums/timeframe.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { makeCopy } from '#common/functions/make-copy';
+import { makeId } from '#common/functions/make-id';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { Model } from '#common/interfaces/blockml/model';
+import { ModelFieldY } from '#common/interfaces/blockml/model-field-y';
+import { Query } from '#common/interfaces/blockml/query';
 import {
   ToBackendDuplicateMconfigAndQueryRequestPayload,
   ToBackendDuplicateMconfigAndQueryResponse
-} from '~common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
+} from '#common/interfaces/to-backend/mconfigs/to-backend-duplicate-mconfig-and-query';
 import {
   ToBackendGroupMetricByDimensionRequestPayload,
   ToBackendGroupMetricByDimensionResponse
-} from '~common/interfaces/to-backend/mconfigs/to-backend-group-metric-by-dimension';
+} from '#common/interfaces/to-backend/mconfigs/to-backend-group-metric-by-dimension';
 import {
   ToBackendGetModelRequestPayload,
   ToBackendGetModelResponse
-} from '~common/interfaces/to-backend/models/to-backend-get-model';
+} from '#common/interfaces/to-backend/models/to-backend-get-model';
 import {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
-} from '~common/interfaces/to-backend/queries/to-backend-get-query';
+} from '#common/interfaces/to-backend/queries/to-backend-get-query';
 import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
+} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { StructQuery } from '~front/app/queries/struct.query';

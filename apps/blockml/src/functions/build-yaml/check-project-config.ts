@@ -1,7 +1,5 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_CONFIG_FILENAME,
@@ -14,18 +12,20 @@ import {
   PROJECT_CONFIG_THOUSANDS_SEPARATOR,
   PROJECT_CONFIG_WEEK_START,
   PROJECT_WEEK_START_VALUES
-} from '~common/constants/top';
-import { LINE_NUM } from '~common/constants/top-blockml';
-import { ParameterEnum } from '~common/enums/docs/parameter.enum';
-import { CallerEnum } from '~common/enums/special/caller.enum';
-import { ErTitleEnum } from '~common/enums/special/er-title.enum';
-import { FuncEnum } from '~common/enums/special/func.enum';
-import { LogTypeEnum } from '~common/enums/special/log-type.enum';
-import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
-import { isTimezoneValid } from '~common/functions/is-timezone-valid';
-import { isUndefined } from '~common/functions/is-undefined';
-import { FileProjectConf } from '~common/interfaces/blockml/internal/file-project-conf';
-import { MyRegex } from '~common/models/my-regex';
+} from '#common/constants/top';
+import { LINE_NUM } from '#common/constants/top-blockml';
+import { ParameterEnum } from '#common/enums/docs/parameter.enum';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
+import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { isTimezoneValid } from '#common/functions/is-timezone-valid';
+import { isUndefined } from '#common/functions/is-undefined';
+import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
+import { MyRegex } from '#common/models/my-regex';
+import { BlockmlConfig } from '~blockml/config/blockml-config';
+import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckProjectConfig;

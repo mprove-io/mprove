@@ -7,14 +7,14 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { PATH_INFO, PATH_ORG, PATH_PROJECT } from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetDashboardsRequestPayload,
   ToBackendGetDashboardsResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
+} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboards';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { MemberQuery } from '../queries/member.query';

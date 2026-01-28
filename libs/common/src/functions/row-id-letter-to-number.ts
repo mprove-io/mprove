@@ -1,4 +1,4 @@
-import { ROW_ID_ALPHABET } from '~common/constants/top';
+import { ROW_ID_ALPHABET } from '#common/constants/top';
 
 let alphabet = ROW_ID_ALPHABET;
 let base = alphabet.length;

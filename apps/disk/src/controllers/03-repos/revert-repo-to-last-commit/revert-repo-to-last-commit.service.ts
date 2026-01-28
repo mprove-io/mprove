@@ -1,13 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErEnum } from '~common/enums/er.enum';
-import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { ErEnum } from '#common/enums/er.enum';
+import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import {
   ToDiskRevertRepoToLastCommitRequest,
   ToDiskRevertRepoToLastCommitResponsePayload
-} from '~common/interfaces/to-disk/03-repos/to-disk-revert-repo-to-last-commit';
+} from '#common/interfaces/to-disk/03-repos/to-disk-revert-repo-to-last-commit';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '~disk/functions/git/checkout-branch';
@@ -16,7 +17,6 @@ import { revertRepoToLastCommit } from '~disk/functions/git/revert-repo-to-last-
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class RevertRepoToLastCommitService {

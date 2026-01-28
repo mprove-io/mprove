@@ -1,5 +1,5 @@
-import { ErrorStoryEnum } from '~common/enums/error-story.enum';
-import { ServerError } from '~common/models/server-error';
+import { ErrorStoryEnum } from '#common/enums/error-story.enum';
+import { ServerError } from '#common/models/server-error';
 
 export interface WrappedError {
   story: ErrorStoryEnum;

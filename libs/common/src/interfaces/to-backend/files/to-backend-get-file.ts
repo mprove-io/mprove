@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { StructX } from '~common/interfaces/backend/struct-x';
-import { Repo } from '~common/interfaces/disk/repo';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { StructX } from '#common/interfaces/backend/struct-x';
+import { Repo } from '#common/interfaces/disk/repo';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetFileRequestPayload {

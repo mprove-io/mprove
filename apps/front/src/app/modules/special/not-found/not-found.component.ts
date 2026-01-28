@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { PAGE_NOT_FOUND_PAGE_TITLE } from '~common/constants/page-titles';
+import { PAGE_NOT_FOUND_PAGE_TITLE } from '#common/constants/page-titles';
 
 @Component({
   standalone: false,

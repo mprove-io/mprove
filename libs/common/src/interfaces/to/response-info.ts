@@ -1,6 +1,6 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ServerError } from '~common/models/server-error';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ServerError } from '#common/models/server-error';
 
 export class ResponseInfo {
   @IsOptional()

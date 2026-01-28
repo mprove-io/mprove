@@ -4,7 +4,7 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { filter, take, tap } from 'rxjs/operators';
-import { LOG_IN_PAGE_TITLE } from '~common/constants/page-titles';
+import { LOG_IN_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   PATH_FORGOT_PASSWORD,
   PATH_LOGIN,
@@ -12,18 +12,18 @@ import {
   PATH_REGISTER,
   PATH_VERIFY_EMAIL,
   RESTRICTED_USER_EMAIL
-} from '~common/constants/top';
+} from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_TOKEN
-} from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
-} from '~common/interfaces/to-backend/users/to-backend-login-user';
+} from '#common/interfaces/to-backend/users/to-backend-login-user';
 import { UserQuery } from '~front/app/queries/user.query';
 import { ApiService } from '~front/app/services/api.service';
 import { AuthService } from '~front/app/services/auth.service';

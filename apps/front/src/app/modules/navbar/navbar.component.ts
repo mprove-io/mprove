@@ -11,9 +11,9 @@ import {
   PATH_FILES,
   PATH_MODELS,
   PATH_REPORTS
-} from '~common/constants/top';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { Member } from '~common/interfaces/backend/member';
+} from '#common/constants/top';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { Member } from '#common/interfaces/backend/member';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '~front/app/queries/repo.query';

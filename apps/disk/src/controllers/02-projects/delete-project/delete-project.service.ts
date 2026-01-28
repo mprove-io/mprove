@@ -1,16 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErEnum } from '~common/enums/er.enum';
+import { ErEnum } from '#common/enums/er.enum';
 import {
   ToDiskDeleteProjectRequest,
   ToDiskDeleteProjectResponsePayload
-} from '~common/interfaces/to-disk/02-projects/to-disk-delete-project';
+} from '#common/interfaces/to-disk/02-projects/to-disk-delete-project';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
 import { removePath } from '~disk/functions/disk/remove-path';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class DeleteProjectService {

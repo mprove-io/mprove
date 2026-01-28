@@ -1,5 +1,5 @@
-import { DiskCatalogNode } from '~common/interfaces/disk/disk-catalog-node';
-import { FileItem } from '~common/interfaces/file-item';
+import { DiskCatalogNode } from '#common/interfaces/disk/disk-catalog-node';
+import { FileItem } from '#common/interfaces/file-item';
 
 export function getFileItems(item: { nodes: DiskCatalogNode[] }): FileItem[] {
   let { nodes } = item;

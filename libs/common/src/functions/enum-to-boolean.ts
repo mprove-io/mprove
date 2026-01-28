@@ -1,6 +1,6 @@
-import { BoolEnum } from '~common/enums/bool.enum';
-import { ErEnum } from '~common/enums/er.enum';
-import { ServerError } from '~common/models/server-error';
+import { BoolEnum } from '#common/enums/bool.enum';
+import { ErEnum } from '#common/enums/er.enum';
+import { ServerError } from '#common/models/server-error';
 
 export function enumToBoolean(item: {
   value: string | BoolEnum;

@@ -1,4 +1,4 @@
-import { FractionLogicEnum } from '~common/enums/fraction/fraction-logic.enum';
+import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FileFractionControl } from './file-fraction-control';
 
 export interface FileFraction {

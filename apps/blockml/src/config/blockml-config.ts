@@ -5,8 +5,8 @@ import {
   IsOptional,
   IsString
 } from 'class-validator';
-import { BlockmlEnvEnum } from '~common/enums/env/blockml-env.enum';
-import { FuncEnum } from '~common/enums/special/func.enum';
+import { BlockmlEnvEnum } from '#common/enums/env/blockml-env.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
 
 export class BlockmlConfig {
   @IsBoolean()

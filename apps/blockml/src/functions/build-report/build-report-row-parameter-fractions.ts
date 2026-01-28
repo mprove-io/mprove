@@ -1,14 +1,14 @@
 import { ConfigService } from '@nestjs/config';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
+import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { FileReport } from '#common/interfaces/blockml/internal/file-report';
+import { ModelMetric } from '#common/interfaces/blockml/model-metric';
+import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
-import { CallerEnum } from '~common/enums/special/caller.enum';
-import { FuncEnum } from '~common/enums/special/func.enum';
-import { LogTypeEnum } from '~common/enums/special/log-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { FileReport } from '~common/interfaces/blockml/internal/file-report';
-import { ModelMetric } from '~common/interfaces/blockml/model-metric';
-import { bricksToFractions } from '~node-common/functions/bricks-to-fractions';
 import { log } from '../extra/log';
 
 let func = FuncEnum.BuildReportRowParameterFractions;

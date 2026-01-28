@@ -7,9 +7,9 @@ import { ChatConfig } from '#chat/config/chat-config';
 import { getConfig } from '#chat/config/get.config';
 import { ConsumerService } from '#chat/services/consumer.service';
 import { MessageService } from '#chat/services/message.service';
-import { APP_NAME_CHAT } from '~common/constants/top-chat';
-import { ChatEnvEnum } from '~common/enums/env/chat-env.enum';
-import { getLoggerOptions } from '~node-common/functions/get-logger-options';
+import { APP_NAME_CHAT } from '#common/constants/top-chat';
+import { ChatEnvEnum } from '#common/enums/env/chat-env.enum';
+import { getLoggerOptions } from '#node-common/functions/get-logger-options';
 
 export async function prepareTest(overrideConfigOptions?: ChatConfig) {
   let extraOverride: ChatConfig = {

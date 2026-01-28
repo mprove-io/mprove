@@ -2,10 +2,10 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ChatConfig } from '#chat/config/chat-config';
 import { getConfig } from '#chat/config/get.config';
-import { ChatEnvEnum } from '~common/enums/env/chat-env.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { logToConsole } from '~node-common/functions/log-to-console';
+import { ChatEnvEnum } from '#common/enums/env/chat-env.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { logToConsole } from '#node-common/functions/log-to-console';
 
 export function logToConsoleChat(item: {
   log: any;

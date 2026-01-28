@@ -5,16 +5,16 @@ import {
   Logger
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '~backend/config/backend-config';
 import {
   NoCheckParamsSchema,
   nameToClass
-} from '~common/constants/name-to-class';
-import { ErEnum } from '~common/enums/er.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '~common/functions/is-undefined';
-import { ServerError } from '~common/models/server-error';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
+} from '#common/constants/name-to-class';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ServerError } from '#common/models/server-error';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
+import { BackendConfig } from '~backend/config/backend-config';
 
 @Injectable()
 export class ValidateRequestGuard implements CanActivate {

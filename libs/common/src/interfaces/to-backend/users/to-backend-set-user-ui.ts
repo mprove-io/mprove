@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
-import { Ui } from '~common/interfaces/backend/ui';
-import { User } from '~common/interfaces/backend/user';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { Ui } from '#common/interfaces/backend/ui';
+import { User } from '#common/interfaces/backend/user';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendSetUserUiRequestPayload {

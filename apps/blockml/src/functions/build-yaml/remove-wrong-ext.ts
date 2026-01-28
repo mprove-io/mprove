@@ -1,13 +1,13 @@
 import { ConfigService } from '@nestjs/config';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { FuncEnum } from '#common/enums/special/func.enum';
+import { LogTypeEnum } from '#common/enums/special/log-type.enum';
+import { BmlFile } from '#common/interfaces/blockml/bml-file';
+import { File2 } from '#common/interfaces/blockml/internal/file-2';
+import { MyRegex } from '#common/models/my-regex';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
-import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { CallerEnum } from '~common/enums/special/caller.enum';
-import { FuncEnum } from '~common/enums/special/func.enum';
-import { LogTypeEnum } from '~common/enums/special/log-type.enum';
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
-import { File2 } from '~common/interfaces/blockml/internal/file-2';
-import { MyRegex } from '~common/models/my-regex';
 import { log } from '../extra/log';
 
 let func = FuncEnum.RemoveWrongExt;

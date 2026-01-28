@@ -1,6 +1,6 @@
 import { getTableColumns } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
-import { isUndefined } from '~common/functions/is-undefined';
+import { isUndefined } from '#common/functions/is-undefined';
 
 export function setUndefinedToNull<
   TTable extends PgTable,

@@ -1,5 +1,5 @@
-import { ErTitleEnum } from '~common/enums/special/er-title.enum';
-import { FileErrorLine } from '~common/interfaces/blockml/internal/file-error-line';
+import { ErTitleEnum } from '#common/enums/special/er-title.enum';
+import { FileErrorLine } from '#common/interfaces/blockml/internal/file-error-line';
 
 export class BmError {
   title: ErTitleEnum;

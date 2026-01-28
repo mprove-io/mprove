@@ -1,7 +1,7 @@
-import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
-import { isDefined } from '~common/functions/is-defined';
-import { Member } from '~common/interfaces/backend/member';
-import { User } from '~common/interfaces/backend/user';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined';
+import { Member } from '#common/interfaces/backend/member';
+import { User } from '#common/interfaces/backend/user';
 
 export function getFullName(x: Member | User) {
   let firstName = capitalizeFirstLetter(x.firstName);

@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
-import { ChartX } from '~common/interfaces/backend/chart-x';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { ChartX } from '#common/interfaces/backend/chart-x';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendSaveCreateChartRequestPayload {

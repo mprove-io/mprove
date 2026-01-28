@@ -1,15 +1,15 @@
 import test from 'ava';
 import * as fse from 'fs-extra';
-import { BRANCH_MAIN, PROJECT_ENV_PROD } from '~common/constants/top';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import {
   POSSIBLE_TIME_DIFF_MS,
   RETRY_OPTIONS
-} from '~common/constants/top-mcli';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { makeId } from '~common/functions/make-id';
-import { sleep } from '~common/functions/sleep';
+} from '#common/constants/top-mcli';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { makeId } from '#common/functions/make-id';
+import { sleep } from '#common/functions/sleep';
 import { getConfig } from '~mcli/config/get.config';
 import { cloneRepo } from '~mcli/functions/clone-repo';
 import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';

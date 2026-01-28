@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
-import { PROJECT_INFO_PAGE_TITLE } from '~common/constants/page-titles';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { Project } from '~common/interfaces/backend/project';
+import { PROJECT_INFO_PAGE_TITLE } from '#common/constants/page-titles';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { Project } from '#common/interfaces/backend/project';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ProjectQuery } from '~front/app/queries/project.query';

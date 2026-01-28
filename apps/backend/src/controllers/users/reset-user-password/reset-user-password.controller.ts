@@ -7,10 +7,18 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Throttle, seconds } from '@nestjs/throttler';
+import { seconds, Throttle } from '@nestjs/throttler';
+import { PATH_UPDATE_PASSWORD } from '#common/constants/top';
+import {
+  PASSWORD_EXPIRES_OFFSET,
+  THROTTLE_MULTIPLIER
+} from '#common/constants/top-backend';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '#common/functions/make-id';
+import { ToBackendResetUserPasswordRequest } from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
 import { BackendConfig } from '~backend/config/backend-config';
 import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { getRetryOption } from '~backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '~backend/functions/make-ts-using-offset-from-now';
 import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
@@ -18,14 +26,6 @@ import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { UsersService } from '~backend/services/db/users.service';
 import { EmailService } from '~backend/services/email.service';
 import { TabService } from '~backend/services/tab.service';
-import { PATH_UPDATE_PASSWORD } from '~common/constants/top';
-import {
-  PASSWORD_EXPIRES_OFFSET,
-  THROTTLE_MULTIPLIER
-} from '~common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '~common/functions/make-id';
-import { ToBackendResetUserPasswordRequest } from '~common/interfaces/to-backend/users/to-backend-reset-user-password';
 
 let retry = require('async-retry');
 

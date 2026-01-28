@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsEnum, ValidateNested } from 'class-validator';
-import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
+import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { IsTimezone } from '#common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
 import { ProjectChartLink } from './project-chart-link';
 import { ProjectDashboardLink } from './project-dashboard-link';

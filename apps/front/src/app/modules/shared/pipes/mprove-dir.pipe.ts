@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { MPROVE_CONFIG_DIR_DOT_SLASH } from '~common/constants/top';
-import { isUndefined } from '~common/functions/is-undefined';
+import { MPROVE_CONFIG_DIR_DOT_SLASH } from '#common/constants/top';
+import { isUndefined } from '#common/functions/is-undefined';
 
 @Pipe({ standalone: false, name: 'mproveDir' })
 export class MproveDirPipe implements PipeTransform {

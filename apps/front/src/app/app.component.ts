@@ -22,11 +22,11 @@ import {
   PATH_UPDATE_PASSWORD,
   PATH_USER_DELETED,
   PATH_VERIFY_EMAIL
-} from '~common/constants/top';
+} from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   MIN_TIME_TO_SPIN
-} from '~common/constants/top-front';
+} from '#common/constants/top-front';
 import { AuthService } from './services/auth.service';
 
 @Component({

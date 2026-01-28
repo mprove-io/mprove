@@ -1,5 +1,5 @@
 import { TemporalUnit } from '@malloydata/malloy-filter';
-import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
+import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 
 export function getFractionTsUnits(
   temporalUnit: TemporalUnit

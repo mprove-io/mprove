@@ -12,8 +12,8 @@ import { resourceFromAttributes } from '@opentelemetry/resources';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
-import { LOCAL_STORAGE_TOKEN } from '~common/constants/top-front';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { LOCAL_STORAGE_TOKEN } from '#common/constants/top-front';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { environment } from '~front/environments/environment';
 
 export function initTelemetry(): void {

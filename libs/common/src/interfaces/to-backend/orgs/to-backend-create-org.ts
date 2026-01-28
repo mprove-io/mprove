@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import { Org } from '~common/interfaces/backend/org';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { Org } from '#common/interfaces/backend/org';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendCreateOrgRequestPayload {

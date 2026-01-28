@@ -4,10 +4,10 @@ import { ChatConfig } from '#chat/config/chat-config';
 import { ProcessMessageService } from '#chat/controllers/process-message/process-message.service';
 import { makeErrorResponseChat } from '#chat/functions/make-error-response-chat';
 import { makeOkResponseChat } from '#chat/functions/make-ok-response-chat';
-import { METHOD_RPC } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ToChatRequestInfoNameEnum } from '~common/enums/to/to-chat-request-info-name.enum';
-import { ServerError } from '~common/models/server-error';
+import { METHOD_RPC } from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToChatRequestInfoNameEnum } from '#common/enums/to/to-chat-request-info-name.enum';
+import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class MessageService {

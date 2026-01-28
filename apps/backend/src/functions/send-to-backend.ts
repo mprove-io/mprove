@@ -1,9 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
 import * as request from 'supertest';
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { ServerError } from '~common/models/server-error';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ServerError } from '#common/models/server-error';
 
 export async function sendToBackend<T>(item: {
   httpServer: any;

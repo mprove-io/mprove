@@ -4,10 +4,10 @@ import {
   BRANCH_MAIN,
   MPROVE_CONFIG_FILENAME,
   README_FILE_NAME
-} from '~common/constants/top';
-import { TEST_PROJECTS } from '~common/constants/top-disk';
-import { isDefined } from '~common/functions/is-defined';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+} from '#common/constants/top';
+import { TEST_PROJECTS } from '#common/constants/top-disk';
+import { isDefined } from '#common/functions/is-defined';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { copyPath } from '../disk/copy-path';
 import { isPathExist } from '../disk/is-path-exist';
 import { writeToFile } from '../disk/write-to-file';

@@ -1,8 +1,6 @@
-import { WrapResult } from '~common/interfaces/wrap-result';
+import { WrapResult } from '#common/interfaces/wrap-result';
 
-export async function getWrapResult<T>(item: {
-  promise: Promise<T>;
-}) {
+export async function getWrapResult<T>(item: { promise: Promise<T> }) {
   let startMs = Date.now();
 
   let resp = await item.promise;

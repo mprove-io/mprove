@@ -10,7 +10,7 @@ import {
   PATH_PROJECT,
   PATH_TEAM,
   RESTRICTED_USER_ALIAS
-} from '~common/constants/top';
+} from '#common/constants/top';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';

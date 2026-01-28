@@ -1,19 +1,19 @@
 import {
   ExtractTablesWithRelations,
-  SQLWrapper,
   eq,
-  isNotNull
+  isNotNull,
+  SQLWrapper
 } from 'drizzle-orm';
 import { NodePgQueryResultHKT } from 'drizzle-orm/node-postgres';
 import { PgTransaction } from 'drizzle-orm/pg-core';
 import { forEachSeries } from 'p-iteration';
+import { isDefined } from '#common/functions/is-defined';
 import { schemaPostgres } from '~backend/drizzle/postgres/schema/_schema-postgres';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
-import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { TabService } from '~backend/services/tab.service';
-import { isDefined } from '~common/functions/is-defined';
+import { TabToEntService } from '~backend/services/tab-to-ent.service';
 import { drizzleSetAllColumnsFull } from './drizzle-set-all-columns-full';
 import { setUndefinedToNull } from './drizzle-set-undefined-to-null';
 import { avatarsTable } from './schema/avatars';

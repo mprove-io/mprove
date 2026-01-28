@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, FormControl, ValidationErrors } from '@angular/forms';
 import { formatSpecifier } from 'd3-format';
-import { getMotherduckDatabaseWrongChars } from '~common/functions/check-motherduck-database-name';
-import { isUndefined } from '~common/functions/is-undefined';
-import { isUndefinedOrEmpty } from '~common/functions/is-undefined-or-empty';
-import { MyRegex } from '~common/models/my-regex';
+import { getMotherduckDatabaseWrongChars } from '#common/functions/check-motherduck-database-name';
+import { isUndefined } from '#common/functions/is-undefined';
+import { isUndefinedOrEmpty } from '#common/functions/is-undefined-or-empty';
+import { MyRegex } from '#common/models/my-regex';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationService {

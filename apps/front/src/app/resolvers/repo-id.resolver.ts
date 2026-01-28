@@ -8,8 +8,8 @@ import {
   PATH_ORG,
   PATH_PROJECT,
   PROD_REPO_ID
-} from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
+} from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';

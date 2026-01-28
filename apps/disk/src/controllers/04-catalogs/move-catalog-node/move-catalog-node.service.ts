@@ -1,14 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErEnum } from '~common/enums/er.enum';
-import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { ErEnum } from '#common/enums/er.enum';
+import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import {
   ToDiskMoveCatalogNodeRequest,
   ToDiskMoveCatalogNodeResponsePayload
-} from '~common/interfaces/to-disk/04-catalogs/to-disk-move-catalog-node';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-disk/04-catalogs/to-disk-move-catalog-node';
+import { ServerError } from '#common/models/server-error';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '~disk/functions/disk/is-path-exist';
@@ -19,7 +20,6 @@ import { getRepoStatus } from '~disk/functions/git/get-repo-status';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class MoveCatalogNodeService {

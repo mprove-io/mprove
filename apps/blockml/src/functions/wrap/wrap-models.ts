@@ -3,26 +3,26 @@ import {
   SourceDef as MalloySourceDef
 } from '@malloydata/malloy';
 import { ModelEntryValueWithSource } from '@malloydata/malloy-interfaces';
-import { MF } from '~common/constants/top';
-import { ParameterEnum } from '~common/enums/docs/parameter.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FileExtensionEnum } from '~common/enums/file-extension.enum';
-import { ModelNodeIdSuffixEnum } from '~common/enums/model-node-id-suffix.enum';
-import { ModelNodeLabelEnum } from '~common/enums/model-node-label.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { capitalizeFirstLetter } from '~common/functions/capitalize-first-letter';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { parseTags } from '~common/functions/parse-tags';
-import { toBooleanFromLowercaseString } from '~common/functions/to-boolean-from-lowercase-string';
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
-import { FileMod } from '~common/interfaces/blockml/internal/file-mod';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
-import { KeyValuePair } from '~common/interfaces/blockml/key-value-pair';
-import { Model } from '~common/interfaces/blockml/model';
-import { ModelField } from '~common/interfaces/blockml/model-field';
-import { ModelNode } from '~common/interfaces/blockml/model-node';
+import { MF } from '#common/constants/top';
+import { ParameterEnum } from '#common/enums/docs/parameter.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+import { ModelNodeIdSuffixEnum } from '#common/enums/model-node-id-suffix.enum';
+import { ModelNodeLabelEnum } from '#common/enums/model-node-label.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { capitalizeFirstLetter } from '#common/functions/capitalize-first-letter';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { parseTags } from '#common/functions/parse-tags';
+import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
+import { BmlFile } from '#common/interfaces/blockml/bml-file';
+import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
+import { FileStore } from '#common/interfaces/blockml/internal/file-store';
+import { KeyValuePair } from '#common/interfaces/blockml/key-value-pair';
+import { Model } from '#common/interfaces/blockml/model';
+import { ModelField } from '#common/interfaces/blockml/model-field';
+import { ModelNode } from '#common/interfaces/blockml/model-node';
 import { getFieldItems } from '../extra/get-field-items';
 import { wrapField } from './wrap-field';
 import { FieldItemX, wrapFieldItem } from './wrap-field-item';
@@ -393,9 +393,7 @@ export function wrapModels(item: {
       // console.log(`${x.name}-byteCountA`);
       // console.log(byteCountA);
       // fse.writeFile(`${x.name}-full.json`, strA);
-
       // malloyModelDef.references = [];
-
       // let strB = JSON.stringify(malloyModelDef);
       // let byteCountB = new TextEncoder().encode(strB).byteLength;
       // console.log(`${x.name}-byteCountB`);

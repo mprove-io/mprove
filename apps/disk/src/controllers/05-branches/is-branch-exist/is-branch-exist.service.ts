@@ -1,18 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErEnum } from '~common/enums/er.enum';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { ErEnum } from '#common/enums/er.enum';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import {
   ToDiskIsBranchExistRequest,
   ToDiskIsBranchExistResponsePayload
-} from '~common/interfaces/to-disk/05-branches/to-disk-is-branch-exist';
+} from '#common/interfaces/to-disk/05-branches/to-disk-is-branch-exist';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '~disk/functions/git/is-remote-branch-exist';
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class IsBranchExistService {

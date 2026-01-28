@@ -1,6 +1,6 @@
 import { Tag, TagInterface } from '@malloydata/malloy-tag';
-import { KeyTagPair } from '~common/interfaces/blockml/key-tag-pair';
-import { KeyValuePair } from '~common/interfaces/blockml/key-value-pair';
+import { KeyTagPair } from '#common/interfaces/blockml/key-tag-pair';
+import { KeyValuePair } from '#common/interfaces/blockml/key-value-pair';
 import { isDefined } from './is-defined';
 import { isUndefined } from './is-undefined';
 
@@ -9,9 +9,7 @@ interface ParseResult {
   mproveTags: KeyValuePair[];
 }
 
-export function parseTags(item: {
-  inputs: string[];
-}): ParseResult {
+export function parseTags(item: { inputs: string[] }): ParseResult {
   let { inputs } = item;
 
   let mproveFlags: string[] = [];

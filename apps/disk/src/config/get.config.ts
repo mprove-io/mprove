@@ -1,7 +1,7 @@
-import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
-import { ErEnum } from '~common/enums/er.enum';
+import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
+import { ErEnum } from '#common/enums/er.enum';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 import { getDevConfig } from './get-dev.config';
 import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';

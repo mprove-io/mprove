@@ -1,9 +1,9 @@
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
-} from '~common/interfaces/to-backend/users/to-backend-login-user';
+} from '#common/interfaces/to-backend/users/to-backend-login-user';
 import { CustomContext } from '~mcli/models/custom-command';
 import { mreq } from './mreq';
 

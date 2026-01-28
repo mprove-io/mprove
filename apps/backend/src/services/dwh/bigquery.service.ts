@@ -1,22 +1,20 @@
 import { BigQuery, BigQueryOptions, JobResponse } from '@google-cloud/bigquery';
 import { Injectable } from '@nestjs/common';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
+import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import {
   ConnectionTab,
   QueryTab
 } from '~backend/drizzle/postgres/schema/_tabs';
 import { makeTsNumber } from '~backend/functions/make-ts-number';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { QueryEstimate } from '~common/interfaces/backend/query-estimate';
-import { TestConnectionResult } from '~common/interfaces/to-backend/connections/to-backend-test-connection';
 
 @Injectable()
 export class BigQueryService {
   constructor() {}
 
-  optionsToBigQueryOptions(item: {
-    connection: ConnectionTab;
-  }) {
+  optionsToBigQueryOptions(item: { connection: ConnectionTab }) {
     let { connection } = item;
 
     let connectionOptions: BigQueryOptions = {
@@ -101,10 +99,7 @@ export class BigQueryService {
     return query;
   }
 
-  async runQueryDry(item: {
-    query: QueryTab;
-    connection: ConnectionTab;
-  }) {
+  async runQueryDry(item: { query: QueryTab; connection: ConnectionTab }) {
     let { query, connection } = item;
 
     let validEstimate: QueryEstimate;

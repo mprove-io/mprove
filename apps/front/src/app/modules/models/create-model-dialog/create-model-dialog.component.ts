@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   OnInit,
   ViewChild
@@ -19,28 +19,28 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
-import { EMPTY_CHART_ID, MPROVE_USERS_FOLDER } from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { encodeFilePath } from '~common/functions/encode-file-path';
-import { isUndefined } from '~common/functions/is-undefined';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
-import { Preset } from '~common/interfaces/blockml/preset';
+import { EMPTY_CHART_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { encodeFilePath } from '#common/functions/encode-file-path';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ProjectConnection } from '#common/interfaces/backend/project-connection';
+import { Preset } from '#common/interfaces/blockml/preset';
 import {
   ToBackendGetConnectionsRequestPayload,
   ToBackendGetConnectionsResponse
-} from '~common/interfaces/to-backend/connections/to-backend-get-connections';
+} from '#common/interfaces/to-backend/connections/to-backend-get-connections';
 import {
   ToBackendCreateFileRequestPayload,
   ToBackendCreateFileResponse
-} from '~common/interfaces/to-backend/files/to-backend-create-file';
+} from '#common/interfaces/to-backend/files/to-backend-create-file';
 import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
-} from '~common/interfaces/to-backend/models/to-backend-get-models';
+} from '#common/interfaces/to-backend/models/to-backend-get-models';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery } from '~front/app/queries/nav.query';

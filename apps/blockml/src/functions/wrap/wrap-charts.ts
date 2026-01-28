@@ -1,10 +1,10 @@
-import { MconfigParentTypeEnum } from '~common/enums/mconfig-parent-type.enum';
-import { Chart } from '~common/interfaces/blockml/chart';
-import { FileChart } from '~common/interfaces/blockml/internal/file-chart';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { Model } from '~common/interfaces/blockml/model';
-import { Query } from '~common/interfaces/blockml/query';
+import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
+import { Chart } from '#common/interfaces/blockml/chart';
+import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
+import { FileStore } from '#common/interfaces/blockml/internal/file-store';
+import { Mconfig } from '#common/interfaces/blockml/mconfig';
+import { Model } from '#common/interfaces/blockml/model';
+import { Query } from '#common/interfaces/blockml/query';
 import { wrapTiles } from './wrap-tiles';
 
 export function wrapCharts(item: {

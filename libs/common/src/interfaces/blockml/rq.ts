@@ -1,6 +1,6 @@
 import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { IsTimezone } from '~common/functions/is-timezone';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { IsTimezone } from '#common/functions/is-timezone';
 
 export class Rq {
   @IsString()

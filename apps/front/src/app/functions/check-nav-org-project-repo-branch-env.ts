@@ -12,8 +12,8 @@ import {
   PATH_PROFILE,
   PATH_PROJECT,
   PROD_REPO_ID
-} from '~common/constants/top';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined';
 import { NavState } from '../queries/nav.query';
 
 export function checkNavOrgProjectRepoBranchEnv(item: {

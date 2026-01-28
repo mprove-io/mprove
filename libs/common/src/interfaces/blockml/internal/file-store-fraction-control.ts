@@ -1,4 +1,4 @@
-import { ControlClassEnum } from '~common/enums/control-class.enum';
+import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { FileStoreFractionControlOption } from './file-store-fraction-control-option';
 
 export interface FileStoreFractionControl {

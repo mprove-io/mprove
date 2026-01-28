@@ -1,5 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { isDefined } from '#common/functions/is-defined';
+import {
+  AvatarLt,
+  AvatarSt,
+  BranchLt,
+  BranchSt,
+  BridgeLt,
+  BridgeSt,
+  ChartLt,
+  ChartSt,
+  ConnectionLt,
+  ConnectionSt,
+  DashboardLt,
+  DashboardSt,
+  DconfigLt,
+  DconfigSt,
+  EnvLt,
+  EnvSt,
+  KitLt,
+  KitSt,
+  MconfigLt,
+  MconfigSt,
+  MemberLt,
+  MemberSt,
+  ModelLt,
+  ModelSt,
+  NoteLt,
+  NoteSt,
+  OrgLt,
+  OrgSt,
+  ProjectLt,
+  ProjectSt,
+  QueryLt,
+  QuerySt,
+  ReportLt,
+  ReportSt,
+  StructLt,
+  StructSt,
+  UserLt,
+  UserSt
+} from '#common/interfaces/st-lt';
+import { encryptData } from '#node-common/functions/encrypt-decrypt';
 import { BackendConfig } from '~backend/config/backend-config';
 import {
   AvatarTab,
@@ -43,48 +85,6 @@ import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '~backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
-import { isDefined } from '~common/functions/is-defined';
-import {
-  AvatarLt,
-  AvatarSt,
-  BranchLt,
-  BranchSt,
-  BridgeLt,
-  BridgeSt,
-  ChartLt,
-  ChartSt,
-  ConnectionLt,
-  ConnectionSt,
-  DashboardLt,
-  DashboardSt,
-  DconfigLt,
-  DconfigSt,
-  EnvLt,
-  EnvSt,
-  KitLt,
-  KitSt,
-  MconfigLt,
-  MconfigSt,
-  MemberLt,
-  MemberSt,
-  ModelLt,
-  ModelSt,
-  NoteLt,
-  NoteSt,
-  OrgLt,
-  OrgSt,
-  ProjectLt,
-  ProjectSt,
-  QueryLt,
-  QuerySt,
-  ReportLt,
-  ReportSt,
-  StructLt,
-  StructSt,
-  UserLt,
-  UserSt
-} from '~common/interfaces/st-lt';
-import { encryptData } from '~node-common/functions/encrypt-decrypt';
 import { HashService } from './hash.service';
 
 @Injectable()
@@ -435,10 +435,7 @@ export class TabToEntService {
     return dashboardEnt;
   }
 
-  dconfigTabToEnt(item: {
-    tab: DconfigTab;
-    hashSecret: string;
-  }): DconfigEnt {
+  dconfigTabToEnt(item: { tab: DconfigTab; hashSecret: string }): DconfigEnt {
     let { tab, hashSecret } = item;
 
     let dconfigSt: DconfigSt = {
@@ -510,10 +507,7 @@ export class TabToEntService {
     return kitEnt;
   }
 
-  mconfigTabToEnt(item: {
-    tab: MconfigTab;
-    hashSecret: string;
-  }): MconfigEnt {
+  mconfigTabToEnt(item: { tab: MconfigTab; hashSecret: string }): MconfigEnt {
     let { tab, hashSecret } = item;
 
     let mconfigSt: MconfigSt = {};
@@ -693,10 +687,7 @@ export class TabToEntService {
     return orgEnt;
   }
 
-  projectTabToEnt(item: {
-    tab: ProjectTab;
-    hashSecret: string;
-  }): ProjectEnt {
+  projectTabToEnt(item: { tab: ProjectTab; hashSecret: string }): ProjectEnt {
     let { tab, hashSecret } = item;
 
     let projectSt: ProjectSt = {

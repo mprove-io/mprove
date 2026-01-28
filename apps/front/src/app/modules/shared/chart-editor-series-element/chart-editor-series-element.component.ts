@@ -8,11 +8,11 @@ import {
   SimpleChanges
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { MconfigChartSeries } from '~common/interfaces/blockml/mconfig-chart-series';
-import { EventChartSeriesElementUpdate } from '~common/interfaces/front/event-chart-series-element-update';
-import { EventChartToggleSeries } from '~common/interfaces/front/event-chart-toggle-series';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
+import { EventChartSeriesElementUpdate } from '#common/interfaces/front/event-chart-series-element-update';
+import { EventChartToggleSeries } from '#common/interfaces/front/event-chart-toggle-series';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
 import { ChartTypeItem } from '../../models/models.component';
 import { ChartSeriesWithField } from '../chart-editor/chart-editor.component';

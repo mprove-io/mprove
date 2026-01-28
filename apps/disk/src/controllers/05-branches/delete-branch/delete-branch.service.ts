@@ -1,15 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PROD_REPO_ID } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
-import { DiskItemStatus } from '~common/interfaces/disk/disk-item-status';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { PROD_REPO_ID } from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
+import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 import {
   ToDiskDeleteBranchRequest,
   ToDiskDeleteBranchResponsePayload
-} from '~common/interfaces/to-disk/05-branches/to-disk-delete-branch';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-disk/05-branches/to-disk-delete-branch';
+import { ServerError } from '#common/models/server-error';
+import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 import { DiskConfig } from '~disk/config/disk-config';
 import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '~disk/functions/git/checkout-branch';
@@ -21,7 +22,6 @@ import { isRemoteBranchExist } from '~disk/functions/git/is-remote-branch-exist'
 import { makeFetchOptions } from '~disk/functions/make-fetch-options';
 import { DiskTabService } from '~disk/services/disk-tab.service';
 import { RestoreService } from '~disk/services/restore.service';
-import { transformValidSync } from '~node-common/functions/transform-valid-sync';
 
 @Injectable()
 export class DeleteBranchService {

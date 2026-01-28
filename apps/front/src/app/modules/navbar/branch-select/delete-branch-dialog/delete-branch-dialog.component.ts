@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -17,14 +17,14 @@ import {
   PATH_PROJECT,
   PATH_REPO,
   PROD_REPO_ID
-} from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+} from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendDeleteBranchRequestPayload,
   ToBackendDeleteBranchResponse
-} from '~common/interfaces/to-backend/branches/to-backend-delete-branch';
+} from '#common/interfaces/to-backend/branches/to-backend-delete-branch';
 import { ApiService } from '~front/app/services/api.service';
 
 export interface DeleteBranchDialogData {

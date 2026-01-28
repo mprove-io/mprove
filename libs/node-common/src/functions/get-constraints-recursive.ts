@@ -1,5 +1,5 @@
 import { ValidationError } from 'class-validator';
-import { isDefined } from '~common/functions/is-defined';
+import { isDefined } from '#common/functions/is-defined';
 
 export function getConstraintsRecursive(
   nestedValidationErrors: ValidationError[]

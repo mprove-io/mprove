@@ -8,8 +8,8 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { ProjectLt, ProjectSt } from '~common/interfaces/st-lt';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
 
 export const projectsTable = pgTable(
   'projects',

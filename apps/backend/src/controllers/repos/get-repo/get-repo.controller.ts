@@ -1,5 +1,17 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
+import { PROD_REPO_ID } from '#common/constants/top';
+import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import {
+  ToBackendGetRepoRequest,
+  ToBackendGetRepoResponsePayload
+} from '#common/interfaces/to-backend/repos/to-backend-get-repo';
+import {
+  ToDiskGetCatalogNodesRequest,
+  ToDiskGetCatalogNodesResponse
+} from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
@@ -14,18 +26,6 @@ import { StructsService } from '~backend/services/db/structs.service';
 import { UsersService } from '~backend/services/db/users.service';
 import { RpcService } from '~backend/services/rpc.service';
 import { TabService } from '~backend/services/tab.service';
-import { PROD_REPO_ID } from '~common/constants/top';
-import { THROTTLE_CUSTOM } from '~common/constants/top-backend';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import {
-  ToBackendGetRepoRequest,
-  ToBackendGetRepoResponsePayload
-} from '~common/interfaces/to-backend/repos/to-backend-get-repo';
-import {
-  ToDiskGetCatalogNodesRequest,
-  ToDiskGetCatalogNodesResponse
-} from '~common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)

@@ -1,10 +1,10 @@
 import { ConfigService } from '@nestjs/config';
+import { CallerEnum } from '#common/enums/special/caller.enum';
+import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
+import { FileStore } from '#common/interfaces/blockml/internal/file-store';
+import { sdrType } from '#common/types/sdr-type';
 import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { BmError } from '~blockml/models/bm-error';
-import { CallerEnum } from '~common/enums/special/caller.enum';
-import { FileProjectConf } from '~common/interfaces/blockml/internal/file-project-conf';
-import { FileStore } from '~common/interfaces/blockml/internal/file-store';
-import { sdrType } from '~common/types/sdr-type';
 import { checkAndSetImplicitFormatNumber } from './check-and-set-implicit-format-number';
 import { checkAndSetImplicitResult } from './check-and-set-implicit-result';
 import { checkFieldDeclaration } from './check-field-declaration';

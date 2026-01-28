@@ -1,5 +1,5 @@
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { Fraction } from '~common/interfaces/blockml/fraction';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { Fraction } from '#common/interfaces/blockml/fraction';
 
 export function makeQueryParams(item: {
   timezone: string;

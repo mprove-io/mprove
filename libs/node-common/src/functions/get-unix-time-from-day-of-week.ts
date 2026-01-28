@@ -1,5 +1,5 @@
 import { add, fromUnixTime, getUnixTime, sub } from 'date-fns';
-import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
+import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 import { getUnitDuration } from './get-unit-duration';
 
 export function getUnixTimeFromDayOfWeek(item: {

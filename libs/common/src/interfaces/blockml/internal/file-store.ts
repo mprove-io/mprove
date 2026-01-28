@@ -1,4 +1,4 @@
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { FieldAny } from './field-any';
 import { FileBasic } from './file-basic';
 import { FileStoreBuildMetric } from './file-store-build-metric';

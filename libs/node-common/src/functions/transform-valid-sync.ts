@@ -4,10 +4,10 @@ import {
   TransformValidationOptions,
   transformAndValidateSync
 } from 'class-transformer-validator';
-import { ErEnum } from '~common/enums/er.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { ServerError } from '~common/models/server-error';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { ServerError } from '#common/models/server-error';
 import { getConstraintsRecursive } from './get-constraints-recursive';
 import { logToConsole } from './log-to-console';
 

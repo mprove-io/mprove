@@ -14,39 +14,39 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
 import {
   BehaviorSubject,
-  Subscription,
   debounceTime,
   distinctUntilChanged,
+  Subscription,
   switchMap,
   take,
   tap
 } from 'rxjs';
-import { DOUBLE_UNDERSCORE, MALLOY_FILTER_ANY } from '~common/constants/top';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { isUndefined } from '~common/functions/is-undefined';
-import { sleep } from '~common/functions/sleep';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
+import { DOUBLE_UNDERSCORE, MALLOY_FILTER_ANY } from '#common/constants/top';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { sleep } from '#common/functions/sleep';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
 import {
   ToBackendSuggestDimensionValuesRequestPayload,
   ToBackendSuggestDimensionValuesResponse
-} from '~common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
+} from '#common/interfaces/to-backend/mconfigs/to-backend-suggest-dimension-values';
 import {
   ToBackendGetQueryRequestPayload,
   ToBackendGetQueryResponse
-} from '~common/interfaces/to-backend/queries/to-backend-get-query';
+} from '#common/interfaces/to-backend/queries/to-backend-get-query';
 import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
-import { MyRegex } from '~common/models/my-regex';
+} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
+import { MyRegex } from '#common/models/my-regex';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { ApiService } from '~front/app/services/api.service';
 import { FractionTypeItem } from '../fraction.component';

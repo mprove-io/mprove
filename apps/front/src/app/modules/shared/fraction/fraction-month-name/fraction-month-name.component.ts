@@ -9,11 +9,11 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { FractionMonthNameValueEnum } from '~common/enums/fraction/fraction-month-name-value.enum';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
+import { FractionMonthNameValueEnum } from '#common/enums/fraction/fraction-month-name-value.enum';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
 import {
   FractionMonthNameValueItem,
   FractionTypeItem

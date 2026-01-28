@@ -12,40 +12,40 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Subscription, from, interval, of } from 'rxjs';
+import { from, interval, of, Subscription } from 'rxjs';
 import { concatMap, delay, filter, startWith, take, tap } from 'rxjs/operators';
-import { DASHBOARDS_PAGE_TITLE } from '~common/constants/page-titles';
+import { DASHBOARDS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
   PATH_DASHBOARDS,
   PATH_DASHBOARDS_LIST,
   RESTRICTED_USER_ALIAS
-} from '~common/constants/top';
-import { REFRESH_LIST } from '~common/constants/top-front';
-import { QueryStatusEnum } from '~common/enums/query-status.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { getTimezones } from '~common/functions/get-timezones';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { isUndefined } from '~common/functions/is-undefined';
-import { makeTrackChangeId } from '~common/functions/make-track-change-id';
-import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
-import { Member } from '~common/interfaces/backend/member';
-import { ModelX } from '~common/interfaces/backend/model-x';
-import { Query } from '~common/interfaces/blockml/query';
-import { RefreshItem } from '~common/interfaces/front/refresh-item';
+} from '#common/constants/top';
+import { REFRESH_LIST } from '#common/constants/top-front';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { getTimezones } from '#common/functions/get-timezones';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { makeTrackChangeId } from '#common/functions/make-track-change-id';
+import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
+import { DashboardX } from '#common/interfaces/backend/dashboard-x';
+import { Member } from '#common/interfaces/backend/member';
+import { ModelX } from '#common/interfaces/backend/model-x';
+import { Query } from '#common/interfaces/blockml/query';
+import { RefreshItem } from '#common/interfaces/front/refresh-item';
 import {
   ToBackendGetQueriesRequestPayload,
   ToBackendGetQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-get-queries';
+} from '#common/interfaces/to-backend/queries/to-backend-get-queries';
 import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
-} from '~common/interfaces/to-backend/queries/to-backend-run-queries';
-import { DashboardPartsFilteredQuery } from '~front/app/queries/dashboard-parts-filtered.query';
-import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
+} from '#common/interfaces/to-backend/queries/to-backend-run-queries';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
+import { DashboardPartsFilteredQuery } from '~front/app/queries/dashboard-parts-filtered.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { ModelsQuery } from '~front/app/queries/models.query';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';

@@ -1,7 +1,7 @@
 import { ChatConfig } from '#chat/config/chat-config';
-import { ChatEnvEnum } from '~common/enums/env/chat-env.enum';
-import { enumToBoolean } from '~common/functions/enum-to-boolean';
-import { isDefined } from '~common/functions/is-defined';
+import { ChatEnvEnum } from '#common/enums/env/chat-env.enum';
+import { enumToBoolean } from '#common/functions/enum-to-boolean';
+import { isDefined } from '#common/functions/is-defined';
 
 export function getDevConfig() {
   let devConfig: ChatConfig = {

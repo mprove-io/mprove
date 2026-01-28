@@ -6,7 +6,7 @@ import {
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { EMPTY, Observable, TimeoutError, combineLatest, timer } from 'rxjs';
+import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 import {
   LAST_SELECTED_CHART_ID,
@@ -21,25 +21,25 @@ import {
   PATH_PROJECT,
   PATH_REPO,
   PROD_REPO_ID
-} from '~common/constants/top';
+} from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_TOKEN,
   MIN_TIME_TO_SPIN,
   SPECIAL_ERROR
-} from '~common/constants/top-front';
-import { ErEnum } from '~common/enums/er.enum';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { makeId } from '~common/functions/make-id';
-import { ErrorData } from '~common/interfaces/front/error-data';
+} from '#common/constants/top-front';
+import { ErEnum } from '#common/enums/er.enum';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { makeId } from '#common/functions/make-id';
+import { ErrorData } from '#common/interfaces/front/error-data';
 import {
   ToBackendGetReportsRequestPayload,
   ToBackendGetReportsResponse
-} from '~common/interfaces/to-backend/reports/to-backend-get-reports';
-import { ToBackendRequest } from '~common/interfaces/to-backend/to-backend-request';
+} from '#common/interfaces/to-backend/reports/to-backend-get-reports';
+import { ToBackendRequest } from '#common/interfaces/to-backend/to-backend-request';
 import { environment } from '~front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { ModelQuery } from '../queries/model.query';

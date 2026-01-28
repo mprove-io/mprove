@@ -1,4 +1,4 @@
-// import { addDurationMetric } from '~node-common/functions/add-duration-metric';
+// import { addDurationMetric } from '#node-common/functions/add-duration-metric';
 
 // export const WithDurationMetric = (item?: {
 //   metricName?: string;

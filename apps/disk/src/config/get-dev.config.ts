@@ -1,6 +1,6 @@
-import { DiskEnvEnum } from '~common/enums/env/disk-env.enum';
-import { enumToBoolean } from '~common/functions/enum-to-boolean';
-import { isDefined } from '~common/functions/is-defined';
+import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
+import { enumToBoolean } from '#common/functions/enum-to-boolean';
+import { isDefined } from '#common/functions/is-defined';
 import { DiskConfig } from '~disk/config/disk-config';
 
 export function getDevConfig() {

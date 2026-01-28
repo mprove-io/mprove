@@ -8,8 +8,8 @@ import {
   startOfWeek,
   startOfYear
 } from 'date-fns';
-import { ProjectWeekStartEnum } from '~common/enums/project-week-start.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
 export function getTimeSpecUnitStartTs(item: {
   timeSpec: TimeSpecEnum;

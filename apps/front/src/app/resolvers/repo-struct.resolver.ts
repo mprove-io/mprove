@@ -5,7 +5,7 @@ import {
   RouterStateSnapshot
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
-import { PATH_FILES } from '~common/constants/top';
+import { PATH_FILES } from '#common/constants/top';
 import { RepoStructFilesResolver } from './repo-struct-files.resolver';
 
 @Injectable({ providedIn: 'root' })

@@ -1,5 +1,5 @@
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 
 export function getFractionTypeForAny(result: FieldResultEnum) {
   return result === FieldResultEnum.String

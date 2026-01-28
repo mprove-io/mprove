@@ -1,5 +1,5 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 
 export class BaseConnection {
   @IsOptional()

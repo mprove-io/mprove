@@ -1,5 +1,5 @@
-import { ErEnum } from '~common/enums/er.enum';
-import { ServerError } from '~common/models/server-error';
+import { ErEnum } from '#common/enums/er.enum';
+import { ServerError } from '#common/models/server-error';
 
 let FIRST_CHAR_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // 26
 let SECOND_CHAR_ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'; // 36

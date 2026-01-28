@@ -1,8 +1,9 @@
 // import { hostname } from 'os';
-import * as util from 'util';
+
 import { Logger } from '@nestjs/common';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { isDefined } from '~common/functions/is-defined';
+import * as util from 'util';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { wrapError } from './wrap-error';
 
 export function logToConsole(item: {

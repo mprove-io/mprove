@@ -1,8 +1,8 @@
 /// <reference path="./types.d.ts" />
 import { Cli } from 'clipanion';
 import 'reflect-metadata';
-import { ErEnum } from '~common/enums/er.enum';
-import { listenProcessEvents } from '~node-common/functions/listen-process-events';
+import { ErEnum } from '#common/enums/er.enum';
+import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { DefinitionsCommand } from './commands/base/definitions/definitions';
 import { HelpCommand } from './commands/base/help/help';
 import { VersionCommand } from './commands/base/version/version';

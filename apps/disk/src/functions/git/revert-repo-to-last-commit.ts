@@ -1,5 +1,5 @@
 import * as nodegit from 'nodegit';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function revertRepoToLastCommit(item: { repoDir: string }) {
   return await addTraceSpan({

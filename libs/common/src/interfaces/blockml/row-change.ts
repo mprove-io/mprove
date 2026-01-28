@@ -1,5 +1,5 @@
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
-import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { Parameter } from './parameter';
 
 export class RowChange {

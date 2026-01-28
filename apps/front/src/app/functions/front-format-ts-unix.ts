@@ -3,7 +3,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 import timezone from 'dayjs/plugin/customParseFormat';
 import customParseFormat from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
 // function content is the same as nodeFormatTsUnix
 

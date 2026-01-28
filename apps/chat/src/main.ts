@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { startTelemetry } from '~node-common/functions/start-telemetry';
+import { startTelemetry } from '#node-common/functions/start-telemetry';
 
 let tracerNodeSdk = startTelemetry({
   serviceName: 'mprove-chat'
@@ -8,10 +8,10 @@ let tracerNodeSdk = startTelemetry({
 //
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
-import { APP_NAME_CHAT } from '~common/constants/top-chat';
-import { ErEnum } from '~common/enums/er.enum';
-import { getLoggerOptions } from '~node-common/functions/get-logger-options';
-import { listenProcessEvents } from '~node-common/functions/listen-process-events';
+import { APP_NAME_CHAT } from '#common/constants/top-chat';
+import { ErEnum } from '#common/enums/er.enum';
+import { getLoggerOptions } from '#node-common/functions/get-logger-options';
+import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { AppModule } from './app.module';
 import { getConfig } from './config/get.config';
 import { logToConsoleChat } from './functions/log-to-console-chat';

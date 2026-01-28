@@ -1,5 +1,5 @@
 // import { CompiledQuery } from '@malloydata/malloy/dist/model/malloy_types';
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { FilterBricksDictionary } from '../filter-bricks-dictionary';
 import { Fraction } from '../fraction';
 import { FileChartData } from './file-chart-data';

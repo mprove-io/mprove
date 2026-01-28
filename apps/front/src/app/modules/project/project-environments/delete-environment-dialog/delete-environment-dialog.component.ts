@@ -1,19 +1,19 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { PROJECT_ENV_PROD } from '~common/constants/top';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendDeleteEnvRequestPayload,
   ToBackendDeleteEnvResponse
-} from '~common/interfaces/to-backend/envs/to-backend-delete-env';
+} from '#common/interfaces/to-backend/envs/to-backend-delete-env';
 import { EnvironmentsQuery } from '~front/app/queries/environments.query';
 import { MemberQuery } from '~front/app/queries/member.query';
 import { NavQuery } from '~front/app/queries/nav.query';

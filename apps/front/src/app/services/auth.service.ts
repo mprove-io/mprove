@@ -9,12 +9,12 @@ import {
   PATH_PROFILE,
   PATH_REGISTER,
   PATH_VERIFY_EMAIL
-} from '~common/constants/top';
+} from '#common/constants/top';
 import {
   LOCAL_STORAGE_ORG_ID,
   LOCAL_STORAGE_TOKEN
-} from '~common/constants/top-front';
-import { isDefined } from '~common/functions/is-defined';
+} from '#common/constants/top-front';
+import { isDefined } from '#common/functions/is-defined';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

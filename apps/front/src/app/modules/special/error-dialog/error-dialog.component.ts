@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { isDefined } from '~common/functions/is-defined';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { isDefined } from '#common/functions/is-defined';
 
-import { ErrorData } from '~common/interfaces/front/error-data';
+import { ErrorData } from '#common/interfaces/front/error-data';
 
 @Component({
   selector: 'm-error-dialog',

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -17,22 +17,22 @@ import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { take, tap } from 'rxjs/operators';
-import { ConnectionTypeEnum } from '~common/enums/connection-type.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { ConnectionOptions } from '~common/interfaces/backend/connection-parts/connection-options';
-import { ProjectConnection } from '~common/interfaces/backend/project-connection';
+import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { ConnectionOptions } from '#common/interfaces/backend/connection-parts/connection-options';
+import { ProjectConnection } from '#common/interfaces/backend/project-connection';
 import {
   ToBackendEditConnectionRequestPayload,
   ToBackendEditConnectionResponse
-} from '~common/interfaces/to-backend/connections/to-backend-edit-connection';
+} from '#common/interfaces/to-backend/connections/to-backend-edit-connection';
 import {
   TestConnectionResult,
   ToBackendTestConnectionRequestPayload,
   ToBackendTestConnectionResponse
-} from '~common/interfaces/to-backend/connections/to-backend-test-connection';
+} from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { SharedModule } from '~front/app/modules/shared/shared.module';
 import { ConnectionsQuery } from '~front/app/queries/connections.query';
 import { ApiService } from '~front/app/services/api.service';

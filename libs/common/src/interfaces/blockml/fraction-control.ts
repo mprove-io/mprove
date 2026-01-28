@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { ControlClassEnum } from '~common/enums/control-class.enum';
+import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { FractionControlOption } from './fraction-control-option';
 
 export class FractionControl {

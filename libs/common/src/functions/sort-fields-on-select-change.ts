@@ -1,8 +1,8 @@
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { ModelField } from '~common/interfaces/blockml/model-field';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+import { Mconfig } from '#common/interfaces/blockml/mconfig';
+import { ModelField } from '#common/interfaces/blockml/model-field';
 import { isDefined } from './is-defined';
 
 export function sortFieldsOnSelectChange<T extends Mconfig>(item: {

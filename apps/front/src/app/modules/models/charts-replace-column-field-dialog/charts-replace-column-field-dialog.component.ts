@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -12,18 +12,18 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { ModelTypeEnum } from '~common/enums/model-type.enum';
-import { QueryOperationTypeEnum } from '~common/enums/query-operation-type.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '~common/functions/is-defined-and-not-empty';
-import { isUndefined } from '~common/functions/is-undefined';
-import { replaceChartField } from '~common/functions/replace-chart-field';
-import { setChartFields } from '~common/functions/set-chart-fields';
-import { setChartTitleOnSelectChange } from '~common/functions/set-chart-title-on-select-change';
-import { ChartX } from '~common/interfaces/backend/chart-x';
-import { ModelField } from '~common/interfaces/blockml/model-field';
-import { ModelFieldY } from '~common/interfaces/blockml/model-field-y';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { ModelTypeEnum } from '#common/enums/model-type.enum';
+import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { replaceChartField } from '#common/functions/replace-chart-field';
+import { setChartFields } from '#common/functions/set-chart-fields';
+import { setChartTitleOnSelectChange } from '#common/functions/set-chart-title-on-select-change';
+import { ChartX } from '#common/interfaces/backend/chart-x';
+import { ModelField } from '#common/interfaces/blockml/model-field';
+import { ModelFieldY } from '#common/interfaces/blockml/model-field-y';
 import { ApiService } from '~front/app/services/api.service';
 import { ChartService } from '~front/app/services/chart.service';
 import { StructService } from '~front/app/services/struct.service';

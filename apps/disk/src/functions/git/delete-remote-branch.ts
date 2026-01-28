@@ -1,6 +1,6 @@
 import * as nodegit from 'nodegit';
-import { PROD_REPO_ID } from '~common/constants/top';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+import { PROD_REPO_ID } from '#common/constants/top';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function deleteRemoteBranch(item: {
   projectDir: string;

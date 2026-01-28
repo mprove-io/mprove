@@ -1,10 +1,10 @@
 import { TreeNode } from '@ali-hm/angular-tree-component';
 import { Component, Input } from '@angular/core';
-import { EMPTY_CHART_ID } from '~common/constants/top';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { encodeFilePath } from '~common/functions/encode-file-path';
-import { ChartX } from '~common/interfaces/backend/chart-x';
-import { ModelX } from '~common/interfaces/backend/model-x';
+import { EMPTY_CHART_ID } from '#common/constants/top';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { encodeFilePath } from '#common/functions/encode-file-path';
+import { ChartX } from '#common/interfaces/backend/chart-x';
+import { ModelX } from '#common/interfaces/backend/model-x';
 import { NavQuery } from '~front/app/queries/nav.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { ApiService } from '~front/app/services/api.service';

@@ -1,4 +1,4 @@
-import { FieldResultEnum } from '~common/enums/field-result.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { Fraction } from '../fraction';
 import { FileFraction } from './file-fraction';
 

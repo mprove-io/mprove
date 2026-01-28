@@ -1,25 +1,25 @@
 import { Injectable } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { EMPTY_CHART_ID } from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { MconfigX } from '~common/interfaces/backend/mconfig-x';
-import { QueryOperation } from '~common/interfaces/backend/query-operation';
+import { EMPTY_CHART_ID } from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { MconfigX } from '#common/interfaces/backend/mconfig-x';
+import { QueryOperation } from '#common/interfaces/backend/query-operation';
 import {
   ToBackendCreateDraftChartRequestPayload,
   ToBackendCreateDraftChartResponse
-} from '~common/interfaces/to-backend/charts/to-backend-create-draft-chart';
+} from '#common/interfaces/to-backend/charts/to-backend-create-draft-chart';
 import {
   ToBackendDeleteDraftChartsRequestPayload,
   ToBackendDeleteDraftChartsResponse
-} from '~common/interfaces/to-backend/charts/to-backend-delete-draft-charts';
+} from '#common/interfaces/to-backend/charts/to-backend-delete-draft-charts';
 import {
   ToBackendEditDraftChartRequestPayload,
   ToBackendEditDraftChartResponse
-} from '~common/interfaces/to-backend/charts/to-backend-edit-draft-chart';
+} from '#common/interfaces/to-backend/charts/to-backend-edit-draft-chart';
 import { ChartQuery } from '../queries/chart.query';
 import { ChartsQuery } from '../queries/charts.query';
 import { ModelQuery } from '../queries/model.query';

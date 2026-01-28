@@ -1,21 +1,21 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { EMPTY_CHART_ID } from '~common/constants/top';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { Chart } from '~common/interfaces/blockml/chart';
+import { EMPTY_CHART_ID } from '#common/constants/top';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { Chart } from '#common/interfaces/blockml/chart';
 import {
   ToBackendDeleteChartRequestPayload,
   ToBackendDeleteChartResponse
-} from '~common/interfaces/to-backend/charts/to-backend-delete-chart';
+} from '#common/interfaces/to-backend/charts/to-backend-delete-chart';
 import { ChartQuery } from '~front/app/queries/chart.query';
 import { ChartsQuery } from '~front/app/queries/charts.query';
 import { ApiService } from '~front/app/services/api.service';

@@ -1,4 +1,4 @@
-import { RowTypeEnum } from '~common/enums/row-type.enum';
+import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { FileReportRowParameter } from './file-report-row-parameter';
 
 export interface FileReportRow {

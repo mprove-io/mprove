@@ -2,13 +2,13 @@ import {
   DEFAULT_CHART,
   DEFAULT_CHART_X_AXIS,
   DEFAULT_CHART_Y_AXIS
-} from '~common/constants/mconfig-chart';
-import { UI_CHART_TYPES } from '~common/constants/ui-chart-types';
-import { FileChartOptions } from '~common/interfaces/blockml/internal/file-chart-options';
-import { FileChartOptionsSeriesElement } from '~common/interfaces/blockml/internal/file-chart-options-series';
-import { FileChartOptionsXAxisElement } from '~common/interfaces/blockml/internal/file-chart-options-x-axis';
-import { FileChartOptionsYAxisElement } from '~common/interfaces/blockml/internal/file-chart-options-y-axis';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
+} from '#common/constants/mconfig-chart';
+import { UI_CHART_TYPES } from '#common/constants/ui-chart-types';
+import { FileChartOptions } from '#common/interfaces/blockml/internal/file-chart-options';
+import { FileChartOptionsSeriesElement } from '#common/interfaces/blockml/internal/file-chart-options-series';
+import { FileChartOptionsXAxisElement } from '#common/interfaces/blockml/internal/file-chart-options-x-axis';
+import { FileChartOptionsYAxisElement } from '#common/interfaces/blockml/internal/file-chart-options-y-axis';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
 import { isDefined } from './is-defined';
 
 export function toFileChartOptions(item: {

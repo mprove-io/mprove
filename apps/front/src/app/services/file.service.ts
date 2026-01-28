@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { PanelEnum } from '~common/enums/panel.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { decodeFilePath } from '~common/functions/decode-file-path';
-import { getFileIds } from '~common/functions/get-file-ids';
+import { PanelEnum } from '#common/enums/panel.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { decodeFilePath } from '#common/functions/decode-file-path';
+import { getFileIds } from '#common/functions/get-file-ids';
 import {
   ToBackendGetFileRequestPayload,
   ToBackendGetFileResponse
-} from '~common/interfaces/to-backend/files/to-backend-get-file';
+} from '#common/interfaces/to-backend/files/to-backend-get-file';
 import { FileQuery, FileState } from '../queries/file.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { RepoQuery, RepoState } from '../queries/repo.query';
@@ -55,11 +55,7 @@ export class FileService {
     this.nav$.subscribe();
   }
 
-  getFile(item: {
-    fileId: string;
-    panel: PanelEnum;
-    skipCheck?: boolean;
-  }) {
+  getFile(item: { fileId: string; panel: PanelEnum; skipCheck?: boolean }) {
     let { fileId, panel, skipCheck } = item;
 
     if (skipCheck !== true) {

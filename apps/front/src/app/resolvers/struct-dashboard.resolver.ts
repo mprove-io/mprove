@@ -13,20 +13,20 @@ import {
   PATH_INFO,
   PATH_ORG,
   PATH_PROJECT
-} from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { makeTrackChangeId } from '~common/functions/make-track-change-id';
+} from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { makeTrackChangeId } from '#common/functions/make-track-change-id';
 import {
   ToBackendGetDashboardRequestPayload,
   ToBackendGetDashboardResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
+} from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
-import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { DashboardQuery } from '../queries/dashboard.query';
+import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';

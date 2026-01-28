@@ -1,4 +1,4 @@
-import { MyRegex } from '~common/models/my-regex';
+import { MyRegex } from '#common/models/my-regex';
 import { isUndefined } from './is-undefined';
 
 export function getMotherduckDatabaseWrongChars(item: {

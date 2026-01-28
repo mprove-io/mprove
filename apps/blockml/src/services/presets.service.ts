@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Preset } from '~common/interfaces/blockml/preset';
+import { Preset } from '#common/interfaces/blockml/preset';
 
 @Injectable()
 export class PresetsService {

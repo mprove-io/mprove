@@ -1,9 +1,9 @@
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
-import { FieldClassEnum } from '~common/enums/field-class.enum';
-import { FieldResultEnum } from '~common/enums/field-result.enum';
-import { Mconfig } from '~common/interfaces/blockml/mconfig';
-import { MconfigChart } from '~common/interfaces/blockml/mconfig-chart';
-import { ModelField } from '~common/interfaces/blockml/model-field';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
+import { FieldClassEnum } from '#common/enums/field-class.enum';
+import { FieldResultEnum } from '#common/enums/field-result.enum';
+import { Mconfig } from '#common/interfaces/blockml/mconfig';
+import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
+import { ModelField } from '#common/interfaces/blockml/model-field';
 import { isDefined } from './is-defined';
 import { setChartSeries } from './set-chart-series';
 

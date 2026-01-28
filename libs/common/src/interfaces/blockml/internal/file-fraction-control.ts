@@ -1,4 +1,4 @@
-import { ControlClassEnum } from '~common/enums/control-class.enum';
+import { ControlClassEnum } from '#common/enums/control-class.enum';
 
 export interface FileFractionControl {
   input?: string;

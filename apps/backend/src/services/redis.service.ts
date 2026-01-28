@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
+import { IDEMP_EXPIRE_SECONDS } from '#common/constants/top-backend';
+import { isDefined } from '#common/functions/is-defined';
 import { BackendConfig } from '~backend/config/backend-config';
-import { IDEMP_EXPIRE_SECONDS } from '~common/constants/top-backend';
-import { isDefined } from '~common/functions/is-defined';
 
 @Injectable()
 export class RedisService {

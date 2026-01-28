@@ -1,9 +1,9 @@
 import * as nodegit from 'nodegit';
 
-import { BRANCH_MAIN, PROD_REPO_ID } from '~common/constants/top';
-import { CENTRAL_REPO_ID } from '~common/constants/top-disk';
-import { ProjectRemoteTypeEnum } from '~common/enums/project-remote-type.enum';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
+import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { ensureDir } from '../disk/ensure-dir';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
 import { pushToRemote } from './push-to-remote';

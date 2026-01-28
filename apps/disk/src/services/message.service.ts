@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { METHOD_RPC } from '~common/constants/top';
-import { ErEnum } from '~common/enums/er.enum';
-import { ToDiskRequestInfoNameEnum } from '~common/enums/to/to-disk-request-info-name.enum';
-import { ServerError } from '~common/models/server-error';
+import { METHOD_RPC } from '#common/constants/top';
+import { ErEnum } from '#common/enums/er.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { ServerError } from '#common/models/server-error';
 import { DiskConfig } from '~disk/config/disk-config';
 import { CreateOrgService } from '~disk/controllers/01-orgs/create-org/create-org.service';
 import { DeleteOrgService } from '~disk/controllers/01-orgs/delete-org/delete-org.service';

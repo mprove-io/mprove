@@ -2,9 +2,9 @@ import * as nodegit from 'nodegit';
 import {
   NODEGIT_PATH_NOT_EXIST_IN_TREE,
   NODEGIT_REMOTE_BRANCH_NOT_FOUND
-} from '~common/constants/top';
-import { isDefined } from '~common/functions/is-defined';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+} from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function getBaseCommitFileContent(item: {
   repoDir: string;

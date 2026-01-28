@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, withProps } from '@ngneat/elf';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
+import { DashboardX } from '#common/interfaces/backend/dashboard-x';
 import { BaseQuery } from './base.query';
 
 export class DashboardState extends DashboardX {}

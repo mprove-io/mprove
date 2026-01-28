@@ -1,7 +1,7 @@
 import * as fse from 'fs-extra';
-import { MPROVE_CONFIG_FILENAME } from '~common/constants/top';
-import { BmlFile } from '~common/interfaces/blockml/bml-file';
-import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
+import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
+import { BmlFile } from '#common/interfaces/blockml/bml-file';
+import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
 
 export async function getMproveConfigFile(configPath: string) {
   let isPathExist = await fse.pathExists(configPath);

@@ -1,11 +1,11 @@
 import { seconds } from '@nestjs/throttler';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionTsLastCompleteOptionEnum } from '~common/enums/fraction/fraction-ts-last-complete-option.enum';
-import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { ModelTreeLevelsEnum } from '~common/enums/model-tree-levels-enum.enum';
-import { TimeSpecEnum } from '~common/enums/timespec.enum';
-import { Ui } from '~common/interfaces/backend/ui';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionTsLastCompleteOptionEnum } from '#common/enums/fraction/fraction-ts-last-complete-option.enum';
+import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
+import { Ui } from '#common/interfaces/backend/ui';
 import { UTC } from './top';
 
 export const APP_NAME_BACKEND = 'BACKEND';

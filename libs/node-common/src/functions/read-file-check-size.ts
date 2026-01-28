@@ -1,6 +1,6 @@
 import * as fse from 'fs-extra';
-import { ErEnum } from '~common/enums/er.enum';
-import { ServerError } from '~common/models/server-error';
+import { ErEnum } from '#common/enums/er.enum';
+import { ServerError } from '#common/models/server-error';
 
 export async function readFileCheckSize(item: {
   filePath: string | URL;

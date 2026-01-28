@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgSelectComponent } from '@ng-select/ng-select';
-import { FractionOperatorEnum } from '~common/enums/fraction/fraction-operator.enum';
-import { FractionTypeEnum } from '~common/enums/fraction/fraction-type.enum';
-import { Fraction } from '~common/interfaces/blockml/fraction';
-import { EventFractionUpdate } from '~common/interfaces/front/event-fraction-update';
+import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
+import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
+import { Fraction } from '#common/interfaces/blockml/fraction';
+import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
 import { ValidationService } from '~front/app/services/validation.service';
 import { FractionTypeItem } from '../fraction.component';
 

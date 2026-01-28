@@ -1,4 +1,4 @@
-import { FractionTsUnitEnum } from '~common/enums/fraction/fraction-ts-unit.enum';
+import { FractionTsUnitEnum } from '#common/enums/fraction/fraction-ts-unit.enum';
 
 export function getUnitDuration(item: {
   unit: FractionTsUnitEnum;

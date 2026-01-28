@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { EMAIL_IS_CONFIRMED_PAGE_TITLE } from '~common/constants/page-titles';
-import { PATH_LOGIN } from '~common/constants/top';
+import { EMAIL_IS_CONFIRMED_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_LOGIN } from '#common/constants/top';
 
 @Component({
   standalone: false,

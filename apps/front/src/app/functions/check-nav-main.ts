@@ -17,12 +17,9 @@ import {
   PATH_REPORT,
   PATH_REPORTS,
   PATH_REPORTS_LIST
-} from '~common/constants/top';
+} from '#common/constants/top';
 
-export function checkNavMain(item: {
-  navArray: string[];
-  urlParts: string[];
-}) {
+export function checkNavMain(item: { navArray: string[]; urlParts: string[] }) {
   let { navArray, urlParts } = item;
 
   let nextNavAr = [...navArray];

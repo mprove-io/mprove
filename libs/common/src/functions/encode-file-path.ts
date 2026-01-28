@@ -1,4 +1,4 @@
-import { DOT_SYMBOL } from '~common/constants/top';
+import { DOT_SYMBOL } from '#common/constants/top';
 
 export function encodeFilePath(item: { filePath: string }): string {
   let { filePath } = item;

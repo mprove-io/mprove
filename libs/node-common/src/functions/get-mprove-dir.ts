@@ -1,8 +1,8 @@
 import * as fse from 'fs-extra';
 import { load } from 'js-yaml';
-import { MPROVE_CONFIG_DIR_DOT_SLASH } from '~common/constants/top';
-import { isUndefined } from '~common/functions/is-undefined';
-import { MyRegex } from '~common/models/my-regex';
+import { MPROVE_CONFIG_DIR_DOT_SLASH } from '#common/constants/top';
+import { isUndefined } from '#common/functions/is-undefined';
+import { MyRegex } from '#common/models/my-regex';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getMproveDir(item: { dir: string; configPath: string }) {

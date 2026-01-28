@@ -3,8 +3,8 @@ import {
   TransformValidationOptions,
   transformAndValidateSync
 } from 'class-transformer-validator';
-import { ServerError } from '~common/models/server-error';
-import { getConstraintsRecursive } from '~node-common/functions/get-constraints-recursive';
+import { ServerError } from '#common/models/server-error';
+import { getConstraintsRecursive } from '#node-common/functions/get-constraints-recursive';
 
 export function transformValidSyncMcli<T extends object>(item: {
   classType: ClassType<T>;

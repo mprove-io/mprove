@@ -1,15 +1,15 @@
 import * as fse from 'fs-extra';
 import { Dirent } from 'fs-extra';
 import { forEachSeries } from 'p-iteration';
-import { MPROVE_CONFIG_FILENAME } from '~common/constants/top';
-import { encodeFilePath } from '~common/functions/encode-file-path';
-import { isDefined } from '~common/functions/is-defined';
-import { DiskCatalogFile } from '~common/interfaces/disk/disk-catalog-file';
-import { DiskCatalogNode } from '~common/interfaces/disk/disk-catalog-node';
-import { DiskItemCatalog } from '~common/interfaces/disk/disk-item-catalog';
-import { MyRegex } from '~common/models/my-regex';
-import { getMproveDir } from '~node-common/functions/get-mprove-dir';
-import { readFileCheckSize } from '~node-common/functions/read-file-check-size';
+import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
+import { encodeFilePath } from '#common/functions/encode-file-path';
+import { isDefined } from '#common/functions/is-defined';
+import { DiskCatalogFile } from '#common/interfaces/disk/disk-catalog-file';
+import { DiskCatalogNode } from '#common/interfaces/disk/disk-catalog-node';
+import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
+import { MyRegex } from '#common/models/my-regex';
+import { getMproveDir } from '#node-common/functions/get-mprove-dir';
+import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
 
 export async function getNodesAndFiles(item: {
   projectId: string;

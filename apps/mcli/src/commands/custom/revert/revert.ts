@@ -1,19 +1,19 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
-import { ErEnum } from '~common/enums/er.enum';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { RepoEnum } from '~common/enums/repo.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '~common/functions/is-undefined';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { RepoEnum } from '#common/enums/repo.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendRevertRepoToLastCommitRequestPayload,
   ToBackendRevertRepoToLastCommitResponse
-} from '~common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
+} from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-last-commit';
 import {
   ToBackendRevertRepoToRemoteRequestPayload,
   ToBackendRevertRepoToRemoteResponse
-} from '~common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
-import { ServerError } from '~common/models/server-error';
+} from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
+import { ServerError } from '#common/models/server-error';
 import { getConfig } from '~mcli/config/get.config';
 import { getFilesUrl } from '~mcli/functions/get-files-url';
 import { getLoginToken } from '~mcli/functions/get-login-token';

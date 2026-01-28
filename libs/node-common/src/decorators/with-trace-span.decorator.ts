@@ -1,5 +1,5 @@
 import type { Context, SpanOptions } from '@opentelemetry/api';
-import { addTraceSpan } from '~node-common/functions/add-trace-span';
+import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export const WithTraceSpan = (item?: {
   spanName?: string;

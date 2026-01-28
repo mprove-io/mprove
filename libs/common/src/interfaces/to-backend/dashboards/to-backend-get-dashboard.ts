@@ -1,10 +1,10 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
-import { IsTimezone } from '~common/functions/is-timezone';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
-import { Member } from '~common/interfaces/backend/member';
-import { StructX } from '~common/interfaces/backend/struct-x';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { IsTimezone } from '#common/functions/is-timezone';
+import { DashboardX } from '#common/interfaces/backend/dashboard-x';
+import { Member } from '#common/interfaces/backend/member';
+import { StructX } from '#common/interfaces/backend/struct-x';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetDashboardRequestPayload {

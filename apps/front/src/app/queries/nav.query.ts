@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
-import { PROJECT_ENV_PROD } from '~common/constants/top';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { BaseQuery } from './base.query';
 
 export class NavState {

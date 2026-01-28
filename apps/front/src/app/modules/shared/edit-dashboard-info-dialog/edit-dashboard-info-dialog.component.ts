@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectorRef,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
   OnInit
 } from '@angular/core';
@@ -15,19 +15,19 @@ import {
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
-import { MPROVE_USERS_FOLDER } from '~common/constants/top';
-import { APP_SPINNER_NAME } from '~common/constants/top-front';
-import { ResponseInfoStatusEnum } from '~common/enums/response-info-status.enum';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { DashboardPart } from '~common/interfaces/backend/dashboard-part';
+import { MPROVE_USERS_FOLDER } from '#common/constants/top';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
 import {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
-} from '~common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
+} from '#common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
 import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { DashboardQuery } from '~front/app/queries/dashboard.query';
+import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
 import { StructQuery, StructState } from '~front/app/queries/struct.query';
 import { UiQuery } from '~front/app/queries/ui.query';
 import { UserQuery } from '~front/app/queries/user.query';

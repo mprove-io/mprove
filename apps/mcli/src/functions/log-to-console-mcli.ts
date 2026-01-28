@@ -1,8 +1,8 @@
 import { BaseContext } from 'clipanion';
-import { LogLevelEnum } from '~common/enums/log-level.enum';
-import { isDefined } from '~common/functions/is-defined';
-import { isUndefined } from '~common/functions/is-undefined';
-import { wrapError } from '~node-common/functions/wrap-error';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isUndefined } from '#common/functions/is-undefined';
+import { wrapError } from '#node-common/functions/wrap-error';
 
 let prettyjson = require('prettyjson');
 

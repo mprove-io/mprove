@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
-import { DashboardX } from '~common/interfaces/backend/dashboard-x';
-import { DashboardField } from '~common/interfaces/blockml/dashboard-field';
-import { Tile } from '~common/interfaces/blockml/tile';
-import { MyResponse } from '~common/interfaces/to/my-response';
+import { DashboardX } from '#common/interfaces/backend/dashboard-x';
+import { DashboardField } from '#common/interfaces/blockml/dashboard-field';
+import { Tile } from '#common/interfaces/blockml/tile';
+import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendEditDraftDashboardRequestPayload {

@@ -1,4 +1,4 @@
-import { ChartTypeEnum } from '~common/enums/chart/chart-type.enum';
+import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 
 export const UI_CHART_TYPES = {
   //

@@ -6,7 +6,7 @@ import {
   PATH_ACCOUNT,
   PATH_ORG,
   PATH_USERS
-} from '~common/constants/top';
+} from '#common/constants/top';
 import { NavQuery, NavState } from '~front/app/queries/nav.query';
 import { OrgQuery } from '~front/app/queries/org.query';
 import { UiQuery } from '~front/app/queries/ui.query';

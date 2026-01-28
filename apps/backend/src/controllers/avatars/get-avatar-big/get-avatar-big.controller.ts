@@ -1,17 +1,17 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import {
+  ToBackendGetAvatarBigRequest,
+  ToBackendGetAvatarBigResponsePayload
+} from '#common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
+import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
 import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
 import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
 import { TabService } from '~backend/services/tab.service';
-import { ToBackendRequestInfoNameEnum } from '~common/enums/to/to-backend-request-info-name.enum';
-import {
-  ToBackendGetAvatarBigRequest,
-  ToBackendGetAvatarBigResponsePayload
-} from '~common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
