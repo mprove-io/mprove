@@ -57,21 +57,26 @@ Apps communicate:
 
 ### Path Aliases
 
-Configured in root `tsconfig.base.json`:
+**Shared libraries** use package.json `exports` field (Just-in-Time pattern):
+
+- `~common/*` → resolved via `@mprove/common` package exports
+- `~node-common/*` → resolved via `@mprove/node-common` package exports
+
+**Internal app paths** use Node.js subpath imports (`#app/*`):
+
+- `#chat/*` → `apps/chat/src/*` (migrated)
+- `~backend/*`, `~blockml/*`, `~disk/*`, `~mcli/*`, `~front/*` → pending migration
+
+Root `tsconfig.base.json` paths (for non-migrated apps):
 
 ```
-"@mprove/common": ["libs/common/src/index.ts"],
-"@mprove/common/*": ["libs/common/src/*"],
-"@mprove/node-common": ["libs/node-common/src/index.ts"],
-"@mprove/node-common/*": ["libs/node-common/src/*"],
+"~common/*": ["node_modules/@mprove/common/*"],
+"~node-common/*": ["node_modules/@mprove/node-common/*"],
 "~backend/*": ["apps/backend/src/*"],
 "~blockml/*": ["apps/blockml/src/*"],
 "~disk/*": ["apps/disk/src/*"],
-"~chat/*": ["apps/chat/src/*"],
 "~mcli/*": ["apps/mcli/src/*"],
-"~front/*": ["apps/front/src/*"],
-"~common/*": ["libs/common/src/*"],
-"~node-common/*": ["libs/node-common/src/*"],
+"~front/*": ["apps/front/src/*"]
 ```
 
 ### libs/common

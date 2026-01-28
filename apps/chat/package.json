@@ -2,6 +2,9 @@
   "name": "@mprove/chat",
   "version": "11.0.96-dev",
   "private": true,
+  "imports": {
+    "#chat/*": "./src/*"
+  },
   "scripts": {
     "circular": "madge --circular .",
     "build:prod": "swc src -d dist --source-maps && node build.mjs",
@@ -55,7 +58,7 @@
     "tsconfig-paths": "catalog:"
   },
   "_moduleAliases": {
-    "~chat": "dist/tests/apps/chat/src",
+    "#chat": "dist/tests/apps/chat/src",
     "~common": "dist/tests/libs/common/src",
     "~node-common": "dist/tests/libs/node-common/src"
   }

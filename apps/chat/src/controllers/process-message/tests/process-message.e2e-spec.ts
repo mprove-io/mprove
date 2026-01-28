@@ -1,6 +1,6 @@
 import test from 'ava';
-import { logToConsoleChat } from '~chat/functions/log-to-console-chat';
-import { prepareTest } from '~chat/functions/prepare-test';
+import { logToConsoleChat } from '#chat/functions/log-to-console-chat';
+import { prepareTest } from '#chat/functions/prepare-test';
 import { LogLevelEnum } from '~common/enums/log-level.enum';
 import { ToChatRequestInfoNameEnum } from '~common/enums/to/to-chat-request-info-name.enum';
 import {

@@ -2,6 +2,9 @@
   "name": "@mprove/common",
   "version": "11.0.96-dev",
   "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {

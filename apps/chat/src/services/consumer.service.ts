@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Queue, Worker } from 'groupmq';
 import Redis from 'ioredis';
-import { ChatConfig } from '~chat/config/chat-config';
+import { ChatConfig } from '#chat/config/chat-config';
 import { RpcNamespacesEnum } from '~common/enums/rpc-namespaces.enum';
 import { RpcRequestData } from '~common/interfaces/rpc-request-data';
 import { MyResponse } from '~common/interfaces/to/my-response';

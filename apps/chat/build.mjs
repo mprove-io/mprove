@@ -14,7 +14,7 @@ execSync('swc ../../libs/node-common/src -d dist/libs/node-common --source-maps 
 
 // Define path aliases pointing to compiled output
 const aliases = {
-  '~chat': resolve(__dirname, 'dist/src'),
+  '#chat': resolve(__dirname, 'dist/src'),
   '~common': resolve(__dirname, 'dist/libs/common/src'),
   '~node-common': resolve(__dirname, 'dist/libs/node-common/src'),
 };

@@ -1,4 +1,4 @@
-import { ChatConfig } from '~chat/config/chat-config';
+import { ChatConfig } from '#chat/config/chat-config';
 import { ChatEnvEnum } from '~common/enums/env/chat-env.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { transformValidSync } from '~node-common/functions/transform-valid-sync';

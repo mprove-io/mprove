@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ChatConfig } from '~chat/config/chat-config';
+import { ChatConfig } from '#chat/config/chat-config';
 import { ChatEnvEnum } from '~common/enums/env/chat-env.enum';
 import { makeOkResponse } from '~node-common/functions/make-ok-response';
 

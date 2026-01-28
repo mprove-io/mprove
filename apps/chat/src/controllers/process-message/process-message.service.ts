@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import type { OpencodeClient } from '@opencode-ai/sdk/client' with {
   'resolution-mode': 'import'
 };
-import { ChatConfig } from '~chat/config/chat-config';
+import { ChatConfig } from '#chat/config/chat-config';
 import { ChatMessageRoleEnum } from '~common/enums/chat-message-role.enum';
 import { ErEnum } from '~common/enums/er.enum';
 import { ChatMessage } from '~common/interfaces/chat/chat-message';
