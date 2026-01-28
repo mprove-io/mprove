@@ -1247,6 +1247,9 @@ importers:
       '@nestjs/testing':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/platform-express@11.1.0)
+      '@swc/cli':
+        specifier: 'catalog:'
+        version: 0.7.10(@swc/core@1.15.10(@swc/helpers@0.5.17))(chokidar@4.0.3)
       '@types/fs-extra':
         specifier: 'catalog:'
         version: 9.0.13
@@ -1259,12 +1262,18 @@ importers:
       ava:
         specifier: 'catalog:'
         version: 3.15.0
+      dotenv-cli:
+        specifier: 'catalog:'
+        version: 11.0.0
       esbuild:
         specifier: 'catalog:'
         version: 0.24.0
-      tsx:
+      module-alias:
         specifier: 'catalog:'
-        version: 4.19.0
+        version: 2.2.3
+      tsconfig-paths:
+        specifier: 'catalog:'
+        version: 3.14.2
 
   apps/disk:
     dependencies:

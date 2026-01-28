@@ -10,7 +10,8 @@
       "Grep",
       "Glob",
       "Bash(git status)",
-      "Bash(ls:*)",
+      "Bash(ls *)",
+      "Bash(ls -la *)",
       "Bash(find:*)",
       "Bash(mkdir:*)"
     ],
