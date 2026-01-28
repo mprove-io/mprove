@@ -10,11 +10,10 @@
   },
   "bin": "dist/main.js",
   "scripts": {
-    "build": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --sourcemap --packages=external",
-    "build:prod": "esbuild src/main.ts --bundle --platform=node --outfile=dist/main.js --minify --packages=external",
-    "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
-    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4 --config=../../ava-js-e2e.config.js dist/tests/**/*.e2e-spec.js",
     "circular": "madge --circular .",
+    "build:prod": "swc src -d dist --source-maps && node build.mjs",
+    "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json",
+    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4 dist/tests/**/*.e2e-spec.js",
     "pkg:mcli": "pkg ."
   },
   "dependencies": {
@@ -52,6 +51,8 @@
     "winston": "catalog:"
   },
   "devDependencies": {
+    "dotenv-cli": "catalog:",
+    "@swc/cli": "catalog:",
     "@types/async-retry": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/js-yaml": "catalog:",
@@ -62,13 +63,9 @@
     "shx": "catalog:"
   },
   "_moduleAliases": {
-    "~backend": "dist/tests/backend/apps/backend/src",
-    "~blockml": "dist/tests/blockml/apps/blockml/src",
-    "~chat": "dist/tests/chat/apps/chat/src",
-    "~disk": "dist/tests/disk/apps/disk/src",
-    "~mcli": "dist/tests/mcli/apps/mcli/src",
-    "~common": "dist/tests/common/libs/common/src",
-    "~node-common": "dist/tests/node-common/libs/node-common/src"
+    "~mcli": "dist/tests/apps/mcli/src",
+    "~common": "dist/tests/libs/common/src",
+    "~node-common": "dist/tests/libs/node-common/src"
   },
   "pkg": {
     "scripts": [

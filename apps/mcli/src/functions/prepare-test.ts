@@ -33,7 +33,7 @@ export async function prepareTest(item: {
     enableColors: true,
     binaryLabel: 'Mprove',
     binaryName: 'mprove',
-    binaryVersion: require('../../../../package.json').version
+    binaryVersion: require('../../../../../../package.json').version
   });
 
   if (isDefined(command)) {

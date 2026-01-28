@@ -9,7 +9,7 @@
     "start": "dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -- node --watch -r ts-node/register -r tsconfig-paths/register src/main.ts",
     "debug": "dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -- node --inspect=0.0.0.0:9232 --watch -r ts-node/register -r tsconfig-paths/register src/main.ts",
     "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json",
-    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava dist/tests/**/*.e2e-spec.js"
+    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=5 dist/tests/**/*.e2e-spec.js"
   },
   "dependencies": {
     "@duckdb/node-api": "catalog:",

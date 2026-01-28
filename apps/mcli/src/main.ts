@@ -62,5 +62,5 @@ Cli.from(appCommands, {
   enableColors: true,
   binaryLabel: 'Mprove CLI',
   binaryName: 'mprove',
-  binaryVersion: require('../../../package.json').version
+  binaryVersion: require('package.json').version
 }).runExit(process.argv.slice(2), customContext);
