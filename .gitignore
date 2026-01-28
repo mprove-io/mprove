@@ -9,6 +9,7 @@ nogit/
 !.vscode/extensions.json
 !.vscode/tasks.json
 !.vscode/launch.json
+apps/mcli/bin/
 dist/
 malloy/
 malloy_data/
