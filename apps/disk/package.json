@@ -27,7 +27,6 @@
     "class-transformer": "catalog:",
     "class-transformer-validator": "catalog:",
     "class-validator": "catalog:",
-    "dotenv": "catalog:",
     "fs-extra": "catalog:",
     "groupmq": "catalog:",
     "ioredis": "catalog:",

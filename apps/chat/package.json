@@ -30,7 +30,6 @@
     "class-validator": "catalog:",
     "date-fns": "catalog:",
     "date-fns-tz": "catalog:",
-    "dotenv": "catalog:",
     "fs-extra": "catalog:",
     "groupmq": "catalog:",
     "ioredis": "catalog:",

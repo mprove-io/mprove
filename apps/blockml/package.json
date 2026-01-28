@@ -43,7 +43,6 @@
     "d3-format": "catalog:",
     "walk": "catalog:",
     "date-fns-tz": "catalog:",
-    "dotenv": "catalog:",
     "fs-extra": "catalog:",
     "groupmq": "catalog:",
     "ioredis": "catalog:",

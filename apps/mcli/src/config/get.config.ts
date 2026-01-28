@@ -6,11 +6,7 @@ import { transformValidSyncMcli } from '~mcli/functions/transform-valid-sync-mcl
 import { McliConfig } from './mcli-config';
 
 export function getConfig(envPath?: string) {
-  let envFilePath = isDefined(envPath)
-    ? envPath
-    : isDefined(process.env.ENV_FILE_PATH)
-      ? process.env.ENV_FILE_PATH
-      : '.env';
+  let envFilePath = isDefined(envPath) ? envPath : '.env';
 
   let envFile: any = {};
 

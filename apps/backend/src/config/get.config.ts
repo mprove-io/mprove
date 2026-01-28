@@ -7,8 +7,7 @@ import { getProdConfig } from './get-prod.config';
 import { getTestConfig } from './get-test.config';
 
 export function getConfig() {
-  let envFilePath = process.env.ENV_FILE_PATH;
-  let devConfig = getDevConfig(envFilePath);
+  let devConfig = getDevConfig();
 
   let config =
     devConfig.backendEnv === BackendEnvEnum.PROD

@@ -51,7 +51,6 @@
     "class-validator": "catalog:",
     "date-fns": "catalog:",
     "date-fns-tz": "catalog:",
-    "dotenv": "catalog:",
     "drizzle-kit": "catalog:",
     "drizzle-orm": "catalog:",
     "fs-extra": "catalog:",
