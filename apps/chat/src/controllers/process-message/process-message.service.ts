@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// biome-ignore syntax/correctness/noTypeOnlyImportAttributes: .
-import type { OpencodeClient } from '@opencode-ai/sdk/client' with {
-  'resolution-mode': 'import'
-};
+import {
+  createOpencodeClient,
+  type OpencodeClient
+} from '@opencode-ai/sdk/client';
 import { ChatConfig } from '#chat/config/chat-config';
 import { ChatMessageRoleEnum } from '#common/enums/chat-message-role.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -30,17 +30,7 @@ export class ProcessMessageService {
     let sessionId: string | undefined;
 
     try {
-      // 1. Dynamic import of ESM-only SDK in CommonJS context
-      const dynamicImport = new Function(
-        'specifier',
-        'return import(specifier)'
-      ) as (specifier: string) => Promise<any>;
-
-      // Use createOpencodeClient from /client to connect to existing server
-      const sdkClient = await dynamicImport('@opencode-ai/sdk/client');
-      const { createOpencodeClient } = sdkClient;
-
-      // 2. Connect to existing OpenCode server (from docker-compose)
+      // 1. Connect to existing OpenCode server (from docker-compose)
       const host =
         this.cs.get<ChatConfig['chatOpencodeHost']>('chatOpencodeHost') ||
         '127.0.0.1';

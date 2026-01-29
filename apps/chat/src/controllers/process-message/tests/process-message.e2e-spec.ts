@@ -8,6 +8,8 @@ import {
   ToChatProcessMessageResponse
 } from '#common/interfaces/to-chat/to-chat-process-message';
 
+// import { ChatMessageRoleEnum } from '#common/enums/chat-message-role.enum';
+
 let testId = 'chat-process-message';
 let traceId = testId;
 
@@ -35,6 +37,7 @@ test('1', async t => {
 
     // test is manual only (uncomment this and "t." to run external api if needed)
     // resp = await messageService.processMessage(processMessageRequest);
+
     // console.log('resp.payload.answer');
     // console.log(resp.payload.answer);
     // console.log('resp.payload.endState');
@@ -51,6 +54,6 @@ test('1', async t => {
   t.is(1, 1);
   // t.truthy(resp?.payload?.answer);
   // t.is(resp?.payload?.endState?.messages?.length, 2);
-  // t.is(resp?.payload?.endState?.messages[0]?.role, 'user');
-  // t.is(resp?.payload?.endState?.messages[1]?.role, 'assistant');
+  // t.is(resp?.payload?.endState?.messages[0]?.role, ChatMessageRoleEnum.User);
+  // t.is(resp?.payload?.endState?.messages[1]?.role,  ChatMessageRoleEnum.Assistant);
 });
