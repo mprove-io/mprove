@@ -1,4 +1,8 @@
 import test from 'ava';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/prepare-test';
+import { sendToBackend } from '#backend/functions/send-to-backend';
+import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -9,10 +13,6 @@ import {
   ToBackendGetMembersRequest,
   ToBackendGetMembersResponse
 } from '#common/interfaces/to-backend/members/to-backend-get-members';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
-import { sendToBackend } from '~backend/functions/send-to-backend';
-import { Prep } from '~backend/interfaces/prep';
 
 let testId = 'backend-get-members__member-does-not-exist';
 

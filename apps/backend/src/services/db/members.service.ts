@@ -1,7 +1,25 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  BridgeTab,
+  MemberTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { makeFullName } from '#backend/functions/make-full-name';
 import {
   EMPTY_STRUCT_ID,
   PROD_REPO_ID,
@@ -18,27 +36,12 @@ import {
   ToDiskCreateDevRepoResponse
 } from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  BridgeTab,
-  MemberTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeFullName } from '~backend/functions/make-full-name';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
 import { TabService } from '../tab.service';
 import { BranchesService } from './branches.service';
 import { BridgesService } from './bridges.service';
-
-let retry = require('async-retry');
 
 @Injectable()
 export class MembersService {

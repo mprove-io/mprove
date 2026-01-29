@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-const ivm = require('isolated-vm');
+import ivm from 'isolated-vm';
 
 @Injectable()
 export class UserCodeService {

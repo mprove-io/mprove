@@ -1,6 +1,31 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray, or } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  DashboardTab,
+  MconfigTab,
+  MemberTab,
+  ProjectTab,
+  QueryTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import {
+  DashboardEnt,
+  dashboardsTable
+} from '#backend/drizzle/postgres/schema/dashboards';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { checkAccess } from '#backend/functions/check-access';
+import { checkModelAccess } from '#backend/functions/check-model-access';
+import { makeDashboardFiltersX } from '#backend/functions/make-dashboard-filters-x';
+import { makeTilesX } from '#backend/functions/make-tiles-x';
 import { EMPTY_QUERY_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
@@ -19,27 +44,6 @@ import { Mconfig } from '#common/interfaces/blockml/mconfig';
 import { Model } from '#common/interfaces/blockml/model';
 import { Query } from '#common/interfaces/blockml/query';
 import { ServerError } from '#common/models/server-error';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  DashboardTab,
-  MconfigTab,
-  MemberTab,
-  ProjectTab,
-  QueryTab,
-  StructTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import {
-  DashboardEnt,
-  dashboardsTable
-} from '~backend/drizzle/postgres/schema/dashboards';
-import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { checkAccess } from '~backend/functions/check-access';
-import { checkModelAccess } from '~backend/functions/check-model-access';
-import { makeDashboardFiltersX } from '~backend/functions/make-dashboard-filters-x';
-import { makeTilesX } from '~backend/functions/make-tiles-x';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 import { MconfigsService } from './mconfigs.service';

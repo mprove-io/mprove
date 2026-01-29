@@ -1,4 +1,8 @@
 import test from 'ava';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/prepare-test';
+import { sendToBackend } from '#backend/functions/send-to-backend';
+import { Prep } from '#backend/interfaces/prep';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import {
   BRANCH_MAIN,
@@ -23,10 +27,6 @@ import {
   ToBackendSaveModifyReportRequest,
   ToBackendSaveModifyReportResponse
 } from '#common/interfaces/to-backend/reports/to-backend-save-modify-report';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
-import { sendToBackend } from '~backend/functions/send-to-backend';
-import { Prep } from '~backend/interfaces/prep';
 
 let testId = 'backend-save-modify-report__ok';
 

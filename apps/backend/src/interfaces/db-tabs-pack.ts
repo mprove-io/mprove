@@ -1,4 +1,4 @@
-import {
+import type {
   AvatarTab,
   BranchTab,
   BridgeTab,
@@ -18,7 +18,7 @@ import {
   ReportTab,
   StructTab,
   UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
+} from '#backend/drizzle/postgres/schema/_tabs';
 
 export class DbTabsPack {
   avatars?: AvatarTab[];

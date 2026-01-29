@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { inArray, sql } from 'drizzle-orm';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { notesTable } from '~backend/drizzle/postgres/schema/notes';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { notesTable } from '#backend/drizzle/postgres/schema/notes';
 
 @Injectable()
 export class NotesService {

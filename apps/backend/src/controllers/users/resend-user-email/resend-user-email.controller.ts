@@ -1,6 +1,15 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { seconds, Throttle } from '@nestjs/throttler';
 import { eq } from 'drizzle-orm';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { UsersService } from '#backend/services/db/users.service';
+import { EmailService } from '#backend/services/email.service';
+import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -10,14 +19,6 @@ import {
   ToBackendResendUserEmailResponsePayload
 } from '#common/interfaces/to-backend/users/to-backend-resend-user-email';
 import { ServerError } from '#common/models/server-error';
-import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { usersTable } from '~backend/drizzle/postgres/schema/users';
-import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { UsersService } from '~backend/services/db/users.service';
-import { EmailService } from '~backend/services/email.service';
-import { TabService } from '~backend/services/tab.service';
 
 @SkipJwtCheck()
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)

@@ -27,6 +27,7 @@ import {
   startOfYear,
   sub
 } from 'date-fns';
+import { BackendConfig } from '#backend/config/backend-config';
 import { TIME_COLUMNS_LIMIT } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
@@ -40,7 +41,6 @@ import { Fraction } from '#common/interfaces/blockml/fraction';
 import { ServerError } from '#common/models/server-error';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
 import { nodeFormatTsUnix } from '#node-common/functions/node-format-ts-unix';
-import { BackendConfig } from '~backend/config/backend-config';
 
 @Injectable()
 export class ReportTimeColumnsService {

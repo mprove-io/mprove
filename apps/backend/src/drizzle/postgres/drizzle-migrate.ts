@@ -1,6 +1,9 @@
 import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
-import { Client, ClientConfig } from 'pg';
+import type { ClientConfig } from 'pg';
+import pg from 'pg';
+
+const { Client } = pg;
 import 'reflect-metadata';
 import { BoolEnum } from '#common/enums/bool.enum';
 

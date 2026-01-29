@@ -10,11 +10,11 @@
       "legacyDecorator": true,
       "decoratorMetadata": true
     },
-    "target": "es2020",
+    "target": "es2022",
     "keepClassNames": true
   },
   "module": {
-    "type": "commonjs"
+    "type": "nodenext"
   },
   "sourceMaps": true
 }

@@ -1,3 +1,7 @@
+import type {
+  ModelTab,
+  StructTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import {
   REPORT_FIELD_DEFAULT_HIDDEN,
   REPORT_ROW_DEFAULT_SHOW_CHART
@@ -21,7 +25,6 @@ import { ModelMetric } from '#common/interfaces/blockml/model-metric';
 import { ReportField } from '#common/interfaces/blockml/report-field';
 import { Row } from '#common/interfaces/blockml/row';
 import { MyRegex } from '#common/models/my-regex';
-import { ModelTab, StructTab } from '~backend/drizzle/postgres/schema/_tabs';
 
 export function makeReportFileText(item: {
   reportId: string;

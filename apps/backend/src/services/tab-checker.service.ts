@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import {
   and,
   desc,
@@ -11,37 +12,36 @@ import {
   or,
   sql
 } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { chartsTable } from '#backend/drizzle/postgres/schema/charts';
+import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
+import { dconfigsTable } from '#backend/drizzle/postgres/schema/dconfigs';
+import { envsTable } from '#backend/drizzle/postgres/schema/envs';
+import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { notesTable } from '#backend/drizzle/postgres/schema/notes';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { structsTable } from '#backend/drizzle/postgres/schema/structs';
+import { usersTable } from '#backend/drizzle/postgres/schema/users';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
-import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { chartsTable } from '~backend/drizzle/postgres/schema/charts';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { dashboardsTable } from '~backend/drizzle/postgres/schema/dashboards';
-import { dconfigsTable } from '~backend/drizzle/postgres/schema/dconfigs';
-import { envsTable } from '~backend/drizzle/postgres/schema/envs';
-import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
-import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { notesTable } from '~backend/drizzle/postgres/schema/notes';
-import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { reportsTable } from '~backend/drizzle/postgres/schema/reports';
-import { structsTable } from '~backend/drizzle/postgres/schema/structs';
-import { usersTable } from '~backend/drizzle/postgres/schema/users';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 import { TabService } from './tab.service';
-
-let retry = require('async-retry');
 
 @Injectable()
 export class TabCheckerService {

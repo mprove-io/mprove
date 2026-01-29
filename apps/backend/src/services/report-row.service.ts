@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import type { StructTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { clearRowsCache } from '#backend/functions/clear-rows-cache';
+import { processRowIds } from '#backend/functions/process-row-ids';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
@@ -12,9 +15,6 @@ import { Parameter } from '#common/interfaces/blockml/parameter';
 import { ReportField } from '#common/interfaces/blockml/report-field';
 import { Row } from '#common/interfaces/blockml/row';
 import { RowChange } from '#common/interfaces/blockml/row-change';
-import { StructTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { clearRowsCache } from '~backend/functions/clear-rows-cache';
-import { processRowIds } from '~backend/functions/process-row-ids';
 
 @Injectable()
 export class ReportRowService {

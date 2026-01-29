@@ -1,5 +1,48 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '#backend/config/backend-config';
+import type {
+  AvatarTab,
+  BranchTab,
+  BridgeTab,
+  ChartTab,
+  ConnectionTab,
+  DashboardTab,
+  DconfigTab,
+  EnvTab,
+  KitTab,
+  MconfigTab,
+  MemberTab,
+  ModelTab,
+  NoteTab,
+  OrgTab,
+  ProjectTab,
+  QueryTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
+import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
+import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
+import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
+import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
+import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
+import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
+import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
+import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
+import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
+import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
+import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
+import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import { UserEnt } from '#backend/drizzle/postgres/schema/users';
+import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
+import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
 import { isDefined } from '#common/functions/is-defined';
 import {
   AvatarLt,
@@ -42,49 +85,6 @@ import {
   UserSt
 } from '#common/interfaces/st-lt';
 import { encryptData } from '#node-common/functions/encrypt-decrypt';
-import { BackendConfig } from '~backend/config/backend-config';
-import {
-  AvatarTab,
-  BranchTab,
-  BridgeTab,
-  ChartTab,
-  ConnectionTab,
-  DashboardTab,
-  DconfigTab,
-  EnvTab,
-  KitTab,
-  MconfigTab,
-  MemberTab,
-  ModelTab,
-  NoteTab,
-  OrgTab,
-  ProjectTab,
-  QueryTab,
-  ReportTab,
-  StructTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { AvatarEnt } from '~backend/drizzle/postgres/schema/avatars';
-import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
-import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
-import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
-import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
-import { DconfigEnt } from '~backend/drizzle/postgres/schema/dconfigs';
-import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
-import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
-import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import { NoteEnt } from '~backend/drizzle/postgres/schema/notes';
-import { OrgEnt } from '~backend/drizzle/postgres/schema/orgs';
-import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
-import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
-import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
-import { DbEntsPack } from '~backend/interfaces/db-ents-pack';
-import { DbTabsPack } from '~backend/interfaces/db-tabs-pack';
 import { HashService } from './hash.service';
 
 @Injectable()

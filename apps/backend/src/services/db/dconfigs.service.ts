@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { isNotNull } from 'drizzle-orm';
-import { DRIZZLE, Db } from '~backend/drizzle/drizzle.module';
-import { dconfigsTable } from '~backend/drizzle/postgres/schema/dconfigs';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { dconfigsTable } from '#backend/drizzle/postgres/schema/dconfigs';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

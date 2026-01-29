@@ -8,9 +8,32 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
 import asyncPool from 'tiny-async-pool';
+import { BackendConfig } from '#backend/config/backend-config';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { QueryTab, UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { BranchesService } from '#backend/services/db/branches.service';
+import { BridgesService } from '#backend/services/db/bridges.service';
+import { ConnectionsService } from '#backend/services/db/connections.service';
+import { EnvsService } from '#backend/services/db/envs.service';
+import { MembersService } from '#backend/services/db/members.service';
+import { QueriesService } from '#backend/services/db/queries.service';
+import { StructsService } from '#backend/services/db/structs.service';
+import { BigQueryService } from '#backend/services/dwh/bigquery.service';
+import { ParentService } from '#backend/services/parent.service';
+import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -20,26 +43,6 @@ import {
   ToBackendRunQueriesDryRequest,
   ToBackendRunQueriesDryResponsePayload
 } from '#common/interfaces/to-backend/queries/to-backend-run-queries-dry';
-import { BackendConfig } from '~backend/config/backend-config';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { QueryTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/db/branches.service';
-import { BridgesService } from '~backend/services/db/bridges.service';
-import { ConnectionsService } from '~backend/services/db/connections.service';
-import { EnvsService } from '~backend/services/db/envs.service';
-import { MembersService } from '~backend/services/db/members.service';
-import { QueriesService } from '~backend/services/db/queries.service';
-import { StructsService } from '~backend/services/db/structs.service';
-import { BigQueryService } from '~backend/services/dwh/bigquery.service';
-import { ParentService } from '~backend/services/parent.service';
-import { TabService } from '~backend/services/tab.service';
-
-let retry = require('async-retry');
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)

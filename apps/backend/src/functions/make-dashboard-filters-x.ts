@@ -1,6 +1,6 @@
+import type { DashboardTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
 import { FilterX } from '#common/interfaces/backend/filter-x';
-import { DashboardTab } from '~backend/drizzle/postgres/schema/_tabs';
 
 export function makeDashboardFiltersX(item: { dashboard: DashboardTab }) {
   let filtersX: FilterX[] = item.dashboard.fields.map(field => {

@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { BackendConfig } from '~backend/config/backend-config';
+import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { BlockmlService } from './services/blockml.service';
@@ -41,9 +41,9 @@ import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { RpcService } from './services/rpc.service';
 import { StoreService } from './services/store.service';
+import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
 import { TabToEntService } from './services/tab-to-ent.service';
-import { TabService } from './services/tab.service';
 import { TasksService } from './services/tasks.service';
 import { UserCodeService } from './services/user-code.service';
 

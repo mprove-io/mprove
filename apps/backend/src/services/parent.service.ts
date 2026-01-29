@@ -1,17 +1,18 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  MemberTab,
+  ModelTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { ErEnum } from '#common/enums/er.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  MemberTab,
-  ModelTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
 import { ChartsService } from './db/charts.service';
 import { DashboardsService } from './db/dashboards.service';
 import { MconfigsService } from './db/mconfigs.service';

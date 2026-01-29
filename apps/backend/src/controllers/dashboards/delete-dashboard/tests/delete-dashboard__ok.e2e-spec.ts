@@ -1,4 +1,8 @@
 import test from 'ava';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/prepare-test';
+import { sendToBackend } from '#backend/functions/send-to-backend';
+import { Prep } from '#backend/interfaces/prep';
 import {
   BRANCH_MAIN,
   EMPTY_STORE_GOOGLE_API_OPTIONS,
@@ -14,10 +18,6 @@ import {
   ToBackendDeleteDashboardRequest,
   ToBackendDeleteDashboardResponse
 } from '#common/interfaces/to-backend/dashboards/to-backend-delete-dashboard';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
-import { sendToBackend } from '~backend/functions/send-to-backend';
-import { Prep } from '~backend/interfaces/prep';
 
 let testId = 'backend-delete-dashboard__ok';
 

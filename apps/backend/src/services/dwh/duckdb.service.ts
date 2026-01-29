@@ -2,19 +2,19 @@ import { type DuckDBConnection, DuckDBInstance, Json } from '@duckdb/node-api';
 import { DuckDBResultReader } from '@duckdb/node-api/lib/DuckDBResultReader';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { ConnectionTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { TabService } from '../tab.service';
-
-let retry = require('async-retry');
 
 @Injectable()
 export class DuckDbService {

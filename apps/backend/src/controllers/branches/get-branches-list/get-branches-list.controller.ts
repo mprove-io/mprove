@@ -1,20 +1,21 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, asc, eq, inArray } from 'drizzle-orm';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { MembersService } from '#backend/services/db/members.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetBranchesListRequest,
   ToBackendGetBranchesListResponsePayload
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/db/members.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { TabService } from '~backend/services/tab.service';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

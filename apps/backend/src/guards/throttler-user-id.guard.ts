@@ -1,11 +1,10 @@
 import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
-import {
-  ThrottlerGuard,
-  ThrottlerModuleOptions,
-  ThrottlerStorage
-} from '@nestjs/throttler';
+import type { ThrottlerModuleOptions } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerStorage } from '@nestjs/throttler';
+import { BackendConfig } from '#backend/config/backend-config';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { RESTRICTED_USER_EMAIL } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -13,8 +12,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
 
 @Injectable()
 export class ThrottlerUserIdGuard extends ThrottlerGuard {

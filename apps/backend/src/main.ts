@@ -10,7 +10,10 @@ let tracerNodeSdk = startTelemetry({
 
 //
 import { NestFactory } from '@nestjs/core';
-import { json, urlencoded } from 'body-parser';
+import bodyParser from 'body-parser';
+
+const { json, urlencoded } = bodyParser;
+
 import { WinstonModule } from 'nest-winston';
 import {
   APP_NAME_BACKEND,

@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { BackendConfig } from '#backend/config/backend-config';
+import type {
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { PATH_CONFIRM_EMAIL } from '#common/constants/top';
-import { BackendConfig } from '~backend/config/backend-config';
-import { ProjectTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
 
 @Injectable()
 export class EmailService {

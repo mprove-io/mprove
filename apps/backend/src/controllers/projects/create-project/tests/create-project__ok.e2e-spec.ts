@@ -1,4 +1,8 @@
 import test from 'ava';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/prepare-test';
+import { sendToBackend } from '#backend/functions/send-to-backend';
+import { Prep } from '#backend/interfaces/prep';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -8,10 +12,6 @@ import {
   ToBackendCreateProjectRequest,
   ToBackendCreateProjectResponse
 } from '#common/interfaces/to-backend/projects/to-backend-create-project';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
-import { sendToBackend } from '~backend/functions/send-to-backend';
-import { Prep } from '~backend/interfaces/prep';
 
 let testId = 'backend-create-project__ok';
 

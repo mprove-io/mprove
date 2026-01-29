@@ -5,6 +5,7 @@ import {
   Logger
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '#backend/config/backend-config';
 import {
   NoCheckParamsSchema,
   nameToClass
@@ -14,7 +15,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { BackendConfig } from '~backend/config/backend-config';
 
 @Injectable()
 export class ValidateRequestGuard implements CanActivate {

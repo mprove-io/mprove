@@ -1,5 +1,18 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { SkipThrottle } from '@nestjs/throttler';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
+import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { ConnectionsService } from '#backend/services/db/connections.service';
+import { EnvsService } from '#backend/services/db/envs.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { RpcService } from '#backend/services/rpc.service';
+import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -13,18 +26,6 @@ import {
   ToDiskGetCatalogFilesRequest,
   ToDiskGetCatalogFilesResponse
 } from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockml-files';
-import { TestRoutesGuard } from '~backend/guards/test-routes.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { ConnectionsService } from '~backend/services/db/connections.service';
-import { EnvsService } from '~backend/services/db/envs.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { RpcService } from '~backend/services/rpc.service';
-import { TabService } from '~backend/services/tab.service';
 
 // ToBackendGetRebuildStructRequest is for tests only
 // backend use apps/backend/src/services/blockml.service.ts -> rebuildStruct

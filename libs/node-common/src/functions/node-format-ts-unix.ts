@@ -1,11 +1,11 @@
 // function content is the same as frontFormatTsUnix
-import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
-let dayjs = require('dayjs');
-let utc = require('dayjs/plugin/utc');
-let timezone = require('dayjs/plugin/timezone');
-let customParseFormat = require('dayjs/plugin/customParseFormat');
-let advancedFormat = require('dayjs/plugin/advancedFormat');
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+import { TimeSpecEnum } from '#common/enums/timespec.enum';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

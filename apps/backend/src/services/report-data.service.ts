@@ -1,7 +1,30 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import { forEachSeries } from 'p-iteration';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  KitTab,
+  MconfigTab,
+  MemberTab,
+  ProjectTab,
+  QueryTab,
+  ReportTab,
+  StructTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { checkModelAccess } from '#backend/functions/check-model-access';
+import { getRetryOption } from '#backend/functions/get-retry-option';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
 import { EMPTY_REPORT_ID } from '#common/constants/top';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
@@ -32,24 +55,6 @@ import { RowRecord } from '#common/interfaces/blockml/row-record';
 import { Rq } from '#common/interfaces/blockml/rq';
 import { Sorting } from '#common/interfaces/blockml/sorting';
 import { getYYYYMMDDFromEpochUtcByTimezone } from '#node-common/functions/get-yyyymmdd-from-epoch-utc-by-timezone';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  KitTab,
-  MconfigTab,
-  MemberTab,
-  ProjectTab,
-  QueryTab,
-  ReportTab,
-  StructTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { kitsTable } from '~backend/drizzle/postgres/schema/kits';
-import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { checkModelAccess } from '~backend/functions/check-model-access';
-import { getRetryOption } from '~backend/functions/get-retry-option';
 import { MconfigsService } from './db/mconfigs.service';
 import { ModelsService } from './db/models.service';
 import { QueriesService } from './db/queries.service';
@@ -58,8 +63,6 @@ import { DocService } from './doc.service';
 import { MalloyService } from './malloy.service';
 import { ReportTimeColumnsService } from './report-time-columns.service';
 import { TabService } from './tab.service';
-
-let retry = require('async-retry');
 
 @Injectable()
 export class ReportDataService {

@@ -1,5 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  MemberTab,
+  ModelTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { ModelEnt, modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { checkAccess } from '#backend/functions/check-access';
+import { checkModelAccess } from '#backend/functions/check-model-access';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { Member } from '#common/interfaces/backend/member';
@@ -8,11 +17,6 @@ import { ModelPartX } from '#common/interfaces/backend/model-part-x';
 import { ModelX } from '#common/interfaces/backend/model-x';
 import { Model } from '#common/interfaces/blockml/model';
 import { ServerError } from '#common/models/server-error';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { MemberTab, ModelTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { ModelEnt, modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkAccess } from '~backend/functions/check-access';
-import { checkModelAccess } from '~backend/functions/check-model-access';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

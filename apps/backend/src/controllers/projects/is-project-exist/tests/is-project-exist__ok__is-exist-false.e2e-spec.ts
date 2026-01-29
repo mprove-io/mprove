@@ -1,4 +1,8 @@
 import test from 'ava';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/prepare-test';
+import { sendToBackend } from '#backend/functions/send-to-backend';
+import { Prep } from '#backend/interfaces/prep';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -7,10 +11,6 @@ import {
   ToBackendIsProjectExistRequest,
   ToBackendIsProjectExistResponse
 } from '#common/interfaces/to-backend/projects/to-backend-is-project-exist';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
-import { sendToBackend } from '~backend/functions/send-to-backend';
-import { Prep } from '~backend/interfaces/prep';
 
 let testId = 'backend-is-project-exist__ok__is-exist-false';
 

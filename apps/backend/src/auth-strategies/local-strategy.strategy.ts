@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
+import { UsersService } from '#backend/services/db/users.service';
+import { HashService } from '#backend/services/hash.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
-import { UsersService } from '~backend/services/db/users.service';
-import { HashService } from '~backend/services/hash.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

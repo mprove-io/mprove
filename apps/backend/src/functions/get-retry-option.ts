@@ -1,10 +1,10 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WrapOptions } from 'retry';
+import { BackendConfig } from '#backend/config/backend-config';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
 import { logToConsoleBackend } from './log-to-console-backend';
 
 interface MyWrapOptions extends WrapOptions {

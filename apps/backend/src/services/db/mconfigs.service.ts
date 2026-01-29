@@ -1,6 +1,21 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  MconfigTab,
+  ModelTab,
+  ProjectTab,
+  QueryTab,
+  StructTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
+import { makeMconfigFields } from '#backend/functions/make-mconfig-fields';
+import { makeMconfigFiltersX } from '#backend/functions/make-mconfig-filters-x';
+import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -15,20 +30,6 @@ import { Mconfig } from '#common/interfaces/blockml/mconfig';
 import { ModelField } from '#common/interfaces/blockml/model-field';
 import { ServerError } from '#common/models/server-error';
 import { makeQueryId } from '#node-common/functions/make-query-id';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  MconfigTab,
-  ModelTab,
-  ProjectTab,
-  QueryTab,
-  StructTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { mconfigsTable } from '~backend/drizzle/postgres/schema/mconfigs';
-import { makeMconfigFields } from '~backend/functions/make-mconfig-fields';
-import { makeMconfigFiltersX } from '~backend/functions/make-mconfig-filters-x';
-import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { HashService } from '../hash.service';
 import { StoreService } from '../store.service';
 import { TabService } from '../tab.service';

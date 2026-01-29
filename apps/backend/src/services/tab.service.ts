@@ -1,16 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
-import { ErEnum } from '#common/enums/er.enum';
-import { isDefined } from '#common/functions/is-defined';
-import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
-import { isUndefined } from '#common/functions/is-undefined';
-import { BaseProject } from '#common/interfaces/backend/base-project';
-import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
-import { ServerError } from '#common/models/server-error';
-import { decryptData } from '#node-common/functions/encrypt-decrypt';
-import { BackendConfig } from '~backend/config/backend-config';
-import {
+import { BackendConfig } from '#backend/config/backend-config';
+import type {
   AvatarTab,
   BranchTab,
   BridgeTab,
@@ -30,26 +22,34 @@ import {
   ReportTab,
   StructTab,
   UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { AvatarEnt } from '~backend/drizzle/postgres/schema/avatars';
-import { BranchEnt } from '~backend/drizzle/postgres/schema/branches';
-import { BridgeEnt } from '~backend/drizzle/postgres/schema/bridges';
-import { ChartEnt } from '~backend/drizzle/postgres/schema/charts';
-import { ConnectionEnt } from '~backend/drizzle/postgres/schema/connections';
-import { DashboardEnt } from '~backend/drizzle/postgres/schema/dashboards';
-import { DconfigEnt } from '~backend/drizzle/postgres/schema/dconfigs';
-import { EnvEnt } from '~backend/drizzle/postgres/schema/envs';
-import { KitEnt } from '~backend/drizzle/postgres/schema/kits';
-import { MconfigEnt } from '~backend/drizzle/postgres/schema/mconfigs';
-import { MemberEnt } from '~backend/drizzle/postgres/schema/members';
-import { ModelEnt } from '~backend/drizzle/postgres/schema/models';
-import { NoteEnt } from '~backend/drizzle/postgres/schema/notes';
-import { OrgEnt } from '~backend/drizzle/postgres/schema/orgs';
-import { ProjectEnt } from '~backend/drizzle/postgres/schema/projects';
-import { QueryEnt } from '~backend/drizzle/postgres/schema/queries';
-import { ReportEnt } from '~backend/drizzle/postgres/schema/reports';
-import { StructEnt } from '~backend/drizzle/postgres/schema/structs';
-import { UserEnt } from '~backend/drizzle/postgres/schema/users';
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
+import { BranchEnt } from '#backend/drizzle/postgres/schema/branches';
+import { BridgeEnt } from '#backend/drizzle/postgres/schema/bridges';
+import { ChartEnt } from '#backend/drizzle/postgres/schema/charts';
+import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
+import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
+import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
+import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
+import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
+import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
+import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
+import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
+import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
+import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import { UserEnt } from '#backend/drizzle/postgres/schema/users';
+import { ErEnum } from '#common/enums/er.enum';
+import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
+import { isUndefined } from '#common/functions/is-undefined';
+import { BaseProject } from '#common/interfaces/backend/base-project';
+import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
+import { ServerError } from '#common/models/server-error';
+import { decryptData } from '#node-common/functions/encrypt-decrypt';
 import { TabToEntService } from './tab-to-ent.service';
 
 @Injectable()

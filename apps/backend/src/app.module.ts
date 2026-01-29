@@ -6,15 +6,20 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
+import retry from 'async-retry';
 import { and, DefaultLogger, eq, isNotNull } from 'drizzle-orm';
 import {
   drizzle as drizzlePg,
   NodePgDatabase
 } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
-import * as fse from 'fs-extra';
-import Redis from 'ioredis';
-import { Client, ClientConfig } from 'pg';
+import fse from 'fs-extra';
+import type { ClientConfig } from 'pg';
+import pg from 'pg';
+
+const { Client } = pg;
+
+import { BackendConfig } from '#backend/config/backend-config';
 import {
   DEMO_ORG_NAME,
   PROJECT_ENV_PROD,
@@ -33,16 +38,16 @@ import { makeId } from '#common/functions/make-id';
 import { Ev } from '#common/interfaces/backend/ev';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
-import { BackendConfig } from '~backend/config/backend-config';
 import { appControllers } from './app-controllers';
 import { AppFilter } from './app-filter';
 import { AppInterceptor } from './app-interceptor';
 import { appProviders } from './app-providers';
 import { getConfig } from './config/get.config';
-import { Db, DRIZZLE, DrizzleModule } from './drizzle/drizzle.module';
+import type { Db } from './drizzle/drizzle.module';
+import { DRIZZLE, DrizzleModule } from './drizzle/drizzle.module';
 import { DrizzleLogWriter } from './drizzle/drizzle-log-writer';
 import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
-import {
+import type {
   ConnectionTab,
   DconfigTab,
   UserTab
@@ -64,8 +69,6 @@ import { UsersService } from './services/db/users.service';
 import { HashService } from './services/hash.service';
 import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
-
-let retry = require('async-retry');
 
 let configModule = ConfigModule.forRoot({
   load: [getConfig],
@@ -89,17 +92,6 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     let valkeyPassword = cs.get<BackendConfig['backendValkeyPassword']>(
       'backendValkeyPassword'
     );
-
-    // the same as apps/backend/src/services/redis.service.ts
-    let redisClient = new Redis({
-      host: valkeyHost,
-      port: 6379,
-      password: valkeyPassword
-      // ,
-      // tls: {
-      //   rejectUnauthorized: false
-      // }
-    });
 
     return {
       throttlers: [
@@ -128,7 +120,13 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
           limit: 300 * THROTTLE_MULTIPLIER
         }
       ],
-      storage: new ThrottlerStorageRedisService(redisClient)
+      // Pass options (not instance) so ThrottlerStorageRedisService sets disconnectRequired=true
+      // and properly disconnects on module destroy
+      storage: new ThrottlerStorageRedisService({
+        host: valkeyHost,
+        port: 6379,
+        password: valkeyPassword
+      })
     };
   }
 });

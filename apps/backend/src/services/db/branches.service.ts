@@ -1,12 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { BranchTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { BranchTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { branchesTable } from '~backend/drizzle/postgres/schema/branches';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

@@ -1,18 +1,19 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { DconfigsService } from '#backend/services/db/dconfigs.service';
+import { HashService } from '#backend/services/hash.service';
+import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendIsOrgExistRequest,
   ToBackendIsOrgExistResponsePayload
 } from '#common/interfaces/to-backend/orgs/to-backend-is-org-exist';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { DconfigsService } from '~backend/services/db/dconfigs.service';
-import { HashService } from '~backend/services/hash.service';
-import { TabService } from '~backend/services/tab.service';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

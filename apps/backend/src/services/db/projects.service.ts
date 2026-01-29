@@ -1,6 +1,18 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import { eq } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  ConnectionTab,
+  MemberTab,
+  ProjectTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getRetryOption } from '#backend/functions/get-retry-option';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -15,16 +27,6 @@ import {
   ToDiskCreateProjectResponse
 } from '#common/interfaces/to-disk/02-projects/to-disk-create-project';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  ConnectionTab,
-  MemberTab,
-  ProjectTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { getRetryOption } from '~backend/functions/get-retry-option';
 import { BlockmlService } from '../blockml.service';
 import { HashService } from '../hash.service';
 import { RpcService } from '../rpc.service';
@@ -33,8 +35,6 @@ import { BranchesService } from './branches.service';
 import { BridgesService } from './bridges.service';
 import { EnvsService } from './envs.service';
 import { MembersService } from './members.service';
-
-let retry = require('async-retry');
 
 @Injectable()
 export class ProjectsService {

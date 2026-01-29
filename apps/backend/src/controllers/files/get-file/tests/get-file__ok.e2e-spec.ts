@@ -1,4 +1,8 @@
 import test from 'ava';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { prepareTestAndSeed } from '#backend/functions/prepare-test';
+import { sendToBackend } from '#backend/functions/send-to-backend';
+import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PanelEnum } from '#common/enums/panel.enum';
@@ -10,10 +14,6 @@ import {
   ToBackendGetFileRequest,
   ToBackendGetFileResponse
 } from '#common/interfaces/to-backend/files/to-backend-get-file';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { prepareTestAndSeed } from '~backend/functions/prepare-test';
-import { sendToBackend } from '~backend/functions/send-to-backend';
-import { Prep } from '~backend/interfaces/prep';
 
 let testId = 'backend-get-file__ok';
 

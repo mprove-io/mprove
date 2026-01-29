@@ -1,6 +1,18 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  ConnectionTab,
+  StructTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { diskFilesToBlockmlFiles } from '#backend/functions/disk-files-to-blockml-files';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { processRowIds } from '#backend/functions/process-row-ids';
 import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -13,16 +25,6 @@ import {
   ToBlockmlRebuildStructRequest,
   ToBlockmlRebuildStructResponse
 } from '#common/interfaces/to-blockml/api/to-blockml-rebuild-struct';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  ConnectionTab,
-  StructTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { diskFilesToBlockmlFiles } from '~backend/functions/disk-files-to-blockml-files';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { processRowIds } from '~backend/functions/process-row-ids';
 import { ChartsService } from './db/charts.service';
 import { ConnectionsService } from './db/connections.service';
 import { DashboardsService } from './db/dashboards.service';
@@ -33,8 +35,6 @@ import { QueriesService } from './db/queries.service';
 import { ReportsService } from './db/reports.service';
 import { RpcService } from './rpc.service';
 import { TabService } from './tab.service';
-
-let retry = require('async-retry');
 
 @Injectable()
 export class BlockmlService {

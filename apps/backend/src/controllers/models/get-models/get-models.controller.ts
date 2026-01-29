@@ -1,5 +1,21 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { modelsTable } from '#backend/drizzle/postgres/schema/models';
+import { checkModelAccess } from '#backend/functions/check-model-access';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { BranchesService } from '#backend/services/db/branches.service';
+import { BridgesService } from '#backend/services/db/bridges.service';
+import { EnvsService } from '#backend/services/db/envs.service';
+import { MembersService } from '#backend/services/db/members.service';
+import { ModelsService } from '#backend/services/db/models.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { StructsService } from '#backend/services/db/structs.service';
+import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -7,21 +23,6 @@ import {
   ToBackendGetModelsRequest,
   ToBackendGetModelsResponsePayload
 } from '#common/interfaces/to-backend/models/to-backend-get-models';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { modelsTable } from '~backend/drizzle/postgres/schema/models';
-import { checkModelAccess } from '~backend/functions/check-model-access';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/db/branches.service';
-import { BridgesService } from '~backend/services/db/bridges.service';
-import { EnvsService } from '~backend/services/db/envs.service';
-import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { StructsService } from '~backend/services/db/structs.service';
-import { TabService } from '~backend/services/tab.service';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

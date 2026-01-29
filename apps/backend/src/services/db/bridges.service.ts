@@ -1,11 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { BridgeTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ErEnum } from '#common/enums/er.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ServerError } from '#common/models/server-error';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { BridgeTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

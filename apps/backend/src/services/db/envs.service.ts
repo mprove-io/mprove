@@ -1,5 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { EnvTab, MemberTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import { envsTable } from '#backend/drizzle/postgres/schema/envs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { makeFullName } from '#backend/functions/make-full-name';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -9,12 +16,6 @@ import { EnvUser } from '#common/interfaces/backend/env-user';
 import { EnvsItem } from '#common/interfaces/backend/envs-item';
 import { Ev } from '#common/interfaces/backend/ev';
 import { ServerError } from '#common/models/server-error';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { EnvTab, MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import { envsTable } from '~backend/drizzle/postgres/schema/envs';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { makeFullName } from '~backend/functions/make-full-name';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 

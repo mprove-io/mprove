@@ -8,6 +8,25 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import { BackendConfig } from '#backend/config/backend-config';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { ConnectionsService } from '#backend/services/db/connections.service';
+import { MembersService } from '#backend/services/db/members.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { BigQueryService } from '#backend/services/dwh/bigquery.service';
+import { DuckDbService } from '#backend/services/dwh/duckdb.service';
+import { MysqlService } from '#backend/services/dwh/mysql.service';
+import { PgService } from '#backend/services/dwh/pg.service';
+import { PrestoService } from '#backend/services/dwh/presto.service';
+import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
+import { TrinoService } from '#backend/services/dwh/trino.service';
+import { StoreService } from '#backend/services/store.service';
+import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -20,24 +39,6 @@ import {
   ToBackendTestConnectionResponsePayload
 } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { ConnectionsService } from '~backend/services/db/connections.service';
-import { MembersService } from '~backend/services/db/members.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { BigQueryService } from '~backend/services/dwh/bigquery.service';
-import { DuckDbService } from '~backend/services/dwh/duckdb.service';
-import { MysqlService } from '~backend/services/dwh/mysql.service';
-import { PgService } from '~backend/services/dwh/pg.service';
-import { PrestoService } from '~backend/services/dwh/presto.service';
-import { SnowFlakeService } from '~backend/services/dwh/snowflake.service';
-import { TrinoService } from '~backend/services/dwh/trino.service';
-import { StoreService } from '~backend/services/store.service';
-import { TabService } from '~backend/services/tab.service';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)

@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
+import { BackendConfig } from '#backend/config/backend-config';
 import { IDEMP_EXPIRE_SECONDS } from '#common/constants/top-backend';
 import { isDefined } from '#common/functions/is-defined';
-import { BackendConfig } from '~backend/config/backend-config';
 
 @Injectable()
-export class RedisService {
+export class RedisService implements OnModuleDestroy {
   private client: Redis;
 
   constructor(private cs: ConfigService<BackendConfig>) {
@@ -41,5 +41,9 @@ export class RedisService {
     const data = await this.client.get(id);
 
     return isDefined(data) ? JSON.parse(data) : undefined;
+  }
+
+  onModuleDestroy() {
+    this.client.disconnect();
   }
 }

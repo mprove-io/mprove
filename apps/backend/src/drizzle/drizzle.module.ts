@@ -1,17 +1,21 @@
 import { instrumentDrizzleClient } from '@kubiks/otel-drizzle';
-import { Logger, Module } from '@nestjs/common';
+import { Inject, Logger, Module, OnModuleDestroy } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DefaultLogger, DrizzleConfig } from 'drizzle-orm';
 import {
-  NodePgDatabase,
-  drizzle as drizzlePg
+  drizzle as drizzlePg,
+  NodePgDatabase
 } from 'drizzle-orm/node-postgres';
-import { Pool, PoolConfig } from 'pg';
-import { BackendConfig } from '~backend/config/backend-config';
-import { getConfig } from '~backend/config/get.config';
-import { HashService } from '~backend/services/hash.service';
-import { TabToEntService } from '~backend/services/tab-to-ent.service';
-import { TabService } from '~backend/services/tab.service';
+import type { PoolConfig, Pool as PoolType } from 'pg';
+import pg from 'pg';
+
+const { Pool } = pg;
+
+import { BackendConfig } from '#backend/config/backend-config';
+import { getConfig } from '#backend/config/get.config';
+import { HashService } from '#backend/services/hash.service';
+import { TabService } from '#backend/services/tab.service';
+import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { DrizzleLogWriter } from './drizzle-log-writer';
 import { DrizzlePacker } from './postgres/drizzle-packer';
 import { schemaPostgres } from './postgres/schema/_schema-postgres';
@@ -21,6 +25,7 @@ export const DRIZZLE = 'DRIZZLE';
 export interface Db {
   drizzle: NodePgDatabase<typeof schemaPostgres>;
   packer: DrizzlePacker;
+  pool: PoolType;
 }
 
 @Module({
@@ -88,7 +93,8 @@ export interface Db {
 
         let db: Db = {
           drizzle: postgresPoolDrizzle,
-          packer: postgresPacker
+          packer: postgresPacker,
+          pool: postgresPool
         };
 
         return db;
@@ -97,4 +103,10 @@ export interface Db {
   ],
   exports: [DRIZZLE]
 })
-export class DrizzleModule {}
+export class DrizzleModule implements OnModuleDestroy {
+  constructor(@Inject(DRIZZLE) private db: Db) {}
+
+  async onModuleDestroy() {
+    await this.db.pool.end();
+  }
+}

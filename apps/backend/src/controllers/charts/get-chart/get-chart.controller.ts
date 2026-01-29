@@ -7,7 +7,34 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  MconfigTab,
+  QueryTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
+import { checkModelAccess } from '#backend/functions/check-model-access';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { BranchesService } from '#backend/services/db/branches.service';
+import { BridgesService } from '#backend/services/db/bridges.service';
+import { ChartsService } from '#backend/services/db/charts.service';
+import { EnvsService } from '#backend/services/db/envs.service';
+import { MconfigsService } from '#backend/services/db/mconfigs.service';
+import { MembersService } from '#backend/services/db/members.service';
+import { ModelsService } from '#backend/services/db/models.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { QueriesService } from '#backend/services/db/queries.service';
+import { StructsService } from '#backend/services/db/structs.service';
+import { MalloyService } from '#backend/services/malloy.service';
+import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
@@ -19,33 +46,6 @@ import {
   ToBackendGetChartResponsePayload
 } from '#common/interfaces/to-backend/charts/to-backend-get-chart';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import {
-  MconfigTab,
-  QueryTab,
-  UserTab
-} from '~backend/drizzle/postgres/schema/_tabs';
-import { queriesTable } from '~backend/drizzle/postgres/schema/queries';
-import { checkModelAccess } from '~backend/functions/check-model-access';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BranchesService } from '~backend/services/db/branches.service';
-import { BridgesService } from '~backend/services/db/bridges.service';
-import { ChartsService } from '~backend/services/db/charts.service';
-import { EnvsService } from '~backend/services/db/envs.service';
-import { MconfigsService } from '~backend/services/db/mconfigs.service';
-import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { QueriesService } from '~backend/services/db/queries.service';
-import { StructsService } from '~backend/services/db/structs.service';
-import { MalloyService } from '~backend/services/malloy.service';
-import { TabService } from '~backend/services/tab.service';
-
-let retry = require('async-retry');
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

@@ -1,8 +1,21 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
+import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { QueryTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
+import {
+  QueryEnt,
+  queriesTable
+} from '#backend/drizzle/postgres/schema/queries';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -13,22 +26,9 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { Query } from '#common/interfaces/blockml/query';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { QueryTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { connectionsTable } from '~backend/drizzle/postgres/schema/connections';
-import {
-  QueryEnt,
-  queriesTable
-} from '~backend/drizzle/postgres/schema/queries';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { logToConsoleBackend } from '~backend/functions/log-to-console-backend';
-import { makeTsNumber } from '~backend/functions/make-ts-number';
 import { HashService } from '../hash.service';
 import { TabService } from '../tab.service';
 import { EnvsService } from './envs.service';
-
-let retry = require('async-retry');
 
 @Injectable()
 export class QueriesService {

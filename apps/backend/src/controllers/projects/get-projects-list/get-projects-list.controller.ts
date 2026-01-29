@@ -8,22 +8,23 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, inArray } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { TabService } from '#backend/services/tab.service';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ProjectsItem } from '#common/interfaces/backend/projects-item';
 import {
   ToBackendGetProjectsListRequest,
   ToBackendGetProjectsListResponsePayload
 } from '#common/interfaces/to-backend/projects/to-backend-get-projects-list';
-import { BackendConfig } from '~backend/config/backend-config';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { TabService } from '~backend/services/tab.service';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()

@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '#backend/config/backend-config';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -7,7 +8,6 @@ import { isDefined } from '#common/functions/is-defined';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { logToConsole } from '#node-common/functions/log-to-console';
 import { WrappedError } from '#node-common/functions/wrap-error';
-import { BackendConfig } from '~backend/config/backend-config';
 
 export function logResponseBackend(item: {
   wrappedError?: WrappedError;

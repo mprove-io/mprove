@@ -8,8 +8,27 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import retry from 'async-retry';
 import { inArray } from 'drizzle-orm';
 import asyncPool from 'tiny-async-pool';
+import { BackendConfig } from '#backend/config/backend-config';
+import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  BridgeTab,
+  MemberTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { getRetryOption } from '#backend/functions/get-retry-option';
+import { ThrottlerIpGuard } from '#backend/guards/throttler-ip.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { BlockmlService } from '#backend/services/blockml.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { RpcService } from '#backend/services/rpc.service';
+import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -29,22 +48,6 @@ import {
   ToDiskGetCatalogFilesResponse
 } from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-files';
 import { ServerError } from '#common/models/server-error';
-import { BackendConfig } from '~backend/config/backend-config';
-import { SkipJwtCheck } from '~backend/decorators/skip-jwt-check.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { BridgeTab, MemberTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { getRetryOption } from '~backend/functions/get-retry-option';
-import { ThrottlerIpGuard } from '~backend/guards/throttler-ip.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { BlockmlService } from '~backend/services/blockml.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { RpcService } from '~backend/services/rpc.service';
-import { TabService } from '~backend/services/tab.service';
-
-let retry = require('async-retry');
 
 @SkipJwtCheck()
 @UseGuards(ThrottlerIpGuard, ValidateRequestGuard)

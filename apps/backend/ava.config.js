@@ -1,7 +1,9 @@
 export default {
-  files: ['dist/tests/**/*.e2e-spec.js'],
-  extensions: ['js'],
+  files: ['src/**/*.e2e-spec.ts'],
+  extensions: {
+    ts: 'module'
+  },
   verbose: true,
   timeout: '1m',
-  require: ['module-alias/register', 'reflect-metadata']
+  nodeArguments: ['--import=@swc-node/register/esm-register']
 };

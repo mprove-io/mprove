@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BackendConfig } from '#backend/config/backend-config';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { makeOkResponse } from '#node-common/functions/make-ok-response';
-import { BackendConfig } from '~backend/config/backend-config';
 
 export function makeOkResponseBackend(item: {
   body: any;

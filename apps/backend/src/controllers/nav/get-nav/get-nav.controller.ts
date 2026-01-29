@@ -1,5 +1,26 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { and, eq, inArray } from 'drizzle-orm';
+import { AttachUser } from '#backend/decorators/attach-user.decorator';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type {
+  BridgeTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { avatarsTable } from '#backend/drizzle/postgres/schema/avatars';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
+import { membersTable } from '#backend/drizzle/postgres/schema/members';
+import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
+import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
+import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
+import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { MembersService } from '#backend/services/db/members.service';
+import { ModelsService } from '#backend/services/db/models.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { StructsService } from '#backend/services/db/structs.service';
+import { UsersService } from '#backend/services/db/users.service';
+import { RpcService } from '#backend/services/rpc.service';
+import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -15,23 +36,6 @@ import {
   ToDiskGetCatalogNodesRequest,
   ToDiskGetCatalogNodesResponse
 } from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
-import { AttachUser } from '~backend/decorators/attach-user.decorator';
-import { Db, DRIZZLE } from '~backend/drizzle/drizzle.module';
-import { BridgeTab, UserTab } from '~backend/drizzle/postgres/schema/_tabs';
-import { avatarsTable } from '~backend/drizzle/postgres/schema/avatars';
-import { bridgesTable } from '~backend/drizzle/postgres/schema/bridges';
-import { membersTable } from '~backend/drizzle/postgres/schema/members';
-import { orgsTable } from '~backend/drizzle/postgres/schema/orgs';
-import { projectsTable } from '~backend/drizzle/postgres/schema/projects';
-import { ThrottlerUserIdGuard } from '~backend/guards/throttler-user-id.guard';
-import { ValidateRequestGuard } from '~backend/guards/validate-request.guard';
-import { MembersService } from '~backend/services/db/members.service';
-import { ModelsService } from '~backend/services/db/models.service';
-import { ProjectsService } from '~backend/services/db/projects.service';
-import { StructsService } from '~backend/services/db/structs.service';
-import { UsersService } from '~backend/services/db/users.service';
-import { RpcService } from '~backend/services/rpc.service';
-import { TabService } from '~backend/services/tab.service';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Controller()
