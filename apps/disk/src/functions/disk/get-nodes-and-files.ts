@@ -1,6 +1,8 @@
-import * as fse from 'fs-extra';
-import { Dirent } from 'fs-extra';
-import { forEachSeries } from 'p-iteration';
+import fse, { Dirent } from 'fs-extra';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';

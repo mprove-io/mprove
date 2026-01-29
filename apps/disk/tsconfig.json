@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "outDir": "./dist",
+    "paths": {
+      "#disk/*": ["./src/*"],
+      "#common/*": ["../../libs/common/src/*"],
+      "#node-common/*": ["../../libs/node-common/src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

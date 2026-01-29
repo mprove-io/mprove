@@ -6,8 +6,8 @@ import {
   ToDiskIsOrgExistRequest,
   ToDiskIsOrgExistResponse
 } from '#common/interfaces/to-disk/01-orgs/to-disk-is-org-exist';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-is-org-exist';
 

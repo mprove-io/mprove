@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import nodegit from 'nodegit';
 
 import {
   BRANCH_MAIN,

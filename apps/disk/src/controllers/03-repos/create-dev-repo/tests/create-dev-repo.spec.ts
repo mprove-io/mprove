@@ -13,8 +13,8 @@ import {
   ToDiskCreateDevRepoRequest,
   ToDiskCreateDevRepoResponse
 } from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-create-dev-repo';
 

@@ -14,8 +14,8 @@ import {
   ToDiskCommitRepoResponse
 } from '#common/interfaces/to-disk/03-repos/to-disk-commit-repo';
 import { ToDiskSaveFileRequest } from '#common/interfaces/to-disk/07-files/to-disk-save-file';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-commit-repo__need-push';
 

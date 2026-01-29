@@ -1,5 +1,8 @@
-import * as nodegit from 'nodegit';
-import { forEachSeries } from 'p-iteration';
+import nodegit from 'nodegit';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
 import { FileStatusEnum } from '#common/enums/file-status.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isUndefined } from '#common/functions/is-undefined';

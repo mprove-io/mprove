@@ -1,17 +1,17 @@
 import { Logger } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
 import { WinstonModule } from 'nest-winston';
 import { APP_NAME_DISK } from '#common/constants/top-disk';
 import { DiskEnvEnum } from '#common/enums/env/disk-env.enum';
+import { appServices } from '#disk/app-services';
+import { DiskConfig } from '#disk/config/disk-config';
+import { getConfig } from '#disk/config/get.config';
+import { ConsumerService } from '#disk/services/consumer.service';
+import { DiskTabService } from '#disk/services/disk-tab.service';
+import { MessageService } from '#disk/services/message.service';
 import { getLoggerOptions } from '#node-common/functions/get-logger-options';
-import { appServices } from '~disk/app-services';
-import { DiskConfig } from '~disk/config/disk-config';
-import { getConfig } from '~disk/config/get.config';
-import { ConsumerService } from '~disk/services/consumer.service';
-import { DiskTabService } from '~disk/services/disk-tab.service';
-import { MessageService } from '~disk/services/message.service';
 
 export async function prepareTest(
   orgId: string,

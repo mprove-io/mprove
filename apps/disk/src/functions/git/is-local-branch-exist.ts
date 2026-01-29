@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import nodegit from 'nodegit';
 import { NODEGIT_LOCAL_BRANCH_NOT_FOUND } from '#common/constants/top';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 

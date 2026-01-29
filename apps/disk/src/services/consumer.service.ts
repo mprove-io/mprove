@@ -5,7 +5,7 @@ import Redis from 'ioredis';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
 import { RpcRequestData } from '#common/interfaces/rpc-request-data';
 import { MyResponse } from '#common/interfaces/to/my-response';
-import { DiskConfig } from '~disk/config/disk-config';
+import { DiskConfig } from '#disk/config/disk-config';
 import { MessageService } from './message.service';
 
 @Injectable()

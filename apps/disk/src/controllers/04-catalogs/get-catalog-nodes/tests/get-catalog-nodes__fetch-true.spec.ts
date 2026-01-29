@@ -12,8 +12,8 @@ import {
   ToDiskGetCatalogNodesRequest,
   ToDiskGetCatalogNodesResponse
 } from '#common/interfaces/to-disk/04-catalogs/to-disk-get-catalog-nodes';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-get-catalog-nodes__fetch-true';
 

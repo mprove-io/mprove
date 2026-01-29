@@ -1,4 +1,4 @@
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
 import { load } from 'js-yaml';
 import { MPROVE_CONFIG_DIR_DOT_SLASH } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined';

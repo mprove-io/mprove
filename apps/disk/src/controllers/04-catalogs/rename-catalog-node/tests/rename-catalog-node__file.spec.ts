@@ -12,8 +12,8 @@ import {
   ToDiskRenameCatalogNodeRequest,
   ToDiskRenameCatalogNodeResponse
 } from '#common/interfaces/to-disk/04-catalogs/to-disk-rename-catalog-node';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-rename-catalog-node__file';
 

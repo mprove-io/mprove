@@ -1,4 +1,4 @@
-import * as nodegit from 'nodegit';
+import nodegit from 'nodegit';
 import {
   NODEGIT_PATH_NOT_EXIST_IN_TREE,
   NODEGIT_REMOTE_BRANCH_NOT_FOUND

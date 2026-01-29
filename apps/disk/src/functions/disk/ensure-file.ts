@@ -1,4 +1,4 @@
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
 
 // auto creates new folders in path
 export async function ensureFile(filePath: string) {

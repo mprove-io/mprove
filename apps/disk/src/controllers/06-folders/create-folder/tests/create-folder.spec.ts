@@ -13,8 +13,8 @@ import {
   ToDiskCreateFolderRequest,
   ToDiskCreateFolderResponse
 } from '#common/interfaces/to-disk/06-folders/to-disk-create-folder';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-create-folder';
 

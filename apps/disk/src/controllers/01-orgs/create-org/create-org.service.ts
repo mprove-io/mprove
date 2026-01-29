@@ -6,11 +6,11 @@ import {
   ToDiskCreateOrgResponsePayload
 } from '#common/interfaces/to-disk/01-orgs/to-disk-create-org';
 import { ServerError } from '#common/models/server-error';
+import { DiskConfig } from '#disk/config/disk-config';
+import { ensureDir } from '#disk/functions/disk/ensure-dir';
+import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { DiskTabService } from '#disk/services/disk-tab.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { DiskConfig } from '~disk/config/disk-config';
-import { ensureDir } from '~disk/functions/disk/ensure-dir';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { DiskTabService } from '~disk/services/disk-tab.service';
 
 @Injectable()
 export class CreateOrgService {

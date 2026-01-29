@@ -5,11 +5,11 @@ import {
   ToDiskIsProjectExistRequest,
   ToDiskIsProjectExistResponsePayload
 } from '#common/interfaces/to-disk/02-projects/to-disk-is-project-exist';
+import { DiskConfig } from '#disk/config/disk-config';
+import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { DiskTabService } from '#disk/services/disk-tab.service';
+import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { DiskConfig } from '~disk/config/disk-config';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { DiskTabService } from '~disk/services/disk-tab.service';
-import { RestoreService } from '~disk/services/restore.service';
 
 @Injectable()
 export class IsProjectExistService {

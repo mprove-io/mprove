@@ -1,5 +1,5 @@
-import * as fse from 'fs-extra';
-import * as nodegit from 'nodegit';
+import fse from 'fs-extra';
+import nodegit from 'nodegit';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 
 export function makeFetchOptions(item: {

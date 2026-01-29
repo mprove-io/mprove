@@ -65,7 +65,8 @@ Apps communicate:
 **Internal app paths** use Node.js subpath imports (`#app/*`):
 
 - `#chat/*` → `apps/chat/src/*` (migrated)
-- `~backend/*`, `~blockml/*`, `~disk/*`, `~mcli/*`, `~front/*` → pending migration
+- `#disk/*` → `apps/disk/src/*` (migrated)
+- `~backend/*`, `~blockml/*`, `~mcli/*`, `~front/*` → pending migration
 
 Root `tsconfig.base.json` paths (for non-migrated apps):
 
@@ -74,10 +75,34 @@ Root `tsconfig.base.json` paths (for non-migrated apps):
 "~node-common/*": ["node_modules/@mprove/node-common/*"],
 "~backend/*": ["apps/backend/src/*"],
 "~blockml/*": ["apps/blockml/src/*"],
-"~disk/*": ["apps/disk/src/*"],
 "~mcli/*": ["apps/mcli/src/*"],
 "~front/*": ["apps/front/src/*"]
 ```
+
+### ESM Migration Configuration
+
+Apps are being migrated from CommonJS to ESM. Migrated apps: chat, disk.
+
+**Migrated App Configuration:**
+
+| File            | Key Changes                                                                  |
+| --------------- | ---------------------------------------------------------------------------- |
+| `package.json`  | `"type": "module"`, `imports` field with `#app/*` aliases                    |
+| `tsconfig.json` | `"module": "ESNext"`, `"moduleResolution": "Bundler"`, paths with `#` prefix |
+| `.swcrc`        | `"target": "es2022"`, `"module": { "type": "nodenext" }`                     |
+| `ava.config.js` | Direct TS execution with `@swc-node/register/esm-register`                   |
+
+**Development Scripts (ESM):**
+
+- `start`: `node --import @swc-node/register/esm-register --watch src/main.ts`
+- `debug`: `node --import @swc-node/register/esm-register --inspect=0.0.0.0:PORT --watch src/main.ts`
+- `e2e`: `ava --concurrency=5` (runs TypeScript directly)
+
+**Non-Migrated App Configuration:**
+
+- Uses `ts-node/register` + `tsconfig-paths/register` for development
+- Uses `module-alias` for test path resolution
+- Requires `build-tests` step before running tests
 
 ### libs/common
 

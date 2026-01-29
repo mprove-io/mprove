@@ -1,4 +1,4 @@
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
 import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
 

@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodegit from 'nodegit';
+import nodegit from 'nodegit';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ProjectLt } from '#common/interfaces/st-lt';
-import { DiskConfig } from '~disk/config/disk-config';
-import { ensureDir } from '~disk/functions/disk/ensure-dir';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { checkoutBranch } from '~disk/functions/git/checkout-branch';
-import { cloneRemote } from '~disk/functions/git/clone-remote';
-import { createBranch } from '~disk/functions/git/create-branch';
-import { isLocalBranchExist } from '~disk/functions/git/is-local-branch-exist';
-import { isRemoteBranchExist } from '~disk/functions/git/is-remote-branch-exist';
-import { makeFetchOptions } from '~disk/functions/make-fetch-options';
+import { DiskConfig } from '#disk/config/disk-config';
+import { ensureDir } from '#disk/functions/disk/ensure-dir';
+import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch';
+import { cloneRemote } from '#disk/functions/git/clone-remote';
+import { createBranch } from '#disk/functions/git/create-branch';
+import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
+import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
+import { makeFetchOptions } from '#disk/functions/make-fetch-options';
 
 @Injectable()
 export class RestoreService {

@@ -12,8 +12,8 @@ import {
   ToDiskIsProjectExistRequest,
   ToDiskIsProjectExistResponse
 } from '#common/interfaces/to-disk/02-projects/to-disk-is-project-exist';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-is-project-exist';
 

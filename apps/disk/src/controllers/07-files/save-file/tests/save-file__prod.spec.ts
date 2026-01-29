@@ -13,8 +13,8 @@ import {
   ToDiskSaveFileRequest,
   ToDiskSaveFileResponse
 } from '#common/interfaces/to-disk/07-files/to-disk-save-file';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-save-file__prod';
 

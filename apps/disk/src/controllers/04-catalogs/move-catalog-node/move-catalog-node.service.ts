@@ -9,17 +9,17 @@ import {
   ToDiskMoveCatalogNodeResponsePayload
 } from '#common/interfaces/to-disk/04-catalogs/to-disk-move-catalog-node';
 import { ServerError } from '#common/models/server-error';
+import { DiskConfig } from '#disk/config/disk-config';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { movePath } from '#disk/functions/disk/move-path';
+import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { DiskTabService } from '#disk/services/disk-tab.service';
+import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { DiskConfig } from '~disk/config/disk-config';
-import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { movePath } from '~disk/functions/disk/move-path';
-import { addChangesToStage } from '~disk/functions/git/add-changes-to-stage';
-import { checkoutBranch } from '~disk/functions/git/checkout-branch';
-import { getRepoStatus } from '~disk/functions/git/get-repo-status';
-import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { DiskTabService } from '~disk/services/disk-tab.service';
-import { RestoreService } from '~disk/services/restore.service';
 
 @Injectable()
 export class MoveCatalogNodeService {

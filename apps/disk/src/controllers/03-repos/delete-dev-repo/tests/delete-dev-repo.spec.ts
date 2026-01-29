@@ -12,8 +12,8 @@ import {
   ToDiskDeleteDevRepoRequest,
   ToDiskDeleteDevRepoResponse
 } from '#common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-delete-dev-repo';
 

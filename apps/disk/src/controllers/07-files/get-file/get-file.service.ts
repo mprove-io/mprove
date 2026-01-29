@@ -10,18 +10,18 @@ import {
   ToDiskGetFileResponsePayload
 } from '#common/interfaces/to-disk/07-files/to-disk-get-file';
 import { ServerError } from '#common/models/server-error';
+import { DiskConfig } from '#disk/config/disk-config';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch';
+import { getBaseCommitFileContent } from '#disk/functions/git/get-base-commit-file-content';
+import { getLastCommitFileContent } from '#disk/functions/git/get-last-commit-file-content';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { DiskTabService } from '#disk/services/disk-tab.service';
+import { RestoreService } from '#disk/services/restore.service';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { DiskConfig } from '~disk/config/disk-config';
-import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { checkoutBranch } from '~disk/functions/git/checkout-branch';
-import { getBaseCommitFileContent } from '~disk/functions/git/get-base-commit-file-content';
-import { getLastCommitFileContent } from '~disk/functions/git/get-last-commit-file-content';
-import { getRepoStatus } from '~disk/functions/git/get-repo-status';
-import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { DiskTabService } from '~disk/services/disk-tab.service';
-import { RestoreService } from '~disk/services/restore.service';
 
 @Injectable()
 export class GetFileService {

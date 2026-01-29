@@ -14,8 +14,8 @@ import {
   ToDiskDeleteBranchRequest,
   ToDiskDeleteBranchResponse
 } from '#common/interfaces/to-disk/05-branches/to-disk-delete-branch';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-delete-branch__remote';
 

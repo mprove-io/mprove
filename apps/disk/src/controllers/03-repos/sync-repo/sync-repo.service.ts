@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodegit from 'nodegit';
-import { forEachSeries } from 'p-iteration';
+import nodegit from 'nodegit';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
 import { ErEnum } from '#common/enums/er.enum';
 import { FileStatusEnum } from '#common/enums/file-status.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -15,20 +18,20 @@ import {
   ToDiskSyncRepoResponsePayload
 } from '#common/interfaces/to-disk/03-repos/to-disk-sync-repo';
 import { ServerError } from '#common/models/server-error';
+import { DiskConfig } from '#disk/config/disk-config';
+import { ensureDir } from '#disk/functions/disk/ensure-dir';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { removePath } from '#disk/functions/disk/remove-path';
+import { writeToFile } from '#disk/functions/disk/write-to-file';
+import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { DiskTabService } from '#disk/services/disk-tab.service';
+import { RestoreService } from '#disk/services/restore.service';
 import { getSyncFiles } from '#node-common/functions/get-sync-files';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { DiskConfig } from '~disk/config/disk-config';
-import { ensureDir } from '~disk/functions/disk/ensure-dir';
-import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { removePath } from '~disk/functions/disk/remove-path';
-import { writeToFile } from '~disk/functions/disk/write-to-file';
-import { addChangesToStage } from '~disk/functions/git/add-changes-to-stage';
-import { checkoutBranch } from '~disk/functions/git/checkout-branch';
-import { getRepoStatus } from '~disk/functions/git/get-repo-status';
-import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { DiskTabService } from '~disk/services/disk-tab.service';
-import { RestoreService } from '~disk/services/restore.service';
 
 @Injectable()
 export class SyncRepoService {

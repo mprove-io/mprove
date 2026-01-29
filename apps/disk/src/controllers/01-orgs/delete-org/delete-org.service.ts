@@ -5,11 +5,11 @@ import {
   ToDiskDeleteOrgRequest,
   ToDiskDeleteOrgResponsePayload
 } from '#common/interfaces/to-disk/01-orgs/to-disk-delete-org';
+import { DiskConfig } from '#disk/config/disk-config';
+import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { removePath } from '#disk/functions/disk/remove-path';
+import { DiskTabService } from '#disk/services/disk-tab.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { DiskConfig } from '~disk/config/disk-config';
-import { isPathExist } from '~disk/functions/disk/is-path-exist';
-import { removePath } from '~disk/functions/disk/remove-path';
-import { DiskTabService } from '~disk/services/disk-tab.service';
 
 @Injectable()
 export class DeleteOrgService {

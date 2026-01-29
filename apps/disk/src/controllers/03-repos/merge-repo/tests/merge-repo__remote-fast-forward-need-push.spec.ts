@@ -17,8 +17,8 @@ import {
 import { ToDiskPushRepoRequest } from '#common/interfaces/to-disk/03-repos/to-disk-push-repo';
 import { ToDiskCreateBranchRequest } from '#common/interfaces/to-disk/05-branches/to-disk-create-branch';
 import { ToDiskSaveFileRequest } from '#common/interfaces/to-disk/07-files/to-disk-save-file';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-merge-repo__remote-fast-forward-need-push';
 

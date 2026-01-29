@@ -13,8 +13,8 @@ import {
   ToDiskGetFileRequest,
   ToDiskGetFileResponse
 } from '#common/interfaces/to-disk/07-files/to-disk-get-file';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-get-file';
 

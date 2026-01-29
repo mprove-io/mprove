@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { emptyDir, ensureDir } from 'fs-extra';
-import * as nodegit from 'nodegit';
+import nodegit from 'nodegit';
 import { ErEnum } from '#common/enums/er.enum';
 import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
@@ -10,14 +10,14 @@ import {
   ToDiskSeedProjectRequest,
   ToDiskSeedProjectResponsePayload
 } from '#common/interfaces/to-disk/08-seed/to-disk-seed-project';
+import { DiskConfig } from '#disk/config/disk-config';
+import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
+import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
+import { getRepoStatus } from '#disk/functions/git/get-repo-status';
+import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
+import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { DiskTabService } from '#disk/services/disk-tab.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { DiskConfig } from '~disk/config/disk-config';
-import { getNodesAndFiles } from '~disk/functions/disk/get-nodes-and-files';
-import { cloneRemoteToDev } from '~disk/functions/git/clone-remote-to-dev';
-import { getRepoStatus } from '~disk/functions/git/get-repo-status';
-import { prepareRemoteAndProd } from '~disk/functions/git/prepare-remote-and-prod';
-import { makeFetchOptions } from '~disk/functions/make-fetch-options';
-import { DiskTabService } from '~disk/services/disk-tab.service';
 
 @Injectable()
 export class SeedProjectService {

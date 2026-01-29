@@ -12,8 +12,8 @@ import {
   ToDiskIsBranchExistRequest,
   ToDiskIsBranchExistResponse
 } from '#common/interfaces/to-disk/05-branches/to-disk-is-branch-exist';
-import { logToConsoleDisk } from '~disk/functions/log-to-console-disk';
-import { prepareTest } from '~disk/functions/prepare-test';
+import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
+import { prepareTest } from '#disk/functions/prepare-test';
 
 let testId = 'disk-is-branch-exist';
 
