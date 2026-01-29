@@ -1,13 +1,12 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { prepareTest } from '~mcli/functions/prepare-test';
-import { CustomContext } from '~mcli/models/custom-command';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/prepare-test';
+import { CustomContext } from '#mcli/models/custom-command';
 import { HelpCommand } from '../help';
-
-let assert = require('node:assert/strict');
-let retry = require('async-retry');
 
 let testId = 'help__ok';
 

@@ -4,6 +4,12 @@
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
   "private": true,
+  "type": "module",
+  "imports": {
+    "#mcli/*": "./src/*",
+    "#common/*": "@mprove/common/*",
+    "#node-common/*": "@mprove/node-common/*"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mprove-io/mprove.git"
@@ -11,9 +17,8 @@
   "bin": "main.js",
   "scripts": {
     "circular": "madge --circular .",
-    "build:prod": "swc src -d dist --source-maps && node build.mjs && shx cp package.json dist/src/package.json",
-    "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json",
-    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4 dist/tests/**/*.e2e-spec.js",
+    "build:prod": "swc src -d dist --source-maps && node build.mjs && shx cp package.json dist/package.json && shx cp package.json dist/src/package.json",
+    "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4",
     "pack": "pkg dist/src"
   },
   "dependencies": {
@@ -38,7 +43,6 @@
     "fast-deep-equal": "catalog:",
     "fs-extra": "catalog:",
     "js-yaml": "catalog:",
-    "module-alias": "catalog:",
     "nanoid": "catalog:",
     "nest-winston": "catalog:",
     "nodegit": "catalog:",
@@ -53,6 +57,9 @@
   "devDependencies": {
     "dotenv-cli": "catalog:",
     "@swc/cli": "catalog:",
+    "@swc-node/register": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/helpers": "catalog:",
     "@types/async-retry": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/js-yaml": "catalog:",
@@ -61,11 +68,6 @@
     "ava": "catalog:",
     "esbuild": "catalog:",
     "shx": "catalog:"
-  },
-  "_moduleAliases": {
-    "~mcli": "dist/tests/apps/mcli/src",
-    "~common": "dist/tests/libs/common/src",
-    "~node-common": "dist/tests/libs/node-common/src"
   },
   "pkg": {
     "scripts": [

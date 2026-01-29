@@ -1,5 +1,5 @@
-import * as fse from 'fs-extra';
-import * as nodegit from 'nodegit';
+import fse from 'fs-extra';
+import nodegit from 'nodegit';
 
 export async function cloneRepo(item: {
   repoPath: string;

@@ -8,7 +8,7 @@ This document outlines the steps to migrate the remaining apps to ESM, following
 | ------- | -------- | ----------------------------------- | ----------- |
 | blockml | 1        | Medium - similar to disk            | ✅ Complete |
 | backend | 2        | High - largest app                  | ✅ Complete |
-| mcli    | 3        | Medium - CLI tool                   | Pending     |
+| mcli    | 3        | Medium - CLI tool                   | ✅ Complete |
 | front   | 4        | Low - Angular handles its own build | Pending     |
 
 ## Migration Pattern (Per App)
@@ -294,17 +294,42 @@ AVA e2e tests were timing out with "Failed to exit" because connections (Redis, 
 - `google-auth-library` → `import { JWT } from 'google-auth-library'`
 - `snowflake-sdk` → `import snowflake from 'snowflake-sdk'`
 
-### mcli
+### mcli ✅ COMPLETE
 
-- CLI tool using Clipanion
-- May have different entry point pattern
-- Check Clipanion ESM compatibility
+**Status:** Production build and tests work
 
-### front
+**Completed:**
 
-- Angular app with its own build system
-- May only need path alias updates
-- Angular CLI handles ESM internally
+- Configuration files updated (package.json, tsconfig.json, .swcrc, ava.config.js, build.mjs)
+- Deleted tsconfig.test.json
+- Path aliases: `~mcli/` → `#mcli/` (505 occurrences across 88 files)
+- fs-extra imports fixed (49 files) - namespace import to default import
+- nodegit imports fixed (2 files) - namespace import to default import
+- p-iteration import fixed - named import to default import + destructure
+- axios require converted to ESM import
+- fast-deep-equal require converted to ESM import
+- prettyjson require uses createRequire pattern (CommonJS-only package)
+- package.json version access uses createRequire pattern (2 files)
+- Test file imports fixed (67 files) - assert and async-retry to ESM imports
+
+### front (Next to migrate)
+
+**Notes:**
+
+- Angular app with its own build system (Angular CLI handles ESM internally)
+- Uses `~front/*` path alias - needs migration to `#front/*`
+- Angular 21 is already ESM-native, so fewer configuration changes needed
+- Focus areas:
+  1. Update `~front/` imports to `#front/` across source files
+  2. Check for any CommonJS require() patterns
+  3. Update tsconfig if needed for path aliases
+- No AVA tests (uses Jasmine/Karma via Angular CLI)
+- No SWC configuration needed (Angular uses its own build system)
+
+**Verification:**
+
+- `pnpm start:front` - dev server starts
+- `pnpm build:front:prod` - production build succeeds
 
 ## Commands Reference
 
@@ -331,6 +356,7 @@ grep -r "~APP/" apps/APP/src | wc -l
 - `disk` - complete
 - `blockml` - complete
 - `backend` - complete
+- `mcli` - complete
 
 ## libs/common Fixes Applied
 

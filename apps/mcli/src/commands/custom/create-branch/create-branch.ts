@@ -10,11 +10,11 @@ import {
   ToBackendCreateBranchResponse
 } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
 import { ServerError } from '#common/models/server-error';
-import { getConfig } from '~mcli/config/get.config';
-import { getLoginToken } from '~mcli/functions/get-login-token';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { mreq } from '~mcli/functions/mreq';
-import { CustomCommand } from '~mcli/models/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { getLoginToken } from '#mcli/functions/get-login-token';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { mreq } from '#mcli/functions/mreq';
+import { CustomCommand } from '#mcli/models/custom-command';
 
 export class CreateBranchCommand extends CustomCommand {
   static paths = [['create-branch']];

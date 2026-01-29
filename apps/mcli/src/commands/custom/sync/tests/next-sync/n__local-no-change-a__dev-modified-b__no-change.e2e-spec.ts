@@ -1,5 +1,7 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
@@ -11,18 +13,15 @@ import {
   ToBackendSaveFileRequestPayload,
   ToBackendSaveFileResponse
 } from '#common/interfaces/to-backend/files/to-backend-save-file';
-import { getConfig } from '~mcli/config/get.config';
-import { cloneRepo } from '~mcli/functions/clone-repo';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { makeSyncTime } from '~mcli/functions/make-sync-time';
-import { mreq } from '~mcli/functions/mreq';
-import { prepareTest } from '~mcli/functions/prepare-test';
-import { writeSyncConfig } from '~mcli/functions/write-sync-config';
-import { CustomContext } from '~mcli/models/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { cloneRepo } from '#mcli/functions/clone-repo';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { makeSyncTime } from '#mcli/functions/make-sync-time';
+import { mreq } from '#mcli/functions/mreq';
+import { prepareTest } from '#mcli/functions/prepare-test';
+import { writeSyncConfig } from '#mcli/functions/write-sync-config';
+import { CustomContext } from '#mcli/models/custom-command';
 import { SyncCommand } from '../../sync';
-
-let assert = require('node:assert/strict');
-let retry = require('async-retry');
 
 let testId = 'mcli_n__local-no-change-a__dev-modified-b__no-change';
 

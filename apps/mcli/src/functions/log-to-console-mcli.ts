@@ -1,10 +1,12 @@
+import { createRequire } from 'node:module';
 import { BaseContext } from 'clipanion';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { wrapError } from '#node-common/functions/wrap-error';
 
-let prettyjson = require('prettyjson');
+const require = createRequire(import.meta.url);
+const prettyjson = require('prettyjson');
 
 export function logToConsoleMcli(item: {
   log: any;

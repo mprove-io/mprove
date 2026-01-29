@@ -34,14 +34,14 @@ import {
   ToBackendGetRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-get-repo';
 import { ServerError } from '#common/models/server-error';
-import { getConfig } from '~mcli/config/get.config';
-import { getChartUrl } from '~mcli/functions/get-chart-url';
-import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
-import { getLoginToken } from '~mcli/functions/get-login-token';
-import { queriesToStats } from '~mcli/functions/get-query-stats';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { mreq } from '~mcli/functions/mreq';
-import { CustomCommand } from '~mcli/models/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { getChartUrl } from '#mcli/functions/get-chart-url';
+import { getDashboardUrl } from '#mcli/functions/get-dashboard-url';
+import { getLoginToken } from '#mcli/functions/get-login-token';
+import { queriesToStats } from '#mcli/functions/get-query-stats';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { mreq } from '#mcli/functions/mreq';
+import { CustomCommand } from '#mcli/models/custom-command';
 
 interface McliChartPart {
   title: string;

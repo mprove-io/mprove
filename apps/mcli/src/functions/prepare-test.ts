@@ -1,5 +1,9 @@
+import { createRequire } from 'node:module';
 import { BaseContext, Cli, CommandClass } from 'clipanion';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+
+const require = createRequire(import.meta.url);
+
 import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendDeleteRecordsRequestPayload,
@@ -13,8 +17,8 @@ import {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
 } from '#common/interfaces/to-backend/users/to-backend-login-user';
-import { McliConfig } from '~mcli/config/mcli-config';
-import { CustomContext } from '~mcli/models/custom-command';
+import { McliConfig } from '#mcli/config/mcli-config';
+import { CustomContext } from '#mcli/models/custom-command';
 import { mreq } from './mreq';
 
 export async function prepareTest(item: {
@@ -33,7 +37,7 @@ export async function prepareTest(item: {
     enableColors: true,
     binaryLabel: 'Mprove',
     binaryName: 'mprove',
-    binaryVersion: require('../../../../../../package.json').version
+    binaryVersion: require('../../../../package.json').version
   });
 
   if (isDefined(command)) {

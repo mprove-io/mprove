@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
@@ -18,15 +20,12 @@ import {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
-import { getConfig } from '~mcli/config/get.config';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { mreq } from '~mcli/functions/mreq';
-import { prepareTest } from '~mcli/functions/prepare-test';
-import { CustomContext } from '~mcli/models/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { mreq } from '#mcli/functions/mreq';
+import { prepareTest } from '#mcli/functions/prepare-test';
+import { CustomContext } from '#mcli/models/custom-command';
 import { MergeCommand } from '../merge';
-
-let assert = require('node:assert/strict');
-let retry = require('async-retry');
 
 let testId = 'mcli__merge__ok';
 

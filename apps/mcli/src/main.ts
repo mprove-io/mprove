@@ -1,6 +1,10 @@
 /// <reference path="./types.d.ts" />
+import { createRequire } from 'node:module';
 import { Cli } from 'clipanion';
 import 'reflect-metadata';
+
+const require = createRequire(import.meta.url);
+
 import { ErEnum } from '#common/enums/er.enum';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events';
 import { DefinitionsCommand } from './commands/base/definitions/definitions';
@@ -62,5 +66,5 @@ Cli.from(appCommands, {
   enableColors: true,
   binaryLabel: 'Mprove CLI',
   binaryName: 'mprove',
-  binaryVersion: require('package.json').version
+  binaryVersion: require('./package.json').version
 }).runExit(process.argv.slice(2), customContext);

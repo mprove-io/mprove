@@ -32,14 +32,14 @@ import {
   ToBackendGetRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-get-repo';
 import { ServerError } from '#common/models/server-error';
-import { getConfig } from '~mcli/config/get.config';
-import { getChartUrl } from '~mcli/functions/get-chart-url';
-import { getDashboardUrl } from '~mcli/functions/get-dashboard-url';
-import { getLoginToken } from '~mcli/functions/get-login-token';
-import { getReportUrl } from '~mcli/functions/get-report-url';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { mreq } from '~mcli/functions/mreq';
-import { CustomCommand } from '~mcli/models/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { getChartUrl } from '#mcli/functions/get-chart-url';
+import { getDashboardUrl } from '#mcli/functions/get-dashboard-url';
+import { getLoginToken } from '#mcli/functions/get-login-token';
+import { getReportUrl } from '#mcli/functions/get-report-url';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { mreq } from '#mcli/functions/mreq';
+import { CustomCommand } from '#mcli/models/custom-command';
 
 interface ChartPartQ {
   title: string;

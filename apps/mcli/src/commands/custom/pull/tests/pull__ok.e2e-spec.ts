@@ -1,3 +1,5 @@
+import assert from 'node:assert/strict';
+import retry from 'async-retry';
 import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
@@ -5,14 +7,11 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
-import { getConfig } from '~mcli/config/get.config';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { prepareTest } from '~mcli/functions/prepare-test';
-import { CustomContext } from '~mcli/models/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { prepareTest } from '#mcli/functions/prepare-test';
+import { CustomContext } from '#mcli/models/custom-command';
 import { PullCommand } from '../pull';
-
-let assert = require('node:assert/strict');
-let retry = require('async-retry');
 
 let testId = 'mcli__pull__ok';
 

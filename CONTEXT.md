@@ -68,20 +68,20 @@ Apps communicate:
 - `#disk/*` → `apps/disk/src/*` (migrated)
 - `#blockml/*` → `apps/blockml/src/*` (migrated)
 - `#backend/*` → `apps/backend/src/*` (migrated)
-- `~mcli/*`, `~front/*` → pending migration
+- `#mcli/*` → `apps/mcli/src/*` (migrated)
+- `~front/*` → pending migration
 
 Root `tsconfig.base.json` paths (for non-migrated apps):
 
 ```
 "~common/*": ["node_modules/@mprove/common/*"],
 "~node-common/*": ["node_modules/@mprove/node-common/*"],
-"~mcli/*": ["apps/mcli/src/*"],
 "~front/*": ["apps/front/src/*"]
 ```
 
 ### ESM Migration Configuration
 
-Apps are being migrated from CommonJS to ESM. Migrated apps: chat, disk, blockml, backend. Pending: mcli, front (see ESM_MIGRATION_PLAN.md).
+Apps are being migrated from CommonJS to ESM. Migrated apps: chat, disk, blockml, backend, mcli. Pending: front (see ESM_MIGRATION_PLAN.md).
 
 **Migrated App Configuration:**
 

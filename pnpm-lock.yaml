@@ -447,9 +447,6 @@ catalogs:
     madge:
       specifier: 8.0.0
       version: 8.0.0
-    module-alias:
-      specifier: 2.2.3
-      version: 2.2.3
     mysql2:
       specifier: 3.11.3
       version: 3.11.3
@@ -1741,9 +1738,6 @@ importers:
       js-yaml:
         specifier: 'catalog:'
         version: 4.1.1
-      module-alias:
-        specifier: 'catalog:'
-        version: 2.2.3
       nanoid:
         specifier: 'catalog:'
         version: 3.3.10
@@ -1775,9 +1769,18 @@ importers:
         specifier: 'catalog:'
         version: 3.14.2
     devDependencies:
+      '@swc-node/register':
+        specifier: 'catalog:'
+        version: 1.11.1(@swc/core@1.15.11(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.2)
       '@swc/cli':
         specifier: 'catalog:'
         version: 0.7.10(@swc/core@1.15.11(@swc/helpers@0.5.18))(chokidar@4.0.3)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.18)
+      '@swc/helpers':
+        specifier: 'catalog:'
+        version: 0.5.18
       '@types/async-retry':
         specifier: 'catalog:'
         version: 1.4.9
@@ -9736,9 +9739,6 @@ packages:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
     engines: {node: '>=10'}
     hasBin: true
-
-  module-alias@2.2.3:
-    resolution: {integrity: sha512-23g5BFj4zdQL/b6tor7Ji+QY4pEfNH784BMslY9Qb0UnJWRAt+lQGLYmRaM0KDBwIG23ffEBELhZDP2rhi9f/Q==}
 
   module-definition@6.0.1:
     resolution: {integrity: sha512-FeVc50FTfVVQnolk/WQT8MX+2WVcDnTGiq6Wo+/+lJ2ET1bRVi3HG3YlJUfqagNMc/kUlFSoR96AJkxGpKz13g==}
@@ -21922,8 +21922,6 @@ snapshots:
       minimist: 1.2.8
 
   mkdirp@1.0.4: {}
-
-  module-alias@2.2.3: {}
 
   module-definition@6.0.1:
     dependencies:

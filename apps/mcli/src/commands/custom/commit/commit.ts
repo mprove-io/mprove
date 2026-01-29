@@ -11,12 +11,12 @@ import {
   ToBackendCommitRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
 import { ServerError } from '#common/models/server-error';
-import { getConfig } from '~mcli/config/get.config';
-import { getFilesUrl } from '~mcli/functions/get-files-url';
-import { getLoginToken } from '~mcli/functions/get-login-token';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
-import { mreq } from '~mcli/functions/mreq';
-import { CustomCommand } from '~mcli/models/custom-command';
+import { getConfig } from '#mcli/config/get.config';
+import { getFilesUrl } from '#mcli/functions/get-files-url';
+import { getLoginToken } from '#mcli/functions/get-login-token';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { mreq } from '#mcli/functions/mreq';
+import { CustomCommand } from '#mcli/models/custom-command';
 
 export class CommitCommand extends CustomCommand {
   static paths = [['commit']];

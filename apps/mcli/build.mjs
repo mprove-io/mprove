@@ -14,9 +14,9 @@ execSync('swc ../../libs/node-common/src -d dist/libs/node-common --source-maps 
 
 // Define path aliases pointing to compiled output
 const aliases = {
-  '~mcli': resolve(__dirname, 'dist/src'),
-  '~common': resolve(__dirname, 'dist/libs/common/src'),
-  '~node-common': resolve(__dirname, 'dist/libs/node-common/src'),
+  '#mcli': resolve(__dirname, 'dist/src'),
+  '#common': resolve(__dirname, 'dist/libs/common/src'),
+  '#node-common': resolve(__dirname, 'dist/libs/node-common/src'),
 };
 
 // Plugin to resolve path aliases
@@ -38,6 +38,7 @@ console.log('Bundling with esbuild...');
 await esbuild.build({
   entryPoints: [resolve(__dirname, 'dist/src/main.js')],
   bundle: true,
+  format: 'esm',
   platform: 'node',
   target: 'node20',
   outfile: resolve(__dirname, 'dist/main.js'),

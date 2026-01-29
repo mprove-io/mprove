@@ -1,8 +1,8 @@
 import { parse } from 'dotenv';
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
-import { transformValidSyncMcli } from '~mcli/functions/transform-valid-sync-mcli';
+import { transformValidSyncMcli } from '#mcli/functions/transform-valid-sync-mcli';
 import { McliConfig } from './mcli-config';
 
 export function getConfig(envPath?: string) {

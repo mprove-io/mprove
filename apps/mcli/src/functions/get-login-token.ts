@@ -4,7 +4,7 @@ import {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
 } from '#common/interfaces/to-backend/users/to-backend-login-user';
-import { CustomContext } from '~mcli/models/custom-command';
+import { CustomContext } from '#mcli/models/custom-command';
 import { mreq } from './mreq';
 
 export async function getLoginToken(context: CustomContext) {

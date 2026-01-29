@@ -40,3 +40,13 @@ src/
 
 - Communicates with backend via HTTP API
 - Uses same DTOs/interfaces as the frontend
+
+## ESM Configuration
+
+This app uses native ESM with the following configuration:
+
+- **Package type:** `"type": "module"`
+- **Path aliases:** `#mcli/*`, `#common/*`, `#node-common/*` (via `imports` field)
+- **TypeScript:** `"module": "ESNext"`, `"moduleResolution": "Bundler"`
+- **SWC:** `"module": { "type": "nodenext" }`, `"target": "es2022"`
+- **Tests:** Direct TypeScript execution with AVA + @swc-node/register

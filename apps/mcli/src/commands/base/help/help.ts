@@ -1,6 +1,6 @@
 import { Command } from 'clipanion';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { logToConsoleMcli } from '~mcli/functions/log-to-console-mcli';
+import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 
 export class HelpCommand extends Command {
   static paths = [['help'], ['-h'], ['--help']];
