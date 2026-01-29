@@ -4,12 +4,12 @@ import { IHeaderParams, IRowNode } from 'ag-grid-community';
 import { tap } from 'rxjs';
 import { ReportX } from '#common/interfaces/backend/report-x';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { ReportService } from '~front/app/services/report.service';
-import { UiService } from '~front/app/services/ui.service';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { ReportService } from '#front/app/services/report.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,

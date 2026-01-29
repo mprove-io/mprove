@@ -20,11 +20,11 @@ import {
   ToBackendCreateEnvVarRequestPayload,
   ToBackendCreateEnvVarResponse
 } from '#common/interfaces/to-backend/envs/to-backend-create-env-var';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { EnvironmentsQuery } from '~front/app/queries/environments.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ValidationService } from '~front/app/services/validation.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { EnvironmentsQuery } from '#front/app/queries/environments.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddEvDialogData {
   apiService: ApiService;

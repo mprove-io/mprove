@@ -13,8 +13,8 @@ import { FractionControl } from '#common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
 import { ReportField } from '#common/interfaces/blockml/report-field';
 import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { ReportService } from '~front/app/services/report.service';
+import { ModelsQuery } from '#front/app/queries/models.query';
+import { ReportService } from '#front/app/services/report.service';
 
 @Component({
   standalone: false,

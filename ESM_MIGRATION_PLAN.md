@@ -9,7 +9,7 @@ This document outlines the steps to migrate the remaining apps to ESM, following
 | blockml | 1        | Medium - similar to disk            | ✅ Complete |
 | backend | 2        | High - largest app                  | ✅ Complete |
 | mcli    | 3        | Medium - CLI tool                   | ✅ Complete |
-| front   | 4        | Low - Angular handles its own build | Pending     |
+| front   | 4        | Low - Angular handles its own build | ✅ Complete |
 
 ## Migration Pattern (Per App)
 
@@ -312,19 +312,19 @@ AVA e2e tests were timing out with "Failed to exit" because connections (Redis, 
 - package.json version access uses createRequire pattern (2 files)
 - Test file imports fixed (67 files) - assert and async-retry to ESM imports
 
-### front (Next to migrate)
+### front ✅ COMPLETE
 
-**Notes:**
+**Status:** Angular app - ESM migration complete
 
-- Angular app with its own build system (Angular CLI handles ESM internally)
-- Uses `~front/*` path alias - needs migration to `#front/*`
-- Angular 21 is already ESM-native, so fewer configuration changes needed
-- Focus areas:
-  1. Update `~front/` imports to `#front/` across source files
-  2. Check for any CommonJS require() patterns
-  3. Update tsconfig if needed for path aliases
-- No AVA tests (uses Jasmine/Karma via Angular CLI)
+**Completed:**
+
+- Path alias updated in `apps/front/tsconfig.base.json`: `~front/*` → `#front/*`
+- All imports updated: 706 occurrences across 153 files
+- Already uses `#common/*` imports (1512 occurrences)
+- Zero CommonJS `require()` patterns - already pure ES imports
+- No `package.json` changes needed (Angular CLI handles ESM internally)
 - No SWC configuration needed (Angular uses its own build system)
+- Documentation updated in CONTEXT.md
 
 **Verification:**
 
@@ -357,6 +357,7 @@ grep -r "~APP/" apps/APP/src | wc -l
 - `blockml` - complete
 - `backend` - complete
 - `mcli` - complete
+- `front` - complete
 
 ## libs/common Fixes Applied
 

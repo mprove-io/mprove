@@ -2,11 +2,11 @@ import { Component, Input } from '@angular/core';
 import { PanelEnum } from '#common/enums/panel.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { ChartX } from '#common/interfaces/backend/chart-x';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

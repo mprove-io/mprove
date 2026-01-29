@@ -13,8 +13,8 @@ import {
   ToBackendDeleteConnectionRequestPayload,
   ToBackendDeleteConnectionResponse
 } from '#common/interfaces/to-backend/connections/to-backend-delete-connection';
-import { ConnectionsQuery } from '~front/app/queries/connections.query';
-import { ApiService } from '~front/app/services/api.service';
+import { ConnectionsQuery } from '#front/app/queries/connections.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteConnectionDialogData {
   apiService: ApiService;

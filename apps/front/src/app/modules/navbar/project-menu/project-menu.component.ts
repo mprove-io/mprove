@@ -11,11 +11,11 @@ import {
   PATH_TEAM,
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { OrgQuery } from '~front/app/queries/org.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { OrgQuery } from '#front/app/queries/org.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
 
 @Component({
   standalone: false,

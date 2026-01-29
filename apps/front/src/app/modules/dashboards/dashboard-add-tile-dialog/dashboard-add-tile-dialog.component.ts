@@ -18,9 +18,9 @@ import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
 } from '#common/interfaces/to-backend/models/to-backend-get-models';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface DashboardAddTileDialogData {
   apiService: ApiService;

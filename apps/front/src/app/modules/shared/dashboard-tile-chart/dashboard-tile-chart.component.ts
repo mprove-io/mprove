@@ -19,13 +19,13 @@ import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { TileX } from '#common/interfaces/backend/tile-x';
 import { Query } from '#common/interfaces/blockml/query';
 import { DeleteFilterFnItem } from '#common/interfaces/front/delete-filter-fn-item';
-import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
-import { DataService, QDataRow } from '~front/app/services/data.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { getSelectValid } from '#front/app/functions/get-select-valid';
+import { DashboardQuery } from '#front/app/queries/dashboard.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { ApiService } from '#front/app/services/api.service';
+import { DataService, QDataRow } from '#front/app/services/data.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { ChartViewComponent } from '../chart-view/chart-view.component';
 
 @Component({

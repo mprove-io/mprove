@@ -38,8 +38,8 @@ import {
   ToBackendGenerateProjectRemoteKeyRequestPayload,
   ToBackendGenerateProjectRemoteKeyResponse
 } from '#common/interfaces/to-backend/projects/to-backend-generate-project-remote-key';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface CreateProjectDialogData {
   apiService: ApiService;

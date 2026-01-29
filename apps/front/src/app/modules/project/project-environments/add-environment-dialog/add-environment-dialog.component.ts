@@ -21,10 +21,10 @@ import {
   ToBackendCreateEnvRequestPayload,
   ToBackendCreateEnvResponse
 } from '#common/interfaces/to-backend/envs/to-backend-create-env';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { EnvironmentsQuery } from '~front/app/queries/environments.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { EnvironmentsQuery } from '#front/app/queries/environments.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface AddEnvironmentDialogData {
   apiService: ApiService;

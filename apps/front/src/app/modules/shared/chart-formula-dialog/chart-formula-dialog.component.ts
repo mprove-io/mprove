@@ -13,9 +13,9 @@ import { isDefined } from '#common/functions/is-defined';
 import { ChartPointsData } from '#common/interfaces/front/chart-points-data';
 import { DataPoint } from '#common/interfaces/front/data-point';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { DataService } from '~front/app/services/data.service';
+import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { DataService } from '#front/app/services/data.service';
 import { SharedModule } from '../shared.module';
 
 export interface ChartFormulaDialogData {

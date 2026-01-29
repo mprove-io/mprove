@@ -25,7 +25,7 @@ import {
   ToBackendDeleteBranchRequestPayload,
   ToBackendDeleteBranchResponse
 } from '#common/interfaces/to-backend/branches/to-backend-delete-branch';
-import { ApiService } from '~front/app/services/api.service';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteBranchDialogData {
   apiService: ApiService;

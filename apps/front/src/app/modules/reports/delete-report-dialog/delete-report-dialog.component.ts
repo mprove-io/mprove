@@ -17,10 +17,10 @@ import {
   ToBackendDeleteReportRequestPayload,
   ToBackendDeleteReportResponse
 } from '#common/interfaces/to-backend/reports/to-backend-delete-report';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { ReportsQuery } from '~front/app/queries/reports.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { ReportsQuery } from '#front/app/queries/reports.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface DeleteReportDialogData {
   apiService: ApiService;

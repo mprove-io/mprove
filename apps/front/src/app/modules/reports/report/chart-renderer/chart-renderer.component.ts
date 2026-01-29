@@ -8,8 +8,8 @@ import { makeCopy } from '#common/functions/make-copy';
 import { MconfigChartSeries } from '#common/interfaces/blockml/mconfig-chart-series';
 import { RowChange } from '#common/interfaces/blockml/row-change';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { ReportService } from '~front/app/services/report.service';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { ReportService } from '#front/app/services/report.service';
 
 @Component({
   standalone: false,

@@ -26,13 +26,13 @@ import {
   ToBackendSaveModifyReportRequestPayload,
   ToBackendSaveModifyReportResponse
 } from '#common/interfaces/to-backend/reports/to-backend-save-modify-report';
-import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { ReportsQuery } from '~front/app/queries/reports.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
+import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { ReportsQuery } from '#front/app/queries/reports.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditReportInfoDialogData {

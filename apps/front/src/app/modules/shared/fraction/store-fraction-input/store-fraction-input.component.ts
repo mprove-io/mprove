@@ -47,8 +47,8 @@ import {
   ToBackendRunQueriesResponse
 } from '#common/interfaces/to-backend/queries/to-backend-run-queries';
 import { MyRegex } from '#common/models/my-regex';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ApiService } from '#front/app/services/api.service';
 
 @Component({
   standalone: false,

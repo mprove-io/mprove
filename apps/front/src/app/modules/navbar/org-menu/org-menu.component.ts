@@ -7,10 +7,10 @@ import {
   PATH_ORG,
   PATH_USERS
 } from '#common/constants/top';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { OrgQuery } from '~front/app/queries/org.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery, UserState } from '~front/app/queries/user.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { OrgQuery } from '#front/app/queries/org.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery, UserState } from '#front/app/queries/user.query';
 
 @Component({
   standalone: false,

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AuthService } from '~front/app/services/auth.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { AuthService } from '#front/app/services/auth.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

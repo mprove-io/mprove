@@ -19,10 +19,10 @@ import { FractionControl } from '#common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
-import { ChartQuery } from '~front/app/queries/chart.query';
-import { ChartService } from '~front/app/services/chart.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
-import { StructService } from '~front/app/services/struct.service';
+import { ChartQuery } from '#front/app/queries/chart.query';
+import { ChartService } from '#front/app/services/chart.service';
+import { MconfigService } from '#front/app/services/mconfig.service';
+import { StructService } from '#front/app/services/struct.service';
 
 @Component({
   standalone: false,

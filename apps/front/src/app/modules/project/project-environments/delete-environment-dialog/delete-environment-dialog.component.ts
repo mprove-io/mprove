@@ -14,10 +14,10 @@ import {
   ToBackendDeleteEnvRequestPayload,
   ToBackendDeleteEnvResponse
 } from '#common/interfaces/to-backend/envs/to-backend-delete-env';
-import { EnvironmentsQuery } from '~front/app/queries/environments.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
+import { EnvironmentsQuery } from '#front/app/queries/environments.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteEnvironmentDialogData {
   apiService: ApiService;

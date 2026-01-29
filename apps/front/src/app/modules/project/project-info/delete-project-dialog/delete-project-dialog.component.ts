@@ -20,9 +20,9 @@ import {
   ToBackendDeleteProjectRequestPayload,
   ToBackendDeleteProjectResponse
 } from '#common/interfaces/to-backend/projects/to-backend-delete-project';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ProjectQuery } from '~front/app/queries/project.query';
-import { ApiService } from '~front/app/services/api.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ProjectQuery } from '#front/app/queries/project.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteProjectDialogData {
   apiService: ApiService;

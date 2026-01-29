@@ -23,9 +23,9 @@ import { sortFieldsOnSelectChange } from '#common/functions/sort-fields-on-selec
 import { ChartX } from '#common/interfaces/backend/chart-x';
 import { ModelField } from '#common/interfaces/blockml/model-field';
 import { ModelFieldY } from '#common/interfaces/blockml/model-field-y';
-import { ApiService } from '~front/app/services/api.service';
-import { ChartService } from '~front/app/services/chart.service';
-import { StructService } from '~front/app/services/struct.service';
+import { ApiService } from '#front/app/services/api.service';
+import { ChartService } from '#front/app/services/chart.service';
+import { StructService } from '#front/app/services/struct.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface ChartsAddColumnFieldDialogData {

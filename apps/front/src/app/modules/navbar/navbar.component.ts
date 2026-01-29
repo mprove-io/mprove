@@ -14,13 +14,13 @@ import {
 } from '#common/constants/top';
 import { PanelEnum } from '#common/enums/panel.enum';
 import { Member } from '#common/interfaces/backend/member';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

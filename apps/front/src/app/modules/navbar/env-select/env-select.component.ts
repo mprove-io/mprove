@@ -23,11 +23,11 @@ import {
   ToBackendGetEnvsListRequestPayload,
   ToBackendGetEnvsListResponse
 } from '#common/interfaces/to-backend/envs/to-backend-get-envs-list';
-import { checkNavMain } from '~front/app/functions/check-nav-main';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery, UserState } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
+import { checkNavMain } from '#front/app/functions/check-nav-main';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery, UserState } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
 
 @Component({
   standalone: false,

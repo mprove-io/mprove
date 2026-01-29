@@ -6,8 +6,8 @@ import {
   Output
 } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { ModelQuery, ModelState } from '~front/app/queries/model.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { ModelQuery, ModelState } from '#front/app/queries/model.query';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

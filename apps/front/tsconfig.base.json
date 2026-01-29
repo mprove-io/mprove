@@ -5,8 +5,8 @@
     "outDir": "../../dist/out-tsc",
     "baseUrl": ".",
     "paths": {
-      "~front/*": ["./src/*"],
-      "~common/*": ["../../libs/common/src/*"]
+      "#front/*": ["./src/*"],
+      "#common/*": ["../../libs/common/src/*"]
     }
   },
   "angularCompilerOptions": {

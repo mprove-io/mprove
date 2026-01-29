@@ -24,13 +24,13 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { makeCopy } from '#common/functions/make-copy';
 import { ModelMetricX } from '#common/interfaces/backend/model-metric-x';
 import { RowChange } from '#common/interfaces/blockml/row-change';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { ReportService } from '~front/app/services/report.service';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ModelsQuery } from '#front/app/queries/models.query';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { ReportService } from '#front/app/services/report.service';
 
 export class MetricNode {
   id: string;

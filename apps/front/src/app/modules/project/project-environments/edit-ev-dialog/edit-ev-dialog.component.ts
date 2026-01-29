@@ -22,10 +22,10 @@ import {
   ToBackendEditEnvVarRequestPayload,
   ToBackendEditEnvVarResponse
 } from '#common/interfaces/to-backend/envs/to-backend-edit-env-var';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { EnvironmentsQuery } from '~front/app/queries/environments.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { EnvironmentsQuery } from '#front/app/queries/environments.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface EditEvDialogData {
   apiService: ApiService;

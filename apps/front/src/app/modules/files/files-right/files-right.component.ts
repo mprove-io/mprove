@@ -46,20 +46,20 @@ import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
 } from '#common/interfaces/to-backend/models/to-backend-get-models';
-import { FileQuery } from '~front/app/queries/file.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
+import { FileQuery } from '#front/app/queries/file.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
 import {
   HighLightService,
   PlaceNameEnum
-} from '~front/app/services/highlight.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { UiService } from '~front/app/services/ui.service';
+} from '#front/app/services/highlight.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,

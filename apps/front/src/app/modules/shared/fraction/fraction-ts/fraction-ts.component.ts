@@ -36,9 +36,9 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { isUndefined } from '#common/functions/is-undefined';
 import { Fraction } from '#common/interfaces/blockml/fraction';
 import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { TimeService } from '~front/app/services/time.service';
-import { ValidationService } from '~front/app/services/validation.service';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { TimeService } from '#front/app/services/time.service';
+import { ValidationService } from '#front/app/services/validation.service';
 import {
   FractionTsLastCompleteOptionItem,
   FractionTsMixUnitItem,

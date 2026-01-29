@@ -5,9 +5,9 @@ import { tap } from 'rxjs/operators';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { ReportX } from '#common/interfaces/backend/report-x';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ReportService } from '~front/app/services/report.service';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ReportService } from '#front/app/services/report.service';
 
 @Component({
   standalone: false,

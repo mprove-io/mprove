@@ -21,11 +21,11 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { BmlError } from '#common/interfaces/blockml/bml-error';
 import { DiskFileLine } from '#common/interfaces/disk/disk-file-line';
-import { getFileExtension } from '~front/app/functions/get-file-extension';
-import { FileQuery } from '~front/app/queries/file.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { getFileExtension } from '#front/app/functions/get-file-extension';
+import { FileQuery } from '#front/app/queries/file.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 export class BmlErrorExtra extends BmlError {
   errorExt: any;

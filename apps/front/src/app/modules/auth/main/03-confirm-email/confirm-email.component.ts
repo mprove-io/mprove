@@ -15,10 +15,10 @@ import {
   ToBackendConfirmUserEmailRequestPayload,
   ToBackendConfirmUserEmailResponse
 } from '#common/interfaces/to-backend/users/to-backend-confirm-user-email';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { AuthService } from '~front/app/services/auth.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { AuthService } from '#front/app/services/auth.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
   standalone: false,

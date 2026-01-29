@@ -21,10 +21,10 @@ import {
   ToBackendSetOrgInfoRequestPayload,
   ToBackendSetOrgInfoResponse
 } from '#common/interfaces/to-backend/orgs/to-backend-set-org-info';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { OrgQuery } from '~front/app/queries/org.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { OrgQuery } from '#front/app/queries/org.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface EditOrgNameDialogData {
   apiService: ApiService;

@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
-import { DashboardPartsFilteredQuery } from '~front/app/queries/dashboard-parts-filtered.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { DashboardPartsFilteredQuery } from '#front/app/queries/dashboard-parts-filtered.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

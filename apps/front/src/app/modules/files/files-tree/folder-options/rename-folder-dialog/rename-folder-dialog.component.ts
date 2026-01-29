@@ -26,15 +26,15 @@ import {
   ToBackendRenameCatalogNodeRequestPayload,
   ToBackendRenameCatalogNodeResponse
 } from '#common/interfaces/to-backend/catalogs/to-backend-rename-catalog-node';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { FileQuery } from '~front/app/queries/file.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { ValidationService } from '~front/app/services/validation.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { FileQuery } from '#front/app/queries/file.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 export interface RenameFolderDialogData {
   apiService: ApiService;

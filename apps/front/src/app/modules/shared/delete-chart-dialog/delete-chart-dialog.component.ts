@@ -16,11 +16,11 @@ import {
   ToBackendDeleteChartRequestPayload,
   ToBackendDeleteChartResponse
 } from '#common/interfaces/to-backend/charts/to-backend-delete-chart';
-import { ChartQuery } from '~front/app/queries/chart.query';
-import { ChartsQuery } from '~front/app/queries/charts.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { UiService } from '~front/app/services/ui.service';
+import { ChartQuery } from '#front/app/queries/chart.query';
+import { ChartsQuery } from '#front/app/queries/charts.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteChartDialogData {
   apiService: ApiService;

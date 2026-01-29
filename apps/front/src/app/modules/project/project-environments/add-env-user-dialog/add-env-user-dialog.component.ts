@@ -27,10 +27,10 @@ import {
   ToBackendGetMembersListRequestPayload,
   ToBackendGetMembersListResponse
 } from '#common/interfaces/to-backend/members/to-backend-get-members-list';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { EnvironmentsQuery } from '~front/app/queries/environments.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { EnvironmentsQuery } from '#front/app/queries/environments.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface AddEnvUserDialogData {
   apiService: ApiService;

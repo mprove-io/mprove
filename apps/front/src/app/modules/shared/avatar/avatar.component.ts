@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { RESTRICTED_USER_ALIAS } from '#common/constants/top';
-import { UserQuery } from '~front/app/queries/user.query';
+import { UserQuery } from '#front/app/queries/user.query';
 
 @Component({
   standalone: false,

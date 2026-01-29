@@ -16,7 +16,7 @@ import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.e
 import { FractionTypeEnum } from '#common/enums/fraction/fraction-type.enum';
 import { Fraction } from '#common/interfaces/blockml/fraction';
 import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
-import { ValidationService } from '~front/app/services/validation.service';
+import { ValidationService } from '#front/app/services/validation.service';
 import {
   FractionNumberBetweenOptionItem,
   FractionTypeItem

@@ -17,10 +17,10 @@ import {
   ToBackendDeleteDashboardRequestPayload,
   ToBackendDeleteDashboardResponse
 } from '#common/interfaces/to-backend/dashboards/to-backend-delete-dashboard';
-import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { DashboardQuery } from '#front/app/queries/dashboard.query';
+import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface DeleteDashboardDialogData {
   apiService: ApiService;

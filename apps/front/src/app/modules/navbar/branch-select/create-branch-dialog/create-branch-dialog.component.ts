@@ -36,10 +36,10 @@ import {
   ToBackendCreateBranchRequestPayload,
   ToBackendCreateBranchResponse
 } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UserQuery, UserState } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UserQuery, UserState } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface CreateBranchDialogData {
   apiService: ApiService;

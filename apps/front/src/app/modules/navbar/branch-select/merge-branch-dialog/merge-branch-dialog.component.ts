@@ -24,13 +24,13 @@ import {
   ToBackendMergeRepoRequestPayload,
   ToBackendMergeRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-merge-repo';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ApiService } from '~front/app/services/api.service';
-import { FileService } from '~front/app/services/file.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { ApiService } from '#front/app/services/api.service';
+import { FileService } from '#front/app/services/file.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface MergeBranchDialogData {
   apiService: ApiService;

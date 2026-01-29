@@ -15,10 +15,10 @@ import {
   ToBackendResetUserPasswordRequestPayload,
   ToBackendResetUserPasswordResponse
 } from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UserQuery, UserState } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UserQuery, UserState } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
   standalone: false,

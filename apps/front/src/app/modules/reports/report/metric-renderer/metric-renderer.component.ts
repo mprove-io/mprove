@@ -13,13 +13,13 @@ import { isDefined } from '#common/functions/is-defined';
 import { FilterX } from '#common/interfaces/backend/filter-x';
 import { ModelMetricX } from '#common/interfaces/backend/model-metric-x';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { DataService } from '~front/app/services/data.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { getSelectValid } from '#front/app/functions/get-select-valid';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { DataService } from '#front/app/services/data.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
   standalone: false,

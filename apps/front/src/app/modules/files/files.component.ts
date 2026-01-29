@@ -26,18 +26,18 @@ import {
   ToBackendPushRepoRequestPayload,
   ToBackendPushRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-push-repo';
-import { FileQuery, FileState } from '~front/app/queries/file.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery, UserState } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { FileService } from '~front/app/services/file.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { UiService } from '~front/app/services/ui.service';
+import { FileQuery, FileState } from '#front/app/queries/file.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery, UserState } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { FileService } from '#front/app/services/file.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,

@@ -30,10 +30,10 @@ import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
 } from '#common/interfaces/to-backend/models/to-backend-get-models';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { DashboardService } from '~front/app/services/dashboard.service';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { DashboardService } from '#front/app/services/dashboard.service';
 
 export class TileX2 extends TileX {
   modelFields?: { [a: string]: ModelField[] };

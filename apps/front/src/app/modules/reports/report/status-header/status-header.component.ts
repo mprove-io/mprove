@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs';
 import { makeId } from '#common/functions/make-id';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { UiQuery } from '~front/app/queries/ui.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 
 @Component({
   standalone: false,

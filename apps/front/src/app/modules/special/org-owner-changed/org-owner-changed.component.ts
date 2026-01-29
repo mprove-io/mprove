@@ -6,7 +6,7 @@ import {
   LOCAL_STORAGE_NEW_ORG_OWNER
 } from '#common/constants/top-front';
 import { isUndefined } from '#common/functions/is-undefined';
-import { AuthService } from '~front/app/services/auth.service';
+import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
   standalone: false,

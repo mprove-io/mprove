@@ -19,8 +19,8 @@ import {
   ToBackendSetUserNameRequestPayload,
   ToBackendSetUserNameResponse
 } from '#common/interfaces/to-backend/users/to-backend-set-user-name';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface EditNameDialogData {

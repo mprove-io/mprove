@@ -15,9 +15,9 @@ import {
   ToBackendResendUserEmailRequestPayload,
   ToBackendResendUserEmailResponse
 } from '#common/interfaces/to-backend/users/to-backend-resend-user-email';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { AuthService } from '~front/app/services/auth.service';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
   standalone: false,

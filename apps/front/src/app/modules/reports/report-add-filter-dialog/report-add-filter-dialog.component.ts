@@ -60,10 +60,10 @@ import {
   ToBackendGetSuggestFieldsResponse
 } from '#common/interfaces/to-backend/suggest-fields/to-backend-get-suggest-fields';
 import { MyRegex } from '#common/models/my-regex';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ReportService } from '~front/app/services/report.service';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ReportService } from '#front/app/services/report.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface ReportAddFilterDialogData {

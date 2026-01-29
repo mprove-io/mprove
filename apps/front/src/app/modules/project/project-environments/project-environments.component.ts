@@ -22,12 +22,12 @@ import {
   ToBackendEditEnvFallbacksRequestPayload,
   ToBackendEditEnvFallbacksResponse
 } from '#common/interfaces/to-backend/envs/to-backend-edit-env-fallbacks';
-import { EnvironmentsQuery } from '~front/app/queries/environments.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { EnvironmentsQuery } from '#front/app/queries/environments.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
   standalone: false,

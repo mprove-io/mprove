@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import { PATH_PROFILE } from '#common/constants/top';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { AuthService } from '~front/app/services/auth.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
   standalone: false,

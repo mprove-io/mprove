@@ -51,14 +51,14 @@ import {
   ToBackendSaveModifyDashboardRequestPayload,
   ToBackendSaveModifyDashboardResponse
 } from '#common/interfaces/to-backend/dashboards/to-backend-save-modify-dashboard';
-import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { ChartsQuery } from '~front/app/queries/charts.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { ChartsQuery } from '#front/app/queries/charts.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 enum ChartSaveAsEnum {
   NEW_CHART = 'NEW_CHART',

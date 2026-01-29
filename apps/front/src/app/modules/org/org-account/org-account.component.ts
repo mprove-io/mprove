@@ -3,10 +3,10 @@ import { Title } from '@angular/platform-browser';
 import { tap } from 'rxjs/operators';
 import { ORGANIZATION_ACCOUNT_PAGE_TITLE } from '#common/constants/page-titles';
 import { Org } from '#common/interfaces/backend/org';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { OrgQuery } from '~front/app/queries/org.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { OrgQuery } from '#front/app/queries/org.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
   standalone: false,

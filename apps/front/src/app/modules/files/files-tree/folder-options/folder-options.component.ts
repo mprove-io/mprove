@@ -1,10 +1,10 @@
 import { TreeNode } from '@ali-hm/angular-tree-component';
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
   standalone: false,

@@ -27,15 +27,15 @@ import { makeId } from '#common/functions/make-id';
 import { DashboardX } from '#common/interfaces/backend/dashboard-x';
 import { TileX } from '#common/interfaces/backend/tile-x';
 import { DeleteFilterFnItem } from '#common/interfaces/front/delete-filter-fn-item';
-import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { DashboardService } from '~front/app/services/dashboard.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { DashboardQuery } from '#front/app/queries/dashboard.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { DashboardService } from '#front/app/services/dashboard.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 class LayoutItem {

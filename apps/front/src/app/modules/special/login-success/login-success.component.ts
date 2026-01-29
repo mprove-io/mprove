@@ -15,10 +15,10 @@ import {
   PROD_REPO_ID
 } from '#common/constants/top';
 import { isUndefined } from '#common/functions/is-undefined';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { AuthService } from '~front/app/services/auth.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { AuthService } from '#front/app/services/auth.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

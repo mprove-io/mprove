@@ -13,8 +13,8 @@ import {
   ToBackendDeleteMemberRequestPayload,
   ToBackendDeleteMemberResponse
 } from '#common/interfaces/to-backend/members/to-backend-delete-member';
-import { TeamQuery } from '~front/app/queries/team.query';
-import { ApiService } from '~front/app/services/api.service';
+import { TeamQuery } from '#front/app/queries/team.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface RemoveMemberDialogData {
   apiService: ApiService;

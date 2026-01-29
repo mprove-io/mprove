@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { ReportX } from '#common/interfaces/backend/report-x';
-import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

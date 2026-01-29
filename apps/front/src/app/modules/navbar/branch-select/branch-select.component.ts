@@ -26,19 +26,19 @@ import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
-import { checkNavMain } from '~front/app/functions/check-nav-main';
-import { makeBranchExtraId } from '~front/app/functions/make-branch-extra-id';
-import { makeBranchExtraName } from '~front/app/functions/make-branch-extra-name';
-import { FileQuery, FileState } from '~front/app/queries/file.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery, UserState } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { FileService } from '~front/app/services/file.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { checkNavMain } from '#front/app/functions/check-nav-main';
+import { makeBranchExtraId } from '#front/app/functions/make-branch-extra-id';
+import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
+import { FileQuery, FileState } from '#front/app/queries/file.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery, UserState } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { FileService } from '#front/app/services/file.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

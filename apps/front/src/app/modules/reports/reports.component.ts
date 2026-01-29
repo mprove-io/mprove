@@ -64,24 +64,24 @@ import {
   ToBackendGetReportRequestPayload,
   ToBackendGetReportResponse
 } from '#common/interfaces/to-backend/reports/to-backend-get-report';
-import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
-import { makeQueryParams } from '~front/app/functions/make-query-params';
-import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { FilteredReportsQuery } from '~front/app/queries/filtered-reports.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { ReportsQuery } from '~front/app/queries/reports.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { RepChartData, UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { StructReportResolver } from '~front/app/resolvers/struct-report.resolver';
-import { ApiService } from '~front/app/services/api.service';
-import { DataService } from '~front/app/services/data.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { ReportService } from '~front/app/services/report.service';
-import { UiService } from '~front/app/services/ui.service';
+import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
+import { makeQueryParams } from '#front/app/functions/make-query-params';
+import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { FilteredReportsQuery } from '#front/app/queries/filtered-reports.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { ReportsQuery } from '#front/app/queries/reports.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { RepChartData, UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { StructReportResolver } from '#front/app/resolvers/struct-report.resolver';
+import { ApiService } from '#front/app/services/api.service';
+import { DataService } from '#front/app/services/data.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { ReportService } from '#front/app/services/report.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export class TimeSpecItem {
   label: string;

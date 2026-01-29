@@ -21,9 +21,9 @@ import {
   ToBackendCreateMemberRequestPayload,
   ToBackendCreateMemberResponse
 } from '#common/interfaces/to-backend/members/to-backend-create-member';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { TeamQuery } from '~front/app/queries/team.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { TeamQuery } from '#front/app/queries/team.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface InviteMemberDialogData {
   apiService: ApiService;

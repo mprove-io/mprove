@@ -16,13 +16,13 @@ import {
   ToBackendDeleteFolderRequestPayload,
   ToBackendDeleteFolderResponse
 } from '#common/interfaces/to-backend/folders/to-backend-delete-folder';
-import { FileQuery } from '~front/app/queries/file.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { FileQuery } from '#front/app/queries/file.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 export interface DeleteFolderDialogData {
   apiService: ApiService;

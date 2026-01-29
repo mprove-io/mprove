@@ -2,8 +2,8 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { PanelEnum } from '#common/enums/panel.enum';
 import { DiskFileLine } from '#common/interfaces/disk/disk-file-line';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

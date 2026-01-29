@@ -32,9 +32,9 @@ import {
   ToBackendCreateOrgRequestPayload,
   ToBackendCreateOrgResponse
 } from '#common/interfaces/to-backend/orgs/to-backend-create-org';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface CreateOrgDialogData {
   apiService: ApiService;

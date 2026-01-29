@@ -40,10 +40,10 @@ import {
   ToBackendGetEnvsListRequestPayload,
   ToBackendGetEnvsListResponse
 } from '#common/interfaces/to-backend/envs/to-backend-get-envs-list';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { ConnectionsQuery } from '~front/app/queries/connections.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ValidationService } from '~front/app/services/validation.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { ConnectionsQuery } from '#front/app/queries/connections.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 export interface AddConnectionDialogData {
   apiService: ApiService;

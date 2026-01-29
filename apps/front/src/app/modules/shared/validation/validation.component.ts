@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
-import { ValidationService } from '~front/app/services/validation.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 @Component({
   standalone: false,

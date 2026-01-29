@@ -10,12 +10,12 @@ import {
   ToBackendGetOrgUsersRequestPayload,
   ToBackendGetOrgUsersResponse
 } from '#common/interfaces/to-backend/org-users/to-backend-get-org-users';
-import { makeInitials } from '~front/app/functions/make-initials';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { OrgQuery } from '~front/app/queries/org.query';
-import { UsersQuery } from '~front/app/queries/users.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { makeInitials } from '#front/app/functions/make-initials';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { OrgQuery } from '#front/app/queries/org.query';
+import { UsersQuery } from '#front/app/queries/users.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 class OrgUserItemExtended extends OrgUsersItem {
   initials: string;

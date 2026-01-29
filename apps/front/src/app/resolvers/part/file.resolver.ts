@@ -14,9 +14,9 @@ import {
 import { PanelEnum } from '#common/enums/panel.enum';
 import { getFileIds } from '#common/functions/get-file-ids';
 import { isDefined } from '#common/functions/is-defined';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { NavigateService } from '#front/app/services/navigate.service';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
 import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';

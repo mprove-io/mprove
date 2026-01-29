@@ -14,14 +14,14 @@ import { MconfigField } from '#common/interfaces/backend/mconfig-field';
 import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { ModelField } from '#common/interfaces/blockml/model-field';
 import { Sorting } from '#common/interfaces/blockml/sorting';
-import { ChartQuery } from '~front/app/queries/chart.query';
-import { ModelQuery } from '~front/app/queries/model.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ChartService } from '~front/app/services/chart.service';
-import { QDataRow } from '~front/app/services/data.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { StructService } from '~front/app/services/struct.service';
+import { ChartQuery } from '#front/app/queries/chart.query';
+import { ModelQuery } from '#front/app/queries/model.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ChartService } from '#front/app/services/chart.service';
+import { QDataRow } from '#front/app/services/data.service';
+import { MconfigService } from '#front/app/services/mconfig.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { StructService } from '#front/app/services/struct.service';
 
 @Component({
   standalone: false,

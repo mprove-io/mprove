@@ -19,11 +19,11 @@ import { makeId } from '#common/functions/make-id';
 import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { Filter } from '#common/interfaces/blockml/filter';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ChartService } from '~front/app/services/chart.service';
-import { DataService } from '~front/app/services/data.service';
-import { TimeService } from '~front/app/services/time.service';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { ChartService } from '#front/app/services/chart.service';
+import { DataService } from '#front/app/services/data.service';
+import { TimeService } from '#front/app/services/time.service';
 
 @Component({
   standalone: false,

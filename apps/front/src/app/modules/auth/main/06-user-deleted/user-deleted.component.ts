@@ -4,8 +4,8 @@ import { Router } from '@angular/router';
 import { take, tap } from 'rxjs/operators';
 import { USER_DELETED_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_REGISTER } from '#common/constants/top';
-import { UserQuery } from '~front/app/queries/user.query';
-import { AuthService } from '~front/app/services/auth.service';
+import { UserQuery } from '#front/app/queries/user.query';
+import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
   standalone: false,

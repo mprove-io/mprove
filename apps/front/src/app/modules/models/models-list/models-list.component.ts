@@ -9,11 +9,11 @@ import { PanelEnum } from '#common/enums/panel.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { ModelX } from '#common/interfaces/backend/model-x';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelQuery } from '~front/app/queries/model.query';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ModelQuery } from '#front/app/queries/model.query';
+import { ModelsQuery } from '#front/app/queries/models.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

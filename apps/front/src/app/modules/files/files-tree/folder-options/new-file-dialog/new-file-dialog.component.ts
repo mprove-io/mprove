@@ -28,13 +28,13 @@ import {
   ToBackendCreateFolderRequestPayload,
   ToBackendCreateFolderResponse
 } from '#common/interfaces/to-backend/folders/to-backend-create-folder';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { ValidationService } from '~front/app/services/validation.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 export interface NewFileDialogData {
   apiService: ApiService;

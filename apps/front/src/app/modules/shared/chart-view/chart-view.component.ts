@@ -24,15 +24,15 @@ import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { MconfigField } from '#common/interfaces/backend/mconfig-field';
 import { MconfigChart } from '#common/interfaces/blockml/mconfig-chart';
-import { frontFormatTsUnix } from '~front/app/functions/front-format-ts-unix';
-import { getSelectValid } from '~front/app/functions/get-select-valid';
-import { StructQuery } from '~front/app/queries/struct.query';
+import { frontFormatTsUnix } from '#front/app/functions/front-format-ts-unix';
+import { getSelectValid } from '#front/app/functions/get-select-valid';
+import { StructQuery } from '#front/app/queries/struct.query';
 import {
   DataService,
   QDataRow,
   SeriesDataElement
-} from '~front/app/services/data.service';
-import { FormatNumberService } from '~front/app/services/format-number.service';
+} from '#front/app/services/data.service';
+import { FormatNumberService } from '#front/app/services/format-number.service';
 
 @Component({
   standalone: false,

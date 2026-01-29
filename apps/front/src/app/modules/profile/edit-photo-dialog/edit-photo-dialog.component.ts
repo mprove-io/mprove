@@ -15,8 +15,8 @@ import {
   ToBackendSetAvatarRequestPayload,
   ToBackendSetAvatarResponse
 } from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ApiService } from '~front/app/services/api.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface EditPhotoDialogData {
   apiService: ApiService;

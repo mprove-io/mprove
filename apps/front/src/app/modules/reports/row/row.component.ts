@@ -22,16 +22,16 @@ import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { ReportX } from '#common/interfaces/backend/report-x';
 import { RowChange } from '#common/interfaces/blockml/row-change';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { DataService } from '~front/app/services/data.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { ReportService } from '~front/app/services/report.service';
-import { ValidationService } from '~front/app/services/validation.service';
+import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { DataService } from '#front/app/services/data.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { ReportService } from '#front/app/services/report.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 export interface FilterX2 extends FilterX {
   listen: string;

@@ -13,7 +13,7 @@ import {
   ToBackendResetUserPasswordRequestPayload,
   ToBackendResetUserPasswordResponse
 } from '#common/interfaces/to-backend/users/to-backend-reset-user-password';
-import { ApiService } from '~front/app/services/api.service';
+import { ApiService } from '#front/app/services/api.service';
 
 @Component({
   standalone: false,

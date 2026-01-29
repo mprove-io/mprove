@@ -18,8 +18,8 @@ import {
   ToBackendRegisterUserRequestPayload,
   ToBackendRegisterUserResponse
 } from '#common/interfaces/to-backend/users/to-backend-register-user';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
 
 @Component({
   standalone: false,

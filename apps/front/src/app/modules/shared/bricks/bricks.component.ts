@@ -7,7 +7,7 @@ import { makeCopy } from '#common/functions/make-copy';
 import { FilterX } from '#common/interfaces/backend/filter-x';
 import { Fraction } from '#common/interfaces/blockml/fraction';
 import { DeleteFilterFnItem } from '#common/interfaces/front/delete-filter-fn-item';
-import { ModelsQuery } from '~front/app/queries/models.query';
+import { ModelsQuery } from '#front/app/queries/models.query';
 
 @Component({
   standalone: false,

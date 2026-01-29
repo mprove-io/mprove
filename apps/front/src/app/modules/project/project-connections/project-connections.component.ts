@@ -4,12 +4,12 @@ import { tap } from 'rxjs/operators';
 import { PROJECT_CONNECTIONS_PAGE_TITLE } from '#common/constants/page-titles';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import { ConnectionsQuery } from '~front/app/queries/connections.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { ConnectionsQuery } from '#front/app/queries/connections.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 @Component({
   standalone: false,

@@ -32,10 +32,10 @@ import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
 } from '#common/interfaces/to-backend/models/to-backend-get-models';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ReportService } from '~front/app/services/report.service';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ReportService } from '#front/app/services/report.service';
 
 export class RowX2 extends Row {
   modelFields?: { [a: string]: ModelField[] };

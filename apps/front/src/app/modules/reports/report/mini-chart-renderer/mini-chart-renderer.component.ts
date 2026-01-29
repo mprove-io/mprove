@@ -4,8 +4,8 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { EChartsInitOpts, EChartsOption } from 'echarts';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { DataService } from '~front/app/services/data.service';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { DataService } from '#front/app/services/data.service';
 
 @Component({
   standalone: false,

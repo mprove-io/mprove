@@ -3,7 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { ORGANIZATION_DELETED_PAGE_TITLE } from '#common/constants/page-titles';
 import { LOCAL_STORAGE_DELETED_ORG_NAME } from '#common/constants/top-front';
 import { isUndefined } from '#common/functions/is-undefined';
-import { AuthService } from '~front/app/services/auth.service';
+import { AuthService } from '#front/app/services/auth.service';
 
 @Component({
   standalone: false,

@@ -29,14 +29,14 @@ import {
   ToBackendRevertRepoToRemoteRequestPayload,
   ToBackendRevertRepoToRemoteResponse
 } from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
-import { FileQuery, FileState } from '~front/app/queries/file.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { FileService } from '~front/app/services/file.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { FileQuery, FileState } from '#front/app/queries/file.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { FileService } from '#front/app/services/file.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

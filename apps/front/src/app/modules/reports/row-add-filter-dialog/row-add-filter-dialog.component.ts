@@ -41,11 +41,11 @@ import {
   ToBackendGetModelRequestPayload,
   ToBackendGetModelResponse
 } from '#common/interfaces/to-backend/models/to-backend-get-model';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ReportService } from '~front/app/services/report.service';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ReportService } from '#front/app/services/report.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface RowAddFilterDialogData {

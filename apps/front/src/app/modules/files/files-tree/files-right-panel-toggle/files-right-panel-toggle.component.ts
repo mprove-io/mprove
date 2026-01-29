@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { UiQuery } from '~front/app/queries/ui.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 
 @Component({
   standalone: false,

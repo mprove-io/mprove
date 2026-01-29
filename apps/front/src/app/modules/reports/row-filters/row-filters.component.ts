@@ -21,10 +21,10 @@ import { Parameter } from '#common/interfaces/blockml/parameter';
 import { RowChange } from '#common/interfaces/blockml/row-change';
 import { DataRow } from '#common/interfaces/front/data-row';
 import { EventFractionUpdate } from '#common/interfaces/front/event-fraction-update';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ReportService } from '~front/app/services/report.service';
+import { ModelsQuery } from '#front/app/queries/models.query';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { ReportService } from '#front/app/services/report.service';
 import { FilterX2 } from '../row/row.component';
 
 @Component({

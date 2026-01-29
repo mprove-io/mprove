@@ -13,8 +13,8 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { Query } from '#common/interfaces/blockml/query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { TimeService } from '~front/app/services/time.service';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { TimeService } from '#front/app/services/time.service';
 
 @Component({
   standalone: false,

@@ -35,11 +35,11 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { ReportX } from '#common/interfaces/backend/report-x';
 import { Row } from '#common/interfaces/blockml/row';
 import { DataRow } from '#common/interfaces/front/data-row';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ReportService } from '~front/app/services/report.service';
-import { UiService } from '~front/app/services/ui.service';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ReportService } from '#front/app/services/report.service';
+import { UiService } from '#front/app/services/ui.service';
 import { ChartHeaderComponent } from './chart-header/chart-header.component';
 import { ChartRendererComponent } from './chart-renderer/chart-renderer.component';
 import { DataRendererComponent } from './data-renderer/data-renderer.component';

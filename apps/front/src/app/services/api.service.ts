@@ -40,7 +40,7 @@ import {
   ToBackendGetReportsResponse
 } from '#common/interfaces/to-backend/reports/to-backend-get-reports';
 import { ToBackendRequest } from '#common/interfaces/to-backend/to-backend-request';
-import { environment } from '~front/environments/environment';
+import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
 import { ModelQuery } from '../queries/model.query';
 import { ModelsQuery } from '../queries/models.query';

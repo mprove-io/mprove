@@ -34,14 +34,14 @@ import { EventChartToggleSeries } from '#common/interfaces/front/event-chart-tog
 import { EventChartToggleYAxisElement } from '#common/interfaces/front/event-chart-toggle-y-axis-element';
 import { EventChartYAxisElementUpdate } from '#common/interfaces/front/event-chart-y-axis-element-update';
 import { SeriesPart } from '#common/interfaces/front/series-part';
-import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { ChartQuery } from '~front/app/queries/chart.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ChartService } from '~front/app/services/chart.service';
-import { DataService } from '~front/app/services/data.service';
-import { FormatNumberService } from '~front/app/services/format-number.service';
-import { ReportService } from '~front/app/services/report.service';
-import { StructService } from '~front/app/services/struct.service';
+import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { ChartQuery } from '#front/app/queries/chart.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { ChartService } from '#front/app/services/chart.service';
+import { DataService } from '#front/app/services/data.service';
+import { FormatNumberService } from '#front/app/services/format-number.service';
+import { ReportService } from '#front/app/services/report.service';
+import { StructService } from '#front/app/services/struct.service';
 
 export class ChartSeriesWithField extends MconfigChartSeries {
   field: MconfigField;

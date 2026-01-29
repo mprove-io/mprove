@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendGetUserProfileResponse } from '#common/interfaces/to-backend/users/to-backend-get-user-profile';
-import { UserQuery } from '~front/app/queries/user.query';
+import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '../../services/api.service';
 
 @Injectable({ providedIn: 'root' })

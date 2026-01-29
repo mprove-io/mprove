@@ -21,10 +21,10 @@ import {
   ToBackendSetProjectInfoRequestPayload,
   ToBackendSetProjectInfoResponse
 } from '#common/interfaces/to-backend/projects/to-backend-set-project-info';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { ProjectQuery } from '~front/app/queries/project.query';
-import { ApiService } from '~front/app/services/api.service';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { ProjectQuery } from '#front/app/queries/project.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface EditProjectNameDialogData {
   apiService: ApiService;

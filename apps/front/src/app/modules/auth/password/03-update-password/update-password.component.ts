@@ -13,9 +13,9 @@ import {
   ToBackendUpdateUserPasswordRequestPayload,
   ToBackendUpdateUserPasswordResponse
 } from '#common/interfaces/to-backend/users/to-backend-update-user-password';
-import { ApiService } from '~front/app/services/api.service';
-import { AuthService } from '~front/app/services/auth.service';
-import { ValidationService } from '~front/app/services/validation.service';
+import { ApiService } from '#front/app/services/api.service';
+import { AuthService } from '#front/app/services/auth.service';
+import { ValidationService } from '#front/app/services/validation.service';
 
 @Component({
   standalone: false,

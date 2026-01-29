@@ -42,14 +42,14 @@ import { FractionControl } from '#common/interfaces/blockml/fraction-control';
 import { FractionSubTypeOption } from '#common/interfaces/blockml/fraction-sub-type-option';
 import { ModelField } from '#common/interfaces/blockml/model-field';
 import { ModelNode } from '#common/interfaces/blockml/model-node';
-import { ChartQuery } from '~front/app/queries/chart.query';
-import { ModelQuery, ModelState } from '~front/app/queries/model.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ChartService } from '~front/app/services/chart.service';
-import { MconfigService } from '~front/app/services/mconfig.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { StructService } from '~front/app/services/struct.service';
-import { UiService } from '~front/app/services/ui.service';
+import { ChartQuery } from '#front/app/queries/chart.query';
+import { ModelQuery, ModelState } from '#front/app/queries/model.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ChartService } from '#front/app/services/chart.service';
+import { MconfigService } from '#front/app/services/mconfig.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { StructService } from '#front/app/services/struct.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export class ModelNodeExtra extends ModelNode {
   isSelected: boolean;

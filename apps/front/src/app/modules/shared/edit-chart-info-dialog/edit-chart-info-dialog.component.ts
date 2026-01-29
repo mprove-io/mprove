@@ -26,14 +26,14 @@ import {
   ToBackendSaveModifyChartRequestPayload,
   ToBackendSaveModifyChartResponse
 } from '#common/interfaces/to-backend/charts/to-backend-save-modify-chart';
-import { setValueAndMark } from '~front/app/functions/set-value-and-mark';
-import { ChartQuery } from '~front/app/queries/chart.query';
-import { ChartsQuery } from '~front/app/queries/charts.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { setValueAndMark } from '#front/app/functions/set-value-and-mark';
+import { ChartQuery } from '#front/app/queries/chart.query';
+import { ChartsQuery } from '#front/app/queries/charts.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 import { SharedModule } from '../shared.module';
 
 export interface EditChartInfoDialogData {

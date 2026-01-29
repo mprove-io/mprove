@@ -15,9 +15,9 @@ import {
   ToBackendDeleteEnvVarRequestPayload,
   ToBackendDeleteEnvVarResponse
 } from '#common/interfaces/to-backend/envs/to-backend-delete-env-var';
-import { EnvironmentsQuery } from '~front/app/queries/environments.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ApiService } from '~front/app/services/api.service';
+import { EnvironmentsQuery } from '#front/app/queries/environments.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ApiService } from '#front/app/services/api.service';
 
 export interface DeleteEvDialogData {
   apiService: ApiService;

@@ -19,12 +19,12 @@ import {
   ToBackendGetNavRequestPayload,
   ToBackendGetNavResponse
 } from '#common/interfaces/to-backend/nav/to-backend-get-nav';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { AuthService } from '~front/app/services/auth.service';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { AuthService } from '#front/app/services/auth.service';
 import { UserQuery } from '../../queries/user.query';
 import { ApiService } from '../../services/api.service';
 

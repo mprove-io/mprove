@@ -43,21 +43,21 @@ import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
 } from '#common/interfaces/to-backend/queries/to-backend-run-queries';
-import { DashboardQuery } from '~front/app/queries/dashboard.query';
-import { DashboardPartsQuery } from '~front/app/queries/dashboard-parts.query';
-import { DashboardPartsFilteredQuery } from '~front/app/queries/dashboard-parts-filtered.query';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { StructDashboardResolver } from '~front/app/resolvers/struct-dashboard.resolver';
-import { ApiService } from '~front/app/services/api.service';
-import { DashboardService } from '~front/app/services/dashboard.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
-import { NavigateService } from '~front/app/services/navigate.service';
-import { UiService } from '~front/app/services/ui.service';
+import { DashboardQuery } from '#front/app/queries/dashboard.query';
+import { DashboardPartsQuery } from '#front/app/queries/dashboard-parts.query';
+import { DashboardPartsFilteredQuery } from '#front/app/queries/dashboard-parts-filtered.query';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ModelsQuery } from '#front/app/queries/models.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { StructDashboardResolver } from '#front/app/resolvers/struct-dashboard.resolver';
+import { ApiService } from '#front/app/services/api.service';
+import { DashboardService } from '#front/app/services/dashboard.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export class ModelXWithTotalDashboards extends ModelX {
   totalDashboards: number;

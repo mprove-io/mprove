@@ -41,14 +41,14 @@ import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
 } from '#common/interfaces/to-backend/models/to-backend-get-models';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ModelsQuery } from '#front/app/queries/models.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CreateModelDialogData {

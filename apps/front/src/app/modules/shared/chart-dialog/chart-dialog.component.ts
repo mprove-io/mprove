@@ -56,13 +56,13 @@ import {
   ToBackendRunQueriesRequestPayload,
   ToBackendRunQueriesResponse
 } from '#common/interfaces/to-backend/queries/to-backend-run-queries';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ChartService } from '~front/app/services/chart.service';
-import { DataService, QDataRow } from '~front/app/services/data.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ChartService } from '#front/app/services/chart.service';
+import { DataService, QDataRow } from '#front/app/services/data.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 import { SharedModule } from '../shared.module';
 
 export interface ChartDialogData {

@@ -14,13 +14,13 @@ import {
   ToBackendGetMembersRequestPayload,
   ToBackendGetMembersResponse
 } from '#common/interfaces/to-backend/members/to-backend-get-members';
-import { makeInitials } from '~front/app/functions/make-initials';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { NavQuery } from '~front/app/queries/nav.query';
-import { TeamQuery } from '~front/app/queries/team.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { MyDialogService } from '~front/app/services/my-dialog.service';
+import { makeInitials } from '#front/app/functions/make-initials';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { NavQuery } from '#front/app/queries/nav.query';
+import { TeamQuery } from '#front/app/queries/team.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 
 class MemberExtended extends Member {
   initials: string;

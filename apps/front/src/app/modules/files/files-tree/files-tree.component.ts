@@ -42,15 +42,15 @@ import {
   ToBackendMoveCatalogNodeRequestPayload,
   ToBackendMoveCatalogNodeResponse
 } from '#common/interfaces/to-backend/catalogs/to-backend-move-catalog-node';
-import { FileQuery, FileState } from '~front/app/queries/file.query';
-import { NavQuery, NavState } from '~front/app/queries/nav.query';
-import { ProjectQuery } from '~front/app/queries/project.query';
-import { RepoQuery, RepoState } from '~front/app/queries/repo.query';
-import { StructQuery, StructState } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { UserQuery } from '~front/app/queries/user.query';
-import { ApiService } from '~front/app/services/api.service';
-import { NavigateService } from '~front/app/services/navigate.service';
+import { FileQuery, FileState } from '#front/app/queries/file.query';
+import { NavQuery, NavState } from '#front/app/queries/nav.query';
+import { ProjectQuery } from '#front/app/queries/project.query';
+import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { StructQuery, StructState } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { UserQuery } from '#front/app/queries/user.query';
+import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 
 @Component({
   standalone: false,

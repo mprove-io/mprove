@@ -26,9 +26,9 @@ import {
   ToBackendCommitRepoRequestPayload,
   ToBackendCommitRepoResponse
 } from '#common/interfaces/to-backend/repos/to-backend-commit-repo';
-import { RepoQuery } from '~front/app/queries/repo.query';
-import { ApiService } from '~front/app/services/api.service';
-import { FileService } from '~front/app/services/file.service';
+import { RepoQuery } from '#front/app/queries/repo.query';
+import { ApiService } from '#front/app/services/api.service';
+import { FileService } from '#front/app/services/file.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CommitDialogDialogData {

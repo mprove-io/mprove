@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { TippyDirective } from '@ngneat/helipopper';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { SharedModule } from '~front/app/modules/shared/shared.module';
+import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { BranchSelectComponent } from './branch-select/branch-select.component';
 import { EnvSelectComponent } from './env-select/env-select.component';
 import { NavbarComponent } from './navbar.component';

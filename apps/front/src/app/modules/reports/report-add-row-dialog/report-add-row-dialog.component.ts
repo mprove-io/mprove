@@ -16,13 +16,13 @@ import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ModelMetricX } from '#common/interfaces/backend/model-metric-x';
 import { RowChange } from '#common/interfaces/blockml/row-change';
-import { MemberQuery } from '~front/app/queries/member.query';
-import { ModelsQuery } from '~front/app/queries/models.query';
-import { ReportQuery } from '~front/app/queries/report.query';
-import { StructQuery } from '~front/app/queries/struct.query';
-import { UiQuery } from '~front/app/queries/ui.query';
-import { ApiService } from '~front/app/services/api.service';
-import { ReportService } from '~front/app/services/report.service';
+import { MemberQuery } from '#front/app/queries/member.query';
+import { ModelsQuery } from '#front/app/queries/models.query';
+import { ReportQuery } from '#front/app/queries/report.query';
+import { StructQuery } from '#front/app/queries/struct.query';
+import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
+import { ReportService } from '#front/app/services/report.service';
 
 export interface ReportAddRowDialogData {
   apiService: ApiService;
