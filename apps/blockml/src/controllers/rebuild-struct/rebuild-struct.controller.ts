@@ -1,9 +1,9 @@
 import { Body, Controller, Logger, Post, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { makeErrorResponseBlockml } from '#blockml/functions/extra/make-error-response-blockml';
+import { makeOkResponseBlockml } from '#blockml/functions/extra/make-ok-response-blockml';
 import { ToBlockmlRequestInfoNameEnum } from '#common/enums/to/to-blockml-request-info-name.enum';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { makeErrorResponseBlockml } from '~blockml/functions/extra/make-error-response-blockml';
-import { makeOkResponseBlockml } from '~blockml/functions/extra/make-ok-response-blockml';
 import { RebuildStructService } from './rebuild-struct.service';
 
 @Controller()

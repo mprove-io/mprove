@@ -1,5 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_CONFIG_FILENAME,
@@ -24,8 +26,6 @@ import { isTimezoneValid } from '#common/functions/is-timezone-valid';
 import { isUndefined } from '#common/functions/is-undefined';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
 import { MyRegex } from '#common/models/my-regex';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckProjectConfig;

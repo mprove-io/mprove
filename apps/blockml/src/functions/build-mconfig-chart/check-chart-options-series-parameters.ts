@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { CHART_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -14,8 +16,6 @@ import { FilePartTile } from '#common/interfaces/blockml/internal/file-part-tile
 import { FileReport } from '#common/interfaces/blockml/internal/file-report';
 import { MyRegex } from '#common/models/my-regex';
 import { drcType } from '#common/types/drc-type';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckChartOptionsSeriesParameters;

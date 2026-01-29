@@ -1,5 +1,9 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
+import { logToConsoleBlockml } from '#blockml/functions/extra/log-to-console-blockml';
+import { prepareTest } from '#blockml/functions/extra/prepare-test';
+import { readLog } from '#blockml/functions/extra/read-log';
+import { BmError } from '#blockml/models/bm-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -8,10 +12,6 @@ import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { File3 } from '#common/interfaces/blockml/internal/file-3';
-import { logToConsoleBlockml } from '~blockml/functions/extra/log-to-console-blockml';
-import { prepareTest } from '~blockml/functions/extra/prepare-test';
-import { readLog } from '~blockml/functions/extra/read-log';
-import { BmError } from '~blockml/models/bm-error';
 
 let caller = CallerEnum.BuildYaml;
 let func = FuncEnum.DeduplicateFileNames;

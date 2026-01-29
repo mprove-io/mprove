@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { LOGIC_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -12,8 +14,6 @@ import { FieldStoreFilter } from '#common/interfaces/blockml/internal/field-stor
 import { FileFraction } from '#common/interfaces/blockml/internal/file-fraction';
 import { FileStoreFractionType } from '#common/interfaces/blockml/internal/file-store-fraction-type';
 import { MyRegex } from '#common/models/my-regex';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from './log';
 
 let func = FuncEnum.CheckStoreFraction;

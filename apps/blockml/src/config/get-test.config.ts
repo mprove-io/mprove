@@ -1,4 +1,4 @@
-import { BlockmlConfig } from '~blockml/config/blockml-config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
 
 export function getTestConfig(devConfig: BlockmlConfig) {
   let testConfig = Object.assign({}, devConfig);

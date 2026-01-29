@@ -1,8 +1,36 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as fse from 'fs-extra';
-import { forEachSeries } from 'p-iteration';
-import * as path from 'path';
+import fse from 'fs-extra';
+import pIteration from 'p-iteration';
+import path from 'path';
+
+const { forEachSeries } = pIteration;
+
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { buildChart } from '#blockml/functions/build-chart/_build-chart';
+import { buildDashboard } from '#blockml/functions/build-dashboard/_build-dashboard';
+import { buildField } from '#blockml/functions/build-field/_build-field';
+import { buildMconfigChart } from '#blockml/functions/build-mconfig-chart/_build-mconfig-chart';
+import { buildMetricsNext } from '#blockml/functions/build-metrics-next/_build-metrics-next';
+import { buildModStart } from '#blockml/functions/build-mod-start/_build-mod-start';
+import { buildReport } from '#blockml/functions/build-report/_build-report';
+import { buildStoreNext } from '#blockml/functions/build-store-next/_build-store-next';
+import { buildStoreStart } from '#blockml/functions/build-store-start/_build-store-start';
+import { buildTile } from '#blockml/functions/build-tile/_build-tile';
+import { buildYaml } from '#blockml/functions/build-yaml/_build-yaml';
+import { checkSuggestModelDimension } from '#blockml/functions/extra/check-suggest-model-dimension';
+import { collectFiles } from '#blockml/functions/extra/collect-files';
+import { getMproveConfigFile } from '#blockml/functions/extra/get-mprove-config-file';
+import { logStruct } from '#blockml/functions/extra/log-struct';
+import { logToConsoleBlockml } from '#blockml/functions/extra/log-to-console-blockml';
+import { wrapCharts } from '#blockml/functions/wrap/wrap-charts';
+import { wrapDashboards } from '#blockml/functions/wrap/wrap-dashboards';
+import { wrapErrors } from '#blockml/functions/wrap/wrap-errors';
+import { wrapModels } from '#blockml/functions/wrap/wrap-models';
+import { wrapReports } from '#blockml/functions/wrap/wrap-reports';
+import { BmError } from '#blockml/models/bm-error';
+import { BlockmlTabService } from '#blockml/services/blockml-tab.service';
+import { PresetsService } from '#blockml/services/presets.service';
 import {
   MPROVE_CONFIG_FILENAME,
   PROJECT_CONFIG_ALLOW_TIMEZONES,
@@ -53,31 +81,6 @@ import {
   makeMalloyConnections
 } from '#node-common/functions/make-malloy-connections';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { buildChart } from '~blockml/functions/build-chart/_build-chart';
-import { buildDashboard } from '~blockml/functions/build-dashboard/_build-dashboard';
-import { buildField } from '~blockml/functions/build-field/_build-field';
-import { buildMconfigChart } from '~blockml/functions/build-mconfig-chart/_build-mconfig-chart';
-import { buildMetricsNext } from '~blockml/functions/build-metrics-next/_build-metrics-next';
-import { buildModStart } from '~blockml/functions/build-mod-start/_build-mod-start';
-import { buildReport } from '~blockml/functions/build-report/_build-report';
-import { buildStoreNext } from '~blockml/functions/build-store-next/_build-store-next';
-import { buildStoreStart } from '~blockml/functions/build-store-start/_build-store-start';
-import { buildTile } from '~blockml/functions/build-tile/_build-tile';
-import { buildYaml } from '~blockml/functions/build-yaml/_build-yaml';
-import { checkSuggestModelDimension } from '~blockml/functions/extra/check-suggest-model-dimension';
-import { collectFiles } from '~blockml/functions/extra/collect-files';
-import { getMproveConfigFile } from '~blockml/functions/extra/get-mprove-config-file';
-import { logStruct } from '~blockml/functions/extra/log-struct';
-import { logToConsoleBlockml } from '~blockml/functions/extra/log-to-console-blockml';
-import { wrapCharts } from '~blockml/functions/wrap/wrap-charts';
-import { wrapDashboards } from '~blockml/functions/wrap/wrap-dashboards';
-import { wrapErrors } from '~blockml/functions/wrap/wrap-errors';
-import { wrapModels } from '~blockml/functions/wrap/wrap-models';
-import { wrapReports } from '~blockml/functions/wrap/wrap-reports';
-import { BmError } from '~blockml/models/bm-error';
-import { BlockmlTabService } from '~blockml/services/blockml-tab.service';
-import { PresetsService } from '~blockml/services/presets.service';
 
 interface RebuildStructPrep {
   errors: BmError[];

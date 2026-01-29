@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ProjectConnection } from '#common/interfaces/backend/project-connection';
@@ -11,8 +13,6 @@ import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
 import { FileReport } from '#common/interfaces/blockml/internal/file-report';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { checkConnections } from './check-connections';
 import { checkProjectConfig } from './check-project-config';
 import { checkTopUnknownParameters } from './check-top-unknown-parameters';

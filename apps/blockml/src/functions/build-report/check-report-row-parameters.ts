@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
@@ -18,8 +20,6 @@ import { Model } from '#common/interfaces/blockml/model';
 import { ModelMetric } from '#common/interfaces/blockml/model-metric';
 import { MyRegex } from '#common/models/my-regex';
 import { bricksToFractions } from '#node-common/functions/bricks-to-fractions';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { checkStoreFraction } from '../extra/check-store-fraction';
 import { checkStoreFractionControls } from '../extra/check-store-fraction-controls';
 import { checkStoreFractionControlsUse } from '../extra/check-store-fraction-controls-use';

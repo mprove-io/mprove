@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import {
   MPROVE_CONFIG_FILENAME,
   MPROVE_CONFIG_NAME
@@ -16,8 +18,6 @@ import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
 import { FileReport } from '#common/interfaces/blockml/internal/file-report';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.SplitFiles;

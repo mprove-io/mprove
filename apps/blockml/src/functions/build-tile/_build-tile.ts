@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -7,8 +9,6 @@ import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { Model } from '#common/interfaces/blockml/model';
 import { dcType } from '#common/types/dc-type';
 import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { checkLimit } from './check-limit';
 import { checkSelectElements } from './check-select-elements';
 import { checkSorts } from './check-sorts';

@@ -1,5 +1,10 @@
 import test from 'ava';
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { logToConsoleBlockml } from '#blockml/functions/extra/log-to-console-blockml';
+import { prepareTest } from '#blockml/functions/extra/prepare-test';
+import { readLog } from '#blockml/functions/extra/read-log';
+import { BmError } from '#blockml/models/bm-error';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -9,11 +14,6 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ProjectConnection } from '#common/interfaces/backend/project-connection';
 import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { logToConsoleBlockml } from '~blockml/functions/extra/log-to-console-blockml';
-import { prepareTest } from '~blockml/functions/extra/prepare-test';
-import { readLog } from '~blockml/functions/extra/read-log';
-import { BmError } from '~blockml/models/bm-error';
 
 let caller = CallerEnum.BuildModStart;
 let func = FuncEnum.BuildMods;

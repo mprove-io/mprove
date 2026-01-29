@@ -1,7 +1,9 @@
 export default {
-  files: ['dist/tests/**/*.spec.js'],
-  extensions: ['js'],
+  files: ['src/**/*.spec.ts'],
+  extensions: {
+    ts: 'module'
+  },
   verbose: true,
   timeout: '1m',
-  require: ['module-alias/register', 'reflect-metadata']
+  nodeArguments: ['--import=@swc-node/register/esm-register']
 };

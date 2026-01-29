@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -13,8 +15,6 @@ import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { Model } from '#common/interfaces/blockml/model';
 import { MyRegex } from '#common/models/my-regex';
 import { dcType } from '#common/types/dc-type';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckTileTitleModelSelect;

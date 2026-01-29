@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
@@ -10,8 +12,6 @@ import { FieldStoreFilter } from '#common/interfaces/blockml/internal/field-stor
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { FileStoreResult } from '#common/interfaces/blockml/internal/file-store-result';
 import { MyRegex } from '#common/models/my-regex';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { checkStoreFraction } from './check-store-fraction';
 import { checkStoreFractionControls } from './check-store-fraction-controls';
 import { checkStoreFractionControlsUse } from './check-store-fraction-controls-use';

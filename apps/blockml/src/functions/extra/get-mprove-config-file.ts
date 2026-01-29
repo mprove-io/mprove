@@ -1,4 +1,4 @@
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
 import { MPROVE_CONFIG_FILENAME } from '#common/constants/top';
 import { BmlFile } from '#common/interfaces/blockml/bml-file';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size';

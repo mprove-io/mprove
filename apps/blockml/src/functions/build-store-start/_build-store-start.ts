@@ -1,9 +1,9 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { Preset } from '#common/interfaces/blockml/preset';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { applyStorePresets } from './apply-store-presets';
 import { checkResultFractionTypes } from './check-result-fraction-types';
 import { checkStoreFieldGroups } from './check-store-field-groups';

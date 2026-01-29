@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ControlClassEnum } from '#common/enums/control-class.enum';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -11,8 +13,6 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { FileErrorLine } from '#common/interfaces/blockml/internal/file-error-line';
 import { FileStoreFractionControl } from '#common/interfaces/blockml/internal/file-store-fraction-control';
 import { MyRegex } from '#common/models/my-regex';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { checkStoreFractionControlOptions } from './check-store-fraction-control-options';
 import { log } from './log';
 

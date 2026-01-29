@@ -1,4 +1,4 @@
-import { Moment } from '@malloydata/malloy-filter';
+import type { Moment } from '@malloydata/malloy-filter';
 import { Type } from 'class-transformer';
 import {
   IsEnum,

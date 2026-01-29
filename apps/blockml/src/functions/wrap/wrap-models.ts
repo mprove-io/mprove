@@ -26,7 +26,7 @@ import { ModelNode } from '#common/interfaces/blockml/model-node';
 import { getFieldItems } from '../extra/get-field-items';
 import { wrapField } from './wrap-field';
 import { FieldItemX, wrapFieldItem } from './wrap-field-item';
-// import * as fse from 'fs-extra';
+// import fse from 'fs-extra';
 
 export function wrapModels(item: {
   projectId: string;

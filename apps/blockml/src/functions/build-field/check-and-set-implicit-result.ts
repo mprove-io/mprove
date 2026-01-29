@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { FILTER_RESULT_VALUES } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
@@ -12,8 +14,6 @@ import { FieldAny } from '#common/interfaces/blockml/internal/field-any';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { MyRegex } from '#common/models/my-regex';
 import { sdrType } from '#common/types/sdr-type';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckAndSetImplicitResult;

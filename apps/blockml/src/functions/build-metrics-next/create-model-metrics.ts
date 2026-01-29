@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import {
   METRIC_ID_BY,
   MF,
@@ -17,8 +19,6 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { Model } from '#common/interfaces/blockml/model';
 import { ModelMetric } from '#common/interfaces/blockml/model-metric';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CreateModelMetrics;

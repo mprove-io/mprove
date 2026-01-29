@@ -1,4 +1,4 @@
-import { TemporalUnit } from '@malloydata/malloy-filter';
+import type { TemporalUnit } from '@malloydata/malloy-filter';
 import { MyRegex } from '#common/models/my-regex';
 import { isDefined } from './is-defined';
 import { isUndefined } from './is-undefined';

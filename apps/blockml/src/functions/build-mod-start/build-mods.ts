@@ -10,8 +10,13 @@ import {
   ModelEntryValueWithSource
 } from '@malloydata/malloy-interfaces';
 import { ConfigService } from '@nestjs/config';
-import * as fse from 'fs-extra';
-import { forEachSeries } from 'p-iteration';
+import fse from 'fs-extra';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
@@ -24,8 +29,6 @@ import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { errorToWrapResult } from '#node-common/functions/error-to-wrap-result';
 import { getWrapResult } from '#node-common/functions/get-wrap-result';
 import { MalloyConnection } from '#node-common/functions/make-malloy-connections';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.BuildMods;

@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import * as walk from 'walk';
+import walk from 'walk';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { LogTypeEnum } from '#common/enums/special/log-type.enum';
@@ -7,7 +8,6 @@ import { isDefined } from '#common/functions/is-defined';
 import { BmlFile } from '#common/interfaces/blockml/bml-file';
 import { MyRegex } from '#common/models/my-regex';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CollectFiles;

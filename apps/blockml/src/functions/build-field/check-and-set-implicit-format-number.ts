@@ -1,5 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { formatSpecifier } from 'd3-format';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
@@ -11,8 +13,6 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
 import { sdrType } from '#common/types/sdr-type';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckAndSetImplicitFormatNumber;

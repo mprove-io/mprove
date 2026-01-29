@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
@@ -12,8 +14,6 @@ import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { FileStoreBuildMetric } from '#common/interfaces/blockml/internal/file-store-build-metric';
 import { MyRegex } from '#common/models/my-regex';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckStoreBuildMetrics;

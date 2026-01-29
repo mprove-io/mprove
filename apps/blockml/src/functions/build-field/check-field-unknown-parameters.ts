@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
@@ -9,8 +11,6 @@ import { LogTypeEnum } from '#common/enums/special/log-type.enum';
 import { FieldAny } from '#common/interfaces/blockml/internal/field-any';
 import { MyRegex } from '#common/models/my-regex';
 import { sdrType } from '#common/types/sdr-type';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { checkStoreFractionControls } from '../extra/check-store-fraction-controls';
 import { log } from '../extra/log';
 

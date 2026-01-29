@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -12,8 +14,6 @@ import { Model } from '#common/interfaces/blockml/model';
 import { ModelField } from '#common/interfaces/blockml/model-field';
 import { MyRegex } from '#common/models/my-regex';
 import { sdrType } from '#common/types/sdr-type';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from './log';
 
 let func = FuncEnum.CheckSuggestModelDimension;

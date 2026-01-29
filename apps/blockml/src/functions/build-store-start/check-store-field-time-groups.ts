@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { MF } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
@@ -11,8 +13,6 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { FileStoreFieldTimeGroup } from '#common/interfaces/blockml/internal/file-store-field-time-group';
 import { MyRegex } from '#common/models/my-regex';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckStoreFieldTimeGroups;

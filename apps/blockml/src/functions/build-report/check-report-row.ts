@@ -1,4 +1,6 @@
 import { ConfigService } from '@nestjs/config';
+import { BlockmlConfig } from '#blockml/config/blockml-config';
+import { BmError } from '#blockml/models/bm-error';
 import { ROW_TYPE_VALUES } from '#common/constants/top';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
@@ -12,8 +14,6 @@ import { FileReport } from '#common/interfaces/blockml/internal/file-report';
 import { FileReportRow } from '#common/interfaces/blockml/internal/file-report-row';
 import { ModelMetric } from '#common/interfaces/blockml/model-metric';
 import { MyRegex } from '#common/models/my-regex';
-import { BlockmlConfig } from '~blockml/config/blockml-config';
-import { BmError } from '~blockml/models/bm-error';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckReportRow;

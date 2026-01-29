@@ -1,11 +1,11 @@
-import * as fse from 'fs-extra';
+import fse from 'fs-extra';
+import { prepareTest } from '#blockml/functions/extra/prepare-test';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { ProjectConnection } from '#common/interfaces/backend/project-connection';
-import { prepareTest } from '~blockml/functions/extra/prepare-test';
 
 let caller = CallerEnum.RebuildStruct;
 let func = FuncEnum.LogStruct;

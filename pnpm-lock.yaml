@@ -376,11 +376,11 @@ catalogs:
       specifier: 3.2.0
       version: 3.2.0
     date-fns:
-      specifier: 2.30.0
-      version: 2.30.0
+      specifier: 4.1.0
+      version: 4.1.0
     date-fns-tz:
-      specifier: 3.1.3
-      version: 3.1.3
+      specifier: 3.2.0
+      version: 3.2.0
     dayjs:
       specifier: 1.11.13
       version: 1.11.13
@@ -790,10 +790,10 @@ importers:
         version: 0.14.2
       date-fns:
         specifier: 'catalog:'
-        version: 2.30.0
+        version: 4.1.0
       date-fns-tz:
         specifier: 'catalog:'
-        version: 3.1.3(date-fns@2.30.0)
+        version: 3.2.0(date-fns@4.1.0)
       dayjs:
         specifier: 'catalog:'
         version: 1.11.13
@@ -1064,10 +1064,10 @@ importers:
         version: 1.4.5
       date-fns:
         specifier: 'catalog:'
-        version: 2.30.0
+        version: 4.1.0
       date-fns-tz:
         specifier: 'catalog:'
-        version: 3.1.3(date-fns@2.30.0)
+        version: 3.2.0(date-fns@4.1.0)
       fs-extra:
         specifier: 'catalog:'
         version: 11.2.0
@@ -1114,9 +1114,18 @@ importers:
       '@nestjs/testing':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/platform-express@11.1.0)
+      '@swc-node/register':
+        specifier: 'catalog:'
+        version: 1.11.1(@swc/core@1.15.11(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.2)
       '@swc/cli':
         specifier: 'catalog:'
         version: 0.7.10(@swc/core@1.15.11(@swc/helpers@0.5.18))(chokidar@4.0.3)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.18)
+      '@swc/helpers':
+        specifier: 'catalog:'
+        version: 0.5.18
       '@types/d3-format':
         specifier: 'catalog:'
         version: 2.0.5
@@ -1144,9 +1153,6 @@ importers:
       esbuild:
         specifier: 'catalog:'
         version: 0.24.0
-      tsconfig-paths:
-        specifier: 'catalog:'
-        version: 3.14.2
 
   apps/chat:
     dependencies:
@@ -1200,10 +1206,10 @@ importers:
         version: 0.14.2
       date-fns:
         specifier: 'catalog:'
-        version: 2.30.0
+        version: 4.1.0
       date-fns-tz:
         specifier: 'catalog:'
-        version: 3.1.3(date-fns@2.30.0)
+        version: 3.2.0(date-fns@4.1.0)
       fs-extra:
         specifier: 'catalog:'
         version: 11.2.0
@@ -1716,10 +1722,10 @@ importers:
         version: 3.2.1(typanion@3.14.0)
       date-fns:
         specifier: 'catalog:'
-        version: 2.30.0
+        version: 4.1.0
       date-fns-tz:
         specifier: 'catalog:'
-        version: 3.1.3(date-fns@2.30.0)
+        version: 3.2.0(date-fns@4.1.0)
       dotenv:
         specifier: 'catalog:'
         version: 8.6.0
@@ -1925,10 +1931,10 @@ importers:
         version: 0.14.2
       date-fns:
         specifier: 'catalog:'
-        version: 2.30.0
+        version: 4.1.0
       date-fns-tz:
         specifier: 'catalog:'
-        version: 3.1.3(date-fns@2.30.0)
+        version: 3.2.0(date-fns@4.1.0)
       dayjs:
         specifier: 'catalog:'
         version: 1.11.13
@@ -7739,14 +7745,13 @@ packages:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
 
-  date-fns-tz@3.1.3:
-    resolution: {integrity: sha512-ZfbMu+nbzW0mEzC8VZrLiSWvUIaI3aRHeq33mTe7Y38UctKukgqPR4nTDwcwS4d64Gf8GghnVsroBuMY3eiTeA==}
+  date-fns-tz@3.2.0:
+    resolution: {integrity: sha512-sg8HqoTEulcbbbVXeg84u5UnlsQa8GS5QXMqjjYIhS4abEVVKIUwe0/l/UhrZdKaL/W5eWZNlbTeEIiOXTcsBQ==}
     peerDependencies:
-      date-fns: ^3.0.0
+      date-fns: ^3.0.0 || ^4.0.0
 
-  date-fns@2.30.0:
-    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
-    engines: {node: '>=0.11'}
+  date-fns@4.1.0:
+    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
   date-time@3.1.0:
     resolution: {integrity: sha512-uqCUKXE5q1PNBXjPqvwhwJf9SwMoAHBgWJ6DcrnS5o+W2JOiIILl0JEdVD8SGujrNS02GGxgwAg2PN2zONgtjg==}
@@ -19799,13 +19804,11 @@ snapshots:
 
   data-uri-to-buffer@4.0.1: {}
 
-  date-fns-tz@3.1.3(date-fns@2.30.0):
+  date-fns-tz@3.2.0(date-fns@4.1.0):
     dependencies:
-      date-fns: 2.30.0
+      date-fns: 4.1.0
 
-  date-fns@2.30.0:
-    dependencies:
-      '@babel/runtime': 7.28.4
+  date-fns@4.1.0: {}
 
   date-time@3.1.0:
     dependencies:
