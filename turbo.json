@@ -1,11 +1,13 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
+    "lint": {},
+    "circular": {},
     "build:prod": {
       "dependsOn": ["^build:prod"],
       "outputs": ["dist/**"]
     },
-    "dev": {
+    "start": {
       "cache": false,
       "persistent": true
     },
@@ -14,28 +16,14 @@
       "cache": false,
       "persistent": true
     },
-    "start": {
-      "cache": false,
-      "persistent": true
-    },
     "debug": {
       "cache": false,
       "persistent": true
     },
-    "test": {
-      "dependsOn": ["build-tests"]
-    },
-    "build-tests": {
-      "dependsOn": ["^build-tests"],
-      "outputs": ["dist/tests/**"]
-    },
-    "e2e": {
-      "dependsOn": ["build-tests"]
-    },
+    "test": {},
+    "e2e": {},
     "pack": {
       "dependsOn": ["build:prod"]
-    },
-    "lint": {},
-    "circular": {}
+    }
   }
 }

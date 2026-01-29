@@ -17,10 +17,9 @@ COPY apps/mcli apps/mcli/
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 
-COPY ava.config.js ava-js.config.js ava-js-e2e.config.js turbo.json package.json tsconfig.base.json tsconfig.json ./
+COPY turbo.json package.json tsconfig.base.json tsconfig.json ./
 
 RUN pnpm build:mcli
-RUN pnpm --filter @mprove/mcli build-tests
 
 # WORKDIR /usr/src/app/apps/mcli
 

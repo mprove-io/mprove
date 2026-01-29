@@ -9,7 +9,7 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "build-tests": "rimraf dist/tests && tsc --project tsconfig.test.json --outDir dist/tests",
+    "lint": "biome lint src",
     "circular": "madge --circular ."
   },
   "dependencies": {

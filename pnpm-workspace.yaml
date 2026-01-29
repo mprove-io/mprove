@@ -141,7 +141,6 @@ catalog:
   isolated-vm: '6.0.2'
   js-yaml: '4.1.1'
   luxon: '2.5.2'
-  module-alias: '2.2.3'
   nanoid: '3.3.10'
   neoip: '3.0.1'
   nodegit: '0.28.0-alpha.36'

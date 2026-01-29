@@ -48,6 +48,38 @@ Apps communicate:
 - `tsconfig.base.json` — path aliases
 - `docker-compose.yml` — local development stack
 
+## Turborepo Scripts
+
+Scripts follow a consistent pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` runs for a specific package.
+
+| Task            | All Packages      | Single Package Example    |
+| --------------- | ----------------- | ------------------------- |
+| **Lint**        | `pnpm lint`       | `pnpm lint:backend`       |
+| **Circular**    | `pnpm circular`   | `pnpm circular:backend`   |
+| **Build**       | `pnpm build:prod` | `pnpm build:backend:prod` |
+| **Start (dev)** | `pnpm start`      | `pnpm start:backend`      |
+| **Test**        | `pnpm test`       | `pnpm test:blockml`       |
+| **E2E**         | `pnpm e2e`        | `pnpm e2e:backend`        |
+
+**Available filters:** `backend`, `blockml`, `chat`, `disk`, `mcli`, `front`, `common`, `node-common`
+
+**Per-package scripts** (defined in each app/lib `package.json`):
+
+| Script       | Purpose                                    |
+| ------------ | ------------------------------------------ |
+| `lint`       | Run Biome linter on `src/`                 |
+| `circular`   | Check for circular dependencies with Madge |
+| `build:prod` | Production build (SWC compile + esbuild)   |
+| `start`      | Dev server with hot reload (SWC register)  |
+| `debug`      | Dev server with Node.js inspector          |
+| `test`       | Unit tests with AVA                        |
+| `e2e`        | End-to-end tests with AVA                  |
+
+**Formatting scripts** (root only):
+
+- `pnpm bfm` — Biome check and fix (ts/js/css)
+- `pnpm pfm` — Prettier format (html/scss/json/md)
+
 ## Shared Libraries
 
 | Library     | Used By           | Purpose                                    |
@@ -59,49 +91,34 @@ Apps communicate:
 
 **Shared libraries** use package.json `exports` field (Just-in-Time pattern):
 
-- `~common/*` → resolved via `@mprove/common` package exports
-- `~node-common/*` → resolved via `@mprove/node-common` package exports
+- `#common/*` → resolved via `@mprove/common` package exports
+- `#node-common/*` → resolved via `@mprove/node-common` package exports
 
 **Internal app paths** use Node.js subpath imports (`#app/*`):
 
-- `#chat/*` → `apps/chat/src/*` (migrated)
-- `#disk/*` → `apps/disk/src/*` (migrated)
-- `#blockml/*` → `apps/blockml/src/*` (migrated)
-- `#backend/*` → `apps/backend/src/*` (migrated)
-- `#mcli/*` → `apps/mcli/src/*` (migrated)
-- `#front/*` → `apps/front/src/*` (migrated)
+- `#chat/*` → `apps/chat/src/*`
+- `#disk/*` → `apps/disk/src/*`
+- `#blockml/*` → `apps/blockml/src/*`
+- `#backend/*` → `apps/backend/src/*`
+- `#mcli/*` → `apps/mcli/src/*`
+- `#front/*` → `apps/front/src/*`
 
-Root `tsconfig.base.json` paths (for shared libraries):
+### ESM Configuration
 
-```
-"~common/*": ["node_modules/@mprove/common/*"],
-"~node-common/*": ["node_modules/@mprove/node-common/*"]
-```
+All apps use native ESM with the following configuration:
 
-### ESM Migration Configuration
-
-Apps are being migrated from CommonJS to ESM. Migrated apps: chat, disk, blockml, backend, mcli, front.
-
-**Migrated App Configuration:**
-
-| File            | Key Changes                                                                  |
+| File            | Key Settings                                                                 |
 | --------------- | ---------------------------------------------------------------------------- |
 | `package.json`  | `"type": "module"`, `imports` field with `#app/*` aliases                    |
 | `tsconfig.json` | `"module": "ESNext"`, `"moduleResolution": "Bundler"`, paths with `#` prefix |
 | `.swcrc`        | `"target": "es2022"`, `"module": { "type": "nodenext" }`                     |
 | `ava.config.js` | Direct TS execution with `@swc-node/register/esm-register`                   |
 
-**Development Scripts (ESM):**
+**Development Scripts:**
 
 - `start`: `node --import @swc-node/register/esm-register --watch src/main.ts`
 - `debug`: `node --import @swc-node/register/esm-register --inspect=0.0.0.0:PORT --watch src/main.ts`
-- `e2e`: `ava --concurrency=5` (runs TypeScript directly)
-
-**Non-Migrated App Configuration:**
-
-- Uses `ts-node/register` + `tsconfig-paths/register` for development
-- Uses `module-alias` for test path resolution
-- Requires `build-tests` step before running tests
+- `e2e`: `ava` (runs TypeScript directly via SWC)
 
 ### libs/common
 
