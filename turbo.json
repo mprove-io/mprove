@@ -3,9 +3,15 @@
   "tasks": {
     "lint": {},
     "circular": {},
-    "clean-node": {},
-    "clean-dist": {},
-    "clean-turbo": {},
+    "clean-node": {
+      "cache": false
+    },
+    "clean-dist": {
+      "cache": false
+    },
+    "clean-turbo": {
+      "cache": false
+    },
     "build:prod": {
       "dependsOn": ["^build:prod"],
       "outputs": ["dist/**"]
