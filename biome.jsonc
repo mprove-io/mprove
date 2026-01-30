@@ -7,16 +7,19 @@
       "**/*.css",
       "**/*.ts",
       "**/*.js",
-      "!.angular/**",
+      "!_nogit/**",
+      "!**/.angular/**",
+      "!.pnpm-store/**",
       "!.turbo/**",
+      "!**/.turbo/**",
       "!apps/backend/src/drizzle/postgres/migrations/**",
       "!**/dist/**",
       "!mprove_data/**",
       "!node_modules/**",
+      "!**/node_modules/**",
       "!tmp/**",
       "!setup-docker/data/**",
-      "!package.docker.json",
-      "!coverage/**"
+      "!package.docker.json"
     ]
   },
   "formatter": {

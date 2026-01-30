@@ -1,4 +1,5 @@
 .angular/
+.pnpm-store/
 .turbo/
 apps/backend/src/drizzle/postgres/migrations/
 dist/
@@ -8,4 +9,3 @@ tmp/
 setup-docker/data/
 package.docker.json
 
-coverage/
