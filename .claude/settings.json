@@ -19,7 +19,6 @@
     "deny": [
       "Read(./_nogit/**)",
       "Read(./.angular/**)",
-      "Read(./.devcontainer/**)",
       "Read(./.github/**)",
       "Read(./.husky/**)",
       "Read(./.turbo/**)",

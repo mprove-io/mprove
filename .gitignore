@@ -6,6 +6,9 @@ nogit/
 .turbo/
 .pnpm-store/
 .vscode/*
+!.vscode/keybindings-example.json
+!.vscode/settings-example.json
+!.vscode/user-settings-example.json
 !.vscode/extensions.json
 !.vscode/tasks.json
 !.vscode/launch.json

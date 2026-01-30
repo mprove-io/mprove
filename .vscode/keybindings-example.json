@@ -1,0 +1,68 @@
+[
+  {
+    "key": "cmd+shift+1",
+    "command": "workbench.action.tasks.runTask",
+    "args": "runCurrentTest"
+  },
+  {
+    "key": "cmd+y",
+    "command": "editor.action.deleteLines",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "cmd+backspace",
+    "command": "-editor.action.deleteLines",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "shift+cmd+s",
+    "command": "workbench.action.openGlobalKeybindings"
+  },
+  {
+    "key": "cmd+k cmd+s",
+    "command": "-workbench.action.openGlobalKeybindings"
+  },
+  {
+    "key": "ctrl+`",
+    "command": "workbench.action.terminal.toggleTerminal",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+escape",
+    "command": "-workbench.action.terminal.toggleTerminal",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "alt+f12",
+    "command": "-workbench.action.terminal.toggleTerminal",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "shift+cmd+t",
+    "command": "workbench.action.selectTheme"
+  },
+  {
+    "key": "ctrl+`",
+    "command": "-workbench.action.selectTheme"
+  },
+  {
+    "key": "shift+cmd+i",
+    "command": "editor.action.formatSelection",
+    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "alt+cmd+l",
+    "command": "-editor.action.formatSelection",
+    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "alt+cmd+u",
+    "command": "git.pushTo",
+    "when": "!inDebugMode && !terminalFocus"
+  },
+  {
+    "key": "alt+cmd+k",
+    "command": "-git.pushTo",
+    "when": "!inDebugMode && !terminalFocus"
+  }
+]

@@ -1,0 +1,96 @@
+{
+  "editor.pasteAs.enabled": false,
+  "explorer.compactFolders": false,
+  "workbench.settings.useSplitJSON": false,
+  "workbench.tree.enableStickyScroll": false,
+  "editor.stickyScroll.enabled": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[md]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "search.exclude": {
+    "**/malloy": true,
+    "**/mprove_data": true,
+    "**/node_modules": true,
+    "**/dist-swc": true,
+    "**/dist": true
+  },
+  "workbench.editor.closeOnFileDelete": true,
+  "files.enableTrash": false,
+  "workbench.colorTheme": "Darcula Extra",
+  "diffEditor.ignoreTrimWhitespace": false,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "editor.links": false,
+  "terminal.integrated.scrollback": 10000,
+  "editor.accessibilitySupport": "off",
+  "workbench.iconTheme": "material-icon-theme",
+  "editor.suggest.showReferences": false,
+  "files.autoSave": "afterDelay",
+  "javascript.updateImportsOnFileMove.enabled": "never",
+  "workbench.startupEditor": "newUntitledFile",
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "extensions.ignoreRecommendations": true,
+  "files.autoSaveDelay": 300,
+  "editor.largeFileOptimizations": false,
+  "workbench.panel.defaultLocation": "bottom",
+  "typescript.referencesCodeLens.enabled": false,
+  "editor.detectIndentation": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "window.zoomLevel": 3.25,
+  "redhat.telemetry.enabled": false,
+  "editor.bracketPairColorization.enabled": false,
+  "workbench.editor.splitInGroupLayout": "horizontal",
+  "editor.tabSize": 2,
+  "explorer.confirmDelete": false,
+  "workbench.settings.editor": "json",
+  "editor.codeLens": true,
+  "files.associations": {
+    "*.chart": "yaml",
+    "*.dashboard": "yaml",
+    "*.report": "yaml",
+    "*.mod": "yaml",
+    "*.store": "yaml",
+    "*.config": "yaml",
+    "*.preset": "yaml",
+    "*.view": "yaml",
+    "*.model": "yaml",
+    "*.udf": "yaml"
+  },
+  "workbench.editor.empty.hint": "hidden",
+  "editor.pasteAs.preferences": ["text.plain"],
+  "git.autoRepositoryDetection": false,
+  "claudeCode.selectedModel": "opus",
+  "claudeCode.useTerminal": false,
+  "claudeCode.initialPermissionMode": "plan",
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.autosave": true,
+  "claudeCode.useCtrlEnterToSend": false,
+  "claudeCode.enableNewConversationShortcut": true,
+  "claudeCode.hideOnboarding": false,
+  "claudeCode.respectGitIgnore": true,
+  "claudeCode.environmentVariables": [],
+  "claudeCode.disableLoginPrompt": false,
+  "claudeCode.allowDangerouslySkipPermissions": false
+}
