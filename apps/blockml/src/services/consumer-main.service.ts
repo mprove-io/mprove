@@ -98,5 +98,6 @@ export class ConsumerMainService {
     if (this.worker) {
       await this.worker.close();
     }
+    this.redisClient.disconnect();
   }
 }
