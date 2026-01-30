@@ -15,8 +15,8 @@
   "scripts": {
     "prepare": "husky",
     "check:db": "node -r ts-node/register -r tsconfig-paths/register apps/backend/src/wait-for-db.ts",
-    "mig:custom": "drizzle-kit generate --custom --config apps/backend/src/drizzle/postgres/drizzle.config.ts --name=$(date -u +\"%Y-%m-%d_%H-%M-%S\")",
-    "mig:gen": "drizzle-kit generate --config apps/backend/src/drizzle/postgres/drizzle.config.ts --name=$(date -u +\"%Y-%m-%d_%H-%M-%S\")",
+    "mig:custom": "cd apps/backend && drizzle-kit generate --custom --config src/drizzle/postgres/drizzle.config.ts --name=$(date -u +\"%Y-%m-%d_%H-%M-%S\")",
+    "mig:gen": "cd apps/backend && drizzle-kit generate --config src/drizzle/postgres/drizzle.config.ts --name=$(date -u +\"%Y-%m-%d_%H-%M-%S\")",
     "mig:run": "pnpm node -r ts-node/register -r tsconfig-paths/register apps/backend/src/drizzle/postgres/drizzle-migrate.ts",
     "mig:dropmig": "drizzle-kit drop --config apps/backend/src/drizzle/postgres/drizzle.config.ts",
     "dz-kit:pull": "drizzle-kit introspect --config apps/backend/src/drizzle/postgres/drizzle.config.ts",

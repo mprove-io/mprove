@@ -2,8 +2,8 @@ import type { Config } from 'drizzle-kit';
 
 export default {
   dialect: 'postgresql',
-  schema: 'apps/backend/src/drizzle/postgres/schema',
-  out: 'apps/backend/src/drizzle/postgres/migrations',
+  schema: 'src/drizzle/postgres/schema',
+  out: 'src/drizzle/postgres/migrations',
   dbCredentials: {
     // TODO: check parameters vs url, ssl, BACKEND_IS_POSTGRES_TLS
     url: process.env.CLI_DRIZZLE_POSTGRES_DATABASE_URL
