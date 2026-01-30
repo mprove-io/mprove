@@ -547,8 +547,8 @@ catalogs:
       specifier: 3.4.14
       version: 3.4.14
     tarjan-graph:
-      specifier: 2.0.0
-      version: 2.0.0
+      specifier: 3.0.0
+      version: 3.0.0
     throttle-debounce:
       specifier: 5.0.0
       version: 5.0.0
@@ -564,12 +564,6 @@ catalogs:
     trino-client:
       specifier: 0.2.9
       version: 0.2.9
-    ts-node:
-      specifier: 10.9.2
-      version: 10.9.2
-    tsconfig-paths:
-      specifier: 3.14.2
-      version: 3.14.2
     tslib:
       specifier: 2.7.0
       version: 2.7.0
@@ -650,12 +644,6 @@ importers:
       shx:
         specifier: 'catalog:'
         version: 0.4.0
-      ts-node:
-        specifier: 'catalog:'
-        version: 10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.18))(@types/node@22.7.5)(typescript@5.9.2)
-      tsconfig-paths:
-        specifier: 'catalog:'
-        version: 3.14.2
       tsx:
         specifier: 4.21.0
         version: 4.21.0
@@ -880,7 +868,7 @@ importers:
         version: 1.18.0
       tarjan-graph:
         specifier: 'catalog:'
-        version: 2.0.0
+        version: 3.0.0
       tiny-async-pool:
         specifier: 'catalog:'
         version: 1.3.0
@@ -6467,9 +6455,6 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/json5@0.0.29':
-    resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
-
   '@types/jsonwebtoken@9.0.10':
     resolution: {integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==}
 
@@ -9280,10 +9265,6 @@ packages:
   json-schema-typed@8.0.2:
     resolution: {integrity: sha512-fQhoXdcvc3V28x7C7BMs4P5+kNlgUURe2jmUT1T//oBRMDrqy1QPelJimwZGo7Hg9VPV3EQV5Bnq4hbFy2vetA==}
 
-  json5@1.0.2:
-    resolution: {integrity: sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA==}
-    hasBin: true
-
   json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
@@ -11589,8 +11570,8 @@ packages:
     engines: {node: '>=18'}
     deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exhorbitant rates) by contacting i@izs.me
 
-  tarjan-graph@2.0.0:
-    resolution: {integrity: sha512-fDe57nO2Ukw2A/jHwVeiEgERGrGHukf3aHmR/YZ9BrveOtHVlFs289AnVeb1wD2aj9g01ZZ6f7VyMJ2QxI2NBQ==}
+  tarjan-graph@3.0.0:
+    resolution: {integrity: sha512-sM1+1ZKnnCtTP9W0DHTMHTlej9buusVHaKiBVecc6tZpBffBeEpE4XdFz7WNs9H1zaYkcgm6MzfyXFxSV2S1rA==}
 
   teeny-request@7.2.0:
     resolution: {integrity: sha512-SyY0pek1zWsi0LRVAALem+avzMLc33MKW/JLLakdP4s9+D7+jHcy5x6P+h94g2QNZsAqQNfX5lsbd3WSeJXrrw==}
@@ -11736,9 +11717,6 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
-
-  tsconfig-paths@3.14.2:
-    resolution: {integrity: sha512-o/9iXgCYc5L/JxCHPe3Hvh8Q/2xm5Z+p18PESBU6Ff33695QnCHBEjcytY2q19ua7Mbl/DavtBOLq+oG0RCL+g==}
 
   tsconfig-paths@4.2.0:
     resolution: {integrity: sha512-NoZ4roiN7LnbKn9QqE1amc9DJfzvZXxF4xDavcOWt1BPkdx+m+0gJuPM+S0vCe7zTJMYUP0R8pO2XMr+Y8oLIg==}
@@ -14780,6 +14758,7 @@ snapshots:
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
+    optional: true
 
   '@ctrl/tinycolor@4.2.0': {}
 
@@ -15444,6 +15423,7 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+    optional: true
 
   '@js-sdsl/ordered-map@4.4.2': {}
 
@@ -18056,13 +18036,17 @@ snapshots:
       '@ts-graphviz/ast': 2.0.7
       '@ts-graphviz/common': 2.1.5
 
-  '@tsconfig/node10@1.0.12': {}
+  '@tsconfig/node10@1.0.12':
+    optional: true
 
-  '@tsconfig/node12@1.0.11': {}
+  '@tsconfig/node12@1.0.11':
+    optional: true
 
-  '@tsconfig/node14@1.0.3': {}
+  '@tsconfig/node14@1.0.3':
+    optional: true
 
-  '@tsconfig/node16@1.0.4': {}
+  '@tsconfig/node16@1.0.4':
+    optional: true
 
   '@tufjs/canonical-json@2.0.0': {}
 
@@ -18176,8 +18160,6 @@ snapshots:
   '@types/js-yaml@4.0.9': {}
 
   '@types/json-schema@7.0.15': {}
-
-  '@types/json5@0.0.29': {}
 
   '@types/jsonwebtoken@9.0.10':
     dependencies:
@@ -18957,7 +18939,8 @@ snapshots:
       delegates: 1.0.0
       readable-stream: 3.6.2
 
-  arg@4.1.3: {}
+  arg@4.1.3:
+    optional: true
 
   arg@5.0.2: {}
 
@@ -19732,7 +19715,8 @@ snapshots:
     optionalDependencies:
       typescript: 5.9.2
 
-  create-require@1.1.1: {}
+  create-require@1.1.1:
+    optional: true
 
   crelt@1.0.6: {}
 
@@ -19965,7 +19949,8 @@ snapshots:
 
   diff-sequences@29.6.3: {}
 
-  diff@4.0.2: {}
+  diff@4.0.2:
+    optional: true
 
   discontinuous-range@1.0.0: {}
 
@@ -21417,10 +21402,6 @@ snapshots:
 
   json-schema-typed@8.0.2: {}
 
-  json5@1.0.2:
-    dependencies:
-      minimist: 1.2.8
-
   json5@2.2.3: {}
 
   jsonc-parser@3.3.1: {}
@@ -21738,7 +21719,8 @@ snapshots:
     dependencies:
       semver: 6.3.1
 
-  make-error@1.3.6: {}
+  make-error@1.3.6:
+    optional: true
 
   make-fetch-happen@14.0.3:
     dependencies:
@@ -24048,7 +24030,7 @@ snapshots:
       minizlib: 3.1.0
       yallist: 5.0.0
 
-  tarjan-graph@2.0.0: {}
+  tarjan-graph@3.0.0: {}
 
   teeny-request@7.2.0(encoding@0.1.13):
     dependencies:
@@ -24201,33 +24183,6 @@ snapshots:
     optionalDependencies:
       '@swc/core': 1.15.11(@swc/helpers@0.5.18)
     optional: true
-
-  ts-node@10.9.2(@swc/core@1.15.11(@swc/helpers@0.5.18))(@types/node@22.7.5)(typescript@5.9.2):
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      '@tsconfig/node10': 1.0.12
-      '@tsconfig/node12': 1.0.11
-      '@tsconfig/node14': 1.0.3
-      '@tsconfig/node16': 1.0.4
-      '@types/node': 22.7.5
-      acorn: 8.15.0
-      acorn-walk: 8.3.4
-      arg: 4.1.3
-      create-require: 1.1.1
-      diff: 4.0.2
-      make-error: 1.3.6
-      typescript: 5.9.2
-      v8-compile-cache-lib: 3.0.1
-      yn: 3.1.1
-    optionalDependencies:
-      '@swc/core': 1.15.11(@swc/helpers@0.5.18)
-
-  tsconfig-paths@3.14.2:
-    dependencies:
-      '@types/json5': 0.0.29
-      json5: 1.0.2
-      minimist: 1.2.8
-      strip-bom: 3.0.0
 
   tsconfig-paths@4.2.0:
     dependencies:
@@ -24408,7 +24363,8 @@ snapshots:
 
   uuid@9.0.1: {}
 
-  v8-compile-cache-lib@3.0.1: {}
+  v8-compile-cache-lib@3.0.1:
+    optional: true
 
   validate-npm-package-license@3.0.4:
     dependencies:
@@ -24737,7 +24693,8 @@ snapshots:
       buffer-crc32: 0.2.13
       pend: 1.2.0
 
-  yn@3.1.1: {}
+  yn@3.1.1:
+    optional: true
 
   yocto-queue@0.1.0: {}
 
