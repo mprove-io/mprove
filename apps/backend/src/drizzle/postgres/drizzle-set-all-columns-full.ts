@@ -1,8 +1,8 @@
 import { getTableColumns, sql } from 'drizzle-orm';
 import {
+  getTableConfig,
   PgTable,
-  PgUpdateSetSource,
-  getTableConfig
+  PgUpdateSetSource
 } from 'drizzle-orm/pg-core';
 
 // https://github.com/drizzle-team/drizzle-orm/issues/1728

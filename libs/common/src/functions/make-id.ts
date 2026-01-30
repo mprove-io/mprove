@@ -1,4 +1,5 @@
 import { customAlphabet } from 'nanoid';
+
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const alphabetWithNumbers = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

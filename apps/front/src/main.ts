@@ -13,8 +13,8 @@ import {
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   BrowserModule,
-  Title,
-  bootstrapApplication
+  bootstrapApplication,
+  Title
 } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -28,8 +28,8 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import tippy from 'tippy.js';
-import { appRoutes } from './app/app-routes';
 import { AppComponent } from './app/app.component';
+import { appRoutes } from './app/app-routes';
 import { AuthModule } from './app/modules/auth/auth.module';
 import { DashboardsModule } from './app/modules/dashboards/dashboards.module';
 import { FilesModule } from './app/modules/files/files.module';

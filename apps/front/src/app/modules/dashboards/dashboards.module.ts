@@ -10,11 +10,11 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { SharedModule } from '../shared/shared.module';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardFiltersComponent } from './dashboard-filters/dashboard-filters.component';
 import { DashboardOptionsComponent } from './dashboard-options/dashboard-options.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { DashboardsListComponent } from './dashboards-list/dashboards-list.component';
 import { DashboardsComponent } from './dashboards.component';
+import { DashboardsListComponent } from './dashboards-list/dashboards-list.component';
 
 @NgModule({
   declarations: [

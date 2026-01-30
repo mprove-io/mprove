@@ -1,11 +1,10 @@
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { Extension } from '@codemirror/state';
+import { EditorView } from '@codemirror/view';
 import { LIGHT_PLUS_STYLES } from './light-plus-tags';
 import { createThemeExtra } from './theme-creators/create-theme-extra';
 import { createThemeExtraDiff } from './theme-creators/create-theme-extra-diff';
 import { createThemeExtraSingle } from './theme-creators/create-theme-extra-single';
-
-import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
-import { EditorView } from '@codemirror/view';
 import { VS_LIGHT_STYLES } from './vs-light-tags';
 
 // https://github.com/uiwjs/react-codemirror/blob/master/themes/theme/src/index.tsx

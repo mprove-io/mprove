@@ -1,9 +1,9 @@
 import {
+  registerDecorator,
   ValidationArguments,
   ValidationOptions,
   ValidatorConstraint,
-  ValidatorConstraintInterface,
-  registerDecorator
+  ValidatorConstraintInterface
 } from 'class-validator';
 import { isTimezoneValid } from './is-timezone-valid';
 
