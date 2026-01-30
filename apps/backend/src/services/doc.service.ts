@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { format, fromUnixTime } from 'date-fns';
@@ -6,7 +6,10 @@ import dayjs from 'dayjs';
 import { DateTime } from 'luxon';
 import pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-import Graph from 'tarjan-graph';
+import tarjanGraph from 'tarjan-graph';
+
+const Graph = (tarjanGraph as any).default;
+
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -34,22 +37,37 @@ import { MyRegex } from '#common/models/my-regex';
 import { ServerError } from '#common/models/server-error';
 import { nodeFormatTsUnix } from '#node-common/functions/node-format-ts-unix';
 
-interface XColumn {
-  id: string;
-  xDeps: string[];
-  input: string;
-  inputSub: string;
-  outputValue: string;
-  outputError: string;
-}
-
 @Injectable()
-export class DocService {
+export class DocService implements OnModuleDestroy {
+  private pgp: pgPromise.IMain;
+  private calcDb: pgPromise.IDatabase<unknown>;
+
   constructor(
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
-  ) {}
+  ) {
+    this.pgp = pgPromise({ noWarnings: true });
+
+    const cn: pg.IConnectionParameters<pg.IClient> = {
+      host: this.cs.get<BackendConfig['calcPostgresHost']>('calcPostgresHost'),
+      port: this.cs.get<BackendConfig['calcPostgresPort']>('calcPostgresPort'),
+      database: 'postgres',
+      user: this.cs.get<BackendConfig['calcPostgresUsername']>(
+        'calcPostgresUsername'
+      ),
+      password: this.cs.get<BackendConfig['calcPostgresPassword']>(
+        'calcPostgresPassword'
+      ),
+      ssl: false
+    };
+
+    this.calcDb = this.pgp(cn);
+  }
+
+  onModuleDestroy() {
+    this.pgp.end();
+  }
 
   async calculateData(item: {
     report: ReportX;
@@ -117,23 +135,6 @@ export class DocService {
     if (report.rows.filter(x => isDefined(x.formulaError)).length > 0) {
       topQueryError = SOME_ROWS_HAVE_FORMULA_ERRORS;
     } else {
-      let cn: pg.IConnectionParameters<pg.IClient> = {
-        host: this.cs.get<BackendConfig['calcPostgresHost']>(
-          'calcPostgresHost'
-        ),
-        port: this.cs.get<BackendConfig['calcPostgresPort']>(
-          'calcPostgresPort'
-        ),
-        database: 'postgres',
-        user: this.cs.get<BackendConfig['calcPostgresUsername']>(
-          'calcPostgresUsername'
-        ),
-        password: this.cs.get<BackendConfig['calcPostgresPassword']>(
-          'calcPostgresPassword'
-        ),
-        ssl: false
-      };
-
       let timestampValues = reportDataColumns.map(
         x => x.fields['timestamp'] * 1000
       );
@@ -207,10 +208,7 @@ SELECT
 ${outerSelectReady}
 FROM main;`;
 
-      let pgp = pgPromise({ noWarnings: true });
-      let pgDb = pgp(cn);
-
-      await pgDb
+      await this.calcDb
         .any(querySql)
         .then(async (data: any) => {
           topQueryData = data.map((r: any) => {

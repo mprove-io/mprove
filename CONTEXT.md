@@ -156,6 +156,8 @@ Scripts follow a consistent pattern: `pnpm <task>` runs for all packages, `pnpm 
 
 All apps use native ESM with the following configuration:
 
+**Node.js built-ins:** Use `node:` prefix (e.g., `import { createRequire } from 'node:module'`).
+
 | File            | Key Settings                                                                 |
 | --------------- | ---------------------------------------------------------------------------- |
 | `package.json`  | `"type": "module"`, `imports` field with `#app/*` aliases                    |

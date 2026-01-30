@@ -13,7 +13,26 @@
       "Bash(ls *)",
       "Bash(ls -la *)",
       "Bash(find:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(gh search code*)",
+      "Bash(gh search issues*)",
+      "Bash(gh search repos*)",
+      "Bash(gh search commits*)",
+      "Bash(gh search prs*)",
+      "Bash(gh pr list*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh pr checks*)",
+      "Bash(gh pr status*)",
+      "Bash(gh issue list*)",
+      "Bash(gh issue view*)",
+      "Bash(gh issue status*)",
+      "Bash(gh repo view*)",
+      "Bash(gh repo list*)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)",
+      "Bash(gh release list*)",
+      "Bash(gh release view*)"
     ],
     "ask": ["Bash", "NotebookEdit", "WebFetch", "WebSearch", "Task"],
     "deny": [
@@ -36,7 +55,6 @@
 
       "Edit(./_nogit/**)",
       "Edit(./.angular/**)",
-      "Edit(./.devcontainer/**)",
       "Edit(./.github/**)",
       "Edit(./.husky/**)",
       "Edit(./.turbo/**)",
@@ -57,7 +75,6 @@
 
       "Write(./_nogit/**)",
       "Write(./.angular/**)",
-      "Write(./.devcontainer/**)",
       "Write(./.github/**)",
       "Write(./.husky/**)",
       "Write(./.turbo/**)",
