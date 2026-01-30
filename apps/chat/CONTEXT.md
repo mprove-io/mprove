@@ -17,7 +17,6 @@ build.mjs
 CONTEXT.md
 package.json
 tsconfig.json
-tsconfig.test.json
 ```
 
 ## Key Files

@@ -46,9 +46,7 @@
     "source=mprove-chat-dist,target=${containerWorkspaceFolder}/apps/chat/dist,type=volume",
     "source=mprove-disk-dist,target=${containerWorkspaceFolder}/apps/disk/dist,type=volume",
     "source=mprove-front-dist,target=${containerWorkspaceFolder}/apps/front/dist,type=volume",
-    "source=mprove-mcli-dist,target=${containerWorkspaceFolder}/apps/mcli/dist,type=volume",
-    "source=mprove-common-dist,target=${containerWorkspaceFolder}/libs/common/dist,type=volume",
-    "source=mprove-node-common-dist,target=${containerWorkspaceFolder}/libs/node-common/dist,type=volume"
+    "source=mprove-mcli-dist,target=${containerWorkspaceFolder}/apps/mcli/dist,type=volume"
   ],
   "initializeCommand": "bash .devcontainer/init.sh",
   "postCreateCommand": "bash .devcontainer/post-create.sh",

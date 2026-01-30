@@ -3,6 +3,9 @@
   "tasks": {
     "lint": {},
     "circular": {},
+    "clean-node": {},
+    "clean-dist": {},
+    "clean-turbo": {},
     "build:prod": {
       "dependsOn": ["^build:prod"],
       "outputs": ["dist/**"]

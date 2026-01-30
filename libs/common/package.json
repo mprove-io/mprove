@@ -10,7 +10,9 @@
   "types": "./src/index.ts",
   "scripts": {
     "lint": "biome lint src",
-    "circular": "madge --circular ."
+    "circular": "madge --circular .",
+    "clean-node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
+    "clean-turbo": "rimraf --glob \".turbo/*\" \".turbo/.[!.]*\""
   },
   "dependencies": {
     "@codemirror/language": "catalog:",
