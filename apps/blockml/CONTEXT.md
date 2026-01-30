@@ -36,14 +36,3 @@ Compiles BlockML model definitions (YAML-based) into executable query structures
 
 - Listens for Valkey (Redis) RPC messages from backend
 - Returns compiled structures or compilation errors
-
-## ESM Configuration
-
-This app uses native ESM with the following configuration:
-
-- **Package type:** `"type": "module"`
-- **Path aliases:** `#blockml/*`, `#common/*`, `#node-common/*` (via `imports` field in package.json)
-- **TypeScript:** `"module": "ESNext"`, `"moduleResolution": "Bundler"`
-- **SWC:** `"module": { "type": "nodenext" }`, `"target": "es2022"`
-- **Tests:** Direct TypeScript execution with AVA + @swc-node/register/esm-register
-- **Scripts:** Uses `node --import @swc-node/register/esm-register` for dev and debug

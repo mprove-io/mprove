@@ -47,13 +47,3 @@ Manages the file system layer for Mprove projects:
 ## Patterns
 
 - Each controller group handles a specific domain entity
-
-## ESM Configuration
-
-This app uses native ESM with the following configuration:
-
-- **Package type:** `"type": "module"`
-- **Path aliases:** `#disk/*`, `#common/*`, `#node-common/*` (via `imports` field)
-- **TypeScript:** `"module": "ESNext"`, `"moduleResolution": "Bundler"`
-- **SWC:** `"module": { "type": "nodenext" }`, `"target": "es2022"`
-- **Tests:** Direct TypeScript execution with AVA + @swc-node/register

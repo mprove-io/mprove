@@ -54,16 +54,6 @@ avatars, branches, catalogs, charts, check, connections, dashboards, envs, files
 - Controllers validate DTOs with `class-validator`
 - Custom `ServerError` with `ErEnum` error codes for all error responses
 
-## ESM Configuration
-
-This app uses native ESM with the following configuration:
-
-- **Package type:** `"type": "module"`
-- **Path aliases:** `#backend/*`, `#common/*`, `#node-common/*` (via `imports` field)
-- **TypeScript:** `"module": "ESNext"`, `"moduleResolution": "Bundler"`
-- **SWC:** `"module": { "type": "nodenext" }`, `"target": "es2022"`
-- **Tests:** Direct TypeScript execution with AVA + @swc-node/register
-
 ## E2E Tests
 
 - Test files: `src/**/*.e2e-spec.ts`

@@ -1,16 +1,17 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "sourceMap": true,
-    "declaration": false,
+    "types": ["node"],
+    "module": "ESNext",
     "moduleResolution": "Bundler",
     "moduleDetection": "force",
+    "sourceMap": true,
+    "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
     "isolatedModules": false,
     "target": "ES2022",
-    "module": "ESNext",
     "useDefineForClassFields": false,
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
@@ -21,15 +22,6 @@
     "strict": true,
     "strictPropertyInitialization": false,
     "strictNullChecks": false,
-    "allowJs": true,
-    "types": ["node"]
-  },
-  "exclude": [
-    "node_modules",
-    "**/node_modules",
-    "dist",
-    "**/dist",
-    "tmp",
-    ".turbo"
-  ]
+    "allowJs": true
+  }
 }

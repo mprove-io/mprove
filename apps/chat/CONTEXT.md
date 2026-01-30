@@ -28,13 +28,3 @@ Communicates with OpenCode server through sdk
 ## Communication
 
 - Receives Valkey (Redis) RPC messages from backend
-
-## ESM Configuration
-
-This app uses native ESM with the following configuration:
-
-- **Package type:** `"type": "module"`
-- **Path aliases:** `#chat/*`, `#common/*`, `#node-common/*` (via `imports` field)
-- **TypeScript:** `"module": "ESNext"`, `"moduleResolution": "Bundler"`
-- **SWC:** `"module": { "type": "nodenext" }`, `"target": "es2022"`
-- **Tests:** Direct TypeScript execution with AVA + @swc-node/register
