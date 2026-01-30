@@ -1,9 +1,27 @@
 /// <reference path="./types.d.ts" />
+import { existsSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { Cli } from 'clipanion';
 import 'reflect-metadata';
 
 const require = createRequire(import.meta.url);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function getPackageVersion(): string {
+  // Binary: package.json in same dir; Dev: package.json in parent dir
+  const candidates = [
+    resolve(__dirname, 'package.json'),
+    resolve(__dirname, '..', 'package.json')
+  ];
+  for (const p of candidates) {
+    if (existsSync(p)) {
+      return require(p).version;
+    }
+  }
+  return 'unknown';
+}
 
 import { ErEnum } from '#common/enums/er.enum';
 import { listenProcessEvents } from '#node-common/functions/listen-process-events';
@@ -66,5 +84,5 @@ Cli.from(appCommands, {
   enableColors: true,
   binaryLabel: 'Mprove CLI',
   binaryName: 'mprove',
-  binaryVersion: require('./package.json').version
+  binaryVersion: getPackageVersion()
 }).runExit(process.argv.slice(2), customContext);

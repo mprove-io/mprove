@@ -18,7 +18,7 @@
   "scripts": {
     "lint": "biome lint src",
     "circular": "madge --circular .",
-    "build:prod": "swc src -d dist --source-maps && node build.mjs && shx cp package.json dist/package.json && shx cp package.json dist/src/package.json",
+    "build:prod": "swc src -d dist --source-maps && node build.mjs && shx cp package.json dist/src/package.json",
     "e2e": "dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4",
     "pack": "pkg dist/src",
     "clean-node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
@@ -81,7 +81,8 @@
     ],
     "assets": [
       "node_modules/nodegit/build/Release/**/*",
-      "node_modules/axios/dist/node/axios.cjs"
+      "node_modules/axios/dist/node/axios.cjs",
+      "package.json"
     ],
     "outputPath": "bin",
     "compress": "GZip"
