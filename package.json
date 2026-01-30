@@ -51,7 +51,7 @@
     "clean:top:turbo": "rimraf --glob \".turbo/*\" \".turbo/.[!.]*\"",
     "clean:top:pnpm-store": "rimraf --glob \".pnpm-store/*\" \".pnpm-store/.[!.]*\"",
     "clean:top:node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
-    "clean:nested": "pnpm clean-turbo && pnpm clean-node && pnpm clean-dist",
+    "clean:nested": "pnpm clean-turbo && pnpm clean-dist && pnpm clean-node",
     "clean-turbo": "turbo run clean-turbo",
     "clean-node": "turbo run clean-node",
     "clean-dist": "turbo run clean-dist",
