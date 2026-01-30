@@ -1,5 +1,11 @@
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
-import { Inject, Logger, Module, OnModuleInit } from '@nestjs/common';
+import {
+  Inject,
+  Logger,
+  Module,
+  OnModuleDestroy,
+  OnModuleInit
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -14,6 +20,7 @@ import {
 } from 'drizzle-orm/node-postgres';
 import { migrate as migratePg } from 'drizzle-orm/node-postgres/migrator';
 import fse from 'fs-extra';
+import Redis from 'ioredis';
 import type { ClientConfig } from 'pg';
 import pg from 'pg';
 
@@ -83,6 +90,9 @@ let jwtModule = JwtModule.registerAsync({
   })
 });
 
+// Store throttler Redis client at module level for proper lifecycle management
+let throttlerRedisClient: Redis;
+
 let customThrottlerModule = ThrottlerModule.forRootAsync({
   inject: [ConfigService],
   useFactory: (cs: ConfigService<BackendConfig>) => {
@@ -92,6 +102,13 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     let valkeyPassword = cs.get<BackendConfig['backendValkeyPassword']>(
       'backendValkeyPassword'
     );
+
+    // Create Redis client instance for proper lifecycle management
+    throttlerRedisClient = new Redis({
+      host: valkeyHost,
+      port: 6379,
+      password: valkeyPassword
+    });
 
     return {
       throttlers: [
@@ -120,13 +137,7 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
           limit: 300 * THROTTLE_MULTIPLIER
         }
       ],
-      // Pass options (not instance) so ThrottlerStorageRedisService sets disconnectRequired=true
-      // and properly disconnects on module destroy
-      storage: new ThrottlerStorageRedisService({
-        host: valkeyHost,
-        port: 6379,
-        password: valkeyPassword
-      })
+      storage: new ThrottlerStorageRedisService(throttlerRedisClient)
     };
   }
 });
@@ -158,7 +169,7 @@ let customThrottlerModule = ThrottlerModule.forRootAsync({
     }
   ]
 })
-export class AppModule implements OnModuleInit {
+export class AppModule implements OnModuleInit, OnModuleDestroy {
   constructor(
     private usersService: UsersService,
     private membersService: MembersService,
@@ -907,5 +918,11 @@ export class AppModule implements OnModuleInit {
     );
 
     return connections;
+  }
+
+  async onModuleDestroy() {
+    if (throttlerRedisClient) {
+      throttlerRedisClient.disconnect();
+    }
   }
 }

@@ -23,7 +23,7 @@
       "Read(./.husky/**)",
       "Read(./.turbo/**)",
       "Read(./.pnpm-store/**)",
-      "Read(./.vscode/**)",
+      "Read(./.vscode/zshrc)",
       "Read(./dist/**)",
       "Read(./mprove_data/**)",
       "Read(./node_modules/**)",

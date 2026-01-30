@@ -56,7 +56,13 @@
     "args": {
       "commands": [
         "editor.action.formatDocument",
-        "editor.action.organizeImports"
+        {
+          "command": "editor.action.sourceAction",
+          "args": {
+            "kind": "source.organizeImports.biome",
+            "apply": "first"
+          }
+        }
       ]
     },
     "when": "editorTextFocus && !editorReadonly && editorLangId == typescript"
