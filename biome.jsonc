@@ -10,7 +10,7 @@
       "!.angular/**",
       "!.turbo/**",
       "!apps/backend/src/drizzle/postgres/migrations/**",
-      "!dist/**",
+      "!**/dist/**",
       "!mprove_data/**",
       "!node_modules/**",
       "!tmp/**",

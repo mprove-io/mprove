@@ -1,9 +1,6 @@
 import * as crypto from 'crypto';
 
-export function encryptData(item: {
-  data: any;
-  keyBuffer: Buffer;
-}) {
+export function encryptData(item: { data: any; keyBuffer: Buffer }) {
   let { data, keyBuffer } = item;
 
   let iv = crypto.randomBytes(16);
