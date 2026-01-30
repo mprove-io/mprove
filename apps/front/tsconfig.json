@@ -1,10 +1,22 @@
 {
-  "extends": "./tsconfig.base.json",
-  "files": ["src/main.ts", "src/polyfills.ts"],
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "types": ["node"],
+    "module": "esnext",
+    "outDir": "../../dist/out-tsc",
+    "baseUrl": ".",
     "target": "ES2022",
+    "types": ["node"],
     "useDefineForClassFields": false,
-    "moduleResolution": "bundler"
-  }
+    "moduleResolution": "bundler",
+    "paths": {
+      "#front/*": ["./src/*"],
+      "#common/*": ["../../libs/common/src/*"]
+    }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictTemplates": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
