@@ -8,6 +8,7 @@ import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
@@ -15,6 +16,10 @@ import {
   ToBackendGetChartsRequest,
   ToBackendGetChartsResponse
 } from '#common/interfaces/to-backend/charts/to-backend-get-charts';
+import {
+  ToBackendGetQueryRequest,
+  ToBackendGetQueryResponse
+} from '#common/interfaces/to-backend/queries/to-backend-get-query';
 import {
   ToBackendRunQueriesRequest,
   ToBackendRunQueriesResponse
@@ -161,6 +166,44 @@ test('1', async t => {
       loginToken: prepareSeedResult.loginToken,
       req: req2
     });
+
+    // Wait for query to complete before closing to avoid "pool closed" error
+    let queryId = resp2.payload.runningQueries[0]?.queryId;
+    if (queryId) {
+      let maxWaitMs = 10000;
+      let waited = 0;
+      while (waited < maxWaitMs) {
+        let reqGetQuery: ToBackendGetQueryRequest = {
+          info: {
+            name: ToBackendRequestInfoNameEnum.ToBackendGetQuery,
+            traceId: traceId,
+            idempotencyKey: makeId()
+          },
+          payload: {
+            projectId: projectId,
+            isRepoProd: false,
+            branchId: BRANCH_MAIN,
+            envId: PROJECT_ENV_PROD,
+            queryId: queryId,
+            mconfigId: chart.tiles[0].mconfigId
+          }
+        };
+
+        let respGetQuery = await sendToBackend<ToBackendGetQueryResponse>({
+          httpServer: prepTest.httpServer,
+          loginToken: prepareSeedResult.loginToken,
+          req: reqGetQuery
+        });
+
+        let status = respGetQuery.payload.query?.status;
+        if (status !== QueryStatusEnum.Running) {
+          break;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 200));
+        waited += 200;
+      }
+    }
 
     await prepTest.app.close();
   } catch (e) {
