@@ -2,6 +2,24 @@
 
 File system and git repository management service. Manages project file storage and git operations.
 
+## Files Tree
+
+Generated with `./scripts/list-context-files-tree.sh apps/disk`
+
+```
+.turbo/
+dist/
+node_modules/
+src/
+.DS_Store
+.swcrc
+ava.config.js
+build.mjs
+CONTEXT.md
+package.json
+tsconfig.json
+```
+
 ## Key Files
 
 - `src/main.ts` — app bootstrap

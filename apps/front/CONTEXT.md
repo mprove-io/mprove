@@ -2,6 +2,26 @@
 
 Angular 21 web application providing the Mprove user interface.
 
+## Files Tree
+
+Generated with `./scripts/list-context-files-tree.sh apps/front`
+
+```
+.angular/
+.turbo/
+dist/
+nginx-configs/
+node_modules/
+src/
+.browserslistrc
+.DS_Store
+angular.json
+CONTEXT.md
+package.json
+tailwind.config.js
+tsconfig.json
+```
+
 ## Key Files
 
 - `src/main.ts` — app bootstrap

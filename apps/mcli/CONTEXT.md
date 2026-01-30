@@ -2,6 +2,24 @@
 
 Command-line interface for Mprove, built with Clipanion.
 
+## Files Tree
+
+Generated with `./scripts/list-context-files-tree.sh apps/mcli`
+
+```
+.turbo/
+bin/
+dist/
+node_modules/
+src/
+.swcrc
+ava.config.js
+build.mjs
+CONTEXT.md
+package.json
+tsconfig.json
+```
+
 ## Key Files
 
 - `src/main.ts` — CLI entry point

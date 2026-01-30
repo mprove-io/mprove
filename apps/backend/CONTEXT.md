@@ -2,6 +2,23 @@
 
 Core API server handling authentication, database operations, and data warehouse queries.
 
+## Files Tree
+
+Generated with `./scripts/list-context-files-tree.sh apps/backend`
+
+```
+.turbo/
+dist/
+node_modules/
+src/
+.swcrc
+ava.config.js
+build.mjs
+CONTEXT.md
+package.json
+tsconfig.json
+```
+
 ## Key Files
 
 - `src/main.ts` — app bootstrap

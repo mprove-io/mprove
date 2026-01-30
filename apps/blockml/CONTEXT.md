@@ -2,6 +2,23 @@
 
 Malloy/BlockML model compilation service. Receives compilation requests from backend via Valkey (Redis) RPC and returns compiled struct.
 
+## Files Tree
+
+Generated with `./scripts/list-context-files-tree.sh apps/blockml`
+
+```
+.turbo/
+dist/
+node_modules/
+src/
+.swcrc
+ava.config.js
+build.mjs
+CONTEXT.md
+package.json
+tsconfig.json
+```
+
 ## Key Files
 
 - `src/main.ts` — app bootstrap

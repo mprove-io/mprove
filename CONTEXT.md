@@ -2,6 +2,55 @@
 
 Open Source Business Intelligence with Malloy Semantic Layer.
 
+## Files Tree
+
+Generated with `./scripts/list-context-files-tree.sh .`
+
+```
+_nogit/
+.angular/
+.claude/
+.devcontainer/
+.git/
+.github/
+.husky/
+.pnpm-store/
+.turbo/
+.vscode/
+apps/
+dist/
+libs/
+mprove_data/
+node_modules/
+notes/
+plan/
+scripts/
+secrets/
+setup-docker/
+tmp/
+.dockerignore
+.DS_Store
+.env
+.envrc
+.gitattributes
+.gitignore
+.prettierignore
+.prettierrc.js
+biome.jsonc
+CLAUDE.md
+CONTEXT.md
+docker-compose.lab.yml
+docker-compose.yml
+LICENSE
+package.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+README.md
+tsconfig.base.json
+tsconfig.json
+turbo.json
+```
+
 ## Tech Stack
 
 | Layer                                      | Technology                                      |

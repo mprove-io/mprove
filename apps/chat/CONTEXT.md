@@ -2,6 +2,24 @@
 
 Session management for OpenCode
 
+## Files Tree
+
+Generated with `./scripts/list-context-files-tree.sh apps/chat`
+
+```
+.turbo/
+dist/
+node_modules/
+src/
+.swcrc
+ava.config.js
+build.mjs
+CONTEXT.md
+package.json
+tsconfig.json
+tsconfig.test.json
+```
+
 ## Key Files
 
 - `src/main.ts` — app bootstrap
