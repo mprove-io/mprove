@@ -52,8 +52,19 @@
   },
   {
     "key": "alt+cmd+l",
-    "command": "-editor.action.formatSelection",
-    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
+    "command": "runCommands",
+    "args": {
+      "commands": [
+        "editor.action.formatDocument",
+        "editor.action.organizeImports"
+      ]
+    },
+    "when": "editorTextFocus && !editorReadonly && editorLangId == typescript"
+  },
+  {
+    "key": "alt+cmd+l",
+    "command": "editor.action.formatDocument",
+    "when": "editorTextFocus && !editorReadonly && editorLangId != typescript"
   },
   {
     "key": "alt+cmd+u",
@@ -64,5 +75,13 @@
     "key": "alt+cmd+k",
     "command": "-git.pushTo",
     "when": "!inDebugMode && !terminalFocus"
+  },
+  {
+    "key": "shift+enter",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": {
+      "text": "\u001b\r"
+    },
+    "when": "terminalFocus"
   }
 ]
