@@ -107,6 +107,22 @@ export class DrizzleModule implements OnModuleDestroy {
   constructor(@Inject(DRIZZLE) private db: Db) {}
 
   async onModuleDestroy() {
-    await this.db.pool.end();
+    const pool = this.db.pool;
+
+    // Wait up to 5 seconds for active queries to complete
+    const maxWaitMs = 5000;
+    const checkIntervalMs = 100;
+    let waited = 0;
+
+    while (waited < maxWaitMs) {
+      const activeConnections = pool.totalCount - pool.idleCount;
+      if (activeConnections === 0) {
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, checkIntervalMs));
+      waited += checkIntervalMs;
+    }
+
+    await pool.end();
   }
 }
