@@ -33,7 +33,6 @@
     "**/malloy": true,
     "**/mprove_data": true,
     "**/node_modules": true,
-    "**/dist-swc": true,
     "**/dist": true
   },
   "workbench.editor.closeOnFileDelete": true,
@@ -70,13 +69,9 @@
     "*.chart": "yaml",
     "*.dashboard": "yaml",
     "*.report": "yaml",
-    "*.mod": "yaml",
     "*.store": "yaml",
     "*.config": "yaml",
-    "*.preset": "yaml",
-    "*.view": "yaml",
-    "*.model": "yaml",
-    "*.udf": "yaml"
+    "*.preset": "yaml"
   },
   "workbench.editor.empty.hint": "hidden",
   "editor.pasteAs.preferences": ["text.plain"],

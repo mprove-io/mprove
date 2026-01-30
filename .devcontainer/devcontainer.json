@@ -133,27 +133,12 @@
         "workbench.settings.editor": "json",
         "editor.codeLens": false,
         "files.associations": {
-          "*.view": "yaml",
-          "*.model": "yaml",
-          "*.dashboard": "yaml",
           "*.chart": "yaml",
-          "*.udf": "yaml",
-          "*.metric": "yaml",
-          "*.config": "yaml"
-        },
-        "gitlens.hovers.enabled": false,
-        "gitlens.statusBar.enabled": false,
-        "gitlens.codeLens.enabled": false,
-        "gitlens.currentLine.enabled": false,
-        "gitlens.hovers.currentLine.over": "line",
-        "gitlens.keymap": "none",
-        "gitlens.advanced.messages": {
-          "suppressCommitHasNoPreviousCommitWarning": false,
-          "suppressCommitNotFoundWarning": false,
-          "suppressFileNotUnderSourceControlWarning": false,
-          "suppressGitVersionWarning": false,
-          "suppressLineUncommittedWarning": false,
-          "suppressNoRepositoryWarning": false
+          "*.dashboard": "yaml",
+          "*.report": "yaml",
+          "*.store": "yaml",
+          "*.config": "yaml",
+          "*.preset": "yaml"
         }
       }
     }
