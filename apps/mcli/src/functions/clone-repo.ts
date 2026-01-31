@@ -1,5 +1,6 @@
+import path from 'node:path';
 import fse from 'fs-extra';
-import nodegit from 'nodegit';
+import { simpleGit } from 'simple-git';
 
 export async function cloneRepo(item: {
   repoPath: string;
@@ -24,26 +25,23 @@ export async function cloneRepo(item: {
   await fse.remove(repoPath);
 
   if (withKeys === true) {
-    let fetchOptions: nodegit.FetchOptions = {
-      callbacks: {
-        certificateCheck: () => 0,
-        credentials: function (url: any, userName: any) {
-          return (nodegit as any).Credential.sshKeyNew(
-            'git',
-            publicKeyPath,
-            privateKeyPath,
-            passPhrase
-          );
-        }
-      },
-      prune: 1
-    };
-    let cloneOptions: nodegit.CloneOptions = {
-      fetchOpts: fetchOptions
-    };
+    let keyDir = path.dirname(privateKeyPath);
+    let askpassPath = `${keyDir}/ssh-askpass.sh`;
 
-    await nodegit.Clone(gitUrl, repoPath, cloneOptions);
+    await fse.writeFile(askpassPath, '#!/bin/sh\necho $SSH_PASSPHRASE', {
+      mode: 0o700
+    });
+
+    let git = simpleGit().env({
+      GIT_SSH_COMMAND: `ssh -i ${privateKeyPath} -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`,
+      SSH_PASSPHRASE: passPhrase,
+      SSH_ASKPASS: askpassPath,
+      SSH_ASKPASS_REQUIRE: 'force',
+      DISPLAY: '1'
+    });
+
+    await git.clone(gitUrl, repoPath);
   } else {
-    await nodegit.Clone(gitUrl, repoPath);
+    await simpleGit().clone(gitUrl, repoPath);
   }
 }

@@ -1,6 +1,6 @@
-import nodegit from 'nodegit';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function cloneRemoteToDev(item: {
@@ -10,12 +10,26 @@ export async function cloneRemoteToDev(item: {
   orgPath: string;
   remoteType: ProjectRemoteTypeEnum;
   gitUrl: string;
-  cloneOptions: nodegit.CloneOptions;
+  keyDir: string;
+  privateKeyEncrypted: string;
+  publicKey: string;
+  passPhrase: string;
 }) {
   return await addTraceSpan({
     spanName: 'disk.git.cloneRemoteToDev',
     fn: async () => {
-      let { orgId, projectId, devRepoId, orgPath, remoteType, gitUrl } = item;
+      let {
+        orgId,
+        projectId,
+        devRepoId,
+        orgPath,
+        remoteType,
+        gitUrl,
+        keyDir,
+        privateKeyEncrypted,
+        publicKey,
+        passPhrase
+      } = item;
 
       let projectDir = `${orgPath}/${orgId}/${projectId}`;
 
@@ -25,7 +39,17 @@ export async function cloneRemoteToDev(item: {
           : `${projectDir}/${CENTRAL_REPO_ID}`;
       let dirDev = `${projectDir}/${devRepoId}`;
 
-      await nodegit.Clone(remoteUrl, dirDev, item.cloneOptions);
+      let git = await createGitInstance({
+        repoDir: undefined,
+        remoteType: remoteType,
+        keyDir: keyDir,
+        gitUrl: gitUrl,
+        privateKeyEncrypted: privateKeyEncrypted,
+        publicKey: publicKey,
+        passPhrase: passPhrase
+      });
+
+      await git.clone(remoteUrl, dirDev);
     }
   });
 }

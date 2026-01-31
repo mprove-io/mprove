@@ -44,7 +44,6 @@
     "ioredis": "catalog:",
     "js-yaml": "catalog:",
     "nest-winston": "catalog:",
-    "nodegit": "catalog:",
     "p-iteration": "catalog:",
     "reflect-metadata": "catalog:",
     "rxjs": "catalog:",
@@ -60,7 +59,6 @@
     "@swc-node/register": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/js-yaml": "catalog:",
-    "@types/nodegit": "catalog:",
     "ava": "catalog:",
     "esbuild": "catalog:"
   }

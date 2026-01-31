@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import nodegit from 'nodegit';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -13,7 +12,7 @@ import { cloneRemote } from '#disk/functions/git/clone-remote';
 import { createBranch } from '#disk/functions/git/create-branch';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 
 @Injectable()
 export class RestoreService {
@@ -66,19 +65,6 @@ export class RestoreService {
     let { gitUrl, defaultBranch, privateKeyEncrypted, publicKey, passPhrase } =
       projectLt;
 
-    let fetchOptions = makeFetchOptions({
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let cloneOptions: nodegit.CloneOptions = {
-      fetchOpts: fetchOptions
-    };
-
     let prodRepoDir = `${projectDir}/${PROD_REPO_ID}`;
 
     let isProdRepoExist = await isPathExist(prodRepoDir);
@@ -91,7 +77,10 @@ export class RestoreService {
         orgPath: orgPath,
         remoteType: remoteType,
         gitUrl: gitUrl,
-        cloneOptions: cloneOptions
+        keyDir: keyDir,
+        privateKeyEncrypted: privateKeyEncrypted,
+        publicKey: publicKey,
+        passPhrase: passPhrase
       });
     }
 
@@ -112,7 +101,10 @@ export class RestoreService {
           orgPath: orgPath,
           remoteType: remoteType,
           gitUrl: gitUrl,
-          cloneOptions: cloneOptions
+          keyDir: keyDir,
+          privateKeyEncrypted: privateKeyEncrypted,
+          publicKey: publicKey,
+          passPhrase: passPhrase
         });
       }
     }
@@ -127,20 +119,30 @@ export class RestoreService {
     });
 
     if (isLocalBranchExistResult === false) {
+      let repoGit = await createGitInstance({
+        repoDir: repoDir,
+        remoteType: remoteType,
+        keyDir: keyDir,
+        gitUrl: gitUrl,
+        privateKeyEncrypted: privateKeyEncrypted,
+        publicKey: publicKey,
+        passPhrase: passPhrase
+      });
+
       await checkoutBranch({
         projectId: projectId,
         projectDir: projectDir,
         repoId: repoId,
         repoDir: repoDir,
         branchName: defaultBranch,
-        fetchOptions: fetchOptions,
+        git: repoGit,
         isFetch: false
       });
 
       let isRemoteBranchExistResult = await isRemoteBranchExist({
         repoDir: repoDir,
         remoteBranch: branchId,
-        fetchOptions: fetchOptions,
+        git: repoGit,
         isFetch: true
       });
 
@@ -151,7 +153,7 @@ export class RestoreService {
             ? `origin/${branchId}`
             : `origin/${defaultBranch}`,
         newBranch: branchId,
-        fetchOptions: fetchOptions
+        git: repoGit
       });
     }
 

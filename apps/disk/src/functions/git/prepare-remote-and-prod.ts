@@ -1,8 +1,9 @@
-import nodegit from 'nodegit';
+import { simpleGit } from 'simple-git';
 
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { ensureDir } from '../disk/ensure-dir';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
@@ -16,7 +17,10 @@ export async function prepareRemoteAndProd(item: {
   userAlias: string;
   remoteType: ProjectRemoteTypeEnum;
   gitUrl: string;
-  cloneOptions: nodegit.CloneOptions;
+  keyDir: string;
+  privateKeyEncrypted: string;
+  publicKey: string;
+  passPhrase: string;
 }) {
   return await addTraceSpan({
     spanName: 'disk.git.prepareRemoteAndProd',
@@ -28,10 +32,14 @@ export async function prepareRemoteAndProd(item: {
       if (item.remoteType === ProjectRemoteTypeEnum.Managed) {
         await ensureDir(centralDir);
 
-        // init central repo
-        let isBare = 1;
-        let repo = await nodegit.Repository.init(centralDir, isBare);
-        await repo.setHead(`refs/heads/${BRANCH_MAIN}`);
+        // init central repo as bare
+        let centralGit = simpleGit(centralDir);
+        await centralGit.init(true);
+        await centralGit.raw([
+          'symbolic-ref',
+          'HEAD',
+          `refs/heads/${BRANCH_MAIN}`
+        ]);
       }
 
       let remoteUrl =
@@ -39,7 +47,17 @@ export async function prepareRemoteAndProd(item: {
           ? item.gitUrl
           : centralDir;
 
-      await nodegit.Clone(remoteUrl, prodDir, item.cloneOptions);
+      let git = await createGitInstance({
+        repoDir: undefined,
+        remoteType: item.remoteType,
+        keyDir: item.keyDir,
+        gitUrl: item.gitUrl,
+        privateKeyEncrypted: item.privateKeyEncrypted,
+        publicKey: item.publicKey,
+        passPhrase: item.passPhrase
+      });
+
+      await git.clone(remoteUrl, prodDir);
 
       if (item.remoteType === ProjectRemoteTypeEnum.Managed) {
         await createInitialCommitToProd({
@@ -50,13 +68,15 @@ export async function prepareRemoteAndProd(item: {
           projectName: item.projectName
         });
 
+        let prodGit = simpleGit({ baseDir: prodDir });
+
         await pushToRemote({
           projectId: item.projectId,
           projectDir: item.projectDir,
           repoId: PROD_REPO_ID,
           repoDir: prodDir,
           branch: BRANCH_MAIN,
-          fetchOptions: item.cloneOptions.fetchOpts
+          git: prodGit
         });
       }
     }

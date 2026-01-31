@@ -1,4 +1,4 @@
-import nodegit from 'nodegit';
+import { simpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function commit(item: {
@@ -9,32 +9,11 @@ export async function commit(item: {
   return await addTraceSpan({
     spanName: 'disk.git.commit',
     fn: async () => {
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.repoDir)
-      );
+      let git = simpleGit({ baseDir: item.repoDir });
 
-      let index = <nodegit.Index>await gitRepo.index();
-
-      let oid = <nodegit.Oid>await index.writeTree();
-
-      let head = <nodegit.Oid>await nodegit.Reference.nameToId(gitRepo, 'HEAD');
-
-      let parent = <nodegit.Commit>await gitRepo.getCommit(head);
-
-      let author = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
-      let committer = nodegit.Signature.now(
-        item.userAlias,
-        `${item.userAlias}@`
-      );
-
-      await gitRepo.createCommit(
-        'HEAD',
-        author,
-        committer,
-        item.commitMessage,
-        oid,
-        [parent]
-      );
+      await git.commit(item.commitMessage, {
+        '--author': `${item.userAlias} <${item.userAlias}@>`
+      });
     }
   });
 }

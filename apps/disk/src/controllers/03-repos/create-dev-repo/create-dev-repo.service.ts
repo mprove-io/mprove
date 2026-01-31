@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import nodegit from 'nodegit';
 import { ErEnum } from '#common/enums/er.enum';
 import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
@@ -14,7 +13,7 @@ import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -90,17 +89,6 @@ export class CreateDevRepoService {
       branchId: undefined
     });
 
-    let cloneOptions: nodegit.CloneOptions = {
-      fetchOpts: makeFetchOptions({
-        remoteType: remoteType,
-        keyDir: keyDir,
-        gitUrl: gitUrl,
-        privateKeyEncrypted: privateKeyEncrypted,
-        publicKey: publicKey,
-        passPhrase: passPhrase
-      })
-    };
-
     let isDevRepoExist = await isPathExist(devRepoDir);
     if (isDevRepoExist === false) {
       await cloneRemoteToDev({
@@ -110,11 +98,24 @@ export class CreateDevRepoService {
         orgPath: orgPath,
         remoteType: remoteType,
         gitUrl: gitUrl,
-        cloneOptions: cloneOptions
+        keyDir: keyDir,
+        privateKeyEncrypted: privateKeyEncrypted,
+        publicKey: publicKey,
+        passPhrase: passPhrase
       });
     }
 
     //
+
+    let devGit = await createGitInstance({
+      repoDir: devRepoDir,
+      remoteType: remoteType,
+      keyDir: keyDir,
+      gitUrl: gitUrl,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
+    });
 
     let {
       repoStatus,
@@ -127,7 +128,7 @@ export class CreateDevRepoService {
       projectDir: projectDir,
       repoId: devRepoId,
       repoDir: devRepoDir,
-      fetchOptions: cloneOptions.fetchOpts,
+      git: devGit,
       isFetch: true,
       isCheckConflicts: true
     });

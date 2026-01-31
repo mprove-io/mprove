@@ -17,7 +17,7 @@ import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { merge } from '#disk/functions/git/merge';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -111,7 +111,8 @@ export class PushRepoService {
       branchId: branch
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -126,7 +127,7 @@ export class PushRepoService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true
     });
 
@@ -138,7 +139,17 @@ export class PushRepoService {
       repoId: repoId,
       repoDir: repoDir,
       branch: branch,
-      fetchOptions: fetchOptions
+      git: git
+    });
+
+    let prodGit = await createGitInstance({
+      repoDir: prodRepoDir,
+      remoteType: remoteType,
+      keyDir: keyDir,
+      gitUrl: gitUrl,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     let isProdBranchExist = await isLocalBranchExist({
@@ -150,7 +161,7 @@ export class PushRepoService {
         repoDir: prodRepoDir,
         fromBranch: `origin/${branch}`,
         newBranch: branch,
-        fetchOptions: fetchOptions
+        git: prodGit
       });
     }
 
@@ -163,7 +174,7 @@ export class PushRepoService {
       branch: branch,
       theirBranch: `origin/${branch}`,
       isTheirBranchRemote: true,
-      fetchOptions: fetchOptions
+      git: prodGit
     });
 
     let {
@@ -177,7 +188,7 @@ export class PushRepoService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true,
       isCheckConflicts: true
     });
@@ -196,7 +207,7 @@ export class PushRepoService {
       repoId: PROD_REPO_ID,
       repoDir: prodRepoDir,
       branchName: branch,
-      fetchOptions: fetchOptions,
+      git: prodGit,
       isFetch: true
     });
 

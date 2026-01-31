@@ -9,7 +9,7 @@ import {
 import { DiskConfig } from '#disk/config/disk-config';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -92,7 +92,8 @@ export class IsBranchExistService {
       branchId: undefined // undefined
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -106,7 +107,7 @@ export class IsBranchExistService {
         ? await isRemoteBranchExist({
             repoDir: repoDir,
             remoteBranch: branch,
-            fetchOptions: fetchOptions,
+            git: git,
             isFetch: true
           })
         : await isLocalBranchExist({

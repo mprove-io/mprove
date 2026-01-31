@@ -1,7 +1,7 @@
 import { Command, Option } from 'clipanion';
 import fse from 'fs-extra';
-import nodegit from 'nodegit';
 import pIteration from 'p-iteration';
+import { simpleGit } from 'simple-git';
 
 const { forEachSeries } = pIteration;
 
@@ -107,17 +107,15 @@ export class SyncCommand extends CustomCommand {
 
     let repoDir = isDefined(this.localPath) ? this.localPath : process.cwd();
 
-    let gitRepo = <nodegit.Repository>await nodegit.Repository.open(repoDir);
+    let git = simpleGit({ baseDir: repoDir });
 
-    let currentBranchRef = await gitRepo.getCurrentBranch();
-    let currentBranchName = await nodegit.Branch.name(currentBranchRef);
+    let branchSummary = await git.branch();
+    let currentBranchName = branchSummary.current;
 
-    let head: nodegit.Commit = await gitRepo.getHeadCommit();
+    let logResult = await git.log(['-1']);
+    let lastCommit = logResult.latest?.hash;
 
-    let headOid = head.id();
-    let lastCommit = headOid.tostrS();
-
-    let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
+    let statusResult = await git.status();
 
     let syncParentPath = `${repoDir}/${MPROVE_CACHE_DIR}`;
     let syncFilePath = `${syncParentPath}/${MPROVE_SYNC_FILENAME}`;
@@ -147,7 +145,7 @@ export class SyncCommand extends CustomCommand {
 
     let { changedFiles, deletedFiles } = await getSyncFiles({
       repoDir: repoDir,
-      statusFiles: statusFiles,
+      statusResult: statusResult,
       lastSyncTime: lastSyncTime
     });
 

@@ -1,4 +1,4 @@
-import nodegit from 'nodegit';
+import { SimpleGit } from 'simple-git';
 
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
@@ -13,7 +13,7 @@ export async function pushToRemote(item: {
   repoId: string;
   repoDir: string;
   branch: string;
-  fetchOptions: nodegit.FetchOptions;
+  git: SimpleGit;
 }) {
   return await addTraceSpan({
     spanName: 'disk.git.pushToRemote',
@@ -24,7 +24,7 @@ export async function pushToRemote(item: {
           projectDir: item.projectDir,
           repoId: item.repoId,
           repoDir: item.repoDir,
-          fetchOptions: item.fetchOptions,
+          git: item.git,
           isFetch: true,
           isCheckConflicts: false
         })
@@ -38,16 +38,7 @@ export async function pushToRemote(item: {
         });
       }
 
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.repoDir)
-      );
-
-      let originRemote = <nodegit.Remote>await gitRepo.getRemote('origin');
-
-      await originRemote.push(
-        [`refs/heads/${item.branch}:refs/heads/${item.branch}`],
-        item.fetchOptions
-      );
+      await item.git.push('origin', item.branch);
     }
   });
 }

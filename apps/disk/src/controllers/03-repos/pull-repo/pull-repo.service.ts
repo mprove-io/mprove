@@ -13,7 +13,7 @@ import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { merge } from '#disk/functions/git/merge';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -105,7 +105,8 @@ export class PullRepoService {
       branchId: branch
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -120,7 +121,7 @@ export class PullRepoService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true
     });
 
@@ -135,7 +136,7 @@ export class PullRepoService {
       branch: branch,
       theirBranch: `origin/${branch}`,
       isTheirBranchRemote: true,
-      fetchOptions: fetchOptions
+      git: git
     });
 
     let {
@@ -149,7 +150,7 @@ export class PullRepoService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true,
       isCheckConflicts: true
     });

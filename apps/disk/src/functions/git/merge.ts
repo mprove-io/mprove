@@ -1,4 +1,4 @@
-import nodegit from 'nodegit';
+import { SimpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function merge(item: {
@@ -10,101 +10,64 @@ export async function merge(item: {
   branch: string;
   theirBranch: string;
   isTheirBranchRemote: boolean;
-  fetchOptions: nodegit.FetchOptions;
+  git: SimpleGit;
 }) {
   return await addTraceSpan({
     spanName: 'disk.git.merge',
     fn: async () => {
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.repoDir)
-      );
+      let git = item.git;
 
       await addTraceSpan({
-        spanName: 'disk.git.merge.gitRepo.fetch',
-        fn: () => gitRepo.fetch('origin', item.fetchOptions)
+        spanName: 'disk.git.merge.git.fetch',
+        fn: () => git.fetch('origin', ['--prune'])
       });
 
-      // try fast forward
+      let ourCommitId = await git.revparse([`refs/heads/${item.branch}`]);
+      ourCommitId = ourCommitId.trim();
 
-      let signature = nodegit.Signature.now(
-        item.userAlias,
-        `${item.userAlias}@`
-      );
-      await gitRepo.mergeBranches(
-        item.branch,
-        item.theirBranch,
-        signature,
-        nodegit.Merge.PREFERENCE.FASTFORWARD_ONLY
-      );
-
-      let ourCommit = <nodegit.Commit>(
-        await gitRepo.getReferenceCommit(`refs/heads/${item.branch}`)
-      );
-
-      let ourCommitOid = ourCommit.id();
-      let ourCommitId = ourCommitOid.tostrS();
-
-      let theirStr =
+      let theirRef =
         item.isTheirBranchRemote === true
           ? `refs/remotes/${item.theirBranch}`
           : `refs/heads/${item.theirBranch}`;
 
-      let theirCommit = <nodegit.Commit>(
-        await gitRepo.getReferenceCommit(theirStr)
-      );
-      let theirCommitOid = theirCommit.id();
-      let theirCommitId = theirCommitOid.tostrS();
+      let theirCommitId = await git.revparse([theirRef]);
+      theirCommitId = theirCommitId.trim();
 
       if (ourCommitId === theirCommitId) {
         return;
       }
 
-      // force
-
-      let theirRef = <nodegit.Reference>await gitRepo.getReference(theirStr);
-
-      let theirAnnotatedCommit = <nodegit.AnnotatedCommit>(
-        await nodegit.AnnotatedCommit.fromRef(gitRepo, theirRef)
-      );
-
-      await nodegit.Merge.merge(gitRepo, theirAnnotatedCommit, null, {
-        checkoutStrategy: nodegit.Checkout.STRATEGY.FORCE
-      });
-
-      let index = <nodegit.Index>await gitRepo.refreshIndex();
-
-      if (index.hasConflicts()) {
-        // merge contains conflicting changes
-
-        await index.addAll(null, null);
-
-        await (<any>index.write()); // wrong @types - method is async
-
-        await index.writeTree();
-      } else {
-        // merge is clean
+      try {
+        await git.merge([item.theirBranch, '--ff-only']);
+        return;
+      } catch {
+        // Fast-forward not possible, continue with regular merge
       }
 
-      let oid = <nodegit.Oid>await index.writeTreeTo(gitRepo);
-
-      let author = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
-      let committer = nodegit.Signature.now(
-        item.userAlias,
-        `${item.userAlias}@`
-      );
-
+      // Force merge with commit
       let message = `Merged branch ${item.theirBranch} to ${item.branch}`;
 
-      let commitOid = <nodegit.Oid>(
-        await gitRepo.createCommit('HEAD', author, committer, message, oid, [
-          ourCommit,
-          theirCommit
-        ])
-      );
+      try {
+        await git.merge([item.theirBranch, '-m', message]);
+      } catch (e: any) {
+        // If merge fails due to conflicts, stage all and commit
+        let statusResult = await git.status();
 
-      let commit = <nodegit.Commit>await gitRepo.getCommit(commitOid);
+        if (statusResult.conflicted.length > 0) {
+          // Stage all files including conflicted ones
+          await git.add('.');
 
-      await nodegit.Reset.reset(gitRepo, commit, nodegit.Reset.TYPE.HARD, null);
+          // Create merge commit with conflicts
+          await git.commit(message, {
+            '--author': `${item.userAlias} <${item.userAlias}@>`
+          });
+
+          // Reset to clean state
+          await git.reset(['--hard', 'HEAD']);
+        } else {
+          throw e;
+        }
+      }
     }
   });
 }

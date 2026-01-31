@@ -15,7 +15,7 @@ import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -115,7 +115,8 @@ export class CreateFolderService {
       branchId: branch
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -130,7 +131,7 @@ export class CreateFolderService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: false
     });
 
@@ -163,7 +164,7 @@ export class CreateFolderService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true,
       isCheckConflicts: true
     });

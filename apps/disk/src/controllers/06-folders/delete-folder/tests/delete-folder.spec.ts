@@ -15,6 +15,7 @@ import {
   ToDiskDeleteFolderRequest,
   ToDiskDeleteFolderResponse
 } from '#common/interfaces/to-disk/06-folders/to-disk-delete-folder';
+import { ToDiskCreateFileRequest } from '#common/interfaces/to-disk/07-files/to-disk-create-file';
 import { logToConsoleDisk } from '#disk/functions/log-to-console-disk';
 import { prepareTest } from '#disk/functions/prepare-test';
 
@@ -126,10 +127,27 @@ test('1', async t => {
       }
     };
 
+    let createFileRequest: ToDiskCreateFileRequest = {
+      info: {
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateFile,
+        traceId: traceId
+      },
+      payload: {
+        orgId: orgId,
+        baseProject: baseProject,
+        repoId: 'r1',
+        branch: BRANCH_MAIN,
+        parentNodeId: `${projectId}/fo1/`,
+        fileName: 'test.txt',
+        userAlias: 'u1'
+      }
+    };
+
     await messageService.processMessage(createOrgRequest);
     await messageService.processMessage(createProjectRequest);
 
     await messageService.processMessage(createFolderRequest);
+    await messageService.processMessage(createFileRequest);
     await messageService.processMessage(commitRepoRequest);
 
     resp = await messageService.processMessage(deleteFolderRequest);
@@ -142,5 +160,5 @@ test('1', async t => {
     });
   }
 
-  t.is(resp.payload.repo.repoStatus, RepoStatusEnum.NeedPush);
+  t.is(resp.payload.repo.repoStatus, RepoStatusEnum.NeedCommit);
 });

@@ -17,7 +17,7 @@ import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { getBaseCommitFileContent } from '#disk/functions/git/get-base-commit-file-content';
 import { getLastCommitFileContent } from '#disk/functions/git/get-last-commit-file-content';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { readFileCheckSize } from '#node-common/functions/read-file-check-size';
@@ -114,7 +114,8 @@ export class GetFileService {
       branchId: branch
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -129,7 +130,7 @@ export class GetFileService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: false
     });
 
@@ -179,7 +180,7 @@ export class GetFileService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: false,
       isCheckConflicts: false
     });

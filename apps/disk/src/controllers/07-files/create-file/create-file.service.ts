@@ -22,7 +22,7 @@ import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { commit } from '#disk/functions/git/commit';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -124,7 +124,8 @@ export class CreateFileService {
       branchId: branch
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -139,7 +140,7 @@ export class CreateFileService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: false
     });
 
@@ -180,7 +181,7 @@ export class CreateFileService {
         repoId: repoId,
         repoDir: repoDir,
         branch: branch,
-        fetchOptions: fetchOptions
+        git: git
       });
     }
 
@@ -195,7 +196,7 @@ export class CreateFileService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true,
       isCheckConflicts: true
     });

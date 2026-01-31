@@ -50,7 +50,7 @@
     "js-yaml": "catalog:",
     "nanoid": "catalog:",
     "nest-winston": "catalog:",
-    "nodegit": "catalog:",
+    "simple-git": "catalog:",
     "p-iteration": "catalog:",
     "prettyjson": "catalog:",
     "reflect-metadata": "catalog:",
@@ -68,7 +68,6 @@
     "@types/async-retry": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/js-yaml": "catalog:",
-    "@types/nodegit": "catalog:",
     "@yao-pkg/pkg": "catalog:",
     "ava": "catalog:",
     "esbuild": "catalog:",
@@ -80,7 +79,6 @@
       "**/*.js"
     ],
     "assets": [
-      "node_modules/nodegit/build/Release/**/*",
       "node_modules/axios/dist/node/axios.cjs",
       "package.json"
     ],

@@ -57,7 +57,6 @@
     "ioredis": "catalog:",
     "js-yaml": "catalog:",
     "nest-winston": "catalog:",
-    "nodegit": "catalog:",
     "p-iteration": "catalog:",
     "reflect-metadata": "catalog:",
     "rxjs": "catalog:",
@@ -76,7 +75,6 @@
     "@types/d3-format": "catalog:",
     "@types/fs-extra": "catalog:",
     "@types/js-yaml": "catalog:",
-    "@types/nodegit": "catalog:",
     "@types/tiny-async-pool": "catalog:",
     "ava": "catalog:",
     "esbuild": "catalog:"

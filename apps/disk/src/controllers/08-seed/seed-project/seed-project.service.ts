@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { emptyDir, ensureDir } from 'fs-extra';
-import nodegit from 'nodegit';
 import { ErEnum } from '#common/enums/er.enum';
 import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
@@ -15,7 +14,7 @@ import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
 
@@ -72,19 +71,6 @@ export class SeedProjectService {
 
     await ensureDir(keyDir);
 
-    let fetchOptions = makeFetchOptions({
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let cloneOptions: nodegit.CloneOptions = {
-      fetchOpts: fetchOptions
-    };
-
     await prepareRemoteAndProd({
       projectId: projectId,
       projectName: projectName,
@@ -93,7 +79,10 @@ export class SeedProjectService {
       userAlias: userAlias,
       remoteType: remoteType,
       gitUrl: gitUrl,
-      cloneOptions: cloneOptions
+      keyDir: keyDir,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     await cloneRemoteToDev({
@@ -103,7 +92,10 @@ export class SeedProjectService {
       orgPath: orgPath,
       remoteType: remoteType,
       gitUrl: gitUrl,
-      cloneOptions: cloneOptions
+      keyDir: keyDir,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
@@ -112,6 +104,16 @@ export class SeedProjectService {
       repoId: devRepoId,
       readFiles: true,
       isRootMproveDir: false
+    });
+
+    let devGit = await createGitInstance({
+      repoDir: devRepoDir,
+      remoteType: remoteType,
+      keyDir: keyDir,
+      gitUrl: gitUrl,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     let {
@@ -125,7 +127,7 @@ export class SeedProjectService {
       projectDir: projectDir,
       repoId: devRepoId,
       repoDir: devRepoDir,
-      fetchOptions: fetchOptions,
+      git: devGit,
       isFetch: true,
       isCheckConflicts: true
     });

@@ -1,32 +1,23 @@
-import nodegit from 'nodegit';
+import { SimpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function createBranch(item: {
   repoDir: string;
   fromBranch: string;
   newBranch: string;
-  fetchOptions: nodegit.FetchOptions;
+  git: SimpleGit;
 }) {
   return await addTraceSpan({
     spanName: 'disk.git.createBranch',
     fn: async () => {
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.repoDir)
-      );
+      let git = item.git;
 
       await addTraceSpan({
-        spanName: 'disk.git.createBranch.gitRepo.fetch',
-        fn: () => gitRepo.fetch('origin', item.fetchOptions)
+        spanName: 'disk.git.createBranch.git.fetch',
+        fn: () => git.fetch('origin', ['--prune'])
       });
 
-      let commit = <nodegit.Commit>(
-        await gitRepo.getBranchCommit(item.fromBranch)
-      );
-
-      // do not overwrite existing branch
-      let force = 0;
-
-      await nodegit.Branch.create(gitRepo, item.newBranch, commit, force);
+      await git.branch([item.newBranch, item.fromBranch]);
     }
   });
 }

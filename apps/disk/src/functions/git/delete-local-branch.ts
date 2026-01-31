@@ -1,4 +1,4 @@
-import nodegit from 'nodegit';
+import { simpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function deleteLocalBranch(item: {
@@ -8,17 +8,9 @@ export async function deleteLocalBranch(item: {
   return await addTraceSpan({
     spanName: 'disk.git.deleteLocalBranch',
     fn: async () => {
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.repoDir)
-      );
+      let git = simpleGit({ baseDir: item.repoDir });
 
-      let branchRef = await nodegit.Branch.lookup(
-        gitRepo,
-        item.branch,
-        nodegit.Branch.BRANCH.LOCAL
-      );
-
-      await nodegit.Branch.delete(branchRef); // await
+      await git.deleteLocalBranch(item.branch, true);
     }
   });
 }

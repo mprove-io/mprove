@@ -57,7 +57,8 @@ export async function prepareTest(
 
   let isOrgExist = fse.pathExistsSync(orgDir);
   if (isOrgExist === true) {
-    fse.removeSync(orgDir);
+    // Use async removal with retry to handle locked files from git processes
+    await fse.remove(orgDir);
   }
 
   let messageService = moduleRef.get<MessageService>(MessageService);

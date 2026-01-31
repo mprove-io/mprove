@@ -1,6 +1,4 @@
-import nodegit from 'nodegit';
-import { NODEGIT_PATH_NOT_EXIST_IN_TREE } from '#common/constants/top';
-import { isDefined } from '#common/functions/is-defined';
+import { simpleGit } from 'simple-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function getLastCommitFileContent(item: {
@@ -10,31 +8,21 @@ export async function getLastCommitFileContent(item: {
   return await addTraceSpan({
     spanName: 'disk.git.getLastCommitFileContent',
     fn: async () => {
-      let originalContent = '';
+      let git = simpleGit({ baseDir: item.repoDir });
 
-      let gitRepo: nodegit.Repository = await nodegit.Repository.open(
-        item.repoDir
-      );
-      let head: nodegit.Commit = await gitRepo.getHeadCommit();
-      let tree: nodegit.Tree = await head.getTree();
-
-      let entry: nodegit.TreeEntry = await tree
-        .getEntry(item.filePathRelative)
-        .catch((e): any => {
-          if (e?.message?.includes(NODEGIT_PATH_NOT_EXIST_IN_TREE)) {
-            return undefined;
-          } else {
-            throw e;
-          }
-        });
-
-      if (isDefined(entry) && entry.isBlob()) {
-        let blob: nodegit.Blob = await entry.getBlob();
-
-        originalContent = blob.toString();
+      try {
+        let content = await git.show([`HEAD:${item.filePathRelative}`]);
+        return content;
+      } catch (e: any) {
+        if (
+          e?.message?.includes('does not exist') ||
+          e?.message?.includes('path') ||
+          e?.message?.includes('exists on disk, but not in')
+        ) {
+          return '';
+        }
+        throw e;
       }
-
-      return originalContent;
     }
   });
 }

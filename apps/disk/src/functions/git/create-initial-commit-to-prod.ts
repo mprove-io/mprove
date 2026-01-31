@@ -1,4 +1,4 @@
-import nodegit from 'nodegit';
+import { simpleGit } from 'simple-git';
 
 import {
   BRANCH_MAIN,
@@ -22,9 +22,7 @@ export async function createInitialCommitToProd(item: {
   return await addTraceSpan({
     spanName: 'disk.git.createInitialCommitToProd',
     fn: async () => {
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.prodDir)
-      );
+      let git = simpleGit({ baseDir: item.prodDir });
 
       let sourceDir = `${TEST_PROJECTS}/${item.testProjectId}`;
 
@@ -61,37 +59,15 @@ currency_suffix: ''
         });
       }
 
-      let index = <nodegit.Index>await gitRepo.refreshIndex();
-
-      await index.addAll(undefined, undefined);
-
-      await (<any>index.write()); // wrong @types - method is async
-
-      let oid = <nodegit.Oid>await index.writeTree();
-
-      let author = nodegit.Signature.now(item.userAlias, `${item.userAlias}@`);
-      let committer = nodegit.Signature.now(
-        item.userAlias,
-        `${item.userAlias}@`
-      );
+      await git.add('.');
 
       let message = 'init';
 
-      // Since we're creating an initial commit, it has no parents. Note that unlike
-      // normal we don't get the head either, because there isn't one yet.
-      // createCommit('HEAD', author, committer, message, oid, []);
-      let commitOid = await gitRepo.createCommit(
-        null,
-        author,
-        committer,
-        message,
-        oid,
-        []
-      );
+      await git.commit(message, {
+        '--author': `${item.userAlias} <${item.userAlias}@>`
+      });
 
-      await gitRepo.createBranch(BRANCH_MAIN, commitOid, false);
-
-      await gitRepo.setHead(`refs/heads/${BRANCH_MAIN}`);
+      await git.branch(['-M', BRANCH_MAIN]);
     }
   });
 }

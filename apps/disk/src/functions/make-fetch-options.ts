@@ -1,54 +1,46 @@
 import fse from 'fs-extra';
-import nodegit from 'nodegit';
+import { SimpleGit, simpleGit } from 'simple-git';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 
-export function makeFetchOptions(item: {
+export async function createGitInstance(item: {
+  repoDir: string;
   remoteType: ProjectRemoteTypeEnum;
   keyDir: string;
   gitUrl: string;
   publicKey: string;
   privateKeyEncrypted: string;
   passPhrase: string;
-}) {
+}): Promise<SimpleGit> {
   let {
+    repoDir,
     remoteType,
     keyDir,
-    gitUrl,
     publicKey,
     privateKeyEncrypted,
     passPhrase
   } = item;
 
-  let pubKeyPath = `${keyDir}/id_rsa.pub`;
-  let privateKeyPath = `${keyDir}/id_rsa`;
-
   if (remoteType === ProjectRemoteTypeEnum.GitClone) {
-    fse.writeFileSync(pubKeyPath, publicKey);
-    fse.writeFileSync(privateKeyPath, privateKeyEncrypted);
+    let pubKeyPath = `${keyDir}/id_rsa.pub`;
+    let privateKeyPath = `${keyDir}/id_rsa`;
+    let askpassPath = `${keyDir}/ssh-askpass.sh`;
+
+    await fse.writeFile(pubKeyPath, publicKey);
+    await fse.writeFile(privateKeyPath, privateKeyEncrypted, { mode: 0o600 });
+    await fse.writeFile(askpassPath, '#!/bin/sh\necho $SSH_PASSPHRASE', {
+      mode: 0o700
+    });
+
+    let baseConfig = repoDir ? { baseDir: repoDir } : {};
+
+    return simpleGit(baseConfig).env({
+      GIT_SSH_COMMAND: `ssh -i ${privateKeyPath} -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`,
+      SSH_PASSPHRASE: passPhrase,
+      SSH_ASKPASS: askpassPath,
+      SSH_ASKPASS_REQUIRE: 'force',
+      DISPLAY: '1'
+    });
   }
 
-  let fetchOptions: nodegit.FetchOptions =
-    remoteType === ProjectRemoteTypeEnum.GitClone
-      ? {
-          callbacks: {
-            certificateCheck: () => 0,
-            credentials: function (url: any, userName: any) {
-              return (nodegit as any).Credential.sshKeyNew(
-                'git',
-                pubKeyPath,
-                privateKeyPath,
-                passPhrase
-              );
-            }
-          },
-          prune: 1
-        }
-      : {
-          callbacks: {
-            certificateCheck: () => 1
-          },
-          prune: 1
-        };
-
-  return fetchOptions;
+  return repoDir ? simpleGit({ baseDir: repoDir }) : simpleGit();
 }

@@ -17,7 +17,7 @@ import { createBranch } from '#disk/functions/git/create-branch';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -117,7 +117,8 @@ export class CreateBranchService {
             : undefined // undefined
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -131,7 +132,7 @@ export class CreateBranchService {
         ? await isRemoteBranchExist({
             repoDir: repoDir,
             remoteBranch: fromBranch,
-            fetchOptions: fetchOptions,
+            git: git,
             isFetch: true
           })
         : await isLocalBranchExist({
@@ -151,7 +152,7 @@ export class CreateBranchService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: fromBranch,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true
     });
 
@@ -161,7 +162,7 @@ export class CreateBranchService {
       repoDir: repoDir,
       fromBranch: isFromRemote === true ? `origin/${fromBranch}` : fromBranch,
       newBranch: newBranch,
-      fetchOptions: fetchOptions
+      git: git
     });
 
     let {
@@ -175,7 +176,7 @@ export class CreateBranchService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true,
       isCheckConflicts: true
     });

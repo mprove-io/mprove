@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import nodegit from 'nodegit';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
@@ -18,7 +17,7 @@ import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -97,19 +96,6 @@ export class CreateProjectService {
     let keyDir = `${orgDir}/_keys/${projectId}`;
     await ensureDir(keyDir);
 
-    let fetchOptions = makeFetchOptions({
-      remoteType: remoteType,
-      keyDir: keyDir,
-      gitUrl: gitUrl,
-      privateKeyEncrypted: privateKeyEncrypted,
-      publicKey: publicKey,
-      passPhrase: passPhrase
-    });
-
-    let cloneOptions: nodegit.CloneOptions = {
-      fetchOpts: fetchOptions
-    };
-
     await prepareRemoteAndProd({
       projectId: projectId,
       projectName: projectName,
@@ -117,8 +103,11 @@ export class CreateProjectService {
       testProjectId: testProjectId,
       userAlias: userAlias,
       remoteType: remoteType,
-      cloneOptions: cloneOptions,
-      gitUrl: gitUrl
+      gitUrl: gitUrl,
+      keyDir: keyDir,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     await cloneRemoteToDev({
@@ -128,7 +117,10 @@ export class CreateProjectService {
       orgPath: orgPath,
       remoteType: remoteType,
       gitUrl: gitUrl,
-      cloneOptions: cloneOptions
+      keyDir: keyDir,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     let prodItemCatalog = <DiskItemCatalog>await getNodesAndFiles({
@@ -137,6 +129,17 @@ export class CreateProjectService {
       repoId: PROD_REPO_ID,
       readFiles: true,
       isRootMproveDir: false
+    });
+
+    let prodRepoDir = `${projectDir}/${PROD_REPO_ID}`;
+    let prodGit = await createGitInstance({
+      repoDir: prodRepoDir,
+      remoteType: remoteType,
+      keyDir: keyDir,
+      gitUrl: gitUrl,
+      privateKeyEncrypted: privateKeyEncrypted,
+      publicKey: publicKey,
+      passPhrase: passPhrase
     });
 
     let {
@@ -149,8 +152,8 @@ export class CreateProjectService {
       projectId: projectId,
       projectDir: projectDir,
       repoId: PROD_REPO_ID,
-      repoDir: `${projectDir}/${PROD_REPO_ID}`,
-      fetchOptions: fetchOptions,
+      repoDir: prodRepoDir,
+      git: prodGit,
       isFetch: true,
       isCheckConflicts: true
     });

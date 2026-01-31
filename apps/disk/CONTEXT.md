@@ -60,7 +60,7 @@ Manages the file system layer for Mprove projects:
 
 - Receives Valkey (Redis) RPC messages from backend
 - Operates on local filesystem (`mprove_data/` directory)
-- Uses NodeGit for git operations
+- Uses SimpleGit for git operations
 
 ## Patterns
 

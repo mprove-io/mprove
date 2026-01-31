@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import nodegit from 'nodegit';
 import pIteration from 'p-iteration';
 
 const { forEachSeries } = pIteration;
@@ -27,7 +26,7 @@ import { writeToFile } from '#disk/functions/disk/write-to-file';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { makeFetchOptions } from '#disk/functions/make-fetch-options';
+import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { getSyncFiles } from '#node-common/functions/get-sync-files';
@@ -130,7 +129,8 @@ export class SyncRepoService {
       branchId: branch
     });
 
-    let fetchOptions = makeFetchOptions({
+    let git = await createGitInstance({
+      repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
       gitUrl: gitUrl,
@@ -145,15 +145,12 @@ export class SyncRepoService {
       repoId: repoId,
       repoDir: repoDir,
       branchName: branch,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: false
     });
 
-    let gitRepo = <nodegit.Repository>await nodegit.Repository.open(repoDir);
-
-    let head: nodegit.Commit = await gitRepo.getHeadCommit();
-    let headOid = head.id();
-    let diskLastCommit = headOid.tostrS();
+    let logResult = await git.log(['-1']);
+    let diskLastCommit = logResult.latest?.hash;
 
     if (lastCommit !== diskLastCommit) {
       throw new ServerError({
@@ -166,11 +163,11 @@ export class SyncRepoService {
       });
     }
 
-    let statusFiles: nodegit.StatusFile[] = await gitRepo.getStatus();
+    let statusResult = await git.status();
 
     let { changedFiles, deletedFiles } = await getSyncFiles({
       repoDir: repoDir,
-      statusFiles: statusFiles,
+      statusResult: statusResult,
       lastSyncTime: lastSyncTime
     });
 
@@ -366,7 +363,7 @@ export class SyncRepoService {
       projectDir: projectDir,
       repoId: repoId,
       repoDir: repoDir,
-      fetchOptions: fetchOptions,
+      git: git,
       isFetch: true,
       isCheckConflicts: true,
       addContent: true

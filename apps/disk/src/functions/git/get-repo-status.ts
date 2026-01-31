@@ -1,9 +1,7 @@
-import nodegit from 'nodegit';
-import { NODEGIT_REMOTE_BRANCH_NOT_FOUND } from '#common/constants/top';
+import { SimpleGit } from 'simple-git';
 import { FileStatusEnum } from '#common/enums/file-status.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
-import { isDefined } from '#common/functions/is-defined';
 import { DiskFileChange } from '#common/interfaces/disk/disk-file-change';
 import { DiskFileLine } from '#common/interfaces/disk/disk-file-line';
 import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
@@ -19,7 +17,7 @@ export async function getRepoStatus(item: {
   repoId: string;
   projectDir: string;
   repoDir: string;
-  fetchOptions: nodegit.FetchOptions;
+  git: SimpleGit;
   isFetch: boolean;
   isCheckConflicts: boolean;
   addContent?: boolean;
@@ -37,65 +35,50 @@ export async function getRepoStatus(item: {
 
       let conflicts: DiskFileLine[] = [];
 
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.repoDir)
-      );
+      let git = item.git;
 
       let changesToCommit: DiskFileChange[] = await getChangesToCommit({
         repoDir: item.repoDir,
         addContent: item.addContent
       });
 
-      let currentBranchRef = await gitRepo.getCurrentBranch();
-      let currentBranchName = await nodegit.Branch.name(currentBranchRef);
+      let branchSummary = await git.branch();
+      let currentBranchName = branchSummary.current;
 
-      let head: nodegit.Commit = <nodegit.Commit>await gitRepo.getHeadCommit();
-      let headOid = head.id();
+      let logResult = await git.log(['-1']);
+      let headCommitSha = logResult.latest?.hash;
 
       //
 
       let changesToPush: DiskFileChange[] = [];
 
       if (changesToCommit.length === 0) {
-        let ref = await nodegit.Branch.lookup(
-          gitRepo,
-          `origin/${currentBranchName}`,
-          nodegit.Branch.BRANCH.REMOTE
-        ).catch(e => {
-          if (e?.message?.includes(NODEGIT_REMOTE_BRANCH_NOT_FOUND)) {
-            return false;
-          } else {
-            throw e;
-          }
-        });
+        let remoteBranches = await git.branch(['-r']);
+        let remoteBranchExists = remoteBranches.all.includes(
+          `origin/${currentBranchName}`
+        );
 
-        if (isDefined(ref) && !!ref) {
-          let theirCommit: nodegit.Commit = await gitRepo.getReferenceCommit(
-            `refs/remotes/origin/${currentBranchName}`
-          );
+        if (remoteBranchExists) {
+          let remoteCommitSha = await git.revparse([
+            `origin/${currentBranchName}`
+          ]);
 
-          if (isDefined(theirCommit)) {
-            let theirCommitOid = theirCommit.id();
+          try {
+            let mergeBaseResult = await git.raw([
+              'merge-base',
+              headCommitSha,
+              remoteCommitSha.trim()
+            ]);
+            let commonAncestorSha = mergeBaseResult.trim();
 
-            let commonAncestorOid: nodegit.Oid = await nodegit.Merge.base(
-              gitRepo,
-              headOid,
-              theirCommitOid
-            );
+            if (commonAncestorSha !== headCommitSha) {
+              let diffSummary = await git.diffSummary([
+                commonAncestorSha,
+                headCommitSha
+              ]);
 
-            if (commonAncestorOid !== headOid) {
-              const headTree = await head.getTree();
-
-              const baseCommit = await gitRepo.getCommit(commonAncestorOid);
-              const baseTree = await baseCommit.getTree();
-
-              const diff = await headTree.diff(baseTree);
-              const patches = await diff.patches();
-
-              changesToPush = patches.map((x: nodegit.ConvenientPatch) => {
-                let file = x.newFile();
-
-                let filePath = file.path();
+              changesToPush = diffSummary.files.map(file => {
+                let filePath = file.file;
                 let filePathArray = filePath.split('/');
 
                 let fileId = encodeFilePath({ filePath: filePath });
@@ -107,48 +90,41 @@ export async function getRepoStatus(item: {
                     ? ''
                     : filePathArray.slice(0, -1).join('/');
 
+                let status: FileStatusEnum;
+                if (
+                  (file as any).insertions > 0 &&
+                  (file as any).deletions === 0 &&
+                  (file as any).binary === false
+                ) {
+                  status = FileStatusEnum.New;
+                } else if (
+                  (file as any).insertions === 0 &&
+                  (file as any).deletions > 0
+                ) {
+                  status = FileStatusEnum.Deleted;
+                } else {
+                  status = FileStatusEnum.Modified;
+                }
+
                 return {
                   fileName: fileName,
                   fileId: fileId,
                   parentPath: fileParentPath,
-                  status: x.isAdded()
-                    ? FileStatusEnum.New
-                    : x.isDeleted()
-                      ? FileStatusEnum.Deleted
-                      : x.isModified()
-                        ? FileStatusEnum.Modified
-                        : x.isTypeChange()
-                          ? FileStatusEnum.TypeChange
-                          : x.isRenamed()
-                            ? FileStatusEnum.Renamed
-                            : x.isIgnored()
-                              ? FileStatusEnum.Ignored
-                              : x.isUnmodified()
-                                ? FileStatusEnum.Unmodified
-                                : x.isCopied()
-                                  ? FileStatusEnum.Copied
-                                  : x.isUntracked()
-                                    ? FileStatusEnum.Untracked
-                                    : x.isUnreadable()
-                                      ? FileStatusEnum.Unreadable
-                                      : undefined
+                  status: status
                 };
               });
             }
+          } catch (e) {
+            // merge-base can fail if commits have no common ancestor
           }
         }
       }
       //
 
-      let treeHead = <nodegit.Tree>await head.getTree();
-
-      const diffTreeToIndex = <nodegit.Diff>(
-        await nodegit.Diff.treeToIndex(gitRepo, treeHead, null)
-      );
-
-      const patchesTreeToIndex = <nodegit.ConvenientPatch[]>(
-        await diffTreeToIndex.patches()
-      );
+      // Use git diff --cached to detect ALL staged changes including deletions
+      // (statusResult.staged doesn't reliably include staged deletions)
+      let stagedDiff = await git.diffSummary(['--cached']);
+      let stagedFilesCount = stagedDiff.files.length;
 
       if (item.isCheckConflicts === true) {
         // check conflicts manually instead of git - because they are already committed
@@ -176,7 +152,7 @@ export async function getRepoStatus(item: {
       }
 
       // RETURN NeedCommit
-      if (patchesTreeToIndex.length > 0) {
+      if (stagedFilesCount > 0) {
         return {
           repoStatus: RepoStatusEnum.NeedCommit,
           conflicts: conflicts,
@@ -189,7 +165,7 @@ export async function getRepoStatus(item: {
       let isBranchExistRemote = await isRemoteBranchExist({
         repoDir: item.repoDir,
         remoteBranch: currentBranchName,
-        fetchOptions: item.fetchOptions,
+        git: git,
         isFetch: item.isFetch
       });
 
@@ -204,27 +180,23 @@ export async function getRepoStatus(item: {
         };
       }
 
-      let localCommit = <nodegit.Commit>(
-        await gitRepo.getReferenceCommit(`refs/heads/${currentBranchName}`)
-      );
+      let localCommitId = await git.revparse([
+        `refs/heads/${currentBranchName}`
+      ]);
+      localCommitId = localCommitId.trim();
 
-      let localCommitOid = localCommit.id();
-      let localCommitId = localCommitOid.tostrS();
-
-      let remoteOriginCommit = <nodegit.Commit>(
-        await gitRepo.getReferenceCommit(
-          `refs/remotes/origin/${currentBranchName}`
-        )
-      );
-
-      let remoteOriginCommitOid = remoteOriginCommit.id();
-      let remoteOriginCommitId = remoteOriginCommitOid.tostrS();
+      let remoteOriginCommitId = await git.revparse([
+        `refs/remotes/origin/${currentBranchName}`
+      ]);
+      remoteOriginCommitId = remoteOriginCommitId.trim();
 
       //
-      let baseCommitOid = <nodegit.Oid>(
-        await nodegit.Merge.base(gitRepo, localCommitOid, remoteOriginCommitOid)
-      );
-      let baseCommitId = baseCommitOid.tostrS();
+      let baseCommitResult = await git.raw([
+        'merge-base',
+        localCommitId,
+        remoteOriginCommitId
+      ]);
+      let baseCommitId = baseCommitResult.trim();
 
       // RETURN Ok
       if (localCommitId === remoteOriginCommitId) {

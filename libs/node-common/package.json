@@ -36,7 +36,7 @@
     "date-fns-tz": "catalog:",
     "fs-extra": "catalog:",
     "js-yaml": "catalog:",
-    "nodegit": "catalog:",
+    "simple-git": "catalog:",
     "ipaddr.js": "catalog:",
     "neoip": "catalog:",
     "dayjs": "catalog:",
@@ -52,7 +52,6 @@
   "devDependencies": {
     "@swc/helpers": "catalog:",
     "@types/fs-extra": "catalog:",
-    "@types/js-yaml": "catalog:",
-    "@types/nodegit": "catalog:"
+    "@types/js-yaml": "catalog:"
   }
 }

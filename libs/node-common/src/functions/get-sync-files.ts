@@ -1,44 +1,67 @@
 import fse from 'fs-extra';
-import nodegit from 'nodegit';
 import pIteration from 'p-iteration';
+import { StatusResult } from 'simple-git';
 
 const { forEachSeries } = pIteration;
 
 import { FileStatusEnum } from '#common/enums/file-status.enum';
 import { DiskSyncFile } from '#common/interfaces/disk/disk-sync-file';
+import { FileWithStatusType } from '#common/interfaces/disk/git-file-status-type';
 import { gitLsFiles } from './git-ls-files';
 import { readFileCheckSize } from './read-file-check-size';
 
 export async function getSyncFiles(item: {
-  statusFiles: nodegit.StatusFile[];
+  statusResult: StatusResult;
   repoDir: string;
   lastSyncTime: number;
 }) {
-  let { statusFiles, repoDir, lastSyncTime } = item;
+  let { statusResult, repoDir, lastSyncTime } = item;
 
   let changedFiles: DiskSyncFile[] = [];
   let deletedFiles: DiskSyncFile[] = [];
 
-  await forEachSeries(statusFiles, async (x: nodegit.StatusFile) => {
-    let path = x.path();
+  let allFiles: FileWithStatusType[] = [
+    ...statusResult.not_added.map(path => ({
+      path,
+      type: 'not_added' as const
+    })),
+    ...statusResult.created.map(path => ({ path, type: 'created' as const })),
+    ...statusResult.deleted.map(path => ({ path, type: 'deleted' as const })),
+    ...statusResult.modified.map(path => ({ path, type: 'modified' as const })),
+    ...statusResult.renamed.map(r => ({
+      path: r.to,
+      type: 'renamed' as const
+    })),
+    ...statusResult.conflicted.map(path => ({
+      path,
+      type: 'conflicted' as const
+    }))
+  ];
 
-    let status =
-      // doesn't return booleans
-      x.isNew()
+  let uniquePaths = new Set<string>();
+  let files: FileWithStatusType[] = [];
+  for (let file of allFiles) {
+    if (!uniquePaths.has(file.path)) {
+      uniquePaths.add(file.path);
+      files.push(file);
+    }
+  }
+
+  await forEachSeries(files, async (x: FileWithStatusType) => {
+    let path = x.path;
+
+    let status: FileStatusEnum =
+      x.type === 'not_added' || x.type === 'created'
         ? FileStatusEnum.New
-        : x.isDeleted()
+        : x.type === 'deleted'
           ? FileStatusEnum.Deleted
-          : x.isModified()
+          : x.type === 'modified'
             ? FileStatusEnum.Modified
-            : x.isConflicted()
+            : x.type === 'conflicted'
               ? FileStatusEnum.Conflicted
-              : x.isTypechange()
-                ? FileStatusEnum.TypeChange
-                : x.isRenamed()
-                  ? FileStatusEnum.Renamed
-                  : x.isIgnored()
-                    ? FileStatusEnum.Ignored
-                    : undefined;
+              : x.type === 'renamed'
+                ? FileStatusEnum.Renamed
+                : undefined;
 
     let content: string;
     let stat: fse.Stats;
@@ -70,7 +93,7 @@ export async function getSyncFiles(item: {
   });
 
   if (lastSyncTime > 0) {
-    let paths = (await gitLsFiles(repoDir)) as string[];
+    let paths = await gitLsFiles(repoDir);
 
     let extraPaths = paths.filter(
       x => [...changedFiles, ...deletedFiles].map(f => f.path).indexOf(x) < 0

@@ -143,7 +143,7 @@ catalog:
   luxon: '2.5.2'
   nanoid: '3.3.10'
   neoip: '3.0.1'
-  nodegit: '0.28.0-alpha.36'
+  simple-git: '3.30.0'
   nodemailer: '7.0.11'
   p-iteration: '1.1.8'
   passport: '0.7.0'
@@ -193,7 +193,6 @@ catalog:
   '@types/lodash-es': '4.17.6'
   '@types/luxon': '2.4.0'
   '@types/node': '22.7.5'
-  '@types/nodegit': '0.28.7'
   '@types/nodemailer': '7.0.4'
   '@types/passport-jwt': '3.0.13'
   '@types/passport-local': '1.0.38'
@@ -244,5 +243,4 @@ onlyBuiltDependencies:
   - isolated-vm
   - lmdb
   - msgpackr-extract
-  - nodegit
   - protobufjs

@@ -1,4 +1,4 @@
-import nodegit from 'nodegit';
+import { SimpleGit } from 'simple-git';
 
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
@@ -13,7 +13,7 @@ export async function checkoutBranch(item: {
   repoId: string;
   repoDir: string;
   branchName: string;
-  fetchOptions: nodegit.FetchOptions;
+  git: SimpleGit;
   isFetch: boolean;
 }) {
   return await addTraceSpan({
@@ -25,7 +25,7 @@ export async function checkoutBranch(item: {
           projectDir: item.projectDir,
           repoId: item.repoId,
           repoDir: item.repoDir,
-          fetchOptions: item.fetchOptions,
+          git: item.git,
           isFetch: item.isFetch,
           isCheckConflicts: false
         })
@@ -50,11 +50,7 @@ export async function checkoutBranch(item: {
         });
       }
 
-      let gitRepo = <nodegit.Repository>(
-        await nodegit.Repository.open(item.repoDir)
-      );
-
-      await gitRepo.checkoutBranch(item.branchName, {});
+      await item.git.checkout(item.branchName);
     }
   });
 }
