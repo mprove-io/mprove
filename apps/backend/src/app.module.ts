@@ -1,3 +1,5 @@
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import {
   Inject,
@@ -229,8 +231,13 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
                 : undefined
           });
 
+        let migrationsFolder = resolve(
+          dirname(fileURLToPath(import.meta.url)),
+          'drizzle/postgres/migrations'
+        );
+
         await migratePg(postgresSingleDrizzle, {
-          migrationsFolder: 'src/drizzle/postgres/migrations'
+          migrationsFolder
         });
 
         // dconfig
