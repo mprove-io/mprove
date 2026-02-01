@@ -71,7 +71,6 @@
     "mysql2": "catalog:",
     "axios": "catalog:",
     "dayjs": "catalog:",
-    "tarjan-graph": "catalog:",
     "toposort": "catalog:",
     "express": "catalog:",
     "google-auth-library": "catalog:",

@@ -6,10 +6,6 @@ import dayjs from 'dayjs';
 import { DateTime } from 'luxon';
 import pgPromise from 'pg-promise';
 import pg from 'pg-promise/typescript/pg-subset';
-import tarjanGraph from 'tarjan-graph';
-
-const Graph = (tarjanGraph as any).default;
-
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -35,6 +31,7 @@ import { Row } from '#common/interfaces/blockml/row';
 import { RowRecord } from '#common/interfaces/blockml/row-record';
 import { MyRegex } from '#common/models/my-regex';
 import { ServerError } from '#common/models/server-error';
+import { CycleGraph } from '#node-common/classes/cycle-graph';
 import { nodeFormatTsUnix } from '#node-common/functions/node-format-ts-unix';
 
 @Injectable()
@@ -78,8 +75,8 @@ export class DocService implements OnModuleDestroy {
   }) {
     let { report, timeSpec, timeRangeFraction, timezone, traceId } = item;
 
-    // check for cycles - tarjan graph
-    let g = new Graph();
+    // check for cycles
+    let g = new CycleGraph();
     // graph for toposort
     let gr: string[][] = [];
 
