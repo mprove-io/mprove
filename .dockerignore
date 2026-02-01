@@ -9,6 +9,7 @@ nogit/
 .pnpm-store/
 .vscode/
 
+.bun/
 dist/
 malloy/
 malloy_data/

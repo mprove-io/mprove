@@ -6,7 +6,7 @@ RUN corepack enable
 
 WORKDIR /usr/src/app
 
-COPY package.docker.json package.json
+COPY package.json .
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
 
@@ -19,7 +19,7 @@ COPY apps/disk apps/disk/
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 
-COPY ava.config.js ava-js.config.js ava-js-e2e.config.js turbo.json package.json tsconfig.base.json tsconfig.json ./
+COPY turbo.json tsconfig.base.json tsconfig.json ./
 
 RUN chmod +x scripts/wait-for-it.sh
 RUN pnpm build:disk

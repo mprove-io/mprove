@@ -4,29 +4,24 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH="/root/.bun/bin:$PATH"
+
 WORKDIR /usr/src/app
 
-COPY package.docker.json package.json
+COPY package.json .
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
 
 RUN pnpm install --frozen-lockfile
 
-COPY apps/mcli apps/mcli/
+COPY mcli mcli/
 
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 
-COPY turbo.json package.json tsconfig.base.json tsconfig.json ./
+COPY turbo.json tsconfig.base.json tsconfig.json ./
 
 RUN pnpm build:mcli
-
-# WORKDIR /usr/src/app/apps/mcli
-
-# RUN pnpm install --frozen-lockfile
-
-# WORKDIR /usr/src/app/dist/apps/mcli
-
-# RUN pnpm install --frozen-lockfile
 
 CMD ["sleep", "infinity"]

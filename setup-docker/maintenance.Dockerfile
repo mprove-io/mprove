@@ -1,4 +1,4 @@
-FROM nginx:1.21.1
+FROM nginx:1.28-bookworm
 
 COPY setup-docker/maintenance/nginx.maintenance.conf /etc/nginx/nginx.conf
 COPY setup-docker/maintenance/index.html /etc/nginx/html/
