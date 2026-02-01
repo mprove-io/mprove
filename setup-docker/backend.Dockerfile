@@ -10,12 +10,15 @@ COPY package.json .
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
 
+COPY apps/backend/package.json apps/backend/
+COPY libs/common/package.json libs/common/
+COPY libs/node-common/package.json libs/node-common/
+
 RUN pnpm install --frozen-lockfile
 
 COPY scripts/wait-for-it.sh scripts/wait-for-it.sh
 
 COPY apps/backend apps/backend/
-
 COPY libs/common libs/common/
 COPY libs/node-common libs/node-common/
 

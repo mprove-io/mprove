@@ -13,6 +13,9 @@ COPY package.json .
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
 
+COPY libs/common/package.json libs/common/
+COPY libs/node-common/package.json libs/node-common/
+
 RUN pnpm install --frozen-lockfile
 
 COPY mcli mcli/

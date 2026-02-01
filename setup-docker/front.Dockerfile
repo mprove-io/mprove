@@ -10,6 +10,9 @@ COPY package.json .
 COPY pnpm-lock.yaml .
 COPY pnpm-workspace.yaml .
 
+COPY apps/front/package.json apps/front/
+COPY libs/common/package.json libs/common/
+
 RUN pnpm install --frozen-lockfile
 
 COPY apps/front apps/front/
