@@ -14,50 +14,35 @@ jobs:
           - runner: macos-15-intel
             os: darwin
             arch: amd64
-            build: pnpm build:mcli
-            pkg: |
-              pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-x64
-              pnpm shx mv bin/mprove mprove
+            bun_target: bun-darwin-x64
             extension: tar.gz
 
           # macOS Apple Silicon (arm64)
           - runner: macos-15
             os: darwin
             arch: arm64
-            build: pnpm build:mcli
-            pkg: |
-              pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-macos-arm64
-              pnpm shx mv bin/mprove mprove
+            bun_target: bun-darwin-arm64
             extension: tar.gz
 
           # Linux amd64
           - runner: ubuntu-latest
             os: linux
             arch: amd64
-            build: pnpm build:mcli
-            pkg: |
-              pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-x64
-              pnpm shx mv bin/mprove mprove
+            bun_target: bun-linux-x64
             extension: tar.gz
 
           # Linux arm64
           # - runner: ubuntu-24.04-arm
           #   os: linux
           #   arch: arm64
-          #   build: pnpm build:mcli
-          #   pkg: |
-          #     pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-linux-arm64
-          #     pnpm shx mv bin/mprove mprove
+          #   bun_target: bun-linux-arm64
           #   extension: tar.gz
 
           # Windows amd64
           - runner: windows-latest
             os: windows
             arch: amd64
-            build: pnpm build:mcli
-            pkg: |
-              pnpm pkg:mcli --no-bytecode --public-packages "*" --public --targets node24-win-x64
-              pnpm shx mv bin/mprove.exe mprove.exe
+            bun_target: bun-windows-x64
             extension: zip
 
     runs-on: ${{ matrix.runner }}
@@ -73,23 +58,25 @@ jobs:
           node-version: 24.10.0
           cache: pnpm
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install top dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install apps/mcli dependencies
-        run: pnpm install --frozen-lockfile
-        working-directory: apps/mcli
+      - name: Install mcli dependencies
+        run: bun install
+        working-directory: mcli
 
-      - name: Build
-        run: ${{ matrix.build }}
+      - name: Build mcli (Unix)
+        if: matrix.os != 'windows'
+        run: bun build src/main.ts --compile --target=${{ matrix.bun_target }} --outfile dist/bin/mprove
+        working-directory: mcli
 
-      - name: Install dist/apps/mcli dependencies
-        run: pnpm install --frozen-lockfile
-        working-directory: dist/apps/mcli
-
-      - name: Package with pkg
-        run: ${{ matrix.pkg }}
-        working-directory: dist/apps/mcli
+      - name: Build mcli (Windows)
+        if: matrix.os == 'windows'
+        run: bun build src/main.ts --compile --target=${{ matrix.bun_target }} --outfile dist/bin/mprove.exe
+        working-directory: mcli
 
       - name: Extract version from tag
         id: version
@@ -109,7 +96,7 @@ jobs:
       - name: Create archive (macOS / Linux)
         if: matrix.os == 'darwin' || matrix.os == 'linux'
         shell: bash
-        working-directory: dist/apps/mcli
+        working-directory: mcli/dist/bin
         env:
           ARTIFACT_NAME: ${{ steps.artifact.outputs.name }}
         run: |
@@ -118,7 +105,7 @@ jobs:
       - name: Create archive (Windows)
         if: matrix.os == 'windows'
         shell: pwsh
-        working-directory: dist/apps/mcli
+        working-directory: mcli/dist/bin
         env:
           ARTIFACT_NAME: ${{ steps.artifact.outputs.name }}
         run: |
@@ -127,7 +114,7 @@ jobs:
       - uses: actions/upload-artifact@v6
         with:
           name: ${{ steps.artifact.outputs.name }}
-          path: dist/apps/mcli/${{ steps.artifact.outputs.name }}
+          path: mcli/dist/bin/${{ steps.artifact.outputs.name }}
 
   release-draft:
     needs: [build]

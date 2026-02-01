@@ -204,7 +204,6 @@ catalog:
   '@types/throttle-debounce': '5.0.0'
   '@types/tiny-async-pool': '1.0.5'
   '@types/walk': '2.3.4'
-  '@yao-pkg/pkg': '6.11.0'
   autoprefixer: '10.4.20'
   ava: '6.4.1'
   cross-env: '7.0.3'
