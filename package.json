@@ -15,6 +15,8 @@
   "scripts": {
     "prepare": "husky",
     "catalog-write": "bash scripts/catalog-to-versions.sh",
+    "deps-check": "bash scripts/deps-check.sh",
+    "deps-write": "bash scripts/deps-write.sh",
     "biome-check": "biome check .",
     "biome-write": "biome check --write .",
     "prettier-check": "prettier \"**/*.{html,scss,json,jsonc,md}\" --check --config .prettierrc.js",
