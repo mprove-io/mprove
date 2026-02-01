@@ -45,6 +45,7 @@ cd /mprove && dist/apps/mcli/bin/mprove version
 
 c build backend && \
 c build blockml && \
+c build chat && \
 c build disk && \
 c build front && \
 c build mcli
