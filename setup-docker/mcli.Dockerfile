@@ -22,6 +22,8 @@ COPY libs/node-common libs/node-common/
 
 COPY turbo.json tsconfig.base.json tsconfig.json ./
 
+RUN cd mcli && bun install
+
 RUN pnpm build:mcli
 
 CMD ["sleep", "infinity"]
