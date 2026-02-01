@@ -28,6 +28,7 @@
     "debug": "turbo run debug",
     "test": "turbo run test",
     "e2e": "pnpm e2e:turbo && pnpm e2e:mcli",
+    "inst": "pnpm catalog-write && pnpm install && pnpm install:mcli",
     "install:mcli": "cd mcli && bun install",
     "build:mcli:linux": "cd mcli && bun run build:linux",
     "mcli": "cd mcli && bun run src/main.ts",
