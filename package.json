@@ -115,6 +115,7 @@
     "@types/node": "catalog:",
     "ava": "catalog:",
     "cross-env": "catalog:",
+    "dayjs": "catalog:",
     "drizzle-kit": "catalog:",
     "esbuild": "catalog:",
     "husky": "catalog:",

@@ -373,8 +373,8 @@ catalogs:
       specifier: 3.2.0
       version: 3.2.0
     dayjs:
-      specifier: 1.11.13
-      version: 1.11.13
+      specifier: 1.11.19
+      version: 1.11.19
     dotenv-cli:
       specifier: 11.0.0
       version: 11.0.0
@@ -593,6 +593,9 @@ importers:
       cross-env:
         specifier: 'catalog:'
         version: 7.0.3
+      dayjs:
+        specifier: 'catalog:'
+        version: 1.11.19
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.27.1
@@ -760,7 +763,7 @@ importers:
         version: 3.2.0(date-fns@4.1.0)
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.13
+        version: 1.11.19
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.27.1
@@ -1490,7 +1493,7 @@ importers:
         version: 3.2.0
       dayjs:
         specifier: 'catalog:'
-        version: 1.11.13
+        version: 1.11.19
       echarts:
         specifier: 'catalog:'
         version: 5.5.1
@@ -1749,8 +1752,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(date-fns@4.1.0)
       dayjs:
-        specifier: 1.11.13
-        version: 1.11.13
+        specifier: 1.11.19
+        version: 1.11.19
       fs-extra:
         specifier: 11.2.0
         version: 11.2.0
@@ -7483,8 +7486,8 @@ packages:
     resolution: {integrity: sha512-uqCUKXE5q1PNBXjPqvwhwJf9SwMoAHBgWJ6DcrnS5o+W2JOiIILl0JEdVD8SGujrNS02GGxgwAg2PN2zONgtjg==}
     engines: {node: '>=6'}
 
-  dayjs@1.11.13:
-    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
+  dayjs@1.11.19:
+    resolution: {integrity: sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==}
 
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -19291,7 +19294,7 @@ snapshots:
     dependencies:
       time-zone: 1.0.0
 
-  dayjs@1.11.13: {}
+  dayjs@1.11.19: {}
 
   debug@2.6.9:
     dependencies:

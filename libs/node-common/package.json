@@ -39,7 +39,7 @@
     "simple-git": "3.30.0",
     "ipaddr.js": "2.3.0",
     "neoip": "3.0.1",
-    "dayjs": "1.11.13",
+    "dayjs": "1.11.19",
     "tslib": "2.7.0",
     "nest-winston": "1.9.4",
     "@malloydata/malloy": "0.0.335",
