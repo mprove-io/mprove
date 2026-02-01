@@ -1,4 +1,3 @@
-/// <reference path="./types.d.ts" />
 import { Cli } from 'clipanion';
 import 'reflect-metadata';
 
