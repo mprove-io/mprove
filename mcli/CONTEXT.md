@@ -1,20 +1,19 @@
-# apps/mcli/CONTEXT.md
+# mcli/CONTEXT.md
 
 Command-line interface for Mprove, built with Clipanion.
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh apps/mcli`
+Generated with `./scripts/list-context-files-tree.sh mcli`
 
 ```
-.turbo/
-bin/
+.bun/
 dist/
 node_modules/
 src/
-.swcrc
 ava.config.js
-build.mjs
+bunfig.toml
+bun.lock
 CONTEXT.md
 package.json
 tsconfig.json
@@ -53,6 +52,13 @@ src/
 ├── models/             # CLI models
 └── assets/             # Static config
 ```
+
+## Package Management
+
+mcli uses **bun** as package manager (independent from turbo/pnpm workspace).
+
+Dependency versions are centrally managed in `pnpm-workspace.yaml` catalog.
+Run `pnpm catalog-write` from project root to sync catalog versions to `package.json`.
 
 ## Communication
 

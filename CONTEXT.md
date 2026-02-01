@@ -20,6 +20,7 @@ _nogit/
 apps/
 dist/
 libs/
+mcli/
 mprove_data/
 node_modules/
 notes/
@@ -97,6 +98,18 @@ Apps communicate:
 - `tsconfig.base.json` — path aliases
 - `docker-compose.yml` — local development stack
 
+## Version Management
+
+All dependency versions are centrally defined in `pnpm-workspace.yaml` catalog.
+
+| Package Type          | Version Syntax | How it works                         |
+| --------------------- | -------------- | ------------------------------------ |
+| Turbo apps (`apps/*`) | `catalog:`     | pnpm resolves versions automatically |
+| Turbo libs (`libs/*`) | explicit       | synced via `pnpm catalog-write`      |
+| mcli (bun)            | explicit       | synced via `pnpm catalog-write`      |
+
+Run `pnpm catalog-write` to sync catalog versions to `libs/common`, `libs/node-common`, and `mcli` package.json files.
+
 ## Turborepo Scripts
 
 Scripts follow a consistent pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` runs for a specific package.
@@ -149,7 +162,7 @@ Scripts follow a consistent pattern: `pnpm <task>` runs for all packages, `pnpm 
 - `#disk/*` → `apps/disk/src/*`
 - `#blockml/*` → `apps/blockml/src/*`
 - `#backend/*` → `apps/backend/src/*`
-- `#mcli/*` → `apps/mcli/src/*`
+- `#mcli/*` → `mcli/src/*`
 - `#front/*` → `apps/front/src/*`
 
 ### ESM Configuration
@@ -240,7 +253,7 @@ For deeper context on specific subsystems, see:
 - [apps/disk/CONTEXT.md](apps/disk/CONTEXT.md)
 - [apps/chat/CONTEXT.md](apps/chat/CONTEXT.md)
 - [apps/front/CONTEXT.md](apps/front/CONTEXT.md)
-- [apps/mcli/CONTEXT.md](apps/mcli/CONTEXT.md)
+- [mcli/CONTEXT.md](mcli/CONTEXT.md)
 
 ## Maintaining the CONTEXT Tree
 
