@@ -41,10 +41,10 @@ services:
       BACKEND_IS_SCHEDULER: 'TRUE'
     ports:
       - 3000:3000
-    depends_on:
-      - db
-      - valkey
-      - calc-postgres
+    # depends_on:
+    #   - db
+    #   - valkey
+    #   - calc-postgres
     command: sh -c 'scripts/wait-for-it.sh db:5432 --timeout=120 -- node apps/backend/dist/main.js'
     volumes:
       - type: bind
@@ -67,6 +67,8 @@ services:
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
     env_file:
       - .env
+    depends_on:
+      - valkey
     command: sh -c 'node apps/blockml/dist/main.js'
     volumes:
       - type: bind
@@ -81,6 +83,8 @@ services:
     env_file:
       - .env
     command: sh -c 'node apps/disk/dist/main.js'
+    depends_on:
+      - valkey
     volumes:
       - type: bind
         source: $COMPOSE_ENV_FILE_SOURCE_PATH
