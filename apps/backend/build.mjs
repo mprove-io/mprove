@@ -40,6 +40,7 @@ await esbuild.build({
   bundle: true,
   platform: 'node',
   target: 'node20',
+  format: 'esm',
   outfile: resolve(__dirname, 'dist/main.js'),
   sourcemap: !isMinify,
   minify: isMinify,

@@ -35,6 +35,8 @@ services:
       context: ./
       dockerfile: setup-docker/backend.Dockerfile
     image: ghcr.io/mprove-io/mprove-backend:$MPROVE_RELEASE_TAG
+    env_file:
+      - .env
     environment:
       BACKEND_IS_SCHEDULER: 'TRUE'
     ports:
@@ -63,6 +65,8 @@ services:
       context: ./
       dockerfile: setup-docker/blockml.Dockerfile
     image: ghcr.io/mprove-io/mprove-blockml:$MPROVE_RELEASE_TAG
+    env_file:
+      - .env
     command: sh -c 'node apps/blockml/dist/main.js'
     volumes:
       - type: bind
@@ -74,6 +78,8 @@ services:
       context: ./
       dockerfile: setup-docker/disk.Dockerfile
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
+    env_file:
+      - .env
     command: sh -c 'node apps/disk/dist/main.js'
     volumes:
       - type: bind
@@ -88,6 +94,8 @@ services:
       context: ./
       dockerfile: setup-docker/chat.Dockerfile
     image: ghcr.io/mprove-io/mprove-chat:$MPROVE_RELEASE_TAG
+    env_file:
+      - .env
     command: sh -c 'node apps/chat/dist/main.js'
     volumes:
       - type: bind
@@ -134,6 +142,8 @@ services:
       context: ./
       dockerfile: setup-docker/mcli.Dockerfile
     image: ghcr.io/mprove-io/mprove-mcli:$MPROVE_RELEASE_TAG
+    env_file:
+      - .env
     volumes:
       - type: bind
         source: $COMPOSE_ENV_FILE_SOURCE_PATH
