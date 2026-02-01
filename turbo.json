@@ -12,8 +12,8 @@
     "clean-turbo": {
       "cache": false
     },
-    "build:prod": {
-      "dependsOn": ["^build:prod"],
+    "build": {
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "start": {
@@ -21,7 +21,7 @@
       "persistent": true
     },
     "serve": {
-      "dependsOn": ["build:prod"],
+      "dependsOn": ["build"],
       "cache": false,
       "persistent": true
     },
@@ -32,7 +32,7 @@
     "test": {},
     "e2e": {},
     "pack": {
-      "dependsOn": ["build:prod"]
+      "dependsOn": ["build"]
     }
   }
 }

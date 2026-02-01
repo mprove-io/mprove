@@ -101,28 +101,28 @@ Apps communicate:
 
 Scripts follow a consistent pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` runs for a specific package.
 
-| Task            | All Packages      | Single Package Example    |
-| --------------- | ----------------- | ------------------------- |
-| **Lint**        | `pnpm lint`       | `pnpm lint:backend`       |
-| **Circular**    | `pnpm circular`   | `pnpm circular:backend`   |
-| **Build**       | `pnpm build:prod` | `pnpm build:backend:prod` |
-| **Start (dev)** | `pnpm start`      | `pnpm start:backend`      |
-| **Test**        | `pnpm test`       | `pnpm test:blockml`       |
-| **E2E**         | `pnpm e2e`        | `pnpm e2e:backend`        |
+| Task            | All Packages    | Single Package Example  |
+| --------------- | --------------- | ----------------------- |
+| **Lint**        | `pnpm lint`     | `pnpm lint:backend`     |
+| **Circular**    | `pnpm circular` | `pnpm circular:backend` |
+| **Build**       | `pnpm build`    | `pnpm build:backend`    |
+| **Start (dev)** | `pnpm start`    | `pnpm start:backend`    |
+| **Test**        | `pnpm test`     | `pnpm test:blockml`     |
+| **E2E**         | `pnpm e2e`      | `pnpm e2e:backend`      |
 
 **Available filters:** `backend`, `blockml`, `chat`, `disk`, `mcli`, `front`, `common`, `node-common`
 
 **Per-package scripts** (defined in each app/lib `package.json`):
 
-| Script       | Purpose                                    |
-| ------------ | ------------------------------------------ |
-| `lint`       | Run Biome linter on `src/`                 |
-| `circular`   | Check for circular dependencies with Madge |
-| `build:prod` | Production build (SWC compile + esbuild)   |
-| `start`      | Dev server with hot reload (SWC register)  |
-| `debug`      | Dev server with Node.js inspector          |
-| `test`       | Unit tests with AVA                        |
-| `e2e`        | End-to-end tests with AVA                  |
+| Script     | Purpose                                    |
+| ---------- | ------------------------------------------ |
+| `lint`     | Run Biome linter on `src/`                 |
+| `circular` | Check for circular dependencies with Madge |
+| `build`    | Production build (SWC compile + esbuild)   |
+| `start`    | Dev server with hot reload (SWC register)  |
+| `debug`    | Dev server with Node.js inspector          |
+| `test`     | Unit tests with AVA                        |
+| `e2e`      | End-to-end tests with AVA                  |
 
 **Formatting scripts** (root only):
 

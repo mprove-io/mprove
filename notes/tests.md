@@ -14,7 +14,7 @@ pnpm install
 pnpm circular
 
 pnpm lint
-pnpm build:prod
+pnpm build
 
 // creates initial env vars
 pnpm create-env

@@ -18,7 +18,7 @@ COPY libs/common libs/common/
 
 COPY turbo.json package.json tsconfig.base.json tsconfig.json ./
 
-RUN pnpm build:front:prod
+RUN pnpm build:front
 
 FROM nginx:1.21.1
 COPY --from=builder /usr/src/app/apps/front/nginx-configs/nginx.front.conf /etc/nginx/nginx.conf

@@ -15,27 +15,27 @@
     "clean-turbo": "rimraf --glob \".turbo/*\" \".turbo/.[!.]*\""
   },
   "dependencies": {
-    "@codemirror/language": "catalog:",
-    "@codemirror/state": "catalog:",
-    "@codemirror/view": "catalog:",
-    "@lezer/highlight": "catalog:",
-    "@malloydata/malloy": "catalog:",
-    "@malloydata/malloy-filter": "catalog:",
-    "@malloydata/malloy-tag": "catalog:",
-    "@malloydata/malloy-interfaces": "catalog:",
-    "@nestjs/throttler": "catalog:",
-    "@replit/codemirror-indentation-markers": "catalog:",
-    "@vaadin/date-picker": "catalog:",
-    "class-transformer": "catalog:",
-    "class-validator": "catalog:",
-    "js-yaml": "catalog:",
-    "nanoid": "catalog:",
-    "reflect-metadata": "catalog:",
-    "trino-client": "catalog:",
-    "tslib": "catalog:"
+    "@codemirror/language": "6.11.3",
+    "@codemirror/state": "6.5.2",
+    "@codemirror/view": "6.36.7",
+    "@lezer/highlight": "1.2.3",
+    "@malloydata/malloy": "0.0.335",
+    "@malloydata/malloy-filter": "0.0.335",
+    "@malloydata/malloy-tag": "0.0.335",
+    "@malloydata/malloy-interfaces": "0.0.335",
+    "@nestjs/throttler": "6.4.0",
+    "@replit/codemirror-indentation-markers": "6.5.3",
+    "@vaadin/date-picker": "23.5.3",
+    "class-transformer": "0.3.1",
+    "class-validator": "0.14.2",
+    "js-yaml": "4.1.1",
+    "nanoid": "3.3.10",
+    "reflect-metadata": "0.2.2",
+    "trino-client": "0.2.9",
+    "tslib": "2.7.0"
   },
   "devDependencies": {
-    "@swc/helpers": "catalog:",
-    "@types/js-yaml": "catalog:"
+    "@swc/helpers": "0.5.18",
+    "@types/js-yaml": "4.0.9"
   }
 }

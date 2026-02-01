@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "biome lint src",
     "circular": "madge --circular .",
-    "build:prod": "ng build --configuration production",
+    "build": "ng build --configuration production",
     "start": "ng serve --configuration development",
     "clean-node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
     "clean-dist": "rimraf --glob \"dist/*\" \"dist/.[!.]*\"",

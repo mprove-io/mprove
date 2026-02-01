@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "biome lint src",
     "circular": "madge --circular .",
-    "build:prod": "swc src -d dist --source-maps && node build.mjs",
+    "build": "swc src -d dist --source-maps && node build.mjs",
     "serve": "dotenv -e ../../.env -- node --enable-source-maps dist/main.js",
     "start": "dotenv -e ../../.env -- node --import @swc-node/register/esm-register --watch src/main.ts",
     "debug": "dotenv -e ../../.env -- node --import @swc-node/register/esm-register --inspect=0.0.0.0:9231 --watch src/main.ts",
