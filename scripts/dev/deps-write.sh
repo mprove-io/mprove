@@ -4,7 +4,7 @@ set -e
 # Add all libs/node-common dependencies to root package.json devDependencies
 # This ensures pnpm hoists them for Docker runtime resolution
 
-ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 ROOT_PKG="$ROOT_DIR/package.json"
 NODE_COMMON_PKG="$ROOT_DIR/libs/node-common/package.json"
 

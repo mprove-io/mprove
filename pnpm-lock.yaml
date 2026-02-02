@@ -584,6 +584,9 @@ importers:
       '@biomejs/biome':
         specifier: 'catalog:'
         version: 2.3.12
+      '@types/js-yaml':
+        specifier: 'catalog:'
+        version: 4.0.9
       '@types/node':
         specifier: 'catalog:'
         version: 22.7.5
@@ -605,6 +608,9 @@ importers:
       husky:
         specifier: 'catalog:'
         version: 9.1.7
+      js-yaml:
+        specifier: 'catalog:'
+        version: 4.1.1
       license-checker:
         specifier: 'catalog:'
         version: 25.0.1

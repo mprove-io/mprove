@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT_DIR="$(cd "$(dirname "$0")/../.." && pwd)"
 CATALOG_FILE="$ROOT_DIR/pnpm-workspace.yaml"
 
 # Function to get version from catalog
