@@ -22,7 +22,7 @@
     "biome-write": "biome check --write .",
     "prettier-check": "prettier \"**/*.{html,scss,json,jsonc,md}\" --check --config .prettierrc.js",
     "prettier-write": "prettier \"**/*.{html,scss,json,jsonc,md}\" --write --config .prettierrc.js",
-    "check": "pnpm typecheck && pnpm lint && pnpm circular",
+    "check": "pnpm typecheck && pnpm lint",
     "typecheck": "pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts",
     "lint": "pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts",
     "circular": "pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts",

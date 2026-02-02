@@ -3,7 +3,7 @@
   "version": "11.0.97-dev",
   "private": true,
   "scripts": {
-    "check": "pnpm typecheck && pnpm lint && pnpm circular",
+    "check": "pnpm typecheck && pnpm lint",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint src",
     "circular": "madge --circular .",

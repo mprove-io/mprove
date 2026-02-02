@@ -529,7 +529,7 @@ ${inputSub}
         queryStart.apiMethod === StoreMethodEnum.Post
           ? await axios.post(url, body, { headers: headers })
           : queryStart.apiMethod === StoreMethodEnum.Get
-            ? await axios.get(url, body, { headers: headers })
+            ? await axios.get(url, { headers: headers })
             : { message: 'method must be POST or GET' };
 
       let q = await this.db.drizzle.query.queriesTable

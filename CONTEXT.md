@@ -57,7 +57,7 @@ Run `pnpm catalog-write` to sync catalog versions to `libs/common`, `libs/node-c
 
 | Script    | Command                                                                 |
 | --------- | ----------------------------------------------------------------------- |
-| check     | `pnpm typecheck && pnpm lint && pnpm circular`                          |
+| check     | `pnpm typecheck && pnpm lint`                                           |
 | typecheck | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
 | lint      | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
 | circular  | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |

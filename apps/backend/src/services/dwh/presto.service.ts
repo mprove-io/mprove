@@ -1,10 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { PrestoClientConfig } from '@prestodb/presto-js-client';
-import prestoClient from '@prestodb/presto-js-client';
+import {
+  PrestoClient,
+  type PrestoClientConfig,
+  type PrestoQuery
+} from '@prestodb/presto-js-client';
 import retry from 'async-retry';
-
-const { PrestoClient } = prestoClient;
 
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -94,7 +95,7 @@ export class PrestoService {
 
     await pc
       .query(querySql)
-      .then(async result => {
+      .then(async (result: PrestoQuery) => {
         let columns = result.columns;
 
         let data = result.data.map(r => {

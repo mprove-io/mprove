@@ -78,7 +78,7 @@ catalog:
   '@opentelemetry/sdk-trace-base': 2.2.0
   '@opentelemetry/sdk-trace-web': 2.2.0
   '@opentelemetry/semantic-conventions': 1.38.0
-  '@prestodb/presto-js-client': 1.0.1
+  '@prestodb/presto-js-client': 1.1.0
   '@replit/codemirror-indentation-markers': 6.5.3
   '@schematics/angular': 21.1.0
   '@swc-node/register': 1.11.1

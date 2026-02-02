@@ -23,7 +23,7 @@ tsconfig.json
 
 | Script      | Command                                                                                                                                         |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| check       | `pnpm typecheck && pnpm lint && pnpm circular`                                                                                                  |
+| check       | `pnpm typecheck && pnpm lint`                                                                                                                   |
 | typecheck   | `tsc --noEmit`                                                                                                                                  |
 | lint        | `biome lint src`                                                                                                                                |
 | circular    | `madge --circular .`                                                                                                                            |

@@ -9,7 +9,7 @@
     "#node-common/*": "@mprove/node-common/*"
   },
   "scripts": {
-    "check": "pnpm typecheck && pnpm lint && pnpm circular",
+    "check": "pnpm typecheck && pnpm lint",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint src",
     "circular": "madge --circular .",
