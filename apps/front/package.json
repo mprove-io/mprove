@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "lint": "biome lint src",
+    "typecheck": "tsc --noEmit",
     "circular": "madge --circular .",
     "build": "ng build --configuration production",
     "start": "ng serve --configuration development",

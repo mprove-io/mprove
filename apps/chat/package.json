@@ -10,6 +10,7 @@
   },
   "scripts": {
     "lint": "biome lint src",
+    "typecheck": "tsc --noEmit",
     "circular": "madge --circular .",
     "build": "swc src -d dist --source-maps && node build.mjs",
     "serve": "dotenv -e ../../.env -- node --enable-source-maps dist/main.js",
