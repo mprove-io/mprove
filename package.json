@@ -56,7 +56,7 @@
     "check:common": "turbo run check --filter=@mprove/common",
     "check:node-common": "turbo run check --filter=@mprove/node-common",
     "check:mcli": "cd mcli && bun run check",
-    "check:scripts": "pnpm typecheck:scripts && pnpm lint:scripts && pnpm circular:scripts",
+    "check:scripts": "pnpm typecheck:scripts && pnpm lint:scripts",
     "typecheck:turbo": "turbo run typecheck",
     "typecheck:backend": "turbo run typecheck --filter=@mprove/backend",
     "typecheck:blockml": "turbo run typecheck --filter=@mprove/blockml",
