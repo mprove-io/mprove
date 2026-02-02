@@ -1,6 +1,6 @@
 {
   "name": "@mprove/front",
-  "version": "11.0.96-dev",
+  "version": "11.0.97-dev",
   "private": true,
   "scripts": {
     "lint": "biome lint src",
