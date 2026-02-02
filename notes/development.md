@@ -20,7 +20,7 @@ pnpm build
 // creates initial env vars
 pnpm create-env
 
-// manually update envs - for tests to work (demo project env vars are also needed)
+// manually update envs - for tests to work (demo project env vars may also be needed)
 BACKEND_ALLOW_TEST_ROUTES=TRUE
 BACKEND_REGISTER_ONLY_INVITED_USERS=FALSE
 BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS=TRUE
