@@ -16,8 +16,9 @@
   },
   "bin": "main.js",
   "scripts": {
-    "lint": "biome lint src",
+    "check": "bun run typecheck && bun run lint && bun run circular",
     "typecheck": "tsc --noEmit",
+    "lint": "biome lint src",
     "circular": "madge --circular .",
     "build": "bun build src/main.ts --compile --outfile dist/bin/mprove",
     "build:linux": "bun build src/main.ts --compile --target=bun-linux-x64 --outfile dist/bin/mprove-linux-x64",

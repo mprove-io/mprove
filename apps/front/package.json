@@ -3,8 +3,9 @@
   "version": "11.0.97-dev",
   "private": true,
   "scripts": {
-    "lint": "biome lint src",
+    "check": "pnpm typecheck && pnpm lint && pnpm circular",
     "typecheck": "tsc --noEmit",
+    "lint": "biome lint src",
     "circular": "madge --circular .",
     "build": "ng build --configuration production",
     "start": "ng serve --configuration development",

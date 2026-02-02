@@ -9,8 +9,9 @@
     "#node-common/*": "@mprove/node-common/*"
   },
   "scripts": {
-    "lint": "biome lint src",
+    "check": "pnpm typecheck && pnpm lint && pnpm circular",
     "typecheck": "tsc --noEmit",
+    "lint": "biome lint src",
     "circular": "madge --circular .",
     "build": "swc src -d dist --source-maps && node build.mjs",
     "serve": "dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -- node --enable-source-maps dist/main.js",

@@ -1,11 +1,16 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
-    "lint": {},
+    "check": {
+      "dependsOn": ["^check"]
+    },
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
-    "circular": {},
+    "lint": {},
+    "circular": {
+      "dependsOn": ["^circular"]
+    },
     "clean-node": {
       "cache": false
     },
@@ -33,9 +38,6 @@
       "persistent": true
     },
     "test": {},
-    "e2e": {},
-    "pack": {
-      "dependsOn": ["build"]
-    }
+    "e2e": {}
   }
 }
