@@ -40,7 +40,6 @@
     "source=mprove-common-turbo,target=${containerWorkspaceFolder}/libs/common/.turbo,type=volume",
     "source=mprove-node-common-turbo,target=${containerWorkspaceFolder}/libs/node-common/.turbo,type=volume",
 
-    "source=mprove-mcli-dist,target=${containerWorkspaceFolder}/mcli/dist,type=volume",
     "source=mprove-backend-dist,target=${containerWorkspaceFolder}/apps/backend/dist,type=volume",
     "source=mprove-blockml-dist,target=${containerWorkspaceFolder}/apps/blockml/dist,type=volume",
     "source=mprove-chat-dist,target=${containerWorkspaceFolder}/apps/chat/dist,type=volume",
