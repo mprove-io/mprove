@@ -26,7 +26,7 @@ BACKEND_ALLOW_TEST_ROUTES=TRUE
 BACKEND_REGISTER_ONLY_INVITED_USERS=FALSE
 BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS=TRUE
 
-# ifra - terminal A (needs to be run outside of devcontainer)
+# infra - terminal A (needs to be run outside of devcontainer)
 
 c up -d db valkey calc-postgres dwh-postgres dwh-mysql clickstack opencode
 
@@ -73,6 +73,13 @@ c build chat && \
 c build disk && \
 c build front && \
 c build mcli
+
+c build backend --no-cache && \
+c build --no-cache blockml && \
+c build --no-cache chat && \
+c build --no-cache disk && \
+c build --no-cache front && \
+c build --no-cache mcli
 
 c up backend blockml disk front chat
 
