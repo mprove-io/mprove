@@ -31,6 +31,7 @@ tsconfig.json
 | lint          | `biome lint src`                                                 |
 | circular      | `madge --circular .`                                             |
 | build         | `ng build --configuration production`                            |
+| node-serve    | `serve -s dist/browser -l 3003 --no-clipboard`                   |
 | start         | `ng serve --configuration development`                           |
 | clean-node    | `rimraf --glob "node_modules/*" "node_modules/.[!.]*"`           |
 | clean-dist    | `rimraf --glob "dist/*" "dist/.[!.]*"`                           |
