@@ -12,12 +12,27 @@ dist/
 node_modules/
 src/
 ava.config.js
-bunfig.toml
 bun.lock
+bunfig.toml
 CONTEXT.md
 package.json
 tsconfig.json
 ```
+
+## Scripts
+
+| Script      | Command                                                                                      |
+| ----------- | -------------------------------------------------------------------------------------------- |
+| check       | `bun run typecheck && bun run lint && bun run circular`                                      |
+| typecheck   | `tsc --noEmit`                                                                               |
+| lint        | `biome lint src`                                                                             |
+| circular    | `madge --circular .`                                                                         |
+| build       | `bun build src/main.ts --compile --outfile dist/bin/mprove`                                  |
+| build:linux | `bun build src/main.ts --compile --target=bun-linux-x64 --outfile dist/bin/mprove-linux-x64` |
+| e2e         | `dotenv -e ../.env -- bun test --concurrent 4 --timeout 60000 src`                           |
+| clean-node  | `rimraf --glob "node_modules/*" "node_modules/.[!.]*"`                                       |
+| clean-dist  | `rimraf --glob "dist/*" "dist/.[!.]*"`                                                       |
+| clean-bun   | `rimraf --glob "bun.lock" ".bun/*" ".bun/.[!.]*"`                                            |
 
 ## Key Files
 

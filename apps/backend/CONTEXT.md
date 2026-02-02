@@ -19,6 +19,23 @@ package.json
 tsconfig.json
 ```
 
+## Scripts
+
+| Script      | Command                                                                                                                                         |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| check       | `pnpm typecheck && pnpm lint && pnpm circular`                                                                                                  |
+| typecheck   | `tsc --noEmit`                                                                                                                                  |
+| lint        | `biome lint src`                                                                                                                                |
+| circular    | `madge --circular .`                                                                                                                            |
+| build       | `swc src -d dist --source-maps && node build.mjs`                                                                                               |
+| serve       | `dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -- node --enable-source-maps dist/main.js`                                                   |
+| start       | `dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -- node --import @swc-node/register/esm-register --watch src/main.ts`                        |
+| debug       | `dotenv -e ../../.env -v BACKEND_IS_SCHEDULER=TRUE -- node --import @swc-node/register/esm-register --inspect=0.0.0.0:9232 --watch src/main.ts` |
+| e2e         | `dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=6`                                                                     |
+| clean-node  | `rimraf --glob "node_modules/*" "node_modules/.[!.]*"`                                                                                          |
+| clean-dist  | `rimraf --glob "dist/*" "dist/.[!.]*"`                                                                                                          |
+| clean-turbo | `rimraf --glob ".turbo/*" ".turbo/.[!.]*"`                                                                                                      |
+
 ## Key Files
 
 - `src/main.ts` — app bootstrap
@@ -56,15 +73,6 @@ avatars, branches, catalogs, charts, check, connections, dashboards, envs, files
 - Schema: `src/drizzle/postgres/schema/`
 - Migrations: `src/drizzle/postgres/migrations/`
 - Entities: avatars, branches, bridges, charts, connections, dashboards, dconfigs, envs, kits, mconfigs, members, models, notes, orgs, projects, queries, reports, structs, users
-
-## Key Services
-
-- `redis.service.ts` — Redis pub/sub RPC to disk/blockml
-- `malloy.service.ts` — Malloy query execution
-- `store.service.ts` — in-memory state
-- `email.service.ts` — email notifications
-- `hash.service.ts` — password hashing
-- `rpc.service.ts` — RPC message handling
 
 ## Patterns
 

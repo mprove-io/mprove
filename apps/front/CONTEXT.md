@@ -22,14 +22,20 @@ tailwind.config.js
 tsconfig.json
 ```
 
-## Key Files
+## Scripts
 
-- `src/main.ts` — app bootstrap
-- `src/app/app.component.ts` — root component
-- `src/app/app-routes.ts` — route definitions
-- `src/index.html` — HTML entry point
-- `src/styles.scss` — global styles
-- `src/init-telemetry.ts` — OpenTelemetry initialization
+| Script        | Command                                                          |
+| ------------- | ---------------------------------------------------------------- |
+| check         | `pnpm typecheck && pnpm lint && pnpm circular`                   |
+| typecheck     | `tsc --noEmit`                                                   |
+| lint          | `biome lint src`                                                 |
+| circular      | `madge --circular .`                                             |
+| build         | `ng build --configuration production`                            |
+| start         | `ng serve --configuration development`                           |
+| clean-node    | `rimraf --glob "node_modules/*" "node_modules/.[!.]*"`           |
+| clean-dist    | `rimraf --glob "dist/*" "dist/.[!.]*"`                           |
+| clean-turbo   | `rimraf --glob ".turbo/*" ".turbo/.[!.]*" && pnpm clean-angular` |
+| clean-angular | `rimraf --glob ".angular/*" ".angular/.[!.]*"`                   |
 
 ## Directory Structure
 

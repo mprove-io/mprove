@@ -19,12 +19,22 @@ package.json
 tsconfig.json
 ```
 
-## Key Files
+## Scripts
 
-- `src/main.ts` — app bootstrap
-- `src/app.module.ts` — root NestJS module
-- `src/app-controllers.ts` — controller registration
-- `src/app-services.ts` — service registration
+| Script      | Command                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------ |
+| check       | `pnpm typecheck && pnpm lint && pnpm circular`                                                                     |
+| typecheck   | `tsc --noEmit`                                                                                                     |
+| lint        | `biome lint src`                                                                                                   |
+| circular    | `madge --circular .`                                                                                               |
+| build       | `swc src -d dist --source-maps && node build.mjs`                                                                  |
+| serve       | `dotenv -e ../../.env -- node --enable-source-maps dist/main.js`                                                   |
+| start       | `dotenv -e ../../.env -- node --import @swc-node/register/esm-register --watch src/main.ts`                        |
+| debug       | `dotenv -e ../../.env -- node --import @swc-node/register/esm-register --inspect=0.0.0.0:9233 --watch src/main.ts` |
+| e2e         | `dotenv -e ../../.env -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=5`                                        |
+| clean-node  | `rimraf --glob "node_modules/*" "node_modules/.[!.]*"`                                                             |
+| clean-dist  | `rimraf --glob "dist/*" "dist/.[!.]*"`                                                                             |
+| clean-turbo | `rimraf --glob ".turbo/*" ".turbo/.[!.]*"`                                                                         |
 
 ## Directory Structure
 

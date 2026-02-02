@@ -8,7 +8,6 @@ Generated with `./scripts/dev/list-context-files-tree.sh .`
 
 ```
 _nogit/
-.angular/
 .claude/
 .devcontainer/
 .git/
@@ -18,13 +17,12 @@ _nogit/
 .turbo/
 .vscode/
 apps/
-dist/
 libs/
 mcli/
 mprove_data/
 node_modules/
 notes/
-plan/
+plans/
 scripts/
 secrets/
 setup-docker/
@@ -90,13 +88,6 @@ Apps communicate:
 - backend to blockml - using RPC using Groupmq and Valkey (Redis) pub/sub
 - backend to disk - using RPC using Groupmq and Valkey (Redis) pub/sub
 - backend to chat - using RPC using Groupmq and Valkey (Redis) pub/sub
-
-## Key Files
-
-- `package.json` — scripts for build, serve, test, lint, format
-- `turbo.json` — Turborepo workspace configuration
-- `tsconfig.base.json` — path aliases
-- `docker-compose.yml` — local development stack
 
 ## Version Management
 
@@ -254,6 +245,20 @@ For deeper context on specific subsystems, see:
 - [apps/chat/CONTEXT.md](apps/chat/CONTEXT.md)
 - [apps/front/CONTEXT.md](apps/front/CONTEXT.md)
 - [mcli/CONTEXT.md](mcli/CONTEXT.md)
+
+### Updating Files Tree
+
+The "Files Tree" section in each CONTEXT.md must be generated using the `list-context-files-tree.sh` script:
+
+```bash
+# Single directory
+./scripts/dev/list-context-files-tree.sh <directory>
+
+# Multiple directories (outputs with headers)
+./scripts/dev/list-context-files-tree.sh . apps/backend apps/blockml apps/disk apps/chat apps/front mcli
+```
+
+The script ensures consistent ordering: folders first (sorted by `_`, `.`, then alphabetically case-insensitive), then files (same order).
 
 ## Maintaining the CONTEXT Tree
 
