@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: $COMPOSE_DB_POSTGRES_USER
       POSTGRES_PASSWORD: $COMPOSE_DB_POSTGRES_PASSWORD
     ports:
-      - 5432:5432
+      - 127.0.0.1:5432:5432
     volumes:
       - type: bind
         source: $COMPOSE_DB_VOLUME_SOURCE_PATH
@@ -16,7 +16,7 @@ services:
     image: valkey/valkey:8.1.4
     command: valkey-server --requirepass ${COMPOSE_VALKEY_PASSWORD} --save "" --appendonly no
     ports:
-      - 6379:6379
+      - 127.0.0.1:6379:6379
 
   calc-postgres:
     image: postgres:18.1
@@ -26,7 +26,7 @@ services:
       CALC_PASSWORD: $COMPOSE_CALC_PASSWORD
       PGPORT: 5437
     ports:
-      - 5437:5437
+      - 127.0.0.1:5437:5437
     volumes:
       - ./scripts/docker-compose/init-calc-user.sh:/docker-entrypoint-initdb.d/init-calc-user.sh
 
@@ -109,7 +109,7 @@ services:
   opencode:
     image: ghcr.io/anomalyco/opencode:1.1.35
     ports:
-      - 4096:4096
+      - 127.0.0.1:4096:4096
     # volumes:
       # - type: bind
       #   source: $COMPOSE_OPENCODE_CACHE_VOLUME_SOURCE_PATH
@@ -170,7 +170,7 @@ services:
       READ_PASSWORD: $COMPOSE_DWH_POSTGRES_READ_PASSWORD
       PGPORT: 5436
     ports:
-      - 5436:5436
+      - 127.0.0.1:5436:5436
     volumes:
       - type: bind
         source: $COMPOSE_DWH_POSTGRES_VOLUME_SOURCE_PATH
@@ -189,7 +189,7 @@ services:
         '--innodb-buffer-pool-size=1G'
       ]
     ports:
-      - 3306:3306
+      - 127.0.0.1:3306:3306
     volumes:
       - type: bind
         source: $COMPOSE_DWH_MYSQL_VOLUME_SOURCE_PATH
@@ -198,7 +198,7 @@ services:
   dwh-trino:
     image: trinodb/trino:476
     ports:
-      - 8081:8080
+      - 127.0.0.1:8081:8080
     volumes:
       - type: bind
         source: $COMPOSE_DWH_TRINO_CATALOG_VOLUME_SOURCE_PATH
@@ -210,7 +210,7 @@ services:
   dwh-presto:
     image: prestodb/presto:0.294
     ports:
-      - 8082:8080
+      - 127.0.0.1:8082:8080
     volumes:
       - type: bind
         source: $COMPOSE_DWH_PRESTO_CATALOG_VOLUME_SOURCE_PATH
@@ -224,8 +224,8 @@ services:
     container_name: clickstack-all-in-one
     ports:
       - 8080:8080
-      - 4317:4317
-      - 4318:4318
+      - 127.0.0.1:4317:4317
+      - 127.0.0.1:4318:4318
     environment:
       HYPERDX_APP_URL: $COMPOSE_CLICKSTACK_HYPERDX_APP_URL
     volumes:
