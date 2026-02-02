@@ -4,7 +4,7 @@ Angular 21 web application providing the Mprove user interface.
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh apps/front`
+Generated with `./scripts/dev/list-context-files-tree.sh apps/front`
 
 ```
 .angular/

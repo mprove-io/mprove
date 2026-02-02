@@ -4,7 +4,7 @@ Open Source Business Intelligence with Malloy Semantic Layer.
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh .`
+Generated with `./scripts/dev/list-context-files-tree.sh .`
 
 ```
 _nogit/

@@ -4,7 +4,7 @@ Command-line interface for Mprove, built with Clipanion.
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh mcli`
+Generated with `./scripts/dev/list-context-files-tree.sh mcli`
 
 ```
 .bun/

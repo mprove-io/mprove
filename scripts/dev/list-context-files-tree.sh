@@ -1,6 +1,6 @@
 #!/bin/bash
 # Lists files and folders for CONTEXT.md files tree
-# Usage: ./scripts/list-files-tree.sh [directory]
+# Usage: ./scripts/dev/list-context-files-tree.sh [directory]
 # Sorting: folders first, then by symbol order (_, ., a-z)
 
 dir="${1:-.}"

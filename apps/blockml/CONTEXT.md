@@ -4,7 +4,7 @@ Malloy/BlockML model compilation service. Receives compilation requests from bac
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh apps/blockml`
+Generated with `./scripts/dev/list-context-files-tree.sh apps/blockml`
 
 ```
 .turbo/

@@ -4,7 +4,7 @@ Session management for OpenCode
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh apps/chat`
+Generated with `./scripts/dev/list-context-files-tree.sh apps/chat`
 
 ```
 .turbo/

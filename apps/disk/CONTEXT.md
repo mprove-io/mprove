@@ -4,7 +4,7 @@ File system and git repository management service. Manages project file storage 
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh apps/disk`
+Generated with `./scripts/dev/list-context-files-tree.sh apps/disk`
 
 ```
 .turbo/

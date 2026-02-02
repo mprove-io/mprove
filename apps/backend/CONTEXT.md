@@ -4,7 +4,7 @@ Core API server handling authentication, database operations, and data warehouse
 
 ## Files Tree
 
-Generated with `./scripts/list-context-files-tree.sh apps/backend`
+Generated with `./scripts/dev/list-context-files-tree.sh apps/backend`
 
 ```
 .turbo/
