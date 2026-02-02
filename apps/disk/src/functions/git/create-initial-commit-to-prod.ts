@@ -61,6 +61,9 @@ currency_suffix: ''
 
       await git.add('.');
 
+      await git.addConfig('user.email', `${item.userAlias}@`);
+      await git.addConfig('user.name', item.userAlias);
+
       let message = 'init';
 
       await git.commit(message, {

@@ -47,6 +47,9 @@ export async function merge(item: {
       // Force merge with commit
       let message = `Merged branch ${item.theirBranch} to ${item.branch}`;
 
+      await git.addConfig('user.email', `${item.userAlias}@`);
+      await git.addConfig('user.name', item.userAlias);
+
       try {
         await git.merge([item.theirBranch, '-m', message]);
       } catch (e: any) {

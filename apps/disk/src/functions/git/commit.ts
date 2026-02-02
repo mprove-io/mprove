@@ -11,6 +11,9 @@ export async function commit(item: {
     fn: async () => {
       let git = simpleGit({ baseDir: item.repoDir });
 
+      await git.addConfig('user.email', `${item.userAlias}@`);
+      await git.addConfig('user.name', item.userAlias);
+
       await git.commit(item.commitMessage, {
         '--author': `${item.userAlias} <${item.userAlias}@>`
       });
