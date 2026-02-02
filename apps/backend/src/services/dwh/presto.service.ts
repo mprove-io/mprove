@@ -1,10 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  PrestoClient,
-  type PrestoClientConfig,
-  type PrestoQuery
+import type {
+  PrestoClientConfig,
+  PrestoQuery
 } from '@prestodb/presto-js-client';
+import PrestoClient from '@prestodb/presto-js-client';
 import retry from 'async-retry';
 
 import { and, eq } from 'drizzle-orm';
