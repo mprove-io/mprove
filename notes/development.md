@@ -12,10 +12,9 @@ pnpm clean:app
 // install
 pnpm inst
 
-// check circular deps
+pnpm check
 pnpm circular
 
-pnpm lint
 pnpm build
 
 // creates initial env vars
@@ -74,13 +73,6 @@ c build disk && \
 c build front && \
 c build mcli
 
-c build backend --no-cache && \
-c build --no-cache blockml && \
-c build --no-cache chat && \
-c build --no-cache disk && \
-c build --no-cache front && \
-c build --no-cache mcli
-
 c up backend blockml disk front chat
 
 # terminal C (needs to be run outside of devcontainer)
@@ -89,3 +81,10 @@ c up backend blockml disk front chat
 docker ps
 c exec -it backend bash
 c exec -it disk bash
+
+c build backend --no-cache && \
+c build --no-cache blockml && \
+c build --no-cache chat && \
+c build --no-cache disk && \
+c build --no-cache front && \
+c build --no-cache mcli
