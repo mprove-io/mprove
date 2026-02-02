@@ -32,7 +32,7 @@ tsconfig.json
 | e2e         | `dotenv -e ../.env -- bun test --concurrent 4 --timeout 60000 src`                           |
 | clean-node  | `rimraf --glob "node_modules/*" "node_modules/.[!.]*"`                                       |
 | clean-dist  | `rimraf --glob "dist/*" "dist/.[!.]*"`                                                       |
-| clean-bun   | `rimraf --glob "bun.lock" ".bun/*" ".bun/.[!.]*"`                                            |
+| clean-bun   | `rimraf --glob ".bun/*" ".bun/.[!.]*"`                                                       |
 
 ## Key Files
 
