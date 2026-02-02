@@ -19,7 +19,7 @@
     "deps-write": "bash scripts/dev/deps-write.sh",
     "deps-check": "bash scripts/dev/deps-check.sh",
     "get-shards": "pnpm exec tsx scripts/dev/get-shards.ts",
-    "create-light-plus-ext": "node scripts/dev/create-light-plus-ext.js",
+    "create-light-plus-ext": "pnpm exec tsx scripts/dev/create-light-plus-ext.ts",
     "biome-check": "biome check .",
     "biome-write": "biome check --write .",
     "prettier-check": "prettier \"**/*.{html,scss,json,jsonc,md}\" --check --config .prettierrc.js",
