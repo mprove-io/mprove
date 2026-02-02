@@ -2,54 +2,6 @@
 
 Open Source Business Intelligence with Malloy Semantic Layer.
 
-## Files Tree
-
-Generated with `./scripts/dev/list-context-files-tree.sh .`
-
-```
-_nogit/
-.claude/
-.devcontainer/
-.git/
-.github/
-.husky/
-.pnpm-store/
-.turbo/
-.vscode/
-apps/
-libs/
-mcli/
-mprove_data/
-node_modules/
-notes/
-plans/
-scripts/
-secrets/
-setup-docker/
-tmp/
-.dockerignore
-.DS_Store
-.env
-.envrc
-.gitattributes
-.gitignore
-.prettierignore
-.prettierrc.js
-biome.jsonc
-CLAUDE.md
-CONTEXT.md
-docker-compose.lab.yml
-docker-compose.yml
-LICENSE
-package.json
-pnpm-lock.yaml
-pnpm-workspace.yaml
-README.md
-tsconfig.base.json
-tsconfig.json
-turbo.json
-```
-
 ## Tech Stack
 
 | Layer                                      | Technology                                      |
@@ -101,60 +53,24 @@ All dependency versions are centrally defined in `pnpm-workspace.yaml` catalog.
 
 Run `pnpm catalog-write` to sync catalog versions to `libs/common`, `libs/node-common`, and `mcli` package.json files.
 
-## Turborepo Scripts
+## Main package.json scripts
 
-Scripts follow a consistent pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` runs for a specific package.
+| Script    | Command                                                                 |
+| --------- | ----------------------------------------------------------------------- |
+| check     | `pnpm typecheck && pnpm lint && pnpm circular`                          |
+| typecheck | `pnpm typecheck:turbo && pnpm typecheck:mcli && pnpm typecheck:scripts` |
+| lint      | `pnpm lint:turbo && pnpm lint:mcli && pnpm lint:scripts`                |
+| circular  | `pnpm circular:turbo && pnpm circular:mcli && pnpm circular:scripts`    |
+| build     | `pnpm build:turbo && pnpm build:mcli`                                   |
+| start     | `turbo run start`                                                       |
+| debug     | `turbo run debug`                                                       |
+| test      | `turbo run test`                                                        |
+| e2e       | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
+| inst      | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
 
-| Task            | All Packages    | Single Package Example  |
-| --------------- | --------------- | ----------------------- |
-| **Lint**        | `pnpm lint`     | `pnpm lint:backend`     |
-| **Circular**    | `pnpm circular` | `pnpm circular:backend` |
-| **Build**       | `pnpm build`    | `pnpm build:backend`    |
-| **Start (dev)** | `pnpm start`    | `pnpm start:backend`    |
-| **Test**        | `pnpm test`     | `pnpm test:blockml`     |
-| **E2E**         | `pnpm e2e`      | `pnpm e2e:backend`      |
+Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` for specific package.
 
-**Available filters:** `backend`, `blockml`, `chat`, `disk`, `mcli`, `front`, `common`, `node-common`
-
-**Per-package scripts** (defined in each app/lib `package.json`):
-
-| Script     | Purpose                                    |
-| ---------- | ------------------------------------------ |
-| `lint`     | Run Biome linter on `src/`                 |
-| `circular` | Check for circular dependencies with Madge |
-| `build`    | Production build (SWC compile + esbuild)   |
-| `start`    | Dev server with hot reload (SWC register)  |
-| `debug`    | Dev server with Node.js inspector          |
-| `test`     | Unit tests with AVA                        |
-| `e2e`      | End-to-end tests with AVA                  |
-
-**Formatting scripts** (root only):
-
-- `pnpm bfm` — Biome check and fix (ts/js/css)
-- `pnpm pfm` — Prettier format (html/scss/json/md)
-
-## Shared Libraries
-
-| Library     | Used By           | Purpose                                    |
-| ----------- | ----------------- | ------------------------------------------ |
-| common      | All apps          | Shared interfaces, types, enums, constants |
-| node-common | Backend apps only | Node.js utilities, telemetry, decorators   |
-
-### Path Aliases
-
-**Shared libraries** use package.json `exports` field (Just-in-Time pattern):
-
-- `#common/*` → resolved via `@mprove/common` package exports
-- `#node-common/*` → resolved via `@mprove/node-common` package exports
-
-**Internal app paths** use Node.js subpath imports (`#app/*`):
-
-- `#chat/*` → `apps/chat/src/*`
-- `#disk/*` → `apps/disk/src/*`
-- `#blockml/*` → `apps/blockml/src/*`
-- `#backend/*` → `apps/backend/src/*`
-- `#mcli/*` → `mcli/src/*`
-- `#front/*` → `apps/front/src/*`
+**Filters:** `backend`, `blockml`, `chat`, `disk`, `front`, `common`, `node-common`, `mcli`
 
 ### ESM Configuration
 
@@ -169,11 +85,12 @@ All apps use native ESM with the following configuration:
 | `.swcrc`        | `"target": "es2022"`, `"module": { "type": "nodenext" }`                     |
 | `ava.config.js` | Direct TS execution with `@swc-node/register/esm-register`                   |
 
-**Development Scripts:**
+## Shared Libraries
 
-- `start`: `node --import @swc-node/register/esm-register --watch src/main.ts`
-- `debug`: `node --import @swc-node/register/esm-register --inspect=0.0.0.0:PORT --watch src/main.ts`
-- `e2e`: `ava` (runs TypeScript directly via SWC)
+| Library     | Used By           | Purpose                                    |
+| ----------- | ----------------- | ------------------------------------------ |
+| common      | All apps          | Shared interfaces, types, enums, constants |
+| node-common | Backend apps only | Node.js utilities, telemetry, decorators   |
 
 ### libs/common
 
@@ -235,18 +152,53 @@ src/
 
 Do not include AI attribution (e.g., "Generated with Claude Code", "Co-Authored-By: Claude") in commits or pull requests.
 
-## Subsystem Context
+## Files Tree
 
-For deeper context on specific subsystems, see:
+Generated with `./scripts/dev/list-context-files-tree.sh .`
 
-- [apps/backend/CONTEXT.md](apps/backend/CONTEXT.md)
-- [apps/blockml/CONTEXT.md](apps/blockml/CONTEXT.md)
-- [apps/disk/CONTEXT.md](apps/disk/CONTEXT.md)
-- [apps/chat/CONTEXT.md](apps/chat/CONTEXT.md)
-- [apps/front/CONTEXT.md](apps/front/CONTEXT.md)
-- [mcli/CONTEXT.md](mcli/CONTEXT.md)
-
-### Updating Files Tree
+```
+_nogit/
+.claude/
+.devcontainer/
+.git/
+.github/
+.husky/
+.pnpm-store/
+.turbo/
+.vscode/
+apps/
+libs/
+mcli/
+mprove_data/
+node_modules/
+notes/
+plans/
+scripts/
+secrets/
+setup-docker/
+tmp/
+.dockerignore
+.DS_Store
+.env
+.envrc
+.gitattributes
+.gitignore
+.prettierignore
+.prettierrc.js
+biome.jsonc
+CLAUDE.md
+CONTEXT.md
+docker-compose.lab.yml
+docker-compose.yml
+LICENSE
+package.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+README.md
+tsconfig.base.json
+tsconfig.json
+turbo.json
+```
 
 The "Files Tree" section in each CONTEXT.md must be generated using the `list-context-files-tree.sh` script:
 
@@ -260,7 +212,18 @@ The "Files Tree" section in each CONTEXT.md must be generated using the `list-co
 
 The script ensures consistent ordering: folders first (sorted by `_`, `.`, then alphabetically case-insensitive), then files (same order).
 
-## Maintaining the CONTEXT Tree
+## Subsystem Context
+
+For deeper context on specific subsystems, see:
+
+- [apps/backend/CONTEXT.md](apps/backend/CONTEXT.md)
+- [apps/blockml/CONTEXT.md](apps/blockml/CONTEXT.md)
+- [apps/disk/CONTEXT.md](apps/disk/CONTEXT.md)
+- [apps/chat/CONTEXT.md](apps/chat/CONTEXT.md)
+- [apps/front/CONTEXT.md](apps/front/CONTEXT.md)
+- [mcli/CONTEXT.md](mcli/CONTEXT.md)
+
+## Maintaining the CONTEXT.md files
 
 This repository uses the [CONTEXT.md convention](https://github.com/the-michael-toy/llm-context-md) for LLM-friendly documentation.
 
