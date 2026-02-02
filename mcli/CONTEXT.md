@@ -23,7 +23,7 @@ tsconfig.json
 
 | Script      | Command                                                                                      |
 | ----------- | -------------------------------------------------------------------------------------------- |
-| check       | `bun run typecheck && bun run lint && bun run circular`                                      |
+| check       | `bun run typecheck && bun run lint`                                                          |
 | typecheck   | `tsc --noEmit`                                                                               |
 | lint        | `biome lint src`                                                                             |
 | circular    | `madge --circular .`                                                                         |
