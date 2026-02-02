@@ -1,20 +1,30 @@
+.git
+
 _nogit/
 nogit/
 
-.git
-.angular/
+**/.angular/
+
 .claude/
 .devcontainer/
-.turbo/
 .pnpm-store/
+
+.turbo/
+**/.turbo/
+
 .vscode/
 
 .bun/
+**/.bun/
+
 dist/
-malloy/
-malloy_data/
+**/dist/
+
 mprove_data/
+
 node_modules/
+**/node_modules/
+
 secrets/
 tmp/
 
