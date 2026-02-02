@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { createRequire } = require('module');
+const frontRequire = createRequire(
+  path.resolve(__dirname, '../../apps/front/package.json')
+);
 
 function processTheme(theme) {
   let colorMap = {};
@@ -118,13 +122,12 @@ function processThemeFile(themeFilePath, tagsOutputPath, extendedOutputPath) {
   }
 }
 
-let inputThemePath = 'node_modules/shiki/themes/light-plus.json';
+let inputThemePath = frontRequire.resolve('shiki/themes/light-plus.json');
 
-let outputTagsPath =
-  'apps/front/src/app/constants/code-themes/light-plus-tags.ts';
+let outputTagsPath = 'libs/common/src/constants/code-themes/light-plus-tags.ts';
 
 let outputThemePath =
-  'apps/front/src/assets/shiki/themes/light-plus-extended.json';
+  'apps/front/src/assets/shiki-themes/light-plus-extended.json';
 
 processThemeFile(inputThemePath, outputTagsPath, outputThemePath);
 
