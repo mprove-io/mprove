@@ -29,4 +29,4 @@ RUN pnpm build:backend
 
 EXPOSE 3000
 
-CMD [ "node", "apps/backend/dist/main.js" ]
+CMD [ "node", "--enable-source-maps", "apps/backend/dist/main.js" ]

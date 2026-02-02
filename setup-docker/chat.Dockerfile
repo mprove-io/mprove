@@ -28,4 +28,4 @@ COPY turbo.json tsconfig.base.json tsconfig.json ./
 RUN chmod +x scripts/wait-for-it.sh
 RUN pnpm build:chat
 
-CMD [ "node", "apps/chat/dist/main.js" ]
+CMD [ "node", "--enable-source-maps", "apps/chat/dist/main.js" ]

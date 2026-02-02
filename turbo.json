@@ -7,29 +7,22 @@
     "typecheck": {
       "dependsOn": ["^typecheck"]
     },
-    "lint": {},
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
     "circular": {
       "dependsOn": ["^circular"]
-    },
-    "clean-node": {
-      "cache": false
-    },
-    "clean-dist": {
-      "cache": false
-    },
-    "clean-turbo": {
-      "cache": false
     },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "start": {
+    "node-serve": {
+      "dependsOn": ["build"],
       "cache": false,
       "persistent": true
     },
-    "serve": {
-      "dependsOn": ["build"],
+    "start": {
       "cache": false,
       "persistent": true
     },
@@ -38,6 +31,15 @@
       "persistent": true
     },
     "test": {},
-    "e2e": {}
+    "e2e": {},
+    "clean-node": {
+      "cache": false
+    },
+    "clean-dist": {
+      "cache": false
+    },
+    "clean-turbo": {
+      "cache": false
+    }
   }
 }

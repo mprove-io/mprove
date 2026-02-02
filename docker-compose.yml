@@ -45,7 +45,7 @@ services:
     #   - db
     #   - valkey
     #   - calc-postgres
-    command: sh -c 'scripts/wait-for-it.sh db:5432 --timeout=120 -- node apps/backend/dist/main.js'
+    command: sh -c 'scripts/wait-for-it.sh db:5432 --timeout=120 -- node --enable-source-maps apps/backend/dist/main.js'
     volumes:
       - type: bind
         source: $COMPOSE_ENV_FILE_SOURCE_PATH
@@ -69,7 +69,7 @@ services:
       - .env
     depends_on:
       - valkey
-    command: sh -c 'node apps/blockml/dist/main.js'
+    command: sh -c 'node --enable-source-maps apps/blockml/dist/main.js'
     volumes:
       - type: bind
         source: $COMPOSE_ENV_FILE_SOURCE_PATH
@@ -82,7 +82,7 @@ services:
     image: ghcr.io/mprove-io/mprove-disk:$MPROVE_RELEASE_TAG
     env_file:
       - .env
-    command: sh -c 'node apps/disk/dist/main.js'
+    command: sh -c 'node --enable-source-maps apps/disk/dist/main.js'
     depends_on:
       - valkey
     volumes:
@@ -100,7 +100,7 @@ services:
     image: ghcr.io/mprove-io/mprove-chat:$MPROVE_RELEASE_TAG
     env_file:
       - .env
-    command: sh -c 'node apps/chat/dist/main.js'
+    command: sh -c 'node --enable-source-maps apps/chat/dist/main.js'
     volumes:
       - type: bind
         source: $COMPOSE_ENV_FILE_SOURCE_PATH
