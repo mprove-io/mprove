@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import fse from 'fs-extra';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
@@ -48,3 +49,10 @@ await esbuild.build({
   plugins: [aliasPlugin],
   logLevel: 'info',
 });
+
+// Copy presets to dist for production
+console.log('Copying presets...');
+await fse.copy(
+  resolve(__dirname, 'src/presets'),
+  resolve(__dirname, 'dist/presets')
+);

@@ -1,7 +1,8 @@
 import { Logger, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { BlockmlConfig } from '#blockml/config/blockml-config';
-import { SRC_PATH } from '#common/constants/top-blockml';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
@@ -46,7 +47,7 @@ export class AppModule implements OnModuleInit {
 
       let presetFiles: BmlFile[] = await collectFiles(
         {
-          dir: `${SRC_PATH}/presets`,
+          dir: resolve(dirname(fileURLToPath(import.meta.url)), 'presets'),
           repoDir: undefined,
           structId: undefined,
           caller: CallerEnum.AppModule,
