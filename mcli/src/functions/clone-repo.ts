@@ -31,6 +31,7 @@ export async function cloneRepo(item: {
     await fse.writeFile(askpassPath, '#!/bin/sh\necho $SSH_PASSPHRASE', {
       mode: 0o700
     });
+    await fse.chmod(askpassPath, 0o700);
 
     let git = simpleGit().env({
       GIT_SSH_COMMAND: `ssh -i ${privateKeyPath} -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`,

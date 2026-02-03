@@ -73,7 +73,11 @@ c build disk && \
 c build front && \
 c build mcli
 
-c up backend blockml disk front chat
+c up --no-deps backend blockml disk front chat
+c up --no-deps backend blockml disk front
+
+c up --no-deps --no-build backend blockml disk front chat
+c up --no-deps --no-build backend blockml disk front
 
 # terminal C (needs to be run outside of devcontainer)
 

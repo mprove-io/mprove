@@ -16,9 +16,11 @@ export async function createGitWithSsh(item: {
   await fse.writeFile(privateKeyPath, item.privateKeyEncrypted, {
     mode: 0o600
   });
+  await fse.chmod(privateKeyPath, 0o600);
   await fse.writeFile(askpassPath, '#!/bin/sh\necho $SSH_PASSPHRASE', {
     mode: 0o700
   });
+  await fse.chmod(askpassPath, 0o700);
 
   return simpleGit({
     baseDir: item.repoDir
