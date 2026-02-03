@@ -25,8 +25,8 @@ import { removePath } from '#disk/functions/disk/remove-path';
 import { writeToFile } from '#disk/functions/disk/write-to-file';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
+import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { getSyncFiles } from '#node-common/functions/get-sync-files';
@@ -129,7 +129,7 @@ export class SyncRepoService {
       branchId: branch
     });
 
-    let git = await createGitInstance({
+    let git = await createGit({
       repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,

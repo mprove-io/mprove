@@ -15,9 +15,9 @@ import { ensureDir } from '#disk/functions/disk/ensure-dir';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
+import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { prepareRemoteAndProd } from '#disk/functions/git/prepare-remote-and-prod';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -132,7 +132,7 @@ export class CreateProjectService {
     });
 
     let prodRepoDir = `${projectDir}/${PROD_REPO_ID}`;
-    let prodGit = await createGitInstance({
+    let prodGit = await createGit({
       repoDir: prodRepoDir,
       remoteType: remoteType,
       keyDir: keyDir,

@@ -1,6 +1,6 @@
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
+import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 
 export async function cloneRemote(item: {
@@ -40,7 +40,7 @@ export async function cloneRemote(item: {
 
       let dirDev = `${projectDir}/${repoId}`;
 
-      let git = await createGitInstance({
+      let git = await createGit({
         repoDir: undefined,
         remoteType: remoteType,
         keyDir: keyDir,

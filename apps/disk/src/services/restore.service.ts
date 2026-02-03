@@ -10,9 +10,9 @@ import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { cloneRemote } from '#disk/functions/git/clone-remote';
 import { createBranch } from '#disk/functions/git/create-branch';
+import { createGit } from '#disk/functions/git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 
 @Injectable()
 export class RestoreService {
@@ -119,7 +119,7 @@ export class RestoreService {
     });
 
     if (isLocalBranchExistResult === false) {
-      let repoGit = await createGitInstance({
+      let repoGit = await createGit({
         repoDir: repoDir,
         remoteType: remoteType,
         keyDir: keyDir,

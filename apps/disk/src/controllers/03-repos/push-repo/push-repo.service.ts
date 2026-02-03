@@ -13,11 +13,11 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createBranch } from '#disk/functions/git/create-branch';
+import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { merge } from '#disk/functions/git/merge';
 import { pushToRemote } from '#disk/functions/git/push-to-remote';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -111,7 +111,7 @@ export class PushRepoService {
       branchId: branch
     });
 
-    let git = await createGitInstance({
+    let git = await createGit({
       repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,
@@ -142,7 +142,7 @@ export class PushRepoService {
       git: git
     });
 
-    let prodGit = await createGitInstance({
+    let prodGit = await createGit({
       repoDir: prodRepoDir,
       remoteType: remoteType,
       keyDir: keyDir,

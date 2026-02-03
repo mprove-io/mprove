@@ -7,9 +7,9 @@ import {
   ToDiskIsBranchExistResponsePayload
 } from '#common/interfaces/to-disk/05-branches/to-disk-is-branch-exist';
 import { DiskConfig } from '#disk/config/disk-config';
+import { createGit } from '#disk/functions/git/create-git';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -92,7 +92,7 @@ export class IsBranchExistService {
       branchId: undefined // undefined
     });
 
-    let git = await createGitInstance({
+    let git = await createGit({
       repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,

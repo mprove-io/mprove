@@ -12,8 +12,8 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
+import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -107,7 +107,7 @@ export class CreateDevRepoService {
 
     //
 
-    let devGit = await createGitInstance({
+    let devGit = await createGit({
       repoDir: devRepoDir,
       remoteType: remoteType,
       keyDir: keyDir,

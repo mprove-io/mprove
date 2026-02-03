@@ -14,10 +14,10 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createBranch } from '#disk/functions/git/create-branch';
+import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
 import { isLocalBranchExist } from '#disk/functions/git/is-local-branch-exist';
 import { isRemoteBranchExist } from '#disk/functions/git/is-remote-branch-exist';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -117,7 +117,7 @@ export class CreateBranchService {
             : undefined // undefined
     });
 
-    let git = await createGitInstance({
+    let git = await createGit({
       repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,

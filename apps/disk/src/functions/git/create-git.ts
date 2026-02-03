@@ -2,7 +2,7 @@ import fse from 'fs-extra';
 import { SimpleGit, simpleGit } from 'simple-git';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 
-export async function createGitInstance(item: {
+export async function createGit(item: {
   repoDir: string;
   remoteType: ProjectRemoteTypeEnum;
   keyDir: string;

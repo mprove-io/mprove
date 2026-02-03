@@ -12,8 +12,8 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { commit } from '#disk/functions/git/commit';
+import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
 import { DiskTabService } from '#disk/services/disk-tab.service';
 import { RestoreService } from '#disk/services/restore.service';
 import { transformValidSync } from '#node-common/functions/transform-valid-sync';
@@ -105,7 +105,7 @@ export class CommitRepoService {
       branchId: branch
     });
 
-    let git = await createGitInstance({
+    let git = await createGit({
       repoDir: repoDir,
       remoteType: remoteType,
       keyDir: keyDir,

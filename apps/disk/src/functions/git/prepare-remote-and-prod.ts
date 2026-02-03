@@ -3,7 +3,7 @@ import { simpleGit } from 'simple-git';
 import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { CENTRAL_REPO_ID } from '#common/constants/top-disk';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { createGitInstance } from '#disk/functions/make-fetch-options';
+import { createGit } from '#disk/functions/git/create-git';
 import { addTraceSpan } from '#node-common/functions/add-trace-span';
 import { ensureDir } from '../disk/ensure-dir';
 import { createInitialCommitToProd } from './create-initial-commit-to-prod';
@@ -47,7 +47,7 @@ export async function prepareRemoteAndProd(item: {
           ? item.gitUrl
           : centralDir;
 
-      let git = await createGitInstance({
+      let git = await createGit({
         repoDir: undefined,
         remoteType: item.remoteType,
         keyDir: item.keyDir,
