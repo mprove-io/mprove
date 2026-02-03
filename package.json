@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "11.0.97-dev",
+  "version": "11.0.97",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.27.0",
@@ -35,6 +35,9 @@
     "e2e": "pnpm e2e:turbo && pnpm e2e:mcli",
     "inst": "pnpm catalog-write && pnpm install && pnpm install:mcli",
     "install:mcli": "cd mcli && bun install",
+    "audit:nofail": "pnpm audit:apps || true && pnpm audit:mcli || true",
+    "audit:apps": "pnpm audit",
+    "audit:mcli": "cd mcli && NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt bun audit",
     "build:mcli:linux": "cd mcli && bun run build:linux",
     "mcli": "cd mcli && bun run src/main.ts",
     "prep:mcli": "pnpm clean:mcli-repos && git clone $MPROVE_CLI_TEST_REMOTE_GIT_URL $MPROVE_CLI_TEST_DESTINATION_URL",

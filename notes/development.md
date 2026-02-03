@@ -88,3 +88,12 @@ c build --no-cache chat && \
 c build --no-cache disk && \
 c build --no-cache front && \
 c build --no-cache mcli
+
+c build dwh-postgres && \
+c build dwh-mysql
+
+c build dwh-postgres --no-cache && \
+c build dwh-mysql --no-cache
+
+c push dwh-postgres && \
+c push dwh-mysql
