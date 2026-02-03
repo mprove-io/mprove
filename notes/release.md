@@ -15,11 +15,16 @@ scripts/tag/tag-cli.sh
 git push origin --tags
 
 (wait for action finish in mprove)
-(manually download cli to check)
 
+(update pods)
+
+(manually create Mprove release - from tag)
+(publish helm release)
+
+(download cli to check - if needed)
 tar -xzf <mprove-cli-downloaded-path>
 xattr -d com.apple.quarantine mprove
 ./mprove version
 
-(manually publish release from draft in mprove-cli)
+(manually publish mprove-cli release - from draft)
 (wait for action finish in mprove-cli)
