@@ -19,7 +19,7 @@ git push origin --tags
 
 tar -xzf <mprove-cli-downloaded-path>
 xattr -d com.apple.quarantine mprove
-mprove version
+./mprove version
 
 (manually publish release from draft in mprove-cli)
 (wait for action finish in mprove-cli)

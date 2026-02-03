@@ -1,6 +1,6 @@
 {
   "name": "mprove",
-  "version": "11.0.98-dev",
+  "version": "11.0.98",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
   "packageManager": "pnpm@10.27.0",

@@ -78,6 +78,16 @@ jobs:
         run: bun build src/main.ts --compile --target=${{ matrix.bun_target }} --outfile dist/bin/mprove.exe
         working-directory: mcli
 
+      - name: Verify binary (Unix)
+        if: matrix.os != 'windows'
+        run: ./dist/bin/mprove version
+        working-directory: mcli
+
+      - name: Verify binary (Windows)
+        if: matrix.os == 'windows'
+        run: ./dist/bin/mprove.exe version
+        working-directory: mcli
+
       - name: Extract version from tag
         id: version
         shell: bash
