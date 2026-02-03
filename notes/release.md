@@ -12,13 +12,14 @@ git commit -m <commit-message>
 
 scripts/tag/tag-app.sh
 scripts/tag/tag-cli.sh
-git push lab --tags
+git push origin --tags
 
 (wait for action finish in mprove)
-(manually publish release from draft in mprove-cli)
-(wait for action finish in mprove-cli)
-
 (manually download cli to check)
 
-tar -xzf mprove-cli
+tar -xzf <mprove-cli-downloaded-path>
 xattr -d com.apple.quarantine mprove
+mprove version
+
+(manually publish release from draft in mprove-cli)
+(wait for action finish in mprove-cli)
