@@ -33,7 +33,6 @@ update_version() {
 update_version "$ROOT_DIR/package.json"
 update_version "$ROOT_DIR/apps/backend/package.json"
 update_version "$ROOT_DIR/apps/blockml/package.json"
-update_version "$ROOT_DIR/apps/chat/package.json"
 update_version "$ROOT_DIR/apps/disk/package.json"
 update_version "$ROOT_DIR/apps/front/package.json"
 update_version "$ROOT_DIR/libs/common/package.json"

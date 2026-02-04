@@ -25,7 +25,6 @@ Open Source Business Intelligence with Malloy Semantic Layer.
 | backend | Core API, auth, DB, DWH queries             | NestJS    |
 | blockml | Malloy and BlockML (YAML) model compilation | NestJS    |
 | disk    | File system & git repo management           | NestJS    |
-| chat    | Session management for Opencode             | NestJS    |
 | front   | Web UI                                      | Angular   |
 | mcli    | Command-line interface                      | Clipanion |
 
@@ -39,7 +38,6 @@ Apps communicate:
 - mcli to backend - using HTTP API
 - backend to blockml - using RPC using Groupmq and Valkey (Redis) pub/sub
 - backend to disk - using RPC using Groupmq and Valkey (Redis) pub/sub
-- backend to chat - using RPC using Groupmq and Valkey (Redis) pub/sub
 
 ## Version Management
 
@@ -71,7 +69,7 @@ Run `pnpm catalog-write` to sync catalog versions to `libs/common`, `libs/node-c
 
 Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` for specific package.
 
-**Filters:** `backend`, `blockml`, `chat`, `disk`, `front`, `common`, `node-common`, `mcli`
+**Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`, `mcli`
 
 ### ESM Configuration
 
@@ -108,14 +106,12 @@ src/
 │   ├── backend/    # Backend-specific interfaces
 │   ├── blockml/    # BlockML interfaces
 │   ├── disk/       # Disk service interfaces
-│   ├── chat/       # Chat service interfaces
 │   ├── front/      # Frontend interfaces
 │   ├── mcli/       # CLI interfaces
 │   ├── to/         # Shared request/response types
 │   ├── to-backend/ # Frontend→Backend DTOs
 │   ├── to-blockml/ # Backend→BlockML DTOs
 │   └── to-disk/    # Backend→Disk DTOs
-│   └── to-chat/    # Backend→Chat DTOs
 ├── models/         # Shared models (ServerError, MyRegex)
 └── types/          # TypeScript types
 ```
@@ -129,7 +125,6 @@ src/
 - `to-backend/` — request/response interfaces for frontend→backend HTTP calls
 - `to-blockml/` — request/response interfaces for backend→blockml RPC
 - `to-disk/` — request/response interfaces for backend→disk RPC
-- `to-chat/` — request/response interfaces for backend→chat RPC
 - Each subdirectory mirrors the controller structure of its target app
 
 **Patterns:**
@@ -139,7 +134,7 @@ src/
 
 ### libs/node-common
 
-NodeJS-specific utilities shared across services (backend, blockml, disk, chat) and mcli. Not used by frontend.
+NodeJS-specific utilities shared across services (backend, blockml, disk) and mcli. Not used by frontend.
 
 **Directory Structure:**
 
@@ -189,7 +184,6 @@ tmp/
 biome.jsonc
 CLAUDE.md
 CONTEXT.md
-docker-compose.lab.yml
 docker-compose.yml
 LICENSE
 package.json
@@ -208,7 +202,7 @@ The "Files Tree" section in each CONTEXT.md must be generated using the `list-co
 ./scripts/dev/list-context-files-tree.sh <directory>
 
 # Multiple directories (outputs with headers)
-./scripts/dev/list-context-files-tree.sh . apps/backend apps/blockml apps/disk apps/chat apps/front mcli
+./scripts/dev/list-context-files-tree.sh . apps/backend apps/blockml apps/disk apps/front mcli
 ```
 
 The script ensures consistent ordering: folders first (sorted by `_`, `.`, then alphabetically case-insensitive), then files (same order).
@@ -220,7 +214,6 @@ For deeper context on specific subsystems, see:
 - [apps/backend/CONTEXT.md](apps/backend/CONTEXT.md)
 - [apps/blockml/CONTEXT.md](apps/blockml/CONTEXT.md)
 - [apps/disk/CONTEXT.md](apps/disk/CONTEXT.md)
-- [apps/chat/CONTEXT.md](apps/chat/CONTEXT.md)
 - [apps/front/CONTEXT.md](apps/front/CONTEXT.md)
 - [mcli/CONTEXT.md](mcli/CONTEXT.md)
 

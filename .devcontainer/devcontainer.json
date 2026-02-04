@@ -24,7 +24,6 @@
     "source=mprove-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
     "source=mprove-backend-node_modules,target=${containerWorkspaceFolder}/apps/backend/node_modules,type=volume",
     "source=mprove-blockml-node_modules,target=${containerWorkspaceFolder}/apps/blockml/node_modules,type=volume",
-    "source=mprove-chat-node_modules,target=${containerWorkspaceFolder}/apps/chat/node_modules,type=volume",
     "source=mprove-disk-node_modules,target=${containerWorkspaceFolder}/apps/disk/node_modules,type=volume",
     "source=mprove-front-node_modules,target=${containerWorkspaceFolder}/apps/front/node_modules,type=volume",
     "source=mprove-mcli-node_modules,target=${containerWorkspaceFolder}/mcli/node_modules,type=volume",
@@ -34,7 +33,6 @@
     "source=mprove-turbo,target=${containerWorkspaceFolder}/.turbo,type=volume",
     "source=mprove-backend-turbo,target=${containerWorkspaceFolder}/apps/backend/.turbo,type=volume",
     "source=mprove-blockml-turbo,target=${containerWorkspaceFolder}/apps/blockml/.turbo,type=volume",
-    "source=mprove-chat-turbo,target=${containerWorkspaceFolder}/apps/chat/.turbo,type=volume",
     "source=mprove-disk-turbo,target=${containerWorkspaceFolder}/apps/disk/.turbo,type=volume",
     "source=mprove-front-turbo,target=${containerWorkspaceFolder}/apps/front/.turbo,type=volume",
     "source=mprove-common-turbo,target=${containerWorkspaceFolder}/libs/common/.turbo,type=volume",
@@ -42,7 +40,6 @@
 
     "source=mprove-backend-dist,target=${containerWorkspaceFolder}/apps/backend/dist,type=volume",
     "source=mprove-blockml-dist,target=${containerWorkspaceFolder}/apps/blockml/dist,type=volume",
-    "source=mprove-chat-dist,target=${containerWorkspaceFolder}/apps/chat/dist,type=volume",
     "source=mprove-disk-dist,target=${containerWorkspaceFolder}/apps/disk/dist,type=volume",
     "source=mprove-front-dist,target=${containerWorkspaceFolder}/apps/front/dist,type=volume"
   ],

@@ -27,9 +27,9 @@ BACKEND_ALLOW_USERS_TO_CREATE_ORGANIZATIONS=TRUE
 
 # infra - terminal A (needs to be run outside of devcontainer)
 
-c up -d db valkey calc-postgres dwh-postgres dwh-mysql clickstack opencode
+c up -d db valkey calc-postgres dwh-postgres dwh-mysql clickstack
 
-c logs -f db valkey calc-postgres dwh-postgres dwh-mysql clickstack opencode
+c logs -f db valkey calc-postgres dwh-postgres dwh-mysql clickstack
 
 # inside running devcontainer
 
@@ -68,15 +68,12 @@ pnpm e2e:mcli
 
 c build backend && \
 c build blockml && \
-c build chat && \
 c build disk && \
 c build front && \
 c build mcli
 
-c up --no-deps backend blockml disk front chat
 c up --no-deps backend blockml disk front
 
-c up --no-deps --no-build backend blockml disk front chat
 c up --no-deps --no-build backend blockml disk front
 
 # terminal C (needs to be run outside of devcontainer)
@@ -88,7 +85,6 @@ c exec -it disk bash
 
 c build backend --no-cache && \
 c build --no-cache blockml && \
-c build --no-cache chat && \
 c build --no-cache disk && \
 c build --no-cache front && \
 c build --no-cache mcli
