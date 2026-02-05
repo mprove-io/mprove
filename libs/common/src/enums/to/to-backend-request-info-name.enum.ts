@@ -143,5 +143,14 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetNav = 'api/ToBackendGetNav',
   //
   ToBackendGetAvatarBig = 'api/ToBackendGetAvatarBig',
-  ToBackendSetAvatar = 'api/ToBackendSetAvatar'
+  ToBackendSetAvatar = 'api/ToBackendSetAvatar',
+  // agent
+  ToBackendCreateAgentSession = 'api/ToBackendCreateAgentSession',
+  ToBackendSendAgentMessage = 'api/ToBackendSendAgentMessage',
+  ToBackendRespondToAgentQuestion = 'api/ToBackendRespondToAgentQuestion',
+  ToBackendRespondToAgentPermission = 'api/ToBackendRespondToAgentPermission',
+  ToBackendGetAgentEventsStream = 'api/ToBackendGetAgentEventsStream',
+  ToBackendDeleteAgentSession = 'api/ToBackendDeleteAgentSession',
+  ToBackendStopAgentSessionSandbox = 'api/ToBackendStopAgentSessionSandbox',
+  ToBackendPauseAgentSessionSandbox = 'api/ToBackendPauseAgentSessionSandbox'
 }

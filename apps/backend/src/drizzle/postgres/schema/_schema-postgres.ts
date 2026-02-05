@@ -6,6 +6,7 @@ import * as connections from '#backend/drizzle/postgres/schema/connections';
 import * as dashboards from '#backend/drizzle/postgres/schema/dashboards';
 import * as dconfigs from '#backend/drizzle/postgres/schema/dconfigs';
 import * as envs from '#backend/drizzle/postgres/schema/envs';
+import * as events from '#backend/drizzle/postgres/schema/events';
 import * as kits from '#backend/drizzle/postgres/schema/kits';
 import * as mconfigs from '#backend/drizzle/postgres/schema/mconfigs';
 import * as members from '#backend/drizzle/postgres/schema/members';
@@ -15,10 +16,13 @@ import * as orgs from '#backend/drizzle/postgres/schema/orgs';
 import * as projects from '#backend/drizzle/postgres/schema/projects';
 import * as queries from '#backend/drizzle/postgres/schema/queries';
 import * as reports from '#backend/drizzle/postgres/schema/reports';
+import * as sessions from '#backend/drizzle/postgres/schema/sessions';
 import * as structs from '#backend/drizzle/postgres/schema/structs';
 import * as users from '#backend/drizzle/postgres/schema/users';
 
 export const schemaPostgres = {
+  ...events,
+  ...sessions,
   ...avatars,
   ...branches,
   ...bridges,

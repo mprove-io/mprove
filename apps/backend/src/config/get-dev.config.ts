@@ -255,7 +255,45 @@ export function getDevConfig() {
     backendLogResponseOk: enumToBoolean({
       value: process.env.BACKEND_LOG_RESPONSE_OK,
       name: 'BACKEND_LOG_RESPONSE_OK'
-    })
+    }),
+
+    e2bApiKey: process.env.BACKEND_E2B_API_KEY,
+
+    sandboxAgentToken: process.env.BACKEND_SANDBOX_AGENT_TOKEN,
+
+    sandboxTimeoutMinutes: isDefined(
+      process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES
+    )
+      ? Number(process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES)
+      : 30,
+
+    sandboxIdleMinutes: isDefined(process.env.BACKEND_SANDBOX_IDLE_MINUTES)
+      ? Number(process.env.BACKEND_SANDBOX_IDLE_MINUTES)
+      : 10,
+
+    sandboxRefreshMinutes: isDefined(
+      process.env.BACKEND_SANDBOX_REFRESH_MINUTES
+    )
+      ? Number(process.env.BACKEND_SANDBOX_REFRESH_MINUTES)
+      : 40,
+
+    maxActiveSessionsPerUser: isDefined(
+      process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER
+    )
+      ? Number(process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER)
+      : 1,
+
+    coordinatorLockTtlSeconds: isDefined(
+      process.env.BACKEND_COORDINATOR_LOCK_TTL_SECONDS
+    )
+      ? Number(process.env.BACKEND_COORDINATOR_LOCK_TTL_SECONDS)
+      : 10,
+
+    coordinatorHeartbeatMs: isDefined(
+      process.env.BACKEND_COORDINATOR_HEARTBEAT_MS
+    )
+      ? Number(process.env.BACKEND_COORDINATOR_HEARTBEAT_MS)
+      : 3000
   };
 
   return devConfig;

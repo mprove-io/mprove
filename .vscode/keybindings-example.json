@@ -46,16 +46,10 @@
     "command": "-workbench.action.selectTheme"
   },
   {
-    "key": "shift+cmd+i",
-    "command": "editor.action.formatSelection",
-    "when": "editorHasDocumentSelectionFormattingProvider && editorTextFocus && !editorReadonly"
-  },
-  {
-    "key": "alt+cmd+l",
+    "key": "alt+cmd+i",
     "command": "runCommands",
     "args": {
       "commands": [
-        "editor.action.formatDocument",
         {
           "command": "editor.action.sourceAction",
           "args": {

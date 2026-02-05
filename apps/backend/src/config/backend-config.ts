@@ -290,4 +290,36 @@ export class BackendConfig {
 
   @IsBoolean()
   backendLogResponseOk?: boolean;
+
+  @IsOptional()
+  @IsString()
+  e2bApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  sandboxAgentToken?: string;
+
+  @IsOptional()
+  @IsNumber()
+  sandboxTimeoutMinutes?: number;
+
+  @IsOptional()
+  @IsNumber()
+  sandboxIdleMinutes?: number;
+
+  @IsOptional()
+  @IsNumber()
+  sandboxRefreshMinutes?: number;
+
+  @IsOptional()
+  @IsNumber()
+  maxActiveSessionsPerUser?: number;
+
+  @IsOptional()
+  @IsNumber()
+  coordinatorLockTtlSeconds?: number;
+
+  @IsOptional()
+  @IsNumber()
+  coordinatorHeartbeatMs?: number;
 }

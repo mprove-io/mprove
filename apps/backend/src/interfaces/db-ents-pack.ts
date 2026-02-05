@@ -6,6 +6,7 @@ import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
 import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import { EventEnt } from '#backend/drizzle/postgres/schema/events';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
@@ -15,6 +16,7 @@ import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
+import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 
@@ -26,6 +28,7 @@ export class DbEntsPack {
   dashboards?: DashboardEnt[];
   dconfigs?: DconfigEnt[];
   envs?: EnvEnt[];
+  events?: EventEnt[];
   kits?: KitEnt[];
   mconfigs?: MconfigEnt[];
   members?: MemberEnt[];
@@ -35,6 +38,7 @@ export class DbEntsPack {
   projects?: ProjectEnt[];
   queries?: QueryEnt[];
   reports?: ReportEnt[];
+  sessions?: SessionEnt[];
   structs?: StructEnt[];
   users?: UserEnt[];
   charts?: ChartEnt[];

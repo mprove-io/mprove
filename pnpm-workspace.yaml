@@ -116,6 +116,7 @@ catalog:
   '@types/walk': 2.3.4
   '@vaadin/date-picker': 23.5.3
   '@vaadin/time-picker': 23.5.3
+  '@e2b/code-interpreter': 2.3.3
   ag-grid-angular: 33.3.0
   ag-grid-community: 33.3.0
   async-retry: 1.3.3
@@ -182,6 +183,7 @@ catalog:
   retry: 0.13.1
   rimraf: 6.0.1
   rxjs: 7.8.1
+  sandbox-agent: 0.1.5
   serve: 14.2.5
   shiki: 0.10.1
   shx: 0.4.0

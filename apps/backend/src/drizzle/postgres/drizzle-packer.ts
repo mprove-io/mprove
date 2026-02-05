@@ -27,6 +27,7 @@ import { connectionsTable } from './schema/connections';
 import { dashboardsTable } from './schema/dashboards';
 import { dconfigsTable } from './schema/dconfigs';
 import { envsTable } from './schema/envs';
+import { eventsTable } from './schema/events';
 import { kitsTable } from './schema/kits';
 import { mconfigsTable } from './schema/mconfigs';
 import { membersTable } from './schema/members';
@@ -36,6 +37,7 @@ import { orgsTable } from './schema/orgs';
 import { projectsTable } from './schema/projects';
 import { queriesTable } from './schema/queries';
 import { reportsTable } from './schema/reports';
+import { sessionsTable } from './schema/sessions';
 import { structsTable } from './schema/structs';
 import { usersTable } from './schema/users';
 
@@ -242,6 +244,14 @@ export class DrizzlePacker {
 
       if (insertEnts.charts.length > 0) {
         await tx.insert(chartsTable).values(insertEnts.charts);
+      }
+
+      if (insertEnts.events.length > 0) {
+        await tx.insert(eventsTable).values(insertEnts.events);
+      }
+
+      if (insertEnts.sessions.length > 0) {
+        await tx.insert(sessionsTable).values(insertEnts.sessions);
       }
     }
 
@@ -507,6 +517,34 @@ export class DrizzlePacker {
             .update(chartsTable)
             .set(x)
             .where(eq(chartsTable.chartFullId, x.chartFullId));
+        });
+      }
+
+      if (updateEnts.events.length > 0) {
+        updateEnts.events = setUndefinedToNull({
+          ents: updateEnts.events,
+          table: eventsTable
+        });
+
+        await forEachSeries(updateEnts.events, async x => {
+          await tx
+            .update(eventsTable)
+            .set(x)
+            .where(eq(eventsTable.eventId, x.eventId));
+        });
+      }
+
+      if (updateEnts.sessions.length > 0) {
+        updateEnts.sessions = setUndefinedToNull({
+          ents: updateEnts.sessions,
+          table: sessionsTable
+        });
+
+        await forEachSeries(updateEnts.sessions, async x => {
+          await tx
+            .update(sessionsTable)
+            .set(x)
+            .where(eq(sessionsTable.sessionId, x.sessionId));
         });
       }
     }
@@ -878,6 +916,44 @@ export class DrizzlePacker {
           .onConflictDoUpdate({
             target: chartsTable.chartFullId,
             set: drizzleSetAllColumnsFull({ table: chartsTable })
+          });
+      }
+
+      if (insOrUpdEnts.events.length > 0) {
+        insOrUpdEnts.events = Array.from(
+          new Set(insOrUpdEnts.events.map(x => x.eventId))
+        ).map(id => insOrUpdEnts.events.find(x => x.eventId === id));
+
+        insOrUpdEnts.events = setUndefinedToNull({
+          ents: insOrUpdEnts.events,
+          table: eventsTable
+        });
+
+        await tx
+          .insert(eventsTable)
+          .values(insOrUpdEnts.events)
+          .onConflictDoUpdate({
+            target: eventsTable.eventId,
+            set: drizzleSetAllColumnsFull({ table: eventsTable })
+          });
+      }
+
+      if (insOrUpdEnts.sessions.length > 0) {
+        insOrUpdEnts.sessions = Array.from(
+          new Set(insOrUpdEnts.sessions.map(x => x.sessionId))
+        ).map(id => insOrUpdEnts.sessions.find(x => x.sessionId === id));
+
+        insOrUpdEnts.sessions = setUndefinedToNull({
+          ents: insOrUpdEnts.sessions,
+          table: sessionsTable
+        });
+
+        await tx
+          .insert(sessionsTable)
+          .values(insOrUpdEnts.sessions)
+          .onConflictDoUpdate({
+            target: sessionsTable.sessionId,
+            set: drizzleSetAllColumnsFull({ table: sessionsTable })
           });
       }
     }

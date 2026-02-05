@@ -1,4 +1,12 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToBackendCreateAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
+import { ToBackendGetAgentEventsStreamRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-events-stream';
+import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session-sandbox';
+import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
+import { ToBackendRespondToAgentQuestionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
+import { ToBackendSendAgentMessageRequest } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
+import { ToBackendStopAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-stop-agent-session-sandbox';
 import { ToBackendGetAvatarBigRequest } from '#common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import { ToBackendSetAvatarRequest } from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
 import { ToBackendCreateBranchRequest } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
@@ -353,5 +361,22 @@ export const nameToClass = {
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetAvatarBig]:
     ToBackendGetAvatarBigRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest
+  [ToBackendRequestInfoNameEnum.ToBackendSetAvatar]: ToBackendSetAvatarRequest,
+  // agent
+  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession]:
+    ToBackendCreateAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage]:
+    ToBackendSendAgentMessageRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendRespondToAgentQuestion]:
+    ToBackendRespondToAgentQuestionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendRespondToAgentPermission]:
+    ToBackendRespondToAgentPermissionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetAgentEventsStream]:
+    ToBackendGetAgentEventsStreamRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:
+    ToBackendDeleteAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendStopAgentSessionSandbox]:
+    ToBackendStopAgentSessionSandboxRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendPauseAgentSessionSandbox]:
+    ToBackendPauseAgentSessionSandboxRequest
 };

@@ -11,6 +11,7 @@ import type {
   DashboardTab,
   DconfigTab,
   EnvTab,
+  EventTab,
   KitTab,
   MconfigTab,
   MemberTab,
@@ -20,6 +21,7 @@ import type {
   ProjectTab,
   QueryTab,
   ReportTab,
+  SessionTab,
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -31,6 +33,7 @@ import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
 import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import { EventEnt } from '#backend/drizzle/postgres/schema/events';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
@@ -40,6 +43,7 @@ import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
+import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { ErEnum } from '#common/enums/er.enum';
@@ -494,5 +498,31 @@ export class TabService {
     };
 
     return user;
+  }
+
+  sessionEntToTab(sessionEnt: SessionEnt): SessionTab {
+    if (isUndefined(sessionEnt)) {
+      return;
+    }
+
+    let session: SessionTab = {
+      ...sessionEnt,
+      ...this.getTabProps({ ent: sessionEnt })
+    };
+
+    return session;
+  }
+
+  eventEntToTab(eventEnt: EventEnt): EventTab {
+    if (isUndefined(eventEnt)) {
+      return;
+    }
+
+    let event: EventTab = {
+      ...eventEnt,
+      ...this.getTabProps({ ent: eventEnt })
+    };
+
+    return event;
   }
 }

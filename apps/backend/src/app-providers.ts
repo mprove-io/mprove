@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
+import { AgentService } from './services/agent.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
@@ -12,6 +13,7 @@ import { ConnectionsService } from './services/db/connections.service';
 import { DashboardsService } from './services/db/dashboards.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { EnvsService } from './services/db/envs.service';
+import { EventsService } from './services/db/events.service';
 import { KitsService } from './services/db/kits.service';
 import { MconfigsService } from './services/db/mconfigs.service';
 import { MembersService } from './services/db/members.service';
@@ -21,6 +23,7 @@ import { OrgsService } from './services/db/orgs.service';
 import { ProjectsService } from './services/db/projects.service';
 import { QueriesService } from './services/db/queries.service';
 import { ReportsService } from './services/db/reports.service';
+import { SessionsService } from './services/db/sessions.service';
 import { StructsService } from './services/db/structs.service';
 import { UsersService } from './services/db/users.service';
 import { DocService } from './services/doc.service';
@@ -40,6 +43,7 @@ import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { RpcService } from './services/rpc.service';
+import { SandboxService } from './services/sandbox.service';
 import { StoreService } from './services/store.service';
 import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
@@ -96,6 +100,11 @@ export const appProviders = [
   StoreService,
   TabToEntService,
   TabService,
+  //
+  SessionsService,
+  EventsService,
+  SandboxService,
+  AgentService,
   {
     provide: TasksService,
     useFactory: (
@@ -103,6 +112,7 @@ export const appProviders = [
       queriesService: QueriesService,
       structsService: StructsService,
       notesService: NotesService,
+      agentService: AgentService,
       logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
@@ -111,10 +121,17 @@ export const appProviders = [
             queriesService,
             structsService,
             notesService,
+            agentService,
             logger
           )
         : {},
-    inject: [ConfigService, QueriesService, StructsService, NotesService]
+    inject: [
+      ConfigService,
+      QueriesService,
+      StructsService,
+      NotesService,
+      AgentService
+    ]
   },
   UserCodeService
 ];

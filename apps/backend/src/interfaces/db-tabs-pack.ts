@@ -7,6 +7,7 @@ import type {
   DashboardTab,
   DconfigTab,
   EnvTab,
+  EventTab,
   KitTab,
   MconfigTab,
   MemberTab,
@@ -16,6 +17,7 @@ import type {
   ProjectTab,
   QueryTab,
   ReportTab,
+  SessionTab,
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -28,6 +30,7 @@ export class DbTabsPack {
   dashboards?: DashboardTab[];
   dconfigs?: DconfigTab[];
   envs?: EnvTab[];
+  events?: EventTab[];
   kits?: KitTab[];
   mconfigs?: MconfigTab[];
   members?: MemberTab[];
@@ -37,6 +40,7 @@ export class DbTabsPack {
   projects?: ProjectTab[];
   queries?: QueryTab[];
   reports?: ReportTab[];
+  sessions?: SessionTab[];
   structs?: StructTab[];
   users?: UserTab[];
   charts?: ChartTab[];

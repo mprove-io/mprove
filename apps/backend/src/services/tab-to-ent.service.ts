@@ -10,6 +10,7 @@ import type {
   DashboardTab,
   DconfigTab,
   EnvTab,
+  EventTab,
   KitTab,
   MconfigTab,
   MemberTab,
@@ -19,6 +20,7 @@ import type {
   ProjectTab,
   QueryTab,
   ReportTab,
+  SessionTab,
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -30,6 +32,7 @@ import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
 import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
+import { EventEnt } from '#backend/drizzle/postgres/schema/events';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
@@ -39,6 +42,7 @@ import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
+import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
@@ -61,6 +65,8 @@ import {
   DconfigSt,
   EnvLt,
   EnvSt,
+  EventLt,
+  EventSt,
   KitLt,
   KitSt,
   MconfigLt,
@@ -79,6 +85,8 @@ import {
   QuerySt,
   ReportLt,
   ReportSt,
+  SessionLt,
+  SessionSt,
   StructLt,
   StructSt,
   UserLt,
@@ -205,7 +213,18 @@ export class TabToEntService {
       users:
         tabsPack.users
           ?.filter(x => isDefined(x))
-          .map(x => this.userTabToEnt({ tab: x, hashSecret: hashSecret })) ?? []
+          .map(x => this.userTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
+      events:
+        tabsPack.events
+          ?.filter(x => isDefined(x))
+          .map(x => this.eventTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
+      sessions:
+        tabsPack.sessions
+          ?.filter(x => isDefined(x))
+          .map(x => this.sessionTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        []
     };
 
     return entsPack;
@@ -889,5 +908,68 @@ export class TabToEntService {
     };
 
     return userEnt;
+  }
+
+  eventTabToEnt(item: { tab: EventTab; hashSecret: string }): EventEnt {
+    let { tab } = item;
+
+    let eventSt: EventSt = {
+      universalEvent: tab.universalEvent
+    };
+
+    let eventLt: EventLt = {};
+
+    let eventEnt: EventEnt = {
+      eventId: tab.eventId,
+      sessionId: tab.sessionId,
+      sequence: tab.sequence,
+      type: tab.type,
+      ...this.getEntProps({
+        dataSt: eventSt,
+        dataLt: eventLt,
+        isMetadata: false
+      }),
+      createdTs: tab.createdTs,
+      serverTs: tab.serverTs
+    };
+
+    return eventEnt;
+  }
+
+  sessionTabToEnt(item: { tab: SessionTab; hashSecret: string }): SessionEnt {
+    let { tab } = item;
+
+    let sessionSt: SessionSt = {
+      providerSandboxId: tab.providerSandboxId,
+      providerHost: tab.providerHost,
+      agentSessionId: tab.agentSessionId,
+      createSessionResponse: tab.createSessionResponse,
+      sessionInfo: tab.sessionInfo
+    };
+
+    let sessionLt: SessionLt = {};
+
+    let sessionEnt: SessionEnt = {
+      sessionId: tab.sessionId,
+      userId: tab.userId,
+      projectId: tab.projectId,
+      sandboxType: tab.sandboxType,
+      agent: tab.agent,
+      agentMode: tab.agentMode,
+      permissionMode: tab.permissionMode,
+      status: tab.status,
+      ...this.getEntProps({
+        dataSt: sessionSt,
+        dataLt: sessionLt,
+        isMetadata: false
+      }),
+      lastActivityTs: tab.lastActivityTs,
+      runningStartTs: tab.runningStartTs,
+      expiresAt: tab.expiresAt,
+      createdTs: tab.createdTs,
+      serverTs: tab.serverTs
+    };
+
+    return sessionEnt;
   }
 }

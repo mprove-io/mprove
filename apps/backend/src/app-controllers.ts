@@ -1,3 +1,11 @@
+import { CreateAgentSessionController } from './controllers/agent/create-agent-session/create-agent-session.controller';
+import { DeleteAgentSessionController } from './controllers/agent/delete-agent-session/delete-agent-session.controller';
+import { GetAgentEventsStreamController } from './controllers/agent/get-agent-events-stream/get-agent-events-stream.controller';
+import { PauseAgentSessionSandboxController } from './controllers/agent/pause-agent-session-sandbox/pause-agent-session-sandbox.controller';
+import { RespondToAgentPermissionController } from './controllers/agent/respond-to-agent-permission/respond-to-agent-permission.controller';
+import { RespondToAgentQuestionController } from './controllers/agent/respond-to-agent-question/respond-to-agent-question.controller';
+import { SendAgentMessageController } from './controllers/agent/send-agent-message/send-agent-message.controller';
+import { StopAgentSessionSandboxController } from './controllers/agent/stop-agent-session-sandbox/stop-agent-session-sandbox.controller';
 import { GetAvatarBigController } from './controllers/avatars/get-avatar-big/get-avatar-big.controller';
 import { SetAvatarController } from './controllers/avatars/set-avatar/set-avatar.controller';
 import { CreateBranchController } from './controllers/branches/create-branch/create-branch.controller';
@@ -116,6 +124,15 @@ import { SetUserUiController } from './controllers/users/set-user-ui/set-user-ui
 import { UpdateUserPasswordController } from './controllers/users/update-user-password/update-user-password.controller';
 
 export const appControllers = [
+  CreateAgentSessionController,
+  SendAgentMessageController,
+  RespondToAgentQuestionController,
+  RespondToAgentPermissionController,
+  GetAgentEventsStreamController,
+  DeleteAgentSessionController,
+  StopAgentSessionSandboxController,
+  PauseAgentSessionSandboxController,
+
   GetAvatarBigController,
   SetAvatarController,
 

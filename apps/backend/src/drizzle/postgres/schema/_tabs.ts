@@ -15,6 +15,8 @@ import {
   DconfigSt,
   EnvLt,
   EnvSt,
+  EventLt,
+  EventSt,
   KitLt,
   KitSt,
   MconfigLt,
@@ -33,6 +35,8 @@ import {
   QuerySt,
   ReportLt,
   ReportSt,
+  SessionLt,
+  SessionSt,
   StructLt,
   StructSt,
   UserLt,
@@ -46,6 +50,7 @@ import { ConnectionEnt } from './connections';
 import { DashboardEnt } from './dashboards';
 import { DconfigEnt } from './dconfigs';
 import { EnvEnt } from './envs';
+import { EventEnt } from './events';
 import { KitEnt } from './kits';
 import { MconfigEnt } from './mconfigs';
 import { MemberEnt } from './members';
@@ -55,6 +60,7 @@ import { OrgEnt } from './orgs';
 import { ProjectEnt } from './projects';
 import { QueryEnt } from './queries';
 import { ReportEnt } from './reports';
+import { SessionEnt } from './sessions';
 import { StructEnt } from './structs';
 import { UserEnt } from './users';
 
@@ -137,3 +143,13 @@ export interface StructTab
     StructLt {}
 
 export interface UserTab extends Omit<UserEnt, 'st' | 'lt'>, UserSt, UserLt {}
+
+export interface EventTab
+  extends Omit<EventEnt, 'st' | 'lt'>,
+    EventSt,
+    EventLt {}
+
+export interface SessionTab
+  extends Omit<SessionEnt, 'st' | 'lt'>,
+    SessionSt,
+    SessionLt {}
