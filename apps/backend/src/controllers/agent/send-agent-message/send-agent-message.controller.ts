@@ -47,7 +47,9 @@ export class SendAgentMessageController {
     let reqValid: ToBackendSendAgentMessageRequest = request.body;
     let { sessionId, message } = reqValid.payload;
 
-    let session = await this.sessionsService.getById({ sessionId });
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId
+    });
 
     if (session.status === SessionStatusEnum.Paused) {
       let project = await this.projectsService.getProjectCheckExists({

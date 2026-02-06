@@ -47,7 +47,9 @@ export class StopAgentSessionSandboxController {
     let reqValid: ToBackendStopAgentSessionSandboxRequest = request.body;
     let { sessionId } = reqValid.payload;
 
-    let session = await this.sessionsService.getById({ sessionId });
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId
+    });
 
     if (
       session.providerSandboxId &&

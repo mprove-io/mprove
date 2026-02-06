@@ -26,7 +26,7 @@ export class GetAgentEventsStreamController {
     let reqValid: ToBackendGetAgentEventsStreamRequest = request.body;
     let { sessionId, lastSequence } = reqValid.payload;
 
-    await this.sessionsService.getById({ sessionId });
+    await this.sessionsService.getSessionByIdCheckExists({ sessionId });
 
     let events = await this.eventsService.getBySessionId({
       sessionId: sessionId,

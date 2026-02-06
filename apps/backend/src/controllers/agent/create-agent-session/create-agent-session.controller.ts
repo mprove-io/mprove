@@ -63,7 +63,7 @@ export class CreateAgentSessionController {
       BackendConfig['maxActiveSessionsPerUser']
     >('maxActiveSessionsPerUser');
 
-    let activeSessions = await this.sessionsService.getActiveByUserId({
+    let activeSessions = await this.sessionsService.getActiveSessionsByUserId({
       userId: user.userId
     });
 

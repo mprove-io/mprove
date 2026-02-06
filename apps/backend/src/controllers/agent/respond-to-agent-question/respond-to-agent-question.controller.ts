@@ -43,7 +43,9 @@ export class RespondToAgentQuestionController {
     let reqValid: ToBackendRespondToAgentQuestionRequest = request.body;
     let { sessionId, questionId, answers } = reqValid.payload;
 
-    let session = await this.sessionsService.getById({ sessionId });
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId
+    });
 
     await this.agentService.respondToQuestion({
       sessionId: sessionId,

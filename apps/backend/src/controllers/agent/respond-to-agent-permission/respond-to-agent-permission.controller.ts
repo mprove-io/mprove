@@ -43,7 +43,9 @@ export class RespondToAgentPermissionController {
     let reqValid: ToBackendRespondToAgentPermissionRequest = request.body;
     let { sessionId, permissionId, reply } = reqValid.payload;
 
-    let session = await this.sessionsService.getById({ sessionId });
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId
+    });
 
     await this.agentService.respondToPermission({
       sessionId: sessionId,

@@ -59,7 +59,9 @@ export class SessionsService {
     return session;
   }
 
-  async getById(item: { sessionId: string }): Promise<SessionTab> {
+  async getSessionByIdCheckExists(item: {
+    sessionId: string;
+  }): Promise<SessionTab> {
     let session = await this.db.drizzle.query.sessionsTable.findFirst({
       where: eq(sessionsTable.sessionId, item.sessionId)
     });
@@ -73,16 +75,19 @@ export class SessionsService {
     return this.tabService.sessionEntToTab(session);
   }
 
-  async getByIdOrUndefined(item: {
+  async getSessionById(item: {
     sessionId: string;
   }): Promise<SessionTab | undefined> {
     let session = await this.db.drizzle.query.sessionsTable.findFirst({
       where: eq(sessionsTable.sessionId, item.sessionId)
     });
+
     return this.tabService.sessionEntToTab(session);
   }
 
-  async getActiveByUserId(item: { userId: string }): Promise<SessionTab[]> {
+  async getActiveSessionsByUserId(item: {
+    userId: string;
+  }): Promise<SessionTab[]> {
     let sessions = await this.db.drizzle.query.sessionsTable.findMany({
       where: and(
         eq(sessionsTable.userId, item.userId),
@@ -92,6 +97,7 @@ export class SessionsService {
         ])
       )
     });
+
     return sessions.map(s => this.tabService.sessionEntToTab(s));
   }
 
@@ -104,6 +110,7 @@ export class SessionsService {
         lt(sessionsTable.lastActivityTs, item.idleThresholdTs)
       )
     });
+
     return sessions.map(s => this.tabService.sessionEntToTab(s));
   }
 }
