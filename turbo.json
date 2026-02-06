@@ -32,6 +32,7 @@
     },
     "test": {},
     "e2e": {},
+    "e2x": {},
     "clean-node": {
       "cache": false
     },

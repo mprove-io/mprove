@@ -65,13 +65,17 @@ export class SandboxService {
     sandboxType: SandboxTypeEnum;
     e2bApiKey: string;
     timeoutMs: number;
+    agent: string;
+    envs?: Record<string, string>;
   }): Promise<SandboxInfo> {
     try {
       switch (item.sandboxType) {
         case SandboxTypeEnum.E2B:
           return await this.e2bCreateSandbox({
             apiKey: item.e2bApiKey,
-            timeoutMs: item.timeoutMs
+            timeoutMs: item.timeoutMs,
+            agent: item.agent,
+            envs: item.envs
           });
         default:
           throw new ServerError({
@@ -148,13 +152,29 @@ export class SandboxService {
   private async e2bCreateSandbox(item: {
     apiKey: string;
     timeoutMs: number;
+    agent: string;
+    envs?: Record<string, string>;
   }): Promise<SandboxInfo> {
     let sandbox = await Sandbox.create({
       apiKey: item.apiKey,
-      timeoutMs: item.timeoutMs
+      timeoutMs: item.timeoutMs,
+      envs: item.envs
     });
 
-    let host = sandbox.getHost(49982);
+    await sandbox.commands.run(
+      'curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh'
+    );
+
+    await sandbox.commands.run(`sandbox-agent install-agent ${item.agent}`);
+
+    await sandbox.commands.run(
+      'sandbox-agent server --no-token --host 0.0.0.0 --port 3000',
+      { background: true }
+    );
+
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    let host = sandbox.getHost(3000);
 
     return {
       providerSandboxId: sandbox.sandboxId,

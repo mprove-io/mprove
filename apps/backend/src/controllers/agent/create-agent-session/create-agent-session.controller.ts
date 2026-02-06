@@ -47,8 +47,14 @@ export class CreateAgentSessionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession)
   async createSession(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCreateAgentSessionRequest = request.body;
-    let { projectId, sandboxType, agent, agentMode, permissionMode } =
-      reqValid.payload;
+    let {
+      projectId,
+      sandboxType,
+      agent,
+      agentMode,
+      permissionMode,
+      firstMessage
+    } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -88,7 +94,8 @@ export class CreateAgentSessionController {
         projectId: projectId,
         agent: agent,
         agentMode: agentMode,
-        permissionMode: permissionMode
+        permissionMode: permissionMode,
+        zenApiKey: project.zenApiKey
       });
 
     await retry(
@@ -106,12 +113,20 @@ export class CreateAgentSessionController {
     );
 
     let sdkSessionId =
-      createSessionResponse.nativeSessionId ?? sessionTab.agentSessionId;
+      createSessionResponse.nativeSessionId ?? sessionTab.sessionId;
 
     this.agentService.startEventStream({
       sessionId: sessionTab.sessionId,
       nativeSessionId: sdkSessionId
     });
+
+    if (firstMessage) {
+      await this.agentService.sendMessage({
+        sessionId: sessionTab.sessionId,
+        nativeSessionId: sdkSessionId,
+        message: firstMessage
+      });
+    }
 
     let payload: ToBackendCreateAgentSessionResponsePayload = {
       sessionId: sessionTab.sessionId

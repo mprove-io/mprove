@@ -105,6 +105,14 @@ export class ToBackendSeedRecordsRequestPayloadProjectsItem {
   @IsOptional()
   @IsString()
   passPhrase?: string;
+
+  @IsOptional()
+  @IsString()
+  e2bApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  zenApiKey?: string;
 }
 
 export class ToBackendSeedRecordsRequestPayloadMembersItem {

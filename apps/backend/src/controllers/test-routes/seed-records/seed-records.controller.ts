@@ -266,6 +266,8 @@ export class SeedRecordsController {
             publicKeyEncrypted: x.publicKeyEncrypted,
             privateKeyEncrypted: x.privateKeyEncrypted,
             passPhrase: x.passPhrase,
+            e2bApiKey: x.e2bApiKey,
+            zenApiKey: x.zenApiKey,
             nameHash: undefined, // tab-to-ent
             gitUrlHash: undefined, // tab-to-ent
             keyTag: undefined,

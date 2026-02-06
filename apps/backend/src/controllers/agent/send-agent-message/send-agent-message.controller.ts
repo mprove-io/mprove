@@ -69,8 +69,7 @@ export class SendAgentMessageController {
         providerSandboxId: session.providerSandboxId,
         providerHost: session.providerHost,
         nativeSessionId:
-          session.createSessionResponse?.nativeSessionId ??
-          session.agentSessionId,
+          session.createSessionResponse?.nativeSessionId ?? session.sessionId,
         e2bApiKey: project.e2bApiKey,
         timeoutMs: timeoutMs
       });
@@ -103,8 +102,7 @@ export class SendAgentMessageController {
     await this.agentService.sendMessage({
       sessionId: sessionId,
       nativeSessionId:
-        session.createSessionResponse?.nativeSessionId ??
-        session.agentSessionId,
+        session.createSessionResponse?.nativeSessionId ?? session.sessionId,
       message: message
     });
 

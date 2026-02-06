@@ -273,7 +273,6 @@ export class EventLt {
 export class SessionSt {
   providerSandboxId: string;
   providerHost: string;
-  agentSessionId: string;
   createSessionResponse: CreateSessionResponse;
   sessionInfo?: SessionInfo;
 }

@@ -27,7 +27,6 @@ export class SessionsService {
     permissionMode: string;
     providerSandboxId: string;
     providerHost: string;
-    agentSessionId: string;
     createSessionResponse: CreateSessionResponse;
     status: SessionStatusEnum;
     lastActivityTs: number;
@@ -45,7 +44,6 @@ export class SessionsService {
       permissionMode: item.permissionMode,
       providerSandboxId: item.providerSandboxId,
       providerHost: item.providerHost,
-      agentSessionId: item.agentSessionId,
       createSessionResponse: item.createSessionResponse,
       status: item.status,
       lastActivityTs: item.lastActivityTs,

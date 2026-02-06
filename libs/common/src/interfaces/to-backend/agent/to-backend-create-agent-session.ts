@@ -21,6 +21,10 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsOptional()
   @IsString()
   permissionMode?: string;
+
+  @IsOptional()
+  @IsString()
+  firstMessage?: string;
 }
 
 export class ToBackendCreateAgentSessionRequest extends ToBackendRequest {

@@ -50,8 +50,7 @@ export class RespondToAgentQuestionController {
     await this.agentService.respondToQuestion({
       sessionId: sessionId,
       nativeSessionId:
-        session.createSessionResponse?.nativeSessionId ??
-        session.agentSessionId,
+        session.createSessionResponse?.nativeSessionId ?? session.sessionId,
       questionId: questionId,
       answers: answers
     });

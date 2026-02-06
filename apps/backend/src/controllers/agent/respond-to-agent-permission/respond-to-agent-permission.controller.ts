@@ -50,8 +50,7 @@ export class RespondToAgentPermissionController {
     await this.agentService.respondToPermission({
       sessionId: sessionId,
       nativeSessionId:
-        session.createSessionResponse?.nativeSessionId ??
-        session.agentSessionId,
+        session.createSessionResponse?.nativeSessionId ?? session.sessionId,
       permissionId: permissionId,
       reply: reply
     });

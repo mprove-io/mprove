@@ -49,20 +49,26 @@ export class AgentService {
     agent: string;
     agentMode?: string;
     permissionMode?: string;
+    zenApiKey?: string;
   }): Promise<CreateSessionResult> {
+    let envs: Record<string, string> = {};
+    if (item.zenApiKey) {
+      envs.ZEN_API_KEY = item.zenApiKey;
+    }
+
     let sandboxInfo = await this.sandboxService.createSandbox({
       sandboxType: item.sandboxType,
       e2bApiKey: item.e2bApiKey,
-      timeoutMs: item.timeoutMs
+      timeoutMs: item.timeoutMs,
+      agent: item.agent,
+      envs: envs
     });
 
     let sessionId = uuidv4();
-    let agentSessionId = uuidv4();
 
     let createSessionResponse = await this.createAgentSession({
       sessionId: sessionId,
       providerHost: sandboxInfo.providerHost,
-      agentSessionId: agentSessionId,
       agent: item.agent,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode
@@ -80,7 +86,6 @@ export class AgentService {
       permissionMode: item.permissionMode,
       providerSandboxId: sandboxInfo.providerSandboxId,
       providerHost: sandboxInfo.providerHost,
-      agentSessionId: agentSessionId,
       createSessionResponse: createSessionResponse,
       status: SessionStatusEnum.Active,
       lastActivityTs: now,
@@ -161,7 +166,6 @@ export class AgentService {
   async createAgentSession(item: {
     sessionId: string;
     providerHost: string;
-    agentSessionId: string;
     agent: string;
     agentMode?: string;
     permissionMode?: string;
@@ -178,7 +182,7 @@ export class AgentService {
     };
 
     let response = await client
-      .createSession(item.agentSessionId, request)
+      .createSession(item.sessionId, request)
       .catch(e => {
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_CONNECTION_FAILED,
