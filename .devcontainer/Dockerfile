@@ -10,7 +10,8 @@ FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:${VARIANT}
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
     direnv \
-    sqlite3
+    sqlite3 \
+    uuid-runtime
 
 RUN chsh -s /bin/zsh root \
   && chsh -s /bin/zsh node    
