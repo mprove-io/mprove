@@ -144,7 +144,7 @@ async function getDirCatalogNodesAndFilesRecursive(item: {
             : isDefined(item.mproveDir)
               ? item.mproveDir === item.repoDir
                 ? true
-                : nodeId.split(mproveDirRelative)[0] === `${item.projectId}/`
+                : nodeId.startsWith(`${item.projectId}/${mproveDirRelative}/`)
               : false;
 
         if (item.readFiles === true && isPass === true) {
