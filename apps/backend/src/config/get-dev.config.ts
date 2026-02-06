@@ -257,7 +257,9 @@ export function getDevConfig() {
       name: 'BACKEND_LOG_RESPONSE_OK'
     }),
 
-    e2bApiKey: process.env.BACKEND_E2B_API_KEY,
+    demoProjectE2bApiKey: process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY,
+
+    demoProjectZenApiKey: process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY,
 
     sandboxAgentToken: process.env.BACKEND_SANDBOX_AGENT_TOKEN,
 

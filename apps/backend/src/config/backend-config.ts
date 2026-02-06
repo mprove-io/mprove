@@ -293,7 +293,11 @@ export class BackendConfig {
 
   @IsOptional()
   @IsString()
-  e2bApiKey?: string;
+  demoProjectZenApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  demoProjectE2bApiKey?: string;
 
   @IsOptional()
   @IsString()

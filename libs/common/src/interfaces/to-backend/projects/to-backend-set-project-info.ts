@@ -11,6 +11,14 @@ export class ToBackendSetProjectInfoRequestPayload {
   @IsOptional()
   @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
+  zenApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  e2bApiKey?: string;
 }
 
 export class ToBackendSetProjectInfoRequest extends ToBackendRequest {

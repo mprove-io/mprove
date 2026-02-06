@@ -1,0 +1,54 @@
+<div class="bg-m0 flex select-none flex-col p-9">
+  <div
+    data-cy="editApiKeyDialogTitle"
+    class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Edit {{ ref.data.keyLabel }}</div
+  >
+
+  <form
+    class="flex w-96 flex-col"
+    [formGroup]="editApiKeyForm"
+    (ngSubmit)="save()"
+  >
+    <input
+      autocomplete="off"
+      #apiKeyInput
+      spellcheck="false"
+      data-cy="editApiKeyDialogInput"
+      class="form-input border-s3 focus:border-m600 mt-9 rounded"
+      [ngClass]="{
+        'border-r600':
+          editApiKeyForm.controls['apiKey'].invalid &&
+          editApiKeyForm.controls['apiKey'].touched
+      }"
+      formControlName="apiKey"
+      placeholder="Enter new key value"
+    />
+    <m-validation [control]="editApiKeyForm.controls['apiKey']"></m-validation>
+
+    <div class="mt-6 flex items-center">
+      <button
+        data-cy="editApiKeyDialogSaveButton"
+        class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
+        type="submit"
+        >Save</button
+      >
+
+      <button
+        data-cy="editApiKeyDialogDeleteButton"
+        class="border-r1 text-r1 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="deleteKey()"
+        >Delete</button
+      >
+
+      <button
+        data-cy="editApiKeyDialogCancelButton"
+        class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+        type="button"
+        (click)="cancel()"
+        >Cancel</button
+      >
+    </div>
+  </form>
+</div>

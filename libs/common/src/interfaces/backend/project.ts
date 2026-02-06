@@ -1,4 +1,10 @@
-import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString
+} from 'class-validator';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 
 export class Project {
@@ -25,6 +31,14 @@ export class Project {
   @IsOptional()
   @IsString()
   publicKey: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isZenApiKeySet?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isE2bApiKeySet?: boolean;
 
   @IsOptional()
   @IsInt()

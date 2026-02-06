@@ -153,6 +153,10 @@ import {
   DeleteProjectDialogData
 } from '../modules/project/project-info/delete-project-dialog/delete-project-dialog.component';
 import {
+  EditApiKeyDialogComponent,
+  EditApiKeyDialogData
+} from '../modules/project/project-info/edit-api-key-dialog/edit-api-key-dialog.component';
+import {
   EditProjectNameDialogComponent,
   EditProjectNameDialogData
 } from '../modules/project/project-info/edit-project-name-dialog/edit-project-name-dialog.component';
@@ -598,6 +602,14 @@ export class MyDialogService {
 
   showEditProjectName(item: EditProjectNameDialogData): void {
     this.dialogService.open(EditProjectNameDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showEditApiKey(item: EditApiKeyDialogData): void {
+    this.dialogService.open(EditApiKeyDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

@@ -77,4 +77,22 @@ export class ProjectInfoComponent implements OnInit {
       projectName: this.project.name
     });
   }
+
+  editZenApiKey() {
+    this.myDialogService.showEditApiKey({
+      apiService: this.apiService,
+      projectId: this.project.projectId,
+      keyLabel: 'Zen API Key',
+      fieldName: 'zenApiKey'
+    });
+  }
+
+  editE2bApiKey() {
+    this.myDialogService.showEditApiKey({
+      apiService: this.apiService,
+      projectId: this.project.projectId,
+      keyLabel: 'E2B API Key',
+      fieldName: 'e2bApiKey'
+    });
+  }
 }

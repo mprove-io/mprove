@@ -229,7 +229,9 @@ export class TabService {
     let { project } = item;
 
     let projectSt: ProjectSt = {
-      name: project.name
+      name: project.name,
+      zenApiKey: undefined, // baseProject does not need project.zenApiKey
+      e2bApiKey: undefined // baseProject does not need project.e2bApiKey
     };
 
     let projectLt: ProjectLt = {

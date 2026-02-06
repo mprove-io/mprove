@@ -540,6 +540,14 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           val: 's_db'
         };
 
+        let demoProjectZenApiKey = this.cs.get<
+          BackendConfig['demoProjectZenApiKey']
+        >('demoProjectZenApiKey');
+
+        let demoProjectE2bApiKey = this.cs.get<
+          BackendConfig['demoProjectE2bApiKey']
+        >('demoProjectE2bApiKey');
+
         demoProject = await this.projectsService.addProject({
           orgId: demoOrg.orgId,
           name: demoProjectName,
@@ -554,6 +562,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           privateKey: undefined,
           privateKeyEncrypted: privateKeyEncrypted,
           passPhrase: demoProjectRemotePassPhrase,
+          zenApiKey: demoProjectZenApiKey,
+          e2bApiKey: demoProjectE2bApiKey,
           evs: [ev1],
           connections: connections
         });

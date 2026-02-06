@@ -10,6 +10,7 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -23,6 +24,7 @@ import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backen
 export class DeleteAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
+    private projectsService: ProjectsService,
     private agentService: AgentService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -38,11 +40,16 @@ export class DeleteAgentSessionController {
       session.providerSandboxId &&
       session.status !== SessionStatusEnum.Stopped
     ) {
+      let project = await this.projectsService.getProjectCheckExists({
+        projectId: session.projectId
+      });
+
       await this.agentService
         .stopSandbox({
           sessionId: sessionId,
           sandboxType: session.sandboxType as SandboxTypeEnum,
-          providerSandboxId: session.providerSandboxId
+          providerSandboxId: session.providerSandboxId,
+          e2bApiKey: project.e2bApiKey
         })
         .catch(() => {});
     }

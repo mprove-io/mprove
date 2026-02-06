@@ -21,6 +21,7 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -34,6 +35,7 @@ import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-
 export class PauseAgentSessionSandboxController {
   constructor(
     private sessionsService: SessionsService,
+    private projectsService: ProjectsService,
     private agentService: AgentService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -51,10 +53,15 @@ export class PauseAgentSessionSandboxController {
       session.providerSandboxId &&
       session.status === SessionStatusEnum.Active
     ) {
+      let project = await this.projectsService.getProjectCheckExists({
+        projectId: session.projectId
+      });
+
       await this.agentService.pauseSandbox({
         sessionId: sessionId,
         sandboxType: session.sandboxType as SandboxTypeEnum,
-        providerSandboxId: session.providerSandboxId
+        providerSandboxId: session.providerSandboxId,
+        e2bApiKey: project.e2bApiKey
       });
     }
 

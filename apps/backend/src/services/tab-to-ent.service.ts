@@ -710,7 +710,9 @@ export class TabToEntService {
     let { tab, hashSecret } = item;
 
     let projectSt: ProjectSt = {
-      name: tab.name
+      name: tab.name,
+      zenApiKey: tab.zenApiKey,
+      e2bApiKey: tab.e2bApiKey
     };
 
     let projectLt: ProjectLt = {

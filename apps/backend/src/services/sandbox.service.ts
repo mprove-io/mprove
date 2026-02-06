@@ -12,10 +12,6 @@ export interface SandboxInfo {
   providerHost: string;
 }
 
-interface CreateSandboxParams {
-  timeoutMs: number;
-}
-
 @Injectable()
 export class SandboxService {
   private clients = new Map<string, SandboxAgent>();
@@ -67,12 +63,16 @@ export class SandboxService {
 
   async createSandbox(item: {
     sandboxType: SandboxTypeEnum;
+    e2bApiKey: string;
     timeoutMs: number;
   }): Promise<SandboxInfo> {
     try {
       switch (item.sandboxType) {
         case SandboxTypeEnum.E2B:
-          return await this.e2bCreateSandbox({ timeoutMs: item.timeoutMs });
+          return await this.e2bCreateSandbox({
+            apiKey: item.e2bApiKey,
+            timeoutMs: item.timeoutMs
+          });
         default:
           throw new ServerError({
             message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
@@ -89,10 +89,14 @@ export class SandboxService {
   async stopProviderSandbox(item: {
     sandboxType: SandboxTypeEnum;
     providerSandboxId: string;
+    e2bApiKey: string;
   }): Promise<void> {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
-        return this.e2bStopSandbox(item.providerSandboxId);
+        return this.e2bStopSandbox({
+          providerSandboxId: item.providerSandboxId,
+          apiKey: item.e2bApiKey
+        });
       default:
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
@@ -103,10 +107,14 @@ export class SandboxService {
   async pauseProviderSandbox(item: {
     sandboxType: SandboxTypeEnum;
     providerSandboxId: string;
+    e2bApiKey: string;
   }): Promise<void> {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
-        return this.e2bPauseSandbox(item.providerSandboxId);
+        return this.e2bPauseSandbox({
+          providerSandboxId: item.providerSandboxId,
+          apiKey: item.e2bApiKey
+        });
       default:
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
@@ -117,11 +125,16 @@ export class SandboxService {
   async resumeProviderSandbox(item: {
     sandboxType: SandboxTypeEnum;
     providerSandboxId: string;
+    e2bApiKey: string;
     timeoutMs: number;
   }): Promise<void> {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
-        await this.e2bResumeSandbox(item.providerSandboxId, item.timeoutMs);
+        await this.e2bResumeSandbox({
+          providerSandboxId: item.providerSandboxId,
+          apiKey: item.e2bApiKey,
+          timeoutMs: item.timeoutMs
+        });
         break;
       default:
         throw new ServerError({
@@ -132,14 +145,13 @@ export class SandboxService {
 
   // E2B
 
-  private async e2bCreateSandbox(
-    params: CreateSandboxParams
-  ): Promise<SandboxInfo> {
-    let apiKey = this.cs.get<BackendConfig['e2bApiKey']>('e2bApiKey');
-
+  private async e2bCreateSandbox(item: {
+    apiKey: string;
+    timeoutMs: number;
+  }): Promise<SandboxInfo> {
     let sandbox = await Sandbox.create({
-      apiKey: apiKey,
-      timeoutMs: params.timeoutMs
+      apiKey: item.apiKey,
+      timeoutMs: item.timeoutMs
     });
 
     let host = sandbox.getHost(49982);
@@ -150,27 +162,28 @@ export class SandboxService {
     };
   }
 
-  private async e2bStopSandbox(providerSandboxId: string): Promise<void> {
-    let apiKey = this.cs.get<BackendConfig['e2bApiKey']>('e2bApiKey');
-
-    await Sandbox.kill(providerSandboxId, { apiKey: apiKey });
+  private async e2bStopSandbox(item: {
+    providerSandboxId: string;
+    apiKey: string;
+  }): Promise<void> {
+    await Sandbox.kill(item.providerSandboxId, { apiKey: item.apiKey });
   }
 
-  private async e2bPauseSandbox(providerSandboxId: string): Promise<void> {
-    let apiKey = this.cs.get<BackendConfig['e2bApiKey']>('e2bApiKey');
-
-    await Sandbox.betaPause(providerSandboxId, { apiKey: apiKey });
+  private async e2bPauseSandbox(item: {
+    providerSandboxId: string;
+    apiKey: string;
+  }): Promise<void> {
+    await Sandbox.betaPause(item.providerSandboxId, { apiKey: item.apiKey });
   }
 
-  private async e2bResumeSandbox(
-    providerSandboxId: string,
-    timeoutMs: number
-  ): Promise<void> {
-    let apiKey = this.cs.get<BackendConfig['e2bApiKey']>('e2bApiKey');
-
-    await Sandbox.connect(providerSandboxId, { apiKey: apiKey });
-    await Sandbox.setTimeout(providerSandboxId, timeoutMs, {
-      apiKey: apiKey
+  private async e2bResumeSandbox(item: {
+    providerSandboxId: string;
+    apiKey: string;
+    timeoutMs: number;
+  }): Promise<void> {
+    await Sandbox.connect(item.providerSandboxId, { apiKey: item.apiKey });
+    await Sandbox.setTimeout(item.providerSandboxId, item.timeoutMs, {
+      apiKey: item.apiKey
     });
   }
 }

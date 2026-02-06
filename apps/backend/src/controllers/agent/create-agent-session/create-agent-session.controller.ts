@@ -82,6 +82,7 @@ export class CreateAgentSessionController {
     let { sessionTab, createSessionResponse } =
       await this.agentService.createSession({
         sandboxType: sandboxType,
+        e2bApiKey: project.e2bApiKey,
         timeoutMs: timeoutMs,
         userId: user.userId,
         projectId: projectId,

@@ -42,6 +42,7 @@ export class AgentService {
 
   async createSession(item: {
     sandboxType: SandboxTypeEnum;
+    e2bApiKey: string;
     timeoutMs: number;
     userId: string;
     projectId: string;
@@ -51,6 +52,7 @@ export class AgentService {
   }): Promise<CreateSessionResult> {
     let sandboxInfo = await this.sandboxService.createSandbox({
       sandboxType: item.sandboxType,
+      e2bApiKey: item.e2bApiKey,
       timeoutMs: item.timeoutMs
     });
 
@@ -99,13 +101,15 @@ export class AgentService {
     sessionId: string;
     sandboxType: SandboxTypeEnum;
     providerSandboxId: string;
+    e2bApiKey: string;
   }): Promise<void> {
     this.stopEventStream(item.sessionId);
     await this.sandboxService.disposeClient(item.sessionId);
 
     await this.sandboxService.stopProviderSandbox({
       sandboxType: item.sandboxType,
-      providerSandboxId: item.providerSandboxId
+      providerSandboxId: item.providerSandboxId,
+      e2bApiKey: item.e2bApiKey
     });
   }
 
@@ -113,13 +117,15 @@ export class AgentService {
     sessionId: string;
     sandboxType: SandboxTypeEnum;
     providerSandboxId: string;
+    e2bApiKey: string;
   }): Promise<void> {
     this.stopEventStream(item.sessionId);
     await this.sandboxService.disposeClient(item.sessionId);
 
     await this.sandboxService.pauseProviderSandbox({
       sandboxType: item.sandboxType,
-      providerSandboxId: item.providerSandboxId
+      providerSandboxId: item.providerSandboxId,
+      e2bApiKey: item.e2bApiKey
     });
   }
 
@@ -129,11 +135,13 @@ export class AgentService {
     providerSandboxId: string;
     providerHost: string;
     nativeSessionId: string;
+    e2bApiKey: string;
     timeoutMs: number;
   }): Promise<void> {
     await this.sandboxService.resumeProviderSandbox({
       sandboxType: item.sandboxType,
       providerSandboxId: item.providerSandboxId,
+      e2bApiKey: item.e2bApiKey,
       timeoutMs: item.timeoutMs
     });
 

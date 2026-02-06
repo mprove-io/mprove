@@ -190,6 +190,8 @@ export class OrgLt {
 
 export class ProjectSt {
   name: string;
+  zenApiKey?: string;
+  e2bApiKey?: string;
 }
 export class ProjectLt {
   gitUrl: string;

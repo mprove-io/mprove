@@ -17,6 +17,7 @@ import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import { Ev } from '#common/interfaces/backend/ev';
@@ -79,6 +80,8 @@ export class ProjectsService {
       defaultBranch: project.defaultBranch,
       gitUrl: isAddGitUrl === true ? project.gitUrl : undefined,
       publicKey: isAddPublicKey === true ? project.publicKey : undefined,
+      isZenApiKeySet: isDefinedAndNotEmpty(project.zenApiKey),
+      isE2bApiKeySet: isDefinedAndNotEmpty(project.e2bApiKey),
       serverTs: Number(project.serverTs)
     };
 
@@ -135,6 +138,8 @@ export class ProjectsService {
     publicKeyEncrypted?: string;
     privateKeyEncrypted?: string;
     passPhrase?: string;
+    zenApiKey?: string;
+    e2bApiKey?: string;
     testProjectId: string;
     user: UserTab;
     evs: Ev[];
@@ -152,6 +157,8 @@ export class ProjectsService {
       publicKeyEncrypted,
       privateKeyEncrypted,
       passPhrase,
+      zenApiKey,
+      e2bApiKey,
       testProjectId,
       user,
       evs,
@@ -171,6 +178,8 @@ export class ProjectsService {
       publicKeyEncrypted: publicKeyEncrypted,
       privateKeyEncrypted: privateKeyEncrypted,
       passPhrase: passPhrase,
+      zenApiKey: zenApiKey,
+      e2bApiKey: e2bApiKey,
       nameHash: undefined, // tab-to-ent
       gitUrlHash: undefined, // tab-to-ent
       keyTag: undefined,
