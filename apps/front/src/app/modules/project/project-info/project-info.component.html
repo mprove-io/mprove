@@ -17,6 +17,14 @@
                 class="flex h-16 select-none items-center justify-end font-semibold"
                 >Project Name</div
               >
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
+                >Zen API Key</div
+              >
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
+                >E2B API Key</div
+              >
               <!-- <div
                 class="flex h-16 select-none items-center justify-end font-semibold"
                 >Remote Repo Type</div
@@ -34,14 +42,6 @@
                 class="flex h-16 select-none items-center justify-end font-semibold"
                 *ngIf="project?.remoteType === remoteTypeGitClone"
                 >Remote Repo Deploy Public Key</div
-              >
-              <div
-                class="flex h-16 select-none items-center justify-end font-semibold"
-                >Zen API Key</div
-              >
-              <div
-                class="flex h-16 select-none items-center justify-end font-semibold"
-                >E2B API Key</div
               >
               <div class="flex items-center justify-end font-semibold"></div>
             </div>
@@ -72,6 +72,117 @@
                   >
                 </div>
               </div>
+
+              <div class="flex h-16 flex-row items-center">
+                <div
+                  data-cy="projectInfoZenApiKeyStatus"
+                  class="flex w-36 items-center text-base"
+                  [ngClass]="{
+                    'text-g700': project?.isZenApiKeySet,
+                    'text-s400': !project?.isZenApiKeySet
+                  }"
+                  >{{
+                    project?.isZenApiKeySet
+                      ? 'API key is set'
+                      : 'API key is not set'
+                  }}</div
+                >
+
+                <div
+                  class="ml-10 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoEditZenApiKeyButton"
+                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                      'border-s300 text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="editZenApiKey()"
+                    >Edit</button
+                  >
+                </div>
+
+                <div
+                  class="ml-3 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoDeleteZenApiKeyButton"
+                    class="select-none focus:outline-none"
+                    [ngClass]="{
+                      'text-s500 hover:text-r1': isAdmin === true,
+                      'text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="deleteZenApiKey()"
+                  >
+                    <div class="ml-3 flex justify-center">
+                      <m-trash-icon></m-trash-icon>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex h-16 flex-row items-center">
+                <div
+                  data-cy="projectInfoE2bApiKeyStatus"
+                  class="flex w-36 items-center text-base"
+                  [ngClass]="{
+                    'text-g700': project?.isE2bApiKeySet,
+                    'text-s400': !project?.isE2bApiKeySet
+                  }"
+                  >{{
+                    project?.isE2bApiKeySet
+                      ? 'API key is set'
+                      : 'API key is not set'
+                  }}</div
+                >
+
+                <div
+                  class="ml-10 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoEditE2bApiKeyButton"
+                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                      'border-s300 text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="editE2bApiKey()"
+                    >Edit</button
+                  >
+                </div>
+
+                <div
+                  class="ml-3 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoDeleteE2bApiKeyButton"
+                    class="select-none focus:outline-none"
+                    [ngClass]="{
+                      'text-s500 hover:text-r1': isAdmin === true,
+                      'text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="deleteE2bApiKey()"
+                  >
+                    <div class="ml-3 flex justify-center">
+                      <m-trash-icon></m-trash-icon>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               <!-- <div
                 data-cy="projectInfoRemoteType"
                 class="flex h-16 max-w-xl items-center truncate text-base"
@@ -116,7 +227,7 @@
               </div>
 
               <div
-                class="mt-[18px] flex flex-row items-start"
+                class="flex min-h-16 flex-row items-start pt-[18px]"
                 *ngIf="project?.remoteType === remoteTypeGitClone"
               >
                 <div
@@ -144,66 +255,6 @@
                   style="word-break: break-all"
                 >
                   {{ project?.publicKey }}
-                </div>
-              </div>
-
-              <div class="flex h-16 flex-row items-center">
-                <div
-                  data-cy="projectInfoZenApiKeyStatus"
-                  class="flex items-center text-base"
-                  >{{
-                    project?.isZenApiKeySet
-                      ? 'API key is set'
-                      : 'API key is not set'
-                  }}</div
-                >
-
-                <div
-                  class="ml-10 flex items-center"
-                  tp="Admin role required"
-                  [tpIsEnabled]="isAdmin === false"
-                >
-                  <button
-                    data-cy="projectInfoEditZenApiKeyButton"
-                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
-                    [ngClass]="{
-                      'border-s400 text-s500 hover:bg-s100': isAdmin === true,
-                      'border-s300 text-s400 cursor-default': isAdmin === false
-                    }"
-                    [disabled]="isAdmin === false"
-                    (click)="editZenApiKey()"
-                    >Edit</button
-                  >
-                </div>
-              </div>
-
-              <div class="flex h-16 flex-row items-center">
-                <div
-                  data-cy="projectInfoE2bApiKeyStatus"
-                  class="flex items-center text-base"
-                  >{{
-                    project?.isE2bApiKeySet
-                      ? 'API key is set'
-                      : 'API key is not set'
-                  }}</div
-                >
-
-                <div
-                  class="ml-10 flex items-center"
-                  tp="Admin role required"
-                  [tpIsEnabled]="isAdmin === false"
-                >
-                  <button
-                    data-cy="projectInfoEditE2bApiKeyButton"
-                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
-                    [ngClass]="{
-                      'border-s400 text-s500 hover:bg-s100': isAdmin === true,
-                      'border-s300 text-s400 cursor-default': isAdmin === false
-                    }"
-                    [disabled]="isAdmin === false"
-                    (click)="editE2bApiKey()"
-                    >Edit</button
-                  >
                 </div>
               </div>
 

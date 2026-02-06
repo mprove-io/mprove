@@ -1,9 +1,15 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { PROJECT_INFO_PAGE_TITLE } from '#common/constants/page-titles';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { Project } from '#common/interfaces/backend/project';
+import {
+  ToBackendSetProjectInfoRequestPayload,
+  ToBackendSetProjectInfoResponse
+} from '#common/interfaces/to-backend/projects/to-backend-set-project-info';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
@@ -94,5 +100,36 @@ export class ProjectInfoComponent implements OnInit {
       keyLabel: 'E2B API Key',
       fieldName: 'e2bApiKey'
     });
+  }
+
+  deleteZenApiKey() {
+    this.deleteApiKey('zenApiKey');
+  }
+
+  deleteE2bApiKey() {
+    this.deleteApiKey('e2bApiKey');
+  }
+
+  private deleteApiKey(fieldName: 'zenApiKey' | 'e2bApiKey') {
+    let payload: ToBackendSetProjectInfoRequestPayload = {
+      projectId: this.project.projectId,
+      [fieldName]: ''
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendSetProjectInfoResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.projectQuery.update(resp.payload.project);
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

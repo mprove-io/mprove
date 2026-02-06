@@ -6,7 +6,7 @@
   >
 
   <form
-    class="flex w-96 flex-col"
+    class="flex w-[30rem] flex-col"
     [formGroup]="editApiKeyForm"
     (ngSubmit)="save()"
   >
@@ -32,14 +32,6 @@
         class="bg-m600 text-m0 w-28 rounded py-3 text-base font-medium focus:outline-none"
         type="submit"
         >Save</button
-      >
-
-      <button
-        data-cy="editApiKeyDialogDeleteButton"
-        class="border-r1 text-r1 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
-        type="button"
-        (click)="deleteKey()"
-        >Delete</button
       >
 
       <button
