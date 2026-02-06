@@ -508,8 +508,8 @@ catalogs:
       specifier: 6.0.1
       version: 6.0.1
     sandbox-agent:
-      specifier: 0.1.5
-      version: 0.1.5
+      specifier: 0.1.6
+      version: 0.1.6
     serve:
       specifier: 14.2.5
       version: 14.2.5
@@ -856,7 +856,7 @@ importers:
         version: 7.8.1
       sandbox-agent:
         specifier: 'catalog:'
-        version: 0.1.5
+        version: 0.1.6
       snowflake-sdk:
         specifier: 'catalog:'
         version: 2.3.1(asn1.js@5.4.1)(encoding@0.1.13)
@@ -1573,8 +1573,8 @@ importers:
         specifier: 0.2.2
         version: 0.2.2
       sandbox-agent:
-        specifier: 0.1.5
-        version: 0.1.5
+        specifier: 0.1.6
+        version: 0.1.6
       trino-client:
         specifier: 0.2.9
         version: 0.2.9
@@ -5534,6 +5534,9 @@ packages:
 
   '@rspack/lite-tapable@1.1.0':
     resolution: {integrity: sha512-E2B0JhYFmVAwdDiG14+DW0Di4Ze4Jg10Pc4/lILUrd5DRCaklduz2OvJ5HYQ6G+hd+WTzqQb3QnDNfK4yvAFYw==}
+
+  '@sandbox-agent/cli-shared@0.1.6':
+    resolution: {integrity: sha512-csBpzJHBOhUYD1SE7VA13bJsZ5sJuE+cJvQHQuF1mhw9KJIlgKnmAJ3fIzbtspFdO3qorSYyYB6j6y1Z43Yy/g==}
 
   '@schematics/angular@21.1.0':
     resolution: {integrity: sha512-gXf3gO5SeU+tiPHxXeQvdbua4C4/V+KH43JH2PYPxaNCD2HGo1uV0pfyNSNgcVF21voKlbAQ13YRrNDh7z5Kig==}
@@ -10598,8 +10601,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sandbox-agent@0.1.5:
-    resolution: {integrity: sha512-iBEC+sSDsvg52y97c+RJEZ4aC/ZR2bduBJHJd4mFS0KQ8OOjNLylU08QnXRg7f4W/XXRnJN/THt6nBt8th0RSQ==}
+  sandbox-agent@0.1.6:
+    resolution: {integrity: sha512-eoGqE5GCk1vHMf7yhtTVS2DxWsBh+Xk1E4fbi9GTo0zn5Rl9mxrU/fcHD6OLG+35/ObmqXowuXkHcLuGIz5SvA==}
 
   sass-embedded-all-unknown@1.97.1:
     resolution: {integrity: sha512-0au5gUNibfob7W/g+ycBx74O22CL8vwHiZdEDY6J0uzMkHPiSJk//h0iRf5AUnMArFHJjFd3urIiQIaoRKYa1Q==}
@@ -15476,7 +15479,7 @@ snapshots:
       js-yaml: 4.1.1
       nanoid: 3.3.10
       reflect-metadata: 0.2.2
-      sandbox-agent: 0.1.5
+      sandbox-agent: 0.1.6
       trino-client: 0.2.9
       tslib: 2.7.0
     transitivePeerDependencies:
@@ -16940,6 +16943,8 @@ snapshots:
 
   '@rspack/lite-tapable@1.1.0':
     optional: true
+
+  '@sandbox-agent/cli-shared@0.1.6': {}
 
   '@schematics/angular@21.1.0(chokidar@5.0.0)':
     dependencies:
@@ -22709,7 +22714,9 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sandbox-agent@0.1.5: {}
+  sandbox-agent@0.1.6:
+    dependencies:
+      '@sandbox-agent/cli-shared': 0.1.6
 
   sass-embedded-all-unknown@1.97.1:
     dependencies:
