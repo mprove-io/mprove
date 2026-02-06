@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
+import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
 import { UNK_ST_ID } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -34,6 +35,13 @@ export class AppFilter implements ExceptionFilter {
       const ctx = host.switchToHttp();
       const response = ctx.getResponse();
       const request = ctx.getRequest();
+
+      if (request?.url?.startsWith('/' + SSE_AGENT_EVENTS_PATH)) {
+        if (!response.headersSent) {
+          response.status(401).json({ message: 'Unauthorized' });
+        }
+        return;
+      }
 
       let e =
         (exception as any).message === 'Unauthorized'

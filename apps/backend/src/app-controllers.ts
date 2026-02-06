@@ -1,6 +1,7 @@
 import { CreateAgentSessionController } from './controllers/agent/create-agent-session/create-agent-session.controller';
+import { CreateAgentSseTicketController } from './controllers/agent/create-agent-sse-ticket/create-agent-sse-ticket.controller';
 import { DeleteAgentSessionController } from './controllers/agent/delete-agent-session/delete-agent-session.controller';
-import { GetAgentEventsStreamController } from './controllers/agent/get-agent-events-stream/get-agent-events-stream.controller';
+import { GetAgentEventsSseController } from './controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
 import { PauseAgentSessionSandboxController } from './controllers/agent/pause-agent-session-sandbox/pause-agent-session-sandbox.controller';
 import { RespondToAgentPermissionController } from './controllers/agent/respond-to-agent-permission/respond-to-agent-permission.controller';
 import { RespondToAgentQuestionController } from './controllers/agent/respond-to-agent-question/respond-to-agent-question.controller';
@@ -125,10 +126,11 @@ import { UpdateUserPasswordController } from './controllers/users/update-user-pa
 
 export const appControllers = [
   CreateAgentSessionController,
+  CreateAgentSseTicketController,
   SendAgentMessageController,
   RespondToAgentQuestionController,
   RespondToAgentPermissionController,
-  GetAgentEventsStreamController,
+  GetAgentEventsSseController,
   DeleteAgentSessionController,
   StopAgentSessionSandboxController,
   PauseAgentSessionSandboxController,

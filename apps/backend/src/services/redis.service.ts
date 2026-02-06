@@ -43,6 +43,27 @@ export class RedisService implements OnModuleDestroy {
     return isDefined(data) ? JSON.parse(data) : undefined;
   }
 
+  async writeTicket(item: {
+    ticket: string;
+    sessionId: string;
+  }): Promise<void> {
+    await this.client.set(
+      `sse-ticket:${item.ticket}`,
+      item.sessionId,
+      'EX',
+      30
+    );
+  }
+
+  async consumeTicket(item: { ticket: string }): Promise<string | undefined> {
+    let key = `sse-ticket:${item.ticket}`;
+    let sessionId = await this.client.get(key);
+    if (sessionId) {
+      await this.client.del(key);
+    }
+    return sessionId ?? undefined;
+  }
+
   onModuleDestroy() {
     this.client.disconnect();
   }

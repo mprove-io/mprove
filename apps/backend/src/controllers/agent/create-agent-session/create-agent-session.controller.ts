@@ -21,9 +21,11 @@ import { AgentService } from '#backend/services/agent.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { RedisService } from '#backend/services/redis.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '#common/functions/make-id';
 import {
   ToBackendCreateAgentSessionRequest,
   ToBackendCreateAgentSessionResponsePayload
@@ -39,6 +41,7 @@ export class CreateAgentSessionController {
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private agentService: AgentService,
+    private redisService: RedisService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -128,8 +131,16 @@ export class CreateAgentSessionController {
       });
     }
 
-    let payload: ToBackendCreateAgentSessionResponsePayload = {
+    let sseTicket = makeId();
+
+    await this.redisService.writeTicket({
+      ticket: sseTicket,
       sessionId: sessionTab.sessionId
+    });
+
+    let payload: ToBackendCreateAgentSessionResponsePayload = {
+      sessionId: sessionTab.sessionId,
+      sseTicket: sseTicket
     };
 
     return payload;

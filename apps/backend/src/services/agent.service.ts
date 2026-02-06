@@ -18,6 +18,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
+import { AgentPubSubService } from './agent-pub-sub.service';
 import { SessionsService } from './db/sessions.service';
 import { SandboxService } from './sandbox.service';
 
@@ -34,6 +35,7 @@ export class AgentService {
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,
     private sandboxService: SandboxService,
+    private agentPubSubService: AgentPubSubService,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -368,5 +370,14 @@ export class AgentService {
         }
       })
     );
+
+    await this.agentPubSubService
+      .publish(item.sessionId, {
+        eventId: item.event.event_id,
+        sequence: item.event.sequence,
+        type: item.event.type,
+        eventData: item.event.data
+      })
+      .catch(() => {});
   }
 }

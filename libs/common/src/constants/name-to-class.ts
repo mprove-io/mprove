@@ -1,7 +1,7 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendCreateAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+import { ToBackendCreateAgentSseTicketRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
-import { ToBackendGetAgentEventsStreamRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-events-stream';
 import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session-sandbox';
 import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendRespondToAgentQuestionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
@@ -371,12 +371,12 @@ export const nameToClass = {
     ToBackendRespondToAgentQuestionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendRespondToAgentPermission]:
     ToBackendRespondToAgentPermissionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendGetAgentEventsStream]:
-    ToBackendGetAgentEventsStreamRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:
     ToBackendDeleteAgentSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendStopAgentSessionSandbox]:
     ToBackendStopAgentSessionSandboxRequest,
   [ToBackendRequestInfoNameEnum.ToBackendPauseAgentSessionSandbox]:
-    ToBackendPauseAgentSessionSandboxRequest
+    ToBackendPauseAgentSessionSandboxRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket]:
+    ToBackendCreateAgentSseTicketRequest
 };

@@ -1,8 +1,11 @@
+import http from 'node:http';
 import test from 'ava';
+import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
+import type { AgentPubSubEvent } from '#backend/services/agent-pub-sub.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -18,11 +21,6 @@ import {
   ToBackendDeleteAgentSessionRequest,
   ToBackendDeleteAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
-import {
-  AgentEventItem,
-  ToBackendGetAgentEventsStreamRequest,
-  ToBackendGetAgentEventsStreamResponse
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-events-stream';
 import {
   ToBackendSendAgentMessageRequest,
   ToBackendSendAgentMessageResponse
@@ -44,48 +42,71 @@ let projectName = testId;
 
 let prep: Prep;
 
-async function pollEvents(item: {
+function connectSse(item: {
   httpServer: any;
-  loginToken: string;
   sessionId: string;
-  lastSequence?: number;
+  ticket: string;
+}): { events: AgentPubSubEvent[]; close: () => void } {
+  let events: AgentPubSubEvent[] = [];
+  let address = item.httpServer.address();
+  let port = typeof address === 'string' ? address : address.port;
+
+  let req = http.get(
+    `http://127.0.0.1:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`,
+    res => {
+      let buffer = '';
+      res.on('data', (chunk: Buffer) => {
+        buffer += chunk.toString();
+        let lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+        for (let line of lines) {
+          if (line.startsWith('data:')) {
+            let json = line.slice(5).trim();
+            if (json) {
+              try {
+                events.push(JSON.parse(json));
+              } catch {
+                // ignore parse errors
+              }
+            }
+          }
+        }
+      });
+    }
+  );
+
+  return {
+    events,
+    close: () => req.destroy()
+  };
+}
+
+async function waitForEvents(item: {
+  events: AgentPubSubEvent[];
+  minCount: number;
+  afterSequence?: number;
   maxRetries?: number;
   delayMs?: number;
-}): Promise<AgentEventItem[]> {
+}): Promise<AgentPubSubEvent[]> {
   let maxRetries = item.maxRetries ?? 30;
   let delayMs = item.delayMs ?? 2000;
 
   for (let i = 0; i < maxRetries; i++) {
-    let getEventsReq: ToBackendGetAgentEventsStreamRequest = {
-      info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendGetAgentEventsStream,
-        traceId: traceId,
-        idempotencyKey: makeId()
-      },
-      payload: {
-        sessionId: item.sessionId,
-        lastSequence: item.lastSequence
-      }
-    };
+    let matching =
+      item.afterSequence !== undefined
+        ? item.events.filter(e => e.sequence > item.afterSequence)
+        : item.events;
 
-    let getEventsResp =
-      await sendToBackend<ToBackendGetAgentEventsStreamResponse>({
-        httpServer: item.httpServer,
-        loginToken: item.loginToken,
-        req: getEventsReq
-      });
-
-    if (
-      getEventsResp.info.status === ResponseInfoStatusEnum.Ok &&
-      getEventsResp.payload.events.length > 0
-    ) {
-      return getEventsResp.payload.events;
+    if (matching.length >= item.minCount) {
+      return matching;
     }
 
     await new Promise(resolve => setTimeout(resolve, delayMs));
   }
 
-  return [];
+  return item.afterSequence !== undefined
+    ? item.events.filter(e => e.sequence > item.afterSequence)
+    : item.events;
 }
 
 test('1', async t => {
@@ -100,6 +121,7 @@ test('1', async t => {
   }
 
   let sessionId: string | undefined;
+  let sse: { events: AgentPubSubEvent[]; close: () => void } | undefined;
 
   try {
     prep = await prepareTestAndSeed({
@@ -174,14 +196,21 @@ test('1', async t => {
 
     t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
     t.truthy(createSessionResp.payload.sessionId);
+    t.truthy(createSessionResp.payload.sseTicket);
 
     sessionId = createSessionResp.payload.sessionId;
 
-    // Poll for events from firstMessage
-    let firstEvents = await pollEvents({
+    // Connect SSE
+    sse = connectSse({
       httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      sessionId: sessionId
+      sessionId: sessionId,
+      ticket: createSessionResp.payload.sseTicket
+    });
+
+    // Wait for events from firstMessage
+    let firstEvents = await waitForEvents({
+      events: sse.events,
+      minCount: 1
     });
 
     t.true(firstEvents.length > 0, 'Expected events from firstMessage');
@@ -210,12 +239,11 @@ test('1', async t => {
 
     t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
 
-    // Poll for events from 2nd message
-    let secondEvents = await pollEvents({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      sessionId: sessionId,
-      lastSequence: lastSequence
+    // Wait for events from 2nd message
+    let secondEvents = await waitForEvents({
+      events: sse.events,
+      minCount: 1,
+      afterSequence: lastSequence
     });
 
     t.true(secondEvents.length > 0, 'Expected events from 2nd message');
@@ -228,6 +256,11 @@ test('1', async t => {
     });
     t.fail(String(e));
   } finally {
+    // Close SSE connection
+    if (sse) {
+      sse.close();
+    }
+
     // Cleanup: delete session
     if (sessionId && prep) {
       try {
