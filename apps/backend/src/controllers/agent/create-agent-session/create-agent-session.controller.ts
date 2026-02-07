@@ -86,18 +86,18 @@ export class CreateAgentSessionController {
       BackendConfig['sandboxTimeoutMinutes']
     >('sandboxTimeoutMinutes');
 
-    let timeoutMs = sandboxTimeoutMinutes * 60 * 1000;
+    let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
     let { sessionTab, createSessionResponse } =
       await this.agentService.createSession({
-        sandboxType: sandboxType,
-        e2bApiKey: project.e2bApiKey,
-        timeoutMs: timeoutMs,
         userId: user.userId,
         projectId: projectId,
+        sandboxType: sandboxType,
+        sandboxTimeoutMs: sandboxTimeoutMs,
         agent: agent,
         agentMode: agentMode,
         permissionMode: permissionMode,
+        e2bApiKey: project.e2bApiKey,
         zenApiKey: project.zenApiKey
       });
 

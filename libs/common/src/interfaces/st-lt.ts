@@ -271,10 +271,10 @@ export class EventLt {
 //
 
 export class SessionSt {
-  providerSandboxId: string;
-  providerHost: string;
-  createSessionResponse: CreateSessionResponse;
+  sandboxId: string;
+  sandboxHost: string;
   sessionInfo?: SessionInfo;
+  createSessionResponse: CreateSessionResponse;
 }
 export class SessionLt {
   emptyData?: number;

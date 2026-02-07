@@ -1,9 +1,11 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { eq } from 'drizzle-orm';
 import type {
   CreateSessionRequest,
   CreateSessionResponse,
   PermissionReply,
+  SandboxAgent,
   UniversalEvent
 } from 'sandbox-agent';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,6 +16,7 @@ import type {
   EventTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -45,7 +48,7 @@ export class AgentService {
   async createSession(item: {
     sandboxType: SandboxTypeEnum;
     e2bApiKey: string;
-    timeoutMs: number;
+    sandboxTimeoutMs: number;
     userId: string;
     projectId: string;
     agent: string;
@@ -53,24 +56,25 @@ export class AgentService {
     permissionMode?: string;
     zenApiKey?: string;
   }): Promise<CreateSessionResult> {
-    let envs: Record<string, string> = {};
+    let sandboxEnvs: Record<string, string> = {};
+
     if (item.zenApiKey) {
-      envs.ZEN_API_KEY = item.zenApiKey;
+      sandboxEnvs.ZEN_API_KEY = item.zenApiKey;
     }
 
-    let sandboxInfo = await this.sandboxService.createSandbox({
+    let { sandboxId, sandboxHost } = await this.sandboxService.createSandbox({
       sandboxType: item.sandboxType,
-      e2bApiKey: item.e2bApiKey,
-      timeoutMs: item.timeoutMs,
+      sandboxTimeoutMs: item.sandboxTimeoutMs,
       agent: item.agent,
-      envs: envs
+      sandboxEnvs: sandboxEnvs,
+      e2bApiKey: item.e2bApiKey
     });
 
     let sessionId = uuidv4();
 
     let createSessionResponse = await this.createAgentSession({
       sessionId: sessionId,
-      providerHost: sandboxInfo.providerHost,
+      providerHost: sandboxHost,
       agent: item.agent,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode
@@ -86,13 +90,13 @@ export class AgentService {
       agent: item.agent,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode,
-      providerSandboxId: sandboxInfo.providerSandboxId,
-      providerHost: sandboxInfo.providerHost,
+      sandboxId: sandboxId,
+      providerHost: sandboxHost,
       createSessionResponse: createSessionResponse,
       status: SessionStatusEnum.Active,
       lastActivityTs: now,
       runningStartTs: now,
-      expiresAt: now + item.timeoutMs,
+      expiresAt: now + item.sandboxTimeoutMs,
       createdTs: now
     });
 
@@ -107,15 +111,15 @@ export class AgentService {
   async stopSandbox(item: {
     sessionId: string;
     sandboxType: SandboxTypeEnum;
-    providerSandboxId: string;
+    sandboxId: string;
     e2bApiKey: string;
   }): Promise<void> {
     this.stopEventStream(item.sessionId);
     await this.sandboxService.disposeClient(item.sessionId);
 
-    await this.sandboxService.stopProviderSandbox({
+    await this.sandboxService.stopSandbox({
       sandboxType: item.sandboxType,
-      providerSandboxId: item.providerSandboxId,
+      sandboxId: item.sandboxId,
       e2bApiKey: item.e2bApiKey
     });
   }
@@ -123,15 +127,15 @@ export class AgentService {
   async pauseSandbox(item: {
     sessionId: string;
     sandboxType: SandboxTypeEnum;
-    providerSandboxId: string;
+    sandboxId: string;
     e2bApiKey: string;
   }): Promise<void> {
     this.stopEventStream(item.sessionId);
     await this.sandboxService.disposeClient(item.sessionId);
 
-    await this.sandboxService.pauseProviderSandbox({
+    await this.sandboxService.pauseSandbox({
       sandboxType: item.sandboxType,
-      providerSandboxId: item.providerSandboxId,
+      sandboxId: item.sandboxId,
       e2bApiKey: item.e2bApiKey
     });
   }
@@ -139,15 +143,15 @@ export class AgentService {
   async resumeSandbox(item: {
     sessionId: string;
     sandboxType: SandboxTypeEnum;
-    providerSandboxId: string;
+    sandboxId: string;
     providerHost: string;
     nativeSessionId: string;
     e2bApiKey: string;
     timeoutMs: number;
   }): Promise<void> {
-    await this.sandboxService.resumeProviderSandbox({
+    await this.sandboxService.resumeSandbox({
       sandboxType: item.sandboxType,
-      providerSandboxId: item.providerSandboxId,
+      sandboxId: item.sandboxId,
       e2bApiKey: item.e2bApiKey,
       timeoutMs: item.timeoutMs
     });
@@ -172,7 +176,7 @@ export class AgentService {
     agentMode?: string;
     permissionMode?: string;
   }): Promise<CreateSessionResponse> {
-    let client = await this.sandboxService.connectClient({
+    let client: SandboxAgent = await this.sandboxService.connectClient({
       sessionId: item.sessionId,
       providerHost: item.providerHost
     });
@@ -257,32 +261,35 @@ export class AgentService {
   // Scheduled task
 
   async pauseIdleSandboxes(): Promise<void> {
-    // let idleMinutes =
-    //   this.cs.get<BackendConfig['sandboxIdleMinutes']>('sandboxIdleMinutes');
-    // let idleThresholdTs = Date.now() - idleMinutes * 60 * 1000;
-    // let sessions = await this.sessionsService.getIdleActiveSessions({
-    //   idleThresholdTs
-    // });
-    // for (let session of sessions) {
-    //   if (
-    //     session.lastActivityTs &&
-    //     session.lastActivityTs < idleThresholdTs &&
-    //     session.providerSandboxId
-    //   ) {
-    //     await this.pauseSandbox({
-    //       sessionId: session.sessionId,
-    //       sandboxType: session.sandboxType as SandboxTypeEnum,
-    //       providerSandboxId: session.providerSandboxId
-    //     }).catch(() => {});
-    //     await this.db.drizzle
-    //       .update(sessionsTable)
-    //       .set({
-    //         status: SessionStatusEnum.Paused,
-    //         serverTs: Date.now()
-    //       })
-    //       .where(eq(sessionsTable.sessionId, session.sessionId));
-    //   }
-    // }
+    let idleMinutes =
+      this.cs.get<BackendConfig['sandboxIdleMinutes']>('sandboxIdleMinutes');
+
+    let idleThresholdTs = Date.now() - idleMinutes * 60 * 1000;
+
+    let sessions = await this.sessionsService.getIdleActiveSessions({
+      idleThresholdTs
+    });
+
+    for (let session of sessions) {
+      if (
+        session.lastActivityTs &&
+        session.lastActivityTs < idleThresholdTs &&
+        session.sandboxId
+      ) {
+        await this.pauseSandbox({
+          sessionId: session.sessionId,
+          sandboxType: session.sandboxType,
+          sandboxId: session.sandboxId
+        }).catch(() => {});
+        await this.db.drizzle
+          .update(sessionsTable)
+          .set({
+            status: SessionStatusEnum.Paused,
+            serverTs: Date.now()
+          })
+          .where(eq(sessionsTable.sessionId, session.sessionId));
+      }
+    }
   }
 
   // stream

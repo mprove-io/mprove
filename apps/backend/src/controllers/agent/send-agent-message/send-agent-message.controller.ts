@@ -66,8 +66,8 @@ export class SendAgentMessageController {
       await this.agentService.resumeSandbox({
         sessionId: sessionId,
         sandboxType: session.sandboxType as SandboxTypeEnum,
-        providerSandboxId: session.providerSandboxId,
-        providerHost: session.providerHost,
+        sandboxId: session.sandboxId,
+        providerHost: session.sandboxHost,
         nativeSessionId:
           session.createSessionResponse?.nativeSessionId ?? session.sessionId,
         e2bApiKey: project.e2bApiKey,

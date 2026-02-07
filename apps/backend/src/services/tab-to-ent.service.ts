@@ -942,8 +942,8 @@ export class TabToEntService {
     let { tab } = item;
 
     let sessionSt: SessionSt = {
-      providerSandboxId: tab.providerSandboxId,
-      providerHost: tab.providerHost,
+      sandboxId: tab.sandboxId,
+      sandboxHost: tab.sandboxHost,
       createSessionResponse: tab.createSessionResponse,
       sessionInfo: tab.sessionInfo
     };

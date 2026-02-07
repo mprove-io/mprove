@@ -51,10 +51,7 @@ export class StopAgentSessionSandboxController {
       sessionId
     });
 
-    if (
-      session.providerSandboxId &&
-      session.status === SessionStatusEnum.Active
-    ) {
+    if (session.sandboxId && session.status === SessionStatusEnum.Active) {
       let project = await this.projectsService.getProjectCheckExists({
         projectId: session.projectId
       });
@@ -63,7 +60,7 @@ export class StopAgentSessionSandboxController {
         .stopSandbox({
           sessionId: sessionId,
           sandboxType: session.sandboxType as SandboxTypeEnum,
-          providerSandboxId: session.providerSandboxId,
+          sandboxId: session.sandboxId,
           e2bApiKey: project.e2bApiKey
         })
         .catch(() => {});
