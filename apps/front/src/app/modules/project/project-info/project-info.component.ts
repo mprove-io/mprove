@@ -93,6 +93,24 @@ export class ProjectInfoComponent implements OnInit {
     });
   }
 
+  editAnthropicApiKey() {
+    this.myDialogService.showEditApiKey({
+      apiService: this.apiService,
+      projectId: this.project.projectId,
+      keyLabel: 'Anthropic API Key',
+      fieldName: 'anthropicApiKey'
+    });
+  }
+
+  editOpenaiApiKey() {
+    this.myDialogService.showEditApiKey({
+      apiService: this.apiService,
+      projectId: this.project.projectId,
+      keyLabel: 'OpenAI API Key',
+      fieldName: 'openaiApiKey'
+    });
+  }
+
   editE2bApiKey() {
     this.myDialogService.showEditApiKey({
       apiService: this.apiService,
@@ -106,11 +124,21 @@ export class ProjectInfoComponent implements OnInit {
     this.deleteApiKey('zenApiKey');
   }
 
+  deleteAnthropicApiKey() {
+    this.deleteApiKey('anthropicApiKey');
+  }
+
+  deleteOpenaiApiKey() {
+    this.deleteApiKey('openaiApiKey');
+  }
+
   deleteE2bApiKey() {
     this.deleteApiKey('e2bApiKey');
   }
 
-  private deleteApiKey(fieldName: 'zenApiKey' | 'e2bApiKey') {
+  private deleteApiKey(
+    fieldName: 'zenApiKey' | 'anthropicApiKey' | 'openaiApiKey' | 'e2bApiKey'
+  ) {
     let payload: ToBackendSetProjectInfoRequestPayload = {
       projectId: this.project.projectId,
       [fieldName]: ''

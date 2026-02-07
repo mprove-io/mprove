@@ -81,6 +81,8 @@ export class ProjectsService {
       gitUrl: isAddGitUrl === true ? project.gitUrl : undefined,
       publicKey: isAddPublicKey === true ? project.publicKey : undefined,
       isZenApiKeySet: isDefinedAndNotEmpty(project.zenApiKey),
+      isAnthropicApiKeySet: isDefinedAndNotEmpty(project.anthropicApiKey),
+      isOpenaiApiKeySet: isDefinedAndNotEmpty(project.openaiApiKey),
       isE2bApiKeySet: isDefinedAndNotEmpty(project.e2bApiKey),
       serverTs: Number(project.serverTs)
     };
@@ -139,6 +141,8 @@ export class ProjectsService {
     privateKeyEncrypted?: string;
     passPhrase?: string;
     zenApiKey?: string;
+    anthropicApiKey?: string;
+    openaiApiKey?: string;
     e2bApiKey?: string;
     testProjectId: string;
     user: UserTab;
@@ -158,6 +162,8 @@ export class ProjectsService {
       privateKeyEncrypted,
       passPhrase,
       zenApiKey,
+      anthropicApiKey,
+      openaiApiKey,
       e2bApiKey,
       testProjectId,
       user,
@@ -179,6 +185,8 @@ export class ProjectsService {
       privateKeyEncrypted: privateKeyEncrypted,
       passPhrase: passPhrase,
       zenApiKey: zenApiKey,
+      anthropicApiKey: anthropicApiKey,
+      openaiApiKey: openaiApiKey,
       e2bApiKey: e2bApiKey,
       nameHash: undefined, // tab-to-ent
       gitUrlHash: undefined, // tab-to-ent

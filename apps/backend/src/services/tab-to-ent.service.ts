@@ -712,6 +712,8 @@ export class TabToEntService {
     let projectSt: ProjectSt = {
       name: tab.name,
       zenApiKey: tab.zenApiKey,
+      anthropicApiKey: tab.anthropicApiKey,
+      openaiApiKey: tab.openaiApiKey,
       e2bApiKey: tab.e2bApiKey
     };
 

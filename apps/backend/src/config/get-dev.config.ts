@@ -261,6 +261,11 @@ export function getDevConfig() {
 
     demoProjectZenApiKey: process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY,
 
+    demoProjectAnthropicApiKey:
+      process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY,
+
+    demoProjectOpenaiApiKey: process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY,
+
     sandboxAgentVersion: process.env.BACKEND_SANDBOX_AGENT_VERSION,
 
     sandboxTimeoutMinutes: isDefined(

@@ -25,7 +25,7 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
-let testId = 'backend-create-agent-session__ok';
+let testId = 'backend-create-agent-session__ok-opencode';
 
 let traceId = testId;
 
@@ -52,7 +52,7 @@ function connectSse(item: {
 
   let url = `http://localhost:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`;
 
-  console.log('connectSse url:', url);
+  // console.log('connectSse url:', url);
 
   let es = new EventSource(url);
 
@@ -110,10 +110,12 @@ async function waitForEvents(item: {
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
   let zenApiKey = process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY;
+  let anthropicApiKey = process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY;
+  let openaiApiKey = process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY;
 
-  if (!e2bApiKey || !zenApiKey) {
+  if (!e2bApiKey || !anthropicApiKey) {
     t.pass(
-      'Skipped: BACKEND_DEMO_PROJECT_E2B_API_KEY or BACKEND_DEMO_PROJECT_ZEN_API_KEY not set'
+      'Skipped: BACKEND_DEMO_PROJECT_E2B_API_KEY or BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY not set'
     );
     return;
   }
@@ -153,7 +155,9 @@ test('1', async t => {
             remoteType: ProjectRemoteTypeEnum.Managed,
             defaultBranch: BRANCH_MAIN,
             e2bApiKey: e2bApiKey,
-            zenApiKey: zenApiKey
+            zenApiKey: zenApiKey,
+            anthropicApiKey: anthropicApiKey,
+            openaiApiKey: openaiApiKey
           }
         ],
         members: [
@@ -180,7 +184,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        agent: 'mock',
+        agent: 'opencode',
         firstMessage: 'hello'
       }
     };

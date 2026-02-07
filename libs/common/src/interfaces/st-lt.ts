@@ -191,6 +191,8 @@ export class OrgLt {
 export class ProjectSt {
   name: string;
   zenApiKey?: string;
+  anthropicApiKey?: string;
+  openaiApiKey?: string;
   e2bApiKey?: string;
 }
 export class ProjectLt {

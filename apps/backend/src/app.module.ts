@@ -544,6 +544,14 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           BackendConfig['demoProjectZenApiKey']
         >('demoProjectZenApiKey');
 
+        let demoProjectAnthropicApiKey = this.cs.get<
+          BackendConfig['demoProjectAnthropicApiKey']
+        >('demoProjectAnthropicApiKey');
+
+        let demoProjectOpenaiApiKey = this.cs.get<
+          BackendConfig['demoProjectOpenaiApiKey']
+        >('demoProjectOpenaiApiKey');
+
         let demoProjectE2bApiKey = this.cs.get<
           BackendConfig['demoProjectE2bApiKey']
         >('demoProjectE2bApiKey');
@@ -563,6 +571,8 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
           privateKeyEncrypted: privateKeyEncrypted,
           passPhrase: demoProjectRemotePassPhrase,
           zenApiKey: demoProjectZenApiKey,
+          anthropicApiKey: demoProjectAnthropicApiKey,
+          openaiApiKey: demoProjectOpenaiApiKey,
           e2bApiKey: demoProjectE2bApiKey,
           evs: [ev1],
           connections: connections

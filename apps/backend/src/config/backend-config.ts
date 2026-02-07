@@ -297,6 +297,14 @@ export class BackendConfig {
 
   @IsOptional()
   @IsString()
+  demoProjectAnthropicApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  demoProjectOpenaiApiKey?: string;
+
+  @IsOptional()
+  @IsString()
   demoProjectE2bApiKey?: string;
 
   @IsOptional()

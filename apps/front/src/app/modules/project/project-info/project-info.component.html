@@ -23,6 +23,14 @@
               >
               <div
                 class="flex h-16 select-none items-center justify-end font-semibold"
+                >Anthropic API Key</div
+              >
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
+                >OpenAI API Key</div
+              >
+              <div
+                class="flex h-16 select-none items-center justify-end font-semibold"
                 >E2B API Key</div
               >
               <!-- <div
@@ -120,6 +128,116 @@
                     }"
                     [disabled]="isAdmin === false"
                     (click)="deleteZenApiKey()"
+                  >
+                    <div class="ml-3 flex justify-center">
+                      <m-trash-icon></m-trash-icon>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex h-16 flex-row items-center">
+                <div
+                  data-cy="projectInfoAnthropicApiKeyStatus"
+                  class="flex w-36 items-center text-base"
+                  [ngClass]="{
+                    'text-g700': project?.isAnthropicApiKeySet,
+                    'text-s400': !project?.isAnthropicApiKeySet
+                  }"
+                  >{{
+                    project?.isAnthropicApiKeySet
+                      ? 'API key is set'
+                      : 'API key is not set'
+                  }}</div
+                >
+
+                <div
+                  class="ml-10 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoEditAnthropicApiKeyButton"
+                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                      'border-s300 text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="editAnthropicApiKey()"
+                    >Edit</button
+                  >
+                </div>
+
+                <div
+                  class="ml-3 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoDeleteAnthropicApiKeyButton"
+                    class="select-none focus:outline-none"
+                    [ngClass]="{
+                      'text-s500 hover:text-r1': isAdmin === true,
+                      'text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="deleteAnthropicApiKey()"
+                  >
+                    <div class="ml-3 flex justify-center">
+                      <m-trash-icon></m-trash-icon>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex h-16 flex-row items-center">
+                <div
+                  data-cy="projectInfoOpenaiApiKeyStatus"
+                  class="flex w-36 items-center text-base"
+                  [ngClass]="{
+                    'text-g700': project?.isOpenaiApiKeySet,
+                    'text-s400': !project?.isOpenaiApiKeySet
+                  }"
+                  >{{
+                    project?.isOpenaiApiKeySet
+                      ? 'API key is set'
+                      : 'API key is not set'
+                  }}</div
+                >
+
+                <div
+                  class="ml-10 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoEditOpenaiApiKeyButton"
+                    class="select-none rounded border px-3 py-2 text-base leading-3 shadow-sm focus:outline-none"
+                    [ngClass]="{
+                      'border-s400 text-s500 hover:bg-s100': isAdmin === true,
+                      'border-s300 text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="editOpenaiApiKey()"
+                    >Edit</button
+                  >
+                </div>
+
+                <div
+                  class="ml-3 flex items-center"
+                  tp="Admin role required"
+                  [tpIsEnabled]="isAdmin === false"
+                >
+                  <button
+                    data-cy="projectInfoDeleteOpenaiApiKeyButton"
+                    class="select-none focus:outline-none"
+                    [ngClass]="{
+                      'text-s500 hover:text-r1': isAdmin === true,
+                      'text-s400 cursor-default': isAdmin === false
+                    }"
+                    [disabled]="isAdmin === false"
+                    (click)="deleteOpenaiApiKey()"
                   >
                     <div class="ml-3 flex justify-center">
                       <m-trash-icon></m-trash-icon>

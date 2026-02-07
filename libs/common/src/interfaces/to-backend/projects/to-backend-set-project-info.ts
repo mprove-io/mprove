@@ -18,6 +18,14 @@ export class ToBackendSetProjectInfoRequestPayload {
 
   @IsOptional()
   @IsString()
+  anthropicApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  openaiApiKey?: string;
+
+  @IsOptional()
+  @IsString()
   e2bApiKey?: string;
 }
 

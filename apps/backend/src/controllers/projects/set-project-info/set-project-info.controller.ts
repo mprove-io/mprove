@@ -45,7 +45,14 @@ export class SetProjectInfoController {
   async setProjectInfo(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSetProjectInfoRequest = request.body;
 
-    let { projectId, name, zenApiKey, e2bApiKey } = reqValid.payload;
+    let {
+      projectId,
+      name,
+      zenApiKey,
+      anthropicApiKey,
+      openaiApiKey,
+      e2bApiKey
+    } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -62,6 +69,15 @@ export class SetProjectInfoController {
 
     if (isDefined(zenApiKey)) {
       project.zenApiKey = zenApiKey === '' ? undefined : zenApiKey;
+    }
+
+    if (isDefined(anthropicApiKey)) {
+      project.anthropicApiKey =
+        anthropicApiKey === '' ? undefined : anthropicApiKey;
+    }
+
+    if (isDefined(openaiApiKey)) {
+      project.openaiApiKey = openaiApiKey === '' ? undefined : openaiApiKey;
     }
 
     if (isDefined(e2bApiKey)) {

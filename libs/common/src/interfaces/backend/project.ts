@@ -38,6 +38,14 @@ export class Project {
 
   @IsOptional()
   @IsBoolean()
+  isAnthropicApiKeySet?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  isOpenaiApiKeySet?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   isE2bApiKeySet?: boolean;
 
   @IsOptional()

@@ -113,6 +113,14 @@ export class ToBackendSeedRecordsRequestPayloadProjectsItem {
   @IsOptional()
   @IsString()
   zenApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  anthropicApiKey?: string;
+
+  @IsOptional()
+  @IsString()
+  openaiApiKey?: string;
 }
 
 export class ToBackendSeedRecordsRequestPayloadMembersItem {

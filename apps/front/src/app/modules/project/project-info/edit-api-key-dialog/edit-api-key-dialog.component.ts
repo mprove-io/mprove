@@ -29,7 +29,7 @@ export interface EditApiKeyDialogData {
   apiService: ApiService;
   projectId: string;
   keyLabel: string;
-  fieldName: 'zenApiKey' | 'e2bApiKey';
+  fieldName: 'zenApiKey' | 'anthropicApiKey' | 'openaiApiKey' | 'e2bApiKey';
 }
 
 @Component({

@@ -268,6 +268,8 @@ export class SeedRecordsController {
             passPhrase: x.passPhrase,
             e2bApiKey: x.e2bApiKey,
             zenApiKey: x.zenApiKey,
+            anthropicApiKey: x.anthropicApiKey,
+            openaiApiKey: x.openaiApiKey,
             nameHash: undefined, // tab-to-ent
             gitUrlHash: undefined, // tab-to-ent
             keyTag: undefined,

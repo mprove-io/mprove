@@ -98,8 +98,19 @@ export class CreateAgentSessionController {
 
     let sandboxEnvs: Record<string, string> = {};
 
-    if (project.zenApiKey) {
-      sandboxEnvs.ZEN_API_KEY = project.zenApiKey;
+    if (agent === 'opencode') {
+      // if (!project.anthropicApiKey) {
+      //   throw new ServerError({
+      //     message:
+      //       ErEnum.BACKEND_AGENT_ANTHROPIC_API_KEY_REQUIRED_FOR_OPENCODE
+      //   });
+      // }
+
+      sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
+
+      // if (project.openaiApiKey) {
+      //   sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
+      // }
     }
 
     let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
