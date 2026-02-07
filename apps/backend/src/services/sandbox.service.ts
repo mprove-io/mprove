@@ -10,7 +10,7 @@ import { ServerError } from '#common/models/server-error';
 
 export interface SandboxInfo {
   sandboxId: string;
-  sandboxHost: string;
+  sandboxBaseUrl: string;
   sandboxAgentToken: string;
 }
 
@@ -24,7 +24,7 @@ export class SandboxService {
 
   async connectClient(item: {
     sessionId: string;
-    sandboxHost: string;
+    sandboxBaseUrl: string;
     sandboxAgentToken: string;
   }): Promise<SandboxAgent> {
     let existing = this.clients.get(item.sessionId);
@@ -33,7 +33,7 @@ export class SandboxService {
     }
 
     let client = await SandboxAgent.connect({
-      baseUrl: item.sandboxHost,
+      baseUrl: item.sandboxBaseUrl,
       token: item.sandboxAgentToken
     });
 
@@ -183,13 +183,19 @@ export class SandboxService {
       { background: true }
     );
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
     let host = sandbox.getHost(3000);
+
+    for (let i = 0; i < 30; i++) {
+      try {
+        let res = await fetch(`https://${host}/v1/health`);
+        if (res.ok) break;
+      } catch {}
+      await new Promise(r => setTimeout(r, 1000));
+    }
 
     let sandboxInfo: SandboxInfo = {
       sandboxId: sandbox.sandboxId,
-      sandboxHost: `https://${host}`,
+      sandboxBaseUrl: `https://${host}`,
       sandboxAgentToken: sandboxAgentToken
     };
 

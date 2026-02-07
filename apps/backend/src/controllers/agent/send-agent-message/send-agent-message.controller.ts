@@ -67,7 +67,7 @@ export class SendAgentMessageController {
         sessionId: sessionId,
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,
-        sandboxHost: session.sandboxHost,
+        sandboxBaseUrl: session.sandboxBaseUrl,
         sandboxAgentToken: session.sandboxAgentToken,
         nativeSessionId:
           session.sdkCreateSessionResponse?.nativeSessionId ??

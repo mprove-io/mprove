@@ -943,7 +943,7 @@ export class TabToEntService {
 
     let sessionSt: SessionSt = {
       sandboxId: tab.sandboxId,
-      sandboxHost: tab.sandboxHost,
+      sandboxBaseUrl: tab.sandboxBaseUrl,
       sandboxAgentToken: tab.sandboxAgentToken,
       sdkCreateSessionResponse: tab.sdkCreateSessionResponse,
       sessionInfo: tab.sessionInfo

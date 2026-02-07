@@ -272,7 +272,7 @@ export class EventLt {
 
 export class SessionSt {
   sandboxId: string;
-  sandboxHost: string;
+  sandboxBaseUrl: string;
   sandboxAgentToken: string;
   sessionInfo?: SessionInfo;
   sdkCreateSessionResponse: CreateSessionResponse;

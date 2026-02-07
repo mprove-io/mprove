@@ -59,7 +59,7 @@ export class AgentService {
       sandboxEnvs.ZEN_API_KEY = item.zenApiKey;
     }
 
-    let { sandboxId, sandboxHost, sandboxAgentToken } =
+    let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
       await this.sandboxService.createSandbox({
         sandboxType: item.sandboxType,
         sandboxTimeoutMs: item.sandboxTimeoutMs,
@@ -72,7 +72,7 @@ export class AgentService {
 
     let sdkCreateSessionResponse = await this.createAgentSession({
       sessionId: sessionId,
-      sandboxHost: sandboxHost,
+      sandboxBaseUrl: sandboxBaseUrl,
       sandboxAgentToken: sandboxAgentToken,
       agent: item.agent,
       agentMode: item.agentMode,
@@ -90,7 +90,7 @@ export class AgentService {
       agentMode: item.agentMode,
       permissionMode: item.permissionMode,
       sandboxId: sandboxId,
-      sandboxHost: sandboxHost,
+      sandboxBaseUrl: sandboxBaseUrl,
       sandboxAgentToken: sandboxAgentToken,
       sdkCreateSessionResponse: sdkCreateSessionResponse,
       status: SessionStatusEnum.Active,
@@ -145,7 +145,7 @@ export class AgentService {
     sessionId: string;
     sandboxType: SandboxTypeEnum;
     sandboxId: string;
-    sandboxHost: string;
+    sandboxBaseUrl: string;
     sandboxAgentToken: string;
     nativeSessionId: string;
     e2bApiKey: string;
@@ -160,7 +160,7 @@ export class AgentService {
 
     await this.sandboxService.connectClient({
       sessionId: item.sessionId,
-      sandboxHost: item.sandboxHost,
+      sandboxBaseUrl: item.sandboxBaseUrl,
       sandboxAgentToken: item.sandboxAgentToken
     });
 
@@ -174,7 +174,7 @@ export class AgentService {
 
   async createAgentSession(item: {
     sessionId: string;
-    sandboxHost: string;
+    sandboxBaseUrl: string;
     sandboxAgentToken: string;
     agent: string;
     agentMode?: string;
@@ -182,7 +182,7 @@ export class AgentService {
   }): Promise<CreateSessionResponse> {
     let client: SandboxAgent = await this.sandboxService.connectClient({
       sessionId: item.sessionId,
-      sandboxHost: item.sandboxHost,
+      sandboxBaseUrl: item.sandboxBaseUrl,
       sandboxAgentToken: item.sandboxAgentToken
     });
 
