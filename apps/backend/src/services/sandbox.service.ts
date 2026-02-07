@@ -89,7 +89,7 @@ export class SandboxService {
           let saVersion = sandboxAgentVersion || 'latest';
 
           await sandbox.commands.run(
-            `curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | SANDBOX_AGENT_VERSION=${saVersion} sh`
+            `curl -fsSL https://releases.rivet.dev/sandbox-agent/${saVersion}/install.sh | SANDBOX_AGENT_VERSION=${saVersion} sh`
           );
 
           await sandbox.commands.run(

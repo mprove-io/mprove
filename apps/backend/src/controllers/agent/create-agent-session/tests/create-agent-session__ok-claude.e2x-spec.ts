@@ -122,6 +122,11 @@ test('1', async t => {
 
   let sessionId: string | undefined;
   let sse: { events: AgentEvent[]; close: () => void } | undefined;
+  let testError: unknown;
+  let createSessionResp: ToBackendCreateAgentSessionResponse;
+  let sendMessageResp: ToBackendSendAgentMessageResponse;
+  let firstEvents: AgentEvent[];
+  let secondEvents: AgentEvent[];
 
   try {
     prep = await prepareTestAndSeed({
@@ -192,7 +197,7 @@ test('1', async t => {
       }
     };
 
-    let createSessionResp =
+    createSessionResp =
       await sendToBackend<ToBackendCreateAgentSessionResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
@@ -200,9 +205,14 @@ test('1', async t => {
         checkIsOk: true
       });
 
-    t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
-    t.truthy(createSessionResp.payload.sessionId);
-    t.truthy(createSessionResp.payload.sseTicket);
+    // console.log(
+    //   'createSessionResp.info:',
+    //   JSON.stringify(createSessionResp.info, null, 2)
+    // );
+    // console.log(
+    //   'createSessionResp.payload:',
+    //   JSON.stringify(createSessionResp.payload, null, 2)
+    // );
 
     sessionId = createSessionResp.payload.sessionId;
 
@@ -219,12 +229,10 @@ test('1', async t => {
     });
 
     // Wait for events from firstMessage
-    let firstEvents = await waitForEvents({
+    firstEvents = await waitForEvents({
       events: sse.events,
       minCount: 1
     });
-
-    t.true(firstEvents.length > 0, 'Expected events from firstMessage');
 
     let lastSequence = firstEvents[firstEvents.length - 1].sequence;
 
@@ -241,23 +249,19 @@ test('1', async t => {
       }
     };
 
-    let sendMessageResp =
-      await sendToBackend<ToBackendSendAgentMessageResponse>({
-        httpServer: prep.httpServer,
-        loginToken: prep.loginToken,
-        req: sendMessageReq
-      });
-
-    t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
+    sendMessageResp = await sendToBackend<ToBackendSendAgentMessageResponse>({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      req: sendMessageReq,
+      checkIsOk: true
+    });
 
     // Wait for events from 2nd message
-    let secondEvents = await waitForEvents({
+    secondEvents = await waitForEvents({
       events: sse.events,
       minCount: 1,
       afterSequence: lastSequence
     });
-
-    t.true(secondEvents.length > 0, 'Expected events from 2nd message');
   } catch (e) {
     logToConsoleBackend({
       log: e,
@@ -265,6 +269,7 @@ test('1', async t => {
       logger: prep.logger,
       cs: prep.cs
     });
+    testError = e;
   } finally {
     // Close SSE connection
     if (sse) {
@@ -288,7 +293,8 @@ test('1', async t => {
         await sendToBackend<ToBackendDeleteAgentSessionResponse>({
           httpServer: prep.httpServer,
           loginToken: prep.loginToken,
-          req: deleteSessionReq
+          req: deleteSessionReq,
+          checkIsOk: true
         });
       } catch (er) {
         logToConsoleBackend({
@@ -304,4 +310,12 @@ test('1', async t => {
       await prep.app.close();
     }
   }
+
+  t.is(testError, undefined, JSON.stringify(testError, null, 2));
+  t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
+  t.truthy(createSessionResp.payload.sessionId);
+  t.truthy(createSessionResp.payload.sseTicket);
+  t.true(firstEvents.length > 0, 'Expected events from firstMessage');
+  t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
+  t.true(secondEvents.length > 0, 'Expected events from 2nd message');
 });
