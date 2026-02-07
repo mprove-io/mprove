@@ -115,18 +115,13 @@ export class CreateAgentSessionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let sdkSessionId =
-      sdkCreateSessionResponse.nativeSessionId ?? session.sessionId;
-
     this.agentService.startEventStream({
-      sessionId: session.sessionId,
-      nativeSessionId: sdkSessionId
+      sessionId: session.sessionId
     });
 
     if (firstMessage) {
       await this.agentService.sendMessage({
         sessionId: session.sessionId,
-        nativeSessionId: sdkSessionId,
         message: firstMessage
       });
     }

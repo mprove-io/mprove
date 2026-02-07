@@ -147,7 +147,6 @@ export class AgentService {
     sandboxId: string;
     sandboxBaseUrl: string;
     sandboxAgentToken: string;
-    nativeSessionId: string;
     e2bApiKey: string;
     timeoutMs: number;
   }): Promise<void> {
@@ -165,8 +164,7 @@ export class AgentService {
     });
 
     this.startEventStream({
-      sessionId: item.sessionId,
-      nativeSessionId: item.nativeSessionId
+      sessionId: item.sessionId
     });
   }
 
@@ -208,13 +206,12 @@ export class AgentService {
 
   async sendMessage(item: {
     sessionId: string;
-    nativeSessionId: string;
     message: string;
   }): Promise<void> {
     let client = this.sandboxService.getClient(item.sessionId);
 
     await client
-      .postMessage(item.nativeSessionId, { message: item.message })
+      .postMessage(item.sessionId, { message: item.message })
       .catch(e => {
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_CONNECTION_FAILED,
@@ -225,14 +222,13 @@ export class AgentService {
 
   async respondToQuestion(item: {
     sessionId: string;
-    nativeSessionId: string;
     questionId: string;
     answers: string[][];
   }): Promise<void> {
     let client = this.sandboxService.getClient(item.sessionId);
 
     await client
-      .replyQuestion(item.nativeSessionId, item.questionId, {
+      .replyQuestion(item.sessionId, item.questionId, {
         answers: item.answers
       })
       .catch(e => {
@@ -245,14 +241,13 @@ export class AgentService {
 
   async respondToPermission(item: {
     sessionId: string;
-    nativeSessionId: string;
     permissionId: string;
     reply: PermissionReply;
   }): Promise<void> {
     let client = this.sandboxService.getClient(item.sessionId);
 
     await client
-      .replyPermission(item.nativeSessionId, item.permissionId, {
+      .replyPermission(item.sessionId, item.permissionId, {
         reply: item.reply
       })
       .catch(e => {
@@ -304,11 +299,7 @@ export class AgentService {
 
   // stream
 
-  startEventStream(item: {
-    sessionId: string;
-    nativeSessionId: string;
-    offset?: number;
-  }): void {
+  startEventStream(item: { sessionId: string; offset?: number }): void {
     this.stopEventStream(item.sessionId);
 
     let abortController = new AbortController();
@@ -316,7 +307,6 @@ export class AgentService {
 
     this.runEventStreamLoop({
       sessionId: item.sessionId,
-      nativeSessionId: item.nativeSessionId,
       offset: item.offset ?? 0,
       signal: abortController.signal
     }).catch(e => {
@@ -336,7 +326,6 @@ export class AgentService {
 
   private async runEventStreamLoop(item: {
     sessionId: string;
-    nativeSessionId: string;
     offset: number;
     signal: AbortSignal;
   }): Promise<void> {
@@ -344,7 +333,7 @@ export class AgentService {
     let currentOffset = item.offset;
 
     let stream = client.streamEvents(
-      item.nativeSessionId,
+      item.sessionId,
       { offset: currentOffset },
       item.signal
     );
