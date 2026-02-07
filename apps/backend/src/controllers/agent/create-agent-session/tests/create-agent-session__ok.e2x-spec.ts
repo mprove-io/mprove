@@ -5,7 +5,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
-import type { AgentPubSubEvent } from '#backend/services/agent-pub-sub.service';
+import type { AgentEvent } from '#backend/services/agent-events.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -46,8 +46,8 @@ function connectSse(item: {
   httpServer: any;
   sessionId: string;
   ticket: string;
-}): { events: AgentPubSubEvent[]; close: () => void } {
-  let events: AgentPubSubEvent[] = [];
+}): { events: AgentEvent[]; close: () => void } {
+  let events: AgentEvent[] = [];
   let address = item.httpServer.address();
   let port = typeof address === 'string' ? address : address.port;
 
@@ -82,12 +82,12 @@ function connectSse(item: {
 }
 
 async function waitForEvents(item: {
-  events: AgentPubSubEvent[];
+  events: AgentEvent[];
   minCount: number;
   afterSequence?: number;
   maxRetries?: number;
   delayMs?: number;
-}): Promise<AgentPubSubEvent[]> {
+}): Promise<AgentEvent[]> {
   let maxRetries = item.maxRetries ?? 30;
   let delayMs = item.delayMs ?? 2000;
 
@@ -121,7 +121,7 @@ test('1', async t => {
   }
 
   let sessionId: string | undefined;
-  let sse: { events: AgentPubSubEvent[]; close: () => void } | undefined;
+  let sse: { events: AgentEvent[]; close: () => void } | undefined;
 
   try {
     prep = await prepareTestAndSeed({

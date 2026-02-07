@@ -6,7 +6,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
-import { AgentService } from './agent.service';
+import { AgentEventsService } from './agent-events.service';
 import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
@@ -24,7 +24,7 @@ export class TasksService {
     private queriesService: QueriesService,
     private structsService: StructsService,
     private notesService: NotesService,
-    private agentService: AgentService,
+    private agentEventsService: AgentEventsService,
     private logger: Logger
   ) {}
 
@@ -122,7 +122,7 @@ export class TasksService {
     if (this.isRunningPauseIdleSandboxes === false) {
       this.isRunningPauseIdleSandboxes = true;
 
-      await this.agentService.pauseIdleSessions().catch(e => {
+      await this.agentEventsService.pauseIdleSessions().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_SANDBOXES,

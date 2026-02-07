@@ -22,7 +22,7 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentService } from '#backend/services/agent.service';
+import { AgentEventsService } from '#backend/services/agent-events.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
@@ -47,7 +47,7 @@ export class CreateAgentSessionController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private sessionsService: SessionsService,
-    private agentService: AgentService,
+    private agentEventsService: AgentEventsService,
     private sandboxService: SandboxService,
     private redisService: RedisService,
     private cs: ConfigService<BackendConfig>,
@@ -113,7 +113,7 @@ export class CreateAgentSessionController {
 
     let sessionId = uuidv4();
 
-    let sAgent: SandboxAgent = await this.sandboxService.connectClient({
+    let sAgent: SandboxAgent = await this.sandboxService.connectSaClient({
       sessionId: sessionId,
       sandboxBaseUrl: sandboxBaseUrl,
       sandboxAgentToken: sandboxAgentToken
@@ -169,7 +169,7 @@ export class CreateAgentSessionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    this.agentService.startEventStream({
+    this.agentEventsService.startEventStream({
       sessionId: session.sessionId
     });
 

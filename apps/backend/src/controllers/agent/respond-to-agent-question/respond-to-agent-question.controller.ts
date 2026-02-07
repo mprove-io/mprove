@@ -49,7 +49,7 @@ export class RespondToAgentQuestionController {
       sessionId
     });
 
-    let sAgent = this.sandboxService.getClient(sessionId);
+    let sAgent = this.sandboxService.getSaClient(sessionId);
 
     await sAgent
       .replyQuestion(sessionId, questionId, {

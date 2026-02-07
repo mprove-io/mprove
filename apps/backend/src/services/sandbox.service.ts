@@ -17,21 +17,19 @@ export interface SandboxInfo {
 
 @Injectable()
 export class SandboxService {
-  private clients = new Map<string, SandboxAgent>();
+  private saClients = new Map<string, SandboxAgent>();
 
   constructor(
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
 
-  // SDK client management
-
-  async connectClient(item: {
+  async connectSaClient(item: {
     sessionId: string;
     sandboxBaseUrl: string;
     sandboxAgentToken: string;
   }): Promise<SandboxAgent> {
-    let existing = this.clients.get(item.sessionId);
+    let existing = this.saClients.get(item.sessionId);
     if (existing) {
       return existing;
     }
@@ -41,12 +39,12 @@ export class SandboxService {
       token: item.sandboxAgentToken
     });
 
-    this.clients.set(item.sessionId, client);
+    this.saClients.set(item.sessionId, client);
     return client;
   }
 
-  getClient(sessionId: string): SandboxAgent {
-    let client = this.clients.get(sessionId);
+  getSaClient(sessionId: string): SandboxAgent {
+    let client = this.saClients.get(sessionId);
     if (!client) {
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED
@@ -55,18 +53,16 @@ export class SandboxService {
     return client;
   }
 
-  async disposeClient(sessionId: string): Promise<void> {
-    let client = this.clients.get(sessionId);
+  async disposeSaClient(sessionId: string): Promise<void> {
+    let client = this.saClients.get(sessionId);
     if (client) {
       await client.dispose().catch(() => {
         // do nothing
       });
 
-      this.clients.delete(sessionId);
+      this.saClients.delete(sessionId);
     }
   }
-
-  // Sandbox provider operations
 
   async createSandbox(item: {
     sandboxType: SandboxTypeEnum;

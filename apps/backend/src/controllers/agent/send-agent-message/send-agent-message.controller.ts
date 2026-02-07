@@ -20,7 +20,7 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentService } from '#backend/services/agent.service';
+import { AgentEventsService } from '#backend/services/agent-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { SandboxService } from '#backend/services/sandbox.service';
@@ -39,7 +39,7 @@ export class SendAgentMessageController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentService: AgentService,
+    private agentEventsService: AgentEventsService,
     private sandboxService: SandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -74,13 +74,13 @@ export class SendAgentMessageController {
         timeoutMs: timeoutMs
       });
 
-      await this.sandboxService.connectClient({
+      await this.sandboxService.connectSaClient({
         sessionId: sessionId,
         sandboxBaseUrl: session.sandboxBaseUrl,
         sandboxAgentToken: session.sandboxAgentToken
       });
 
-      this.agentService.startEventStream({
+      this.agentEventsService.startEventStream({
         sessionId: sessionId
       });
 
@@ -109,7 +109,7 @@ export class SendAgentMessageController {
       );
     }
 
-    let sAgent = this.sandboxService.getClient(sessionId);
+    let sAgent = this.sandboxService.getSaClient(sessionId);
 
     await sAgent.postMessage(sessionId, { message: message }).catch(e => {
       throw new ServerError({

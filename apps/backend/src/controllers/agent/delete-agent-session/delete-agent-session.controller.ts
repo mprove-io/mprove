@@ -9,7 +9,7 @@ import { eventsTable } from '#backend/drizzle/postgres/schema/events';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentService } from '#backend/services/agent.service';
+import { AgentEventsService } from '#backend/services/agent-events.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { SandboxService } from '#backend/services/sandbox.service';
@@ -26,7 +26,7 @@ export class DeleteAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentService: AgentService,
+    private agentEventsService: AgentEventsService,
     private sandboxService: SandboxService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -45,9 +45,9 @@ export class DeleteAgentSessionController {
         projectId: session.projectId
       });
 
-      this.agentService.stopEventStream(sessionId);
+      this.agentEventsService.stopEventStream(sessionId);
 
-      await this.sandboxService.disposeClient(sessionId);
+      await this.sandboxService.disposeSaClient(sessionId);
 
       await this.sandboxService.stopSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
