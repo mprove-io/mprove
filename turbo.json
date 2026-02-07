@@ -33,6 +33,7 @@
     "test": {},
     "e2e": {},
     "e2x": {},
+    "custom": {},
     "clean-node": {
       "cache": false
     },

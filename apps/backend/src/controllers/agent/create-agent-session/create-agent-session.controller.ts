@@ -32,6 +32,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isUndefined } from '#common/functions/is-undefined';
 import { makeId } from '#common/functions/make-id';
 import {
   ToBackendCreateAgentSessionRequest,
@@ -99,19 +100,27 @@ export class CreateAgentSessionController {
 
     let sandboxEnvs: Record<string, string> = {};
 
-    if (agent === 'opencode') {
-      // if (!project.anthropicApiKey) {
-      //   throw new ServerError({
-      //     message:
-      //       ErEnum.BACKEND_AGENT_ANTHROPIC_API_KEY_REQUIRED_FOR_OPENCODE
-      //   });
-      // }
-
+    if (agent === 'codex') {
+      if (isUndefined(project.openaiApiKey)) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_OPENAI_API_KEY_REQUIRED_FOR_CODEX
+        });
+      }
+      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
+    } else if (agent === 'opencode') {
+      if (isUndefined(project.openaiApiKey)) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_OPENAI_API_KEY_REQUIRED_FOR_OPENCODE
+        });
+      }
+      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
+    } else if (agent === 'claude') {
+      if (isUndefined(project.anthropicApiKey)) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_ANTHROPIC_API_KEY_REQUIRED_FOR_CLAUDE
+        });
+      }
       sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
-
-      // if (project.openaiApiKey) {
-      //   sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
-      // }
     }
 
     let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
@@ -146,6 +155,26 @@ export class CreateAgentSessionController {
           originalError: e
         });
       });
+
+    let sessions = await sAgent.listSessions();
+
+    console.log('sessions');
+    console.log(sessions);
+
+    let agents = await sAgent.listAgents();
+
+    console.log('agents');
+    console.log(agents);
+
+    let agentModes = await sAgent.getAgentModes(agent);
+
+    console.log('agentModes');
+    console.log(agentModes);
+
+    let agentModels = await sAgent.getAgentModels(agent);
+
+    console.log('agentModels');
+    console.log(agentModels);
 
     let now = Date.now();
 

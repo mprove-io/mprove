@@ -25,7 +25,7 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
-let testId = 'backend-create-agent-session__ok-mock';
+let testId = 'backend-create-agent-session__ok-codex';
 
 let traceId = testId;
 
@@ -184,8 +184,8 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        agent: 'mock',
-        model: 'mock',
+        agent: 'codex',
+        model: 'gpt-5.1-codex-mini',
         agentMode: 'plan',
         permissionMode: 'default',
         firstMessage: 'hello'
