@@ -187,7 +187,7 @@ export class SandboxService {
 
     let healthy = false;
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 30; i++) {
       try {
         let res = await fetch(`https://${host}/v1/health`);
         if (res.ok) {
