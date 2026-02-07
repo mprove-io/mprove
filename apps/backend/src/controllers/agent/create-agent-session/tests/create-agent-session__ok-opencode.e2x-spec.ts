@@ -185,6 +185,9 @@ test('1', async t => {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         agent: 'opencode',
+        model: 'sonnet',
+        agentMode: 'code',
+        permissionMode: 'default',
         firstMessage: 'hello'
       }
     };

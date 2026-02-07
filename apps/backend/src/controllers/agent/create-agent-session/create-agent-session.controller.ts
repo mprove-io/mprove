@@ -62,6 +62,7 @@ export class CreateAgentSessionController {
       projectId,
       sandboxType,
       agent,
+      model,
       agentMode,
       permissionMode,
       firstMessage
@@ -132,6 +133,7 @@ export class CreateAgentSessionController {
 
     let sdkCreateSessionRequest: CreateSessionRequest = {
       agent: agent,
+      model: model,
       agentMode: agentMode,
       permissionMode: permissionMode
     };
@@ -153,6 +155,7 @@ export class CreateAgentSessionController {
       projectId: projectId,
       sandboxType: sandboxType,
       agent: agent,
+      model: model,
       agentMode: agentMode,
       permissionMode: permissionMode,
       sandboxId: sandboxId,

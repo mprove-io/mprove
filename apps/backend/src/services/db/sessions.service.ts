@@ -23,6 +23,7 @@ export class SessionsService {
     projectId: string;
     sandboxType: string;
     agent: string;
+    model: string;
     agentMode: string;
     permissionMode: string;
     sandboxId: string;
@@ -41,6 +42,7 @@ export class SessionsService {
       projectId: item.projectId,
       sandboxType: item.sandboxType,
       agent: item.agent,
+      model: item.model,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode,
       sandboxId: item.sandboxId,

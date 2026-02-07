@@ -185,6 +185,9 @@ test('1', async t => {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         agent: 'mock',
+        model: undefined,
+        agentMode: undefined,
+        permissionMode: undefined,
         firstMessage: 'hello'
       }
     };

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsEnum, IsString, ValidateNested } from 'class-validator';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -14,17 +14,17 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsString()
   agent: string;
 
-  @IsOptional()
   @IsString()
-  agentMode?: string;
+  model: string;
 
-  @IsOptional()
   @IsString()
-  permissionMode?: string;
+  agentMode: string;
 
-  @IsOptional()
   @IsString()
-  firstMessage?: string;
+  permissionMode: string;
+
+  @IsString()
+  firstMessage: string;
 }
 
 export class ToBackendCreateAgentSessionRequest extends ToBackendRequest {
