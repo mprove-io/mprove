@@ -88,18 +88,17 @@ export class CreateAgentSessionController {
 
     let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
-    let { session, sdkCreateSessionResponse } =
-      await this.agentService.createSession({
-        userId: user.userId,
-        projectId: projectId,
-        sandboxType: sandboxType,
-        sandboxTimeoutMs: sandboxTimeoutMs,
-        agent: agent,
-        agentMode: agentMode,
-        permissionMode: permissionMode,
-        e2bApiKey: project.e2bApiKey,
-        zenApiKey: project.zenApiKey
-      });
+    let session = await this.agentService.createSession({
+      userId: user.userId,
+      projectId: projectId,
+      sandboxType: sandboxType,
+      sandboxTimeoutMs: sandboxTimeoutMs,
+      agent: agent,
+      agentMode: agentMode,
+      permissionMode: permissionMode,
+      e2bApiKey: project.e2bApiKey,
+      zenApiKey: project.zenApiKey
+    });
 
     await retry(
       async () =>

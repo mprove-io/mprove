@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { eq } from 'drizzle-orm';
 import type {
   CreateSessionRequest,
-  CreateSessionResponse,
   PermissionReply,
   SandboxAgent,
   UniversalEvent
@@ -70,14 +69,26 @@ export class AgentService {
 
     let sessionId = uuidv4();
 
-    let sdkCreateSessionResponse = await this.createAgentSession({
+    let client: SandboxAgent = await this.sandboxService.connectClient({
       sessionId: sessionId,
       sandboxBaseUrl: sandboxBaseUrl,
-      sandboxAgentToken: sandboxAgentToken,
+      sandboxAgentToken: sandboxAgentToken
+    });
+
+    let request: CreateSessionRequest = {
       agent: item.agent,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode
-    });
+    };
+
+    let sdkCreateSessionResponse = await client
+      .createSession(sessionId, request)
+      .catch(e => {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_CONNECTION_FAILED,
+          originalError: e
+        });
+      });
 
     let now = Date.now();
 
@@ -100,10 +111,7 @@ export class AgentService {
       createdTs: now
     });
 
-    return {
-      session,
-      sdkCreateSessionResponse
-    };
+    return session;
   }
 
   // Sandbox lifecycle
@@ -166,40 +174,6 @@ export class AgentService {
     this.startEventStream({
       sessionId: item.sessionId
     });
-  }
-
-  // Agent session management (SDK)
-
-  async createAgentSession(item: {
-    sessionId: string;
-    sandboxBaseUrl: string;
-    sandboxAgentToken: string;
-    agent: string;
-    agentMode?: string;
-    permissionMode?: string;
-  }): Promise<CreateSessionResponse> {
-    let client: SandboxAgent = await this.sandboxService.connectClient({
-      sessionId: item.sessionId,
-      sandboxBaseUrl: item.sandboxBaseUrl,
-      sandboxAgentToken: item.sandboxAgentToken
-    });
-
-    let request: CreateSessionRequest = {
-      agent: item.agent,
-      agentMode: item.agentMode,
-      permissionMode: item.permissionMode
-    };
-
-    let response = await client
-      .createSession(item.sessionId, request)
-      .catch(e => {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_CONNECTION_FAILED,
-          originalError: e
-        });
-      });
-
-    return response;
   }
 
   // Agent communication (SDK)
