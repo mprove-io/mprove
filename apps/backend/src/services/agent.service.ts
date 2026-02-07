@@ -71,7 +71,7 @@ export class AgentService {
 
     let sdkCreateSessionResponse = await this.createAgentSession({
       sessionId: sessionId,
-      providerHost: sandboxHost,
+      sandboxHost: sandboxHost,
       agent: item.agent,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode
@@ -88,7 +88,7 @@ export class AgentService {
       agentMode: item.agentMode,
       permissionMode: item.permissionMode,
       sandboxId: sandboxId,
-      providerHost: sandboxHost,
+      sandboxHost: sandboxHost,
       sdkCreateSessionResponse: sdkCreateSessionResponse,
       status: SessionStatusEnum.Active,
       lastActivityTs: now,
@@ -142,7 +142,7 @@ export class AgentService {
     sessionId: string;
     sandboxType: SandboxTypeEnum;
     sandboxId: string;
-    providerHost: string;
+    sandboxHost: string;
     nativeSessionId: string;
     e2bApiKey: string;
     timeoutMs: number;
@@ -156,7 +156,7 @@ export class AgentService {
 
     await this.sandboxService.connectClient({
       sessionId: item.sessionId,
-      providerHost: item.providerHost
+      sandboxHost: item.sandboxHost
     });
 
     this.startEventStream({
@@ -169,14 +169,14 @@ export class AgentService {
 
   async createAgentSession(item: {
     sessionId: string;
-    providerHost: string;
+    sandboxHost: string;
     agent: string;
     agentMode?: string;
     permissionMode?: string;
   }): Promise<CreateSessionResponse> {
     let client: SandboxAgent = await this.sandboxService.connectClient({
       sessionId: item.sessionId,
-      providerHost: item.providerHost
+      sandboxHost: item.sandboxHost
     });
 
     let request: CreateSessionRequest = {

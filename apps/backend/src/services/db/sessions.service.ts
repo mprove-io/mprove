@@ -26,7 +26,7 @@ export class SessionsService {
     agentMode: string;
     permissionMode: string;
     sandboxId: string;
-    providerHost: string;
+    sandboxHost: string;
     sdkCreateSessionResponse: CreateSessionResponse;
     status: SessionStatusEnum;
     lastActivityTs: number;
@@ -43,7 +43,7 @@ export class SessionsService {
       agentMode: item.agentMode,
       permissionMode: item.permissionMode,
       sandboxId: item.sandboxId,
-      sandboxHost: item.providerHost,
+      sandboxHost: item.sandboxHost,
       sdkCreateSessionResponse: item.sdkCreateSessionResponse,
       status: item.status,
       lastActivityTs: item.lastActivityTs,

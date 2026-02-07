@@ -22,7 +22,7 @@ export class SandboxService {
 
   async connectClient(item: {
     sessionId: string;
-    providerHost: string;
+    sandboxHost: string;
   }): Promise<SandboxAgent> {
     let existing = this.clients.get(item.sessionId);
     if (existing) {
@@ -33,7 +33,7 @@ export class SandboxService {
       this.cs.get<BackendConfig['sandboxAgentToken']>('sandboxAgentToken');
 
     let client = await SandboxAgent.connect({
-      baseUrl: item.providerHost,
+      baseUrl: item.sandboxHost,
       token: sandboxAgentToken
     });
 
@@ -166,14 +166,21 @@ export class SandboxService {
       envs: item.sandboxEnvs
     });
 
+    let sandboxAgentVersion = this.cs.get<BackendConfig['sandboxAgentVersion']>(
+      'sandboxAgentVersion'
+    );
+
     await sandbox.commands.run(
-      'curl -fsSL https://releases.rivet.dev/sandbox-agent/latest/install.sh | sh'
+      `curl -fsSL https://releases.rivet.dev/sandbox-agent/${sandboxAgentVersion}/install.sh | SANDBOX_AGENT_VERSION=${sandboxAgentVersion} sh`
     );
 
     await sandbox.commands.run(`sandbox-agent install-agent ${item.agent}`);
 
+    let sandboxAgentToken =
+      this.cs.get<BackendConfig['sandboxAgentToken']>('sandboxAgentToken');
+
     await sandbox.commands.run(
-      'sandbox-agent server --no-token --host 0.0.0.0 --port 3000',
+      `sandbox-agent server --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
       { background: true }
     );
 

@@ -304,6 +304,10 @@ export class BackendConfig {
   sandboxAgentToken?: string;
 
   @IsOptional()
+  @IsString()
+  sandboxAgentVersion?: string;
+
+  @IsOptional()
   @IsNumber()
   sandboxTimeoutMinutes?: number;
 

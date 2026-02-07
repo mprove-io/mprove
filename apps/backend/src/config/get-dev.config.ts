@@ -263,6 +263,8 @@ export function getDevConfig() {
 
     sandboxAgentToken: process.env.BACKEND_SANDBOX_AGENT_TOKEN,
 
+    sandboxAgentVersion: process.env.BACKEND_SANDBOX_AGENT_VERSION,
+
     sandboxTimeoutMinutes: isDefined(
       process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES
     )
