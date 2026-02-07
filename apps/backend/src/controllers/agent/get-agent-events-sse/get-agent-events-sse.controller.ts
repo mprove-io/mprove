@@ -3,7 +3,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import { AgentEventsService } from '#backend/services/agent-events.service';
+import { AgentService } from '#backend/services/agent.service';
 import { RedisService } from '#backend/services/redis.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
@@ -16,7 +16,7 @@ export const SSE_AGENT_EVENTS_PATH = 'api/sse/agent-events';
 export class GetAgentEventsSseController {
   constructor(
     private redisService: RedisService,
-    private agentEventsService: AgentEventsService
+    private agentService: AgentService
   ) {}
 
   @Sse(SSE_AGENT_EVENTS_PATH)
@@ -34,7 +34,7 @@ export class GetAgentEventsSseController {
             });
           }
 
-          let subscription = this.agentEventsService
+          let subscription = this.agentService
             .subscribe(sessionId)
             .pipe(
               map(

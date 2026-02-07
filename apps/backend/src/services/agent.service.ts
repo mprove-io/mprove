@@ -28,7 +28,7 @@ export interface AgentEvent {
 }
 
 @Injectable()
-export class AgentEventsService implements OnModuleDestroy {
+export class AgentService implements OnModuleDestroy {
   private redisClient: Redis;
   private activeStreams = new Map<string, AbortController>();
 

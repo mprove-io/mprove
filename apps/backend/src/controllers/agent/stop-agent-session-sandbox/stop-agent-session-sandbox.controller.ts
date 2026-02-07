@@ -20,7 +20,7 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentEventsService } from '#backend/services/agent-events.service';
+import { AgentService } from '#backend/services/agent.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { SandboxService } from '#backend/services/sandbox.service';
@@ -37,7 +37,7 @@ export class StopAgentSessionSandboxController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentEventsService: AgentEventsService,
+    private agentService: AgentService,
     private sandboxService: SandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -58,7 +58,7 @@ export class StopAgentSessionSandboxController {
         projectId: session.projectId
       });
 
-      this.agentEventsService.stopEventStream(sessionId);
+      this.agentService.stopEventStream(sessionId);
 
       await this.sandboxService.disposeSaClient(sessionId);
 

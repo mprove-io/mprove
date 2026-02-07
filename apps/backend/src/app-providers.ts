@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
-import { AgentEventsService } from './services/agent-events.service';
+import { AgentService } from './services/agent.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
@@ -102,7 +102,7 @@ export const appProviders = [
   //
   SessionsService,
   SandboxService,
-  AgentEventsService,
+  AgentService,
   {
     provide: TasksService,
     useFactory: (
@@ -110,7 +110,7 @@ export const appProviders = [
       queriesService: QueriesService,
       structsService: StructsService,
       notesService: NotesService,
-      agentEventsService: AgentEventsService,
+      agentService: AgentService,
       logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
@@ -119,7 +119,7 @@ export const appProviders = [
             queriesService,
             structsService,
             notesService,
-            agentEventsService,
+            agentService,
             logger
           )
         : {},
@@ -128,7 +128,7 @@ export const appProviders = [
       QueriesService,
       StructsService,
       NotesService,
-      AgentEventsService
+      AgentService
     ]
   },
   UserCodeService
