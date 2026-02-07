@@ -1,9 +1,10 @@
 import crypto from 'node:crypto';
 import { Sandbox } from '@e2b/code-interpreter';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SandboxAgent } from 'sandbox-agent';
 import { BackendConfig } from '#backend/config/backend-config';
+import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ServerError } from '#common/models/server-error';
@@ -18,7 +19,10 @@ export interface SandboxInfo {
 export class SandboxService {
   private clients = new Map<string, SandboxAgent>();
 
-  constructor(private cs: ConfigService<BackendConfig>) {}
+  constructor(
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger
+  ) {}
 
   // SDK client management
 
@@ -187,14 +191,28 @@ export class SandboxService {
 
     let healthy = false;
 
+    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
     for (let i = 0; i < 30; i++) {
       try {
+        // let res = await fetch(`https://${host}/v1/health`, {
+        //   headers: { Authorization: `Bearer ${sandboxAgentToken}` }
+        // });
+
         let res = await fetch(`https://${host}/v1/health`);
+
         if (res.ok) {
           healthy = true;
           break;
         }
-      } catch {}
+      } catch (e: any) {
+        if (backendEnv !== BackendEnvEnum.PROD) {
+          this.logger.warn(
+            `Health check attempt ${i + 1}/30 failed for sandbox ${sandbox.sandboxId}: ${e?.message}`
+          );
+        }
+      }
+
       await new Promise(r => setTimeout(r, 1000));
     }
 
