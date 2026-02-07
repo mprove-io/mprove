@@ -202,7 +202,7 @@ catalog:
   ts-node: 10.9.2
   tsconfig-paths: 3.14.2
   tslib: 2.7.0
-  turbo: 2.7.6
+  turbo: 2.8.3
   typanion: 3.14.0
   typescript: 5.9.2
   uuid: 11.1.0
