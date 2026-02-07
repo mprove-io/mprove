@@ -198,10 +198,9 @@ test('1', async t => {
       await sendToBackend<ToBackendCreateAgentSessionResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
-        req: createSessionReq
+        req: createSessionReq,
+        checkIsOk: true
       });
-
-    // console.log('createSessionResp.info:', JSON.stringify(createSessionResp.info, null, 2));
 
     t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
     t.truthy(createSessionResp.payload.sessionId);
