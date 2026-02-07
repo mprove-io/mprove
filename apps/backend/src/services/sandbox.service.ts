@@ -79,14 +79,75 @@ export class SandboxService {
       let sandboxInfo: SandboxInfo;
 
       switch (item.sandboxType) {
-        case SandboxTypeEnum.E2B:
-          sandboxInfo = await this.e2bCreateSandbox({
-            sandboxTimeoutMs: item.sandboxTimeoutMs,
-            sandboxEnvs: item.sandboxEnvs,
-            agent: item.agent,
-            e2bApiKey: item.e2bApiKey
+        case SandboxTypeEnum.E2B: {
+          let sandbox = await Sandbox.create({
+            apiKey: item.e2bApiKey,
+            timeoutMs: item.sandboxTimeoutMs,
+            envs: item.sandboxEnvs
           });
+
+          let sandboxAgentVersion = this.cs.get<
+            BackendConfig['sandboxAgentVersion']
+          >('sandboxAgentVersion');
+
+          await sandbox.commands.run(
+            `curl -fsSL https://releases.rivet.dev/sandbox-agent/${sandboxAgentVersion}/install.sh | SANDBOX_AGENT_VERSION=${sandboxAgentVersion} sh`
+          );
+
+          await sandbox.commands.run(
+            `sandbox-agent install-agent ${item.agent}`
+          );
+
+          let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
+
+          await sandbox.commands.run(
+            `sandbox-agent server --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
+            { background: true }
+          );
+
+          let host = sandbox.getHost(3000);
+
+          let healthy = false;
+
+          let backendEnv =
+            this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+          for (let i = 0; i < 30; i++) {
+            try {
+              // let res = await fetch(`https://${host}/v1/health`, {
+              //   headers: { Authorization: `Bearer ${sandboxAgentToken}` }
+              // });
+
+              let res = await fetch(`https://${host}/v1/health`);
+
+              if (res.ok) {
+                healthy = true;
+                break;
+              }
+            } catch (e: any) {
+              if (backendEnv !== BackendEnvEnum.PROD) {
+                this.logger.warn(
+                  `Health check attempt ${i + 1}/30 failed for sandbox ${sandbox.sandboxId}: ${e?.message}`
+                );
+              }
+            }
+
+            await new Promise(r => setTimeout(r, 1000));
+          }
+
+          if (!healthy) {
+            throw new ServerError({
+              message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
+            });
+          }
+
+          sandboxInfo = {
+            sandboxId: sandbox.sandboxId,
+            sandboxBaseUrl: `https://${host}`,
+            sandboxAgentToken: sandboxAgentToken
+          };
           break;
+        }
         default:
           throw new ServerError({
             message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
@@ -109,10 +170,8 @@ export class SandboxService {
   }): Promise<void> {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
-        return this.e2bStopSandbox({
-          sandboxId: item.sandboxId,
-          apiKey: item.e2bApiKey
-        });
+        await Sandbox.kill(item.sandboxId, { apiKey: item.e2bApiKey });
+        break;
       default:
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
@@ -127,10 +186,8 @@ export class SandboxService {
   }): Promise<void> {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
-        return this.e2bPauseSandbox({
-          sandboxId: item.sandboxId,
-          apiKey: item.e2bApiKey
-        });
+        await Sandbox.betaPause(item.sandboxId, { apiKey: item.e2bApiKey });
+        break;
       default:
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
@@ -146,10 +203,9 @@ export class SandboxService {
   }): Promise<void> {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
-        await this.e2bResumeSandbox({
-          sandboxId: item.sandboxId,
-          apiKey: item.e2bApiKey,
-          timeoutMs: item.timeoutMs
+        await Sandbox.connect(item.sandboxId, { apiKey: item.e2bApiKey });
+        await Sandbox.setTimeout(item.sandboxId, item.timeoutMs, {
+          apiKey: item.e2bApiKey
         });
         break;
       default:
@@ -157,105 +213,5 @@ export class SandboxService {
           message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
         });
     }
-  }
-
-  // E2B
-
-  private async e2bCreateSandbox(item: {
-    agent: string;
-    sandboxTimeoutMs: number;
-    sandboxEnvs?: Record<string, string>;
-    e2bApiKey: string;
-  }): Promise<SandboxInfo> {
-    let sandbox = await Sandbox.create({
-      apiKey: item.e2bApiKey,
-      timeoutMs: item.sandboxTimeoutMs,
-      envs: item.sandboxEnvs
-    });
-
-    let sandboxAgentVersion = this.cs.get<BackendConfig['sandboxAgentVersion']>(
-      'sandboxAgentVersion'
-    );
-
-    await sandbox.commands.run(
-      `curl -fsSL https://releases.rivet.dev/sandbox-agent/${sandboxAgentVersion}/install.sh | SANDBOX_AGENT_VERSION=${sandboxAgentVersion} sh`
-    );
-
-    await sandbox.commands.run(`sandbox-agent install-agent ${item.agent}`);
-
-    let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
-
-    await sandbox.commands.run(
-      `sandbox-agent server --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
-      { background: true }
-    );
-
-    let host = sandbox.getHost(3000);
-
-    let healthy = false;
-
-    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
-
-    for (let i = 0; i < 30; i++) {
-      try {
-        // let res = await fetch(`https://${host}/v1/health`, {
-        //   headers: { Authorization: `Bearer ${sandboxAgentToken}` }
-        // });
-
-        let res = await fetch(`https://${host}/v1/health`);
-
-        if (res.ok) {
-          healthy = true;
-          break;
-        }
-      } catch (e: any) {
-        if (backendEnv !== BackendEnvEnum.PROD) {
-          this.logger.warn(
-            `Health check attempt ${i + 1}/30 failed for sandbox ${sandbox.sandboxId}: ${e?.message}`
-          );
-        }
-      }
-
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    if (!healthy) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
-      });
-    }
-
-    let sandboxInfo: SandboxInfo = {
-      sandboxId: sandbox.sandboxId,
-      sandboxBaseUrl: `https://${host}`,
-      sandboxAgentToken: sandboxAgentToken
-    };
-
-    return sandboxInfo;
-  }
-
-  private async e2bStopSandbox(item: {
-    sandboxId: string;
-    apiKey: string;
-  }): Promise<void> {
-    await Sandbox.kill(item.sandboxId, { apiKey: item.apiKey });
-  }
-
-  private async e2bPauseSandbox(item: {
-    sandboxId: string;
-    apiKey: string;
-  }): Promise<void> {
-    await Sandbox.betaPause(item.sandboxId, { apiKey: item.apiKey });
-  }
-
-  private async e2bResumeSandbox(item: {
-    sandboxId: string;
-    apiKey: string;
-    timeoutMs: number;
-  }): Promise<void> {
-    await Sandbox.connect(item.sandboxId, { apiKey: item.apiKey });
-    await Sandbox.setTimeout(item.sandboxId, item.timeoutMs, {
-      apiKey: item.apiKey
-    });
   }
 }
