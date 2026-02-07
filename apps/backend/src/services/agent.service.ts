@@ -22,6 +22,7 @@ import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
 import { AgentPubSubService } from './agent-pub-sub.service';
+import { ProjectsService } from './db/projects.service';
 import { SessionsService } from './db/sessions.service';
 import { SandboxService } from './sandbox.service';
 
@@ -37,6 +38,7 @@ export class AgentService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,
+    private projectsService: ProjectsService,
     private sandboxService: SandboxService,
     private agentPubSubService: AgentPubSubService,
     private logger: Logger,
@@ -131,6 +133,7 @@ export class AgentService {
     e2bApiKey: string;
   }): Promise<void> {
     this.stopEventStream(item.sessionId);
+
     await this.sandboxService.disposeClient(item.sessionId);
 
     await this.sandboxService.pauseSandbox({
@@ -276,10 +279,15 @@ export class AgentService {
         session.lastActivityTs < idleThresholdTs &&
         session.sandboxId
       ) {
+        let project = await this.projectsService.getProjectCheckExists({
+          projectId: session.projectId
+        });
+
         await this.pauseSandbox({
           sessionId: session.sessionId,
-          sandboxType: session.sandboxType,
-          sandboxId: session.sandboxId
+          sandboxType: session.sandboxType as SandboxTypeEnum,
+          sandboxId: session.sandboxId,
+          e2bApiKey: project.e2bApiKey
         }).catch(() => {});
         await this.db.drizzle
           .update(sessionsTable)
