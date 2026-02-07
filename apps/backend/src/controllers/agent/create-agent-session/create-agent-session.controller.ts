@@ -88,7 +88,7 @@ export class CreateAgentSessionController {
 
     let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
-    let { sessionTab, createSessionResponse } =
+    let { session, sdkCreateSessionResponse } =
       await this.agentService.createSession({
         userId: user.userId,
         projectId: projectId,
@@ -108,7 +108,7 @@ export class CreateAgentSessionController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                sessions: [sessionTab]
+                sessions: [session]
               }
             })
         ),
@@ -116,16 +116,16 @@ export class CreateAgentSessionController {
     );
 
     let sdkSessionId =
-      createSessionResponse.nativeSessionId ?? sessionTab.sessionId;
+      sdkCreateSessionResponse.nativeSessionId ?? session.sessionId;
 
     this.agentService.startEventStream({
-      sessionId: sessionTab.sessionId,
+      sessionId: session.sessionId,
       nativeSessionId: sdkSessionId
     });
 
     if (firstMessage) {
       await this.agentService.sendMessage({
-        sessionId: sessionTab.sessionId,
+        sessionId: session.sessionId,
         nativeSessionId: sdkSessionId,
         message: firstMessage
       });
@@ -135,11 +135,11 @@ export class CreateAgentSessionController {
 
     await this.redisService.writeTicket({
       ticket: sseTicket,
-      sessionId: sessionTab.sessionId
+      sessionId: session.sessionId
     });
 
     let payload: ToBackendCreateAgentSessionResponsePayload = {
-      sessionId: sessionTab.sessionId,
+      sessionId: session.sessionId,
       sseTicket: sseTicket
     };
 

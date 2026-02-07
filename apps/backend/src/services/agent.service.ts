@@ -26,11 +26,6 @@ import { ProjectsService } from './db/projects.service';
 import { SessionsService } from './db/sessions.service';
 import { SandboxService } from './sandbox.service';
 
-export interface CreateSessionResult {
-  sessionTab: SessionTab;
-  createSessionResponse: CreateSessionResponse;
-}
-
 @Injectable()
 export class AgentService {
   private activeStreams = new Map<string, AbortController>();
@@ -57,7 +52,7 @@ export class AgentService {
     agentMode?: string;
     permissionMode?: string;
     zenApiKey?: string;
-  }): Promise<CreateSessionResult> {
+  }) {
     let sandboxEnvs: Record<string, string> = {};
 
     if (item.zenApiKey) {
@@ -74,7 +69,7 @@ export class AgentService {
 
     let sessionId = uuidv4();
 
-    let createSessionResponse = await this.createAgentSession({
+    let sdkCreateSessionResponse = await this.createAgentSession({
       sessionId: sessionId,
       providerHost: sandboxHost,
       agent: item.agent,
@@ -84,7 +79,7 @@ export class AgentService {
 
     let now = Date.now();
 
-    let sessionTab = this.sessionsService.makeSession({
+    let session: SessionTab = this.sessionsService.makeSession({
       sessionId: sessionId,
       userId: item.userId,
       projectId: item.projectId,
@@ -94,7 +89,7 @@ export class AgentService {
       permissionMode: item.permissionMode,
       sandboxId: sandboxId,
       providerHost: sandboxHost,
-      createSessionResponse: createSessionResponse,
+      sdkCreateSessionResponse: sdkCreateSessionResponse,
       status: SessionStatusEnum.Active,
       lastActivityTs: now,
       runningStartTs: now,
@@ -103,8 +98,8 @@ export class AgentService {
     });
 
     return {
-      sessionTab,
-      createSessionResponse
+      session,
+      sdkCreateSessionResponse
     };
   }
 

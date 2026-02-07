@@ -274,7 +274,7 @@ export class SessionSt {
   sandboxId: string;
   sandboxHost: string;
   sessionInfo?: SessionInfo;
-  createSessionResponse: CreateSessionResponse;
+  sdkCreateSessionResponse: CreateSessionResponse;
 }
 export class SessionLt {
   emptyData?: number;
