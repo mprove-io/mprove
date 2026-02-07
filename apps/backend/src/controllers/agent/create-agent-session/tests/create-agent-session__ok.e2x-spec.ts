@@ -1,4 +1,3 @@
-import http from 'node:http';
 import test from 'ava';
 import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -51,33 +50,23 @@ function connectSse(item: {
   let address = item.httpServer.address();
   let port = typeof address === 'string' ? address : address.port;
 
-  let req = http.get(
-    `http://127.0.0.1:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`,
-    res => {
-      let buffer = '';
-      res.on('data', (chunk: Buffer) => {
-        buffer += chunk.toString();
-        let lines = buffer.split('\n');
-        buffer = lines.pop() ?? '';
-        for (let line of lines) {
-          if (line.startsWith('data:')) {
-            let json = line.slice(5).trim();
-            if (json) {
-              try {
-                events.push(JSON.parse(json));
-              } catch {
-                // ignore parse errors
-              }
-            }
-          }
-        }
-      });
-    }
+  console.log(`connectSse port: ${port}`);
+
+  let es = new EventSource(
+    `http://localhost:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`
   );
+
+  es.addEventListener('agent-event', (e: MessageEvent) => {
+    try {
+      events.push(JSON.parse(e.data));
+    } catch {
+      // ignore parse errors
+    }
+  });
 
   return {
     events,
-    close: () => req.destroy()
+    close: () => es.close()
   };
 }
 
