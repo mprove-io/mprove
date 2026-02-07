@@ -263,10 +263,9 @@ test('1', async t => {
     logToConsoleBackend({
       log: e,
       logLevel: LogLevelEnum.Error,
-      logger: prep?.logger,
-      cs: prep?.cs
+      logger: prep.logger,
+      cs: prep.cs
     });
-    t.fail(String(e));
   } finally {
     // Close SSE connection
     if (sse) {
@@ -292,8 +291,13 @@ test('1', async t => {
           loginToken: prep.loginToken,
           req: deleteSessionReq
         });
-      } catch (_) {
-        // ignore cleanup errors
+      } catch (er) {
+        logToConsoleBackend({
+          log: er,
+          logLevel: LogLevelEnum.Error,
+          logger: prep.logger,
+          cs: prep.cs
+        });
       }
     }
 
