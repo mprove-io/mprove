@@ -8,9 +8,6 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsString()
-  firstMessage: string;
-
   @IsEnum(SandboxTypeEnum)
   sandboxType: SandboxTypeEnum;
 
@@ -25,6 +22,9 @@ export class ToBackendCreateAgentSessionRequestPayload {
 
   @IsString()
   permissionMode: string;
+
+  @IsString()
+  firstMessage: string;
 }
 
 export class ToBackendCreateAgentSessionRequest extends ToBackendRequest {

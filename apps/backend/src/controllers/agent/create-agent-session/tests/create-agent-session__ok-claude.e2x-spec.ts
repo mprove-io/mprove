@@ -25,7 +25,7 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
-let testId = 'backend-create-agent-session__ok-opencode';
+let testId = 'backend-create-agent-session__ok-claude';
 
 let traceId = testId;
 
@@ -184,10 +184,8 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        agent: 'opencode',
-        model: 'opencode/glm-4.7-free',
-        // model: 'openai/gpt-5.1-codex-mini',
-        // model: 'opencode/big-pickle',
+        agent: 'claude',
+        model: 'claude-haiku-4-5-20251001',
         agentMode: 'plan',
         permissionMode: 'default',
         firstMessage: 'hello'

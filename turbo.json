@@ -32,8 +32,12 @@
     },
     "test": {},
     "e2e": {},
-    "e2x": {},
-    "custom": {},
+    "e2x": {
+      "cache": false
+    },
+    "custom": {
+      "cache": false
+    },
     "clean-node": {
       "cache": false
     },

@@ -107,13 +107,6 @@ export class CreateAgentSessionController {
         });
       }
       sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
-    } else if (agent === 'opencode') {
-      if (isUndefined(project.openaiApiKey)) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_OPENAI_API_KEY_REQUIRED_FOR_OPENCODE
-        });
-      }
-      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
     } else if (agent === 'claude') {
       if (isUndefined(project.anthropicApiKey)) {
         throw new ServerError({
@@ -121,7 +114,16 @@ export class CreateAgentSessionController {
         });
       }
       sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
+    } else if (agent === 'opencode') {
+      if (isUndefined(project.openaiApiKey)) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_OPENAI_API_KEY_REQUIRED_FOR_OPENCODE
+        });
+      }
+      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
     }
+
+    console.log('creating sandbox...');
 
     let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
       await this.sandboxService.createSandbox({
@@ -134,27 +136,13 @@ export class CreateAgentSessionController {
 
     let sessionId = uuidv4();
 
+    console.log('sandbox created');
+
     let sAgent: SandboxAgent = await this.sandboxService.connectSaClient({
       sessionId: sessionId,
       sandboxBaseUrl: sandboxBaseUrl,
       sandboxAgentToken: sandboxAgentToken
     });
-
-    let sdkCreateSessionRequest: CreateSessionRequest = {
-      agent: agent,
-      model: model,
-      agentMode: agentMode,
-      permissionMode: permissionMode
-    };
-
-    let sdkCreateSessionResponse = await sAgent
-      .createSession(sessionId, sdkCreateSessionRequest)
-      .catch(e => {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
-          originalError: e
-        });
-      });
 
     let sessions = await sAgent.listSessions();
 
@@ -175,6 +163,22 @@ export class CreateAgentSessionController {
 
     console.log('agentModels');
     console.log(agentModels);
+
+    let sdkCreateSessionRequest: CreateSessionRequest = {
+      agent: agent,
+      model: model,
+      agentMode: agentMode,
+      permissionMode: permissionMode
+    };
+
+    let sdkCreateSessionResponse = await sAgent
+      .createSession(sessionId, sdkCreateSessionRequest)
+      .catch(e => {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
+          originalError: e
+        });
+      });
 
     let now = Date.now();
 
