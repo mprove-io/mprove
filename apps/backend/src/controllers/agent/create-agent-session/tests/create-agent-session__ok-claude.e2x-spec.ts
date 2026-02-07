@@ -311,7 +311,7 @@ test('1', async t => {
     }
   }
 
-  t.is(testError, undefined, JSON.stringify(testError, null, 2));
+  t.is(testError, undefined);
   t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
   t.truthy(createSessionResp.payload.sessionId);
   t.truthy(createSessionResp.payload.sseTicket);
