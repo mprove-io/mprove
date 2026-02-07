@@ -122,7 +122,7 @@ export class TasksService {
     if (this.isRunningPauseIdleSandboxes === false) {
       this.isRunningPauseIdleSandboxes = true;
 
-      await this.agentService.pauseIdleSandboxes().catch(e => {
+      await this.agentService.pauseIdleSessions().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_SANDBOXES,

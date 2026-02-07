@@ -56,7 +56,7 @@ export class PauseAgentSessionSandboxController {
         projectId: session.projectId
       });
 
-      await this.agentService.pauseSandbox({
+      await this.agentService.pauseSession({
         sessionId: sessionId,
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,

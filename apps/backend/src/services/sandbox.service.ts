@@ -49,7 +49,7 @@ export class SandboxService {
     let client = this.clients.get(sessionId);
     if (!client) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_CONNECTION_FAILED
+        message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED
       });
     }
     return client;
@@ -58,7 +58,10 @@ export class SandboxService {
   async disposeClient(sessionId: string): Promise<void> {
     let client = this.clients.get(sessionId);
     if (client) {
-      await client.dispose().catch(() => {});
+      await client.dispose().catch(() => {
+        // do nothing
+      });
+
       this.clients.delete(sessionId);
     }
   }

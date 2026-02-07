@@ -63,7 +63,7 @@ export class SendAgentMessageController {
         60 *
         1000;
 
-      await this.agentService.resumeSandbox({
+      await this.agentService.resumeSession({
         sessionId: sessionId,
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,

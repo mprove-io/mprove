@@ -43,14 +43,12 @@ export class DeleteAgentSessionController {
         projectId: session.projectId
       });
 
-      await this.agentService
-        .stopSandbox({
-          sessionId: sessionId,
-          sandboxType: session.sandboxType as SandboxTypeEnum,
-          sandboxId: session.sandboxId,
-          e2bApiKey: project.e2bApiKey
-        })
-        .catch(() => {});
+      await this.agentService.stopSession({
+        sessionId: sessionId,
+        sandboxType: session.sandboxType as SandboxTypeEnum,
+        sandboxId: session.sandboxId,
+        e2bApiKey: project.e2bApiKey
+      });
     }
 
     await this.db.drizzle

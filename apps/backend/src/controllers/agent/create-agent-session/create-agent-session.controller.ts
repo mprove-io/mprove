@@ -9,11 +9,16 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
+import { CreateSessionRequest, SandboxAgent } from 'sandbox-agent';
+import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  SessionTab,
+  UserTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
@@ -22,8 +27,10 @@ import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
+import { SandboxService } from '#backend/services/sandbox.service.js';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
@@ -41,6 +48,7 @@ export class CreateAgentSessionController {
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private agentService: AgentService,
+    private sandboxService: SandboxService,
     private redisService: RedisService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -88,16 +96,63 @@ export class CreateAgentSessionController {
 
     let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
-    let session = await this.agentService.createSession({
+    let sandboxEnvs: Record<string, string> = {};
+
+    if (project.zenApiKey) {
+      sandboxEnvs.ZEN_API_KEY = project.zenApiKey;
+    }
+
+    let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
+      await this.sandboxService.createSandbox({
+        sandboxType: sandboxType,
+        sandboxTimeoutMs: sandboxTimeoutMs,
+        agent: agent,
+        sandboxEnvs: sandboxEnvs,
+        e2bApiKey: project.e2bApiKey
+      });
+
+    let sessionId = uuidv4();
+
+    let client: SandboxAgent = await this.sandboxService.connectClient({
+      sessionId: sessionId,
+      sandboxBaseUrl: sandboxBaseUrl,
+      sandboxAgentToken: sandboxAgentToken
+    });
+
+    let sdkCreateSessionRequest: CreateSessionRequest = {
+      agent: agent,
+      agentMode: agentMode,
+      permissionMode: permissionMode
+    };
+
+    let sdkCreateSessionResponse = await client
+      .createSession(sessionId, sdkCreateSessionRequest)
+      .catch(e => {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
+          originalError: e
+        });
+      });
+
+    let now = Date.now();
+
+    let session: SessionTab = this.sessionsService.makeSession({
+      sessionId: sessionId,
       userId: user.userId,
       projectId: projectId,
       sandboxType: sandboxType,
-      sandboxTimeoutMs: sandboxTimeoutMs,
       agent: agent,
       agentMode: agentMode,
       permissionMode: permissionMode,
-      e2bApiKey: project.e2bApiKey,
-      zenApiKey: project.zenApiKey
+      sandboxId: sandboxId,
+      sandboxBaseUrl: sandboxBaseUrl,
+      sandboxAgentToken: sandboxAgentToken,
+      sdkCreateSessionResponse: sdkCreateSessionResponse,
+      status: SessionStatusEnum.Active,
+      lastActivityTs: now,
+      runningStartTs: now,
+      expiresAt: now + sandboxTimeoutMs,
+      createdTs: now
     });
 
     await retry(
