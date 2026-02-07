@@ -5,5 +5,8 @@ export default {
   },
   verbose: true,
   timeout: '5m',
-  nodeArguments: ['--import=@swc-node/register/esm-register']
+  nodeArguments: [
+    '--import=@swc-node/register/esm-register',
+    '--experimental-eventsource'
+  ]
 };

@@ -50,13 +50,22 @@ function connectSse(item: {
   let address = item.httpServer.address();
   let port = typeof address === 'string' ? address : address.port;
 
-  console.log(`connectSse port: ${port}`);
+  let url = `http://localhost:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`;
 
-  let es = new EventSource(
-    `http://localhost:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`
-  );
+  console.log('connectSse url:', url);
+
+  let es = new EventSource(url);
+
+  // es.onopen = () => {
+  //   console.log('SSE connection opened');
+  // };
+
+  // es.onerror = (e: any) => {
+  //   console.log('SSE error:', e?.type, e?.message, 'readyState:', es.readyState);
+  // };
 
   es.addEventListener('agent-event', (e: MessageEvent) => {
+    // console.log('SSE agent-event received:', e.data?.substring(0, 200));
     try {
       events.push(JSON.parse(e.data));
     } catch {
@@ -171,7 +180,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        agent: 'opencode',
+        agent: 'mock',
         firstMessage: 'hello'
       }
     };
@@ -183,11 +192,18 @@ test('1', async t => {
         req: createSessionReq
       });
 
+    // console.log('createSessionResp.info:', JSON.stringify(createSessionResp.info, null, 2));
+
     t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
     t.truthy(createSessionResp.payload.sessionId);
     t.truthy(createSessionResp.payload.sseTicket);
 
     sessionId = createSessionResp.payload.sessionId;
+
+    // Start listening so EventSource can connect
+    await new Promise<void>(resolve => {
+      prep.httpServer.listen(0, () => resolve());
+    });
 
     // Connect SSE
     sse = connectSse({
