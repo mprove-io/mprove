@@ -12,6 +12,7 @@ import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -26,6 +27,7 @@ export class DeleteAgentSessionController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private agentService: AgentService,
+    private sandboxService: SandboxService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -43,8 +45,11 @@ export class DeleteAgentSessionController {
         projectId: session.projectId
       });
 
-      await this.agentService.stopSession({
-        sessionId: sessionId,
+      this.agentService.stopEventStream(sessionId);
+
+      await this.sandboxService.disposeClient(sessionId);
+
+      await this.sandboxService.stopSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey

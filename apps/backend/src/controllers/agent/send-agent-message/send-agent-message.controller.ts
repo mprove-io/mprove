@@ -23,11 +23,14 @@ import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendSendAgentMessageRequest } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -37,6 +40,7 @@ export class SendAgentMessageController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private agentService: AgentService,
+    private sandboxService: SandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -63,14 +67,21 @@ export class SendAgentMessageController {
         60 *
         1000;
 
-      await this.agentService.resumeSession({
-        sessionId: sessionId,
+      await this.sandboxService.resumeSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,
-        sandboxBaseUrl: session.sandboxBaseUrl,
-        sandboxAgentToken: session.sandboxAgentToken,
         e2bApiKey: project.e2bApiKey,
         timeoutMs: timeoutMs
+      });
+
+      await this.sandboxService.connectClient({
+        sessionId: sessionId,
+        sandboxBaseUrl: session.sandboxBaseUrl,
+        sandboxAgentToken: session.sandboxAgentToken
+      });
+
+      this.agentService.startEventStream({
+        sessionId: sessionId
       });
 
       let now = Date.now();
@@ -98,9 +109,13 @@ export class SendAgentMessageController {
       );
     }
 
-    await this.agentService.sendMessage({
-      sessionId: sessionId,
-      message: message
+    let sAgent = this.sandboxService.getClient(sessionId);
+
+    await sAgent.postMessage(sessionId, { message: message }).catch(e => {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
+        originalError: e
+      });
     });
 
     let finalSession: SessionTab = {

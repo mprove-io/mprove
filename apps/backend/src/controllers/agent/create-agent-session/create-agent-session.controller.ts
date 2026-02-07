@@ -113,7 +113,7 @@ export class CreateAgentSessionController {
 
     let sessionId = uuidv4();
 
-    let client: SandboxAgent = await this.sandboxService.connectClient({
+    let sAgent: SandboxAgent = await this.sandboxService.connectClient({
       sessionId: sessionId,
       sandboxBaseUrl: sandboxBaseUrl,
       sandboxAgentToken: sandboxAgentToken
@@ -125,7 +125,7 @@ export class CreateAgentSessionController {
       permissionMode: permissionMode
     };
 
-    let sdkCreateSessionResponse = await client
+    let sdkCreateSessionResponse = await sAgent
       .createSession(sessionId, sdkCreateSessionRequest)
       .catch(e => {
         throw new ServerError({
@@ -174,10 +174,14 @@ export class CreateAgentSessionController {
     });
 
     if (firstMessage) {
-      await this.agentService.sendMessage({
-        sessionId: session.sessionId,
-        message: firstMessage
-      });
+      await sAgent
+        .postMessage(session.sessionId, { message: firstMessage })
+        .catch(e => {
+          throw new ServerError({
+            message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
+            originalError: e
+          });
+        });
     }
 
     let sseTicket = makeId();

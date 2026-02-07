@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { PermissionReply, UniversalEvent } from 'sandbox-agent';
+import type { UniversalEvent } from 'sandbox-agent';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -8,10 +8,8 @@ import type {
   EventTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { ServerError } from '#common/models/server-error';
 import { AgentPubSubService } from './agent-pub-sub.service';
 import { ProjectsService } from './db/projects.service';
 import { SessionsService } from './db/sessions.service';
@@ -30,170 +28,6 @@ export class AgentService {
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
-
-  async stopSession(item: {
-    sessionId: string;
-    sandboxType: SandboxTypeEnum;
-    sandboxId: string;
-    e2bApiKey: string;
-  }): Promise<void> {
-    this.stopEventStream(item.sessionId);
-
-    await this.sandboxService.disposeClient(item.sessionId);
-
-    await this.sandboxService.stopSandbox({
-      sandboxType: item.sandboxType,
-      sandboxId: item.sandboxId,
-      e2bApiKey: item.e2bApiKey
-    });
-  }
-
-  async pauseSession(item: {
-    sessionId: string;
-    sandboxType: SandboxTypeEnum;
-    sandboxId: string;
-    e2bApiKey: string;
-  }): Promise<void> {
-    this.stopEventStream(item.sessionId);
-
-    await this.sandboxService.disposeClient(item.sessionId);
-
-    await this.sandboxService.pauseSandbox({
-      sandboxType: item.sandboxType,
-      sandboxId: item.sandboxId,
-      e2bApiKey: item.e2bApiKey
-    });
-  }
-
-  async resumeSession(item: {
-    sessionId: string;
-    sandboxType: SandboxTypeEnum;
-    sandboxId: string;
-    sandboxBaseUrl: string;
-    sandboxAgentToken: string;
-    e2bApiKey: string;
-    timeoutMs: number;
-  }): Promise<void> {
-    await this.sandboxService.resumeSandbox({
-      sandboxType: item.sandboxType,
-      sandboxId: item.sandboxId,
-      e2bApiKey: item.e2bApiKey,
-      timeoutMs: item.timeoutMs
-    });
-
-    await this.sandboxService.connectClient({
-      sessionId: item.sessionId,
-      sandboxBaseUrl: item.sandboxBaseUrl,
-      sandboxAgentToken: item.sandboxAgentToken
-    });
-
-    this.startEventStream({
-      sessionId: item.sessionId
-    });
-  }
-
-  // Agent communication (SDK)
-
-  async sendMessage(item: {
-    sessionId: string;
-    message: string;
-  }): Promise<void> {
-    let client = this.sandboxService.getClient(item.sessionId);
-
-    await client
-      .postMessage(item.sessionId, { message: item.message })
-      .catch(e => {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
-          originalError: e
-        });
-      });
-  }
-
-  async respondToQuestion(item: {
-    sessionId: string;
-    questionId: string;
-    answers: string[][];
-  }): Promise<void> {
-    let client = this.sandboxService.getClient(item.sessionId);
-
-    await client
-      .replyQuestion(item.sessionId, item.questionId, {
-        answers: item.answers
-      })
-      .catch(e => {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_RESPOND_TO_QUESTION_FAILED,
-          originalError: e
-        });
-      });
-  }
-
-  async respondToPermission(item: {
-    sessionId: string;
-    permissionId: string;
-    reply: PermissionReply;
-  }): Promise<void> {
-    let client = this.sandboxService.getClient(item.sessionId);
-
-    await client
-      .replyPermission(item.sessionId, item.permissionId, {
-        reply: item.reply
-      })
-      .catch(e => {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_RESPOND_TO_PERMISSION_FAILED,
-          originalError: e
-        });
-      });
-  }
-
-  // Scheduled task
-
-  async pauseIdleSessions(): Promise<void> {
-    let idleMinutes =
-      this.cs.get<BackendConfig['sandboxIdleMinutes']>('sandboxIdleMinutes');
-
-    let idleThresholdTs = Date.now() - idleMinutes * 60 * 1000;
-
-    let sessions = await this.sessionsService.getIdleActiveSessions({
-      idleThresholdTs
-    });
-
-    for (let session of sessions) {
-      if (
-        session.lastActivityTs &&
-        session.lastActivityTs < idleThresholdTs &&
-        session.sandboxId
-      ) {
-        let project = await this.projectsService.getProjectCheckExists({
-          projectId: session.projectId
-        });
-
-        await this.pauseSession({
-          sessionId: session.sessionId,
-          sandboxType: session.sandboxType as SandboxTypeEnum,
-          sandboxId: session.sandboxId,
-          e2bApiKey: project.e2bApiKey
-        });
-
-        let updatedSession: SessionTab = {
-          ...session,
-          status: SessionStatusEnum.Paused
-        };
-
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                sessions: [updatedSession]
-              }
-            })
-        );
-      }
-    }
-  }
 
   // stream
 
@@ -281,5 +115,55 @@ export class AgentService {
       type: item.event.type,
       eventData: item.event.data
     });
+  }
+
+  // Scheduled task
+
+  async pauseIdleSessions(): Promise<void> {
+    let idleMinutes =
+      this.cs.get<BackendConfig['sandboxIdleMinutes']>('sandboxIdleMinutes');
+
+    let idleThresholdTs = Date.now() - idleMinutes * 60 * 1000;
+
+    let sessions = await this.sessionsService.getIdleActiveSessions({
+      idleThresholdTs
+    });
+
+    for (let session of sessions) {
+      if (
+        session.lastActivityTs &&
+        session.lastActivityTs < idleThresholdTs &&
+        session.sandboxId
+      ) {
+        let project = await this.projectsService.getProjectCheckExists({
+          projectId: session.projectId
+        });
+
+        this.stopEventStream(session.sessionId);
+
+        await this.sandboxService.disposeClient(session.sessionId);
+
+        await this.sandboxService.pauseSandbox({
+          sandboxType: session.sandboxType as SandboxTypeEnum,
+          sandboxId: session.sandboxId,
+          e2bApiKey: project.e2bApiKey
+        });
+
+        let updatedSession: SessionTab = {
+          ...session,
+          status: SessionStatusEnum.Paused
+        };
+
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                sessions: [updatedSession]
+              }
+            })
+        );
+      }
+    }
   }
 }

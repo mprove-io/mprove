@@ -23,6 +23,7 @@ import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -37,6 +38,7 @@ export class PauseAgentSessionSandboxController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private agentService: AgentService,
+    private sandboxService: SandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -56,8 +58,11 @@ export class PauseAgentSessionSandboxController {
         projectId: session.projectId
       });
 
-      await this.agentService.pauseSession({
-        sessionId: sessionId,
+      this.agentService.stopEventStream(sessionId);
+
+      await this.sandboxService.disposeClient(sessionId);
+
+      await this.sandboxService.pauseSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey

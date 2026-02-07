@@ -20,11 +20,13 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentService } from '#backend/services/agent.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -32,7 +34,7 @@ import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-
 export class RespondToAgentPermissionController {
   constructor(
     private sessionsService: SessionsService,
-    private agentService: AgentService,
+    private sandboxService: SandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -47,11 +49,18 @@ export class RespondToAgentPermissionController {
       sessionId
     });
 
-    await this.agentService.respondToPermission({
-      sessionId: sessionId,
-      permissionId: permissionId,
-      reply: reply
-    });
+    let sAgent = this.sandboxService.getClient(sessionId);
+
+    await sAgent
+      .replyPermission(sessionId, permissionId, {
+        reply: reply
+      })
+      .catch(e => {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_RESPOND_TO_PERMISSION_FAILED,
+          originalError: e
+        });
+      });
 
     let updatedSession: SessionTab = {
       ...session,
