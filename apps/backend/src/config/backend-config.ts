@@ -301,10 +301,6 @@ export class BackendConfig {
 
   @IsOptional()
   @IsString()
-  sandboxAgentToken?: string;
-
-  @IsOptional()
-  @IsString()
   sandboxAgentVersion?: string;
 
   @IsOptional()

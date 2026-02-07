@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { Sandbox } from '@e2b/code-interpreter';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -10,6 +11,7 @@ import { ServerError } from '#common/models/server-error';
 export interface SandboxInfo {
   sandboxId: string;
   sandboxHost: string;
+  sandboxAgentToken: string;
 }
 
 @Injectable()
@@ -23,18 +25,16 @@ export class SandboxService {
   async connectClient(item: {
     sessionId: string;
     sandboxHost: string;
+    sandboxAgentToken: string;
   }): Promise<SandboxAgent> {
     let existing = this.clients.get(item.sessionId);
     if (existing) {
       return existing;
     }
 
-    let sandboxAgentToken =
-      this.cs.get<BackendConfig['sandboxAgentToken']>('sandboxAgentToken');
-
     let client = await SandboxAgent.connect({
       baseUrl: item.sandboxHost,
-      token: sandboxAgentToken
+      token: item.sandboxAgentToken
     });
 
     this.clients.set(item.sessionId, client);
@@ -69,7 +69,7 @@ export class SandboxService {
     e2bApiKey: string;
   }): Promise<SandboxInfo> {
     try {
-      let sandboxInfo: { sandboxId: string; sandboxHost: string };
+      let sandboxInfo: SandboxInfo;
 
       switch (item.sandboxType) {
         case SandboxTypeEnum.E2B:
@@ -176,8 +176,7 @@ export class SandboxService {
 
     await sandbox.commands.run(`sandbox-agent install-agent ${item.agent}`);
 
-    let sandboxAgentToken =
-      this.cs.get<BackendConfig['sandboxAgentToken']>('sandboxAgentToken');
+    let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
 
     await sandbox.commands.run(
       `sandbox-agent server --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
@@ -188,10 +187,13 @@ export class SandboxService {
 
     let host = sandbox.getHost(3000);
 
-    return {
+    let sandboxInfo: SandboxInfo = {
       sandboxId: sandbox.sandboxId,
-      sandboxHost: `https://${host}`
+      sandboxHost: `https://${host}`,
+      sandboxAgentToken: sandboxAgentToken
     };
+
+    return sandboxInfo;
   }
 
   private async e2bStopSandbox(item: {

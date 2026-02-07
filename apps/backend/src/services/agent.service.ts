@@ -59,19 +59,21 @@ export class AgentService {
       sandboxEnvs.ZEN_API_KEY = item.zenApiKey;
     }
 
-    let { sandboxId, sandboxHost } = await this.sandboxService.createSandbox({
-      sandboxType: item.sandboxType,
-      sandboxTimeoutMs: item.sandboxTimeoutMs,
-      agent: item.agent,
-      sandboxEnvs: sandboxEnvs,
-      e2bApiKey: item.e2bApiKey
-    });
+    let { sandboxId, sandboxHost, sandboxAgentToken } =
+      await this.sandboxService.createSandbox({
+        sandboxType: item.sandboxType,
+        sandboxTimeoutMs: item.sandboxTimeoutMs,
+        agent: item.agent,
+        sandboxEnvs: sandboxEnvs,
+        e2bApiKey: item.e2bApiKey
+      });
 
     let sessionId = uuidv4();
 
     let sdkCreateSessionResponse = await this.createAgentSession({
       sessionId: sessionId,
       sandboxHost: sandboxHost,
+      sandboxAgentToken: sandboxAgentToken,
       agent: item.agent,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode
@@ -89,6 +91,7 @@ export class AgentService {
       permissionMode: item.permissionMode,
       sandboxId: sandboxId,
       sandboxHost: sandboxHost,
+      sandboxAgentToken: sandboxAgentToken,
       sdkCreateSessionResponse: sdkCreateSessionResponse,
       status: SessionStatusEnum.Active,
       lastActivityTs: now,
@@ -143,6 +146,7 @@ export class AgentService {
     sandboxType: SandboxTypeEnum;
     sandboxId: string;
     sandboxHost: string;
+    sandboxAgentToken: string;
     nativeSessionId: string;
     e2bApiKey: string;
     timeoutMs: number;
@@ -156,7 +160,8 @@ export class AgentService {
 
     await this.sandboxService.connectClient({
       sessionId: item.sessionId,
-      sandboxHost: item.sandboxHost
+      sandboxHost: item.sandboxHost,
+      sandboxAgentToken: item.sandboxAgentToken
     });
 
     this.startEventStream({
@@ -170,13 +175,15 @@ export class AgentService {
   async createAgentSession(item: {
     sessionId: string;
     sandboxHost: string;
+    sandboxAgentToken: string;
     agent: string;
     agentMode?: string;
     permissionMode?: string;
   }): Promise<CreateSessionResponse> {
     let client: SandboxAgent = await this.sandboxService.connectClient({
       sessionId: item.sessionId,
-      sandboxHost: item.sandboxHost
+      sandboxHost: item.sandboxHost,
+      sandboxAgentToken: item.sandboxAgentToken
     });
 
     let request: CreateSessionRequest = {
