@@ -185,12 +185,23 @@ export class SandboxService {
 
     let host = sandbox.getHost(3000);
 
-    for (let i = 0; i < 30; i++) {
+    let healthy = false;
+
+    for (let i = 0; i < 20; i++) {
       try {
         let res = await fetch(`https://${host}/v1/health`);
-        if (res.ok) break;
+        if (res.ok) {
+          healthy = true;
+          break;
+        }
       } catch {}
       await new Promise(r => setTimeout(r, 1000));
+    }
+
+    if (!healthy) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
+      });
     }
 
     let sandboxInfo: SandboxInfo = {
