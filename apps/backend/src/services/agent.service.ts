@@ -169,6 +169,9 @@ export class AgentService implements OnModuleDestroy {
       })
     );
 
+    console.log('item.event.data');
+    console.dir(item.event.data, { depth: null });
+
     await this.publish(item.sessionId, {
       eventId: item.event.event_id,
       sequence: item.event.sequence,

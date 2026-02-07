@@ -147,22 +147,22 @@ export class CreateAgentSessionController {
     let sessions = await sAgent.listSessions();
 
     console.log('sessions');
-    console.log(sessions);
+    console.dir(sessions, { depth: null });
 
     let agents = await sAgent.listAgents();
 
     console.log('agents');
-    console.log(agents);
+    console.dir(agents, { depth: null });
 
     let agentModes = await sAgent.getAgentModes(agent);
 
     console.log('agentModes');
-    console.log(agentModes);
+    console.dir(agentModes, { depth: null });
 
     let agentModels = await sAgent.getAgentModels(agent);
 
     console.log('agentModels');
-    console.log(agentModels);
+    console.dir(agentModels, { depth: null });
 
     let sdkCreateSessionRequest: CreateSessionRequest = {
       agent: agent,
