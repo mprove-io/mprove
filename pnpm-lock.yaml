@@ -384,6 +384,9 @@ catalogs:
     drizzle-orm:
       specifier: 0.36.0
       version: 0.36.0
+    e2b:
+      specifier: 2.12.0
+      version: 2.12.0
     echarts:
       specifier: 5.5.1
       version: 5.5.1
@@ -590,6 +593,12 @@ importers:
       '@biomejs/biome':
         specifier: 'catalog:'
         version: 2.3.12
+      '@swc-node/register':
+        specifier: 'catalog:'
+        version: 1.11.1(@swc/core@1.15.11(@swc/helpers@0.5.18))(@swc/types@0.1.25)(typescript@5.9.2)
+      '@swc/core':
+        specifier: 'catalog:'
+        version: 1.15.11(@swc/helpers@0.5.18)
       '@types/js-yaml':
         specifier: 'catalog:'
         version: 4.0.9
@@ -608,6 +617,9 @@ importers:
       drizzle-kit:
         specifier: 'catalog:'
         version: 0.27.1
+      e2b:
+        specifier: 'catalog:'
+        version: 2.12.0
       esbuild:
         specifier: 'catalog:'
         version: 0.24.0

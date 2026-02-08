@@ -268,6 +268,8 @@ export function getDevConfig() {
 
     sandboxAgentVersion: process.env.BACKEND_SANDBOX_AGENT_VERSION,
 
+    e2bTemplateVariant: process.env.BACKEND_E2B_TEMPLATE_VARIANT,
+
     sandboxTimeoutMinutes: isDefined(
       process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES
     )

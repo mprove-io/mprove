@@ -312,6 +312,10 @@ export class BackendConfig {
   sandboxAgentVersion?: string;
 
   @IsOptional()
+  @IsString()
+  e2bTemplateVariant?: string;
+
+  @IsOptional()
   @IsNumber()
   sandboxTimeoutMinutes?: number;
 
