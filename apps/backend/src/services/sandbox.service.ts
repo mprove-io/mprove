@@ -64,6 +64,19 @@ export class SandboxService {
     }
   }
 
+  getE2bTemplateName(): string {
+    let sandboxAgentVersion = this.cs.get<BackendConfig['sandboxAgentVersion']>(
+      'sandboxAgentVersion'
+    );
+    let saVersion = sandboxAgentVersion;
+
+    let e2bTemplateVariant =
+      this.cs.get<BackendConfig['e2bTemplateVariant']>('e2bTemplateVariant');
+    let variant = e2bTemplateVariant;
+
+    return `sandboxagent_${saVersion.split('.').join('-')}_${variant}`;
+  }
+
   async createSandbox(item: {
     sandboxType: SandboxTypeEnum;
     sandboxTimeoutMs: number;
@@ -76,25 +89,13 @@ export class SandboxService {
 
       switch (item.sandboxType) {
         case SandboxTypeEnum.E2B: {
-          let sandbox = await Sandbox.create({
+          let templateName = this.getE2bTemplateName();
+
+          let sandbox = await Sandbox.create(templateName, {
             apiKey: item.e2bApiKey,
             timeoutMs: item.sandboxTimeoutMs,
             envs: item.sandboxEnvs
           });
-
-          let sandboxAgentVersion = this.cs.get<
-            BackendConfig['sandboxAgentVersion']
-          >('sandboxAgentVersion');
-
-          let saVersion = sandboxAgentVersion || 'latest';
-
-          await sandbox.commands.run(
-            `curl -fsSL https://releases.rivet.dev/sandbox-agent/${saVersion}/install.sh | SANDBOX_AGENT_VERSION=${saVersion} sh`
-          );
-
-          await sandbox.commands.run(
-            `sandbox-agent install-agent ${item.agent}`
-          );
 
           let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
 
