@@ -309,11 +309,7 @@ export class BackendConfig {
 
   @IsOptional()
   @IsString()
-  sandboxAgentVersion?: string;
-
-  @IsOptional()
-  @IsString()
-  e2bTemplateVariant?: string;
+  e2bPublicTemplate?: string;
 
   @IsOptional()
   @IsNumber()

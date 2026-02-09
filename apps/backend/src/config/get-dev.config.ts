@@ -266,9 +266,7 @@ export function getDevConfig() {
 
     demoProjectOpenaiApiKey: process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY,
 
-    sandboxAgentVersion: process.env.BACKEND_SANDBOX_AGENT_VERSION,
-
-    e2bTemplateVariant: process.env.BACKEND_E2B_TEMPLATE_VARIANT,
+    e2bPublicTemplate: process.env.BACKEND_E2B_PUBLIC_TEMPLATE,
 
     sandboxTimeoutMinutes: isDefined(
       process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES

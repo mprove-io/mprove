@@ -65,16 +65,7 @@ export class SandboxService {
   }
 
   getE2bTemplateName(): string {
-    let sandboxAgentVersion = this.cs.get<BackendConfig['sandboxAgentVersion']>(
-      'sandboxAgentVersion'
-    );
-    let saVersion = sandboxAgentVersion;
-
-    let e2bTemplateVariant =
-      this.cs.get<BackendConfig['e2bTemplateVariant']>('e2bTemplateVariant');
-    let variant = e2bTemplateVariant;
-
-    return `sandboxagent_${saVersion.split('.').join('-')}_${variant}`;
+    return this.cs.get<BackendConfig['e2bPublicTemplate']>('e2bPublicTemplate');
   }
 
   async createSandbox(item: {
