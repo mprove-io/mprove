@@ -184,7 +184,7 @@ catalog:
   retry: 0.13.1
   rimraf: 6.0.1
   rxjs: 7.8.1
-  sandbox-agent: 0.1.10
+  sandbox-agent: 0.1.11
   serve: 14.2.5
   shiki: 0.10.1
   shx: 0.4.0

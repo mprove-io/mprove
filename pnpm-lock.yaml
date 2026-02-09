@@ -511,8 +511,8 @@ catalogs:
       specifier: 6.0.1
       version: 6.0.1
     sandbox-agent:
-      specifier: 0.1.10
-      version: 0.1.10
+      specifier: 0.1.11
+      version: 0.1.11
     serve:
       specifier: 14.2.5
       version: 14.2.5
@@ -868,7 +868,7 @@ importers:
         version: 7.8.1
       sandbox-agent:
         specifier: 'catalog:'
-        version: 0.1.10
+        version: 0.1.11
       snowflake-sdk:
         specifier: 'catalog:'
         version: 2.3.1(asn1.js@5.4.1)(encoding@0.1.13)
@@ -1585,8 +1585,8 @@ importers:
         specifier: 0.2.2
         version: 0.2.2
       sandbox-agent:
-        specifier: 0.1.10
-        version: 0.1.10
+        specifier: 0.1.11
+        version: 0.1.11
       trino-client:
         specifier: 0.2.9
         version: 0.2.9
@@ -5547,8 +5547,37 @@ packages:
   '@rspack/lite-tapable@1.1.0':
     resolution: {integrity: sha512-E2B0JhYFmVAwdDiG14+DW0Di4Ze4Jg10Pc4/lILUrd5DRCaklduz2OvJ5HYQ6G+hd+WTzqQb3QnDNfK4yvAFYw==}
 
-  '@sandbox-agent/cli-shared@0.1.10':
-    resolution: {integrity: sha512-Dx8CB/WcwLGiu5k1ijYqwJ73O/oPtpQ+YbG4mmxRv5NibPqX2a2pJAylTxbWxob8cBlbcjcyBKUpwJtXZ8pw4g==}
+  '@sandbox-agent/cli-darwin-arm64@0.1.11':
+    resolution: {integrity: sha512-Xh59hSo/0xiPm1nscSTUXcc/naGlF3E7xIBG0XjFM5jEOI+tdpJn6hGx02s7Py9uZOmqyN2yCaytEgJc4p2klw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@sandbox-agent/cli-darwin-x64@0.1.11':
+    resolution: {integrity: sha512-h14t6qh+I2Tt68XzF5a44CGJ0/EyuK2GV46d+JyBPxGPhJanmgY0gnOvpI+AwWxg8ZeoOmOXXEYPMW5WogEhIw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@sandbox-agent/cli-linux-arm64@0.1.11':
+    resolution: {integrity: sha512-fq8gy34RVshxcU9FfHx0ZmfWwiDAIPCKyP6/k0GIhM/RlN2YMExar6VrFgeHMmboarHOAQQSN1XsfxVH6Ixlkg==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@sandbox-agent/cli-linux-x64@0.1.11':
+    resolution: {integrity: sha512-sPpVIcXG2Gbb/IQWnzVFFwGRqaxPZ9o6qpa+AXha7fZ38Ey6ypbC4eWSU27r2114POmqaciupxVlDKR/yGsuZg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@sandbox-agent/cli-shared@0.1.11':
+    resolution: {integrity: sha512-Rr0r0uK49rhlTJOcuXvMwlkG/DFtolpIkwx3Ob4hwmknFHkCX3fcfRJmRcW0XmmwFwIJCLJeYYYMw2Ltr8k4HQ==}
+
+  '@sandbox-agent/cli-win32-x64@0.1.11':
+    resolution: {integrity: sha512-vvpwdHs3EoqD1kmCWuYWnvol0zGBiqwx64HSMgkGsE5Lc0DAULuXBaiR4ZElSeSCSWpIr2EhcO8AfHSyn91jDg==}
+    cpu: [x64]
+    os: [win32]
+
+  '@sandbox-agent/cli@0.1.11':
+    resolution: {integrity: sha512-4nVH0dKC70zQjYSYhUagnn9bAy2mOXQovr77YlD4qATcjJHr6bbx/hgvtGYuaIGr/3SoZsPJMf8X6On81EnIxw==}
+    hasBin: true
 
   '@schematics/angular@21.1.0':
     resolution: {integrity: sha512-gXf3gO5SeU+tiPHxXeQvdbua4C4/V+KH43JH2PYPxaNCD2HGo1uV0pfyNSNgcVF21voKlbAQ13YRrNDh7z5Kig==}
@@ -10613,8 +10642,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sandbox-agent@0.1.10:
-    resolution: {integrity: sha512-9zS50iV2avd42qOzSGpJtGWfied+cTJudI5tv4HSFZFBmuJ+6dSDROSXYvtqDsG1Zgscq+LN28/qUz4UJv28ug==}
+  sandbox-agent@0.1.11:
+    resolution: {integrity: sha512-xyQtCe2KXWbEM4QnLnDspWuh4vapJp129GiWB7aCOhsLFShiK5mobQYK8VevKUuidUjNLaQO9O9bDn318ha/yA==}
 
   sass-embedded-all-unknown@1.97.1:
     resolution: {integrity: sha512-0au5gUNibfob7W/g+ycBx74O22CL8vwHiZdEDY6J0uzMkHPiSJk//h0iRf5AUnMArFHJjFd3urIiQIaoRKYa1Q==}
@@ -15485,7 +15514,7 @@ snapshots:
       js-yaml: 4.1.1
       nanoid: 3.3.10
       reflect-metadata: 0.2.2
-      sandbox-agent: 0.1.10
+      sandbox-agent: 0.1.11
       trino-client: 0.2.9
       tslib: 2.7.0
     transitivePeerDependencies:
@@ -16950,7 +16979,33 @@ snapshots:
   '@rspack/lite-tapable@1.1.0':
     optional: true
 
-  '@sandbox-agent/cli-shared@0.1.10': {}
+  '@sandbox-agent/cli-darwin-arm64@0.1.11':
+    optional: true
+
+  '@sandbox-agent/cli-darwin-x64@0.1.11':
+    optional: true
+
+  '@sandbox-agent/cli-linux-arm64@0.1.11':
+    optional: true
+
+  '@sandbox-agent/cli-linux-x64@0.1.11':
+    optional: true
+
+  '@sandbox-agent/cli-shared@0.1.11': {}
+
+  '@sandbox-agent/cli-win32-x64@0.1.11':
+    optional: true
+
+  '@sandbox-agent/cli@0.1.11':
+    dependencies:
+      '@sandbox-agent/cli-shared': 0.1.11
+    optionalDependencies:
+      '@sandbox-agent/cli-darwin-arm64': 0.1.11
+      '@sandbox-agent/cli-darwin-x64': 0.1.11
+      '@sandbox-agent/cli-linux-arm64': 0.1.11
+      '@sandbox-agent/cli-linux-x64': 0.1.11
+      '@sandbox-agent/cli-win32-x64': 0.1.11
+    optional: true
 
   '@schematics/angular@21.1.0(chokidar@5.0.0)':
     dependencies:
@@ -22720,9 +22775,11 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sandbox-agent@0.1.10:
+  sandbox-agent@0.1.11:
     dependencies:
-      '@sandbox-agent/cli-shared': 0.1.10
+      '@sandbox-agent/cli-shared': 0.1.11
+    optionalDependencies:
+      '@sandbox-agent/cli': 0.1.11
 
   sass-embedded-all-unknown@1.97.1:
     dependencies:
