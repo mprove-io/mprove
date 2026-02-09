@@ -33,7 +33,7 @@
     "js-yaml": "4.1.1",
     "nanoid": "3.3.10",
     "reflect-metadata": "0.2.2",
-    "sandbox-agent": "0.1.9",
+    "sandbox-agent": "0.1.10",
     "trino-client": "0.2.9",
     "tslib": "2.7.0"
   },

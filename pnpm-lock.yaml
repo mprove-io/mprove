@@ -511,8 +511,8 @@ catalogs:
       specifier: 6.0.1
       version: 6.0.1
     sandbox-agent:
-      specifier: 0.1.9
-      version: 0.1.9
+      specifier: 0.1.10
+      version: 0.1.10
     serve:
       specifier: 14.2.5
       version: 14.2.5
@@ -868,7 +868,7 @@ importers:
         version: 7.8.1
       sandbox-agent:
         specifier: 'catalog:'
-        version: 0.1.9
+        version: 0.1.10
       snowflake-sdk:
         specifier: 'catalog:'
         version: 2.3.1(asn1.js@5.4.1)(encoding@0.1.13)
@@ -1585,8 +1585,8 @@ importers:
         specifier: 0.2.2
         version: 0.2.2
       sandbox-agent:
-        specifier: 0.1.9
-        version: 0.1.9
+        specifier: 0.1.10
+        version: 0.1.10
       trino-client:
         specifier: 0.2.9
         version: 0.2.9
@@ -5547,8 +5547,8 @@ packages:
   '@rspack/lite-tapable@1.1.0':
     resolution: {integrity: sha512-E2B0JhYFmVAwdDiG14+DW0Di4Ze4Jg10Pc4/lILUrd5DRCaklduz2OvJ5HYQ6G+hd+WTzqQb3QnDNfK4yvAFYw==}
 
-  '@sandbox-agent/cli-shared@0.1.9':
-    resolution: {integrity: sha512-l1FwxQ22JnM4nsf20J5bXkAWChmO2T0AlN8UAM/wFWUyWxta1K9JVwfJ7BTrNdffyiHWok3RPMd+vX8v7R3tsQ==}
+  '@sandbox-agent/cli-shared@0.1.10':
+    resolution: {integrity: sha512-Dx8CB/WcwLGiu5k1ijYqwJ73O/oPtpQ+YbG4mmxRv5NibPqX2a2pJAylTxbWxob8cBlbcjcyBKUpwJtXZ8pw4g==}
 
   '@schematics/angular@21.1.0':
     resolution: {integrity: sha512-gXf3gO5SeU+tiPHxXeQvdbua4C4/V+KH43JH2PYPxaNCD2HGo1uV0pfyNSNgcVF21voKlbAQ13YRrNDh7z5Kig==}
@@ -10613,8 +10613,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sandbox-agent@0.1.9:
-    resolution: {integrity: sha512-rcPAbWGOt5KHR4Ckp3OrDpEMgqvUzCQksLeJkTUMkqbo/F3a2Rcr+EWVsaDCxc9sAbJE00NwMzQVGYq8kk1WFw==}
+  sandbox-agent@0.1.10:
+    resolution: {integrity: sha512-9zS50iV2avd42qOzSGpJtGWfied+cTJudI5tv4HSFZFBmuJ+6dSDROSXYvtqDsG1Zgscq+LN28/qUz4UJv28ug==}
 
   sass-embedded-all-unknown@1.97.1:
     resolution: {integrity: sha512-0au5gUNibfob7W/g+ycBx74O22CL8vwHiZdEDY6J0uzMkHPiSJk//h0iRf5AUnMArFHJjFd3urIiQIaoRKYa1Q==}
@@ -15491,7 +15491,7 @@ snapshots:
       js-yaml: 4.1.1
       nanoid: 3.3.10
       reflect-metadata: 0.2.2
-      sandbox-agent: 0.1.9
+      sandbox-agent: 0.1.10
       trino-client: 0.2.9
       tslib: 2.7.0
     transitivePeerDependencies:
@@ -16956,7 +16956,7 @@ snapshots:
   '@rspack/lite-tapable@1.1.0':
     optional: true
 
-  '@sandbox-agent/cli-shared@0.1.9': {}
+  '@sandbox-agent/cli-shared@0.1.10': {}
 
   '@schematics/angular@21.1.0(chokidar@5.0.0)':
     dependencies:
@@ -22726,9 +22726,9 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sandbox-agent@0.1.9:
+  sandbox-agent@0.1.10:
     dependencies:
-      '@sandbox-agent/cli-shared': 0.1.9
+      '@sandbox-agent/cli-shared': 0.1.10
 
   sass-embedded-all-unknown@1.97.1:
     dependencies:
