@@ -18,7 +18,7 @@ console.log();
 
 let template = Template()
   .fromBaseImage()
-  .aptInstall(['git', 'curl', 'ca-certificates'])
+  .aptInstall(['git', 'openssh-client', 'curl', 'ca-certificates'])
   .runCmd(
     `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | SANDBOX_AGENT_VERSION=${version} sh`
   )

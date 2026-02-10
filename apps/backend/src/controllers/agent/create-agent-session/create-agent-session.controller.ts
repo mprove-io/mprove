@@ -131,12 +131,12 @@ export class CreateAgentSessionController {
         sandboxTimeoutMs: sandboxTimeoutMs,
         agent: agent,
         sandboxEnvs: sandboxEnvs,
-        e2bApiKey: project.e2bApiKey
+        project: project
       });
 
-    let sessionId = uuidv4();
-
     console.log('sandbox created');
+
+    let sessionId = uuidv4();
 
     let sAgent: SandboxAgent = await this.sandboxService.connectSaClient({
       sessionId: sessionId,

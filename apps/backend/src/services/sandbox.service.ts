@@ -4,15 +4,18 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SandboxAgent } from 'sandbox-agent';
 import { BackendConfig } from '#backend/config/backend-config';
+import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
+import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ServerError } from '#common/models/server-error';
 
-export interface SandboxInfo {
+export interface CreateSandboxResult {
   sandboxId: string;
   sandboxBaseUrl: string;
   sandboxAgentToken: string;
+  sandbox: Sandbox;
 }
 
 @Injectable()
@@ -73,20 +76,32 @@ export class SandboxService {
     sandboxTimeoutMs: number;
     sandboxEnvs?: Record<string, string>;
     agent: string;
-    e2bApiKey: string;
-  }): Promise<SandboxInfo> {
+    project: ProjectTab;
+  }): Promise<CreateSandboxResult> {
     try {
-      let sandboxInfo: SandboxInfo;
+      let createSandboxResult: CreateSandboxResult;
 
       switch (item.sandboxType) {
         case SandboxTypeEnum.E2B: {
           let templateName = this.getE2bTemplateName();
 
           let sandbox = await Sandbox.create(templateName, {
-            apiKey: item.e2bApiKey,
+            apiKey: item.project.e2bApiKey,
             timeoutMs: item.sandboxTimeoutMs,
             envs: item.sandboxEnvs
           });
+
+          if (item.project.remoteType === ProjectRemoteTypeEnum.GitClone) {
+            await this.cloneRepoInSandbox({
+              sandbox: sandbox,
+              gitUrl: item.project.gitUrl,
+              defaultBranch: item.project.defaultBranch,
+              publicKey: item.project.publicKey,
+              privateKeyEncrypted: item.project.privateKeyEncrypted,
+              passPhrase: item.project.passPhrase,
+              cloneDir: '/home/user/project'
+            });
+          }
 
           let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
 
@@ -131,10 +146,11 @@ export class SandboxService {
             });
           }
 
-          sandboxInfo = {
+          createSandboxResult = {
             sandboxId: sandbox.sandboxId,
             sandboxBaseUrl: `https://${host}`,
-            sandboxAgentToken: sandboxAgentToken
+            sandboxAgentToken: sandboxAgentToken,
+            sandbox: sandbox
           };
           break;
         }
@@ -144,12 +160,67 @@ export class SandboxService {
           });
       }
 
-      return sandboxInfo;
+      return createSandboxResult;
     } catch (e) {
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_SANDBOX_CREATE_FAILED,
         originalError: e
       });
+    }
+  }
+
+  async cloneRepoInSandbox(item: {
+    sandbox: Sandbox;
+    gitUrl: string;
+    defaultBranch: string;
+    publicKey: string;
+    privateKeyEncrypted: string;
+    passPhrase: string;
+    cloneDir: string;
+  }): Promise<void> {
+    let keyDir = '/tmp/ssh-keys';
+    let privateKeyPath = `${keyDir}/id_rsa`;
+    let pubKeyPath = `${keyDir}/id_rsa.pub`;
+    let askpassPath = `${keyDir}/ssh-askpass.sh`;
+
+    await item.sandbox.commands.run(`mkdir -p ${keyDir}`);
+
+    await item.sandbox.files.write(pubKeyPath, item.publicKey);
+    await item.sandbox.files.write(privateKeyPath, item.privateKeyEncrypted);
+    await item.sandbox.files.write(
+      askpassPath,
+      '#!/bin/sh\necho $SSH_PASSPHRASE'
+    );
+
+    await item.sandbox.commands.run(
+      `chmod 600 ${privateKeyPath} && chmod 700 ${askpassPath}`
+    );
+
+    try {
+      let gitSshCommand = `ssh -i ${privateKeyPath} -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`;
+
+      let cloneResult = await item.sandbox.commands.run(
+        `git clone --branch ${item.defaultBranch} ${item.gitUrl} ${item.cloneDir}`,
+        {
+          envs: {
+            GIT_SSH_COMMAND: gitSshCommand,
+            SSH_PASSPHRASE: item.passPhrase,
+            SSH_ASKPASS: askpassPath,
+            SSH_ASKPASS_REQUIRE: 'force',
+            DISPLAY: '1'
+          },
+          timeoutMs: 5 * 60 * 1000
+        }
+      );
+
+      if (cloneResult.exitCode !== 0) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_SANDBOX_GIT_CLONE_FAILED,
+          originalError: new Error(cloneResult.stderr)
+        });
+      }
+    } finally {
+      await item.sandbox.commands.run(`rm -rf ${keyDir}`).catch(() => {});
     }
   }
 
