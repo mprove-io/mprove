@@ -24,7 +24,16 @@ let template = Template()
   )
   .runCmd('sandbox-agent install-agent codex')
   .runCmd('sandbox-agent install-agent claude')
-  .runCmd('sandbox-agent install-agent opencode');
+  .runCmd('sandbox-agent install-agent opencode')
+  .runCmd(
+    '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+  )
+  .runCmd(
+    '/home/linuxbrew/.linuxbrew/bin/brew install mprove-io/mprove/mprove-cli'
+  )
+  .runCmd(
+    'sudo ln -s /home/linuxbrew/.linuxbrew/bin/mprove /usr/local/bin/mprove'
+  );
 
 let result = await Template.build(template, templateName, {
   cpuCount: 2,

@@ -48,6 +48,18 @@ test('1', async t => {
       'git --version should return version string'
     );
 
+    // Check mprove CLI is installed
+    let mproveResult = await sandbox.commands.run('mprove version');
+
+    console.log(`mprove: ${mproveResult.stdout.trim()}`);
+
+    t.is(mproveResult.exitCode, 0, 'mprove should be installed');
+
+    t.true(
+      mproveResult.stdout.includes('mproveCLI'),
+      'mprove version should return mproveCLI'
+    );
+
     // Check sandbox-agent binary exists
     let whichResult = await sandbox.commands.run('which sandbox-agent');
 
