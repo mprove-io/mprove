@@ -5,7 +5,7 @@
         <div class="flex h-11 w-1/4 flex-row items-center justify-start">
           <m-left-panel-icon
             data-cy="filesLeftPanelToggle"
-            class="text-s500 flex-shrink-0 cursor-pointer"
+            class="text-s500 ml-5 flex-shrink-0 cursor-pointer"
             (click)="toggleShowLeft()"
             [isFilled]="showFilesLeftPanel === true"
           ></m-left-panel-icon>
@@ -51,7 +51,7 @@
                     'text-s500':
                       panel !== panelChangesToCommit || !showFilesLeftPanel
                   }"
-                  >Changes To Commit</div
+                  >Changes to Commit</div
                 >
 
                 <div
@@ -116,7 +116,7 @@
                     'text-s500':
                       panel !== panelChangesToPush || !showFilesLeftPanel
                   }"
-                  >Changes To Push</div
+                  >Changes to Push</div
                 >
 
                 <div
