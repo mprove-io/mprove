@@ -5,6 +5,8 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import type { AgentEvent } from '#backend/services/agent.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
+import { SandboxService } from '#backend/services/sandbox.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -25,7 +27,7 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
-let inspectUI = true;
+let inspectUI: boolean = false;
 
 let testId = 'backend-create-agent-session__ok-codex';
 
@@ -274,52 +276,13 @@ test('1', async t => {
       cs: prep.cs
     });
     testError = e;
-  } finally {
-    // Close SSE connection
-    if (sse) {
-      sse.close();
-    }
-
-    if (inspectUI) {
-      // Do nothing — keep everything running so Inspector UI can work
-    } else {
-      // Cleanup: delete session
-      if (sessionId && prep) {
-        try {
-          let deleteSessionReq: ToBackendDeleteAgentSessionRequest = {
-            info: {
-              name: ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession,
-              traceId: traceId,
-              idempotencyKey: makeId()
-            },
-            payload: {
-              sessionId: sessionId
-            }
-          };
-
-          await sendToBackend<ToBackendDeleteAgentSessionResponse>({
-            httpServer: prep.httpServer,
-            loginToken: prep.loginToken,
-            req: deleteSessionReq,
-            checkIsOk: true
-          });
-        } catch (er) {
-          logToConsoleBackend({
-            log: er,
-            logLevel: LogLevelEnum.Error,
-            logger: prep.logger,
-            cs: prep.cs
-          });
-        }
-      }
-
-      if (prep) {
-        await prep.app.close();
-      }
-    }
   }
 
-  if (inspectUI) {
+  if (sse) {
+    sse.close();
+  }
+
+  if (!!inspectUI) {
     if (testError) {
       console.log('Test error (non-fatal for inspection):', testError);
     }
@@ -331,10 +294,6 @@ test('1', async t => {
     t.pass('Session created for inspection');
 
     // Periodic health check
-    let { SandboxService } = await import('#backend/services/sandbox.service');
-    let { SessionsService } = await import(
-      '#backend/services/db/sessions.service'
-    );
     let sandboxService = prep.app.get(SandboxService);
     let sessionsService = prep.app.get(SessionsService);
     let session = await sessionsService.getSessionByIdCheckExists({
@@ -357,13 +316,49 @@ test('1', async t => {
       try {
         let sessions = await client.listSessions();
         console.log(
-          `[${i * 10}s] sandbox-agent OK, sessions: ${sessions.sessions.length}`
+          `[${(i + 1) * 10}s] sandbox-agent OK, sessions: ${sessions.sessions.length}`
         );
       } catch (err: any) {
-        console.log(`[${i * 10}s] sandbox-agent FAILED: ${err?.message}`);
+        console.log(`[${(i + 1) * 10}s] sandbox-agent FAILED: ${err?.message}`);
       }
     }
-  } else {
+  }
+
+  if (!inspectUI) {
+    // Cleanup
+    if (sessionId && prep) {
+      try {
+        let deleteSessionReq: ToBackendDeleteAgentSessionRequest = {
+          info: {
+            name: ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession,
+            traceId: traceId,
+            idempotencyKey: makeId()
+          },
+          payload: {
+            sessionId: sessionId
+          }
+        };
+
+        await sendToBackend<ToBackendDeleteAgentSessionResponse>({
+          httpServer: prep.httpServer,
+          loginToken: prep.loginToken,
+          req: deleteSessionReq,
+          checkIsOk: true
+        });
+      } catch (er) {
+        logToConsoleBackend({
+          log: er,
+          logLevel: LogLevelEnum.Error,
+          logger: prep.logger,
+          cs: prep.cs
+        });
+      }
+    }
+
+    if (prep) {
+      await prep.app.close();
+    }
+
     t.is(testError, undefined);
     t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
     t.truthy(createSessionResp.payload.sessionId);
