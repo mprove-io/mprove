@@ -7,9 +7,6 @@
         >
           <m-logo></m-logo>
 
-          <!-- <div class="flex flex-1"></div> -->
-          <!-- <div class="flex flex-1"></div> -->
-
           <div class="ml-10 flex flex-row items-center">
             <div
               *ngIf="!!nav && !!nav.projectId"
@@ -22,46 +19,6 @@
                 >Branch</div
               >
               <m-branch-select class="ml-5"></m-branch-select>
-
-              <div class="flex w-[130px] flex-row justify-start">
-                <button
-                  class="text-s1 ml-7 flex h-10 flex-row items-center justify-start text-left text-base focus:outline-none"
-                  [ngClass]="{
-                    'text-s400 cursor-default':
-                      !nav || !nav.projectId || needSave === true,
-                    'font-semibold': isFilesRouteActive === true
-                  }"
-                  (click)="navigateFiles()"
-                  [disabled]="!nav || !nav.projectId || needSave === true"
-                >
-                  <div
-                    class="flex flex-shrink-0 flex-row items-center justify-center"
-                  >
-                    <div
-                      class="text-a500 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
-                      *ngIf="nav.needValidate === true"
-                    >
-                      <m-exclamation-icon></m-exclamation-icon>
-                    </div>
-
-                    <div
-                      class="text-r1 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
-                      *ngIf="
-                        nav.needValidate === false &&
-                        (struct?.errors.length > 0 ||
-                          repo?.conflicts.length > 0)
-                      "
-                    >
-                      <m-exclamation-icon></m-exclamation-icon>
-                    </div>
-
-                    <div
-                      class="flex w-[60px] select-none items-center justify-center"
-                      >Files</div
-                    >
-                  </div>
-                </button>
-              </div>
             </div>
           </div>
 
@@ -71,12 +28,51 @@
             *ngIf="!!nav && !!nav.projectId"
             class="flex flex-row items-center space-x-5"
           >
+            <div class="flex w-[130px] flex-row justify-end">
+              <button
+                class="text-s1 ml-7 flex h-10 flex-row items-center justify-start text-left text-base focus:outline-none"
+                [ngClass]="{
+                  'text-s400 cursor-default':
+                    !nav || !nav.projectId || needSave === true,
+                  'font-semibold': isFilesRouteActive === true
+                }"
+                (click)="navigateFiles()"
+                [disabled]="!nav || !nav.projectId || needSave === true"
+              >
+                <div
+                  class="flex flex-shrink-0 flex-row items-center justify-center"
+                >
+                  <div
+                    class="text-a500 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
+                    *ngIf="nav.needValidate === true"
+                  >
+                    <m-exclamation-icon></m-exclamation-icon>
+                  </div>
+
+                  <div
+                    class="text-r1 ml-2 mr-2 flex h-8 w-8 flex-shrink-0"
+                    *ngIf="
+                      nav.needValidate === false &&
+                      (struct?.errors.length > 0 || repo?.conflicts.length > 0)
+                    "
+                  >
+                    <m-exclamation-icon></m-exclamation-icon>
+                  </div>
+
+                  <div
+                    class="flex w-[85px] select-none items-center justify-center"
+                    >Sessions</div
+                  >
+                </div>
+              </button>
+            </div>
+
             <div
               tp="Explorer role required"
               [tpIsEnabled]="member.isExplorer === false"
             >
               <button
-                class="text-s1 ml-5 flex h-10 w-[80px] select-none items-center justify-center text-left text-base focus:outline-none"
+                class="text-s1 flex h-10 w-[80px] select-none items-center justify-center text-left text-base focus:outline-none"
                 [ngClass]="{
                   'text-s400 cursor-default':
                     !nav ||
