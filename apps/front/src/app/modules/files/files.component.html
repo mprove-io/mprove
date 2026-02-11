@@ -335,12 +335,25 @@
             </button>
           </div>
 
-          <div class="relative ml-3 mr-5" *ngIf="isEditor === true">
+          <div
+            class="relative ml-3 mr-9"
+            [ngClass]="{
+              'mr-[50px]': !secondFileNodeId,
+              'mr-4': !!secondFileNodeId
+            }"
+            *ngIf="isEditor === true"
+          >
             <m-repo-options></m-repo-options>
           </div>
         </div>
 
-        <div class="flex w-1/4 flex-row items-center justify-end">
+        <div
+          class="flex flex-row items-center justify-end"
+          [ngClass]="{
+            'w-1/4': !secondFileNodeId,
+            'flex-1': !!secondFileNodeId
+          }"
+        >
           <div class="flex flex-row items-center">
             <button
               class="flex w-[100px] select-none flex-row items-center justify-center text-lg focus:outline-none"
@@ -426,7 +439,11 @@
         </div>
 
         <div
-          class="ml-6 flex w-1/4 flex-shrink-0"
+          class="ml-6 flex"
+          [ngClass]="{
+            'w-1/4 flex-shrink-0': !secondFileNodeId,
+            'flex-1': !!secondFileNodeId
+          }"
           *ngIf="panel === panelTree || lastUrl === pathFiles || !file?.fileId"
         >
           <m-files-sessions
