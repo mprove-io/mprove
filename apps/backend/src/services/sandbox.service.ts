@@ -103,11 +103,24 @@ export class SandboxService {
             });
           }
 
+          // Codex app-server reads ~/.codex/auth.json (not env vars).
+          if (item.agent === 'codex' && item.sandboxEnvs?.OPENAI_API_KEY) {
+            await sandbox.commands.run('mkdir -p /home/user/.codex');
+            await sandbox.files.write(
+              '/home/user/.codex/auth.json',
+              JSON.stringify({
+                OPENAI_API_KEY: item.sandboxEnvs.OPENAI_API_KEY,
+                tokens: null,
+                last_refresh: null
+              })
+            );
+          }
+
           let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
 
           await sandbox.commands.run(
             `sandbox-agent server --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
-            { background: true }
+            { background: true, timeoutMs: 0 }
           );
 
           let host = sandbox.getHost(3000);
@@ -146,9 +159,15 @@ export class SandboxService {
             });
           }
 
+          let sandboxBaseUrl = `https://${host}`;
+
+          console.log(`\n=== INSPECTOR UI ===`);
+          console.log(`${sandboxBaseUrl}/ui/?token=${sandboxAgentToken}`);
+          console.log(`===================\n`);
+
           createSandboxResult = {
             sandboxId: sandbox.sandboxId,
-            sandboxBaseUrl: `https://${host}`,
+            sandboxBaseUrl: sandboxBaseUrl,
             sandboxAgentToken: sandboxAgentToken,
             sandbox: sandbox
           };
