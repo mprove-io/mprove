@@ -160,8 +160,10 @@ export class CreateAgentSessionController {
 
     let agents = await sAgent.listAgents();
 
-    console.log('agents');
-    console.dir(agents, { depth: null });
+    let selectedAgent = agents.agents.find(x => x.id === agent);
+
+    console.log('selectedAgent');
+    console.dir(selectedAgent, { depth: null });
 
     let agentModes = await sAgent.getAgentModes(agent);
 

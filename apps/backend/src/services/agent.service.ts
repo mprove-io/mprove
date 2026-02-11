@@ -11,13 +11,11 @@ import type {
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type {
-  EventTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { EventsService } from './db/events.service';
 import { ProjectsService } from './db/projects.service';
 import { SessionsService } from './db/sessions.service';
 import { SandboxService } from './sandbox.service';
@@ -37,6 +35,7 @@ export class AgentService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
+    private eventsService: EventsService,
     private sessionsService: SessionsService,
     private tabService: TabService,
     private projectsService: ProjectsService,
@@ -152,17 +151,10 @@ export class AgentService implements OnModuleDestroy {
     sessionId: string;
     event: UniversalEvent;
   }): Promise<void> {
-    let now = Date.now();
-
-    let eventTab = {
-      eventId: item.event.event_id,
+    let eventTab = this.eventsService.makeEvent({
       sessionId: item.sessionId,
-      sequence: item.event.sequence,
-      type: item.event.type,
-      universalEvent: item.event,
-      createdTs: now,
-      serverTs: now
-    } as EventTab;
+      event: item.event
+    });
 
     await this.db.drizzle.transaction(async tx =>
       this.db.packer.write({
@@ -173,8 +165,8 @@ export class AgentService implements OnModuleDestroy {
       })
     );
 
-    console.log('item.event.data');
-    console.dir(item.event.data, { depth: null });
+    // console.log('item.event.data');
+    // console.dir(item.event.data, { depth: null });
 
     await this.publish(item.sessionId, {
       eventId: item.event.event_id,
