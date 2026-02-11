@@ -190,6 +190,7 @@ export class FilesComponent implements OnInit {
   get isRightPanelVisible() {
     return (
       this.showFilesRightPanel &&
+      !this.secondFileNodeId &&
       (this.panel === PanelEnum.Tree ||
         this.lastUrl === this.pathFiles ||
         !this.file?.fileId)
@@ -220,6 +221,10 @@ export class FilesComponent implements OnInit {
 
     if (this.panel !== PanelEnum.Tree) {
       this.navigateService.navigateToFiles();
+    }
+
+    if (this.secondFileNodeId) {
+      this.uiQuery.updatePart({ secondFileNodeId: undefined });
     }
 
     if (tab === this.filesRightPanelTab) {

@@ -432,7 +432,8 @@
           <m-files-sessions
             *ngIf="
               showFilesRightPanel === true &&
-              filesRightPanelTab === filesRightPanelTabSessions
+              filesRightPanelTab === filesRightPanelTabSessions &&
+              !secondFileNodeId
             "
             class="flex w-full"
           ></m-files-sessions>
@@ -440,7 +441,8 @@
           <m-files-right
             *ngIf="
               showFilesRightPanel === true &&
-              filesRightPanelTab === filesRightPanelTabErrors
+              (filesRightPanelTab === filesRightPanelTabErrors ||
+                !!secondFileNodeId)
             "
             class="flex w-full"
           ></m-files-right>

@@ -33,7 +33,10 @@ export class FilesRightPanelToggleComponent {
     if (this.secondFileNodeId === fileNodeId) {
       this.uiQuery.updatePart({ secondFileNodeId: undefined });
     } else {
-      this.uiQuery.updatePart({ secondFileNodeId: fileNodeId });
+      this.uiQuery.updatePart({
+        secondFileNodeId: fileNodeId,
+        showFilesRightPanel: true
+      });
     }
   }
 }
