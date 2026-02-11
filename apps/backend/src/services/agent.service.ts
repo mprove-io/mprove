@@ -1,5 +1,6 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { and, eq, lt } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
 import type {
@@ -14,11 +15,13 @@ import type {
   EventTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ProjectsService } from './db/projects.service';
 import { SessionsService } from './db/sessions.service';
 import { SandboxService } from './sandbox.service';
+import { TabService } from './tab.service';
 
 export interface AgentEvent {
   eventId: string;
@@ -35,6 +38,7 @@ export class AgentService implements OnModuleDestroy {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private sessionsService: SessionsService,
+    private tabService: TabService,
     private projectsService: ProjectsService,
     private sandboxService: SandboxService,
     private logger: Logger,
@@ -186,16 +190,21 @@ export class AgentService implements OnModuleDestroy {
     let idleMinutes =
       this.cs.get<BackendConfig['sandboxIdleMinutes']>('sandboxIdleMinutes');
 
-    let idleThresholdTs = Date.now() - idleMinutes * 60 * 1000;
+    let pauseThresholdTs = Date.now() - idleMinutes * 60 * 1000;
 
-    let sessions = await this.sessionsService.getIdleActiveSessions({
-      idleThresholdTs
-    });
+    let sessionsToPause = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: and(
+          eq(sessionsTable.status, SessionStatusEnum.Active),
+          lt(sessionsTable.lastActivityTs, pauseThresholdTs)
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-    for (let session of sessions) {
+    for (let session of sessionsToPause) {
       if (
         session.lastActivityTs &&
-        session.lastActivityTs < idleThresholdTs &&
+        session.lastActivityTs < pauseThresholdTs &&
         session.sandboxId
       ) {
         let project = await this.projectsService.getProjectCheckExists({

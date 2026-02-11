@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq, inArray, lt } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import type { CreateSessionResponse } from 'sandbox-agent';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -75,44 +75,5 @@ export class SessionsService {
     }
 
     return this.tabService.sessionEntToTab(session);
-  }
-
-  async getSessionById(item: {
-    sessionId: string;
-  }): Promise<SessionTab | undefined> {
-    let session = await this.db.drizzle.query.sessionsTable.findFirst({
-      where: eq(sessionsTable.sessionId, item.sessionId)
-    });
-
-    return this.tabService.sessionEntToTab(session);
-  }
-
-  async getActiveSessionsByUserId(item: {
-    userId: string;
-  }): Promise<SessionTab[]> {
-    let sessions = await this.db.drizzle.query.sessionsTable.findMany({
-      where: and(
-        eq(sessionsTable.userId, item.userId),
-        inArray(sessionsTable.status, [
-          SessionStatusEnum.Active,
-          SessionStatusEnum.Paused
-        ])
-      )
-    });
-
-    return sessions.map(s => this.tabService.sessionEntToTab(s));
-  }
-
-  async getIdleActiveSessions(item: {
-    idleThresholdTs: number;
-  }): Promise<SessionTab[]> {
-    let sessions = await this.db.drizzle.query.sessionsTable.findMany({
-      where: and(
-        eq(sessionsTable.status, SessionStatusEnum.Active),
-        lt(sessionsTable.lastActivityTs, item.idleThresholdTs)
-      )
-    });
-
-    return sessions.map(s => this.tabService.sessionEntToTab(s));
   }
 }

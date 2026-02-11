@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
+import { and, eq, inArray } from 'drizzle-orm';
 import { CreateSessionRequest, SandboxAgent } from 'sandbox-agent';
 import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -19,6 +20,7 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
@@ -28,6 +30,7 @@ import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
 import { SandboxService } from '#backend/services/sandbox.service.js';
+import { TabService } from '#backend/services/tab.service.js';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -50,6 +53,7 @@ export class CreateAgentSessionController {
     private sessionsService: SessionsService,
     private agentService: AgentService,
     private sandboxService: SandboxService,
+    private tabService: TabService,
     private redisService: RedisService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -82,9 +86,14 @@ export class CreateAgentSessionController {
       BackendConfig['maxActiveSessionsPerUser']
     >('maxActiveSessionsPerUser');
 
-    let activeSessions = await this.sessionsService.getActiveSessionsByUserId({
-      userId: user.userId
-    });
+    let activeSessions = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: and(
+          eq(sessionsTable.userId, user.userId),
+          inArray(sessionsTable.status, [SessionStatusEnum.Active])
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
     if (activeSessions.length >= maxActiveSandboxesPerUser) {
       throw new ServerError({
