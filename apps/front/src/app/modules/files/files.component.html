@@ -3,11 +3,12 @@
     <div class="mx-6 mb-6 mt-8 flex min-w-[2px] flex-grow flex-col">
       <div class="flex h-11 flex-row items-center justify-between">
         <div class="flex h-11 w-1/4 flex-row items-center justify-start">
-          <div
-            data-cy="filesTitle"
-            class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
-            >{{ pageTitle }}
-          </div>
+          <m-left-panel-icon
+            data-cy="filesLeftPanelToggle"
+            class="text-s500 flex-shrink-0 cursor-pointer"
+            (click)="toggleShowLeft()"
+            [isFilled]="showFilesLeftPanel === true"
+          ></m-left-panel-icon>
 
           <div
             class="ml-10 flex flex-1 select-none flex-row items-center justify-between"
@@ -23,8 +24,9 @@
               <button
                 class="flex w-[54px] items-center justify-center text-lg focus:outline-none"
                 [ngClass]="{
-                  'text-m500 font-semibold': panel === panelTree,
-                  'text-s500': panel !== panelTree
+                  'text-m500 font-semibold':
+                    panel === panelTree && showFilesLeftPanel,
+                  'text-s500': panel !== panelTree || !showFilesLeftPanel
                 }"
                 [disabled]="needSave === true"
                 >Code</button
@@ -44,8 +46,10 @@
                 <div
                   class="flex w-[110px] flex-shrink-0 justify-center text-lg"
                   [ngClass]="{
-                    'text-m500 font-semibold': panel === panelChangesToCommit,
-                    'text-s500': panel !== panelChangesToCommit
+                    'text-m500 font-semibold':
+                      panel === panelChangesToCommit && showFilesLeftPanel,
+                    'text-s500':
+                      panel !== panelChangesToCommit || !showFilesLeftPanel
                   }"
                   >To Commit</div
                 >
@@ -53,12 +57,13 @@
                 <div
                   class="text-m0 ml-2 flex h-7 min-w-7 flex-shrink-0 items-center justify-center rounded px-2 py-[1px]"
                   [ngClass]="{
-                    'bg-m500': panel === panelChangesToCommit,
+                    'bg-m500':
+                      panel === panelChangesToCommit && showFilesLeftPanel,
                     'bg-m600':
-                      panel !== panelChangesToCommit &&
+                      (panel !== panelChangesToCommit || !showFilesLeftPanel) &&
                       repo?.changesToCommit?.length > 0,
                     'bg-s400':
-                      panel !== panelChangesToCommit &&
+                      (panel !== panelChangesToCommit || !showFilesLeftPanel) &&
                       !(repo?.changesToCommit?.length > 0)
                   }"
                   >{{ repo?.changesToCommit?.length }}</div
@@ -106,8 +111,10 @@
                 <div
                   class="flex w-[80px] flex-shrink-0 justify-center text-lg"
                   [ngClass]="{
-                    'text-m500 font-semibold': panel === panelChangesToPush,
-                    'text-s500': panel !== panelChangesToPush
+                    'text-m500 font-semibold':
+                      panel === panelChangesToPush && showFilesLeftPanel,
+                    'text-s500':
+                      panel !== panelChangesToPush || !showFilesLeftPanel
                   }"
                   >To Push</div
                 >
@@ -118,12 +125,13 @@
                   <div
                     class="text-m0 flex h-7 min-w-7 flex-shrink-0 items-center rounded px-2 py-[1px]"
                     [ngClass]="{
-                      'bg-m500': panel === panelChangesToPush,
+                      'bg-m500':
+                        panel === panelChangesToPush && showFilesLeftPanel,
                       'bg-m600':
-                        panel !== panelChangesToPush &&
+                        (panel !== panelChangesToPush || !showFilesLeftPanel) &&
                         repo?.changesToPush?.length > 0,
                       'bg-s400':
-                        panel !== panelChangesToPush &&
+                        (panel !== panelChangesToPush || !showFilesLeftPanel) &&
                         !(repo?.changesToPush?.length > 0)
                     }"
                     *ngIf="
@@ -390,10 +398,13 @@
       </div>
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
-        <m-files-tree
-          [panel]="panel"
-          class="flex w-1/4 flex-shrink-0"
-        ></m-files-tree>
+        <div class="flex w-1/4 flex-shrink-0">
+          <m-files-tree
+            *ngIf="showFilesLeftPanel === true"
+            [panel]="panel"
+            class="flex w-full"
+          ></m-files-tree>
+        </div>
 
         <div class="ml-6 flex flex-1 flex-col">
           <div class="bg-m0 flex h-full flex-grow rounded shadow">
@@ -447,6 +458,7 @@
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="panel$ | async"></div>
+<div *ngIf="showFilesLeftPanel$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="user$ | async"></div>

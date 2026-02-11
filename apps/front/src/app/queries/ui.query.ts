@@ -42,6 +42,7 @@ export class UiState {
   needSave: boolean;
   showTileParameters: boolean;
   showDashboardsLeftPanel: boolean;
+  showFilesLeftPanel: boolean;
   showMetricsChart: boolean;
   showMiniCharts: boolean;
   isAutoRun: boolean;
@@ -89,6 +90,7 @@ let uiState: UiState = {
   needSave: false,
   showTileParameters: false,
   showDashboardsLeftPanel: true,
+  showFilesLeftPanel: true,
   showMetricsChart: true,
   showMiniCharts: true,
   isAutoRun: true,
@@ -131,6 +133,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showDashboardsLeftPanel$ = this.store.pipe(
     select(state => state.showDashboardsLeftPanel)
+  );
+
+  showFilesLeftPanel$ = this.store.pipe(
+    select(state => state.showFilesLeftPanel)
   );
 
   showMiniCharts$ = this.store.pipe(select(state => state.showMiniCharts));

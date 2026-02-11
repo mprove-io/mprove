@@ -110,6 +110,14 @@ export class FilesComponent implements OnInit {
   panel = PanelEnum.Tree;
   panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
 
+  showFilesLeftPanel = true;
+  showFilesLeftPanel$ = this.uiQuery.showFilesLeftPanel$.pipe(
+    tap(x => {
+      this.showFilesLeftPanel = x;
+      this.cd.detectChanges();
+    })
+  );
+
   isEditor: boolean;
   isEditor$ = this.memberQuery.isEditor$.pipe(
     tap(x => {
@@ -159,9 +167,22 @@ export class FilesComponent implements OnInit {
     this.lastUrl = ar[ar.length - 1];
   }
 
+  toggleShowLeft() {
+    this.showFilesLeftPanel = !this.showFilesLeftPanel;
+
+    this.uiQuery.updatePart({
+      showFilesLeftPanel: this.showFilesLeftPanel
+    });
+  }
+
   setPanel(x: PanelEnum) {
     if (this.needSave === true) {
       return;
+    }
+
+    if (this.showFilesLeftPanel === false) {
+      this.showFilesLeftPanel = true;
+      this.uiQuery.updatePart({ showFilesLeftPanel: true });
     }
 
     if (x === this.panel) {
