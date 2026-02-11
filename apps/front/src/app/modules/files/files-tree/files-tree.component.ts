@@ -6,8 +6,10 @@ import {
 import {
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnDestroy,
+  Output,
   ViewChild
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -61,6 +63,12 @@ import { NavigateService } from '#front/app/services/navigate.service';
 export class FilesTreeComponent implements OnDestroy {
   @Input()
   panel: PanelEnum;
+
+  @Input()
+  isEditor: boolean;
+
+  @Output()
+  newFileClick = new EventEmitter<void>();
 
   panelTree = PanelEnum.Tree;
   panelChangesToCommit = PanelEnum.ChangesToCommit;

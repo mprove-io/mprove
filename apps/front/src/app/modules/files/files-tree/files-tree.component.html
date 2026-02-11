@@ -4,31 +4,83 @@
 >
   <div class="text-s1 mt-6 flex w-full flex-col text-base">
     <div class="flex flex-1 flex-col">
-      <div class="mb-6 flex h-11 flex-row items-center">
-        <m-search-icon class="text-s1 ml-6"></m-search-icon>
+      <div class="mb-6 flex h-11 flex-row items-center justify-between">
+        <div class="flex flex-row items-center">
+          <m-search-icon class="text-s1 ml-6"></m-search-icon>
 
-        <input
-          spellcheck="false"
-          autocomplete="off"
-          data-cy="dashboardsSearchInput"
-          class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
-          placeholder="Search Files"
-          [ngClass]="{
-            'bg-p200': !!word
-          }"
-          [(ngModel)]="word"
-          (ngModelChange)="searchWordChange()"
-        />
-
-        <div class="h-9 w-9">
-          <m-delete-icon
-            *ngIf="!!word"
-            class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+          <input
+            spellcheck="false"
+            autocomplete="off"
+            data-cy="dashboardsSearchInput"
+            class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
+            placeholder="Search Files"
             [ngClass]="{
-              'bg-p200 hover:bg-p300 cursor-pointer': !!word
+              'bg-p200': !!word
             }"
-            (click)="resetSearch()"
-          ></m-delete-icon>
+            [(ngModel)]="word"
+            (ngModelChange)="searchWordChange()"
+          />
+
+          <div class="h-9 w-9">
+            <m-delete-icon
+              *ngIf="!!word"
+              class="text-s1 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+              [ngClass]="{
+                'bg-p200 hover:bg-p300 cursor-pointer': !!word
+              }"
+              (click)="resetSearch()"
+            ></m-delete-icon>
+          </div>
+        </div>
+
+        <ng-template #templateNewFile>
+          <div *ngIf="isEditor === false"
+            >Files can be edited by project members with FilesEditor role</div
+          >
+
+          <div *ngIf="isEditor === true && nav?.isRepoProd === true"
+            >Switch branch from Production repo to Dev repo to edit files</div
+          >
+
+          <div
+            *ngIf="
+              isEditor === true &&
+              nav?.isRepoProd === false &&
+              needSave === true
+            "
+            >Need to Save changes</div
+          >
+        </ng-template>
+
+        <div
+          [tp]="templateNewFile"
+          [tpIsEnabled]="
+            isEditor === false || nav?.isRepoProd === true || needSave === true
+          "
+          class="mr-6 flex-shrink-0"
+        >
+          <button
+            type="button"
+            data-cy="filesAddFileButton"
+            class="text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
+            [ngClass]="{
+              'bg-m600':
+                isEditor === true ||
+                nav?.isRepoProd === false ||
+                needSave === false,
+              'bg-s400 cursor-default':
+                isEditor === false ||
+                nav?.isRepoProd === true ||
+                needSave === true
+            }"
+            (click)="newFileClick.emit()"
+            [disabled]="
+              isEditor === false ||
+              nav?.isRepoProd === true ||
+              needSave === true
+            "
+            >New File</button
+          >
         </div>
       </div>
 
