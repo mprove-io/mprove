@@ -29,7 +29,7 @@
                   'text-s500': panel !== panelTree || !showFilesLeftPanel
                 }"
                 [disabled]="needSave === true"
-                >Code</button
+                >Files</button
               >
             </div>
 
@@ -44,14 +44,14 @@
                 [disabled]="needSave === true"
               >
                 <div
-                  class="flex w-[110px] flex-shrink-0 justify-center text-lg"
+                  class="flex w-[200px] flex-shrink-0 justify-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
                       panel === panelChangesToCommit && showFilesLeftPanel,
                     'text-s500':
                       panel !== panelChangesToCommit || !showFilesLeftPanel
                   }"
-                  >To Commit</div
+                  >Changes To Commit</div
                 >
 
                 <div
@@ -109,14 +109,14 @@
                 (click)="setPanel(panelChangesToPush)"
               >
                 <div
-                  class="flex w-[80px] flex-shrink-0 justify-center text-lg"
+                  class="flex w-[170px] flex-shrink-0 justify-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
                       panel === panelChangesToPush && showFilesLeftPanel,
                     'text-s500':
                       panel !== panelChangesToPush || !showFilesLeftPanel
                   }"
-                  >To Push</div
+                  >Changes To Push</div
                 >
 
                 <div
