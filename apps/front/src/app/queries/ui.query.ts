@@ -6,6 +6,7 @@ import {
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
 } from '#common/constants/top-front';
+import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { PanelEnum } from '#common/enums/panel.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
@@ -43,6 +44,8 @@ export class UiState {
   showTileParameters: boolean;
   showDashboardsLeftPanel: boolean;
   showFilesLeftPanel: boolean;
+  showFilesRightPanel: boolean;
+  filesRightPanelTab: FilesRightPanelTabEnum;
   showMetricsChart: boolean;
   showMiniCharts: boolean;
   isAutoRun: boolean;
@@ -91,6 +94,8 @@ let uiState: UiState = {
   showTileParameters: false,
   showDashboardsLeftPanel: true,
   showFilesLeftPanel: true,
+  showFilesRightPanel: true,
+  filesRightPanelTab: FilesRightPanelTabEnum.Errors,
   showMetricsChart: true,
   showMiniCharts: true,
   isAutoRun: true,
@@ -137,6 +142,14 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showFilesLeftPanel$ = this.store.pipe(
     select(state => state.showFilesLeftPanel)
+  );
+
+  showFilesRightPanel$ = this.store.pipe(
+    select(state => state.showFilesRightPanel)
+  );
+
+  filesRightPanelTab$ = this.store.pipe(
+    select(state => state.filesRightPanelTab)
   );
 
   showMiniCharts$ = this.store.pipe(select(state => state.showMiniCharts));

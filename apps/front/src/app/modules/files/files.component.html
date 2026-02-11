@@ -342,7 +342,61 @@
           </div>
         </div>
 
-        <div class="flex w-[37%]"></div>
+        <div class="flex w-[37%] flex-row items-center justify-end">
+          <div class="flex flex-row items-center">
+            <button
+              class="flex w-[100px] flex-row items-center justify-center text-lg focus:outline-none"
+              [ngClass]="{
+                'text-m500 font-semibold':
+                  filesRightPanelTab === filesRightPanelTabErrors &&
+                  isRightPanelVisible,
+                'text-s500':
+                  filesRightPanelTab !== filesRightPanelTabErrors ||
+                  !isRightPanelVisible
+              }"
+              (click)="setRightPanelTab(filesRightPanelTabErrors)"
+              >Validation</button
+            >
+
+            <div
+              class="text-m0 ml-3 flex h-7 min-w-7 flex-shrink-0 items-center justify-center rounded px-2 py-[1px]"
+              [ngClass]="{
+                'bg-m500':
+                  filesRightPanelTab === filesRightPanelTabErrors &&
+                  isRightPanelVisible,
+                'bg-m600':
+                  (filesRightPanelTab !== filesRightPanelTabErrors ||
+                    !isRightPanelVisible) &&
+                  struct?.errors?.length > 0,
+                'bg-s400':
+                  (filesRightPanelTab !== filesRightPanelTabErrors ||
+                    !isRightPanelVisible) &&
+                  !(struct?.errors?.length > 0)
+              }"
+              >{{ struct?.errors?.length }}</div
+            >
+
+            <button
+              class="ml-7 flex w-[90px] items-center justify-center text-lg focus:outline-none"
+              [ngClass]="{
+                'text-m500 font-semibold':
+                  filesRightPanelTab === filesRightPanelTabSessions &&
+                  isRightPanelVisible,
+                'text-s500':
+                  filesRightPanelTab !== filesRightPanelTabSessions ||
+                  !isRightPanelVisible
+              }"
+              (click)="setRightPanelTab(filesRightPanelTabSessions)"
+              >Sessions</button
+            >
+          </div>
+
+          <m-right-panel-icon
+            class="text-s500 ml-7 mr-5 flex-shrink-0 cursor-pointer"
+            [isFilled]="showFilesRightPanel === true"
+            (click)="toggleShowRight()"
+          ></m-right-panel-icon>
+        </div>
       </div>
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
@@ -373,10 +427,26 @@
           </div>
         </div>
 
-        <m-files-right
-          *ngIf="panel === panelTree"
+        <div
           class="flex w-[37%]"
-        ></m-files-right>
+          *ngIf="panel === panelTree || lastUrl === pathFiles || !file?.fileId"
+        >
+          <m-files-sessions
+            *ngIf="
+              showFilesRightPanel === true &&
+              filesRightPanelTab === filesRightPanelTabSessions
+            "
+            class="flex w-full"
+          ></m-files-sessions>
+
+          <m-files-right
+            *ngIf="
+              showFilesRightPanel === true &&
+              filesRightPanelTab === filesRightPanelTabErrors
+            "
+            class="flex w-full"
+          ></m-files-right>
+        </div>
 
         <!-- <m-files-right
           *ngIf="panel === panelTree"
@@ -409,6 +479,8 @@
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="panel$ | async"></div>
 <div *ngIf="showFilesLeftPanel$ | async"></div>
+<div *ngIf="showFilesRightPanel$ | async"></div>
+<div *ngIf="filesRightPanelTab$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="user$ | async"></div>

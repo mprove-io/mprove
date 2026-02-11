@@ -14,6 +14,7 @@ import { FilesComponent } from './files.component';
 import { BlockmlErrorsComponent } from './files-right/blockml-errors/blockml-errors.component';
 import { FilesRightComponent } from './files-right/files-right.component';
 import { RepoConflictsComponent } from './files-right/repo-conflicts/repo-conflicts.component';
+import { FilesSessionsComponent } from './files-sessions/files-sessions.component';
 import { FileOptionsComponent } from './files-tree/file-options/file-options.component';
 import { FilesRightPanelToggleComponent } from './files-tree/files-right-panel-toggle/files-right-panel-toggle.component';
 import { FilesTreeComponent } from './files-tree/files-tree.component';
@@ -30,6 +31,7 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     FileEditorComponent,
     RepoOptionsComponent,
     FilesRightComponent,
+    FilesSessionsComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent
   ],

@@ -7,6 +7,7 @@ import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { FILES_PAGE_TITLE } from '#common/constants/page-titles';
 import { PATH_FILES } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
 import { PanelEnum } from '#common/enums/panel.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -118,6 +119,25 @@ export class FilesComponent implements OnInit {
     })
   );
 
+  showFilesRightPanel = true;
+  showFilesRightPanel$ = this.uiQuery.showFilesRightPanel$.pipe(
+    tap(x => {
+      this.showFilesRightPanel = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  filesRightPanelTabSessions = FilesRightPanelTabEnum.Sessions;
+  filesRightPanelTabErrors = FilesRightPanelTabEnum.Errors;
+
+  filesRightPanelTab = FilesRightPanelTabEnum.Errors;
+  filesRightPanelTab$ = this.uiQuery.filesRightPanelTab$.pipe(
+    tap(x => {
+      this.filesRightPanelTab = x;
+      this.cd.detectChanges();
+    })
+  );
+
   isEditor: boolean;
   isEditor$ = this.memberQuery.isEditor$.pipe(
     tap(x => {
@@ -167,12 +187,46 @@ export class FilesComponent implements OnInit {
     this.lastUrl = ar[ar.length - 1];
   }
 
+  get isRightPanelVisible() {
+    return (
+      this.showFilesRightPanel &&
+      (this.panel === PanelEnum.Tree ||
+        this.lastUrl === this.pathFiles ||
+        !this.file?.fileId)
+    );
+  }
+
   toggleShowLeft() {
     this.showFilesLeftPanel = !this.showFilesLeftPanel;
 
     this.uiQuery.updatePart({
       showFilesLeftPanel: this.showFilesLeftPanel
     });
+  }
+
+  toggleShowRight() {
+    this.showFilesRightPanel = !this.showFilesRightPanel;
+
+    this.uiQuery.updatePart({
+      showFilesRightPanel: this.showFilesRightPanel
+    });
+  }
+
+  setRightPanelTab(tab: FilesRightPanelTabEnum) {
+    if (this.showFilesRightPanel === false) {
+      this.showFilesRightPanel = true;
+      this.uiQuery.updatePart({ showFilesRightPanel: true });
+    }
+
+    if (this.panel !== PanelEnum.Tree) {
+      this.navigateService.navigateToFiles();
+    }
+
+    if (tab === this.filesRightPanelTab) {
+      return;
+    }
+
+    this.uiQuery.updatePart({ filesRightPanelTab: tab });
   }
 
   setPanel(x: PanelEnum) {
