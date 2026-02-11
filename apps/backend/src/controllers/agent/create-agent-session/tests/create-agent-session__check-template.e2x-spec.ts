@@ -72,7 +72,7 @@ test('1', async t => {
 
     await sandbox.commands.run(
       `sandbox-agent server --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
-      { background: true }
+      { background: true, timeoutMs: 0 }
     );
 
     // Health check
