@@ -144,7 +144,7 @@ export class CreateAgentSessionController {
         project: project
       });
 
-    console.log('sandboxAgent started');
+    console.log('sandboxAgent server started');
 
     let sessionId = uuidv4();
 
