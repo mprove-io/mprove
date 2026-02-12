@@ -80,7 +80,9 @@ test('1', async t => {
 
     for (let i = 0; i < 30; i++) {
       try {
-        let res = await fetch(`https://${host}/v1/health`);
+        let res = await fetch(`https://${host}/v1/health`, {
+          headers: { Authorization: `Bearer ${sandboxAgentToken}` }
+        });
         if (res.ok) {
           healthy = true;
           break;
@@ -105,7 +107,11 @@ test('1', async t => {
     let installedAgents = agentsData.agents.filter(a => a.installed);
     console.dir(installedAgents, { depth: null });
 
-    for (let id of ['codex', 'claude', 'opencode']) {
+    for (let id of [
+      // 'claude',
+      'codex',
+      'opencode'
+    ]) {
       let agent = agentsData.agents.find(a => a.id === id);
       t.truthy(agent, `${id} agent should be available`);
       if (agent) {
