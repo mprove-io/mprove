@@ -5,12 +5,9 @@ import { type AgentListResponse } from 'sandbox-agent';
 import { BackendConfig } from '#backend/config/backend-config';
 import { prepareTest } from '#backend/functions/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
-import { SandboxService } from '#backend/services/sandbox.service';
 
 test('1', async t => {
   let prep: Prep = await prepareTest({});
-
-  let sandboxService = prep.moduleRef.get<SandboxService>(SandboxService);
 
   let e2bApiKey = prep.cs.get<BackendConfig['demoProjectE2bApiKey']>(
     'demoProjectE2bApiKey'
@@ -22,7 +19,8 @@ test('1', async t => {
     return;
   }
 
-  let templateName = sandboxService.getE2bTemplateName();
+  let templateName =
+    prep.cs.get<BackendConfig['e2bPublicTemplate']>('e2bPublicTemplate');
 
   console.log(`Using template: ${templateName}`);
 

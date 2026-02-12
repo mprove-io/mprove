@@ -1,17 +1,13 @@
-import type {
-  PromptRequest,
-  PromptResponse,
-  SessionNotification
-} from '@agentclientprotocol/sdk';
 import test from 'ava';
-import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
+import { forTestsConnectSse } from '#backend/functions/for-tests-connect-sse';
+import { forTestsExtractDialogLines } from '#backend/functions/for-tests-extract-dialog-lines';
+import { forTestsInspectUi } from '#backend/functions/for-tests-inspect-ui';
+import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests-wait-for-turn-ended';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import type { AgentEvent } from '#backend/services/agent.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { SandboxService } from '#backend/services/sandbox.service';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -50,63 +46,6 @@ let projectId = makeId();
 let projectName = testId;
 
 let prep: Prep;
-
-async function connectSse(item: {
-  httpServer: any;
-  sessionId: string;
-  ticket: string;
-}): Promise<{ events: AgentEvent[]; close: () => void }> {
-  let events: AgentEvent[] = [];
-  let address = item.httpServer.address();
-  let port = typeof address === 'string' ? address : address.port;
-
-  let url = `http://localhost:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`;
-
-  // console.log('connectSse url:', url);
-
-  let es = new EventSource(url);
-
-  // Wait for SSE connection to open (ticket consumed + Redis subscribed)
-  await new Promise<void>((resolve, reject) => {
-    es.onopen = () => resolve();
-    es.onerror = (e: any) =>
-      reject(new Error(`SSE connection error: ${e?.message}`));
-  });
-
-  es.addEventListener('agent-event', (event: MessageEvent) => {
-    // console.log('SSE agent-event received:', e.data?.substring(0, 200));
-    try {
-      events.push(JSON.parse(event.data));
-    } catch (e) {
-      // ignore parse errors
-      console.log('event listener json parse error:');
-      console.log(e);
-    }
-  });
-
-  return {
-    events,
-    close: () => es.close()
-  };
-}
-
-async function waitForTurnEnded(item: {
-  events: AgentEvent[];
-  count: number;
-  maxRetries: number;
-}): Promise<void> {
-  for (let i = 0; i < item.maxRetries; i++) {
-    let ended = item.events.filter(
-      (agentEvent: AgentEvent) =>
-        agentEvent.sender === 'agent' &&
-        (agentEvent.payload as { result?: PromptResponse }).result?.stopReason
-    ).length;
-    if (ended >= item.count) {
-      return;
-    }
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  }
-}
 
 test('1', async t => {
   if (inspectUI) {
@@ -233,7 +172,7 @@ test('1', async t => {
     });
 
     // Connect SSE before sending any messages
-    sse = await connectSse({
+    sse = await forTestsConnectSse({
       httpServer: prep.httpServer,
       sessionId: sessionId,
       ticket: createSessionResp.payload.sseTicket
@@ -261,7 +200,7 @@ test('1', async t => {
       });
 
     // Wait for 1st turn to complete
-    await waitForTurnEnded({
+    await forTestsWaitForTurnEnded({
       events: sse.events,
       count: 1,
       maxRetries: 40
@@ -288,7 +227,7 @@ test('1', async t => {
     });
 
     // Wait for 2nd turn to complete
-    await waitForTurnEnded({
+    await forTestsWaitForTurnEnded({
       events: sse.events,
       count: 2,
       maxRetries: 40
@@ -310,45 +249,13 @@ test('1', async t => {
   }
 
   if (!!inspectUI) {
-    if (testError) {
-      console.log('Test error (non-fatal for inspection):', testError);
-    }
-
-    if (createSessionResp) {
-      console.log('sessionId:', createSessionResp.payload.sessionId);
-    }
-
-    t.pass('Session created for inspection');
-
-    // Periodic health check
-    let sandboxService = prep.app.get(SandboxService);
-    let sessionsService = prep.app.get(SessionsService);
-    let session = await sessionsService.getSessionByIdCheckExists({
-      sessionId
+    await forTestsInspectUi({
+      t,
+      prep,
+      sessionId,
+      testError,
+      createSessionResp
     });
-    let client = sandboxService.getSandboxAgent(sessionId);
-
-    console.log(`\n=== INSPECTOR UI ===`);
-    console.log(
-      `${session.sandboxBaseUrl}/ui/?token=${session.sandboxAgentToken}`
-    );
-    console.log(`===================\n`);
-    console.log('Sandbox kept alive for inspection. Waiting 30 minutes...');
-    console.log('Press Ctrl+C to stop.');
-    console.log('Health checking every 10s...\n');
-
-    for (let i = 0; i < 180; i++) {
-      await new Promise(resolve => setTimeout(resolve, 10_000));
-
-      try {
-        let sessions = await client.listSessions();
-        console.log(
-          `[${(i + 1) * 10}s] sandbox-agent OK, sessions: ${sessions.items.length}`
-        );
-      } catch (err: any) {
-        console.log(`[${(i + 1) * 10}s] sandbox-agent FAILED: ${err?.message}`);
-      }
-    }
   }
 
   if (!inspectUI) {
@@ -394,34 +301,7 @@ test('1', async t => {
     t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
 
     // Extract dialog messages from ACP events
-    let dialogLines: string[] = [];
-
-    for (let e of sse.events) {
-      // User messages: session/prompt requests from client
-      let p = e.payload as { method?: string; params?: unknown };
-
-      // User messages: session/prompt requests from client
-      if (e.sender === 'client' && p.method === 'session/prompt') {
-        let params = p.params as PromptRequest;
-        for (let block of params.prompt) {
-          if (block.type === 'text') {
-            dialogLines.push(`=== User: ${block.text}`);
-          }
-        }
-        continue;
-      }
-
-      // Agent messages: session/update notifications with agent_message_chunk
-      if (p.method === 'session/update') {
-        let notif = p.params as SessionNotification;
-        if (
-          notif.update.sessionUpdate === 'agent_message_chunk' &&
-          notif.update.content.type === 'text'
-        ) {
-          dialogLines.push(`=== Assistant: ${notif.update.content.text}`);
-        }
-      }
-    }
+    let dialogLines = forTestsExtractDialogLines({ events: sse.events });
 
     console.log('\n' + dialogLines.join('\n'));
 
