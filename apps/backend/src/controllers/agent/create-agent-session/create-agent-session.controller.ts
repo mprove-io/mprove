@@ -140,7 +140,6 @@ export class CreateAgentSessionController {
       await this.sandboxService.startSandboxAgentServer({
         sandboxType: sandboxType,
         sandboxTimeoutMs: sandboxTimeoutMs,
-        agent: agent,
         sandboxEnvs: sandboxEnvs,
         project: project
       });

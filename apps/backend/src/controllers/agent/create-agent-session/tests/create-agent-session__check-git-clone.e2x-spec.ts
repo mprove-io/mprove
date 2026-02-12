@@ -67,7 +67,6 @@ test('1', async t => {
     let result = await sandboxService.startSandboxAgentServer({
       sandboxType: SandboxTypeEnum.E2B,
       sandboxTimeoutMs: 5 * 60 * 1000,
-      agent: 'codex',
       project: project
     });
 

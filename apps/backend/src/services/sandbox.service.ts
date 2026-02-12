@@ -75,7 +75,6 @@ export class SandboxService {
     sandboxType: SandboxTypeEnum;
     sandboxTimeoutMs: number;
     sandboxEnvs?: Record<string, string>;
-    agent: string;
     project: ProjectTab;
   }): Promise<CreateSandboxResult> {
     try {
