@@ -69,7 +69,7 @@ test('1', async t => {
     let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
 
     await sandbox.commands.run(
-      `sandbox-agent server --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
+      `sandbox-agent server --no-telemetry --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
       { background: true, timeoutMs: 0 }
     );
 

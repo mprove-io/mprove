@@ -187,7 +187,7 @@ test('1', async t => {
       },
       payload: {
         sessionId: sessionId,
-        message: 'hi, what is current time?'
+        message: 'hello'
       }
     };
 
