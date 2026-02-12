@@ -32,8 +32,8 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
-let inspectUI: boolean = true;
-let suppressAcpSdkNoise: boolean = true;
+let inspectUI: boolean = false;
+let suppressAcpSdkNoise: boolean = false;
 
 let testId = 'backend-create-agent-session__ok-codex';
 
