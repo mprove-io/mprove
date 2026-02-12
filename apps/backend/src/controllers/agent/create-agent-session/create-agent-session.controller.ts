@@ -116,6 +116,7 @@ export class CreateAgentSessionController {
         });
       }
       sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
+      sandboxEnvs.CODEX_API_KEY = project.openaiApiKey;
     } else if (agent === 'claude') {
       if (isUndefined(project.anthropicApiKey)) {
         throw new ServerError({
@@ -132,10 +133,10 @@ export class CreateAgentSessionController {
       sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
     }
 
-    console.log('creating sandbox...');
+    console.log('starting sandboxAgent server...');
 
     let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
-      await this.sandboxService.createSandbox({
+      await this.sandboxService.startSandboxAgentServer({
         sandboxType: sandboxType,
         sandboxTimeoutMs: sandboxTimeoutMs,
         agent: agent,
@@ -143,15 +144,16 @@ export class CreateAgentSessionController {
         project: project
       });
 
-    console.log('sandbox created');
+    console.log('sandboxAgent started');
 
     let sessionId = uuidv4();
 
-    let sandboxAgent: SandboxAgent = await this.sandboxService.connectSaClient({
-      sessionId: sessionId,
-      sandboxBaseUrl: sandboxBaseUrl,
-      sandboxAgentToken: sandboxAgentToken
-    });
+    let sandboxAgent: SandboxAgent =
+      await this.sandboxService.connectSandboxAgent({
+        sessionId: sessionId,
+        sandboxBaseUrl: sandboxBaseUrl,
+        sandboxAgentToken: sandboxAgentToken
+      });
 
     let sdkSession = await sandboxAgent
       .createSession({

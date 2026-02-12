@@ -74,7 +74,7 @@ export class SendAgentMessageController {
         timeoutMs: timeoutMs
       });
 
-      await this.sandboxService.connectSaClient({
+      await this.sandboxService.connectSandboxAgent({
         sessionId: sessionId,
         sandboxBaseUrl: session.sandboxBaseUrl,
         sandboxAgentToken: session.sandboxAgentToken
@@ -109,7 +109,7 @@ export class SendAgentMessageController {
       );
     }
 
-    let sAgent = this.sandboxService.getSaClient(sessionId);
+    let sAgent = this.sandboxService.getSandboxAgent(sessionId);
 
     let sdkSession = await sAgent.getSession(sessionId);
 

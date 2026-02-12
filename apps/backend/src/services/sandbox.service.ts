@@ -20,59 +20,58 @@ export interface CreateSandboxResult {
 
 @Injectable()
 export class SandboxService {
-  private saClients = new Map<string, SandboxAgent>();
+  private sandboxAgents = new Map<string, SandboxAgent>();
 
   constructor(
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
 
-  async connectSaClient(item: {
+  async connectSandboxAgent(item: {
     sessionId: string;
     sandboxBaseUrl: string;
     sandboxAgentToken: string;
   }): Promise<SandboxAgent> {
-    let existing = this.saClients.get(item.sessionId);
-    if (existing) {
-      return existing;
+    let existingSandboxAgent = this.sandboxAgents.get(item.sessionId);
+
+    if (existingSandboxAgent) {
+      return existingSandboxAgent;
     }
 
-    let client = await SandboxAgent.connect({
+    let sandboxAgent = await SandboxAgent.connect({
       baseUrl: item.sandboxBaseUrl,
       token: item.sandboxAgentToken
     });
 
-    this.saClients.set(item.sessionId, client);
-    return client;
+    this.sandboxAgents.set(item.sessionId, sandboxAgent);
+
+    return sandboxAgent;
   }
 
-  getSaClient(sessionId: string): SandboxAgent {
-    let client = this.saClients.get(sessionId);
+  getSandboxAgent(sessionId: string): SandboxAgent {
+    let sandboxAgent = this.sandboxAgents.get(sessionId);
 
-    if (!client) {
+    if (!sandboxAgent) {
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_CLIENT_NOT_FOUND
       });
     }
-    return client;
+    return sandboxAgent;
   }
 
-  async disposeSaClient(sessionId: string): Promise<void> {
-    let client = this.saClients.get(sessionId);
-    if (client) {
-      await client.dispose().catch(() => {
+  async disposeSandboxAgent(sessionId: string): Promise<void> {
+    let sandboxAgent = this.sandboxAgents.get(sessionId);
+
+    if (sandboxAgent) {
+      await sandboxAgent.dispose().catch(() => {
         // do nothing
       });
 
-      this.saClients.delete(sessionId);
+      this.sandboxAgents.delete(sessionId);
     }
   }
 
-  getE2bTemplateName(): string {
-    return this.cs.get<BackendConfig['e2bPublicTemplate']>('e2bPublicTemplate');
-  }
-
-  async createSandbox(item: {
+  async startSandboxAgentServer(item: {
     sandboxType: SandboxTypeEnum;
     sandboxTimeoutMs: number;
     sandboxEnvs?: Record<string, string>;
@@ -84,12 +83,16 @@ export class SandboxService {
 
       switch (item.sandboxType) {
         case SandboxTypeEnum.E2B: {
-          let templateName = this.getE2bTemplateName();
+          let templateName =
+            this.cs.get<BackendConfig['e2bPublicTemplate']>(
+              'e2bPublicTemplate'
+            );
 
           let sandbox = await Sandbox.create(templateName, {
             apiKey: item.project.e2bApiKey,
-            timeoutMs: item.sandboxTimeoutMs,
-            envs: item.sandboxEnvs
+            envs: item.sandboxEnvs,
+            allowInternetAccess: true,
+            timeoutMs: item.sandboxTimeoutMs
           });
 
           if (item.project.remoteType === ProjectRemoteTypeEnum.GitClone) {
@@ -104,18 +107,17 @@ export class SandboxService {
             });
           }
 
-          // Codex app-server reads ~/.codex/auth.json (not env vars).
-          if (item.agent === 'codex' && item.sandboxEnvs?.OPENAI_API_KEY) {
-            await sandbox.commands.run('mkdir -p /home/user/.codex');
-            await sandbox.files.write(
-              '/home/user/.codex/auth.json',
-              JSON.stringify({
-                OPENAI_API_KEY: item.sandboxEnvs.OPENAI_API_KEY,
-                tokens: null,
-                last_refresh: null
-              })
-            );
-          }
+          // if (item.agent === 'codex' && item.sandboxEnvs?.OPENAI_API_KEY) {
+          //   await sandbox.commands.run('mkdir -p /home/user/.codex');
+          //   await sandbox.files.write(
+          //     '/home/user/.codex/auth.json',
+          //     JSON.stringify({
+          //       OPENAI_API_KEY: item.sandboxEnvs.OPENAI_API_KEY,
+          //       tokens: null,
+          //       last_refresh: null
+          //     })
+          //   );
+          // }
 
           let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
 
@@ -170,6 +172,7 @@ export class SandboxService {
             sandboxAgentToken: sandboxAgentToken,
             sandbox: sandbox
           };
+
           break;
         }
         default:
@@ -197,6 +200,7 @@ export class SandboxService {
     cloneDir: string;
   }): Promise<void> {
     let keyDir = '/tmp/ssh-keys';
+
     let privateKeyPath = `${keyDir}/id_rsa`;
     let pubKeyPath = `${keyDir}/id_rsa.pub`;
     let askpassPath = `${keyDir}/ssh-askpass.sh`;
@@ -250,6 +254,7 @@ export class SandboxService {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
         await Sandbox.kill(item.sandboxId, { apiKey: item.e2bApiKey });
+
         break;
       default:
         throw new ServerError({
@@ -266,6 +271,7 @@ export class SandboxService {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
         await Sandbox.betaPause(item.sandboxId, { apiKey: item.e2bApiKey });
+
         break;
       default:
         throw new ServerError({
@@ -283,9 +289,11 @@ export class SandboxService {
     switch (item.sandboxType) {
       case SandboxTypeEnum.E2B:
         await Sandbox.connect(item.sandboxId, { apiKey: item.e2bApiKey });
+
         await Sandbox.setTimeout(item.sandboxId, item.timeoutMs, {
           apiKey: item.e2bApiKey
         });
+
         break;
       default:
         throw new ServerError({

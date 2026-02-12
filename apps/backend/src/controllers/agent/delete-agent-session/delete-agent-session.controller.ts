@@ -47,7 +47,7 @@ export class DeleteAgentSessionController {
 
       this.agentService.stopEventStream(sessionId);
 
-      await this.sandboxService.disposeSaClient(sessionId);
+      await this.sandboxService.disposeSandboxAgent(sessionId);
 
       await this.sandboxService.stopSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,

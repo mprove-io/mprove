@@ -60,7 +60,7 @@ export class PauseAgentSessionSandboxController {
 
       this.agentService.stopEventStream(sessionId);
 
-      await this.sandboxService.disposeSaClient(sessionId);
+      await this.sandboxService.disposeSandboxAgent(sessionId);
 
       await this.sandboxService.pauseSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,

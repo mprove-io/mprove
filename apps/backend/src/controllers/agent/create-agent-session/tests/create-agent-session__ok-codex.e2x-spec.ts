@@ -326,7 +326,7 @@ test('1', async t => {
     let session = await sessionsService.getSessionByIdCheckExists({
       sessionId
     });
-    let client = sandboxService.getSaClient(sessionId);
+    let client = sandboxService.getSandboxAgent(sessionId);
 
     console.log(`\n=== INSPECTOR UI ===`);
     console.log(

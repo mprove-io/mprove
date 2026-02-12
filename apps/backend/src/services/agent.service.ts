@@ -27,6 +27,7 @@ export interface AgentEvent {
 @Injectable()
 export class AgentService implements OnModuleDestroy {
   private redisClient: Redis;
+
   private activeStreams = new Map<string, () => void>();
 
   constructor(
@@ -93,26 +94,31 @@ export class AgentService implements OnModuleDestroy {
   startEventStream(item: { sessionId: string; offset?: number }): void {
     this.stopEventStream(item.sessionId);
 
-    let client = this.sandboxService.getSaClient(item.sessionId);
+    let sandboxAgent = this.sandboxService.getSandboxAgent(item.sessionId);
 
-    let sessionEventHandler = client.onSessionEvent(item.sessionId, event => {
-      this.storeEvent({
-        sessionId: item.sessionId,
-        event: event
-      }).catch(e => {
-        this.logger.warn(
-          `Failed to store event for session ${item.sessionId}: ${e?.message}`
-        );
-      });
-    });
+    let sessionEventHandler = sandboxAgent.onSessionEvent(
+      item.sessionId,
+      event => {
+        this.storeEvent({
+          sessionId: item.sessionId,
+          event: event
+        }).catch(e => {
+          this.logger.warn(
+            `Failed to store event for session ${item.sessionId}: ${e?.message}`
+          );
+        });
+      }
+    );
 
     this.activeStreams.set(item.sessionId, sessionEventHandler);
   }
 
   stopEventStream(sessionId: string): void {
     let sessionEventHandler = this.activeStreams.get(sessionId);
+
     if (sessionEventHandler) {
       sessionEventHandler();
+
       this.activeStreams.delete(sessionId);
     }
   }
@@ -172,7 +178,7 @@ export class AgentService implements OnModuleDestroy {
 
         this.stopEventStream(session.sessionId);
 
-        await this.sandboxService.disposeSaClient(session.sessionId);
+        await this.sandboxService.disposeSandboxAgent(session.sessionId);
 
         await this.sandboxService.pauseSandbox({
           sandboxType: session.sandboxType as SandboxTypeEnum,
