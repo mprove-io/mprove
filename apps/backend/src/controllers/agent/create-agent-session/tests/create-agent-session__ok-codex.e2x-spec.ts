@@ -1,3 +1,8 @@
+import type {
+  PromptRequest,
+  PromptResponse,
+  SessionNotification
+} from '@agentclientprotocol/sdk';
 import test from 'ava';
 import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -27,7 +32,8 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
-let inspectUI: boolean = false;
+let inspectUI: boolean = true;
+let suppressAcpSdkNoise: boolean = true;
 
 let testId = 'backend-create-agent-session__ok-codex';
 
@@ -90,7 +96,11 @@ async function waitForTurnEnded(item: {
   maxRetries: number;
 }): Promise<void> {
   for (let i = 0; i < item.maxRetries; i++) {
-    let ended = item.events.filter(e => e.type === 'turn.ended').length;
+    let ended = item.events.filter(
+      (agentEvent: AgentEvent) =>
+        agentEvent.sender === 'agent' &&
+        (agentEvent.payload as { result?: PromptResponse }).result?.stopReason
+    ).length;
     if (ended >= item.count) {
       return;
     }
@@ -121,6 +131,21 @@ test('1', async t => {
   let createSessionResp: ToBackendCreateAgentSessionResponse;
   let sendFirstMessageResp: ToBackendSendAgentMessageResponse;
   let sendMessageResp: ToBackendSendAgentMessageResponse;
+
+  // Suppress known ACP SDK noise: "Got response to unknown request"
+  let originalConsoleError = console.error;
+
+  if (suppressAcpSdkNoise) {
+    console.error = (...args: unknown[]) => {
+      if (
+        typeof args[0] === 'string' &&
+        args[0].startsWith('Got response to unknown request')
+      ) {
+        return;
+      }
+      originalConsoleError.apply(console, args);
+    };
+  }
 
   try {
     prep = await prepareTestAndSeed({
@@ -278,6 +303,8 @@ test('1', async t => {
     testError = e;
   }
 
+  console.error = originalConsoleError;
+
   if (sse) {
     sse.close();
   }
@@ -316,7 +343,7 @@ test('1', async t => {
       try {
         let sessions = await client.listSessions();
         console.log(
-          `[${(i + 1) * 10}s] sandbox-agent OK, sessions: ${sessions.sessions.length}`
+          `[${(i + 1) * 10}s] sandbox-agent OK, sessions: ${sessions.items.length}`
         );
       } catch (err: any) {
         console.log(`[${(i + 1) * 10}s] sandbox-agent FAILED: ${err?.message}`);
@@ -366,21 +393,35 @@ test('1', async t => {
     t.is(sendFirstMessageResp.info.status, ResponseInfoStatusEnum.Ok);
     t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
 
-    // Extract dialog messages from events
-    let dialogLines = sse.events
-      .filter(
-        (e: any) =>
-          e.type === 'item.completed' &&
-          (e.eventData?.item?.role === 'user' ||
-            e.eventData?.item?.role === 'assistant') &&
-          Array.isArray(e.eventData?.item?.content)
-      )
-      .flatMap((e: any) => {
-        let role = e.eventData.item.role === 'user' ? 'User' : 'Assistant';
-        return e.eventData.item.content
-          .filter((c: any) => c.type === 'text')
-          .map((c: any) => `=== ${role}: ${c.text}`);
-      });
+    // Extract dialog messages from ACP events
+    let dialogLines: string[] = [];
+
+    for (let e of sse.events) {
+      // User messages: session/prompt requests from client
+      let p = e.payload as { method?: string; params?: unknown };
+
+      // User messages: session/prompt requests from client
+      if (e.sender === 'client' && p.method === 'session/prompt') {
+        let params = p.params as PromptRequest;
+        for (let block of params.prompt) {
+          if (block.type === 'text') {
+            dialogLines.push(`=== User: ${block.text}`);
+          }
+        }
+        continue;
+      }
+
+      // Agent messages: session/update notifications with agent_message_chunk
+      if (p.method === 'session/update') {
+        let notif = p.params as SessionNotification;
+        if (
+          notif.update.sessionUpdate === 'agent_message_chunk' &&
+          notif.update.content.type === 'text'
+        ) {
+          dialogLines.push(`=== Assistant: ${notif.update.content.text}`);
+        }
+      }
+    }
 
     console.log('\n' + dialogLines.join('\n'));
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
-import type { CreateSessionResponse } from 'sandbox-agent';
+import type { SessionRecord } from 'sandbox-agent';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -29,7 +29,7 @@ export class SessionsService {
     sandboxId: string;
     sandboxBaseUrl: string;
     sandboxAgentToken: string;
-    sdkCreateSessionResponse: CreateSessionResponse;
+    sessionRecord: SessionRecord;
     status: SessionStatusEnum;
     lastActivityTs: number;
     runningStartTs: number;
@@ -48,7 +48,7 @@ export class SessionsService {
       sandboxId: item.sandboxId,
       sandboxBaseUrl: item.sandboxBaseUrl,
       sandboxAgentToken: item.sandboxAgentToken,
-      sdkCreateSessionResponse: item.sdkCreateSessionResponse,
+      sessionRecord: item.sessionRecord,
       status: item.status,
       lastActivityTs: item.lastActivityTs,
       runningStartTs: item.runningStartTs,

@@ -3,7 +3,7 @@
   "version": "11.0.99-dev",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.29.3",
   "private": true,
   "sideEffects": [
     "apps/front/src/polyfills.ts"
@@ -156,6 +156,7 @@
     "cross-env": "catalog:",
     "dayjs": "catalog:",
     "drizzle-kit": "catalog:",
+    "e2b": "catalog:",
     "esbuild": "catalog:",
     "husky": "catalog:",
     "js-yaml": "catalog:",
@@ -165,7 +166,6 @@
     "prettier": "catalog:",
     "prettier-plugin-tailwindcss": "catalog:",
     "rimraf": "catalog:",
-    "e2b": "catalog:",
     "shx": "catalog:",
     "tsx": "4.21.0",
     "turbo": "catalog:",
@@ -192,6 +192,21 @@
   "pnpm": {
     "overrides": {
       "rxjs": "catalog:"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "@nestjs/core",
+      "@parcel/watcher",
+      "@sandbox-agent/cli-linux-x64",
+      "@swc/core",
+      "bcrypt",
+      "duckdb",
+      "esbuild",
+      "husky",
+      "isolated-vm",
+      "lmdb",
+      "msgpackr-extract",
+      "protobufjs"
+    ]
   }
 }

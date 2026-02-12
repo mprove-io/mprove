@@ -48,9 +48,10 @@ export class SandboxService {
 
   getSaClient(sessionId: string): SandboxAgent {
     let client = this.saClients.get(sessionId);
+
     if (!client) {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED
+        message: ErEnum.BACKEND_AGENT_CLIENT_NOT_FOUND
       });
     }
     return client;
@@ -132,11 +133,9 @@ export class SandboxService {
 
           for (let i = 0; i < 30; i++) {
             try {
-              // let res = await fetch(`https://${host}/v1/health`, {
-              //   headers: { Authorization: `Bearer ${sandboxAgentToken}` }
-              // });
-
-              let res = await fetch(`https://${host}/v1/health`);
+              let res = await fetch(`https://${host}/v1/health`, {
+                headers: { Authorization: `Bearer ${sandboxAgentToken}` }
+              });
 
               if (res.ok) {
                 healthy = true;

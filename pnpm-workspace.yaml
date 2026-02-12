@@ -3,6 +3,7 @@ packages:
   - libs/*
 
 catalog:
+  '@agentclientprotocol/sdk': 0.14.1
   '@acrodata/code-editor': 0.5.1
   '@ali-hm/angular-tree-component': 21.0.3
   '@angular-devkit/build-angular': 21.1.0
@@ -184,7 +185,7 @@ catalog:
   retry: 0.13.1
   rimraf: 6.0.1
   rxjs: 7.8.1
-  sandbox-agent: 0.1.11
+  sandbox-agent: 0.2.0
   serve: 14.2.5
   shiki: 0.10.1
   shx: 0.4.0
@@ -203,7 +204,7 @@ catalog:
   ts-node: 10.9.2
   tsconfig-paths: 3.14.2
   tslib: 2.7.0
-  turbo: 2.8.3
+  turbo: 2.8.7
   typanion: 3.14.0
   typescript: 5.9.2
   uuid: 11.1.0
@@ -211,6 +212,7 @@ catalog:
   vscode-textmate: 9.2.0
   walk: 2.3.15
   winston: 3.14.2
+  zod: 4.3.6
   zone.js: 0.16.0
 
 ignoredBuiltDependencies:

@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import { CreateSessionRequest, SandboxAgent } from 'sandbox-agent';
+import { SandboxAgent, SessionRecord } from 'sandbox-agent';
 import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
@@ -147,49 +147,25 @@ export class CreateAgentSessionController {
 
     let sessionId = uuidv4();
 
-    let sAgent: SandboxAgent = await this.sandboxService.connectSaClient({
+    let sandboxAgent: SandboxAgent = await this.sandboxService.connectSaClient({
       sessionId: sessionId,
       sandboxBaseUrl: sandboxBaseUrl,
       sandboxAgentToken: sandboxAgentToken
     });
 
-    let sessions = await sAgent.listSessions();
-
-    console.log('sessions');
-    console.dir(sessions, { depth: null });
-
-    let agents = await sAgent.listAgents();
-
-    let selectedAgent = agents.agents.find(x => x.id === agent);
-
-    console.log('selectedAgent');
-    console.dir(selectedAgent, { depth: null });
-
-    let agentModes = await sAgent.getAgentModes(agent);
-
-    console.log('agentModes');
-    console.dir(agentModes, { depth: null });
-
-    let agentModels = await sAgent.getAgentModels(agent);
-
-    console.log('agentModels');
-    console.dir(agentModels, { depth: null });
-
-    let sdkCreateSessionRequest: CreateSessionRequest = {
-      agent: agent,
-      model: model,
-      agentMode: agentMode,
-      permissionMode: permissionMode
-    };
-
-    let sdkCreateSessionResponse = await sAgent
-      .createSession(sessionId, sdkCreateSessionRequest)
+    let sdkSession = await sandboxAgent
+      .createSession({
+        id: sessionId,
+        agent: agent
+      })
       .catch(e => {
         throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
+          message: ErEnum.BACKEND_AGENT_CREATE_SESSION_FAILED,
           originalError: e
         });
       });
+
+    let sessionRecord: SessionRecord = sdkSession.toRecord();
 
     let now = Date.now();
 
@@ -205,7 +181,7 @@ export class CreateAgentSessionController {
       sandboxId: sandboxId,
       sandboxBaseUrl: sandboxBaseUrl,
       sandboxAgentToken: sandboxAgentToken,
-      sdkCreateSessionResponse: sdkCreateSessionResponse,
+      sessionRecord: sessionRecord,
       status: SessionStatusEnum.Active,
       lastActivityTs: now,
       runningStartTs: now,
@@ -232,11 +208,11 @@ export class CreateAgentSessionController {
     });
 
     if (firstMessage) {
-      await sAgent
-        .postMessage(session.sessionId, { message: firstMessage })
+      await sdkSession
+        .prompt([{ type: 'text', text: firstMessage }])
         .catch(e => {
           throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
+            message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
             originalError: e
           });
         });

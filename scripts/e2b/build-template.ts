@@ -4,7 +4,7 @@ let version = process.argv[2];
 let variant = process.argv[3];
 if (!version || !variant) {
   console.error(
-    'Usage: pnpm e2b:build <sandbox-agent-version> <variant>\nExample: pnpm e2b:build 0.1.9 v1'
+    'Usage: pnpm e2b:build <sandbox-agent-version> <variant>\nExample: pnpm e2b:build 0.2.0 v4_11-0-99-dev'
   );
   process.exit(1);
 }
@@ -23,7 +23,6 @@ let template = Template()
     `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | SANDBOX_AGENT_VERSION=${version} sh`
   )
   .runCmd('sandbox-agent install-agent codex')
-  .runCmd('sandbox-agent install-agent claude')
   .runCmd('sandbox-agent install-agent opencode')
   .runCmd(
     '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
@@ -38,7 +37,7 @@ let template = Template()
 let result = await Template.build(template, templateName, {
   cpuCount: 2,
   memoryMB: 2048,
-  // skipCache: false,
+  // skipCache: true,
   onBuildLogs: defaultBuildLogger()
 });
 

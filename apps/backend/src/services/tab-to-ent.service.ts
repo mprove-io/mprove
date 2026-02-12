@@ -926,8 +926,8 @@ export class TabToEntService {
     let eventEnt: EventEnt = {
       eventId: tab.eventId,
       sessionId: tab.sessionId,
-      sequence: tab.sequence,
-      type: tab.type,
+      eventIndex: tab.eventIndex,
+      sender: tab.sender,
       ...this.getEntProps({
         dataSt: eventSt,
         dataLt: eventLt,
@@ -947,8 +947,7 @@ export class TabToEntService {
       sandboxId: tab.sandboxId,
       sandboxBaseUrl: tab.sandboxBaseUrl,
       sandboxAgentToken: tab.sandboxAgentToken,
-      sdkCreateSessionResponse: tab.sdkCreateSessionResponse,
-      sessionInfo: tab.sessionInfo
+      sessionRecord: tab.sessionRecord
     };
 
     let sessionLt: SessionLt = {};

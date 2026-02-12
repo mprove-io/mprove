@@ -14,8 +14,8 @@ export const eventsTable = pgTable(
   {
     eventId: varchar('event_id', { length: 255 }).notNull().primaryKey(),
     sessionId: varchar('session_id', { length: 255 }).notNull(),
-    sequence: bigint('sequence', { mode: 'number' }).notNull(),
-    type: varchar('type', { length: 255 }).notNull(),
+    eventIndex: bigint('event_index', { mode: 'number' }).notNull(),
+    sender: varchar('sender', { length: 255 }).notNull(),
     st: json('st').$type<{ encrypted: string; decrypted: EventSt }>().notNull(),
     lt: json('lt').$type<{ encrypted: string; decrypted: EventLt }>().notNull(),
     keyTag: text('key_tag'),

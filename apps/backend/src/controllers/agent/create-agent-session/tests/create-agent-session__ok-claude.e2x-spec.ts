@@ -82,7 +82,7 @@ function connectSse(item: {
 async function waitForEvents(item: {
   events: AgentEvent[];
   minCount: number;
-  afterSequence?: number;
+  afterIndex?: number;
   maxRetries?: number;
   delayMs?: number;
 }): Promise<AgentEvent[]> {
@@ -91,8 +91,8 @@ async function waitForEvents(item: {
 
   for (let i = 0; i < maxRetries; i++) {
     let matching =
-      item.afterSequence !== undefined
-        ? item.events.filter(e => e.sequence > item.afterSequence)
+      item.afterIndex !== undefined
+        ? item.events.filter(e => e.eventIndex > item.afterIndex)
         : item.events;
 
     if (matching.length >= item.minCount) {
@@ -102,8 +102,8 @@ async function waitForEvents(item: {
     await new Promise(resolve => setTimeout(resolve, delayMs));
   }
 
-  return item.afterSequence !== undefined
-    ? item.events.filter(e => e.sequence > item.afterSequence)
+  return item.afterIndex !== undefined
+    ? item.events.filter(e => e.eventIndex > item.afterIndex)
     : item.events;
 }
 
@@ -234,7 +234,7 @@ test('1', async t => {
       minCount: 1
     });
 
-    let lastSequence = firstEvents[firstEvents.length - 1].sequence;
+    let lastIndex = firstEvents[firstEvents.length - 1].eventIndex;
 
     // Send 2nd message
     let sendMessageReq: ToBackendSendAgentMessageRequest = {
@@ -260,7 +260,7 @@ test('1', async t => {
     secondEvents = await waitForEvents({
       events: sse.events,
       minCount: 1,
-      afterSequence: lastSequence
+      afterIndex: lastIndex
     });
   } catch (e) {
     logToConsoleBackend({

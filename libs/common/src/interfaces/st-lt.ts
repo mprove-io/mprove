@@ -1,9 +1,5 @@
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
-import type {
-  CreateSessionResponse,
-  SessionInfo,
-  UniversalEvent
-} from 'sandbox-agent';
+import type { SessionEvent, SessionRecord } from 'sandbox-agent';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
 import { Ev } from './backend/ev';
 import { MproveConfig } from './backend/mprove-config';
@@ -264,7 +260,7 @@ export class UserLt {
 //
 
 export class EventSt {
-  universalEvent: UniversalEvent;
+  universalEvent: SessionEvent;
 }
 export class EventLt {
   emptyData?: number;
@@ -276,8 +272,7 @@ export class SessionSt {
   sandboxId: string;
   sandboxBaseUrl: string;
   sandboxAgentToken: string;
-  sessionInfo?: SessionInfo;
-  sdkCreateSessionResponse: CreateSessionResponse;
+  sessionRecord: SessionRecord;
 }
 export class SessionLt {
   emptyData?: number;

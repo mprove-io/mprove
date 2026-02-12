@@ -104,6 +104,7 @@
     "winston": "catalog:"
   },
   "devDependencies": {
+    "@agentclientprotocol/sdk": "catalog:",
     "dotenv-cli": "catalog:",
     "@nestjs/testing": "catalog:",
     "@swc/cli": "catalog:",

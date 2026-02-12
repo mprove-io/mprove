@@ -1,6 +1,5 @@
 import { Type } from 'class-transformer';
 import { IsString, ValidateNested } from 'class-validator';
-import type { PermissionReply } from 'sandbox-agent';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -12,7 +11,7 @@ export class ToBackendRespondToAgentPermissionRequestPayload {
   permissionId: string;
 
   @IsString()
-  reply: PermissionReply;
+  reply: string;
 }
 
 export class ToBackendRespondToAgentPermissionRequest extends ToBackendRequest {

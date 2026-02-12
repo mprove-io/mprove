@@ -111,9 +111,11 @@ export class SendAgentMessageController {
 
     let sAgent = this.sandboxService.getSaClient(sessionId);
 
-    await sAgent.postMessage(sessionId, { message: message }).catch(e => {
+    let sdkSession = await sAgent.getSession(sessionId);
+
+    await sdkSession.prompt([{ type: 'text', text: message }]).catch(e => {
       throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SEND_MESSAGE_FAILED,
+        message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
         originalError: e
       });
     });

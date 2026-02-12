@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { UniversalEvent } from 'sandbox-agent';
+import type { SessionEvent } from 'sandbox-agent';
 import type { EventTab } from '#backend/drizzle/postgres/schema/_tabs';
 
 @Injectable()
@@ -8,17 +8,17 @@ export class EventsService {
     return `${item.sessionId}_${item.eventId}`;
   }
 
-  makeEvent(item: { sessionId: string; event: UniversalEvent }): EventTab {
+  makeEvent(item: { sessionId: string; event: SessionEvent }): EventTab {
     let now = Date.now();
 
     let eventTab: EventTab = {
       eventId: this.makeEventFullId({
         sessionId: item.sessionId,
-        eventId: item.event.event_id
+        eventId: item.event.id
       }),
       sessionId: item.sessionId,
-      sequence: item.event.sequence,
-      type: item.event.type,
+      eventIndex: item.event.eventIndex,
+      sender: item.event.sender,
       universalEvent: item.event,
       createdTs: now,
       serverTs: undefined,

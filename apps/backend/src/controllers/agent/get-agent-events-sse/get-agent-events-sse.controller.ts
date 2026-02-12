@@ -40,7 +40,7 @@ export class GetAgentEventsSseController {
               map(
                 event =>
                   ({
-                    id: String(event.sequence),
+                    id: event.eventIndex.toString(),
                     type: 'agent-event',
                     data: JSON.stringify(event)
                   }) as MessageEvent

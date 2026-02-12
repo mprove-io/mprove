@@ -3,11 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { and, eq, lt } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
-import type {
-  UniversalEvent,
-  UniversalEventData,
-  UniversalEventType
-} from 'sandbox-agent';
+import type { SessionEvent } from 'sandbox-agent';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -23,15 +19,15 @@ import { TabService } from './tab.service';
 
 export interface AgentEvent {
   eventId: string;
-  sequence: number;
-  type: UniversalEventType;
-  eventData: UniversalEventData;
+  eventIndex: number;
+  sender: SessionEvent['sender'];
+  payload: SessionEvent['payload'];
 }
 
 @Injectable()
 export class AgentService implements OnModuleDestroy {
   private redisClient: Redis;
-  private activeStreams = new Map<string, AbortController>();
+  private activeStreams = new Map<string, () => void>();
 
   constructor(
     private cs: ConfigService<BackendConfig>,
@@ -97,59 +93,33 @@ export class AgentService implements OnModuleDestroy {
   startEventStream(item: { sessionId: string; offset?: number }): void {
     this.stopEventStream(item.sessionId);
 
-    let abortController = new AbortController();
-    this.activeStreams.set(item.sessionId, abortController);
+    let client = this.sandboxService.getSaClient(item.sessionId);
 
-    this.runEventStreamLoop({
-      sessionId: item.sessionId,
-      offset: item.offset ?? 0,
-      signal: abortController.signal
-    }).catch(e => {
-      this.logger.warn(
-        `Event stream ended for session ${item.sessionId}: ${e?.message}`
-      );
+    let sessionEventHandler = client.onSessionEvent(item.sessionId, event => {
+      this.storeEvent({
+        sessionId: item.sessionId,
+        event: event
+      }).catch(e => {
+        this.logger.warn(
+          `Failed to store event for session ${item.sessionId}: ${e?.message}`
+        );
+      });
     });
+
+    this.activeStreams.set(item.sessionId, sessionEventHandler);
   }
 
   stopEventStream(sessionId: string): void {
-    let controller = this.activeStreams.get(sessionId);
-    if (controller) {
-      controller.abort();
+    let sessionEventHandler = this.activeStreams.get(sessionId);
+    if (sessionEventHandler) {
+      sessionEventHandler();
       this.activeStreams.delete(sessionId);
-    }
-  }
-
-  private async runEventStreamLoop(item: {
-    sessionId: string;
-    offset: number;
-    signal: AbortSignal;
-  }): Promise<void> {
-    let client = this.sandboxService.getSaClient(item.sessionId);
-    let currentOffset = item.offset;
-
-    let stream = client.streamEvents(
-      item.sessionId,
-      { offset: currentOffset },
-      item.signal
-    );
-
-    for await (let event of stream) {
-      if (item.signal.aborted) {
-        break;
-      }
-
-      await this.storeEvent({
-        sessionId: item.sessionId,
-        event: event
-      });
-
-      currentOffset = event.sequence;
     }
   }
 
   private async storeEvent(item: {
     sessionId: string;
-    event: UniversalEvent;
+    event: SessionEvent;
   }): Promise<void> {
     let eventTab = this.eventsService.makeEvent({
       sessionId: item.sessionId,
@@ -165,14 +135,11 @@ export class AgentService implements OnModuleDestroy {
       })
     );
 
-    // console.log('item.event.data');
-    // console.dir(item.event.data, { depth: null });
-
     await this.publish(item.sessionId, {
-      eventId: item.event.event_id,
-      sequence: item.event.sequence,
-      type: item.event.type,
-      eventData: item.event.data
+      eventId: item.event.id,
+      eventIndex: item.event.eventIndex,
+      sender: item.event.sender,
+      payload: item.event.payload
     });
   }
 
