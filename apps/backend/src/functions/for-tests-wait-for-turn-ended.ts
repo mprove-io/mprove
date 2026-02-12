@@ -17,4 +17,7 @@ export async function forTestsWaitForTurnEnded(item: {
     }
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
+  throw new Error(
+    `forTestsWaitForTurnEnded: timed out after ${item.maxRetries}s waiting for ${item.count} turn(s) to complete`
+  );
 }

@@ -105,6 +105,7 @@ export class CreateAgentSessionController {
       BackendConfig['sandboxTimeoutMinutes']
     >('sandboxTimeoutMinutes');
 
+    // intentionally * 50 (not * 60) to pause sandbox before provider does
     let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
     let sandboxEnvs: Record<string, string> = {};
