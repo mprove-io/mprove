@@ -1,5 +1,8 @@
 import test from 'ava';
-import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
+import { forTestsConnectSse } from '#backend/functions/for-tests-connect-sse';
+import { forTestsExtractDialogLines } from '#backend/functions/for-tests-extract-dialog-lines';
+import { forTestsInspectUi } from '#backend/functions/for-tests-inspect-ui';
+import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests-wait-for-turn-ended';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
@@ -25,6 +28,9 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
+let inspectUI: boolean = false;
+let suppressAcpSdkNoise: boolean = false;
+
 let testId = 'backend-create-agent-session__ok-mock';
 
 let traceId = testId;
@@ -41,73 +47,11 @@ let projectName = testId;
 
 let prep: Prep;
 
-function connectSse(item: {
-  httpServer: any;
-  sessionId: string;
-  ticket: string;
-}): { events: AgentEvent[]; close: () => void } {
-  let events: AgentEvent[] = [];
-  let address = item.httpServer.address();
-  let port = typeof address === 'string' ? address : address.port;
-
-  let url = `http://localhost:${port}/${SSE_AGENT_EVENTS_PATH}?sessionId=${item.sessionId}&ticket=${item.ticket}`;
-
-  // console.log('connectSse url:', url);
-
-  let es = new EventSource(url);
-
-  // es.onopen = () => {
-  //   console.log('SSE connection opened');
-  // };
-
-  // es.onerror = (e: any) => {
-  //   console.log('SSE error:', e?.type, e?.message, 'readyState:', es.readyState);
-  // };
-
-  es.addEventListener('agent-event', (e: MessageEvent) => {
-    // console.log('SSE agent-event received:', e.data?.substring(0, 200));
-    try {
-      events.push(JSON.parse(e.data));
-    } catch {
-      // ignore parse errors
-    }
-  });
-
-  return {
-    events,
-    close: () => es.close()
-  };
-}
-
-async function waitForEvents(item: {
-  events: AgentEvent[];
-  minCount: number;
-  afterIndex?: number;
-  maxRetries?: number;
-  delayMs?: number;
-}): Promise<AgentEvent[]> {
-  let maxRetries = item.maxRetries ?? 30;
-  let delayMs = item.delayMs ?? 2000;
-
-  for (let i = 0; i < maxRetries; i++) {
-    let matching =
-      item.afterIndex !== undefined
-        ? item.events.filter(e => e.eventIndex > item.afterIndex)
-        : item.events;
-
-    if (matching.length >= item.minCount) {
-      return matching;
-    }
-
-    await new Promise(resolve => setTimeout(resolve, delayMs));
+test('1', async t => {
+  if (inspectUI) {
+    t.timeout(35 * 60 * 1000); // 35 minutes for inspection mode
   }
 
-  return item.afterIndex !== undefined
-    ? item.events.filter(e => e.eventIndex > item.afterIndex)
-    : item.events;
-}
-
-test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
   let zenApiKey = process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY;
   let anthropicApiKey = process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY;
@@ -124,9 +68,23 @@ test('1', async t => {
   let sse: { events: AgentEvent[]; close: () => void } | undefined;
   let testError: unknown;
   let createSessionResp: ToBackendCreateAgentSessionResponse;
+  let sendFirstMessageResp: ToBackendSendAgentMessageResponse;
   let sendMessageResp: ToBackendSendAgentMessageResponse;
-  let firstEvents: AgentEvent[];
-  let secondEvents: AgentEvent[];
+
+  // Suppress known ACP SDK noise: "Got response to unknown request"
+  let originalConsoleError = console.error;
+
+  if (suppressAcpSdkNoise) {
+    console.error = (...args: unknown[]) => {
+      if (
+        typeof args[0] === 'string' &&
+        args[0].startsWith('Got response to unknown request')
+      ) {
+        return;
+      }
+      originalConsoleError.apply(console, args);
+    };
+  }
 
   try {
     prep = await prepareTestAndSeed({
@@ -179,7 +137,9 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
-    // Create agent session with firstMessage
+    // Create agent session without firstMessage to avoid race condition:
+    // SSE must be connected before messages are sent, otherwise events
+    // published to Redis pub/sub before SSE subscription are lost.
     let createSessionReq: ToBackendCreateAgentSessionRequest = {
       info: {
         name: ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession,
@@ -192,8 +152,7 @@ test('1', async t => {
         agent: 'mock',
         model: 'mock',
         agentMode: 'plan',
-        permissionMode: 'default',
-        firstMessage: 'hello'
+        permissionMode: 'default'
       }
     };
 
@@ -212,20 +171,40 @@ test('1', async t => {
       prep.httpServer.listen(0, () => resolve());
     });
 
-    // Connect SSE
-    sse = connectSse({
+    // Connect SSE before sending any messages
+    sse = await forTestsConnectSse({
       httpServer: prep.httpServer,
       sessionId: sessionId,
       ticket: createSessionResp.payload.sseTicket
     });
 
-    // Wait for events from firstMessage
-    firstEvents = await waitForEvents({
-      events: sse.events,
-      minCount: 1
-    });
+    // Send 1st message (after SSE is connected)
+    let sendFirstMessageReq: ToBackendSendAgentMessageRequest = {
+      info: {
+        name: ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage,
+        traceId: traceId,
+        idempotencyKey: makeId()
+      },
+      payload: {
+        sessionId: sessionId,
+        message: 'hello'
+      }
+    };
 
-    let lastIndex = firstEvents[firstEvents.length - 1].eventIndex;
+    sendFirstMessageResp =
+      await sendToBackend<ToBackendSendAgentMessageResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: sendFirstMessageReq,
+        checkIsOk: true
+      });
+
+    // Wait for 1st turn to complete
+    await forTestsWaitForTurnEnded({
+      events: sse.events,
+      count: 1,
+      maxRetries: 40
+    });
 
     // Send 2nd message
     let sendMessageReq: ToBackendSendAgentMessageRequest = {
@@ -247,11 +226,11 @@ test('1', async t => {
       checkIsOk: true
     });
 
-    // Wait for events from 2nd message
-    secondEvents = await waitForEvents({
+    // Wait for 2nd turn to complete
+    await forTestsWaitForTurnEnded({
       events: sse.events,
-      minCount: 1,
-      afterIndex: lastIndex
+      count: 2,
+      maxRetries: 40
     });
   } catch (e) {
     logToConsoleBackend({
@@ -261,13 +240,26 @@ test('1', async t => {
       cs: prep.cs
     });
     testError = e;
-  } finally {
-    // Close SSE connection
-    if (sse) {
-      sse.close();
-    }
+  }
 
-    // Cleanup: delete session
+  console.error = originalConsoleError;
+
+  if (sse) {
+    sse.close();
+  }
+
+  if (!!inspectUI) {
+    await forTestsInspectUi({
+      t,
+      prep,
+      sessionId,
+      testError,
+      createSessionResp
+    });
+  }
+
+  if (!inspectUI) {
+    // Cleanup
     if (sessionId && prep) {
       try {
         let deleteSessionReq: ToBackendDeleteAgentSessionRequest = {
@@ -300,13 +292,27 @@ test('1', async t => {
     if (prep) {
       await prep.app.close();
     }
-  }
 
-  t.is(testError, undefined);
-  t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
-  t.truthy(createSessionResp.payload.sessionId);
-  t.truthy(createSessionResp.payload.sseTicket);
-  t.true(firstEvents.length > 0, 'Expected events from firstMessage');
-  t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
-  t.true(secondEvents.length > 0, 'Expected events from 2nd message');
+    t.is(testError, undefined);
+    t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
+    t.truthy(createSessionResp.payload.sessionId);
+    t.truthy(createSessionResp.payload.sseTicket);
+    t.is(sendFirstMessageResp.info.status, ResponseInfoStatusEnum.Ok);
+    t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
+
+    // Extract dialog messages from ACP events
+    let dialogLines = forTestsExtractDialogLines({ events: sse.events });
+
+    console.log('\n' + dialogLines.join('\n'));
+
+    t.true(
+      dialogLines.some(l => l.startsWith('=== Assistant:')),
+      'Expected assistant text answer in dialog'
+    );
+
+    t.true(
+      dialogLines.some(l => l.startsWith('=== User:')),
+      'Expected user text message in dialog'
+    );
+  }
 });
