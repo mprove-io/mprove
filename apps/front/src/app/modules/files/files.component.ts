@@ -130,7 +130,7 @@ export class FilesComponent implements OnInit {
   filesRightPanelTabSessions = FilesRightPanelTabEnum.Sessions;
   filesRightPanelTabErrors = FilesRightPanelTabEnum.Errors;
 
-  filesRightPanelTab = FilesRightPanelTabEnum.Errors;
+  filesRightPanelTab = FilesRightPanelTabEnum.Sessions;
   filesRightPanelTab$ = this.uiQuery.filesRightPanelTab$.pipe(
     tap(x => {
       this.filesRightPanelTab = x;

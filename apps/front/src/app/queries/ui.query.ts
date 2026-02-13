@@ -95,7 +95,7 @@ let uiState: UiState = {
   showDashboardsLeftPanel: true,
   showFilesLeftPanel: true,
   showFilesRightPanel: true,
-  filesRightPanelTab: FilesRightPanelTabEnum.Errors,
+  filesRightPanelTab: FilesRightPanelTabEnum.Sessions,
   showMetricsChart: true,
   showMiniCharts: true,
   isAutoRun: true,

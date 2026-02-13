@@ -146,12 +146,9 @@
           </div>
         </div>
 
-        <div
-          class="flex flex-1 flex-row items-center justify-end"
-          *ngIf="!!repo"
-        >
+        <div class="flex flex-1 flex-row items-center" *ngIf="!!repo">
           <button
-            class="mr-5 flex select-none items-center justify-center text-lg focus:outline-none"
+            class="ml-12 mr-5 flex w-[80px] select-none items-center justify-center text-lg focus:outline-none"
             [ngClass]="{
               'text-m500 font-semibold': lastUrl === pathFiles || !file?.fileId,
               'text-s500': lastUrl !== pathFiles && !!file?.fileId
@@ -201,6 +198,8 @@
               >No changes to commit</div
             >
           </ng-template>
+
+          <div class="flex flex-1"></div>
 
           <div
             *ngIf="isEditor === true"
@@ -385,7 +384,7 @@
                 'bg-m500':
                   filesRightPanelTab === filesRightPanelTabErrors &&
                   isRightPanelVisible,
-                'bg-m600':
+                'bg-r1':
                   (filesRightPanelTab !== filesRightPanelTabErrors ||
                     !isRightPanelVisible) &&
                   struct?.errors?.length > 0,
