@@ -46,6 +46,14 @@ export class UsersService {
       lastName: user.lastName,
       isEmailVerified: user.isEmailVerified,
       ui: {
+        showFilesLeftPanel: isDefined(user.ui?.showFilesLeftPanel)
+          ? user.ui?.showFilesLeftPanel
+          : defaultSrvUi.showFilesLeftPanel,
+        //
+        showFilesRightPanel: isDefined(user.ui?.showFilesRightPanel)
+          ? user.ui?.showFilesRightPanel
+          : defaultSrvUi.showFilesRightPanel,
+        //
         timezone: user.ui?.timezone || defaultSrvUi.timezone,
         timeSpec: user.ui?.timeSpec || defaultSrvUi.timeSpec,
         timeRangeFraction:

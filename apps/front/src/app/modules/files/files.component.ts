@@ -203,6 +203,9 @@ export class FilesComponent implements OnInit {
     this.uiQuery.updatePart({
       showFilesLeftPanel: this.showFilesLeftPanel
     });
+    this.uiService.setUserUi({
+      showFilesLeftPanel: this.showFilesLeftPanel
+    });
   }
 
   toggleShowRight() {
@@ -211,12 +214,16 @@ export class FilesComponent implements OnInit {
     this.uiQuery.updatePart({
       showFilesRightPanel: this.showFilesRightPanel
     });
+    this.uiService.setUserUi({
+      showFilesRightPanel: this.showFilesRightPanel
+    });
   }
 
   setRightPanelTab(tab: FilesRightPanelTabEnum) {
     if (this.showFilesRightPanel === false) {
       this.showFilesRightPanel = true;
       this.uiQuery.updatePart({ showFilesRightPanel: true });
+      this.uiService.setUserUi({ showFilesRightPanel: true });
     }
 
     if (this.panel !== PanelEnum.Tree) {

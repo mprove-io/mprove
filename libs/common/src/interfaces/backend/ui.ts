@@ -11,6 +11,10 @@ import { ProjectModelLink } from './project-model-link';
 import { ProjectReportLink } from './project-report-link';
 
 export class Ui {
+  showFilesLeftPanel: boolean;
+
+  showFilesRightPanel: boolean;
+
   @IsEnum(ModelTreeLevelsEnum)
   modelTreeLevels: ModelTreeLevelsEnum;
 

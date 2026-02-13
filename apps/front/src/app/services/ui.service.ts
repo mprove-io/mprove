@@ -30,6 +30,8 @@ export class UiService {
   ) {}
 
   async setUserUi(item: {
+    showFilesLeftPanel?: boolean;
+    showFilesRightPanel?: boolean;
     timezone?: string;
     modelTreeLevels?: ModelTreeLevelsEnum;
     projectFileLinks?: ProjectFileLink[];
@@ -39,6 +41,8 @@ export class UiService {
     projectReportLinks?: ProjectReportLink[];
   }) {
     let {
+      showFilesLeftPanel,
+      showFilesRightPanel,
       timezone,
       modelTreeLevels,
       projectFileLinks,
@@ -51,6 +55,12 @@ export class UiService {
     let uiState = this.uiQuery.getValue();
 
     let ui: Ui = {
+      showFilesLeftPanel: isDefined(showFilesLeftPanel)
+        ? showFilesLeftPanel
+        : uiState.showFilesLeftPanel,
+      showFilesRightPanel: isDefined(showFilesRightPanel)
+        ? showFilesRightPanel
+        : uiState.showFilesRightPanel,
       modelTreeLevels: isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,
