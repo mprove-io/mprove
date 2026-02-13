@@ -10,7 +10,7 @@
             [isFilled]="showFilesLeftPanel === true"
           ></m-left-panel-icon>
 
-          <div class="ml-5 flex select-none flex-row items-center">
+          <div class="ml-7 flex select-none flex-row items-center">
             <div
               class="flex cursor-pointer flex-row items-center"
               tp="Need to Save changes"
@@ -42,18 +42,18 @@
                 [disabled]="needSave === true"
               >
                 <div
-                  class="flex w-[200px] flex-shrink-0 justify-center text-lg"
+                  class="flex flex-shrink-0 text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
                       panel === panelChangesToCommit && showFilesLeftPanel,
                     'text-s500':
                       panel !== panelChangesToCommit || !showFilesLeftPanel
                   }"
-                  >Changes to Commit</div
+                  >To Commit</div
                 >
 
                 <div
-                  class="text-m0 ml-2 flex h-7 min-w-7 flex-shrink-0 items-center justify-center rounded px-2 py-[1px]"
+                  class="text-m0 ml-3 flex h-7 min-w-7 flex-shrink-0 items-center justify-center rounded px-2 py-[1px]"
                   [ngClass]="{
                     'bg-m500':
                       panel === panelChangesToCommit && showFilesLeftPanel,
@@ -107,18 +107,18 @@
                 (click)="setPanel(panelChangesToPush)"
               >
                 <div
-                  class="flex w-[170px] flex-shrink-0 justify-center text-lg"
+                  class="flex flex-shrink-0 text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
                       panel === panelChangesToPush && showFilesLeftPanel,
                     'text-s500':
                       panel !== panelChangesToPush || !showFilesLeftPanel
                   }"
-                  >Changes to Push</div
+                  >To Push</div
                 >
 
                 <div
-                  class="ml-2 flex h-7 min-w-7 flex-shrink-0 items-center rounded"
+                  class="ml-3 flex h-7 min-w-7 flex-shrink-0 items-center rounded"
                 >
                   <div
                     class="text-m0 flex h-7 min-w-7 flex-shrink-0 items-center rounded px-2 py-[1px]"
