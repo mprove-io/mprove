@@ -483,3 +483,8 @@ li.pagination-next.disabled.ng-star-inserted {
 ng-select .ng-select-container .ng-value-container .ng-placeholder {
   padding-left: 4px;
 }
+
+// shift app loader spinner lower
+.ngx-spinner-overlay > div:not(.loading-text) {
+  top: 57% !important;
+}
