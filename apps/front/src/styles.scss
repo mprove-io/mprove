@@ -32,6 +32,31 @@ body {
   background-color: rgba(0, 0, 0, 0.15);
 }
 
+// thin scroll for chat textarea
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: rgb(0 0 0 / 15%);
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(0 0 0 / 15%) transparent;
+}
+
 // codemirror scroll for WebKit browsers (Chrome, Safari)
 .cm-scroller::-webkit-scrollbar {
   width: 0;

@@ -430,11 +430,18 @@
               <router-outlet></router-outlet>
             </div>
 
-            <div
+            <!-- <div
               class="flex h-full w-full select-none items-center justify-center text-xl"
               *ngIf="lastUrl === pathFiles || !file?.fileId"
               >Select File</div
+            > -->
+
+            <div
+              class="h-full w-full"
+              *ngIf="lastUrl === pathFiles || !file?.fileId"
             >
+              <m-sessions-chat-input></m-sessions-chat-input>
+            </div>
           </div>
         </div>
 

@@ -65,6 +65,7 @@ import { ArrowDropDownIconComponent } from './icons/arrow-drop-down-icon/arrow-d
 import { ArrowLeftIconComponent } from './icons/arrow-left-icon/arrow-left-icon.component';
 import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/arrow-narrow-right-icon.component';
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
+import { ArrowUpIconComponent } from './icons/arrow-up-icon/arrow-up-icon.component';
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
 import { BottomPanelIconComponent } from './icons/bottom-panel-icon/bottom-panel-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
@@ -180,6 +181,7 @@ let sharedComponents = [
   ArrowNarrowRightIconComponent,
   ArrowLeftIconComponent,
   ArrowRightIconComponent,
+  ArrowUpIconComponent,
   DescIconComponent,
   AscIconComponent,
   CurrencyDollarIconComponent,
