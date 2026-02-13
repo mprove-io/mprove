@@ -67,6 +67,7 @@ import { ArrowNarrowRightIconComponent } from './icons/arrow-narrow-right-icon/a
 import { ArrowRightIconComponent } from './icons/arrow-right-icon/arrow-right-icon.component';
 import { ArrowUpIconComponent } from './icons/arrow-up-icon/arrow-up-icon.component';
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
+import { BothPanelsIconComponent } from './icons/both-panels-icon/both-panels-icon.component';
 import { BottomPanelIconComponent } from './icons/bottom-panel-icon/bottom-panel-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
@@ -250,6 +251,7 @@ let sharedComponents = [
   ChartSingleIconComponent,
   LeftPanelIconComponent,
   RightPanelIconComponent,
+  BothPanelsIconComponent,
   UnfoldMoreIconComponent,
   UnfoldLessIconComponent,
   BottomPanelIconComponent,

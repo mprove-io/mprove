@@ -219,6 +219,22 @@ export class FilesComponent implements OnInit {
     });
   }
 
+  toggleBothPanels() {
+    let show = !(this.showFilesLeftPanel && this.showFilesRightPanel);
+
+    this.showFilesLeftPanel = show;
+    this.showFilesRightPanel = show;
+
+    this.uiQuery.updatePart({
+      showFilesLeftPanel: show,
+      showFilesRightPanel: show
+    });
+    this.uiService.setUserUi({
+      showFilesLeftPanel: show,
+      showFilesRightPanel: show
+    });
+  }
+
   setRightPanelTab(tab: FilesRightPanelTabEnum) {
     if (this.showFilesRightPanel === false) {
       this.showFilesRightPanel = true;
