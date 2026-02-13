@@ -26,6 +26,7 @@ import { FileQuery } from '#front/app/queries/file.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export class BmlErrorExtra extends BmlError {
   errorExt: any;
@@ -202,7 +203,8 @@ export class BlockmlErrorsComponent implements OnDestroy {
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private uiService: UiService
   ) {}
 
   treeOnInitialized() {
@@ -282,6 +284,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
       let fileId = encodeFilePath({ filePath: filePath });
 
+      this.uiService.ensureFilesLeftPanel();
       this.navigateService.navigateToFileLine({
         panel: PanelEnum.Tree,
         encodedFileId: fileId,

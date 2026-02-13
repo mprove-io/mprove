@@ -17,6 +17,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
 import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';
@@ -31,7 +32,8 @@ export class FileResolver implements Resolve<Observable<boolean>> {
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
     private repoQuery: RepoQuery,
-    private router: Router
+    private router: Router,
+    private uiService: UiService
   ) {}
 
   resolve(
@@ -84,6 +86,7 @@ export class FileResolver implements Resolve<Observable<boolean>> {
         let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
 
         if (isDefined(pFileId)) {
+          this.uiService.ensureFilesLeftPanel();
           this.navigateService.navigateToFileLine({
             panel: PanelEnum.Tree,
             encodedFileId: pFileId

@@ -36,6 +36,7 @@ import { ApiService } from '#front/app/services/api.service';
 import { DashboardService } from '#front/app/services/dashboard.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 import { DashboardTileChartComponent } from '../../shared/dashboard-tile-chart/dashboard-tile-chart.component';
 
 class LayoutItem {
@@ -178,7 +179,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private apiService: ApiService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private uiService: UiService
   ) {}
 
   ngOnInit() {
@@ -230,6 +232,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let filePath = fileIdAr.join('/');
 
+    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       panel: PanelEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })

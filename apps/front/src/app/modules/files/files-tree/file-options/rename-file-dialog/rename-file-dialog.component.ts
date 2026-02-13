@@ -36,6 +36,7 @@ import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface RenameFileDialogData {
@@ -74,7 +75,8 @@ export class RenameFileDialogComponent implements OnInit {
     private navigateService: NavigateService,
     private structQuery: StructQuery,
     private spinner: NgxSpinnerService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private uiService: UiService
   ) {}
 
   ngOnInit() {
@@ -179,6 +181,7 @@ export class RenameFileDialogComponent implements OnInit {
 
               let fileId = encodeFilePath({ filePath: filePath });
 
+              this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
                 panel: PanelEnum.Tree,
                 encodedFileId: fileId

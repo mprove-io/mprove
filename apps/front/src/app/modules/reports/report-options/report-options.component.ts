@@ -8,6 +8,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -23,6 +24,7 @@ export class ReportOptionsComponent {
 
   constructor(
     private navigateService: NavigateService,
+    private uiService: UiService,
     private apiService: ApiService,
     private reportQuery: ReportQuery,
     private navQuery: NavQuery,
@@ -44,6 +46,7 @@ export class ReportOptionsComponent {
 
     let filePath = fileIdAr.join('/');
 
+    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       panel: PanelEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),

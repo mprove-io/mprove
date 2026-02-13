@@ -103,6 +103,13 @@ export class UiService {
       .subscribe();
   }
 
+  ensureFilesLeftPanel() {
+    if (!this.uiQuery.getValue().showFilesLeftPanel) {
+      this.uiQuery.updatePart({ showFilesLeftPanel: true });
+      this.setUserUi({ showFilesLeftPanel: true });
+    }
+  }
+
   setProjectFileLink() {
     let fileId = this.fileQuery.getValue().fileId;
 

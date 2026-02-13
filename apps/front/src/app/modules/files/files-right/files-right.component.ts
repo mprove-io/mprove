@@ -558,6 +558,7 @@ export class FilesRightComponent implements OnInit, OnDestroy {
 
     let filePath = fileIdAr.join('/');
 
+    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       panel: PanelEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })

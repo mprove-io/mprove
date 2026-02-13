@@ -7,6 +7,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -24,6 +25,7 @@ export class ChartOptionsComponent {
     private myDialogService: MyDialogService,
     private apiService: ApiService,
     private navigateService: NavigateService,
+    private uiService: UiService,
     private navQuery: NavQuery,
     private uiQuery: UiQuery
   ) {}
@@ -42,6 +44,7 @@ export class ChartOptionsComponent {
 
     this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
+    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       panel: PanelEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })

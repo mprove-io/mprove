@@ -286,6 +286,7 @@ export class FilesComponent implements OnInit {
         let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
 
         if (isDefined(pFileId)) {
+          this.uiService.ensureFilesLeftPanel();
           this.navigateService.navigateToFileLine({
             panel: PanelEnum.Tree,
             encodedFileId: pFileId

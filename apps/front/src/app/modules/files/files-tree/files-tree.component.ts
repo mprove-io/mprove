@@ -53,6 +53,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -187,7 +188,8 @@ export class FilesTreeComponent implements OnDestroy {
     private router: Router,
     private fileQuery: FileQuery,
     private apiService: ApiService,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private uiService: UiService
   ) {}
 
   treeOnInitialized() {
@@ -280,6 +282,7 @@ export class FilesTreeComponent implements OnDestroy {
   }
 
   fileItemOnClick(fileId: string) {
+    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       panel: PanelEnum.Tree,
       encodedFileId: fileId
@@ -293,6 +296,7 @@ export class FilesTreeComponent implements OnDestroy {
         node.toggleExpanded();
       }
     } else {
+      this.uiService.ensureFilesLeftPanel();
       this.navigateService.navigateToFileLine({
         panel: PanelEnum.Tree,
         encodedFileId: node.data.fileId
@@ -369,6 +373,7 @@ export class FilesTreeComponent implements OnDestroy {
             });
 
             if (isDefined(newFileId)) {
+              this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
                 panel: PanelEnum.Tree,
                 encodedFileId: newFileId
