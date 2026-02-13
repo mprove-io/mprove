@@ -62,7 +62,10 @@ export class FileResolver implements Resolve<Observable<boolean>> {
     });
 
     let panel: PanelEnum = route.queryParams?.panel;
-    this.uiQuery.updatePart({ panel: panel || PanelEnum.Tree });
+
+    if (isDefined(panel)) {
+      this.uiQuery.updatePart({ panel: panel });
+    }
 
     let parametersFileId: string = route.params[PARAMETER_FILE_ID];
 

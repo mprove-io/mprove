@@ -12,7 +12,6 @@ import {
   PATH_MODELS,
   PATH_REPORTS
 } from '#common/constants/top';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { Member } from '#common/interfaces/backend/member';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
@@ -110,10 +109,8 @@ export class NavbarComponent implements OnInit {
     if (this.isFilesRouteActive === true) {
       return;
     }
-    this.uiQuery.updatePart({ panel: PanelEnum.Tree });
 
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
       encodedFileId: LAST_SELECTED_FILE_ID
     });
   }

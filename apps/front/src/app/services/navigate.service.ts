@@ -95,7 +95,7 @@ export class NavigateService {
   }
 
   async navigateToFileLine(item: {
-    panel: PanelEnum;
+    panel?: PanelEnum;
     encodedFileId: string;
     lineNumber?: number;
   }) {
@@ -119,16 +119,18 @@ export class NavigateService {
       encodedFileId
     ];
 
-    let navResult = this.router.navigate(ar, {
-      queryParams: {
-        panel: panel
-      }
-    });
+    let queryParams: { panel?: PanelEnum; line?: number } = {};
+
+    if (isDefined(panel)) {
+      queryParams.panel = panel;
+    }
+
+    let navResult = this.router.navigate(ar, { queryParams });
 
     setTimeout(() => {
       this.router.navigate(ar, {
         queryParams: {
-          panel: panel,
+          ...queryParams,
           line: lineNumber
         }
       });
