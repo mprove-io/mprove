@@ -150,6 +150,16 @@
           class="flex flex-1 flex-row items-center justify-end"
           *ngIf="!!repo"
         >
+          <button
+            class="mr-5 flex select-none items-center justify-center text-lg focus:outline-none"
+            [ngClass]="{
+              'text-m500 font-semibold': lastUrl === pathFiles || !file?.fileId,
+              'text-s500': lastUrl !== pathFiles && !!file?.fileId
+            }"
+            (click)="showSession()"
+            >Session</button
+          >
+
           <div
             tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
             *ngIf="nav?.isRepoProd === true"

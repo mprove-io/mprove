@@ -278,6 +278,19 @@ export class FilesComponent implements OnInit {
     this.uiQuery.updatePart({ panel: x });
   }
 
+  showSession() {
+    let links = this.uiQuery.getValue().projectFileLinks;
+    let newLinks = links.map(l =>
+      l.projectId === this.nav.projectId
+        ? { ...l, fileId: undefined, navTs: Date.now() }
+        : l
+    );
+    this.uiQuery.updatePart({ projectFileLinks: newLinks });
+    this.uiService.setUserUi({ projectFileLinks: newLinks });
+
+    this.navigateService.navigateToFiles();
+  }
+
   newFile() {
     this.myDialogService.showNewFile({
       apiService: this.apiService,
