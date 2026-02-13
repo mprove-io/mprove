@@ -113,12 +113,16 @@ export class SendAgentMessageController {
 
     let sdkSession = await sAgent.getSession(sessionId);
 
-    await sdkSession.prompt([{ type: 'text', text: message }]).catch(e => {
-      throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
-        originalError: e
+    let promptResponse = await sdkSession
+      .prompt([{ type: 'text', text: message }])
+      .catch(e => {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+          originalError: e
+        });
       });
-    });
+
+    console.log('prompt response:', JSON.stringify(promptResponse, null, 2));
 
     let finalSession: SessionTab = {
       ...session,

@@ -116,7 +116,7 @@ export class CreateAgentSessionController {
           message: ErEnum.BACKEND_AGENT_OPENAI_API_KEY_REQUIRED_FOR_CODEX
         });
       }
-      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
+      // sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
       sandboxEnvs.CODEX_API_KEY = project.openaiApiKey;
     } else if (agent === 'claude') {
       if (isUndefined(project.anthropicApiKey)) {
@@ -126,12 +126,12 @@ export class CreateAgentSessionController {
       }
       sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
     } else if (agent === 'opencode') {
-      if (isUndefined(project.openaiApiKey)) {
+      if (isUndefined(project.zenApiKey)) {
         throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_OPENAI_API_KEY_REQUIRED_FOR_OPENCODE
+          message: ErEnum.BACKEND_AGENT_ZEN_API_KEY_REQUIRED_FOR_OPENCODE
         });
       }
-      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
+      sandboxEnvs.OPENCODE_API_KEY = project.zenApiKey;
     }
 
     console.log('starting sandboxAgent server...');
@@ -141,6 +141,7 @@ export class CreateAgentSessionController {
         sandboxType: sandboxType,
         sandboxTimeoutMs: sandboxTimeoutMs,
         sandboxEnvs: sandboxEnvs,
+        agent: agent,
         project: project
       });
 
@@ -155,6 +156,14 @@ export class CreateAgentSessionController {
         sandboxAgentToken: sandboxAgentToken
       });
 
+    // let agentInfo = await sandboxAgent.getAgent(agent);
+
+    // if (!agentInfo.credentialsAvailable) {
+    //   throw new ServerError({
+    //     message: ErEnum.BACKEND_AGENT_CREDENTIALS_NOT_AVAILABLE
+    //   });
+    // }
+
     let sdkSession = await sandboxAgent
       .createSession({
         id: sessionId,
@@ -166,6 +175,20 @@ export class CreateAgentSessionController {
           originalError: e
         });
       });
+
+    // if (model) {
+    //   let { response: setModelResponse } =
+    //     await sandboxAgent.sendSessionMethod(
+    //       sessionId,
+    //       'session/set_model',
+    //       { sessionId: sessionId, modelId: model }
+    //     );
+
+    //   console.log(
+    //     'set_model response:',
+    //     JSON.stringify(setModelResponse, null, 2)
+    //   );
+    // }
 
     let sessionRecord: SessionRecord = sdkSession.toRecord();
 
@@ -210,7 +233,7 @@ export class CreateAgentSessionController {
     });
 
     if (firstMessage) {
-      await sdkSession
+      let promptResponse = await sdkSession
         .prompt([{ type: 'text', text: firstMessage }])
         .catch(e => {
           throw new ServerError({
@@ -218,6 +241,11 @@ export class CreateAgentSessionController {
             originalError: e
           });
         });
+
+      // console.log(
+      //   'firstMessage prompt response:',
+      //   JSON.stringify(promptResponse, null, 2)
+      // );
     }
 
     let sseTicket = makeId();

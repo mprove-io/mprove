@@ -57,9 +57,9 @@ test('1', async t => {
   let anthropicApiKey = process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY;
   let openaiApiKey = process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY;
 
-  if (!e2bApiKey || !openaiApiKey) {
+  if (!e2bApiKey || !zenApiKey) {
     t.pass(
-      'Skipped: BACKEND_DEMO_PROJECT_E2B_API_KEY or BACKEND_DEMO_PROJECT_OPENAI_API_KEY not set'
+      'Skipped: BACKEND_DEMO_PROJECT_E2B_API_KEY or BACKEND_DEMO_PROJECT_ZEN_API_KEY not set'
     );
     return;
   }
@@ -150,7 +150,10 @@ test('1', async t => {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         agent: 'opencode',
-        model: 'openai/gpt-5.1-codex-mini',
+        // model: 'openai/gpt-5.1-codex-mini',
+        // model: 'gemini-3-pro',
+        model: 'opencode/kimi-free',
+        // model: 'big-pickle',
         agentMode: 'plan',
         permissionMode: 'default'
       }
@@ -187,7 +190,7 @@ test('1', async t => {
       },
       payload: {
         sessionId: sessionId,
-        message: 'hello'
+        message: 'hello, what model is used?'
       }
     };
 

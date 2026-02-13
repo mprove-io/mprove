@@ -75,6 +75,7 @@ export class SandboxService {
     sandboxType: SandboxTypeEnum;
     sandboxTimeoutMs: number;
     sandboxEnvs?: Record<string, string>;
+    agent: string;
     project: ProjectTab;
   }): Promise<CreateSandboxResult> {
     try {
@@ -106,14 +107,20 @@ export class SandboxService {
             });
           }
 
-          // if (item.agent === 'codex' && item.sandboxEnvs?.OPENAI_API_KEY) {
-          //   await sandbox.commands.run('mkdir -p /home/user/.codex');
+          // if (
+          //   item.agent === 'opencode' &&
+          //   item.sandboxEnvs?.OPENCODE_API_KEY
+          // ) {
+          //   await sandbox.commands.run(
+          //     'mkdir -p /home/user/.local/share/opencode'
+          //   );
           //   await sandbox.files.write(
-          //     '/home/user/.codex/auth.json',
+          //     '/home/user/.local/share/opencode/auth.json',
           //     JSON.stringify({
-          //       OPENAI_API_KEY: item.sandboxEnvs.OPENAI_API_KEY,
-          //       tokens: null,
-          //       last_refresh: null
+          //       opencode: {
+          //         type: 'api',
+          //         key: item.sandboxEnvs.OPENCODE_API_KEY
+          //       }
           //     })
           //   );
           // }
