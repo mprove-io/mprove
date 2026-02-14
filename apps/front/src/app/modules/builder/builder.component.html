@@ -156,7 +156,7 @@
           ></m-both-panels-icon> -->
 
           <button
-            class="ml-12 mr-5 flex w-[130px] select-none items-center justify-center text-lg focus:outline-none"
+            class="ml-12 flex w-[130px] select-none items-center justify-center text-lg focus:outline-none"
             [ngClass]="{
               'text-m500 font-semibold':
                 lastUrl === pathBuilder || !file?.fileId,
@@ -165,6 +165,18 @@
             (click)="showSession()"
             >Chat Session</button
           >
+
+          <button
+            type="button"
+            class="ml-3 mr-5 flex select-none flex-row items-center rounded px-3 py-2 text-xs focus:outline-none"
+            [ngClass]="{
+              'bg-blue-100 text-blue-700': debugMode,
+              'text-s500 hover:bg-s100': !debugMode
+            }"
+            (click)="toggleDebug()"
+          >
+            Debug
+          </button>
 
           <ng-template #templateCommit>
             <div *ngIf="needSave === true">Need to Save changes</div>
@@ -194,6 +206,13 @@
           </ng-template>
 
           <div class="flex flex-1"></div>
+
+          <div
+            *ngIf="sessionId"
+            class="text-s500 mr-5 flex h-11 select-none flex-row items-center text-xs"
+          >
+            {{ sessionId }}
+          </div>
 
           <div
             tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
@@ -491,6 +510,8 @@
 <div *ngIf="showFilesLeftPanel$ | async"></div>
 <div *ngIf="showFilesRightPanel$ | async"></div>
 <div *ngIf="filesRightPanelTab$ | async"></div>
+<div *ngIf="debugMode$ | async"></div>
+<div *ngIf="sessionId$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>
 <div *ngIf="user$ | async"></div>

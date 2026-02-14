@@ -167,6 +167,22 @@ export class BuilderComponent implements OnInit {
     })
   );
 
+  debugMode = false;
+  debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
+    tap(x => {
+      this.debugMode = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  sessionId: string;
+  sessionId$ = this.sessionQuery.select().pipe(
+    tap(x => {
+      this.sessionId = x?.sessionId;
+      this.cd.detectChanges();
+    })
+  );
+
   secondFileNodeId: string;
   secondFileNodeId$ = this.uiQuery.secondFileNodeId$.pipe(
     tap(x => {
@@ -316,6 +332,10 @@ export class BuilderComponent implements OnInit {
     }
 
     this.uiQuery.updatePart({ panel: x });
+  }
+
+  toggleDebug() {
+    this.uiQuery.updatePart({ sessionDebugMode: !this.debugMode });
   }
 
   showSession() {
