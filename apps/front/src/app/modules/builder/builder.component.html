@@ -146,7 +146,10 @@
           </div>
         </div>
 
-        <div class="flex flex-1 flex-row items-center" *ngIf="!!repo">
+        <div
+          class="flex min-w-0 flex-1 flex-row items-center overflow-hidden"
+          *ngIf="!!repo"
+        >
           <!-- <m-both-panels-icon
             class="text-s500 ml-12 flex-shrink-0 cursor-pointer"
             (click)="toggleBothPanels()"
@@ -156,7 +159,7 @@
           ></m-both-panels-icon> -->
 
           <button
-            class="ml-12 flex w-[130px] select-none items-center justify-center text-lg focus:outline-none"
+            class="ml-12 flex w-[130px] flex-shrink-0 select-none items-center justify-center text-lg focus:outline-none"
             [ngClass]="{
               'text-m500 font-semibold':
                 lastUrl === pathBuilder || !file?.fileId,
@@ -166,9 +169,17 @@
             >Chat Session</button
           >
 
+          <div
+            *ngIf="sessionId"
+            class="text-s500 ml-5 mt-[2px] flex h-11 w-[100px] min-w-0 shrink select-none flex-row items-center text-base"
+          >
+            <span class="truncate">{{ sessionId }}</span>
+          </div>
+
           <button
+            *ngIf="sessionId"
             type="button"
-            class="ml-3 mr-5 flex select-none flex-row items-center rounded px-3 py-2 text-xs focus:outline-none"
+            class="ml-5 flex flex-shrink-0 select-none flex-row items-center rounded px-3 py-2 text-base focus:outline-none"
             [ngClass]="{
               'bg-blue-100 text-blue-700': debugMode,
               'text-s500 hover:bg-s100': !debugMode
@@ -177,6 +188,23 @@
           >
             Debug
           </button>
+
+          <div class="flex flex-1"></div>
+
+          <div
+            tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
+            *ngIf="nav?.isRepoProd === true"
+            class="text-s500 mr-5 flex h-11 flex-shrink-0 flex-row items-center text-lg font-semibold"
+          >
+            production - {{ nav.branchId }}
+          </div>
+
+          <div
+            *ngIf="nav?.isRepoProd === false"
+            class="text-s500 mr-5 flex h-11 flex-shrink-0 select-none flex-row items-center text-lg font-semibold"
+          >
+            dev-{{ user.alias }} - {{ nav.branchId }}
+          </div>
 
           <ng-template #templateCommit>
             <div *ngIf="needSave === true">Need to Save changes</div>
@@ -205,31 +233,8 @@
             >
           </ng-template>
 
-          <div class="flex flex-1"></div>
-
           <div
-            *ngIf="sessionId"
-            class="text-s500 mr-5 flex h-11 select-none flex-row items-center text-xs"
-          >
-            {{ sessionId }}
-          </div>
-
-          <div
-            tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
-            *ngIf="nav?.isRepoProd === true"
-            class="text-s500 mr-5 flex h-11 flex-row items-center text-lg font-semibold"
-          >
-            production - {{ nav.branchId }}
-          </div>
-
-          <div
-            *ngIf="nav?.isRepoProd === false"
-            class="text-s500 mr-5 flex h-11 select-none flex-row items-center text-lg font-semibold"
-          >
-            dev-{{ user.alias }} - {{ nav.branchId }}
-          </div>
-
-          <div
+            class="flex-shrink-0"
             *ngIf="isEditor === true"
             [tp]="templateCommit"
             [tpIsEnabled]="
@@ -259,6 +264,7 @@
           </ng-template>
 
           <div
+            class="flex-shrink-0"
             *ngIf="isEditor === true && repo.repoStatus === repoStatusNeedPull"
             [tp]="templatePullFromRemote"
             [tpIsEnabled]="needSave === true"
@@ -311,6 +317,7 @@
           </ng-template>
 
           <div
+            class="flex-shrink-0"
             *ngIf="isEditor === true"
             [tp]="templatePushToRemote"
             [tpIsEnabled]="
@@ -352,6 +359,7 @@
           </div>
 
           <div
+            class="flex-shrink-0"
             *ngIf="isEditor === true"
             tp="Need to Save changes"
             [tpIsEnabled]="needSave === true"
@@ -373,7 +381,7 @@
           </div>
 
           <div
-            class="relative ml-3 mr-9"
+            class="relative ml-3 mr-9 flex-shrink-0"
             [ngClass]="{
               'mr-[50px]': !secondFileNodeId,
               'mr-4': !!secondFileNodeId

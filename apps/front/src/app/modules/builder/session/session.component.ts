@@ -55,6 +55,11 @@ export class SessionComponent implements OnDestroy {
     tap(x => {
       this.session = x?.sessionId ? x : undefined;
 
+      if (this.session) {
+        this.agent = this.session.agent;
+        this.agentMode = this.session.agentMode;
+      }
+
       // Connect SSE when session becomes active and no SSE is open
       if (
         this.session?.status === SessionStatusEnum.Active &&

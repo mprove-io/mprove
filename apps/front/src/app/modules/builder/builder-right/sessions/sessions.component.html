@@ -36,7 +36,7 @@
         >
           <div class="flex items-center justify-between">
             <span
-              class="text-sm"
+              class="text-base"
               [ngClass]="{
                 'text-m600 font-semibold': session.sessionId === sessionId,
                 'text-s1': session.sessionId !== sessionId
@@ -44,7 +44,7 @@
               >{{ session.agent }}</span
             >
             <span
-              class="text-xs"
+              class="text-sm"
               [ngClass]="{
                 'text-m600': session.sessionId === sessionId,
                 'text-s600': session.sessionId !== sessionId
@@ -54,7 +54,7 @@
           </div>
           <div class="mt-1 flex items-center space-x-2">
             <span
-              class="text-xs"
+              class="text-sm"
               [ngClass]="{
                 'text-m600': session.sessionId === sessionId,
                 'text-s600': session.sessionId !== sessionId
@@ -62,7 +62,7 @@
               >{{ session.agentMode }}</span
             >
             <span
-              class="rounded-full px-2 py-0.5 text-xs"
+              class="rounded-full px-2 py-0.5 text-sm"
               [ngClass]="{
                 'bg-green-100 text-green-700': session.status === 'Active',
                 'bg-yellow-100 text-yellow-700': session.status === 'Paused',

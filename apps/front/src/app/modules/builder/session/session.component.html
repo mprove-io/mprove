@@ -76,7 +76,7 @@
         <!-- User message -->
         <div *ngIf="msg.sender === 'user'" class="flex justify-end">
           <div class="bg-m100 max-w-[80%] rounded-2xl px-4 py-3">
-            <div class="text-s1 whitespace-pre-wrap text-sm">{{
+            <div class="text-s1 whitespace-pre-wrap text-base">{{
               msg.text
             }}</div>
           </div>
@@ -85,7 +85,7 @@
         <!-- Agent message -->
         <div *ngIf="msg.sender === 'agent'" class="flex justify-start">
           <div class="max-w-[80%] rounded-2xl px-4 py-3">
-            <div class="text-s1 whitespace-pre-wrap text-sm">{{
+            <div class="text-s1 whitespace-pre-wrap text-base">{{
               msg.text
             }}</div>
           </div>
@@ -94,14 +94,14 @@
         <!-- Tool call -->
         <div *ngIf="msg.sender === 'tool'" class="flex justify-start">
           <div class="border-s200 max-w-[80%] rounded-lg border px-3 py-2">
-            <div class="text-s600 text-xs">{{ msg.text }}</div>
+            <div class="text-s600 text-sm">{{ msg.text }}</div>
           </div>
         </div>
 
         <!-- Thought -->
         <div *ngIf="msg.sender === 'thought'" class="flex justify-start">
           <div class="max-w-[80%] rounded-2xl px-4 py-2">
-            <div class="text-s500 whitespace-pre-wrap text-xs italic">{{
+            <div class="text-s500 whitespace-pre-wrap text-sm italic">{{
               msg.text
             }}</div>
           </div>
@@ -150,6 +150,30 @@
             <m-arrow-up-icon class="text-white"></m-arrow-up-icon>
           </button>
         </div>
+      </div>
+
+      <div class="mt-4 flex flex-row items-center justify-center space-x-3">
+        <ng-select
+          class="sessions-select w-[140px] select-none text-sm"
+          [items]="agents"
+          [clearable]="false"
+          [searchable]="false"
+          [(ngModel)]="agent"
+          [disabled]="true"
+          appendTo="body"
+          placeholder="Agent"
+        ></ng-select>
+
+        <ng-select
+          class="sessions-select w-[140px] select-none text-sm"
+          [items]="agentModes"
+          [clearable]="false"
+          [searchable]="false"
+          [(ngModel)]="agentMode"
+          [disabled]="true"
+          appendTo="body"
+          placeholder="Mode"
+        ></ng-select>
       </div>
     </div>
   </div>

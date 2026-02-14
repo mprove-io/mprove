@@ -339,6 +339,10 @@ export class BuilderComponent implements OnInit {
   }
 
   showSession() {
+    if (this.sessionId) {
+      return;
+    }
+
     let links = this.uiQuery.getValue().projectFileLinks;
     let newLinks = links.map(l =>
       l.projectId === this.nav.projectId
