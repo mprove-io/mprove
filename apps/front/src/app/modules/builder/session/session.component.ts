@@ -249,20 +249,37 @@ export class SessionComponent implements OnInit, OnDestroy {
     let currentMessage: ChatMessage;
 
     for (let event of events) {
-      let update = event.payload?.params?.update;
+      let p = event.payload as { method?: string; params?: any };
+
+      // User messages: session/prompt requests from client
+      if (event.sender === 'client' && p?.method === 'session/prompt') {
+        let prompt = p.params?.prompt;
+        if (Array.isArray(prompt)) {
+          for (let block of prompt) {
+            if (block.type === 'text' && block.text) {
+              if (currentMessage && currentMessage.sender === 'user') {
+                currentMessage.text += block.text;
+              } else {
+                currentMessage = { sender: 'user', text: block.text };
+                messages.push(currentMessage);
+              }
+            }
+          }
+        }
+        continue;
+      }
+
+      // Agent messages: session/update notifications
+      let update = p?.params?.update;
       let sessionUpdate = update?.sessionUpdate;
 
-      if (
-        sessionUpdate === 'user_message_chunk' ||
-        sessionUpdate === 'agent_message_chunk'
-      ) {
-        let sender = sessionUpdate === 'user_message_chunk' ? 'user' : 'agent';
+      if (sessionUpdate === 'agent_message_chunk') {
         let text = update?.content?.text || '';
 
-        if (currentMessage && currentMessage.sender === sender) {
+        if (currentMessage && currentMessage.sender === 'agent') {
           currentMessage.text += text;
         } else {
-          currentMessage = { sender, text };
+          currentMessage = { sender: 'agent', text };
           messages.push(currentMessage);
         }
       } else if (sessionUpdate === 'tool_call') {

@@ -80,8 +80,7 @@
       "Bash(mv:*)",
       "Bash(sudo:*)",
       "Bash(chmod:*)",
-      "Bash(chown:*)",
-      "Bash"
+      "Bash(chown:*)"
     ],
     "deny": [
       "Read(./_nogit/**)",
