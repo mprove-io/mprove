@@ -458,7 +458,7 @@
               class="h-full w-full"
               *ngIf="lastUrl === pathBuilder || !file?.fileId"
             >
-              <m-sessions-chat-input></m-sessions-chat-input>
+              <m-session></m-session>
             </div>
           </div>
         </div>
@@ -473,14 +473,14 @@
             panel === panelTree || lastUrl === pathBuilder || !file?.fileId
           "
         >
-          <m-files-sessions
+          <m-sessions
             *ngIf="
               showFilesRightPanel === true &&
               filesRightPanelTab === filesRightPanelTabSessions &&
               !secondFileNodeId
             "
             class="flex w-full"
-          ></m-files-sessions>
+          ></m-sessions>
 
           <m-files-right
             *ngIf="

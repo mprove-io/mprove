@@ -12,10 +12,10 @@ import { ApiService } from '#front/app/services/api.service';
 
 @Component({
   standalone: false,
-  selector: 'm-sessions-chat-input',
-  templateUrl: './sessions-chat-input.component.html'
+  selector: 'm-session',
+  templateUrl: './session.component.html'
 })
-export class SessionsChatInputComponent {
+export class SessionComponent {
   messageText = '';
   isSubmitting = false;
 

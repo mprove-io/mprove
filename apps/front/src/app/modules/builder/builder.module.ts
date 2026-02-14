@@ -14,13 +14,13 @@ import { FileEditorComponent } from './file-editor/file-editor.component';
 import { BlockmlErrorsComponent } from './files-right/blockml-errors/blockml-errors.component';
 import { FilesRightComponent } from './files-right/files-right.component';
 import { RepoConflictsComponent } from './files-right/repo-conflicts/repo-conflicts.component';
-import { FilesSessionsComponent } from './files-sessions/files-sessions.component';
-import { SessionsChatInputComponent } from './files-sessions/sessions-chat-input.component';
 import { FileOptionsComponent } from './files-tree/file-options/file-options.component';
 import { FilesRightPanelToggleComponent } from './files-tree/files-right-panel-toggle/files-right-panel-toggle.component';
 import { FilesTreeComponent } from './files-tree/files-tree.component';
 import { FolderOptionsComponent } from './files-tree/folder-options/folder-options.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
+import { SessionComponent } from './session/session.component';
+import { SessionsComponent } from './sessions/sessions.component';
 
 @NgModule({
   declarations: [
@@ -32,8 +32,8 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     FileEditorComponent,
     RepoOptionsComponent,
     FilesRightComponent,
-    FilesSessionsComponent,
-    SessionsChatInputComponent,
+    SessionsComponent,
+    SessionComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent
   ],
