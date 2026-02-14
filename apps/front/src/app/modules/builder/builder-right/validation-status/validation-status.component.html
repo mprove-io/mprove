@@ -1,0 +1,93 @@
+<div
+  class="flex h-full flex-col items-center justify-center"
+  *ngIf="
+    nav?.needValidate === true ||
+    (repo &&
+      repo.conflicts.length === 0 &&
+      struct &&
+      struct.errors.length === 0 &&
+      !secondFileNodeId)
+  "
+>
+  <div
+    class="flex flex-col items-center justify-center"
+    *ngIf="nav?.needValidate === true"
+  >
+    <div class="text-a500 flex h-14 flex-row items-end">
+      <m-alert-ring></m-alert-ring>
+    </div>
+
+    <div class="mt-2 text-xl"> Validation is required </div></div
+  >
+
+  <div
+    *ngIf="
+      nav?.needValidate === false &&
+      repo &&
+      repo.conflicts.length === 0 &&
+      struct &&
+      struct.errors.length === 0 &&
+      !secondFileNodeId
+    "
+    class="flex flex-col items-center justify-center"
+  >
+    <div class="h-12">
+      <m-completed-ring></m-completed-ring>
+    </div>
+    <div class="mt-4 text-xl"> Mprove Files are valid </div>
+  </div>
+
+  <div
+    tp="FileEditor role is required to validate files"
+    [tpIsEnabled]="isEditor === false"
+  >
+    <button
+      *ngIf="nav?.needValidate === true"
+      data-cy="filesRightValidateButton"
+      class="text-m0 mt-7 h-11 rounded px-5 py-2 text-lg font-medium focus:outline-none"
+      type="button"
+      [ngClass]="{
+        'bg-m600': isEditor === true && needSave === false,
+        'bg-s400 cursor-default': isEditor === false || needSave === true
+      }"
+      (click)="validate()"
+      [disabled]="isEditor === false || needSave === true"
+      >Validate Files</button
+    >
+
+    <button
+      *ngIf="nav?.needValidate === false && nav?.isRepoProd === false"
+      type="button"
+      data-cy="filesRightRevalidateButton"
+      class="border-s400 text-s500 mt-5 h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-lg font-medium focus:outline-none"
+      [ngClass]="{
+        'hover:bg-gray-50': isEditor === true && needSave === false,
+        'cursor-default bg-gray-100': isEditor === false || needSave === true
+      }"
+      (click)="validate()"
+      [disabled]="isEditor === false || needSave === true"
+      >Validate Files</button
+    >
+  </div>
+</div>
+
+<m-repo-conflicts
+  *ngIf="nav?.needValidate === false && repo && repo.conflicts.length > 0"
+></m-repo-conflicts>
+
+<m-blockml-errors
+  *ngIf="
+    nav?.needValidate === false &&
+    repo &&
+    repo.conflicts.length === 0 &&
+    struct &&
+    struct.errors.length > 0
+  "
+></m-blockml-errors>
+
+<div *ngIf="repo$ | async"></div>
+<div *ngIf="struct$ | async"></div>
+<div *ngIf="needSave$ | async"></div>
+<div *ngIf="nav$ | async"></div>
+<div *ngIf="isEditor$ | async"></div>
+<div *ngIf="secondFileNodeId$ | async"></div>

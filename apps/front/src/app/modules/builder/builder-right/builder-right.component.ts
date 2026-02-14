@@ -40,10 +40,6 @@ import {
   ToBackendGetFileResponse
 } from '#common/interfaces/to-backend/files/to-backend-get-file';
 import {
-  ToBackendValidateFilesRequestPayload,
-  ToBackendValidateFilesResponse
-} from '#common/interfaces/to-backend/files/to-backend-validate-files';
-import {
   ToBackendGetModelsRequestPayload,
   ToBackendGetModelsResponse
 } from '#common/interfaces/to-backend/models/to-backend-get-models';
@@ -98,9 +94,6 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
   prevBranchId: string;
   prevEnvId: string;
 
-  needSave = false;
-  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
-
   nav: NavState;
   nav$ = this.navQuery.select().pipe(
     tap(x => {
@@ -118,14 +111,6 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
         this.checkContent();
       }
 
-      this.cd.detectChanges();
-    })
-  );
-
-  isEditor: boolean;
-  isEditor$ = this.memberQuery.isEditor$.pipe(
-    tap(x => {
-      this.isEditor = x;
       this.cd.detectChanges();
     })
   );
@@ -260,35 +245,6 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
     this.setLanguage();
 
     this.cd.detectChanges();
-  }
-
-  validate() {
-    let payload: ToBackendValidateFilesRequestPayload = {
-      projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
-      branchId: this.nav.branchId,
-      envId: this.nav.envId
-    };
-
-    this.apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendValidateFiles,
-        payload: payload,
-        showSpinner: true
-      })
-      .pipe(
-        tap((resp: ToBackendValidateFilesResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.repoQuery.update(resp.payload.repo);
-            this.structQuery.update(resp.payload.struct);
-            this.navQuery.updatePart({
-              needValidate: resp.payload.needValidate
-            });
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
   }
 
   goTo() {

@@ -14,6 +14,7 @@ import { BuilderRightComponent } from './builder-right/builder-right.component';
 import { SessionsComponent } from './builder-right/sessions/sessions.component';
 import { BlockmlErrorsComponent } from './builder-right/validation-status/blockml-errors/blockml-errors.component';
 import { RepoConflictsComponent } from './builder-right/validation-status/repo-conflicts/repo-conflicts.component';
+import { ValidationStatusComponent } from './builder-right/validation-status/validation-status.component';
 import { FileEditorComponent } from './file-editor/file-editor.component';
 import { FileOptionsComponent } from './files-tree/file-options/file-options.component';
 import { FilesRightPanelToggleComponent } from './files-tree/files-right-panel-toggle/files-right-panel-toggle.component';
@@ -35,7 +36,8 @@ import { SessionComponent } from './session/session.component';
     SessionsComponent,
     SessionComponent,
     BlockmlErrorsComponent,
-    RepoConflictsComponent
+    RepoConflictsComponent,
+    ValidationStatusComponent
   ],
   imports: [
     CommonModule,
