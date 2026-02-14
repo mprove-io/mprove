@@ -34,9 +34,9 @@
                 [ngClass]="{
                   'text-s400 cursor-default':
                     !nav || !nav.projectId || needSave === true,
-                  'font-semibold': isFilesRouteActive === true
+                  'font-semibold': isBuilderRouteActive === true
                 }"
-                (click)="navigateFiles()"
+                (click)="navigateBuilder()"
                 [disabled]="!nav || !nav.projectId || needSave === true"
               >
                 <div

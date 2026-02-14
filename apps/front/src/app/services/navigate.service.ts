@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_CHART,
   PATH_CHARTS_LIST,
   PATH_DASHBOARD,
@@ -10,7 +11,6 @@ import {
   PATH_DASHBOARDS_LIST,
   PATH_ENV,
   PATH_FILE,
-  PATH_FILES,
   PATH_MODEL,
   PATH_MODELS,
   PATH_MODELS_LIST,
@@ -76,7 +76,7 @@ export class NavigateService {
     return this.router.navigate([PATH_PROFILE]);
   }
 
-  async navigateToFiles(branchId?: string) {
+  async navigateToBuilder(branchId?: string) {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
     return this.router.navigate([
@@ -90,7 +90,7 @@ export class NavigateService {
       isDefined(branchId) ? branchId : this.nav.branchId,
       PATH_ENV,
       this.nav.envId,
-      PATH_FILES
+      PATH_BUILDER
     ]);
   }
 
@@ -114,7 +114,7 @@ export class NavigateService {
       this.nav.branchId,
       PATH_ENV,
       this.nav.envId,
-      PATH_FILES,
+      PATH_BUILDER,
       PATH_FILE,
       encodedFileId
     ];

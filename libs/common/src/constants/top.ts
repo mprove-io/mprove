@@ -146,7 +146,7 @@ export const PATH_PASSWORD_RESET_SENT_AUTH = 'password-reset-sent-auth';
 export const PATH_PROFILE = 'profile';
 export const PATH_ENV_VARIABLES = 'env-variables';
 
-export const PATH_FILES = 'files';
+export const PATH_BUILDER = 'builder';
 export const PATH_FILE = 'file';
 export const PATH_MODELS = 'models';
 export const PATH_CHART = 'chart';

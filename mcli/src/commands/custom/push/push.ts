@@ -11,7 +11,7 @@ import {
 } from '#common/interfaces/to-backend/repos/to-backend-push-repo';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { getFilesUrl } from '#mcli/functions/get-files-url';
+import { getBuilderUrl } from '#mcli/functions/get-builder-url';
 import { getLoginToken } from '#mcli/functions/get-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
@@ -100,7 +100,7 @@ export class PushCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let filesUrl = getFilesUrl({
+    let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
       orgId: pushRepoResp.payload.repo.orgId,
       projectId: this.projectId,
@@ -128,7 +128,7 @@ export class PushCommand extends CustomCommand {
       log.validationErrors = pushRepoResp.payload.struct.errors;
     }
 
-    log.url = filesUrl;
+    log.url = builderUrl;
 
     logToConsoleMcli({
       log: log,

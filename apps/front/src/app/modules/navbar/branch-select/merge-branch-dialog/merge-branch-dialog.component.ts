@@ -128,7 +128,7 @@ export class MergeBranchDialogComponent implements OnInit {
               needValidate: resp.payload.needValidate
             });
 
-            this.navigateService.navigateToFiles();
+            this.navigateService.navigateToBuilder();
           }
         }),
         take(1)

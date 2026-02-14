@@ -27,9 +27,9 @@ import {
 } from '#common/interfaces/to-backend/repos/to-backend-get-repo';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
+import { getBuilderUrl } from '#mcli/functions/get-builder-url';
 import { getChartUrl } from '#mcli/functions/get-chart-url';
 import { getDashboardUrl } from '#mcli/functions/get-dashboard-url';
-import { getFilesUrl } from '#mcli/functions/get-files-url';
 import { getLoginToken } from '#mcli/functions/get-login-token';
 import { getModelUrl } from '#mcli/functions/get-model-url';
 import { getReportUrl } from '#mcli/functions/get-report-url';
@@ -205,7 +205,7 @@ export class GetStateCommand extends CustomCommand {
       host: this.context.config.mproveCliHost
     });
 
-    let filesUrl = getFilesUrl({
+    let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
       orgId: getRepoResp.payload.repo.orgId,
       projectId: this.projectId,
@@ -340,7 +340,7 @@ export class GetStateCommand extends CustomCommand {
       log.validationErrors = getRepoResp.payload.struct.errors;
     }
 
-    log.filesUrl = filesUrl;
+    log.builderUrl = builderUrl;
 
     logToConsoleMcli({
       log: log,

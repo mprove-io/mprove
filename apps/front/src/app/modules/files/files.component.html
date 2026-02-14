@@ -158,8 +158,9 @@
           <button
             class="ml-12 mr-5 flex w-[130px] select-none items-center justify-center text-lg focus:outline-none"
             [ngClass]="{
-              'text-m500 font-semibold': lastUrl === pathFiles || !file?.fileId,
-              'text-s500': lastUrl !== pathFiles && !!file?.fileId
+              'text-m500 font-semibold':
+                lastUrl === pathBuilder || !file?.fileId,
+              'text-s500': lastUrl !== pathBuilder && !!file?.fileId
             }"
             (click)="showSession()"
             >Chat Session</button
@@ -442,20 +443,20 @@
           <div class="bg-m0 flex h-full flex-grow rounded shadow">
             <div
               class="h-full w-full"
-              *ngIf="lastUrl !== pathFiles && !!file?.fileId"
+              *ngIf="lastUrl !== pathBuilder && !!file?.fileId"
             >
               <router-outlet></router-outlet>
             </div>
 
             <!-- <div
               class="flex h-full w-full select-none items-center justify-center text-xl"
-              *ngIf="lastUrl === pathFiles || !file?.fileId"
+              *ngIf="lastUrl === pathBuilder || !file?.fileId"
               >Select File</div
             > -->
 
             <div
               class="h-full w-full"
-              *ngIf="lastUrl === pathFiles || !file?.fileId"
+              *ngIf="lastUrl === pathBuilder || !file?.fileId"
             >
               <m-sessions-chat-input></m-sessions-chat-input>
             </div>
@@ -468,7 +469,9 @@
             'w-1/4 flex-shrink-0': !secondFileNodeId,
             'flex-1': !!secondFileNodeId
           }"
-          *ngIf="panel === panelTree || lastUrl === pathFiles || !file?.fileId"
+          *ngIf="
+            panel === panelTree || lastUrl === pathBuilder || !file?.fileId
+          "
         >
           <m-files-sessions
             *ngIf="

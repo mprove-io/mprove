@@ -7,8 +7,8 @@ import {
   LAST_SELECTED_FILE_ID,
   LAST_SELECTED_MODEL_ID,
   LAST_SELECTED_REPORT_ID,
+  PATH_BUILDER,
   PATH_DASHBOARDS,
-  PATH_FILES,
   PATH_MODELS,
   PATH_REPORTS
 } from '#common/constants/top';
@@ -46,7 +46,7 @@ export class NavbarComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  isFilesRouteActive: boolean;
+  isBuilderRouteActive: boolean;
   isModelsRouteActive: boolean;
   isDashboardsRouteActive: boolean;
   isReportsRouteActive: boolean;
@@ -91,7 +91,8 @@ export class NavbarComponent implements OnInit {
   }
 
   checkUrls(url: string) {
-    this.isFilesRouteActive = url.split('?')[0]?.split('/')[11] === PATH_FILES;
+    this.isBuilderRouteActive =
+      url.split('?')[0]?.split('/')[11] === PATH_BUILDER;
 
     this.isModelsRouteActive =
       url.split('?')[0]?.split('/')[11] === PATH_MODELS;
@@ -105,8 +106,8 @@ export class NavbarComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  navigateFiles() {
-    if (this.isFilesRouteActive === true) {
+  navigateBuilder() {
+    if (this.isBuilderRouteActive === true) {
       return;
     }
 

@@ -13,9 +13,9 @@ import {
   LAST_SELECTED_FILE_ID,
   LAST_SELECTED_MODEL_ID,
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_ENV,
   PATH_FILE,
-  PATH_FILES,
   PATH_INFO,
   PATH_ORG,
   PATH_PROJECT,
@@ -220,7 +220,7 @@ export class ApiService {
               errorCurrentBranch,
               PATH_ENV,
               nav.envId,
-              PATH_FILES,
+              PATH_BUILDER,
               PATH_FILE,
               LAST_SELECTED_FILE_ID
             ];
@@ -392,12 +392,12 @@ export class ApiService {
               });
           }
         }).bind(this);
-        errorData.rightButtonText = 'Get changes, go to files';
+        errorData.rightButtonText = 'Get changes, go to builder';
         errorData.rightOnClickFnBindThis = (() => {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              this.navigateService.navigateToFiles(nav.branchId);
+              this.navigateService.navigateToBuilder(nav.branchId);
             });
         }).bind(this);
 
@@ -437,7 +437,7 @@ export class ApiService {
                   encodedFileId: encodedFileId
                 });
               } else {
-                this.navigateService.navigateToFiles(nav.branchId);
+                this.navigateService.navigateToBuilder(nav.branchId);
               }
             });
         }).bind(this);

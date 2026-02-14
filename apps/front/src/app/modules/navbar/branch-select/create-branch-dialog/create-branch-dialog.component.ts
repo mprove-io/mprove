@@ -20,8 +20,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_ENV,
-  PATH_FILES,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
@@ -200,7 +200,7 @@ export class CreateBranchDialogComponent implements OnInit {
               this.createBranchForm.value.branchId,
               PATH_ENV,
               this.nav.envId,
-              PATH_FILES
+              PATH_BUILDER
             ]);
           }
         }),

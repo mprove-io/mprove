@@ -12,6 +12,7 @@ import {
   PARAMETER_REPORT_ID,
   PATH_ACCOUNT,
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_CHART,
   PATH_CHARTS_LIST,
   PATH_COMPLETE_REGISTRATION,
@@ -24,7 +25,6 @@ import {
   PATH_ENV,
   PATH_ENVIRONMENTS,
   PATH_FILE,
-  PATH_FILES,
   PATH_FORGOT_PASSWORD,
   PATH_INFO,
   PATH_LOGIN,
@@ -68,7 +68,7 @@ import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.com
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
 import { FileEditorComponent } from './modules/files/file-editor/file-editor.component';
-import { FilesComponent } from './modules/files/files.component';
+import { BuilderComponent } from './modules/files/files.component';
 import { ChartComponent } from './modules/models/chart/chart.component';
 import { ChartsListComponent } from './modules/models/charts-list/charts-list.component';
 import { ModelComponent } from './modules/models/model/model.component';
@@ -249,8 +249,8 @@ export const appRoutes: Routes = [
                         resolve: [RepoStructResolver],
                         children: [
                           {
-                            component: FilesComponent,
-                            path: PATH_FILES,
+                            component: BuilderComponent,
+                            path: PATH_BUILDER,
                             resolve: [RepoStructFilesResolver],
                             children: [
                               {

@@ -32,7 +32,7 @@ import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app-routes';
 import { AuthModule } from './app/modules/auth/auth.module';
 import { DashboardsModule } from './app/modules/dashboards/dashboards.module';
-import { FilesModule } from './app/modules/files/files.module';
+import { BuilderModule } from './app/modules/files/files.module';
 import { ModelsModule } from './app/modules/models/models.module';
 import { NavModule } from './app/modules/nav/nav.module';
 import { NavbarModule } from './app/modules/navbar/navbar.module';
@@ -70,7 +70,7 @@ bootstrapApplication(AppComponent, {
       ProfileModule,
       OrgModule,
       ProjectModule,
-      FilesModule,
+      BuilderModule,
       ModelsModule,
       NgxSpinnerModule,
       BrowserAnimationsModule,

@@ -10,7 +10,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { SharedModule } from '../shared/shared.module';
 import { FileEditorComponent } from './file-editor/file-editor.component';
-import { FilesComponent } from './files.component';
+import { BuilderComponent } from './files.component';
 import { BlockmlErrorsComponent } from './files-right/blockml-errors/blockml-errors.component';
 import { FilesRightComponent } from './files-right/files-right.component';
 import { RepoConflictsComponent } from './files-right/repo-conflicts/repo-conflicts.component';
@@ -24,7 +24,7 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
 
 @NgModule({
   declarations: [
-    FilesComponent,
+    BuilderComponent,
     FilesTreeComponent,
     FilesRightPanelToggleComponent,
     FolderOptionsComponent,
@@ -52,4 +52,4 @@ import { RepoOptionsComponent } from './repo-options/repo-options.component';
     NgScrollbarModule
   ]
 })
-export class FilesModule {}
+export class BuilderModule {}

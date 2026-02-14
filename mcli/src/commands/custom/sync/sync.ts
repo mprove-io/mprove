@@ -22,7 +22,7 @@ import {
 } from '#common/interfaces/to-backend/repos/to-backend-sync-repo';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { getFilesUrl } from '#mcli/functions/get-files-url';
+import { getBuilderUrl } from '#mcli/functions/get-builder-url';
 import { getLoginToken } from '#mcli/functions/get-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';
@@ -239,7 +239,7 @@ export class SyncCommand extends CustomCommand {
       syncTime: syncTime
     });
 
-    let filesUrl = getFilesUrl({
+    let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
       orgId: syncRepoResp.payload.repo.orgId,
       projectId: this.projectId,
@@ -288,7 +288,7 @@ export class SyncCommand extends CustomCommand {
       };
     }
 
-    log.url = filesUrl;
+    log.url = builderUrl;
 
     logToConsoleMcli({
       log: log,

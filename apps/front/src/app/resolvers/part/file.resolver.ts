@@ -92,12 +92,12 @@ export class FileResolver implements Resolve<Observable<boolean>> {
             encodedFileId: pFileId
           });
         } else {
-          this.navigateService.navigateToFiles();
+          this.navigateService.navigateToBuilder();
         }
 
         return of(false);
       } else {
-        this.navigateService.navigateToFiles();
+        this.navigateService.navigateToBuilder();
 
         return of(false);
       }

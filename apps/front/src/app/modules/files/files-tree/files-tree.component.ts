@@ -20,9 +20,9 @@ import {
   LAST_SELECTED_FILE_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_ENV,
   PATH_FILE,
-  PATH_FILES,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
@@ -402,7 +402,7 @@ export class FilesTreeComponent implements OnDestroy {
               this.nav.branchId,
               PATH_ENV,
               this.nav.envId,
-              PATH_FILES
+              PATH_BUILDER
             ];
 
             let arStartStr = arStart.join('/');

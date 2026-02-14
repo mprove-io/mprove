@@ -4,8 +4,8 @@ import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { FILES_PAGE_TITLE } from '#common/constants/page-titles';
-import { PATH_FILES } from '#common/constants/top';
+import { BUILDER_PAGE_TITLE } from '#common/constants/page-titles';
+import { PATH_BUILDER } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
 import { PanelEnum } from '#common/enums/panel.enum';
@@ -42,11 +42,11 @@ import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
-  selector: 'm-files',
+  selector: 'm-builder',
   templateUrl: './files.component.html'
 })
-export class FilesComponent implements OnInit {
-  pageTitle = FILES_PAGE_TITLE;
+export class BuilderComponent implements OnInit {
+  pageTitle = BUILDER_PAGE_TITLE;
 
   panelTree = PanelEnum.Tree;
   panelChangesToCommit = PanelEnum.ChangesToCommit;
@@ -92,7 +92,7 @@ export class FilesComponent implements OnInit {
     })
   );
 
-  pathFiles = PATH_FILES;
+  pathBuilder = PATH_BUILDER;
 
   lastUrl: string;
 
@@ -192,7 +192,7 @@ export class FilesComponent implements OnInit {
       this.showFilesRightPanel &&
       !this.secondFileNodeId &&
       (this.panel === PanelEnum.Tree ||
-        this.lastUrl === this.pathFiles ||
+        this.lastUrl === this.pathBuilder ||
         !this.file?.fileId)
     );
   }
@@ -243,7 +243,7 @@ export class FilesComponent implements OnInit {
     }
 
     if (this.panel !== PanelEnum.Tree) {
-      this.navigateService.navigateToFiles();
+      this.navigateService.navigateToBuilder();
     }
 
     if (this.secondFileNodeId) {
@@ -281,7 +281,7 @@ export class FilesComponent implements OnInit {
       );
 
       if (isUndefined(pLink)) {
-        this.navigateService.navigateToFiles();
+        this.navigateService.navigateToBuilder();
       } else {
         let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
 
@@ -292,11 +292,11 @@ export class FilesComponent implements OnInit {
             encodedFileId: pFileId
           });
         } else {
-          this.navigateService.navigateToFiles();
+          this.navigateService.navigateToBuilder();
         }
       }
     } else {
-      this.navigateService.navigateToFiles();
+      this.navigateService.navigateToBuilder();
     }
 
     this.uiQuery.updatePart({ panel: x });
@@ -312,7 +312,7 @@ export class FilesComponent implements OnInit {
     this.uiQuery.updatePart({ projectFileLinks: newLinks });
     this.uiService.setUserUi({ projectFileLinks: newLinks });
 
-    this.navigateService.navigateToFiles();
+    this.navigateService.navigateToBuilder();
   }
 
   newFile() {

@@ -115,7 +115,7 @@ export class DeleteFileDialogComponent implements OnInit {
             }
 
             if (isNavigateNewFile === true) {
-              this.navigateService.navigateToFiles();
+              this.navigateService.navigateToBuilder();
             }
           }
         }),

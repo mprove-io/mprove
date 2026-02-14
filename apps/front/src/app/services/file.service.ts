@@ -64,7 +64,7 @@ export class FileService {
 
       if (fileIds.indexOf(fileId) < 0) {
         return of(undefined).pipe(
-          tap(() => this.navigateService.navigateToFiles())
+          tap(() => this.navigateService.navigateToBuilder())
         );
       }
     }

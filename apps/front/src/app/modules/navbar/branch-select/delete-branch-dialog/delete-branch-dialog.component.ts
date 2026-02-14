@@ -11,8 +11,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_ENV,
-  PATH_FILES,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
@@ -101,7 +101,7 @@ export class DeleteBranchDialogComponent implements OnInit {
               this.ref.data.defaultBranch,
               PATH_ENV,
               this.ref.data.envId,
-              PATH_FILES
+              PATH_BUILDER
             ]);
           }
         }),

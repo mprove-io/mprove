@@ -15,7 +15,7 @@ import {
 } from '#common/interfaces/to-backend/repos/to-backend-revert-repo-to-remote';
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
-import { getFilesUrl } from '#mcli/functions/get-files-url';
+import { getBuilderUrl } from '#mcli/functions/get-builder-url';
 import { getLoginToken } from '#mcli/functions/get-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
@@ -142,7 +142,7 @@ export class RevertCommand extends CustomCommand {
       });
     }
 
-    let filesUrl = getFilesUrl({
+    let builderUrl = getBuilderUrl({
       host: this.context.config.mproveCliHost,
       orgId: revertRepoResp.payload.repo.orgId,
       projectId: this.projectId,
@@ -170,7 +170,7 @@ export class RevertCommand extends CustomCommand {
       log.validationErrors = revertRepoResp.payload.struct.errors;
     }
 
-    log.url = filesUrl;
+    log.url = builderUrl;
 
     logToConsoleMcli({
       log: log,

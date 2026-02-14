@@ -4,13 +4,13 @@ import {
   LAST_SELECTED_FILE_ID,
   LAST_SELECTED_MODEL_ID,
   LAST_SELECTED_REPORT_ID,
+  PATH_BUILDER,
   PATH_CHART,
   PATH_CHARTS_LIST,
   PATH_DASHBOARD,
   PATH_DASHBOARDS,
   PATH_DASHBOARDS_LIST,
   PATH_FILE,
-  PATH_FILES,
   PATH_MODEL,
   PATH_MODELS,
   PATH_MODELS_LIST,
@@ -24,8 +24,8 @@ export function checkNavMain(item: { navArray: string[]; urlParts: string[] }) {
 
   let nextNavAr = [...navArray];
 
-  if (urlParts[11] === PATH_FILES) {
-    nextNavAr.push(PATH_FILES);
+  if (urlParts[11] === PATH_BUILDER) {
+    nextNavAr.push(PATH_BUILDER);
     nextNavAr.push(PATH_FILE);
     nextNavAr.push(LAST_SELECTED_FILE_ID);
   } else if (urlParts[11] === PATH_MODELS) {
@@ -63,7 +63,7 @@ export function checkNavMain(item: { navArray: string[]; urlParts: string[] }) {
       nextNavAr.push(LAST_SELECTED_REPORT_ID);
     }
   } else {
-    nextNavAr.push(PATH_FILES);
+    nextNavAr.push(PATH_BUILDER);
   }
 
   return nextNavAr;
