@@ -2,6 +2,8 @@ import { CreateAgentSessionController } from './controllers/agent/create-agent-s
 import { CreateAgentSseTicketController } from './controllers/agent/create-agent-sse-ticket/create-agent-sse-ticket.controller';
 import { DeleteAgentSessionController } from './controllers/agent/delete-agent-session/delete-agent-session.controller';
 import { GetAgentEventsSseController } from './controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
+import { GetAgentSessionController } from './controllers/agent/get-agent-session/get-agent-session.controller';
+import { GetAgentSessionsListController } from './controllers/agent/get-agent-sessions-list/get-agent-sessions-list.controller';
 import { PauseAgentSessionSandboxController } from './controllers/agent/pause-agent-session-sandbox/pause-agent-session-sandbox.controller';
 import { SendAgentMessageController } from './controllers/agent/send-agent-message/send-agent-message.controller';
 import { StopAgentSessionSandboxController } from './controllers/agent/stop-agent-session-sandbox/stop-agent-session-sandbox.controller';
@@ -130,6 +132,8 @@ export const appControllers = [
   DeleteAgentSessionController,
   StopAgentSessionSandboxController,
   PauseAgentSessionSandboxController,
+  GetAgentSessionsListController,
+  GetAgentSessionController,
 
   GetAvatarBigController,
   SetAvatarController,

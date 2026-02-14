@@ -288,7 +288,7 @@ export function getDevConfig() {
       process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER
     )
       ? Number(process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER)
-      : 1,
+      : 5,
 
     coordinatorLockTtlSeconds: isDefined(
       process.env.BACKEND_COORDINATOR_LOCK_TTL_SECONDS

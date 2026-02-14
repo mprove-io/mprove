@@ -1,4 +1,5 @@
-<div class="flex h-full w-full flex-col items-center">
+<!-- Mode 1: Creation mode (no active session) -->
+<div *ngIf="!isChatMode" class="flex h-full w-full flex-col items-center">
   <div class="h-[40%] flex-shrink-0"></div>
   <div class="flex w-full max-w-[860px] flex-col px-6">
     <div class="mb-10 flex justify-center">
@@ -59,6 +60,89 @@
         appendTo="body"
         placeholder="Mode"
       ></ng-select>
+    </div>
+  </div>
+</div>
+
+<!-- Mode 2: Chat mode (active session with messages) -->
+<div *ngIf="isChatMode" class="flex h-full w-full flex-col">
+  <!-- Messages area -->
+  <div class="thin-scrollbar flex-grow overflow-y-auto px-6 py-4">
+    <div class="mx-auto max-w-[860px]">
+      <div *ngFor="let msg of messages" class="mb-4">
+        <!-- User message -->
+        <div *ngIf="msg.sender === 'user'" class="flex justify-end">
+          <div class="bg-m100 max-w-[80%] rounded-2xl px-4 py-3">
+            <div class="text-s1 whitespace-pre-wrap text-sm">{{
+              msg.text
+            }}</div>
+          </div>
+        </div>
+
+        <!-- Agent message -->
+        <div *ngIf="msg.sender === 'agent'" class="flex justify-start">
+          <div class="max-w-[80%] rounded-2xl px-4 py-3">
+            <div class="text-s1 whitespace-pre-wrap text-sm">{{
+              msg.text
+            }}</div>
+          </div>
+        </div>
+
+        <!-- Tool call -->
+        <div *ngIf="msg.sender === 'tool'" class="flex justify-start">
+          <div class="border-s200 max-w-[80%] rounded-lg border px-3 py-2">
+            <div class="text-s600 text-xs">{{ msg.text }}</div>
+          </div>
+        </div>
+
+        <!-- Thought -->
+        <div *ngIf="msg.sender === 'thought'" class="flex justify-start">
+          <div class="max-w-[80%] rounded-2xl px-4 py-2">
+            <div class="text-s500 whitespace-pre-wrap text-xs italic">{{
+              msg.text
+            }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="messages.length === 0"
+        class="text-s500 flex items-center justify-center py-8 text-sm"
+      >
+        No messages yet
+      </div>
+    </div>
+  </div>
+
+  <!-- Input area (pinned to bottom) -->
+  <div class="flex-shrink-0 px-6 pb-4">
+    <div class="mx-auto max-w-[860px]">
+      <div
+        class="border-s300 focus-within:border-s500 overflow-hidden rounded-3xl border-[1.5px]"
+      >
+        <div class="flex w-full flex-row items-end pl-5 pr-2">
+          <textarea
+            class="text-s1 min-w-0 flex-1 resize-none overflow-y-hidden bg-transparent py-4 text-lg leading-relaxed placeholder-gray-400 [field-sizing:content] focus:outline-none"
+            placeholder="Send a message..."
+            [(ngModel)]="messageText"
+            (keydown)="onKeyDown($event)"
+            [disabled]="isSubmitting"
+            rows="1"
+          ></textarea>
+
+          <button
+            class="sticky bottom-2 mb-2 ml-3 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full focus:outline-none"
+            [ngClass]="{
+              'bg-m600 cursor-pointer': messageText.trim() && !isSubmitting,
+              'bg-s300 cursor-default': !messageText.trim() || isSubmitting
+            }"
+            (click)="sendFollowUp()"
+            [disabled]="!messageText.trim() || isSubmitting"
+          >
+            <m-arrow-up-icon class="text-white"></m-arrow-up-icon>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -166,21 +166,6 @@
             >Chat Session</button
           >
 
-          <div
-            tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
-            *ngIf="nav?.isRepoProd === true"
-            class="text-s500 mr-5 flex h-11 flex-row items-center text-lg font-semibold"
-          >
-            production - {{ nav.branchId }}
-          </div>
-
-          <div
-            *ngIf="nav?.isRepoProd === false"
-            class="text-s500 mr-5 flex h-11 select-none flex-row items-center text-lg font-semibold"
-          >
-            dev-{{ user.alias }} - {{ nav.branchId }}
-          </div>
-
           <ng-template #templateCommit>
             <div *ngIf="needSave === true">Need to Save changes</div>
 
@@ -209,6 +194,21 @@
           </ng-template>
 
           <div class="flex flex-1"></div>
+
+          <div
+            tp="Production repo is a read-only version of a Remote repo. Switch to the Dev repo to enter development mode."
+            *ngIf="nav?.isRepoProd === true"
+            class="text-s500 mr-5 flex h-11 flex-row items-center text-lg font-semibold"
+          >
+            production - {{ nav.branchId }}
+          </div>
+
+          <div
+            *ngIf="nav?.isRepoProd === false"
+            class="text-s500 mr-5 flex h-11 select-none flex-row items-center text-lg font-semibold"
+          >
+            dev-{{ user.alias }} - {{ nav.branchId }}
+          </div>
 
           <div
             *ngIf="isEditor === true"
@@ -443,20 +443,18 @@
           <div class="bg-m0 flex h-full flex-grow rounded shadow">
             <div
               class="h-full w-full"
-              *ngIf="lastUrl !== pathBuilder && !!file?.fileId"
+              *ngIf="
+                (lastUrl !== pathBuilder && !!file?.fileId) || isSessionRoute
+              "
             >
               <router-outlet></router-outlet>
             </div>
 
-            <!-- <div
-              class="flex h-full w-full select-none items-center justify-center text-xl"
-              *ngIf="lastUrl === pathBuilder || !file?.fileId"
-              >Select File</div
-            > -->
-
             <div
               class="h-full w-full"
-              *ngIf="lastUrl === pathBuilder || !file?.fileId"
+              *ngIf="
+                !isSessionRoute && (lastUrl === pathBuilder || !file?.fileId)
+              "
             >
               <m-session></m-session>
             </div>

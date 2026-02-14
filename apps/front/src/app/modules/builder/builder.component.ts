@@ -5,7 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { BUILDER_PAGE_TITLE } from '#common/constants/page-titles';
-import { PATH_BUILDER } from '#common/constants/top';
+import { PATH_BUILDER, PATH_SESSION } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
 import { PanelEnum } from '#common/enums/panel.enum';
@@ -31,6 +31,8 @@ import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
@@ -95,12 +97,23 @@ export class BuilderComponent implements OnInit {
   pathBuilder = PATH_BUILDER;
 
   lastUrl: string;
+  isSessionRoute = false;
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
     tap((x: any) => {
       let ar = x.url.split('?')[0].split('/');
       this.lastUrl = ar[ar.length - 1];
+
+      let wasSessionRoute = this.isSessionRoute;
+
+      this.isSessionRoute = ar.includes(PATH_SESSION);
+
+      if (wasSessionRoute && !this.isSessionRoute) {
+        this.sessionQuery.reset();
+        this.sessionEventsQuery.reset();
+      }
+
       this.cd.detectChanges();
     })
   );
@@ -177,7 +190,9 @@ export class BuilderComponent implements OnInit {
     private title: Title,
     private memberQuery: MemberQuery,
     private structQuery: StructQuery,
-    private userQuery: UserQuery
+    private userQuery: UserQuery,
+    private sessionQuery: SessionQuery,
+    private sessionEventsQuery: SessionEventsQuery
   ) {}
 
   ngOnInit() {
@@ -185,6 +200,7 @@ export class BuilderComponent implements OnInit {
 
     let ar = this.router.url.split('?')[0].split('/');
     this.lastUrl = ar[ar.length - 1];
+    this.isSessionRoute = ar.includes(PATH_SESSION);
   }
 
   get isRightPanelVisible() {

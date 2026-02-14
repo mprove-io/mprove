@@ -10,6 +10,7 @@ import {
   PARAMETER_PROJECT_ID,
   PARAMETER_REPO_ID,
   PARAMETER_REPORT_ID,
+  PARAMETER_SESSION_ID,
   PATH_ACCOUNT,
   PATH_BRANCH,
   PATH_BUILDER,
@@ -46,6 +47,7 @@ import {
   PATH_REPORT,
   PATH_REPORTS,
   PATH_REPORTS_LIST,
+  PATH_SESSION,
   PATH_TEAM,
   PATH_UPDATE_PASSWORD,
   PATH_USER_DELETED,
@@ -66,6 +68,7 @@ import { UpdatePasswordComponent } from './modules/auth/password/03-update-passw
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { BuilderComponent } from './modules/builder/builder.component';
 import { FileEditorComponent } from './modules/builder/file-editor/file-editor.component';
+import { SessionComponent } from './modules/builder/session/session.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
@@ -101,10 +104,12 @@ import { ProjectResolver } from './resolvers/project.resolver';
 import { ProjectConnectionsResolver } from './resolvers/project-connections.resolver';
 import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
 import { ProjectInfoResolver } from './resolvers/project-info.resolver';
+import { ProjectSessionsResolver } from './resolvers/project-sessions.resolver';
 import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
 import { RepoStructFilesResolver } from './resolvers/repo-struct-files.resolver';
+import { SessionResolver } from './resolvers/session.resolver';
 import { StructChartResolver } from './resolvers/struct-chart.resolver';
 import { StructChartsResolver } from './resolvers/struct-charts.resolver';
 import { StructDashboardResolver } from './resolvers/struct-dashboard.resolver';
@@ -251,13 +256,22 @@ export const appRoutes: Routes = [
                           {
                             component: BuilderComponent,
                             path: PATH_BUILDER,
-                            resolve: [RepoStructFilesResolver],
+                            resolve: [
+                              RepoStructFilesResolver,
+                              ProjectSessionsResolver
+                            ],
                             children: [
                               {
                                 component: FileEditorComponent,
                                 canDeactivate: [DeactivateGuard],
                                 path: PATH_FILE + `/:${PARAMETER_FILE_ID}`,
                                 resolve: [FileResolver]
+                              },
+                              {
+                                component: SessionComponent,
+                                path:
+                                  PATH_SESSION + `/:${PARAMETER_SESSION_ID}`,
+                                resolve: [SessionResolver]
                               }
                             ]
                           },

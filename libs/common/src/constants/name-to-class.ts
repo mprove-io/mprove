@@ -2,6 +2,8 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToBackendCreateAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
 import { ToBackendCreateAgentSseTicketRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
+import { ToBackendGetAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import { ToBackendGetAgentSessionsListRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
 import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session-sandbox';
 import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendRespondToAgentQuestionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
@@ -378,5 +380,9 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendPauseAgentSessionSandbox]:
     ToBackendPauseAgentSessionSandboxRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket]:
-    ToBackendCreateAgentSseTicketRequest
+    ToBackendCreateAgentSseTicketRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList]:
+    ToBackendGetAgentSessionsListRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetAgentSession]:
+    ToBackendGetAgentSessionRequest
 };

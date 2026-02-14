@@ -1,40 +1,110 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
+import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import {
   ToBackendCreateAgentSessionRequestPayload,
   ToBackendCreateAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+import {
+  ToBackendCreateAgentSseTicketRequestPayload,
+  ToBackendCreateAgentSseTicketResponse
+} from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
+import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { NavQuery } from '#front/app/queries/nav.query';
+import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
+import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { ApiService } from '#front/app/services/api.service';
+import { NavigateService } from '#front/app/services/navigate.service';
+import { environment } from '#front/environments/environment';
+
+interface ChatMessage {
+  sender: string;
+  text: string;
+}
 
 @Component({
   standalone: false,
   selector: 'm-session',
   templateUrl: './session.component.html'
 })
-export class SessionComponent {
+export class SessionComponent implements OnInit, OnDestroy {
   messageText = '';
   isSubmitting = false;
 
-  agent = 'claude';
-  agentMode = 'plan';
+  agent = 'codex';
+  agentMode = 'code';
 
   agents = ['claude', 'opencode', 'codex'];
   agentModes = ['plan', 'code'];
 
+  // Chat mode
+  session: AgentSessionApi;
+  events: AgentEventApi[] = [];
+  messages: ChatMessage[] = [];
+  eventSource: EventSource;
+
+  private subscriptions: Subscription[] = [];
+
   constructor(
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private sessionsQuery: SessionsQuery,
+    private sessionQuery: SessionQuery,
+    private sessionEventsQuery: SessionEventsQuery,
+    private navigateService: NavigateService
   ) {}
+
+  ngOnInit() {
+    this.subscriptions.push(
+      this.sessionQuery.select().subscribe(x => {
+        this.session = x?.sessionId ? x : undefined;
+
+        // Connect SSE when session becomes active and no SSE is open
+        if (
+          this.session?.status === SessionStatusEnum.Active &&
+          !this.eventSource
+        ) {
+          this.connectSse(this.session.sessionId);
+        }
+
+        this.cd.detectChanges();
+      })
+    );
+
+    this.subscriptions.push(
+      this.sessionEventsQuery.events$.subscribe(x => {
+        this.events = x;
+        this.messages = this.buildMessages(x);
+        this.cd.detectChanges();
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.closeSse();
+  }
+
+  get isChatMode(): boolean {
+    return !!this.session;
+  }
 
   onKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
-      this.sendMessage();
+      if (this.isChatMode) {
+        this.sendFollowUp();
+      } else {
+        this.sendMessage();
+      }
     }
   }
 
@@ -67,7 +137,26 @@ export class SessionComponent {
       .pipe(
         tap((resp: ToBackendCreateAgentSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            let sessionId = resp.payload.sessionId;
+
+            // Add new session to the sessions list
+            let currentSessions = this.sessionsQuery.getValue().sessions;
+            let newSession: AgentSessionApi = {
+              sessionId: sessionId,
+              agent: this.agent,
+              agentMode: this.agentMode,
+              status: SessionStatusEnum.Active,
+              createdTs: Date.now(),
+              lastActivityTs: Date.now()
+            };
+            this.sessionsQuery.updatePart({
+              sessions: [newSession, ...currentSessions]
+            });
+
             this.messageText = '';
+
+            // Navigate to session route (resolver will load session, SSE connects via subscription)
+            this.navigateService.navigateToSession({ sessionId: sessionId });
           }
           this.isSubmitting = false;
           this.cd.detectChanges();
@@ -77,10 +166,121 @@ export class SessionComponent {
       .subscribe();
   }
 
-  // onWheel(event: WheelEvent) {
-  //   let target = event.currentTarget as HTMLElement;
-  //   let multiplier = 1;
-  //   target.scrollTop += event.deltaY * multiplier;
-  //   event.preventDefault();
-  // }
+  sendFollowUp() {
+    if (!this.messageText.trim() || this.isSubmitting || !this.session) {
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.cd.detectChanges();
+
+    let payload: ToBackendSendAgentMessageRequestPayload = {
+      sessionId: this.session.sessionId,
+      message: this.messageText.trim()
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage,
+        payload: payload
+      })
+      .pipe(
+        tap(() => {
+          this.messageText = '';
+          this.isSubmitting = false;
+          this.cd.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  private connectSse(sessionId: string) {
+    // Get a fresh SSE ticket, then connect
+    let payload: ToBackendCreateAgentSseTicketRequestPayload = {
+      sessionId: sessionId
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendCreateAgentSseTicketResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.connectSseWithTicket(sessionId, resp.payload.sseTicket);
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  private connectSseWithTicket(sessionId: string, sseTicket: string) {
+    this.closeSse();
+
+    let url =
+      environment.httpUrl +
+      `/api/sse/agent-events?sessionId=${sessionId}&ticket=${sseTicket}`;
+
+    this.eventSource = new EventSource(url);
+
+    this.eventSource.addEventListener('agent-event', (event: MessageEvent) => {
+      let agentEvent: AgentEventApi = JSON.parse(event.data);
+
+      let currentEvents = this.sessionEventsQuery.getValue().events;
+      let updatedEvents = [...currentEvents, agentEvent];
+
+      this.sessionEventsQuery.updatePart({ events: updatedEvents });
+    });
+  }
+
+  private closeSse() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = undefined;
+    }
+  }
+
+  private buildMessages(events: AgentEventApi[]): ChatMessage[] {
+    let messages: ChatMessage[] = [];
+    let currentMessage: ChatMessage;
+
+    for (let event of events) {
+      let update = event.payload?.params?.update;
+      let sessionUpdate = update?.sessionUpdate;
+
+      if (
+        sessionUpdate === 'user_message_chunk' ||
+        sessionUpdate === 'agent_message_chunk'
+      ) {
+        let sender = sessionUpdate === 'user_message_chunk' ? 'user' : 'agent';
+        let text = update?.content?.text || '';
+
+        if (currentMessage && currentMessage.sender === sender) {
+          currentMessage.text += text;
+        } else {
+          currentMessage = { sender, text };
+          messages.push(currentMessage);
+        }
+      } else if (sessionUpdate === 'tool_call') {
+        let toolName = update?.name || 'tool';
+        currentMessage = { sender: 'tool', text: toolName };
+        messages.push(currentMessage);
+        currentMessage = undefined;
+      } else if (sessionUpdate === 'agent_thought_chunk') {
+        let text = update?.content?.text || '';
+        if (currentMessage && currentMessage.sender === 'thought') {
+          currentMessage.text += text;
+        } else {
+          currentMessage = { sender: 'thought', text };
+          messages.push(currentMessage);
+        }
+      }
+    }
+
+    return messages;
+  }
 }

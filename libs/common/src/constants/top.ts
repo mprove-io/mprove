@@ -161,6 +161,9 @@ export const PATH_DASHBOARD = 'dashboard';
 export const PATH_REPORTS = 'reports';
 export const PATH_REPORTS_LIST = 'reports-list';
 export const PATH_REPORT = 'report';
+export const PATH_SESSION = 'session';
+
+export const PARAMETER_SESSION_ID = 'sessionId';
 
 export const PATH_ORG = 'org';
 export const PATH_ACCOUNT = 'account';

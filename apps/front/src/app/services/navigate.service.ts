@@ -21,6 +21,7 @@ import {
   PATH_REPORT,
   PATH_REPORTS,
   PATH_REPORTS_LIST,
+  PATH_SESSION,
   PROD_REPO_ID
 } from '#common/constants/top';
 import { PanelEnum } from '#common/enums/panel.enum';
@@ -373,6 +374,28 @@ export class NavigateService {
     ];
 
     return this.router.navigate(navTo);
+  }
+
+  async navigateToSession(item: { sessionId: string }) {
+    let { sessionId } = item;
+
+    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
+
+    return this.router.navigate([
+      PATH_ORG,
+      this.nav.orgId,
+      PATH_PROJECT,
+      this.nav.projectId,
+      PATH_REPO,
+      repoId,
+      PATH_BRANCH,
+      this.nav.branchId,
+      PATH_ENV,
+      this.nav.envId,
+      PATH_BUILDER,
+      PATH_SESSION,
+      sessionId
+    ]);
   }
 
   async navigateToReport(item: { reportId: string; skipDeselect?: boolean }) {
