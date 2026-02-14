@@ -57,11 +57,11 @@ import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
-  selector: 'm-files-tree',
-  templateUrl: './files-tree.component.html',
-  styleUrls: ['files-tree.component.scss']
+  selector: 'm-builder-left',
+  templateUrl: './builder-left.component.html',
+  styleUrls: ['builder-left.component.scss']
 })
-export class FilesTreeComponent implements OnDestroy {
+export class BuilderLeftComponent implements OnDestroy {
   @Input()
   panel: PanelEnum;
 

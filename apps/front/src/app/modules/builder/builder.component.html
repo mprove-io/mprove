@@ -430,13 +430,13 @@
 
       <div class="mt-6 flex h-2 flex-1 flex-row">
         <div class="flex w-1/4 flex-shrink-0">
-          <m-files-tree
+          <m-builder-left
             *ngIf="showFilesLeftPanel === true"
             [panel]="panel"
             [isEditor]="isEditor"
             (newFileClick)="newFile()"
             class="flex w-full"
-          ></m-files-tree>
+          ></m-builder-left>
         </div>
 
         <div class="ml-6 flex flex-1 flex-col">

@@ -16,9 +16,9 @@ import { BlockmlErrorsComponent } from './builder-right/validation-status/blockm
 import { RepoConflictsComponent } from './builder-right/validation-status/repo-conflicts/repo-conflicts.component';
 import { ValidationStatusComponent } from './builder-right/validation-status/validation-status.component';
 import { FileEditorComponent } from './file-editor/file-editor.component';
+import { BuilderLeftComponent } from './files-tree/builder-left.component';
 import { FileOptionsComponent } from './files-tree/file-options/file-options.component';
 import { FilesRightPanelToggleComponent } from './files-tree/files-right-panel-toggle/files-right-panel-toggle.component';
-import { FilesTreeComponent } from './files-tree/files-tree.component';
 import { FolderOptionsComponent } from './files-tree/folder-options/folder-options.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
 import { SessionComponent } from './session/session.component';
@@ -26,7 +26,7 @@ import { SessionComponent } from './session/session.component';
 @NgModule({
   declarations: [
     BuilderComponent,
-    FilesTreeComponent,
+    BuilderLeftComponent,
     FilesRightPanelToggleComponent,
     FolderOptionsComponent,
     FileOptionsComponent,
