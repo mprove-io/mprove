@@ -473,43 +473,11 @@
             panel === panelTree || lastUrl === pathBuilder || !file?.fileId
           "
         >
-          <m-sessions
-            *ngIf="
-              showFilesRightPanel === true &&
-              filesRightPanelTab === filesRightPanelTabSessions &&
-              !secondFileNodeId
-            "
+          <m-builder-right
+            *ngIf="showFilesRightPanel === true"
             class="flex w-full"
-          ></m-sessions>
-
-          <m-files-right
-            *ngIf="
-              showFilesRightPanel === true &&
-              (filesRightPanelTab === filesRightPanelTabErrors ||
-                !!secondFileNodeId)
-            "
-            class="flex w-full"
-          ></m-files-right>
+          ></m-builder-right>
         </div>
-
-        <!-- <m-files-right
-          *ngIf="panel === panelTree"
-          class="flex"
-          [ngClass]="{
-            'w-[37%]':
-              nav?.needValidate === false &&
-              !!repo &&
-              repo.conflicts.length === 0 &&
-              !!struct &&
-              struct.errors.length === 0 &&
-              !!secondFileNodeId,
-            'w-[30%]':
-              nav?.needValidate === true ||
-              repo?.conflicts?.length !== 0 ||
-              struct?.errors?.length !== 0 ||
-              !secondFileNodeId
-          }"
-        ></m-files-right> -->
       </div>
     </div>
   </div>

@@ -1,4 +1,12 @@
-<div class="bg-m0 w-full min-w-[2px] select-none rounded shadow">
+<m-sessions
+  *ngIf="filesRightPanelTab === filesRightPanelTabSessions && !secondFileNodeId"
+  class="flex w-full"
+></m-sessions>
+
+<div
+  *ngIf="filesRightPanelTab === filesRightPanelTabErrors || !!secondFileNodeId"
+  class="bg-m0 w-full min-w-[2px] select-none rounded shadow"
+>
   <div
     class="flex h-full flex-col items-center justify-center"
     *ngIf="
@@ -228,3 +236,4 @@
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="secondFileNodeId$ | async"></div>
 <div *ngIf="fileNodeId$ | async"></div>
+<div *ngIf="filesRightPanelTab$ | async"></div>

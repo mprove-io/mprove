@@ -22,6 +22,7 @@ import {
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
 import { PanelEnum } from '#common/enums/panel.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -63,10 +64,10 @@ import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
-  selector: 'm-files-right',
-  templateUrl: './files-right.component.html'
+  selector: 'm-builder-right',
+  templateUrl: './builder-right.component.html'
 })
-export class FilesRightComponent implements OnInit, OnDestroy {
+export class BuilderRightComponent implements OnInit, OnDestroy {
   isEditorOptionsInitComplete = false;
 
   extensions: Extension[] = [];
@@ -133,6 +134,17 @@ export class FilesRightComponent implements OnInit, OnDestroy {
   isExplorer$ = this.memberQuery.isExplorer$.pipe(
     tap(x => {
       this.isExplorer = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  filesRightPanelTabSessions = FilesRightPanelTabEnum.Sessions;
+  filesRightPanelTabErrors = FilesRightPanelTabEnum.Errors;
+
+  filesRightPanelTab = FilesRightPanelTabEnum.Sessions;
+  filesRightPanelTab$ = this.uiQuery.filesRightPanelTab$.pipe(
+    tap(x => {
+      this.filesRightPanelTab = x;
       this.cd.detectChanges();
     })
   );
