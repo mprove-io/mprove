@@ -41,7 +41,7 @@ export class SessionResolver {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.sessionQuery.update(resp.payload.session);
 
-            this.sessionEventsQuery.update({
+            this.sessionEventsQuery.updatePart({
               events: resp.payload.events
             });
 

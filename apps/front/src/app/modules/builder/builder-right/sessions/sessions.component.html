@@ -9,6 +9,20 @@
         <div>New Session</div>
       </button>
     </div>
+
+    <div class="ml-3 flex-shrink-0">
+      <button
+        type="button"
+        class="flex select-none flex-row items-center rounded px-3 py-2 text-xs focus:outline-none"
+        [ngClass]="{
+          'bg-blue-100 text-blue-700': debugMode,
+          'text-s500 hover:bg-s100': !debugMode
+        }"
+        (click)="toggleDebug()"
+      >
+        Debug
+      </button>
+    </div>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -81,4 +95,5 @@
 </div>
 <div *ngIf="sessions$ | async"></div>
 <div *ngIf="session$ | async"></div>
+<div *ngIf="debugMode$ | async"></div>
 <div *ngIf="interval$ | async"></div>

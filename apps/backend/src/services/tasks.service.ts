@@ -116,25 +116,25 @@ export class TasksService {
     }
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
-  @WithTraceSpan()
-  async loopPauseIdleSandboxes() {
-    if (this.isRunningPauseIdleSandboxes === false) {
-      this.isRunningPauseIdleSandboxes = true;
+  // @Cron(CronExpression.EVERY_MINUTE)
+  // @WithTraceSpan()
+  // async loopPauseIdleSandboxes() {
+  //   if (this.isRunningPauseIdleSandboxes === false) {
+  //     this.isRunningPauseIdleSandboxes = true;
 
-      await this.agentService.pauseIdleSessions().catch(e => {
-        logToConsoleBackend({
-          log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_SANDBOXES,
-            originalError: e
-          }),
-          logLevel: LogLevelEnum.Error,
-          logger: this.logger,
-          cs: this.cs
-        });
-      });
+  //     await this.agentService.pauseIdleSessions().catch(e => {
+  //       logToConsoleBackend({
+  //         log: new ServerError({
+  //           message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_SANDBOXES,
+  //           originalError: e
+  //         }),
+  //         logLevel: LogLevelEnum.Error,
+  //         logger: this.logger,
+  //         cs: this.cs
+  //       });
+  //     });
 
-      this.isRunningPauseIdleSandboxes = false;
-    }
-  }
+  //     this.isRunningPauseIdleSandboxes = false;
+  //   }
+  // }
 }

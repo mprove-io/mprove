@@ -22,6 +22,7 @@ import { ValidationStatusComponent } from './builder-right/validation-status/val
 import { FileEditorComponent } from './file-editor/file-editor.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
 import { SessionComponent } from './session/session.component';
+import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { SessionComponent } from './session/session.component';
     BuilderRightComponent,
     SessionsComponent,
     SessionComponent,
+    SessionDebugEventsComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent,
     ValidationStatusComponent

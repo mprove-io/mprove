@@ -57,6 +57,7 @@ export class UiState {
   metricsTimeColumnsNarrowWidth: number;
   metricsTimeColumnsWideWidth: number;
   secondFileNodeId: string;
+  sessionDebugMode: boolean;
   //
   modelTreeLevels: ModelTreeLevelsEnum;
   timezone: string;
@@ -107,6 +108,7 @@ let uiState: UiState = {
   metricsTimeColumnsNarrowWidth: DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   metricsTimeColumnsWideWidth: DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH,
   secondFileNodeId: undefined,
+  sessionDebugMode: false,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -207,6 +209,8 @@ export class UiQuery extends BaseQuery<UiState> {
   );
 
   secondFileNodeId$ = this.store.pipe(select(state => state.secondFileNodeId));
+
+  sessionDebugMode$ = this.store.pipe(select(state => state.sessionDebugMode));
 
   constructor() {
     super(createStore({ name: 'ui' }, withProps<UiState>(uiState)));

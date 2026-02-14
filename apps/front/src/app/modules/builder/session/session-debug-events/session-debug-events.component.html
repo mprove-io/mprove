@@ -1,0 +1,59 @@
+<div class="flex flex-col">
+  <div *ngFor="let event of events; let i = index" class="border-s200 border-b">
+    <div
+      class="flex cursor-pointer select-none flex-row items-center px-4 py-2 hover:bg-gray-50"
+      (click)="toggleEvent(event.eventId)"
+    >
+      <!-- Icon -->
+      <span
+        class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded font-mono text-xs font-bold"
+        [ngClass]="{
+          'bg-blue-100 text-blue-700': event.sender === 'client',
+          'bg-green-100 text-green-700': event.sender === 'agent'
+        }"
+        >{{ getMethodIcon(event) }}</span
+      >
+
+      <!-- Method -->
+      <span class="text-s1 ml-3 min-w-0 flex-1 truncate font-mono text-xs">{{
+        getMethod(event)
+      }}</span>
+
+      <!-- Sender pill -->
+      <span
+        class="ml-2 flex-shrink-0 rounded-full px-2 py-0.5 text-xs"
+        [ngClass]="{
+          'bg-blue-100 text-blue-700': event.sender === 'client',
+          'bg-green-100 text-green-700': event.sender === 'agent'
+        }"
+        >{{ event.sender }}</span
+      >
+
+      <!-- Index -->
+      <span
+        class="text-s500 ml-2 w-8 flex-shrink-0 text-right font-mono text-xs"
+        >{{ event.eventIndex }}</span
+      >
+
+      <!-- Expand chevron -->
+      <span class="text-s400 ml-2 flex-shrink-0 text-xs">{{
+        expandedEvents[event.eventId] ? '▼' : '▶'
+      }}</span>
+    </div>
+
+    <!-- Expanded payload -->
+    <div *ngIf="expandedEvents[event.eventId]" class="bg-s50 px-4 py-3">
+      <pre
+        class="text-s1 overflow-x-auto whitespace-pre-wrap font-mono text-xs"
+        >{{ getPayloadJson(event) }}</pre
+      >
+    </div>
+  </div>
+
+  <div
+    *ngIf="events.length === 0"
+    class="text-s500 flex items-center justify-center py-8 text-sm"
+  >
+    No events yet
+  </div>
+</div>

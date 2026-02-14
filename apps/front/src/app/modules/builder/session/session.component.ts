@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -20,6 +19,7 @@ import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { environment } from '#front/environments/environment';
@@ -34,7 +34,7 @@ interface ChatMessage {
   selector: 'm-session',
   templateUrl: './session.component.html'
 })
-export class SessionComponent implements OnInit, OnDestroy {
+export class SessionComponent implements OnDestroy {
   messageText = '';
   isSubmitting = false;
 
@@ -48,9 +48,39 @@ export class SessionComponent implements OnInit, OnDestroy {
   session: AgentSessionApi;
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
+  debugMode = false;
   eventSource: EventSource;
 
-  private subscriptions: Subscription[] = [];
+  session$ = this.sessionQuery.select().pipe(
+    tap(x => {
+      this.session = x?.sessionId ? x : undefined;
+
+      // Connect SSE when session becomes active and no SSE is open
+      if (
+        this.session?.status === SessionStatusEnum.Active &&
+        !this.eventSource
+      ) {
+        this.connectSse(this.session.sessionId);
+      }
+
+      this.cd.detectChanges();
+    })
+  );
+
+  events$ = this.sessionEventsQuery.events$.pipe(
+    tap(x => {
+      this.events = x;
+      this.messages = this.buildMessages(x);
+      this.cd.detectChanges();
+    })
+  );
+
+  debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
+    tap(x => {
+      this.debugMode = x;
+      this.cd.detectChanges();
+    })
+  );
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -59,37 +89,11 @@ export class SessionComponent implements OnInit, OnDestroy {
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
+    private uiQuery: UiQuery,
     private navigateService: NavigateService
   ) {}
 
-  ngOnInit() {
-    this.subscriptions.push(
-      this.sessionQuery.select().subscribe(x => {
-        this.session = x?.sessionId ? x : undefined;
-
-        // Connect SSE when session becomes active and no SSE is open
-        if (
-          this.session?.status === SessionStatusEnum.Active &&
-          !this.eventSource
-        ) {
-          this.connectSse(this.session.sessionId);
-        }
-
-        this.cd.detectChanges();
-      })
-    );
-
-    this.subscriptions.push(
-      this.sessionEventsQuery.events$.subscribe(x => {
-        this.events = x;
-        this.messages = this.buildMessages(x);
-        this.cd.detectChanges();
-      })
-    );
-  }
-
   ngOnDestroy() {
-    this.subscriptions.forEach(s => s.unsubscribe());
     this.closeSse();
   }
 

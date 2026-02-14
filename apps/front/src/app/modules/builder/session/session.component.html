@@ -66,8 +66,11 @@
 
 <!-- Mode 2: Chat mode (active session with messages) -->
 <div *ngIf="isChatMode" class="flex h-full w-full flex-col">
-  <!-- Messages area -->
-  <div class="thin-scrollbar flex-grow overflow-y-auto px-6 py-4">
+  <!-- Messages area (chat view) -->
+  <div
+    *ngIf="!debugMode"
+    class="thin-scrollbar flex-grow overflow-y-auto px-6 py-4"
+  >
     <div class="mx-auto max-w-[860px]">
       <div *ngFor="let msg of messages" class="mb-4">
         <!-- User message -->
@@ -114,6 +117,11 @@
     </div>
   </div>
 
+  <!-- Debug events view -->
+  <div *ngIf="debugMode" class="thin-scrollbar flex-grow overflow-y-auto">
+    <m-session-debug-events [events]="events"></m-session-debug-events>
+  </div>
+
   <!-- Input area (pinned to bottom) -->
   <div class="flex-shrink-0 px-6 pb-4">
     <div class="mx-auto max-w-[860px]">
@@ -146,3 +154,6 @@
     </div>
   </div>
 </div>
+<div *ngIf="session$ | async"></div>
+<div *ngIf="events$ | async"></div>
+<div *ngIf="debugMode$ | async"></div>
