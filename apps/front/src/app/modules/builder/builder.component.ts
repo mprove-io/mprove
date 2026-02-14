@@ -43,7 +43,7 @@ import { UiService } from '#front/app/services/ui.service';
 @Component({
   standalone: false,
   selector: 'm-builder',
-  templateUrl: './files.component.html'
+  templateUrl: './builder.component.html'
 })
 export class BuilderComponent implements OnInit {
   pageTitle = BUILDER_PAGE_TITLE;

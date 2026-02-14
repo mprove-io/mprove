@@ -31,7 +31,7 @@ import tippy from 'tippy.js';
 import { AppComponent } from './app/app.component';
 import { appRoutes } from './app/app-routes';
 import { AuthModule } from './app/modules/auth/auth.module';
-import { BuilderModule } from './app/modules/builder/files.module';
+import { BuilderModule } from './app/modules/builder/builder.module';
 import { DashboardsModule } from './app/modules/dashboards/dashboards.module';
 import { ModelsModule } from './app/modules/models/models.module';
 import { NavModule } from './app/modules/nav/nav.module';
