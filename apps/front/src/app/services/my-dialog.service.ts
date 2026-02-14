@@ -4,6 +4,42 @@ import { SPECIAL_ERROR } from '#common/constants/top-front';
 import { ErrorData } from '#common/interfaces/front/error-data';
 import { EmailConfirmedDialogComponent } from '../modules/auth/main/03-confirm-email/email-confirmed-dialog/email-confirmed-dialog.component';
 import {
+  CommitDialogComponent,
+  CommitDialogDialogData
+} from '../modules/builder/commit-dialog/commit-dialog.component';
+import {
+  DeleteFileDialogComponent,
+  DeleteFileDialogData
+} from '../modules/builder/files-tree/file-options/delete-file-dialog/delete-file-dialog.component';
+import {
+  RenameFileDialogComponent,
+  RenameFileDialogData
+} from '../modules/builder/files-tree/file-options/rename-file-dialog/rename-file-dialog.component';
+import {
+  CreateFileDialogComponent,
+  CreateFileDialogData
+} from '../modules/builder/files-tree/folder-options/create-file-dialog/create-file-dialog.component';
+import {
+  CreateFolderDialogComponent,
+  CreateFolderDialogData
+} from '../modules/builder/files-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
+import {
+  DeleteFolderDialogComponent,
+  DeleteFolderDialogData
+} from '../modules/builder/files-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
+import {
+  NewFileDialogComponent,
+  NewFileDialogData
+} from '../modules/builder/files-tree/folder-options/new-file-dialog/new-file-dialog.component';
+import {
+  RenameFolderDialogComponent,
+  RenameFolderDialogData
+} from '../modules/builder/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
+import {
+  MalloyModelsDialogComponent,
+  MalloyModelsDialogData
+} from '../modules/builder/malloy-models-dialog/malloy-models-dialog.component';
+import {
   CreateDashboardDialogComponent,
   CreateDashboardDialogData
 } from '../modules/dashboards/create-dashboard-dialog/create-dashboard-dialog.component';
@@ -15,42 +51,6 @@ import {
   DashboardAddTileDialogComponent,
   DashboardAddTileDialogData
 } from '../modules/dashboards/dashboard-add-tile-dialog/dashboard-add-tile-dialog.component';
-import {
-  CommitDialogComponent,
-  CommitDialogDialogData
-} from '../modules/files/commit-dialog/commit-dialog.component';
-import {
-  DeleteFileDialogComponent,
-  DeleteFileDialogData
-} from '../modules/files/files-tree/file-options/delete-file-dialog/delete-file-dialog.component';
-import {
-  RenameFileDialogComponent,
-  RenameFileDialogData
-} from '../modules/files/files-tree/file-options/rename-file-dialog/rename-file-dialog.component';
-import {
-  CreateFileDialogComponent,
-  CreateFileDialogData
-} from '../modules/files/files-tree/folder-options/create-file-dialog/create-file-dialog.component';
-import {
-  CreateFolderDialogComponent,
-  CreateFolderDialogData
-} from '../modules/files/files-tree/folder-options/create-folder-dialog/create-folder-dialog.component';
-import {
-  DeleteFolderDialogComponent,
-  DeleteFolderDialogData
-} from '../modules/files/files-tree/folder-options/delete-folder-dialog/delete-folder-dialog.component';
-import {
-  NewFileDialogComponent,
-  NewFileDialogData
-} from '../modules/files/files-tree/folder-options/new-file-dialog/new-file-dialog.component';
-import {
-  RenameFolderDialogComponent,
-  RenameFolderDialogData
-} from '../modules/files/files-tree/folder-options/rename-folder-dialog/rename-folder-dialog.component';
-import {
-  MalloyModelsDialogComponent,
-  MalloyModelsDialogData
-} from '../modules/files/malloy-models-dialog/malloy-models-dialog.component';
 import {
   ChartsAddColumnFieldDialogComponent,
   ChartsAddColumnFieldDialogData
