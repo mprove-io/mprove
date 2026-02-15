@@ -88,10 +88,18 @@ body {
 
 ng-scrollbar {
   --scrollbar-thumb-color: rgb(0 0 0 / 15%);
-  --scrollbar-thickness: 15;
+  --scrollbar-thumb-hover-color: rgb(0 0 0 / 25%);
+  --scrollbar-track-color: transparent;
+  --scrollbar-thickness: 10;
   --scrollbar-hover-opacity-transition-enter-duration: 200ms;
   --scrollbar-hover-opacity-transition-leave-duration: 500ms;
   --scrollbar-hover-opacity-transition-leave-delay: 0ms;
+}
+
+scrollbar-thumb-y {
+  // border-right: 2.5px solid transparent !important;
+  // background-clip: padding-box !important;
+  border-radius: 6px !important;
 }
 
 // @import '~ngx-ui-switch/ui-switch.component.scss';
