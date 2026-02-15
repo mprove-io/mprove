@@ -24,8 +24,7 @@ interface ChatTurn {
 @Component({
   standalone: false,
   selector: 'm-session-messages',
-  templateUrl: './session-messages.component.html',
-  host: { class: 'flex h-2 w-full flex-grow flex-col overflow-y-auto' }
+  templateUrl: './session-messages.component.html'
 })
 export class SessionMessagesComponent implements OnChanges, OnDestroy {
   @Input() turns: ChatTurn[] = [];

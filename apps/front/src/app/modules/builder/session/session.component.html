@@ -65,6 +65,7 @@
 <div *ngIf="isChatMode" class="flex h-full w-full flex-col">
   <!-- Messages area (chat view) -->
   <m-session-messages
+    class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
     *ngIf="!debugMode && showSessionMessages"
     [turns]="turns"
     [session]="session"
@@ -80,7 +81,7 @@
   </div>
 
   <!-- Input area (pinned to bottom) -->
-  <div class="flex-shrink-0 px-6 pb-4">
+  <div class="flex-shrink-0 px-6 pb-4 pt-[6px]">
     <div class="mx-auto max-w-[860px]">
       <div
         class="border-s300 focus-within:border-s500 overflow-hidden rounded-3xl border-[1.5px]"
