@@ -471,8 +471,7 @@
             <div
               class="h-full w-full"
               *ngIf="
-                !isNavigatingSession &&
-                ((lastUrl !== pathBuilder && !!file?.fileId) || isSessionRoute)
+                (lastUrl !== pathBuilder && !!file?.fileId) || isSessionRoute
               "
             >
               <router-outlet></router-outlet>
@@ -520,7 +519,6 @@
 <div *ngIf="showFilesRightPanel$ | async"></div>
 <div *ngIf="filesRightPanelTab$ | async"></div>
 <div *ngIf="debugMode$ | async"></div>
-<div *ngIf="isNavigatingSession$ | async"></div>
 <div *ngIf="sessionId$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="isEditor$ | async"></div>

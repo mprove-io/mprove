@@ -23,6 +23,7 @@ import { FileEditorComponent } from './file-editor/file-editor.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
 import { SessionComponent } from './session/session.component';
 import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
+import { SessionMessagesComponent } from './session/session-messages/session-messages.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { SessionDebugEventsComponent } from './session/session-debug-events/sess
     SessionsComponent,
     SessionComponent,
     SessionDebugEventsComponent,
+    SessionMessagesComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent,
     ValidationStatusComponent

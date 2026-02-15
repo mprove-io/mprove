@@ -55,7 +55,7 @@ export class SessionsComponent {
 
   openSession(session: AgentSessionApi) {
     if (this.sessionId) {
-      this.uiQuery.updatePart({ isNavigatingSession: true });
+      this.uiQuery.updatePart({ showSessionMessages: false });
     }
     this.sessionQuery.update(session);
     this.navigateService.navigateToSession({

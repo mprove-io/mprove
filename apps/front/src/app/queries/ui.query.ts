@@ -59,6 +59,7 @@ export class UiState {
   secondFileNodeId: string;
   sessionDebugMode: boolean;
   isNavigatingSession: boolean;
+  showSessionMessages: boolean;
   //
   modelTreeLevels: ModelTreeLevelsEnum;
   timezone: string;
@@ -111,6 +112,7 @@ let uiState: UiState = {
   secondFileNodeId: undefined,
   sessionDebugMode: false,
   isNavigatingSession: false,
+  showSessionMessages: true,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -216,6 +218,10 @@ export class UiQuery extends BaseQuery<UiState> {
 
   isNavigatingSession$ = this.store.pipe(
     select(state => state.isNavigatingSession)
+  );
+
+  showSessionMessages$ = this.store.pipe(
+    select(state => state.showSessionMessages)
   );
 
   constructor() {

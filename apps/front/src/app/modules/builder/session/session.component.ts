@@ -1,18 +1,10 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  ViewChild
-} from '@angular/core';
-import { NgScrollbar } from 'ngx-scrollbar';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { combineLatest, interval, Subscription } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { makeId } from '#common/functions/make-id';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import {
@@ -67,21 +59,17 @@ export class SessionComponent implements OnDestroy {
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
-  responseMinHeight = 0;
+  scrollTrigger = 0;
+  showSessionMessages = true;
   private previousTurnsCount = 0;
   private previousLastTurnResponsesExist = false;
+  private userSentMessage = false;
   isChatMode = false;
   isActivating = false;
   isWaitingForResponse = false;
   isSessionError = false;
   debugMode = false;
   eventSource: EventSource;
-
-  // Scroll
-  @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
-
-  // Spinners
-  waitingSpinnerName = makeId();
 
   // Polling
   private pollSubscription: Subscription;
@@ -130,16 +118,19 @@ export class SessionComponent implements OnDestroy {
       this.isActivating = this.session?.status === SessionStatusEnum.New;
       this.isWaitingForResponse = this.checkIsWaitingForResponse();
       this.isSessionError = this.session?.status === SessionStatusEnum.Error;
-      this.updateResponseMinHeight();
-      this.updateSpinners();
+
+      if (!this.showSessionMessages) {
+        this.uiQuery.updatePart({ showSessionMessages: true });
+      }
+
       this.cd.detectChanges();
 
       let shouldScroll = false;
 
-      // New user message (new turn created)
-      if (this.turns.length > this.previousTurnsCount) {
+      // Scroll only when user sent a message and new turn appeared
+      if (this.userSentMessage && this.turns.length > this.previousTurnsCount) {
         shouldScroll = true;
-        this.previousLastTurnResponsesExist = false;
+        this.userSentMessage = false;
       }
 
       // First response in current turn
@@ -153,7 +144,7 @@ export class SessionComponent implements OnDestroy {
       this.previousLastTurnResponsesExist = lastTurnHasResponses;
 
       if (shouldScroll) {
-        this.scrollUserMessageToTop();
+        this.scrollTrigger++;
       }
     })
   );
@@ -161,6 +152,13 @@ export class SessionComponent implements OnDestroy {
   debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
     tap(x => {
       this.debugMode = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  showSessionMessages$ = this.uiQuery.showSessionMessages$.pipe(
+    tap(x => {
+      this.showSessionMessages = x;
       this.cd.detectChanges();
     })
   );
@@ -173,8 +171,7 @@ export class SessionComponent implements OnDestroy {
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
     private uiQuery: UiQuery,
-    private navigateService: NavigateService,
-    private spinner: NgxSpinnerService
+    private navigateService: NavigateService
   ) {}
 
   ngOnDestroy() {
@@ -198,6 +195,7 @@ export class SessionComponent implements OnDestroy {
       return;
     }
 
+    this.userSentMessage = true;
     this.isSubmitting = true;
 
     let nav = this.navQuery.getValue();
@@ -256,6 +254,7 @@ export class SessionComponent implements OnDestroy {
       return;
     }
 
+    this.userSentMessage = true;
     this.isSubmitting = true;
 
     let payload: ToBackendSendAgentMessageRequestPayload = {
@@ -373,40 +372,10 @@ export class SessionComponent implements OnDestroy {
     });
   }
 
-  private scrollUserMessageToTop() {
-    if (!this.chatScrollbar) {
-      return;
-    }
-    setTimeout(() => {
-      let elements =
-        this.chatScrollbar.nativeElement.querySelectorAll('.user-message');
-      let lastEl = elements[elements.length - 1] as HTMLElement;
-      if (lastEl) {
-        this.chatScrollbar.adapter.scrollTo({ top: lastEl.offsetTop });
-      }
-    });
-  }
-
   private closeSse() {
     if (this.eventSource) {
       this.eventSource.close();
       this.eventSource = undefined;
-    }
-  }
-
-  private updateResponseMinHeight() {
-    if (!this.chatScrollbar) {
-      return;
-    }
-    this.responseMinHeight =
-      this.chatScrollbar.nativeElement.clientHeight * 0.7;
-  }
-
-  private updateSpinners() {
-    if (this.isWaitingForResponse) {
-      this.spinner.show(this.waitingSpinnerName);
-    } else {
-      this.spinner.hide(this.waitingSpinnerName);
     }
   }
 
