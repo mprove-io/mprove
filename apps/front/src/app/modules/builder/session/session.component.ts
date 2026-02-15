@@ -63,6 +63,7 @@ export class SessionComponent implements OnDestroy {
   showSessionMessages = true;
   private previousTurnsCount = 0;
   private previousLastTurnResponsesExist = false;
+  private previousSessionId: string;
   private userSentMessage = false;
   isChatMode = false;
   isActivating = false;
@@ -124,6 +125,17 @@ export class SessionComponent implements OnDestroy {
       }
 
       this.cd.detectChanges();
+
+      let currentSessionId = this.session?.sessionId;
+      let sessionChanged = currentSessionId !== this.previousSessionId;
+      this.previousSessionId = currentSessionId;
+
+      if (sessionChanged) {
+        this.previousTurnsCount = this.turns.length;
+        this.previousLastTurnResponsesExist =
+          this.turns[this.turns.length - 1]?.responses?.length > 0;
+        return;
+      }
 
       let shouldScroll = false;
 
