@@ -269,10 +269,11 @@ export class EventLt {
 //
 
 export class SessionSt {
-  sandboxId: string;
-  sandboxBaseUrl: string;
-  sandboxAgentToken: string;
-  sessionRecord: SessionRecord;
+  sandboxId?: string;
+  sandboxBaseUrl?: string;
+  sandboxAgentToken?: string;
+  sessionRecord?: SessionRecord;
+  firstMessage?: string;
 }
 export class SessionLt {
   emptyData?: number;

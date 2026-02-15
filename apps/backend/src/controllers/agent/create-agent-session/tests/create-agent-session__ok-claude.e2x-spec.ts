@@ -1,7 +1,9 @@
 import test from 'ava';
 import { forTestsConnectSse } from '#backend/functions/for-tests-connect-sse';
 import { forTestsExtractDialogLines } from '#backend/functions/for-tests-extract-dialog-lines';
+import { forTestsGetSseTicket } from '#backend/functions/for-tests-get-sse-ticket';
 import { forTestsInspectUi } from '#backend/functions/for-tests-inspect-ui';
+import { forTestsWaitForSessionActive } from '#backend/functions/for-tests-wait-for-session-active';
 import { forTestsWaitForTurnEnded } from '#backend/functions/for-tests-wait-for-turn-ended';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
@@ -171,11 +173,26 @@ test('1', async t => {
       prep.httpServer.listen(0, () => resolve());
     });
 
-    // Connect SSE before sending any messages
+    // Wait for async session activation to complete
+    await forTestsWaitForSessionActive({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      traceId: traceId,
+      sessionId: sessionId
+    });
+
+    // Get SSE ticket and connect before sending any messages
+    let sseTicket = await forTestsGetSseTicket({
+      httpServer: prep.httpServer,
+      loginToken: prep.loginToken,
+      traceId: traceId,
+      sessionId: sessionId
+    });
+
     sse = await forTestsConnectSse({
       httpServer: prep.httpServer,
       sessionId: sessionId,
-      ticket: createSessionResp.payload.sseTicket
+      ticket: sseTicket
     });
 
     // Send 1st message (after SSE is connected)
@@ -296,7 +313,6 @@ test('1', async t => {
     t.is(testError, undefined);
     t.is(createSessionResp.info.status, ResponseInfoStatusEnum.Ok);
     t.truthy(createSessionResp.payload.sessionId);
-    t.truthy(createSessionResp.payload.sseTicket);
     t.is(sendFirstMessageResp.info.status, ResponseInfoStatusEnum.Ok);
     t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
 

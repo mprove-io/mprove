@@ -947,7 +947,8 @@ export class TabToEntService {
       sandboxId: tab.sandboxId,
       sandboxBaseUrl: tab.sandboxBaseUrl,
       sandboxAgentToken: tab.sandboxAgentToken,
-      sessionRecord: tab.sessionRecord
+      sessionRecord: tab.sessionRecord,
+      firstMessage: tab.firstMessage
     };
 
     let sessionLt: SessionLt = {};

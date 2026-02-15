@@ -1,9 +1,12 @@
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { take, tap } from 'rxjs/operators';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { combineLatest, interval, Subscription } from 'rxjs';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '#common/functions/make-id';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import {
@@ -14,6 +17,10 @@ import {
   ToBackendCreateAgentSseTicketRequestPayload,
   ToBackendCreateAgentSseTicketResponse
 } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
+import {
+  ToBackendGetAgentSessionRequestPayload,
+  ToBackendGetAgentSessionResponse
+} from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -48,16 +55,45 @@ export class SessionComponent implements OnDestroy {
   session: AgentSessionApi;
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
+  isChatMode = false;
+  isActivating = false;
+  isWaitingForResponse = false;
+  isSessionError = false;
   debugMode = false;
   eventSource: EventSource;
 
-  session$ = this.sessionQuery.select().pipe(
-    tap(x => {
-      this.session = x?.sessionId ? x : undefined;
+  // Spinners
+  waitingSpinnerName = makeId();
+
+  // Polling
+  private pollSubscription: Subscription;
+
+  sessionAndEvents$ = combineLatest([
+    this.sessionQuery.select(),
+    this.sessionEventsQuery.events$
+  ]).pipe(
+    tap(([sessionValue, eventsValue]) => {
+      this.session = sessionValue?.sessionId ? sessionValue : undefined;
 
       if (this.session) {
         this.agent = this.session.agent;
         this.agentMode = this.session.agentMode;
+      }
+
+      // Start polling when session is New
+      if (
+        this.session?.status === SessionStatusEnum.New &&
+        !this.pollSubscription
+      ) {
+        this.startPolling(this.session.sessionId);
+      }
+
+      // Stop polling when session is no longer New
+      if (
+        this.session?.status !== SessionStatusEnum.New &&
+        this.pollSubscription
+      ) {
+        this.stopPolling();
       }
 
       // Connect SSE when session becomes active and no SSE is open
@@ -68,14 +104,14 @@ export class SessionComponent implements OnDestroy {
         this.connectSse(this.session.sessionId);
       }
 
-      this.cd.detectChanges();
-    })
-  );
+      this.events = eventsValue;
+      this.messages = this.buildMessages(eventsValue);
 
-  events$ = this.sessionEventsQuery.events$.pipe(
-    tap(x => {
-      this.events = x;
-      this.messages = this.buildMessages(x);
+      this.isChatMode = !!this.session;
+      this.isActivating = this.session?.status === SessionStatusEnum.New;
+      this.isWaitingForResponse = this.checkIsWaitingForResponse();
+      this.isSessionError = this.session?.status === SessionStatusEnum.Error;
+      this.updateSpinners();
       this.cd.detectChanges();
     })
   );
@@ -95,15 +131,13 @@ export class SessionComponent implements OnDestroy {
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
     private uiQuery: UiQuery,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnDestroy() {
     this.closeSse();
-  }
-
-  get isChatMode(): boolean {
-    return !!this.session;
+    this.stopPolling();
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -123,9 +157,11 @@ export class SessionComponent implements OnDestroy {
     }
 
     this.isSubmitting = true;
-    this.cd.detectChanges();
 
     let nav = this.navQuery.getValue();
+    let firstMessageText = this.messageText.trim();
+
+    this.messageText = '';
 
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
@@ -134,14 +170,13 @@ export class SessionComponent implements OnDestroy {
       model: 'unk',
       agentMode: this.agentMode,
       permissionMode: 'default',
-      firstMessage: this.messageText.trim()
+      firstMessage: firstMessageText
     };
 
     this.apiService
       .req({
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCreateAgentSession,
-        payload: payload,
-        showSpinner: true
+        payload: payload
       })
       .pipe(
         tap((resp: ToBackendCreateAgentSessionResponse) => {
@@ -154,17 +189,16 @@ export class SessionComponent implements OnDestroy {
               sessionId: sessionId,
               agent: this.agent,
               agentMode: this.agentMode,
-              status: SessionStatusEnum.Active,
+              status: SessionStatusEnum.New,
               createdTs: Date.now(),
-              lastActivityTs: Date.now()
+              lastActivityTs: Date.now(),
+              firstMessage: firstMessageText
             };
             this.sessionsQuery.updatePart({
               sessions: [newSession, ...currentSessions]
             });
 
-            this.messageText = '';
-
-            // Navigate to session route (resolver will load session, SSE connects via subscription)
+            // Navigate to session route (resolver will load session, polling starts via subscription)
             this.navigateService.navigateToSession({ sessionId: sessionId });
           }
           this.isSubmitting = false;
@@ -181,12 +215,13 @@ export class SessionComponent implements OnDestroy {
     }
 
     this.isSubmitting = true;
-    this.cd.detectChanges();
 
     let payload: ToBackendSendAgentMessageRequestPayload = {
       sessionId: this.session.sessionId,
       message: this.messageText.trim()
     };
+
+    this.messageText = '';
 
     this.apiService
       .req({
@@ -195,13 +230,52 @@ export class SessionComponent implements OnDestroy {
       })
       .pipe(
         tap(() => {
-          this.messageText = '';
           this.isSubmitting = false;
           this.cd.detectChanges();
         }),
         take(1)
       )
       .subscribe();
+  }
+
+  private startPolling(sessionId: string) {
+    this.pollSubscription = interval(1000)
+      .pipe(
+        switchMap(() =>
+          this.apiService.req({
+            pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
+            payload: {
+              sessionId: sessionId
+            } as ToBackendGetAgentSessionRequestPayload
+          })
+        ),
+        tap((resp: ToBackendGetAgentSessionResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.sessionQuery.update(resp.payload.session);
+
+            if (resp.payload.events.length > 0) {
+              this.sessionEventsQuery.updatePart({
+                events: resp.payload.events
+              });
+            }
+
+            // Update session in the sessions list
+            let sessions = this.sessionsQuery.getValue().sessions;
+            let updated = sessions.map(s =>
+              s.sessionId === sessionId ? resp.payload.session : s
+            );
+            this.sessionsQuery.updatePart({ sessions: updated });
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  private stopPolling() {
+    if (this.pollSubscription) {
+      this.pollSubscription.unsubscribe();
+      this.pollSubscription = undefined;
+    }
   }
 
   private connectSse(sessionId: string) {
@@ -240,7 +314,18 @@ export class SessionComponent implements OnDestroy {
       let agentEvent: AgentEventApi = JSON.parse(event.data);
 
       let currentEvents = this.sessionEventsQuery.getValue().events;
-      let updatedEvents = [...currentEvents, agentEvent];
+
+      // Deduplicate by eventIndex
+      let exists = currentEvents.some(
+        e => e.eventIndex === agentEvent.eventIndex
+      );
+      if (exists) {
+        return;
+      }
+
+      let updatedEvents = [...currentEvents, agentEvent].sort(
+        (a, b) => a.eventIndex - b.eventIndex
+      );
 
       this.sessionEventsQuery.updatePart({ events: updatedEvents });
     });
@@ -253,11 +338,39 @@ export class SessionComponent implements OnDestroy {
     }
   }
 
+  private updateSpinners() {
+    if (this.isWaitingForResponse) {
+      this.spinner.show(this.waitingSpinnerName);
+    } else {
+      this.spinner.hide(this.waitingSpinnerName);
+    }
+  }
+
+  private checkIsWaitingForResponse(): boolean {
+    if (this.session?.status !== SessionStatusEnum.Active) {
+      return false;
+    }
+    if (this.messages.length === 0) {
+      return true;
+    }
+    let lastMessage = this.messages[this.messages.length - 1];
+    return lastMessage.sender === 'user' || lastMessage.sender === 'tool';
+  }
+
   private buildMessages(events: AgentEventApi[]): ChatMessage[] {
     let messages: ChatMessage[] = [];
     let currentMessage: ChatMessage;
 
-    for (let event of events) {
+    // Only process contiguous events (stop at first gap in eventIndex)
+    let contiguousEvents: AgentEventApi[] = [];
+    for (let i = 0; i < events.length; i++) {
+      if (i > 0 && events[i].eventIndex !== events[i - 1].eventIndex + 1) {
+        break;
+      }
+      contiguousEvents.push(events[i]);
+    }
+
+    for (let event of contiguousEvents) {
       let p = event.payload as { method?: string; params?: any };
 
       // User messages: session/prompt requests from client

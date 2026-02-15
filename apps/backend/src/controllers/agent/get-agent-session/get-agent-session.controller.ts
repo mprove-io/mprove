@@ -67,7 +67,8 @@ export class GetAgentSessionController {
       agentMode: session.agentMode,
       status: session.status,
       createdTs: session.createdTs,
-      lastActivityTs: session.lastActivityTs
+      lastActivityTs: session.lastActivityTs,
+      firstMessage: session.firstMessage
     };
 
     let payload: ToBackendGetAgentSessionResponsePayload = {

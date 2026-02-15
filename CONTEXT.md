@@ -67,6 +67,8 @@ Run `pnpm catalog-write` to sync catalog versions to `libs/common`, `libs/node-c
 | e2e        | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
 | inst       | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
 
+Use `pnpm check` instead of running `pnpm typecheck` and `pnpm lint` separately.
+
 Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` for specific package.
 
 **Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`, `mcli`

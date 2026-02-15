@@ -55,6 +55,12 @@ export class SendAgentMessageController {
       sessionId
     });
 
+    if (session.status === SessionStatusEnum.New) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SESSION_NOT_READY
+      });
+    }
+
     if (session.status === SessionStatusEnum.Paused) {
       let project = await this.projectsService.getProjectCheckExists({
         projectId: session.projectId

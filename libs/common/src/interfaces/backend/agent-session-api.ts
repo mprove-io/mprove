@@ -18,4 +18,6 @@ export class AgentSessionApi {
 
   @IsInt()
   lastActivityTs: number;
+
+  firstMessage?: string;
 }

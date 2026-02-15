@@ -26,14 +26,15 @@ export class SessionsService {
     model: string;
     agentMode: string;
     permissionMode: string;
-    sandboxId: string;
-    sandboxBaseUrl: string;
-    sandboxAgentToken: string;
-    sessionRecord: SessionRecord;
+    sandboxId?: string;
+    sandboxBaseUrl?: string;
+    sandboxAgentToken?: string;
+    sessionRecord?: SessionRecord;
+    firstMessage?: string;
     status: SessionStatusEnum;
     lastActivityTs: number;
-    runningStartTs: number;
-    expiresAt: number;
+    runningStartTs?: number;
+    expiresAt?: number;
     createdTs: number;
   }): SessionTab {
     let session: SessionTab = {
@@ -49,6 +50,7 @@ export class SessionsService {
       sandboxBaseUrl: item.sandboxBaseUrl,
       sandboxAgentToken: item.sandboxAgentToken,
       sessionRecord: item.sessionRecord,
+      firstMessage: item.firstMessage,
       status: item.status,
       lastActivityTs: item.lastActivityTs,
       runningStartTs: item.runningStartTs,

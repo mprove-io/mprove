@@ -64,6 +64,7 @@
             <span
               class="rounded-full px-2 py-0.5 text-sm"
               [ngClass]="{
+                'bg-blue-100 text-blue-700': session.status === 'New',
                 'bg-green-100 text-green-700': session.status === 'Active',
                 'bg-yellow-100 text-yellow-700': session.status === 'Paused',
                 'bg-red-100 text-red-700':

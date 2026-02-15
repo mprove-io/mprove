@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import { SandboxAgent, SessionRecord } from 'sandbox-agent';
 import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
@@ -28,15 +27,14 @@ import { AgentService } from '#backend/services/agent.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { RedisService } from '#backend/services/redis.service';
 import { SandboxService } from '#backend/services/sandbox.service.js';
 import { TabService } from '#backend/services/tab.service.js';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
-import { makeId } from '#common/functions/make-id';
 import {
   ToBackendCreateAgentSessionRequest,
   ToBackendCreateAgentSessionResponsePayload
@@ -54,7 +52,6 @@ export class CreateAgentSessionController {
     private agentService: AgentService,
     private sandboxService: SandboxService,
     private tabService: TabService,
-    private redisService: RedisService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -90,7 +87,10 @@ export class CreateAgentSessionController {
       .findMany({
         where: and(
           eq(sessionsTable.userId, user.userId),
-          inArray(sessionsTable.status, [SessionStatusEnum.Active])
+          inArray(sessionsTable.status, [
+            SessionStatusEnum.Active,
+            SessionStatusEnum.New
+          ])
         )
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
@@ -100,13 +100,6 @@ export class CreateAgentSessionController {
         message: ErEnum.BACKEND_TOO_MANY_ACTIVE_SESSIONS
       });
     }
-
-    let sandboxTimeoutMinutes = this.cs.get<
-      BackendConfig['sandboxTimeoutMinutes']
-    >('sandboxTimeoutMinutes');
-
-    // intentionally * 50 (not * 60) to pause sandbox before provider does
-    let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
     let sandboxEnvs: Record<string, string> = {};
 
@@ -134,64 +127,9 @@ export class CreateAgentSessionController {
       sandboxEnvs.OPENCODE_API_KEY = project.zenApiKey;
     }
 
-    console.log('starting sandboxAgent server...');
-
-    let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
-      await this.sandboxService.startSandboxAgentServer({
-        sandboxType: sandboxType,
-        sandboxTimeoutMs: sandboxTimeoutMs,
-        sandboxEnvs: sandboxEnvs,
-        agent: agent,
-        project: project
-      });
-
-    console.log('sandboxAgent server started');
+    // Phase 1: Save session with status=New and return immediately
 
     let sessionId = uuidv4();
-
-    let sandboxAgent: SandboxAgent =
-      await this.sandboxService.connectSandboxAgent({
-        sessionId: sessionId,
-        sandboxBaseUrl: sandboxBaseUrl,
-        sandboxAgentToken: sandboxAgentToken
-      });
-
-    // let agentInfo = await sandboxAgent.getAgent(agent);
-
-    // if (!agentInfo.credentialsAvailable) {
-    //   throw new ServerError({
-    //     message: ErEnum.BACKEND_AGENT_CREDENTIALS_NOT_AVAILABLE
-    //   });
-    // }
-
-    let sdkSession = await sandboxAgent
-      .createSession({
-        id: sessionId,
-        agent: agent
-      })
-      .catch(e => {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_CREATE_SESSION_FAILED,
-          originalError: e
-        });
-      });
-
-    // if (model) {
-    //   let { response: setModelResponse } =
-    //     await sandboxAgent.sendSessionMethod(
-    //       sessionId,
-    //       'session/set_model',
-    //       { sessionId: sessionId, modelId: model }
-    //     );
-
-    //   console.log(
-    //     'set_model response:',
-    //     JSON.stringify(setModelResponse, null, 2)
-    //   );
-    // }
-
-    let sessionRecord: SessionRecord = sdkSession.toRecord();
-
     let now = Date.now();
 
     let session: SessionTab = this.sessionsService.makeSession({
@@ -203,14 +141,9 @@ export class CreateAgentSessionController {
       model: model,
       agentMode: agentMode,
       permissionMode: permissionMode,
-      sandboxId: sandboxId,
-      sandboxBaseUrl: sandboxBaseUrl,
-      sandboxAgentToken: sandboxAgentToken,
-      sessionRecord: sessionRecord,
-      status: SessionStatusEnum.Active,
+      firstMessage: firstMessage,
+      status: SessionStatusEnum.New,
       lastActivityTs: now,
-      runningStartTs: now,
-      expiresAt: now + sandboxTimeoutMs,
       createdTs: now
     });
 
@@ -228,38 +161,158 @@ export class CreateAgentSessionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    this.agentService.startEventStream({
-      sessionId: session.sessionId
+    // Phase 2: Activate session asynchronously (fire-and-forget)
+
+    this.activateSessionAsync({
+      session: session,
+      sandboxType: sandboxType,
+      sandboxEnvs: sandboxEnvs,
+      agent: agent,
+      project: project,
+      firstMessage: firstMessage
+    }).catch(e => {
+      this.logger.error(
+        `Failed to activate session ${sessionId}: ${e?.message}`,
+        e?.stack
+      );
     });
 
-    if (firstMessage) {
-      let promptResponse = await sdkSession
-        .prompt([{ type: 'text', text: firstMessage }])
+    let payload: ToBackendCreateAgentSessionResponsePayload = {
+      sessionId: session.sessionId
+    };
+
+    return payload;
+  }
+
+  private async activateSessionAsync(item: {
+    session: SessionTab;
+    sandboxType: SandboxTypeEnum;
+    sandboxEnvs: Record<string, string>;
+    agent: string;
+    project: any;
+    firstMessage?: string;
+  }) {
+    let { session, sandboxType, sandboxEnvs, agent, project, firstMessage } =
+      item;
+
+    let sessionId = session.sessionId;
+
+    try {
+      let sandboxTimeoutMinutes = this.cs.get<
+        BackendConfig['sandboxTimeoutMinutes']
+      >('sandboxTimeoutMinutes');
+
+      // intentionally * 50 (not * 60) to pause sandbox before provider does
+      let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
+
+      console.log('starting sandboxAgent server...');
+
+      let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
+        await this.sandboxService.startSandboxAgentServer({
+          sandboxType: sandboxType,
+          sandboxTimeoutMs: sandboxTimeoutMs,
+          sandboxEnvs: sandboxEnvs,
+          agent: agent,
+          project: project
+        });
+
+      console.log('sandboxAgent server started');
+
+      await this.sandboxService.connectSandboxAgent({
+        sessionId: sessionId,
+        sandboxBaseUrl: sandboxBaseUrl,
+        sandboxAgentToken: sandboxAgentToken
+      });
+
+      let sandboxAgent = this.sandboxService.getSandboxAgent(sessionId);
+
+      let sdkSession = await sandboxAgent
+        .createSession({
+          id: sessionId,
+          agent: agent
+        })
         .catch(e => {
           throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+            message: ErEnum.BACKEND_AGENT_CREATE_SESSION_FAILED,
             originalError: e
           });
         });
 
-      // console.log(
-      //   'firstMessage prompt response:',
-      //   JSON.stringify(promptResponse, null, 2)
-      // );
+      let sessionRecord = sdkSession.toRecord();
+
+      let now = Date.now();
+
+      let updatedSession: SessionTab = {
+        ...session,
+        sandboxId: sandboxId,
+        sandboxBaseUrl: sandboxBaseUrl,
+        sandboxAgentToken: sandboxAgentToken,
+        sessionRecord: sessionRecord,
+        status: SessionStatusEnum.Active,
+        lastActivityTs: now,
+        runningStartTs: now,
+        expiresAt: now + sandboxTimeoutMs
+      };
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  sessions: [updatedSession]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+
+      this.agentService.startEventStream({
+        sessionId: sessionId
+      });
+
+      if (firstMessage) {
+        await sdkSession
+          .prompt([{ type: 'text', text: firstMessage }])
+          .catch(e => {
+            throw new ServerError({
+              message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
+              originalError: e
+            });
+          });
+      }
+    } catch (e: any) {
+      this.logger.error(
+        `Session activation failed for ${sessionId}: ${e?.message}`,
+        e?.stack
+      );
+
+      let errorSession: SessionTab = {
+        ...session,
+        status: SessionStatusEnum.Error
+      };
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  sessions: [errorSession]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      ).catch(retryErr => {
+        this.logger.error(
+          `Failed to update session ${sessionId} to Error status: ${retryErr?.message}`,
+          retryErr?.stack
+        );
+      });
+
+      throw e;
     }
-
-    let sseTicket = makeId();
-
-    await this.redisService.writeTicket({
-      ticket: sseTicket,
-      sessionId: session.sessionId
-    });
-
-    let payload: ToBackendCreateAgentSessionResponsePayload = {
-      sessionId: session.sessionId,
-      sseTicket: sseTicket
-    };
-
-    return payload;
   }
 }

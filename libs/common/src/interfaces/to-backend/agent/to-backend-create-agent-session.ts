@@ -37,9 +37,6 @@ export class ToBackendCreateAgentSessionRequest extends ToBackendRequest {
 export class ToBackendCreateAgentSessionResponsePayload {
   @IsString()
   sessionId: string;
-
-  @IsString()
-  sseTicket: string;
 }
 
 export class ToBackendCreateAgentSessionResponse extends MyResponse {
