@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  ViewChild
+} from '@angular/core';
+import { NgScrollbar } from 'ngx-scrollbar';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, interval, Subscription } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
@@ -36,6 +42,11 @@ interface ChatMessage {
   text: string;
 }
 
+interface ChatTurn {
+  userMessage?: ChatMessage;
+  responses: ChatMessage[];
+}
+
 @Component({
   standalone: false,
   selector: 'm-session',
@@ -55,12 +66,17 @@ export class SessionComponent implements OnDestroy {
   session: AgentSessionApi;
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
+  turns: ChatTurn[] = [];
+  responseMinHeight = 0;
   isChatMode = false;
   isActivating = false;
   isWaitingForResponse = false;
   isSessionError = false;
   debugMode = false;
   eventSource: EventSource;
+
+  // Scroll
+  @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 
   // Spinners
   waitingSpinnerName = makeId();
@@ -106,13 +122,16 @@ export class SessionComponent implements OnDestroy {
 
       this.events = eventsValue;
       this.messages = this.buildMessages(eventsValue);
+      this.turns = this.buildTurns(this.messages);
 
       this.isChatMode = !!this.session;
       this.isActivating = this.session?.status === SessionStatusEnum.New;
       this.isWaitingForResponse = this.checkIsWaitingForResponse();
       this.isSessionError = this.session?.status === SessionStatusEnum.Error;
+      this.updateResponseMinHeight();
       this.updateSpinners();
       this.cd.detectChanges();
+      this.scrollUserMessageToTop();
     })
   );
 
@@ -331,11 +350,36 @@ export class SessionComponent implements OnDestroy {
     });
   }
 
+  private scrollUserMessageToTop() {
+    if (!this.chatScrollbar) {
+      return;
+    }
+    let lastMessage = this.messages[this.messages.length - 1];
+    if (lastMessage?.sender === 'user') {
+      setTimeout(() => {
+        let elements =
+          this.chatScrollbar.nativeElement.querySelectorAll('.user-message');
+        let lastEl = elements[elements.length - 1] as HTMLElement;
+        if (lastEl) {
+          this.chatScrollbar.adapter.scrollTo({ top: lastEl.offsetTop });
+        }
+      });
+    }
+  }
+
   private closeSse() {
     if (this.eventSource) {
       this.eventSource.close();
       this.eventSource = undefined;
     }
+  }
+
+  private updateResponseMinHeight() {
+    if (!this.chatScrollbar) {
+      return;
+    }
+    this.responseMinHeight =
+      this.chatScrollbar.nativeElement.clientHeight * 0.7;
   }
 
   private updateSpinners() {
@@ -355,6 +399,26 @@ export class SessionComponent implements OnDestroy {
     }
     let lastMessage = this.messages[this.messages.length - 1];
     return lastMessage.sender === 'user' || lastMessage.sender === 'tool';
+  }
+
+  private buildTurns(messages: ChatMessage[]): ChatTurn[] {
+    let turns: ChatTurn[] = [];
+    let currentTurn: ChatTurn | undefined;
+
+    for (let msg of messages) {
+      if (msg.sender === 'user') {
+        currentTurn = { userMessage: msg, responses: [] };
+        turns.push(currentTurn);
+      } else {
+        if (!currentTurn) {
+          currentTurn = { responses: [] };
+          turns.push(currentTurn);
+        }
+        currentTurn.responses.push(msg);
+      }
+    }
+
+    return turns;
   }
 
   private buildMessages(events: AgentEventApi[]): ChatMessage[] {

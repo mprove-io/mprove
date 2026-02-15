@@ -69,106 +69,159 @@
   <!-- Messages area (chat view) -->
   <div
     *ngIf="!debugMode"
-    class="thin-scrollbar flex-grow overflow-y-auto px-6 py-4"
+    class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
   >
-    <div class="mx-auto flex min-h-full max-w-[860px] flex-col">
-      <!-- First message from session (before events arrive) -->
-      <div *ngIf="messages.length === 0 && session?.firstMessage" class="mb-4">
-        <div class="flex justify-end">
-          <div class="bg-s100 max-w-[80%] rounded-2xl px-4 py-3">
-            <div class="text-s1 whitespace-pre-wrap text-base">{{
-              session.firstMessage
-            }}</div>
-          </div>
-        </div>
-      </div>
+    <ng-scrollbar #chatScroll [orientation]="'vertical'" [visibility]="'hover'">
+      <div class="px-6 py-4">
+        <div class="mx-auto flex min-h-full max-w-[860px] flex-col">
+          <!-- First message from session (before events arrive) -->
+          <ng-container *ngIf="turns.length === 0 && session?.firstMessage">
+            <div class="user-message mb-4">
+              <div class="flex justify-end">
+                <div class="bg-s100 max-w-[80%] rounded-2xl px-4 py-3">
+                  <div class="text-s1 whitespace-pre-wrap text-base">{{
+                    session.firstMessage
+                  }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="response-div" [style.min-height.px]="responseMinHeight">
+              <div *ngIf="isActivating" class="mb-4 flex justify-start">
+                <div class="rounded-2xl px-4 py-3">
+                  <span class="text-s500 text-sm">Activating session...</span>
+                </div>
+              </div>
+              <div
+                *ngIf="isWaitingForResponse"
+                class="mb-4 flex items-center px-4 py-3"
+              >
+                <div class="relative flex h-9 w-9 flex-shrink-0">
+                  <ngx-spinner
+                    [name]="waitingSpinnerName"
+                    color="#0084d1"
+                    bdColor="#00000000"
+                    size="default"
+                    type="ball-clip-rotate"
+                    [fullScreen]="false"
+                    [disableAnimation]="true"
+                    [zIndex]="99998"
+                  >
+                  </ngx-spinner>
+                </div>
+              </div>
+              <div *ngIf="isSessionError" class="mb-4 flex justify-start">
+                <div class="max-w-[80%] rounded-2xl bg-red-50 px-4 py-3">
+                  <div class="text-sm text-red-700">
+                    Session activation failed. Please try again.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
 
-      <div *ngFor="let msg of messages" class="mb-4">
-        <!-- User message -->
-        <div *ngIf="msg.sender === 'user'" class="flex justify-end">
-          <div class="bg-s100 max-w-[80%] rounded-2xl px-4 py-3">
-            <div class="text-s1 whitespace-pre-wrap text-base">{{
-              msg.text
-            }}</div>
-          </div>
-        </div>
+          <!-- Turn-based message rendering -->
+          <ng-container *ngFor="let turn of turns; let isLast = last">
+            <!-- User message -->
+            <div *ngIf="turn.userMessage" class="user-message mb-4">
+              <div class="flex justify-end">
+                <div class="bg-s100 max-w-[80%] rounded-2xl px-4 py-3">
+                  <div class="text-s1 whitespace-pre-wrap text-base">{{
+                    turn.userMessage.text
+                  }}</div>
+                </div>
+              </div>
+            </div>
 
-        <!-- Agent message -->
-        <div *ngIf="msg.sender === 'agent'" class="flex justify-start">
-          <div class="max-w-[80%] rounded-2xl px-4 py-3">
-            <div class="text-s1 whitespace-pre-wrap text-base">{{
-              msg.text
-            }}</div>
-          </div>
-        </div>
+            <!-- Response div wrapping all non-user content for this turn -->
+            <div
+              class="response-div"
+              [style.min-height.px]="isLast ? responseMinHeight : 0"
+            >
+              <div *ngFor="let msg of turn.responses" class="mb-4">
+                <!-- Agent message -->
+                <div *ngIf="msg.sender === 'agent'" class="flex justify-start">
+                  <div class="max-w-[80%] rounded-2xl px-4 py-3">
+                    <div class="text-s1 whitespace-pre-wrap text-base">{{
+                      msg.text
+                    }}</div>
+                  </div>
+                </div>
 
-        <!-- Tool call -->
-        <div *ngIf="msg.sender === 'tool'" class="flex justify-start">
-          <div class="border-s200 max-w-[80%] rounded-lg border px-3 py-2">
-            <div class="text-s600 text-sm">{{ msg.text }}</div>
-          </div>
-        </div>
+                <!-- Tool call -->
+                <div *ngIf="msg.sender === 'tool'" class="flex justify-start">
+                  <div
+                    class="border-s200 max-w-[80%] rounded-lg border px-3 py-2"
+                  >
+                    <div class="text-s600 text-sm">{{ msg.text }}</div>
+                  </div>
+                </div>
 
-        <!-- Thought -->
-        <div *ngIf="msg.sender === 'thought'" class="flex justify-start">
-          <div class="max-w-[80%] rounded-2xl px-4 py-2">
-            <div class="text-s500 whitespace-pre-wrap text-sm italic">{{
-              msg.text
-            }}</div>
-          </div>
-        </div>
-      </div>
+                <!-- Thought -->
+                <div
+                  *ngIf="msg.sender === 'thought'"
+                  class="flex justify-start"
+                >
+                  <div class="max-w-[80%] rounded-2xl px-4 py-2">
+                    <div class="text-s500 whitespace-pre-wrap text-sm italic">{{
+                      msg.text
+                    }}</div>
+                  </div>
+                </div>
+              </div>
 
-      <!-- Activating session indicator -->
-      <div *ngIf="isActivating" class="mb-4 flex justify-start">
-        <div class="rounded-2xl px-4 py-3">
-          <span class="text-s500 text-sm">Activating session...</span>
-        </div>
-      </div>
+              <!-- Indicators only in the last turn -->
+              <ng-container *ngIf="isLast">
+                <div *ngIf="isActivating" class="mb-4 flex justify-start">
+                  <div class="rounded-2xl px-4 py-3">
+                    <span class="text-s500 text-sm">Activating session...</span>
+                  </div>
+                </div>
+                <div
+                  *ngIf="isWaitingForResponse"
+                  class="mb-4 flex items-center px-4 py-3"
+                >
+                  <div class="relative flex h-9 w-9 flex-shrink-0">
+                    <ngx-spinner
+                      [name]="waitingSpinnerName"
+                      color="#0084d1"
+                      bdColor="#00000000"
+                      size="default"
+                      type="ball-clip-rotate"
+                      [fullScreen]="false"
+                      [disableAnimation]="true"
+                      [zIndex]="99998"
+                    >
+                    </ngx-spinner>
+                  </div>
+                </div>
+                <div *ngIf="isSessionError" class="mb-4 flex justify-start">
+                  <div class="max-w-[80%] rounded-2xl bg-red-50 px-4 py-3">
+                    <div class="text-sm text-red-700">
+                      Session activation failed. Please try again.
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
 
-      <!-- Waiting for agent response indicator -->
-      <div
-        *ngIf="isWaitingForResponse"
-        class="mb-4 flex items-center px-4 py-3"
-      >
-        <div class="relative flex h-9 w-9 flex-shrink-0">
-          <ngx-spinner
-            [name]="waitingSpinnerName"
-            color="#0084d1"
-            bdColor="#00000000"
-            size="default"
-            type="ball-clip-rotate"
-            [fullScreen]="false"
-            [disableAnimation]="true"
-            [zIndex]="99998"
+          <!-- No messages state -->
+          <div
+            *ngIf="
+              turns.length === 0 &&
+              !session?.firstMessage &&
+              !isActivating &&
+              !isSessionError
+            "
+            class="text-s500 flex items-center justify-center py-8 text-sm"
           >
-          </ngx-spinner>
-        </div>
-      </div>
-
-      <!-- Session activation error -->
-      <div *ngIf="isSessionError" class="mb-4 flex justify-start">
-        <div class="max-w-[80%] rounded-2xl bg-red-50 px-4 py-3">
-          <div class="text-sm text-red-700">
-            Session activation failed. Please try again.
+            No messages yet
           </div>
+
+          <div class="flex-grow"></div>
         </div>
       </div>
-
-      <div
-        *ngIf="
-          messages.length === 0 &&
-          !session?.firstMessage &&
-          !isActivating &&
-          !isSessionError
-        "
-        class="text-s500 flex items-center justify-center py-8 text-sm"
-      >
-        No messages yet
-      </div>
-
-      <div class="flex-grow"></div>
-    </div>
+    </ng-scrollbar>
   </div>
 
   <!-- Debug events view -->
