@@ -23,8 +23,11 @@ export function listenProcessEvents(item: {
     logToConsoleFn
   } = item;
 
+  let shuttingDown = false;
+
   signalsNames.forEach(signalName =>
     process.on(signalName, async signal => {
+      shuttingDown = true;
       logToConsoleFn({
         log: new ServerError({
           message: appTerminated,
@@ -76,21 +79,23 @@ export function listenProcessEvents(item: {
       logger: undefined,
       cs: undefined
     });
-    promise.catch(e => {
-      logToConsoleFn({
-        log: new ServerError({
-          message: unhandledRejection,
-          originalError: e,
-          customData: {
-            reason: reason
-          }
-        }),
-        logLevel: LogLevelEnum.Error,
-        logger: undefined,
-        cs: undefined
+    if (!shuttingDown) {
+      promise.catch(e => {
+        logToConsoleFn({
+          log: new ServerError({
+            message: unhandledRejection,
+            originalError: e,
+            customData: {
+              reason: reason
+            }
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: undefined,
+          cs: undefined
+        });
+        process.exit(1);
       });
-      process.exit(1);
-    });
+    }
   });
   return;
 }
