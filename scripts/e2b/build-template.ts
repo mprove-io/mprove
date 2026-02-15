@@ -16,10 +16,12 @@ console.log(`  sandbox-agent version: ${version}`);
 console.log();
 
 let template = Template()
+  // .fromNodeImage('24')
   .fromBaseImage()
-  .aptInstall(['git', 'openssh-client', 'curl', 'ca-certificates'])
+  .aptInstall(['curl', 'git', 'ripgrep', 'openssh-client', 'ca-certificates'])
   .runCmd(
-    `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | SANDBOX_AGENT_VERSION=${version} sh`
+    // `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | SANDBOX_AGENT_VERSION=${version} sh`
+    `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | sh`
   )
   // .runCmd('sandbox-agent install-agent claude')
   .runCmd('sandbox-agent install-agent codex')
@@ -33,6 +35,9 @@ let template = Template()
   .runCmd(
     'sudo ln -s /home/linuxbrew/.linuxbrew/bin/mprove /usr/local/bin/mprove'
   );
+// .runCmd(
+//   'echo "--- Installed versions ---" && node --version && npm --version && git --version && rg --version && sandbox-agent --version && mprove --version'
+// );
 
 let result = await Template.build(template, templateName, {
   cpuCount: 2,
