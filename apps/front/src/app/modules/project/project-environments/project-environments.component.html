@@ -28,7 +28,11 @@
     </div>
 
     <div class="bg-m0 mt-6 flex-grow overflow-auto rounded shadow">
-      <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+      <ng-scrollbar
+        [orientation]="'auto'"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+      >
         <div class="text-s1 mx-5 mt-8">
           <table class="divide-s500 min-w-full divide-y">
             <thead>

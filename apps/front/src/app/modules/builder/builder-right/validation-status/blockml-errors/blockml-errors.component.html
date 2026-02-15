@@ -7,7 +7,11 @@
   </div>
 
   <div class="flex w-full flex-grow flex-col overflow-y-auto pl-5">
-    <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+    <ng-scrollbar
+      [orientation]="'vertical'"
+      [visibility]="'hover'"
+      [appearance]="'compact'"
+    >
       <tree-root
         class="mt-4 h-2 w-full"
         #itemsTree

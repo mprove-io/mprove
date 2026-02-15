@@ -96,7 +96,11 @@
         class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
         *ngIf="panel === panelTree"
       >
-        <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+        <ng-scrollbar
+          [orientation]="'vertical'"
+          [visibility]="'hover'"
+          [appearance]="'compact'"
+        >
           <div class="mt-2 h-full w-full">
             <div *ngIf="!!word" class="ml-6 mr-5">
               <div
@@ -296,7 +300,11 @@
   <div class="flex h-full w-full flex-col">
     <div class="flex h-full flex-1 flex-col">
       <div class="flex h-full w-full flex-grow flex-col overflow-y-auto">
-        <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+        <ng-scrollbar
+          [orientation]="'vertical'"
+          [visibility]="'hover'"
+          [appearance]="'compact'"
+        >
           <div
             class="mt-4 h-full w-full"
             *ngIf="
@@ -350,7 +358,11 @@
           </div>
         </ng-scrollbar>
 
-        <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+        <ng-scrollbar
+          [orientation]="'vertical'"
+          [visibility]="'hover'"
+          [appearance]="'compact'"
+        >
           <div
             class="mt-4 h-full w-full"
             *ngIf="

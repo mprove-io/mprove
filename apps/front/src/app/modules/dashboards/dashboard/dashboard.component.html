@@ -92,7 +92,11 @@
         }"
       >
         <div #scrollable class="mt-1 flex w-full flex-grow flex-col">
-          <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+          <ng-scrollbar
+            [orientation]="'auto'"
+            [visibility]="'hover'"
+            [appearance]="'compact'"
+          >
             <div class="mb-[100px] mt-5 pr-0">
               <ktd-grid
                 [ngClass]="{

@@ -261,7 +261,11 @@
       *ngIf="isData === true && mconfig?.fields?.length > 0"
       class="flex w-full max-w-max flex-1 overflow-auto"
     >
-      <ng-scrollbar [orientation]="'auto'" [visibility]="'hover'">
+      <ng-scrollbar
+        [orientation]="'auto'"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+      >
         <m-main-table
           [isTableHeaderWide]="false"
           [isEdit]="false"

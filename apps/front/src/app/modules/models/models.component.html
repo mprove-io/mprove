@@ -571,7 +571,11 @@
                 invisible: isInitialScrollCompleted === false
               }"
             >
-              <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+              <ng-scrollbar
+                [orientation]="'vertical'"
+                [visibility]="'hover'"
+                [appearance]="'compact'"
+              >
                 <div class="h-[12px]"></div>
 
                 <div
@@ -1199,6 +1203,7 @@
                     <ng-scrollbar
                       [orientation]="'vertical'"
                       [visibility]="'hover'"
+                      [appearance]="'compact'"
                     >
                       <m-chart-editor
                         [chart]="mconfig.chart"
@@ -1734,6 +1739,7 @@
                         class="h-full"
                         [orientation]="'auto'"
                         [visibility]="'hover'"
+                        [appearance]="'compact'"
                       >
                         <div class="flex flex-row items-start">
                           <m-main-table

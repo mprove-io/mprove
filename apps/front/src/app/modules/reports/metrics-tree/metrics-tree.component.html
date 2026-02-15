@@ -1,6 +1,10 @@
 <div class="flex w-full flex-col">
   <div class="flex h-2 flex-grow flex-col overflow-y-auto">
-    <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+    <ng-scrollbar
+      [orientation]="'vertical'"
+      [visibility]="'hover'"
+      [appearance]="'compact'"
+    >
       <div class="h-[16px]"></div>
 
       <tree-root

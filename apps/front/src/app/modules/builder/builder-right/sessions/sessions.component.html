@@ -27,7 +27,11 @@
     *ngIf="sessions.length > 0"
     class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
   >
-    <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+    <ng-scrollbar
+      [orientation]="'vertical'"
+      [visibility]="'hover'"
+      [appearance]="'compact'"
+    >
       <div class="mt-2 h-full w-full">
         <div
           *ngFor="let session of sessions"

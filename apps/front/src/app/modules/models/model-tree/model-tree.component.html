@@ -10,7 +10,11 @@
     *ngIf="!!model?.modelId"
     class="flex h-2 flex-grow flex-col overflow-y-auto"
   >
-    <ng-scrollbar [orientation]="'vertical'" [visibility]="'hover'">
+    <ng-scrollbar
+      [orientation]="'vertical'"
+      [visibility]="'hover'"
+      [appearance]="'compact'"
+    >
       <div class="h-[16px]"></div>
 
       <div
