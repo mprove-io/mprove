@@ -45,7 +45,7 @@ export class SessionComponent implements OnDestroy {
   messageText = '';
   isSubmitting = false;
 
-  agent = 'codex';
+  agent = 'opencode';
   agentMode = 'code';
 
   agents = ['claude', 'opencode', 'codex'];

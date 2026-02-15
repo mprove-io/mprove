@@ -229,7 +229,11 @@ export class CreateAgentSessionController {
       let sdkSession = await sandboxAgent
         .createSession({
           id: sessionId,
-          agent: agent
+          agent: agent,
+          sessionInit: {
+            cwd: '/home/user/project',
+            mcpServers: []
+          }
         })
         .catch(e => {
           throw new ServerError({
