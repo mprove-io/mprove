@@ -13,7 +13,6 @@ let templateName = `sandboxagent_${version.split('.').join('-')}_${variant}`;
 
 console.log(`Building e2b template: ${templateName}`);
 console.log(`  sandbox-agent version: ${version}`);
-console.log(`  agents: codex, claude, opencode`);
 console.log();
 
 let template = Template()
@@ -22,6 +21,7 @@ let template = Template()
   .runCmd(
     `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | SANDBOX_AGENT_VERSION=${version} sh`
   )
+  // .runCmd('sandbox-agent install-agent claude')
   .runCmd('sandbox-agent install-agent codex')
   .runCmd('sandbox-agent install-agent opencode')
   .runCmd(
