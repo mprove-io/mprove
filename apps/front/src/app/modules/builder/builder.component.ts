@@ -98,6 +98,7 @@ export class BuilderComponent implements OnInit {
 
   lastUrl: string;
   isSessionRoute = false;
+  isNavigatingSession = false;
 
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
@@ -112,6 +113,11 @@ export class BuilderComponent implements OnInit {
       if (wasSessionRoute && !this.isSessionRoute) {
         this.sessionQuery.reset();
         this.sessionEventsQuery.reset();
+      }
+
+      if (this.isNavigatingSession) {
+        this.isNavigatingSession = false;
+        this.uiQuery.updatePart({ isNavigatingSession: false });
       }
 
       this.cd.detectChanges();
@@ -171,6 +177,13 @@ export class BuilderComponent implements OnInit {
   debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
     tap(x => {
       this.debugMode = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  isNavigatingSession$ = this.uiQuery.isNavigatingSession$.pipe(
+    tap(x => {
+      this.isNavigatingSession = x;
       this.cd.detectChanges();
     })
   );

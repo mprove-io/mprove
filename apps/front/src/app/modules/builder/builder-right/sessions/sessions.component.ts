@@ -4,6 +4,7 @@ import { startWith, tap } from 'rxjs/operators';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { TimeService } from '#front/app/services/time.service';
 
@@ -42,6 +43,7 @@ export class SessionsComponent {
   constructor(
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
+    private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private timeService: TimeService
@@ -52,6 +54,9 @@ export class SessionsComponent {
   }
 
   openSession(session: AgentSessionApi) {
+    if (this.sessionId) {
+      this.uiQuery.updatePart({ isNavigatingSession: true });
+    }
     this.sessionQuery.update(session);
     this.navigateService.navigateToSession({
       sessionId: session.sessionId
