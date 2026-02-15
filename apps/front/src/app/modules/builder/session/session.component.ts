@@ -131,6 +131,7 @@ export class SessionComponent implements OnDestroy {
       this.previousSessionId = currentSessionId;
 
       if (sessionChanged) {
+        this.messageText = '';
         this.previousTurnsCount = this.turns.length;
         this.previousLastTurnResponsesExist =
           this.turns[this.turns.length - 1]?.responses?.length > 0;
