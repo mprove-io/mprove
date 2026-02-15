@@ -68,6 +68,8 @@ export class SessionComponent implements OnDestroy {
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
   responseMinHeight = 0;
+  private previousTurnsCount = 0;
+  private previousLastTurnResponsesExist = false;
   isChatMode = false;
   isActivating = false;
   isWaitingForResponse = false;
@@ -131,7 +133,28 @@ export class SessionComponent implements OnDestroy {
       this.updateResponseMinHeight();
       this.updateSpinners();
       this.cd.detectChanges();
-      this.scrollUserMessageToTop();
+
+      let shouldScroll = false;
+
+      // New user message (new turn created)
+      if (this.turns.length > this.previousTurnsCount) {
+        shouldScroll = true;
+        this.previousLastTurnResponsesExist = false;
+      }
+
+      // First response in current turn
+      let lastTurn = this.turns[this.turns.length - 1];
+      let lastTurnHasResponses = lastTurn?.responses?.length > 0;
+      if (lastTurnHasResponses && !this.previousLastTurnResponsesExist) {
+        shouldScroll = true;
+      }
+
+      this.previousTurnsCount = this.turns.length;
+      this.previousLastTurnResponsesExist = lastTurnHasResponses;
+
+      if (shouldScroll) {
+        this.scrollUserMessageToTop();
+      }
     })
   );
 
@@ -354,17 +377,14 @@ export class SessionComponent implements OnDestroy {
     if (!this.chatScrollbar) {
       return;
     }
-    let lastMessage = this.messages[this.messages.length - 1];
-    if (lastMessage?.sender === 'user') {
-      setTimeout(() => {
-        let elements =
-          this.chatScrollbar.nativeElement.querySelectorAll('.user-message');
-        let lastEl = elements[elements.length - 1] as HTMLElement;
-        if (lastEl) {
-          this.chatScrollbar.adapter.scrollTo({ top: lastEl.offsetTop });
-        }
-      });
-    }
+    setTimeout(() => {
+      let elements =
+        this.chatScrollbar.nativeElement.querySelectorAll('.user-message');
+      let lastEl = elements[elements.length - 1] as HTMLElement;
+      if (lastEl) {
+        this.chatScrollbar.adapter.scrollTo({ top: lastEl.offsetTop });
+      }
+    });
   }
 
   private closeSse() {
