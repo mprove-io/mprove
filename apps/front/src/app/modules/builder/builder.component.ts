@@ -297,6 +297,7 @@ export class BuilderComponent implements OnInit {
     if (this.showFilesLeftPanel === false) {
       this.showFilesLeftPanel = true;
       this.uiQuery.updatePart({ showFilesLeftPanel: true });
+      this.uiService.setUserUi({ showFilesLeftPanel: true });
     }
 
     if (x === this.panel) {
