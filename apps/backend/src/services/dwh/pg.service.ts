@@ -77,7 +77,7 @@ export class PgService {
         };
       }
 
-      pgp.end();
+      pgDb.$pool.end();
 
       return {
         isSuccess: true,
@@ -154,7 +154,7 @@ export class PgService {
         })
       );
 
-    pgp.end();
+    pgDb.$pool.end();
   }
 
   async processError(item: {

@@ -434,7 +434,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   showGoTo = false;
 
   needSave = false;
-  needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
+  needSave$ = this.uiQuery.needSave$.pipe(
+    tap(x => {
+      this.needSave = x;
+      this.cd.detectChanges();
+    })
+  );
 
   cachedCanDeactivateAnswerNoTimestamp: number;
 
@@ -1094,6 +1099,13 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
             this.startText = this.content;
 
+            this.diffContent = {
+              original: this.content,
+              modified: this.content
+            };
+
+            // this.cd.detectChanges();
+
             this.undoStack = [];
             this.redoStack = [];
 
@@ -1295,6 +1307,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   canDeactivate(): Promise<boolean> | boolean {
+    // console.log('canDeactivate');
+
     // prevents the dialog from trigger twice after cancel clicked
     if (
       this.cachedCanDeactivateAnswerNoTimestamp > 0 &&

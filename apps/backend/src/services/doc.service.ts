@@ -63,7 +63,7 @@ export class DocService implements OnModuleDestroy {
   }
 
   onModuleDestroy() {
-    this.pgp.end();
+    this.calcDb.$pool.end();
   }
 
   async calculateData(item: {
