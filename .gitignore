@@ -1,5 +1,6 @@
 _nogit/
-nogit/
+
+.claude/settings.local.json
 
 .angular/
 .devcontainer/.zshrc
@@ -18,6 +19,7 @@ malloy/
 malloy_data/
 mprove_data/
 node_modules/
+nogit/
 notes/_dev.md
 plans/
 secrets/

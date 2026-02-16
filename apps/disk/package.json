@@ -1,6 +1,6 @@
 {
   "name": "@mprove/disk",
-  "version": "11.0.99-dev",
+  "version": "11.0.99",
   "private": true,
   "type": "module",
   "imports": {
