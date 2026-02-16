@@ -26,7 +26,10 @@ export interface AgentEvent {
 
 @Injectable()
 export class AgentService implements OnModuleDestroy {
-  private redisClient: Redis;
+  private redisPubClient: Redis;
+  private redisSubClient: Redis;
+
+  private channelListeners = new Map<string, Set<Subject<AgentEvent>>>();
 
   private activeStreams = new Map<string, () => void>();
 
@@ -47,10 +50,28 @@ export class AgentService implements OnModuleDestroy {
       'backendValkeyPassword'
     );
 
-    this.redisClient = new Redis({
+    let redisOptions = {
       host: valkeyHost,
       port: 6379,
       password: valkeyPassword
+    };
+
+    this.redisPubClient = new Redis(redisOptions);
+
+    this.redisSubClient = new Redis(redisOptions);
+
+    this.redisSubClient.on('error', (err: Error) => {
+      this.logger.warn(`Redis sub client error: ${err.message}`);
+    });
+
+    this.redisSubClient.on('message', (channel: string, message: string) => {
+      let listeners = this.channelListeners.get(channel);
+      if (listeners) {
+        let event = JSON.parse(message) as AgentEvent;
+        for (let subject of listeners) {
+          subject.next(event);
+        }
+      }
     });
   }
 
@@ -61,7 +82,7 @@ export class AgentService implements OnModuleDestroy {
   }
 
   async publish(sessionId: string, event: AgentEvent): Promise<void> {
-    await this.redisClient.publish(
+    await this.redisPubClient.publish(
       this.channelName(sessionId),
       JSON.stringify(event)
     );
@@ -69,22 +90,41 @@ export class AgentService implements OnModuleDestroy {
 
   subscribe(sessionId: string): Observable<AgentEvent> {
     let channel = this.channelName(sessionId);
-    let subject = new Subject<AgentEvent>();
-
-    let sub = this.redisClient.duplicate();
-
-    sub.subscribe(channel).then(() => {
-      sub.on('message', (_ch: string, message: string) => {
-        subject.next(JSON.parse(message) as AgentEvent);
-      });
-    });
 
     return new Observable<AgentEvent>(observer => {
+      let subject = new Subject<AgentEvent>();
       let subscription = subject.subscribe(observer);
+
+      let listeners = this.channelListeners.get(channel);
+
+      if (listeners) {
+        listeners.add(subject);
+      } else {
+        listeners = new Set([subject]);
+        this.channelListeners.set(channel, listeners);
+        this.redisSubClient.subscribe(channel).catch((err: Error) => {
+          this.logger.warn(
+            `Redis subscribe failed for session ${sessionId}: ${err.message}`
+          );
+        });
+      }
 
       return () => {
         subscription.unsubscribe();
-        sub.unsubscribe(channel).then(() => sub.quit());
+        subject.complete();
+
+        let currentListeners = this.channelListeners.get(channel);
+        if (currentListeners) {
+          currentListeners.delete(subject);
+          if (currentListeners.size === 0) {
+            this.channelListeners.delete(channel);
+            this.redisSubClient.unsubscribe(channel).catch((err: Error) => {
+              this.logger.warn(
+                `Redis unsubscribe failed for session ${sessionId}: ${err.message}`
+              );
+            });
+          }
+        }
       };
     });
   }
@@ -205,6 +245,7 @@ export class AgentService implements OnModuleDestroy {
   }
 
   onModuleDestroy() {
-    this.redisClient.disconnect();
+    this.redisPubClient.disconnect();
+    this.redisSubClient.disconnect();
   }
 }

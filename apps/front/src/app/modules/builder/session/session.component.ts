@@ -87,6 +87,15 @@ export class SessionComponent implements OnDestroy {
         this.agentMode = this.session.agentMode;
       }
 
+      // Detect session change and close old connections
+      let currentSessionId = this.session?.sessionId;
+      let sessionChanged = currentSessionId !== this.previousSessionId;
+
+      if (sessionChanged) {
+        this.closeSse();
+        this.stopPolling();
+      }
+
       // Start polling when session is New
       if (
         this.session?.status === SessionStatusEnum.New &&
@@ -126,12 +135,11 @@ export class SessionComponent implements OnDestroy {
 
       this.cd.detectChanges();
 
-      let currentSessionId = this.session?.sessionId;
-      let sessionChanged = currentSessionId !== this.previousSessionId;
       this.previousSessionId = currentSessionId;
 
       if (sessionChanged) {
         this.messageText = '';
+        this.isSubmitting = false;
         this.previousTurnsCount = this.turns.length;
         this.previousLastTurnResponsesExist =
           this.turns[this.turns.length - 1]?.responses?.length > 0;
@@ -263,12 +271,11 @@ export class SessionComponent implements OnDestroy {
   }
 
   sendFollowUp() {
-    if (!this.messageText.trim() || this.isSubmitting || !this.session) {
+    if (!this.messageText.trim() || !this.session) {
       return;
     }
 
     this.userSentMessage = true;
-    this.isSubmitting = true;
 
     let payload: ToBackendSendAgentMessageRequestPayload = {
       sessionId: this.session.sessionId,
@@ -282,13 +289,7 @@ export class SessionComponent implements OnDestroy {
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage,
         payload: payload
       })
-      .pipe(
-        tap(() => {
-          this.isSubmitting = false;
-          this.cd.detectChanges();
-        }),
-        take(1)
-      )
+      .pipe(take(1))
       .subscribe();
   }
 
