@@ -1,8 +1,8 @@
-import crypto from 'node:crypto';
 import { Sandbox } from '@e2b/code-interpreter';
 import { createOpencodeClient } from '@opencode-ai/sdk';
 import test from 'ava';
 import { BackendConfig } from '#backend/config/backend-config';
+import { forTestsStartOpencodeServer } from '#backend/functions/for-tests-start-opencode-server';
 import { prepareTest } from '#backend/functions/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
 
@@ -64,37 +64,15 @@ test('1', async t => {
       `opencode: ${opencodeVersionResult.stdout.trim() || opencodeVersionResult.stderr.trim()}`
     );
 
+    // Create project directory (no git clone in this test)
+    await sandbox.commands.run('mkdir -p /home/user/project');
+
     // Start opencode server with basic auth
     console.log('Starting opencode server...');
-    let opencodePassword = crypto.randomBytes(32).toString('hex');
-
-    await sandbox.commands.run('opencode serve --port 3000', {
-      background: true,
-      timeoutMs: 0,
-      envs: { OPENCODE_SERVER_PASSWORD: opencodePassword }
+    let { baseUrl, client } = await forTestsStartOpencodeServer({
+      sandbox,
+      cwd: '/home/user/project'
     });
-
-    // Wait for server to start
-    let host = sandbox.getHost(3000);
-    let baseUrl = `https://${host}`;
-
-    console.log('Waiting for server to become ready...');
-    let serverReady = false;
-
-    for (let i = 0; i < 30; i++) {
-      try {
-        let res = await fetch(`${baseUrl}/config`);
-        if (res.status === 401) {
-          serverReady = true;
-          break;
-        }
-      } catch {
-        // retry
-      }
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    t.true(serverReady, 'opencode server should be reachable');
 
     // Verify no access without auth
     console.log('Verifying unauthenticated request is rejected...');
@@ -108,13 +86,6 @@ test('1', async t => {
 
     // Verify access with auth
     console.log('Verifying authenticated request succeeds...');
-    let client = createOpencodeClient({
-      baseUrl,
-      directory: '/home/user/project',
-      headers: {
-        Authorization: `Basic ${Buffer.from(`opencode:${opencodePassword}`).toString('base64')}`
-      }
-    });
 
     let { data: config } = await client.config.get();
     t.truthy(config, 'should return config with valid auth');

@@ -2,12 +2,10 @@ import fs from 'node:fs';
 import { Sandbox } from '@e2b/code-interpreter';
 import test from 'ava';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { forTestsStartOpencodeServer } from '#backend/functions/for-tests-start-opencode-server';
 import { prepareTest } from '#backend/functions/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
 import { SandboxService } from '#backend/services/sandbox.service';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 
 test('1', async t => {
   let prep: Prep = await prepareTest({});
@@ -34,49 +32,68 @@ test('1', async t => {
     'demoProjectRemotePassPhrase'
   );
 
-  if (
-    !e2bApiKey ||
-    !gitUrl ||
-    !privateKeyEncryptedPath ||
-    !publicKeyPath ||
-    !passPhrase
-  ) {
+  if (!e2bApiKey) {
     await prep.app.close();
-    t.pass(
-      'Skipped: BACKEND_DEMO_PROJECT_E2B_API_KEY, BACKEND_DEMO_PROJECT_GIT_URL, BACKEND_DEMO_PROJECT_PRIVATE_KEY_ENCRYPTED_PATH, BACKEND_DEMO_PROJECT_PUBLIC_KEY_PATH, or BACKEND_DEMO_PROJECT_PASS_PHRASE not set'
-    );
+    t.fail('demoProjectE2bApiKey not set');
+    return;
+  }
+
+  if (!gitUrl) {
+    await prep.app.close();
+    t.fail('demoProjectRemoteGitUrl not set');
+    return;
+  }
+
+  if (!privateKeyEncryptedPath) {
+    await prep.app.close();
+    t.fail('demoProjectRemotePrivateKeyEncryptedPath not set');
+    return;
+  }
+
+  if (!publicKeyPath) {
+    await prep.app.close();
+    t.fail('demoProjectRemotePublicKeyPath not set');
+    return;
+  }
+
+  if (!passPhrase) {
+    await prep.app.close();
+    t.fail('demoProjectRemotePassPhrase not set');
     return;
   }
 
   let privateKeyEncrypted = fs.readFileSync(privateKeyEncryptedPath, 'utf-8');
   let publicKey = fs.readFileSync(publicKeyPath, 'utf-8');
 
-  let project = {
-    remoteType: ProjectRemoteTypeEnum.GitClone,
-    e2bApiKey: e2bApiKey,
-    gitUrl: gitUrl,
-    defaultBranch: 'main',
-    publicKey: publicKey,
-    privateKeyEncrypted: privateKeyEncrypted,
-    passPhrase: passPhrase
-  } as ProjectTab;
+  let templateName =
+    prep.cs.get<BackendConfig['e2bPublicTemplate']>('e2bPublicTemplate');
 
-  let sandboxId: string;
+  let sandbox: Sandbox;
 
   try {
-    let result = await sandboxService.startSandboxAgentServer({
-      sandboxType: SandboxTypeEnum.E2B,
-      sandboxTimeoutMs: 5 * 60 * 1000,
-      agent: 'codex',
-      project: project
+    console.log(`Creating sandbox from template: ${templateName}`);
+
+    sandbox = await Sandbox.create(templateName, {
+      apiKey: e2bApiKey,
+      timeoutMs: 5 * 60 * 1000
     });
 
-    sandboxId = result.sandboxId;
+    console.log(`Sandbox created: ${sandbox.sandboxId}`);
 
-    console.log(`Sandbox created with git clone: ${sandboxId}`);
+    // Clone repo
+    console.log('Cloning repo...');
+    await sandboxService.cloneRepoInSandbox({
+      sandbox: sandbox,
+      gitUrl: gitUrl,
+      defaultBranch: 'main',
+      publicKey: publicKey,
+      privateKeyEncrypted: privateKeyEncrypted,
+      passPhrase: passPhrase,
+      cloneDir: '/home/user/project'
+    });
 
     // Verify clone succeeded
-    let lsResult = await result.sandbox.commands.run('ls /home/user/project');
+    let lsResult = await sandbox.commands.run('ls /home/user/project');
 
     console.log(`ls /home/user/project: ${lsResult.stdout.trim()}`);
 
@@ -88,16 +105,36 @@ test('1', async t => {
     );
 
     // Verify SSH keys are cleaned up
-    let lsTmpResult = await result.sandbox.commands.run('ls /tmp');
+    let lsTmpResult = await sandbox.commands.run('ls /tmp');
 
     t.false(
       lsTmpResult.stdout.includes('ssh-keys'),
       'SSH keys directory should not exist after clone'
     );
+
+    // Start opencode server and verify it can list cloned files
+    console.log('Starting opencode server...');
+    let { client } = await forTestsStartOpencodeServer({
+      sandbox,
+      cwd: '/home/user/project'
+    });
+
+    console.log('Listing files via opencode SDK...');
+    let { data: files, response: filesRes } = await client.file.list({
+      query: { path: '.' }
+    });
+
+    console.log(`file.list status: ${filesRes.status}`);
+    console.log(`file.list: ${JSON.stringify(files)}`);
+
+    t.true(
+      Array.isArray(files) && files.length > 0,
+      'file list should not be empty'
+    );
   } finally {
-    if (sandboxId) {
-      await Sandbox.kill(sandboxId, { apiKey: e2bApiKey });
-      console.log(`Sandbox killed: ${sandboxId}`);
+    if (sandbox) {
+      await Sandbox.kill(sandbox.sandboxId, { apiKey: e2bApiKey });
+      console.log(`Sandbox killed: ${sandbox.sandboxId}`);
     }
 
     await prep.app.close();
