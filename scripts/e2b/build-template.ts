@@ -4,28 +4,23 @@ let version = process.argv[2];
 let variant = process.argv[3];
 if (!version || !variant) {
   console.error(
-    'Usage: pnpm e2b:build <sandbox-agent-version> <variant>\nExample: pnpm e2b:build 0.2.0 v4_11-0-99-dev'
+    'Usage: pnpm e2b:build <opencode-version> <variant>\nExample: pnpm e2b:build 1.2.5 v4_11-0-99-dev'
   );
   process.exit(1);
 }
 
-let templateName = `sandboxagent_${version.split('.').join('-')}_${variant}`;
+let templateName = `opencode_${version.split('.').join('-')}_${variant}`;
 
 console.log(`Building e2b template: ${templateName}`);
-console.log(`  sandbox-agent version: ${version}`);
 console.log();
 
 let template = Template()
-  // .fromNodeImage('24')
   .fromBaseImage()
   .aptInstall(['curl', 'git', 'ripgrep', 'openssh-client', 'ca-certificates'])
+  .runCmd('curl -fsSL https://opencode.ai/install | bash')
   .runCmd(
-    // `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | SANDBOX_AGENT_VERSION=${version} sh`
-    `curl -fsSL https://releases.rivet.dev/sandbox-agent/${version}/install.sh | sh`
+    'sudo ln -s /home/user/.opencode/bin/opencode /usr/local/bin/opencode'
   )
-  // .runCmd('sandbox-agent install-agent claude')
-  .runCmd('sandbox-agent install-agent codex')
-  .runCmd('sandbox-agent install-agent opencode')
   .runCmd(
     '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
   )
@@ -35,14 +30,11 @@ let template = Template()
   .runCmd(
     'sudo ln -s /home/linuxbrew/.linuxbrew/bin/mprove /usr/local/bin/mprove'
   );
-// .runCmd(
-//   'echo "--- Installed versions ---" && node --version && npm --version && git --version && rg --version && sandbox-agent --version && mprove --version'
-// );
 
 let result = await Template.build(template, templateName, {
   cpuCount: 2,
   memoryMB: 2048,
-  // skipCache: true,
+  skipCache: true,
   onBuildLogs: defaultBuildLogger()
 });
 

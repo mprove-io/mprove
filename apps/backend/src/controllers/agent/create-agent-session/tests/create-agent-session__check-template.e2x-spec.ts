@@ -1,7 +1,7 @@
+import crypto from 'node:crypto';
 import { Sandbox } from '@e2b/code-interpreter';
+import { createOpencodeClient } from '@opencode-ai/sdk';
 import test from 'ava';
-import crypto from 'crypto';
-import { type AgentListResponse } from 'sandbox-agent';
 import { BackendConfig } from '#backend/config/backend-config';
 import { prepareTest } from '#backend/functions/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
@@ -15,18 +15,18 @@ test('1', async t => {
 
   if (!e2bApiKey) {
     await prep.app.close();
-    t.pass('Skipped: demoProjectE2bApiKey not set');
+    t.fail('demoProjectE2bApiKey not set');
     return;
   }
 
   let templateName =
     prep.cs.get<BackendConfig['e2bPublicTemplate']>('e2bPublicTemplate');
 
-  console.log(`Using template: ${templateName}`);
-
   let sandbox: Sandbox;
 
   try {
+    console.log(`Creating sandbox from template: ${templateName}`);
+
     sandbox = await Sandbox.create(templateName, {
       apiKey: e2bApiKey,
       timeoutMs: 5 * 60 * 1000
@@ -35,56 +35,57 @@ test('1', async t => {
     console.log(`Sandbox created: ${sandbox.sandboxId}`);
 
     // Check git is installed
+    console.log('Checking git...');
     let gitResult = await sandbox.commands.run('git --version');
-
-    console.log(`git: ${gitResult.stdout.trim()}`);
-
     t.is(gitResult.exitCode, 0, 'git should be installed');
-
     t.true(
       gitResult.stdout.includes('git version'),
       'git --version should return version string'
     );
 
     // Check mprove CLI is installed
+    console.log('Checking mprove...');
     let mproveResult = await sandbox.commands.run('mprove version');
-
     console.log(`mprove: ${mproveResult.stdout.trim()}`);
-
     t.is(mproveResult.exitCode, 0, 'mprove should be installed');
-
     t.true(
       mproveResult.stdout.includes('mproveCLI'),
       'mprove version should return mproveCLI'
     );
 
-    // Check sandbox-agent binary exists
-    let whichResult = await sandbox.commands.run('which sandbox-agent');
+    // Check opencode binary exists
+    console.log('Checking opencode...');
+    let whichResult = await sandbox.commands.run('which opencode');
+    t.is(whichResult.exitCode, 0, 'opencode binary should exist');
 
-    console.log(`sandbox-agent path: ${whichResult.stdout.trim()}`);
-
-    t.is(whichResult.exitCode, 0, 'sandbox-agent binary should exist');
-
-    // Start sandbox-agent server
-    let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
-
-    await sandbox.commands.run(
-      `sandbox-agent server --no-telemetry --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
-      { background: true, timeoutMs: 0 }
+    let opencodeVersionResult =
+      await sandbox.commands.run('opencode --version');
+    console.log(
+      `opencode: ${opencodeVersionResult.stdout.trim() || opencodeVersionResult.stderr.trim()}`
     );
 
-    // Health check
-    let host = sandbox.getHost(3000);
+    // Start opencode server with basic auth
+    console.log('Starting opencode server...');
+    let opencodePassword = crypto.randomBytes(32).toString('hex');
 
-    let healthy = false;
+    await sandbox.commands.run('opencode serve --port 3000', {
+      background: true,
+      timeoutMs: 0,
+      envs: { OPENCODE_SERVER_PASSWORD: opencodePassword }
+    });
+
+    // Wait for server to start
+    let host = sandbox.getHost(3000);
+    let baseUrl = `https://${host}`;
+
+    console.log('Waiting for server to become ready...');
+    let serverReady = false;
 
     for (let i = 0; i < 30; i++) {
       try {
-        let res = await fetch(`https://${host}/v1/health`, {
-          headers: { Authorization: `Bearer ${sandboxAgentToken}` }
-        });
-        if (res.ok) {
-          healthy = true;
+        let res = await fetch(`${baseUrl}/config`);
+        if (res.status === 401) {
+          serverReady = true;
           break;
         }
       } catch {
@@ -93,31 +94,37 @@ test('1', async t => {
       await new Promise(r => setTimeout(r, 1000));
     }
 
-    t.true(healthy, 'sandbox-agent server should become healthy');
+    t.true(serverReady, 'opencode server should be reachable');
 
-    // Verify agents are available
-    let agentsRes = await fetch(`https://${host}/v1/agents`, {
-      headers: { Authorization: `Bearer ${sandboxAgentToken}` }
+    // Verify no access without auth
+    console.log('Verifying unauthenticated request is rejected...');
+    let unauthClient = createOpencodeClient({
+      baseUrl,
+      directory: '/home/user/project'
     });
 
-    t.true(agentsRes.ok, '/v1/agents should respond ok');
+    let { response: unauthRes } = await unauthClient.config.get();
+    t.is(unauthRes.status, 401, 'should reject unauthenticated requests');
 
-    let agentsData: AgentListResponse = await agentsRes.json();
-
-    let installedAgents = agentsData.agents.filter(a => a.installed);
-    console.dir(installedAgents, { depth: null });
-
-    for (let id of [
-      // 'claude',
-      'codex',
-      'opencode'
-    ]) {
-      let agent = agentsData.agents.find(a => a.id === id);
-      t.truthy(agent, `${id} agent should be available`);
-      if (agent) {
-        t.true(agent.installed, `${id} agent should be installed`);
+    // Verify access with auth
+    console.log('Verifying authenticated request succeeds...');
+    let client = createOpencodeClient({
+      baseUrl,
+      directory: '/home/user/project',
+      headers: {
+        Authorization: `Basic ${Buffer.from(`opencode:${opencodePassword}`).toString('base64')}`
       }
-    }
+    });
+
+    let { data: config } = await client.config.get();
+    t.truthy(config, 'should return config with valid auth');
+
+    // Verify agents are available
+    console.log('Verifying agents are available...');
+    let { data: agents } = await client.app.agents();
+    t.truthy(agents, 'agents list should be returned');
+
+    console.log('All checks passed');
   } finally {
     if (sandbox) {
       await Sandbox.kill(sandbox.sandboxId, { apiKey: e2bApiKey });

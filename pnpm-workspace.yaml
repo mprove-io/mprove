@@ -4,6 +4,7 @@ packages:
 
 catalog:
   '@agentclientprotocol/sdk': 0.14.1
+  '@opencode-ai/sdk': 1.2.5
   '@acrodata/code-editor': 0.5.1
   '@ali-hm/angular-tree-component': 21.0.3
   '@angular-devkit/build-angular': 21.1.0

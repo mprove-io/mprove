@@ -94,6 +94,7 @@
     "reflect-metadata": "catalog:",
     "retry": "catalog:",
     "rxjs": "catalog:",
+    "@opencode-ai/sdk": "catalog:",
     "sandbox-agent": "catalog:",
     "snowflake-sdk": "catalog:",
     "sshpk": "catalog:",
