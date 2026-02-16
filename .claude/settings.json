@@ -13,6 +13,7 @@
       "Task",
       "Grep",
       "Glob",
+      "Bash(pnpm check:*)",
       "Bash(git status)",
       "Bash(gh search code*)",
       "Bash(gh search issues*)",
