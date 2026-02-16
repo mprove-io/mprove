@@ -33,6 +33,13 @@ export class AgentService implements OnModuleDestroy {
 
   private activeStreams = new Map<string, () => void>();
 
+  private pendingEvents = new Map<
+    string,
+    { sessionId: string; event: SessionEvent }[]
+  >();
+
+  private drainTimer: ReturnType<typeof setInterval>;
+
   constructor(
     private cs: ConfigService<BackendConfig>,
     private eventsService: EventsService,
@@ -73,6 +80,12 @@ export class AgentService implements OnModuleDestroy {
         }
       }
     });
+
+    this.drainTimer = setInterval(() => {
+      this.drainAllQueues().catch(e => {
+        this.logger.warn(`Failed to drain event queues: ${e?.message}`);
+      });
+    }, 1000);
   }
 
   // pub/sub
@@ -131,62 +144,79 @@ export class AgentService implements OnModuleDestroy {
 
   // stream
 
-  startEventStream(item: { sessionId: string; offset?: number }): void {
-    this.stopEventStream(item.sessionId);
+  async startEventStream(item: {
+    sessionId: string;
+    offset?: number;
+  }): Promise<void> {
+    await this.stopEventStream(item.sessionId);
 
     let sandboxAgent = this.sandboxService.getSandboxAgent(item.sessionId);
 
     let sessionEventHandler = sandboxAgent.onSessionEvent(
       item.sessionId,
       event => {
-        this.storeEvent({
-          sessionId: item.sessionId,
-          event: event
-        }).catch(e => {
-          this.logger.warn(
-            `Failed to store event for session ${item.sessionId}: ${e?.message}`
-          );
-        });
+        let queue = this.pendingEvents.get(item.sessionId);
+        if (!queue) {
+          queue = [];
+          this.pendingEvents.set(item.sessionId, queue);
+        }
+        queue.push({ sessionId: item.sessionId, event: event });
       }
     );
 
     this.activeStreams.set(item.sessionId, sessionEventHandler);
   }
 
-  stopEventStream(sessionId: string): void {
+  async stopEventStream(sessionId: string): Promise<void> {
     let sessionEventHandler = this.activeStreams.get(sessionId);
 
     if (sessionEventHandler) {
       sessionEventHandler();
-
       this.activeStreams.delete(sessionId);
+    }
+
+    await this.drainQueue(sessionId);
+    this.pendingEvents.delete(sessionId);
+  }
+
+  private async drainAllQueues(): Promise<void> {
+    for (let sessionId of Array.from(this.pendingEvents.keys())) {
+      await this.drainQueue(sessionId);
     }
   }
 
-  private async storeEvent(item: {
-    sessionId: string;
-    event: SessionEvent;
-  }): Promise<void> {
-    let eventTab = this.eventsService.makeEvent({
-      sessionId: item.sessionId,
-      event: item.event
-    });
+  private async drainQueue(sessionId: string): Promise<void> {
+    let queue = this.pendingEvents.get(sessionId);
+    if (!queue || queue.length === 0) {
+      return;
+    }
+
+    let items = queue.splice(0);
+
+    let eventTabs = items.map(item =>
+      this.eventsService.makeEvent({
+        sessionId: item.sessionId,
+        event: item.event
+      })
+    );
 
     await this.db.drizzle.transaction(async tx =>
       this.db.packer.write({
         tx: tx,
         insert: {
-          events: [eventTab]
+          events: eventTabs
         }
       })
     );
 
-    await this.publish(item.sessionId, {
-      eventId: item.event.id,
-      eventIndex: item.event.eventIndex,
-      sender: item.event.sender,
-      payload: item.event.payload
-    });
+    for (let item of items) {
+      await this.publish(item.sessionId, {
+        eventId: item.event.id,
+        eventIndex: item.event.eventIndex,
+        sender: item.event.sender,
+        payload: item.event.payload
+      });
+    }
   }
 
   // Scheduled task
@@ -216,7 +246,7 @@ export class AgentService implements OnModuleDestroy {
           projectId: session.projectId
         });
 
-        this.stopEventStream(session.sessionId);
+        await this.stopEventStream(session.sessionId);
 
         await this.sandboxService.disposeSandboxAgent(session.sessionId);
 
@@ -245,6 +275,7 @@ export class AgentService implements OnModuleDestroy {
   }
 
   onModuleDestroy() {
+    clearInterval(this.drainTimer);
     this.redisPubClient.disconnect();
     this.redisSubClient.disconnect();
   }

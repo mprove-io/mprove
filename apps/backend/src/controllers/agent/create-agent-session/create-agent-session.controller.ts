@@ -272,7 +272,7 @@ export class CreateAgentSessionController {
         getRetryOption(this.cs, this.logger)
       );
 
-      this.agentService.startEventStream({
+      await this.agentService.startEventStream({
         sessionId: sessionId
       });
 

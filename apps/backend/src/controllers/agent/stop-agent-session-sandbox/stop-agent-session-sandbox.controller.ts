@@ -58,7 +58,7 @@ export class StopAgentSessionSandboxController {
         projectId: session.projectId
       });
 
-      this.agentService.stopEventStream(sessionId);
+      await this.agentService.stopEventStream(sessionId);
 
       await this.sandboxService.disposeSandboxAgent(sessionId);
 

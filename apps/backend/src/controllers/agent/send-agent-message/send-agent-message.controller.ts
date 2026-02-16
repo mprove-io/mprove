@@ -86,7 +86,7 @@ export class SendAgentMessageController {
         sandboxAgentToken: session.sandboxAgentToken
       });
 
-      this.agentService.startEventStream({
+      await this.agentService.startEventStream({
         sessionId: sessionId
       });
 

@@ -71,6 +71,9 @@ export class SessionComponent implements OnDestroy {
   isSessionError = false;
   debugMode = false;
   eventSource: EventSource;
+  private sseRetryCount = 0;
+  private readonly SSE_MAX_RETRIES = 5;
+  private readonly SSE_RETRY_DELAY_MS = 3000;
 
   // Polling
   private pollSubscription: Subscription;
@@ -94,6 +97,7 @@ export class SessionComponent implements OnDestroy {
       if (sessionChanged) {
         this.closeSse();
         this.stopPolling();
+        this.sseRetryCount = 0;
       }
 
       // Start polling when session is New
@@ -366,6 +370,8 @@ export class SessionComponent implements OnDestroy {
     this.eventSource = new EventSource(url);
 
     this.eventSource.addEventListener('agent-event', (event: MessageEvent) => {
+      this.sseRetryCount = 0;
+
       let agentEvent: AgentEventApi = JSON.parse(event.data);
 
       let currentEvents = this.sessionEventsQuery.getValue().events;
@@ -384,6 +390,54 @@ export class SessionComponent implements OnDestroy {
 
       this.sessionEventsQuery.updatePart({ events: updatedEvents });
     });
+
+    this.eventSource.onerror = () => {
+      this.closeSse();
+
+      if (this.sseRetryCount >= this.SSE_MAX_RETRIES) {
+        return;
+      }
+
+      this.sseRetryCount++;
+
+      setTimeout(() => {
+        if (
+          this.session?.sessionId === sessionId &&
+          this.session?.status === SessionStatusEnum.Active
+        ) {
+          this.reconnectSse(sessionId);
+        }
+      }, this.SSE_RETRY_DELAY_MS);
+    };
+  }
+
+  private reconnectSse(sessionId: string) {
+    let payload: ToBackendGetAgentSessionRequestPayload = {
+      sessionId: sessionId
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendGetAgentSessionResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.sessionQuery.update(resp.payload.session);
+
+            if (resp.payload.events.length > 0) {
+              this.sessionEventsQuery.updatePart({
+                events: resp.payload.events
+              });
+            }
+
+            this.connectSse(sessionId);
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   private closeSse() {
