@@ -2,6 +2,7 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToBackendCreateAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
 import { ToBackendCreateAgentSseTicketRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
+import { ToBackendGetAgentProviderModelsRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
 import { ToBackendGetAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import { ToBackendGetAgentSessionModelsRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session-models';
 import { ToBackendGetAgentSessionsListRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
@@ -387,5 +388,7 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSession]:
     ToBackendGetAgentSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionModels]:
-    ToBackendGetAgentSessionModelsRequest
+    ToBackendGetAgentSessionModelsRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels]:
+    ToBackendGetAgentProviderModelsRequest
 };

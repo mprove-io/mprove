@@ -7,7 +7,7 @@ export class SessionState extends AgentSessionApi {}
 
 let sessionState: SessionState = {
   sessionId: undefined,
-  agent: undefined,
+  provider: undefined,
   agentMode: undefined,
   status: undefined,
   createdTs: undefined,

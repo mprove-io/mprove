@@ -43,7 +43,7 @@ export class GetAgentSessionsListController {
       let tab = this.tabService.sessionEntToTab(ent);
       return {
         sessionId: tab.sessionId,
-        agent: tab.agent,
+        provider: tab.provider,
         agentMode: tab.agentMode,
         model: tab.model,
         status: tab.status,

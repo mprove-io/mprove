@@ -37,6 +37,20 @@
 
     <div class="mt-8 flex flex-row items-center justify-center space-x-3">
       <ng-select
+        class="sessions-select w-[160px] select-none text-sm"
+        [items]="providers"
+        bindLabel="label"
+        bindValue="id"
+        [clearable]="false"
+        [searchable]="false"
+        [(ngModel)]="provider"
+        (ngModelChange)="onProviderChange()"
+        [disabled]="isSubmitting"
+        appendTo="body"
+        placeholder="Provider"
+      ></ng-select>
+
+      <ng-select
         class="sessions-select w-[240px] select-none text-sm"
         [items]="models"
         [clearable]="false"
@@ -116,6 +130,19 @@
       </div>
 
       <div class="mt-4 flex flex-row items-center justify-center space-x-3">
+        <ng-select
+          class="sessions-select w-[160px] select-none text-sm"
+          [items]="providers"
+          bindLabel="label"
+          bindValue="id"
+          [clearable]="false"
+          [searchable]="false"
+          [(ngModel)]="provider"
+          [disabled]="true"
+          appendTo="body"
+          placeholder="Provider"
+        ></ng-select>
+
         <ng-select
           class="sessions-select w-[240px] select-none text-sm"
           [items]="models"

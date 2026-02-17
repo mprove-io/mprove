@@ -45,7 +45,7 @@
                 'text-m600 font-semibold': session.sessionId === sessionId,
                 'text-s1': session.sessionId !== sessionId
               }"
-              >{{ session.agent }}</span
+              >{{ providerLabels[session.provider] || session.provider }}</span
             >
             <span
               class="text-sm"

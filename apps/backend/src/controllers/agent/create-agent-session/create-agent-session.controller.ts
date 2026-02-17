@@ -63,7 +63,7 @@ export class CreateAgentSessionController {
     let {
       projectId,
       sandboxType,
-      agent,
+      provider,
       model,
       agentMode,
       permissionMode,
@@ -123,7 +123,7 @@ export class CreateAgentSessionController {
       userId: user.userId,
       projectId: projectId,
       sandboxType: sandboxType,
-      agent: agent,
+      provider: provider,
       model: model,
       agentMode: agentMode,
       permissionMode: permissionMode,

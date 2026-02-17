@@ -12,7 +12,7 @@ export class ToBackendCreateAgentSessionRequestPayload {
   sandboxType: SandboxTypeEnum;
 
   @IsString()
-  agent: string;
+  provider: string;
 
   @IsOptional()
   @IsString()

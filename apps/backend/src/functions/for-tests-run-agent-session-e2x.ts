@@ -131,7 +131,7 @@ export async function forTestsRunAgentSessionE2x(item: {
       payload: {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
-        agent: 'opencode',
+        provider: 'opencode',
         model: item.model,
         agentMode: 'plan',
         permissionMode: 'default'

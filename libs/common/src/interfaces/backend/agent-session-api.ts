@@ -5,7 +5,7 @@ export class AgentSessionApi {
   sessionId: string;
 
   @IsString()
-  agent: string;
+  provider: string;
 
   @IsString()
   agentMode: string;

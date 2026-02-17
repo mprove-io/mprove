@@ -2,6 +2,7 @@ import { CreateAgentSessionController } from './controllers/agent/create-agent-s
 import { CreateAgentSseTicketController } from './controllers/agent/create-agent-sse-ticket/create-agent-sse-ticket.controller';
 import { DeleteAgentSessionController } from './controllers/agent/delete-agent-session/delete-agent-session.controller';
 import { GetAgentEventsSseController } from './controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
+import { GetAgentProviderModelsController } from './controllers/agent/get-agent-provider-models/get-agent-provider-models.controller';
 import { GetAgentSessionController } from './controllers/agent/get-agent-session/get-agent-session.controller';
 import { GetAgentSessionModelsController } from './controllers/agent/get-agent-session-models/get-agent-session-models.controller';
 import { GetAgentSessionsListController } from './controllers/agent/get-agent-sessions-list/get-agent-sessions-list.controller';
@@ -138,6 +139,7 @@ export const appControllers = [
   GetAgentSessionsListController,
   GetAgentSessionController,
   GetAgentSessionModelsController,
+  GetAgentProviderModelsController,
 
   GetAvatarBigController,
   SetAvatarController,

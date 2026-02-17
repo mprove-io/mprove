@@ -17,6 +17,11 @@ export class SessionsComponent {
   sessions: AgentSessionApi[] = [];
   sessionId: string;
   lastActivityTimes: Record<string, string> = {};
+  providerLabels: Record<string, string> = {
+    opencode: 'Zen',
+    openai: 'OpenAI',
+    anthropic: 'Anthropic'
+  };
 
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {

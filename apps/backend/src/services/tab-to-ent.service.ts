@@ -960,7 +960,7 @@ export class TabToEntService {
       projectId: tab.projectId,
       model: tab.model,
       sandboxType: tab.sandboxType,
-      agent: tab.agent,
+      provider: tab.provider,
       agentMode: tab.agentMode,
       permissionMode: tab.permissionMode,
       status: tab.status,

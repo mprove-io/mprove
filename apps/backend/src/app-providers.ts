@@ -4,6 +4,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { AgentService } from './services/agent.service';
+import { AgentModelsService } from './services/agent-models.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
@@ -105,6 +106,7 @@ export const appProviders = [
   SessionsService,
   SandboxService,
   AgentService,
+  AgentModelsService,
   {
     provide: TasksService,
     useFactory: (

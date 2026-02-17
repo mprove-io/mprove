@@ -63,7 +63,7 @@ export class GetAgentSessionController {
 
     let sessionApi: AgentSessionApi = {
       sessionId: session.sessionId,
-      agent: session.agent,
+      provider: session.provider,
       agentMode: session.agentMode,
       model: session.model,
       status: session.status,

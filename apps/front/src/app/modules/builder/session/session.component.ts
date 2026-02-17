@@ -15,6 +15,7 @@ import {
   ToBackendCreateAgentSseTicketRequestPayload,
   ToBackendCreateAgentSseTicketResponse
 } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
+import { ToBackendGetAgentProviderModelsResponse } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
 import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
@@ -51,9 +52,15 @@ export class SessionComponent implements OnDestroy {
   messageText = '';
   isSubmitting = false;
 
+  provider = 'opencode';
   model = 'default';
   agentMode = 'code';
 
+  providers = [
+    { id: 'opencode', label: 'Zen' },
+    { id: 'openai', label: 'OpenAI' },
+    { id: 'anthropic', label: 'Anthropic' }
+  ];
   models: string[] = ['default'];
   agentModes = ['plan', 'code'];
 
@@ -89,6 +96,7 @@ export class SessionComponent implements OnDestroy {
       this.session = sessionValue?.sessionId ? sessionValue : undefined;
 
       if (this.session) {
+        this.provider = this.session.provider;
         this.agentMode = this.session.agentMode;
         this.model = this.session.model || 'default';
       }
@@ -209,7 +217,9 @@ export class SessionComponent implements OnDestroy {
     private sessionEventsQuery: SessionEventsQuery,
     private uiQuery: UiQuery,
     private navigateService: NavigateService
-  ) {}
+  ) {
+    this.fetchProviderModels(this.provider);
+  }
 
   ngOnDestroy() {
     this.closeSse();
@@ -243,7 +253,7 @@ export class SessionComponent implements OnDestroy {
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
       sandboxType: SandboxTypeEnum.E2B,
-      agent: 'opencode',
+      provider: this.provider,
       model: this.model,
       agentMode: this.agentMode,
       permissionMode: 'default',
@@ -264,7 +274,7 @@ export class SessionComponent implements OnDestroy {
             let currentSessions = this.sessionsQuery.getValue().sessions;
             let newSession: AgentSessionApi = {
               sessionId: sessionId,
-              agent: 'opencode',
+              provider: this.provider,
               agentMode: this.agentMode,
               model: this.model,
               status: SessionStatusEnum.New,
@@ -329,6 +339,34 @@ export class SessionComponent implements OnDestroy {
         payload: payload
       })
       .pipe(take(1))
+      .subscribe();
+  }
+
+  onProviderChange() {
+    this.model = 'default';
+    this.models = ['default'];
+    this.fetchProviderModels(this.provider);
+  }
+
+  private fetchProviderModels(provider: string) {
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels,
+        payload: { provider }
+      })
+      .pipe(
+        tap((resp: ToBackendGetAgentProviderModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            let modelIds = resp.payload.models.map(
+              m => `${m.providerId}/${m.id}`
+            );
+            this.models = ['default', ...modelIds];
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
       .subscribe();
   }
 
