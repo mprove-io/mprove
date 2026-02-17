@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { Sandbox } from '@e2b/code-interpreter';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { SandboxAgent } from 'sandbox-agent';
+import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
@@ -14,68 +14,62 @@ import { ServerError } from '#common/models/server-error';
 export interface CreateSandboxResult {
   sandboxId: string;
   sandboxBaseUrl: string;
-  sandboxAgentToken: string;
+  opencodePassword: string;
   sandbox: Sandbox;
 }
 
 @Injectable()
 export class SandboxService {
-  private sandboxAgents = new Map<string, SandboxAgent>();
+  private opencodeClients = new Map<string, OpencodeClient>();
 
   constructor(
     private cs: ConfigService<BackendConfig>,
     private logger: Logger
   ) {}
 
-  async connectSandboxAgent(item: {
+  connectOpenCodeClient(item: {
     sessionId: string;
     sandboxBaseUrl: string;
-    sandboxAgentToken: string;
-  }): Promise<SandboxAgent> {
-    let existingSandboxAgent = this.sandboxAgents.get(item.sessionId);
+    opencodePassword: string;
+  }): OpencodeClient {
+    let existing = this.opencodeClients.get(item.sessionId);
 
-    if (existingSandboxAgent) {
-      return existingSandboxAgent;
+    if (existing) {
+      return existing;
     }
 
-    let sandboxAgent = await SandboxAgent.connect({
+    let client = createOpencodeClient({
       baseUrl: item.sandboxBaseUrl,
-      token: item.sandboxAgentToken
+      directory: '/home/user/project',
+      headers: {
+        Authorization: `Basic ${Buffer.from(`opencode:${item.opencodePassword}`).toString('base64')}`
+      }
     });
 
-    this.sandboxAgents.set(item.sessionId, sandboxAgent);
+    this.opencodeClients.set(item.sessionId, client);
 
-    return sandboxAgent;
+    return client;
   }
 
-  getSandboxAgent(sessionId: string): SandboxAgent {
-    let sandboxAgent = this.sandboxAgents.get(sessionId);
+  getOpenCodeClient(sessionId: string): OpencodeClient {
+    let client = this.opencodeClients.get(sessionId);
 
-    if (!sandboxAgent) {
+    if (!client) {
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_CLIENT_NOT_FOUND
       });
     }
-    return sandboxAgent;
+    return client;
   }
 
-  async disposeSandboxAgent(sessionId: string): Promise<void> {
-    let sandboxAgent = this.sandboxAgents.get(sessionId);
-
-    if (sandboxAgent) {
-      await sandboxAgent.dispose().catch(() => {
-        // do nothing
-      });
-
-      this.sandboxAgents.delete(sessionId);
-    }
+  disposeOpenCodeClient(sessionId: string): void {
+    this.opencodeClients.delete(sessionId);
   }
 
-  async startSandboxAgentServer(item: {
+  async startOpencodeServer(item: {
     sandboxType: SandboxTypeEnum;
     sandboxTimeoutMs: number;
     sandboxEnvs?: Record<string, string>;
-    agent: string;
     project: ProjectTab;
   }): Promise<CreateSandboxResult> {
     try {
@@ -88,14 +82,22 @@ export class SandboxService {
               'e2bPublicTemplate'
             );
 
+          console.log(
+            `[sandbox] creating E2B sandbox from template: ${templateName}`
+          );
+
           let sandbox = await Sandbox.create(templateName, {
             apiKey: item.project.e2bApiKey,
-            envs: item.sandboxEnvs,
             allowInternetAccess: true,
             timeoutMs: item.sandboxTimeoutMs
           });
 
+          console.log(`[sandbox] sandbox created: ${sandbox.sandboxId}`);
+
+          await sandbox.commands.run('mkdir -p /home/user/project');
+
           if (item.project.remoteType === ProjectRemoteTypeEnum.GitClone) {
+            console.log('[sandbox] cloning repo...');
             await this.cloneRepoInSandbox({
               sandbox: sandbox,
               gitUrl: item.project.gitUrl,
@@ -105,34 +107,30 @@ export class SandboxService {
               passPhrase: item.project.passPhrase,
               cloneDir: '/home/user/project'
             });
+            console.log('[sandbox] repo cloned');
           }
 
-          // if (
-          //   item.agent === 'opencode' &&
-          //   item.sandboxEnvs?.OPENCODE_API_KEY
-          // ) {
-          //   await sandbox.commands.run(
-          //     'mkdir -p /home/user/.local/share/opencode'
-          //   );
-          //   await sandbox.files.write(
-          //     '/home/user/.local/share/opencode/auth.json',
-          //     JSON.stringify({
-          //       opencode: {
-          //         type: 'api',
-          //         key: item.sandboxEnvs.OPENCODE_API_KEY
-          //       }
-          //     })
-          //   );
-          // }
+          let opencodePassword = crypto.randomBytes(32).toString('hex');
 
-          let sandboxAgentToken = crypto.randomBytes(32).toString('hex');
+          console.log('[sandbox] starting opencode serve...');
 
           await sandbox.commands.run(
-            `sandbox-agent server --no-telemetry --token ${sandboxAgentToken} --host 0.0.0.0 --port 3000`,
-            { background: true, timeoutMs: 0 }
+            `cd /home/user/project && opencode serve --port 3000`,
+            {
+              background: true,
+              timeoutMs: 0,
+              envs: {
+                ...item.sandboxEnvs,
+                OPENCODE_SERVER_PASSWORD: opencodePassword
+              }
+            }
           );
 
           let host = sandbox.getHost(3000);
+
+          console.log(
+            `[sandbox] polling health check at https://${host}/config`
+          );
 
           let healthy = false;
 
@@ -141,13 +139,18 @@ export class SandboxService {
 
           for (let i = 0; i < 30; i++) {
             try {
-              let res = await fetch(`https://${host}/v1/health`, {
-                headers: { Authorization: `Bearer ${sandboxAgentToken}` }
-              });
+              let res = await fetch(`https://${host}/config`);
 
-              if (res.ok) {
+              if (res.status === 401) {
                 healthy = true;
+                console.log(
+                  `[sandbox] health check passed on attempt ${i + 1}/30`
+                );
                 break;
+              } else {
+                console.log(
+                  `[sandbox] health check attempt ${i + 1}/30: status ${res.status} (expected 401)`
+                );
               }
             } catch (e: any) {
               if (backendEnv !== BackendEnvEnum.PROD) {
@@ -161,6 +164,7 @@ export class SandboxService {
           }
 
           if (!healthy) {
+            console.log('[sandbox] health check failed after 30 attempts');
             throw new ServerError({
               message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
             });
@@ -168,14 +172,10 @@ export class SandboxService {
 
           let sandboxBaseUrl = `https://${host}`;
 
-          console.log(`\n=== INSPECTOR UI ===`);
-          console.log(`${sandboxBaseUrl}/ui/?token=${sandboxAgentToken}`);
-          console.log(`===================\n`);
-
           createSandboxResult = {
             sandboxId: sandbox.sandboxId,
             sandboxBaseUrl: sandboxBaseUrl,
-            sandboxAgentToken: sandboxAgentToken,
+            opencodePassword: opencodePassword,
             sandbox: sandbox
           };
 

@@ -16,34 +16,32 @@ export class SessionDebugEventsComponent {
   }
 
   getMethodIcon(event: AgentEventApi): string {
-    let p = event.payload as { method?: string };
-    let method = p?.method || '';
+    let t = event.eventType;
 
-    if (method === 'session/prompt') {
+    if (t === 'message.updated') {
       return '>';
     }
-    if (method === 'session/update') {
+    if (t === 'message.part.updated') {
       return '<';
     }
-    if (method.includes('tool')) {
-      return 'T';
-    }
-    if (method.includes('config') || method.includes('permission')) {
+    if (t.includes('permission')) {
       return '*';
+    }
+    if (t.startsWith('session.')) {
+      return 'S';
     }
     return '.';
   }
 
   getMethod(event: AgentEventApi): string {
-    let p = event.payload as { method?: string };
-    return p?.method || '(unknown)';
+    return event.eventType;
   }
 
   getPayloadJson(event: AgentEventApi): string {
     try {
-      return JSON.stringify(event.payload, undefined, 2);
+      return JSON.stringify(event.ocEvent, undefined, 2);
     } catch {
-      return String(event.payload);
+      return String(event.ocEvent);
     }
   }
 }

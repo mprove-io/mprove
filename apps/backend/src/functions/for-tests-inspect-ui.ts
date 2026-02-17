@@ -27,13 +27,11 @@ export async function forTestsInspectUi(item: {
   let session = await sessionsService.getSessionByIdCheckExists({
     sessionId: item.sessionId
   });
-  let client = sandboxService.getSandboxAgent(item.sessionId);
+  let client = sandboxService.getOpenCodeClient(item.sessionId);
 
-  console.log(`\n=== INSPECTOR UI ===`);
-  console.log(
-    `${session.sandboxBaseUrl}/ui/?token=${session.sandboxAgentToken}`
-  );
-  console.log(`===================\n`);
+  console.log(`\n=== SANDBOX ===`);
+  console.log(`sandboxBaseUrl: ${session.sandboxBaseUrl}`);
+  console.log(`===============\n`);
   console.log('Sandbox kept alive for inspection. Waiting 30 minutes...');
   console.log('Press Ctrl+C to stop.');
   console.log('Health checking every 10s...\n');
@@ -42,12 +40,12 @@ export async function forTestsInspectUi(item: {
     await new Promise(resolve => setTimeout(resolve, 10_000));
 
     try {
-      let sessions = await client.listSessions();
+      let { data: sessions } = await client.session.list();
       console.log(
-        `[${(i + 1) * 10}s] sandbox-agent OK, sessions: ${sessions.items.length}`
+        `[${(i + 1) * 10}s] opencode OK, sessions: ${sessions.length}`
       );
     } catch (err: any) {
-      console.log(`[${(i + 1) * 10}s] sandbox-agent FAILED: ${err?.message}`);
+      console.log(`[${(i + 1) * 10}s] opencode FAILED: ${err?.message}`);
     }
   }
 }

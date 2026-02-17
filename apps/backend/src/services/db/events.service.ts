@@ -1,25 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import type { SessionEvent } from 'sandbox-agent';
+import type { Event } from '@opencode-ai/sdk';
 import type { EventTab } from '#backend/drizzle/postgres/schema/_tabs';
 
 @Injectable()
 export class EventsService {
-  makeEventFullId(item: { sessionId: string; eventId: string }): string {
-    return `${item.sessionId}_${item.eventId}`;
+  makeEventFullId(item: { sessionId: string; eventIndex: number }): string {
+    return `${item.sessionId}_${item.eventIndex}`;
   }
 
-  makeEvent(item: { sessionId: string; event: SessionEvent }): EventTab {
+  makeEvent(item: {
+    sessionId: string;
+    event: Event;
+    eventIndex: number;
+  }): EventTab {
     let now = Date.now();
 
     let eventTab: EventTab = {
       eventId: this.makeEventFullId({
         sessionId: item.sessionId,
-        eventId: item.event.id
+        eventIndex: item.eventIndex
       }),
       sessionId: item.sessionId,
-      eventIndex: item.event.eventIndex,
-      sender: item.event.sender,
-      universalEvent: item.event,
+      eventIndex: item.eventIndex,
+      sender: item.event.type,
+      ocEvent: item.event,
       createdTs: now,
       serverTs: undefined,
       keyTag: undefined

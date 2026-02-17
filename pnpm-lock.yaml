@@ -9,9 +9,6 @@ catalogs:
     '@acrodata/code-editor':
       specifier: 0.5.1
       version: 0.5.1
-    '@agentclientprotocol/sdk':
-      specifier: 0.14.1
-      version: 0.14.1
     '@ali-hm/angular-tree-component':
       specifier: 21.0.3
       version: 21.0.3
@@ -519,9 +516,6 @@ catalogs:
     rxjs:
       specifier: 7.8.1
       version: 7.8.1
-    sandbox-agent:
-      specifier: 0.2.0
-      version: 0.2.0
     serve:
       specifier: 14.2.5
       version: 14.2.5
@@ -875,9 +869,6 @@ importers:
       rxjs:
         specifier: 'catalog:'
         version: 7.8.1
-      sandbox-agent:
-        specifier: 'catalog:'
-        version: 0.2.0(zod@4.3.6)
       snowflake-sdk:
         specifier: 'catalog:'
         version: 2.3.1(asn1.js@5.4.1)(encoding@0.1.13)
@@ -903,9 +894,6 @@ importers:
         specifier: 'catalog:'
         version: 3.14.2
     devDependencies:
-      '@agentclientprotocol/sdk':
-        specifier: 'catalog:'
-        version: 0.14.1(zod@4.3.6)
       '@nestjs/testing':
         specifier: 'catalog:'
         version: 11.1.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(@nestjs/platform-express@11.1.0)
@@ -1599,9 +1587,6 @@ importers:
       reflect-metadata:
         specifier: 0.2.2
         version: 0.2.2
-      sandbox-agent:
-        specifier: 0.2.0
-        version: 0.2.0(zod@4.3.6)
       trino-client:
         specifier: 0.2.9
         version: 0.2.9
@@ -1741,11 +1726,6 @@ packages:
 
   '@adobe/css-tools@4.3.3':
     resolution: {integrity: sha512-rE0Pygv0sEZ4vBWHlAgJLGDU7Pm8xoO6p3wsEceb7GYAjScrOHpEo8KK/eVkAcnSM+slAEtXjA2JpdjLp4fJQQ==}
-
-  '@agentclientprotocol/sdk@0.14.1':
-    resolution: {integrity: sha512-b6r3PS3Nly+Wyw9U+0nOr47bV8tfS476EgyEMhoKvJCZLbgqoDFN7DJwkxL88RR0aiOqOYV1ZnESHqb+RmdH8w==}
-    peerDependencies:
-      zod: ^3.25.0 || ^4.0.0
 
   '@algolia/abtesting@1.12.2':
     resolution: {integrity: sha512-oWknd6wpfNrmRcH0vzed3UPX0i17o4kYLM5OMITyMVM2xLgaRbIafoxL0e8mcrNNb0iORCJA0evnNDKRYth5WQ==}
@@ -5617,38 +5597,6 @@ packages:
   '@rspack/lite-tapable@1.1.0':
     resolution: {integrity: sha512-E2B0JhYFmVAwdDiG14+DW0Di4Ze4Jg10Pc4/lILUrd5DRCaklduz2OvJ5HYQ6G+hd+WTzqQb3QnDNfK4yvAFYw==}
 
-  '@sandbox-agent/cli-darwin-arm64@0.2.0':
-    resolution: {integrity: sha512-DQ8nmqnHYwZvtVh1q4Tuy1qlzWiYYwg/7W8Jc2nwGobIrxVl3atMC0uZ22yx2OlxP5VRu6UkPJUuhB3LMy59NA==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@sandbox-agent/cli-darwin-x64@0.2.0':
-    resolution: {integrity: sha512-elHLfqNY4So1WXXWIKYThLiD/V4RZcvK9w0DQ4LGFQc87KDvHsaucN1V3tY2O7IW+A5URvvLENkm/UBkzpiFzg==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@sandbox-agent/cli-linux-arm64@0.2.0':
-    resolution: {integrity: sha512-JrYAS1tODC0i4xkWyv6qQWZ7Ejrx8scQrTemYwzRjTFC7ms77/6eVJp9BCN0Oml5IXK8mFHrzGmEqdtyPcI53w==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@sandbox-agent/cli-linux-x64@0.2.0':
-    resolution: {integrity: sha512-yzJ4gK1gWB7geNdybZS/SVuwn4UvhBDzodD6F9hhwH8HvGlWOkwiBGrkC+EfKVKToewHztaKO2wMKoI737VkIQ==}
-    cpu: [x64]
-    os: [linux]
-
-  '@sandbox-agent/cli-shared@0.2.0':
-    resolution: {integrity: sha512-gME/yVdeNlkNQRYfJOnkELziXnw++CzzrqCMWoAXf1c5cJYYEZIAMQ4y/WRIQgc/1BV8EjnHWxLJxgyqOF1zRw==}
-
-  '@sandbox-agent/cli-win32-x64@0.2.0':
-    resolution: {integrity: sha512-Zdl/RtSX31LcGgu8/36VyKx/kEFoutjEUG79vnaywEvaCAk0LyECBEHHKGHnIZpBiHkaNfK3rapY6rKPAquhJQ==}
-    cpu: [x64]
-    os: [win32]
-
-  '@sandbox-agent/cli@0.2.0':
-    resolution: {integrity: sha512-kTZyybllHki1cCiSUt20udzlrN4Z94rnRMDSquebOaR3AkkJQQVe7oXvapeDezujIN+C4H7TUpCFVf+40DgeIg==}
-    hasBin: true
-
   '@schematics/angular@21.1.0':
     resolution: {integrity: sha512-gXf3gO5SeU+tiPHxXeQvdbua4C4/V+KH43JH2PYPxaNCD2HGo1uV0pfyNSNgcVF21voKlbAQ13YRrNDh7z5Kig==}
     engines: {node: ^20.19.0 || ^22.12.0 || >=24.0.0, npm: ^6.11.0 || ^7.5.6 || >=8.0.0, yarn: '>= 1.13.0'}
@@ -6683,9 +6631,6 @@ packages:
     resolution: {integrity: sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==}
     engines: {node: '>=0.4.0'}
     hasBin: true
-
-  acp-http-client@0.1.0:
-    resolution: {integrity: sha512-EI0HH0lcr+Cypten2Otzfuo+406EVGUWR6pWfo3TVVHqbSPBUIAtVjF8HCQycJWpkKlt1mgVXmC8kRaidEQbeA==}
 
   adjust-sourcemap-loader@4.0.0:
     resolution: {integrity: sha512-OXwN5b9pCUXNQHJpwwD2qP40byEmSgzj8B4ydSN0uMNYWiFmJ6x6KwUllMmfk8Rwu/HJDFR7U8ubsWBoN0Xp0A==}
@@ -10719,9 +10664,6 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sandbox-agent@0.2.0:
-    resolution: {integrity: sha512-3mwFbnu+R/SMIRHIQWNFb/G/CC1+b3CjpN7d9qEor8V2AOPQ44hvb75+CuT0H2ZZPwuUsxqIF6lPGx2xrskINw==}
-
   sass-embedded-all-unknown@1.97.1:
     resolution: {integrity: sha512-0au5gUNibfob7W/g+ycBx74O22CL8vwHiZdEDY6J0uzMkHPiSJk//h0iRf5AUnMArFHJjFd3urIiQIaoRKYa1Q==}
     cpu: ['!arm', '!arm64', '!riscv64', '!x64']
@@ -12055,10 +11997,6 @@ snapshots:
 
   '@adobe/css-tools@4.3.3':
     optional: true
-
-  '@agentclientprotocol/sdk@0.14.1(zod@4.3.6)':
-    dependencies:
-      zod: 4.3.6
 
   '@algolia/abtesting@1.12.2':
     dependencies:
@@ -15607,7 +15545,6 @@ snapshots:
       js-yaml: 4.1.1
       nanoid: 3.3.10
       reflect-metadata: 0.2.2
-      sandbox-agent: 0.2.0(zod@4.3.6)
       trino-client: 0.2.9
       tslib: 2.7.0
       zod: 4.3.6
@@ -17073,34 +17010,6 @@ snapshots:
     optional: true
 
   '@rspack/lite-tapable@1.1.0':
-    optional: true
-
-  '@sandbox-agent/cli-darwin-arm64@0.2.0':
-    optional: true
-
-  '@sandbox-agent/cli-darwin-x64@0.2.0':
-    optional: true
-
-  '@sandbox-agent/cli-linux-arm64@0.2.0':
-    optional: true
-
-  '@sandbox-agent/cli-linux-x64@0.2.0':
-    optional: true
-
-  '@sandbox-agent/cli-shared@0.2.0': {}
-
-  '@sandbox-agent/cli-win32-x64@0.2.0':
-    optional: true
-
-  '@sandbox-agent/cli@0.2.0':
-    dependencies:
-      '@sandbox-agent/cli-shared': 0.2.0
-    optionalDependencies:
-      '@sandbox-agent/cli-darwin-arm64': 0.2.0
-      '@sandbox-agent/cli-darwin-x64': 0.2.0
-      '@sandbox-agent/cli-linux-arm64': 0.2.0
-      '@sandbox-agent/cli-linux-x64': 0.2.0
-      '@sandbox-agent/cli-win32-x64': 0.2.0
     optional: true
 
   '@schematics/angular@21.1.0(chokidar@5.0.0)':
@@ -18606,12 +18515,6 @@ snapshots:
       acorn: 8.15.0
 
   acorn@8.15.0: {}
-
-  acp-http-client@0.1.0(zod@4.3.6):
-    dependencies:
-      '@agentclientprotocol/sdk': 0.14.1(zod@4.3.6)
-    transitivePeerDependencies:
-      - zod
 
   adjust-sourcemap-loader@4.0.0:
     dependencies:
@@ -22876,15 +22779,6 @@ snapshots:
   safe-stable-stringify@2.5.0: {}
 
   safer-buffer@2.1.2: {}
-
-  sandbox-agent@0.2.0(zod@4.3.6):
-    dependencies:
-      '@sandbox-agent/cli-shared': 0.2.0
-      acp-http-client: 0.1.0(zod@4.3.6)
-    optionalDependencies:
-      '@sandbox-agent/cli': 0.2.0
-    transitivePeerDependencies:
-      - zod
 
   sass-embedded-all-unknown@1.97.1:
     dependencies:

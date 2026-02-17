@@ -21,57 +21,51 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session-sandbox';
+import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class PauseAgentSessionSandboxController {
+export class RespondToAgentPermissionController {
   constructor(
     private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
     private agentService: AgentService,
-    private sandboxService: SandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendPauseAgentSessionSandbox)
-  async pauseSessionSandbox(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendPauseAgentSessionSandboxRequest = request.body;
-    let { sessionId } = reqValid.payload;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendRespondToAgentPermission)
+  async respondToPermission(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendRespondToAgentPermissionRequest = request.body;
+    let { sessionId, permissionId, reply } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
     });
 
-    if (session.sandboxId && session.status === SessionStatusEnum.Active) {
-      let project = await this.projectsService.getProjectCheckExists({
-        projectId: session.projectId
-      });
-
-      await this.agentService.stopEventStream(sessionId);
-
-      this.sandboxService.disposeOpenCodeClient(sessionId);
-
-      await this.sandboxService.pauseSandbox({
-        sandboxType: session.sandboxType as SandboxTypeEnum,
-        sandboxId: session.sandboxId,
-        e2bApiKey: project.e2bApiKey
+    if (session.status !== SessionStatusEnum.Active) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SESSION_NOT_READY
       });
     }
 
-    let updatedSession: SessionTab = {
+    await this.agentService.respondToPermission({
+      sessionId: sessionId,
+      opencodeSessionId: session.opencodeSessionId,
+      permissionId: permissionId,
+      reply: reply
+    });
+
+    let finalSession: SessionTab = {
       ...session,
-      status: SessionStatusEnum.Paused
+      lastActivityTs: Date.now()
     };
 
     await retry(
@@ -81,7 +75,7 @@ export class PauseAgentSessionSandboxController {
             await this.db.packer.write({
               tx: tx,
               insertOrUpdate: {
-                sessions: [updatedSession]
+                sessions: [finalSession]
               }
             })
         ),

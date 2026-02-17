@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { Event } from '@opencode-ai/sdk';
 import { and, eq, lt } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
-import type { SessionEvent } from 'sandbox-agent';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -20,8 +20,8 @@ import { TabService } from './tab.service';
 export interface AgentEvent {
   eventId: string;
   eventIndex: number;
-  sender: SessionEvent['sender'];
-  payload: SessionEvent['payload'];
+  eventType: string;
+  ocEvent: Event;
 }
 
 @Injectable()
@@ -35,8 +35,10 @@ export class AgentService implements OnModuleDestroy {
 
   private pendingEvents = new Map<
     string,
-    { sessionId: string; event: SessionEvent }[]
+    { sessionId: string; event: Event; eventIndex: number }[]
   >();
+
+  private eventCounters = new Map<string, number>();
 
   private drainTimer: ReturnType<typeof setInterval>;
 
@@ -144,39 +146,75 @@ export class AgentService implements OnModuleDestroy {
 
   // stream
 
-  async startEventStream(item: {
-    sessionId: string;
-    offset?: number;
-  }): Promise<void> {
+  async startEventStream(item: { sessionId: string }): Promise<void> {
     await this.stopEventStream(item.sessionId);
 
-    let sandboxAgent = this.sandboxService.getSandboxAgent(item.sessionId);
+    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
 
-    let sessionEventHandler = sandboxAgent.onSessionEvent(
-      item.sessionId,
-      event => {
-        let queue = this.pendingEvents.get(item.sessionId);
-        if (!queue) {
-          queue = [];
-          this.pendingEvents.set(item.sessionId, queue);
+    let abortController = new AbortController();
+
+    let eventIndex = this.eventCounters.get(item.sessionId) ?? 0;
+
+    let response = await client.event.subscribe({
+      signal: abortController.signal
+    });
+
+    let processStream = async () => {
+      try {
+        for await (let event of response.stream) {
+          let queue = this.pendingEvents.get(item.sessionId);
+          if (!queue) {
+            queue = [];
+            this.pendingEvents.set(item.sessionId, queue);
+          }
+          queue.push({
+            sessionId: item.sessionId,
+            event: event,
+            eventIndex: eventIndex
+          });
+          eventIndex++;
+          this.eventCounters.set(item.sessionId, eventIndex);
         }
-        queue.push({ sessionId: item.sessionId, event: event });
+      } catch (e: any) {
+        if (e.name !== 'AbortError') {
+          this.logger.warn(`SSE stream error: ${e?.message}`);
+        }
       }
-    );
+    };
 
-    this.activeStreams.set(item.sessionId, sessionEventHandler);
+    processStream();
+
+    this.activeStreams.set(item.sessionId, () => abortController.abort());
   }
 
   async stopEventStream(sessionId: string): Promise<void> {
-    let sessionEventHandler = this.activeStreams.get(sessionId);
+    let stopFn = this.activeStreams.get(sessionId);
 
-    if (sessionEventHandler) {
-      sessionEventHandler();
+    if (stopFn) {
+      stopFn();
       this.activeStreams.delete(sessionId);
     }
 
     await this.drainQueue(sessionId);
     this.pendingEvents.delete(sessionId);
+    this.eventCounters.delete(sessionId);
+  }
+
+  async respondToPermission(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    permissionId: string;
+    reply: string;
+  }): Promise<void> {
+    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
+
+    await client.postSessionIdPermissionsPermissionId({
+      path: {
+        id: item.opencodeSessionId,
+        permissionID: item.permissionId
+      },
+      body: { response: item.reply as 'always' | 'once' | 'reject' }
+    });
   }
 
   private async drainAllQueues(): Promise<void> {
@@ -196,7 +234,8 @@ export class AgentService implements OnModuleDestroy {
     let eventTabs = items.map(item =>
       this.eventsService.makeEvent({
         sessionId: item.sessionId,
-        event: item.event
+        event: item.event,
+        eventIndex: item.eventIndex
       })
     );
 
@@ -210,11 +249,12 @@ export class AgentService implements OnModuleDestroy {
     );
 
     for (let item of items) {
+      let eventId = `${item.sessionId}_${item.eventIndex}`;
       await this.publish(item.sessionId, {
-        eventId: item.event.id,
-        eventIndex: item.event.eventIndex,
-        sender: item.event.sender,
-        payload: item.event.payload
+        eventId: eventId,
+        eventIndex: item.eventIndex,
+        eventType: item.event.type,
+        ocEvent: item.event
       });
     }
   }
@@ -248,7 +288,7 @@ export class AgentService implements OnModuleDestroy {
 
         await this.stopEventStream(session.sessionId);
 
-        await this.sandboxService.disposeSandboxAgent(session.sessionId);
+        this.sandboxService.disposeOpenCodeClient(session.sessionId);
 
         await this.sandboxService.pauseSandbox({
           sandboxType: session.sandboxType as SandboxTypeEnum,

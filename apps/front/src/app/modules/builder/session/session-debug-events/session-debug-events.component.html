@@ -15,22 +15,22 @@
         >{{ event.eventIndex }}</span
       >
 
-      <!-- Sender pill -->
+      <!-- Event type pill -->
       <span
         class="ml-3 flex-shrink-0 rounded-full px-2 py-0.5 text-sm"
         [ngClass]="{
-          'bg-blue-100 text-blue-700': event.sender === 'client',
-          'bg-green-100 text-green-700': event.sender === 'agent'
+          'bg-blue-100 text-blue-700': event.eventType.startsWith('message.'),
+          'bg-green-100 text-green-700': event.eventType.startsWith('session.')
         }"
-        >{{ event.sender }}</span
+        >{{ event.eventType }}</span
       >
 
       <!-- Direction icon -->
       <span
         class="ml-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded font-mono text-sm font-bold"
         [ngClass]="{
-          'bg-blue-100 text-blue-700': event.sender === 'client',
-          'bg-green-100 text-green-700': event.sender === 'agent'
+          'bg-blue-100 text-blue-700': event.eventType.startsWith('message.'),
+          'bg-green-100 text-green-700': event.eventType.startsWith('session.')
         }"
         >{{ getMethodIcon(event) }}</span
       >

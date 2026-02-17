@@ -80,10 +80,10 @@ export class SendAgentMessageController {
         timeoutMs: timeoutMs
       });
 
-      await this.sandboxService.connectSandboxAgent({
+      this.sandboxService.connectOpenCodeClient({
         sessionId: sessionId,
         sandboxBaseUrl: session.sandboxBaseUrl,
-        sandboxAgentToken: session.sandboxAgentToken
+        opencodePassword: session.opencodePassword
       });
 
       await this.agentService.startEventStream({
@@ -115,20 +115,29 @@ export class SendAgentMessageController {
       );
     }
 
-    let sAgent = this.sandboxService.getSandboxAgent(sessionId);
+    let client = this.sandboxService.getOpenCodeClient(sessionId);
 
-    let sdkSession = await sAgent.getSession(sessionId);
+    let promptBody: any = {
+      parts: [{ type: 'text', text: message }]
+    };
 
-    let promptResponse = await sdkSession
-      .prompt([{ type: 'text', text: message }])
+    let parsedModel = parseModel(session.model);
+    if (parsedModel) {
+      promptBody.model = parsedModel;
+    }
+
+    await client.session
+      .promptAsync({
+        path: { id: session.opencodeSessionId },
+        body: promptBody,
+        throwOnError: true
+      })
       .catch(e => {
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
           originalError: e
         });
       });
-
-    console.log('prompt response:', JSON.stringify(promptResponse, null, 2));
 
     let finalSession: SessionTab = {
       ...session,
@@ -153,4 +162,20 @@ export class SendAgentMessageController {
 
     return payload;
   }
+}
+
+function parseModel(
+  model: string | undefined
+): { providerID: string; modelID: string } | undefined {
+  if (!model) {
+    return undefined;
+  }
+  let slashIndex = model.indexOf('/');
+  if (slashIndex > 0) {
+    return {
+      providerID: model.substring(0, slashIndex),
+      modelID: model.substring(slashIndex + 1)
+    };
+  }
+  return undefined;
 }

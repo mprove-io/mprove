@@ -103,29 +103,12 @@ export class CreateAgentSessionController {
 
     let sandboxEnvs: Record<string, string> = {};
 
-    if (agent === 'codex') {
-      if (isUndefined(project.openaiApiKey)) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_OPENAI_API_KEY_REQUIRED_FOR_CODEX
-        });
-      }
-      // sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
-      sandboxEnvs.CODEX_API_KEY = project.openaiApiKey;
-    } else if (agent === 'claude') {
-      if (isUndefined(project.anthropicApiKey)) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_ANTHROPIC_API_KEY_REQUIRED_FOR_CLAUDE
-        });
-      }
-      sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
-    } else if (agent === 'opencode') {
-      if (isUndefined(project.zenApiKey)) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_ZEN_API_KEY_REQUIRED_FOR_OPENCODE
-        });
-      }
-      sandboxEnvs.OPENCODE_API_KEY = project.zenApiKey;
+    if (isUndefined(project.zenApiKey)) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_ZEN_API_KEY_REQUIRED_FOR_OPENCODE
+      });
     }
+    sandboxEnvs.OPENCODE_API_KEY = project.zenApiKey;
 
     // Phase 1: Save session with status=New and return immediately
 
@@ -167,10 +150,10 @@ export class CreateAgentSessionController {
       session: session,
       sandboxType: sandboxType,
       sandboxEnvs: sandboxEnvs,
-      agent: agent,
       project: project,
       firstMessage: firstMessage
     }).catch(e => {
+      console.log(`[activate] FAILED for session ${sessionId}: ${e?.message}`);
       this.logger.error(
         `Failed to activate session ${sessionId}: ${e?.message}`,
         e?.stack
@@ -188,12 +171,10 @@ export class CreateAgentSessionController {
     session: SessionTab;
     sandboxType: SandboxTypeEnum;
     sandboxEnvs: Record<string, string>;
-    agent: string;
     project: any;
     firstMessage?: string;
   }) {
-    let { session, sandboxType, sandboxEnvs, agent, project, firstMessage } =
-      item;
+    let { session, sandboxType, sandboxEnvs, project, firstMessage } = item;
 
     let sessionId = session.sessionId;
 
@@ -205,35 +186,30 @@ export class CreateAgentSessionController {
       // intentionally * 50 (not * 60) to pause sandbox before provider does
       let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
-      console.log('starting sandboxAgent server...');
+      console.log('starting opencode server...');
 
-      let { sandboxId, sandboxBaseUrl, sandboxAgentToken } =
-        await this.sandboxService.startSandboxAgentServer({
+      let { sandboxId, sandboxBaseUrl, opencodePassword } =
+        await this.sandboxService.startOpencodeServer({
           sandboxType: sandboxType,
           sandboxTimeoutMs: sandboxTimeoutMs,
           sandboxEnvs: sandboxEnvs,
-          agent: agent,
           project: project
         });
 
-      console.log('sandboxAgent server started');
+      console.log('opencode server started');
 
-      await this.sandboxService.connectSandboxAgent({
+      let opencodeClient = this.sandboxService.connectOpenCodeClient({
         sessionId: sessionId,
         sandboxBaseUrl: sandboxBaseUrl,
-        sandboxAgentToken: sandboxAgentToken
+        opencodePassword: opencodePassword
       });
 
-      let sandboxAgent = this.sandboxService.getSandboxAgent(sessionId);
-
-      let sdkSession = await sandboxAgent
-        .createSession({
-          id: sessionId,
-          agent: agent,
-          sessionInit: {
-            cwd: '/home/user/project',
-            mcpServers: []
-          }
+      let { data: opencodeSession } = await opencodeClient.session
+        .create({
+          body: {
+            title: 'mprove session'
+          },
+          throwOnError: true
         })
         .catch(e => {
           throw new ServerError({
@@ -242,7 +218,7 @@ export class CreateAgentSessionController {
           });
         });
 
-      let sessionRecord = sdkSession.toRecord();
+      let opencodeSessionId = opencodeSession.id;
 
       let now = Date.now();
 
@@ -250,8 +226,9 @@ export class CreateAgentSessionController {
         ...session,
         sandboxId: sandboxId,
         sandboxBaseUrl: sandboxBaseUrl,
-        sandboxAgentToken: sandboxAgentToken,
-        sessionRecord: sessionRecord,
+        opencodeSessionId: opencodeSessionId,
+        opencodePassword: opencodePassword,
+        ocSession: opencodeSession,
         status: SessionStatusEnum.Active,
         lastActivityTs: now,
         runningStartTs: now,
@@ -277,8 +254,21 @@ export class CreateAgentSessionController {
       });
 
       if (firstMessage) {
-        await sdkSession
-          .prompt([{ type: 'text', text: firstMessage }])
+        let promptBody: any = {
+          parts: [{ type: 'text', text: firstMessage }]
+        };
+
+        let parsedModel = parseModel(session.model);
+        if (parsedModel) {
+          promptBody.model = parsedModel;
+        }
+
+        await opencodeClient.session
+          .promptAsync({
+            path: { id: opencodeSessionId },
+            body: promptBody,
+            throwOnError: true
+          })
           .catch(e => {
             throw new ServerError({
               message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
@@ -319,4 +309,20 @@ export class CreateAgentSessionController {
       throw e;
     }
   }
+}
+
+function parseModel(
+  model: string | undefined
+): { providerID: string; modelID: string } | undefined {
+  if (!model) {
+    return undefined;
+  }
+  let slashIndex = model.indexOf('/');
+  if (slashIndex > 0) {
+    return {
+      providerID: model.substring(0, slashIndex),
+      modelID: model.substring(slashIndex + 1)
+    };
+  }
+  return undefined;
 }

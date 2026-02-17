@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
+import type { Session } from '@opencode-ai/sdk';
 import { eq } from 'drizzle-orm';
-import type { SessionRecord } from 'sandbox-agent';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
@@ -28,8 +28,9 @@ export class SessionsService {
     permissionMode: string;
     sandboxId?: string;
     sandboxBaseUrl?: string;
-    sandboxAgentToken?: string;
-    sessionRecord?: SessionRecord;
+    opencodeSessionId?: string;
+    opencodePassword?: string;
+    ocSession?: Session;
     firstMessage?: string;
     status: SessionStatusEnum;
     lastActivityTs: number;
@@ -48,8 +49,9 @@ export class SessionsService {
       permissionMode: item.permissionMode,
       sandboxId: item.sandboxId,
       sandboxBaseUrl: item.sandboxBaseUrl,
-      sandboxAgentToken: item.sandboxAgentToken,
-      sessionRecord: item.sessionRecord,
+      opencodeSessionId: item.opencodeSessionId,
+      opencodePassword: item.opencodePassword,
+      ocSession: item.ocSession,
       firstMessage: item.firstMessage,
       status: item.status,
       lastActivityTs: item.lastActivityTs,

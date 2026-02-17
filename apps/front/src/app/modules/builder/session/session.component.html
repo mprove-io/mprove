@@ -73,6 +73,7 @@
     [isWaitingForResponse]="isWaitingForResponse"
     [isSessionError]="isSessionError"
     [scrollTrigger]="scrollTrigger"
+    (permissionResponse)="respondToPermission($event)"
   ></m-session-messages>
 
   <!-- Debug events view -->

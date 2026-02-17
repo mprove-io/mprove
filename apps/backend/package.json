@@ -95,7 +95,6 @@
     "retry": "catalog:",
     "rxjs": "catalog:",
     "@opencode-ai/sdk": "catalog:",
-    "sandbox-agent": "catalog:",
     "snowflake-sdk": "catalog:",
     "sshpk": "catalog:",
     "tiny-async-pool": "catalog:",
@@ -105,7 +104,6 @@
     "winston": "catalog:"
   },
   "devDependencies": {
-    "@agentclientprotocol/sdk": "catalog:",
     "dotenv-cli": "catalog:",
     "@nestjs/testing": "catalog:",
     "@swc/cli": "catalog:",

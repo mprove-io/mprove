@@ -1,3 +1,4 @@
+import type { Event } from '@opencode-ai/sdk';
 import { IsInt, IsString } from 'class-validator';
 
 export class AgentEventApi {
@@ -8,7 +9,7 @@ export class AgentEventApi {
   eventIndex: number;
 
   @IsString()
-  sender: string;
+  eventType: string;
 
-  payload: any;
+  ocEvent: Event;
 }

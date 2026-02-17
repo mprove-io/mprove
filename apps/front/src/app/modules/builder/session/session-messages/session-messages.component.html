@@ -94,6 +94,46 @@
                 }}</div>
               </div>
             </div>
+
+            <!-- Error -->
+            <div *ngIf="msg.sender === 'error'" class="flex justify-start">
+              <div class="max-w-[80%] rounded-2xl bg-red-50 px-4 py-3">
+                <div class="text-[17px] text-red-700">{{ msg.text }}</div>
+              </div>
+            </div>
+
+            <!-- Permission request -->
+            <div *ngIf="msg.sender === 'permission'" class="flex justify-start">
+              <div
+                class="max-w-[80%] rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3"
+              >
+                <div class="text-[17px] text-amber-800">{{ msg.text }}</div>
+                <div class="mt-2 flex space-x-2">
+                  <button
+                    class="rounded-lg bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
+                    (click)="
+                      permissionResponse.emit({
+                        permissionId: msg.permissionId,
+                        reply: 'always'
+                      })
+                    "
+                  >
+                    Allow
+                  </button>
+                  <button
+                    class="rounded-lg bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+                    (click)="
+                      permissionResponse.emit({
+                        permissionId: msg.permissionId,
+                        reply: 'reject'
+                      })
+                    "
+                  >
+                    Deny
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Indicators only in the last turn -->

@@ -918,7 +918,7 @@ export class TabToEntService {
     let { tab } = item;
 
     let eventSt: EventSt = {
-      universalEvent: tab.universalEvent
+      ocEvent: tab.ocEvent
     };
 
     let eventLt: EventLt = {};
@@ -946,8 +946,9 @@ export class TabToEntService {
     let sessionSt: SessionSt = {
       sandboxId: tab.sandboxId,
       sandboxBaseUrl: tab.sandboxBaseUrl,
-      sandboxAgentToken: tab.sandboxAgentToken,
-      sessionRecord: tab.sessionRecord,
+      opencodeSessionId: tab.opencodeSessionId,
+      opencodePassword: tab.opencodePassword,
+      ocSession: tab.ocSession,
       firstMessage: tab.firstMessage
     };
 

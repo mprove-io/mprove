@@ -31,7 +31,6 @@ import {
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
 let inspectUI: boolean = false;
-let suppressAcpSdkNoise: boolean = false;
 
 let testId = 'backend-create-agent-session__ok-opencode';
 
@@ -73,22 +72,8 @@ test('1', async t => {
   let sendFirstMessageResp: ToBackendSendAgentMessageResponse;
   let sendMessageResp: ToBackendSendAgentMessageResponse;
 
-  // Suppress known ACP SDK noise: "Got response to unknown request"
-  let originalConsoleError = console.error;
-
-  if (suppressAcpSdkNoise) {
-    console.error = (...args: unknown[]) => {
-      if (
-        typeof args[0] === 'string' &&
-        args[0].startsWith('Got response to unknown request')
-      ) {
-        return;
-      }
-      originalConsoleError.apply(console, args);
-    };
-  }
-
   try {
+    console.log('[test] preparing test and seeding...');
     prep = await prepareTestAndSeed({
       traceId: traceId,
       deleteRecordsPayload: {
@@ -139,6 +124,8 @@ test('1', async t => {
       loginUserPayload: { email, password }
     });
 
+    console.log('[test] seed complete, creating agent session...');
+
     // Create agent session without firstMessage to avoid race condition:
     // SSE must be connected before messages are sent, otherwise events
     // published to Redis pub/sub before SSE subscription are lost.
@@ -152,10 +139,7 @@ test('1', async t => {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         agent: 'opencode',
-        // model: 'openai/gpt-5.1-codex-mini',
-        // model: 'gemini-3-pro',
-        model: 'opencode/kimi-free',
-        // model: 'big-pickle',
+        model: 'big-pickle',
         agentMode: 'plan',
         permissionMode: 'default'
       }
@@ -170,11 +154,16 @@ test('1', async t => {
       });
 
     sessionId = createSessionResp.payload.sessionId;
+    console.log(`[test] session created: ${sessionId}`);
 
     // Start listening so EventSource can connect
     await new Promise<void>(resolve => {
       prep.httpServer.listen(0, () => resolve());
     });
+
+    console.log(
+      '[test] http server listening, waiting for session activation...'
+    );
 
     // Wait for async session activation to complete
     await forTestsWaitForSessionActive({
@@ -183,6 +172,8 @@ test('1', async t => {
       traceId: traceId,
       sessionId: sessionId
     });
+
+    console.log('[test] session active, connecting SSE...');
 
     // Get SSE ticket and connect before sending any messages
     let sseTicket = await forTestsGetSseTicket({
@@ -197,6 +188,8 @@ test('1', async t => {
       sessionId: sessionId,
       ticket: sseTicket
     });
+
+    console.log('[test] SSE connected, sending 1st message...');
 
     // Send 1st message (after SSE is connected)
     let sendFirstMessageReq: ToBackendSendAgentMessageRequest = {
@@ -219,12 +212,18 @@ test('1', async t => {
         checkIsOk: true
       });
 
+    console.log('[test] 1st message sent, waiting for turn to complete...');
+
     // Wait for 1st turn to complete
     await forTestsWaitForTurnEnded({
       events: sse.events,
       count: 1,
-      maxRetries: 40
+      maxRetries: 60
     });
+
+    console.log(
+      `[test] 1st turn complete (${sse.events.length} events so far), sending 2nd message...`
+    );
 
     // Send 2nd message
     let sendMessageReq: ToBackendSendAgentMessageRequest = {
@@ -246,13 +245,23 @@ test('1', async t => {
       checkIsOk: true
     });
 
+    console.log('[test] 2nd message sent, waiting for turn to complete...');
+
     // Wait for 2nd turn to complete
     await forTestsWaitForTurnEnded({
       events: sse.events,
       count: 2,
-      maxRetries: 40
+      maxRetries: 60
     });
+
+    console.log(`[test] 2nd turn complete (${sse.events.length} events total)`);
   } catch (e) {
+    console.log(`[test] ERROR: ${e instanceof Error ? e.message : e}`);
+    if (sse) {
+      console.log(`[test] events received so far: ${sse.events.length}`);
+      let eventTypes = sse.events.map(ev => ev.eventType);
+      console.log(`[test] event types: ${JSON.stringify(eventTypes)}`);
+    }
     logToConsoleBackend({
       log: e,
       logLevel: LogLevelEnum.Error,
@@ -261,8 +270,6 @@ test('1', async t => {
     });
     testError = e;
   }
-
-  console.error = originalConsoleError;
 
   if (sse) {
     sse.close();
@@ -319,7 +326,16 @@ test('1', async t => {
     t.is(sendFirstMessageResp.info.status, ResponseInfoStatusEnum.Ok);
     t.is(sendMessageResp.info.status, ResponseInfoStatusEnum.Ok);
 
-    // Extract dialog messages from ACP events
+    // Log event summary
+    let eventTypeCounts: Record<string, number> = {};
+    for (let ev of sse.events) {
+      eventTypeCounts[ev.eventType] = (eventTypeCounts[ev.eventType] || 0) + 1;
+    }
+    console.log(
+      `[test] event summary (${sse.events.length} total): ${JSON.stringify(eventTypeCounts, null, 2)}`
+    );
+
+    // Extract dialog messages from OpenCode events
     let dialogLines = forTestsExtractDialogLines({ events: sse.events });
 
     console.log('\n' + dialogLines.join('\n'));

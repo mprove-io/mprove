@@ -194,7 +194,6 @@
       "@biomejs/biome",
       "@nestjs/core",
       "@parcel/watcher",
-      "@sandbox-agent/cli-linux-x64",
       "@swc/core",
       "bcrypt",
       "duckdb",
@@ -215,7 +214,6 @@
       "libs/*"
     ],
     "catalog": {
-      "@agentclientprotocol/sdk": "0.14.1",
       "@acrodata/code-editor": "0.5.1",
       "@ali-hm/angular-tree-component": "21.0.3",
       "@angular-devkit/build-angular": "21.1.0",
@@ -397,7 +395,6 @@
       "retry": "0.13.1",
       "rimraf": "6.0.1",
       "rxjs": "7.8.1",
-      "sandbox-agent": "0.2.0",
       "serve": "14.2.5",
       "shiki": "0.10.1",
       "shx": "0.4.0",

@@ -19,6 +19,7 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import { ToBackendRespondToAgentPermissionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -32,6 +33,7 @@ import { environment } from '#front/environments/environment';
 interface ChatMessage {
   sender: string;
   text: string;
+  permissionId?: string;
 }
 
 interface ChatTurn {
@@ -51,7 +53,7 @@ export class SessionComponent implements OnDestroy {
   agent = 'opencode';
   agentMode = 'code';
 
-  agents = ['claude', 'opencode', 'codex'];
+  agents = ['opencode'];
   agentModes = ['plan', 'code'];
 
   // Chat mode
@@ -297,6 +299,27 @@ export class SessionComponent implements OnDestroy {
       .subscribe();
   }
 
+  respondToPermission(event: { permissionId: string; reply: string }) {
+    if (!this.session) {
+      return;
+    }
+
+    let payload: ToBackendRespondToAgentPermissionRequestPayload = {
+      sessionId: this.session.sessionId,
+      permissionId: event.permissionId,
+      reply: event.reply
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendRespondToAgentPermission,
+        payload: payload
+      })
+      .pipe(take(1))
+      .subscribe();
+  }
+
   private startPolling(sessionId: string) {
     this.pollSubscription = interval(1000)
       .pipe(
@@ -455,6 +478,9 @@ export class SessionComponent implements OnDestroy {
       return true;
     }
     let lastMessage = this.messages[this.messages.length - 1];
+    if (lastMessage.sender === 'error') {
+      return false;
+    }
     return lastMessage.sender === 'user' || lastMessage.sender === 'tool';
   }
 
@@ -482,6 +508,13 @@ export class SessionComponent implements OnDestroy {
     let messages: ChatMessage[] = [];
     let currentMessage: ChatMessage;
 
+    // Track message roles by ID to distinguish user vs assistant parts
+    let messageRoles = new Map<string, string>();
+    // Track which message IDs already have a ChatMessage entry
+    let seenMessageIds = new Set<string>();
+    // Map message ID to its ChatMessage for updating text from parts
+    let messageById = new Map<string, ChatMessage>();
+
     // Only process contiguous events (stop at first gap in eventIndex)
     let contiguousEvents: AgentEventApi[] = [];
     for (let i = 0; i < events.length; i++) {
@@ -492,52 +525,91 @@ export class SessionComponent implements OnDestroy {
     }
 
     for (let event of contiguousEvents) {
-      let p = event.payload as { method?: string; params?: any };
+      let oc = event.ocEvent;
+      if (!oc) {
+        continue;
+      }
 
-      // User messages: session/prompt requests from client
-      if (event.sender === 'client' && p?.method === 'session/prompt') {
-        let prompt = p.params?.prompt;
-        if (Array.isArray(prompt)) {
-          for (let block of prompt) {
-            if (block.type === 'text' && block.text) {
-              if (currentMessage && currentMessage.sender === 'user') {
-                currentMessage.text += block.text;
-              } else {
-                currentMessage = { sender: 'user', text: block.text };
-                messages.push(currentMessage);
-              }
-            }
+      // Permission requests
+      if ((oc.type as string) === 'permission.asked') {
+        let props = (oc as any).properties;
+        currentMessage = {
+          sender: 'permission',
+          text: props.permission || 'Permission requested',
+          permissionId: props.id
+        };
+        messages.push(currentMessage);
+        currentMessage = undefined;
+        continue;
+      }
+
+      // message.updated: register role, create entry only on first occurrence
+      if (oc.type === 'message.updated') {
+        let info = oc.properties.info;
+        let msgId = info.id;
+        messageRoles.set(msgId, info.role);
+
+        if (!seenMessageIds.has(msgId)) {
+          seenMessageIds.add(msgId);
+
+          if (info.role === 'user') {
+            currentMessage = { sender: 'user', text: '' };
+            messages.push(currentMessage);
+            messageById.set(msgId, currentMessage);
           }
         }
         continue;
       }
 
-      // Agent messages: session/update notifications
-      let update = p?.params?.update;
-      let sessionUpdate = update?.sessionUpdate;
+      // message.part.updated events
+      if (oc.type === 'message.part.updated') {
+        let part = oc.properties.part;
+        let parentMsgId = part.messageID;
+        let parentRole = messageRoles.get(parentMsgId);
 
-      if (sessionUpdate === 'agent_message_chunk') {
-        let text = update?.content?.text || '';
-
-        if (currentMessage && currentMessage.sender === 'agent') {
-          currentMessage.text += text;
-        } else {
-          currentMessage = { sender: 'agent', text };
-          messages.push(currentMessage);
+        // User message part: update the user message text
+        if (parentRole === 'user') {
+          if (part.type === 'text') {
+            let userMsg = messageById.get(parentMsgId);
+            if (userMsg) {
+              userMsg.text = part.text || '';
+            }
+          }
+          continue;
         }
-      } else if (sessionUpdate === 'tool_call') {
-        let toolName = update?.name || 'tool';
-        currentMessage = { sender: 'tool', text: toolName };
+
+        // Assistant message parts
+        if (part.type === 'text') {
+          let text = part.text || '';
+          if (currentMessage && currentMessage.sender === 'agent') {
+            currentMessage.text = text;
+          } else {
+            currentMessage = { sender: 'agent', text };
+            messages.push(currentMessage);
+          }
+        } else if (part.type === 'tool') {
+          let toolName = part.tool || 'tool';
+          currentMessage = { sender: 'tool', text: toolName };
+          messages.push(currentMessage);
+          currentMessage = undefined;
+        } else if (part.type === 'reasoning') {
+          let text = part.text || '';
+          if (currentMessage && currentMessage.sender === 'thought') {
+            currentMessage.text = text;
+          } else {
+            currentMessage = { sender: 'thought', text };
+            messages.push(currentMessage);
+          }
+        }
+      }
+
+      // Session error
+      if ((oc.type as string) === 'session.error') {
+        let props = (oc as any).properties;
+        let errorMsg = props?.error?.data?.message || 'Session error';
+        currentMessage = { sender: 'error', text: errorMsg };
         messages.push(currentMessage);
         currentMessage = undefined;
-      } else if (sessionUpdate === 'agent_thought_chunk') {
-        let text = update?.content?.text || '';
-        if (currentMessage && currentMessage.sender === 'thought') {
-          currentMessage.text += text;
-        } else {
-          currentMessage = { sender: 'thought', text };
-          messages.push(currentMessage);
-        }
       }
     }
 

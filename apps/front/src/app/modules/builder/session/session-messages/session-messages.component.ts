@@ -1,8 +1,10 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
+  Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -14,6 +16,7 @@ import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 interface ChatMessage {
   sender: string;
   text: string;
+  permissionId?: string;
 }
 
 interface ChatTurn {
@@ -33,6 +36,11 @@ export class SessionMessagesComponent implements OnChanges, OnDestroy {
   @Input() isWaitingForResponse = false;
   @Input() isSessionError = false;
   @Input() scrollTrigger = 0;
+
+  @Output() permissionResponse = new EventEmitter<{
+    permissionId: string;
+    reply: string;
+  }>();
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 

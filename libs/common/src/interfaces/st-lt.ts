@@ -1,5 +1,5 @@
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
-import type { SessionEvent, SessionRecord } from 'sandbox-agent';
+import type { Event, Session } from '@opencode-ai/sdk';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
 import { Ev } from './backend/ev';
 import { MproveConfig } from './backend/mprove-config';
@@ -260,7 +260,7 @@ export class UserLt {
 //
 
 export class EventSt {
-  universalEvent: SessionEvent;
+  ocEvent: Event;
 }
 export class EventLt {
   emptyData?: number;
@@ -271,8 +271,9 @@ export class EventLt {
 export class SessionSt {
   sandboxId?: string;
   sandboxBaseUrl?: string;
-  sandboxAgentToken?: string;
-  sessionRecord?: SessionRecord;
+  opencodeSessionId?: string;
+  opencodePassword?: string;
+  ocSession?: Session;
   firstMessage?: string;
 }
 export class SessionLt {

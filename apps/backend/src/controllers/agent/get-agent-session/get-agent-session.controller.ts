@@ -56,8 +56,8 @@ export class GetAgentSessionController {
       return {
         eventId: tab.eventId,
         eventIndex: tab.eventIndex,
-        sender: tab.sender,
-        payload: tab.universalEvent?.payload
+        eventType: tab.sender,
+        ocEvent: tab.ocEvent
       };
     });
 
