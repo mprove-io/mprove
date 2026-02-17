@@ -45,6 +45,7 @@ export class GetAgentSessionsListController {
         sessionId: tab.sessionId,
         agent: tab.agent,
         agentMode: tab.agentMode,
+        model: tab.model,
         status: tab.status,
         createdTs: tab.createdTs,
         lastActivityTs: tab.lastActivityTs,

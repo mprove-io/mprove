@@ -19,6 +19,7 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import { ToBackendGetAgentSessionModelsResponse } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session-models';
 import { ToBackendRespondToAgentPermissionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -50,10 +51,10 @@ export class SessionComponent implements OnDestroy {
   messageText = '';
   isSubmitting = false;
 
-  agent = 'opencode';
+  model = 'default';
   agentMode = 'code';
 
-  agents = ['opencode'];
+  models: string[] = ['default'];
   agentModes = ['plan', 'code'];
 
   // Chat mode
@@ -88,8 +89,8 @@ export class SessionComponent implements OnDestroy {
       this.session = sessionValue?.sessionId ? sessionValue : undefined;
 
       if (this.session) {
-        this.agent = this.session.agent;
         this.agentMode = this.session.agentMode;
+        this.model = this.session.model || 'default';
       }
 
       // Detect session change and close old connections
@@ -100,6 +101,7 @@ export class SessionComponent implements OnDestroy {
         this.closeSse();
         this.stopPolling();
         this.sseRetryCount = 0;
+        this.models = ['default'];
       }
 
       // Start polling when session is New
@@ -124,6 +126,14 @@ export class SessionComponent implements OnDestroy {
         !this.eventSource
       ) {
         this.connectSse(this.session.sessionId);
+      }
+
+      // Fetch models when session becomes active
+      if (
+        this.session?.status === SessionStatusEnum.Active &&
+        this.models.length === 1
+      ) {
+        this.fetchModels(this.session.sessionId);
       }
 
       this.events = eventsValue;
@@ -233,8 +243,8 @@ export class SessionComponent implements OnDestroy {
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
       sandboxType: SandboxTypeEnum.E2B,
-      agent: this.agent,
-      model: 'unk',
+      agent: 'opencode',
+      model: this.model,
       agentMode: this.agentMode,
       permissionMode: 'default',
       firstMessage: firstMessageText
@@ -254,8 +264,9 @@ export class SessionComponent implements OnDestroy {
             let currentSessions = this.sessionsQuery.getValue().sessions;
             let newSession: AgentSessionApi = {
               sessionId: sessionId,
-              agent: this.agent,
+              agent: 'opencode',
               agentMode: this.agentMode,
+              model: this.model,
               status: SessionStatusEnum.New,
               createdTs: Date.now(),
               lastActivityTs: Date.now(),
@@ -285,7 +296,8 @@ export class SessionComponent implements OnDestroy {
 
     let payload: ToBackendSendAgentMessageRequestPayload = {
       sessionId: this.session.sessionId,
-      message: this.messageText.trim()
+      message: this.messageText.trim(),
+      model: this.model
     };
 
     this.messageText = '';
@@ -317,6 +329,28 @@ export class SessionComponent implements OnDestroy {
         payload: payload
       })
       .pipe(take(1))
+      .subscribe();
+  }
+
+  private fetchModels(sessionId: string) {
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionModels,
+        payload: { sessionId }
+      })
+      .pipe(
+        tap((resp: ToBackendGetAgentSessionModelsResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            let modelIds = resp.payload.models.map(
+              m => `${m.providerId}/${m.id}`
+            );
+            this.models = ['default', ...modelIds];
+            this.cd.detectChanges();
+          }
+        }),
+        take(1)
+      )
       .subscribe();
   }
 

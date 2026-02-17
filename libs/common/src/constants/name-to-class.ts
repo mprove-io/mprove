@@ -3,6 +3,7 @@ import { ToBackendCreateAgentSessionRequest } from '#common/interfaces/to-backen
 import { ToBackendCreateAgentSseTicketRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
 import { ToBackendGetAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import { ToBackendGetAgentSessionModelsRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session-models';
 import { ToBackendGetAgentSessionsListRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
 import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session-sandbox';
 import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
@@ -384,5 +385,7 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList]:
     ToBackendGetAgentSessionsListRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSession]:
-    ToBackendGetAgentSessionRequest
+    ToBackendGetAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionModels]:
+    ToBackendGetAgentSessionModelsRequest
 };

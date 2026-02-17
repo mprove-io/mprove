@@ -29,6 +29,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { splitModel } from '#common/functions/split-model';
 import { ToBackendSendAgentMessageRequest } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { ServerError } from '#common/models/server-error';
 
@@ -49,7 +50,7 @@ export class SendAgentMessageController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage)
   async sendMessage(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSendAgentMessageRequest = request.body;
-    let { sessionId, message } = reqValid.payload;
+    let { sessionId, message, model } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -117,13 +118,15 @@ export class SendAgentMessageController {
 
     let client = this.sandboxService.getOpenCodeClient(sessionId);
 
+    let effectiveModel = model !== undefined ? model : session.model;
+
     let promptBody: any = {
       parts: [{ type: 'text', text: message }]
     };
 
-    let parsedModel = parseModel(session.model);
-    if (parsedModel) {
-      promptBody.model = parsedModel;
+    let split = splitModel(effectiveModel);
+    if (split) {
+      promptBody.model = split;
     }
 
     await client.session
@@ -141,6 +144,7 @@ export class SendAgentMessageController {
 
     let finalSession: SessionTab = {
       ...session,
+      model: model !== undefined ? model : session.model,
       lastActivityTs: Date.now()
     };
 
@@ -162,20 +166,4 @@ export class SendAgentMessageController {
 
     return payload;
   }
-}
-
-function parseModel(
-  model: string | undefined
-): { providerID: string; modelID: string } | undefined {
-  if (!model) {
-    return undefined;
-  }
-  let slashIndex = model.indexOf('/');
-  if (slashIndex > 0) {
-    return {
-      providerID: model.substring(0, slashIndex),
-      modelID: model.substring(slashIndex + 1)
-    };
-  }
-  return undefined;
 }

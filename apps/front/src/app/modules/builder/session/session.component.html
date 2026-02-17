@@ -37,14 +37,14 @@
 
     <div class="mt-8 flex flex-row items-center justify-center space-x-3">
       <ng-select
-        class="sessions-select w-[140px] select-none text-sm"
-        [items]="agents"
+        class="sessions-select w-[240px] select-none text-sm"
+        [items]="models"
         [clearable]="false"
         [searchable]="false"
-        [(ngModel)]="agent"
+        [(ngModel)]="model"
         [disabled]="isSubmitting"
         appendTo="body"
-        placeholder="Agent"
+        placeholder="Model"
       ></ng-select>
 
       <ng-select
@@ -117,14 +117,14 @@
 
       <div class="mt-4 flex flex-row items-center justify-center space-x-3">
         <ng-select
-          class="sessions-select w-[140px] select-none text-sm"
-          [items]="agents"
+          class="sessions-select w-[240px] select-none text-sm"
+          [items]="models"
           [clearable]="false"
           [searchable]="false"
-          [(ngModel)]="agent"
-          [disabled]="true"
+          [(ngModel)]="model"
+          [disabled]="isActivating"
           appendTo="body"
-          placeholder="Agent"
+          placeholder="Model"
         ></ng-select>
 
         <ng-select

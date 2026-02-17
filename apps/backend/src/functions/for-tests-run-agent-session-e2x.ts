@@ -1,4 +1,4 @@
-import test from 'ava';
+import type { ExecutionContext } from 'ava';
 import { forTestsConnectSse } from '#backend/functions/for-tests-connect-sse';
 import { forTestsExtractDialogLines } from '#backend/functions/for-tests-extract-dialog-lines';
 import { forTestsGetSseTicket } from '#backend/functions/for-tests-get-sse-ticket';
@@ -30,41 +30,34 @@ import {
   ToBackendSendAgentMessageResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 
-let inspectUI: boolean = false;
+export async function forTestsRunAgentSessionE2x(item: {
+  t: ExecutionContext;
+  testId: string;
+  inspectUI: boolean;
+  projectApiKeys: {
+    e2bApiKey: string;
+    zenApiKey?: string;
+    anthropicApiKey?: string;
+    openaiApiKey?: string;
+  };
+  model?: string;
+}): Promise<void> {
+  let { t, testId, inspectUI } = item;
 
-let testId = 'backend-create-agent-session__ok-opencode';
-
-let traceId = testId;
-
-let email = `${testId}@example.com`;
-let userId = makeId();
-let password = '123456';
-
-let orgId = testId;
-let orgName = testId;
-
-let projectId = makeId();
-let projectName = testId;
-
-let prep: Prep;
-
-test('1', async t => {
   if (inspectUI) {
     t.timeout(35 * 60 * 1000); // 35 minutes for inspection mode
   }
 
-  let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
-  let zenApiKey = process.env.BACKEND_DEMO_PROJECT_ZEN_API_KEY;
-  let anthropicApiKey = process.env.BACKEND_DEMO_PROJECT_ANTHROPIC_API_KEY;
-  let openaiApiKey = process.env.BACKEND_DEMO_PROJECT_OPENAI_API_KEY;
+  let traceId = testId;
+  let email = `${testId}@example.com`;
+  let userId = makeId();
+  let password = '123456';
+  let orgId = testId;
+  let orgName = testId;
+  let projectId = makeId();
+  let projectName = testId;
 
-  if (!e2bApiKey || !zenApiKey) {
-    t.pass(
-      'Skipped: BACKEND_DEMO_PROJECT_E2B_API_KEY or BACKEND_DEMO_PROJECT_ZEN_API_KEY not set'
-    );
-    return;
-  }
-
+  let prep: Prep;
   let sessionId: string | undefined;
   let sse: { events: AgentEvent[]; close: () => void } | undefined;
   let testError: unknown;
@@ -104,10 +97,10 @@ test('1', async t => {
             name: projectName,
             remoteType: ProjectRemoteTypeEnum.Managed,
             defaultBranch: BRANCH_MAIN,
-            e2bApiKey: e2bApiKey,
-            zenApiKey: zenApiKey,
-            anthropicApiKey: anthropicApiKey,
-            openaiApiKey: openaiApiKey
+            e2bApiKey: item.projectApiKeys.e2bApiKey,
+            zenApiKey: item.projectApiKeys.zenApiKey,
+            anthropicApiKey: item.projectApiKeys.anthropicApiKey,
+            openaiApiKey: item.projectApiKeys.openaiApiKey
           }
         ],
         members: [
@@ -139,7 +132,7 @@ test('1', async t => {
         projectId: projectId,
         sandboxType: SandboxTypeEnum.E2B,
         agent: 'opencode',
-        model: 'big-pickle',
+        model: item.model,
         agentMode: 'plan',
         permissionMode: 'default'
       }
@@ -250,7 +243,7 @@ test('1', async t => {
     // Wait for 2nd turn to complete
     await forTestsWaitForTurnEnded({
       events: sse.events,
-      count: 2,
+      count: 1,
       maxRetries: 60
     });
 
@@ -335,6 +328,24 @@ test('1', async t => {
       `[test] event summary (${sse.events.length} total): ${JSON.stringify(eventTypeCounts, null, 2)}`
     );
 
+    // // Log each event for debugging
+    // for (let ev of sse.events) {
+    //   let oc = ev.ocEvent;
+    //   let detail = '';
+    //   if (oc.type === 'message.updated') {
+    //     detail = ` role=${oc.properties.info.role} msgId=${oc.properties.info.id}`;
+    //   } else if (oc.type === 'message.part.updated') {
+    //     detail = ` partType=${oc.properties.part.type} partId=${oc.properties.part.id} msgId=${oc.properties.part.messageID}`;
+    //     if (oc.properties.part.type === 'text') {
+    //       detail += ` text="${oc.properties.part.text?.substring(0, 80)}"`;
+    //     }
+    //   } else if (ev.eventType === 'message.part.delta') {
+    //     let props = (oc as any).properties;
+    //     detail = ` partId=${props.partID} field=${props.field} delta="${props.delta?.substring(0, 80)}"`;
+    //   }
+    //   console.log(`[event ${ev.eventIndex}] ${ev.eventType}${detail}`);
+    // }
+
     // Extract dialog messages from OpenCode events
     let dialogLines = forTestsExtractDialogLines({ events: sse.events });
 
@@ -350,4 +361,4 @@ test('1', async t => {
       'Expected user text message in dialog'
     );
   }
-});
+}

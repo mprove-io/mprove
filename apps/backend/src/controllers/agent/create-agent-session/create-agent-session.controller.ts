@@ -34,7 +34,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isUndefined } from '#common/functions/is-undefined';
+import { splitModel } from '#common/functions/split-model';
 import {
   ToBackendCreateAgentSessionRequest,
   ToBackendCreateAgentSessionResponsePayload
@@ -103,12 +103,15 @@ export class CreateAgentSessionController {
 
     let sandboxEnvs: Record<string, string> = {};
 
-    if (isUndefined(project.zenApiKey)) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_ZEN_API_KEY_REQUIRED_FOR_OPENCODE
-      });
+    if (project.zenApiKey) {
+      sandboxEnvs.OPENCODE_API_KEY = project.zenApiKey;
     }
-    sandboxEnvs.OPENCODE_API_KEY = project.zenApiKey;
+    if (project.anthropicApiKey) {
+      sandboxEnvs.ANTHROPIC_API_KEY = project.anthropicApiKey;
+    }
+    if (project.openaiApiKey) {
+      sandboxEnvs.OPENAI_API_KEY = project.openaiApiKey;
+    }
 
     // Phase 1: Save session with status=New and return immediately
 
@@ -258,9 +261,9 @@ export class CreateAgentSessionController {
           parts: [{ type: 'text', text: firstMessage }]
         };
 
-        let parsedModel = parseModel(session.model);
-        if (parsedModel) {
-          promptBody.model = parsedModel;
+        let split = splitModel(session.model);
+        if (split) {
+          promptBody.model = split;
         }
 
         await opencodeClient.session
@@ -309,20 +312,4 @@ export class CreateAgentSessionController {
       throw e;
     }
   }
-}
-
-function parseModel(
-  model: string | undefined
-): { providerID: string; modelID: string } | undefined {
-  if (!model) {
-    return undefined;
-  }
-  let slashIndex = model.indexOf('/');
-  if (slashIndex > 0) {
-    return {
-      providerID: model.substring(0, slashIndex),
-      modelID: model.substring(slashIndex + 1)
-    };
-  }
-  return undefined;
 }

@@ -1,4 +1,4 @@
-import { IsInt, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class AgentSessionApi {
   @IsString()
@@ -9,6 +9,10 @@ export class AgentSessionApi {
 
   @IsString()
   agentMode: string;
+
+  @IsOptional()
+  @IsString()
+  model?: string;
 
   @IsString()
   status: string;

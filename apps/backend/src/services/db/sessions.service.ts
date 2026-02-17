@@ -23,7 +23,7 @@ export class SessionsService {
     projectId: string;
     sandboxType: string;
     agent: string;
-    model: string;
+    model?: string;
     agentMode: string;
     permissionMode: string;
     sandboxId?: string;

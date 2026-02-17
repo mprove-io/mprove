@@ -14,8 +14,9 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsString()
   agent: string;
 
+  @IsOptional()
   @IsString()
-  model: string;
+  model?: string;
 
   @IsString()
   agentMode: string;
