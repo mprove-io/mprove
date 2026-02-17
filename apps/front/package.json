@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "check": "pnpm typecheck && pnpm lint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "biome lint src",
     "circular": "madge --circular .",
     "build": "ng build --configuration production",

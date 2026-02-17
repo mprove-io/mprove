@@ -10,14 +10,14 @@
   },
   "scripts": {
     "check": "pnpm typecheck && pnpm lint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "biome lint src",
     "circular": "madge --circular .",
     "build": "swc src -d dist --source-maps && node build.mjs",
     "node-serve": "dotenv -e ../../.env -- node --enable-source-maps dist/main.js",
-    "start": "dotenv -e ../../.env -- node --import @swc-node/register/esm-register --watch src/main.ts",
-    "debug": "dotenv -e ../../.env -- node --import @swc-node/register/esm-register --inspect=0.0.0.0:9231 --watch src/main.ts",
-    "test": "dotenv -e ../../.env -v BLOCKML_LOG_IO=TRUE -v IS_TELEMETRY_ENABLED=FALSE -- ava --concurrency=4",
+    "start": "dotenv -e ../../.env -v SWC_NODE_PROJECT=tsconfig.app.json -- node --import @swc-node/register/esm-register --watch src/main.ts",
+    "debug": "dotenv -e ../../.env -v SWC_NODE_PROJECT=tsconfig.app.json -- node --import @swc-node/register/esm-register --inspect=0.0.0.0:9231 --watch src/main.ts",
+    "test": "dotenv -e ../../.env -v BLOCKML_LOG_IO=TRUE -v IS_TELEMETRY_ENABLED=FALSE -v SWC_NODE_PROJECT=tsconfig.app.json -- ava --concurrency=4",
     "clean-node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
     "clean-dist": "rimraf --glob \"dist/*\" \"dist/.[!.]*\"",
     "clean-turbo": "rimraf --glob \".turbo/*\" \".turbo/.[!.]*\""

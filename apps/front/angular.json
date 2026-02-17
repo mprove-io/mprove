@@ -15,7 +15,7 @@
             "outputPath": "dist",
             "browser": "src/main.ts",
             "polyfills": ["src/polyfills.ts"],
-            "tsConfig": "tsconfig.json",
+            "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.svg",
               "src/assets",

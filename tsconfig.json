@@ -1,5 +1,16 @@
 {
   "extends": "./tsconfig.base.json",
-  "include": ["scripts/**/*.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#backend/*": ["apps/backend/src/*"],
+      "#blockml/*": ["apps/blockml/src/*"],
+      "#disk/*": ["apps/disk/src/*"],
+      "#front/*": ["apps/front/src/*"],
+      "#common/*": ["libs/common/src/*"],
+      "#node-common/*": ["libs/node-common/src/*"]
+    }
+  },
+  "include": ["apps/*/src/**/*.ts", "libs/*/src/**/*.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -10,7 +10,7 @@
   "types": "./src/index.ts",
   "scripts": {
     "check": "pnpm typecheck && pnpm lint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "lint": "biome lint src",
     "circular": "madge --circular .",
     "clean-node": "rimraf --glob \"node_modules/*\" \"node_modules/.[!.]*\"",
