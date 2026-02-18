@@ -55,7 +55,7 @@ export class SessionComponent implements OnDestroy {
 
   provider = 'opencode';
   model = 'default';
-  agent = 'build';
+  agent = 'plan';
 
   providers = [
     { id: 'opencode', label: 'Zen' },
@@ -65,7 +65,7 @@ export class SessionComponent implements OnDestroy {
   models: { value: string; label: string }[] = [
     { value: 'default', label: 'default' }
   ];
-  agents = ['build', 'plan', 'docs'];
+  agents = ['build', 'plan'];
   providerHasApiKey = true;
 
   // Chat mode

@@ -146,6 +146,12 @@ src/
 └── functions/      # Node.js utility functions
 ```
 
+## External Dependencies
+
+### external/opencode
+
+Source code for the [OpenCode](https://github.com/anomalyco/opencode) dependency used in the project. Kept locally for reference and debugging.
+
 ## Commit and PR Guidelines
 
 Do not include AI attribution (e.g., "Generated with Claude Code", "Co-Authored-By: Claude") in commits or pull requests.
@@ -165,6 +171,7 @@ _nogit/
 .turbo/
 .vscode/
 apps/
+external/
 libs/
 mcli/
 mprove_data/
