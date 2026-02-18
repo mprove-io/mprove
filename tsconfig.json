@@ -11,6 +11,11 @@
       "#node-common/*": ["libs/node-common/src/*"]
     }
   },
-  "include": ["apps/*/src/**/*.ts", "libs/*/src/**/*.ts", "scripts/**/*.ts"],
+  "include": [
+    "apps/*/src/**/*.ts",
+    "mcli/src/**/*.ts",
+    "libs/*/src/**/*.ts",
+    "scripts/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }
