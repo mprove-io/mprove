@@ -473,6 +473,18 @@ ngneat-dialog {
   max-height: 36.5vh;
 }
 
+.ng-dropdown-panel.session-models-select .scroll-host {
+  max-height: 55vh;
+}
+
+.ng-dropdown-panel.session-providers-select .scroll-host {
+  max-height: 55vh;
+}
+
+.ng-dropdown-panel.session-agents-select .scroll-host {
+  max-height: 55vh;
+}
+
 // pagination
 li.pagination-previous.disabled.ng-star-inserted {
   color: #99a1af;

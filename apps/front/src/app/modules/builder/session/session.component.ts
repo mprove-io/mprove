@@ -24,6 +24,7 @@ import { ToBackendGetAgentSessionModelsResponse } from '#common/interfaces/to-ba
 import { ToBackendRespondToAgentPermissionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { NavQuery } from '#front/app/queries/nav.query';
+import { ProjectQuery } from '#front/app/queries/project.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -54,15 +55,18 @@ export class SessionComponent implements OnDestroy {
 
   provider = 'opencode';
   model = 'default';
-  agentMode = 'code';
+  agent = 'build';
 
   providers = [
     { id: 'opencode', label: 'Zen' },
     { id: 'openai', label: 'OpenAI' },
     { id: 'anthropic', label: 'Anthropic' }
   ];
-  models: string[] = ['default'];
-  agentModes = ['plan', 'code'];
+  models: { value: string; label: string }[] = [
+    { value: 'default', label: 'default' }
+  ];
+  agents = ['build', 'plan', 'docs'];
+  providerHasApiKey = true;
 
   // Chat mode
   session: AgentSessionApi;
@@ -95,21 +99,20 @@ export class SessionComponent implements OnDestroy {
     tap(([sessionValue, eventsValue]) => {
       this.session = sessionValue?.sessionId ? sessionValue : undefined;
 
-      if (this.session) {
-        this.provider = this.session.provider;
-        this.agentMode = this.session.agentMode;
-        this.model = this.session.model || 'default';
-      }
-
       // Detect session change and close old connections
       let currentSessionId = this.session?.sessionId;
       let sessionChanged = currentSessionId !== this.previousSessionId;
 
-      if (sessionChanged) {
+      if (sessionChanged && this.session) {
+        this.provider = this.session.provider;
+        this.agent = this.session.agentMode;
+        this.model = this.session.model || 'default';
         this.closeSse();
         this.stopPolling();
         this.sseRetryCount = 0;
-        this.models = ['default'];
+        this.models = [{ value: 'default', label: 'default' }];
+        this.updateProviderHasApiKey();
+        setTimeout(() => this.fetchProviderModels(this.provider));
       }
 
       // Start polling when session is New
@@ -211,6 +214,7 @@ export class SessionComponent implements OnDestroy {
   constructor(
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
+    private projectQuery: ProjectQuery,
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
@@ -218,7 +222,8 @@ export class SessionComponent implements OnDestroy {
     private uiQuery: UiQuery,
     private navigateService: NavigateService
   ) {
-    this.fetchProviderModels(this.provider);
+    this.updateProviderHasApiKey();
+    setTimeout(() => this.fetchProviderModels(this.provider));
   }
 
   ngOnDestroy() {
@@ -255,7 +260,7 @@ export class SessionComponent implements OnDestroy {
       sandboxType: SandboxTypeEnum.E2B,
       provider: this.provider,
       model: this.model,
-      agentMode: this.agentMode,
+      agentMode: this.agent,
       permissionMode: 'default',
       firstMessage: firstMessageText
     };
@@ -275,7 +280,7 @@ export class SessionComponent implements OnDestroy {
             let newSession: AgentSessionApi = {
               sessionId: sessionId,
               provider: this.provider,
-              agentMode: this.agentMode,
+              agentMode: this.agent,
               model: this.model,
               status: SessionStatusEnum.New,
               createdTs: Date.now(),
@@ -344,8 +349,22 @@ export class SessionComponent implements OnDestroy {
 
   onProviderChange() {
     this.model = 'default';
-    this.models = ['default'];
-    this.fetchProviderModels(this.provider);
+    this.models = [{ value: 'default', label: 'default' }];
+    this.updateProviderHasApiKey();
+    setTimeout(() => this.fetchProviderModels(this.provider));
+  }
+
+  private updateProviderHasApiKey() {
+    let project = this.projectQuery.getValue();
+    if (this.provider === 'opencode') {
+      this.providerHasApiKey = !!project.isZenApiKeySet;
+    } else if (this.provider === 'openai') {
+      this.providerHasApiKey = !!project.isOpenaiApiKeySet;
+    } else if (this.provider === 'anthropic') {
+      this.providerHasApiKey = !!project.isAnthropicApiKeySet;
+    } else {
+      this.providerHasApiKey = false;
+    }
   }
 
   private fetchProviderModels(provider: string) {
@@ -358,10 +377,14 @@ export class SessionComponent implements OnDestroy {
       .pipe(
         tap((resp: ToBackendGetAgentProviderModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let modelIds = resp.payload.models.map(
-              m => `${m.providerId}/${m.id}`
-            );
-            this.models = ['default', ...modelIds];
+            let modelOptions = resp.payload.models.map(m => ({
+              value: `${m.providerId}/${m.id}`,
+              label: m.id
+            }));
+            this.models = [
+              { value: 'default', label: 'default' },
+              ...modelOptions
+            ];
             this.cd.detectChanges();
           }
         }),
@@ -380,10 +403,14 @@ export class SessionComponent implements OnDestroy {
       .pipe(
         tap((resp: ToBackendGetAgentSessionModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let modelIds = resp.payload.models.map(
-              m => `${m.providerId}/${m.id}`
-            );
-            this.models = ['default', ...modelIds];
+            let modelOptions = resp.payload.models.map(m => ({
+              value: `${m.providerId}/${m.id}`,
+              label: m.id
+            }));
+            this.models = [
+              { value: 'default', label: 'default' },
+              ...modelOptions
+            ];
             this.cd.detectChanges();
           }
         }),
