@@ -31,6 +31,7 @@
   },
   "search.exclude": {
     "**/external": true,
+    "**/.angular": true,
     "**/mprove_data": true,
     "**/node_modules": true,
     "**/dist": true
