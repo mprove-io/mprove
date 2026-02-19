@@ -40,6 +40,7 @@ export class UiService {
     projectDashboardLinks?: ProjectDashboardLink[];
     projectReportLinks?: ProjectReportLink[];
     lastSelectedProviderModel?: string;
+    lastSelectedVariant?: string;
   }) {
     let {
       showFilesLeftPanel,
@@ -51,7 +52,8 @@ export class UiService {
       projectChartLinks,
       projectDashboardLinks,
       projectReportLinks,
-      lastSelectedProviderModel
+      lastSelectedProviderModel,
+      lastSelectedVariant
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -86,7 +88,10 @@ export class UiService {
         : uiState.projectReportLinks,
       lastSelectedProviderModel: isDefined(lastSelectedProviderModel)
         ? lastSelectedProviderModel
-        : uiState.lastSelectedProviderModel
+        : uiState.lastSelectedProviderModel,
+      lastSelectedVariant: isDefined(lastSelectedVariant)
+        ? lastSelectedVariant
+        : uiState.lastSelectedVariant
     };
 
     let payload: ToBackendSetUserUiRequestPayload = {

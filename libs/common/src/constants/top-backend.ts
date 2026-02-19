@@ -80,5 +80,6 @@ export const DEFAULT_SRV_UI: Ui = {
   projectChartLinks: [],
   projectDashboardLinks: [],
   projectReportLinks: [],
-  lastSelectedProviderModel: undefined
+  lastSelectedProviderModel: undefined,
+  lastSelectedVariant: undefined
 };

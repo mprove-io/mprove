@@ -51,4 +51,8 @@ export class Ui {
   @IsOptional()
   @IsString()
   lastSelectedProviderModel?: string;
+
+  @IsOptional()
+  @IsString()
+  lastSelectedVariant?: string;
 }

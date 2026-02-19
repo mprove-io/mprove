@@ -150,6 +150,7 @@ export class SendAgentMessageController {
       ...session,
       model: model !== undefined ? model : session.model,
       lastMessageProviderModel: effectiveModel,
+      lastMessageVariant: variant,
       lastActivityTs: Date.now()
     };
 

@@ -99,6 +99,7 @@
           [searchable]="true"
           [searchFn]="variantsSearchFn"
           [(ngModel)]="variant"
+          (ngModelChange)="onVariantChange()"
           [disabled]="isSubmitting"
           appendTo="body"
           placeholder="Thinking"
@@ -230,6 +231,7 @@
           [searchable]="true"
           [searchFn]="variantsSearchFn"
           [(ngModel)]="variant"
+          (ngModelChange)="onVariantChange()"
           appendTo="body"
           placeholder="Thinking"
         ></ng-select>

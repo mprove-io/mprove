@@ -959,6 +959,8 @@ export class TabToEntService {
       userId: tab.userId,
       projectId: tab.projectId,
       model: tab.model,
+      lastMessageProviderModel: tab.lastMessageProviderModel,
+      lastMessageVariant: tab.lastMessageVariant,
       sandboxType: tab.sandboxType,
       provider: tab.provider,
       agentMode: tab.agentMode,

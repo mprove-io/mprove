@@ -114,11 +114,14 @@ export class SessionComponent implements OnDestroy {
           this.session.lastMessageProviderModel ||
           this.session.model ||
           'default';
-        this.variant = 'default';
         this.closeSse();
         this.stopPolling();
         this.sseRetryCount = 0;
         this.applyModels(this.agentModelsQuery.getValue().models);
+        let savedVariant = this.session.lastMessageVariant || 'default';
+        this.variant = this.variants.includes(savedVariant)
+          ? savedVariant
+          : 'default';
         this.updateProviderHasApiKey();
       }
 
@@ -225,6 +228,10 @@ export class SessionComponent implements OnDestroy {
   ) {
     this.model = this.uiQuery.getValue().lastSelectedProviderModel || 'default';
     this.applyModels(this.agentModelsQuery.getValue().models);
+    let savedVariant = this.uiQuery.getValue().lastSelectedVariant || 'default';
+    if (this.variants.includes(savedVariant)) {
+      this.variant = savedVariant;
+    }
     this.updateProviderHasApiKey();
   }
 
@@ -265,8 +272,14 @@ export class SessionComponent implements OnDestroy {
 
     this.messageText = '';
 
-    this.uiQuery.updatePart({ lastSelectedProviderModel: this.model });
-    this.uiService.setUserUi({ lastSelectedProviderModel: this.model });
+    this.uiQuery.updatePart({
+      lastSelectedProviderModel: this.model,
+      lastSelectedVariant: this.variant
+    });
+    this.uiService.setUserUi({
+      lastSelectedProviderModel: this.model,
+      lastSelectedVariant: this.variant
+    });
 
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
@@ -297,6 +310,8 @@ export class SessionComponent implements OnDestroy {
               agentMode: this.agent,
               model: this.model,
               lastMessageProviderModel: this.model,
+              lastMessageVariant:
+                this.variant !== 'default' ? this.variant : undefined,
               status: SessionStatusEnum.New,
               createdTs: Date.now(),
               lastActivityTs: Date.now(),
@@ -324,8 +339,14 @@ export class SessionComponent implements OnDestroy {
 
     this.userSentMessage = true;
 
-    this.uiQuery.updatePart({ lastSelectedProviderModel: this.model });
-    this.uiService.setUserUi({ lastSelectedProviderModel: this.model });
+    this.uiQuery.updatePart({
+      lastSelectedProviderModel: this.model,
+      lastSelectedVariant: this.variant
+    });
+    this.uiService.setUserUi({
+      lastSelectedProviderModel: this.model,
+      lastSelectedVariant: this.variant
+    });
 
     let payload: ToBackendSendAgentMessageRequestPayload = {
       sessionId: this.session.sessionId,
@@ -396,8 +417,23 @@ export class SessionComponent implements OnDestroy {
   onModelChange() {
     this.updateVariants();
     this.updateProviderHasApiKey();
-    this.uiQuery.updatePart({ lastSelectedProviderModel: this.model });
-    this.uiService.setUserUi({ lastSelectedProviderModel: this.model });
+    this.uiQuery.updatePart({
+      lastSelectedProviderModel: this.model,
+      lastSelectedVariant: this.variant
+    });
+    this.uiService.setUserUi({
+      lastSelectedProviderModel: this.model,
+      lastSelectedVariant: this.variant
+    });
+  }
+
+  onVariantChange() {
+    this.uiQuery.updatePart({
+      lastSelectedVariant: this.variant
+    });
+    this.uiService.setUserUi({
+      lastSelectedVariant: this.variant
+    });
   }
 
   private updateProviderHasApiKey() {
@@ -675,13 +711,6 @@ export class SessionComponent implements OnDestroy {
     let messages: ChatMessage[] = [];
     let currentMessage: ChatMessage;
 
-    // Track message roles by ID to distinguish user vs assistant parts
-    let messageRoles = new Map<string, string>();
-    // Track which message IDs already have a ChatMessage entry
-    let seenMessageIds = new Set<string>();
-    // Map message ID to its ChatMessage for updating text from parts
-    let messageById = new Map<string, ChatMessage>();
-
     // Only process contiguous events (stop at first gap in eventIndex)
     let contiguousEvents: AgentEventApi[] = [];
     for (let i = 0; i < events.length; i++) {
@@ -690,6 +719,38 @@ export class SessionComponent implements OnDestroy {
       }
       contiguousEvents.push(events[i]);
     }
+
+    // Pre-scan: build messageRoles and parentID maps from all message.updated events.
+    // This ensures we know roles even when parts arrive before their message.updated.
+    let messageRoles = new Map<string, string>();
+    let messageParents = new Map<string, string>();
+
+    for (let event of contiguousEvents) {
+      let oc = event.ocEvent;
+      if (!oc || oc.type !== 'message.updated') {
+        continue;
+      }
+      let info = oc.properties.info;
+      messageRoles.set(info.id, info.role);
+      if (info.role === 'assistant') {
+        messageParents.set(info.id, (info as any).parentID);
+      }
+    }
+
+    // Track emitted user messages and their ChatMessage entries
+    let emittedUserMessages = new Set<string>();
+    let messageById = new Map<string, ChatMessage>();
+    let seenMessageIds = new Set<string>();
+
+    let emitUserMessage = (userMsgId: string) => {
+      if (emittedUserMessages.has(userMsgId)) {
+        return;
+      }
+      emittedUserMessages.add(userMsgId);
+      let userMsg: ChatMessage = { sender: 'user', text: '' };
+      messages.push(userMsg);
+      messageById.set(userMsgId, userMsg);
+    };
 
     for (let event of contiguousEvents) {
       let oc = event.ocEvent;
@@ -710,19 +771,16 @@ export class SessionComponent implements OnDestroy {
         continue;
       }
 
-      // message.updated: register role, create entry only on first occurrence
+      // message.updated: emit user message entry
       if (oc.type === 'message.updated') {
         let info = oc.properties.info;
         let msgId = info.id;
-        messageRoles.set(msgId, info.role);
 
         if (!seenMessageIds.has(msgId)) {
           seenMessageIds.add(msgId);
 
           if (info.role === 'user') {
-            currentMessage = { sender: 'user', text: '' };
-            messages.push(currentMessage);
-            messageById.set(msgId, currentMessage);
+            emitUserMessage(msgId);
           }
         }
         continue;
@@ -736,6 +794,7 @@ export class SessionComponent implements OnDestroy {
 
         // User message part: update the user message text
         if (parentRole === 'user') {
+          emitUserMessage(parentMsgId);
           if (part.type === 'text') {
             let userMsg = messageById.get(parentMsgId);
             if (userMsg) {
@@ -743,6 +802,12 @@ export class SessionComponent implements OnDestroy {
             }
           }
           continue;
+        }
+
+        // Before processing assistant parts, ensure parent user message is emitted
+        let parentUserMsgId = messageParents.get(parentMsgId);
+        if (parentUserMsgId && messageRoles.get(parentUserMsgId) === 'user') {
+          emitUserMessage(parentUserMsgId);
         }
 
         // Assistant message parts
@@ -777,6 +842,16 @@ export class SessionComponent implements OnDestroy {
         currentMessage = { sender: 'error', text: errorMsg };
         messages.push(currentMessage);
         currentMessage = undefined;
+      }
+    }
+
+    // Fill missing/empty first user message from session.firstMessage
+    if (this.session?.firstMessage) {
+      let firstUserMsg = messages.find(m => m.sender === 'user');
+      if (!firstUserMsg) {
+        messages.unshift({ sender: 'user', text: this.session.firstMessage });
+      } else if (firstUserMsg.text === '') {
+        firstUserMsg.text = this.session.firstMessage;
       }
     }
 

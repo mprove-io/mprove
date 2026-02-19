@@ -127,6 +127,7 @@ export class CreateAgentSessionController {
       provider: provider,
       model: model,
       lastMessageProviderModel: model,
+      lastMessageVariant: variant,
       agentMode: agentMode,
       permissionMode: permissionMode,
       firstMessage: firstMessage,

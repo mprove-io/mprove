@@ -85,7 +85,11 @@ export class UsersService {
         //
         lastSelectedProviderModel: isDefined(user.ui?.lastSelectedProviderModel)
           ? user.ui?.lastSelectedProviderModel
-          : defaultSrvUi.lastSelectedProviderModel
+          : defaultSrvUi.lastSelectedProviderModel,
+        //
+        lastSelectedVariant: isDefined(user.ui?.lastSelectedVariant)
+          ? user.ui?.lastSelectedVariant
+          : defaultSrvUi.lastSelectedVariant
       },
       serverTs: Number(user.serverTs)
     };
