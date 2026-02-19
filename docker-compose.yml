@@ -35,6 +35,9 @@ services:
     command: ['serve', '--hostname=0.0.0.0', '--port=14096']
     environment:
       OPENCODE_SERVER_PASSWORD: $COMPOSE_OPENCODE_SERVER_PASSWORD
+      OPENCODE_API_KEY: $COMPOSE_ZEN_API_KEY
+      ANTHROPIC_API_KEY: $COMPOSE_ANTHROPIC_API_KEY
+      OPENAI_API_KEY: $COMPOSE_OPENAI_API_KEY
     ports:
       - 127.0.0.1:14096:14096
 

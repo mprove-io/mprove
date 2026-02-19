@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { combineLatest, interval, Subscription } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -363,6 +364,33 @@ export class SessionComponent implements OnDestroy {
       })
       .pipe(take(1))
       .subscribe();
+  }
+
+  agentsSearchFn(term: string, agent: string) {
+    let haystack = [`${agent}`];
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+    return idxs != null && idxs.length > 0;
+  }
+
+  modelsSearchFn(
+    term: string,
+    model: { label: string; modelId: string; providerName: string }
+  ) {
+    let haystack = [`${model.modelId} ${model.providerName}`];
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+    return idxs != null && idxs.length > 0;
+  }
+
+  variantsSearchFn(term: string, variant: string) {
+    let haystack = [`${variant}`];
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+    return idxs != null && idxs.length > 0;
   }
 
   onModelChange() {
