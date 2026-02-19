@@ -149,6 +149,7 @@ export class SendAgentMessageController {
     let finalSession: SessionTab = {
       ...session,
       model: model !== undefined ? model : session.model,
+      lastMessageProviderModel: effectiveModel,
       lastActivityTs: Date.now()
     };
 

@@ -66,6 +66,7 @@ export class GetAgentSessionController {
       provider: session.provider,
       agentMode: session.agentMode,
       model: session.model,
+      lastMessageProviderModel: session.lastMessageProviderModel,
       status: session.status,
       createdTs: session.createdTs,
       lastActivityTs: session.lastActivityTs,

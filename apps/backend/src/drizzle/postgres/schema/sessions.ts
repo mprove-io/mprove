@@ -19,6 +19,9 @@ export const sessionsTable = pgTable(
     sandboxType: varchar('sandbox_type', { length: 32 }).notNull(),
     provider: varchar('provider', { length: 64 }).notNull(),
     model: varchar('model', { length: 64 }),
+    lastMessageProviderModel: varchar('last_message_provider_model', {
+      length: 64
+    }),
     agentMode: varchar('agent_mode', { length: 64 }),
     permissionMode: varchar('permission_mode', { length: 64 }),
     status: varchar('status', { length: 32 })

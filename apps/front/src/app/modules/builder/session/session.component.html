@@ -57,6 +57,40 @@
         ></ng-select>
 
         <ng-select
+          class="w-[320px] select-none text-sm"
+          [items]="models"
+          bindLabel="label"
+          bindValue="value"
+          [clearable]="false"
+          [searchable]="true"
+          [loading]="modelsLoading"
+          [(ngModel)]="model"
+          (ngModelChange)="onModelChange()"
+          (open)="openModelSelect()"
+          [disabled]="isSubmitting"
+          appendTo="body"
+          placeholder="Model"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 truncate">
+              <span>{{ item.modelId }}</span>
+              <span *ngIf="item.providerName" class="text-s400 ml-3 mr-2">{{
+                item.providerName
+              }}</span>
+            </div>
+          </ng-template>
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 truncate">
+              <span>{{ item.modelId }}</span>
+              <span *ngIf="item.providerName" class="text-s400 ml-3 mr-2">{{
+                item.providerName
+              }}</span>
+            </div>
+          </ng-template>
+        </ng-select>
+
+        <ng-select
           class="session-variants-select w-[140px] select-none text-sm"
           [items]="variants"
           [clearable]="false"
@@ -64,35 +98,7 @@
           [(ngModel)]="variant"
           [disabled]="isSubmitting"
           appendTo="body"
-          placeholder="Effort"
-        ></ng-select>
-
-        <ng-select
-          class="w-[260px] select-none text-sm"
-          [items]="models"
-          bindLabel="label"
-          bindValue="value"
-          [clearable]="false"
-          [searchable]="true"
-          [(ngModel)]="model"
-          (ngModelChange)="onModelChange()"
-          [disabled]="isSubmitting"
-          appendTo="body"
-          placeholder="Model"
-        ></ng-select>
-
-        <ng-select
-          class="session-providers-select w-[140px] select-none text-sm"
-          [items]="providers"
-          bindLabel="label"
-          bindValue="id"
-          [clearable]="false"
-          [searchable]="true"
-          [(ngModel)]="provider"
-          (ngModelChange)="onProviderChange()"
-          [disabled]="isSubmitting"
-          appendTo="body"
-          placeholder="Provider"
+          placeholder="Thinking"
         ></ng-select>
       </div>
 
@@ -180,39 +186,46 @@
         ></ng-select>
 
         <ng-select
+          class="session-models-select w-[320px] select-none text-sm"
+          [items]="models"
+          bindLabel="label"
+          bindValue="value"
+          [clearable]="false"
+          [searchable]="true"
+          [loading]="modelsLoading"
+          [(ngModel)]="model"
+          (ngModelChange)="onModelChange()"
+          (open)="openModelSelect()"
+          appendTo="body"
+          placeholder="Model"
+        >
+          <ng-template ng-label-tmp let-item="item">
+            <div class="ml-1 truncate">
+              <span>{{ item.modelId }}</span>
+              <span *ngIf="item.providerName" class="text-s400 ml-3 mr-2">{{
+                item.providerName
+              }}</span>
+            </div>
+          </ng-template>
+
+          <ng-template ng-option-tmp let-item="item">
+            <div class="ml-1 truncate">
+              <span>{{ item.modelId }}</span>
+              <span *ngIf="item.providerName" class="text-s400 ml-3 mr-2">{{
+                item.providerName
+              }}</span>
+            </div>
+          </ng-template>
+        </ng-select>
+
+        <ng-select
           class="session-variants-select w-[140px] select-none text-sm"
           [items]="variants"
           [clearable]="false"
           [searchable]="true"
           [(ngModel)]="variant"
           appendTo="body"
-          placeholder="Effort"
-        ></ng-select>
-
-        <ng-select
-          class="session-models-select w-[260px] select-none text-sm"
-          [items]="models"
-          bindLabel="label"
-          bindValue="value"
-          [clearable]="false"
-          [searchable]="true"
-          [(ngModel)]="model"
-          (ngModelChange)="onModelChange()"
-          appendTo="body"
-          placeholder="Model"
-        ></ng-select>
-
-        <ng-select
-          class="session-providers-select w-[140px] select-none text-sm"
-          [items]="providers"
-          bindLabel="label"
-          bindValue="id"
-          [clearable]="false"
-          [searchable]="true"
-          [(ngModel)]="provider"
-          (ngModelChange)="onProviderChange()"
-          appendTo="body"
-          placeholder="Provider"
+          placeholder="Thinking"
         ></ng-select>
       </div>
     </div>

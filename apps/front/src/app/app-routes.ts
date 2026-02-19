@@ -94,6 +94,7 @@ import { NotFoundComponent } from './modules/special/not-found/not-found.compone
 import { OrgDeletedComponent } from './modules/special/org-deleted/org-deleted.component';
 import { OrgOwnerChangedComponent } from './modules/special/org-owner-changed/org-owner-changed.component';
 import { ProjectDeletedComponent } from './modules/special/project-deleted/project-deleted.component';
+import { AgentModelsResolver } from './resolvers/agent-models.resolver';
 import { OrgResolver } from './resolvers/org.resolver';
 import { OrgAccountResolver } from './resolvers/org-account.resolver';
 import { OrgUsersResolver } from './resolvers/org-users.resolver';
@@ -258,7 +259,8 @@ export const appRoutes: Routes = [
                             path: PATH_BUILDER,
                             resolve: [
                               RepoStructFilesResolver,
-                              ProjectSessionsResolver
+                              ProjectSessionsResolver,
+                              AgentModelsResolver
                             ],
                             children: [
                               {

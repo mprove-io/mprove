@@ -81,7 +81,11 @@ export class UsersService {
         //
         modelTreeLevels: isDefined(user.ui?.modelTreeLevels)
           ? user.ui?.modelTreeLevels
-          : defaultSrvUi.modelTreeLevels
+          : defaultSrvUi.modelTreeLevels,
+        //
+        lastSelectedProviderModel: isDefined(user.ui?.lastSelectedProviderModel)
+          ? user.ui?.lastSelectedProviderModel
+          : defaultSrvUi.lastSelectedProviderModel
       },
       serverTs: Number(user.serverTs)
     };

@@ -42,14 +42,14 @@
                 [disabled]="needSave === true"
               >
                 <div
-                  class="flex w-[110px] flex-shrink-0 justify-end text-lg"
+                  class="flex w-[85px] flex-shrink-0 justify-end text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
                       panel === panelChangesToCommit && showFilesLeftPanel,
                     'text-s500':
                       panel !== panelChangesToCommit || !showFilesLeftPanel
                   }"
-                  >To Commit</div
+                  >Changes</div
                 >
 
                 <div
@@ -312,7 +312,7 @@
             >
 
             <div *ngIf="needSave === false && repo.repoStatus === repoStatusOk"
-              >No changes to Push</div
+              >No committed changes to Push</div
             >
           </ng-template>
 

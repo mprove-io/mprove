@@ -11,6 +11,12 @@ import { UTC } from './top';
 export const APP_NAME_BACKEND = 'BACKEND';
 export const APP_NAME_SCHEDULER = 'SCHEDULER';
 
+export const MODEL_PROVIDERS: { provider_id: string; label: string }[] = [
+  { provider_id: 'openai', label: 'OpenAI' },
+  { provider_id: 'anthropic', label: 'Anthropic' },
+  { provider_id: 'opencode', label: 'Zen' }
+];
+
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
 
 export const IDEMP_EXPIRE_SECONDS = 600;
@@ -73,5 +79,6 @@ export const DEFAULT_SRV_UI: Ui = {
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
-  projectReportLinks: []
+  projectReportLinks: [],
+  lastSelectedProviderModel: undefined
 };

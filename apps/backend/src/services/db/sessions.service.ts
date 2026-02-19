@@ -24,6 +24,7 @@ export class SessionsService {
     sandboxType: string;
     provider: string;
     model?: string;
+    lastMessageProviderModel?: string;
     agentMode: string;
     permissionMode: string;
     sandboxId?: string;
@@ -45,6 +46,7 @@ export class SessionsService {
       sandboxType: item.sandboxType,
       provider: item.provider,
       model: item.model,
+      lastMessageProviderModel: item.lastMessageProviderModel,
       agentMode: item.agentMode,
       permissionMode: item.permissionMode,
       sandboxId: item.sandboxId,

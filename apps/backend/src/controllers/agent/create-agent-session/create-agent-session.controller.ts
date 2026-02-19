@@ -126,6 +126,7 @@ export class CreateAgentSessionController {
       sandboxType: sandboxType,
       provider: provider,
       model: model,
+      lastMessageProviderModel: model,
       agentMode: agentMode,
       permissionMode: permissionMode,
       firstMessage: firstMessage,

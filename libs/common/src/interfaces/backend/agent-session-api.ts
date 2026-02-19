@@ -14,6 +14,10 @@ export class AgentSessionApi {
   @IsString()
   model?: string;
 
+  @IsOptional()
+  @IsString()
+  lastMessageProviderModel?: string;
+
   @IsString()
   status: string;
 

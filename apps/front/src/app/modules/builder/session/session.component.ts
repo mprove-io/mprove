@@ -20,9 +20,9 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import { ToBackendGetAgentSessionModelsResponse } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session-models';
 import { ToBackendRespondToAgentPermissionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
+import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -31,6 +31,7 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 import { environment } from '#front/environments/environment';
 
 interface ChatMessage {
@@ -53,19 +54,19 @@ export class SessionComponent implements OnDestroy {
   messageText = '';
   isSubmitting = false;
 
-  provider = 'opencode';
   model = 'default';
   agent = 'plan';
   variant = 'default';
 
-  providers = [
-    { id: 'opencode', label: 'Zen' },
-    { id: 'openai', label: 'OpenAI' },
-    { id: 'anthropic', label: 'Anthropic' }
+  models: {
+    value: string;
+    label: string;
+    modelId: string;
+    providerName: string;
+  }[] = [
+    { value: 'default', label: 'default', modelId: 'default', providerName: '' }
   ];
-  models: { value: string; label: string }[] = [
-    { value: 'default', label: 'default' }
-  ];
+  modelsLoading = false;
   agents = ['build', 'plan'];
   variants: string[] = ['default'];
   private modelVariantsMap = new Map<string, string[]>();
@@ -107,18 +108,17 @@ export class SessionComponent implements OnDestroy {
       let sessionChanged = currentSessionId !== this.previousSessionId;
 
       if (sessionChanged && this.session) {
-        this.provider = this.session.provider;
         this.agent = this.session.agentMode;
-        this.model = this.session.model || 'default';
+        this.model =
+          this.session.lastMessageProviderModel ||
+          this.session.model ||
+          'default';
         this.variant = 'default';
         this.closeSse();
         this.stopPolling();
         this.sseRetryCount = 0;
-        this.models = [{ value: 'default', label: 'default' }];
-        this.variants = ['default'];
-        this.modelVariantsMap.clear();
+        this.applyModels(this.agentModelsQuery.getValue().models);
         this.updateProviderHasApiKey();
-        setTimeout(() => this.fetchProviderModels(this.provider));
       }
 
       // Start polling when session is New
@@ -143,14 +143,6 @@ export class SessionComponent implements OnDestroy {
         !this.eventSource
       ) {
         this.connectSse(this.session.sessionId);
-      }
-
-      // Fetch models when session becomes active
-      if (
-        this.session?.status === SessionStatusEnum.Active &&
-        this.models.length === 1
-      ) {
-        this.fetchModels(this.session.sessionId);
       }
 
       this.events = eventsValue;
@@ -226,10 +218,13 @@ export class SessionComponent implements OnDestroy {
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
     private uiQuery: UiQuery,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private uiService: UiService,
+    private agentModelsQuery: AgentModelsQuery
   ) {
+    this.model = this.uiQuery.getValue().lastSelectedProviderModel || 'default';
+    this.applyModels(this.agentModelsQuery.getValue().models);
     this.updateProviderHasApiKey();
-    setTimeout(() => this.fetchProviderModels(this.provider));
   }
 
   ngOnDestroy() {
@@ -248,6 +243,13 @@ export class SessionComponent implements OnDestroy {
     }
   }
 
+  private getProviderFromModel(): string {
+    if (this.model === 'default') {
+      return 'opencode';
+    }
+    return this.model.split('/')[0];
+  }
+
   sendMessage() {
     if (!this.messageText.trim() || this.isSubmitting) {
       return;
@@ -258,13 +260,17 @@ export class SessionComponent implements OnDestroy {
 
     let nav = this.navQuery.getValue();
     let firstMessageText = this.messageText.trim();
+    let provider = this.getProviderFromModel();
 
     this.messageText = '';
+
+    this.uiQuery.updatePart({ lastSelectedProviderModel: this.model });
+    this.uiService.setUserUi({ lastSelectedProviderModel: this.model });
 
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
       sandboxType: SandboxTypeEnum.E2B,
-      provider: this.provider,
+      provider: provider,
       model: this.model,
       agentMode: this.agent,
       permissionMode: 'default',
@@ -286,9 +292,10 @@ export class SessionComponent implements OnDestroy {
             let currentSessions = this.sessionsQuery.getValue().sessions;
             let newSession: AgentSessionApi = {
               sessionId: sessionId,
-              provider: this.provider,
+              provider: provider,
               agentMode: this.agent,
               model: this.model,
+              lastMessageProviderModel: this.model,
               status: SessionStatusEnum.New,
               createdTs: Date.now(),
               lastActivityTs: Date.now(),
@@ -315,6 +322,9 @@ export class SessionComponent implements OnDestroy {
     }
 
     this.userSentMessage = true;
+
+    this.uiQuery.updatePart({ lastSelectedProviderModel: this.model });
+    this.uiService.setUserUi({ lastSelectedProviderModel: this.model });
 
     let payload: ToBackendSendAgentMessageRequestPayload = {
       sessionId: this.session.sessionId,
@@ -355,31 +365,25 @@ export class SessionComponent implements OnDestroy {
       .subscribe();
   }
 
-  onProviderChange() {
-    this.model = 'default';
-    this.variant = 'default';
-    this.models = [{ value: 'default', label: 'default' }];
-    this.variants = ['default'];
-    this.modelVariantsMap.clear();
+  onModelChange() {
+    this.updateVariants();
     this.updateProviderHasApiKey();
-    setTimeout(() => this.fetchProviderModels(this.provider));
+    this.uiQuery.updatePart({ lastSelectedProviderModel: this.model });
+    this.uiService.setUserUi({ lastSelectedProviderModel: this.model });
   }
 
   private updateProviderHasApiKey() {
+    let provider = this.getProviderFromModel();
     let project = this.projectQuery.getValue();
-    if (this.provider === 'opencode') {
+    if (provider === 'opencode') {
       this.providerHasApiKey = !!project.isZenApiKeySet;
-    } else if (this.provider === 'openai') {
+    } else if (provider === 'openai') {
       this.providerHasApiKey = !!project.isOpenaiApiKeySet;
-    } else if (this.provider === 'anthropic') {
+    } else if (provider === 'anthropic') {
       this.providerHasApiKey = !!project.isAnthropicApiKeySet;
     } else {
       this.providerHasApiKey = false;
     }
-  }
-
-  onModelChange() {
-    this.updateVariants();
   }
 
   private updateVariants() {
@@ -394,62 +398,61 @@ export class SessionComponent implements OnDestroy {
     }
   }
 
-  private fetchProviderModels(provider: string) {
+  private applyModels(
+    apiModels: {
+      id: string;
+      providerId: string;
+      providerName: string;
+      variants?: string[];
+    }[]
+  ) {
+    this.modelVariantsMap.clear();
+    let modelOptions = apiModels.map(m => {
+      let value = `${m.providerId}/${m.id}`;
+      if (m.variants && m.variants.length > 0) {
+        this.modelVariantsMap.set(value, m.variants);
+      }
+      return {
+        value,
+        label: `${m.id}`,
+        modelId: m.id,
+        providerName: m.providerName
+      };
+    });
+    this.models = [
+      {
+        value: 'default',
+        label: 'default',
+        modelId: 'default',
+        providerName: ''
+      },
+      ...modelOptions
+    ];
+    this.updateVariants();
+  }
+
+  openModelSelect() {
+    this.modelsLoading = true;
+
+    let payload: { sessionId?: string } = {};
+    if (this.session?.sessionId) {
+      payload.sessionId = this.session.sessionId;
+    }
+
     this.apiService
       .req({
         pathInfoName:
           ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels,
-        payload: { provider }
+        payload: payload
       })
       .pipe(
         tap((resp: ToBackendGetAgentProviderModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.modelVariantsMap.clear();
-            let modelOptions = resp.payload.models.map(m => {
-              let value = `${m.providerId}/${m.id}`;
-              if (m.variants && m.variants.length > 0) {
-                this.modelVariantsMap.set(value, m.variants);
-              }
-              return { value, label: m.id };
-            });
-            this.models = [
-              { value: 'default', label: 'default' },
-              ...modelOptions
-            ];
-            this.updateVariants();
-            this.cd.detectChanges();
+            this.agentModelsQuery.update({ models: resp.payload.models });
+            this.applyModels(resp.payload.models);
           }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  private fetchModels(sessionId: string) {
-    this.apiService
-      .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionModels,
-        payload: { sessionId }
-      })
-      .pipe(
-        tap((resp: ToBackendGetAgentSessionModelsResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.modelVariantsMap.clear();
-            let modelOptions = resp.payload.models.map(m => {
-              let value = `${m.providerId}/${m.id}`;
-              if (m.variants && m.variants.length > 0) {
-                this.modelVariantsMap.set(value, m.variants);
-              }
-              return { value, label: m.id };
-            });
-            this.models = [
-              { value: 'default', label: 'default' },
-              ...modelOptions
-            ];
-            this.updateVariants();
-            this.cd.detectChanges();
-          }
+          this.modelsLoading = false;
+          this.cd.detectChanges();
         }),
         take(1)
       )

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsEnum, ValidateNested } from 'class-validator';
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { IsTimezone } from '#common/functions/is-timezone';
@@ -47,4 +47,8 @@ export class Ui {
   @ValidateNested()
   @Type(() => ProjectReportLink)
   projectReportLinks: ProjectReportLink[];
+
+  @IsOptional()
+  @IsString()
+  lastSelectedProviderModel?: string;
 }

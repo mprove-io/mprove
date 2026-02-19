@@ -70,6 +70,7 @@ export class UiState {
   projectChartLinks: ProjectChartLink[];
   projectDashboardLinks: ProjectDashboardLink[];
   projectReportLinks: ProjectReportLink[];
+  lastSelectedProviderModel: string;
 }
 
 let uiState: UiState = {
@@ -122,7 +123,8 @@ let uiState: UiState = {
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
-  projectReportLinks: []
+  projectReportLinks: [],
+  lastSelectedProviderModel: undefined
 };
 
 @Injectable({ providedIn: 'root' })

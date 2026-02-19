@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ADD COLUMN "last_message_provider_model" varchar(64);

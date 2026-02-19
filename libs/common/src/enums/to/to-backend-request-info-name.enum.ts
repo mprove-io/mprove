@@ -155,6 +155,5 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendCreateAgentSseTicket = 'api/ToBackendCreateAgentSseTicket',
   ToBackendGetAgentSessionsList = 'api/ToBackendGetAgentSessionsList',
   ToBackendGetAgentSession = 'api/ToBackendGetAgentSession',
-  ToBackendGetAgentSessionModels = 'api/ToBackendGetAgentSessionModels',
   ToBackendGetAgentProviderModels = 'api/ToBackendGetAgentProviderModels'
 }
