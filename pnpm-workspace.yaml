@@ -4,6 +4,7 @@ packages:
 
 catalog:
   '@opencode-ai/sdk': 1.2.6
+  'opencode-ai': 1.2.6
   '@acrodata/code-editor': 0.5.1
   '@ali-hm/angular-tree-component': 21.0.3
   '@angular-devkit/build-angular': 21.1.0

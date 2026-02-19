@@ -300,7 +300,11 @@ export function getDevConfig() {
       process.env.BACKEND_COORDINATOR_HEARTBEAT_MS
     )
       ? Number(process.env.BACKEND_COORDINATOR_HEARTBEAT_MS)
-      : 3000
+      : 3000,
+
+    opencodeServerPassword: process.env.BACKEND_OPENCODE_SERVER_PASSWORD,
+
+    opencodeServerUrl: process.env.BACKEND_OPENCODE_SERVER_URL
   };
 
   return devConfig;

@@ -95,6 +95,7 @@
     "retry": "catalog:",
     "rxjs": "catalog:",
     "@opencode-ai/sdk": "catalog:",
+    "opencode-ai": "catalog:",
     "snowflake-sdk": "catalog:",
     "sshpk": "catalog:",
     "tiny-async-pool": "catalog:",

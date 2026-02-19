@@ -154,7 +154,7 @@ export class SandboxService {
               }
             } catch (e: any) {
               if (backendEnv !== BackendEnvEnum.PROD) {
-                this.logger.warn(
+                console.log(
                   `Health check attempt ${i + 1}/30 failed for sandbox ${sandbox.sandboxId}: ${e?.message}`
                 );
               }

@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class AgentModelApi {
   @IsString()
@@ -12,4 +12,9 @@ export class AgentModelApi {
 
   @IsString()
   providerName: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  variants?: string[];
 }

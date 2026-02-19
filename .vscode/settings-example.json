@@ -30,7 +30,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "search.exclude": {
-    "**/malloy": true,
+    "**/external": true,
     "**/mprove_data": true,
     "**/node_modules": true,
     "**/dist": true

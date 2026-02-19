@@ -50,7 +50,7 @@ export class SendAgentMessageController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage)
   async sendMessage(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendSendAgentMessageRequest = request.body;
-    let { sessionId, message, model } = reqValid.payload;
+    let { sessionId, message, model, variant } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
@@ -127,6 +127,10 @@ export class SendAgentMessageController {
     let split = splitModel(effectiveModel);
     if (split) {
       promptBody.model = split;
+    }
+
+    if (variant) {
+      promptBody.variant = variant;
     }
 
     await client.session

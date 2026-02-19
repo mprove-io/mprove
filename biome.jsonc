@@ -19,7 +19,8 @@
       "!**/node_modules/**",
       "!tmp/**",
       "!setup-docker/data/**",
-      "!package.docker.json"
+      "!package.docker.json",
+      "!external/**"
     ]
   },
   "formatter": {

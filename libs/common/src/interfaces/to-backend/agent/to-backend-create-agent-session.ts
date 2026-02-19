@@ -26,6 +26,10 @@ export class ToBackendCreateAgentSessionRequestPayload {
 
   @IsOptional()
   @IsString()
+  variant?: string;
+
+  @IsOptional()
+  @IsString()
   firstMessage?: string;
 }
 

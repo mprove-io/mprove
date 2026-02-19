@@ -8,7 +8,8 @@
       "#disk/*": ["apps/disk/src/*"],
       "#front/*": ["apps/front/src/*"],
       "#common/*": ["libs/common/src/*"],
-      "#node-common/*": ["libs/node-common/src/*"]
+      "#node-common/*": ["libs/node-common/src/*"],
+      "#mcli/*": ["mcli/src/*"]
     }
   },
   "include": [
@@ -17,5 +18,5 @@
     "libs/*/src/**/*.ts",
     "scripts/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "external"]
 }

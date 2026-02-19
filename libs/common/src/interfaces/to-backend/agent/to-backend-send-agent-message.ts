@@ -13,6 +13,10 @@ export class ToBackendSendAgentMessageRequestPayload {
   @IsOptional()
   @IsString()
   model?: string;
+
+  @IsOptional()
+  @IsString()
+  variant?: string;
 }
 
 export class ToBackendSendAgentMessageRequest extends ToBackendRequest {

@@ -70,7 +70,7 @@ export class AgentService implements OnModuleDestroy {
     this.redisSubClient = new Redis(redisOptions);
 
     this.redisSubClient.on('error', (err: Error) => {
-      this.logger.warn(`Redis sub client error: ${err.message}`);
+      console.log(`Redis sub client error: ${err.message}`);
     });
 
     this.redisSubClient.on('message', (channel: string, message: string) => {
@@ -85,7 +85,7 @@ export class AgentService implements OnModuleDestroy {
 
     this.drainTimer = setInterval(() => {
       this.drainAllQueues().catch(e => {
-        this.logger.warn(`Failed to drain event queues: ${e?.message}`);
+        console.log(`Failed to drain event queues: ${e?.message}`);
       });
     }, 1000);
   }
@@ -118,7 +118,7 @@ export class AgentService implements OnModuleDestroy {
         listeners = new Set([subject]);
         this.channelListeners.set(channel, listeners);
         this.redisSubClient.subscribe(channel).catch((err: Error) => {
-          this.logger.warn(
+          console.log(
             `Redis subscribe failed for session ${sessionId}: ${err.message}`
           );
         });
@@ -134,7 +134,7 @@ export class AgentService implements OnModuleDestroy {
           if (currentListeners.size === 0) {
             this.channelListeners.delete(channel);
             this.redisSubClient.unsubscribe(channel).catch((err: Error) => {
-              this.logger.warn(
+              console.log(
                 `Redis unsubscribe failed for session ${sessionId}: ${err.message}`
               );
             });
@@ -177,7 +177,7 @@ export class AgentService implements OnModuleDestroy {
         }
       } catch (e: any) {
         if (e.name !== 'AbortError') {
-          this.logger.warn(`SSE stream error: ${e?.message}`);
+          console.log(`SSE stream error: ${e?.message}`);
         }
       }
     };

@@ -56,6 +56,7 @@ export class SessionComponent implements OnDestroy {
   provider = 'opencode';
   model = 'default';
   agent = 'plan';
+  variant = 'default';
 
   providers = [
     { id: 'opencode', label: 'Zen' },
@@ -66,6 +67,8 @@ export class SessionComponent implements OnDestroy {
     { value: 'default', label: 'default' }
   ];
   agents = ['build', 'plan'];
+  variants: string[] = ['default'];
+  private modelVariantsMap = new Map<string, string[]>();
   providerHasApiKey = true;
 
   // Chat mode
@@ -107,10 +110,13 @@ export class SessionComponent implements OnDestroy {
         this.provider = this.session.provider;
         this.agent = this.session.agentMode;
         this.model = this.session.model || 'default';
+        this.variant = 'default';
         this.closeSse();
         this.stopPolling();
         this.sseRetryCount = 0;
         this.models = [{ value: 'default', label: 'default' }];
+        this.variants = ['default'];
+        this.modelVariantsMap.clear();
         this.updateProviderHasApiKey();
         setTimeout(() => this.fetchProviderModels(this.provider));
       }
@@ -262,6 +268,7 @@ export class SessionComponent implements OnDestroy {
       model: this.model,
       agentMode: this.agent,
       permissionMode: 'default',
+      variant: this.variant !== 'default' ? this.variant : undefined,
       firstMessage: firstMessageText
     };
 
@@ -312,7 +319,8 @@ export class SessionComponent implements OnDestroy {
     let payload: ToBackendSendAgentMessageRequestPayload = {
       sessionId: this.session.sessionId,
       message: this.messageText.trim(),
-      model: this.model
+      model: this.model,
+      variant: this.variant !== 'default' ? this.variant : undefined
     };
 
     this.messageText = '';
@@ -349,7 +357,10 @@ export class SessionComponent implements OnDestroy {
 
   onProviderChange() {
     this.model = 'default';
+    this.variant = 'default';
     this.models = [{ value: 'default', label: 'default' }];
+    this.variants = ['default'];
+    this.modelVariantsMap.clear();
     this.updateProviderHasApiKey();
     setTimeout(() => this.fetchProviderModels(this.provider));
   }
@@ -367,6 +378,22 @@ export class SessionComponent implements OnDestroy {
     }
   }
 
+  onModelChange() {
+    this.updateVariants();
+  }
+
+  private updateVariants() {
+    let modelVariants = this.modelVariantsMap.get(this.model);
+    if (modelVariants && modelVariants.length > 0) {
+      this.variants = ['default', ...modelVariants];
+    } else {
+      this.variants = ['default'];
+    }
+    if (!this.variants.includes(this.variant)) {
+      this.variant = 'default';
+    }
+  }
+
   private fetchProviderModels(provider: string) {
     this.apiService
       .req({
@@ -377,14 +404,19 @@ export class SessionComponent implements OnDestroy {
       .pipe(
         tap((resp: ToBackendGetAgentProviderModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let modelOptions = resp.payload.models.map(m => ({
-              value: `${m.providerId}/${m.id}`,
-              label: m.id
-            }));
+            this.modelVariantsMap.clear();
+            let modelOptions = resp.payload.models.map(m => {
+              let value = `${m.providerId}/${m.id}`;
+              if (m.variants && m.variants.length > 0) {
+                this.modelVariantsMap.set(value, m.variants);
+              }
+              return { value, label: m.id };
+            });
             this.models = [
               { value: 'default', label: 'default' },
               ...modelOptions
             ];
+            this.updateVariants();
             this.cd.detectChanges();
           }
         }),
@@ -403,14 +435,19 @@ export class SessionComponent implements OnDestroy {
       .pipe(
         tap((resp: ToBackendGetAgentSessionModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let modelOptions = resp.payload.models.map(m => ({
-              value: `${m.providerId}/${m.id}`,
-              label: m.id
-            }));
+            this.modelVariantsMap.clear();
+            let modelOptions = resp.payload.models.map(m => {
+              let value = `${m.providerId}/${m.id}`;
+              if (m.variants && m.variants.length > 0) {
+                this.modelVariantsMap.set(value, m.variants);
+              }
+              return { value, label: m.id };
+            });
             this.models = [
               { value: 'default', label: 'default' },
               ...modelOptions
             ];
+            this.updateVariants();
             this.cd.detectChanges();
           }
         }),

@@ -67,6 +67,7 @@ export class CreateAgentSessionController {
       model,
       agentMode,
       permissionMode,
+      variant,
       firstMessage
     } = reqValid.payload;
 
@@ -154,10 +155,10 @@ export class CreateAgentSessionController {
       sandboxType: sandboxType,
       sandboxEnvs: sandboxEnvs,
       project: project,
+      variant: variant,
       firstMessage: firstMessage
     }).catch(e => {
-      console.log(`[activate] FAILED for session ${sessionId}: ${e?.message}`);
-      this.logger.error(
+      console.log(
         `Failed to activate session ${sessionId}: ${e?.message}`,
         e?.stack
       );
@@ -175,9 +176,11 @@ export class CreateAgentSessionController {
     sandboxType: SandboxTypeEnum;
     sandboxEnvs: Record<string, string>;
     project: any;
+    variant?: string;
     firstMessage?: string;
   }) {
-    let { session, sandboxType, sandboxEnvs, project, firstMessage } = item;
+    let { session, sandboxType, sandboxEnvs, project, variant, firstMessage } =
+      item;
 
     let sessionId = session.sessionId;
 
@@ -266,6 +269,10 @@ export class CreateAgentSessionController {
           promptBody.model = split;
         }
 
+        if (variant) {
+          promptBody.variant = variant;
+        }
+
         await opencodeClient.session
           .promptAsync({
             path: { id: opencodeSessionId },
@@ -280,7 +287,7 @@ export class CreateAgentSessionController {
           });
       }
     } catch (e: any) {
-      this.logger.error(
+      console.log(
         `Session activation failed for ${sessionId}: ${e?.message}`,
         e?.stack
       );
@@ -303,7 +310,7 @@ export class CreateAgentSessionController {
           ),
         getRetryOption(this.cs, this.logger)
       ).catch(retryErr => {
-        this.logger.error(
+        console.log(
           `Failed to update session ${sessionId} to Error status: ${retryErr?.message}`,
           retryErr?.stack
         );

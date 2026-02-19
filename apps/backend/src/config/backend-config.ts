@@ -334,4 +334,10 @@ export class BackendConfig {
   @IsOptional()
   @IsNumber()
   coordinatorHeartbeatMs?: number;
+
+  @IsString()
+  opencodeServerPassword?: string;
+
+  @IsString()
+  opencodeServerUrl?: string;
 }

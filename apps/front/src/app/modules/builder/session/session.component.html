@@ -57,6 +57,17 @@
         ></ng-select>
 
         <ng-select
+          class="session-variants-select w-[140px] select-none text-sm"
+          [items]="variants"
+          [clearable]="false"
+          [searchable]="true"
+          [(ngModel)]="variant"
+          [disabled]="isSubmitting"
+          appendTo="body"
+          placeholder="Effort"
+        ></ng-select>
+
+        <ng-select
           class="w-[260px] select-none text-sm"
           [items]="models"
           bindLabel="label"
@@ -64,6 +75,7 @@
           [clearable]="false"
           [searchable]="true"
           [(ngModel)]="model"
+          (ngModelChange)="onModelChange()"
           [disabled]="isSubmitting"
           appendTo="body"
           placeholder="Model"
@@ -168,6 +180,16 @@
         ></ng-select>
 
         <ng-select
+          class="session-variants-select w-[140px] select-none text-sm"
+          [items]="variants"
+          [clearable]="false"
+          [searchable]="true"
+          [(ngModel)]="variant"
+          appendTo="body"
+          placeholder="Effort"
+        ></ng-select>
+
+        <ng-select
           class="session-models-select w-[260px] select-none text-sm"
           [items]="models"
           bindLabel="label"
@@ -175,6 +197,7 @@
           [clearable]="false"
           [searchable]="true"
           [(ngModel)]="model"
+          (ngModelChange)="onModelChange()"
           appendTo="body"
           placeholder="Model"
         ></ng-select>

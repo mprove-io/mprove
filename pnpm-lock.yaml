@@ -480,6 +480,9 @@ catalogs:
     nodemailer:
       specifier: 7.0.11
       version: 7.0.11
+    opencode-ai:
+      specifier: 1.2.6
+      version: 1.2.6
     p-iteration:
       specifier: 1.1.8
       version: 1.1.8
@@ -842,6 +845,9 @@ importers:
       nodemailer:
         specifier: 'catalog:'
         version: 7.0.11
+      opencode-ai:
+        specifier: 'catalog:'
+        version: 1.2.6
       p-iteration:
         specifier: 'catalog:'
         version: 1.1.8
@@ -9835,6 +9841,65 @@ packages:
 
   openapi-typescript-helpers@0.0.15:
     resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
+
+  opencode-ai@1.2.6:
+    resolution: {integrity: sha512-50leGrfFGrL8hr/iCs/nDr9kHNtNV7X3NMi3EedTj4R6l8yLvB2KZUQHQFOvR0tjfEBm6OqkLu5rw5JSAt8YZg==}
+    hasBin: true
+
+  opencode-darwin-arm64@1.2.6:
+    resolution: {integrity: sha512-v5/Qs2vHAb1J/cMwQ13jTMiDPsEnf1bH+AvQYNlsLNFQbDtWc2gc9FJcXqva0/lhI+aVo2X/Z45E6ZfGE3ffDA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  opencode-darwin-x64-baseline@1.2.6:
+    resolution: {integrity: sha512-4EkBCNhr9ukVf8BYjBqPbWy4OyFLGeRDkM/Jtemu6/+2GoQfOvYeedGoixx6WSdgIF9XcqQAltHuP09Uq2+wgg==}
+    cpu: [x64]
+    os: [darwin]
+
+  opencode-darwin-x64@1.2.6:
+    resolution: {integrity: sha512-fyk1Y2+M7n0OC7ANAZKXYjJ7o4SdBmgDi2lxoWfixUcx+hauGhQoSmDSl047QMhbVUMYT0/GrJ0Wz/VpaKQG7A==}
+    cpu: [x64]
+    os: [darwin]
+
+  opencode-linux-arm64-musl@1.2.6:
+    resolution: {integrity: sha512-rLW65R+omO/lYGQdIhekPpasX6BF1RNHZbJOrt9p13/bp39J6Iqu6z4WQmZbGVrBwhRcozwZAeFBq+dbptXlYQ==}
+    cpu: [arm64]
+    os: [linux]
+
+  opencode-linux-arm64@1.2.6:
+    resolution: {integrity: sha512-kOAc+NJ8QnUb/GpZHCoPuWrUVIG57pXzrpvAW+htjmwMyCR340YMRraXkTxBf5V3dn9mE8JEO2SG1YuVS04WMA==}
+    cpu: [arm64]
+    os: [linux]
+
+  opencode-linux-x64-baseline-musl@1.2.6:
+    resolution: {integrity: sha512-rQtKOrcop3hAPJW7Djuq2DdhdxBH9Fb/DWwKI4mgK2Z0e5Bspselan+1lnD6ucD9JWGSCa9OItWKxqVRnBFPOQ==}
+    cpu: [x64]
+    os: [linux]
+
+  opencode-linux-x64-baseline@1.2.6:
+    resolution: {integrity: sha512-ioXDyYWmEs+Lo0ssZUTpwbg5mBPh/deDo+KgvFqB4UowJT5A9hEafEs4ke6vlZccynXefz7AUNc+Ts3rAcz7SA==}
+    cpu: [x64]
+    os: [linux]
+
+  opencode-linux-x64-musl@1.2.6:
+    resolution: {integrity: sha512-6OWPagHeOxOf0X/Rjp4W8bZzxtPARJj41WelqU4wSeWgYA3uoGKuAzd8TJUAwQH3H61TWdPxMrp+wRY77RX2Sg==}
+    cpu: [x64]
+    os: [linux]
+
+  opencode-linux-x64@1.2.6:
+    resolution: {integrity: sha512-jj1V1Za2UgnHlXJ51z5curhn+dVbYBso3jZ/yAztDrg/WpRmjBHlFfNFXjDTr1Ojz2MLXqhJxz+LZrIhmpvcUA==}
+    cpu: [x64]
+    os: [linux]
+
+  opencode-windows-x64-baseline@1.2.6:
+    resolution: {integrity: sha512-0kaVc+6CAA4qxtI/FA0JdskAF7DOdcZcxyyOEduKQwengwWQaiUi076AXCjQ9COMVPxo+99QodMG2Lt06d691A==}
+    cpu: [x64]
+    os: [win32]
+
+  opencode-windows-x64@1.2.6:
+    resolution: {integrity: sha512-tac0/9dINr3rUctYOSXaofL1TGenR8E8pipxyL07vGh/DxqI7ZXcY/RTryeannIt1LGCo8Lf+dYbzGuJKL4AaQ==}
+    cpu: [x64]
+    os: [win32]
 
   ora@5.4.1:
     resolution: {integrity: sha512-5b6Y85tPxZZ7QytO+BQzysW31HJku27cRIlkbAXaNx+BdcVi+LlRFmVXzeF6a7JCwJpyw5c4b+YSVImQIrBpuQ==}
@@ -21919,6 +21984,53 @@ snapshots:
       openapi-typescript-helpers: 0.0.15
 
   openapi-typescript-helpers@0.0.15: {}
+
+  opencode-ai@1.2.6:
+    optionalDependencies:
+      opencode-darwin-arm64: 1.2.6
+      opencode-darwin-x64: 1.2.6
+      opencode-darwin-x64-baseline: 1.2.6
+      opencode-linux-arm64: 1.2.6
+      opencode-linux-arm64-musl: 1.2.6
+      opencode-linux-x64: 1.2.6
+      opencode-linux-x64-baseline: 1.2.6
+      opencode-linux-x64-baseline-musl: 1.2.6
+      opencode-linux-x64-musl: 1.2.6
+      opencode-windows-x64: 1.2.6
+      opencode-windows-x64-baseline: 1.2.6
+
+  opencode-darwin-arm64@1.2.6:
+    optional: true
+
+  opencode-darwin-x64-baseline@1.2.6:
+    optional: true
+
+  opencode-darwin-x64@1.2.6:
+    optional: true
+
+  opencode-linux-arm64-musl@1.2.6:
+    optional: true
+
+  opencode-linux-arm64@1.2.6:
+    optional: true
+
+  opencode-linux-x64-baseline-musl@1.2.6:
+    optional: true
+
+  opencode-linux-x64-baseline@1.2.6:
+    optional: true
+
+  opencode-linux-x64-musl@1.2.6:
+    optional: true
+
+  opencode-linux-x64@1.2.6:
+    optional: true
+
+  opencode-windows-x64-baseline@1.2.6:
+    optional: true
+
+  opencode-windows-x64@1.2.6:
+    optional: true
 
   ora@5.4.1:
     dependencies:

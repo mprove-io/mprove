@@ -67,7 +67,7 @@
     "typecheck:common": "turbo run typecheck --filter=@mprove/common",
     "typecheck:node-common": "turbo run typecheck --filter=@mprove/node-common",
     "typecheck:mcli": "cd mcli && bun run typecheck",
-    "typecheck:scripts": "tsc --noEmit",
+    "typecheck:scripts": "tsc --noEmit -p tsconfig.check.json",
     "lint:turbo": "turbo run lint",
     "lint:backend": "turbo run lint --filter=@mprove/backend",
     "lint:blockml": "turbo run lint --filter=@mprove/blockml",

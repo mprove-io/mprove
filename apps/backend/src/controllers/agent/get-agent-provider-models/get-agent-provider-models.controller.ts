@@ -26,7 +26,7 @@ export class GetAgentProviderModelsController {
     let reqValid: ToBackendGetAgentProviderModelsRequest = request.body;
     let { provider } = reqValid.payload;
 
-    let models = this.agentModelsService.getModelsForProvider(provider);
+    let models = await this.agentModelsService.getModelsForProvider(provider);
 
     let payload: ToBackendGetAgentProviderModelsResponsePayload = {
       models: models
