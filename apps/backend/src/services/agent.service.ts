@@ -2,8 +2,10 @@ import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
   Event,
+  EventMessagePartDelta,
   EventMessagePartUpdated,
-  EventMessageUpdated
+  EventMessageUpdated,
+  Part
 } from '@opencode-ai/sdk/v2';
 import { and, eq, lt } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -49,7 +51,7 @@ export class AgentService implements OnModuleDestroy {
 
   private eventCounters = new Map<string, number>();
 
-  private partStates = new Map<string, Map<string, Record<string, unknown>>>();
+  private partStates = new Map<string, Map<string, Part>>();
 
   private drainTimer: ReturnType<typeof setInterval>;
 
@@ -305,16 +307,12 @@ export class AgentService implements OnModuleDestroy {
         sessionParts.set(props.part.id, { ...props.part });
         touchedPartIds.add(props.part.id);
       } else if (item.event.type === 'message.part.delta') {
-        let props = item.event.properties as {
-          partID: string;
-          field: string;
-          delta: string;
-        };
+        let props = (item.event as EventMessagePartDelta).properties;
         let existing = sessionParts.get(props.partID);
         if (existing) {
-          let current = existing[props.field];
-          existing[props.field] =
-            (typeof current === 'string' ? current : '') + props.delta;
+          let field = props.field as keyof typeof existing;
+          let current = existing[field] as string | undefined;
+          (existing[field] as string) = (current ?? '') + props.delta;
           touchedPartIds.add(props.partID);
         }
       }
