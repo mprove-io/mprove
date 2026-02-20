@@ -133,7 +133,7 @@ export async function forTestsRunAgentSessionE2x(item: {
         sandboxType: SandboxTypeEnum.E2B,
         provider: 'opencode',
         model: item.model,
-        agentMode: 'plan',
+        agent: 'plan',
         permissionMode: 'default'
       }
     };
@@ -339,8 +339,8 @@ export async function forTestsRunAgentSessionE2x(item: {
     //     if (oc.properties.part.type === 'text') {
     //       detail += ` text="${oc.properties.part.text?.substring(0, 80)}"`;
     //     }
-    //   } else if (ev.eventType === 'message.part.delta') {
-    //     let props = (oc as any).properties;
+    //   } else if (oc.type === 'message.part.delta') {
+    //     let props = oc.properties;
     //     detail = ` partId=${props.partID} field=${props.field} delta="${props.delta?.substring(0, 80)}"`;
     //   }
     //   console.log(`[event ${ev.eventIndex}] ${ev.eventType}${detail}`);

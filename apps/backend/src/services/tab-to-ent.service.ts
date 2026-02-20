@@ -14,9 +14,11 @@ import type {
   KitTab,
   MconfigTab,
   MemberTab,
+  MessageTab,
   ModelTab,
   NoteTab,
   OrgTab,
+  PartTab,
   ProjectTab,
   QueryTab,
   ReportTab,
@@ -36,9 +38,11 @@ import { EventEnt } from '#backend/drizzle/postgres/schema/events';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import { MessageEnt } from '#backend/drizzle/postgres/schema/messages';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import { PartEnt } from '#backend/drizzle/postgres/schema/parts';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
@@ -73,12 +77,16 @@ import {
   MconfigSt,
   MemberLt,
   MemberSt,
+  MessageLt,
+  MessageSt,
   ModelLt,
   ModelSt,
   NoteLt,
   NoteSt,
   OrgLt,
   OrgSt,
+  PartLt,
+  PartSt,
   ProjectLt,
   ProjectSt,
   QueryLt,
@@ -176,6 +184,11 @@ export class TabToEntService {
           ?.filter(x => isDefined(x))
           .map(x => this.memberTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
+      messages:
+        tabsPack.messages
+          ?.filter(x => isDefined(x))
+          .map(x => this.messageTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       models:
         tabsPack.models
           ?.filter(x => isDefined(x))
@@ -190,6 +203,11 @@ export class TabToEntService {
         tabsPack.orgs
           ?.filter(x => isDefined(x))
           .map(x => this.orgTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
+      parts:
+        tabsPack.parts
+          ?.filter(x => isDefined(x))
+          .map(x => this.partTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
       projects:
         tabsPack.projects
           ?.filter(x => isDefined(x))
@@ -963,7 +981,7 @@ export class TabToEntService {
       lastMessageVariant: tab.lastMessageVariant,
       sandboxType: tab.sandboxType,
       provider: tab.provider,
-      agentMode: tab.agentMode,
+      agent: tab.agent,
       permissionMode: tab.permissionMode,
       status: tab.status,
       ...this.getEntProps({
@@ -979,5 +997,55 @@ export class TabToEntService {
     };
 
     return sessionEnt;
+  }
+
+  messageTabToEnt(item: { tab: MessageTab; hashSecret: string }): MessageEnt {
+    let { tab } = item;
+
+    let messageSt: MessageSt = {
+      ocMessage: tab.ocMessage
+    };
+
+    let messageLt: MessageLt = {};
+
+    let messageEnt: MessageEnt = {
+      messageId: tab.messageId,
+      sessionId: tab.sessionId,
+      role: tab.role,
+      ...this.getEntProps({
+        dataSt: messageSt,
+        dataLt: messageLt,
+        isMetadata: false
+      }),
+      createdTs: tab.createdTs,
+      serverTs: tab.serverTs
+    };
+
+    return messageEnt;
+  }
+
+  partTabToEnt(item: { tab: PartTab; hashSecret: string }): PartEnt {
+    let { tab } = item;
+
+    let partSt: PartSt = {
+      ocPart: tab.ocPart
+    };
+
+    let partLt: PartLt = {};
+
+    let partEnt: PartEnt = {
+      partId: tab.partId,
+      messageId: tab.messageId,
+      sessionId: tab.sessionId,
+      ...this.getEntProps({
+        dataSt: partSt,
+        dataLt: partLt,
+        isMetadata: false
+      }),
+      createdTs: tab.createdTs,
+      serverTs: tab.serverTs
+    };
+
+    return partEnt;
   }
 }

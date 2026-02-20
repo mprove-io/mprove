@@ -1,0 +1,23 @@
+export function binarySearch<T>(
+  array: T[],
+  id: string,
+  compare: (item: T) => string
+): { found: boolean; index: number } {
+  let left = 0;
+  let right = array.length - 1;
+
+  while (left <= right) {
+    let mid = Math.floor((left + right) / 2);
+    let midId = compare(array[mid]);
+
+    if (midId === id) {
+      return { found: true, index: mid };
+    } else if (midId < id) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  return { found: false, index: left };
+}

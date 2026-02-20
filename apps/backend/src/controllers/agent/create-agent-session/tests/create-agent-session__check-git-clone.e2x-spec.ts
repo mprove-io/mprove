@@ -121,7 +121,7 @@ test('1', async t => {
 
     console.log('Listing files via opencode SDK...');
     let { data: files, response: filesRes } = await client.file.list({
-      query: { path: '.' }
+      path: '.'
     });
 
     console.log(`file.list status: ${filesRes.status}`);

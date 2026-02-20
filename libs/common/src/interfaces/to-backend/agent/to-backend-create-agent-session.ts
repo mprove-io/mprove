@@ -19,7 +19,7 @@ export class ToBackendCreateAgentSessionRequestPayload {
   model?: string;
 
   @IsString()
-  agentMode: string;
+  agent: string;
 
   @IsString()
   permissionMode: string;

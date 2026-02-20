@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Session } from '@opencode-ai/sdk';
+import type { Session } from '@opencode-ai/sdk/v2';
 import { eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -26,7 +26,7 @@ export class SessionsService {
     model?: string;
     lastMessageProviderModel?: string;
     lastMessageVariant?: string;
-    agentMode: string;
+    agent: string;
     permissionMode: string;
     sandboxId?: string;
     sandboxBaseUrl?: string;
@@ -49,7 +49,7 @@ export class SessionsService {
       model: item.model,
       lastMessageProviderModel: item.lastMessageProviderModel,
       lastMessageVariant: item.lastMessageVariant,
-      agentMode: item.agentMode,
+      agent: item.agent,
       permissionMode: item.permissionMode,
       sandboxId: item.sandboxId,
       sandboxBaseUrl: item.sandboxBaseUrl,

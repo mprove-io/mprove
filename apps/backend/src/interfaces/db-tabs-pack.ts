@@ -11,9 +11,11 @@ import type {
   KitTab,
   MconfigTab,
   MemberTab,
+  MessageTab,
   ModelTab,
   NoteTab,
   OrgTab,
+  PartTab,
   ProjectTab,
   QueryTab,
   ReportTab,
@@ -34,9 +36,11 @@ export class DbTabsPack {
   kits?: KitTab[];
   mconfigs?: MconfigTab[];
   members?: MemberTab[];
+  messages?: MessageTab[];
   models?: ModelTab[];
   notes?: NoteTab[];
   orgs?: OrgTab[];
+  parts?: PartTab[];
   projects?: ProjectTab[];
   queries?: QueryTab[];
   reports?: ReportTab[];

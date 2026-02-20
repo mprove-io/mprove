@@ -18,9 +18,11 @@ import { EventsService } from './services/db/events.service';
 import { KitsService } from './services/db/kits.service';
 import { MconfigsService } from './services/db/mconfigs.service';
 import { MembersService } from './services/db/members.service';
+import { MessagesService } from './services/db/messages.service';
 import { ModelsService } from './services/db/models.service';
 import { NotesService } from './services/db/notes.service';
 import { OrgsService } from './services/db/orgs.service';
+import { PartsService } from './services/db/parts.service';
 import { ProjectsService } from './services/db/projects.service';
 import { QueriesService } from './services/db/queries.service';
 import { ReportsService } from './services/db/reports.service';
@@ -69,9 +71,11 @@ export const appProviders = [
   KitsService,
   MconfigsService,
   MembersService,
+  MessagesService,
   ModelsService,
   NotesService,
   OrgsService,
+  PartsService,
   ProjectsService,
   QueriesService,
   ReportsService,

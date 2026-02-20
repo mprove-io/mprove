@@ -1,3 +1,4 @@
+import type { EventSessionStatus } from '@opencode-ai/sdk/v2';
 import type { AgentEvent } from '#backend/services/agent.service';
 
 function isIdleEvent(agentEvent: AgentEvent): boolean {
@@ -7,7 +8,7 @@ function isIdleEvent(agentEvent: AgentEvent): boolean {
     return true;
   }
   if (agentEvent.eventType === 'session.status') {
-    let status = (agentEvent.ocEvent as any).properties?.status;
+    let status = (agentEvent.ocEvent as EventSessionStatus).properties?.status;
     return status?.type === 'idle';
   }
   return false;

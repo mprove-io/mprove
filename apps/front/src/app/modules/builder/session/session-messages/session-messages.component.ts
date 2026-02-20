@@ -11,12 +11,15 @@ import {
 import { NgScrollbar } from 'ngx-scrollbar';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { makeId } from '#common/functions/make-id';
+import type { QuestionRequest } from '#common/interfaces/backend/agent-event-api';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 
 interface ChatMessage {
   sender: string;
   text: string;
   permissionId?: string;
+  questionId?: string;
+  question?: QuestionRequest;
 }
 
 interface ChatTurn {
@@ -40,6 +43,15 @@ export class SessionMessagesComponent implements OnChanges, OnDestroy {
   @Output() permissionResponse = new EventEmitter<{
     permissionId: string;
     reply: string;
+  }>();
+
+  @Output() questionResponse = new EventEmitter<{
+    questionId: string;
+    answers: string[][];
+  }>();
+
+  @Output() questionReject = new EventEmitter<{
+    questionId: string;
   }>();
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;

@@ -9,16 +9,21 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
+import { groupPartsByMessageId } from '../functions/group-parts-by-message-id';
 import { SessionQuery } from '../queries/session.query';
+import { SessionDataQuery } from '../queries/session-data.query';
 import { SessionEventsQuery } from '../queries/session-events.query';
 import { ApiService } from '../services/api.service';
+import { EventReducerService } from '../services/event-reducer.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionResolver {
   constructor(
     private apiService: ApiService,
     private sessionQuery: SessionQuery,
-    private sessionEventsQuery: SessionEventsQuery
+    private sessionEventsQuery: SessionEventsQuery,
+    private sessionDataQuery: SessionDataQuery,
+    private eventReducerService: EventReducerService
   ) {}
 
   resolve(
@@ -28,7 +33,8 @@ export class SessionResolver {
     let sessionId = route.params[PARAMETER_SESSION_ID];
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
-      sessionId: sessionId
+      sessionId: sessionId,
+      includeMessagesAndParts: true
     };
 
     return this.apiService
@@ -39,10 +45,19 @@ export class SessionResolver {
       .pipe(
         map((resp: ToBackendGetAgentSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.eventReducerService.resetAll();
+
             this.sessionQuery.update(resp.payload.session);
 
             this.sessionEventsQuery.updatePart({
               events: resp.payload.events
+            });
+
+            this.sessionDataQuery.updatePart({
+              messages: resp.payload.messages || [],
+              parts: resp.payload.parts
+                ? groupPartsByMessageId(resp.payload.parts)
+                : {}
             });
 
             return true;

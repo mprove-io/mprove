@@ -10,9 +10,11 @@ import * as events from '#backend/drizzle/postgres/schema/events';
 import * as kits from '#backend/drizzle/postgres/schema/kits';
 import * as mconfigs from '#backend/drizzle/postgres/schema/mconfigs';
 import * as members from '#backend/drizzle/postgres/schema/members';
+import * as messages from '#backend/drizzle/postgres/schema/messages';
 import * as models from '#backend/drizzle/postgres/schema/models';
 import * as notes from '#backend/drizzle/postgres/schema/notes';
 import * as orgs from '#backend/drizzle/postgres/schema/orgs';
+import * as parts from '#backend/drizzle/postgres/schema/parts';
 import * as projects from '#backend/drizzle/postgres/schema/projects';
 import * as queries from '#backend/drizzle/postgres/schema/queries';
 import * as reports from '#backend/drizzle/postgres/schema/reports';
@@ -34,9 +36,11 @@ export const schemaPostgres = {
   ...kits,
   ...mconfigs,
   ...members,
+  ...messages,
   ...models,
   ...notes,
   ...orgs,
+  ...parts,
   ...projects,
   ...queries,
   ...reports,

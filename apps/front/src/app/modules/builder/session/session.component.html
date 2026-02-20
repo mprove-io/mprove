@@ -128,6 +128,8 @@
     [isSessionError]="isSessionError"
     [scrollTrigger]="scrollTrigger"
     (permissionResponse)="respondToPermission($event)"
+    (questionResponse)="respondToQuestion($event)"
+    (questionReject)="rejectQuestion($event)"
   ></m-session-messages>
 
   <!-- Debug events view -->
@@ -239,6 +241,7 @@
     </div>
   </div>
 </div>
-<div *ngIf="sessionAndEvents$ | async"></div>
+<div *ngIf="sessionAndData$ | async"></div>
+<div *ngIf="debugEvents$ | async"></div>
 <div *ngIf="debugMode$ | async"></div>
 <div *ngIf="showSessionMessages$ | async"></div>

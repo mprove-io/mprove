@@ -6,6 +6,7 @@ import { ToBackendGetAgentProviderModelsRequest } from '#common/interfaces/to-ba
 import { ToBackendGetAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import { ToBackendGetAgentSessionsListRequest } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
 import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session-sandbox';
+import { ToBackendRejectAgentQuestionRequest } from '#common/interfaces/to-backend/agent/to-backend-reject-agent-question';
 import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendRespondToAgentQuestionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
 import { ToBackendSendAgentMessageRequest } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
@@ -372,6 +373,8 @@ export const nameToClass = {
     ToBackendSendAgentMessageRequest,
   [ToBackendRequestInfoNameEnum.ToBackendRespondToAgentQuestion]:
     ToBackendRespondToAgentQuestionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendRejectAgentQuestion]:
+    ToBackendRejectAgentQuestionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendRespondToAgentPermission]:
     ToBackendRespondToAgentPermissionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:

@@ -32,6 +32,7 @@ import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionDataQuery } from '#front/app/queries/session-data.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -111,6 +112,7 @@ export class BuilderComponent implements OnInit {
 
       if (wasSessionRoute && !this.isSessionRoute) {
         this.sessionQuery.reset();
+        this.sessionDataQuery.reset();
         this.sessionEventsQuery.reset();
       }
 
@@ -208,6 +210,7 @@ export class BuilderComponent implements OnInit {
     private structQuery: StructQuery,
     private userQuery: UserQuery,
     private sessionQuery: SessionQuery,
+    private sessionDataQuery: SessionDataQuery,
     private sessionEventsQuery: SessionEventsQuery
   ) {}
 

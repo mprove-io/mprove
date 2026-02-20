@@ -25,7 +25,7 @@ export const sessionsTable = pgTable(
     lastMessageVariant: varchar('last_message_variant', {
       length: 64
     }),
-    agentMode: varchar('agent_mode', { length: 64 }),
+    agent: varchar('agent', { length: 64 }),
     permissionMode: varchar('permission_mode', { length: 64 }),
     status: varchar('status', { length: 32 })
       .notNull()

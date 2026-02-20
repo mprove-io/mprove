@@ -134,6 +134,38 @@
                 </div>
               </div>
             </div>
+
+            <!-- Question request -->
+            <div *ngIf="msg.sender === 'question'" class="flex justify-start">
+              <div
+                class="max-w-[80%] rounded-2xl border border-blue-300 bg-blue-50 px-4 py-3"
+              >
+                <div class="text-[17px] text-blue-800">{{ msg.text }}</div>
+                <div class="mt-2 flex space-x-2">
+                  <button
+                    class="rounded-lg bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
+                    (click)="
+                      questionResponse.emit({
+                        questionId: msg.questionId,
+                        answers: [[]]
+                      })
+                    "
+                  >
+                    Answer
+                  </button>
+                  <button
+                    class="rounded-lg bg-gray-600 px-3 py-1 text-sm text-white hover:bg-gray-700"
+                    (click)="
+                      questionReject.emit({
+                        questionId: msg.questionId
+                      })
+                    "
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Indicators only in the last turn -->

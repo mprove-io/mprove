@@ -65,7 +65,7 @@ export class CreateAgentSessionController {
       sandboxType,
       provider,
       model,
-      agentMode,
+      agent,
       permissionMode,
       variant,
       firstMessage
@@ -128,7 +128,7 @@ export class CreateAgentSessionController {
       model: model,
       lastMessageProviderModel: model,
       lastMessageVariant: variant,
-      agentMode: agentMode,
+      agent: agent,
       permissionMode: permissionMode,
       firstMessage: firstMessage,
       status: SessionStatusEnum.New,
@@ -213,12 +213,12 @@ export class CreateAgentSessionController {
       });
 
       let { data: opencodeSession } = await opencodeClient.session
-        .create({
-          body: {
+        .create(
+          {
             title: 'mprove session'
           },
-          throwOnError: true
-        })
+          { throwOnError: true }
+        )
         .catch(e => {
           throw new ServerError({
             message: ErEnum.BACKEND_AGENT_CREATE_SESSION_FAILED,
@@ -276,11 +276,13 @@ export class CreateAgentSessionController {
         }
 
         await opencodeClient.session
-          .promptAsync({
-            path: { id: opencodeSessionId },
-            body: promptBody,
-            throwOnError: true
-          })
+          .promptAsync(
+            {
+              sessionID: opencodeSessionId,
+              ...promptBody
+            },
+            { throwOnError: true }
+          )
           .catch(e => {
             throw new ServerError({
               message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,

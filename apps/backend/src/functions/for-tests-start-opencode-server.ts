@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import type { Sandbox } from '@e2b/code-interpreter';
-import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk';
+import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
 
 export async function forTestsStartOpencodeServer(item: {
   sandbox: Sandbox;

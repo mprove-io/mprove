@@ -4,7 +4,7 @@ import {
   createOpencodeClient,
   type OpencodeClient,
   type ProviderListResponse
-} from '@opencode-ai/sdk';
+} from '@opencode-ai/sdk/v2';
 import { BackendConfig } from '#backend/config/backend-config';
 import { MODEL_PROVIDERS } from '#common/constants/top-backend';
 import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
@@ -97,7 +97,7 @@ export class AgentModelsService {
   }
 
   async getModelsFromClient(client: OpencodeClient): Promise<AgentModelApi[]> {
-    let { data } = await client.provider.list({ throwOnError: true });
+    let { data } = await client.provider.list({}, { throwOnError: true });
     return this.mapProviderModels(data.all);
   }
 

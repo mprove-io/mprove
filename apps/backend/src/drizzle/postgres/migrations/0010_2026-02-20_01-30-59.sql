@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" RENAME COLUMN "agent_mode" TO "agent";

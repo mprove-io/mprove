@@ -1,5 +1,5 @@
 import { Sandbox } from '@e2b/code-interpreter';
-import { createOpencodeClient } from '@opencode-ai/sdk';
+import { createOpencodeClient } from '@opencode-ai/sdk/v2';
 import test from 'ava';
 import { BackendConfig } from '#backend/config/backend-config';
 import { forTestsStartOpencodeServer } from '#backend/functions/for-tests-start-opencode-server';

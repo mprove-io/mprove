@@ -15,9 +15,11 @@ import type {
   KitTab,
   MconfigTab,
   MemberTab,
+  MessageTab,
   ModelTab,
   NoteTab,
   OrgTab,
+  PartTab,
   ProjectTab,
   QueryTab,
   ReportTab,
@@ -37,9 +39,11 @@ import { EventEnt } from '#backend/drizzle/postgres/schema/events';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
+import { MessageEnt } from '#backend/drizzle/postgres/schema/messages';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
+import { PartEnt } from '#backend/drizzle/postgres/schema/parts';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
@@ -528,5 +532,31 @@ export class TabService {
     };
 
     return event;
+  }
+
+  messageEntToTab(messageEnt: MessageEnt): MessageTab {
+    if (isUndefined(messageEnt)) {
+      return;
+    }
+
+    let message: MessageTab = {
+      ...messageEnt,
+      ...this.getTabProps({ ent: messageEnt })
+    };
+
+    return message;
+  }
+
+  partEntToTab(partEnt: PartEnt): PartTab {
+    if (isUndefined(partEnt)) {
+      return;
+    }
+
+    let part: PartTab = {
+      ...partEnt,
+      ...this.getTabProps({ ent: partEnt })
+    };
+
+    return part;
   }
 }

@@ -1,12 +1,25 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Inject,
+  Logger,
+  Post,
+  Req,
+  UseGuards
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
-import { eq } from 'drizzle-orm';
+import retry from 'async-retry';
+import { and, eq } from 'drizzle-orm';
+import { BackendConfig } from '#backend/config/backend-config.js';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { eventsTable } from '#backend/drizzle/postgres/schema/events';
+import { messagesTable } from '#backend/drizzle/postgres/schema/messages.js';
+import { partsTable } from '#backend/drizzle/postgres/schema/parts.js';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { getRetryOption } from '#backend/functions/get-retry-option.js';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
@@ -28,6 +41,8 @@ export class DeleteAgentSessionController {
     private projectsService: ProjectsService,
     private agentService: AgentService,
     private sandboxService: SandboxService,
+    private cs: ConfigService<BackendConfig>,
+    private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -56,13 +71,27 @@ export class DeleteAgentSessionController {
       });
     }
 
-    await this.db.drizzle
-      .delete(eventsTable)
-      .where(eq(eventsTable.sessionId, sessionId));
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(async tx => {
+          await tx
+            .delete(sessionsTable)
+            .where(and(eq(sessionsTable.sessionId, sessionId)));
 
-    await this.db.drizzle
-      .delete(sessionsTable)
-      .where(eq(sessionsTable.sessionId, sessionId));
+          await tx
+            .delete(messagesTable)
+            .where(and(eq(messagesTable.sessionId, sessionId)));
+
+          await tx
+            .delete(partsTable)
+            .where(and(eq(partsTable.sessionId, sessionId)));
+
+          await tx
+            .delete(eventsTable)
+            .where(and(eq(eventsTable.sessionId, sessionId)));
+        }),
+      getRetryOption(this.cs, this.logger)
+    );
 
     let payload = {};
 

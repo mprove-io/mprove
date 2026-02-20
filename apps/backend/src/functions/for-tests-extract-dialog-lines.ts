@@ -40,7 +40,7 @@ export function forTestsExtractDialogLines(item: {
       if (error) {
         errors.push({
           order: orderCounter++,
-          line: `=== Error: [${error.name}] ${(error as any).data?.message ?? JSON.stringify(error.data)}`
+          line: `=== Error: [${error.name}] ${(error.data as { message?: string }).message ?? JSON.stringify(error.data)}`
         });
       }
     }

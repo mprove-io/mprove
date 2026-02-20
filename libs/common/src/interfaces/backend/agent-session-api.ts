@@ -8,7 +8,7 @@ export class AgentSessionApi {
   provider: string;
 
   @IsString()
-  agentMode: string;
+  agent: string;
 
   @IsOptional()
   @IsString()

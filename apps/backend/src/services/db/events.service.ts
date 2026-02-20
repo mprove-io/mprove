@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Event } from '@opencode-ai/sdk';
+import type { Event } from '@opencode-ai/sdk/v2';
 import type { EventTab } from '#backend/drizzle/postgres/schema/_tabs';
 
 @Injectable()

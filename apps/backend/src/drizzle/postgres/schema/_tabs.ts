@@ -23,12 +23,16 @@ import {
   MconfigSt,
   MemberLt,
   MemberSt,
+  MessageLt,
+  MessageSt,
   ModelLt,
   ModelSt,
   NoteLt,
   NoteSt,
   OrgLt,
   OrgSt,
+  PartLt,
+  PartSt,
   ProjectLt,
   ProjectSt,
   QueryLt,
@@ -54,9 +58,11 @@ import { EventEnt } from './events';
 import { KitEnt } from './kits';
 import { MconfigEnt } from './mconfigs';
 import { MemberEnt } from './members';
+import { MessageEnt } from './messages';
 import { ModelEnt } from './models';
 import { NoteEnt } from './notes';
 import { OrgEnt } from './orgs';
+import { PartEnt } from './parts';
 import { ProjectEnt } from './projects';
 import { QueryEnt } from './queries';
 import { ReportEnt } from './reports';
@@ -148,6 +154,13 @@ export interface EventTab
   extends Omit<EventEnt, 'st' | 'lt'>,
     EventSt,
     EventLt {}
+
+export interface MessageTab
+  extends Omit<MessageEnt, 'st' | 'lt'>,
+    MessageSt,
+    MessageLt {}
+
+export interface PartTab extends Omit<PartEnt, 'st' | 'lt'>, PartSt, PartLt {}
 
 export interface SessionTab
   extends Omit<SessionEnt, 'st' | 'lt'>,

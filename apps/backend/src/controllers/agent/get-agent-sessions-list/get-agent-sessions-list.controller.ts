@@ -44,7 +44,7 @@ export class GetAgentSessionsListController {
       return {
         sessionId: tab.sessionId,
         provider: tab.provider,
-        agentMode: tab.agentMode,
+        agent: tab.agent,
         model: tab.model,
         lastMessageProviderModel: tab.lastMessageProviderModel,
         lastMessageVariant: tab.lastMessageVariant,

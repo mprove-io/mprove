@@ -79,9 +79,7 @@ test('1', async t => {
         traceId: traceId,
         idempotencyKey: makeId()
       },
-      payload: {
-        provider: 'openai'
-      }
+      payload: {}
     };
 
     resp = await sendToBackend<ToBackendGetAgentProviderModelsResponse>({

@@ -1,6 +1,10 @@
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { Event } from '@opencode-ai/sdk';
+import type {
+  Event,
+  EventMessagePartUpdated,
+  EventMessageUpdated
+} from '@opencode-ai/sdk/v2';
 import { and, eq, lt } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
@@ -12,6 +16,8 @@ import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { EventsService } from './db/events.service';
+import { MessagesService } from './db/messages.service';
+import { PartsService } from './db/parts.service';
 import { ProjectsService } from './db/projects.service';
 import { SessionsService } from './db/sessions.service';
 import { SandboxService } from './sandbox.service';
@@ -45,6 +51,8 @@ export class AgentService implements OnModuleDestroy {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private eventsService: EventsService,
+    private messagesService: MessagesService,
+    private partsService: PartsService,
     private sessionsService: SessionsService,
     private tabService: TabService,
     private projectsService: ProjectsService,
@@ -155,9 +163,10 @@ export class AgentService implements OnModuleDestroy {
 
     let eventIndex = this.eventCounters.get(item.sessionId) ?? 0;
 
-    let response = await client.event.subscribe({
-      signal: abortController.signal
-    });
+    let response = await client.event.subscribe(
+      {},
+      { signal: abortController.signal }
+    );
 
     let processStream = async () => {
       try {
@@ -208,12 +217,36 @@ export class AgentService implements OnModuleDestroy {
   }): Promise<void> {
     let client = this.sandboxService.getOpenCodeClient(item.sessionId);
 
-    await client.postSessionIdPermissionsPermissionId({
-      path: {
-        id: item.opencodeSessionId,
-        permissionID: item.permissionId
-      },
-      body: { response: item.reply as 'always' | 'once' | 'reject' }
+    await client.permission.respond({
+      sessionID: item.opencodeSessionId,
+      permissionID: item.permissionId,
+      response: item.reply as 'always' | 'once' | 'reject'
+    });
+  }
+
+  async respondToQuestion(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    questionId: string;
+    answers: string[][];
+  }): Promise<void> {
+    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
+
+    await client.question.reply({
+      requestID: item.questionId,
+      answers: item.answers
+    });
+  }
+
+  async rejectQuestion(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    questionId: string;
+  }): Promise<void> {
+    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
+
+    await client.question.reject({
+      requestID: item.questionId
     });
   }
 
@@ -239,14 +272,56 @@ export class AgentService implements OnModuleDestroy {
       })
     );
 
-    await this.db.drizzle.transaction(async tx =>
-      this.db.packer.write({
+    let messageTabs = items
+      .filter(item => item.event.type === 'message.updated')
+      .map(item => {
+        let props = (item.event as EventMessageUpdated).properties;
+        return this.messagesService.makeMessage({
+          messageId: props.info.id,
+          sessionId: props.info.sessionID,
+          role: props.info.role,
+          ocMessage: props.info
+        });
+      });
+
+    let partTabs = items
+      .filter(item => item.event.type === 'message.part.updated')
+      .map(item => {
+        let props = (item.event as EventMessagePartUpdated).properties;
+        return this.partsService.makePart({
+          partId: props.part.id,
+          messageId: props.part.messageID,
+          sessionId: sessionId,
+          ocPart: props.part
+        });
+      });
+
+    await this.db.drizzle.transaction(async tx => {
+      await this.db.packer.write({
         tx: tx,
         insert: {
           events: eventTabs
         }
-      })
-    );
+      });
+
+      if (messageTabs.length > 0) {
+        await this.db.packer.write({
+          tx: tx,
+          insertOrUpdate: {
+            messages: messageTabs
+          }
+        });
+      }
+
+      if (partTabs.length > 0) {
+        await this.db.packer.write({
+          tx: tx,
+          insertOrUpdate: {
+            parts: partTabs
+          }
+        });
+      }
+    });
 
     for (let item of items) {
       let eventId = `${item.sessionId}_${item.eventIndex}`;

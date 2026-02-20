@@ -134,11 +134,13 @@ export class SendAgentMessageController {
     }
 
     await client.session
-      .promptAsync({
-        path: { id: session.opencodeSessionId },
-        body: promptBody,
-        throwOnError: true
-      })
+      .promptAsync(
+        {
+          sessionID: session.opencodeSessionId,
+          ...promptBody
+        },
+        { throwOnError: true }
+      )
       .catch(e => {
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_PROMPT_FAILED,
