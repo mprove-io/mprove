@@ -23,23 +23,8 @@
               <span class="text-s500 text-[17px]">Activating session...</span>
             </div>
           </div>
-          <div
-            *ngIf="isWaitingForResponse"
-            class="mb-4 flex items-center px-4 py-3"
-          >
-            <div class="relative flex h-9 w-9 flex-shrink-0">
-              <ngx-spinner
-                [name]="waitingSpinnerName"
-                color="#0084d1"
-                bdColor="#00000000"
-                size="default"
-                type="ball-clip-rotate"
-                [fullScreen]="false"
-                [disableAnimation]="true"
-                [zIndex]="99998"
-              >
-              </ngx-spinner>
-            </div>
+          <div *ngIf="isWaitingForResponse" class="mb-4 px-4 py-3">
+            <span class="text-base text-amber-400">Working</span>
           </div>
           <div *ngIf="isSessionError" class="mb-4 flex justify-start">
             <div class="max-w-[80%] rounded-2xl bg-red-50 px-4 py-3">
@@ -175,23 +160,8 @@
                 <span class="text-s500 text-[17px]">Activating session...</span>
               </div>
             </div>
-            <div
-              *ngIf="isWaitingForResponse"
-              class="mb-4 flex items-center px-4 py-3"
-            >
-              <div class="relative flex h-9 w-9 flex-shrink-0">
-                <ngx-spinner
-                  [name]="waitingSpinnerName"
-                  color="#0084d1"
-                  bdColor="#00000000"
-                  size="default"
-                  type="ball-clip-rotate"
-                  [fullScreen]="false"
-                  [disableAnimation]="true"
-                  [zIndex]="99998"
-                >
-                </ngx-spinner>
-              </div>
+            <div *ngIf="isWaitingForResponse" class="mb-4 px-4 py-3">
+              <span class="text-base text-amber-400">Working</span>
             </div>
             <div *ngIf="isSessionError" class="mb-4 flex justify-start">
               <div class="max-w-[80%] rounded-2xl bg-red-50 px-4 py-3">

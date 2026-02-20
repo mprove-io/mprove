@@ -21,16 +21,25 @@
 
   <!-- Input area (pinned to bottom) -->
   <div class="flex-shrink-0 px-6 pb-8 pt-[6px]">
-    <div class="mx-auto max-w-[860px]">
-      <m-session-input
-        [(model)]="model"
-        [(agent)]="agent"
-        [(variant)]="variant"
-        [disabled]="isActivating"
-        [showSelects]="messages.length > 0"
-        [sessionId]="session?.sessionId"
-        (send)="sendFollowUp($event)"
-      ></m-session-input>
+    <div class="mx-auto flex max-w-[860px] items-start">
+      <div class="w-5 flex-shrink-0 pt-[28px]">
+        <div
+          *ngIf="isWaitingForResponse"
+          class="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-300"
+        ></div>
+      </div>
+      <div class="min-w-0 flex-1">
+        <m-session-input
+          [(model)]="model"
+          [(agent)]="agent"
+          [(variant)]="variant"
+          [disabled]="isActivating"
+          [showSelects]="messages.length > 0"
+          [sessionId]="session?.sessionId"
+          (send)="sendFollowUp($event)"
+        ></m-session-input>
+      </div>
+      <div class="w-5 flex-shrink-0"></div>
     </div>
   </div>
 </div>

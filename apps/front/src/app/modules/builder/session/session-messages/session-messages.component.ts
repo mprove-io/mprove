@@ -4,14 +4,11 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnDestroy,
   Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
 import { NgScrollbar } from 'ngx-scrollbar';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { makeId } from '#common/functions/make-id';
 import type { QuestionRequest } from '#common/interfaces/backend/agent-event-api';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 
@@ -33,9 +30,7 @@ interface ChatTurn {
   selector: 'm-session-messages',
   templateUrl: './session-messages.component.html'
 })
-export class SessionMessagesComponent
-  implements AfterViewInit, OnChanges, OnDestroy
-{
+export class SessionMessagesComponent implements AfterViewInit, OnChanges {
   @Input() turns: ChatTurn[] = [];
   @Input() session: AgentSessionApi;
   @Input() isActivating = false;
@@ -61,9 +56,6 @@ export class SessionMessagesComponent
 
   skipNextScroll = true;
   responseMinHeight = 0;
-  waitingSpinnerName = makeId();
-
-  constructor(private spinner: NgxSpinnerService) {}
 
   ngAfterViewInit() {
     if (this.chatScrollbar) {
@@ -78,11 +70,6 @@ export class SessionMessagesComponent
     }
 
     this.updateResponseMinHeight();
-    this.updateSpinners();
-  }
-
-  ngOnDestroy() {
-    this.spinner.hide(this.waitingSpinnerName);
   }
 
   scrollUserMessageToTop() {
@@ -113,13 +100,5 @@ export class SessionMessagesComponent
     }
     this.responseMinHeight =
       this.chatScrollbar.nativeElement.clientHeight * 0.7;
-  }
-
-  updateSpinners() {
-    if (this.isWaitingForResponse) {
-      this.spinner.show(this.waitingSpinnerName);
-    } else {
-      this.spinner.hide(this.waitingSpinnerName);
-    }
   }
 }
