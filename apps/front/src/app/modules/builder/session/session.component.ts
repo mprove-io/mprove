@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnDestroy,
+  OnInit,
   ViewChild
 } from '@angular/core';
 import { combineLatest, interval, Subscription } from 'rxjs';
@@ -64,7 +65,7 @@ interface ChatTurn {
   selector: 'm-session',
   templateUrl: './session.component.html'
 })
-export class SessionComponent implements OnDestroy {
+export class SessionComponent implements OnInit, OnDestroy {
   @ViewChild(SessionInputComponent) sessionInput: SessionInputComponent;
 
   model = 'default';
@@ -77,6 +78,7 @@ export class SessionComponent implements OnDestroy {
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
   scrollTrigger = 0;
+  isSessionSwitching = false;
   showSessionMessages = true;
   previousTurnsCount = 0;
   previousLastTurnResponsesExist = false;
@@ -160,6 +162,8 @@ export class SessionComponent implements OnDestroy {
       this.cd.detectChanges();
     })
   );
+
+  ngOnInit() {}
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -511,6 +515,10 @@ export class SessionComponent implements OnDestroy {
   }
 
   enterSession(sessionData: SessionDataState) {
+    // Destroy session-messages to reset scroll state
+    this.isSessionSwitching = true;
+    this.cd.detectChanges();
+
     this.agent = this.session.agent;
     this.model =
       this.session.lastMessageProviderModel || this.session.model || 'default';
@@ -549,6 +557,8 @@ export class SessionComponent implements OnDestroy {
       this.uiQuery.updatePart({ showSessionMessages: true });
     }
 
+    // Recreate session-messages — ngAfterViewInit will scroll to bottom
+    this.isSessionSwitching = false;
     this.managePollingAndSse();
   }
 

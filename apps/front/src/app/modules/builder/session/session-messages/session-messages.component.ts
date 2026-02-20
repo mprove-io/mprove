@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -32,7 +33,9 @@ interface ChatTurn {
   selector: 'm-session-messages',
   templateUrl: './session-messages.component.html'
 })
-export class SessionMessagesComponent implements OnChanges, OnDestroy {
+export class SessionMessagesComponent
+  implements AfterViewInit, OnChanges, OnDestroy
+{
   @Input() turns: ChatTurn[] = [];
   @Input() session: AgentSessionApi;
   @Input() isActivating = false;
@@ -56,10 +59,18 @@ export class SessionMessagesComponent implements OnChanges, OnDestroy {
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 
+  skipNextScroll = true;
   responseMinHeight = 0;
   waitingSpinnerName = makeId();
 
   constructor(private spinner: NgxSpinnerService) {}
+
+  ngAfterViewInit() {
+    if (this.chatScrollbar) {
+      let viewport = this.chatScrollbar.adapter.viewportElement;
+      viewport.scrollTop = viewport.scrollHeight;
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['scrollTrigger'] && !changes['scrollTrigger'].firstChange) {
@@ -74,8 +85,16 @@ export class SessionMessagesComponent implements OnChanges, OnDestroy {
     this.spinner.hide(this.waitingSpinnerName);
   }
 
-  private scrollUserMessageToTop() {
+  scrollUserMessageToTop() {
     if (!this.chatScrollbar) {
+      return;
+    }
+    if (this.skipNextScroll) {
+      this.skipNextScroll = false;
+      setTimeout(() => {
+        let viewport = this.chatScrollbar.adapter.viewportElement;
+        viewport.scrollTop = viewport.scrollHeight;
+      });
       return;
     }
     setTimeout(() => {
@@ -88,7 +107,7 @@ export class SessionMessagesComponent implements OnChanges, OnDestroy {
     });
   }
 
-  private updateResponseMinHeight() {
+  updateResponseMinHeight() {
     if (!this.chatScrollbar) {
       return;
     }
@@ -96,7 +115,7 @@ export class SessionMessagesComponent implements OnChanges, OnDestroy {
       this.chatScrollbar.nativeElement.clientHeight * 0.7;
   }
 
-  private updateSpinners() {
+  updateSpinners() {
     if (this.isWaitingForResponse) {
       this.spinner.show(this.waitingSpinnerName);
     } else {

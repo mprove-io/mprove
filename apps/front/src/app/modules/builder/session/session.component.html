@@ -2,7 +2,7 @@
   <!-- Messages area (chat view) -->
   <m-session-messages
     class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
-    *ngIf="!debugMode && showSessionMessages"
+    *ngIf="!debugMode && showSessionMessages && !isSessionSwitching"
     [turns]="turns"
     [session]="session"
     [isActivating]="isActivating"
