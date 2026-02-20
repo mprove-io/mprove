@@ -21,8 +21,10 @@ import { RepoConflictsComponent } from './builder-right/validation-status/repo-c
 import { ValidationStatusComponent } from './builder-right/validation-status/validation-status.component';
 import { FileEditorComponent } from './file-editor/file-editor.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
+import { NewSessionComponent } from './session/new-session/new-session.component';
 import { SessionComponent } from './session/session.component';
 import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
+import { SessionInputComponent } from './session/session-input/session-input.component';
 import { SessionMessagesComponent } from './session/session-messages/session-messages.component';
 
 @NgModule({
@@ -36,8 +38,10 @@ import { SessionMessagesComponent } from './session/session-messages/session-mes
     RepoOptionsComponent,
     BuilderRightComponent,
     SessionsComponent,
+    NewSessionComponent,
     SessionComponent,
     SessionDebugEventsComponent,
+    SessionInputComponent,
     SessionMessagesComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent,

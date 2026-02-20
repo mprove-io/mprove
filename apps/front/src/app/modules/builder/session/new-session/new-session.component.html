@@ -1,0 +1,17 @@
+<div class="flex h-full w-full flex-col items-center">
+  <div class="h-[40%] flex-shrink-0"></div>
+  <div class="flex w-full max-w-[860px] flex-col px-6">
+    <div class="mb-10 flex justify-center">
+      <img class="w-40" src="assets/logo/mprove_logo_web-01-b-gray.svg" />
+    </div>
+
+    <m-session-input
+      [(model)]="model"
+      [(agent)]="agent"
+      [(variant)]="variant"
+      [disabled]="isSubmitting"
+      [scrollableInput]="true"
+      (send)="sendMessage($event)"
+    ></m-session-input>
+  </div>
+</div>

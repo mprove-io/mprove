@@ -11,7 +11,10 @@ import { Observable, Subject } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  PartTab,
+  SessionTab
+} from '#backend/drizzle/postgres/schema/_tabs';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -45,6 +48,8 @@ export class AgentService implements OnModuleDestroy {
   >();
 
   private eventCounters = new Map<string, number>();
+
+  private partStates = new Map<string, Map<string, Record<string, unknown>>>();
 
   private drainTimer: ReturnType<typeof setInterval>;
 
@@ -207,6 +212,7 @@ export class AgentService implements OnModuleDestroy {
     await this.drainQueue(sessionId);
     this.pendingEvents.delete(sessionId);
     this.eventCounters.delete(sessionId);
+    this.partStates.delete(sessionId);
   }
 
   async respondToPermission(item: {
@@ -278,23 +284,56 @@ export class AgentService implements OnModuleDestroy {
         let props = (item.event as EventMessageUpdated).properties;
         return this.messagesService.makeMessage({
           messageId: props.info.id,
-          sessionId: props.info.sessionID,
+          sessionId: sessionId,
           role: props.info.role,
           ocMessage: props.info
         });
       });
 
-    let partTabs = items
-      .filter(item => item.event.type === 'message.part.updated')
-      .map(item => {
+    // Accumulate part states across drain cycles (updates + deltas)
+    let sessionParts = this.partStates.get(sessionId);
+    if (!sessionParts) {
+      sessionParts = new Map();
+      this.partStates.set(sessionId, sessionParts);
+    }
+
+    let touchedPartIds = new Set<string>();
+
+    for (let item of items) {
+      if (item.event.type === 'message.part.updated') {
         let props = (item.event as EventMessagePartUpdated).properties;
-        return this.partsService.makePart({
-          partId: props.part.id,
-          messageId: props.part.messageID,
-          sessionId: sessionId,
-          ocPart: props.part
-        });
-      });
+        sessionParts.set(props.part.id, { ...props.part });
+        touchedPartIds.add(props.part.id);
+      } else if (item.event.type === 'message.part.delta') {
+        let props = item.event.properties as {
+          partID: string;
+          field: string;
+          delta: string;
+        };
+        let existing = sessionParts.get(props.partID);
+        if (existing) {
+          let current = existing[props.field];
+          existing[props.field] =
+            (typeof current === 'string' ? current : '') + props.delta;
+          touchedPartIds.add(props.partID);
+        }
+      }
+    }
+
+    let partTabs: PartTab[] = [];
+    for (let partId of touchedPartIds) {
+      let part = sessionParts.get(partId);
+      if (part) {
+        partTabs.push(
+          this.partsService.makePart({
+            partId: part.id as string,
+            messageId: part.messageID as string,
+            sessionId: sessionId,
+            ocPart: part as EventMessagePartUpdated['properties']['part']
+          })
+        );
+      }
+    }
 
     await this.db.drizzle.transaction(async tx => {
       await this.db.packer.write({
