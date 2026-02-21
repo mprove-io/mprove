@@ -9,7 +9,6 @@ import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import {
   EMPTY_CHART_ID,
-  LAST_SELECTED_CHART_ID,
   PARAMETER_CHART_ID,
   PATH_INFO,
   PATH_ORG,
@@ -26,14 +25,12 @@ import {
 } from '#common/interfaces/to-backend/charts/to-backend-get-chart';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { ChartQuery } from '../queries/chart.query';
-import { ChartsQuery } from '../queries/charts.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { NavigateService } from '../services/navigate.service';
 import { UiService } from '../services/ui.service';
 
 @Injectable({ providedIn: 'root' })
@@ -43,12 +40,10 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     private navQuery: NavQuery,
     private userQuery: UserQuery,
     private structQuery: StructQuery,
-    private chartsQuery: ChartsQuery,
     private chartQuery: ChartQuery,
     private memberQuery: MemberQuery,
     private uiQuery: UiQuery,
     private uiService: UiService,
-    private navigateService: NavigateService,
     private router: Router
   ) {}
 
@@ -85,8 +80,9 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot;
     showSpinner: boolean;
     timezone: string;
+    skipCache?: boolean;
   }): Observable<boolean> {
-    let { chartId, route, showSpinner, timezone } = item;
+    let { chartId, route, showSpinner, timezone, skipCache } = item;
 
     let nav: NavState;
     this.navQuery
@@ -120,48 +116,14 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
       return of(true);
     }
 
-    if (parametersChartId === LAST_SELECTED_CHART_ID) {
-      let charts = this.chartsQuery.getValue().charts;
-      let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
-      let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
+    let chartState = this.chartQuery.getValue();
 
-      let pChartLink = projectChartLinks.find(
-        link => link.projectId === nav.projectId
-      );
-
-      let pModelLink = projectModelLinks.find(
-        link => link.projectId === nav.projectId
-      );
-
-      if (
-        isDefined(pChartLink) &&
-        pChartLink.chartId === EMPTY_CHART_ID &&
-        isDefined(pModelLink)
-      ) {
-        this.navigateService.navigateToChart({
-          modelId: pModelLink.modelId,
-          chartId: EMPTY_CHART_ID
-        });
-
-        return of(false);
-      } else if (isDefined(pChartLink)) {
-        let pChart = charts.find(r => r.chartId === pChartLink.chartId);
-
-        if (isDefined(pChart)) {
-          this.navigateService.navigateToChart({
-            modelId: pChart.modelId,
-            chartId: pChart.chartId
-          });
-        } else {
-          this.navigateService.navigateToModels();
-        }
-
-        return of(false);
-      } else {
-        this.navigateService.navigateToModels();
-
-        return of(false);
-      }
+    if (
+      skipCache !== true &&
+      parametersChartId === chartState.chartId &&
+      chartState.structId === this.structQuery.getValue().structId
+    ) {
+      return of(true);
     }
 
     let payload: ToBackendGetChartRequestPayload = {

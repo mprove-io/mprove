@@ -897,7 +897,8 @@ export class ReportsComponent implements OnInit, OnDestroy {
         showSpinner: true,
         timezone: uiState.timezone,
         timeSpec: uiState.timeSpec,
-        timeRangeFractionBrick: uiState.timeRangeFraction.brick
+        timeRangeFractionBrick: uiState.timeRangeFraction.brick,
+        skipCache: true
       })
       .pipe(
         tap(x => {

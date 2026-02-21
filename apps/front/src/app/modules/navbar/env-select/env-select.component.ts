@@ -137,8 +137,18 @@ export class EnvSelectComponent {
 
     let urlParts = this.router.url.split('/');
 
-    let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
-    let pLink = projectDashboardLinks.find(
+    let uiState = this.uiQuery.getValue();
+
+    let pDashboardLink = uiState.projectDashboardLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+    let pModelLink = uiState.projectModelLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+    let pChartLink = uiState.projectChartLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+    let pReportLink = uiState.projectReportLinks.find(
       link => link.projectId === this.nav.projectId
     );
 
@@ -156,7 +166,10 @@ export class EnvSelectComponent {
         PATH_ENV,
         this.selectedEnvId
       ],
-      lastDashboardId: pLink?.dashboardId
+      lastDashboardId: pDashboardLink?.dashboardId,
+      lastModelId: pModelLink?.modelId,
+      lastChartId: pChartLink?.chartId,
+      lastReportId: pReportLink?.reportId
     });
 
     if (urlParts[11] === PATH_REPORTS) {

@@ -1042,7 +1042,8 @@ export class ModelsComponent implements OnInit, OnDestroy {
           chartId: this.chart.chartId,
           route: this.route.snapshot,
           showSpinner: true,
-          timezone: uiState.timezone
+          timezone: uiState.timezone,
+          skipCache: true
         })
         .pipe(
           tap(x => {

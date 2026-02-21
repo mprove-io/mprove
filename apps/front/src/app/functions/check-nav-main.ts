@@ -1,7 +1,4 @@
 import {
-  LAST_SELECTED_CHART_ID,
-  LAST_SELECTED_MODEL_ID,
-  LAST_SELECTED_REPORT_ID,
   PATH_BUILDER,
   PATH_CHART,
   PATH_CHARTS_LIST,
@@ -21,8 +18,18 @@ export function checkNavMain(item: {
   navArray: string[];
   urlParts: string[];
   lastDashboardId?: string;
+  lastModelId?: string;
+  lastChartId?: string;
+  lastReportId?: string;
 }) {
-  let { navArray, urlParts, lastDashboardId } = item;
+  let {
+    navArray,
+    urlParts,
+    lastDashboardId,
+    lastModelId,
+    lastChartId,
+    lastReportId
+  } = item;
 
   let nextNavAr = [...navArray];
 
@@ -33,15 +40,23 @@ export function checkNavMain(item: {
     } else if (urlParts[12] === PATH_MODELS_LIST) {
       nextNavAr.push(PATH_MODELS_LIST);
     } else if (urlParts[12] === PATH_MODEL) {
-      nextNavAr.push(PATH_MODEL);
-      nextNavAr.push(LAST_SELECTED_MODEL_ID);
-      if (urlParts[14] === PATH_CHARTS_LIST) {
-        nextNavAr.push(PATH_CHARTS_LIST);
-      } else if (urlParts[14] === PATH_MODELS_LIST) {
+      if (isDefined(lastModelId)) {
+        nextNavAr.push(PATH_MODEL);
+        nextNavAr.push(lastModelId);
+        if (urlParts[14] === PATH_CHARTS_LIST) {
+          nextNavAr.push(PATH_CHARTS_LIST);
+        } else if (urlParts[14] === PATH_MODELS_LIST) {
+          nextNavAr.push(PATH_MODELS_LIST);
+        } else if (urlParts[14] === PATH_CHART) {
+          if (isDefined(lastChartId)) {
+            nextNavAr.push(PATH_CHART);
+            nextNavAr.push(lastChartId);
+          } else {
+            nextNavAr.push(PATH_CHARTS_LIST);
+          }
+        }
+      } else {
         nextNavAr.push(PATH_MODELS_LIST);
-      } else if (urlParts[14] === PATH_CHART) {
-        nextNavAr.push(PATH_CHART);
-        nextNavAr.push(LAST_SELECTED_CHART_ID);
       }
     }
   } else if (urlParts[11] === PATH_DASHBOARDS) {
@@ -58,9 +73,11 @@ export function checkNavMain(item: {
     nextNavAr.push(PATH_REPORTS);
     if (urlParts[12] === PATH_REPORTS_LIST) {
       nextNavAr.push(PATH_REPORTS_LIST);
-    } else {
+    } else if (isDefined(lastReportId)) {
       nextNavAr.push(PATH_REPORT);
-      nextNavAr.push(LAST_SELECTED_REPORT_ID);
+      nextNavAr.push(lastReportId);
+    } else {
+      nextNavAr.push(PATH_REPORTS_LIST);
     }
   } else {
     nextNavAr.push(PATH_BUILDER);

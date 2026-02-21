@@ -2,9 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import {
-  LAST_SELECTED_CHART_ID,
-  LAST_SELECTED_MODEL_ID,
-  LAST_SELECTED_REPORT_ID,
+  EMPTY_REPORT_ID,
   PATH_BUILDER,
   PATH_DASHBOARDS,
   PATH_MODELS,
@@ -137,10 +135,25 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    this.navigateService.navigateToChart({
-      modelId: LAST_SELECTED_MODEL_ID,
-      chartId: LAST_SELECTED_CHART_ID
-    });
+    let projectModelLinks = this.uiQuery.getValue().projectModelLinks;
+    let projectChartLinks = this.uiQuery.getValue().projectChartLinks;
+
+    let pModelLink = projectModelLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+
+    let pChartLink = projectChartLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+
+    if (isDefined(pModelLink) && isDefined(pChartLink)) {
+      this.navigateService.navigateToChart({
+        modelId: pModelLink.modelId,
+        chartId: pChartLink.chartId
+      });
+    } else {
+      this.navigateService.navigateToModels();
+    }
   }
 
   navigateDashboards() {
@@ -167,9 +180,18 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    this.navigateService.navigateToReport({
-      reportId: LAST_SELECTED_REPORT_ID,
-      skipDeselect: true
-    });
+    let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
+
+    let pLink = projectReportLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+
+    if (isDefined(pLink) && pLink.reportId === EMPTY_REPORT_ID) {
+      this.navigateService.navigateToReport({ reportId: EMPTY_REPORT_ID });
+    } else if (isDefined(pLink)) {
+      this.navigateService.navigateToReport({ reportId: pLink.reportId });
+    } else {
+      this.navigateService.navigateToReportsList();
+    }
   }
 }

@@ -4,7 +4,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { LOGIN_SUCCESS_PAGE_TITLE } from '#common/constants/page-titles';
 import {
-  LAST_SELECTED_REPORT_ID,
   PATH_BRANCH,
   PATH_ENV,
   PATH_ORG,
@@ -12,10 +11,13 @@ import {
   PATH_REPO,
   PATH_REPORT,
   PATH_REPORTS,
+  PATH_REPORTS_LIST,
   PROD_REPO_ID
 } from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { NavQuery } from '#front/app/queries/nav.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { AuthService } from '#front/app/services/auth.service';
 import { NavigateService } from '#front/app/services/navigate.service';
@@ -33,6 +35,7 @@ export class LoginSuccessComponent implements OnInit {
   constructor(
     private title: Title,
     private navQuery: NavQuery,
+    private uiQuery: UiQuery,
     private userQuery: UserQuery,
     private authService: AuthService,
     private navigateService: NavigateService,
@@ -53,8 +56,8 @@ export class LoginSuccessComponent implements OnInit {
       )
       .subscribe();
 
-    let orgId;
-    let projectId;
+    let orgId: string;
+    let projectId: string;
     let isRepoProd;
     let branchId;
     let envId;
@@ -78,21 +81,45 @@ export class LoginSuccessComponent implements OnInit {
           } else {
             let repoId = isRepoProd === true ? PROD_REPO_ID : userId;
 
-            let navParts = [
-              PATH_ORG,
-              orgId,
-              PATH_PROJECT,
-              projectId,
-              PATH_REPO,
-              repoId,
-              PATH_BRANCH,
-              branchId,
-              PATH_ENV,
-              envId,
-              PATH_REPORTS,
-              PATH_REPORT,
-              LAST_SELECTED_REPORT_ID
-            ];
+            let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
+            let pLink = projectReportLinks.find(
+              link => link.projectId === projectId
+            );
+
+            let navParts: string[];
+
+            if (isDefined(pLink)) {
+              navParts = [
+                PATH_ORG,
+                orgId,
+                PATH_PROJECT,
+                projectId,
+                PATH_REPO,
+                repoId,
+                PATH_BRANCH,
+                branchId,
+                PATH_ENV,
+                envId,
+                PATH_REPORTS,
+                PATH_REPORT,
+                pLink.reportId
+              ];
+            } else {
+              navParts = [
+                PATH_ORG,
+                orgId,
+                PATH_PROJECT,
+                projectId,
+                PATH_REPO,
+                repoId,
+                PATH_BRANCH,
+                branchId,
+                PATH_ENV,
+                envId,
+                PATH_REPORTS,
+                PATH_REPORTS_LIST
+              ];
+            }
 
             this.navigateService.navigateTo({ navParts: navParts });
           }

@@ -195,10 +195,6 @@ export const EMPTY_MCONFIG_ID = 'new';
 export const EMPTY_QUERY_ID = 'new';
 export const EMPTY_REPORT_ID = 'new';
 
-export const LAST_SELECTED_MODEL_ID = 'last-selected';
-export const LAST_SELECTED_CHART_ID = 'last-selected';
-export const LAST_SELECTED_REPORT_ID = 'last-selected';
-
 export const PATH_PROJECT = 'project';
 export const PATH_REPO = 'repo';
 export const PATH_BRANCH = 'branch';

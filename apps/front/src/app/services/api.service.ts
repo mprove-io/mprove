@@ -9,8 +9,6 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 import {
-  LAST_SELECTED_CHART_ID,
-  LAST_SELECTED_MODEL_ID,
   PATH_BRANCH,
   PATH_BUILDER,
   PATH_ENV,
@@ -41,7 +39,6 @@ import {
 import { ToBackendRequest } from '#common/interfaces/to-backend/to-backend-request';
 import { environment } from '#front/environments/environment';
 import { MemberQuery } from '../queries/member.query';
-import { ModelQuery } from '../queries/model.query';
 import { ModelsQuery } from '../queries/models.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { ReportsQuery } from '../queries/reports.query';
@@ -62,7 +59,6 @@ export class ApiService {
     private authService: AuthService,
     private spinner: NgxSpinnerService,
     private uiQuery: UiQuery,
-    private modelQuery: ModelQuery,
     private myDialogService: MyDialogService,
     private navigateService: NavigateService,
     private reportsQuery: ReportsQuery,
@@ -279,10 +275,7 @@ export class ApiService {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              this.navigateService.navigateToChart({
-                modelId: LAST_SELECTED_MODEL_ID,
-                chartId: LAST_SELECTED_CHART_ID
-              });
+              this.navigateToLastModelChart(nav);
             });
         }).bind(this);
 
@@ -326,10 +319,7 @@ export class ApiService {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                this.navigateService.navigateToChart({
-                  modelId: LAST_SELECTED_MODEL_ID,
-                  chartId: LAST_SELECTED_CHART_ID
-                });
+                this.navigateToLastModelChart(nav);
               });
           } else if (
             [ErEnum.BACKEND_DASHBOARD_DOES_NOT_EXIST].indexOf(
@@ -347,10 +337,7 @@ export class ApiService {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                this.navigateService.navigateToChart({
-                  modelId: LAST_SELECTED_MODEL_ID,
-                  chartId: LAST_SELECTED_CHART_ID
-                });
+                this.navigateToLastModelChart(nav);
               });
           } else if (
             [
@@ -358,35 +345,16 @@ export class ApiService {
               ErEnum.BACKEND_QUERY_DOES_NOT_EXIST
             ].indexOf(infoErrorMessage) > -1
           ) {
-            let model = this.modelQuery.getValue();
-
-            if (isDefined(model.modelId)) {
-              this.router
-                .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-                .then(() => {
-                  this.navigateService.navigateToChart({
-                    modelId: LAST_SELECTED_MODEL_ID,
-                    chartId: LAST_SELECTED_CHART_ID
-                  });
-                });
-            } else {
-              this.router
-                .navigateByUrl(orgProjectPath, { skipLocationChange: true })
-                .then(() => {
-                  this.navigateService.navigateToChart({
-                    modelId: LAST_SELECTED_MODEL_ID,
-                    chartId: LAST_SELECTED_CHART_ID
-                  });
-                });
-            }
+            this.router
+              .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+              .then(() => {
+                this.navigateToLastModelChart(nav);
+              });
           } else {
             this.router
               .navigateByUrl(orgProjectPath, { skipLocationChange: true })
               .then(() => {
-                this.navigateService.navigateToChart({
-                  modelId: LAST_SELECTED_MODEL_ID,
-                  chartId: LAST_SELECTED_CHART_ID
-                });
+                this.navigateToLastModelChart(nav);
               });
           }
         }).bind(this);
@@ -460,6 +428,26 @@ export class ApiService {
     }
 
     return res.body;
+  }
+
+  private navigateToLastModelChart(nav: NavState) {
+    let uiState = this.uiQuery.getValue();
+
+    let pModelLink = uiState.projectModelLinks.find(
+      link => link.projectId === nav.projectId
+    );
+    let pChartLink = uiState.projectChartLinks.find(
+      link => link.projectId === nav.projectId
+    );
+
+    if (isDefined(pModelLink) && isDefined(pChartLink)) {
+      this.navigateService.navigateToChart({
+        modelId: pModelLink.modelId,
+        chartId: pChartLink.chartId
+      });
+    } else {
+      this.navigateService.navigateToModels();
+    }
   }
 
   private catchErr(e: any) {

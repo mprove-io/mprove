@@ -9,7 +9,6 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { map, take, tap } from 'rxjs/operators';
 import {
   DEMO_ORG_NAME,
-  LAST_SELECTED_REPORT_ID,
   PATH_BRANCH,
   PATH_ENV,
   PATH_ORG,
@@ -17,10 +16,12 @@ import {
   PATH_REPO,
   PATH_REPORT,
   PATH_REPORTS,
+  PATH_REPORTS_LIST,
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { ProjectsItem } from '#common/interfaces/backend/projects-item';
 import {
   ToBackendGetProjectsListRequestPayload,
@@ -141,21 +142,45 @@ export class ProjectSelectComponent {
       p => p.projectId === this.selectedProjectId
     ).defaultBranch;
 
-    let navParts = [
-      PATH_ORG,
-      this.nav.orgId,
-      PATH_PROJECT,
-      this.selectedProjectId,
-      PATH_REPO,
-      PROD_REPO_ID,
-      PATH_BRANCH,
-      branchId,
-      PATH_ENV,
-      PROJECT_ENV_PROD,
-      PATH_REPORTS,
-      PATH_REPORT,
-      LAST_SELECTED_REPORT_ID
-    ];
+    let projectReportLinks = this.uiQuery.getValue().projectReportLinks;
+    let pLink = projectReportLinks.find(
+      link => link.projectId === this.selectedProjectId
+    );
+
+    let navParts: string[];
+
+    if (isDefined(pLink)) {
+      navParts = [
+        PATH_ORG,
+        this.nav.orgId,
+        PATH_PROJECT,
+        this.selectedProjectId,
+        PATH_REPO,
+        PROD_REPO_ID,
+        PATH_BRANCH,
+        branchId,
+        PATH_ENV,
+        PROJECT_ENV_PROD,
+        PATH_REPORTS,
+        PATH_REPORT,
+        pLink.reportId
+      ];
+    } else {
+      navParts = [
+        PATH_ORG,
+        this.nav.orgId,
+        PATH_PROJECT,
+        this.selectedProjectId,
+        PATH_REPO,
+        PROD_REPO_ID,
+        PATH_BRANCH,
+        branchId,
+        PATH_ENV,
+        PROJECT_ENV_PROD,
+        PATH_REPORTS,
+        PATH_REPORTS_LIST
+      ];
+    }
 
     this.navigateService.navigateTo({ navParts: navParts });
   }

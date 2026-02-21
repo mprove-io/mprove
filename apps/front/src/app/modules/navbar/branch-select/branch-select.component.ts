@@ -384,15 +384,28 @@ export class BranchSelectComponent {
 
       this.router.navigate(navArray, { queryParams });
     } else {
-      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
-      let pLink = projectDashboardLinks.find(
+      let uiState = this.uiQuery.getValue();
+
+      let pDashboardLink = uiState.projectDashboardLinks.find(
+        link => link.projectId === this.selectedProjectId
+      );
+      let pModelLink = uiState.projectModelLinks.find(
+        link => link.projectId === this.selectedProjectId
+      );
+      let pChartLink = uiState.projectChartLinks.find(
+        link => link.projectId === this.selectedProjectId
+      );
+      let pReportLink = uiState.projectReportLinks.find(
         link => link.projectId === this.selectedProjectId
       );
 
       let navArray = checkNavMain({
         urlParts: urlParts,
         navArray: baseNavArray,
-        lastDashboardId: pLink?.dashboardId
+        lastDashboardId: pDashboardLink?.dashboardId,
+        lastModelId: pModelLink?.modelId,
+        lastChartId: pChartLink?.chartId,
+        lastReportId: pReportLink?.reportId
       });
 
       this.router.navigate(navArray);
