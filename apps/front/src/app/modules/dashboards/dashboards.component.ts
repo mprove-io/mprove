@@ -427,7 +427,8 @@ export class DashboardsComponent implements OnInit, OnDestroy {
           dashboardId: this.dashboard.dashboardId,
           route: this.route.snapshot,
           showSpinner: true,
-          timezone: uiState.timezone
+          timezone: uiState.timezone,
+          skipCache: true
         })
         .pipe(
           tap(x => {

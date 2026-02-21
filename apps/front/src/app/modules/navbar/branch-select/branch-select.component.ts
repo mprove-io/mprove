@@ -384,9 +384,15 @@ export class BranchSelectComponent {
 
       this.router.navigate(navArray, { queryParams });
     } else {
+      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
+      let pLink = projectDashboardLinks.find(
+        link => link.projectId === this.selectedProjectId
+      );
+
       let navArray = checkNavMain({
         urlParts: urlParts,
-        navArray: baseNavArray
+        navArray: baseNavArray,
+        lastDashboardId: pLink?.dashboardId
       });
 
       this.router.navigate(navArray);

@@ -136,6 +136,11 @@ export class EnvSelectComponent {
 
     let urlParts = this.router.url.split('/');
 
+    let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
+    let pLink = projectDashboardLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+
     let navArray = checkNavMain({
       urlParts: urlParts,
       navArray: [
@@ -149,7 +154,8 @@ export class EnvSelectComponent {
         this.nav.branchId,
         PATH_ENV,
         this.selectedEnvId
-      ]
+      ],
+      lastDashboardId: pLink?.dashboardId
     });
 
     if (urlParts[11] === PATH_REPORTS) {

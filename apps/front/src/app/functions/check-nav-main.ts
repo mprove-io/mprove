@@ -1,6 +1,5 @@
 import {
   LAST_SELECTED_CHART_ID,
-  LAST_SELECTED_DASHBOARD_ID,
   LAST_SELECTED_MODEL_ID,
   LAST_SELECTED_REPORT_ID,
   PATH_BUILDER,
@@ -16,9 +15,14 @@ import {
   PATH_REPORTS,
   PATH_REPORTS_LIST
 } from '#common/constants/top';
+import { isDefined } from '#common/functions/is-defined';
 
-export function checkNavMain(item: { navArray: string[]; urlParts: string[] }) {
-  let { navArray, urlParts } = item;
+export function checkNavMain(item: {
+  navArray: string[];
+  urlParts: string[];
+  lastDashboardId?: string;
+}) {
+  let { navArray, urlParts, lastDashboardId } = item;
 
   let nextNavAr = [...navArray];
 
@@ -44,9 +48,11 @@ export function checkNavMain(item: { navArray: string[]; urlParts: string[] }) {
     nextNavAr.push(PATH_DASHBOARDS);
     if (urlParts[12] === PATH_DASHBOARDS_LIST) {
       nextNavAr.push(PATH_DASHBOARDS_LIST);
-    } else {
+    } else if (isDefined(lastDashboardId)) {
       nextNavAr.push(PATH_DASHBOARD);
-      nextNavAr.push(LAST_SELECTED_DASHBOARD_ID);
+      nextNavAr.push(lastDashboardId);
+    } else {
+      nextNavAr.push(PATH_DASHBOARDS_LIST);
     }
   } else if (urlParts[11] === PATH_REPORTS) {
     nextNavAr.push(PATH_REPORTS);

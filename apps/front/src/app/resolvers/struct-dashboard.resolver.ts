@@ -8,7 +8,6 @@ import {
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import {
-  LAST_SELECTED_DASHBOARD_ID,
   PARAMETER_DASHBOARD_ID,
   PATH_INFO,
   PATH_ORG,
@@ -26,24 +25,20 @@ import {
 } from '#common/interfaces/to-backend/dashboards/to-backend-get-dashboard';
 import { checkNavOrgProjectRepoBranchEnv } from '../functions/check-nav-org-project-repo-branch-env';
 import { DashboardQuery } from '../queries/dashboard.query';
-import { DashboardPartsQuery } from '../queries/dashboard-parts.query';
 import { MemberQuery } from '../queries/member.query';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { StructQuery } from '../queries/struct.query';
 import { UiQuery } from '../queries/ui.query';
 import { UserQuery } from '../queries/user.query';
 import { ApiService } from '../services/api.service';
-import { NavigateService } from '../services/navigate.service';
 import { UiService } from '../services/ui.service';
 
 @Injectable({ providedIn: 'root' })
 export class StructDashboardResolver implements Resolve<Observable<boolean>> {
   constructor(
     private apiService: ApiService,
-    private navigateService: NavigateService,
     private navQuery: NavQuery,
     private userQuery: UserQuery,
-    private dashboardPartsQuery: DashboardPartsQuery,
     private dashboardQuery: DashboardQuery,
     private structQuery: StructQuery,
     private memberQuery: MemberQuery,
@@ -85,8 +80,9 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
     route: ActivatedRouteSnapshot;
     showSpinner: boolean;
     timezone: string;
+    skipCache?: boolean;
   }): Observable<boolean> {
-    let { dashboardId, route, showSpinner, timezone } = item;
+    let { dashboardId, route, showSpinner, timezone, skipCache } = item;
 
     let nav: NavState;
     this.navQuery
@@ -115,38 +111,12 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
       ? dashboardId
       : route?.params[PARAMETER_DASHBOARD_ID];
 
-    if (parametersDashboardId === LAST_SELECTED_DASHBOARD_ID) {
-      let dashboardParts = this.dashboardPartsQuery.getValue().dashboardParts;
-      let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
-
-      let pLink = projectDashboardLinks.find(
-        link => link.projectId === nav.projectId
-      );
-
-      if (isDefined(pLink)) {
-        let pDashboard = dashboardParts.find(
-          r => r.dashboardId === pLink.dashboardId
-        );
-
-        if (isDefined(pDashboard)) {
-          this.navigateService.navigateToDashboard({
-            dashboardId: pDashboard.dashboardId
-          });
-        } else {
-          this.navigateService.navigateToDashboards();
-        }
-
-        return of(false);
-      } else {
-        this.navigateService.navigateToDashboards();
-
-        return of(false);
-      }
-    }
+    let dashboardState = this.dashboardQuery.getValue();
 
     if (
-      route?.params[PARAMETER_DASHBOARD_ID] ===
-      this.dashboardQuery.getValue().dashboardId
+      skipCache !== true &&
+      parametersDashboardId === dashboardState.dashboardId &&
+      dashboardState.structId === this.structQuery.getValue().structId
     ) {
       return of(true);
     }

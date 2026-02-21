@@ -3,7 +3,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import {
   LAST_SELECTED_CHART_ID,
-  LAST_SELECTED_DASHBOARD_ID,
   LAST_SELECTED_MODEL_ID,
   LAST_SELECTED_REPORT_ID,
   PATH_BUILDER,
@@ -149,9 +148,18 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    this.navigateService.navigateToDashboard({
-      dashboardId: LAST_SELECTED_DASHBOARD_ID
-    });
+    let projectDashboardLinks = this.uiQuery.getValue().projectDashboardLinks;
+    let pLink = projectDashboardLinks.find(
+      link => link.projectId === this.nav.projectId
+    );
+
+    if (isDefined(pLink?.dashboardId)) {
+      this.navigateService.navigateToDashboard({
+        dashboardId: pLink.dashboardId
+      });
+    } else {
+      this.navigateService.navigateToDashboardsList();
+    }
   }
 
   navigateReports() {
