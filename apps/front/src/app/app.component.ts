@@ -11,14 +11,17 @@ import {
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { tap } from 'rxjs/operators';
 import {
+  PATH_BUILDER,
   PATH_COMPLETE_REGISTRATION,
   PATH_CONFIRM_EMAIL,
   PATH_EMAIL_CONFIRMED,
   PATH_FORGOT_PASSWORD,
   PATH_LOGIN,
   PATH_NEW_PASSWORD_WAS_SET,
+  PATH_NEW_SESSION,
   PATH_PASSWORD_RESET_SENT,
   PATH_REGISTER,
+  PATH_SELECT_FILE,
   PATH_UPDATE_PASSWORD,
   PATH_USER_DELETED,
   PATH_VERIFY_EMAIL
@@ -46,6 +49,25 @@ export class AppComponent implements OnInit {
     tap((x: any) => {
       switch (true) {
         case x instanceof NavigationStart: {
+          let startPath = this.router.url.split('?')[0];
+          let endPath = x.url.split('?')[0];
+
+          let builderSegment = `/${PATH_BUILDER}/`;
+          let startIdx = startPath.indexOf(builderSegment);
+          let endIdx = endPath.indexOf(builderSegment);
+
+          let endLastSegment = endPath.split('/').pop();
+
+          if (
+            startIdx >= 0 &&
+            endIdx >= 0 &&
+            startPath.substring(0, startIdx) === endPath.substring(0, endIdx) &&
+            (endLastSegment === PATH_SELECT_FILE ||
+              endLastSegment === PATH_NEW_SESSION)
+          ) {
+            break;
+          }
+
           let urlPart = x.url.split('?')[0];
           let urlPartArray = urlPart.split('/');
 
