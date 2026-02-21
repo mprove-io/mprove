@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
@@ -5,16 +6,18 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { BUILDER_PAGE_TITLE } from '#common/constants/page-titles';
-import { PATH_BUILDER, PATH_SESSION } from '#common/constants/top';
+import {
+  PATH_NEW_SESSION,
+  PATH_SELECT_FILE,
+  PATH_SESSION
+} from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { getFileIds } from '#common/functions/get-file-ids';
 import { isDefined } from '#common/functions/is-defined';
-import { isUndefined } from '#common/functions/is-undefined';
 import {
   ToBackendGetRepoRequestPayload,
   ToBackendGetRepoResponse
@@ -51,9 +54,9 @@ import { UiService } from '#front/app/services/ui.service';
 export class BuilderComponent implements OnInit {
   pageTitle = BUILDER_PAGE_TITLE;
 
-  panelTree = PanelEnum.Tree;
-  panelChangesToCommit = PanelEnum.ChangesToCommit;
-  panelChangesToPush = PanelEnum.ChangesToPush;
+  builderLeftTree = BuilderLeftEnum.Tree;
+  builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
+  builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
 
   repoStatusNeedCommit = RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = RepoStatusEnum.NeedPull;
@@ -72,10 +75,7 @@ export class BuilderComponent implements OnInit {
   file$ = this.fileQuery.select().pipe(
     tap(x => {
       this.file = x;
-
       this.cd.detectChanges();
-
-      this.uiService.setProjectFileLink();
     })
   );
 
@@ -95,7 +95,8 @@ export class BuilderComponent implements OnInit {
     })
   );
 
-  pathBuilder = PATH_BUILDER;
+  pathNewSession = PATH_NEW_SESSION;
+  pathSelectFile = PATH_SELECT_FILE;
 
   lastUrl: string;
   isSessionRoute = false;
@@ -123,8 +124,18 @@ export class BuilderComponent implements OnInit {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  panel = PanelEnum.Tree;
-  panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
+  builderLeft = BuilderLeftEnum.Tree;
+  builderLeft$ = this.uiQuery.builderLeft$.pipe(
+    tap(x => (this.builderLeft = x))
+  );
+
+  builderRight = BuilderRightEnum.Sessions;
+  builderRight$ = this.uiQuery.builderRight$.pipe(
+    tap(x => {
+      this.builderRight = x;
+      this.cd.detectChanges();
+    })
+  );
 
   showFilesLeftPanel = true;
   showFilesLeftPanel$ = this.uiQuery.showFilesLeftPanel$.pipe(
@@ -142,16 +153,8 @@ export class BuilderComponent implements OnInit {
     })
   );
 
-  filesRightPanelTabSessions = FilesRightPanelTabEnum.Sessions;
-  filesRightPanelTabErrors = FilesRightPanelTabEnum.Errors;
-
-  filesRightPanelTab = FilesRightPanelTabEnum.Sessions;
-  filesRightPanelTab$ = this.uiQuery.filesRightPanelTab$.pipe(
-    tap(x => {
-      this.filesRightPanelTab = x;
-      this.cd.detectChanges();
-    })
-  );
+  builderRightSessions = BuilderRightEnum.Sessions;
+  builderRightValidation = BuilderRightEnum.Validation;
 
   isEditor: boolean;
   isEditor$ = this.memberQuery.isEditor$.pipe(
@@ -193,6 +196,7 @@ export class BuilderComponent implements OnInit {
   );
 
   constructor(
+    private location: Location,
     private router: Router,
     private cd: ChangeDetectorRef,
     private navQuery: NavQuery,
@@ -220,14 +224,32 @@ export class BuilderComponent implements OnInit {
     let ar = this.router.url.split('?')[0].split('/');
     this.lastUrl = ar[ar.length - 1];
     this.isSessionRoute = ar.includes(PATH_SESSION);
+
+    let urlTree = this.router.parseUrl(this.router.url);
+    let left: BuilderLeftEnum = urlTree.queryParams['left'];
+    let right: BuilderRightEnum = urlTree.queryParams['right'];
+
+    if (isDefined(left)) {
+      this.uiQuery.updatePart({ builderLeft: left });
+    }
+    if (isDefined(right)) {
+      this.uiQuery.updatePart({ builderRight: right });
+    }
+  }
+
+  get isBaseRoute() {
+    return (
+      this.lastUrl === this.pathNewSession ||
+      this.lastUrl === this.pathSelectFile
+    );
   }
 
   get isRightPanelVisible() {
     return (
       this.showFilesRightPanel &&
       !this.secondFileNodeId &&
-      (this.panel === PanelEnum.Tree ||
-        this.lastUrl === this.pathBuilder ||
+      (this.builderLeft === BuilderLeftEnum.Tree ||
+        this.isBaseRoute ||
         !this.file?.fileId)
     );
   }
@@ -270,29 +292,29 @@ export class BuilderComponent implements OnInit {
     });
   }
 
-  setRightPanelTab(tab: FilesRightPanelTabEnum) {
+  setBuilderRight(tab: BuilderRightEnum) {
     if (this.showFilesRightPanel === false) {
       this.showFilesRightPanel = true;
       this.uiQuery.updatePart({ showFilesRightPanel: true });
       this.uiService.setUserUi({ showFilesRightPanel: true });
     }
 
-    if (this.panel !== PanelEnum.Tree) {
-      this.navigateService.navigateToBuilder();
-    }
-
     if (this.secondFileNodeId) {
       this.uiQuery.updatePart({ secondFileNodeId: undefined });
     }
 
-    if (tab === this.filesRightPanelTab) {
+    if (tab === this.builderRight) {
       return;
     }
 
-    this.uiQuery.updatePart({ filesRightPanelTab: tab });
+    this.uiQuery.updatePart({ builderRight: tab });
+
+    let urlTree = this.router.parseUrl(this.router.url);
+    urlTree.queryParams['right'] = tab;
+    this.location.replaceState(this.router.serializeUrl(urlTree));
   }
 
-  setPanel(x: PanelEnum) {
+  setBuilderLeft(x: BuilderLeftEnum) {
     if (this.needSave === true) {
       return;
     }
@@ -303,60 +325,53 @@ export class BuilderComponent implements OnInit {
       this.uiService.setUserUi({ showFilesLeftPanel: true });
     }
 
-    if (x === this.panel) {
+    if (x === this.builderLeft) {
       return;
     }
 
-    if (x === PanelEnum.Tree) {
-      let fileIds = getFileIds({ nodes: this.repo.nodes });
+    let prevLeft = this.builderLeft;
 
-      let projectFileLinks = this.uiQuery.getValue().projectFileLinks;
+    this.uiQuery.updatePart({ builderLeft: x });
 
-      let pLink = projectFileLinks.find(
-        link => link.projectId === this.nav.projectId
-      );
+    let isFromChanges =
+      prevLeft === BuilderLeftEnum.ChangesToCommit ||
+      prevLeft === BuilderLeftEnum.ChangesToPush;
 
-      if (isUndefined(pLink)) {
-        this.navigateService.navigateToBuilder();
+    if (
+      x === BuilderLeftEnum.Tree &&
+      isFromChanges &&
+      !this.isBaseRoute &&
+      !this.isSessionRoute
+    ) {
+      let pLink = this.uiQuery
+        .getValue()
+        .projectSessionLinks.find(
+          link => link.projectId === this.nav.projectId
+        );
+
+      if (isDefined(pLink?.sessionId)) {
+        this.navigateService.navigateToSession({
+          sessionId: pLink.sessionId,
+          left: x
+        });
       } else {
-        let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
-
-        if (isDefined(pFileId)) {
-          this.uiService.ensureFilesLeftPanel();
-          this.navigateService.navigateToFileLine({
-            panel: PanelEnum.Tree,
-            encodedFileId: pFileId
-          });
-        } else {
-          this.navigateService.navigateToBuilder();
-        }
+        this.navigateService.navigateToBuilder({ left: x });
       }
+    } else if (
+      x === BuilderLeftEnum.Tree ||
+      this.isSessionRoute ||
+      this.isBaseRoute
+    ) {
+      let urlTree = this.router.parseUrl(this.router.url);
+      urlTree.queryParams['left'] = x;
+      this.location.replaceState(this.router.serializeUrl(urlTree));
     } else {
-      this.navigateService.navigateToBuilder();
+      this.navigateService.navigateToBuilder({ left: x });
     }
-
-    this.uiQuery.updatePart({ panel: x });
   }
 
   toggleDebug() {
     this.uiQuery.updatePart({ sessionDebugMode: !this.debugMode });
-  }
-
-  showSession() {
-    if (this.sessionId) {
-      return;
-    }
-
-    let links = this.uiQuery.getValue().projectFileLinks;
-    let newLinks = links.map(l =>
-      l.projectId === this.nav.projectId
-        ? { ...l, fileId: undefined, navTs: Date.now() }
-        : l
-    );
-    this.uiQuery.updatePart({ projectFileLinks: newLinks });
-    this.uiService.setUserUi({ projectFileLinks: newLinks });
-
-    this.navigateService.navigateToBuilder();
   }
 
   newFile() {
@@ -374,7 +389,7 @@ export class BuilderComponent implements OnInit {
       projectId: this.nav.projectId,
       isRepoProd: this.nav.isRepoProd,
       branchId: this.nav.branchId,
-      panel: this.panel,
+      builderLeft: this.builderLeft,
       fileId: this.file.fileId
     });
   }
@@ -412,7 +427,7 @@ export class BuilderComponent implements OnInit {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),
@@ -458,7 +473,7 @@ export class BuilderComponent implements OnInit {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),
@@ -505,7 +520,7 @@ export class BuilderComponent implements OnInit {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),

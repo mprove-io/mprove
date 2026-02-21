@@ -7,17 +7,14 @@ import {
 } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import {
-  LAST_SELECTED_FILE_ID,
-  PARAMETER_FILE_ID
-} from '#common/constants/top';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { PARAMETER_FILE_ID } from '#common/constants/top';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { getFileIds } from '#common/functions/get-file-ids';
 import { isDefined } from '#common/functions/is-defined';
 import { RepoQuery } from '#front/app/queries/repo.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 import { checkNavOrgProjectRepoBranchEnv } from '../../functions/check-nav-org-project-repo-branch-env';
 import { NavQuery, NavState } from '../../queries/nav.query';
 import { UserQuery } from '../../queries/user.query';
@@ -32,8 +29,7 @@ export class FileResolver implements Resolve<Observable<boolean>> {
     private userQuery: UserQuery,
     private uiQuery: UiQuery,
     private repoQuery: RepoQuery,
-    private router: Router,
-    private uiService: UiService
+    private router: Router
   ) {}
 
   resolve(
@@ -63,48 +59,30 @@ export class FileResolver implements Resolve<Observable<boolean>> {
       userId: userId
     });
 
-    let panel: PanelEnum = route.queryParams?.panel;
+    let left: BuilderLeftEnum = route.queryParams?.left;
+    let right: BuilderRightEnum = route.queryParams?.right;
 
-    if (isDefined(panel)) {
-      this.uiQuery.updatePart({ panel: panel });
+    if (isDefined(left)) {
+      this.uiQuery.updatePart({ builderLeft: left });
+    }
+    if (isDefined(right)) {
+      this.uiQuery.updatePart({ builderRight: right });
     }
 
     let parametersFileId: string = route.params[PARAMETER_FILE_ID];
 
-    if (parametersFileId === LAST_SELECTED_FILE_ID) {
-      let repo = this.repoQuery.getValue();
+    let repo = this.repoQuery.getValue();
+    let fileIds = getFileIds({ nodes: repo.nodes });
 
-      let fileIds = getFileIds({ nodes: repo.nodes });
-
-      let projectFileLinks = this.uiQuery.getValue().projectFileLinks;
-
-      let pLink = projectFileLinks.find(
-        link => link.projectId === nav.projectId
-      );
-
-      if (isDefined(pLink)) {
-        let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
-
-        if (isDefined(pFileId)) {
-          this.uiService.ensureFilesLeftPanel();
-          this.navigateService.navigateToFileLine({
-            panel: PanelEnum.Tree,
-            encodedFileId: pFileId
-          });
-        } else {
-          this.navigateService.navigateToBuilder();
-        }
-
-        return of(false);
-      } else {
-        this.navigateService.navigateToBuilder();
-
-        return of(false);
-      }
+    if (fileIds.indexOf(parametersFileId) < 0) {
+      this.navigateService.navigateToBuilder({
+        left: left || BuilderLeftEnum.Tree
+      });
+      return of(false);
     }
 
     return this.fileService
-      .getFile({ fileId: parametersFileId, panel: panel, skipCheck: true })
+      .getFile({ fileId: parametersFileId, builderLeft: left, skipCheck: true })
       .pipe(map(x => true));
   }
 }

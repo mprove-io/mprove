@@ -7,15 +7,14 @@ import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
 import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link';
 import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
-import { ProjectFileLink } from '#common/interfaces/backend/project-file-link';
 import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
 import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
+import { ProjectSessionLink } from '#common/interfaces/backend/project-session-link';
 import { Ui } from '#common/interfaces/backend/ui';
 import {
   ToBackendSetUserUiRequestPayload,
   ToBackendSetUserUiResponse
 } from '#common/interfaces/to-backend/users/to-backend-set-user-ui';
-import { FileQuery } from '../queries/file.query';
 import { NavQuery } from '../queries/nav.query';
 import { UiQuery } from '../queries/ui.query';
 import { ApiService } from './api.service';
@@ -25,7 +24,6 @@ export class UiService {
   constructor(
     private apiService: ApiService,
     private uiQuery: UiQuery,
-    private fileQuery: FileQuery,
     private navQuery: NavQuery
   ) {}
 
@@ -34,7 +32,7 @@ export class UiService {
     showFilesRightPanel?: boolean;
     timezone?: string;
     modelTreeLevels?: ModelTreeLevelsEnum;
-    projectFileLinks?: ProjectFileLink[];
+    projectSessionLinks?: ProjectSessionLink[];
     projectModelLinks?: ProjectModelLink[];
     projectChartLinks?: ProjectChartLink[];
     projectDashboardLinks?: ProjectDashboardLink[];
@@ -47,7 +45,7 @@ export class UiService {
       showFilesRightPanel,
       timezone,
       modelTreeLevels,
-      projectFileLinks,
+      projectSessionLinks,
       projectModelLinks,
       projectChartLinks,
       projectDashboardLinks,
@@ -71,9 +69,9 @@ export class UiService {
       timezone: isDefined(timezone) ? timezone : uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction,
-      projectFileLinks: isDefined(projectFileLinks)
-        ? projectFileLinks
-        : uiState.projectFileLinks,
+      projectSessionLinks: isDefined(projectSessionLinks)
+        ? projectSessionLinks
+        : uiState.projectSessionLinks,
       projectModelLinks: isDefined(projectModelLinks)
         ? projectModelLinks
         : uiState.projectModelLinks,
@@ -120,60 +118,69 @@ export class UiService {
     }
   }
 
-  setProjectFileLink() {
-    let fileId = this.fileQuery.getValue().fileId;
-
+  clearProjectSessionLink() {
     let projectId = this.navQuery.getValue().projectId;
 
     if (isUndefined(projectId)) {
       return;
     }
 
-    let links = this.uiQuery.getValue().projectFileLinks;
+    let links = this.uiQuery.getValue().projectSessionLinks;
 
-    let link: ProjectFileLink = links.find(l => l.projectId === projectId);
+    let link: ProjectSessionLink = links.find(l => l.projectId === projectId);
 
-    let linkNewFileId = isDefined(fileId) ? fileId : link?.fileId;
-
-    if (isUndefined(link?.fileId) && isUndefined(linkNewFileId)) {
+    if (isUndefined(link)) {
       return;
     }
 
-    if (link?.fileId === linkNewFileId) {
+    let newProjectSessionLinks = links.filter(l => l.projectId !== projectId);
+
+    this.uiQuery.updatePart({ projectSessionLinks: newProjectSessionLinks });
+    this.setUserUi({ projectSessionLinks: newProjectSessionLinks });
+  }
+
+  setProjectSessionLink(item: { sessionId: string }) {
+    let { sessionId } = item;
+
+    let projectId = this.navQuery.getValue().projectId;
+
+    if (isUndefined(projectId) || isUndefined(sessionId)) {
       return;
     }
 
-    let newProjectFileLinks: ProjectFileLink[];
+    let links = this.uiQuery.getValue().projectSessionLinks;
+
+    let link: ProjectSessionLink = links.find(l => l.projectId === projectId);
+
+    if (link?.sessionId === sessionId) {
+      return;
+    }
+
+    let newLink: ProjectSessionLink = {
+      projectId: projectId,
+      sessionId: sessionId,
+      navTs: Date.now()
+    };
+
+    let newProjectSessionLinks: ProjectSessionLink[];
 
     if (isDefined(link)) {
-      let newLink: ProjectFileLink = {
-        projectId: projectId,
-        fileId: isDefined(fileId) ? fileId : link.fileId,
-        navTs: Date.now()
-      };
-
-      newProjectFileLinks = [
+      newProjectSessionLinks = [
         newLink,
         ...links.filter(r => !(r.projectId === projectId))
       ];
     } else {
-      let newLink: ProjectFileLink = {
-        projectId: projectId,
-        fileId: fileId,
-        navTs: Date.now()
-      };
-
-      newProjectFileLinks = [newLink, ...links];
+      newProjectSessionLinks = [newLink, ...links];
     }
 
     let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
 
-    newProjectFileLinks = newProjectFileLinks.filter(
+    newProjectSessionLinks = newProjectSessionLinks.filter(
       l => l.navTs >= oneYearAgoTimestamp
     );
 
-    this.uiQuery.updatePart({ projectFileLinks: newProjectFileLinks });
-    this.setUserUi({ projectFileLinks: newProjectFileLinks });
+    this.uiQuery.updatePart({ projectSessionLinks: newProjectSessionLinks });
+    this.setUserUi({ projectSessionLinks: newProjectSessionLinks });
   }
 
   setProjectChartLink(item: { chartId: string }) {

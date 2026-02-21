@@ -21,9 +21,10 @@ import {
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
+import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
@@ -123,13 +124,13 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
     })
   );
 
-  filesRightPanelTabSessions = FilesRightPanelTabEnum.Sessions;
-  filesRightPanelTabErrors = FilesRightPanelTabEnum.Errors;
+  builderRightSessions = BuilderRightEnum.Sessions;
+  builderRightValidation = BuilderRightEnum.Validation;
 
-  filesRightPanelTab = FilesRightPanelTabEnum.Sessions;
-  filesRightPanelTab$ = this.uiQuery.filesRightPanelTab$.pipe(
+  builderRight = BuilderRightEnum.Sessions;
+  builderRight$ = this.uiQuery.builderRight$.pipe(
     tap(x => {
-      this.filesRightPanelTab = x;
+      this.builderRight = x;
       this.cd.detectChanges();
     })
   );
@@ -407,7 +408,7 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
           branchId: nav.branchId,
           envId: nav.envId,
           fileNodeId: this.secondFileNodeId,
-          panel: PanelEnum.Tree
+          builderCenter: BuilderCenterEnum.File
         };
 
         this.isShowSpinner = true;
@@ -528,7 +529,7 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
 
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

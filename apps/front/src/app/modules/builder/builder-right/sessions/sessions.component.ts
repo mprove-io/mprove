@@ -7,6 +7,7 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { TimeService } from '#front/app/services/time.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -51,7 +52,8 @@ export class SessionsComponent {
     private uiQuery: UiQuery,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
-    private timeService: TimeService
+    private timeService: TimeService,
+    private uiService: UiService
   ) {}
 
   newSession() {
@@ -64,6 +66,9 @@ export class SessionsComponent {
     }
     this.sessionQuery.update(session);
     this.navigateService.navigateToSession({
+      sessionId: session.sessionId
+    });
+    this.uiService.setProjectSessionLink({
       sessionId: session.sessionId
     });
   }

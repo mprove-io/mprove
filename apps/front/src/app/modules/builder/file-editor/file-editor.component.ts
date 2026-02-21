@@ -45,8 +45,8 @@ import {
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
@@ -101,7 +101,7 @@ export const malloyCommentToggle = Annotation.define<'toggle'>();
 export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   isEditorOptionsInitComplete = false;
 
-  panelTree = PanelEnum.Tree;
+  builderLeftTree = BuilderLeftEnum.Tree;
 
   @ViewChild('codeEditor', { static: false })
   codeEditorRef: CodeEditor;
@@ -444,13 +444,13 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
   cachedCanDeactivateAnswerNoTimestamp: number;
 
-  panel: PanelEnum;
-  panel$ = this.uiQuery.panel$.pipe(
+  builderLeft: BuilderLeftEnum;
+  builderLeft$ = this.uiQuery.builderLeft$.pipe(
     tap(x => {
-      this.panel = x;
+      this.builderLeft = x;
       this.cd.detectChanges();
 
-      if (this.panel === PanelEnum.Tree) {
+      if (this.builderLeft === BuilderLeftEnum.Tree) {
         this.cleanupSyncScroll();
       }
     })
@@ -506,8 +506,8 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
       };
 
       if (
-        (this.panel === PanelEnum.ChangesToCommit ||
-          this.panel === PanelEnum.ChangesToPush) &&
+        (this.builderLeft === BuilderLeftEnum.ChangesToCommit ||
+          this.builderLeft === BuilderLeftEnum.ChangesToPush) &&
         isDefined(this.file.fileId)
       ) {
         this.setupDiffEditorSyncScroll();
@@ -527,7 +527,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
         isThrottle: false
       });
 
-      if (this.panel !== PanelEnum.Tree) {
+      if (this.builderLeft !== BuilderLeftEnum.Tree) {
         this.highLightService.updateDocText({
           placeName: PlaceNameEnum.Original,
           docText: x.originalContent,
@@ -856,7 +856,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   removeMarkers() {
-    if (this.panel !== PanelEnum.Tree) {
+    if (this.builderLeft !== BuilderLeftEnum.Tree) {
       return;
     }
 
@@ -865,7 +865,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   refreshMarkers() {
-    if (this.panel !== PanelEnum.Tree) {
+    if (this.builderLeft !== BuilderLeftEnum.Tree) {
       return;
     }
 
@@ -970,7 +970,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
   onOriginalTextChanged() {
     // console.log('fileEditor - onOriginalTextChanged');
 
-    if (this.panel !== PanelEnum.Tree) {
+    if (this.builderLeft !== BuilderLeftEnum.Tree) {
       this.highLightService.updateDocText({
         placeName: PlaceNameEnum.Original,
         docText: this.originalContent,
@@ -1049,7 +1049,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     });
 
     let editorV =
-      this.panel === PanelEnum.Tree
+      this.builderLeft === BuilderLeftEnum.Tree
         ? this.codeEditorRef.view
         : this.diffEditorRef.mergeView.b;
 
@@ -1113,12 +1113,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
             this.uiQuery.updatePart({
               needSave: false,
-              panel: PanelEnum.Tree
+              builderLeft: BuilderLeftEnum.Tree
             });
 
             this.uiService.ensureFilesLeftPanel();
             this.navigateService.navigateToFileLine({
-              panel: PanelEnum.Tree,
+              builderLeft: BuilderLeftEnum.Tree,
               encodedFileId: this.file.fileId
             });
 

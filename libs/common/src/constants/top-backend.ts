@@ -75,7 +75,7 @@ export const DEFAULT_SRV_UI: Ui = {
     tsLastValue: 5,
     type: FractionTypeEnum.TsIsInLast
   },
-  projectFileLinks: [],
+  projectSessionLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],

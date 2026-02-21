@@ -1,12 +1,12 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-export class ProjectFileLink {
+export class ProjectSessionLink {
   @IsString()
   projectId: string;
 
   @IsOptional()
   @IsString()
-  fileId: string;
+  sessionId: string;
 
   @IsOptional()
   @IsInt()

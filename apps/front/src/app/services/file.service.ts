@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
@@ -55,8 +56,12 @@ export class FileService {
     this.nav$.subscribe();
   }
 
-  getFile(item: { fileId: string; panel: PanelEnum; skipCheck?: boolean }) {
-    let { fileId, panel, skipCheck } = item;
+  getFile(item: {
+    fileId: string;
+    builderLeft: BuilderLeftEnum;
+    skipCheck?: boolean;
+  }) {
+    let { fileId, builderLeft, skipCheck } = item;
 
     if (skipCheck !== true) {
       let repo = this.repoQuery.getValue();
@@ -84,7 +89,12 @@ export class FileService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fileNodeId: fileNodeId,
-      panel: panel || PanelEnum.Tree
+      builderCenter:
+        builderLeft === BuilderLeftEnum.ChangesToCommit
+          ? BuilderCenterEnum.FileChangeToCommit
+          : builderLeft === BuilderLeftEnum.ChangesToPush
+            ? BuilderCenterEnum.FileChangeToPush
+            : BuilderCenterEnum.File
     };
 
     return this.apiService

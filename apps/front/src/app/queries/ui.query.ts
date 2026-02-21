@@ -6,15 +6,15 @@ import {
   DEFAULT_METRICS_TIME_COLUMNS_NARROW_WIDTH,
   DEFAULT_METRICS_TIME_COLUMNS_WIDE_WIDTH
 } from '#common/constants/top-front';
-import { FilesRightPanelTabEnum } from '#common/enums/files-right-panel-tab.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link';
 import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
-import { ProjectFileLink } from '#common/interfaces/backend/project-file-link';
 import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
 import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
+import { ProjectSessionLink } from '#common/interfaces/backend/project-session-link';
 import { Column } from '#common/interfaces/blockml/column';
 import { Fraction } from '#common/interfaces/blockml/fraction';
 import { ChartPointsData } from '#common/interfaces/front/chart-points-data';
@@ -39,13 +39,13 @@ export class UiState {
   showSchema: boolean;
   searchSchemaWord: string;
   searchMetricsWord: string;
-  panel: PanelEnum;
+  builderLeft: BuilderLeftEnum;
+  builderRight: BuilderRightEnum;
   needSave: boolean;
   showTileParameters: boolean;
   showDashboardsLeftPanel: boolean;
   showFilesLeftPanel: boolean;
   showFilesRightPanel: boolean;
-  filesRightPanelTab: FilesRightPanelTabEnum;
   showMetricsChart: boolean;
   showMiniCharts: boolean;
   isAutoRun: boolean;
@@ -65,7 +65,7 @@ export class UiState {
   timezone: string;
   timeSpec: TimeSpecEnum;
   timeRangeFraction: Fraction;
-  projectFileLinks: ProjectFileLink[];
+  projectSessionLinks: ProjectSessionLink[];
   projectModelLinks: ProjectModelLink[];
   projectChartLinks: ProjectChartLink[];
   projectDashboardLinks: ProjectDashboardLink[];
@@ -94,13 +94,13 @@ let uiState: UiState = {
   showSchema: false,
   searchSchemaWord: undefined,
   searchMetricsWord: undefined,
-  panel: PanelEnum.Tree,
+  builderLeft: BuilderLeftEnum.Tree,
+  builderRight: BuilderRightEnum.Sessions,
   needSave: false,
   showTileParameters: false,
   showDashboardsLeftPanel: true,
   showFilesLeftPanel: false,
   showFilesRightPanel: false,
-  filesRightPanelTab: FilesRightPanelTabEnum.Sessions,
   showMetricsChart: true,
   showMiniCharts: true,
   isAutoRun: true,
@@ -120,7 +120,7 @@ let uiState: UiState = {
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
-  projectFileLinks: [],
+  projectSessionLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
@@ -140,7 +140,9 @@ export class UiQuery extends BaseQuery<UiState> {
     select(state => state.metricsTimeColumnsWideWidth)
   );
 
-  panel$ = this.store.pipe(select(state => state.panel));
+  builderLeft$ = this.store.pipe(select(state => state.builderLeft));
+
+  builderRight$ = this.store.pipe(select(state => state.builderRight));
 
   showTileParameters$ = this.store.pipe(
     select(state => state.showTileParameters)
@@ -158,10 +160,6 @@ export class UiQuery extends BaseQuery<UiState> {
     select(state => state.showFilesRightPanel)
   );
 
-  filesRightPanelTab$ = this.store.pipe(
-    select(state => state.filesRightPanelTab)
-  );
-
   showMiniCharts$ = this.store.pipe(select(state => state.showMiniCharts));
 
   showHours$ = this.store.pipe(select(state => state.showHours));
@@ -170,7 +168,9 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showSchema$ = this.store.pipe(select(state => state.showSchema));
 
-  projectFileLinks$ = this.store.pipe(select(state => state.projectFileLinks));
+  projectSessionLinks$ = this.store.pipe(
+    select(state => state.projectSessionLinks)
+  );
 
   projectModelLinks$ = this.store.pipe(
     select(state => state.projectModelLinks)

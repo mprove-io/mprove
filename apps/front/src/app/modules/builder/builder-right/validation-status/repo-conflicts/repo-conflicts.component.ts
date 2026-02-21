@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { tap } from 'rxjs/operators';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { DiskFileLine } from '#common/interfaces/disk/disk-file-line';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { NavigateService } from '#front/app/services/navigate.service';
@@ -30,7 +30,7 @@ export class RepoConflictsComponent {
   goToFileLine(conflict: DiskFileLine) {
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: conflict.fileId,
       lineNumber: conflict.lineNumber
     });

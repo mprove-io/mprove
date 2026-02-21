@@ -9,14 +9,20 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { filter, take, tap } from 'rxjs/operators';
 import {
   PATH_BRANCH,
+  PATH_BUILDER,
   PATH_ENV,
+  PATH_FILE,
+  PATH_NEW_SESSION,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
   PATH_REPORTS,
+  PATH_SELECT_FILE,
+  PATH_SESSION,
   PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -331,30 +337,60 @@ export class BranchSelectComponent {
 
     let envId = repoId === PROD_REPO_ID ? PROJECT_ENV_PROD : this.nav.envId;
 
-    let urlParts = this.router.url.split('/');
-
-    let navArray = checkNavMain({
-      urlParts: urlParts,
-      navArray: [
-        PATH_ORG,
-        this.selectedOrgId,
-        PATH_PROJECT,
-        this.selectedProjectId,
-        PATH_REPO,
-        repoId,
-        PATH_BRANCH,
-        newSelectedBranchItem.branchId,
-        PATH_ENV,
-        envId
-      ]
-    });
+    let urlParts = this.router.url.split('?')[0].split('/');
 
     if (urlParts[11] === PATH_REPORTS) {
       let uiState = this.uiQuery.getValue();
       uiState.gridApi?.deselectAll();
     }
 
-    this.router.navigate(navArray);
+    let baseNavArray = [
+      PATH_ORG,
+      this.selectedOrgId,
+      PATH_PROJECT,
+      this.selectedProjectId,
+      PATH_REPO,
+      repoId,
+      PATH_BRANCH,
+      newSelectedBranchItem.branchId,
+      PATH_ENV,
+      envId
+    ];
+
+    if (urlParts[11] === PATH_BUILDER) {
+      let uiState = this.uiQuery.getValue();
+
+      let isChangeView =
+        uiState.builderLeft === BuilderLeftEnum.ChangesToCommit ||
+        uiState.builderLeft === BuilderLeftEnum.ChangesToPush;
+
+      let navArray = [...baseNavArray, PATH_BUILDER];
+      let queryParams: Record<string, any> = {
+        left: uiState.builderLeft,
+        right: uiState.builderRight
+      };
+
+      if (isChangeView) {
+        navArray.push(PATH_SELECT_FILE);
+      } else if (urlParts[12] === PATH_FILE && isDefined(urlParts[13])) {
+        navArray.push(PATH_FILE);
+        navArray.push(urlParts[13]);
+      } else if (urlParts[12] === PATH_SESSION && isDefined(urlParts[13])) {
+        navArray.push(PATH_SESSION);
+        navArray.push(urlParts[13]);
+      } else {
+        navArray.push(urlParts[12] || PATH_NEW_SESSION);
+      }
+
+      this.router.navigate(navArray, { queryParams });
+    } else {
+      let navArray = checkNavMain({
+        urlParts: urlParts,
+        navArray: baseNavArray
+      });
+
+      this.router.navigate(navArray);
+    }
   }
 
   makeBranchItem(item: {

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { ReportX } from '#common/interfaces/backend/report-x';
 import { NavQuery } from '#front/app/queries/nav.query';
@@ -48,7 +48,7 @@ export class ReportOptionsComponent {
 
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: 0
     });

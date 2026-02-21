@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { tap } from 'rxjs/operators';
 import { MODELS_LIST_PAGE_TITLE } from '#common/constants/page-titles';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { ModelX } from '#common/interfaces/backend/model-x';
@@ -166,7 +166,7 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

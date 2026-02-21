@@ -4,7 +4,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -68,8 +68,10 @@ export class RepoOptionsComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  panel = PanelEnum.Tree;
-  panel$ = this.uiQuery.panel$.pipe(tap(x => (this.panel = x)));
+  builderLeft = BuilderLeftEnum.Tree;
+  builderLeft$ = this.uiQuery.builderLeft$.pipe(
+    tap(x => (this.builderLeft = x))
+  );
 
   repo: RepoState;
   repo$ = this.repoQuery.select().pipe(
@@ -128,7 +130,7 @@ export class RepoOptionsComponent {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),
@@ -176,7 +178,7 @@ export class RepoOptionsComponent {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),
@@ -225,7 +227,7 @@ export class RepoOptionsComponent {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),
@@ -273,7 +275,7 @@ export class RepoOptionsComponent {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),
@@ -321,7 +323,7 @@ export class RepoOptionsComponent {
           x === true && isDefined(this.file.fileId)
             ? this.fileService.getFile({
                 fileId: this.file.fileId,
-                panel: this.panel
+                builderLeft: this.builderLeft
               })
             : of([])
         ),

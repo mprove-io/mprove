@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
@@ -180,7 +180,7 @@ export class NewFileDialogComponent implements OnInit {
 
               this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
-                panel: PanelEnum.Tree,
+                builderLeft: BuilderLeftEnum.Tree,
                 encodedFileId: fileId
               });
             }

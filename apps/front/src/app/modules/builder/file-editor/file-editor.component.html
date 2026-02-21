@@ -110,7 +110,7 @@
   <div class="flex h-2 w-full flex-grow flex-row pl-6 pr-6">
     <div
       *ngIf="
-        panel === panelTree &&
+        builderLeft === builderLeftTree &&
         isEditorOptionsInitComplete === true &&
         content != null &&
         !!file?.fileNodeId
@@ -139,7 +139,7 @@
       class="flex w-2 flex-1"
       *ngIf="
         showDiff === true &&
-        panel !== panelTree &&
+        builderLeft !== builderLeftTree &&
         isEditorOptionsInitComplete === true &&
         !!originalExtensions &&
         !!modifiedExtensions
@@ -162,7 +162,7 @@
 </div>
 
 <div *ngIf="isHighlighterReady$ | async"></div>
-<div *ngIf="panel$ | async"></div>
+<div *ngIf="builderLeft$ | async"></div>
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="nav$ | async"></div>
 <div *ngIf="file$ | async"></div>

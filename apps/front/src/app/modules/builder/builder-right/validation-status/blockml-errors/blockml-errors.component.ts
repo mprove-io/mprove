@@ -11,8 +11,8 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
@@ -286,7 +286,7 @@ export class BlockmlErrorsComponent implements OnDestroy {
 
       this.uiService.ensureFilesLeftPanel();
       this.navigateService.navigateToFileLine({
-        panel: PanelEnum.Tree,
+        builderLeft: BuilderLeftEnum.Tree,
         encodedFileId: fileId,
         lineNumber: line.lineNumber
       });

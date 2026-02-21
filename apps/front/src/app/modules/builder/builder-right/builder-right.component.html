@@ -1,10 +1,10 @@
 <m-sessions
-  *ngIf="filesRightPanelTab === filesRightPanelTabSessions && !secondFileNodeId"
+  *ngIf="builderRight === builderRightSessions && !secondFileNodeId"
   class="flex w-full"
 ></m-sessions>
 
 <div
-  *ngIf="filesRightPanelTab === filesRightPanelTabErrors || !!secondFileNodeId"
+  *ngIf="builderRight === builderRightValidation || !!secondFileNodeId"
   class="bg-m0 w-full min-w-[2px] select-none rounded shadow"
 >
   <m-validation-status
@@ -158,4 +158,4 @@
 <div *ngIf="isExplorer$ | async"></div>
 <div *ngIf="secondFileNodeId$ | async"></div>
 <div *ngIf="fileNodeId$ | async"></div>
-<div *ngIf="filesRightPanelTab$ | async"></div>
+<div *ngIf="builderRight$ | async"></div>

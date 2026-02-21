@@ -6,9 +6,9 @@ import { IsTimezone } from '#common/functions/is-timezone';
 import { Fraction } from '../blockml/fraction';
 import { ProjectChartLink } from './project-chart-link';
 import { ProjectDashboardLink } from './project-dashboard-link';
-import { ProjectFileLink } from './project-file-link';
 import { ProjectModelLink } from './project-model-link';
 import { ProjectReportLink } from './project-report-link';
+import { ProjectSessionLink } from './project-session-link';
 
 export class Ui {
   showFilesLeftPanel: boolean;
@@ -29,8 +29,8 @@ export class Ui {
   timeRangeFraction: Fraction;
 
   @ValidateNested()
-  @Type(() => ProjectFileLink)
-  projectFileLinks: ProjectFileLink[];
+  @Type(() => ProjectSessionLink)
+  projectSessionLinks: ProjectSessionLink[];
 
   @ValidateNested()
   @Type(() => ProjectModelLink)

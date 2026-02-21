@@ -10,13 +10,12 @@ import { combineLatest, EMPTY, Observable, TimeoutError, timer } from 'rxjs';
 import { catchError, finalize, map, take } from 'rxjs/operators';
 import {
   LAST_SELECTED_CHART_ID,
-  LAST_SELECTED_FILE_ID,
   LAST_SELECTED_MODEL_ID,
   PATH_BRANCH,
   PATH_BUILDER,
   PATH_ENV,
-  PATH_FILE,
   PATH_INFO,
+  PATH_NEW_SESSION,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
@@ -28,8 +27,8 @@ import {
   MIN_TIME_TO_SPIN,
   SPECIAL_ERROR
 } from '#common/constants/top-front';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -221,8 +220,7 @@ export class ApiService {
               PATH_ENV,
               nav.envId,
               PATH_BUILDER,
-              PATH_FILE,
-              LAST_SELECTED_FILE_ID
+              PATH_NEW_SESSION
             ];
 
             this.router
@@ -230,7 +228,7 @@ export class ApiService {
               .then(() => {
                 this.router.navigate(arNext, {
                   queryParams: {
-                    panel: PanelEnum.Tree
+                    left: BuilderLeftEnum.Tree
                   }
                 });
               });
@@ -397,7 +395,9 @@ export class ApiService {
           this.router
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
-              this.navigateService.navigateToBuilder(nav.branchId);
+              this.navigateService.navigateToBuilder({
+                branchId: nav.branchId
+              });
             });
         }).bind(this);
 
@@ -433,11 +433,13 @@ export class ApiService {
                   this.uiQuery.updatePart({ showFilesLeftPanel: true });
                 }
                 this.navigateService.navigateToFileLine({
-                  panel: PanelEnum.Tree,
+                  builderLeft: BuilderLeftEnum.Tree,
                   encodedFileId: encodedFileId
                 });
               } else {
-                this.navigateService.navigateToBuilder(nav.branchId);
+                this.navigateService.navigateToBuilder({
+                  branchId: nav.branchId
+                });
               }
             });
         }).bind(this);

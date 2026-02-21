@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { MetricNode } from '#front/app/modules/reports/metrics-tree/metrics-tree.component';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -47,7 +47,7 @@ export class FieldOptionsComponent {
 
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber:
         this.isMetric === true

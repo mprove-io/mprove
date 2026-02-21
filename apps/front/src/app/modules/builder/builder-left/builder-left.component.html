@@ -1,5 +1,5 @@
 <div
-  *ngIf="panel === panelTree"
+  *ngIf="builderLeft === builderLeftTree"
   class="bg-m0 flex w-full flex-grow rounded shadow"
 >
   <div class="text-s1 mt-6 flex w-full flex-col text-base">
@@ -94,7 +94,7 @@
 
       <div
         class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
-        *ngIf="panel === panelTree"
+        *ngIf="builderLeft === builderLeftTree"
       >
         <ng-scrollbar
           [orientation]="'vertical'"
@@ -294,7 +294,7 @@
 </div>
 
 <div
-  *ngIf="panel !== panelTree"
+  *ngIf="builderLeft !== builderLeftTree"
   class="bg-m0 flex h-full w-full flex-grow rounded shadow"
 >
   <div class="flex h-full w-full flex-col">
@@ -308,7 +308,7 @@
           <div
             class="mt-4 h-full w-full"
             *ngIf="
-              panel === panelChangesToCommit &&
+              builderLeft === builderLeftChangesToCommit &&
               repo?.changesToCommit?.length > 0
             "
           >
@@ -366,7 +366,8 @@
           <div
             class="mt-4 h-full w-full"
             *ngIf="
-              panel === panelChangesToPush && repo?.changesToPush?.length > 0
+              builderLeft === builderLeftChangesToPush &&
+              repo?.changesToPush?.length > 0
             "
           >
             <div
@@ -417,7 +418,7 @@
 
         <div
           *ngIf="
-            panel === panelChangesToCommit &&
+            builderLeft === builderLeftChangesToCommit &&
             repo?.changesToCommit?.length === 0
           "
           class="flex h-full w-full flex-col items-center justify-center"
@@ -428,7 +429,7 @@
 
         <div
           *ngIf="
-            panel === panelChangesToPush &&
+            builderLeft === builderLeftChangesToPush &&
             repo?.changesToPush?.length === 0 &&
             repo.repoStatus !== repoStatusNeedPush
           "
@@ -440,7 +441,7 @@
 
         <div
           *ngIf="
-            panel === panelChangesToPush &&
+            builderLeft === builderLeftChangesToPush &&
             repo?.changesToPush?.length === 0 &&
             repo.repoStatus === repoStatusNeedPush
           "

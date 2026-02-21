@@ -15,6 +15,7 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { TRIPLE_UNDERSCORE } from '#common/constants/top';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FractionLogicEnum } from '#common/enums/fraction/fraction-logic.enum';
 import { FractionOperatorEnum } from '#common/enums/fraction/fraction-operator.enum';
@@ -23,7 +24,6 @@ import { ModelNodeIdSuffixEnum } from '#common/enums/model-node-id-suffix.enum';
 import { ModelNodeLabelEnum } from '#common/enums/model-node-label.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { getFractionTypeForAny } from '#common/functions/get-fraction-type-for-any';
 import { isDefined } from '#common/functions/is-defined';
@@ -712,7 +712,7 @@ export class ModelTreeComponent implements AfterViewInit {
 
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: fieldLineNumber
     });

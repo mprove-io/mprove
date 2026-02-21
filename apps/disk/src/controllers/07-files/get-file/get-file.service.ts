@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
 import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
@@ -45,7 +45,7 @@ export class GetFileService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, repoId, branch, fileNodeId, panel } =
+    let { orgId, baseProject, repoId, branch, fileNodeId, builderCenter } =
       requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
@@ -141,7 +141,7 @@ export class GetFileService {
     let isFileExist = await isPathExist(filePath);
     if (isFileExist === false) {
       isExist = false;
-      if (panel === PanelEnum.Tree) {
+      if (builderCenter === BuilderCenterEnum.File) {
         throw new ServerError({
           message: ErEnum.DISK_FILE_IS_NOT_EXIST
         });
@@ -157,12 +157,12 @@ export class GetFileService {
 
     let originalContent;
 
-    if (panel === PanelEnum.ChangesToCommit) {
+    if (builderCenter === BuilderCenterEnum.FileChangeToCommit) {
       originalContent = await getLastCommitFileContent({
         repoDir: repoDir,
         filePathRelative: filePathRelative
       });
-    } else if (panel === PanelEnum.ChangesToPush) {
+    } else if (builderCenter === BuilderCenterEnum.FileChangeToPush) {
       originalContent = await getBaseCommitFileContent({
         repoDir: repoDir,
         filePathRelative: filePathRelative

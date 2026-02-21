@@ -14,6 +14,7 @@ import {
   PATH_MODEL,
   PATH_MODELS,
   PATH_MODELS_LIST,
+  PATH_NEW_SESSION,
   PATH_ORG,
   PATH_PROFILE,
   PATH_PROJECT,
@@ -21,10 +22,11 @@ import {
   PATH_REPORT,
   PATH_REPORTS,
   PATH_REPORTS_LIST,
+  PATH_SELECT_FILE,
   PATH_SESSION,
   PROD_REPO_ID
 } from '#common/constants/top';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeQueryParams } from '../functions/make-query-params';
 import { ModelQuery, ModelState } from '../queries/model.query';
@@ -77,30 +79,57 @@ export class NavigateService {
     return this.router.navigate([PATH_PROFILE]);
   }
 
-  async navigateToBuilder(branchId?: string) {
+  async navigateToBuilder(item?: {
+    branchId?: string;
+    left?: BuilderLeftEnum;
+    right?: string;
+    selectFile?: boolean;
+  }) {
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
-    return this.router.navigate([
-      PATH_ORG,
-      this.nav.orgId,
-      PATH_PROJECT,
-      this.nav.projectId,
-      PATH_REPO,
-      repoId,
-      PATH_BRANCH,
-      isDefined(branchId) ? branchId : this.nav.branchId,
-      PATH_ENV,
-      this.nav.envId,
-      PATH_BUILDER
-    ]);
+    let uiState = this.uiQuery.getValue();
+
+    let left = item?.left || uiState.builderLeft;
+    let right = item?.right || uiState.builderRight;
+
+    let isChanges =
+      left === BuilderLeftEnum.ChangesToCommit ||
+      left === BuilderLeftEnum.ChangesToPush;
+    let centerPath =
+      isChanges || item?.selectFile === true
+        ? PATH_SELECT_FILE
+        : PATH_NEW_SESSION;
+
+    return this.router.navigate(
+      [
+        PATH_ORG,
+        this.nav.orgId,
+        PATH_PROJECT,
+        this.nav.projectId,
+        PATH_REPO,
+        repoId,
+        PATH_BRANCH,
+        isDefined(item?.branchId) ? item.branchId : this.nav.branchId,
+        PATH_ENV,
+        this.nav.envId,
+        PATH_BUILDER,
+        centerPath
+      ],
+      { queryParams: { left, right } }
+    );
   }
 
   async navigateToFileLine(item: {
-    panel?: PanelEnum;
+    builderLeft?: BuilderLeftEnum;
     encodedFileId: string;
     lineNumber?: number;
   }) {
-    let { panel, encodedFileId, lineNumber } = item;
+    let { builderLeft, encodedFileId, lineNumber } = item;
+
+    let uiState = this.uiQuery.getValue();
+
+    let left = builderLeft || uiState.builderLeft;
+    let right = uiState.builderRight;
 
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
@@ -120,11 +149,7 @@ export class NavigateService {
       encodedFileId
     ];
 
-    let queryParams: { panel?: PanelEnum; line?: number } = {};
-
-    if (isDefined(panel)) {
-      queryParams.panel = panel;
-    }
+    let queryParams: Record<string, any> = { left, right };
 
     if (isDefined(lineNumber)) {
       queryParams.line = lineNumber;
@@ -369,26 +394,38 @@ export class NavigateService {
     return this.router.navigate(navTo);
   }
 
-  async navigateToSession(item: { sessionId: string }) {
+  async navigateToSession(item: {
+    sessionId: string;
+    left?: BuilderLeftEnum;
+    right?: string;
+  }) {
     let { sessionId } = item;
+
+    let uiState = this.uiQuery.getValue();
+
+    let left = item.left || uiState.builderLeft;
+    let right = item.right || uiState.builderRight;
 
     let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
 
-    return this.router.navigate([
-      PATH_ORG,
-      this.nav.orgId,
-      PATH_PROJECT,
-      this.nav.projectId,
-      PATH_REPO,
-      repoId,
-      PATH_BRANCH,
-      this.nav.branchId,
-      PATH_ENV,
-      this.nav.envId,
-      PATH_BUILDER,
-      PATH_SESSION,
-      sessionId
-    ]);
+    return this.router.navigate(
+      [
+        PATH_ORG,
+        this.nav.orgId,
+        PATH_PROJECT,
+        this.nav.projectId,
+        PATH_REPO,
+        repoId,
+        PATH_BRANCH,
+        this.nav.branchId,
+        PATH_ENV,
+        this.nav.envId,
+        PATH_BUILDER,
+        PATH_SESSION,
+        sessionId
+      ],
+      { queryParams: { left, right } }
+    );
   }
 
   async navigateToReport(item: { reportId: string; skipDeselect?: boolean }) {

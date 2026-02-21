@@ -11,8 +11,8 @@ import {
   PATH_MODELS,
   PATH_REPORTS
 } from '#common/constants/top';
-import { PanelEnum } from '#common/enums/panel.enum';
-import { getFileIds } from '#common/functions/get-file-ids';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { Member } from '#common/interfaces/backend/member';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -22,7 +22,6 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -86,8 +85,7 @@ export class NavbarComponent implements OnInit {
     private uiQuery: UiQuery,
     private userQuery: UserQuery,
     private memberQuery: MemberQuery,
-    private cd: ChangeDetectorRef,
-    private uiService: UiService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -115,27 +113,23 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    let repo = this.repoQuery.getValue();
-    let fileIds = getFileIds({ nodes: repo.nodes });
-    let projectFileLinks = this.uiQuery.getValue().projectFileLinks;
+    let projectSessionLinks = this.uiQuery.getValue().projectSessionLinks;
 
-    let pLink = projectFileLinks.find(
+    let pLink = projectSessionLinks.find(
       link => link.projectId === this.nav.projectId
     );
 
-    if (isDefined(pLink)) {
-      let pFileId = fileIds.find(fileId => fileId === pLink.fileId);
-
-      if (isDefined(pFileId)) {
-        this.uiService.ensureFilesLeftPanel();
-        this.navigateService.navigateToFileLine({
-          panel: PanelEnum.Tree,
-          encodedFileId: pFileId
-        });
-        return;
-      }
+    if (isDefined(pLink?.sessionId)) {
+      this.navigateService.navigateToSession({
+        sessionId: pLink.sessionId,
+        left: BuilderLeftEnum.Tree,
+        right: BuilderRightEnum.Sessions
+      });
     } else {
-      this.navigateService.navigateToBuilder();
+      this.navigateService.navigateToBuilder({
+        left: BuilderLeftEnum.Tree,
+        right: BuilderRightEnum.Sessions
+      });
     }
   }
 

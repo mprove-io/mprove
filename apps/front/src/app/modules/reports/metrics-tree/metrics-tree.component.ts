@@ -12,11 +12,11 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ChangeTypeEnum } from '#common/enums/change-type.enum';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
 import { isDefined } from '#common/functions/is-defined';
@@ -254,7 +254,7 @@ export class MetricsTreeComponent implements AfterViewInit {
 
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),
       lineNumber: fieldLineNumber
     });

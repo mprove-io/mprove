@@ -18,7 +18,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -36,7 +36,7 @@ export interface CommitDialogDialogData {
   projectId: string;
   isRepoProd: boolean;
   branchId: string;
-  panel: PanelEnum;
+  builderLeft: BuilderLeftEnum;
   fileId: string;
 }
 
@@ -116,7 +116,7 @@ export class CommitDialogComponent implements OnInit {
           x === true && isDefined(this.ref.data.fileId)
             ? this.fileService.getFile({
                 fileId: this.ref.data.fileId,
-                panel: this.ref.data.panel
+                builderLeft: this.ref.data.builderLeft
               })
             : of([])
         ),

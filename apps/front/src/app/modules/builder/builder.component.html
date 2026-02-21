@@ -15,7 +15,7 @@
               class="flex cursor-pointer flex-row items-center"
               tp="Need to Save changes"
               [tpIsEnabled]="needSave === true"
-              (click)="setPanel(panelTree)"
+              (click)="setBuilderLeft(builderLeftTree)"
             >
               <!-- <m-document-icon></m-document-icon> -->
 
@@ -23,8 +23,9 @@
                 class="flex w-[54px] items-center justify-center text-lg focus:outline-none"
                 [ngClass]="{
                   'text-m500 font-semibold':
-                    panel === panelTree && showFilesLeftPanel,
-                  'text-s500': panel !== panelTree || !showFilesLeftPanel
+                    builderLeft === builderLeftTree && showFilesLeftPanel,
+                  'text-s500':
+                    builderLeft !== builderLeftTree || !showFilesLeftPanel
                 }"
                 [disabled]="needSave === true"
                 >Files</button
@@ -38,16 +39,18 @@
             >
               <button
                 class="flex flex-shrink-0 cursor-pointer flex-row items-center focus:outline-none"
-                (click)="setPanel(panelChangesToCommit)"
+                (click)="setBuilderLeft(builderLeftChangesToCommit)"
                 [disabled]="needSave === true"
               >
                 <div
                   class="flex w-[85px] flex-shrink-0 justify-end text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
-                      panel === panelChangesToCommit && showFilesLeftPanel,
+                      builderLeft === builderLeftChangesToCommit &&
+                      showFilesLeftPanel,
                     'text-s500':
-                      panel !== panelChangesToCommit || !showFilesLeftPanel
+                      builderLeft !== builderLeftChangesToCommit ||
+                      !showFilesLeftPanel
                   }"
                   >Changes</div
                 >
@@ -56,12 +59,15 @@
                   class="text-m0 ml-4 flex h-7 min-w-7 flex-shrink-0 items-center justify-center rounded px-2 py-[1px]"
                   [ngClass]="{
                     'bg-m500':
-                      panel === panelChangesToCommit && showFilesLeftPanel,
+                      builderLeft === builderLeftChangesToCommit &&
+                      showFilesLeftPanel,
                     'bg-m600':
-                      (panel !== panelChangesToCommit || !showFilesLeftPanel) &&
+                      (builderLeft !== builderLeftChangesToCommit ||
+                        !showFilesLeftPanel) &&
                       repo?.changesToCommit?.length > 0,
                     'bg-s400':
-                      (panel !== panelChangesToCommit || !showFilesLeftPanel) &&
+                      (builderLeft !== builderLeftChangesToCommit ||
+                        !showFilesLeftPanel) &&
                       !(repo?.changesToCommit?.length > 0)
                   }"
                   >{{ repo?.changesToCommit?.length }}</div
@@ -104,15 +110,17 @@
                 [disabled]="
                   needSave === true || repo?.changesToCommit?.length > 0
                 "
-                (click)="setPanel(panelChangesToPush)"
+                (click)="setBuilderLeft(builderLeftChangesToPush)"
               >
                 <div
                   class="flex w-[80px] flex-shrink-0 justify-end text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
-                      panel === panelChangesToPush && showFilesLeftPanel,
+                      builderLeft === builderLeftChangesToPush &&
+                      showFilesLeftPanel,
                     'text-s500':
-                      panel !== panelChangesToPush || !showFilesLeftPanel
+                      builderLeft !== builderLeftChangesToPush ||
+                      !showFilesLeftPanel
                   }"
                   >To Push</div
                 >
@@ -124,12 +132,15 @@
                     class="text-m0 flex h-7 min-w-7 flex-shrink-0 items-center rounded px-2 py-[1px]"
                     [ngClass]="{
                       'bg-m500':
-                        panel === panelChangesToPush && showFilesLeftPanel,
+                        builderLeft === builderLeftChangesToPush &&
+                        showFilesLeftPanel,
                       'bg-m600':
-                        (panel !== panelChangesToPush || !showFilesLeftPanel) &&
+                        (builderLeft !== builderLeftChangesToPush ||
+                          !showFilesLeftPanel) &&
                         repo?.changesToPush?.length > 0,
                       'bg-s400':
-                        (panel !== panelChangesToPush || !showFilesLeftPanel) &&
+                        (builderLeft !== builderLeftChangesToPush ||
+                          !showFilesLeftPanel) &&
                         !(repo?.changesToPush?.length > 0)
                     }"
                     *ngIf="
@@ -157,17 +168,6 @@
               showFilesLeftPanel === true && showFilesRightPanel === true
             "
           ></m-both-panels-icon> -->
-
-          <button
-            class="ml-12 flex w-[130px] flex-shrink-0 select-none items-center justify-center text-lg focus:outline-none"
-            [ngClass]="{
-              'text-m500 font-semibold':
-                lastUrl === pathBuilder || !file?.fileId,
-              'text-s500': lastUrl !== pathBuilder && !!file?.fileId
-            }"
-            (click)="showSession()"
-            >Chat Session</button
-          >
 
           <div
             *ngIf="sessionId"
@@ -404,13 +404,13 @@
               class="flex w-[100px] select-none flex-row items-center justify-end text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':
-                  filesRightPanelTab === filesRightPanelTabErrors &&
+                  builderRight === builderRightValidation &&
                   isRightPanelVisible,
                 'text-s500':
-                  filesRightPanelTab !== filesRightPanelTabErrors ||
+                  builderRight !== builderRightValidation ||
                   !isRightPanelVisible
               }"
-              (click)="setRightPanelTab(filesRightPanelTabErrors)"
+              (click)="setBuilderRight(builderRightValidation)"
               >Validation</button
             >
 
@@ -418,14 +418,14 @@
               class="text-m0 ml-4 flex h-7 min-w-7 flex-shrink-0 select-none items-center justify-center rounded px-2 py-[1px]"
               [ngClass]="{
                 'bg-m500':
-                  filesRightPanelTab === filesRightPanelTabErrors &&
+                  builderRight === builderRightValidation &&
                   isRightPanelVisible,
                 'bg-r1':
-                  (filesRightPanelTab !== filesRightPanelTabErrors ||
+                  (builderRight !== builderRightValidation ||
                     !isRightPanelVisible) &&
                   struct?.errors?.length > 0,
                 'bg-s400':
-                  (filesRightPanelTab !== filesRightPanelTabErrors ||
+                  (builderRight !== builderRightValidation ||
                     !isRightPanelVisible) &&
                   !(struct?.errors?.length > 0)
               }"
@@ -436,13 +436,11 @@
               class="ml-7 flex w-[90px] select-none items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':
-                  filesRightPanelTab === filesRightPanelTabSessions &&
-                  isRightPanelVisible,
+                  builderRight === builderRightSessions && isRightPanelVisible,
                 'text-s500':
-                  filesRightPanelTab !== filesRightPanelTabSessions ||
-                  !isRightPanelVisible
+                  builderRight !== builderRightSessions || !isRightPanelVisible
               }"
-              (click)="setRightPanelTab(filesRightPanelTabSessions)"
+              (click)="setBuilderRight(builderRightSessions)"
               >Sessions</button
             >
           </div>
@@ -459,7 +457,7 @@
         <div class="flex w-1/4 flex-shrink-0">
           <m-builder-left
             *ngIf="showFilesLeftPanel === true"
-            [panel]="panel"
+            [builderLeft]="builderLeft"
             [isEditor]="isEditor"
             (newFileClick)="newFile()"
             class="flex w-full"
@@ -468,22 +466,8 @@
 
         <div class="ml-6 flex flex-1 flex-col">
           <div class="bg-m0 flex h-full flex-grow rounded shadow">
-            <div
-              class="h-full w-full"
-              *ngIf="
-                (lastUrl !== pathBuilder && !!file?.fileId) || isSessionRoute
-              "
-            >
+            <div class="h-full w-full">
               <router-outlet></router-outlet>
-            </div>
-
-            <div
-              class="h-full w-full"
-              *ngIf="
-                !isSessionRoute && (lastUrl === pathBuilder || !file?.fileId)
-              "
-            >
-              <m-new-session></m-new-session>
             </div>
           </div>
         </div>
@@ -495,7 +479,7 @@
             'flex-1': !!secondFileNodeId
           }"
           *ngIf="
-            panel === panelTree || lastUrl === pathBuilder || !file?.fileId
+            builderLeft === builderLeftTree || isBaseRoute || !file?.fileId
           "
         >
           <m-builder-right
@@ -514,10 +498,10 @@
 <div *ngIf="file$ | async"></div>
 <div *ngIf="repo$ | async"></div>
 <div *ngIf="struct$ | async"></div>
-<div *ngIf="panel$ | async"></div>
+<div *ngIf="builderLeft$ | async"></div>
+<div *ngIf="builderRight$ | async"></div>
 <div *ngIf="showFilesLeftPanel$ | async"></div>
 <div *ngIf="showFilesRightPanel$ | async"></div>
-<div *ngIf="filesRightPanelTab$ | async"></div>
 <div *ngIf="debugMode$ | async"></div>
 <div *ngIf="sessionId$ | async"></div>
 <div *ngIf="needSave$ | async"></div>

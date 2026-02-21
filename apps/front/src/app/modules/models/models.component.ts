@@ -40,12 +40,12 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { REFRESH_LIST } from '#common/constants/top-front';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ChartTypeEnum } from '#common/enums/chart/chart-type.enum';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { QueryPartEnum } from '#common/enums/query-part.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
@@ -964,7 +964,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })
     });
   }

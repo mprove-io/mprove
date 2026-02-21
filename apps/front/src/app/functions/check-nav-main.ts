@@ -1,7 +1,6 @@
 import {
   LAST_SELECTED_CHART_ID,
   LAST_SELECTED_DASHBOARD_ID,
-  LAST_SELECTED_FILE_ID,
   LAST_SELECTED_MODEL_ID,
   LAST_SELECTED_REPORT_ID,
   PATH_BUILDER,
@@ -10,7 +9,6 @@ import {
   PATH_DASHBOARD,
   PATH_DASHBOARDS,
   PATH_DASHBOARDS_LIST,
-  PATH_FILE,
   PATH_MODEL,
   PATH_MODELS,
   PATH_MODELS_LIST,
@@ -24,11 +22,7 @@ export function checkNavMain(item: { navArray: string[]; urlParts: string[] }) {
 
   let nextNavAr = [...navArray];
 
-  if (urlParts[11] === PATH_BUILDER) {
-    nextNavAr.push(PATH_BUILDER);
-    nextNavAr.push(PATH_FILE);
-    nextNavAr.push(LAST_SELECTED_FILE_ID);
-  } else if (urlParts[11] === PATH_MODELS) {
+  if (urlParts[11] === PATH_MODELS) {
     nextNavAr.push(PATH_MODELS);
     if (urlParts[12] === PATH_CHARTS_LIST) {
       nextNavAr.push(PATH_CHARTS_LIST);

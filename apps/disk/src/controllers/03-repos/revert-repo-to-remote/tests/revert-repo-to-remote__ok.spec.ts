@@ -1,7 +1,7 @@
 import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
+import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -175,7 +175,7 @@ test('1', async t => {
         repoId: 'r1',
         branch: BRANCH_MAIN,
         fileNodeId: `${projectId}/readme.md`,
-        panel: PanelEnum.Tree
+        builderCenter: BuilderCenterEnum.File
       }
     };
 

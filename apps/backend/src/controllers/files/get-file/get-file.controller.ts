@@ -46,7 +46,7 @@ export class GetFileController {
   async getFile(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetFileRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, fileNodeId, panel } =
+    let { projectId, isRepoProd, branchId, envId, fileNodeId, builderCenter } =
       reqValid.payload;
 
     let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
@@ -75,7 +75,7 @@ export class GetFileController {
         repoId: repoId,
         branch: branchId,
         fileNodeId: fileNodeId,
-        panel: panel
+        builderCenter: builderCenter
       }
     };
 

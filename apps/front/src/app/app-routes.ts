@@ -34,6 +34,7 @@ import {
   PATH_MODELS,
   PATH_MODELS_LIST,
   PATH_NEW_PASSWORD_WAS_SET,
+  PATH_NEW_SESSION,
   PATH_ORG,
   PATH_ORG_DELETED,
   PATH_ORG_OWNER_CHANGED,
@@ -47,6 +48,7 @@ import {
   PATH_REPORT,
   PATH_REPORTS,
   PATH_REPORTS_LIST,
+  PATH_SELECT_FILE,
   PATH_SESSION,
   PATH_TEAM,
   PATH_UPDATE_PASSWORD,
@@ -68,6 +70,8 @@ import { UpdatePasswordComponent } from './modules/auth/password/03-update-passw
 import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-password-was-set/new-password-was-set.component';
 import { BuilderComponent } from './modules/builder/builder.component';
 import { FileEditorComponent } from './modules/builder/file-editor/file-editor.component';
+import { SelectFileComponent } from './modules/builder/select-file/select-file.component';
+import { NewSessionComponent } from './modules/builder/session/new-session/new-session.component';
 import { SessionComponent } from './modules/builder/session/session.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
@@ -263,6 +267,19 @@ export const appRoutes: Routes = [
                               AgentModelsResolver
                             ],
                             children: [
+                              {
+                                path: '',
+                                redirectTo: PATH_NEW_SESSION,
+                                pathMatch: 'full'
+                              },
+                              {
+                                component: SelectFileComponent,
+                                path: PATH_SELECT_FILE
+                              },
+                              {
+                                component: NewSessionComponent,
+                                path: PATH_NEW_SESSION
+                              },
                               {
                                 component: FileEditorComponent,
                                 canDeactivate: [DeactivateGuard],

@@ -21,8 +21,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID, MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
-import { PanelEnum } from '#common/enums/panel.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
@@ -332,7 +332,7 @@ export class CreateModelDialogComponent implements OnInit {
 
               this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
-                panel: PanelEnum.Tree,
+                builderLeft: BuilderLeftEnum.Tree,
                 encodedFileId: fileId
               });
             } else {

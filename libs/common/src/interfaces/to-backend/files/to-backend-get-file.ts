@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
 import { StructX } from '#common/interfaces/backend/struct-x';
 import { Repo } from '#common/interfaces/disk/repo';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -22,8 +22,8 @@ export class ToBackendGetFileRequestPayload {
   @IsString()
   fileNodeId: string;
 
-  @IsEnum(PanelEnum)
-  panel: PanelEnum;
+  @IsEnum(BuilderCenterEnum)
+  builderCenter: BuilderCenterEnum;
 }
 
 export class ToBackendGetFileRequest extends ToBackendRequest {

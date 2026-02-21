@@ -17,18 +17,17 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { Subscription } from 'rxjs';
 import { finalize, take, tap } from 'rxjs/operators';
 import {
-  LAST_SELECTED_FILE_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
   PATH_BRANCH,
   PATH_BUILDER,
   PATH_ENV,
-  PATH_FILE,
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
+  PATH_SELECT_FILE,
   PROD_REPO_ID
 } from '#common/constants/top';
-import { PanelEnum } from '#common/enums/panel.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -63,7 +62,7 @@ import { UiService } from '#front/app/services/ui.service';
 })
 export class BuilderLeftComponent implements OnDestroy {
   @Input()
-  panel: PanelEnum;
+  builderLeft: BuilderLeftEnum;
 
   @Input()
   isEditor: boolean;
@@ -71,9 +70,9 @@ export class BuilderLeftComponent implements OnDestroy {
   @Output()
   newFileClick = new EventEmitter<void>();
 
-  panelTree = PanelEnum.Tree;
-  panelChangesToCommit = PanelEnum.ChangesToCommit;
-  panelChangesToPush = PanelEnum.ChangesToPush;
+  builderLeftTree = BuilderLeftEnum.Tree;
+  builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
+  builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
 
   repoStatusNeedPush = RepoStatusEnum.NeedPush;
 
@@ -230,7 +229,7 @@ export class BuilderLeftComponent implements OnDestroy {
       .pipe(
         tap(x => {
           if (
-            this.panel === PanelEnum.Tree &&
+            this.builderLeft === BuilderLeftEnum.Tree &&
             isDefined(x.fileId) &&
             this.file.isExist === true
           ) {
@@ -269,14 +268,14 @@ export class BuilderLeftComponent implements OnDestroy {
 
   changeToCommitOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.ChangesToCommit,
+      builderLeft: BuilderLeftEnum.ChangesToCommit,
       encodedFileId: fileId
     });
   }
 
   changeToPushOnClick(fileId: string) {
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.ChangesToPush,
+      builderLeft: BuilderLeftEnum.ChangesToPush,
       encodedFileId: fileId
     });
   }
@@ -284,7 +283,7 @@ export class BuilderLeftComponent implements OnDestroy {
   fileItemOnClick(fileId: string) {
     this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
-      panel: PanelEnum.Tree,
+      builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: fileId
     });
   }
@@ -298,7 +297,7 @@ export class BuilderLeftComponent implements OnDestroy {
     } else {
       this.uiService.ensureFilesLeftPanel();
       this.navigateService.navigateToFileLine({
-        panel: PanelEnum.Tree,
+        builderLeft: BuilderLeftEnum.Tree,
         encodedFileId: node.data.fileId
       });
     }
@@ -375,7 +374,7 @@ export class BuilderLeftComponent implements OnDestroy {
             if (isDefined(newFileId)) {
               this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
-                panel: PanelEnum.Tree,
+                builderLeft: BuilderLeftEnum.Tree,
                 encodedFileId: newFileId
               });
             }
@@ -407,14 +406,14 @@ export class BuilderLeftComponent implements OnDestroy {
 
             let arStartStr = arStart.join('/');
 
-            let arNext = [...arStart, PATH_FILE, LAST_SELECTED_FILE_ID];
+            let arNext = [...arStart, PATH_SELECT_FILE];
 
             this.router
               .navigateByUrl(arStartStr, { skipLocationChange: true })
               .then(() => {
                 this.router.navigate(arNext, {
                   queryParams: {
-                    panel: PanelEnum.Tree
+                    left: BuilderLeftEnum.Tree
                   }
                 });
               });

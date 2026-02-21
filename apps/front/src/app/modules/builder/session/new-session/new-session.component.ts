@@ -14,6 +14,7 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -33,11 +34,14 @@ export class NewSessionComponent {
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
     private uiQuery: UiQuery,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private uiService: UiService
   ) {
     this.model = this.uiQuery.getValue().lastSelectedProviderModel || 'default';
     let savedVariant = this.uiQuery.getValue().lastSelectedVariant || 'default';
     this.variant = savedVariant;
+
+    this.uiService.clearProjectSessionLink();
   }
 
   getProviderFromModel(): string {
@@ -99,6 +103,7 @@ export class NewSessionComponent {
 
             // Navigate to session route
             this.navigateService.navigateToSession({ sessionId: sessionId });
+            this.uiService.setProjectSessionLink({ sessionId: sessionId });
           }
           this.isSubmitting = false;
           this.cd.detectChanges();
