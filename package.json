@@ -3,7 +3,7 @@
   "version": "11.0.100-dev",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
-  "packageManager": "pnpm@10.29.3",
+  "packageManager": "pnpm@10.30.1",
   "private": true,
   "sideEffects": [
     "apps/front/src/polyfills.ts"
@@ -133,7 +133,7 @@
     "clean:clickstack-ch": "pnpm clean:clickstack-ch-data && pnpm clean:clickstack-ch-logs",
     "clean": "pnpm clean:mcli && pnpm clean:nested && pnpm clean:top",
     "clean:mcli": "pnpm clean-bun:mcli && pnpm clean-dist:mcli && pnpm clean-node:mcli",
-    "clean-bun:mcli": "rimraf --glob \"mcli/bun.lock\" \"mcli/.bun/*\" \"mcli/.bun/.[!.]*\"",
+    "clean-bun:mcli": "rimraf --glob \"mcli/.bun/*\" \"mcli/.bun/.[!.]*\"",
     "clean-dist:mcli": "rimraf --glob \"mcli/dist/*\" \"mcli/dist/.[!.]*\"",
     "clean-node:mcli": "rimraf --glob \"mcli/node_modules/*\" \"mcli/node_modules/.[!.]*\"",
     "clean:nested": "pnpm clean-turbo && pnpm clean-dist && pnpm clean-node",
@@ -202,6 +202,7 @@
       "isolated-vm",
       "lmdb",
       "msgpackr-extract",
+      "opencode-ai",
       "protobufjs"
     ]
   },
