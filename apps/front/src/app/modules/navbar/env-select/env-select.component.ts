@@ -114,6 +114,7 @@ export class EnvSelectComponent {
           this.envsList = x;
           this.envsListLoading = false;
           this.envsListLength = x.length;
+          this.cd.detectChanges();
         }),
         take(1)
       )
