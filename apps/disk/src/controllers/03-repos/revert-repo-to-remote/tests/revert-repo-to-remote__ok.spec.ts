@@ -1,6 +1,6 @@
 import test from 'ava';
 import { BRANCH_MAIN } from '#common/constants/top';
-import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
@@ -175,7 +175,7 @@ test('1', async t => {
         repoId: 'r1',
         branch: BRANCH_MAIN,
         fileNodeId: `${projectId}/readme.md`,
-        builderCenter: BuilderCenterEnum.File
+        builderLeft: BuilderLeftEnum.Tree
       }
     };
 

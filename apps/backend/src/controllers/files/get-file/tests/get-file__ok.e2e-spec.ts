@@ -4,7 +4,7 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
-import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -96,7 +96,7 @@ test('1', async t => {
         branchId: branchId,
         envId: PROJECT_ENV_PROD,
         fileNodeId: `${projectId}/readme.md`,
-        builderCenter: BuilderCenterEnum.File
+        builderLeft: BuilderLeftEnum.Tree
       }
     };
 

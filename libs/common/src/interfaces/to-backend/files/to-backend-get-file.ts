@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsEnum, IsString, ValidateNested } from 'class-validator';
-import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
+import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { StructX } from '#common/interfaces/backend/struct-x';
 import { Repo } from '#common/interfaces/disk/repo';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -22,8 +22,8 @@ export class ToBackendGetFileRequestPayload {
   @IsString()
   fileNodeId: string;
 
-  @IsEnum(BuilderCenterEnum)
-  builderCenter: BuilderCenterEnum;
+  @IsEnum(BuilderLeftEnum)
+  builderLeft: BuilderLeftEnum;
 }
 
 export class ToBackendGetFileRequest extends ToBackendRequest {

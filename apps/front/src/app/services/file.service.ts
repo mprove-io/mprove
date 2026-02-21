@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -89,12 +88,7 @@ export class FileService {
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fileNodeId: fileNodeId,
-      builderCenter:
-        builderLeft === BuilderLeftEnum.ChangesToCommit
-          ? BuilderCenterEnum.FileChangeToCommit
-          : builderLeft === BuilderLeftEnum.ChangesToPush
-            ? BuilderCenterEnum.FileChangeToPush
-            : BuilderCenterEnum.File
+      builderLeft: builderLeft
     };
 
     return this.apiService

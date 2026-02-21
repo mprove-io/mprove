@@ -21,7 +21,6 @@ import {
   BLOCKML_EXT_LIST,
   LIGHT_PLUS_LANGUAGES
 } from '#common/constants/top-front';
-import { BuilderCenterEnum } from '#common/enums/builder-center.enum';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
@@ -408,7 +407,7 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
           branchId: nav.branchId,
           envId: nav.envId,
           fileNodeId: this.secondFileNodeId,
-          builderCenter: BuilderCenterEnum.File
+          builderLeft: BuilderLeftEnum.Tree
         };
 
         this.isShowSpinner = true;
