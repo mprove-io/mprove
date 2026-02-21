@@ -61,8 +61,6 @@ export const DEFAULT_QUERY_SIZE_LIMIT = 1;
 export const UNK_ST_ID = 'unk';
 
 export const DEFAULT_SRV_UI: Ui = {
-  showFilesLeftPanel: false,
-  showFilesRightPanel: false,
   modelTreeLevels: ModelTreeLevelsEnum.FlatTime,
   timezone: UTC,
   timeSpec: TimeSpecEnum.Days,

@@ -30,7 +30,6 @@ import { RepoQuery } from '#front/app/queries/repo.query';
 import { StructQuery } from '#front/app/queries/struct.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface CreateFileDialogData {
@@ -65,8 +64,7 @@ export class CreateFileDialogComponent implements OnInit {
     private structQuery: StructQuery,
     private navigateService: NavigateService,
     private navQuery: NavQuery,
-    private cd: ChangeDetectorRef,
-    private uiService: UiService
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -134,7 +132,6 @@ export class CreateFileDialogComponent implements OnInit {
 
             let fileId = encodeFilePath({ filePath: filePath });
 
-            this.uiService.ensureFilesLeftPanel();
             this.navigateService.navigateToFileLine({
               builderLeft: BuilderLeftEnum.Tree,
               encodedFileId: fileId

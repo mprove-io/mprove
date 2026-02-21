@@ -28,8 +28,6 @@ export class UiService {
   ) {}
 
   async setUserUi(item: {
-    showFilesLeftPanel?: boolean;
-    showFilesRightPanel?: boolean;
     timezone?: string;
     modelTreeLevels?: ModelTreeLevelsEnum;
     projectSessionLinks?: ProjectSessionLink[];
@@ -41,8 +39,6 @@ export class UiService {
     lastSelectedVariant?: string;
   }) {
     let {
-      showFilesLeftPanel,
-      showFilesRightPanel,
       timezone,
       modelTreeLevels,
       projectSessionLinks,
@@ -57,12 +53,6 @@ export class UiService {
     let uiState = this.uiQuery.getValue();
 
     let ui: Ui = {
-      showFilesLeftPanel: isDefined(showFilesLeftPanel)
-        ? showFilesLeftPanel
-        : uiState.showFilesLeftPanel,
-      showFilesRightPanel: isDefined(showFilesRightPanel)
-        ? showFilesRightPanel
-        : uiState.showFilesRightPanel,
       modelTreeLevels: isDefined(modelTreeLevels)
         ? modelTreeLevels
         : uiState.modelTreeLevels,
@@ -109,13 +99,6 @@ export class UiService {
         take(1)
       )
       .subscribe();
-  }
-
-  ensureFilesLeftPanel() {
-    if (!this.uiQuery.getValue().showFilesLeftPanel) {
-      this.uiQuery.updatePart({ showFilesLeftPanel: true });
-      this.setUserUi({ showFilesLeftPanel: true });
-    }
   }
 
   clearProjectSessionLink() {

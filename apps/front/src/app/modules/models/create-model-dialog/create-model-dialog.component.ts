@@ -49,7 +49,6 @@ import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 import { SharedModule } from '../../shared/shared.module';
 
 export interface CreateModelDialogData {
@@ -128,7 +127,6 @@ export class CreateModelDialogComponent implements OnInit {
     private fb: FormBuilder,
     private uiQuery: UiQuery,
     private navigateService: NavigateService,
-    private uiService: UiService,
     private repoQuery: RepoQuery,
     private modelsQuery: ModelsQuery,
     private memberQuery: MemberQuery,
@@ -330,7 +328,6 @@ export class CreateModelDialogComponent implements OnInit {
 
               this.uiQuery.updatePart({ secondFileNodeId: undefined });
 
-              this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
                 builderLeft: BuilderLeftEnum.Tree,
                 encodedFileId: fileId

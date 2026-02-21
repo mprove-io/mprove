@@ -397,9 +397,6 @@ export class ApiService {
                   ?.encodedFileId;
 
               if (isDefined(encodedFileId)) {
-                if (!this.uiQuery.getValue().showFilesLeftPanel) {
-                  this.uiQuery.updatePart({ showFilesLeftPanel: true });
-                }
                 this.navigateService.navigateToFileLine({
                   builderLeft: BuilderLeftEnum.Tree,
                   encodedFileId: encodedFileId

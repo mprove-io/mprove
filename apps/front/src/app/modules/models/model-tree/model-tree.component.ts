@@ -710,7 +710,6 @@ export class ModelTreeComponent implements AfterViewInit {
 
     let filePath = fileIdAr.join('/');
 
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),

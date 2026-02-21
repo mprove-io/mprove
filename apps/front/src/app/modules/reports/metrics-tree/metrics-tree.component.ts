@@ -31,7 +31,6 @@ import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { ReportService } from '#front/app/services/report.service';
-import { UiService } from '#front/app/services/ui.service';
 
 export class MetricNode {
   id: string;
@@ -90,8 +89,7 @@ export class MetricsTreeComponent implements AfterViewInit {
     private reportQuery: ReportQuery,
     private uiQuery: UiQuery,
     private reportService: ReportService,
-    private navigateService: NavigateService,
-    private uiService: UiService
+    private navigateService: NavigateService
   ) {}
 
   ngAfterViewInit() {
@@ -252,7 +250,6 @@ export class MetricsTreeComponent implements AfterViewInit {
 
     let filePath = fileIdAr.join('/');
 
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath }),

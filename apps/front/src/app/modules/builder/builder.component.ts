@@ -44,7 +44,6 @@ import { ApiService } from '#front/app/services/api.service';
 import { FileService } from '#front/app/services/file.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -137,22 +136,6 @@ export class BuilderComponent implements OnInit {
     })
   );
 
-  showFilesLeftPanel = true;
-  showFilesLeftPanel$ = this.uiQuery.showFilesLeftPanel$.pipe(
-    tap(x => {
-      this.showFilesLeftPanel = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  showFilesRightPanel = true;
-  showFilesRightPanel$ = this.uiQuery.showFilesRightPanel$.pipe(
-    tap(x => {
-      this.showFilesRightPanel = x;
-      this.cd.detectChanges();
-    })
-  );
-
   builderRightSessions = BuilderRightEnum.Sessions;
   builderRightValidation = BuilderRightEnum.Validation;
 
@@ -206,7 +189,6 @@ export class BuilderComponent implements OnInit {
     private repoQuery: RepoQuery,
     private apiService: ApiService,
     private myDialogService: MyDialogService,
-    private uiService: UiService,
     private fileService: FileService,
     private navigateService: NavigateService,
     private title: Title,
@@ -246,7 +228,6 @@ export class BuilderComponent implements OnInit {
 
   get isRightPanelVisible() {
     return (
-      this.showFilesRightPanel &&
       !this.secondFileNodeId &&
       (this.builderLeft === BuilderLeftEnum.Tree ||
         this.isBaseRoute ||
@@ -254,51 +235,7 @@ export class BuilderComponent implements OnInit {
     );
   }
 
-  toggleShowLeft() {
-    this.showFilesLeftPanel = !this.showFilesLeftPanel;
-
-    this.uiQuery.updatePart({
-      showFilesLeftPanel: this.showFilesLeftPanel
-    });
-    this.uiService.setUserUi({
-      showFilesLeftPanel: this.showFilesLeftPanel
-    });
-  }
-
-  toggleShowRight() {
-    this.showFilesRightPanel = !this.showFilesRightPanel;
-
-    this.uiQuery.updatePart({
-      showFilesRightPanel: this.showFilesRightPanel
-    });
-    this.uiService.setUserUi({
-      showFilesRightPanel: this.showFilesRightPanel
-    });
-  }
-
-  toggleBothPanels() {
-    let show = !(this.showFilesLeftPanel && this.showFilesRightPanel);
-
-    this.showFilesLeftPanel = show;
-    this.showFilesRightPanel = show;
-
-    this.uiQuery.updatePart({
-      showFilesLeftPanel: show,
-      showFilesRightPanel: show
-    });
-    this.uiService.setUserUi({
-      showFilesLeftPanel: show,
-      showFilesRightPanel: show
-    });
-  }
-
   setBuilderRight(tab: BuilderRightEnum) {
-    if (this.showFilesRightPanel === false) {
-      this.showFilesRightPanel = true;
-      this.uiQuery.updatePart({ showFilesRightPanel: true });
-      this.uiService.setUserUi({ showFilesRightPanel: true });
-    }
-
     if (this.secondFileNodeId) {
       this.uiQuery.updatePart({ secondFileNodeId: undefined });
     }
@@ -317,12 +254,6 @@ export class BuilderComponent implements OnInit {
   setBuilderLeft(x: BuilderLeftEnum) {
     if (this.needSave === true) {
       return;
-    }
-
-    if (this.showFilesLeftPanel === false) {
-      this.showFilesLeftPanel = true;
-      this.uiQuery.updatePart({ showFilesLeftPanel: true });
-      this.uiService.setUserUi({ showFilesLeftPanel: true });
     }
 
     if (x === this.builderLeft) {

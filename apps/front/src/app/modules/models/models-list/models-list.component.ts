@@ -14,7 +14,6 @@ import { ModelQuery } from '#front/app/queries/model.query';
 import { ModelsQuery } from '#front/app/queries/models.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -67,7 +66,6 @@ export class ModelsListComponent implements OnInit, OnDestroy {
     private memberQuery: MemberQuery,
     private modelQuery: ModelQuery,
     private navigateService: NavigateService,
-    private uiService: UiService,
     private location: Location,
     private title: Title
   ) {}
@@ -164,7 +162,6 @@ export class ModelsListComponent implements OnInit, OnDestroy {
 
     let filePath = fileIdAr.join('/');
 
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })

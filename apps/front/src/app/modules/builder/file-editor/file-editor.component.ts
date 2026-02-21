@@ -83,7 +83,6 @@ import {
 } from '#front/app/services/highlight.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 interface HistoryEntry {
   fullDocContent: string;
@@ -613,8 +612,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
     private confirmService: ConfirmService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
-    private route: ActivatedRoute,
-    private uiService: UiService
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -1116,7 +1114,6 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
               builderLeft: BuilderLeftEnum.Tree
             });
 
-            this.uiService.ensureFilesLeftPanel();
             this.navigateService.navigateToFileLine({
               builderLeft: BuilderLeftEnum.Tree,
               encodedFileId: this.file.fileId

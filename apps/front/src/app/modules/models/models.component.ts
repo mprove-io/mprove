@@ -962,7 +962,6 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let filePath = fileIdAr.join('/');
 
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })

@@ -8,7 +8,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -29,8 +28,7 @@ export class DashboardOptionsComponent {
     private navQuery: NavQuery,
     private uiQuery: UiQuery,
     private apiService: ApiService,
-    private cd: ChangeDetectorRef,
-    private uiService: UiService
+    private cd: ChangeDetectorRef
   ) {}
 
   clickMenu(event: MouseEvent) {
@@ -47,7 +45,6 @@ export class DashboardOptionsComponent {
 
     let filePath = fileIdAr.join('/');
 
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })

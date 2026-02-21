@@ -34,7 +34,6 @@ import { StructQuery } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 import { ValidationService } from '#front/app/services/validation.service';
 
 export interface RenameFolderDialogData {
@@ -71,8 +70,7 @@ export class RenameFolderDialogComponent implements OnInit {
     private uiQuery: UiQuery,
     private repoQuery: RepoQuery,
     private navQuery: NavQuery,
-    private structQuery: StructQuery,
-    private uiService: UiService
+    private structQuery: StructQuery
   ) {}
 
   ngOnInit() {
@@ -192,7 +190,6 @@ export class RenameFolderDialogComponent implements OnInit {
             }
 
             if (isNavigateNewFile === true) {
-              this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
                 builderLeft: BuilderLeftEnum.Tree,
                 encodedFileId: newFileId

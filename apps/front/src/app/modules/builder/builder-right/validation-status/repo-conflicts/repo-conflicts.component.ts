@@ -4,7 +4,6 @@ import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { DiskFileLine } from '#common/interfaces/disk/disk-file-line';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -23,12 +22,10 @@ export class RepoConflictsComponent {
   constructor(
     private repoQuery: RepoQuery,
     private cd: ChangeDetectorRef,
-    private navigateService: NavigateService,
-    private uiService: UiService
+    private navigateService: NavigateService
   ) {}
 
   goToFileLine(conflict: DiskFileLine) {
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: conflict.fileId,

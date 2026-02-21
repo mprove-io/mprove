@@ -52,7 +52,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -187,8 +186,7 @@ export class BuilderLeftComponent implements OnDestroy {
     private router: Router,
     private fileQuery: FileQuery,
     private apiService: ApiService,
-    private navigateService: NavigateService,
-    private uiService: UiService
+    private navigateService: NavigateService
   ) {}
 
   treeOnInitialized() {
@@ -281,7 +279,6 @@ export class BuilderLeftComponent implements OnDestroy {
   }
 
   fileItemOnClick(fileId: string) {
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: fileId
@@ -295,7 +292,6 @@ export class BuilderLeftComponent implements OnDestroy {
         node.toggleExpanded();
       }
     } else {
-      this.uiService.ensureFilesLeftPanel();
       this.navigateService.navigateToFileLine({
         builderLeft: BuilderLeftEnum.Tree,
         encodedFileId: node.data.fileId
@@ -372,7 +368,6 @@ export class BuilderLeftComponent implements OnDestroy {
             });
 
             if (isDefined(newFileId)) {
-              this.uiService.ensureFilesLeftPanel();
               this.navigateService.navigateToFileLine({
                 builderLeft: BuilderLeftEnum.Tree,
                 encodedFileId: newFileId

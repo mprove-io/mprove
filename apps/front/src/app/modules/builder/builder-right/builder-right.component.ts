@@ -56,7 +56,6 @@ import {
 } from '#front/app/services/highlight.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -199,7 +198,6 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
     private spinner: NgxSpinnerService,
     private navigateService: NavigateService,
     private myDialogService: MyDialogService,
-    private uiService: UiService,
     private cd: ChangeDetectorRef,
     private apiService: ApiService
   ) {}
@@ -526,7 +524,6 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
 
     let filePath = fileIdAr.join('/');
 
-    this.uiService.ensureFilesLeftPanel();
     this.navigateService.navigateToFileLine({
       builderLeft: BuilderLeftEnum.Tree,
       encodedFileId: encodeFilePath({ filePath: filePath })
