@@ -127,21 +127,10 @@ export class NavigateService {
     }
 
     if (isDefined(lineNumber)) {
-      let navResult = this.router.navigate(ar, { queryParams });
-
-      setTimeout(() => {
-        this.router.navigate(ar, {
-          queryParams: {
-            ...queryParams,
-            line: lineNumber
-          }
-        });
-      }, 0);
-
-      return navResult;
-    } else {
-      return this.router.navigate(ar, { queryParams });
+      queryParams.line = lineNumber;
     }
+
+    return this.router.navigate(ar, { queryParams });
   }
 
   async navigateToModels() {
