@@ -15,8 +15,43 @@
   ></m-session-messages>
 
   <!-- Debug events view -->
+  <div
+    *ngIf="debugMode"
+    class="mb-6 mt-6 flex h-11 flex-shrink-0 flex-row items-center"
+  >
+    <div class="flex flex-1"></div>
+
+    <button
+      type="button"
+      class="text-s500 hover:bg-s100 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      (click)="toggleAllEvents()"
+    >
+      <m-unfold-more-icon *ngIf="!allEventsExpanded"></m-unfold-more-icon>
+      <m-unfold-less-icon *ngIf="allEventsExpanded"></m-unfold-less-icon>
+    </button>
+
+    <div class="ml-5 mr-6 flex-shrink-0">
+      <button
+        type="button"
+        class="border-s400 text-s500 hover:bg-s100 flex select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
+        (click)="copyEventsJson()"
+      >
+        <div>Copy JSON</div>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="debugMode" class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
+    <div class="flex flex-row"></div>
+    <div class="flex flex-row"></div>
+  </div>
+
   <div *ngIf="debugMode" class="thin-scrollbar flex-grow overflow-y-auto">
-    <m-session-debug-events [events]="events"></m-session-debug-events>
+    <m-session-debug-events
+      [events]="events"
+      [expandedEvents]="debugExpandedEvents"
+      (expandedEventsChange)="debugExpandedEvents = $event"
+    ></m-session-debug-events>
   </div>
 
   <!-- Input area (pinned to bottom) -->

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 
 @Component({
@@ -8,11 +8,15 @@ import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 })
 export class SessionDebugEventsComponent {
   @Input() events: AgentEventApi[] = [];
-
-  expandedEvents: Record<string, boolean> = {};
+  @Input() expandedEvents: Record<string, boolean> = {};
+  @Output() expandedEventsChange = new EventEmitter<Record<string, boolean>>();
 
   toggleEvent(eventId: string) {
-    this.expandedEvents[eventId] = !this.expandedEvents[eventId];
+    this.expandedEvents = {
+      ...this.expandedEvents,
+      [eventId]: !this.expandedEvents[eventId]
+    };
+    this.expandedEventsChange.emit(this.expandedEvents);
   }
 
   getEventRole(event: AgentEventApi): string | undefined {

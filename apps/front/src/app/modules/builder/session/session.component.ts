@@ -88,6 +88,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   isWaitingForResponse = false;
   isSessionError = false;
   debugMode = false;
+  debugExpandedEvents: Record<string, boolean> = {};
+  allEventsExpanded = false;
   eventSource: EventSource;
   isConnectingSse = false;
   sseRetryCount = 0;
@@ -181,6 +183,22 @@ export class SessionComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.closeSse();
     this.stopPolling();
+  }
+
+  toggleAllEvents() {
+    this.allEventsExpanded = !this.allEventsExpanded;
+    let expanded: Record<string, boolean> = {};
+    if (this.allEventsExpanded) {
+      for (let event of this.events) {
+        expanded[event.eventId] = true;
+      }
+    }
+    this.debugExpandedEvents = expanded;
+  }
+
+  copyEventsJson() {
+    const json = JSON.stringify(this.events, undefined, 2);
+    navigator.clipboard.writeText(json);
   }
 
   getProviderFromModel(): string {
