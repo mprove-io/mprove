@@ -329,20 +329,13 @@ export class BuilderComponent implements OnInit {
       return;
     }
 
-    let prevLeft = this.builderLeft;
-
     this.uiQuery.updatePart({ builderLeft: x });
 
-    let isFromChanges =
-      prevLeft === BuilderLeftEnum.ChangesToCommit ||
-      prevLeft === BuilderLeftEnum.ChangesToPush;
-
-    if (
-      x === BuilderLeftEnum.Tree &&
-      isFromChanges &&
-      !this.isBaseRoute &&
-      !this.isSessionRoute
-    ) {
+    if (this.isSessionRoute || this.isBaseRoute) {
+      let urlTree = this.router.parseUrl(this.router.url);
+      urlTree.queryParams['left'] = x;
+      this.location.replaceState(this.router.serializeUrl(urlTree));
+    } else if (x === BuilderLeftEnum.Tree) {
       let pLink = this.uiQuery
         .getValue()
         .projectSessionLinks.find(
@@ -357,14 +350,6 @@ export class BuilderComponent implements OnInit {
       } else {
         this.navigateService.navigateToBuilder({ left: x });
       }
-    } else if (
-      x === BuilderLeftEnum.Tree ||
-      this.isSessionRoute ||
-      this.isBaseRoute
-    ) {
-      let urlTree = this.router.parseUrl(this.router.url);
-      urlTree.queryParams['left'] = x;
-      this.location.replaceState(this.router.serializeUrl(urlTree));
     } else {
       this.navigateService.navigateToBuilder({ left: x });
     }
