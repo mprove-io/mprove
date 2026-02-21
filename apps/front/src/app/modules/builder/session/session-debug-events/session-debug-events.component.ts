@@ -15,26 +15,11 @@ export class SessionDebugEventsComponent {
     this.expandedEvents[eventId] = !this.expandedEvents[eventId];
   }
 
-  getMethodIcon(event: AgentEventApi): string {
-    let t = event.eventType;
-
-    if (t === 'message.updated') {
-      return '>';
+  getEventRole(event: AgentEventApi): string | undefined {
+    if (event.ocEvent?.type === 'message.updated') {
+      return event.ocEvent.properties.info.role;
     }
-    if (t === 'message.part.updated') {
-      return '<';
-    }
-    if (t.includes('permission')) {
-      return '*';
-    }
-    if (t.startsWith('session.')) {
-      return 'S';
-    }
-    return '.';
-  }
-
-  getMethod(event: AgentEventApi): string {
-    return event.eventType;
+    return undefined;
   }
 
   getPayloadJson(event: AgentEventApi): string {

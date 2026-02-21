@@ -4,44 +4,24 @@
       class="flex cursor-pointer select-none flex-row items-center px-4 py-2 hover:bg-gray-50"
       (click)="toggleEvent(event.eventId)"
     >
-      <!-- Triangle -->
-      <span class="text-s400 flex-shrink-0 text-sm">{{
+      <span class="text-s400 flex-shrink-0 text-base">{{
         expandedEvents[event.eventId] ? '▼' : '▶'
       }}</span>
 
-      <!-- Index -->
-      <span
-        class="text-s500 ml-2 w-8 flex-shrink-0 text-right font-mono text-sm"
-        >{{ event.eventIndex }}</span
-      >
-
-      <!-- Event type pill -->
-      <span
-        class="ml-3 flex-shrink-0 rounded-full px-2 py-0.5 text-sm"
-        [ngClass]="{
-          'bg-blue-100 text-blue-700': event.eventType.startsWith('message.'),
-          'bg-green-100 text-green-700': event.eventType.startsWith('session.')
-        }"
-        >{{ event.eventType }}</span
-      >
-
-      <!-- Direction icon -->
-      <span
-        class="ml-3 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded font-mono text-sm font-bold"
-        [ngClass]="{
-          'bg-blue-100 text-blue-700': event.eventType.startsWith('message.'),
-          'bg-green-100 text-green-700': event.eventType.startsWith('session.')
-        }"
-        >{{ getMethodIcon(event) }}</span
-      >
-
-      <!-- Method type -->
-      <span class="text-s1 ml-3 min-w-0 flex-1 truncate font-mono text-base">{{
-        getMethod(event)
+      <span class="text-s500 ml-2 w-8 flex-shrink-0 text-right text-base">{{
+        event.eventIndex
       }}</span>
+
+      <span class="text-s1 ml-5 flex-shrink-0 truncate font-mono text-base">{{
+        event.eventType
+      }}</span>
+
+      <span
+        class="text-s1 ml-[100px] flex-shrink-0 truncate font-mono text-base font-semibold"
+        >{{ getEventRole(event) }}</span
+      >
     </div>
 
-    <!-- Expanded payload -->
     <div *ngIf="expandedEvents[event.eventId]" class="bg-s50 px-4 py-3">
       <pre
         class="text-s1 overflow-x-auto whitespace-pre-wrap font-mono text-base"
