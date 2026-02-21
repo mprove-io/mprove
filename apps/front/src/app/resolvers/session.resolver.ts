@@ -13,6 +13,7 @@ import { groupPartsByMessageId } from '../functions/group-parts-by-message-id';
 import { SessionQuery } from '../queries/session.query';
 import { SessionDataQuery } from '../queries/session-data.query';
 import { SessionEventsQuery } from '../queries/session-events.query';
+import { SessionsQuery } from '../queries/sessions.query';
 import { ApiService } from '../services/api.service';
 import { EventReducerService } from '../services/event-reducer.service';
 
@@ -21,6 +22,7 @@ export class SessionResolver {
   constructor(
     private apiService: ApiService,
     private sessionQuery: SessionQuery,
+    private sessionsQuery: SessionsQuery,
     private sessionEventsQuery: SessionEventsQuery,
     private sessionDataQuery: SessionDataQuery,
     private eventReducerService: EventReducerService
@@ -48,6 +50,15 @@ export class SessionResolver {
             this.eventReducerService.resetAll();
 
             this.sessionQuery.update(resp.payload.session);
+
+            let sessions = this.sessionsQuery.getValue().sessions;
+            this.sessionsQuery.update({
+              sessions: sessions.map(s =>
+                s.sessionId === resp.payload.session.sessionId
+                  ? resp.payload.session
+                  : s
+              )
+            });
 
             this.sessionEventsQuery.updatePart({
               events: resp.payload.events

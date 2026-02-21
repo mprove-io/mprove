@@ -1,22 +1,35 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { interval } from 'rxjs';
-import { startWith, tap } from 'rxjs/operators';
+import { map, startWith, take, tap } from 'rxjs/operators';
+import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import {
+  ToBackendGetAgentSessionsListRequestPayload,
+  ToBackendGetAgentSessionsListResponse
+} from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
+import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { TimeService } from '#front/app/services/time.service';
 import { UiService } from '#front/app/services/ui.service';
+
+let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
 @Component({
   standalone: false,
   selector: 'm-sessions',
   templateUrl: './sessions.component.html'
 })
-export class SessionsComponent {
+export class SessionsComponent implements OnInit {
   sessions: AgentSessionApi[] = [];
   sessionId: string;
+  isRefreshing = false;
+  spinnerName = SESSIONS_SPINNER_NAME;
   lastActivityTimes: Record<string, string> = {};
   providerLabels: Record<string, string> = {
     opencode: 'Zen',
@@ -40,7 +53,7 @@ export class SessionsComponent {
 
   interval$ = interval(1000).pipe(
     startWith(0),
-    tap(x => {
+    tap(() => {
       this.calculateTimes();
       this.cd.detectChanges();
     })
@@ -50,11 +63,56 @@ export class SessionsComponent {
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
     private uiQuery: UiQuery,
+    private navQuery: NavQuery,
+    private apiService: ApiService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
     private timeService: TimeService,
-    private uiService: UiService
+    private uiService: UiService,
+    private spinner: NgxSpinnerService
   ) {}
+
+  ngOnInit() {
+    this.loadSessions();
+  }
+
+  loadSessions() {
+    let projectId: string;
+
+    this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
+      projectId = x;
+    });
+
+    let payload: ToBackendGetAgentSessionsListRequestPayload = {
+      projectId: projectId
+    };
+
+    this.isRefreshing = true;
+    this.spinner.show(SESSIONS_SPINNER_NAME);
+    this.cd.detectChanges();
+
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList,
+        payload: payload
+      })
+      .pipe(
+        map((resp: ToBackendGetAgentSessionsListResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.sessionsQuery.update({
+              sessions: resp.payload.sessions
+            });
+          }
+
+          this.isRefreshing = false;
+          this.spinner.hide(SESSIONS_SPINNER_NAME);
+          this.cd.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
 
   newSession() {
     this.navigateService.navigateToBuilder();

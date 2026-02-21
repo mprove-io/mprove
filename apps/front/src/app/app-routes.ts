@@ -109,7 +109,6 @@ import { ProjectResolver } from './resolvers/project.resolver';
 import { ProjectConnectionsResolver } from './resolvers/project-connections.resolver';
 import { ProjectEnvironmentsResolver } from './resolvers/project-environments.resolver';
 import { ProjectInfoResolver } from './resolvers/project-info.resolver';
-import { ProjectSessionsResolver } from './resolvers/project-sessions.resolver';
 import { ProjectTeamResolver } from './resolvers/project-team.resolver';
 import { RepoIdResolver } from './resolvers/repo-id.resolver';
 import { RepoStructResolver } from './resolvers/repo-struct.resolver';
@@ -263,7 +262,6 @@ export const appRoutes: Routes = [
                             path: PATH_BUILDER,
                             resolve: [
                               RepoStructFilesResolver,
-                              ProjectSessionsResolver,
                               AgentModelsResolver
                             ],
                             children: [

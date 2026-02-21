@@ -9,6 +9,31 @@
         <div>New Session</div>
       </button>
     </div>
+
+    <div class="flex flex-1"></div>
+
+    <div *ngIf="isRefreshing" class="relative flex h-7 w-7 flex-shrink-0">
+      <ngx-spinner
+        [name]="spinnerName"
+        color="#0084d1"
+        bdColor="#00000000"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+
+    <button
+      tp="Refresh sessions"
+      type="button"
+      class="hover:bg-m200 ml-5 mr-6 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      (click)="loadSessions()"
+    >
+      <m-refresh-icon></m-refresh-icon>
+    </button>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -32,7 +57,7 @@
       [visibility]="'hover'"
       [appearance]="'compact'"
     >
-      <div class="mt-2 h-full w-full">
+      <div class="mt-2 h-full w-full pb-6">
         <div
           *ngFor="let session of sessions"
           class="hover:bg-m50 ml-6 mr-5 flex cursor-pointer select-none flex-col rounded py-2 pl-3 pr-3"
