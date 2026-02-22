@@ -59,58 +59,61 @@
     >
       <div class="mt-2 h-full w-full pb-6">
         <div
-          *ngFor="let session of sessions"
-          class="hover:bg-m50 ml-6 mr-5 flex cursor-pointer select-none flex-col rounded py-2 pl-3 pr-3"
+          *ngFor="let session of sessions; trackBy: trackBySessionId"
+          class="hover:bg-m50 group ml-6 mr-9 flex h-11 cursor-pointer select-none flex-row items-center rounded pl-3 pr-3"
           (click)="openSession(session)"
         >
-          <div class="flex items-center justify-between">
-            <span
-              class="truncate text-base"
-              [ngClass]="{
-                'text-m600 font-semibold': session.sessionId === sessionId,
-                'text-s1': session.sessionId !== sessionId
-              }"
-              >{{ session.displayTitle }}</span
+          <span
+            class="min-w-0 flex-1 truncate text-base"
+            [ngClass]="{
+              'text-m600 font-semibold': session.sessionId === sessionId,
+              'text-s1': session.sessionId !== sessionId
+            }"
+            >{{ session.displayTitle }}</span
+          >
+
+          <span class="text-s600 ml-5 flex-shrink-0 text-sm">{{
+            session.timeAgo
+          }}</span>
+
+          <span
+            class="ml-5 flex-shrink-0 rounded-full px-2 py-0.5 text-sm"
+            [ngClass]="{
+              'bg-blue-100 text-blue-700': session.status === 'New',
+              'bg-green-100 text-green-700': session.status === 'Active',
+              'bg-yellow-100 text-yellow-700': session.status === 'Paused',
+              'bg-red-100 text-red-700':
+                session.status === 'Stopped' ||
+                session.status === 'Error' ||
+                session.status === 'Expired'
+            }"
+            >{{ session.status }}</span
+          >
+
+          <div
+            class="ml-4 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+          >
+            <button
+              class="hover:bg-m200 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
+              [tp]="templateRenameSession"
+              [tpHideOnEscape]="true"
+              tpVariation="menu"
+              className="my-menu"
+              #tpRef="tippy"
+              (click)="$event.stopPropagation()"
             >
-            <span
-              class="ml-2 flex-shrink-0 text-sm"
-              [ngClass]="{
-                'text-m600': session.sessionId === sessionId,
-                'text-s600': session.sessionId !== sessionId
-              }"
-              >{{ session.timeAgo }}</span
-            >
-          </div>
-          <div class="mt-1 flex items-center space-x-2">
-            <span
-              class="text-sm"
-              [ngClass]="{
-                'text-m600': session.sessionId === sessionId,
-                'text-s600': session.sessionId !== sessionId
-              }"
-              >{{ session.providerLabel }}</span
-            >
-            <span
-              class="text-sm"
-              [ngClass]="{
-                'text-m600': session.sessionId === sessionId,
-                'text-s600': session.sessionId !== sessionId
-              }"
-              >{{ session.agent }}</span
-            >
-            <span
-              class="rounded-full px-2 py-0.5 text-sm"
-              [ngClass]="{
-                'bg-blue-100 text-blue-700': session.status === 'New',
-                'bg-green-100 text-green-700': session.status === 'Active',
-                'bg-yellow-100 text-yellow-700': session.status === 'Paused',
-                'bg-red-100 text-red-700':
-                  session.status === 'Stopped' ||
-                  session.status === 'Error' ||
-                  session.status === 'Expired'
-              }"
-              >{{ session.status }}</span
-            >
+              <m-dots-vertical-icon></m-dots-vertical-icon>
+            </button>
+
+            <ng-template #templateRenameSession>
+              <div class="border-s4 bg-m0 w-48 rounded-md border-2 shadow-xl">
+                <button
+                  class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                  (click)="tpRef.hide(); renameSession($event, session)"
+                  >Rename Session</button
+                >
+              </div>
+            </ng-template>
           </div>
         </div>
       </div>
@@ -119,4 +122,3 @@
 </div>
 <div *ngIf="sessions$ | async"></div>
 <div *ngIf="session$ | async"></div>
-<div *ngIf="interval$ | async"></div>

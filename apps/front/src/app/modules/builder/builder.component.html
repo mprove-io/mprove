@@ -5,7 +5,13 @@
         <div class="flex h-11 w-1/4 flex-row items-center justify-start">
           <div class="ml-5 flex select-none flex-row items-center">
             <div
-              class="flex cursor-pointer flex-row items-center"
+              data-cy="builderTitle"
+              class="text-s1 flex select-none items-center self-center text-2xl font-semibold"
+            >
+              {{ pageTitle }}
+            </div>
+            <div
+              class="ml-7 flex cursor-pointer flex-row items-center"
               tp="Need to Save changes"
               [tpIsEnabled]="needSave === true"
               (click)="setBuilderLeft(builderLeftTree)"

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { interval } from 'rxjs';
+import { combineLatest, interval } from 'rxjs';
 import { map, startWith, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -15,6 +15,7 @@ import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { TimeService } from '#front/app/services/time.service';
 import { UiService } from '#front/app/services/ui.service';
@@ -43,8 +44,11 @@ export class SessionsComponent implements OnInit {
     anthropic: 'Anthropic'
   };
 
-  sessions$ = this.sessionsQuery.sessions$.pipe(
-    tap(x => {
+  sessions$ = combineLatest([
+    this.sessionsQuery.sessions$,
+    interval(1000).pipe(startWith(0))
+  ]).pipe(
+    tap(([x]) => {
       this.sessions = x.map(s =>
         Object.assign({}, s, <AgentSessionApiX>{
           displayTitle: makeTitle(s),
@@ -65,20 +69,6 @@ export class SessionsComponent implements OnInit {
     })
   );
 
-  interval$ = interval(1000).pipe(
-    startWith(0),
-    tap(() => {
-      this.sessions = this.sessions.map(s =>
-        Object.assign({}, s, {
-          timeAgo: s.lastActivityTs
-            ? this.timeService.timeAgoFromNow(s.lastActivityTs)
-            : ''
-        })
-      );
-      this.cd.detectChanges();
-    })
-  );
-
   constructor(
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
@@ -89,7 +79,8 @@ export class SessionsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private timeService: TimeService,
     private uiService: UiService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private myDialogService: MyDialogService
   ) {}
 
   ngOnInit() {
@@ -136,6 +127,19 @@ export class SessionsComponent implements OnInit {
 
   newSession() {
     this.navigateService.navigateToBuilder();
+  }
+
+  renameSession(event: MouseEvent, session: AgentSessionApiX) {
+    event.stopPropagation();
+    this.myDialogService.showEditSessionTitle({
+      apiService: this.apiService,
+      sessionId: session.sessionId,
+      title: makeTitle(session)
+    });
+  }
+
+  trackBySessionId(_index: number, session: AgentSessionApiX) {
+    return session.sessionId;
   }
 
   openSession(session: AgentSessionApi) {
