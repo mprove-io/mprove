@@ -119,12 +119,12 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pLink?.sessionId)) {
       this.navigateService.navigateToSession({
         sessionId: pLink.sessionId,
-        left: BuilderLeftEnum.Tree,
+        left: BuilderLeftEnum.Info,
         right: BuilderRightEnum.Sessions
       });
     } else {
       this.navigateService.navigateToBuilder({
-        left: BuilderLeftEnum.Tree,
+        left: BuilderLeftEnum.Info,
         right: BuilderRightEnum.Sessions
       });
     }
