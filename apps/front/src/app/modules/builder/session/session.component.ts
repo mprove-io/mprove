@@ -329,6 +329,10 @@ export class SessionComponent implements OnInit, OnDestroy {
     return makeTitle(this.session);
   }
 
+  toggleDebug() {
+    this.uiQuery.updatePart({ sessionDebugMode: !this.debugMode });
+  }
+
   openTitleEditor() {
     if (!this.session) {
       return;

@@ -138,26 +138,6 @@
           class="flex min-w-0 flex-1 flex-row items-center overflow-hidden"
           *ngIf="!!repo"
         >
-          <div
-            *ngIf="sessionId"
-            class="text-s500 ml-5 mt-[2px] flex h-11 w-[130px] min-w-0 shrink select-none flex-row items-center text-base"
-          >
-            <span class="truncate">{{ sessionId }}</span>
-          </div>
-
-          <button
-            *ngIf="sessionId"
-            type="button"
-            class="ml-5 flex flex-shrink-0 select-none flex-row items-center rounded px-3 py-2 text-base focus:outline-none"
-            [ngClass]="{
-              'bg-orange-100 text-orange-700': debugMode,
-              'text-s500 hover:bg-s100': !debugMode
-            }"
-            (click)="toggleDebug()"
-          >
-            Debug
-          </button>
-
           <div class="flex flex-1"></div>
 
           <div
@@ -352,7 +332,7 @@
           <div
             class="relative ml-3 mr-9 flex-shrink-0"
             [ngClass]="{
-              'mr-[50px]': !secondFileNodeId,
+              'mr-[72px]': !secondFileNodeId,
               'mr-4': !!secondFileNodeId
             }"
             *ngIf="isEditor === true"

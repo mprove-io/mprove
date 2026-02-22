@@ -1,22 +1,74 @@
 <div class="flex h-full w-full flex-col">
   <!-- Session title -->
-  <div *ngIf="session" class="flex flex-shrink-0 items-center px-6 pb-1 pt-4">
-    <div class="mx-auto flex w-full max-w-[860px] items-center pl-5">
-      <div class="flex min-w-0 items-center">
-        <span class="text-s1 truncate text-base font-medium">
-          {{ sessionTitle }}
-        </span>
+  <ng-container *ngIf="session">
+    <div class="mb-6 mt-6 flex h-11 flex-shrink-0 flex-row items-center">
+      <span class="text-s1 ml-16 truncate text-lg font-medium">
+        {{ sessionTitle }}
+      </span>
+
+      <div class="flex flex-1"></div>
+
+      <button
+        *ngIf="debugMode"
+        type="button"
+        class="border-s400 text-s500 hover:bg-s100 flex flex-shrink-0 select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
+        (click)="copyEventsJson()"
+      >
+        <div>Copy JSON</div>
+      </button>
+
+      <button
+        *ngIf="debugMode"
+        type="button"
+        class="text-s500 hover:bg-s100 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+        (click)="toggleAllEvents()"
+      >
+        <m-unfold-more-icon *ngIf="!allEventsExpanded"></m-unfold-more-icon>
+        <m-unfold-less-icon *ngIf="allEventsExpanded"></m-unfold-less-icon>
+      </button>
+
+      <button
+        *ngIf="session"
+        type="button"
+        class="ml-5 mr-3 flex flex-shrink-0 select-none flex-row items-center rounded px-3 py-2 text-base focus:outline-none"
+        [ngClass]="{
+          'bg-orange-100 text-orange-700': debugMode,
+          'text-s500 hover:bg-s100': !debugMode
+        }"
+        (click)="toggleDebug()"
+      >
+        Debug
+      </button>
+
+      <div class="mr-12 flex-shrink-0">
         <button
-          type="button"
-          class="text-s500 hover:text-s1 ml-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-          (click)="openTitleEditor()"
-          title="Edit title"
+          class="hover:bg-m200 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+          #t1="tippy"
+          [tp]="templateSessionOptions"
+          [tpHideOnEscape]="true"
+          tpVariation="menu"
+          className="my-menu"
         >
-          <m-edit-icon></m-edit-icon>
+          <m-dots-vertical-icon></m-dots-vertical-icon>
         </button>
       </div>
     </div>
-  </div>
+
+    <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
+      <div class="flex flex-row"></div>
+      <div class="flex flex-row"></div>
+    </div>
+
+    <ng-template #templateSessionOptions>
+      <div class="border-s4 bg-m0 w-48 rounded-md border-2 shadow-xl">
+        <button
+          class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+          (click)="t1.hide(); openTitleEditor()"
+          >Rename Session</button
+        >
+      </div>
+    </ng-template>
+  </ng-container>
 
   <!-- Messages area (chat view) -->
   <m-session-messages
@@ -33,39 +85,10 @@
     (questionReject)="rejectQuestion($event)"
   ></m-session-messages>
 
-  <!-- Debug events view -->
   <div
     *ngIf="debugMode"
-    class="mb-6 mt-6 flex h-11 flex-shrink-0 flex-row items-center"
+    class="thin-scrollbar ml-16 mr-[60px] flex-grow overflow-y-auto"
   >
-    <div class="flex flex-1"></div>
-
-    <button
-      type="button"
-      class="text-s500 hover:bg-s100 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-      (click)="toggleAllEvents()"
-    >
-      <m-unfold-more-icon *ngIf="!allEventsExpanded"></m-unfold-more-icon>
-      <m-unfold-less-icon *ngIf="allEventsExpanded"></m-unfold-less-icon>
-    </button>
-
-    <div class="ml-5 mr-6 flex-shrink-0">
-      <button
-        type="button"
-        class="border-s400 text-s500 hover:bg-s100 flex select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
-        (click)="copyEventsJson()"
-      >
-        <div>Copy JSON</div>
-      </button>
-    </div>
-  </div>
-
-  <div *ngIf="debugMode" class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
-    <div class="flex flex-row"></div>
-    <div class="flex flex-row"></div>
-  </div>
-
-  <div *ngIf="debugMode" class="thin-scrollbar flex-grow overflow-y-auto">
     <m-session-debug-events
       [events]="events"
       [expandedEvents]="debugExpandedEvents"
