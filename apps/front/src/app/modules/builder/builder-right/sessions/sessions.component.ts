@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { combineLatest, interval } from 'rxjs';
-import { map, startWith, take, tap } from 'rxjs/operators';
+import { map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
@@ -17,14 +16,12 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { TimeService } from '#front/app/services/time.service';
 import { UiService } from '#front/app/services/ui.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
 export class AgentSessionApiX extends AgentSessionApi {
   displayTitle: string;
-  timeAgo: string;
   providerLabel: string;
 }
 
@@ -44,17 +41,11 @@ export class SessionsComponent implements OnInit {
     anthropic: 'Anthropic'
   };
 
-  sessions$ = combineLatest([
-    this.sessionsQuery.sessions$,
-    interval(1000).pipe(startWith(0))
-  ]).pipe(
-    tap(([x]) => {
+  sessions$ = this.sessionsQuery.sessions$.pipe(
+    tap(x => {
       this.sessions = x.map(s =>
         Object.assign({}, s, <AgentSessionApiX>{
           displayTitle: makeTitle(s),
-          timeAgo: s.lastActivityTs
-            ? this.timeService.timeAgoFromNow(s.lastActivityTs)
-            : '',
           providerLabel: this.providerLabels[s.provider] || s.provider
         })
       );
@@ -77,7 +68,6 @@ export class SessionsComponent implements OnInit {
     private apiService: ApiService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
-    private timeService: TimeService,
     private uiService: UiService,
     private spinner: NgxSpinnerService,
     private myDialogService: MyDialogService
