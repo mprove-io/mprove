@@ -336,29 +336,34 @@ export class AgentService implements OnModuleDestroy {
     }
 
     let sessionTabs: SessionTab[] = [];
-    for (let item of items.filter(
-      item => item.event.type === 'session.updated'
-    )) {
-      let ocSession = (item.event as EventSessionUpdated).properties.info;
-      let session = await this.sessionsService.getSessionByIdCheckExists({
-        sessionId: item.sessionId
-      });
-      sessionTabs.push({ ...session, ocSession: ocSession });
-    }
 
+    let sessionUpdatedItems = items.filter(
+      item => item.event.type === 'session.updated'
+    );
     let todoItems = items.filter(item => item.event.type === 'todo.updated');
-    if (todoItems.length > 0) {
-      let lastTodoEvent = todoItems[todoItems.length - 1];
-      let todos =
-        (lastTodoEvent.event as EventTodoUpdated).properties.todos ?? [];
-      let existingIndex = sessionTabs.findIndex(t => t.sessionId === sessionId);
-      if (existingIndex >= 0) {
-        sessionTabs[existingIndex] = { ...sessionTabs[existingIndex], todos };
-      } else {
-        let session = await this.sessionsService.getSessionByIdCheckExists({
-          sessionId: sessionId
-        });
-        sessionTabs.push({ ...session, todos });
+
+    if (sessionUpdatedItems.length > 0 || todoItems.length > 0) {
+      let session = await this.sessionsService.getSessionByIdCheckExists({
+        sessionId: sessionId
+      });
+
+      for (let item of sessionUpdatedItems) {
+        let ocSession = (item.event as EventSessionUpdated).properties.info;
+        sessionTabs.push({ ...session, ocSession: ocSession });
+      }
+
+      if (todoItems.length > 0) {
+        let lastTodoEvent = todoItems[todoItems.length - 1];
+        let todos =
+          (lastTodoEvent.event as EventTodoUpdated).properties.todos ?? [];
+        let existingIndex = sessionTabs.findIndex(
+          t => t.sessionId === sessionId
+        );
+        if (existingIndex >= 0) {
+          sessionTabs[existingIndex] = { ...sessionTabs[existingIndex], todos };
+        } else {
+          sessionTabs.push({ ...session, todos });
+        }
       }
     }
 
