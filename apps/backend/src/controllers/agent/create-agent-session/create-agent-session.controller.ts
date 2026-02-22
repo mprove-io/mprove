@@ -213,12 +213,7 @@ export class CreateAgentSessionController {
       });
 
       let { data: opencodeSession } = await opencodeClient.session
-        .create(
-          {
-            title: 'mprove session'
-          },
-          { throwOnError: true }
-        )
+        .create({}, { throwOnError: true })
         .catch(e => {
           throw new ServerError({
             message: ErEnum.BACKEND_AGENT_CREATE_SESSION_FAILED,

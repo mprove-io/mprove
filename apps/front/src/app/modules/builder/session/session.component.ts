@@ -32,6 +32,7 @@ import { ToBackendRespondToAgentPermissionRequestPayload } from '#common/interfa
 import { ToBackendRespondToAgentQuestionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
 import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
+import { makeTitle } from '#front/app/functions/make-title';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
@@ -43,6 +44,7 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { EventReducerService } from '#front/app/services/event-reducer.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { UiService } from '#front/app/services/ui.service';
 import { environment } from '#front/environments/environment';
 import { SessionInputComponent } from './session-input/session-input.component';
@@ -177,7 +179,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     private uiQuery: UiQuery,
     private uiService: UiService,
     private agentModelsQuery: AgentModelsQuery,
-    private eventReducerService: EventReducerService
+    private eventReducerService: EventReducerService,
+    private myDialogService: MyDialogService
   ) {}
 
   ngOnDestroy() {
@@ -317,6 +320,24 @@ export class SessionComponent implements OnInit, OnDestroy {
       })
       .pipe(take(1))
       .subscribe();
+  }
+
+  get sessionTitle(): string {
+    if (!this.session) {
+      return '';
+    }
+    return makeTitle(this.session);
+  }
+
+  openTitleEditor() {
+    if (!this.session) {
+      return;
+    }
+    this.myDialogService.showEditSessionTitle({
+      apiService: this.apiService,
+      sessionId: this.session.sessionId,
+      title: makeTitle(this.session)
+    });
   }
 
   startPolling(sessionId: string) {
@@ -581,6 +602,22 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   updateSessionData(sessionData: SessionDataState) {
+    // Propagate title from SSE session.updated event
+    if (
+      sessionData.sessionTitle &&
+      sessionData.sessionTitle !== this.session?.title
+    ) {
+      this.session = { ...this.session, title: sessionData.sessionTitle };
+
+      let sessions = this.sessionsQuery.getValue().sessions;
+      let updated = sessions.map(s =>
+        s.sessionId === this.session.sessionId
+          ? { ...s, title: sessionData.sessionTitle }
+          : s
+      );
+      this.sessionsQuery.updatePart({ sessions: updated });
+    }
+
     // Cleanup confirmed optimistic messages
     let storeUserCount = sessionData.messages.filter(
       m => m.role === 'user'

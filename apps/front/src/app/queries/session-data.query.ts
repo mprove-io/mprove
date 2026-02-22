@@ -15,6 +15,7 @@ export class SessionDataState {
   permissions: PermissionRequest[];
   questions: QuestionRequest[];
   sdkSessionStatus: SessionStatus;
+  sessionTitle?: string;
 }
 
 let sessionDataState: SessionDataState = {
@@ -22,7 +23,8 @@ let sessionDataState: SessionDataState = {
   parts: {},
   permissions: [],
   questions: [],
-  sdkSessionStatus: undefined
+  sdkSessionStatus: undefined,
+  sessionTitle: undefined
 };
 
 @Injectable({ providedIn: 'root' })

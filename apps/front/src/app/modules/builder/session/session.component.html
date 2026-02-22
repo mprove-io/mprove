@@ -1,4 +1,23 @@
 <div class="flex h-full w-full flex-col">
+  <!-- Session title -->
+  <div *ngIf="session" class="flex flex-shrink-0 items-center px-6 pb-1 pt-4">
+    <div class="mx-auto flex w-full max-w-[860px] items-center pl-5">
+      <div class="flex min-w-0 items-center">
+        <span class="text-s1 truncate text-base font-medium">
+          {{ sessionTitle }}
+        </span>
+        <button
+          type="button"
+          class="text-s500 hover:text-s1 ml-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+          (click)="openTitleEditor()"
+          title="Edit title"
+        >
+          <m-edit-icon></m-edit-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Messages area (chat view) -->
   <m-session-messages
     class="flex h-2 w-full flex-grow flex-col overflow-y-auto"

@@ -10,6 +10,7 @@ import { ToBackendRejectAgentQuestionRequest } from '#common/interfaces/to-backe
 import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
 import { ToBackendRespondToAgentQuestionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
 import { ToBackendSendAgentMessageRequest } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
+import { ToBackendSetAgentSessionTitleRequest } from '#common/interfaces/to-backend/agent/to-backend-set-agent-session-title';
 import { ToBackendStopAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-stop-agent-session-sandbox';
 import { ToBackendGetAvatarBigRequest } from '#common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import { ToBackendSetAvatarRequest } from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
@@ -389,6 +390,8 @@ export const nameToClass = {
     ToBackendGetAgentSessionsListRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentSession]:
     ToBackendGetAgentSessionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle]:
+    ToBackendSetAgentSessionTitleRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels]:
     ToBackendGetAgentProviderModelsRequest
 };

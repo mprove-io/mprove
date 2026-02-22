@@ -148,6 +148,11 @@ export class EventReducerService {
         return { ...state, sdkSessionStatus: event.properties.status };
       }
 
+      case 'session.updated': {
+        let info = event.properties.info;
+        return { ...state, sessionTitle: info?.title };
+      }
+
       case 'permission.asked': {
         let permission = event.properties;
         let permissions = state.permissions ? [...state.permissions] : [];

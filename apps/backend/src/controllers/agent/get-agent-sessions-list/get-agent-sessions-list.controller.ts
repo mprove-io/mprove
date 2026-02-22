@@ -51,7 +51,8 @@ export class GetAgentSessionsListController {
         status: tab.status,
         createdTs: tab.createdTs,
         lastActivityTs: tab.lastActivityTs,
-        firstMessage: tab.firstMessage
+        firstMessage: tab.firstMessage,
+        title: tab.ocSession?.title
       };
     });
 

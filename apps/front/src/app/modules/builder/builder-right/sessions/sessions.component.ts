@@ -9,6 +9,7 @@ import {
   ToBackendGetAgentSessionsListRequestPayload,
   ToBackendGetAgentSessionsListResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
+import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
@@ -20,17 +21,22 @@ import { UiService } from '#front/app/services/ui.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
+export class AgentSessionApiX extends AgentSessionApi {
+  displayTitle: string;
+  timeAgo: string;
+  providerLabel: string;
+}
+
 @Component({
   standalone: false,
   selector: 'm-sessions',
   templateUrl: './sessions.component.html'
 })
 export class SessionsComponent implements OnInit {
-  sessions: AgentSessionApi[] = [];
+  sessions: AgentSessionApiX[] = [];
   sessionId: string;
   isRefreshing = false;
   spinnerName = SESSIONS_SPINNER_NAME;
-  lastActivityTimes: Record<string, string> = {};
   providerLabels: Record<string, string> = {
     opencode: 'Zen',
     openai: 'OpenAI',
@@ -39,7 +45,15 @@ export class SessionsComponent implements OnInit {
 
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
-      this.sessions = x;
+      this.sessions = x.map(s =>
+        Object.assign({}, s, <AgentSessionApiX>{
+          displayTitle: makeTitle(s),
+          timeAgo: s.lastActivityTs
+            ? this.timeService.timeAgoFromNow(s.lastActivityTs)
+            : '',
+          providerLabel: this.providerLabels[s.provider] || s.provider
+        })
+      );
       this.cd.detectChanges();
     })
   );
@@ -54,7 +68,13 @@ export class SessionsComponent implements OnInit {
   interval$ = interval(1000).pipe(
     startWith(0),
     tap(() => {
-      this.calculateTimes();
+      this.sessions = this.sessions.map(s =>
+        Object.assign({}, s, {
+          timeAgo: s.lastActivityTs
+            ? this.timeService.timeAgoFromNow(s.lastActivityTs)
+            : ''
+        })
+      );
       this.cd.detectChanges();
     })
   );
@@ -129,13 +149,5 @@ export class SessionsComponent implements OnInit {
     this.uiService.setProjectSessionLink({
       sessionId: session.sessionId
     });
-  }
-
-  calculateTimes() {
-    for (let session of this.sessions) {
-      this.lastActivityTimes[session.sessionId] = session.lastActivityTs
-        ? this.timeService.timeAgoFromNow(session.lastActivityTs)
-        : '';
-    }
   }
 }

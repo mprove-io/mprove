@@ -75,7 +75,8 @@ export class GetAgentSessionController {
       status: session.status,
       createdTs: session.createdTs,
       lastActivityTs: session.lastActivityTs,
-      firstMessage: session.firstMessage
+      firstMessage: session.firstMessage,
+      title: session.ocSession?.title
     };
 
     let payload: ToBackendGetAgentSessionResponsePayload = {

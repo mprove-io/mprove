@@ -10,6 +10,7 @@ import { RejectAgentQuestionController } from './controllers/agent/reject-agent-
 import { RespondToAgentPermissionController } from './controllers/agent/respond-to-agent-permission/respond-to-agent-permission.controller';
 import { RespondToAgentQuestionController } from './controllers/agent/respond-to-agent-question/respond-to-agent-question.controller';
 import { SendAgentMessageController } from './controllers/agent/send-agent-message/send-agent-message.controller';
+import { SetAgentSessionTitleController } from './controllers/agent/set-agent-session-title/set-agent-session-title.controller';
 import { StopAgentSessionSandboxController } from './controllers/agent/stop-agent-session-sandbox/stop-agent-session-sandbox.controller';
 import { GetAvatarBigController } from './controllers/avatars/get-avatar-big/get-avatar-big.controller';
 import { SetAvatarController } from './controllers/avatars/set-avatar/set-avatar.controller';
@@ -141,6 +142,7 @@ export const appControllers = [
   RejectAgentQuestionController,
   GetAgentSessionsListController,
   GetAgentSessionController,
+  SetAgentSessionTitleController,
   GetAgentProviderModelsController,
 
   GetAvatarBigController,

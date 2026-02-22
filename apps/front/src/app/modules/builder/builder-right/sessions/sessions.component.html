@@ -65,23 +65,31 @@
         >
           <div class="flex items-center justify-between">
             <span
-              class="text-base"
+              class="truncate text-base"
               [ngClass]="{
                 'text-m600 font-semibold': session.sessionId === sessionId,
                 'text-s1': session.sessionId !== sessionId
               }"
-              >{{ providerLabels[session.provider] || session.provider }}</span
+              >{{ session.displayTitle }}</span
             >
+            <span
+              class="ml-2 flex-shrink-0 text-sm"
+              [ngClass]="{
+                'text-m600': session.sessionId === sessionId,
+                'text-s600': session.sessionId !== sessionId
+              }"
+              >{{ session.timeAgo }}</span
+            >
+          </div>
+          <div class="mt-1 flex items-center space-x-2">
             <span
               class="text-sm"
               [ngClass]="{
                 'text-m600': session.sessionId === sessionId,
                 'text-s600': session.sessionId !== sessionId
               }"
-              >{{ lastActivityTimes[session.sessionId] }}</span
+              >{{ session.providerLabel }}</span
             >
-          </div>
-          <div class="mt-1 flex items-center space-x-2">
             <span
               class="text-sm"
               [ngClass]="{

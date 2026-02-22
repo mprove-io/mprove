@@ -5,6 +5,7 @@ import type {
   EventMessagePartDelta,
   EventMessagePartUpdated,
   EventMessageUpdated,
+  EventSessionUpdated,
   Part
 } from '@opencode-ai/sdk/v2';
 import { and, eq, lt } from 'drizzle-orm';
@@ -333,31 +334,29 @@ export class AgentService implements OnModuleDestroy {
       }
     }
 
+    let sessionTabs: SessionTab[] = [];
+    for (let item of items.filter(
+      item => item.event.type === 'session.updated'
+    )) {
+      let ocSession = (item.event as EventSessionUpdated).properties.info;
+      let session = await this.sessionsService.getSessionByIdCheckExists({
+        sessionId: item.sessionId
+      });
+      sessionTabs.push({ ...session, ocSession: ocSession });
+    }
+
     await this.db.drizzle.transaction(async tx => {
       await this.db.packer.write({
         tx: tx,
         insert: {
           events: eventTabs
+        },
+        insertOrUpdate: {
+          messages: messageTabs,
+          parts: partTabs,
+          sessions: sessionTabs
         }
       });
-
-      if (messageTabs.length > 0) {
-        await this.db.packer.write({
-          tx: tx,
-          insertOrUpdate: {
-            messages: messageTabs
-          }
-        });
-      }
-
-      if (partTabs.length > 0) {
-        await this.db.packer.write({
-          tx: tx,
-          insertOrUpdate: {
-            parts: partTabs
-          }
-        });
-      }
     });
 
     for (let item of items) {

@@ -32,4 +32,8 @@ export class AgentSessionApi {
   lastActivityTs: number;
 
   firstMessage?: string;
+
+  @IsOptional()
+  @IsString()
+  title?: string;
 }
