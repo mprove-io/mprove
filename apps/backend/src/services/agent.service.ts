@@ -104,7 +104,7 @@ export class AgentService implements OnModuleDestroy {
       this.drainAllQueues().catch(e => {
         console.log(`Failed to drain event queues: ${e?.message}`);
       });
-    }, 1000);
+    }, 350);
   }
 
   // pub/sub

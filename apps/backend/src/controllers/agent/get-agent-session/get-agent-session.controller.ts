@@ -60,7 +60,7 @@ export class GetAgentSessionController {
       return {
         eventId: tab.eventId,
         eventIndex: tab.eventIndex,
-        eventType: tab.sender,
+        eventType: tab.type,
         ocEvent: tab.ocEvent
       };
     });

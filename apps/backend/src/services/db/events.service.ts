@@ -22,7 +22,7 @@ export class EventsService {
       }),
       sessionId: item.sessionId,
       eventIndex: item.eventIndex,
-      sender: item.event.type,
+      type: item.event.type,
       ocEvent: item.event,
       createdTs: now,
       serverTs: undefined,

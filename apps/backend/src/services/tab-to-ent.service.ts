@@ -945,7 +945,7 @@ export class TabToEntService {
       eventId: tab.eventId,
       sessionId: tab.sessionId,
       eventIndex: tab.eventIndex,
-      sender: tab.sender,
+      type: tab.type,
       ...this.getEntProps({
         dataSt: eventSt,
         dataLt: eventLt,
