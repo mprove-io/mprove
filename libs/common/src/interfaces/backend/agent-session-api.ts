@@ -1,3 +1,4 @@
+import type { Todo } from '@opencode-ai/sdk/v2';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class AgentSessionApi {
@@ -36,4 +37,6 @@ export class AgentSessionApi {
   @IsOptional()
   @IsString()
   title?: string;
+
+  todos?: Todo[];
 }

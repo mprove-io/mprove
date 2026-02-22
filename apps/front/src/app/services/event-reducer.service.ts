@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { Event } from '#common/interfaces/backend/agent-event-api';
+import type { Event } from '@opencode-ai/sdk/v2';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { binarySearch } from '../functions/binary-search';
@@ -151,6 +151,11 @@ export class EventReducerService {
       case 'session.updated': {
         let info = event.properties.info;
         return { ...state, sessionTitle: info?.title };
+      }
+
+      case 'todo.updated': {
+        let todos = event.properties.todos ?? [];
+        return { ...state, todos };
       }
 
       case 'permission.asked': {

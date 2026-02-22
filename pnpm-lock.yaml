@@ -1346,6 +1346,9 @@ importers:
       '@ngneat/overview':
         specifier: 'catalog:'
         version: 7.0.0(@angular/core@21.1.0(@angular/compiler@21.1.0)(rxjs@7.8.1)(zone.js@0.16.0))
+      '@opencode-ai/sdk':
+        specifier: 'catalog:'
+        version: 1.2.6
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.0

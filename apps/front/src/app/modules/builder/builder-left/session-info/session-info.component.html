@@ -1,0 +1,161 @@
+<div
+  *ngIf="!sessionId"
+  class="bg-m0 flex h-full w-full flex-col items-center justify-center rounded shadow"
+>
+  <div class="text-xl">Select Session</div>
+</div>
+
+<div
+  *ngIf="!!sessionId"
+  class="bg-m0 flex h-full w-full flex-col rounded shadow"
+>
+  <div class="flex h-2 w-full flex-grow flex-col overflow-y-auto">
+    <ng-scrollbar
+      [orientation]="'vertical'"
+      [visibility]="'hover'"
+      [appearance]="'compact'"
+    >
+      <div class="px-6 pb-6 pt-6">
+        <!-- TODOs Section -->
+        <div *ngIf="todos.length > 0" class="mb-8">
+          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
+            TODOs
+          </div>
+
+          <div class="text-s500 mb-3 text-base">
+            {{ completedCount }} of {{ totalCount }} tasks completed
+          </div>
+
+          <div class="flex flex-col space-y-2">
+            <div
+              *ngFor="let todo of todos"
+              class="flex flex-row items-start space-x-3"
+            >
+              <div
+                class="mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+              >
+                <div
+                  *ngIf="todo.status === 'completed'"
+                  class="bg-m600 flex h-4 w-4 items-center justify-center rounded"
+                >
+                  <m-check-icon class="text-m0 h-3 w-3"></m-check-icon>
+                </div>
+
+                <div
+                  *ngIf="todo.status === 'in_progress'"
+                  class="flex h-4 w-4 items-center justify-center"
+                >
+                  <div
+                    class="bg-m500 h-2.5 w-2.5 animate-pulse rounded-full"
+                  ></div>
+                </div>
+
+                <div
+                  *ngIf="todo.status === 'pending'"
+                  class="border-s400 h-4 w-4 rounded border"
+                ></div>
+
+                <div
+                  *ngIf="todo.status === 'cancelled'"
+                  class="border-s400 bg-s200 flex h-4 w-4 items-center justify-center rounded border"
+                >
+                  <div class="bg-s400 h-[1px] w-2"></div>
+                </div>
+              </div>
+
+              <span
+                class="min-w-0 text-base leading-5"
+                [ngClass]="{
+                  'text-s400 line-through':
+                    todo.status === 'completed' || todo.status === 'cancelled',
+                  'text-s1 font-semibold': todo.status === 'in_progress',
+                  'text-s1': todo.status === 'pending'
+                }"
+                >{{ todo.content }}</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="todos.length === 0" class="mb-8">
+          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
+            TODOs
+          </div>
+          <div class="text-s400 text-base">No tasks</div>
+        </div>
+
+        <!-- Session Info Section -->
+        <div class="mb-8">
+          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
+            Session Info
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base">Provider</div>
+              <div class="text-s1 text-base">{{ providerLabel }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base">Model</div>
+              <div class="text-s1 text-base">
+                {{ session?.model || '-' }}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base">Agent</div>
+              <div class="text-s1 text-base">
+                {{ session?.agent || '-' }}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base">Status</div>
+              <div class="text-base">
+                <span
+                  class="rounded-full px-2 py-0.5"
+                  [ngClass]="{
+                    'bg-blue-100 text-blue-700': session?.status === 'New',
+                    'bg-green-100 text-green-700': session?.status === 'Active',
+                    'bg-yellow-100 text-yellow-700':
+                      session?.status === 'Paused',
+                    'bg-red-100 text-red-700':
+                      session?.status === 'Stopped' ||
+                      session?.status === 'Error' ||
+                      session?.status === 'Expired'
+                  }"
+                  >{{ session?.status || '-' }}</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Context Section -->
+        <div>
+          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
+            Context
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base">Session Created</div>
+              <div class="text-s1 text-base">
+                {{ formatTimestamp(session?.createdTs) }}
+              </div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base">Last Activity</div>
+              <div class="text-s1 text-base">{{ lastActivityAgo }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-scrollbar>
+  </div>
+</div>
+
+<div *ngIf="session$ | async"></div>
+<div *ngIf="todos$ | async"></div>

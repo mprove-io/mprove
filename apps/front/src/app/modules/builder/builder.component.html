@@ -137,6 +137,20 @@
                 </div>
               </button>
             </div>
+
+            <div
+              class="ml-7 flex cursor-pointer flex-row items-center"
+              (click)="setBuilderLeft(builderLeftInfo)"
+            >
+              <button
+                class="flex w-[40px] items-center justify-center text-lg focus:outline-none"
+                [ngClass]="{
+                  'text-m500 font-semibold': builderLeft === builderLeftInfo,
+                  'text-s500': builderLeft !== builderLeftInfo
+                }"
+                >Info</button
+              >
+            </div>
           </div>
         </div>
 
@@ -427,7 +441,10 @@
             'flex-1': !!secondFileNodeId
           }"
           *ngIf="
-            builderLeft === builderLeftTree || isBaseRoute || !file?.fileId
+            builderLeft === builderLeftTree ||
+            builderLeft === builderLeftInfo ||
+            isBaseRoute ||
+            !file?.fileId
           "
         >
           <m-builder-right class="flex w-full"></m-builder-right>

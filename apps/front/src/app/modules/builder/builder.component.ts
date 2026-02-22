@@ -56,6 +56,7 @@ export class BuilderComponent implements OnInit {
   builderLeftTree = BuilderLeftEnum.Tree;
   builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
   builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
+  builderLeftInfo = BuilderLeftEnum.Info;
 
   repoStatusNeedCommit = RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = RepoStatusEnum.NeedPull;
@@ -230,6 +231,7 @@ export class BuilderComponent implements OnInit {
     return (
       !this.secondFileNodeId &&
       (this.builderLeft === BuilderLeftEnum.Tree ||
+        this.builderLeft === BuilderLeftEnum.Info ||
         this.isBaseRoute ||
         !this.file?.fileId)
     );

@@ -5,17 +5,17 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
+import type {
+  PermissionRequest,
+  QuestionRequest,
+  SessionStatus
+} from '@opencode-ai/sdk/v2';
 import { combineLatest, interval, Subscription } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import {
-  AgentEventApi,
-  type PermissionRequest,
-  type QuestionRequest,
-  type SessionStatus
-} from '#common/interfaces/backend/agent-event-api';
+import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
@@ -370,7 +370,8 @@ export class SessionComponent implements OnInit, OnDestroy {
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
-                : {}
+                : {},
+              todos: resp.payload.session.todos ?? []
             });
 
             // Update session in the sessions list
@@ -510,7 +511,8 @@ export class SessionComponent implements OnInit, OnDestroy {
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
-                : {}
+                : {},
+              todos: resp.payload.session.todos ?? []
             });
 
             // Release the guard, then connect SSE directly

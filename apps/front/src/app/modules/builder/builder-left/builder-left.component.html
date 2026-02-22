@@ -294,7 +294,7 @@
 </div>
 
 <div
-  *ngIf="builderLeft !== builderLeftTree"
+  *ngIf="builderLeft !== builderLeftTree && builderLeft !== builderLeftInfo"
   class="bg-m0 flex h-full w-full flex-grow rounded shadow"
 >
   <div class="flex h-full w-full flex-col">
@@ -456,6 +456,11 @@
     </div>
   </div>
 </div>
+
+<m-session-info
+  *ngIf="builderLeft === builderLeftInfo"
+  class="flex h-full w-full flex-grow"
+></m-session-info>
 
 <div *ngIf="struct$ | async"></div>
 <div *ngIf="repo$ | async"></div>

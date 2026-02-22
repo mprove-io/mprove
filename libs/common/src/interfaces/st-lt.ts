@@ -1,5 +1,5 @@
 import { ModelDef as MalloyModelDef } from '@malloydata/malloy';
-import type { Event, Message, Part, Session } from '@opencode-ai/sdk/v2';
+import type { Event, Message, Part, Session, Todo } from '@opencode-ai/sdk/v2';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
 import { Ev } from './backend/ev';
 import { MproveConfig } from './backend/mprove-config';
@@ -275,6 +275,7 @@ export class SessionSt {
   opencodePassword?: string;
   ocSession?: Session;
   firstMessage?: string;
+  todos?: Todo[];
 }
 export class SessionLt {
   emptyData?: number;

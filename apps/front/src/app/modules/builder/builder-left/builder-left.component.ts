@@ -72,6 +72,7 @@ export class BuilderLeftComponent implements OnDestroy {
   builderLeftTree = BuilderLeftEnum.Tree;
   builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
   builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
+  builderLeftInfo = BuilderLeftEnum.Info;
 
   repoStatusNeedPush = RepoStatusEnum.NeedPush;
 

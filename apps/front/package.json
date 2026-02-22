@@ -40,6 +40,7 @@
     "@lezer/highlight": "catalog:",
     "@malloydata/malloy-filter": "catalog:",
     "@mprove/common": "workspace:*",
+    "@opencode-ai/sdk": "catalog:",
     "@ng-select/ng-select": "catalog:",
     "@ngneat/dialog": "catalog:",
     "@ngneat/elf": "catalog:",

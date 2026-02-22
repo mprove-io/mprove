@@ -8,8 +8,8 @@ import {
   SimpleChanges,
   ViewChild
 } from '@angular/core';
+import type { QuestionRequest } from '@opencode-ai/sdk/v2';
 import { NgScrollbar } from 'ngx-scrollbar';
-import type { QuestionRequest } from '#common/interfaces/backend/agent-event-api';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 
 interface ChatMessage {

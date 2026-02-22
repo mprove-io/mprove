@@ -6,6 +6,7 @@ import type {
   EventMessagePartUpdated,
   EventMessageUpdated,
   EventSessionUpdated,
+  EventTodoUpdated,
   Part
 } from '@opencode-ai/sdk/v2';
 import { and, eq, lt } from 'drizzle-orm';
@@ -343,6 +344,22 @@ export class AgentService implements OnModuleDestroy {
         sessionId: item.sessionId
       });
       sessionTabs.push({ ...session, ocSession: ocSession });
+    }
+
+    let todoItems = items.filter(item => item.event.type === 'todo.updated');
+    if (todoItems.length > 0) {
+      let lastTodoEvent = todoItems[todoItems.length - 1];
+      let todos =
+        (lastTodoEvent.event as EventTodoUpdated).properties.todos ?? [];
+      let existingIndex = sessionTabs.findIndex(t => t.sessionId === sessionId);
+      if (existingIndex >= 0) {
+        sessionTabs[existingIndex] = { ...sessionTabs[existingIndex], todos };
+      } else {
+        let session = await this.sessionsService.getSessionByIdCheckExists({
+          sessionId: sessionId
+        });
+        sessionTabs.push({ ...session, todos });
+      }
     }
 
     await this.db.drizzle.transaction(async tx => {

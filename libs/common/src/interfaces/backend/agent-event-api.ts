@@ -1,12 +1,5 @@
-import type {
-  Event,
-  PermissionRequest,
-  QuestionRequest,
-  SessionStatus
-} from '@opencode-ai/sdk/v2';
+import type { Event } from '@opencode-ai/sdk/v2';
 import { IsInt, IsString } from 'class-validator';
-
-export type { Event, PermissionRequest, QuestionRequest, SessionStatus };
 
 export class AgentEventApi {
   @IsString()
