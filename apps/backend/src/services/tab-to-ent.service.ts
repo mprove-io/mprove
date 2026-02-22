@@ -1038,6 +1038,7 @@ export class TabToEntService {
       partId: tab.partId,
       messageId: tab.messageId,
       sessionId: tab.sessionId,
+      type: tab.type,
       ...this.getEntProps({
         dataSt: partSt,
         dataLt: partLt,

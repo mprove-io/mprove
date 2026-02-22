@@ -15,6 +15,7 @@ export const partsTable = pgTable(
     partId: varchar('part_id', { length: 255 }).notNull().primaryKey(),
     messageId: varchar('message_id', { length: 255 }).notNull(),
     sessionId: varchar('session_id', { length: 255 }).notNull(),
+    type: varchar('type', { length: 255 }).notNull(),
     st: json('st').$type<{ encrypted: string; decrypted: PartSt }>().notNull(),
     lt: json('lt').$type<{ encrypted: string; decrypted: PartLt }>().notNull(),
     keyTag: text('key_tag'),

@@ -16,6 +16,7 @@ export class PartsService {
       partId: item.partId,
       messageId: item.messageId,
       sessionId: item.sessionId,
+      type: item.ocPart.type,
       ocPart: item.ocPart,
       createdTs: now,
       serverTs: undefined,
