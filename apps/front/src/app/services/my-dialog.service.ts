@@ -803,7 +803,8 @@ export class MyDialogService {
     this.dialogService.open(EditSessionTitleDialogComponent, {
       enableClose: false,
       closeButton: false,
-      data: item
+      data: item,
+      width: 720
     });
   }
 }

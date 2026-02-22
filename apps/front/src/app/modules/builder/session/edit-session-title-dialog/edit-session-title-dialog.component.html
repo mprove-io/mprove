@@ -3,11 +3,7 @@
     >Edit Session Title</div
   >
 
-  <form
-    class="flex w-80 flex-col"
-    [formGroup]="editTitleForm"
-    (ngSubmit)="save()"
-  >
+  <form class="flex flex-col" [formGroup]="editTitleForm" (ngSubmit)="save()">
     <input
       autocomplete="off"
       #titleInput
