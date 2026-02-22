@@ -1,4 +1,4 @@
-<div class="bg-m0 flex h-full w-full flex-col rounded shadow">
+<div class="bg-m0 relative flex h-full w-full flex-col rounded shadow">
   <div class="mb-6 mt-6 flex h-11 flex-shrink-0 flex-row items-center">
     <div class="ml-6 flex-shrink-0">
       <button
@@ -43,7 +43,7 @@
 
   <div
     *ngIf="sessions.length === 0"
-    class="flex h-full w-full select-none items-center justify-center text-xl"
+    class="pointer-events-none absolute inset-0 flex select-none items-center justify-center text-xl"
   >
     Sessions are empty
   </div>
