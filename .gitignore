@@ -4,8 +4,8 @@ _nogit/
 
 .angular/
 .devcontainer/.zshrc
-.turbo/
 .pnpm-store/
+.turbo/
 .vscode/*
 !.vscode/keybindings-example.json
 !.vscode/settings-example.json
@@ -13,6 +13,7 @@ _nogit/
 !.vscode/extensions.json
 !.vscode/tasks.json
 !.vscode/launch.json
+external/
 mcli/.bun
 dist/
 malloy/

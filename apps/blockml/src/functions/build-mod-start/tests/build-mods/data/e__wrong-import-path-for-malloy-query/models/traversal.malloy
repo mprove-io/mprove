@@ -1,0 +1,4 @@
+import '../../../../etc/passwd.malloy';
+
+#(mprove) model
+source: dummy is _db_.table('dbo.dummy')

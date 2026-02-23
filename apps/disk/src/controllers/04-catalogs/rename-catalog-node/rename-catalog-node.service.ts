@@ -13,6 +13,7 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { renamePath } from '#disk/functions/disk/rename-path';
+import { validatePathUnderDir } from '#disk/functions/disk/validate-path-under-dir';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
@@ -69,6 +70,9 @@ export class RenameCatalogNodeService {
     sourceArray.pop();
     let parentPath = sourceArray.join('/');
     let newPath = parentPath + '/' + newName;
+
+    validatePathUnderDir({ fullPath: oldPath, allowedDir: repoDir });
+    validatePathUnderDir({ fullPath: newPath, allowedDir: repoDir });
 
     // let isOrgExist = await isPathExist(orgDir);
     // if (isOrgExist === false) {

@@ -64,6 +64,13 @@ export class AppInterceptor implements NestInterceptor {
     let idemp = isUndefined(iKey)
       ? undefined
       : await this.redisService.find({ id: iKey }); // stId
+
+    if (isDefined(idemp) && !!idemp.stId && idemp.stId !== stId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_IDEMP_USER_MISMATCH
+      });
+    }
+
     if (isUndefined(idemp) && isDefined(iKey)) {
       let idempWr: Idemp = {
         idempotencyKey: iKey,
