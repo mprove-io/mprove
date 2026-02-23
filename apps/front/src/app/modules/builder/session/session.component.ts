@@ -34,6 +34,7 @@ import { ToBackendRespondToAgentQuestionRequestPayload } from '#common/interface
 import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeTitle } from '#front/app/functions/make-title';
+import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
@@ -801,6 +802,7 @@ export class SessionComponent implements OnInit, OnDestroy {
         chatMessages.push({ role: 'user', text });
       } else {
         // Assistant message - process each part
+        let partCount = 0;
         for (let partApi of parts) {
           let part = partApi.ocPart;
           if (!part) continue;
@@ -810,17 +812,29 @@ export class SessionComponent implements OnInit, OnDestroy {
               role: 'agent',
               text: part.text || ''
             });
+            partCount++;
           } else if (part.type === 'tool') {
             chatMessages.push({
               role: 'tool',
               text: part.tool || 'tool',
               toolPart: part as ToolPart
             });
+            partCount++;
           } else if (part.type === 'reasoning') {
             chatMessages.push({
               role: 'thought',
               text: part.text || ''
             });
+            partCount++;
+          }
+        }
+
+        // Show error if assistant message has no visible parts but has an error
+        if (partCount === 0) {
+          let error = (msg.ocMessage as any)?.error;
+          if (error && error.name !== 'MessageAbortedError') {
+            let errorText = unwrapErrorMessage(error.data?.message ?? '');
+            chatMessages.push({ role: 'error', text: errorText });
           }
         }
       }
