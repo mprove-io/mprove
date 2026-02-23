@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import type { Todo } from '@opencode-ai/sdk/v2';
-import { tap } from 'rxjs/operators';
+import { interval } from 'rxjs';
+import { startWith, tap } from 'rxjs/operators';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionDataQuery } from '#front/app/queries/session-data.query';
@@ -26,6 +27,9 @@ export class SessionInfoComponent {
     tap(x => {
       this.session = x;
       this.sessionId = x?.sessionId;
+      this.lastActivityAgo = x?.lastActivityTs
+        ? this.timeService.timeAgoFromNow(x.lastActivityTs)
+        : '';
       this.cd.detectChanges();
     })
   );
@@ -69,8 +73,15 @@ export class SessionInfoComponent {
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
-  get lastActivityAgo(): string {
-    if (!this.session?.lastActivityTs) return '-';
-    return this.timeService.timeAgoFromNow(this.session.lastActivityTs);
-  }
+  lastActivityAgo = '';
+
+  interval$ = interval(1000).pipe(
+    startWith(0),
+    tap(() => {
+      this.lastActivityAgo = this.session?.lastActivityTs
+        ? this.timeService.timeAgoFromNow(this.session.lastActivityTs)
+        : '-';
+      this.cd.detectChanges();
+    })
+  );
 }

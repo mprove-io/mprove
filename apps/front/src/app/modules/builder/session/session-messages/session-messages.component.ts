@@ -46,6 +46,7 @@ export class SessionMessagesComponent implements AfterViewInit, OnChanges {
   @Input() session: AgentSessionApi;
   @Input() isActivating = false;
   @Input() isWaitingForResponse = false;
+  @Input() retryMessage: string;
   @Input() isSessionError = false;
   @Input() scrollTrigger = 0;
 

@@ -24,7 +24,9 @@
             </div>
           </div>
           <div *ngIf="isWaitingForResponse" class="mb-4 px-4 py-3">
-            <span class="text-lg text-amber-500">Working</span>
+            <span class="text-lg text-amber-500">{{
+              retryMessage || 'Working'
+            }}</span>
           </div>
           <div *ngIf="isSessionError" class="mb-4 flex justify-start">
             <div class="max-w-[85%] rounded-2xl bg-red-50 px-4 py-3">
@@ -168,7 +170,9 @@
               </div>
             </div>
             <div *ngIf="isWaitingForResponse" class="mb-4 px-4 py-3">
-              <span class="text-lg text-amber-500">Working</span>
+              <span class="text-lg text-amber-500">{{
+                retryMessage || 'Working'
+              }}</span>
             </div>
             <div *ngIf="isSessionError" class="mb-4 flex justify-start">
               <div class="max-w-[85%] rounded-2xl bg-red-50 px-4 py-3">

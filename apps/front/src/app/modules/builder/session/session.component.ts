@@ -89,6 +89,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   userSentMessage = false;
   isActivating = false;
   isWaitingForResponse = false;
+  retryMessage: string;
   isSessionError = false;
   debugMode = false;
   debugExpandedEvents: Record<string, boolean> = {};
@@ -598,6 +599,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isWaitingForResponse = this.checkIsWaitingForResponse(
       sessionData.sdkSessionStatus
     );
+    this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
     this.previousTurnsCount = this.turns.length;
@@ -656,6 +658,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isWaitingForResponse =
       this.pendingUserMessages.length > 0 ||
       this.checkIsWaitingForResponse(sessionData.sdkSessionStatus);
+    this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
     if (!this.showSessionMessages) {
@@ -723,7 +726,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       return false;
     }
     if (sdkSessionStatus) {
-      let result = sdkSessionStatus.type === 'busy';
+      let result = sdkSessionStatus.type !== 'idle';
       return result;
     }
     if (this.messages.length === 0) {
@@ -735,6 +738,13 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
     let result = lastMessage.role === 'user' || lastMessage.role === 'tool';
     return result;
+  }
+
+  getRetryMessage(sdkSessionStatus: SessionStatus): string {
+    if (sdkSessionStatus?.type === 'retry') {
+      return `Retrying (attempt ${sdkSessionStatus.attempt}): ${sdkSessionStatus.message}`;
+    }
+    return undefined;
   }
 
   rebuildMessagesAndTurns() {
