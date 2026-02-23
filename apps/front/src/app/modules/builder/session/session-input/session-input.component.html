@@ -43,6 +43,8 @@
   *ngIf="showSelects"
   class="mt-4 flex flex-row items-center justify-center space-x-3"
 >
+  <div *ngIf="showAutoScroll" class="h-8 w-8 flex-shrink-0"></div>
+
   <ng-select
     class="session-agents-select w-[140px] select-none text-base"
     [items]="agents"
@@ -103,4 +105,31 @@
     appendTo="body"
     placeholder="Thinking"
   ></ng-select>
+
+  <button
+    *ngIf="showAutoScroll"
+    type="button"
+    class="hover:bg-s100 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded transition-colors focus:outline-none"
+    [ngClass]="{
+      'text-m600': autoScroll,
+      'text-s300': !autoScroll
+    }"
+    (click)="onAutoScrollToggle()"
+    [title]="autoScroll ? 'Auto-scroll on' : 'Auto-scroll off'"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M12 5v14" />
+      <path d="m19 12-7 7-7-7" />
+    </svg>
+  </button>
 </div>

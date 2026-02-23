@@ -3,6 +3,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -42,7 +43,9 @@ const TOOL_TITLE_MAP: Record<string, string> = {
   selector: 'm-session-messages',
   templateUrl: './session-messages.component.html'
 })
-export class SessionMessagesComponent implements AfterViewInit, OnChanges {
+export class SessionMessagesComponent
+  implements AfterViewInit, OnChanges, OnDestroy
+{
   @Input() turns: ChatTurn[] = [];
   @Input() session: AgentSessionApi;
   @Input() isActivating = false;
@@ -50,16 +53,31 @@ export class SessionMessagesComponent implements AfterViewInit, OnChanges {
   @Input() retryMessage: string;
   @Input() isSessionError = false;
   @Input() scrollTrigger = 0;
+  @Input() autoScroll = true;
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 
   skipNextScroll = true;
   responseMinHeight = 0;
+  isAtBottom = true;
+  isOverflowing = false;
+
+  private scrollListener: (() => void) | null = null;
+  private rafId: number | null = null;
 
   ngAfterViewInit() {
     if (this.chatScrollbar) {
       let viewport = this.chatScrollbar.adapter.viewportElement;
       viewport.scrollTop = viewport.scrollHeight;
+
+      setTimeout(() => {
+        viewport.scrollTop = viewport.scrollHeight;
+      });
+
+      this.scrollListener = () => this.scheduleScrollStateUpdate();
+      viewport.addEventListener('scroll', this.scrollListener, {
+        passive: true
+      });
     }
   }
 
@@ -69,6 +87,60 @@ export class SessionMessagesComponent implements AfterViewInit, OnChanges {
     }
 
     this.updateResponseMinHeight();
+
+    // Auto-scroll: when turns change WITHOUT scrollTrigger, scroll to bottom
+    if (this.autoScroll && changes['turns'] && !changes['scrollTrigger']) {
+      setTimeout(() => {
+        if (this.chatScrollbar) {
+          let viewport = this.chatScrollbar.adapter.viewportElement;
+          viewport.scrollTop = viewport.scrollHeight;
+        }
+      });
+    }
+
+    setTimeout(() => this.updateScrollState());
+  }
+
+  ngOnDestroy() {
+    if (this.scrollListener && this.chatScrollbar) {
+      let viewport = this.chatScrollbar.adapter.viewportElement;
+      viewport.removeEventListener('scroll', this.scrollListener);
+      this.scrollListener = null;
+    }
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+  }
+
+  scrollToBottom() {
+    if (!this.chatScrollbar) {
+      return;
+    }
+    this.isAtBottom = true;
+    let viewport = this.chatScrollbar.adapter.viewportElement;
+    let scrollMax = viewport.scrollHeight - viewport.clientHeight;
+    this.chatScrollbar.adapter.scrollTo({ top: scrollMax, duration: 200 });
+  }
+
+  private scheduleScrollStateUpdate() {
+    if (this.rafId !== null) {
+      return;
+    }
+    this.rafId = requestAnimationFrame(() => {
+      this.rafId = null;
+      this.updateScrollState();
+    });
+  }
+
+  private updateScrollState() {
+    if (!this.chatScrollbar) {
+      return;
+    }
+    let viewport = this.chatScrollbar.adapter.viewportElement;
+    let max = viewport.scrollHeight - viewport.clientHeight;
+    this.isOverflowing = max > 1;
+    this.isAtBottom = !this.isOverflowing || viewport.scrollTop >= max - 2;
   }
 
   scrollUserMessageToTop() {

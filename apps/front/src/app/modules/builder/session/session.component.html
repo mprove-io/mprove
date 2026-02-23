@@ -85,6 +85,7 @@
     [retryMessage]="retryMessage"
     [isSessionError]="isSessionError"
     [scrollTrigger]="scrollTrigger"
+    [autoScroll]="autoScroll"
   ></m-session-messages>
 
   <div
@@ -189,6 +190,8 @@
           [disabled]="isActivating"
           [showSelects]="messages.length > 0"
           [sessionId]="session?.sessionId"
+          [autoScroll]="autoScroll"
+          (autoScrollChange)="autoScroll = $event"
           (send)="sendFollowUp($event)"
         ></m-session-input>
       </div>

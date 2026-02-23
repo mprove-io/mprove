@@ -93,6 +93,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   isWaitingForResponse = false;
   retryMessage: string;
   isSessionError = false;
+  autoScroll = false;
   debugMode = false;
   debugExpandedEvents: Record<string, boolean> = {};
   allEventsExpanded = false;
