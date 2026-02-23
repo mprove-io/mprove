@@ -76,6 +76,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   // Chat mode
   session: AgentSessionApi;
+  sessionTitle = '';
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
@@ -166,6 +167,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       }
 
       this.previousSessionId = currentSessionId;
+      this.sessionTitle = this.session ? makeTitle(this.session) : '';
       this.cd.detectChanges();
     })
   );
@@ -323,13 +325,6 @@ export class SessionComponent implements OnInit, OnDestroy {
       })
       .pipe(take(1))
       .subscribe();
-  }
-
-  get sessionTitle(): string {
-    if (!this.session) {
-      return '';
-    }
-    return makeTitle(this.session);
   }
 
   toggleDebug() {

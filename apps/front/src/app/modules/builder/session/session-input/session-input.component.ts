@@ -56,6 +56,7 @@ export class SessionInputComponent implements OnChanges {
   variants: string[] = ['default'];
   modelVariantsMap = new Map<string, string[]>();
   providerHasApiKey = true;
+  effectiveDisabled = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -68,14 +69,13 @@ export class SessionInputComponent implements OnChanges {
     this.applyModels(this.agentModelsQuery.getValue().models);
   }
 
-  get effectiveDisabled(): boolean {
-    return this.disabled || !this.providerHasApiKey;
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes['model']) {
       this.updateVariants();
       this.updateProviderHasApiKey();
+    }
+    if (changes['disabled']) {
+      this.effectiveDisabled = this.disabled || !this.providerHasApiKey;
     }
   }
 
@@ -142,6 +142,7 @@ export class SessionInputComponent implements OnChanges {
     } else {
       this.providerHasApiKey = false;
     }
+    this.effectiveDisabled = this.disabled || !this.providerHasApiKey;
     this.providerHasApiKeyChange.emit(this.providerHasApiKey);
   }
 

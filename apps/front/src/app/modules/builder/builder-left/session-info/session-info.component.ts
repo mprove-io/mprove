@@ -23,10 +23,17 @@ export class SessionInfoComponent {
     anthropic: 'Anthropic'
   };
 
+  providerLabel = '-';
+  completedCount = 0;
+  totalCount = 0;
+
   session$ = this.sessionQuery.select().pipe(
     tap(x => {
       this.session = x;
       this.sessionId = x?.sessionId;
+      this.providerLabel = x?.provider
+        ? this.providerLabels[x.provider] || x.provider
+        : '-';
       this.lastActivityAgo = x?.lastActivityTs
         ? this.timeService.timeAgoFromNow(x.lastActivityTs)
         : '';
@@ -37,6 +44,10 @@ export class SessionInfoComponent {
   todos$ = this.sessionDataQuery.todos$.pipe(
     tap(x => {
       this.todos = x ?? [];
+      this.completedCount = this.todos.filter(
+        t => t.status === 'completed'
+      ).length;
+      this.totalCount = this.todos.length;
       this.cd.detectChanges();
     })
   );
@@ -47,19 +58,6 @@ export class SessionInfoComponent {
     private timeService: TimeService,
     private cd: ChangeDetectorRef
   ) {}
-
-  get providerLabel(): string {
-    if (!this.session?.provider) return '-';
-    return this.providerLabels[this.session.provider] || this.session.provider;
-  }
-
-  get completedCount(): number {
-    return this.todos.filter(t => t.status === 'completed').length;
-  }
-
-  get totalCount(): number {
-    return this.todos.length;
-  }
 
   formatTimestamp(ts: number): string {
     if (!ts) return '-';
