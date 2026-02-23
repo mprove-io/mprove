@@ -69,7 +69,9 @@ export class SessionResolver {
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
                 : {},
-              todos: resp.payload.session.todos ?? []
+              todos: resp.payload.session.todos ?? [],
+              questions: resp.payload.session.questions ?? [],
+              permissions: resp.payload.session.permissions ?? []
             });
 
             return true;

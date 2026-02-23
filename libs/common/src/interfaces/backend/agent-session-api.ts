@@ -1,4 +1,8 @@
-import type { Todo } from '@opencode-ai/sdk/v2';
+import type {
+  PermissionRequest,
+  QuestionRequest,
+  Todo
+} from '@opencode-ai/sdk/v2';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class AgentSessionApi {
@@ -39,4 +43,6 @@ export class AgentSessionApi {
   title?: string;
 
   todos?: Todo[];
+  questions?: QuestionRequest[];
+  permissions?: PermissionRequest[];
 }

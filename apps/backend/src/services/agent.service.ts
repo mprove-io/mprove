@@ -5,9 +5,16 @@ import type {
   EventMessagePartDelta,
   EventMessagePartUpdated,
   EventMessageUpdated,
+  EventPermissionAsked,
+  EventPermissionReplied,
+  EventQuestionAsked,
+  EventQuestionRejected,
+  EventQuestionReplied,
   EventSessionUpdated,
   EventTodoUpdated,
-  Part
+  Part,
+  PermissionRequest,
+  QuestionRequest
 } from '@opencode-ai/sdk/v2';
 import { and, eq, lt } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -341,8 +348,29 @@ export class AgentService implements OnModuleDestroy {
       item => item.event.type === 'session.updated'
     );
     let todoItems = items.filter(item => item.event.type === 'todo.updated');
+    let questionAskedItems = items.filter(
+      item => item.event.type === 'question.asked'
+    );
+    let questionResolvedItems = items.filter(
+      item =>
+        item.event.type === 'question.replied' ||
+        item.event.type === 'question.rejected'
+    );
+    let permissionAskedItems = items.filter(
+      item => item.event.type === 'permission.asked'
+    );
+    let permissionRepliedItems = items.filter(
+      item => item.event.type === 'permission.replied'
+    );
 
-    if (sessionUpdatedItems.length > 0 || todoItems.length > 0) {
+    if (
+      sessionUpdatedItems.length > 0 ||
+      todoItems.length > 0 ||
+      questionAskedItems.length > 0 ||
+      questionResolvedItems.length > 0 ||
+      permissionAskedItems.length > 0 ||
+      permissionRepliedItems.length > 0
+    ) {
       let session = await this.sessionsService.getSessionByIdCheckExists({
         sessionId: sessionId
       });
@@ -363,6 +391,79 @@ export class AgentService implements OnModuleDestroy {
           sessionTabs[existingIndex] = { ...sessionTabs[existingIndex], todos };
         } else {
           sessionTabs.push({ ...session, todos });
+        }
+      }
+
+      if (questionAskedItems.length > 0 || questionResolvedItems.length > 0) {
+        let existingIndex = sessionTabs.findIndex(
+          t => t.sessionId === sessionId
+        );
+        let base = existingIndex >= 0 ? sessionTabs[existingIndex] : session;
+        let questions: QuestionRequest[] = base.questions
+          ? [...base.questions]
+          : [];
+
+        for (let item of questionAskedItems) {
+          let q = (item.event as EventQuestionAsked).properties;
+          let idx = questions.findIndex(x => x.id === q.id);
+          if (idx >= 0) {
+            questions[idx] = q;
+          } else {
+            questions.push(q);
+          }
+        }
+
+        for (let item of questionResolvedItems) {
+          let props = (
+            item.event as EventQuestionReplied | EventQuestionRejected
+          ).properties;
+          questions = questions.filter(x => x.id !== props.requestID);
+        }
+
+        if (existingIndex >= 0) {
+          sessionTabs[existingIndex] = {
+            ...sessionTabs[existingIndex],
+            questions
+          };
+        } else {
+          sessionTabs.push({ ...session, questions });
+        }
+      }
+
+      if (
+        permissionAskedItems.length > 0 ||
+        permissionRepliedItems.length > 0
+      ) {
+        let existingIndex = sessionTabs.findIndex(
+          t => t.sessionId === sessionId
+        );
+        let base = existingIndex >= 0 ? sessionTabs[existingIndex] : session;
+        let permissions: PermissionRequest[] = base.permissions
+          ? [...base.permissions]
+          : [];
+
+        for (let item of permissionAskedItems) {
+          let p = (item.event as EventPermissionAsked).properties;
+          let idx = permissions.findIndex(x => x.id === p.id);
+          if (idx >= 0) {
+            permissions[idx] = p;
+          } else {
+            permissions.push(p);
+          }
+        }
+
+        for (let item of permissionRepliedItems) {
+          let props = (item.event as EventPermissionReplied).properties;
+          permissions = permissions.filter(x => x.id !== props.requestID);
+        }
+
+        if (existingIndex >= 0) {
+          sessionTabs[existingIndex] = {
+            ...sessionTabs[existingIndex],
+            permissions
+          };
+        } else {
+          sessionTabs.push({ ...session, permissions });
         }
       }
     }

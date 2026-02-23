@@ -372,7 +372,9 @@ export class SessionComponent implements OnInit, OnDestroy {
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
                 : {},
-              todos: resp.payload.session.todos ?? []
+              todos: resp.payload.session.todos ?? [],
+              questions: resp.payload.session.questions ?? [],
+              permissions: resp.payload.session.permissions ?? []
             });
 
             // Update session in the sessions list
@@ -513,7 +515,9 @@ export class SessionComponent implements OnInit, OnDestroy {
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
                 : {},
-              todos: resp.payload.session.todos ?? []
+              todos: resp.payload.session.todos ?? [],
+              questions: resp.payload.session.questions ?? [],
+              permissions: resp.payload.session.permissions ?? []
             });
 
             // Release the guard, then connect SSE directly

@@ -968,7 +968,9 @@ export class TabToEntService {
       opencodePassword: tab.opencodePassword,
       ocSession: tab.ocSession,
       firstMessage: tab.firstMessage,
-      todos: tab.todos
+      todos: tab.todos,
+      questions: tab.questions,
+      permissions: tab.permissions
     };
 
     let sessionLt: SessionLt = {};
