@@ -1,29 +1,40 @@
 import {
   AfterViewInit,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
-import type { QuestionRequest } from '@opencode-ai/sdk/v2';
+import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 
 interface ChatMessage {
-  sender: string;
+  role: 'user' | 'agent' | 'tool' | 'thought' | 'error';
   text: string;
-  permissionId?: string;
-  questionId?: string;
-  question?: QuestionRequest;
+  toolPart?: ToolPart;
 }
 
 interface ChatTurn {
   userMessage?: ChatMessage;
   responses: ChatMessage[];
 }
+
+const TOOL_TITLE_MAP: Record<string, string> = {
+  bash: 'Shell',
+  read: 'Read',
+  write: 'Write',
+  edit: 'Edit',
+  glob: 'Glob',
+  grep: 'Grep',
+  web_search: 'Web Search',
+  web_fetch: 'Web Fetch',
+  task: 'Task',
+  todo_write: 'Todo',
+  notebook_edit: 'Notebook Edit',
+  ask_user_question: 'Question'
+};
 
 @Component({
   standalone: false,
@@ -38,19 +49,7 @@ export class SessionMessagesComponent implements AfterViewInit, OnChanges {
   @Input() isSessionError = false;
   @Input() scrollTrigger = 0;
 
-  @Output() permissionResponse = new EventEmitter<{
-    permissionId: string;
-    reply: string;
-  }>();
-
-  @Output() questionResponse = new EventEmitter<{
-    questionId: string;
-    answers: string[][];
-  }>();
-
-  @Output() questionReject = new EventEmitter<{
-    questionId: string;
-  }>();
+  expandedTools: Record<string, boolean> = {};
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 
@@ -100,5 +99,39 @@ export class SessionMessagesComponent implements AfterViewInit, OnChanges {
     }
     this.responseMinHeight =
       this.chatScrollbar.nativeElement.clientHeight * 0.7;
+  }
+
+  getToolTitle(name: string): string {
+    return TOOL_TITLE_MAP[name] || name;
+  }
+
+  getToolSubtitle(toolPart: ToolPart): string {
+    let input = toolPart.state?.input;
+    if (!input) return '';
+    return (
+      (input['file_path'] as string) ||
+      (input['filePath'] as string) ||
+      (input['pattern'] as string) ||
+      (input['command'] as string) ||
+      (input['description'] as string) ||
+      (input['query'] as string) ||
+      (input['url'] as string) ||
+      ''
+    );
+  }
+
+  getToolOutput(toolPart: ToolPart): string {
+    if (!toolPart.state) return '';
+    if (toolPart.state.status === 'completed') return toolPart.state.output;
+    if (toolPart.state.status === 'error') return toolPart.state.error;
+    return '';
+  }
+
+  toggleToolCollapse(id: string) {
+    this.expandedTools[id] = !this.expandedTools[id];
+  }
+
+  isToolCollapsed(id: string): boolean {
+    return !this.expandedTools[id];
   }
 }

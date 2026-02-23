@@ -24,6 +24,7 @@ import { FileEditorComponent } from './file-editor/file-editor.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
 import { SelectFileComponent } from './select-file/select-file.component';
 import { NewSessionComponent } from './session/new-session/new-session.component';
+import { QuestionPromptComponent } from './session/question-prompt/question-prompt.component';
 import { SessionComponent } from './session/session.component';
 import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
 import { SessionInputComponent } from './session/session-input/session-input.component';
@@ -45,6 +46,7 @@ import { SessionMessagesComponent } from './session/session-messages/session-mes
     SessionComponent,
     SessionDebugEventsComponent,
     SessionInputComponent,
+    QuestionPromptComponent,
     SessionMessagesComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent,

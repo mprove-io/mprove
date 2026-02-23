@@ -8,7 +8,8 @@ import {
 import type {
   PermissionRequest,
   QuestionRequest,
-  SessionStatus
+  SessionStatus,
+  ToolPart
 } from '@opencode-ai/sdk/v2';
 import { combineLatest, interval, Subscription } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
@@ -50,11 +51,9 @@ import { environment } from '#front/environments/environment';
 import { SessionInputComponent } from './session-input/session-input.component';
 
 interface ChatMessage {
-  sender: string;
+  role: 'user' | 'agent' | 'tool' | 'thought' | 'error';
   text: string;
-  permissionId?: string;
-  questionId?: string;
-  question?: QuestionRequest;
+  toolPart?: ToolPart;
 }
 
 interface ChatTurn {
@@ -79,6 +78,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
+  permissions: PermissionRequest[] = [];
+  questions: QuestionRequest[] = [];
   scrollTrigger = 0;
   isSessionSwitching = false;
   showSessionMessages = true;
@@ -580,11 +581,12 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.sessionInput.applyModels(this.agentModelsQuery.getValue().models);
     }
 
+    this.permissions = sessionData.permissions || [];
+    this.questions = sessionData.questions || [];
+
     this.messages = this.buildMessagesFromStores(
       sessionData.messages,
-      sessionData.parts,
-      sessionData.permissions,
-      sessionData.questions
+      sessionData.parts
     );
     this.turns = this.buildTurns(this.messages);
 
@@ -637,11 +639,12 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
     this.lastKnownStoreUserCount = storeUserCount;
 
+    this.permissions = sessionData.permissions || [];
+    this.questions = sessionData.questions || [];
+
     this.messages = this.buildMessagesFromStores(
       sessionData.messages,
-      sessionData.parts,
-      sessionData.permissions,
-      sessionData.questions
+      sessionData.parts
     );
     this.turns = this.buildTurns(this.messages);
 
@@ -723,21 +726,16 @@ export class SessionComponent implements OnInit, OnDestroy {
       return true;
     }
     let lastMessage = this.messages[this.messages.length - 1];
-    if (lastMessage.sender === 'error') {
+    if (lastMessage.role === 'error') {
       return false;
     }
-    let result = lastMessage.sender === 'user' || lastMessage.sender === 'tool';
+    let result = lastMessage.role === 'user' || lastMessage.role === 'tool';
     return result;
   }
 
   rebuildMessagesAndTurns() {
     let data = this.sessionDataQuery.getValue();
-    this.messages = this.buildMessagesFromStores(
-      data.messages,
-      data.parts,
-      data.permissions,
-      data.questions
-    );
+    this.messages = this.buildMessagesFromStores(data.messages, data.parts);
     this.turns = this.buildTurns(this.messages);
   }
 
@@ -746,7 +744,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     let currentTurn: ChatTurn | undefined;
 
     for (let msg of messages) {
-      if (msg.sender === 'user') {
+      if (msg.role === 'user') {
         currentTurn = { userMessage: msg, responses: [] };
         turns.push(currentTurn);
       } else {
@@ -763,9 +761,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   buildMessagesFromStores(
     storeMessages: AgentMessageApi[],
-    storeParts: { [messageId: string]: AgentPartApi[] },
-    permissions: PermissionRequest[],
-    questions: QuestionRequest[]
+    storeParts: { [messageId: string]: AgentPartApi[] }
   ): ChatMessage[] {
     let chatMessages: ChatMessage[] = [];
 
@@ -788,7 +784,7 @@ export class SessionComponent implements OnInit, OnDestroy {
           }
         }
 
-        chatMessages.push({ sender: 'user', text });
+        chatMessages.push({ role: 'user', text });
       } else {
         // Assistant message - process each part
         for (let partApi of parts) {
@@ -797,17 +793,18 @@ export class SessionComponent implements OnInit, OnDestroy {
 
           if (part.type === 'text') {
             chatMessages.push({
-              sender: 'agent',
+              role: 'agent',
               text: part.text || ''
             });
           } else if (part.type === 'tool') {
             chatMessages.push({
-              sender: 'tool',
-              text: part.tool || 'tool'
+              role: 'tool',
+              text: part.tool || 'tool',
+              toolPart: part as ToolPart
             });
           } else if (part.type === 'reasoning') {
             chatMessages.push({
-              sender: 'thought',
+              role: 'thought',
               text: part.text || ''
             });
           }
@@ -818,33 +815,14 @@ export class SessionComponent implements OnInit, OnDestroy {
     // If no messages yet but session has firstMessage, show it
     if (chatMessages.length === 0 && this.session?.firstMessage) {
       chatMessages.push({
-        sender: 'user',
+        role: 'user',
         text: this.session.firstMessage
       });
     }
 
     // Append pending optimistic user messages
     for (let text of this.pendingUserMessages) {
-      chatMessages.push({ sender: 'user', text });
-    }
-
-    // Append active permissions
-    for (let perm of permissions) {
-      chatMessages.push({
-        sender: 'permission',
-        text: perm.permission || 'Permission requested',
-        permissionId: perm.id
-      });
-    }
-
-    // Append active questions
-    for (let q of questions) {
-      chatMessages.push({
-        sender: 'question',
-        text: q.questions?.[0]?.question || 'Question asked',
-        questionId: q.id,
-        question: q
-      });
+      chatMessages.push({ role: 'user', text });
     }
 
     return chatMessages;

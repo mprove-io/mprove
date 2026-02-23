@@ -14,7 +14,7 @@ export function makeTitle(session: AgentSessionApi): string {
     session.status === SessionStatusEnum.New ||
     session.status === SessionStatusEnum.Active
   ) {
-    return 'Untitled session...';
+    return 'Untitled Session';
   }
   return 'No title';
 }

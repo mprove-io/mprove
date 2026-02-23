@@ -56,7 +56,7 @@
         >
           <div *ngFor="let msg of turn.responses" class="mb-4">
             <!-- Agent message -->
-            <div *ngIf="msg.sender === 'agent'" class="flex justify-start">
+            <div *ngIf="msg.role === 'agent'" class="flex justify-start">
               <div class="max-w-[95%] rounded-2xl px-4 py-3">
                 <div class="text-s1 whitespace-pre-wrap text-[17px]">{{
                   msg.text
@@ -64,15 +64,87 @@
               </div>
             </div>
 
-            <!-- Tool call -->
-            <div *ngIf="msg.sender === 'tool'" class="flex justify-start">
+            <!-- Tool call (rich rendering) -->
+            <div
+              *ngIf="msg.role === 'tool' && msg.toolPart"
+              class="flex justify-start"
+            >
+              <div
+                class="max-w-[85%] overflow-hidden rounded-lg border"
+                [ngClass]="{
+                  'border-red-300 bg-red-50':
+                    msg.toolPart.state?.status === 'error',
+                  'border-s200': msg.toolPart.state?.status !== 'error'
+                }"
+              >
+                <!-- Tool header -->
+                <button
+                  class="flex w-full items-center gap-2 px-3 py-2 text-left focus:outline-none"
+                  (click)="toggleToolCollapse(msg.toolPart.id)"
+                >
+                  <!-- Status dot -->
+                  <span
+                    class="h-2 w-2 flex-shrink-0 rounded-full"
+                    [ngClass]="{
+                      'bg-amber-400':
+                        msg.toolPart.state?.status === 'pending' ||
+                        msg.toolPart.state?.status === 'running',
+                      'bg-green-500':
+                        msg.toolPart.state?.status === 'completed',
+                      'bg-red-500': msg.toolPart.state?.status === 'error'
+                    }"
+                  ></span>
+
+                  <!-- Tool title -->
+                  <span class="text-s1 text-sm font-medium">{{
+                    getToolTitle(msg.toolPart.tool)
+                  }}</span>
+
+                  <!-- Subtitle -->
+                  <span
+                    *ngIf="getToolSubtitle(msg.toolPart)"
+                    class="text-s500 min-w-0 flex-1 truncate text-sm"
+                    >{{ getToolSubtitle(msg.toolPart) }}</span
+                  >
+
+                  <!-- Collapse chevron -->
+                  <span
+                    class="text-s400 ml-auto flex-shrink-0 text-xs transition-transform"
+                    [ngClass]="{
+                      'rotate-90': !isToolCollapsed(msg.toolPart.id)
+                    }"
+                    >&#9654;</span
+                  >
+                </button>
+
+                <!-- Collapsible output -->
+                <div
+                  *ngIf="
+                    !isToolCollapsed(msg.toolPart.id) &&
+                    getToolOutput(msg.toolPart)
+                  "
+                  class="border-s200 max-h-[300px] overflow-auto border-t px-3 py-2"
+                >
+                  <pre
+                    class="text-s600 whitespace-pre-wrap break-words font-mono text-xs"
+                    >{{ getToolOutput(msg.toolPart) }}</pre
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Tool call (fallback without toolPart) -->
+            <div
+              *ngIf="msg.role === 'tool' && !msg.toolPart"
+              class="flex justify-start"
+            >
               <div class="border-s200 max-w-[85%] rounded-lg border px-3 py-2">
                 <div class="text-s600 text-[17px]">{{ msg.text }}</div>
               </div>
             </div>
 
             <!-- Thought -->
-            <div *ngIf="msg.sender === 'thought'" class="flex justify-start">
+            <div *ngIf="msg.role === 'thought'" class="flex justify-start">
               <div class="max-w-[85%] rounded-2xl px-4 py-2">
                 <div class="text-s500 whitespace-pre-wrap text-[17px] italic">{{
                   msg.text
@@ -81,74 +153,9 @@
             </div>
 
             <!-- Error -->
-            <div *ngIf="msg.sender === 'error'" class="flex justify-start">
+            <div *ngIf="msg.role === 'error'" class="flex justify-start">
               <div class="max-w-[85%] rounded-2xl bg-red-50 px-4 py-3">
                 <div class="text-[17px] text-red-700">{{ msg.text }}</div>
-              </div>
-            </div>
-
-            <!-- Permission request -->
-            <div *ngIf="msg.sender === 'permission'" class="flex justify-start">
-              <div
-                class="max-w-[85%] rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3"
-              >
-                <div class="text-[17px] text-amber-800">{{ msg.text }}</div>
-                <div class="mt-2 flex space-x-2">
-                  <button
-                    class="rounded-lg bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
-                    (click)="
-                      permissionResponse.emit({
-                        permissionId: msg.permissionId,
-                        reply: 'always'
-                      })
-                    "
-                  >
-                    Allow
-                  </button>
-                  <button
-                    class="rounded-lg bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
-                    (click)="
-                      permissionResponse.emit({
-                        permissionId: msg.permissionId,
-                        reply: 'reject'
-                      })
-                    "
-                  >
-                    Deny
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Question request -->
-            <div *ngIf="msg.sender === 'question'" class="flex justify-start">
-              <div
-                class="max-w-[85%] rounded-2xl border border-blue-300 bg-blue-50 px-4 py-3"
-              >
-                <div class="text-[17px] text-blue-800">{{ msg.text }}</div>
-                <div class="mt-2 flex space-x-2">
-                  <button
-                    class="rounded-lg bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700"
-                    (click)="
-                      questionResponse.emit({
-                        questionId: msg.questionId,
-                        answers: [[]]
-                      })
-                    "
-                  >
-                    Answer
-                  </button>
-                  <button
-                    class="rounded-lg bg-gray-600 px-3 py-1 text-sm text-white hover:bg-gray-700"
-                    (click)="
-                      questionReject.emit({
-                        questionId: msg.questionId
-                      })
-                    "
-                  >
-                    Reject
-                  </button>
-                </div>
               </div>
             </div>
           </div>

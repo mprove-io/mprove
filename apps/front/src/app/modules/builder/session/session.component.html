@@ -84,9 +84,6 @@
     [isWaitingForResponse]="isWaitingForResponse"
     [isSessionError]="isSessionError"
     [scrollTrigger]="scrollTrigger"
-    (permissionResponse)="respondToPermission($event)"
-    (questionResponse)="respondToQuestion($event)"
-    (questionReject)="rejectQuestion($event)"
   ></m-session-messages>
 
   <div
@@ -98,6 +95,73 @@
       [expandedEvents]="debugExpandedEvents"
       (expandedEventsChange)="debugExpandedEvents = $event"
     ></m-session-debug-events>
+  </div>
+
+  <!-- Permission dock -->
+  <div
+    *ngIf="permissions.length > 0"
+    class="mx-auto flex w-full max-w-[860px] flex-shrink-0 flex-col gap-2 px-6 pb-2 pt-2"
+  >
+    <div class="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
+      <div class="text-sm font-medium text-amber-800">
+        {{ permissions[0].permission }}
+      </div>
+      <div
+        *ngIf="permissions[0].patterns?.length > 0"
+        class="mt-1 text-xs text-amber-600"
+      >
+        Patterns: {{ permissions[0].patterns.join(', ') }}
+      </div>
+      <div class="mt-2 flex space-x-2">
+        <button
+          class="rounded-lg bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+          (click)="
+            respondToPermission({
+              permissionId: permissions[0].id,
+              reply: 'reject'
+            })
+          "
+        >
+          Deny
+        </button>
+        <button
+          class="rounded-lg bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
+          (click)="
+            respondToPermission({
+              permissionId: permissions[0].id,
+              reply: 'always'
+            })
+          "
+        >
+          Allow Always
+        </button>
+        <button
+          class="rounded-lg border border-green-600 bg-white px-3 py-1 text-sm text-green-700 hover:bg-green-50"
+          (click)="
+            respondToPermission({
+              permissionId: permissions[0].id,
+              reply: 'once'
+            })
+          "
+        >
+          Allow Once
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question dock -->
+  <div
+    *ngIf="questions.length > 0"
+    class="mx-auto flex w-full max-w-[1084px] flex-shrink-0 flex-col gap-2 px-6 pb-2 pt-2"
+  >
+    <m-question-prompt
+      [question]="questions[0]"
+      (answer)="
+        respondToQuestion({ questionId: questions[0].id, answers: $event })
+      "
+      (reject)="rejectQuestion({ questionId: questions[0].id })"
+    ></m-question-prompt>
   </div>
 
   <!-- Input area (pinned to bottom) -->

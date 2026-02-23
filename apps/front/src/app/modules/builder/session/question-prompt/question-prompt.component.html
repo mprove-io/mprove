@@ -1,0 +1,160 @@
+<div
+  *ngIf="question && question.questions?.length > 0"
+  class="border-s300 flex max-h-[45vh] flex-col rounded-lg border bg-white"
+>
+  <!-- Scrollable content -->
+  <ng-scrollbar
+    class="flex-1"
+    [orientation]="'vertical'"
+    [visibility]="'hover'"
+    [appearance]="'compact'"
+  >
+    <div class="px-5 py-4">
+      <div class="flex flex-col gap-6">
+        <div
+          *ngFor="let q of question.questions; let qIdx = index"
+          class="flex flex-col gap-2"
+        >
+          <!-- Question title -->
+          <div>
+            <div
+              *ngIf="question.questions.length > 1"
+              class="text-s500 mb-0.5 text-[15px] font-normal"
+            >
+              Question {{ qIdx + 1 }} of {{ question.questions.length }}
+            </div>
+            <div class="text-s1 text-lg font-medium">
+              {{ q.question }}
+              <span *ngIf="q.multiple" class="text-s500 text-base font-normal"
+                >(select multiple)</span
+              >
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="mt-1 flex flex-col gap-1">
+            <button
+              *ngFor="let opt of q.options"
+              type="button"
+              class="hover:bg-m50 flex w-4/5 items-center gap-4 rounded-md border border-transparent px-5 py-2.5 text-left focus:outline-none"
+              [ngClass]="{
+                'border-m600': isSelected(qIdx, opt.label)
+              }"
+              (click)="selectOption(qIdx, opt.label)"
+            >
+              <!-- Radio indicator (single-select) -->
+              <span
+                *ngIf="!q.multiple"
+                class="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded-full border-2"
+                [ngClass]="{
+                  'border-m600 bg-m600': isSelected(qIdx, opt.label),
+                  'border-s400': !isSelected(qIdx, opt.label)
+                }"
+              >
+                <span
+                  *ngIf="isSelected(qIdx, opt.label)"
+                  class="h-2 w-2 rounded-full bg-white"
+                ></span>
+              </span>
+
+              <!-- Checkbox indicator (multi-select) -->
+              <span
+                *ngIf="q.multiple"
+                class="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded border-2"
+                [ngClass]="{
+                  'border-m600 bg-m600 text-white': isSelected(qIdx, opt.label),
+                  'border-s400': !isSelected(qIdx, opt.label)
+                }"
+              >
+                <span *ngIf="isSelected(qIdx, opt.label)" class="text-xs"
+                  >&#10003;</span
+                >
+              </span>
+
+              <div class="min-w-0 flex-1">
+                <div class="text-s1 text-lg font-medium">
+                  {{ opt.label }}
+                </div>
+                <div
+                  *ngIf="opt.description"
+                  class="text-s500 text-base font-normal"
+                >
+                  {{ opt.description }}
+                </div>
+              </div>
+            </button>
+
+            <!-- Custom answer row -->
+            <div
+              *ngIf="q.custom !== false"
+              class="flex w-4/5 items-center gap-4 rounded-md border border-transparent px-5 py-2.5"
+              [ngClass]="{
+                'border-m600': isCustomActive(qIdx)
+              }"
+            >
+              <!-- Radio / Checkbox indicator -->
+              <span
+                *ngIf="!q.multiple"
+                class="flex h-[18px] w-[18px] flex-shrink-0 cursor-pointer items-center justify-center rounded-full border-2"
+                [ngClass]="{
+                  'border-m600 bg-m600': isCustomActive(qIdx),
+                  'border-s400': !isCustomActive(qIdx)
+                }"
+                (click)="toggleCustom(qIdx)"
+              >
+                <span
+                  *ngIf="isCustomActive(qIdx)"
+                  class="h-2 w-2 rounded-full bg-white"
+                ></span>
+              </span>
+              <span
+                *ngIf="q.multiple"
+                class="flex h-[18px] w-[18px] flex-shrink-0 cursor-pointer items-center justify-center rounded border-2"
+                [ngClass]="{
+                  'border-m600 bg-m600 text-white': isCustomActive(qIdx),
+                  'border-s400': !isCustomActive(qIdx)
+                }"
+                (click)="toggleCustom(qIdx)"
+              >
+                <span *ngIf="isCustomActive(qIdx)" class="text-xs"
+                  >&#10003;</span
+                >
+              </span>
+
+              <input
+                #customInput
+                type="text"
+                class="border-s300 text-s1 focus:border-m600 min-w-0 flex-1 rounded border bg-white px-3 py-2 text-lg focus:outline-none"
+                placeholder="Type own answer..."
+                [value]="customInputs[qIdx]"
+                (focus)="onCustomFocus(qIdx)"
+                (blur)="onCustomBlur(qIdx)"
+                (input)="onCustomInput(qIdx, $any($event.target).value)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-scrollbar>
+
+  <!-- Footer -->
+  <div
+    class="border-s200 flex items-center justify-end gap-3 border-t px-5 py-3"
+  >
+    <button
+      type="button"
+      class="text-s500 hover:text-s1 rounded px-4 py-2 text-[17px] focus:outline-none"
+      (click)="dismiss()"
+    >
+      Cancel
+    </button>
+    <button
+      type="button"
+      class="bg-m600 rounded px-4 py-2 text-[17px] text-white hover:opacity-90 focus:outline-none"
+      (click)="submit()"
+    >
+      Send
+    </button>
+  </div>
+</div>
