@@ -75,7 +75,7 @@
               class="flex justify-start"
             >
               <div
-                class="max-w-[90%] overflow-hidden rounded-lg border"
+                class="ml-4 max-w-[90%] overflow-hidden rounded-lg border"
                 [ngClass]="{
                   'border-red-300 bg-red-50':
                     msg.toolPart.state?.status === 'error',
@@ -121,7 +121,9 @@
               *ngIf="msg.role === 'tool' && !msg.toolPart"
               class="flex justify-start"
             >
-              <div class="border-s200 max-w-[90%] rounded-lg border px-3 py-2">
+              <div
+                class="border-s200 ml-4 max-w-[90%] rounded-lg border px-3 py-2"
+              >
                 <div class="text-s600 break-words text-[17px]">{{
                   msg.text
                 }}</div>
