@@ -1,0 +1,34 @@
+<div class="flex max-h-[80vh] min-h-[300px] flex-col">
+  <div
+    class="flex flex-shrink-0 items-center gap-2 border-b px-8 py-5"
+    [ngClass]="{
+      'border-red-200 bg-red-50': dataItem.isError,
+      'border-s200': !dataItem.isError
+    }"
+  >
+    <span class="text-s1 text-lg font-medium">{{ dataItem.title }}</span>
+    <span
+      *ngIf="dataItem.subtitle"
+      class="text-s500 min-w-0 truncate text-lg"
+      >{{ dataItem.subtitle }}</span
+    >
+  </div>
+
+  <ng-scrollbar
+    [orientation]="'vertical'"
+    [visibility]="'hover'"
+    [appearance]="'compact'"
+    class="flex-1"
+  >
+    <div class="px-8 py-5">
+      <pre
+        class="whitespace-pre-wrap break-all font-mono text-[16px]"
+        [ngClass]="{
+          'text-red-700': dataItem.isError,
+          'text-s600': !dataItem.isError
+        }"
+        >{{ dataItem.output }}</pre
+      >
+    </div>
+  </ng-scrollbar>
+</div>

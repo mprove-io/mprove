@@ -85,7 +85,8 @@
                 <!-- Tool header -->
                 <button
                   class="flex w-full items-center gap-2 px-3 py-2 text-left focus:outline-none"
-                  (click)="toggleToolCollapse(msg.toolPart.id)"
+                  [disabled]="!getToolOutput(msg.toolPart)"
+                  (click)="openToolOutput(msg.toolPart)"
                 >
                   <!-- Status dot -->
                   <span
@@ -111,30 +112,7 @@
                     class="text-s500 min-w-0 flex-1 truncate text-base"
                     >{{ getToolSubtitle(msg.toolPart) }}</span
                   >
-
-                  <!-- Collapse chevron -->
-                  <span
-                    class="text-s400 ml-auto flex-shrink-0 text-xs transition-transform"
-                    [ngClass]="{
-                      'rotate-90': !isToolCollapsed(msg.toolPart.id)
-                    }"
-                    >&#9654;</span
-                  >
                 </button>
-
-                <!-- Collapsible output -->
-                <div
-                  *ngIf="
-                    !isToolCollapsed(msg.toolPart.id) &&
-                    getToolOutput(msg.toolPart)
-                  "
-                  class="border-s200 max-h-[300px] overflow-auto border-t px-3 py-2"
-                >
-                  <pre
-                    class="text-s600 whitespace-pre-wrap break-all font-mono text-sm"
-                    >{{ getToolOutput(msg.toolPart) }}</pre
-                  >
-                </div>
               </div>
             </div>
 

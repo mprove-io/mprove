@@ -9,6 +9,7 @@ import {
 import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { MyDialogService } from '../../../../services/my-dialog.service';
 
 interface ChatMessage {
   role: 'user' | 'agent' | 'tool' | 'thought' | 'error';
@@ -49,8 +50,6 @@ export class SessionMessagesComponent implements AfterViewInit, OnChanges {
   @Input() retryMessage: string;
   @Input() isSessionError = false;
   @Input() scrollTrigger = 0;
-
-  expandedTools: Record<string, boolean> = {};
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 
@@ -128,11 +127,16 @@ export class SessionMessagesComponent implements AfterViewInit, OnChanges {
     return '';
   }
 
-  toggleToolCollapse(id: string) {
-    this.expandedTools[id] = !this.expandedTools[id];
-  }
+  constructor(private myDialogService: MyDialogService) {}
 
-  isToolCollapsed(id: string): boolean {
-    return !this.expandedTools[id];
+  openToolOutput(toolPart: ToolPart) {
+    let output = this.getToolOutput(toolPart);
+    if (!output) return;
+    this.myDialogService.showToolOutput({
+      title: this.getToolTitle(toolPart.tool),
+      subtitle: this.getToolSubtitle(toolPart),
+      output,
+      isError: toolPart.state?.status === 'error'
+    });
   }
 }

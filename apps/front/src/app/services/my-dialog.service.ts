@@ -44,6 +44,10 @@ import {
   EditSessionTitleDialogData
 } from '../modules/builder/session/edit-session-title-dialog/edit-session-title-dialog.component';
 import {
+  ToolOutputDialogComponent,
+  ToolOutputDialogData
+} from '../modules/builder/session/tool-output-dialog/tool-output-dialog.component';
+import {
   CreateDashboardDialogComponent,
   CreateDashboardDialogData
 } from '../modules/dashboards/create-dashboard-dialog/create-dashboard-dialog.component';
@@ -805,6 +809,15 @@ export class MyDialogService {
       closeButton: false,
       data: item,
       width: 720
+    });
+  }
+
+  showToolOutput(item: ToolOutputDialogData): void {
+    this.dialogService.open(ToolOutputDialogComponent, {
+      enableClose: false,
+      closeButton: true,
+      data: item,
+      width: '50vw'
     });
   }
 }
