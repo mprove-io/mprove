@@ -1,6 +1,6 @@
 <div class="bg-m0 relative flex h-full w-full flex-col rounded shadow">
   <div class="mb-6 mt-6 flex h-11 flex-shrink-0 flex-row items-center">
-    <div class="ml-6 flex-shrink-0">
+    <div class="ml-10 flex-shrink-0">
       <button
         type="button"
         class="border-s400 text-s500 hover:bg-s100 flex select-none flex-row items-center rounded border p-4 py-2 focus:outline-none"
@@ -60,7 +60,7 @@
       <div class="mt-2 h-full w-full pb-6">
         <div
           *ngFor="let session of sessions; trackBy: trackBySessionId"
-          class="hover:bg-m50 group ml-6 mr-9 flex h-11 cursor-pointer select-none flex-row items-center rounded pl-3 pr-3"
+          class="hover:bg-m50 group ml-6 mr-9 flex h-11 cursor-pointer select-none flex-row items-center rounded pl-6 pr-3"
           (click)="openSession(session)"
         >
           <span
