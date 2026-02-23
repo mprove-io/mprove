@@ -373,9 +373,23 @@
               class="flex w-[90px] select-none items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':
-                  builderRight === builderRightSessions && isRightPanelVisible,
+                  builderRight === builderRightSessions &&
+                  !secondFileNodeId &&
+                  (builderLeft === builderLeftTree ||
+                    builderLeft === builderLeftInfo ||
+                    lastUrl === pathNewSession ||
+                    lastUrl === pathSelectFile ||
+                    !file?.fileId),
                 'text-s500':
-                  builderRight !== builderRightSessions || !isRightPanelVisible
+                  builderRight !== builderRightSessions ||
+                  !(
+                    !secondFileNodeId &&
+                    (builderLeft === builderLeftTree ||
+                      builderLeft === builderLeftInfo ||
+                      lastUrl === pathNewSession ||
+                      lastUrl === pathSelectFile ||
+                      !file?.fileId)
+                  )
               }"
               (click)="setBuilderRight(builderRightSessions)"
               >Sessions</button
@@ -386,10 +400,22 @@
               [ngClass]="{
                 'text-m500 font-semibold':
                   builderRight === builderRightValidation &&
-                  isRightPanelVisible,
+                  !secondFileNodeId &&
+                  (builderLeft === builderLeftTree ||
+                    builderLeft === builderLeftInfo ||
+                    lastUrl === pathNewSession ||
+                    lastUrl === pathSelectFile ||
+                    !file?.fileId),
                 'text-s500':
                   builderRight !== builderRightValidation ||
-                  !isRightPanelVisible
+                  !(
+                    !secondFileNodeId &&
+                    (builderLeft === builderLeftTree ||
+                      builderLeft === builderLeftInfo ||
+                      lastUrl === pathNewSession ||
+                      lastUrl === pathSelectFile ||
+                      !file?.fileId)
+                  )
               }"
               (click)="setBuilderRight(builderRightValidation)"
               >Validation</button
@@ -400,14 +426,33 @@
               [ngClass]="{
                 'bg-m500':
                   builderRight === builderRightValidation &&
-                  isRightPanelVisible,
+                  !secondFileNodeId &&
+                  (builderLeft === builderLeftTree ||
+                    builderLeft === builderLeftInfo ||
+                    lastUrl === pathNewSession ||
+                    lastUrl === pathSelectFile ||
+                    !file?.fileId),
                 'bg-r1':
                   (builderRight !== builderRightValidation ||
-                    !isRightPanelVisible) &&
+                    !(
+                      !secondFileNodeId &&
+                      (builderLeft === builderLeftTree ||
+                        builderLeft === builderLeftInfo ||
+                        lastUrl === pathNewSession ||
+                        lastUrl === pathSelectFile ||
+                        !file?.fileId)
+                    )) &&
                   struct?.errors?.length > 0,
                 'bg-s400':
                   (builderRight !== builderRightValidation ||
-                    !isRightPanelVisible) &&
+                    !(
+                      !secondFileNodeId &&
+                      (builderLeft === builderLeftTree ||
+                        builderLeft === builderLeftInfo ||
+                        lastUrl === pathNewSession ||
+                        lastUrl === pathSelectFile ||
+                        !file?.fileId)
+                    )) &&
                   !(struct?.errors?.length > 0)
               }"
               >{{ struct?.errors?.length }}</div
@@ -443,7 +488,8 @@
           *ngIf="
             builderLeft === builderLeftTree ||
             builderLeft === builderLeftInfo ||
-            isBaseRoute ||
+            lastUrl === pathNewSession ||
+            lastUrl === pathSelectFile ||
             !file?.fileId
           "
         >

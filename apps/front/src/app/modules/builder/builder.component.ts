@@ -220,23 +220,6 @@ export class BuilderComponent implements OnInit {
     }
   }
 
-  get isBaseRoute() {
-    return (
-      this.lastUrl === this.pathNewSession ||
-      this.lastUrl === this.pathSelectFile
-    );
-  }
-
-  get isRightPanelVisible() {
-    return (
-      !this.secondFileNodeId &&
-      (this.builderLeft === BuilderLeftEnum.Tree ||
-        this.builderLeft === BuilderLeftEnum.Info ||
-        this.isBaseRoute ||
-        !this.file?.fileId)
-    );
-  }
-
   setBuilderRight(tab: BuilderRightEnum) {
     if (this.secondFileNodeId) {
       this.uiQuery.updatePart({ secondFileNodeId: undefined });
@@ -264,7 +247,11 @@ export class BuilderComponent implements OnInit {
 
     this.uiQuery.updatePart({ builderLeft: x });
 
-    if (this.isSessionRoute || this.isBaseRoute) {
+    if (
+      this.isSessionRoute ||
+      this.lastUrl === this.pathNewSession ||
+      this.lastUrl === this.pathSelectFile
+    ) {
       let urlTree = this.router.parseUrl(this.router.url);
       urlTree.queryParams['left'] = x;
       this.location.replaceState(this.router.serializeUrl(urlTree));
