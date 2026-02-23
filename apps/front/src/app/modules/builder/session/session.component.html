@@ -167,10 +167,10 @@
   <!-- Input area (pinned to bottom) -->
   <div class="flex-shrink-0 px-6 pb-8 pt-[6px]">
     <div class="mx-auto flex max-w-[860px] items-start">
-      <div class="w-5 flex-shrink-0 pt-[28px]">
+      <div class="mr-3 w-3 flex-shrink-0 pt-[28px]">
         <div
           *ngIf="isWaitingForResponse"
-          class="h-2.5 w-2.5 animate-pulse rounded-full bg-amber-300"
+          class="h-3 w-3 rounded-full bg-amber-400"
         ></div>
       </div>
       <div class="min-w-0 flex-1">
@@ -184,7 +184,7 @@
           (send)="sendFollowUp($event)"
         ></m-session-input>
       </div>
-      <div class="w-5 flex-shrink-0"></div>
+      <div class="ml-3 w-3 flex-shrink-0"></div>
     </div>
   </div>
 </div>
