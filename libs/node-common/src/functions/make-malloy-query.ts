@@ -24,7 +24,6 @@ import {
   ASTViewOperation
 } from '@malloydata/malloy-query-builder';
 // import { FieldBase } from '@malloydata/malloy/dist/model/malloy_types';
-import fse from 'fs-extra';
 import { DOUBLE_UNDERSCORE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
@@ -477,7 +476,11 @@ export async function makeMalloyQuery(item: {
 
   let runtime = new MalloyRuntime({
     urlReader: {
-      readURL: async (url: URL) => await fse.readFile(url, 'utf8')
+      readURL: async (_url: URL) => {
+        throw new ServerError({
+          message: ErEnum.BLOCKML_UNEXPECTED_URL_READ
+        });
+      }
     },
     connections: {
       lookupConnection: async function (name: string) {

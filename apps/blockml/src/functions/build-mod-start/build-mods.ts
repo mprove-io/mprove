@@ -1,3 +1,4 @@
+import path from 'node:path';
 import {
   Model as MalloyModel,
   ModelDef as MalloyModelDef,
@@ -80,11 +81,14 @@ export async function buildMods(
         let blockmlDataPath =
           cs.get<BlockmlConfig['blockmlData']>('blockmlData');
 
+        let resolvedPath = path.resolve(url.pathname);
+        let resolvedBase = path.resolve(blockmlDataPath);
+
         if (
           url.protocol.toLowerCase().startsWith('file') === true &&
-          (url.pathname.includes(blockmlDataPath) === false ||
+          (!resolvedPath.startsWith(resolvedBase + path.sep) ||
             (isDefined(projectId) &&
-              url.pathname.includes(projectId) === false))
+              !resolvedPath.includes('/' + projectId + '/')))
         ) {
           item.errors.push(
             new BmError({

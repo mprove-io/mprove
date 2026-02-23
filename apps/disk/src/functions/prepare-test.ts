@@ -19,12 +19,13 @@ export async function prepareTest(
 ) {
   let extraOverride: DiskConfig = {
     diskEnv: DiskEnvEnum.TEST,
-    diskLogResponseError: true
+    diskLogResponseError: true,
+    ...overrideConfigOptions
   };
 
   let config = getConfig();
 
-  let mockConfig = Object.assign(config, overrideConfigOptions, extraOverride);
+  let mockConfig = Object.assign(config, extraOverride);
 
   let moduleRef: TestingModule = await Test.createTestingModule({
     imports: [

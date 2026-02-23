@@ -14,6 +14,7 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { removePath } from '#disk/functions/disk/remove-path';
+import { validatePathUnderDir } from '#disk/functions/disk/validate-path-under-dir';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { commit } from '#disk/functions/git/commit';
@@ -69,6 +70,8 @@ export class DeleteFileService {
 
     let relativeFilePath = fileNodeId.substring(projectId.length + 1);
     let filePath = repoDir + '/' + relativeFilePath;
+
+    validatePathUnderDir({ fullPath: filePath, allowedDir: repoDir });
 
     //
 

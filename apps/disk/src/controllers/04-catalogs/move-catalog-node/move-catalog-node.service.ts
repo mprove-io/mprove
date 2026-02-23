@@ -13,6 +13,7 @@ import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
 import { movePath } from '#disk/functions/disk/move-path';
+import { validatePathUnderDir } from '#disk/functions/disk/validate-path-under-dir';
 import { addChangesToStage } from '#disk/functions/git/add-changes-to-stage';
 import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { createGit } from '#disk/functions/git/create-git';
@@ -67,6 +68,9 @@ export class MoveCatalogNodeService {
 
     let fromPath = repoDir + '/' + fromNodeId.substring(projectId.length + 1);
     let toPath = repoDir + '/' + toNodeId.substring(projectId.length + 1);
+
+    validatePathUnderDir({ fullPath: fromPath, allowedDir: repoDir });
+    validatePathUnderDir({ fullPath: toPath, allowedDir: repoDir });
 
     // let isOrgExist = await isPathExist(orgDir);
     // if (isOrgExist === false) {

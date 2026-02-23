@@ -4,8 +4,8 @@ _nogit/
 
 .angular/
 .devcontainer/.zshrc
-.turbo/
 .pnpm-store/
+.turbo/
 .vscode/*
 !.vscode/keybindings-example.json
 !.vscode/settings-example.json
