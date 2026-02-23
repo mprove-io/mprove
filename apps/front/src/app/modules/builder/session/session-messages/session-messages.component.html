@@ -10,10 +10,11 @@
       <ng-container *ngIf="turns.length === 0 && session?.firstMessage">
         <div class="user-message mb-4">
           <div class="flex justify-end">
-            <div class="bg-s100 max-w-[85%] rounded-2xl px-4 py-3">
-              <div class="text-s1 whitespace-pre-wrap text-[17px]">{{
-                session.firstMessage
-              }}</div>
+            <div class="bg-s100 max-w-[90%] rounded-2xl px-4 py-3">
+              <div
+                class="text-s1 whitespace-pre-wrap break-words text-[17px]"
+                >{{ session.firstMessage }}</div
+              >
             </div>
           </div>
         </div>
@@ -29,8 +30,8 @@
             }}</span>
           </div>
           <div *ngIf="isSessionError" class="mb-4 flex justify-start">
-            <div class="max-w-[85%] rounded-2xl bg-red-50 px-4 py-3">
-              <div class="text-[17px] text-red-700">
+            <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
+              <div class="break-words text-[17px] text-red-700">
                 Session activation failed. Please try again.
               </div>
             </div>
@@ -43,10 +44,11 @@
         <!-- User message -->
         <div *ngIf="turn.userMessage" class="user-message mb-4">
           <div class="flex justify-end">
-            <div class="bg-s100 max-w-[85%] rounded-2xl px-4 py-3">
-              <div class="text-s1 whitespace-pre-wrap text-[17px]">{{
-                turn.userMessage.text
-              }}</div>
+            <div class="bg-s100 max-w-[90%] rounded-2xl px-4 py-3">
+              <div
+                class="text-s1 whitespace-pre-wrap break-words text-[17px]"
+                >{{ turn.userMessage.text }}</div
+              >
             </div>
           </div>
         </div>
@@ -59,10 +61,11 @@
           <div *ngFor="let msg of turn.responses" class="mb-4">
             <!-- Agent message -->
             <div *ngIf="msg.role === 'agent'" class="flex justify-start">
-              <div class="max-w-[95%] rounded-2xl px-4 py-3">
-                <div class="text-s1 whitespace-pre-wrap text-[17px]">{{
-                  msg.text
-                }}</div>
+              <div class="max-w-[90%] rounded-2xl px-4 py-3">
+                <div
+                  class="text-s1 whitespace-pre-wrap break-words text-[17px]"
+                  >{{ msg.text }}</div
+                >
               </div>
             </div>
 
@@ -72,7 +75,7 @@
               class="flex justify-start"
             >
               <div
-                class="max-w-[85%] overflow-hidden rounded-lg border"
+                class="max-w-[90%] overflow-hidden rounded-lg border"
                 [ngClass]="{
                   'border-red-300 bg-red-50':
                     msg.toolPart.state?.status === 'error',
@@ -98,14 +101,14 @@
                   ></span>
 
                   <!-- Tool title -->
-                  <span class="text-s1 text-sm font-medium">{{
+                  <span class="text-s1 text-base font-medium">{{
                     getToolTitle(msg.toolPart.tool)
                   }}</span>
 
                   <!-- Subtitle -->
                   <span
                     *ngIf="getToolSubtitle(msg.toolPart)"
-                    class="text-s500 min-w-0 flex-1 truncate text-sm"
+                    class="text-s500 min-w-0 flex-1 truncate text-base"
                     >{{ getToolSubtitle(msg.toolPart) }}</span
                   >
 
@@ -128,7 +131,7 @@
                   class="border-s200 max-h-[300px] overflow-auto border-t px-3 py-2"
                 >
                   <pre
-                    class="text-s600 whitespace-pre-wrap break-words font-mono text-xs"
+                    class="text-s600 whitespace-pre-wrap break-all font-mono text-sm"
                     >{{ getToolOutput(msg.toolPart) }}</pre
                   >
                 </div>
@@ -140,24 +143,29 @@
               *ngIf="msg.role === 'tool' && !msg.toolPart"
               class="flex justify-start"
             >
-              <div class="border-s200 max-w-[85%] rounded-lg border px-3 py-2">
-                <div class="text-s600 text-[17px]">{{ msg.text }}</div>
-              </div>
-            </div>
-
-            <!-- Thought -->
-            <div *ngIf="msg.role === 'thought'" class="flex justify-start">
-              <div class="max-w-[85%] rounded-2xl px-4 py-2">
-                <div class="text-s500 whitespace-pre-wrap text-[17px] italic">{{
+              <div class="border-s200 max-w-[90%] rounded-lg border px-3 py-2">
+                <div class="text-s600 break-words text-[17px]">{{
                   msg.text
                 }}</div>
               </div>
             </div>
 
+            <!-- Thought -->
+            <div *ngIf="msg.role === 'thought'" class="flex justify-start">
+              <div class="max-w-[90%] rounded-2xl px-4 py-2">
+                <div
+                  class="text-s500 whitespace-pre-wrap break-words text-[17px] italic"
+                  >{{ msg.text }}</div
+                >
+              </div>
+            </div>
+
             <!-- Error -->
             <div *ngIf="msg.role === 'error'" class="flex justify-start">
-              <div class="max-w-[85%] rounded-2xl bg-red-50 px-4 py-3">
-                <div class="text-[17px] text-red-700">{{ msg.text }}</div>
+              <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
+                <div class="break-words text-[17px] text-red-700">{{
+                  msg.text
+                }}</div>
               </div>
             </div>
           </div>
@@ -175,8 +183,8 @@
               }}</span>
             </div>
             <div *ngIf="isSessionError" class="mb-4 flex justify-start">
-              <div class="max-w-[85%] rounded-2xl bg-red-50 px-4 py-3">
-                <div class="text-[17px] text-red-700">
+              <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
+                <div class="break-words text-[17px] text-red-700">
                   Session activation failed. Please try again.
                 </div>
               </div>
