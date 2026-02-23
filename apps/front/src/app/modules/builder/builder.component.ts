@@ -268,7 +268,7 @@ export class BuilderComponent implements OnInit {
       let urlTree = this.router.parseUrl(this.router.url);
       urlTree.queryParams['left'] = x;
       this.location.replaceState(this.router.serializeUrl(urlTree));
-    } else if (x === BuilderLeftEnum.Tree) {
+    } else if (x === BuilderLeftEnum.Tree || x === BuilderLeftEnum.Info) {
       let pLink = this.uiQuery
         .getValue()
         .projectSessionLinks.find(
