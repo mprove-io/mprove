@@ -1,6 +1,6 @@
 {
   "name": "@mprove/mcli",
-  "version": "11.0.101",
+  "version": "11.0.102-dev",
   "author": "Alexander Kalitenya <akalitenya@mprove.io>",
   "license": "UNLICENSED",
   "private": true,
