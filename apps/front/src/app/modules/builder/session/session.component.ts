@@ -834,8 +834,10 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.isWaitingForResponse =
-      this.pendingUserMessages.length > 0 ||
-      this.checkIsWaitingForResponse(sessionData.sdkSessionStatus);
+      this.questions.length === 0 &&
+      this.permissions.length === 0 &&
+      (this.pendingUserMessages.length > 0 ||
+        this.checkIsWaitingForResponse(sessionData.sdkSessionStatus));
     this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
