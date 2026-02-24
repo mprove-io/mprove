@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -145,8 +146,17 @@ export class SessionMessagesComponent
     }
     let viewport = this.chatScrollbar.adapter.viewportElement;
     let max = viewport.scrollHeight - viewport.clientHeight;
-    this.isOverflowing = max > 1;
-    this.isAtBottom = !this.isOverflowing || viewport.scrollTop >= max - 2;
+    let newIsOverflowing = max > 1;
+    let newIsAtBottom = !newIsOverflowing || viewport.scrollTop >= max - 2;
+
+    if (
+      this.isOverflowing !== newIsOverflowing ||
+      this.isAtBottom !== newIsAtBottom
+    ) {
+      this.isOverflowing = newIsOverflowing;
+      this.isAtBottom = newIsAtBottom;
+      this.cd.detectChanges();
+    }
   }
 
   scrollUserMessageToTop() {
@@ -205,7 +215,10 @@ export class SessionMessagesComponent
     return '';
   }
 
-  constructor(private myDialogService: MyDialogService) {}
+  constructor(
+    private myDialogService: MyDialogService,
+    private cd: ChangeDetectorRef
+  ) {}
 
   openToolOutput(toolPart: ToolPart) {
     let output = this.getToolOutput(toolPart);

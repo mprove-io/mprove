@@ -9,6 +9,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import type { AgentEvent } from '#backend/services/agent.service';
 import { BRANCH_MAIN } from '#common/constants/top';
+import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -27,9 +28,9 @@ import {
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import {
-  ToBackendSendAgentMessageRequest,
-  ToBackendSendAgentMessageResponse
-} from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
+  ToBackendSendUserMessageToAgentRequest,
+  ToBackendSendUserMessageToAgentResponse
+} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
 
 test('1', async t => {
   let e2bApiKey = process.env.BACKEND_DEMO_PROJECT_E2B_API_KEY;
@@ -162,19 +163,20 @@ test('1', async t => {
 
     console.log('[test] SSE connected, sending message...');
 
-    let sendMessageReq: ToBackendSendAgentMessageRequest = {
+    let sendMessageReq: ToBackendSendUserMessageToAgentRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage,
+        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: {
         sessionId: sessionId,
+        interactionType: InteractionTypeEnum.Message,
         message: 'what is 10 + 20?'
       }
     };
 
-    await sendToBackend<ToBackendSendAgentMessageResponse>({
+    await sendToBackend<ToBackendSendUserMessageToAgentResponse>({
       httpServer: prep.httpServer,
       loginToken: prep.loginToken,
       req: sendMessageReq,

@@ -16,7 +16,7 @@ import type {
   PermissionRequest,
   QuestionRequest
 } from '@opencode-ai/sdk/v2';
-import { and, eq, lt } from 'drizzle-orm';
+import { and, eq, lt, max } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -26,6 +26,7 @@ import type {
   PartTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { eventsTable } from '#backend/drizzle/postgres/schema/events.js';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -177,7 +178,14 @@ export class AgentService implements OnModuleDestroy {
 
     let abortController = new AbortController();
 
-    let eventIndex = this.eventCounters.get(item.sessionId) ?? 0;
+    let eventIndex = this.eventCounters.get(item.sessionId);
+    if (eventIndex === undefined) {
+      let maxRow = await this.db.drizzle
+        .select({ maxIndex: max(eventsTable.eventIndex) })
+        .from(eventsTable)
+        .where(eq(eventsTable.sessionId, item.sessionId));
+      eventIndex = maxRow[0]?.maxIndex != null ? maxRow[0].maxIndex + 1 : 0;
+    }
 
     let response = await client.event.subscribe(
       {},

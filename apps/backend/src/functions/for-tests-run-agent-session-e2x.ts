@@ -11,6 +11,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import type { AgentEvent } from '#backend/services/agent.service';
 import { BRANCH_MAIN } from '#common/constants/top';
+import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -26,9 +27,9 @@ import {
   ToBackendDeleteAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
 import {
-  ToBackendSendAgentMessageRequest,
-  ToBackendSendAgentMessageResponse
-} from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
+  ToBackendSendUserMessageToAgentRequest,
+  ToBackendSendUserMessageToAgentResponse
+} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
 
 export async function forTestsRunAgentSessionE2x(item: {
   t: ExecutionContext;
@@ -62,8 +63,8 @@ export async function forTestsRunAgentSessionE2x(item: {
   let sse: { events: AgentEvent[]; close: () => void } | undefined;
   let testError: unknown;
   let createSessionResp: ToBackendCreateAgentSessionResponse;
-  let sendFirstMessageResp: ToBackendSendAgentMessageResponse;
-  let sendMessageResp: ToBackendSendAgentMessageResponse;
+  let sendFirstMessageResp: ToBackendSendUserMessageToAgentResponse;
+  let sendMessageResp: ToBackendSendUserMessageToAgentResponse;
 
   try {
     console.log('[test] preparing test and seeding...');
@@ -185,20 +186,21 @@ export async function forTestsRunAgentSessionE2x(item: {
     console.log('[test] SSE connected, sending 1st message...');
 
     // Send 1st message (after SSE is connected)
-    let sendFirstMessageReq: ToBackendSendAgentMessageRequest = {
+    let sendFirstMessageReq: ToBackendSendUserMessageToAgentRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage,
+        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: {
         sessionId: sessionId,
+        interactionType: InteractionTypeEnum.Message,
         message: 'hello, what model is used?'
       }
     };
 
     sendFirstMessageResp =
-      await sendToBackend<ToBackendSendAgentMessageResponse>({
+      await sendToBackend<ToBackendSendUserMessageToAgentResponse>({
         httpServer: prep.httpServer,
         loginToken: prep.loginToken,
         req: sendFirstMessageReq,
@@ -219,24 +221,26 @@ export async function forTestsRunAgentSessionE2x(item: {
     );
 
     // Send 2nd message
-    let sendMessageReq: ToBackendSendAgentMessageRequest = {
+    let sendMessageReq: ToBackendSendUserMessageToAgentRequest = {
       info: {
-        name: ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage,
+        name: ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
         traceId: traceId,
         idempotencyKey: makeId()
       },
       payload: {
         sessionId: sessionId,
+        interactionType: InteractionTypeEnum.Message,
         message: 'what is 2 + 2?'
       }
     };
 
-    sendMessageResp = await sendToBackend<ToBackendSendAgentMessageResponse>({
-      httpServer: prep.httpServer,
-      loginToken: prep.loginToken,
-      req: sendMessageReq,
-      checkIsOk: true
-    });
+    sendMessageResp =
+      await sendToBackend<ToBackendSendUserMessageToAgentResponse>({
+        httpServer: prep.httpServer,
+        loginToken: prep.loginToken,
+        req: sendMessageReq,
+        checkIsOk: true
+      });
 
     console.log('[test] 2nd message sent, waiting for turn to complete...');
 

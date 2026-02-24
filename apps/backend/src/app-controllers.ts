@@ -6,11 +6,8 @@ import { GetAgentEventsSseController } from './controllers/agent/get-agent-event
 import { GetAgentProviderModelsController } from './controllers/agent/get-agent-provider-models/get-agent-provider-models.controller';
 import { GetAgentSessionController } from './controllers/agent/get-agent-session/get-agent-session.controller';
 import { GetAgentSessionsListController } from './controllers/agent/get-agent-sessions-list/get-agent-sessions-list.controller';
-import { PauseAgentSessionSandboxController } from './controllers/agent/pause-agent-session-sandbox/pause-agent-session-sandbox.controller';
-import { RejectAgentQuestionController } from './controllers/agent/reject-agent-question/reject-agent-question.controller';
-import { RespondToAgentPermissionController } from './controllers/agent/respond-to-agent-permission/respond-to-agent-permission.controller';
-import { RespondToAgentQuestionController } from './controllers/agent/respond-to-agent-question/respond-to-agent-question.controller';
-import { SendAgentMessageController } from './controllers/agent/send-agent-message/send-agent-message.controller';
+import { PauseAgentSessionController } from './controllers/agent/pause-agent-session/pause-agent-session.controller';
+import { SendUserMessageToAgentController } from './controllers/agent/send-user-message-to-agent/send-user-message-to-agent.controller';
 import { SetAgentSessionTitleController } from './controllers/agent/set-agent-session-title/set-agent-session-title.controller';
 import { GetAvatarBigController } from './controllers/avatars/get-avatar-big/get-avatar-big.controller';
 import { SetAvatarController } from './controllers/avatars/set-avatar/set-avatar.controller';
@@ -132,14 +129,11 @@ import { UpdateUserPasswordController } from './controllers/users/update-user-pa
 export const appControllers = [
   CreateAgentSessionController,
   CreateAgentSseTicketController,
-  SendAgentMessageController,
+  SendUserMessageToAgentController,
   GetAgentEventsSseController,
   DeleteAgentSessionController,
   ArchiveAgentSessionController,
-  PauseAgentSessionSandboxController,
-  RespondToAgentPermissionController,
-  RespondToAgentQuestionController,
-  RejectAgentQuestionController,
+  PauseAgentSessionController,
   GetAgentSessionsListController,
   GetAgentSessionController,
   SetAgentSessionTitleController,

@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import {
@@ -122,6 +123,40 @@ export class SessionsComponent implements OnInit {
 
   newSession() {
     this.navigateService.navigateToBuilder();
+  }
+
+  pauseSession(event: MouseEvent, session: AgentSessionApiX) {
+    event.stopPropagation();
+
+    let sessionId = session.sessionId;
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession,
+        payload: { sessionId: sessionId },
+        showSpinner: true
+      })
+      .pipe(
+        tap(() => {
+          let sessions = this.sessionsQuery.getValue().sessions;
+          let updated = sessions.map(s =>
+            s.sessionId === sessionId
+              ? { ...s, status: SessionStatusEnum.Paused }
+              : s
+          );
+          this.sessionsQuery.updatePart({ sessions: updated });
+
+          let currentSession = this.sessionQuery.getValue();
+          if (currentSession?.sessionId === sessionId) {
+            this.sessionQuery.update({
+              ...currentSession,
+              status: SessionStatusEnum.Paused
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   archiveSession(event: MouseEvent, session: AgentSessionApiX) {

@@ -28,12 +28,12 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendPauseAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session-sandbox';
+import { ToBackendPauseAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class PauseAgentSessionSandboxController {
+export class PauseAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
@@ -44,9 +44,9 @@ export class PauseAgentSessionSandboxController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendPauseAgentSessionSandbox)
-  async pauseSessionSandbox(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendPauseAgentSessionSandboxRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession)
+  async pauseSession(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendPauseAgentSessionRequest = request.body;
     let { sessionId } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({

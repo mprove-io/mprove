@@ -11,8 +11,9 @@ import type {
   SessionStatus,
   ToolPart
 } from '@opencode-ai/sdk/v2';
-import { combineLatest, interval, Subscription } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { combineLatest, EMPTY, interval, Subscription } from 'rxjs';
+import { catchError, switchMap, take, tap } from 'rxjs/operators';
+import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -28,10 +29,8 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import { ToBackendRejectAgentQuestionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-reject-agent-question';
-import { ToBackendRespondToAgentPermissionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-permission';
-import { ToBackendRespondToAgentQuestionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
-import { ToBackendSendAgentMessageRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
+import { ToBackendPauseAgentSessionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
+import { ToBackendSendUserMessageToAgentRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeTitle } from '#front/app/functions/make-title';
 import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
@@ -47,6 +46,7 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { EventReducerService } from '#front/app/services/event-reducer.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
 import { environment } from '#front/environments/environment';
 import { SessionInputComponent } from './session-input/session-input.component';
@@ -187,7 +187,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     private uiService: UiService,
     private agentModelsQuery: AgentModelsQuery,
     private eventReducerService: EventReducerService,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    private navigateService: NavigateService
   ) {}
 
   ngOnDestroy() {
@@ -223,6 +224,8 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    let wasPaused = this.session.status === SessionStatusEnum.Paused;
+
     this.userSentMessage = true;
 
     // Optimistic: show user message immediately
@@ -232,8 +235,9 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.scrollTrigger++;
     this.cd.detectChanges();
 
-    let payload: ToBackendSendAgentMessageRequestPayload = {
+    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
       sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Message,
       message: text,
       model: this.model,
       variant: this.variant !== 'default' ? this.variant : undefined
@@ -241,10 +245,32 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSendAgentMessage,
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
         payload: payload
       })
-      .pipe(take(1))
+      .pipe(
+        tap(() => {
+          if (wasPaused) {
+            this.sessionQuery.update({
+              ...this.session,
+              status: SessionStatusEnum.Active
+            });
+
+            let sessions = this.sessionsQuery.getValue().sessions;
+            let updated = sessions.map(s =>
+              s.sessionId === this.session.sessionId
+                ? { ...s, status: SessionStatusEnum.Active }
+                : s
+            );
+            this.sessionsQuery.updatePart({ sessions: updated });
+          }
+        }),
+        catchError(() => {
+          return EMPTY;
+        }),
+        take(1)
+      )
       .subscribe();
   }
 
@@ -252,6 +278,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     if (!this.session) {
       return;
     }
+
+    let wasPaused = this.session.status === SessionStatusEnum.Paused;
 
     // Optimistic: remove permission from store
     let currentState = this.sessionDataQuery.getValue();
@@ -261,8 +289,9 @@ export class SessionComponent implements OnInit, OnDestroy {
       )
     });
 
-    let payload: ToBackendRespondToAgentPermissionRequestPayload = {
+    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
       sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Permission,
       permissionId: event.permissionId,
       reply: event.reply
     };
@@ -270,10 +299,31 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.apiService
       .req({
         pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendRespondToAgentPermission,
+          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
         payload: payload
       })
-      .pipe(take(1))
+      .pipe(
+        tap(() => {
+          if (wasPaused) {
+            this.sessionQuery.update({
+              ...this.session,
+              status: SessionStatusEnum.Active
+            });
+
+            let sessions = this.sessionsQuery.getValue().sessions;
+            let updated = sessions.map(s =>
+              s.sessionId === this.session.sessionId
+                ? { ...s, status: SessionStatusEnum.Active }
+                : s
+            );
+            this.sessionsQuery.updatePart({ sessions: updated });
+          }
+        }),
+        catchError(() => {
+          return EMPTY;
+        }),
+        take(1)
+      )
       .subscribe();
   }
 
@@ -282,14 +332,17 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    let wasPaused = this.session.status === SessionStatusEnum.Paused;
+
     // Optimistic: remove question from store
     let currentState = this.sessionDataQuery.getValue();
     this.sessionDataQuery.updatePart({
       questions: currentState.questions.filter(q => q.id !== event.questionId)
     });
 
-    let payload: ToBackendRespondToAgentQuestionRequestPayload = {
+    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
       sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Question,
       questionId: event.questionId,
       answers: event.answers
     };
@@ -297,10 +350,31 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.apiService
       .req({
         pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendRespondToAgentQuestion,
+          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
         payload: payload
       })
-      .pipe(take(1))
+      .pipe(
+        tap(() => {
+          if (wasPaused) {
+            this.sessionQuery.update({
+              ...this.session,
+              status: SessionStatusEnum.Active
+            });
+
+            let sessions = this.sessionsQuery.getValue().sessions;
+            let updated = sessions.map(s =>
+              s.sessionId === this.session.sessionId
+                ? { ...s, status: SessionStatusEnum.Active }
+                : s
+            );
+            this.sessionsQuery.updatePart({ sessions: updated });
+          }
+        }),
+        catchError(() => {
+          return EMPTY;
+        }),
+        take(1)
+      )
       .subscribe();
   }
 
@@ -309,23 +383,48 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
+    let wasPaused = this.session.status === SessionStatusEnum.Paused;
+
     // Optimistic: remove question from store
     let currentState = this.sessionDataQuery.getValue();
     this.sessionDataQuery.updatePart({
       questions: currentState.questions.filter(q => q.id !== event.questionId)
     });
 
-    let payload: ToBackendRejectAgentQuestionRequestPayload = {
+    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
       sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Question,
       questionId: event.questionId
     };
 
     this.apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRejectAgentQuestion,
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
         payload: payload
       })
-      .pipe(take(1))
+      .pipe(
+        tap(() => {
+          if (wasPaused) {
+            this.sessionQuery.update({
+              ...this.session,
+              status: SessionStatusEnum.Active
+            });
+
+            let sessions = this.sessionsQuery.getValue().sessions;
+            let updated = sessions.map(s =>
+              s.sessionId === this.session.sessionId
+                ? { ...s, status: SessionStatusEnum.Active }
+                : s
+            );
+            this.sessionsQuery.updatePart({ sessions: updated });
+          }
+        }),
+        catchError(() => {
+          return EMPTY;
+        }),
+        take(1)
+      )
       .subscribe();
   }
 
@@ -338,6 +437,85 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
     this.myDialogService.showEditSessionTitle({
+      apiService: this.apiService,
+      sessionId: this.session.sessionId,
+      title: makeTitle(this.session)
+    });
+  }
+
+  pauseSession() {
+    if (!this.session) {
+      return;
+    }
+
+    let payload: ToBackendPauseAgentSessionRequestPayload = {
+      sessionId: this.session.sessionId
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap(() => {
+          this.closeSse();
+          this.stopPolling();
+
+          this.sessionQuery.update({
+            ...this.session,
+            status: SessionStatusEnum.Paused
+          });
+
+          let sessions = this.sessionsQuery.getValue().sessions;
+          let updated = sessions.map(s =>
+            s.sessionId === this.session.sessionId
+              ? { ...s, status: SessionStatusEnum.Paused }
+              : s
+          );
+          this.sessionsQuery.updatePart({ sessions: updated });
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  archiveSession() {
+    if (!this.session) {
+      return;
+    }
+
+    let sessionId = this.session.sessionId;
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession,
+        payload: { sessionId: sessionId },
+        showSpinner: true
+      })
+      .pipe(
+        tap(() => {
+          this.closeSse();
+          this.stopPolling();
+
+          let sessions = this.sessionsQuery.getValue().sessions;
+          let updated = sessions.filter(s => s.sessionId !== sessionId);
+          this.sessionsQuery.updatePart({ sessions: updated });
+
+          this.navigateService.navigateToBuilder();
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  deleteSession() {
+    if (!this.session) {
+      return;
+    }
+
+    this.myDialogService.showDeleteSession({
       apiService: this.apiService,
       sessionId: this.session.sessionId,
       title: makeTitle(this.session)

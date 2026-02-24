@@ -128,49 +128,12 @@ export class SandboxService {
 
           let host = sandbox.getHost(3000);
 
-          console.log(
-            `[sandbox] polling health check at https://${host}/config`
-          );
-
-          let healthy = false;
-
-          let backendEnv =
-            this.cs.get<BackendConfig['backendEnv']>('backendEnv');
-
-          for (let i = 0; i < 30; i++) {
-            try {
-              let res = await fetch(`https://${host}/config`);
-
-              if (res.status === 401) {
-                healthy = true;
-                console.log(
-                  `[sandbox] health check passed on attempt ${i + 1}/30`
-                );
-                break;
-              } else {
-                console.log(
-                  `[sandbox] health check attempt ${i + 1}/30: status ${res.status} (expected 401)`
-                );
-              }
-            } catch (e: any) {
-              if (backendEnv !== BackendEnvEnum.PROD) {
-                console.log(
-                  `Health check attempt ${i + 1}/30 failed for sandbox ${sandbox.sandboxId}: ${e?.message}`
-                );
-              }
-            }
-
-            await new Promise(r => setTimeout(r, 1000));
-          }
-
-          if (!healthy) {
-            console.log('[sandbox] health check failed after 30 attempts');
-            throw new ServerError({
-              message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
-            });
-          }
-
           let sandboxBaseUrl = `https://${host}`;
+
+          await this.healthCheckOpenCode({
+            sandboxBaseUrl: sandboxBaseUrl,
+            maxAttempts: 30
+          });
 
           createSandboxResult = {
             sandboxId: sandbox.sandboxId,
@@ -305,6 +268,56 @@ export class SandboxService {
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
         });
+    }
+  }
+
+  async healthCheckOpenCode(item: {
+    sandboxBaseUrl: string;
+    maxAttempts?: number;
+  }): Promise<void> {
+    let maxAttempts = item.maxAttempts ?? 15;
+
+    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+    let healthy = false;
+
+    console.log(
+      `[sandbox] polling health check at ${item.sandboxBaseUrl}/config`
+    );
+
+    for (let i = 0; i < maxAttempts; i++) {
+      try {
+        let res = await fetch(`${item.sandboxBaseUrl}/config`);
+
+        if (res.status === 401) {
+          healthy = true;
+          console.log(
+            `[sandbox] health check passed on attempt ${i + 1}/${maxAttempts}`
+          );
+          break;
+        } else {
+          console.log(
+            `[sandbox] health check attempt ${i + 1}/${maxAttempts}: status ${res.status} (expected 401)`
+          );
+        }
+      } catch (e: any) {
+        if (backendEnv !== BackendEnvEnum.PROD) {
+          console.log(
+            `[sandbox] health check attempt ${i + 1}/${maxAttempts} failed: ${e?.message}`
+          );
+        }
+      }
+
+      await new Promise(r => setTimeout(r, 1000));
+    }
+
+    if (!healthy) {
+      console.log(
+        `[sandbox] health check failed after ${maxAttempts} attempts`
+      );
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
+      });
     }
   }
 }

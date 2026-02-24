@@ -107,6 +107,12 @@
             <ng-template #templateSessionMenu>
               <div class="border-s4 bg-m0 w-48 rounded-md border-2 shadow-xl">
                 <button
+                  *ngIf="session.status === 'Active'"
+                  class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                  (click)="tpRef.hide(); pauseSession($event, session)"
+                  >Pause Session</button
+                >
+                <button
                   class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                   [ngClass]="{
                     'text-s400 cursor-default': session.status === 'New'
@@ -126,7 +132,7 @@
                   >Archive Session</button
                 >
                 <button
-                  class="text-r600 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                  class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                   [ngClass]="{
                     'text-s400 cursor-default': session.status === 'New'
                   }"
