@@ -12,6 +12,7 @@ import {
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -39,6 +40,8 @@ export class SessionsComponent implements OnInit {
   sessionId: string;
   isRefreshing = false;
   spinnerName = SESSIONS_SPINNER_NAME;
+  debugMode = false;
+  allEventsExpanded = false;
   providerLabels: Record<string, string> = {
     opencode: 'Zen',
     openai: 'OpenAI',
@@ -57,6 +60,20 @@ export class SessionsComponent implements OnInit {
     })
   );
 
+  debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
+    tap(x => {
+      this.debugMode = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  allEventsExpanded$ = this.uiQuery.sessionAllEventsExpanded$.pipe(
+    tap(x => {
+      this.allEventsExpanded = x;
+      this.cd.detectChanges();
+    })
+  );
+
   session$ = this.sessionQuery.select().pipe(
     tap(x => {
       this.sessionId = x?.sessionId;
@@ -67,6 +84,7 @@ export class SessionsComponent implements OnInit {
   constructor(
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
+    private sessionEventsQuery: SessionEventsQuery,
     private uiQuery: UiQuery,
     private navQuery: NavQuery,
     private apiService: ApiService,
@@ -275,6 +293,21 @@ export class SessionsComponent implements OnInit {
       sessionId: session.sessionId,
       title: makeTitle(session)
     });
+  }
+
+  toggleDebug() {
+    this.uiQuery.updatePart({ sessionDebugMode: !this.debugMode });
+  }
+
+  copyEventsJson() {
+    let events = this.sessionEventsQuery.getValue().events;
+    let json = JSON.stringify(events, undefined, 2);
+    navigator.clipboard.writeText(json);
+  }
+
+  toggleAllEvents() {
+    let newValue = this.uiQuery.getValue().sessionToggleAllEvents + 1;
+    this.uiQuery.updatePart({ sessionToggleAllEvents: newValue });
   }
 
   trackBySessionId(_index: number, session: AgentSessionApiX) {

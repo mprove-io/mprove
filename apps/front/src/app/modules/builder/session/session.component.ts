@@ -29,10 +29,8 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import { ToBackendPauseAgentSessionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
 import { ToBackendSendUserMessageToAgentRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
-import { makeTitle } from '#front/app/functions/make-title';
 import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -45,8 +43,6 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { EventReducerService } from '#front/app/services/event-reducer.service';
-import { MyDialogService } from '#front/app/services/my-dialog.service';
-import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
 import { environment } from '#front/environments/environment';
 import { SessionInputComponent } from './session-input/session-input.component';
@@ -76,7 +72,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   // Chat mode
   session: AgentSessionApi;
-  sessionTitle = '';
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
@@ -137,6 +132,16 @@ export class SessionComponent implements OnInit, OnDestroy {
     })
   );
 
+  private toggleAllEventsLastValue = 0;
+  toggleAllEvents$ = this.uiQuery.sessionToggleAllEvents$.pipe(
+    tap(x => {
+      if (x !== this.toggleAllEventsLastValue) {
+        this.toggleAllEventsLastValue = x;
+        this.toggleAllEvents();
+      }
+    })
+  );
+
   sessionAndData$ = combineLatest([
     this.sessionQuery.select(),
     this.sessionDataQuery.select()
@@ -169,7 +174,6 @@ export class SessionComponent implements OnInit, OnDestroy {
       }
 
       this.previousSessionId = currentSessionId;
-      this.sessionTitle = this.session ? makeTitle(this.session) : '';
       this.cd.detectChanges();
     })
   );
@@ -186,9 +190,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     private uiQuery: UiQuery,
     private uiService: UiService,
     private agentModelsQuery: AgentModelsQuery,
-    private eventReducerService: EventReducerService,
-    private myDialogService: MyDialogService,
-    private navigateService: NavigateService
+    private eventReducerService: EventReducerService
   ) {}
 
   ngOnDestroy() {
@@ -205,11 +207,9 @@ export class SessionComponent implements OnInit, OnDestroy {
       }
     }
     this.debugExpandedEvents = expanded;
-  }
-
-  copyEventsJson() {
-    const json = JSON.stringify(this.events, undefined, 2);
-    navigator.clipboard.writeText(json);
+    this.uiQuery.updatePart({
+      sessionAllEventsExpanded: this.allEventsExpanded
+    });
   }
 
   getProviderFromModel(): string {
@@ -426,100 +426,6 @@ export class SessionComponent implements OnInit, OnDestroy {
         take(1)
       )
       .subscribe();
-  }
-
-  toggleDebug() {
-    this.uiQuery.updatePart({ sessionDebugMode: !this.debugMode });
-  }
-
-  openTitleEditor() {
-    if (!this.session) {
-      return;
-    }
-    this.myDialogService.showEditSessionTitle({
-      apiService: this.apiService,
-      sessionId: this.session.sessionId,
-      title: makeTitle(this.session)
-    });
-  }
-
-  pauseSession() {
-    if (!this.session) {
-      return;
-    }
-
-    let payload: ToBackendPauseAgentSessionRequestPayload = {
-      sessionId: this.session.sessionId
-    };
-
-    this.apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession,
-        payload: payload,
-        showSpinner: true
-      })
-      .pipe(
-        tap(() => {
-          this.closeSse();
-          this.stopPolling();
-
-          this.sessionQuery.update({
-            ...this.session,
-            status: SessionStatusEnum.Paused
-          });
-
-          let sessions = this.sessionsQuery.getValue().sessions;
-          let updated = sessions.map(s =>
-            s.sessionId === this.session.sessionId
-              ? { ...s, status: SessionStatusEnum.Paused }
-              : s
-          );
-          this.sessionsQuery.updatePart({ sessions: updated });
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  archiveSession() {
-    if (!this.session) {
-      return;
-    }
-
-    let sessionId = this.session.sessionId;
-
-    this.apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession,
-        payload: { sessionId: sessionId },
-        showSpinner: true
-      })
-      .pipe(
-        tap(() => {
-          this.closeSse();
-          this.stopPolling();
-
-          let sessions = this.sessionsQuery.getValue().sessions;
-          let updated = sessions.filter(s => s.sessionId !== sessionId);
-          this.sessionsQuery.updatePart({ sessions: updated });
-
-          this.navigateService.navigateToBuilder();
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  deleteSession() {
-    if (!this.session) {
-      return;
-    }
-
-    this.myDialogService.showDeleteSession({
-      apiService: this.apiService,
-      sessionId: this.session.sessionId,
-      title: makeTitle(this.session)
-    });
   }
 
   startPolling(sessionId: string) {

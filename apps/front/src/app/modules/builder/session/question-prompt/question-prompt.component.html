@@ -36,7 +36,7 @@
             <button
               *ngFor="let opt of q.options"
               type="button"
-              class="hover:bg-m50 flex w-4/5 items-center gap-4 rounded-md border border-transparent px-5 py-2.5 text-left focus:outline-none"
+              class="hover:bg-m50 flex w-[89%] items-center gap-4 rounded-md border border-transparent px-5 py-2.5 text-left focus:outline-none"
               [ngClass]="{
                 'border-m600': isSelected(qIdx, opt.label)
               }"
@@ -87,7 +87,7 @@
             <!-- Custom answer row -->
             <div
               *ngIf="q.custom !== false"
-              class="flex w-4/5 items-center gap-4 rounded-md border border-transparent px-5 py-2.5"
+              class="flex w-[89%] items-center gap-4 rounded-md border border-transparent px-5 py-2.5"
               [ngClass]="{
                 'border-m600': isCustomActive(qIdx)
               }"
