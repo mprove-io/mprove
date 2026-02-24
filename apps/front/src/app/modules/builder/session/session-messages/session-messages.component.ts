@@ -13,15 +13,27 @@ import { NgScrollbar } from 'ngx-scrollbar';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import { MyDialogService } from '../../../../services/my-dialog.service';
 
+interface FileDiffInfo {
+  file: string;
+  additions: number;
+  deletions: number;
+  status?: 'added' | 'deleted' | 'modified';
+}
+
 interface ChatMessage {
   role: 'user' | 'agent' | 'tool' | 'thought' | 'error';
   text: string;
   toolPart?: ToolPart;
+  agentName?: string;
+  modelId?: string;
+  variant?: string;
+  summaryDiffs?: FileDiffInfo[];
 }
 
 interface ChatTurn {
   userMessage?: ChatMessage;
   responses: ChatMessage[];
+  fileDiffs?: FileDiffInfo[];
 }
 
 const TOOL_TITLE_MAP: Record<string, string> = {
@@ -228,6 +240,38 @@ export class SessionMessagesComponent
       subtitle: this.getToolSubtitle(toolPart),
       output,
       isError: toolPart.state?.status === 'error'
+    });
+  }
+
+  getMetaText(msg: ChatMessage): string {
+    let parts: string[] = [];
+    if (msg.agentName) {
+      parts.push(
+        msg.agentName.charAt(0).toUpperCase() + msg.agentName.slice(1)
+      );
+    }
+    if (msg.modelId) {
+      parts.push(msg.modelId);
+    }
+    if (msg.variant) {
+      parts.push(msg.variant);
+    }
+    return parts.join(' \u00B7 ');
+  }
+
+  getTotalAdditions(diffs: FileDiffInfo[]): number {
+    return diffs.reduce((sum, d) => sum + d.additions, 0);
+  }
+
+  getTotalDeletions(diffs: FileDiffInfo[]): number {
+    return diffs.reduce((sum, d) => sum + d.deletions, 0);
+  }
+
+  openFileDiffs(diffs: FileDiffInfo[]) {
+    this.myDialogService.showFileDiffs({
+      diffs,
+      totalAdditions: this.getTotalAdditions(diffs),
+      totalDeletions: this.getTotalDeletions(diffs)
     });
   }
 }

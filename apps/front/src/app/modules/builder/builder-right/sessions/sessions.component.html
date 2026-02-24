@@ -104,14 +104,10 @@
           >
 
           <span
-            class="ml-5 flex-shrink-0 rounded-full px-2 py-0.5 text-base"
+            class="ml-5 w-[84px] flex-shrink-0 text-left text-[13px]"
             [ngClass]="{
-              'bg-yellow-100 text-yellow-700': session.status === 'New',
-              'bg-green-100 text-green-700': session.status === 'Active',
-              'bg-blue-100 text-blue-700': session.status === 'Paused',
-              'bg-gray-100 text-gray-600':
-                session.status === 'Archived' || session.status === 'Expired',
-              'bg-red-100 text-red-700': session.status === 'Error'
+              'text-green-600': session.status === 'Active',
+              'text-s400': session.status !== 'Active'
             }"
             >{{ session.status }}</span
           >

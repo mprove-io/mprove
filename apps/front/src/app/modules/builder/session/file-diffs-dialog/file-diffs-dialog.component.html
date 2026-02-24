@@ -1,0 +1,49 @@
+<div class="flex max-h-[80vh] min-h-[200px] flex-col">
+  <div
+    class="border-s200 flex flex-shrink-0 items-center gap-3 border-b px-8 py-5"
+  >
+    <span class="text-s1 text-lg font-medium">Modified</span>
+    <span class="text-s500 text-lg"
+      >{{ dataItem.diffs.length }}
+      {{ dataItem.diffs.length === 1 ? 'file' : 'files' }}</span
+    >
+    <span class="flex items-center gap-2 text-sm">
+      <span class="text-green-600">+{{ dataItem.totalAdditions }}</span>
+      <span class="text-red-600">-{{ dataItem.totalDeletions }}</span>
+    </span>
+  </div>
+
+  <ng-scrollbar
+    [orientation]="'vertical'"
+    [visibility]="'hover'"
+    [appearance]="'compact'"
+    class="flex-1"
+  >
+    <div class="py-2">
+      <div
+        *ngFor="let diff of dataItem.diffs"
+        class="border-s200 flex items-center justify-between border-b px-8 py-3 last:border-b-0"
+      >
+        <span class="text-s1 min-w-0 truncate text-base">{{ diff.file }}</span>
+        <span class="ml-4 flex flex-shrink-0 items-center gap-3 text-sm">
+          <span *ngIf="diff.additions > 0" class="text-green-600"
+            >+{{ diff.additions }}</span
+          >
+          <span *ngIf="diff.deletions > 0" class="text-red-600"
+            >-{{ diff.deletions }}</span
+          >
+          <span
+            *ngIf="diff.status"
+            class="rounded px-1.5 py-0.5 text-xs"
+            [ngClass]="{
+              'bg-green-50 text-green-700': diff.status === 'added',
+              'bg-red-50 text-red-700': diff.status === 'deleted',
+              'bg-blue-50 text-blue-700': diff.status === 'modified'
+            }"
+            >{{ diff.status }}</span
+          >
+        </span>
+      </div>
+    </div>
+  </ng-scrollbar>
+</div>

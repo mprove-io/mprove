@@ -16,7 +16,7 @@
   >
     <div class="flex w-full flex-row items-end pl-5 pr-2">
       <textarea
-        class="text-s1 min-w-0 flex-1 resize-none overflow-y-hidden bg-transparent py-4 text-lg leading-relaxed placeholder-gray-400 [field-sizing:content] focus:outline-none"
+        class="text-s1 max-h-[280px] min-w-0 flex-1 resize-none overflow-y-auto bg-transparent py-4 text-lg leading-relaxed placeholder-gray-400 [field-sizing:content] focus:outline-none"
         placeholder="Ask anything..."
         [(ngModel)]="messageText"
         (keydown)="onKeyDown($event)"

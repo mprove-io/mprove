@@ -123,8 +123,21 @@ export class SessionsComponent implements OnInit {
       .pipe(
         map((resp: ToBackendGetAgentSessionsListResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            let sessions = resp.payload.sessions;
+
+            // Keep the currently selected session visible even if archived
+            if (this.sessionId) {
+              let found = sessions.some(s => s.sessionId === this.sessionId);
+              if (!found) {
+                let currentSession = this.sessionQuery.getValue();
+                if (currentSession) {
+                  sessions = [...sessions, currentSession];
+                }
+              }
+            }
+
             this.sessionsQuery.update({
-              sessions: resp.payload.sessions
+              sessions: sessions
             });
           }
 

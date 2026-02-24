@@ -47,15 +47,27 @@ import { UiService } from '#front/app/services/ui.service';
 import { environment } from '#front/environments/environment';
 import { SessionInputComponent } from './session-input/session-input.component';
 
+interface FileDiffInfo {
+  file: string;
+  additions: number;
+  deletions: number;
+  status?: 'added' | 'deleted' | 'modified';
+}
+
 interface ChatMessage {
   role: 'user' | 'agent' | 'tool' | 'thought' | 'error';
   text: string;
   toolPart?: ToolPart;
+  agentName?: string;
+  modelId?: string;
+  variant?: string;
+  summaryDiffs?: FileDiffInfo[];
 }
 
 interface ChatTurn {
   userMessage?: ChatMessage;
   responses: ChatMessage[];
+  fileDiffs?: FileDiffInfo[];
 }
 
 @Component({
@@ -845,6 +857,10 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     for (let msg of messages) {
       if (msg.role === 'user') {
+        // Attach this user message's summaryDiffs to the PREVIOUS turn
+        if (currentTurn && msg.summaryDiffs?.length > 0) {
+          currentTurn.fileDiffs = msg.summaryDiffs;
+        }
         currentTurn = { userMessage: msg, responses: [] };
         turns.push(currentTurn);
       } else {
@@ -884,7 +900,41 @@ export class SessionComponent implements OnInit, OnDestroy {
           }
         }
 
-        chatMessages.push({ role: 'user', text });
+        // Extract metadata from ocMessage (UserMessage type)
+        let userOcMsg = msg.ocMessage as any;
+        let agentName = userOcMsg?.agent || '';
+        let modelId = userOcMsg?.model?.modelID || '';
+        let variant = userOcMsg?.variant || '';
+
+        // Extract summary diffs
+        let summaryDiffs: FileDiffInfo[] | undefined;
+        let rawDiffs = userOcMsg?.summary?.diffs;
+        if (Array.isArray(rawDiffs) && rawDiffs.length > 0) {
+          let seen = new Set<string>();
+          let deduped: FileDiffInfo[] = [];
+          for (let i = rawDiffs.length - 1; i >= 0; i--) {
+            let d = rawDiffs[i];
+            if (!seen.has(d.file)) {
+              seen.add(d.file);
+              deduped.push({
+                file: d.file,
+                additions: d.additions,
+                deletions: d.deletions,
+                status: d.status
+              });
+            }
+          }
+          summaryDiffs = deduped.reverse();
+        }
+
+        chatMessages.push({
+          role: 'user',
+          text,
+          agentName,
+          modelId,
+          variant,
+          summaryDiffs
+        });
       } else {
         // Assistant message - process each part
         let partCount = 0;

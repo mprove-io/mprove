@@ -48,6 +48,10 @@ import {
   EditSessionTitleDialogData
 } from '../modules/builder/session/edit-session-title-dialog/edit-session-title-dialog.component';
 import {
+  FileDiffsDialogComponent,
+  FileDiffsDialogData
+} from '../modules/builder/session/file-diffs-dialog/file-diffs-dialog.component';
+import {
   ToolOutputDialogComponent,
   ToolOutputDialogData
 } from '../modules/builder/session/tool-output-dialog/tool-output-dialog.component';
@@ -826,6 +830,15 @@ export class MyDialogService {
 
   showToolOutput(item: ToolOutputDialogData): void {
     this.dialogService.open(ToolOutputDialogComponent, {
+      enableClose: false,
+      closeButton: true,
+      data: item,
+      width: '50vw'
+    });
+  }
+
+  showFileDiffs(item: FileDiffsDialogData): void {
+    this.dialogService.open(FileDiffsDialogComponent, {
       enableClose: false,
       closeButton: true,
       data: item,
