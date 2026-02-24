@@ -25,6 +25,7 @@ import type {
   ReportTab,
   SessionTab,
   StructTab,
+  UconfigTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
@@ -49,6 +50,7 @@ import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { ErEnum } from '#common/enums/er.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -350,6 +352,19 @@ export class TabService {
     };
 
     return dconfig;
+  }
+
+  uconfigEntToTab(uconfigEnt: UconfigEnt): UconfigTab {
+    if (isUndefined(uconfigEnt)) {
+      return;
+    }
+
+    let uconfig: UconfigTab = {
+      ...uconfigEnt,
+      ...this.getTabProps({ ent: uconfigEnt })
+    };
+
+    return uconfig;
   }
 
   envEntToTab(envEnt: EnvEnt): EnvTab {

@@ -20,6 +20,7 @@ import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 
 export class DbEntsPack {
@@ -44,6 +45,7 @@ export class DbEntsPack {
   reports?: ReportEnt[];
   sessions?: SessionEnt[];
   structs?: StructEnt[];
+  uconfigs?: UconfigEnt[];
   users?: UserEnt[];
   charts?: ChartEnt[];
 }

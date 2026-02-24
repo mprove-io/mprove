@@ -108,6 +108,15 @@ export class DconfigLt {
 
 //
 
+export class UconfigSt {
+  emptyData?: number;
+}
+export class UconfigLt {
+  emptyData?: number;
+}
+
+//
+
 export class KitSt {
   emptyData?: number;
 }

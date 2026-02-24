@@ -41,6 +41,7 @@ import { queriesTable } from './schema/queries';
 import { reportsTable } from './schema/reports';
 import { sessionsTable } from './schema/sessions';
 import { structsTable } from './schema/structs';
+import { uconfigsTable } from './schema/uconfigs';
 import { usersTable } from './schema/users';
 
 export interface PackerInput {
@@ -194,6 +195,10 @@ export class DrizzlePacker {
 
       if (insertEnts.dconfigs.length > 0) {
         await tx.insert(dconfigsTable).values(insertEnts.dconfigs);
+      }
+
+      if (insertEnts.uconfigs.length > 0) {
+        await tx.insert(uconfigsTable).values(insertEnts.uconfigs);
       }
 
       if (insertEnts.envs.length > 0) {
@@ -351,6 +356,20 @@ export class DrizzlePacker {
             .update(dconfigsTable)
             .set(x)
             .where(eq(dconfigsTable.dconfigId, x.dconfigId));
+        });
+      }
+
+      if (updateEnts.uconfigs.length > 0) {
+        updateEnts.uconfigs = setUndefinedToNull({
+          ents: updateEnts.uconfigs,
+          table: uconfigsTable
+        });
+
+        await forEachSeries(updateEnts.uconfigs, async x => {
+          await tx
+            .update(uconfigsTable)
+            .set(x)
+            .where(eq(uconfigsTable.uconfigId, x.uconfigId));
         });
       }
 
@@ -707,6 +726,25 @@ export class DrizzlePacker {
           .onConflictDoUpdate({
             target: dconfigsTable.dconfigId,
             set: drizzleSetAllColumnsFull({ table: dconfigsTable })
+          });
+      }
+
+      if (insOrUpdEnts.uconfigs.length > 0) {
+        insOrUpdEnts.uconfigs = Array.from(
+          new Set(insOrUpdEnts.uconfigs.map(x => x.uconfigId))
+        ).map(id => insOrUpdEnts.uconfigs.find(x => x.uconfigId === id));
+
+        insOrUpdEnts.uconfigs = setUndefinedToNull({
+          ents: insOrUpdEnts.uconfigs,
+          table: uconfigsTable
+        });
+
+        await tx
+          .insert(uconfigsTable)
+          .values(insOrUpdEnts.uconfigs)
+          .onConflictDoUpdate({
+            target: uconfigsTable.uconfigId,
+            set: drizzleSetAllColumnsFull({ table: uconfigsTable })
           });
       }
 

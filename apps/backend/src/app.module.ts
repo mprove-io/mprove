@@ -59,16 +59,19 @@ import { schemaPostgres } from './drizzle/postgres/schema/_schema-postgres';
 import type {
   ConnectionTab,
   DconfigTab,
+  UconfigTab,
   UserTab
 } from './drizzle/postgres/schema/_tabs';
 import { connectionsTable } from './drizzle/postgres/schema/connections';
 import { dconfigsTable } from './drizzle/postgres/schema/dconfigs';
 import { orgsTable } from './drizzle/postgres/schema/orgs';
 import { projectsTable } from './drizzle/postgres/schema/projects';
+import { uconfigsTable } from './drizzle/postgres/schema/uconfigs';
 import { usersTable } from './drizzle/postgres/schema/users';
 import { getRetryOption } from './functions/get-retry-option';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AgentModelsService } from './services/agent-models.service';
 import { ConnectionsService } from './services/db/connections.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { MembersService } from './services/db/members.service';
@@ -180,6 +183,7 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     private checkTabService: TabCheckerService,
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
+    private agentModelsService: AgentModelsService,
     private hashService: HashService,
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
@@ -277,6 +281,41 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         // encryption
 
         await this.checkRecordsEncryption();
+
+        // uconfig
+
+        let uconfig = await this.db.drizzle.query.uconfigsTable
+          .findFirst({
+            where: isNotNull(uconfigsTable.uconfigId)
+          })
+          .then(x => this.tabService.uconfigEntToTab(x));
+
+        if (isUndefined(uconfig)) {
+          let uconfigInit: UconfigTab = {
+            uconfigId: makeId(),
+            providerModels: [],
+            keyTag: undefined,
+            serverTs: undefined
+          };
+
+          await retry(
+            async () =>
+              await this.db.drizzle.transaction(
+                async tx =>
+                  await this.db.packer.write({
+                    tx: tx,
+                    insert: {
+                      uconfigs: [uconfigInit]
+                    }
+                  })
+              ),
+            getRetryOption(this.cs, this.logger)
+          );
+        }
+
+        // agent models cache
+
+        this.agentModelsService.loadSharedModels();
 
         // admin
 

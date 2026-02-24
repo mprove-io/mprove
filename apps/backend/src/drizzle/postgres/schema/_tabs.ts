@@ -43,6 +43,8 @@ import {
   SessionSt,
   StructLt,
   StructSt,
+  UconfigLt,
+  UconfigSt,
   UserLt,
   UserSt
 } from '#common/interfaces/st-lt';
@@ -68,6 +70,7 @@ import { QueryEnt } from './queries';
 import { ReportEnt } from './reports';
 import { SessionEnt } from './sessions';
 import { StructEnt } from './structs';
+import { UconfigEnt } from './uconfigs';
 import { UserEnt } from './users';
 
 export interface AvatarTab
@@ -166,3 +169,8 @@ export interface SessionTab
   extends Omit<SessionEnt, 'st' | 'lt'>,
     SessionSt,
     SessionLt {}
+
+export interface UconfigTab
+  extends Omit<UconfigEnt, 'st' | 'lt'>,
+    UconfigSt,
+    UconfigLt {}

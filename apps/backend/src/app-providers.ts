@@ -119,6 +119,7 @@ export const appProviders = [
       structsService: StructsService,
       notesService: NotesService,
       agentService: AgentService,
+      agentModelsService: AgentModelsService,
       logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
@@ -128,6 +129,7 @@ export const appProviders = [
             structsService,
             notesService,
             agentService,
+            agentModelsService,
             logger
           )
         : {},
@@ -136,7 +138,8 @@ export const appProviders = [
       QueriesService,
       StructsService,
       NotesService,
-      AgentService
+      AgentService,
+      AgentModelsService
     ]
   },
   UserCodeService

@@ -20,6 +20,7 @@ import * as queries from '#backend/drizzle/postgres/schema/queries';
 import * as reports from '#backend/drizzle/postgres/schema/reports';
 import * as sessions from '#backend/drizzle/postgres/schema/sessions';
 import * as structs from '#backend/drizzle/postgres/schema/structs';
+import * as uconfigs from '#backend/drizzle/postgres/schema/uconfigs';
 import * as users from '#backend/drizzle/postgres/schema/users';
 
 export const schemaPostgres = {
@@ -45,5 +46,6 @@ export const schemaPostgres = {
   ...queries,
   ...reports,
   ...structs,
+  ...uconfigs,
   ...users
 };

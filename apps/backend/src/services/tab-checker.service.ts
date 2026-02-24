@@ -33,6 +33,7 @@ import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
 import { structsTable } from '#backend/drizzle/postgres/schema/structs';
+import { uconfigsTable } from '#backend/drizzle/postgres/schema/uconfigs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
@@ -89,6 +90,7 @@ export class TabCheckerService {
     await this.checkBridges(isAllRecords);
     await this.checkConnections(isAllRecords);
     await this.checkDconfigs(isAllRecords);
+    await this.checkUconfigs(isAllRecords);
     await this.checkEnvs(isAllRecords);
     await this.checkKits(isAllRecords);
     await this.checkMembers(isAllRecords);
@@ -525,6 +527,89 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Dconfigs, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkUconfigs(isAllRecords: boolean) {
+    let startTs = Date.now();
+    let uconfigLatest = await this.db.drizzle.query.uconfigsTable
+      .findFirst({
+        orderBy: desc(uconfigsTable.serverTs)
+      })
+      .then(x => this.tabService.uconfigEntToTab(x));
+
+    if (isUndefined(uconfigLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(uconfigsTable.serverTs, uconfigLatest.serverTs)
+        : this.isEncryptDb === true
+          ? or(
+              isNull(uconfigsTable.keyTag),
+              eq(uconfigsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(uconfigsTable.keyTag, this.keyTag),
+              eq(uconfigsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let uconfig = await this.db.drizzle.query.uconfigsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.uconfigEntToTab(x));
+
+      if (isUndefined(uconfig)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  uconfigs: [uconfig]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let uconfigsResult = await this.db.drizzle
+      .select({
+        record: uconfigsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(uconfigsTable)
+      .where(
+        and(
+          isNotNull(uconfigsTable.keyTag),
+          notInArray(uconfigsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (uconfigsResult.length > 0 && uconfigsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'uconfigs',
+          count: uconfigsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - Uconfigs, ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs

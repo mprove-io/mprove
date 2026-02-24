@@ -24,6 +24,7 @@ import type {
   ReportTab,
   SessionTab,
   StructTab,
+  UconfigTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { AvatarEnt } from '#backend/drizzle/postgres/schema/avatars';
@@ -48,6 +49,7 @@ import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
 import { SessionEnt } from '#backend/drizzle/postgres/schema/sessions';
 import { StructEnt } from '#backend/drizzle/postgres/schema/structs';
+import { UconfigEnt } from '#backend/drizzle/postgres/schema/uconfigs';
 import { UserEnt } from '#backend/drizzle/postgres/schema/users';
 import { DbEntsPack } from '#backend/interfaces/db-ents-pack';
 import { DbTabsPack } from '#backend/interfaces/db-tabs-pack';
@@ -97,6 +99,8 @@ import {
   SessionSt,
   StructLt,
   StructSt,
+  UconfigLt,
+  UconfigSt,
   UserLt,
   UserSt
 } from '#common/interfaces/st-lt';
@@ -242,6 +246,11 @@ export class TabToEntService {
         tabsPack.sessions
           ?.filter(x => isDefined(x))
           .map(x => this.sessionTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+        [],
+      uconfigs:
+        tabsPack.uconfigs
+          ?.filter(x => isDefined(x))
+          .map(x => this.uconfigTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         []
     };
 
@@ -492,6 +501,26 @@ export class TabToEntService {
     };
 
     return dconfigEnt;
+  }
+
+  uconfigTabToEnt(item: { tab: UconfigTab; hashSecret: string }): UconfigEnt {
+    let { tab, hashSecret } = item;
+
+    let uconfigSt: UconfigSt = {};
+    let uconfigLt: UconfigLt = {};
+
+    let uconfigEnt: UconfigEnt = {
+      uconfigId: tab.uconfigId,
+      providerModels: tab.providerModels,
+      ...this.getEntProps({
+        dataSt: uconfigSt,
+        dataLt: uconfigLt,
+        isMetadata: false
+      }),
+      serverTs: tab.serverTs
+    };
+
+    return uconfigEnt;
   }
 
   envTabToEnt(item: { tab: EnvTab; hashSecret: string }): EnvEnt {

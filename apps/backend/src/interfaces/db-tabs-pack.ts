@@ -21,6 +21,7 @@ import type {
   ReportTab,
   SessionTab,
   StructTab,
+  UconfigTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 
@@ -46,6 +47,7 @@ export class DbTabsPack {
   reports?: ReportTab[];
   sessions?: SessionTab[];
   structs?: StructTab[];
+  uconfigs?: UconfigTab[];
   users?: UserTab[];
   charts?: ChartTab[];
 }
