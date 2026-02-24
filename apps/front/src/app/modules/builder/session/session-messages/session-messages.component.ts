@@ -74,6 +74,7 @@ export class SessionMessagesComponent
   responseMinHeight = 0;
   isAtBottom = true;
   isOverflowing = false;
+  isReady = false;
 
   private scrollListener: (() => void) | null = null;
   private rafId: number | null = null;
@@ -82,10 +83,15 @@ export class SessionMessagesComponent
   ngAfterViewInit() {
     if (this.chatScrollbar) {
       let viewport = this.chatScrollbar.adapter.viewportElement;
+      viewport.style.overflowAnchor = 'none';
       viewport.scrollTop = viewport.scrollHeight;
 
       setTimeout(() => {
         viewport.scrollTop = viewport.scrollHeight;
+        requestAnimationFrame(() => {
+          this.isReady = true;
+          this.cd.detectChanges();
+        });
       });
 
       this.scrollListener = () => this.scheduleScrollStateUpdate();

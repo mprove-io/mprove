@@ -1,4 +1,7 @@
-<div class="relative h-full w-full">
+<div
+  class="relative h-full w-full"
+  [style.visibility]="isReady ? 'visible' : 'hidden'"
+>
   <ng-scrollbar
     #chatScroll
     class="h-full"

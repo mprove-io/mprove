@@ -9,14 +9,15 @@
     'border-s200 bg-s100 opacity-60': effectiveDisabled
   }"
 >
-  <div
-    [ngClass]="{
-      'thin-scrollbar mr-3 max-h-[400px] overflow-y-auto': scrollableInput
-    }"
+  <ng-scrollbar
+    [orientation]="'vertical'"
+    [visibility]="'hover'"
+    [appearance]="'compact'"
+    class="max-h-[400px]"
   >
     <div class="flex w-full flex-row items-end pl-5 pr-2">
       <textarea
-        class="text-s1 max-h-[280px] min-w-0 flex-1 resize-none overflow-y-auto bg-transparent py-4 text-lg leading-relaxed placeholder-gray-400 [field-sizing:content] focus:outline-none"
+        class="text-s1 min-w-0 flex-1 resize-none bg-transparent py-4 text-lg leading-relaxed placeholder-gray-400 [field-sizing:content] focus:outline-none"
         placeholder="Ask anything..."
         [(ngModel)]="messageText"
         (keydown)="onKeyDown($event)"
@@ -36,7 +37,7 @@
         <m-arrow-up-icon class="text-white"></m-arrow-up-icon>
       </button>
     </div>
-  </div>
+  </ng-scrollbar>
 </div>
 
 <div

@@ -701,9 +701,10 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.previousLastTurnResponsesExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
-    if (!this.showSessionMessages) {
-      this.uiQuery.updatePart({ showSessionMessages: true });
-    }
+    // Don't set showSessionMessages here — when switching sessions,
+    // openSession() sets it to false. Let updateSessionData() set it
+    // to true once the correct data arrives from the resolver.
+    // For first load, showSessionMessages is already true.
 
     // Recreate session-messages — ngAfterViewInit will scroll to bottom
     this.isSessionSwitching = false;

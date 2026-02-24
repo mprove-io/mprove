@@ -1,17 +1,22 @@
 <div class="flex h-full w-full flex-col">
   <!-- Messages area (chat view) -->
-  <m-session-messages
+  <div
+    *ngIf="!debugMode"
     class="mt-0.5 flex h-2 w-full flex-grow flex-col overflow-y-auto"
-    *ngIf="!debugMode && showSessionMessages && !isSessionSwitching"
-    [turns]="turns"
-    [session]="session"
-    [isActivating]="isActivating"
-    [isWaitingForResponse]="isWaitingForResponse"
-    [retryMessage]="retryMessage"
-    [isSessionError]="isSessionError"
-    [scrollTrigger]="scrollTrigger"
-    [autoScroll]="autoScroll"
-  ></m-session-messages>
+  >
+    <m-session-messages
+      class="h-full w-full"
+      *ngIf="showSessionMessages && !isSessionSwitching"
+      [turns]="turns"
+      [session]="session"
+      [isActivating]="isActivating"
+      [isWaitingForResponse]="isWaitingForResponse"
+      [retryMessage]="retryMessage"
+      [isSessionError]="isSessionError"
+      [scrollTrigger]="scrollTrigger"
+      [autoScroll]="autoScroll"
+    ></m-session-messages>
+  </div>
 
   <div
     *ngIf="debugMode"
