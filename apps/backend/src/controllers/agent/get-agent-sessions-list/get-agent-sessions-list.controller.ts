@@ -1,6 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, desc, eq, ne } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -10,6 +10,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import {
@@ -34,7 +35,8 @@ export class GetAgentSessionsListController {
     let sessionEnts = await this.db.drizzle.query.sessionsTable.findMany({
       where: and(
         eq(sessionsTable.projectId, projectId),
-        eq(sessionsTable.userId, user.userId)
+        eq(sessionsTable.userId, user.userId),
+        ne(sessionsTable.status, SessionStatusEnum.Deleted)
       ),
       orderBy: [desc(sessionsTable.createdTs)]
     });

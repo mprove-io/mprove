@@ -1,0 +1,26 @@
+<div class="bg-m0 flex select-none flex-col p-9">
+  <div class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Delete Session</div
+  >
+
+  <div class="text-s1 mt-6 text-lg"
+    >Are you sure you want to delete session
+    <span class="font-semibold"> {{ this.ref.data.title }} </span>?</div
+  >
+
+  <div class="mt-6">
+    <button
+      class="bg-r1 text-m0 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+      (click)="delete()"
+      (keyup.enter)="$event.stopImmediatePropagation()"
+      >Delete</button
+    >
+
+    <button
+      class="border-m600 text-m600 ml-3 w-28 rounded border py-3 text-base font-medium focus:outline-none"
+      type="button"
+      (click)="cancel()"
+      >Cancel</button
+    >
+  </div>
+</div>

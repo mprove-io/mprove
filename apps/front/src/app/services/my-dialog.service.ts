@@ -40,6 +40,10 @@ import {
   MalloyModelsDialogData
 } from '../modules/builder/malloy-models-dialog/malloy-models-dialog.component';
 import {
+  DeleteSessionDialogComponent,
+  DeleteSessionDialogData
+} from '../modules/builder/session/delete-session-dialog/delete-session-dialog.component';
+import {
   EditSessionTitleDialogComponent,
   EditSessionTitleDialogData
 } from '../modules/builder/session/edit-session-title-dialog/edit-session-title-dialog.component';
@@ -797,6 +801,14 @@ export class MyDialogService {
 
   showDeleteFile(item: DeleteFileDialogData): void {
     this.dialogService.open(DeleteFileDialogComponent, {
+      enableClose: false,
+      closeButton: false,
+      data: item
+    });
+  }
+
+  showDeleteSession(item: DeleteSessionDialogData): void {
+    this.dialogService.open(DeleteSessionDialogComponent, {
       enableClose: false,
       closeButton: false,
       data: item

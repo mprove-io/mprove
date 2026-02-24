@@ -128,6 +128,15 @@ export class SessionsComponent implements OnInit {
     });
   }
 
+  deleteSession(event: MouseEvent, session: AgentSessionApiX) {
+    event.stopPropagation();
+    this.myDialogService.showDeleteSession({
+      apiService: this.apiService,
+      sessionId: session.sessionId,
+      title: makeTitle(session)
+    });
+  }
+
   trackBySessionId(_index: number, session: AgentSessionApiX) {
     return session.sessionId;
   }

@@ -4,5 +4,6 @@ export enum SessionStatusEnum {
   Paused = 'Paused',
   Stopped = 'Stopped',
   Expired = 'Expired',
+  Deleted = 'Deleted',
   Error = 'Error'
 }

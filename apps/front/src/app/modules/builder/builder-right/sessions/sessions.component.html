@@ -112,6 +112,15 @@
                   (click)="tpRef.hide(); renameSession($event, session)"
                   >Rename Session</button
                 >
+                <button
+                  class="text-r600 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                  [ngClass]="{
+                    'text-s400 cursor-default': session.status === 'New'
+                  }"
+                  [disabled]="session.status === 'New'"
+                  (click)="tpRef.hide(); deleteSession($event, session)"
+                  >Delete Session</button
+                >
               </div>
             </ng-template>
           </div>

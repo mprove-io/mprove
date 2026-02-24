@@ -14,6 +14,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
@@ -47,6 +48,12 @@ export class GetAgentSessionController {
     if (session.userId !== user.userId) {
       throw new ServerError({
         message: ErEnum.BACKEND_UNAUTHORIZED
+      });
+    }
+
+    if (session.status === SessionStatusEnum.Deleted) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SESSION_NOT_FOUND
       });
     }
 
