@@ -31,7 +31,7 @@ services:
       - ./scripts/docker-compose/init-calc-user.sh:/docker-entrypoint-initdb.d/init-calc-user.sh
 
   opencode:
-    image: ghcr.io/anomalyco/opencode:1.2.6
+    image: ghcr.io/anomalyco/opencode:1.2.10
     command: ['serve', '--hostname=0.0.0.0', '--port=14096']
     environment:
       OPENCODE_SERVER_PASSWORD: $COMPOSE_OPENCODE_SERVER_PASSWORD

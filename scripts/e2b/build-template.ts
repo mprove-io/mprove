@@ -4,7 +4,7 @@ let version = process.argv[2];
 let variant = process.argv[3];
 if (!version || !variant) {
   console.error(
-    'Usage: pnpm e2b:build <opencode-version> <variant>\nExample: pnpm e2b:build 1.2.5 v4_11-0-99-dev'
+    'Usage: pnpm e2b:build <opencode-version> <variant>\nExample: pnpm e2b:build 1.2.10 11.0.102-dev_v1'
   );
   process.exit(1);
 }
@@ -17,7 +17,9 @@ console.log();
 let template = Template()
   .fromBaseImage()
   .aptInstall(['curl', 'git', 'ripgrep', 'openssh-client', 'ca-certificates'])
-  .runCmd('curl -fsSL https://opencode.ai/install | bash')
+  .runCmd(
+    `curl -fsSL https://opencode.ai/install | bash -s -- --version ${version}`
+  )
   .runCmd(
     'sudo ln -s /home/user/.opencode/bin/opencode /usr/local/bin/opencode'
   )

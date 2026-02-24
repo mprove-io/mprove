@@ -33,7 +33,7 @@
     "js-yaml": "4.1.1",
     "nanoid": "3.3.10",
     "reflect-metadata": "0.2.2",
-    "@opencode-ai/sdk": "1.2.6",
+    "@opencode-ai/sdk": "1.2.10",
     "trino-client": "0.2.9",
     "tslib": "2.7.0",
     "zod": "4.3.6"
