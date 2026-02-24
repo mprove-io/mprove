@@ -64,6 +64,7 @@ export class SessionMessagesComponent
 
   private scrollListener: (() => void) | null = null;
   private rafId: number | null = null;
+  private isScrollingToBottom = false;
 
   ngAfterViewInit() {
     if (this.chatScrollbar) {
@@ -118,9 +119,14 @@ export class SessionMessagesComponent
       return;
     }
     this.isAtBottom = true;
+    this.isScrollingToBottom = true;
     let viewport = this.chatScrollbar.adapter.viewportElement;
     let scrollMax = viewport.scrollHeight - viewport.clientHeight;
     this.chatScrollbar.adapter.scrollTo({ top: scrollMax, duration: 200 });
+    setTimeout(() => {
+      this.isScrollingToBottom = false;
+      this.updateScrollState();
+    }, 300);
   }
 
   private scheduleScrollStateUpdate() {
@@ -134,7 +140,7 @@ export class SessionMessagesComponent
   }
 
   private updateScrollState() {
-    if (!this.chatScrollbar) {
+    if (this.isScrollingToBottom || !this.chatScrollbar) {
       return;
     }
     let viewport = this.chatScrollbar.adapter.viewportElement;
