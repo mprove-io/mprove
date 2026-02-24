@@ -32,6 +32,9 @@ export class AgentSessionApiX extends AgentSessionApi {
 })
 export class SessionsComponent implements OnInit {
   sessions: AgentSessionApiX[] = [];
+  hasMoreArchived = false;
+  isLoadingArchived = false;
+  archivedLastCreatedTs: number = undefined;
   sessionId: string;
   isRefreshing = false;
   spinnerName = SESSIONS_SPINNER_NAME;
@@ -108,6 +111,8 @@ export class SessionsComponent implements OnInit {
 
           this.isRefreshing = false;
           this.spinner.hide(SESSIONS_SPINNER_NAME);
+          this.hasMoreArchived = false;
+          this.archivedLastCreatedTs = undefined;
           this.cd.detectChanges();
         }),
         take(1)
@@ -117,6 +122,106 @@ export class SessionsComponent implements OnInit {
 
   newSession() {
     this.navigateService.navigateToBuilder();
+  }
+
+  archiveSession(event: MouseEvent, session: AgentSessionApiX) {
+    event.stopPropagation();
+
+    let sessionId = session.sessionId;
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession,
+        payload: { sessionId: sessionId },
+        showSpinner: true
+      })
+      .pipe(
+        tap(() => {
+          let sessions = this.sessionsQuery.getValue().sessions;
+
+          if (
+            this.archivedLastCreatedTs !== undefined &&
+            session.createdTs >= this.archivedLastCreatedTs
+          ) {
+            // Move to archived section
+            let others = sessions.filter(s => s.sessionId !== sessionId);
+            let nonArchived = others.filter(s => s.status !== 'Archived');
+            let archived = others.filter(s => s.status === 'Archived');
+            let archivedSession = { ...session, status: 'Archived' };
+
+            let insertIdx = archived.findIndex(
+              s => s.createdTs < archivedSession.createdTs
+            );
+            if (insertIdx === -1) {
+              archived.push(archivedSession);
+            } else {
+              archived.splice(insertIdx, 0, archivedSession);
+            }
+
+            this.sessionsQuery.updatePart({
+              sessions: [...nonArchived, ...archived]
+            });
+          } else {
+            // Remove from list
+            let updated = sessions.filter(s => s.sessionId !== sessionId);
+            this.sessionsQuery.updatePart({ sessions: updated });
+          }
+
+          let currentSession = this.sessionQuery.getValue();
+          if (currentSession?.sessionId === sessionId) {
+            this.navigateService.navigateToBuilder();
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  loadArchivedSessions() {
+    let projectId: string;
+
+    this.navQuery.projectId$.pipe(take(1)).subscribe(x => {
+      projectId = x;
+    });
+
+    let payload: ToBackendGetAgentSessionsListRequestPayload = {
+      projectId: projectId,
+      includeArchived: true,
+      archivedLimit: 10,
+      archivedLastCreatedTs: this.archivedLastCreatedTs
+    };
+
+    this.isLoadingArchived = true;
+    this.cd.detectChanges();
+
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList,
+        payload: payload
+      })
+      .pipe(
+        map((resp: ToBackendGetAgentSessionsListResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.sessionsQuery.update({
+              sessions: resp.payload.sessions
+            });
+            this.hasMoreArchived = resp.payload.hasMoreArchived ?? false;
+            let archivedSessions = resp.payload.sessions.filter(
+              s => s.status === 'Archived'
+            );
+            if (archivedSessions.length > 0) {
+              this.archivedLastCreatedTs =
+                archivedSessions[archivedSessions.length - 1].createdTs;
+            }
+          }
+
+          this.isLoadingArchived = false;
+          this.cd.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   renameSession(event: MouseEvent, session: AgentSessionApiX) {

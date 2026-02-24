@@ -151,7 +151,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendRejectAgentQuestion = 'api/ToBackendRejectAgentQuestion',
   ToBackendRespondToAgentPermission = 'api/ToBackendRespondToAgentPermission',
   ToBackendDeleteAgentSession = 'api/ToBackendDeleteAgentSession',
-  ToBackendStopAgentSessionSandbox = 'api/ToBackendStopAgentSessionSandbox',
+  ToBackendArchiveAgentSession = 'api/ToBackendArchiveAgentSession',
   ToBackendPauseAgentSessionSandbox = 'api/ToBackendPauseAgentSessionSandbox',
   ToBackendCreateAgentSseTicket = 'api/ToBackendCreateAgentSseTicket',
   ToBackendGetAgentSessionsList = 'api/ToBackendGetAgentSessionsList',

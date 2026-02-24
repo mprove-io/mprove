@@ -1,4 +1,5 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToBackendArchiveAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
 import { ToBackendCreateAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
 import { ToBackendCreateAgentSseTicketRequest } from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
@@ -11,7 +12,6 @@ import { ToBackendRespondToAgentPermissionRequest } from '#common/interfaces/to-
 import { ToBackendRespondToAgentQuestionRequest } from '#common/interfaces/to-backend/agent/to-backend-respond-to-agent-question';
 import { ToBackendSendAgentMessageRequest } from '#common/interfaces/to-backend/agent/to-backend-send-agent-message';
 import { ToBackendSetAgentSessionTitleRequest } from '#common/interfaces/to-backend/agent/to-backend-set-agent-session-title';
-import { ToBackendStopAgentSessionSandboxRequest } from '#common/interfaces/to-backend/agent/to-backend-stop-agent-session-sandbox';
 import { ToBackendGetAvatarBigRequest } from '#common/interfaces/to-backend/avatars/to-backend-get-avatar-big';
 import { ToBackendSetAvatarRequest } from '#common/interfaces/to-backend/avatars/to-backend-set-avatar';
 import { ToBackendCreateBranchRequest } from '#common/interfaces/to-backend/branches/to-backend-create-branch';
@@ -380,8 +380,8 @@ export const nameToClass = {
     ToBackendRespondToAgentPermissionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession]:
     ToBackendDeleteAgentSessionRequest,
-  [ToBackendRequestInfoNameEnum.ToBackendStopAgentSessionSandbox]:
-    ToBackendStopAgentSessionSandboxRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession]:
+    ToBackendArchiveAgentSessionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendPauseAgentSessionSandbox]:
     ToBackendPauseAgentSessionSandboxRequest,
   [ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket]:

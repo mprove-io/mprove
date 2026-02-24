@@ -90,6 +90,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   previousSessionId: string;
   userSentMessage = false;
   isActivating = false;
+  isArchived = false;
   isWaitingForResponse = false;
   retryMessage: string;
   isSessionError = false;
@@ -593,6 +594,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.turns = this.buildTurns(this.messages);
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
+    this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.isWaitingForResponse = this.checkIsWaitingForResponse(
       sessionData.sdkSessionStatus
     );
@@ -652,6 +654,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.turns = this.buildTurns(this.messages);
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
+    this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.isWaitingForResponse =
       this.pendingUserMessages.length > 0 ||
       this.checkIsWaitingForResponse(sessionData.sdkSessionStatus);

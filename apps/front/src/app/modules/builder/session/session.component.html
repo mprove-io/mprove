@@ -101,7 +101,7 @@
 
   <!-- Permission dock -->
   <div
-    *ngIf="permissions.length > 0"
+    *ngIf="permissions.length > 0 && !isArchived"
     class="mx-auto flex w-full max-w-[1084px] flex-shrink-0 flex-col gap-2 px-6 pb-2 pt-2"
   >
     <div class="border-s300 flex flex-col rounded-lg border bg-white">
@@ -161,7 +161,7 @@
 
   <!-- Question dock -->
   <div
-    *ngIf="questions.length > 0"
+    *ngIf="questions.length > 0 && !isArchived"
     class="mx-auto flex w-full max-w-[1084px] flex-shrink-0 flex-col gap-2 px-6 pb-2 pt-2"
   >
     <m-question-prompt
@@ -187,7 +187,7 @@
           [(model)]="model"
           [(agent)]="agent"
           [(variant)]="variant"
-          [disabled]="isActivating"
+          [disabled]="isActivating || isArchived"
           [showSelects]="messages.length > 0"
           [sessionId]="session?.sessionId"
           [autoScroll]="autoScroll"

@@ -62,6 +62,12 @@ export class SendAgentMessageController {
       });
     }
 
+    if (session.status === SessionStatusEnum.Archived) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SESSION_IS_ARCHIVED
+      });
+    }
+
     if (session.status === SessionStatusEnum.Paused) {
       let project = await this.projectsService.getProjectCheckExists({
         projectId: session.projectId

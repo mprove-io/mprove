@@ -65,7 +65,11 @@ export class DeleteAgentSessionController {
       });
     }
 
-    if (session.sandboxId && session.status !== SessionStatusEnum.Stopped) {
+    if (
+      session.sandboxId &&
+      (session.status === SessionStatusEnum.Active ||
+        session.status === SessionStatusEnum.Paused)
+    ) {
       let project = await this.projectsService.getProjectCheckExists({
         projectId: session.projectId
       });

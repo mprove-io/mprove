@@ -57,20 +57,24 @@ export class GetAgentSessionController {
       });
     }
 
-    let eventEnts = await this.db.drizzle.query.eventsTable.findMany({
-      where: eq(eventsTable.sessionId, sessionId),
-      orderBy: [asc(eventsTable.eventIndex)]
-    });
+    let events: AgentEventApi[] = [];
 
-    let events: AgentEventApi[] = eventEnts.map(ent => {
-      let tab = this.tabService.eventEntToTab(ent);
-      return {
-        eventId: tab.eventId,
-        eventIndex: tab.eventIndex,
-        eventType: tab.type,
-        ocEvent: tab.ocEvent
-      };
-    });
+    if (session.status !== SessionStatusEnum.Archived) {
+      let eventEnts = await this.db.drizzle.query.eventsTable.findMany({
+        where: eq(eventsTable.sessionId, sessionId),
+        orderBy: [asc(eventsTable.eventIndex)]
+      });
+
+      events = eventEnts.map(ent => {
+        let tab = this.tabService.eventEntToTab(ent);
+        return {
+          eventId: tab.eventId,
+          eventIndex: tab.eventIndex,
+          eventType: tab.type,
+          ocEvent: tab.ocEvent
+        };
+      });
+    }
 
     let sessionApi: AgentSessionApi = {
       sessionId: session.sessionId,

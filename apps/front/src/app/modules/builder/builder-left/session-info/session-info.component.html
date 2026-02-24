@@ -120,8 +120,8 @@
                     'bg-green-100 text-green-700': session?.status === 'Active',
                     'bg-yellow-100 text-yellow-700':
                       session?.status === 'Paused',
+                    'bg-gray-100 text-gray-600': session?.status === 'Archived',
                     'bg-red-100 text-red-700':
-                      session?.status === 'Stopped' ||
                       session?.status === 'Error' ||
                       session?.status === 'Expired'
                   }"

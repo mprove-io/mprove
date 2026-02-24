@@ -2,7 +2,7 @@ export enum SessionStatusEnum {
   New = 'New',
   Active = 'Active',
   Paused = 'Paused',
-  Stopped = 'Stopped',
+  Archived = 'Archived',
   Expired = 'Expired',
   Deleted = 'Deleted',
   Error = 'Error'

@@ -67,7 +67,11 @@
             class="min-w-0 flex-1 truncate text-base"
             [ngClass]="{
               'text-m600 font-semibold': session.sessionId === sessionId,
-              'text-s1': session.sessionId !== sessionId
+              'text-s400':
+                session.sessionId !== sessionId &&
+                session.status === 'Archived',
+              'text-s1':
+                session.sessionId !== sessionId && session.status !== 'Archived'
             }"
             >{{ session.displayTitle }}</span
           >
@@ -78,10 +82,9 @@
               'bg-blue-100 text-blue-700': session.status === 'New',
               'bg-green-100 text-green-700': session.status === 'Active',
               'bg-yellow-100 text-yellow-700': session.status === 'Paused',
+              'bg-gray-100 text-gray-600': session.status === 'Archived',
               'bg-red-100 text-red-700':
-                session.status === 'Stopped' ||
-                session.status === 'Error' ||
-                session.status === 'Expired'
+                session.status === 'Error' || session.status === 'Expired'
             }"
             >{{ session.status }}</span
           >
@@ -91,7 +94,7 @@
           >
             <button
               class="hover:bg-m200 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
-              [tp]="templateRenameSession"
+              [tp]="templateSessionMenu"
               [tpHideOnEscape]="true"
               tpVariation="menu"
               className="my-menu"
@@ -101,7 +104,7 @@
               <m-dots-vertical-icon></m-dots-vertical-icon>
             </button>
 
-            <ng-template #templateRenameSession>
+            <ng-template #templateSessionMenu>
               <div class="border-s4 bg-m0 w-48 rounded-md border-2 shadow-xl">
                 <button
                   class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -111,6 +114,16 @@
                   [disabled]="session.status === 'New'"
                   (click)="tpRef.hide(); renameSession($event, session)"
                   >Rename Session</button
+                >
+                <button
+                  *ngIf="session.status !== 'Archived'"
+                  class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                  [ngClass]="{
+                    'text-s400 cursor-default': session.status === 'New'
+                  }"
+                  [disabled]="session.status === 'New'"
+                  (click)="tpRef.hide(); archiveSession($event, session)"
+                  >Archive Session</button
                 >
                 <button
                   class="text-r600 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
@@ -124,6 +137,24 @@
               </div>
             </ng-template>
           </div>
+        </div>
+
+        <!-- Load archived sessions button -->
+        <div class="ml-6 mr-9 mt-4 flex justify-center">
+          <button
+            type="button"
+            class="text-s400 hover:text-s500 px-4 py-2 text-sm focus:outline-none"
+            [disabled]="isLoadingArchived"
+            (click)="loadArchivedSessions()"
+          >
+            {{
+              isLoadingArchived
+                ? 'Loading...'
+                : archivedLastCreatedTs
+                  ? 'Load more archived sessions'
+                  : 'Load archived sessions'
+            }}
+          </button>
         </div>
       </div>
     </ng-scrollbar>
