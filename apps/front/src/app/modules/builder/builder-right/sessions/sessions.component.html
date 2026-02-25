@@ -11,6 +11,30 @@
     </div>
 
     <button
+      tp="Refresh sessions"
+      type="button"
+      class="hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      (click)="loadSessions()"
+    >
+      <m-refresh-icon></m-refresh-icon>
+    </button>
+
+    <div class="relative ml-5 flex h-7 w-7 flex-shrink-0">
+      <ngx-spinner
+        *ngIf="isRefreshing"
+        [name]="spinnerName"
+        color="#0084d1"
+        bdColor="#00000000"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+
+    <button
       type="button"
       class="ml-5 flex flex-shrink-0 select-none flex-row items-center rounded px-3 py-2 text-base focus:outline-none"
       [ngClass]="{
@@ -42,29 +66,6 @@
     </button>
 
     <div class="flex flex-1"></div>
-
-    <div *ngIf="isRefreshing" class="relative flex h-7 w-7 flex-shrink-0">
-      <ngx-spinner
-        [name]="spinnerName"
-        color="#0084d1"
-        bdColor="#00000000"
-        size="default"
-        type="ball-clip-rotate"
-        [fullScreen]="false"
-        [disableAnimation]="true"
-        [zIndex]="99998"
-      >
-      </ngx-spinner>
-    </div>
-
-    <button
-      tp="Refresh sessions"
-      type="button"
-      class="hover:bg-m200 ml-5 mr-12 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-      (click)="loadSessions()"
-    >
-      <m-refresh-icon></m-refresh-icon>
-    </button>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -91,10 +92,34 @@
       <div class="mt-2 h-full w-full pb-6">
         <div
           *ngFor="let session of sessions; trackBy: trackBySessionId"
-          class="hover:bg-m50 group ml-6 mr-9 flex h-11 cursor-pointer select-none flex-row items-center rounded pl-3 pr-3"
+          class="hover:bg-m50 group ml-6 mr-6 flex h-11 cursor-pointer select-none flex-row items-center rounded pl-5 pr-2"
           (click)="openSession(session)"
         >
-          <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center">
+          <span
+            class="min-w-0 flex-1 truncate text-[17px]"
+            [ngClass]="{
+              'text-m600 font-semibold': session.sessionId === sessionId,
+              'text-s400':
+                session.status === 'Archived' &&
+                session.sessionId !== sessionId,
+              'text-s1':
+                session.sessionId !== sessionId && session.status !== 'Archived'
+            }"
+            >{{ session.displayTitle }}</span
+          >
+
+          <span
+            class="ml-4 w-[84px] flex-shrink-0 text-right text-[16px]"
+            [ngClass]="{
+              'text-s400': session.status === 'Archived',
+              'text-s1': session.status !== 'Archived'
+            }"
+            >{{ session.status }}</span
+          >
+
+          <div
+            class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+          >
             <button
               class="hover:bg-m200 invisible flex h-8 w-8 items-center justify-center rounded focus:outline-none group-hover:visible"
               [tp]="templateSessionMenu"
@@ -146,36 +171,10 @@
               </div>
             </ng-template>
           </div>
-
-          <span
-            class="ml-4 min-w-0 flex-1 truncate text-[17px]"
-            [ngClass]="{
-              'text-m600 font-semibold': session.sessionId === sessionId,
-              'text-s400':
-                session.status === 'Archived' &&
-                session.sessionId !== sessionId,
-              'text-s1':
-                session.sessionId !== sessionId && session.status !== 'Archived'
-            }"
-            >{{ session.displayTitle }}</span
-          >
-
-          <span
-            class="ml-4 w-[84px] flex-shrink-0 text-right text-[16px]"
-            [ngClass]="{
-              'text-m600': session.sessionId === sessionId,
-              'text-s400':
-                session.status === 'Archived' &&
-                session.sessionId !== sessionId,
-              'text-s1':
-                session.sessionId !== sessionId && session.status !== 'Archived'
-            }"
-            >{{ session.status }}</span
-          >
         </div>
 
         <!-- Load archived sessions button -->
-        <div class="ml-6 mr-9 mt-4 flex justify-end pr-3">
+        <div class="ml-6 mr-9 mt-4 flex justify-center pr-3">
           <button
             type="button"
             class="text-s400 hover:text-s500 py-2 text-base focus:outline-none"
