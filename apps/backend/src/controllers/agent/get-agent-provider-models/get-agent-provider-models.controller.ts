@@ -51,12 +51,9 @@ export class GetAgentProviderModelsController {
 
         return payload;
       } catch (er) {
-        console.log(
-          'Sandbox not reachable, fall through to agentModelsService',
-          er
-        );
-
-        // Sandbox not reachable, fall through to agentModelsService
+        // console.log(
+        //   'Sandbox not reachable, fall through to agentModelsService'
+        // );
       }
     }
 
