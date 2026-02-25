@@ -18,6 +18,8 @@ interface FileDiffInfo {
   additions: number;
   deletions: number;
   status?: 'added' | 'deleted' | 'modified';
+  before?: string;
+  after?: string;
 }
 
 interface ChatMessage {
@@ -233,13 +235,25 @@ export class SessionMessagesComponent
     return '';
   }
 
+  hasToolContent(toolPart: ToolPart): boolean {
+    if (toolPart.tool === 'write' && toolPart.state?.input?.['content']) {
+      return true;
+    }
+    return !!this.getToolOutput(toolPart);
+  }
+
   constructor(
     private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef
   ) {}
 
   openToolOutput(toolPart: ToolPart) {
-    let output = this.getToolOutput(toolPart);
+    let output: string;
+    if (toolPart.tool === 'write' && toolPart.state?.input?.['content']) {
+      output = toolPart.state.input['content'] as string;
+    } else {
+      output = this.getToolOutput(toolPart);
+    }
     if (!output) return;
     this.myDialogService.showToolOutput({
       title: this.getToolTitle(toolPart.tool),
@@ -273,11 +287,9 @@ export class SessionMessagesComponent
     return diffs.reduce((sum, d) => sum + d.deletions, 0);
   }
 
-  openFileDiffs(diffs: FileDiffInfo[]) {
+  openFileDiff(diff: FileDiffInfo) {
     this.myDialogService.showFileDiffs({
-      diffs,
-      totalAdditions: this.getTotalAdditions(diffs),
-      totalDeletions: this.getTotalDeletions(diffs)
+      diff
     });
   }
 }

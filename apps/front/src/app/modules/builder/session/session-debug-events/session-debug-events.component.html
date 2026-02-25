@@ -20,6 +20,18 @@
         class="text-s1 ml-[100px] flex-shrink-0 truncate font-mono text-base font-semibold"
         >{{ getEventRole(event) }}</span
       >
+
+      <span
+        *ngIf="getPartType(event)"
+        class="text-s500 ml-4 flex-shrink-0 truncate font-mono text-base"
+        >{{ getPartType(event) }}</span
+      >
+
+      <span
+        *ngIf="getPartTool(event)"
+        class="ml-2 flex-shrink-0 truncate font-mono text-base text-amber-600"
+        >{{ getPartTool(event) }}</span
+      >
     </div>
 
     <div *ngIf="expandedEvents[event.eventId]" class="bg-s50 px-4 py-3">

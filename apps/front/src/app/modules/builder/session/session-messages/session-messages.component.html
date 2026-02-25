@@ -108,7 +108,7 @@
                   <!-- Tool header -->
                   <button
                     class="flex w-full items-center gap-2 px-3 py-2 text-left focus:outline-none"
-                    [disabled]="!getToolOutput(msg.toolPart)"
+                    [disabled]="!hasToolContent(msg.toolPart)"
                     (click)="openToolOutput(msg.toolPart)"
                   >
                     <!-- Status dot -->
@@ -173,20 +173,19 @@
               </div>
             </div>
 
-            <!-- File changes summary -->
+            <!-- File changes summary (only show when turn is complete) -->
             <div
-              *ngIf="turn.fileDiffs?.length > 0"
+              *ngIf="
+                turn.fileDiffs?.length > 0 && (!isLast || !isWaitingForResponse)
+              "
               class="mb-4 flex justify-start"
             >
               <div
                 class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
               >
-                <button
-                  class="flex w-full items-center gap-2 px-3 py-2 text-left focus:outline-none"
-                  (click)="openFileDiffs(turn.fileDiffs)"
-                >
+                <div class="flex items-center gap-2 px-3 py-2">
                   <span
-                    class="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500"
+                    class="h-2 w-2 flex-shrink-0 rounded-full bg-green-500"
                   ></span>
                   <span class="text-s1 text-base font-medium">Modified</span>
                   <span class="text-s500 text-base"
@@ -201,7 +200,36 @@
                       >-{{ getTotalDeletions(turn.fileDiffs) }}</span
                     >
                   </span>
-                </button>
+                </div>
+                <div
+                  *ngFor="let diff of turn.fileDiffs"
+                  class="border-s200 flex cursor-pointer items-center justify-between border-t px-3 py-1.5 hover:bg-gray-50"
+                  (click)="openFileDiff(diff)"
+                >
+                  <span class="text-s1 min-w-0 truncate text-sm">{{
+                    diff.file
+                  }}</span>
+                  <span
+                    class="ml-3 flex flex-shrink-0 items-center gap-2 text-xs"
+                  >
+                    <span *ngIf="diff.additions > 0" class="text-green-600"
+                      >+{{ diff.additions }}</span
+                    >
+                    <span *ngIf="diff.deletions > 0" class="text-red-600"
+                      >-{{ diff.deletions }}</span
+                    >
+                    <span
+                      *ngIf="diff.status"
+                      class="rounded px-1 py-0.5 text-xs"
+                      [ngClass]="{
+                        'bg-green-50 text-green-700': diff.status === 'added',
+                        'bg-red-50 text-red-700': diff.status === 'deleted',
+                        'bg-blue-50 text-blue-700': diff.status === 'modified'
+                      }"
+                      >{{ diff.status }}</span
+                    >
+                  </span>
+                </div>
               </div>
             </div>
 

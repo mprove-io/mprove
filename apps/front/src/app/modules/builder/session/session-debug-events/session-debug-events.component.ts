@@ -26,6 +26,16 @@ export class SessionDebugEventsComponent {
     return undefined;
   }
 
+  getPartType(event: AgentEventApi): string | undefined {
+    let ocEvent = event.ocEvent as any;
+    return ocEvent?.properties?.part?.type;
+  }
+
+  getPartTool(event: AgentEventApi): string | undefined {
+    let ocEvent = event.ocEvent as any;
+    return ocEvent?.properties?.part?.tool;
+  }
+
   getPayloadJson(event: AgentEventApi): string {
     try {
       return JSON.stringify(event.ocEvent, undefined, 2);

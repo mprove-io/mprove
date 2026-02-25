@@ -842,7 +842,7 @@ export class MyDialogService {
       enableClose: false,
       closeButton: true,
       data: item,
-      width: '50vw'
+      width: '80vw'
     });
   }
 }

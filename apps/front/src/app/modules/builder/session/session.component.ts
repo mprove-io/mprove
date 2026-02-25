@@ -52,6 +52,8 @@ interface FileDiffInfo {
   additions: number;
   deletions: number;
   status?: 'added' | 'deleted' | 'modified';
+  before?: string;
+  after?: string;
 }
 
 interface ChatMessage {
@@ -858,11 +860,11 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     for (let msg of messages) {
       if (msg.role === 'user') {
-        // Attach this user message's summaryDiffs to the PREVIOUS turn
-        if (currentTurn && msg.summaryDiffs?.length > 0) {
-          currentTurn.fileDiffs = msg.summaryDiffs;
-        }
-        currentTurn = { userMessage: msg, responses: [] };
+        currentTurn = {
+          userMessage: msg,
+          responses: [],
+          fileDiffs: msg.summaryDiffs?.length > 0 ? msg.summaryDiffs : undefined
+        };
         turns.push(currentTurn);
       } else {
         if (!currentTurn) {
@@ -921,7 +923,9 @@ export class SessionComponent implements OnInit, OnDestroy {
                 file: d.file,
                 additions: d.additions,
                 deletions: d.deletions,
-                status: d.status
+                status: d.status,
+                before: d.before ?? '',
+                after: d.after ?? ''
               });
             }
           }
