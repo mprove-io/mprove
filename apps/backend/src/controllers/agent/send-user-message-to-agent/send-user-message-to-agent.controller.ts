@@ -255,6 +255,41 @@ export class SendUserMessageToAgentController {
           ),
         getRetryOption(this.cs, this.logger)
       );
+    } else if (interactionType === InteractionTypeEnum.Abort) {
+      let client = this.sandboxService.getOpenCodeClient(sessionId);
+
+      await client.session
+        .abort(
+          {
+            sessionID: session.opencodeSessionId
+          },
+          { throwOnError: true }
+        )
+        .catch(e => {
+          throw new ServerError({
+            message: ErEnum.BACKEND_AGENT_ABORT_FAILED,
+            originalError: e
+          });
+        });
+
+      let finalSession: SessionTab = {
+        ...session,
+        lastActivityTs: Date.now()
+      };
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  sessions: [finalSession]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
     }
 
     let payload2 = {};

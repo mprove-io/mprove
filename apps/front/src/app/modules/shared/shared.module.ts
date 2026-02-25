@@ -102,6 +102,7 @@ import { RightPanelIconComponent } from './icons/right-panel-icon/right-panel-ic
 import { SaveIconComponent } from './icons/save-icon/save-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
+import { StopIconComponent } from './icons/stop-icon/stop-icon.component';
 import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { TreeIconComponent } from './icons/tree-icon/tree-icon.component';
@@ -162,6 +163,7 @@ let sharedComponents = [
   AlertRingComponent,
   //
   SettingsIconComponent,
+  StopIconComponent,
   DeleteIconComponent,
   DeleteBigIconComponent,
   EditIconComponent,

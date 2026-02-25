@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import type { SessionStatus } from '@opencode-ai/sdk/v2';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PARAMETER_SESSION_ID } from '#common/constants/top';
@@ -64,6 +65,13 @@ export class SessionResolver {
               events: resp.payload.events
             });
 
+            let sdkSessionStatus: SessionStatus;
+            for (let e of resp.payload.events) {
+              if (e.ocEvent?.type === 'session.status') {
+                sdkSessionStatus = e.ocEvent.properties.status;
+              }
+            }
+
             this.sessionDataQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
@@ -71,7 +79,8 @@ export class SessionResolver {
                 : {},
               todos: resp.payload.session.todos ?? [],
               questions: resp.payload.session.questions ?? [],
-              permissions: resp.payload.session.permissions ?? []
+              permissions: resp.payload.session.permissions ?? [],
+              sdkSessionStatus
             });
 
             return true;

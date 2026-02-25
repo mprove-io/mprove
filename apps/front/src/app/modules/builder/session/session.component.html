@@ -132,11 +132,13 @@
           [(agent)]="agent"
           [(variant)]="variant"
           [disabled]="isActivating"
+          [isWaitingForResponse]="isAgentBusy"
           [showSelects]="messages.length > 0"
           [sessionId]="session?.sessionId"
           [autoScroll]="autoScroll"
           (autoScrollChange)="autoScroll = $event"
           (send)="sendFollowUp($event)"
+          (stop)="abortSession()"
         ></m-session-input>
       </div>
       <div class="ml-3 w-3 flex-shrink-0"></div>

@@ -39,8 +39,10 @@ export class SessionInputComponent implements OnChanges {
   @Input() sessionId: string | undefined;
   @Input() showAutoScroll = false;
   @Input() autoScroll = false;
+  @Input() isWaitingForResponse = false;
 
   @Output() send = new EventEmitter<string>();
+  @Output() stop = new EventEmitter<void>();
   @Output() providerHasApiKeyChange = new EventEmitter<boolean>();
   @Output() autoScrollChange = new EventEmitter<boolean>();
 
@@ -87,6 +89,10 @@ export class SessionInputComponent implements OnChanges {
       event.preventDefault();
       this.onSend();
     }
+  }
+
+  onStop() {
+    this.stop.emit();
   }
 
   onSend() {

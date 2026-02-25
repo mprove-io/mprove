@@ -101,6 +101,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   isActivating = false;
   isArchived = false;
   isWaitingForResponse = false;
+  isAgentBusy = false;
+  isAborting = false;
   retryMessage: string;
   isSessionError = false;
   autoScroll = false;
@@ -288,6 +290,35 @@ export class SessionComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  abortSession() {
+    if (!this.session) {
+      return;
+    }
+
+    this.isAborting = true;
+    this.isAgentBusy = false;
+    this.cd.detectChanges();
+
+    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
+      sessionId: this.session.sessionId,
+      interactionType: InteractionTypeEnum.Abort
+    };
+
+    this.apiService
+      .req({
+        pathInfoName:
+          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
+        payload: payload
+      })
+      .pipe(
+        catchError(() => {
+          return EMPTY;
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
   respondToPermission(event: { permissionId: string; reply: string }) {
     if (!this.session) {
       return;
@@ -464,6 +495,13 @@ export class SessionComponent implements OnInit, OnDestroy {
               });
             }
 
+            let sdkSessionStatus: SessionStatus;
+            for (let e of resp.payload.events) {
+              if (e.ocEvent?.type === 'session.status') {
+                sdkSessionStatus = e.ocEvent.properties.status;
+              }
+            }
+
             this.sessionDataQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
@@ -471,7 +509,8 @@ export class SessionComponent implements OnInit, OnDestroy {
                 : {},
               todos: resp.payload.session.todos ?? [],
               questions: resp.payload.session.questions ?? [],
-              permissions: resp.payload.session.permissions ?? []
+              permissions: resp.payload.session.permissions ?? [],
+              sdkSessionStatus
             });
 
             // Update session in the sessions list
@@ -607,6 +646,13 @@ export class SessionComponent implements OnInit, OnDestroy {
               this.lastProcessedEventIndex = maxIndex;
             }
 
+            let sdkSessionStatus: SessionStatus;
+            for (let e of resp.payload.events) {
+              if (e.ocEvent?.type === 'session.status') {
+                sdkSessionStatus = e.ocEvent.properties.status;
+              }
+            }
+
             this.sessionDataQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
@@ -614,7 +660,8 @@ export class SessionComponent implements OnInit, OnDestroy {
                 : {},
               todos: resp.payload.session.todos ?? [],
               questions: resp.payload.session.questions ?? [],
-              permissions: resp.payload.session.permissions ?? []
+              permissions: resp.payload.session.permissions ?? [],
+              sdkSessionStatus
             });
 
             // Release the guard, then connect SSE directly
@@ -671,6 +718,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.session.lastMessageProviderModel || this.session.model || 'default';
     this.sseRetryCount = 0;
     this.lastProcessedEventIndex = -1;
+    this.isAborting = false;
     this.pendingUserMessages = [];
     this.lastKnownStoreUserCount = sessionData.messages.filter(
       m => m.role === 'user'
@@ -696,6 +744,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isWaitingForResponse = this.checkIsWaitingForResponse(
       sessionData.sdkSessionStatus
     );
+    this.isAgentBusy = this.checkIsAgentBusy(sessionData.sdkSessionStatus);
     this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
@@ -759,6 +808,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.permissions.length === 0 &&
       (this.pendingUserMessages.length > 0 ||
         this.checkIsWaitingForResponse(sessionData.sdkSessionStatus));
+    this.isAgentBusy = this.checkIsAgentBusy(sessionData.sdkSessionStatus);
     this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
@@ -839,6 +889,30 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
     let result = lastMessage.role === 'user' || lastMessage.role === 'tool';
     return result;
+  }
+
+  checkIsAgentBusy(sdkSessionStatus: SessionStatus): boolean {
+    if (this.session?.status !== SessionStatusEnum.Active) {
+      return false;
+    }
+    if (sdkSessionStatus) {
+      let busy = sdkSessionStatus.type !== 'idle';
+      if (!busy) {
+        this.isAborting = false;
+      }
+      if (this.isAborting) {
+        return false;
+      }
+      return busy;
+    }
+    if (this.messages.length === 0) {
+      return false;
+    }
+    let lastMessage = this.messages[this.messages.length - 1];
+    if (lastMessage.role === 'error') {
+      return false;
+    }
+    return lastMessage.role === 'user' || lastMessage.role === 'tool';
   }
 
   getRetryMessage(sdkSessionStatus: SessionStatus): string {
