@@ -982,15 +982,32 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     // If no messages yet but session has firstMessage, show it
     if (chatMessages.length === 0 && this.session?.firstMessage) {
+      let firstModelId =
+        this.model !== 'default' && this.model.includes('/')
+          ? this.model.substring(this.model.indexOf('/') + 1)
+          : this.model;
       chatMessages.push({
         role: 'user',
-        text: this.session.firstMessage
+        text: this.session.firstMessage,
+        agentName: this.agent,
+        modelId: firstModelId,
+        variant: this.variant !== 'default' ? this.variant : ''
       });
     }
 
     // Append pending optimistic user messages
+    let optimisticModelId =
+      this.model !== 'default' && this.model.includes('/')
+        ? this.model.substring(this.model.indexOf('/') + 1)
+        : this.model;
     for (let text of this.pendingUserMessages) {
-      chatMessages.push({ role: 'user', text });
+      chatMessages.push({
+        role: 'user',
+        text,
+        agentName: this.agent,
+        modelId: optimisticModelId,
+        variant: this.variant !== 'default' ? this.variant : ''
+      });
     }
 
     return chatMessages;

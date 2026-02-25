@@ -65,7 +65,7 @@
             <!-- Meta info: agent / model / variant -->
             <div
               *ngIf="turn.userMessage.agentName || turn.userMessage.modelId"
-              class="mt-1 flex justify-end"
+              class="mt-1 flex justify-end pr-3"
             >
               <span class="text-s500 text-[15px]">{{
                 getMetaText(turn.userMessage)
@@ -107,7 +107,7 @@
                 >
                   <!-- Tool header -->
                   <button
-                    class="flex w-full items-center gap-2 px-3 py-2 text-left focus:outline-none"
+                    class="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
                     [disabled]="!hasToolContent(msg.toolPart)"
                     (click)="openToolOutput(msg.toolPart)"
                   >
