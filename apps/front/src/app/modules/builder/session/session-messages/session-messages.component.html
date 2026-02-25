@@ -134,25 +134,22 @@
                 </div>
               </div>
 
-              <!-- Tool call (rich rendering) -->
+              <!-- Tool call: BASH with inline output -->
               <div
                 *ngIf="
                   msg.role === 'tool' &&
                   msg.toolPart &&
-                  msg.toolPart.tool !== 'question'
+                  msg.toolPart.tool === 'bash'
                 "
                 class="flex justify-start"
               >
-                <div
-                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
+                <button
+                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
+                  [disabled]="!hasToolContent(msg.toolPart)"
+                  (click)="openToolOutput(msg.toolPart)"
                 >
-                  <!-- Tool header -->
-                  <button
-                    class="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
-                    [disabled]="!hasToolContent(msg.toolPart)"
-                    (click)="openToolOutput(msg.toolPart)"
-                  >
-                    <!-- Status dot -->
+                  <!-- Header -->
+                  <div class="flex w-full items-center gap-2 px-3 py-2">
                     <span
                       class="h-2 w-2 flex-shrink-0 rounded-full"
                       [ngClass]="{
@@ -164,13 +161,61 @@
                         'bg-red-500': msg.toolPart.state?.status === 'error'
                       }"
                     ></span>
-
-                    <!-- Tool title -->
                     <span class="text-s1 text-base font-medium">{{
                       getToolTitle(msg.toolPart.tool)
                     }}</span>
+                    <span
+                      *ngIf="getToolSubtitle(msg.toolPart)"
+                      class="text-s500 min-w-0 flex-1 truncate text-base"
+                      >{{ getToolSubtitle(msg.toolPart) }}</span
+                    >
+                  </div>
 
-                    <!-- Subtitle -->
+                  <!-- Inline output preview -->
+                  <div
+                    *ngIf="getToolOutput(msg.toolPart)"
+                    class="border-s200 max-h-[3.3lh] overflow-hidden border-t px-3 py-2"
+                  >
+                    <pre
+                      class="text-s500 whitespace-pre-wrap break-all font-mono text-sm"
+                      >{{ getBashOutputPreview(msg.toolPart) }}</pre
+                    >
+                  </div>
+                </button>
+              </div>
+
+              <!-- Tool call: NON-BASH (existing behavior) -->
+              <div
+                *ngIf="
+                  msg.role === 'tool' &&
+                  msg.toolPart &&
+                  msg.toolPart.tool !== 'question' &&
+                  msg.toolPart.tool !== 'bash'
+                "
+                class="flex justify-start"
+              >
+                <div
+                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
+                >
+                  <button
+                    class="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
+                    [disabled]="!hasToolContent(msg.toolPart)"
+                    (click)="openToolOutput(msg.toolPart)"
+                  >
+                    <span
+                      class="h-2 w-2 flex-shrink-0 rounded-full"
+                      [ngClass]="{
+                        'bg-amber-400':
+                          msg.toolPart.state?.status === 'pending' ||
+                          msg.toolPart.state?.status === 'running',
+                        'bg-green-500':
+                          msg.toolPart.state?.status === 'completed',
+                        'bg-red-500': msg.toolPart.state?.status === 'error'
+                      }"
+                    ></span>
+                    <span class="text-s1 text-base font-medium">{{
+                      getToolTitle(msg.toolPart.tool)
+                    }}</span>
                     <span
                       *ngIf="getToolSubtitle(msg.toolPart)"
                       class="text-s500 min-w-0 flex-1 truncate text-base"

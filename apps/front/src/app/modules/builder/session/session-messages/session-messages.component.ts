@@ -307,6 +307,13 @@ export class SessionMessagesComponent
     return diffs.reduce((sum, d) => sum + d.deletions, 0);
   }
 
+  getBashOutputPreview(toolPart: ToolPart, maxLines = 4): string {
+    let output = this.getToolOutput(toolPart);
+    if (!output) return '';
+    let lines = output.split('\n');
+    return lines.slice(0, maxLines).join('\n');
+  }
+
   openFileDiff(diff: FileDiffInfo) {
     this.myDialogService.showFileDiffs({
       diff
