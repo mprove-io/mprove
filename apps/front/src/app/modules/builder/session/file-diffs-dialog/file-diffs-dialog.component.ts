@@ -1,11 +1,14 @@
 import { DiffEditor } from '@acrodata/code-editor';
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   HostListener,
-  OnInit
+  OnDestroy,
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { defaultKeymap } from '@codemirror/commands';
@@ -38,7 +41,12 @@ export interface FileDiffsDialogData {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, SharedModule, DiffEditor, FormsModule]
 })
-export class FileDiffsDialogComponent implements OnInit {
+export class FileDiffsDialogComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
+  @ViewChild('diffEditor', { static: false })
+  diffEditorRef: DiffEditor;
+
   @HostListener('window:keyup.esc')
   onEscKeyUp() {
     this.ref.close();
@@ -49,6 +57,8 @@ export class FileDiffsDialogComponent implements OnInit {
   diffContent: { original: string; modified: string };
   originalExtensions: Extension[];
   modifiedExtensions: Extension[];
+
+  private syncScrollCleanups: (() => void)[] = [];
 
   private baseExtensions: Extension[] = [
     highlightSelectionMatches(),
@@ -66,6 +76,14 @@ export class FileDiffsDialogComponent implements OnInit {
     }, 0);
 
     this.initDiffState();
+  }
+
+  ngAfterViewInit(): void {
+    this.setupDiffEditorSyncScroll();
+  }
+
+  ngOnDestroy(): void {
+    this.cleanupSyncScroll();
   }
 
   private initDiffState() {
@@ -106,6 +124,54 @@ export class FileDiffsDialogComponent implements OnInit {
     };
     this.originalExtensions = originalExtensions;
     this.modifiedExtensions = modifiedExtensions;
+  }
+
+  private setupDiffEditorSyncScroll() {
+    setTimeout(() => {
+      if (
+        this.diffEditorRef?.mergeView?.a &&
+        this.diffEditorRef?.mergeView?.b
+      ) {
+        let editorA = this.diffEditorRef.mergeView.a;
+        let editorB = this.diffEditorRef.mergeView.b;
+
+        this.cleanupSyncScroll();
+
+        let isSyncing = false;
+
+        let syncScrollHandler = (
+          source: { scrollDOM: HTMLElement },
+          target: { scrollDOM: HTMLElement }
+        ) => {
+          return () => {
+            if (isSyncing === true) {
+              return;
+            }
+            isSyncing = true;
+            target.scrollDOM.scrollTop = source.scrollDOM.scrollTop;
+            requestAnimationFrame(() => (isSyncing = false));
+          };
+        };
+
+        let aToB = syncScrollHandler(editorA, editorB);
+        let bToA = syncScrollHandler(editorB, editorA);
+
+        editorA.scrollDOM.addEventListener('scroll', aToB);
+        editorB.scrollDOM.addEventListener('scroll', bToA);
+
+        this.syncScrollCleanups.push(
+          () => editorA.scrollDOM.removeEventListener('scroll', aToB),
+          () => editorB.scrollDOM.removeEventListener('scroll', bToA)
+        );
+
+        editorB.scrollDOM.scrollTop = editorA.scrollDOM.scrollTop;
+      }
+    });
+  }
+
+  private cleanupSyncScroll() {
+    this.syncScrollCleanups.forEach(cleanup => cleanup());
+    this.syncScrollCleanups = [];
   }
 
   private getFileExtension(filePath: string): string {
