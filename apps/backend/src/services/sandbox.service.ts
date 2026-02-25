@@ -1,8 +1,8 @@
 import crypto from 'node:crypto';
-import { Sandbox } from '@e2b/code-interpreter';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
+import { Sandbox } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';

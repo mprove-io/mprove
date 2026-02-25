@@ -66,7 +66,7 @@
     "date-fns-tz": "catalog:",
     "drizzle-kit": "catalog:",
     "drizzle-orm": "catalog:",
-    "@e2b/code-interpreter": "catalog:",
+    "e2b": "catalog:",
     "fs-extra": "catalog:",
     "groupmq": "catalog:",
     "nanoid": "catalog:",

@@ -90,9 +90,6 @@ catalogs:
     '@duckdb/node-api':
       specifier: 1.4.3-r.1
       version: 1.4.3-r.1
-    '@e2b/code-interpreter':
-      specifier: 2.3.3
-      version: 2.3.3
     '@google-cloud/bigquery':
       specifier: 5.12.0
       version: 5.12.0
@@ -668,9 +665,6 @@ importers:
       '@duckdb/node-api':
         specifier: 'catalog:'
         version: 1.4.3-r.1
-      '@e2b/code-interpreter':
-        specifier: 'catalog:'
-        version: 2.3.3
       '@google-cloud/bigquery':
         specifier: 'catalog:'
         version: 5.12.0(encoding@0.1.13)
@@ -803,6 +797,9 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.36.0(@opentelemetry/api@1.9.0)(@types/pg@8.11.10)(mysql2@3.11.3)(pg@8.13.0)(react@19.2.3)
+      e2b:
+        specifier: 'catalog:'
+        version: 2.12.0
       express:
         specifier: 'catalog:'
         version: 5.1.0
@@ -3117,10 +3114,6 @@ packages:
 
   '@duckdb/node-bindings@1.4.3-r.1':
     resolution: {integrity: sha512-I7rkYeNYDs9oV9AU076m9msrWb4wdVXapX1y2em8YkGItn4ehyp8q0KEJ2QZy45+PLqmkHt9b/QHlDo8xKnLZQ==}
-
-  '@e2b/code-interpreter@2.3.3':
-    resolution: {integrity: sha512-WOpSwc1WpvxyOijf6WMbR76BUuvd2O9ddXgCHHi65lkuy6YgQGq7oyd8PNsT331O9Tqbccjy6uF4xanSdLX1UA==}
-    engines: {node: '>=20'}
 
   '@emnapi/core@1.7.1':
     resolution: {integrity: sha512-o1uhUASyo921r2XtHYOHy7gdkGLge8ghBEQHMWmyJFoXlpU58kIrhhN3w26lpQb6dspetweapMn2CSNwQ8I4wg==}
@@ -14597,10 +14590,6 @@ snapshots:
       '@duckdb/node-bindings-linux-arm64': 1.4.3-r.1
       '@duckdb/node-bindings-linux-x64': 1.4.3-r.1
       '@duckdb/node-bindings-win32-x64': 1.4.3-r.1
-
-  '@e2b/code-interpreter@2.3.3':
-    dependencies:
-      e2b: 2.12.0
 
   '@emnapi/core@1.7.1':
     dependencies:

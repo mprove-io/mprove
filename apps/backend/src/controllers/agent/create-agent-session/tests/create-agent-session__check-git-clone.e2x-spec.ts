@@ -1,6 +1,6 @@
 import fs from 'node:fs';
-import { Sandbox } from '@e2b/code-interpreter';
 import test from 'ava';
+import { Sandbox } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
 import { forTestsStartOpencodeServer } from '#backend/functions/for-tests-start-opencode-server';
 import { prepareTest } from '#backend/functions/prepare-test';
