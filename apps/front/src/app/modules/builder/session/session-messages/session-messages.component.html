@@ -89,21 +89,57 @@
                 </div>
               </div>
 
-              <!-- Tool call (rich rendering) -->
+              <!-- Question/permission (inline, not clickable) -->
               <div
-                *ngIf="msg.role === 'tool' && msg.toolPart"
+                *ngIf="
+                  msg.role === 'tool' &&
+                  msg.toolPart &&
+                  msg.toolPart.tool === 'question'
+                "
                 class="flex justify-start"
               >
                 <div
-                  class="ml-4 max-w-[90%] overflow-hidden rounded-lg border"
-                  [ngClass]="{
-                    'border-red-300 bg-red-50':
-                      msg.toolPart.state?.status === 'error' &&
-                      msg.toolPart.tool !== 'ask_user_question',
-                    'border-s200':
-                      msg.toolPart.state?.status !== 'error' ||
-                      msg.toolPart.tool === 'ask_user_question'
-                  }"
+                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
+                >
+                  <div class="flex items-center gap-2 px-3 py-2">
+                    <span
+                      class="h-2 w-2 flex-shrink-0 rounded-full"
+                      [ngClass]="{
+                        'bg-amber-400':
+                          msg.toolPart.state?.status === 'pending' ||
+                          msg.toolPart.state?.status === 'running',
+                        'bg-green-500':
+                          msg.toolPart.state?.status === 'completed',
+                        'bg-red-500': msg.toolPart.state?.status === 'error'
+                      }"
+                    ></span>
+                    <span class="text-s1 text-base font-medium">{{
+                      getQuestionStatus(msg.toolPart)
+                    }}</span>
+                  </div>
+                  <div
+                    *ngIf="getToolOutput(msg.toolPart)"
+                    class="border-s200 border-t px-3 py-2"
+                  >
+                    <div
+                      class="text-s1 whitespace-pre-wrap break-words text-base"
+                      >{{ getToolOutput(msg.toolPart) }}</div
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tool call (rich rendering) -->
+              <div
+                *ngIf="
+                  msg.role === 'tool' &&
+                  msg.toolPart &&
+                  msg.toolPart.tool !== 'question'
+                "
+                class="flex justify-start"
+              >
+                <div
+                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
                 >
                   <!-- Tool header -->
                   <button
@@ -203,14 +239,14 @@
                 </div>
                 <div
                   *ngFor="let diff of turn.fileDiffs"
-                  class="border-s200 flex cursor-pointer items-center justify-between border-t px-3 py-1.5 hover:bg-gray-50"
+                  class="border-s200 flex cursor-pointer items-center justify-between border-t px-3 py-2 hover:bg-gray-50"
                   (click)="openFileDiff(diff)"
                 >
-                  <span class="text-s1 min-w-0 truncate text-sm">{{
+                  <span class="text-s1 min-w-0 truncate text-base">{{
                     diff.file
                   }}</span>
                   <span
-                    class="ml-3 flex flex-shrink-0 items-center gap-2 text-xs"
+                    class="ml-3 flex flex-shrink-0 items-center gap-2 text-sm"
                   >
                     <span *ngIf="diff.additions > 0" class="text-green-600"
                       >+{{ diff.additions }}</span
@@ -220,7 +256,7 @@
                     >
                     <span
                       *ngIf="diff.status"
-                      class="rounded px-1 py-0.5 text-xs"
+                      class="rounded px-1.5 py-0.5 text-sm"
                       [ngClass]="{
                         'bg-green-50 text-green-700': diff.status === 'added',
                         'bg-red-50 text-red-700': diff.status === 'deleted',

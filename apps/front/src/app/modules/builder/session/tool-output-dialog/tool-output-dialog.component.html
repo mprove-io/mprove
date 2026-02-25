@@ -1,10 +1,6 @@
 <div class="flex max-h-[80vh] min-h-[300px] flex-col">
   <div
-    class="flex flex-shrink-0 items-center gap-2 border-b px-8 py-5"
-    [ngClass]="{
-      'border-red-200 bg-red-50': dataItem.isError,
-      'border-s200': !dataItem.isError
-    }"
+    class="border-s200 flex flex-shrink-0 items-center gap-2 border-b px-8 py-5"
   >
     <span class="text-s1 text-lg font-medium">{{ dataItem.title }}</span>
     <span
@@ -22,11 +18,7 @@
   >
     <div class="px-8 py-5">
       <pre
-        class="whitespace-pre-wrap break-all font-mono text-[16px]"
-        [ngClass]="{
-          'text-red-700': dataItem.isError,
-          'text-s600': !dataItem.isError
-        }"
+        class="text-s600 whitespace-pre-wrap break-all font-mono text-[16px]"
         >{{ dataItem.output }}</pre
       >
     </div>

@@ -50,7 +50,7 @@ const TOOL_TITLE_MAP: Record<string, string> = {
   task: 'Task',
   todo_write: 'Todo',
   notebook_edit: 'Notebook Edit',
-  ask_user_question: 'Question'
+  question: 'Question'
 };
 
 @Component({
@@ -239,6 +239,13 @@ export class SessionMessagesComponent
     if (toolPart.tool === 'write' && toolPart.state?.input?.['content']) {
       return true;
     }
+    if (
+      toolPart.tool === 'edit' &&
+      (toolPart.state?.input?.['newString'] ||
+        toolPart.state?.input?.['new_string'])
+    ) {
+      return true;
+    }
     return !!this.getToolOutput(toolPart);
   }
 
@@ -251,6 +258,12 @@ export class SessionMessagesComponent
     let output: string;
     if (toolPart.tool === 'write' && toolPart.state?.input?.['content']) {
       output = toolPart.state.input['content'] as string;
+    } else if (toolPart.tool === 'edit' && toolPart.state?.input) {
+      let newStr =
+        (toolPart.state.input['newString'] as string) ||
+        (toolPart.state.input['new_string'] as string) ||
+        '';
+      output = newStr || this.getToolOutput(toolPart);
     } else {
       output = this.getToolOutput(toolPart);
     }
@@ -277,6 +290,12 @@ export class SessionMessagesComponent
       parts.push(msg.variant);
     }
     return parts.join(' \u00B7 ');
+  }
+
+  getQuestionStatus(toolPart: ToolPart): string {
+    if (toolPart.state?.status === 'completed') return 'User answered';
+    if (toolPart.state?.status === 'error') return 'User declined';
+    return 'Waiting for user';
   }
 
   getTotalAdditions(diffs: FileDiffInfo[]): number {
