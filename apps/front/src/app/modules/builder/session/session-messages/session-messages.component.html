@@ -25,7 +25,10 @@
               </div>
             </div>
           </div>
-          <div class="response-div" [style.min-height.px]="responseMinHeight">
+          <div
+            class="response-div"
+            [style.min-height.px]="isArchived ? 0 : responseMinHeight"
+          >
             <div *ngIf="isActivating" class="mb-4 flex justify-start">
               <div class="rounded-2xl px-4 py-3">
                 <span class="text-s500 text-[17px]">Activating session...</span>
@@ -76,7 +79,9 @@
           <!-- Response div wrapping all non-user content for this turn -->
           <div
             class="response-div"
-            [style.min-height.px]="isLast ? responseMinHeight : 0"
+            [style.min-height.px]="
+              isLast && !isArchived ? responseMinHeight : 0
+            "
           >
             <div *ngFor="let msg of turn.responses" class="mb-4">
               <!-- Agent message -->

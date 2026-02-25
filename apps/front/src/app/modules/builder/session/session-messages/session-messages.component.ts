@@ -64,6 +64,7 @@ export class SessionMessagesComponent
   @Input() turns: ChatTurn[] = [];
   @Input() session: AgentSessionApi;
   @Input() isActivating = false;
+  @Input() isArchived = false;
   @Input() isWaitingForResponse = false;
   @Input() retryMessage: string;
   @Input() isSessionError = false;
