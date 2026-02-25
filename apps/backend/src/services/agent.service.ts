@@ -28,8 +28,12 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { eventsTable } from '#backend/drizzle/postgres/schema/events.js';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { ServerError } from '#common/models/server-error';
 import { EventsService } from './db/events.service';
 import { MessagesService } from './db/messages.service';
 import { PartsService } from './db/parts.service';
@@ -95,7 +99,15 @@ export class AgentService implements OnModuleDestroy {
     this.redisSubClient = new Redis(redisOptions);
 
     this.redisSubClient.on('error', (err: Error) => {
-      console.log(`Redis sub client error: ${err.message}`);
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_AGENT_REDIS_SUB_CLIENT_ERROR,
+          originalError: err
+        }),
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
     });
 
     this.redisSubClient.on('message', (channel: string, message: string) => {
@@ -110,7 +122,15 @@ export class AgentService implements OnModuleDestroy {
 
     this.drainTimer = setInterval(() => {
       this.drainAllQueues().catch(e => {
-        console.log(`Failed to drain event queues: ${e?.message}`);
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_DRAIN_QUEUES_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
       });
     }, 350);
   }
@@ -143,9 +163,15 @@ export class AgentService implements OnModuleDestroy {
         listeners = new Set([subject]);
         this.channelListeners.set(channel, listeners);
         this.redisSubClient.subscribe(channel).catch((err: Error) => {
-          console.log(
-            `Redis subscribe failed for session ${sessionId}: ${err.message}`
-          );
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_AGENT_REDIS_SUBSCRIBE_FAILED,
+              originalError: err
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
         });
       }
 
@@ -159,9 +185,15 @@ export class AgentService implements OnModuleDestroy {
           if (currentListeners.size === 0) {
             this.channelListeners.delete(channel);
             this.redisSubClient.unsubscribe(channel).catch((err: Error) => {
-              console.log(
-                `Redis unsubscribe failed for session ${sessionId}: ${err.message}`
-              );
+              logToConsoleBackend({
+                log: new ServerError({
+                  message: ErEnum.BACKEND_AGENT_REDIS_UNSUBSCRIBE_FAILED,
+                  originalError: err
+                }),
+                logLevel: LogLevelEnum.Error,
+                logger: this.logger,
+                cs: this.cs
+              });
             });
           }
         }
@@ -210,7 +242,15 @@ export class AgentService implements OnModuleDestroy {
         }
       } catch (e: any) {
         if (e.name !== 'AbortError') {
-          console.log(`SSE stream error: ${e?.message}`);
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_AGENT_SSE_STREAM_ERROR,
+              originalError: e
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
         }
       }
     };

@@ -194,7 +194,7 @@ export class CreateAgentSessionController {
       // intentionally * 50 (not * 60) to pause sandbox before provider does
       let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
 
-      console.log('starting opencode server...');
+      // console.log('starting opencode server...');
 
       let { sandboxId, sandboxBaseUrl, opencodePassword } =
         await this.sandboxService.startOpencodeServer({
@@ -204,7 +204,7 @@ export class CreateAgentSessionController {
           project: project
         });
 
-      console.log('opencode server started');
+      // console.log('opencode server started');
 
       let opencodeClient = this.sandboxService.connectOpenCodeClient({
         sessionId: sessionId,

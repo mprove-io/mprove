@@ -11,8 +11,12 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { uconfigsTable } from '#backend/drizzle/postgres/schema/uconfigs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { MODEL_PROVIDERS } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
+import { ServerError } from '#common/models/server-error';
 import { TabService } from './tab.service';
 
 // Extends SDK model type with variants (present in response but missing from generated types)
@@ -73,15 +77,21 @@ export class AgentModelsService {
         getRetryOption(this.cs, this.logger)
       );
 
-      console.log(
-        `[agent-models] cached ${models.length} models in ${Date.now() - startMs}ms`
-      );
+      // console.log(
+      //   `[agent-models] cached ${models.length} models in ${Date.now() - startMs}ms`
+      // );
 
       return models;
     } catch (e: any) {
-      console.log(
-        `[agent-models] failed to cache provider models: ${e?.message}`
-      );
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_AGENT_MODELS_CACHE_PROVIDER_MODELS_ERROR,
+          originalError: e
+        }),
+        logLevel: LogLevelEnum.Info,
+        logger: this.logger,
+        cs: this.cs
+      });
 
       return [];
     }

@@ -82,9 +82,9 @@ export class SandboxService {
               'e2bPublicTemplate'
             );
 
-          console.log(
-            `[sandbox] creating E2B sandbox from template: ${templateName}`
-          );
+          // console.log(
+          //   `[sandbox] creating E2B sandbox from template: ${templateName}`
+          // );
 
           let sandbox = await Sandbox.create(templateName, {
             apiKey: item.project.e2bApiKey,
@@ -92,12 +92,12 @@ export class SandboxService {
             timeoutMs: item.sandboxTimeoutMs
           });
 
-          console.log(`[sandbox] sandbox created: ${sandbox.sandboxId}`);
+          // console.log(`[sandbox] sandbox created: ${sandbox.sandboxId}`);
 
           await sandbox.commands.run('mkdir -p /home/user/project');
 
           if (item.project.remoteType === ProjectRemoteTypeEnum.GitClone) {
-            console.log('[sandbox] cloning repo...');
+            // console.log('[sandbox] cloning repo...');
             await this.cloneRepoInSandbox({
               sandbox: sandbox,
               gitUrl: item.project.gitUrl,
@@ -107,12 +107,12 @@ export class SandboxService {
               passPhrase: item.project.passPhrase,
               cloneDir: '/home/user/project'
             });
-            console.log('[sandbox] repo cloned');
+            // console.log('[sandbox] repo cloned');
           }
 
           let opencodePassword = crypto.randomBytes(32).toString('hex');
 
-          console.log('[sandbox] starting opencode serve...');
+          // console.log('[sandbox] starting opencode serve...');
 
           await sandbox.commands.run(
             `cd /home/user/project && opencode serve --port 3000`,
@@ -281,9 +281,9 @@ export class SandboxService {
 
     let healthy = false;
 
-    console.log(
-      `[sandbox] polling health check at ${item.sandboxBaseUrl}/config`
-    );
+    // console.log(
+    //   `[sandbox] polling health check at ${item.sandboxBaseUrl}/config`
+    // );
 
     for (let i = 0; i < maxAttempts; i++) {
       try {
@@ -291,14 +291,14 @@ export class SandboxService {
 
         if (res.status === 401) {
           healthy = true;
-          console.log(
-            `[sandbox] health check passed on attempt ${i + 1}/${maxAttempts}`
-          );
+          // console.log(
+          //   `[sandbox] health check passed on attempt ${i + 1}/${maxAttempts}`
+          // );
           break;
         } else {
-          console.log(
-            `[sandbox] health check attempt ${i + 1}/${maxAttempts}: status ${res.status} (expected 401)`
-          );
+          // console.log(
+          //   `[sandbox] health check attempt ${i + 1}/${maxAttempts}: status ${res.status} (expected 401)`
+          // );
         }
       } catch (e: any) {
         if (backendEnv !== BackendEnvEnum.PROD) {
@@ -312,9 +312,6 @@ export class SandboxService {
     }
 
     if (!healthy) {
-      console.log(
-        `[sandbox] health check failed after ${maxAttempts} attempts`
-      );
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
       });
