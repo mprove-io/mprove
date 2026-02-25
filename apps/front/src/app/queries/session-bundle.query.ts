@@ -10,7 +10,7 @@ import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { BaseQuery } from './base.query';
 
-export class SessionDataState {
+export class SessionBundleState {
   messages: AgentMessageApi[];
   parts: { [messageId: string]: AgentPartApi[] };
   permissions: PermissionRequest[];
@@ -20,7 +20,7 @@ export class SessionDataState {
   todos: Todo[];
 }
 
-let sessionDataState: SessionDataState = {
+let sessionBundleState: SessionBundleState = {
   messages: [],
   parts: {},
   permissions: [],
@@ -31,7 +31,7 @@ let sessionDataState: SessionDataState = {
 };
 
 @Injectable({ providedIn: 'root' })
-export class SessionDataQuery extends BaseQuery<SessionDataState> {
+export class SessionBundleQuery extends BaseQuery<SessionBundleState> {
   messages$ = this.store.pipe(select(state => state.messages));
   parts$ = this.store.pipe(select(state => state.parts));
   permissions$ = this.store.pipe(select(state => state.permissions));
@@ -42,8 +42,8 @@ export class SessionDataQuery extends BaseQuery<SessionDataState> {
   constructor() {
     super(
       createStore(
-        { name: 'sessionData' },
-        withProps<SessionDataState>(sessionDataState)
+        { name: 'sessionBundle' },
+        withProps<SessionBundleState>(sessionBundleState)
       )
     );
   }

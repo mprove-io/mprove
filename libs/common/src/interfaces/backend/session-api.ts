@@ -1,11 +1,6 @@
-import type {
-  PermissionRequest,
-  QuestionRequest,
-  Todo
-} from '@opencode-ai/sdk/v2';
 import { IsInt, IsOptional, IsString } from 'class-validator';
 
-export class AgentSessionApi {
+export class SessionApi {
   @IsString()
   sessionId: string;
 
@@ -30,6 +25,10 @@ export class AgentSessionApi {
   @IsString()
   status: string;
 
+  @IsOptional()
+  @IsString()
+  archivedReason?: string;
+
   @IsInt()
   createdTs: number;
 
@@ -41,8 +40,4 @@ export class AgentSessionApi {
   @IsOptional()
   @IsString()
   title?: string;
-
-  todos?: Todo[];
-  questions?: QuestionRequest[];
-  permissions?: PermissionRequest[];
 }

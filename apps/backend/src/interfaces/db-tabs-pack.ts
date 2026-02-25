@@ -14,6 +14,7 @@ import type {
   MessageTab,
   ModelTab,
   NoteTab,
+  OcSessionTab,
   OrgTab,
   PartTab,
   ProjectTab,
@@ -40,6 +41,7 @@ export class DbTabsPack {
   messages?: MessageTab[];
   models?: ModelTab[];
   notes?: NoteTab[];
+  ocSessions?: OcSessionTab[];
   orgs?: OrgTab[];
   parts?: PartTab[];
   projects?: ProjectTab[];

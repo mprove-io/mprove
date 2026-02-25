@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ADD COLUMN "archived_reason" varchar(32);

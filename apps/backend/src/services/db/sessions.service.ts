@@ -1,12 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
-import type { Session } from '@opencode-ai/sdk/v2';
 import { eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  OcSessionTab,
+  SessionTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { OcSessionApi } from '#common/interfaces/backend/oc-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import { ServerError } from '#common/models/server-error';
 import { TabService } from '../tab.service';
 
@@ -32,7 +37,6 @@ export class SessionsService {
     sandboxBaseUrl?: string;
     opencodeSessionId?: string;
     opencodePassword?: string;
-    ocSession?: Session;
     firstMessage?: string;
     status: SessionStatusEnum;
     lastActivityTs: number;
@@ -55,9 +59,9 @@ export class SessionsService {
       sandboxBaseUrl: item.sandboxBaseUrl,
       opencodeSessionId: item.opencodeSessionId,
       opencodePassword: item.opencodePassword,
-      ocSession: item.ocSession,
       firstMessage: item.firstMessage,
       status: item.status,
+      archivedReason: undefined,
       lastActivityTs: item.lastActivityTs,
       runningStartTs: item.runningStartTs,
       expiresAt: item.expiresAt,
@@ -67,6 +71,16 @@ export class SessionsService {
     };
 
     return session;
+  }
+
+  makeOcSession(item: { sessionId: string }): OcSessionTab {
+    let ocSession: OcSessionTab = {
+      sessionId: item.sessionId,
+      serverTs: undefined,
+      keyTag: undefined
+    };
+
+    return ocSession;
   }
 
   async getSessionByIdCheckExists(item: {
@@ -83,5 +97,48 @@ export class SessionsService {
     }
 
     return this.tabService.sessionEntToTab(session);
+  }
+
+  async getOcSessionBySessionId(item: {
+    sessionId: string;
+  }): Promise<OcSessionTab> {
+    let ocSessionEnt = await this.db.drizzle.query.ocSessionsTable.findFirst({
+      where: eq(ocSessionsTable.sessionId, item.sessionId)
+    });
+
+    return this.tabService.ocSessionEntToTab(ocSessionEnt);
+  }
+
+  tabToSessionApi(item: {
+    session: SessionTab;
+    ocSession?: OcSessionTab;
+  }): SessionApi {
+    let { session, ocSession } = item;
+
+    return {
+      sessionId: session.sessionId,
+      provider: session.provider,
+      agent: session.agent,
+      model: session.model,
+      lastMessageProviderModel: session.lastMessageProviderModel,
+      lastMessageVariant: session.lastMessageVariant,
+      status: session.status,
+      archivedReason: session.archivedReason,
+      createdTs: session.createdTs,
+      lastActivityTs: session.lastActivityTs,
+      firstMessage: session.firstMessage,
+      title: ocSession?.openSession?.title
+    };
+  }
+
+  tabToOcSessionApi(item: { ocSession: OcSessionTab }): OcSessionApi {
+    let { ocSession } = item;
+
+    return {
+      sessionId: ocSession.sessionId,
+      todos: ocSession.todos,
+      questions: ocSession.questions,
+      permissions: ocSession.permissions
+    };
   }
 }

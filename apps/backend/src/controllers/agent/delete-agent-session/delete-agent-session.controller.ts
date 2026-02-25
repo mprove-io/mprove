@@ -20,6 +20,7 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { eventsTable } from '#backend/drizzle/postgres/schema/events';
 import { messagesTable } from '#backend/drizzle/postgres/schema/messages.js';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { partsTable } from '#backend/drizzle/postgres/schema/parts.js';
 import { getRetryOption } from '#backend/functions/get-retry-option.js';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
@@ -114,6 +115,10 @@ export class DeleteAgentSessionController {
           await tx
             .delete(eventsTable)
             .where(and(eq(eventsTable.sessionId, sessionId)));
+
+          await tx
+            .delete(ocSessionsTable)
+            .where(and(eq(ocSessionsTable.sessionId, sessionId)));
         }),
       getRetryOption(this.cs, this.logger)
     );

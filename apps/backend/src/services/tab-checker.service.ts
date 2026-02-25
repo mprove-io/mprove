@@ -30,6 +30,7 @@ import { membersTable } from '#backend/drizzle/postgres/schema/members';
 import { messagesTable } from '#backend/drizzle/postgres/schema/messages';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { notesTable } from '#backend/drizzle/postgres/schema/notes';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { partsTable } from '#backend/drizzle/postgres/schema/parts';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
@@ -107,6 +108,7 @@ export class TabCheckerService {
     await this.checkMessages(isAllRecords);
     await this.checkParts(isAllRecords);
     await this.checkSessions(isAllRecords);
+    await this.checkOcSessions(isAllRecords);
     //
     await this.checkStructsMetadata(isAllRecords);
     await this.checkModelsMetadata(isAllRecords);
@@ -1605,6 +1607,89 @@ export class TabCheckerService {
 
     logToConsoleBackend({
       log: `TabChecker - Sessions, ${durationMs} ms`,
+      logLevel: LogLevelEnum.Info,
+      logger: this.logger,
+      cs: this.cs
+    });
+  }
+
+  async checkOcSessions(isAllRecords: boolean) {
+    let startTs = Date.now();
+    let ocSessionLatest = await this.db.drizzle.query.ocSessionsTable
+      .findFirst({
+        orderBy: desc(ocSessionsTable.serverTs)
+      })
+      .then(x => this.tabService.ocSessionEntToTab(x));
+
+    if (isUndefined(ocSessionLatest)) {
+      return;
+    }
+
+    let where =
+      isAllRecords === true
+        ? lte(ocSessionsTable.serverTs, ocSessionLatest.serverTs)
+        : this.isEncryptDb === true
+          ? or(
+              isNull(ocSessionsTable.keyTag),
+              eq(ocSessionsTable.keyTag, this.prevKeyTag)
+            )
+          : or(
+              eq(ocSessionsTable.keyTag, this.keyTag),
+              eq(ocSessionsTable.keyTag, this.prevKeyTag)
+            );
+
+    while (true) {
+      let ocSession = await this.db.drizzle.query.ocSessionsTable
+        .findFirst({ where: where })
+        .then(x => this.tabService.ocSessionEntToTab(x));
+
+      if (isUndefined(ocSession)) {
+        break;
+      }
+
+      await retry(
+        async () =>
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                update: {
+                  ocSessions: [ocSession]
+                }
+              })
+          ),
+        getRetryOption(this.cs, this.logger)
+      );
+    }
+
+    let ocSessionsResult = await this.db.drizzle
+      .select({
+        record: ocSessionsTable,
+        total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
+      })
+      .from(ocSessionsTable)
+      .where(
+        and(
+          isNotNull(ocSessionsTable.keyTag),
+          notInArray(ocSessionsTable.keyTag, this.keyTags)
+        )
+      );
+
+    if (ocSessionsResult.length > 0 && ocSessionsResult[0].total > 0) {
+      throw new ServerError({
+        message:
+          ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
+        customData: {
+          table: 'oc_sessions',
+          count: ocSessionsResult[0].total
+        }
+      });
+    }
+
+    let durationMs = Date.now() - startTs;
+
+    logToConsoleBackend({
+      log: `TabChecker - OcSessions, ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs

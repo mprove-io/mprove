@@ -2,9 +2,9 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import type { Todo } from '@opencode-ai/sdk/v2';
 import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import { SessionQuery } from '#front/app/queries/session.query';
-import { SessionDataQuery } from '#front/app/queries/session-data.query';
+import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { TimeService } from '#front/app/services/time.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { TimeService } from '#front/app/services/time.service';
 })
 export class SessionInfoComponent {
   sessionId: string;
-  session: AgentSessionApi;
+  session: SessionApi;
   todos: Todo[] = [];
 
   providerLabels: Record<string, string> = {
@@ -41,7 +41,7 @@ export class SessionInfoComponent {
     })
   );
 
-  todos$ = this.sessionDataQuery.todos$.pipe(
+  todos$ = this.sessionBundleQuery.todos$.pipe(
     tap(x => {
       this.todos = x ?? [];
       this.completedCount = this.todos.filter(
@@ -54,7 +54,7 @@ export class SessionInfoComponent {
 
   constructor(
     private sessionQuery: SessionQuery,
-    private sessionDataQuery: SessionDataQuery,
+    private sessionBundleQuery: SessionBundleQuery,
     private timeService: TimeService,
     private cd: ChangeDetectorRef
   ) {}

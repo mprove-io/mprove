@@ -17,6 +17,7 @@ import type {
   MessageTab,
   ModelTab,
   NoteTab,
+  OcSessionTab,
   OrgTab,
   PartTab,
   ProjectTab,
@@ -42,6 +43,7 @@ import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { MessageEnt } from '#backend/drizzle/postgres/schema/messages';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { PartEnt } from '#backend/drizzle/postgres/schema/parts';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
@@ -85,6 +87,8 @@ import {
   ModelSt,
   NoteLt,
   NoteSt,
+  OcSessionLt,
+  OcSessionSt,
   OrgLt,
   OrgSt,
   PartLt,
@@ -203,6 +207,12 @@ export class TabToEntService {
           ?.filter(x => isDefined(x))
           .map(x => this.noteTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
+      ocSessions:
+        tabsPack.ocSessions
+          ?.filter(x => isDefined(x))
+          .map(x =>
+            this.ocSessionTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
       orgs:
         tabsPack.orgs
           ?.filter(x => isDefined(x))
@@ -995,11 +1005,7 @@ export class TabToEntService {
       sandboxBaseUrl: tab.sandboxBaseUrl,
       opencodeSessionId: tab.opencodeSessionId,
       opencodePassword: tab.opencodePassword,
-      ocSession: tab.ocSession,
-      firstMessage: tab.firstMessage,
-      todos: tab.todos,
-      questions: tab.questions,
-      permissions: tab.permissions
+      firstMessage: tab.firstMessage
     };
 
     let sessionLt: SessionLt = {};
@@ -1016,6 +1022,7 @@ export class TabToEntService {
       agent: tab.agent,
       permissionMode: tab.permissionMode,
       status: tab.status,
+      archivedReason: tab.archivedReason,
       ...this.getEntProps({
         dataSt: sessionSt,
         dataLt: sessionLt,
@@ -1029,6 +1036,34 @@ export class TabToEntService {
     };
 
     return sessionEnt;
+  }
+
+  ocSessionTabToEnt(item: {
+    tab: OcSessionTab;
+    hashSecret: string;
+  }): OcSessionEnt {
+    let { tab } = item;
+
+    let ocSessionSt: OcSessionSt = {
+      openSession: tab.openSession,
+      todos: tab.todos,
+      questions: tab.questions,
+      permissions: tab.permissions
+    };
+
+    let ocSessionLt: OcSessionLt = {};
+
+    let ocSessionEnt: OcSessionEnt = {
+      sessionId: tab.sessionId,
+      ...this.getEntProps({
+        dataSt: ocSessionSt,
+        dataLt: ocSessionLt,
+        isMetadata: false
+      }),
+      serverTs: tab.serverTs
+    };
+
+    return ocSessionEnt;
   }
 
   messageTabToEnt(item: { tab: MessageTab; hashSecret: string }): MessageEnt {

@@ -19,7 +19,6 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
 import {
   ToBackendGetAgentSessionRequest,
   ToBackendGetAgentSessionResponsePayload
@@ -57,6 +56,10 @@ export class GetAgentSessionController {
       });
     }
 
+    let ocSession = await this.sessionsService.getOcSessionBySessionId({
+      sessionId
+    });
+
     let events: AgentEventApi[] = [];
 
     if (session.status !== SessionStatusEnum.Archived) {
@@ -76,25 +79,18 @@ export class GetAgentSessionController {
       });
     }
 
-    let sessionApi: AgentSessionApi = {
-      sessionId: session.sessionId,
-      provider: session.provider,
-      agent: session.agent,
-      model: session.model,
-      lastMessageProviderModel: session.lastMessageProviderModel,
-      lastMessageVariant: session.lastMessageVariant,
-      status: session.status,
-      createdTs: session.createdTs,
-      lastActivityTs: session.lastActivityTs,
-      firstMessage: session.firstMessage,
-      title: session.ocSession?.title,
-      todos: session.todos ?? [],
-      questions: session.questions ?? [],
-      permissions: session.permissions ?? []
-    };
+    let sessionApi = this.sessionsService.tabToSessionApi({
+      session,
+      ocSession
+    });
+
+    let ocSessionApi = ocSession
+      ? this.sessionsService.tabToOcSessionApi({ ocSession })
+      : undefined;
 
     let payload: ToBackendGetAgentSessionResponsePayload = {
       session: sessionApi,
+      ocSession: ocSessionApi,
       events: events
     };
 

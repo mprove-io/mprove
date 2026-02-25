@@ -18,6 +18,7 @@ import type {
   MessageTab,
   ModelTab,
   NoteTab,
+  OcSessionTab,
   OrgTab,
   PartTab,
   ProjectTab,
@@ -43,6 +44,7 @@ import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { MessageEnt } from '#backend/drizzle/postgres/schema/messages';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { PartEnt } from '#backend/drizzle/postgres/schema/parts';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
@@ -534,6 +536,19 @@ export class TabService {
     };
 
     return session;
+  }
+
+  ocSessionEntToTab(ocSessionEnt: OcSessionEnt): OcSessionTab {
+    if (isUndefined(ocSessionEnt)) {
+      return;
+    }
+
+    let ocSession: OcSessionTab = {
+      ...ocSessionEnt,
+      ...this.getTabProps({ ent: ocSessionEnt })
+    };
+
+    return ocSession;
   }
 
   eventEntToTab(eventEnt: EventEnt): EventTab {

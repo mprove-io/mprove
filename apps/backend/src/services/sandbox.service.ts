@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
-import { Sandbox } from 'e2b';
+import { Sandbox, type SandboxInfo } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
@@ -51,6 +51,10 @@ export class SandboxService {
     return client;
   }
 
+  tryGetOpenCodeClient(sessionId: string): OpencodeClient | undefined {
+    return this.opencodeClients.get(sessionId);
+  }
+
   getOpenCodeClient(sessionId: string): OpencodeClient {
     let client = this.opencodeClients.get(sessionId);
 
@@ -60,6 +64,31 @@ export class SandboxService {
       });
     }
     return client;
+  }
+
+  async getSandboxInfo(item: {
+    sandboxId: string;
+    e2bApiKey: string;
+  }): Promise<SandboxInfo | null> {
+    try {
+      return await Sandbox.getInfo(item.sandboxId, {
+        apiKey: item.e2bApiKey
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  async listSandboxes(item: { e2bApiKey: string }): Promise<SandboxInfo[]> {
+    let all: SandboxInfo[] = [];
+    let paginator = Sandbox.list({ apiKey: item.e2bApiKey });
+
+    while (paginator.hasNext) {
+      let page = await paginator.nextItems();
+      all.push(...page);
+    }
+
+    return all;
   }
 
   disposeOpenCodeClient(sessionId: string): void {

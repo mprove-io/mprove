@@ -1,12 +1,7 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
@@ -24,8 +19,7 @@ import { ServerError } from '#common/models/server-error';
 export class SetAgentSessionTitleController {
   constructor(
     private sessionsService: SessionsService,
-    private sandboxService: SandboxService,
-    @Inject(DRIZZLE) private db: Db
+    private sandboxService: SandboxService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle)
@@ -57,23 +51,6 @@ export class SetAgentSessionTitleController {
         { throwOnError: true }
       );
     }
-
-    let updatedSession: SessionTab = {
-      ...session,
-      ocSession: session.ocSession
-        ? { ...session.ocSession, title: title }
-        : undefined
-    };
-
-    await this.db.drizzle.transaction(
-      async tx =>
-        await this.db.packer.write({
-          tx: tx,
-          insertOrUpdate: {
-            sessions: [updatedSession]
-          }
-        })
-    );
 
     let payload = {};
 

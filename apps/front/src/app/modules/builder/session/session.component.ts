@@ -11,8 +11,8 @@ import type {
   SessionStatus,
   ToolPart
 } from '@opencode-ai/sdk/v2';
-import { combineLatest, EMPTY, interval, Subscription } from 'rxjs';
-import { catchError, switchMap, take, tap } from 'rxjs/operators';
+import { combineLatest, interval, Subscription } from 'rxjs';
+import { switchMap, take, tap } from 'rxjs/operators';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -20,7 +20,7 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
   ToBackendCreateAgentSseTicketRequestPayload,
   ToBackendCreateAgentSseTicketResponse
@@ -29,15 +29,18 @@ import {
   ToBackendGetAgentSessionRequestPayload,
   ToBackendGetAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
-import { ToBackendSendUserMessageToAgentRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
+import {
+  ToBackendSendUserMessageToAgentRequestPayload,
+  ToBackendSendUserMessageToAgentResponse
+} from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
 import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
-  SessionDataQuery,
-  SessionDataState
-} from '#front/app/queries/session-data.query';
+  SessionBundleQuery,
+  SessionBundleState
+} from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -85,7 +88,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   variant = 'default';
 
   // Chat mode
-  session: AgentSessionApi;
+  session: SessionApi;
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
@@ -160,7 +163,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   sessionAndData$ = combineLatest([
     this.sessionQuery.select(),
-    this.sessionDataQuery.select()
+    this.sessionBundleQuery.select()
   ]).pipe(
     tap(([session, sessionData]) => {
       let currentSessionId = session?.sessionId;
@@ -202,7 +205,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     private sessionsQuery: SessionsQuery,
     private sessionQuery: SessionQuery,
     private sessionEventsQuery: SessionEventsQuery,
-    private sessionDataQuery: SessionDataQuery,
+    private sessionBundleQuery: SessionBundleQuery,
     private uiQuery: UiQuery,
     private uiService: UiService,
     private agentModelsQuery: AgentModelsQuery,
@@ -240,8 +243,6 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let wasPaused = this.session.status === SessionStatusEnum.Paused;
-
     this.userSentMessage = true;
 
     // Optimistic: show user message immediately
@@ -251,43 +252,13 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.scrollTrigger++;
     this.cd.detectChanges();
 
-    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
+    this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Message,
       message: text,
       model: this.model,
       variant: this.variant !== 'default' ? this.variant : undefined
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
-        payload: payload
-      })
-      .pipe(
-        tap(() => {
-          if (wasPaused) {
-            this.sessionQuery.update({
-              ...this.session,
-              status: SessionStatusEnum.Active
-            });
-
-            let sessions = this.sessionsQuery.getValue().sessions;
-            let updated = sessions.map(s =>
-              s.sessionId === this.session.sessionId
-                ? { ...s, status: SessionStatusEnum.Active }
-                : s
-            );
-            this.sessionsQuery.updatePart({ sessions: updated });
-          }
-        }),
-        catchError(() => {
-          return EMPTY;
-        }),
-        take(1)
-      )
-      .subscribe();
+    });
   }
 
   abortSession() {
@@ -299,24 +270,10 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isAgentBusy = false;
     this.cd.detectChanges();
 
-    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
+    this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Abort
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
-        payload: payload
-      })
-      .pipe(
-        catchError(() => {
-          return EMPTY;
-        }),
-        take(1)
-      )
-      .subscribe();
+    });
   }
 
   respondToPermission(event: { permissionId: string; reply: string }) {
@@ -324,52 +281,20 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let wasPaused = this.session.status === SessionStatusEnum.Paused;
-
     // Optimistic: remove permission from store
-    let currentState = this.sessionDataQuery.getValue();
-    this.sessionDataQuery.updatePart({
+    let currentState = this.sessionBundleQuery.getValue();
+    this.sessionBundleQuery.updatePart({
       permissions: currentState.permissions.filter(
         p => p.id !== event.permissionId
       )
     });
 
-    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
+    this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Permission,
       permissionId: event.permissionId,
       reply: event.reply
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
-        payload: payload
-      })
-      .pipe(
-        tap(() => {
-          if (wasPaused) {
-            this.sessionQuery.update({
-              ...this.session,
-              status: SessionStatusEnum.Active
-            });
-
-            let sessions = this.sessionsQuery.getValue().sessions;
-            let updated = sessions.map(s =>
-              s.sessionId === this.session.sessionId
-                ? { ...s, status: SessionStatusEnum.Active }
-                : s
-            );
-            this.sessionsQuery.updatePart({ sessions: updated });
-          }
-        }),
-        catchError(() => {
-          return EMPTY;
-        }),
-        take(1)
-      )
-      .subscribe();
+    });
   }
 
   respondToQuestion(event: { questionId: string; answers: string[][] }) {
@@ -377,50 +302,18 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let wasPaused = this.session.status === SessionStatusEnum.Paused;
-
     // Optimistic: remove question from store
-    let currentState = this.sessionDataQuery.getValue();
-    this.sessionDataQuery.updatePart({
+    let currentState = this.sessionBundleQuery.getValue();
+    this.sessionBundleQuery.updatePart({
       questions: currentState.questions.filter(q => q.id !== event.questionId)
     });
 
-    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
+    this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Question,
       questionId: event.questionId,
       answers: event.answers
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendSendUserMessageToAgent,
-        payload: payload
-      })
-      .pipe(
-        tap(() => {
-          if (wasPaused) {
-            this.sessionQuery.update({
-              ...this.session,
-              status: SessionStatusEnum.Active
-            });
-
-            let sessions = this.sessionsQuery.getValue().sessions;
-            let updated = sessions.map(s =>
-              s.sessionId === this.session.sessionId
-                ? { ...s, status: SessionStatusEnum.Active }
-                : s
-            );
-            this.sessionsQuery.updatePart({ sessions: updated });
-          }
-        }),
-        catchError(() => {
-          return EMPTY;
-        }),
-        take(1)
-      )
-      .subscribe();
+    });
   }
 
   rejectQuestion(event: { questionId: string }) {
@@ -428,20 +321,20 @@ export class SessionComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let wasPaused = this.session.status === SessionStatusEnum.Paused;
-
     // Optimistic: remove question from store
-    let currentState = this.sessionDataQuery.getValue();
-    this.sessionDataQuery.updatePart({
+    let currentState = this.sessionBundleQuery.getValue();
+    this.sessionBundleQuery.updatePart({
       questions: currentState.questions.filter(q => q.id !== event.questionId)
     });
 
-    let payload: ToBackendSendUserMessageToAgentRequestPayload = {
+    this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Question,
       questionId: event.questionId
-    };
+    });
+  }
 
+  sendInteraction(payload: ToBackendSendUserMessageToAgentRequestPayload) {
     this.apiService
       .req({
         pathInfoName:
@@ -449,24 +342,20 @@ export class SessionComponent implements OnInit, OnDestroy {
         payload: payload
       })
       .pipe(
-        tap(() => {
-          if (wasPaused) {
-            this.sessionQuery.update({
-              ...this.session,
-              status: SessionStatusEnum.Active
-            });
+        tap((resp: ToBackendSendUserMessageToAgentResponse) => {
+          let session = resp?.payload?.session;
+          if (session) {
+            this.sessionQuery.update(session);
 
-            let sessions = this.sessionsQuery.getValue().sessions;
-            let updated = sessions.map(s =>
-              s.sessionId === this.session.sessionId
-                ? { ...s, status: SessionStatusEnum.Active }
-                : s
-            );
-            this.sessionsQuery.updatePart({ sessions: updated });
+            let sessionId = this.session?.sessionId;
+            if (sessionId) {
+              let sessions = this.sessionsQuery.getValue().sessions;
+              let updated = sessions.map(s =>
+                s.sessionId === sessionId ? session : s
+              );
+              this.sessionsQuery.updatePart({ sessions: updated });
+            }
           }
-        }),
-        catchError(() => {
-          return EMPTY;
         }),
         take(1)
       )
@@ -502,14 +391,14 @@ export class SessionComponent implements OnInit, OnDestroy {
               }
             }
 
-            this.sessionDataQuery.updatePart({
+            this.sessionBundleQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
                 : {},
-              todos: resp.payload.session.todos ?? [],
-              questions: resp.payload.session.questions ?? [],
-              permissions: resp.payload.session.permissions ?? [],
+              todos: resp.payload.ocSession?.todos ?? [],
+              questions: resp.payload.ocSession?.questions ?? [],
+              permissions: resp.payload.ocSession?.permissions ?? [],
               sdkSessionStatus
             });
 
@@ -653,14 +542,14 @@ export class SessionComponent implements OnInit, OnDestroy {
               }
             }
 
-            this.sessionDataQuery.updatePart({
+            this.sessionBundleQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
                 : {},
-              todos: resp.payload.session.todos ?? [],
-              questions: resp.payload.session.questions ?? [],
-              permissions: resp.payload.session.permissions ?? [],
+              todos: resp.payload.ocSession?.todos ?? [],
+              questions: resp.payload.ocSession?.questions ?? [],
+              permissions: resp.payload.ocSession?.permissions ?? [],
               sdkSessionStatus
             });
 
@@ -708,7 +597,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.lastProcessedEventIndex = maxIndex;
   }
 
-  enterSession(sessionData: SessionDataState) {
+  enterSession(sessionData: SessionBundleState) {
     // Destroy session-messages to reset scroll state
     this.isSessionSwitching = true;
     this.cd.detectChanges();
@@ -762,7 +651,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.managePollingAndSse();
   }
 
-  updateSessionData(sessionData: SessionDataState) {
+  updateSessionData(sessionData: SessionBundleState) {
     // Propagate title from SSE session.updated event
     if (
       sessionData.sessionTitle &&
@@ -923,7 +812,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   rebuildMessagesAndTurns() {
-    let data = this.sessionDataQuery.getValue();
+    let data = this.sessionBundleQuery.getValue();
     this.messages = this.buildMessagesFromStores(data.messages, data.parts);
     this.turns = this.buildTurns(this.messages);
   }

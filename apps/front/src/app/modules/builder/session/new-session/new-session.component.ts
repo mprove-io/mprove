@@ -4,7 +4,7 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
   ToBackendCreateAgentSessionRequestPayload,
   ToBackendCreateAgentSessionResponse
@@ -84,7 +84,7 @@ export class NewSessionComponent {
 
             // Add new session to the sessions list
             let currentSessions = this.sessionsQuery.getValue().sessions;
-            let newSession: AgentSessionApi = {
+            let newSession: SessionApi = {
               sessionId: sessionId,
               provider: provider,
               agent: this.agent,

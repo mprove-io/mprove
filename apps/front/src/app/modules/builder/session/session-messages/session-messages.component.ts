@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { NgScrollbar } from 'ngx-scrollbar';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyDialogService } from '../../../../services/my-dialog.service';
 
 interface FileDiffInfo {
@@ -62,7 +62,7 @@ export class SessionMessagesComponent
   implements AfterViewInit, OnChanges, OnDestroy
 {
   @Input() turns: ChatTurn[] = [];
-  @Input() session: AgentSessionApi;
+  @Input() session: SessionApi;
   @Input() isActivating = false;
   @Input() isArchived = false;
   @Input() isWaitingForResponse = false;

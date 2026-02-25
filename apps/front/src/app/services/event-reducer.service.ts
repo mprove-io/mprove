@@ -4,35 +4,38 @@ import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { binarySearch } from '../functions/binary-search';
 import {
-  SessionDataQuery,
-  SessionDataState
-} from '../queries/session-data.query';
+  SessionBundleQuery,
+  SessionBundleState
+} from '../queries/session-bundle.query';
 
 @Injectable({ providedIn: 'root' })
 export class EventReducerService {
-  constructor(private sessionDataQuery: SessionDataQuery) {}
+  constructor(private sessionBundleQuery: SessionBundleQuery) {}
 
   applyEvent(event: Event) {
-    let state = this.sessionDataQuery.getValue();
+    let state = this.sessionBundleQuery.getValue();
     let newState = this.reduceEvent(state, event);
     if (newState !== state) {
-      this.sessionDataQuery.updatePart(newState);
+      this.sessionBundleQuery.updatePart(newState);
     }
   }
 
   applyEvents(events: Event[]) {
-    let state = this.sessionDataQuery.getValue();
+    let state = this.sessionBundleQuery.getValue();
     for (let event of events) {
       state = this.reduceEvent(state, event);
     }
-    this.sessionDataQuery.updatePart(state);
+    this.sessionBundleQuery.updatePart(state);
   }
 
   resetAll() {
-    this.sessionDataQuery.reset();
+    this.sessionBundleQuery.reset();
   }
 
-  private reduceEvent(state: SessionDataState, event: Event): SessionDataState {
+  private reduceEvent(
+    state: SessionBundleState,
+    event: Event
+  ): SessionBundleState {
     switch (event.type) {
       case 'message.updated': {
         let raw = event.properties.info;

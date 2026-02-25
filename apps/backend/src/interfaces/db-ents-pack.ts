@@ -13,6 +13,7 @@ import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
 import { MessageEnt } from '#backend/drizzle/postgres/schema/messages';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
 import { PartEnt } from '#backend/drizzle/postgres/schema/parts';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
@@ -38,6 +39,7 @@ export class DbEntsPack {
   messages?: MessageEnt[];
   models?: ModelEnt[];
   notes?: NoteEnt[];
+  ocSessions?: OcSessionEnt[];
   orgs?: OrgEnt[];
   parts?: PartEnt[];
   projects?: ProjectEnt[];

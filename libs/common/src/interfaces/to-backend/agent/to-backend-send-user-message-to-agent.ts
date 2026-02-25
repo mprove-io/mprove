@@ -7,6 +7,7 @@ import {
   ValidateNested
 } from 'class-validator';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
+import type { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -52,6 +53,10 @@ export class ToBackendSendUserMessageToAgentRequest extends ToBackendRequest {
   payload: ToBackendSendUserMessageToAgentRequestPayload;
 }
 
+export interface ToBackendSendUserMessageToAgentResponsePayload {
+  session: SessionApi;
+}
+
 export class ToBackendSendUserMessageToAgentResponse extends MyResponse {
-  payload: { [k in any]: never };
+  payload: ToBackendSendUserMessageToAgentResponsePayload;
 }

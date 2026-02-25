@@ -1,7 +1,7 @@
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 
-export function makeTitle(session: AgentSessionApi): string {
+export function makeTitle(session: SessionApi): string {
   if (
     session.title &&
     !/^(New session - |Child session - )\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(

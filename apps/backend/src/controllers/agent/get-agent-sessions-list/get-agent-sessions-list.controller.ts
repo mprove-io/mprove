@@ -1,16 +1,20 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { and, desc, eq, gte, lt, notInArray } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, lt, notInArray } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import {
   SessionEnt,
   sessionsTable
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { AgentService } from '#backend/services/agent.service';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -25,6 +29,9 @@ import {
 @Controller()
 export class GetAgentSessionsListController {
   constructor(
+    private projectsService: ProjectsService,
+    private sessionsService: SessionsService,
+    private agentService: AgentService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -34,6 +41,17 @@ export class GetAgentSessionsListController {
     let reqValid: ToBackendGetAgentSessionsListRequest = request.body;
     let { projectId, includeArchived, archivedLimit, archivedLastCreatedTs } =
       reqValid.payload;
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
+
+    if (project.e2bApiKey) {
+      await this.agentService.syncProjectSandboxStatuses({
+        projectId: projectId,
+        e2bApiKey: project.e2bApiKey
+      });
+    }
 
     let sessionEnts = await this.db.drizzle.query.sessionsTable.findMany({
       where: and(
@@ -112,21 +130,26 @@ export class GetAgentSessionsListController {
       }
     }
 
+    let sessionIds = allEnts.map(e => e.sessionId);
+
+    let ocSessionEnts =
+      sessionIds.length > 0
+        ? await this.db.drizzle.query.ocSessionsTable.findMany({
+            where: inArray(ocSessionsTable.sessionId, sessionIds)
+          })
+        : [];
+
+    let ocSessionMap = new Map(
+      ocSessionEnts.map(e => [
+        e.sessionId,
+        this.tabService.ocSessionEntToTab(e)
+      ])
+    );
+
     payload.sessions = allEnts.map(ent => {
-      let tab = this.tabService.sessionEntToTab(ent);
-      return {
-        sessionId: tab.sessionId,
-        provider: tab.provider,
-        agent: tab.agent,
-        model: tab.model,
-        lastMessageProviderModel: tab.lastMessageProviderModel,
-        lastMessageVariant: tab.lastMessageVariant,
-        status: tab.status,
-        createdTs: tab.createdTs,
-        lastActivityTs: tab.lastActivityTs,
-        firstMessage: tab.firstMessage,
-        title: tab.ocSession?.title
-      };
+      let session = this.tabService.sessionEntToTab(ent);
+      let ocSession = ocSessionMap.get(session.sessionId);
+      return this.sessionsService.tabToSessionApi({ session, ocSession });
     });
 
     return payload;

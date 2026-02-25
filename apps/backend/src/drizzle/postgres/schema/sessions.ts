@@ -30,6 +30,7 @@ export const sessionsTable = pgTable(
     status: varchar('status', { length: 32 })
       .notNull()
       .$type<SessionStatusEnum>(),
+    archivedReason: varchar('archived_reason', { length: 32 }),
     st: json('st')
       .$type<{ encrypted: string; decrypted: SessionSt }>()
       .notNull(),

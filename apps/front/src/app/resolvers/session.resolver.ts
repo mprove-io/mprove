@@ -12,7 +12,7 @@ import {
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import { groupPartsByMessageId } from '../functions/group-parts-by-message-id';
 import { SessionQuery } from '../queries/session.query';
-import { SessionDataQuery } from '../queries/session-data.query';
+import { SessionBundleQuery } from '../queries/session-bundle.query';
 import { SessionEventsQuery } from '../queries/session-events.query';
 import { SessionsQuery } from '../queries/sessions.query';
 import { ApiService } from '../services/api.service';
@@ -25,7 +25,7 @@ export class SessionResolver {
     private sessionQuery: SessionQuery,
     private sessionsQuery: SessionsQuery,
     private sessionEventsQuery: SessionEventsQuery,
-    private sessionDataQuery: SessionDataQuery,
+    private sessionBundleQuery: SessionBundleQuery,
     private eventReducerService: EventReducerService
   ) {}
 
@@ -72,14 +72,14 @@ export class SessionResolver {
               }
             }
 
-            this.sessionDataQuery.updatePart({
+            this.sessionBundleQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
                 ? groupPartsByMessageId(resp.payload.parts)
                 : {},
-              todos: resp.payload.session.todos ?? [],
-              questions: resp.payload.session.questions ?? [],
-              permissions: resp.payload.session.permissions ?? [],
+              todos: resp.payload.ocSession?.todos ?? [],
+              questions: resp.payload.ocSession?.questions ?? [],
+              permissions: resp.payload.ocSession?.permissions ?? [],
               sdkSessionStatus
             });
 

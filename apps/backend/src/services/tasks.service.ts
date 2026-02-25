@@ -18,8 +18,9 @@ export class TasksService {
   private isRunningRemoveStructs = false;
   private isRunningRemoveQueries = false;
   private isRunningRemoveNotes = false;
-  private isRunningPauseIdleSandboxes = false;
   private isRunningUpdateAgentModelsCache = false;
+  private isRunningSyncSandboxStatuses = false;
+  private isRunningPauseIdleSandboxes = false;
 
   constructor(
     private cs: ConfigService,
@@ -138,6 +139,28 @@ export class TasksService {
       });
 
       this.isRunningUpdateAgentModelsCache = false;
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  @WithTraceSpan()
+  async loopSyncSandboxStatuses() {
+    if (this.isRunningSyncSandboxStatuses === false) {
+      this.isRunningSyncSandboxStatuses = true;
+
+      await this.agentService.syncSandboxStatuses().catch(e => {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_SYNC_SANDBOX_STATUSES_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      });
+
+      this.isRunningSyncSandboxStatuses = false;
     }
   }
 

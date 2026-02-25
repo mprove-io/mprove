@@ -16,19 +16,21 @@ import type {
   PermissionRequest,
   QuestionRequest
 } from '@opencode-ai/sdk/v2';
-import { and, eq, lt, max } from 'drizzle-orm';
+import { and, eq, inArray, lt, max } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  OcSessionTab,
   PartTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { eventsTable } from '#backend/drizzle/postgres/schema/events.js';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -390,7 +392,7 @@ export class AgentService implements OnModuleDestroy {
       }
     }
 
-    let sessionTabs: SessionTab[] = [];
+    let ocSessionTabs: OcSessionTab[] = [];
 
     let sessionUpdatedItems = items.filter(
       item => item.event.type === 'session.updated'
@@ -419,34 +421,42 @@ export class AgentService implements OnModuleDestroy {
       permissionAskedItems.length > 0 ||
       permissionRepliedItems.length > 0
     ) {
-      let session = await this.sessionsService.getSessionByIdCheckExists({
+      let ocSessionTab = await this.sessionsService.getOcSessionBySessionId({
         sessionId: sessionId
       });
 
+      if (!ocSessionTab) {
+        ocSessionTab = this.sessionsService.makeOcSession({ sessionId });
+      }
+
       for (let item of sessionUpdatedItems) {
-        let ocSession = (item.event as EventSessionUpdated).properties.info;
-        sessionTabs.push({ ...session, ocSession: ocSession });
+        let ocSessionData = (item.event as EventSessionUpdated).properties.info;
+        ocSessionTabs.push({ ...ocSessionTab, openSession: ocSessionData });
       }
 
       if (todoItems.length > 0) {
         let lastTodoEvent = todoItems[todoItems.length - 1];
         let todos =
           (lastTodoEvent.event as EventTodoUpdated).properties.todos ?? [];
-        let existingIndex = sessionTabs.findIndex(
+        let existingIndex = ocSessionTabs.findIndex(
           t => t.sessionId === sessionId
         );
         if (existingIndex >= 0) {
-          sessionTabs[existingIndex] = { ...sessionTabs[existingIndex], todos };
+          ocSessionTabs[existingIndex] = {
+            ...ocSessionTabs[existingIndex],
+            todos
+          };
         } else {
-          sessionTabs.push({ ...session, todos });
+          ocSessionTabs.push({ ...ocSessionTab, todos });
         }
       }
 
       if (questionAskedItems.length > 0 || questionResolvedItems.length > 0) {
-        let existingIndex = sessionTabs.findIndex(
+        let existingIndex = ocSessionTabs.findIndex(
           t => t.sessionId === sessionId
         );
-        let base = existingIndex >= 0 ? sessionTabs[existingIndex] : session;
+        let base =
+          existingIndex >= 0 ? ocSessionTabs[existingIndex] : ocSessionTab;
         let questions: QuestionRequest[] = base.questions
           ? [...base.questions]
           : [];
@@ -469,12 +479,12 @@ export class AgentService implements OnModuleDestroy {
         }
 
         if (existingIndex >= 0) {
-          sessionTabs[existingIndex] = {
-            ...sessionTabs[existingIndex],
+          ocSessionTabs[existingIndex] = {
+            ...ocSessionTabs[existingIndex],
             questions
           };
         } else {
-          sessionTabs.push({ ...session, questions });
+          ocSessionTabs.push({ ...ocSessionTab, questions });
         }
       }
 
@@ -482,10 +492,11 @@ export class AgentService implements OnModuleDestroy {
         permissionAskedItems.length > 0 ||
         permissionRepliedItems.length > 0
       ) {
-        let existingIndex = sessionTabs.findIndex(
+        let existingIndex = ocSessionTabs.findIndex(
           t => t.sessionId === sessionId
         );
-        let base = existingIndex >= 0 ? sessionTabs[existingIndex] : session;
+        let base =
+          existingIndex >= 0 ? ocSessionTabs[existingIndex] : ocSessionTab;
         let permissions: PermissionRequest[] = base.permissions
           ? [...base.permissions]
           : [];
@@ -506,12 +517,12 @@ export class AgentService implements OnModuleDestroy {
         }
 
         if (existingIndex >= 0) {
-          sessionTabs[existingIndex] = {
-            ...sessionTabs[existingIndex],
+          ocSessionTabs[existingIndex] = {
+            ...ocSessionTabs[existingIndex],
             permissions
           };
         } else {
-          sessionTabs.push({ ...session, permissions });
+          ocSessionTabs.push({ ...ocSessionTab, permissions });
         }
       }
     }
@@ -525,7 +536,7 @@ export class AgentService implements OnModuleDestroy {
         insertOrUpdate: {
           messages: messageTabs,
           parts: partTabs,
-          sessions: sessionTabs
+          ocSessions: ocSessionTabs
         }
       });
     });
@@ -592,6 +603,137 @@ export class AgentService implements OnModuleDestroy {
               }
             })
         );
+      }
+    }
+  }
+
+  async syncSandboxStatuses(): Promise<void> {
+    let sessions = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: inArray(sessionsTable.status, [
+          SessionStatusEnum.Active,
+          SessionStatusEnum.Paused
+        ])
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+
+    // Collect unique projectIds
+    let projectIds = [
+      ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
+    ];
+
+    for (let projectId of projectIds) {
+      try {
+        let project = await this.projectsService.getProjectCheckExists({
+          projectId: projectId
+        });
+
+        await this.syncProjectSandboxStatuses({
+          projectId: projectId,
+          e2bApiKey: project.e2bApiKey
+        });
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_SYNC_SANDBOX_STATUSES_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+    }
+  }
+
+  async syncProjectSandboxStatuses(item: {
+    projectId: string;
+    e2bApiKey: string;
+  }): Promise<void> {
+    let sessions = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: and(
+          eq(sessionsTable.projectId, item.projectId),
+          inArray(sessionsTable.status, [
+            SessionStatusEnum.Active,
+            SessionStatusEnum.Paused
+          ])
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+
+    let sessionsWithSandbox = sessions.filter(s => s.sandboxId);
+
+    if (sessionsWithSandbox.length === 0) {
+      return;
+    }
+
+    let sandboxes = await this.sandboxService.listSandboxes({
+      e2bApiKey: item.e2bApiKey
+    });
+
+    let sandboxMap = new Map(sandboxes.map(s => [s.sandboxId, s]));
+
+    for (let session of sessionsWithSandbox) {
+      try {
+        // Skip sessions with active in-memory client to avoid
+        // conflicting with in-flight requests
+        if (this.sandboxService.tryGetOpenCodeClient(session.sessionId)) {
+          continue;
+        }
+
+        let sandboxInfo = sandboxMap.get(session.sandboxId);
+
+        if (!sandboxInfo) {
+          // Sandbox no longer exists
+          let updatedSession: SessionTab = {
+            ...session,
+            status: SessionStatusEnum.Archived,
+            archivedReason: ArchivedReasonEnum.Expire
+          };
+
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  sessions: [updatedSession]
+                }
+              })
+          );
+
+          continue;
+        }
+
+        if (
+          session.status === SessionStatusEnum.Active &&
+          sandboxInfo.state === 'paused'
+        ) {
+          let updatedSession: SessionTab = {
+            ...session,
+            status: SessionStatusEnum.Paused
+          };
+
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  sessions: [updatedSession]
+                }
+              })
+          );
+        }
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_SYNC_SANDBOX_STATUS_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
       }
     }
   }

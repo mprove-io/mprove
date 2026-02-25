@@ -29,6 +29,8 @@ import {
   ModelSt,
   NoteLt,
   NoteSt,
+  OcSessionLt,
+  OcSessionSt,
   OrgLt,
   OrgSt,
   PartLt,
@@ -63,6 +65,7 @@ import { MemberEnt } from './members';
 import { MessageEnt } from './messages';
 import { ModelEnt } from './models';
 import { NoteEnt } from './notes';
+import { OcSessionEnt } from './oc-sessions';
 import { OrgEnt } from './orgs';
 import { PartEnt } from './parts';
 import { ProjectEnt } from './projects';
@@ -164,6 +167,11 @@ export interface MessageTab
     MessageLt {}
 
 export interface PartTab extends Omit<PartEnt, 'st' | 'lt'>, PartSt, PartLt {}
+
+export interface OcSessionTab
+  extends Omit<OcSessionEnt, 'st' | 'lt'>,
+    OcSessionSt,
+    OcSessionLt {}
 
 export interface SessionTab
   extends Omit<SessionEnt, 'st' | 'lt'>,

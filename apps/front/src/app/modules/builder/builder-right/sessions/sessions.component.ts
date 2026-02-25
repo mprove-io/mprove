@@ -4,7 +4,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
   ToBackendGetAgentSessionsListRequestPayload,
   ToBackendGetAgentSessionsListResponse
@@ -22,7 +22,7 @@ import { UiService } from '#front/app/services/ui.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
-export class AgentSessionApiX extends AgentSessionApi {
+export class SessionApiX extends SessionApi {
   displayTitle: string;
   providerLabel: string;
 }
@@ -33,7 +33,7 @@ export class AgentSessionApiX extends AgentSessionApi {
   templateUrl: './sessions.component.html'
 })
 export class SessionsComponent implements OnInit {
-  sessions: AgentSessionApiX[] = [];
+  sessions: SessionApiX[] = [];
   hasMoreArchived = false;
   isLoadingArchived = false;
   archivedLastCreatedTs: number = undefined;
@@ -51,7 +51,7 @@ export class SessionsComponent implements OnInit {
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
       this.sessions = x.map(s =>
-        Object.assign({}, s, <AgentSessionApiX>{
+        Object.assign({}, s, <SessionApiX>{
           displayTitle: makeTitle(s),
           providerLabel: this.providerLabels[s.provider] || s.provider
         })
@@ -156,7 +156,7 @@ export class SessionsComponent implements OnInit {
     this.navigateService.navigateToBuilder();
   }
 
-  pauseSession(event: MouseEvent, session: AgentSessionApiX) {
+  pauseSession(event: MouseEvent, session: SessionApiX) {
     event.stopPropagation();
 
     let sessionId = session.sessionId;
@@ -190,7 +190,7 @@ export class SessionsComponent implements OnInit {
       .subscribe();
   }
 
-  archiveSession(event: MouseEvent, session: AgentSessionApiX) {
+  archiveSession(event: MouseEvent, session: SessionApiX) {
     event.stopPropagation();
 
     let sessionId = session.sessionId;
@@ -303,7 +303,7 @@ export class SessionsComponent implements OnInit {
       .subscribe();
   }
 
-  renameSession(event: MouseEvent, session: AgentSessionApiX) {
+  renameSession(event: MouseEvent, session: SessionApiX) {
     event.stopPropagation();
     this.myDialogService.showEditSessionTitle({
       apiService: this.apiService,
@@ -312,7 +312,7 @@ export class SessionsComponent implements OnInit {
     });
   }
 
-  deleteSession(event: MouseEvent, session: AgentSessionApiX) {
+  deleteSession(event: MouseEvent, session: SessionApiX) {
     event.stopPropagation();
     this.myDialogService.showDeleteSession({
       apiService: this.apiService,
@@ -336,11 +336,11 @@ export class SessionsComponent implements OnInit {
     this.uiQuery.updatePart({ sessionToggleAllEvents: newValue });
   }
 
-  trackBySessionId(_index: number, session: AgentSessionApiX) {
+  trackBySessionId(_index: number, session: SessionApiX) {
     return session.sessionId;
   }
 
-  openSession(session: AgentSessionApi) {
+  openSession(session: SessionApi) {
     if (this.sessionId) {
       this.uiQuery.updatePart({ showSessionMessages: false });
     }

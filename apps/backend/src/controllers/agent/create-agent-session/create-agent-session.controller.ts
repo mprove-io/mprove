@@ -15,6 +15,7 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  OcSessionTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -136,6 +137,10 @@ export class CreateAgentSessionController {
       createdTs: now
     });
 
+    let ocSession = this.sessionsService.makeOcSession({
+      sessionId: sessionId
+    });
+
     await retry(
       async () =>
         await this.db.drizzle.transaction(
@@ -143,7 +148,8 @@ export class CreateAgentSessionController {
             await this.db.packer.write({
               tx: tx,
               insert: {
-                sessions: [session]
+                sessions: [session],
+                ocSessions: [ocSession]
               }
             })
         ),
@@ -231,11 +237,17 @@ export class CreateAgentSessionController {
         sandboxBaseUrl: sandboxBaseUrl,
         opencodeSessionId: opencodeSessionId,
         opencodePassword: opencodePassword,
-        ocSession: opencodeSession,
         status: SessionStatusEnum.Active,
         lastActivityTs: now,
         runningStartTs: now,
         expiresAt: now + sandboxTimeoutMs
+      };
+
+      let updatedOcSession: OcSessionTab = {
+        sessionId: sessionId,
+        openSession: opencodeSession,
+        serverTs: undefined,
+        keyTag: undefined
       };
 
       await retry(
@@ -245,7 +257,8 @@ export class CreateAgentSessionController {
               await this.db.packer.write({
                 tx: tx,
                 insertOrUpdate: {
-                  sessions: [updatedSession]
+                  sessions: [updatedSession],
+                  ocSessions: [updatedOcSession]
                 }
               })
           ),

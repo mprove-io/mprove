@@ -34,6 +34,7 @@ import { membersTable } from './schema/members';
 import { messagesTable } from './schema/messages';
 import { modelsTable } from './schema/models';
 import { notesTable } from './schema/notes';
+import { ocSessionsTable } from './schema/oc-sessions';
 import { orgsTable } from './schema/orgs';
 import { partsTable } from './schema/parts';
 import { projectsTable } from './schema/projects';
@@ -259,6 +260,10 @@ export class DrizzlePacker {
 
       if (insertEnts.sessions.length > 0) {
         await tx.insert(sessionsTable).values(insertEnts.sessions);
+      }
+
+      if (insertEnts.ocSessions.length > 0) {
+        await tx.insert(ocSessionsTable).values(insertEnts.ocSessions);
       }
 
       if (insertEnts.messages.length > 0) {
@@ -574,6 +579,20 @@ export class DrizzlePacker {
             .update(sessionsTable)
             .set(x)
             .where(eq(sessionsTable.sessionId, x.sessionId));
+        });
+      }
+
+      if (updateEnts.ocSessions.length > 0) {
+        updateEnts.ocSessions = setUndefinedToNull({
+          ents: updateEnts.ocSessions,
+          table: ocSessionsTable
+        });
+
+        await forEachSeries(updateEnts.ocSessions, async x => {
+          await tx
+            .update(ocSessionsTable)
+            .set(x)
+            .where(eq(ocSessionsTable.sessionId, x.sessionId));
         });
       }
 
@@ -1030,6 +1049,25 @@ export class DrizzlePacker {
           .onConflictDoUpdate({
             target: sessionsTable.sessionId,
             set: drizzleSetAllColumnsFull({ table: sessionsTable })
+          });
+      }
+
+      if (insOrUpdEnts.ocSessions.length > 0) {
+        insOrUpdEnts.ocSessions = Array.from(
+          new Set(insOrUpdEnts.ocSessions.map(x => x.sessionId))
+        ).map(id => insOrUpdEnts.ocSessions.find(x => x.sessionId === id));
+
+        insOrUpdEnts.ocSessions = setUndefinedToNull({
+          ents: insOrUpdEnts.ocSessions,
+          table: ocSessionsTable
+        });
+
+        await tx
+          .insert(ocSessionsTable)
+          .values(insOrUpdEnts.ocSessions)
+          .onConflictDoUpdate({
+            target: ocSessionsTable.sessionId,
+            set: drizzleSetAllColumnsFull({ table: ocSessionsTable })
           });
       }
 

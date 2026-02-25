@@ -13,6 +13,7 @@ import * as members from '#backend/drizzle/postgres/schema/members';
 import * as messages from '#backend/drizzle/postgres/schema/messages';
 import * as models from '#backend/drizzle/postgres/schema/models';
 import * as notes from '#backend/drizzle/postgres/schema/notes';
+import * as ocSessions from '#backend/drizzle/postgres/schema/oc-sessions';
 import * as orgs from '#backend/drizzle/postgres/schema/orgs';
 import * as parts from '#backend/drizzle/postgres/schema/parts';
 import * as projects from '#backend/drizzle/postgres/schema/projects';
@@ -25,6 +26,7 @@ import * as users from '#backend/drizzle/postgres/schema/users';
 
 export const schemaPostgres = {
   ...events,
+  ...ocSessions,
   ...sessions,
   ...avatars,
   ...branches,

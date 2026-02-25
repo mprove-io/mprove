@@ -6,7 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -34,7 +34,7 @@ export class ToBackendGetAgentSessionsListRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetAgentSessionsListResponsePayload {
-  sessions: AgentSessionApi[];
+  sessions: SessionApi[];
   hasMoreArchived?: boolean;
 }
 

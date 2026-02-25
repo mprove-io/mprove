@@ -8,7 +8,8 @@ import {
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
-import { AgentSessionApi } from '#common/interfaces/backend/agent-session-api';
+import { OcSessionApi } from '#common/interfaces/backend/oc-session-api';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -28,7 +29,8 @@ export class ToBackendGetAgentSessionRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetAgentSessionResponsePayload {
-  session: AgentSessionApi;
+  session: SessionApi;
+  ocSession?: OcSessionApi;
   events: AgentEventApi[];
   messages?: AgentMessageApi[];
   parts?: AgentPartApi[];

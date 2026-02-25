@@ -290,13 +290,21 @@ export class SessionSt {
   sandboxBaseUrl?: string;
   opencodeSessionId?: string;
   opencodePassword?: string;
-  ocSession?: Session;
   firstMessage?: string;
+}
+export class SessionLt {
+  emptyData?: number;
+}
+
+//
+
+export class OcSessionSt {
+  openSession?: Session;
   todos?: Todo[];
   questions?: QuestionRequest[];
   permissions?: PermissionRequest[];
 }
-export class SessionLt {
+export class OcSessionLt {
   emptyData?: number;
 }
 
