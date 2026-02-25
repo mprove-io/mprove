@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
 import { and, eq, inArray } from 'drizzle-orm';
-import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
@@ -34,6 +33,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { makeId } from '#common/functions/make-id';
 import { splitModel } from '#common/functions/split-model';
 import {
   ToBackendCreateAgentSessionRequest,
@@ -116,7 +116,7 @@ export class CreateAgentSessionController {
 
     // Phase 1: Save session with status=New and return immediately
 
-    let sessionId = uuidv4();
+    let sessionId = makeId().toLowerCase();
     let now = Date.now();
 
     let session: SessionTab = this.sessionsService.makeSession({
