@@ -22,7 +22,8 @@ export class GetAgentEventsSseController {
   @Sse(SSE_AGENT_EVENTS_PATH)
   agentEventsSse(
     @Query('sessionId') sessionId: string,
-    @Query('ticket') ticket: string
+    @Query('ticket') ticket: string,
+    @Query('lastEventIndex') lastEventIndexStr?: string
   ): Observable<MessageEvent> {
     return new Observable<MessageEvent>(observer => {
       this.redisService
@@ -34,8 +35,11 @@ export class GetAgentEventsSseController {
             });
           }
 
+          let lastEventIndex =
+            lastEventIndexStr != null ? parseInt(lastEventIndexStr, 10) : -1;
+
           let subscription = this.agentService
-            .subscribe(sessionId)
+            .subscribeWithBackfill(sessionId, lastEventIndex)
             .pipe(
               map(
                 event =>

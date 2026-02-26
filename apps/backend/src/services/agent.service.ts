@@ -16,7 +16,7 @@ import type {
   PermissionRequest,
   QuestionRequest
 } from '@opencode-ai/sdk/v2';
-import { and, eq, inArray, lt, max } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, lt, max } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -203,6 +203,120 @@ export class AgentService implements OnModuleDestroy {
     });
   }
 
+  subscribeWithBackfill(
+    sessionId: string,
+    lastEventIndex: number
+  ): Observable<AgentEvent> {
+    let channel = this.channelName(sessionId);
+
+    return new Observable<AgentEvent>(observer => {
+      let buffer: AgentEvent[] = [];
+      let isBackfilling = true;
+
+      // 1. Subscribe to live events immediately (buffer during backfill)
+      let subject = new Subject<AgentEvent>();
+      let liveSub = subject.subscribe(event => {
+        if (isBackfilling) {
+          buffer.push(event);
+        } else {
+          observer.next(event);
+        }
+      });
+
+      let listeners = this.channelListeners.get(channel);
+
+      if (listeners) {
+        listeners.add(subject);
+      } else {
+        listeners = new Set([subject]);
+        this.channelListeners.set(channel, listeners);
+        this.redisSubClient.subscribe(channel).catch((err: Error) => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_AGENT_REDIS_SUBSCRIBE_FAILED,
+              originalError: err
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+        });
+      }
+
+      // 2. Backfill from DB, then flush buffer and go live
+      this.getEventsSince(sessionId, lastEventIndex)
+        .then(dbEvents => {
+          for (let event of dbEvents) {
+            observer.next(event);
+          }
+
+          let maxDbIndex =
+            dbEvents.length > 0
+              ? dbEvents[dbEvents.length - 1].eventIndex
+              : lastEventIndex;
+
+          // Flush buffered live events that aren't covered by DB
+          isBackfilling = false;
+          for (let event of buffer) {
+            if (event.eventIndex > maxDbIndex) {
+              observer.next(event);
+            }
+          }
+          buffer = [];
+        })
+        .catch(err => {
+          observer.error(err);
+        });
+
+      return () => {
+        liveSub.unsubscribe();
+        subject.complete();
+
+        let currentListeners = this.channelListeners.get(channel);
+        if (currentListeners) {
+          currentListeners.delete(subject);
+          if (currentListeners.size === 0) {
+            this.channelListeners.delete(channel);
+            this.redisSubClient.unsubscribe(channel).catch((err: Error) => {
+              logToConsoleBackend({
+                log: new ServerError({
+                  message: ErEnum.BACKEND_AGENT_REDIS_UNSUBSCRIBE_FAILED,
+                  originalError: err
+                }),
+                logLevel: LogLevelEnum.Error,
+                logger: this.logger,
+                cs: this.cs
+              });
+            });
+          }
+        }
+      };
+    });
+  }
+
+  private async getEventsSince(
+    sessionId: string,
+    lastEventIndex: number
+  ): Promise<AgentEvent[]> {
+    let eventEnts = await this.db.drizzle.query.eventsTable.findMany({
+      where: and(
+        eq(eventsTable.sessionId, sessionId),
+        gt(eventsTable.eventIndex, lastEventIndex)
+      ),
+      orderBy: [asc(eventsTable.eventIndex)]
+    });
+
+    return eventEnts.map(ent => {
+      let tab = this.tabService.eventEntToTab(ent);
+      return {
+        eventId: tab.eventId,
+        eventIndex: tab.eventIndex,
+        eventType: tab.type,
+        ocEvent: tab.ocEvent
+      };
+    });
+  }
+
   // stream
 
   async startEventStream(item: { sessionId: string }): Promise<void> {
@@ -329,7 +443,8 @@ export class AgentService implements OnModuleDestroy {
       return;
     }
 
-    let items = queue.splice(0);
+    let itemCount = queue.length;
+    let items = queue.slice(0, itemCount);
 
     let eventTabs = items.map(item =>
       this.eventsService.makeEvent({
@@ -356,6 +471,12 @@ export class AgentService implements OnModuleDestroy {
     if (!sessionParts) {
       sessionParts = new Map();
       this.partStates.set(sessionId, sessionParts);
+    }
+
+    // Snapshot partStates before delta accumulation for rollback on failure
+    let savedParts = new Map<string, Part>();
+    for (let [k, v] of sessionParts) {
+      savedParts.set(k, { ...v });
     }
 
     let touchedPartIds = new Set<string>();
@@ -527,19 +648,27 @@ export class AgentService implements OnModuleDestroy {
       }
     }
 
-    await this.db.drizzle.transaction(async tx => {
-      await this.db.packer.write({
-        tx: tx,
-        insert: {
-          events: eventTabs
-        },
-        insertOrUpdate: {
-          messages: messageTabs,
-          parts: partTabs,
-          ocSessions: ocSessionTabs
-        }
+    try {
+      await this.db.drizzle.transaction(async tx => {
+        await this.db.packer.write({
+          tx: tx,
+          insert: {
+            events: eventTabs
+          },
+          insertOrUpdate: {
+            messages: messageTabs,
+            parts: partTabs,
+            ocSessions: ocSessionTabs
+          }
+        });
       });
-    });
+    } catch (e) {
+      // Restore partStates snapshot so deltas aren't doubled on retry
+      this.partStates.set(sessionId, savedParts);
+      throw e;
+    }
+
+    queue.splice(0, itemCount);
 
     for (let item of items) {
       let eventId = `${item.sessionId}_${item.eventIndex}`;

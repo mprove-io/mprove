@@ -495,7 +495,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     let url =
       environment.httpUrl +
-      `/api/sse/agent-events?sessionId=${sessionId}&ticket=${sseTicket}`;
+      `/api/sse/agent-events?sessionId=${sessionId}&ticket=${sseTicket}&lastEventIndex=${this.lastProcessedEventIndex}`;
 
     this.eventSource = new EventSource(url);
 
