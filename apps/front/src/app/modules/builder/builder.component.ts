@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -37,6 +37,7 @@ import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
+import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { StructQuery, StructState } from '#front/app/queries/struct.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
@@ -50,7 +51,7 @@ import { NavigateService } from '#front/app/services/navigate.service';
   selector: 'm-builder',
   templateUrl: './builder.component.html'
 })
-export class BuilderComponent implements OnInit {
+export class BuilderComponent implements OnInit, OnDestroy {
   pageTitle = BUILDER_PAGE_TITLE;
 
   builderLeftTree = BuilderLeftEnum.Tree;
@@ -198,8 +199,13 @@ export class BuilderComponent implements OnInit {
     private userQuery: UserQuery,
     private sessionQuery: SessionQuery,
     private sessionBundleQuery: SessionBundleQuery,
-    private sessionEventsQuery: SessionEventsQuery
+    private sessionEventsQuery: SessionEventsQuery,
+    private sessionsQuery: SessionsQuery
   ) {}
+
+  ngOnDestroy() {
+    // this.sessionsQuery.reset();
+  }
 
   ngOnInit() {
     this.title.setTitle(this.pageTitle);

@@ -96,7 +96,10 @@ export class SessionsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadSessions();
+    let sessions = this.sessionsQuery.getValue().sessions;
+    if (sessions.length === 0) {
+      this.loadSessions();
+    }
   }
 
   loadSessions() {
@@ -106,9 +109,12 @@ export class SessionsComponent implements OnInit {
       projectId = x;
     });
 
+    let currentSessionId =
+      this.sessionId ?? this.sessionQuery.getValue()?.sessionId;
+
     let payload: ToBackendGetAgentSessionsListRequestPayload = {
       projectId: projectId,
-      currentSessionId: this.sessionId
+      currentSessionId: currentSessionId
     };
 
     this.isRefreshing = true;
@@ -126,9 +132,9 @@ export class SessionsComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let sessions = resp.payload.sessions;
 
-            if (this.sessionId) {
+            if (currentSessionId) {
               let freshCurrentSession = sessions.find(
-                s => s.sessionId === this.sessionId
+                s => s.sessionId === currentSessionId
               );
               if (freshCurrentSession) {
                 this.sessionQuery.update(freshCurrentSession);
