@@ -109,6 +109,46 @@ export class SessionComponent implements OnInit, OnDestroy {
   retryMessage: string;
   isSessionError = false;
   autoScroll = false;
+
+  get statusText(): string {
+    if (this.isActivating) {
+      return 'Activating';
+    }
+    if (this.isWaitingForResponse) {
+      return this.retryMessage ? 'Retrying' : 'Working';
+    }
+    return '';
+  }
+
+  get statusTooltip(): string {
+    if (this.isWaitingForResponse && this.retryMessage) {
+      return this.retryMessage;
+    }
+    return '';
+  }
+
+  statusTextChars: { char: string; index: number }[] = [];
+  private cachedStatusText = '';
+
+  updateStatusTextChars() {
+    const text = this.statusText;
+    if (text !== this.cachedStatusText) {
+      this.cachedStatusText = text;
+      if (!text) {
+        this.statusTextChars = [];
+      } else {
+        this.statusTextChars = text.split('').map((char, i) => ({
+          char: char === ' ' ? '\u00A0' : char,
+          index: i
+        }));
+      }
+    }
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
   debugMode = false;
   debugExpandedEvents: Record<string, boolean> = {};
   allEventsExpanded = false;
@@ -637,6 +677,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
+    this.updateStatusTextChars();
+
     this.previousTurnsCount = this.turns.length;
     this.previousLastTurnResponsesExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
@@ -700,6 +742,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isAgentBusy = this.checkIsAgentBusy(sessionData.sdkSessionStatus);
     this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
+
+    this.updateStatusTextChars();
 
     if (!this.showSessionMessages) {
       this.uiQuery.updatePart({ showSessionMessages: true });

@@ -29,16 +29,6 @@
             class="response-div"
             [style.min-height.px]="isArchived ? 0 : responseMinHeight"
           >
-            <div *ngIf="isActivating" class="mb-4 flex justify-start">
-              <div class="rounded-2xl px-4 py-3">
-                <span class="text-s500 text-[17px]">Activating session...</span>
-              </div>
-            </div>
-            <div *ngIf="isWaitingForResponse" class="mb-4 px-4 py-3">
-              <span class="text-lg text-amber-500">{{
-                retryMessage || 'Working'
-              }}</span>
-            </div>
             <div *ngIf="isSessionError" class="mb-4 flex justify-start">
               <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
                 <div class="break-words text-[17px] text-red-700">
@@ -321,18 +311,6 @@
 
             <!-- Indicators only in the last turn -->
             <ng-container *ngIf="isLast">
-              <div *ngIf="isActivating" class="mb-4 flex justify-start">
-                <div class="rounded-2xl px-4 py-3">
-                  <span class="text-s500 text-[17px]"
-                    >Activating session...</span
-                  >
-                </div>
-              </div>
-              <div *ngIf="isWaitingForResponse" class="mb-4 px-4 py-3">
-                <span class="text-lg text-amber-500">{{
-                  retryMessage || 'Working'
-                }}</span>
-              </div>
               <div *ngIf="isSessionError" class="mb-4 flex justify-start">
                 <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
                   <div class="break-words text-[17px] text-red-700">

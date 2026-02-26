@@ -508,3 +508,34 @@ ng-select .ng-select-container .ng-value-container .ng-placeholder {
 .ngx-spinner-overlay > div:not(.loading-text) {
   top: 57% !important;
 }
+
+// text shimmer animation (OpenCode-style)
+.text-shimmer {
+  --text-shimmer-step: 45ms;
+  --text-shimmer-duration: 1200ms;
+}
+
+.text-shimmer-char {
+  white-space: pre;
+  animation-name: text-shimmer-char;
+  animation-duration: var(--text-shimmer-duration);
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  animation-delay: calc(var(--text-shimmer-step) * var(--text-shimmer-index));
+}
+
+@keyframes text-shimmer-char {
+  0%,
+  100% {
+    color: #d4d4d4;
+  }
+  30% {
+    color: #c0c0c0;
+  }
+  55% {
+    color: #adadad;
+  }
+  75% {
+    color: #9a9a9a;
+  }
+}
