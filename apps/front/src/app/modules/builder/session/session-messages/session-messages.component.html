@@ -13,7 +13,7 @@
       <div class="mx-auto flex min-h-full flex-col">
         <!-- First message from session (before events arrive) -->
         <ng-container *ngIf="turns.length === 0 && session?.firstMessage">
-          <div class="user-message mb-4 ml-4">
+          <div class="user-message mb-8 ml-4">
             <div class="flex justify-start">
               <div
                 class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3"
@@ -29,7 +29,7 @@
             class="response-div"
             [style.min-height.px]="isArchived ? 0 : responseMinHeight"
           >
-            <div *ngIf="isSessionError" class="mb-4 flex justify-start">
+            <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
               <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
                 <div class="break-words text-[17px] text-red-700">
                   Session activation failed. Please try again.
@@ -49,7 +49,7 @@
           "
         >
           <!-- User message -->
-          <div *ngIf="turn.userMessage" class="user-message mb-4 ml-4">
+          <div *ngIf="turn.userMessage" class="user-message mb-8 ml-4">
             <div class="flex justify-start">
               <div
                 class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3"
@@ -63,9 +63,9 @@
             <!-- Meta info: agent / model / variant -->
             <div
               *ngIf="turn.userMessage.agentName || turn.userMessage.modelId"
-              class="mt-1 flex justify-start pl-3"
+              class="ml-6 mt-1 flex justify-start pl-4"
             >
-              <span class="text-s500 text-[15px]">{{
+              <span class="text-s500 text-[15px] font-medium">{{
                 getMetaText(turn.userMessage)
               }}</span>
             </div>
@@ -73,17 +73,20 @@
 
           <!-- Response div wrapping all non-user content for this turn -->
           <div
-            class="response-div"
+            class="response-div mb-8"
             [style.min-height.px]="
               isLast && !isArchived ? responseMinHeight : 0
             "
           >
             <div *ngFor="let msg of turn.responses" class="mb-4">
               <!-- Agent message -->
-              <div *ngIf="msg.role === 'agent'" class="flex justify-start">
+              <div
+                *ngIf="msg.role === 'agent'"
+                class="ml-10 flex justify-start"
+              >
                 <div class="max-w-[90%] rounded-2xl px-4 py-3">
                   <div
-                    class="text-s1 whitespace-pre-wrap break-words text-[17px]"
+                    class="whitespace-pre-wrap break-words text-[17px] text-gray-800"
                     >{{ msg.text }}</div
                   >
                 </div>
@@ -96,23 +99,22 @@
                   msg.toolPart &&
                   msg.toolPart.tool === 'question'
                 "
-                class="flex justify-start"
+                class="ml-[34px] flex items-start gap-3"
               >
+                <span
+                  class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                  [ngClass]="{
+                    'bg-amber-400':
+                      msg.toolPart.state?.status === 'pending' ||
+                      msg.toolPart.state?.status === 'running',
+                    'bg-green-500': msg.toolPart.state?.status === 'completed',
+                    'bg-red-500': msg.toolPart.state?.status === 'error'
+                  }"
+                ></span>
                 <div
-                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
+                  class="border-s200 max-w-[90%] overflow-hidden rounded-lg border"
                 >
                   <div class="flex items-center gap-2 px-3 py-2">
-                    <span
-                      class="h-2 w-2 flex-shrink-0 rounded-full"
-                      [ngClass]="{
-                        'bg-amber-400':
-                          msg.toolPart.state?.status === 'pending' ||
-                          msg.toolPart.state?.status === 'running',
-                        'bg-green-500':
-                          msg.toolPart.state?.status === 'completed',
-                        'bg-red-500': msg.toolPart.state?.status === 'error'
-                      }"
-                    ></span>
                     <span class="text-s1 text-base font-medium">{{
                       getQuestionStatus(msg.toolPart)
                     }}</span>
@@ -136,26 +138,25 @@
                   msg.toolPart &&
                   msg.toolPart.tool === 'bash'
                 "
-                class="flex justify-start"
+                class="ml-[34px] flex items-start gap-3"
               >
+                <span
+                  class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                  [ngClass]="{
+                    'bg-amber-400':
+                      msg.toolPart.state?.status === 'pending' ||
+                      msg.toolPart.state?.status === 'running',
+                    'bg-green-500': msg.toolPart.state?.status === 'completed',
+                    'bg-red-500': msg.toolPart.state?.status === 'error'
+                  }"
+                ></span>
                 <button
-                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
+                  class="border-s200 max-w-[90%] overflow-hidden rounded-lg border text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
                   [disabled]="!hasToolContent(msg.toolPart)"
                   (click)="openToolOutput(msg.toolPart)"
                 >
                   <!-- Header -->
                   <div class="flex w-full items-center gap-2 px-3 py-2">
-                    <span
-                      class="h-2 w-2 flex-shrink-0 rounded-full"
-                      [ngClass]="{
-                        'bg-amber-400':
-                          msg.toolPart.state?.status === 'pending' ||
-                          msg.toolPart.state?.status === 'running',
-                        'bg-green-500':
-                          msg.toolPart.state?.status === 'completed',
-                        'bg-red-500': msg.toolPart.state?.status === 'error'
-                      }"
-                    ></span>
                     <span class="text-s1 text-base font-medium">{{
                       getToolTitle(msg.toolPart.tool)
                     }}</span>
@@ -187,27 +188,26 @@
                   msg.toolPart.tool !== 'question' &&
                   msg.toolPart.tool !== 'bash'
                 "
-                class="flex justify-start"
+                class="ml-[34px] flex items-start gap-3"
               >
+                <span
+                  class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                  [ngClass]="{
+                    'bg-amber-400':
+                      msg.toolPart.state?.status === 'pending' ||
+                      msg.toolPart.state?.status === 'running',
+                    'bg-green-500': msg.toolPart.state?.status === 'completed',
+                    'bg-red-500': msg.toolPart.state?.status === 'error'
+                  }"
+                ></span>
                 <div
-                  class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
+                  class="border-s200 max-w-[90%] overflow-hidden rounded-lg border"
                 >
                   <button
                     class="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 focus:outline-none disabled:hover:bg-transparent"
                     [disabled]="!hasToolContent(msg.toolPart)"
                     (click)="openToolOutput(msg.toolPart)"
                   >
-                    <span
-                      class="h-2 w-2 flex-shrink-0 rounded-full"
-                      [ngClass]="{
-                        'bg-amber-400':
-                          msg.toolPart.state?.status === 'pending' ||
-                          msg.toolPart.state?.status === 'running',
-                        'bg-green-500':
-                          msg.toolPart.state?.status === 'completed',
-                        'bg-red-500': msg.toolPart.state?.status === 'error'
-                      }"
-                    ></span>
                     <span class="text-s1 text-base font-medium">{{
                       getToolTitle(msg.toolPart.tool)
                     }}</span>
@@ -223,10 +223,10 @@
               <!-- Tool call (fallback without toolPart) -->
               <div
                 *ngIf="msg.role === 'tool' && !msg.toolPart"
-                class="flex justify-start"
+                class="ml-10 flex justify-start"
               >
                 <div
-                  class="border-s200 ml-4 max-w-[90%] rounded-lg border px-3 py-2"
+                  class="border-s200 max-w-[90%] rounded-lg border px-3 py-2"
                 >
                   <div class="text-s600 break-words text-[17px]">{{
                     msg.text
@@ -235,18 +235,23 @@
               </div>
 
               <!-- Thought -->
-              <div *ngIf="msg.role === 'thought'" class="flex justify-start">
+              <div
+                *ngIf="msg.role === 'thought'"
+                class="ml-10 flex justify-start"
+              >
                 <div class="max-w-[90%] rounded-2xl px-4 py-2">
-                  <div class="text-s500 text-[17px] font-medium">Thinking:</div>
                   <div
-                    class="text-s500 mt-1 whitespace-pre-wrap break-words pl-4 text-[17px]"
+                    class="text-s500 whitespace-pre-wrap break-words text-[17px]"
                     >{{ msg.text }}</div
                   >
                 </div>
               </div>
 
               <!-- Error -->
-              <div *ngIf="msg.role === 'error'" class="flex justify-start">
+              <div
+                *ngIf="msg.role === 'error'"
+                class="ml-10 flex justify-start"
+              >
                 <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
                   <div class="break-words text-[17px] text-red-700">{{
                     msg.text
@@ -260,15 +265,15 @@
               *ngIf="
                 turn.fileDiffs?.length > 0 && (!isLast || !isWaitingForResponse)
               "
-              class="mb-4 flex justify-start"
+              class="mb-4 ml-[34px] flex items-start gap-3"
             >
+              <span
+                class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-green-500"
+              ></span>
               <div
-                class="border-s200 ml-4 max-w-[90%] overflow-hidden rounded-lg border"
+                class="border-s200 max-w-[90%] overflow-hidden rounded-lg border"
               >
                 <div class="flex items-center gap-2 px-3 py-2">
-                  <span
-                    class="h-2 w-2 flex-shrink-0 rounded-full bg-green-500"
-                  ></span>
                   <span class="text-s1 text-base font-medium">Modified</span>
                   <span class="text-s500 text-base"
                     >{{ turn.fileDiffs.length }}
@@ -333,7 +338,7 @@
                   >
                 </div>
               </div>
-              <div *ngIf="isSessionError" class="mb-4 flex justify-start">
+              <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
                 <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
                   <div class="break-words text-[17px] text-red-700">
                     Session activation failed. Please try again.
