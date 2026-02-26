@@ -1,0 +1,37 @@
+<div
+  *ngIf="hasData"
+  class="flex h-8 w-8 flex-shrink-0 items-center justify-center"
+  [tp]="tooltipText"
+  [tpIsEnabled]="!!tooltipText"
+  tpPlacement="top"
+>
+  <svg
+    [attr.width]="18"
+    [attr.height]="18"
+    viewBox="0 0 16 16"
+    fill="none"
+    class="-rotate-90"
+  >
+    <circle
+      cx="8"
+      cy="8"
+      [attr.r]="radius"
+      stroke="#d1d5db"
+      [attr.stroke-width]="strokeWidth"
+      fill="none"
+    />
+    <circle
+      cx="8"
+      cy="8"
+      [attr.r]="radius"
+      stroke="currentColor"
+      [attr.stroke-width]="strokeWidth"
+      fill="none"
+      stroke-linecap="round"
+      [attr.stroke-dasharray]="circumference"
+      [attr.stroke-dashoffset]="dashOffset"
+      class="text-m600 transition-[stroke-dashoffset] duration-300 ease-out"
+    />
+  </svg>
+</div>
+<div *ngIf="metrics$ | async"></div>

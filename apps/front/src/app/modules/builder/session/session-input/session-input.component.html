@@ -60,6 +60,8 @@
   *ngIf="showSelects"
   class="mt-4 flex flex-row items-center justify-center space-x-3"
 >
+  <div class="h-8 w-8 flex-shrink-0"></div>
+
   <div *ngIf="showAutoScroll" class="h-8 w-8 flex-shrink-0"></div>
 
   <ng-select
@@ -149,4 +151,6 @@
       <path d="m19 12-7 7-7-7" />
     </svg>
   </button>
+
+  <m-context-usage-circle></m-context-usage-circle>
 </div>

@@ -27,6 +27,7 @@ import { NewSessionComponent } from './session/new-session/new-session.component
 import { QuestionPromptComponent } from './session/question-prompt/question-prompt.component';
 import { SessionComponent } from './session/session.component';
 import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
+import { ContextUsageCircleComponent } from './session/session-input/context-usage-circle/context-usage-circle.component';
 import { SessionInputComponent } from './session/session-input/session-input.component';
 import { SessionMessagesComponent } from './session/session-messages/session-messages.component';
 
@@ -46,6 +47,7 @@ import { SessionMessagesComponent } from './session/session-messages/session-mes
     SessionComponent,
     SessionDebugEventsComponent,
     SessionInputComponent,
+    ContextUsageCircleComponent,
     QuestionPromptComponent,
     SessionMessagesComponent,
     BlockmlErrorsComponent,
