@@ -15,6 +15,10 @@ export class ToBackendGetAgentSessionsListRequestPayload {
   projectId: string;
 
   @IsOptional()
+  @IsString()
+  currentSessionId?: string;
+
+  @IsOptional()
   @IsBoolean()
   includeArchived?: boolean;
 

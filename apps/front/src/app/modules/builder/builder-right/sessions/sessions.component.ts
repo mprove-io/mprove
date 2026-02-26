@@ -107,7 +107,8 @@ export class SessionsComponent implements OnInit {
     });
 
     let payload: ToBackendGetAgentSessionsListRequestPayload = {
-      projectId: projectId
+      projectId: projectId,
+      currentSessionId: this.sessionId
     };
 
     this.isRefreshing = true;
@@ -125,14 +126,12 @@ export class SessionsComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let sessions = resp.payload.sessions;
 
-            // Keep the currently selected session visible even if archived
             if (this.sessionId) {
-              let found = sessions.some(s => s.sessionId === this.sessionId);
-              if (!found) {
-                let currentSession = this.sessionQuery.getValue();
-                if (currentSession) {
-                  sessions = [...sessions, currentSession];
-                }
+              let freshCurrentSession = sessions.find(
+                s => s.sessionId === this.sessionId
+              );
+              if (freshCurrentSession) {
+                this.sessionQuery.update(freshCurrentSession);
               }
             }
 
@@ -254,7 +253,8 @@ export class SessionsComponent implements OnInit {
       projectId: projectId,
       includeArchived: true,
       archivedLimit: 10,
-      archivedLastCreatedTs: this.archivedLastCreatedTs
+      archivedLastCreatedTs: this.archivedLastCreatedTs,
+      currentSessionId: this.sessionId
     };
 
     this.isLoadingArchived = true;
@@ -271,14 +271,12 @@ export class SessionsComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let sessions = resp.payload.sessions;
 
-            // Keep the currently selected session visible even if archived
             if (this.sessionId) {
-              let found = sessions.some(s => s.sessionId === this.sessionId);
-              if (!found) {
-                let currentSession = this.sessionQuery.getValue();
-                if (currentSession) {
-                  sessions = [...sessions, currentSession];
-                }
+              let freshCurrentSession = sessions.find(
+                s => s.sessionId === this.sessionId
+              );
+              if (freshCurrentSession) {
+                this.sessionQuery.update(freshCurrentSession);
               }
             }
 

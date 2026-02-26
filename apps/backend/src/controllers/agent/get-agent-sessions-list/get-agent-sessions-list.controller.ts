@@ -39,8 +39,13 @@ export class GetAgentSessionsListController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetAgentSessionsList)
   async getAgentSessionsList(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetAgentSessionsListRequest = request.body;
-    let { projectId, includeArchived, archivedLimit, archivedLastCreatedTs } =
-      reqValid.payload;
+    let {
+      projectId,
+      currentSessionId,
+      includeArchived,
+      archivedLimit,
+      archivedLastCreatedTs
+    } = reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -127,6 +132,23 @@ export class GetAgentSessionsListController {
 
         allEnts = [...allEnts, ...archivedEnts];
         payload.hasMoreArchived = hasMore;
+      }
+    }
+
+    if (currentSessionId) {
+      let alreadyIncluded = allEnts.some(e => e.sessionId === currentSessionId);
+      if (!alreadyIncluded) {
+        let currentSessionEnt =
+          await this.db.drizzle.query.sessionsTable.findFirst({
+            where: and(
+              eq(sessionsTable.sessionId, currentSessionId),
+              eq(sessionsTable.projectId, projectId),
+              eq(sessionsTable.userId, user.userId)
+            )
+          });
+        if (currentSessionEnt) {
+          allEnts = [...allEnts, currentSessionEnt];
+        }
       }
     }
 

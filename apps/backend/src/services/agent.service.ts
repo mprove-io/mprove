@@ -134,7 +134,7 @@ export class AgentService implements OnModuleDestroy {
           cs: this.cs
         });
       });
-    }, 350);
+    }, 1000);
   }
 
   // pub/sub
