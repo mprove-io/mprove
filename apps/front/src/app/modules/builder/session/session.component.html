@@ -142,7 +142,7 @@
             [(model)]="model"
             [(agent)]="agent"
             [(variant)]="variant"
-            [disabled]="isActivating"
+            [disabled]="isActivating || isSessionError"
             [isWaitingForResponse]="isAgentBusy"
             [showSelects]="messages.length > 0"
             [sessionId]="session?.sessionId"
