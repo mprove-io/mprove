@@ -92,6 +92,7 @@ import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-ic
 import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.component';
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
+import { ListIconComponent } from './icons/list-icon/list-icon.component';
 import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-icon.component';
 import { MagGlassIconComponent } from './icons/mag-glass-icon/mag-glass-icon.component';
 import { MiniChartsIconComponent } from './icons/mini-charts-icon/mini-charts-icon.component';
@@ -225,6 +226,7 @@ let sharedComponents = [
   SearchIconComponent,
   RefreshIconComponent,
   LockClosedIconComponent,
+  ListIconComponent,
   ArrowDropDownIconComponent,
   DragIconComponent,
   ResizeIconComponent,

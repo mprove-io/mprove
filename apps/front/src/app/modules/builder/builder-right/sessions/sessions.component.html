@@ -11,6 +11,19 @@
     </div>
 
     <button
+      tp="Toggle debug mode"
+      type="button"
+      class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      [ngClass]="{
+        'bg-orange-100 text-orange-700': debugMode,
+        'text-s500 hover:bg-m200': !debugMode
+      }"
+      (click)="toggleDebug()"
+    >
+      <m-list-icon></m-list-icon>
+    </button>
+
+    <button
       tp="Refresh sessions"
       type="button"
       class="hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
@@ -33,18 +46,6 @@
       >
       </ngx-spinner>
     </div>
-
-    <button
-      type="button"
-      class="ml-5 flex flex-shrink-0 select-none flex-row items-center rounded px-3 py-2 text-base focus:outline-none"
-      [ngClass]="{
-        'bg-orange-100 text-orange-700': debugMode,
-        'text-s500 hover:bg-s100': !debugMode
-      }"
-      (click)="toggleDebug()"
-    >
-      Debug
-    </button>
 
     <button
       *ngIf="debugMode"
