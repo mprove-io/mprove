@@ -123,7 +123,8 @@ export class AgentModelsService {
           name: model.name,
           providerId: provider.id,
           providerName: label,
-          variants: variantNames
+          variants: variantNames,
+          contextLimit: model.limit?.context
         });
       }
     }

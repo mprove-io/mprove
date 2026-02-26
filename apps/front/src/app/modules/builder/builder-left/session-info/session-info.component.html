@@ -15,9 +15,61 @@
       [visibility]="'hover'"
       [appearance]="'compact'"
     >
-      <div class="px-6 pb-6 pt-6">
+      <div class="ml-4 mt-4 px-6 pb-6 pt-6">
+        <!-- Session Section -->
+        <div class="mb-8">
+          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
+            Session
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Status</div>
+              <div class="text-s400 text-base">{{
+                session?.status || '-'
+              }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Last Activity</div>
+              <div class="text-s400 text-base">{{ lastActivityAgo }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Created At</div>
+              <div class="text-s400 text-base">
+                {{ formatTimestamp(session?.createdTs) }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Context Section -->
+        <div class="mb-8">
+          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
+            Context
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Provider</div>
+              <div class="text-s400 text-base">{{ providerDisplay }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Model</div>
+              <div class="text-s400 text-base">{{ modelDisplay }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Usage</div>
+              <div class="text-s400 text-base">{{ usageDisplay }}</div>
+            </div>
+          </div>
+        </div>
+
         <!-- TODOs Section -->
-        <div *ngIf="todos.length > 0" class="mb-8">
+        <div *ngIf="todos.length > 0">
           <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
             TODOs
           </div>
@@ -77,78 +129,11 @@
           </div>
         </div>
 
-        <div *ngIf="todos.length === 0" class="mb-8">
+        <div *ngIf="todos.length === 0">
           <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
             TODOs
           </div>
           <div class="text-s400 text-base">No tasks</div>
-        </div>
-
-        <!-- Session Info Section -->
-        <div class="mb-8">
-          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
-            Session Info
-          </div>
-
-          <div class="flex flex-col gap-3">
-            <div class="grid grid-cols-[auto_1fr] gap-x-4">
-              <div class="text-s400 text-base">Provider</div>
-              <div class="text-s1 text-base">{{ providerLabel }}</div>
-            </div>
-
-            <div class="grid grid-cols-[auto_1fr] gap-x-4">
-              <div class="text-s400 text-base">Model</div>
-              <div class="text-s1 text-base">
-                {{ session?.model || '-' }}
-              </div>
-            </div>
-
-            <div class="grid grid-cols-[auto_1fr] gap-x-4">
-              <div class="text-s400 text-base">Agent</div>
-              <div class="text-s1 text-base">
-                {{ session?.agent || '-' }}
-              </div>
-            </div>
-
-            <div class="grid grid-cols-[auto_1fr] gap-x-4">
-              <div class="text-s400 text-base">Status</div>
-              <div class="text-base">
-                <span
-                  class="rounded-full px-2 py-0.5"
-                  [ngClass]="{
-                    'bg-blue-100 text-blue-700': session?.status === 'New',
-                    'bg-green-100 text-green-700': session?.status === 'Active',
-                    'bg-yellow-100 text-yellow-700':
-                      session?.status === 'Paused',
-                    'bg-gray-100 text-gray-600': session?.status === 'Archived',
-                    'bg-red-100 text-red-700': session?.status === 'Error'
-                  }"
-                  >{{ session?.status || '-' }}</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Context Section -->
-        <div>
-          <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
-            Context
-          </div>
-
-          <div class="flex flex-col gap-3">
-            <div class="grid grid-cols-[auto_1fr] gap-x-4">
-              <div class="text-s400 text-base">Session Created</div>
-              <div class="text-s1 text-base">
-                {{ formatTimestamp(session?.createdTs) }}
-              </div>
-            </div>
-
-            <div class="grid grid-cols-[auto_1fr] gap-x-4">
-              <div class="text-s400 text-base">Last Activity</div>
-              <div class="text-s1 text-base">{{ lastActivityAgo }}</div>
-            </div>
-          </div>
         </div>
       </div>
     </ng-scrollbar>
@@ -157,4 +142,5 @@
 
 <div *ngIf="session$ | async"></div>
 <div *ngIf="todos$ | async"></div>
+<div *ngIf="metrics$ | async"></div>
 <div *ngIf="interval$ | async"></div>
