@@ -133,6 +133,17 @@ export class GetAgentSessionsListController {
         allEnts = [...allEnts, ...archivedEnts];
         payload.hasMoreArchived = hasMore;
       }
+    } else {
+      let archivedExists = await this.db.drizzle.query.sessionsTable.findFirst({
+        where: and(
+          eq(sessionsTable.projectId, projectId),
+          eq(sessionsTable.userId, user.userId),
+          eq(sessionsTable.status, SessionStatusEnum.Archived)
+        ),
+        columns: { sessionId: true }
+      });
+
+      payload.hasMoreArchived = archivedExists !== undefined;
     }
 
     if (currentSessionId) {

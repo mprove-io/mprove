@@ -74,10 +74,27 @@
   </div>
 
   <div
-    *ngIf="sessions.length === 0"
+    *ngIf="sessionsLoaded && sessions.length === 0 && !hasMoreArchived"
     class="pointer-events-none absolute inset-0 flex select-none items-center justify-center text-xl"
   >
     Sessions are empty
+  </div>
+
+  <div
+    *ngIf="sessionsLoaded && sessions.length === 0 && hasMoreArchived"
+    class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
+  >
+    <!-- Load archived sessions button -->
+    <div class="ml-6 mr-9 mt-4 flex justify-center pr-3">
+      <button
+        type="button"
+        class="text-s400 hover:text-s500 py-2 text-base focus:outline-none"
+        [disabled]="isLoadingArchived"
+        (click)="loadArchivedSessions()"
+      >
+        {{ isLoadingArchived ? 'Loading...' : 'Load archived sessions' }}
+      </button>
+    </div>
   </div>
 
   <div

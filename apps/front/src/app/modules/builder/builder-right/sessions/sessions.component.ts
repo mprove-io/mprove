@@ -34,6 +34,7 @@ export class SessionApiX extends SessionApi {
 })
 export class SessionsComponent implements OnInit {
   sessions: SessionApiX[] = [];
+  sessionsLoaded = false;
   hasMoreArchived = false;
   isLoadingArchived = false;
   archivedLastCreatedTs: number = undefined;
@@ -148,7 +149,8 @@ export class SessionsComponent implements OnInit {
 
           this.isRefreshing = false;
           this.spinner.hide(SESSIONS_SPINNER_NAME);
-          this.hasMoreArchived = false;
+          this.sessionsLoaded = true;
+          this.hasMoreArchived = resp.payload.hasMoreArchived ?? false;
           this.archivedLastCreatedTs = undefined;
           this.cd.detectChanges();
         }),
@@ -237,6 +239,8 @@ export class SessionsComponent implements OnInit {
             let updated = sessions.filter(s => s.sessionId !== sessionId);
             this.sessionsQuery.updatePart({ sessions: updated });
           }
+
+          this.hasMoreArchived = true;
 
           let currentSession = this.sessionQuery.getValue();
           if (currentSession?.sessionId === sessionId) {
