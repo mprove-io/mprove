@@ -73,6 +73,15 @@ export class SessionMessagesComponent
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 
+  activatingChars = 'Activating Session...'.split('').map((char, i) => ({
+    char: char === ' ' ? '\u00A0' : char,
+    index: i
+  }));
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
   skipNextScroll = true;
   responseMinHeight = 0;
   isAtBottom = true;

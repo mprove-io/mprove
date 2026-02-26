@@ -111,9 +111,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   autoScroll = false;
 
   get statusText(): string {
-    if (this.isActivating) {
-      return 'Activating';
-    }
     if (this.isWaitingForResponse) {
       return this.retryMessage ? 'Retrying' : 'Working';
     }
