@@ -74,7 +74,7 @@
             TODOs
           </div>
 
-          <div class="text-s500 mb-3 text-base">
+          <div class="text-s500 mb-3 text-[17px]">
             {{ completedCount }} of {{ totalCount }} tasks completed
           </div>
 
@@ -84,39 +84,37 @@
               class="flex flex-row items-start space-x-3"
             >
               <div
-                class="mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center"
+                class="mt-1 flex h-5 w-5 flex-shrink-0 items-center justify-center"
               >
                 <div
                   *ngIf="todo.status === 'completed'"
-                  class="bg-m600 flex h-4 w-4 items-center justify-center rounded"
+                  class="bg-s400 flex h-5 w-5 items-center justify-center rounded"
                 >
-                  <m-check-icon class="text-m0 h-3 w-3"></m-check-icon>
+                  <m-check-icon class="text-m0 h-3.5 w-3.5"></m-check-icon>
                 </div>
 
                 <div
                   *ngIf="todo.status === 'in_progress'"
-                  class="flex h-4 w-4 items-center justify-center"
+                  class="flex h-5 w-5 items-center justify-center"
                 >
-                  <div
-                    class="bg-m500 h-2.5 w-2.5 animate-pulse rounded-full"
-                  ></div>
+                  <div class="bg-s400 h-3 w-3 animate-pulse rounded-full"></div>
                 </div>
 
                 <div
                   *ngIf="todo.status === 'pending'"
-                  class="border-s400 h-4 w-4 rounded border"
+                  class="border-s400 h-5 w-5 rounded border"
                 ></div>
 
                 <div
                   *ngIf="todo.status === 'cancelled'"
-                  class="border-s400 bg-s200 flex h-4 w-4 items-center justify-center rounded border"
+                  class="border-s400 bg-s200 flex h-5 w-5 items-center justify-center rounded border"
                 >
                   <div class="bg-s400 h-[1px] w-2"></div>
                 </div>
               </div>
 
               <span
-                class="min-w-0 text-base leading-5"
+                class="min-w-0 text-[17px] leading-5"
                 [ngClass]="{
                   'text-s400 line-through':
                     todo.status === 'completed' || todo.status === 'cancelled',
@@ -133,7 +131,7 @@
           <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
             TODOs
           </div>
-          <div class="text-s400 text-base">No tasks</div>
+          <div class="text-s400 text-[17px]">No tasks</div>
         </div>
       </div>
     </ng-scrollbar>

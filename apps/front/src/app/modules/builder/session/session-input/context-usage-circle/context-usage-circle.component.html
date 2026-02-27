@@ -1,28 +1,28 @@
 <div
   *ngIf="hasData"
-  class="flex h-8 w-8 flex-shrink-0 items-center justify-center"
+  class="flex h-10 w-10 flex-shrink-0 items-center justify-center"
   [tp]="tooltipText"
   [tpIsEnabled]="!!tooltipText"
   tpPlacement="top"
 >
   <svg
-    [attr.width]="18"
-    [attr.height]="18"
-    viewBox="0 0 16 16"
+    [attr.width]="24"
+    [attr.height]="24"
+    viewBox="0 0 22 22"
     fill="none"
     class="-rotate-90"
   >
     <circle
-      cx="8"
-      cy="8"
+      cx="11"
+      cy="11"
       [attr.r]="radius"
       stroke="#d1d5db"
       [attr.stroke-width]="strokeWidth"
       fill="none"
     />
     <circle
-      cx="8"
-      cy="8"
+      cx="11"
+      cy="11"
       [attr.r]="radius"
       stroke="currentColor"
       [attr.stroke-width]="strokeWidth"

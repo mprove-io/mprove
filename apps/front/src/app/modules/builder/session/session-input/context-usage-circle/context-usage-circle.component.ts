@@ -11,8 +11,8 @@ import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
   templateUrl: './context-usage-circle.component.html'
 })
 export class ContextUsageCircleComponent {
-  strokeWidth = 2;
-  radius = 8 - this.strokeWidth / 2;
+  strokeWidth = 2.5;
+  radius = 11 - this.strokeWidth / 2;
   circumference = 2 * Math.PI * this.radius;
   dashOffset = this.circumference;
 
