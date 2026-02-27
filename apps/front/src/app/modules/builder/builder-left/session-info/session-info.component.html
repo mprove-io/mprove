@@ -26,7 +26,11 @@
             <div class="grid grid-cols-[auto_1fr] gap-x-4">
               <div class="text-s400 text-base font-medium">Status</div>
               <div class="text-s400 text-base">{{
-                session?.status || '-'
+                session?.status === 'Archived'
+                  ? session?.archivedReason === archivedReasonEnum.Expire
+                    ? 'Archived (sandbox expired)'
+                    : 'Archived by User'
+                  : session?.status || '-'
               }}</div>
             </div>
 
@@ -72,10 +76,6 @@
         <div *ngIf="todos.length > 0">
           <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
             TODOs
-          </div>
-
-          <div class="text-s500 mb-3 text-[17px]">
-            {{ completedCount }} of {{ totalCount }} tasks completed
           </div>
 
           <div class="flex flex-col space-y-2">

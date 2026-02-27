@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import type { AssistantMessage, Todo } from '@opencode-ai/sdk/v2';
 import { combineLatest, interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
+import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -14,6 +15,8 @@ import { TimeService } from '#front/app/services/time.service';
   templateUrl: './session-info.component.html'
 })
 export class SessionInfoComponent {
+  archivedReasonEnum = ArchivedReasonEnum;
+
   sessionId: string;
   session: SessionApi;
   todos: Todo[] = [];

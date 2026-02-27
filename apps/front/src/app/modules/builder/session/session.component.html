@@ -110,7 +110,11 @@
   <!-- Archived session message -->
   <div *ngIf="isArchived" class="flex-shrink-0 px-6 pb-8 pt-[6px]">
     <div class="mx-auto flex max-w-[860px] items-center justify-center">
-      <div class="text-s400 py-4 text-lg"> Session is archived </div>
+      <div class="text-s400 py-4 text-lg">{{
+        archivedReason === archivedReasonEnum.Expire
+          ? 'Session is archived (sandbox expired)'
+          : 'Session is archived by User'
+      }}</div>
     </div>
   </div>
 

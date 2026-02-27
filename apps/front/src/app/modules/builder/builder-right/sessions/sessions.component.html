@@ -127,17 +127,12 @@
           >
 
           <span
-            class="ml-4 flex-shrink-0 text-right text-[16px]"
+            class="ml-4 w-[84px] flex-shrink-0 text-right text-[16px]"
             [ngClass]="{
               'text-s400': session.status === 'Archived',
               'text-s1': session.status !== 'Archived'
             }"
-            >{{
-              session.status === 'Archived' &&
-              session.archivedReason === 'Expire'
-                ? 'Archived (sandbox expired)'
-                : session.status
-            }}</span
+            >{{ session.status }}</span
           >
 
           <div

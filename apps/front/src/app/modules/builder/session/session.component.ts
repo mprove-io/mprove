@@ -13,6 +13,7 @@ import type {
 } from '@opencode-ai/sdk/v2';
 import { combineLatest, interval, Subscription } from 'rxjs';
 import { switchMap, take, tap } from 'rxjs/operators';
+import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -83,6 +84,7 @@ interface ChatTurn {
 export class SessionComponent implements OnInit, OnDestroy {
   @ViewChild(SessionInputComponent) sessionInput: SessionInputComponent;
 
+  archivedReasonEnum = ArchivedReasonEnum;
   model = 'default';
   agent = 'plan';
   variant = 'default';
@@ -103,6 +105,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   userSentMessage = false;
   isActivating = false;
   isArchived = false;
+  archivedReason: string | undefined;
   isWaitingForResponse = false;
   isAgentBusy = false;
   isAborting = false;
@@ -667,6 +670,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
+    this.archivedReason = this.session.archivedReason;
     this.isWaitingForResponse = this.checkIsWaitingForResponse(
       sessionData.sdkSessionStatus
     );
@@ -731,6 +735,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
+    this.archivedReason = this.session.archivedReason;
     this.isWaitingForResponse =
       this.questions.length === 0 &&
       this.permissions.length === 0 &&
