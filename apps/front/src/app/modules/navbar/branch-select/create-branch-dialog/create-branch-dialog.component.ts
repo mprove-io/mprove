@@ -68,6 +68,8 @@ export class CreateBranchDialogComponent implements OnInit {
     this.createBranchSelectElement?.close();
   }
 
+  repoTypeEnum = RepoTypeEnum;
+
   createBranchForm: FormGroup;
 
   user: UserState;
