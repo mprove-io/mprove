@@ -28,6 +28,7 @@ import {
   PROD_REPO_ID
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeCopy } from '#common/functions/make-copy';
@@ -83,11 +84,11 @@ export class CreateBranchDialogComponent implements OnInit {
     tap(x => {
       this.nav = x;
 
-      this.isTargetProd = this.nav.isRepoProd;
+      this.targetRepoType = this.nav.repoType;
 
       this.branchesList = makeCopy<BranchItem[]>(
         this.ref.data.branchesList
-      ).filter(y => y.isRepoProd === this.isTargetProd);
+      ).filter(y => y.repoType === this.targetRepoType);
 
       this.cd.detectChanges();
     })
@@ -98,7 +99,7 @@ export class CreateBranchDialogComponent implements OnInit {
   selectedBranchItem: BranchItem = this.ref.data.selectedBranchItem;
   selectedBranchExtraId: string = this.ref.data.selectedBranchExtraId;
 
-  isTargetProd = false;
+  targetRepoType: RepoTypeEnum;
 
   constructor(
     public ref: DialogRef<CreateBranchDialogData>,
@@ -124,11 +125,11 @@ export class CreateBranchDialogComponent implements OnInit {
   }
 
   prodOnClick() {
-    this.isTargetProd = true;
+    this.targetRepoType = RepoTypeEnum.Prod;
 
     this.branchesList = makeCopy<BranchItem[]>(
       this.ref.data.branchesList
-    ).filter(y => y.isRepoProd === this.isTargetProd);
+    ).filter(y => y.repoType === this.targetRepoType);
 
     this.selectedBranchItem = this.branchesList[0];
     this.selectedBranchExtraId = this.selectedBranchItem.extraId;
@@ -137,11 +138,11 @@ export class CreateBranchDialogComponent implements OnInit {
   }
 
   devOnClick() {
-    this.isTargetProd = false;
+    this.targetRepoType = RepoTypeEnum.Dev;
 
     this.branchesList = makeCopy<BranchItem[]>(
       this.ref.data.branchesList
-    ).filter(y => y.isRepoProd === this.isTargetProd);
+    ).filter(y => y.repoType === this.targetRepoType);
 
     this.selectedBranchItem = this.branchesList[0];
     this.selectedBranchExtraId = this.selectedBranchItem.extraId;
@@ -162,11 +163,22 @@ export class CreateBranchDialogComponent implements OnInit {
 
     this.ref.close();
 
+    let userId;
+    this.userQuery.userId$
+      .pipe(
+        tap(x => (userId = x)),
+        take(1)
+      )
+      .subscribe();
+
+    let repoId =
+      this.targetRepoType === RepoTypeEnum.Prod ? PROD_REPO_ID : userId;
+
     let payload: ToBackendCreateBranchRequestPayload = {
       projectId: this.ref.data.projectId,
       newBranchId: this.createBranchForm.value.branchId,
       fromBranchId: this.selectedBranchItem.branchId,
-      isRepoProd: this.isTargetProd
+      repoId: repoId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -179,16 +191,6 @@ export class CreateBranchDialogComponent implements OnInit {
       .pipe(
         tap((resp: ToBackendCreateBranchResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let userId;
-            this.userQuery.userId$
-              .pipe(
-                tap(x => (userId = x)),
-                take(1)
-              )
-              .subscribe();
-
-            let repoId = this.isTargetProd === true ? PROD_REPO_ID : userId;
-
             this.router.navigate([
               PATH_ORG,
               this.ref.data.orgId,

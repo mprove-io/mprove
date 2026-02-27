@@ -385,7 +385,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId
     };
@@ -443,7 +443,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
 
     let payload: ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       modelId: this.storeModelForm.controls['storeModel'].value
@@ -503,7 +503,7 @@ export class ReportAddFilterDialogComponent implements OnInit {
     let payload: ToBackendGetSuggestFieldsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       envId: nav.envId,
       parentId: this.report.reportId,
       parentType: MconfigParentTypeEnum.Report

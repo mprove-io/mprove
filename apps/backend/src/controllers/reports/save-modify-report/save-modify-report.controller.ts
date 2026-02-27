@@ -34,12 +34,13 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ReportsService } from '#backend/services/db/reports.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { ReportDataService } from '#backend/services/report-data.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { EMPTY_STRUCT_ID, PROD_REPO_ID, UTC } from '#common/constants/top';
+import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -70,6 +71,7 @@ export class SaveModifyReportController {
     private projectsService: ProjectsService,
     private structsService: StructsService,
     private reportsService: ReportsService,
+    private sessionsService: SessionsService,
     private reportDataService: ReportDataService,
     private branchesService: BranchesService,
     private rpcService: RpcService,
@@ -90,7 +92,7 @@ export class SaveModifyReportController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       modReportId,
@@ -104,7 +106,11 @@ export class SaveModifyReportController {
       chart
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

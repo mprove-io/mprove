@@ -10,8 +10,8 @@ export class ToBackendGetFileRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

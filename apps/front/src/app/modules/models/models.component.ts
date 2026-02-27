@@ -49,6 +49,7 @@ import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { QueryOperationTypeEnum } from '#common/enums/query-operation-type.enum';
 import { QueryPartEnum } from '#common/enums/query-part.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { encodeFilePath } from '#common/functions/encode-file-path';
@@ -171,6 +172,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
   modelTreeLevelsFlatTime = ModelTreeLevelsEnum.FlatTime;
   modelTreeLevelsNested = ModelTreeLevelsEnum.Nested;
 
+  repoTypeEnum = RepoTypeEnum;
   queryStatusEnum = QueryStatusEnum;
   connectionTypeEnum = ConnectionTypeEnum;
   chartTypeEnum = ChartTypeEnum;
@@ -662,7 +664,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
             let payload: ToBackendGetQueryRequestPayload = {
               projectId: nav.projectId,
-              isRepoProd: nav.isRepoProd,
+              repoId: nav.repoId,
               branchId: nav.branchId,
               envId: nav.envId,
               mconfigId: this.mconfig.mconfigId,
@@ -1072,7 +1074,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: [this.mconfig.mconfigId]
@@ -1120,7 +1122,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendRunQueriesDryRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: [this.mconfig.mconfigId],
@@ -1174,7 +1176,7 @@ export class ModelsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendCancelQueriesRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: [this.mconfig.mconfigId]

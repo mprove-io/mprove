@@ -103,7 +103,7 @@ export class ChartService {
 
     let payload: ToBackendCreateDraftChartRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       mconfig: mconfig,
@@ -150,7 +150,7 @@ export class ChartService {
 
     let payload: ToBackendEditDraftChartRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       chartId: chartId,
@@ -195,7 +195,7 @@ export class ChartService {
 
     let payload: ToBackendDeleteDraftChartsRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       chartIds: chartIds

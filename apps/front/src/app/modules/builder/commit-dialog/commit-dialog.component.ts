@@ -19,6 +19,7 @@ import { of } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -34,7 +35,8 @@ import { SharedModule } from '../../shared/shared.module';
 export interface CommitDialogDialogData {
   apiService: ApiService;
   projectId: string;
-  isRepoProd: boolean;
+  repoId: string;
+  repoType: RepoTypeEnum;
   branchId: string;
   builderLeft: BuilderLeftEnum;
   fileId: string;
@@ -90,7 +92,7 @@ export class CommitDialogComponent implements OnInit {
 
     let payload: ToBackendCommitRepoRequestPayload = {
       projectId: this.ref.data.projectId,
-      isRepoProd: this.ref.data.isRepoProd,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId,
       commitMessage: this.commitForm.value.message
     };

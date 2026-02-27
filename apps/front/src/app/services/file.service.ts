@@ -84,7 +84,7 @@ export class FileService {
 
     let getFilePayload: ToBackendGetFileRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fileNodeId: fileNodeId,

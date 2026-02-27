@@ -93,7 +93,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         branchId: branchId,
-        isRepoProd: false,
+        repoId: userId,
         commitMessage: commitMessage
       }
     };

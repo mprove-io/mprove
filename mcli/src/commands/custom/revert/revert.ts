@@ -1,8 +1,9 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
-import { RepoEnum } from '#common/enums/repo.enum';
+import { RepoParameterEnum } from '#common/enums/repo-parameter.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
@@ -56,8 +57,8 @@ export class RevertCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(RepoEnum),
-    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
+    validator: t.isEnum(RepoParameterEnum),
+    description: `(required, "${RepoParameterEnum.Dev}" or "${RepoParameterEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -101,9 +102,10 @@ export class RevertCommand extends CustomCommand {
       throw serverError;
     }
 
-    let isRepoProd = this.repo === 'production' ? true : false;
-
     let loginToken = await getLoginToken(this.context);
+
+    let repoId =
+      this.repo === 'production' ? PROD_REPO_ID : this.context.userId;
 
     let revertRepoResp:
       | ToBackendRevertRepoToLastCommitResponse
@@ -113,7 +115,7 @@ export class RevertCommand extends CustomCommand {
       let revertRepoToLastCommitReqPayload: ToBackendRevertRepoToLastCommitRequestPayload =
         {
           projectId: this.projectId,
-          isRepoProd: isRepoProd,
+          repoId: repoId,
           branchId: this.branch,
           envId: this.env
         };
@@ -129,7 +131,7 @@ export class RevertCommand extends CustomCommand {
       let revertRepoToRemoteReqPayload: ToBackendRevertRepoToRemoteRequestPayload =
         {
           projectId: this.projectId,
-          isRepoProd: isRepoProd,
+          repoId: repoId,
           branchId: this.branch,
           envId: this.env
         };

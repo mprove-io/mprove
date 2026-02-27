@@ -615,7 +615,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: this.dashboard.tiles.map(tile => tile.mconfigId)
@@ -664,7 +664,7 @@ export class DashboardsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendGetQueriesRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: mconfigIds,

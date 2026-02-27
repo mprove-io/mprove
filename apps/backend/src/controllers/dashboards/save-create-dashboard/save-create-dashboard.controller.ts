@@ -35,6 +35,7 @@ import { MconfigsService } from '#backend/services/db/mconfigs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
@@ -43,7 +44,6 @@ import {
   EMPTY_STRUCT_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
-  PROD_REPO_ID,
   UTC
 } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -81,6 +81,7 @@ export class SaveCreateDashboardController {
     private dashboardsService: DashboardsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private blockmlService: BlockmlService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
@@ -98,7 +99,7 @@ export class SaveCreateDashboardController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       newDashboardId,
@@ -109,7 +110,11 @@ export class SaveCreateDashboardController {
       timezone
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

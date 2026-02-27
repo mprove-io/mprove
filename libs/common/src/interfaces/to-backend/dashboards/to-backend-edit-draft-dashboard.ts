@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { DashboardX } from '#common/interfaces/backend/dashboard-x';
 import { DashboardField } from '#common/interfaces/blockml/dashboard-field';
 import { Tile } from '#common/interfaces/blockml/tile';
@@ -10,8 +10,8 @@ export class ToBackendEditDraftDashboardRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

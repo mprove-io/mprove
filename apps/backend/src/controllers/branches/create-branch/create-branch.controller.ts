@@ -31,13 +31,10 @@ import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import {
-  EMPTY_STRUCT_ID,
-  PROD_REPO_ID,
-  PROJECT_ENV_PROD
-} from '#common/constants/top';
+import { EMPTY_STRUCT_ID, PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -56,6 +53,7 @@ export class CreateBranchController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private rpcService: RpcService,
+    private sessionsService: SessionsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
     private membersService: MembersService,
@@ -70,9 +68,13 @@ export class CreateBranchController {
     let reqValid: ToBackendCreateBranchRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, newBranchId, fromBranchId, isRepoProd } = reqValid.payload;
+    let { projectId, newBranchId, fromBranchId, repoId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

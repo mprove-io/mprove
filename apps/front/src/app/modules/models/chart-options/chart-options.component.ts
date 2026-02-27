@@ -58,7 +58,8 @@ export class ChartOptionsComponent {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
+      repoType: nav.repoType,
       chart: item
     });
   }
@@ -74,7 +75,8 @@ export class ChartOptionsComponent {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd
+      repoId: nav.repoId,
+      repoType: nav.repoType
     });
   }
 }

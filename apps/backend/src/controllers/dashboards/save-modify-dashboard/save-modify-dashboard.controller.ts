@@ -36,11 +36,12 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { EMPTY_STRUCT_ID, PROD_REPO_ID, UTC } from '#common/constants/top';
+import { EMPTY_STRUCT_ID, UTC } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
@@ -77,6 +78,7 @@ export class SaveModifyDashboardController {
     private dashboardsService: DashboardsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
     private cs: ConfigService<BackendConfig>,
@@ -93,7 +95,7 @@ export class SaveModifyDashboardController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       toDashboardId,
@@ -107,7 +109,11 @@ export class SaveModifyDashboardController {
       timezone
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

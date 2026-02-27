@@ -98,7 +98,7 @@ test('1', async t => {
         projectId: projectId,
         fromBranchId: fromBranchId,
         newBranchId: newBranchId,
-        isRepoProd: false
+        repoId: userId
       }
     };
 
@@ -116,7 +116,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        isRepoProd: false,
+        repoId: userId,
         branchId: newBranchId
       }
     };

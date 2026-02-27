@@ -76,6 +76,7 @@ export async function prepareTest(item: {
 
   let createMockContext = (itemC: {
     loginToken: string;
+    userId: string;
     config: McliConfig;
   }) => {
     let out = '';
@@ -95,12 +96,14 @@ export async function prepareTest(item: {
         }
       },
       loginToken: itemC.loginToken,
+      userId: itemC.userId,
       config: itemC.config
     };
   };
 
   let mockContext = createMockContext({
     loginToken: loginUserResp?.payload?.token,
+    userId: loginUserResp?.payload?.user?.userId,
     config: config
   });
 

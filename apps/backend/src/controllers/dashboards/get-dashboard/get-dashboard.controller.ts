@@ -29,12 +29,12 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
 import {
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
-  PROD_REPO_ID,
   UTC
 } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
@@ -66,6 +66,7 @@ export class GetDashboardController {
     private envsService: EnvsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -76,10 +77,14 @@ export class GetDashboardController {
     let reqValid: ToBackendGetDashboardRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, dashboardId, timezone } =
+    let { projectId, repoId, branchId, envId, dashboardId, timezone } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -94,7 +99,7 @@ export class GetDashboardController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

@@ -124,7 +124,7 @@ export class ReportService {
 
     let payload: ToBackendCreateDraftReportRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fromReportId: fromReportId,
@@ -180,7 +180,7 @@ export class ReportService {
 
     let payload: ToBackendEditDraftReportRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       reportId: reportId,
@@ -228,7 +228,7 @@ export class ReportService {
 
     let payload: ToBackendDeleteDraftReportsRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       reportIds: reportIds

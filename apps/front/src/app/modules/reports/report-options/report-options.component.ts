@@ -61,7 +61,8 @@ export class ReportOptionsComponent {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
+      repoType: nav.repoType,
       report: item
     });
   }
@@ -77,7 +78,8 @@ export class ReportOptionsComponent {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
+      repoType: nav.repoType,
       isStartSpinnerUntilNavEnd:
         this.reportQuery.getValue().reportId === this.report.reportId
     });

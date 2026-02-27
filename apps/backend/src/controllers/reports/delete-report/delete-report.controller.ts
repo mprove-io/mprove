@@ -30,9 +30,10 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ReportsService } from '#backend/services/db/reports.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
+import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -51,6 +52,7 @@ export class DeleteReportController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
+    private sessionsService: SessionsService,
     private branchesService: BranchesService,
     private rpcService: RpcService,
     private envsService: EnvsService,
@@ -65,9 +67,13 @@ export class DeleteReportController {
     let reqValid: ToBackendDeleteReportRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, reportId } = reqValid.payload;
+    let { projectId, repoId, branchId, envId, reportId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

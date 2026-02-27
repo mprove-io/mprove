@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -7,8 +7,8 @@ export class ToBackendDeleteChartRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

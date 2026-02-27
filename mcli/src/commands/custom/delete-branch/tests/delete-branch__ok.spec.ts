@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test';
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
-import { BRANCH_MAIN } from '#common/constants/top';
+import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -109,11 +109,11 @@ test('1', async () => {
 
       context = mockContext as any;
 
-      let isRepoProd = repo === 'production' ? true : false;
+      let repoId = repo === 'production' ? PROD_REPO_ID : userId;
 
       let createBranchReqPayload: ToBackendCreateBranchRequestPayload = {
         projectId: projectId,
-        isRepoProd: isRepoProd,
+        repoId: repoId,
         newBranchId: branch,
         fromBranchId: defaultBranch
       };

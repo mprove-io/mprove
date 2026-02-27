@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { Query } from '#common/interfaces/blockml/query';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -9,8 +9,8 @@ export class ToBackendDuplicateMconfigAndQueryRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

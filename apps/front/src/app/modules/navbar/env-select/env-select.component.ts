@@ -14,9 +14,9 @@ import {
   PATH_PROJECT,
   PATH_REPO,
   PATH_REPORTS,
-  PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { EnvsItem } from '#common/interfaces/backend/envs-item';
 import {
@@ -42,6 +42,8 @@ export class EnvSelectComponent {
   onEscKeyUp() {
     this.envSelectElement?.close();
   }
+
+  repoTypeEnum = RepoTypeEnum;
 
   projectEnvProd = PROJECT_ENV_PROD;
 
@@ -125,16 +127,6 @@ export class EnvSelectComponent {
     this.showEmptySelector = true;
     this.cd.detectChanges();
 
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : userId;
-
     let urlParts = this.router.url.split('/');
 
     let uiState = this.uiQuery.getValue();
@@ -160,7 +152,7 @@ export class EnvSelectComponent {
         PATH_PROJECT,
         this.nav.projectId,
         PATH_REPO,
-        repoId,
+        this.nav.repoId,
         PATH_BRANCH,
         this.nav.branchId,
         PATH_ENV,

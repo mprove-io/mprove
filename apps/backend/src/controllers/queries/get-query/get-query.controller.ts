@@ -11,9 +11,9 @@ import { MconfigsService } from '#backend/services/db/mconfigs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_MULTIPLIER } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -46,6 +46,7 @@ export class GetQueryController {
   constructor(
     private tabService: TabService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private parentService: ParentService,
     private membersService: MembersService,
     private branchesService: BranchesService,
@@ -59,10 +60,14 @@ export class GetQueryController {
   async getQuery(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetQueryRequest = request.body;
 
-    let { queryId, mconfigId, projectId, isRepoProd, branchId, envId } =
+    let { queryId, mconfigId, projectId, repoId, branchId, envId } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

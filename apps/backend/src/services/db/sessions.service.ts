@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
@@ -8,7 +8,9 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { OcSessionApi } from '#common/interfaces/backend/oc-session-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
@@ -141,6 +143,39 @@ export class SessionsService {
       firstMessage: session.firstMessage,
       title: ocSession?.openSession?.title
     };
+  }
+
+  async checkRepoId(item: {
+    repoId: string;
+    userId: string;
+    projectId: string;
+  }): Promise<RepoTypeEnum> {
+    let { repoId, userId, projectId } = item;
+
+    if (repoId === PROD_REPO_ID) {
+      return RepoTypeEnum.Prod;
+    }
+
+    if (repoId === userId) {
+      return RepoTypeEnum.Dev;
+    }
+
+    let session = await this.db.drizzle.query.sessionsTable.findFirst({
+      where: and(
+        eq(sessionsTable.sessionId, repoId),
+        eq(sessionsTable.repoId, repoId),
+        eq(sessionsTable.userId, userId),
+        eq(sessionsTable.projectId, projectId)
+      )
+    });
+
+    if (session) {
+      return RepoTypeEnum.Session;
+    }
+
+    throw new ServerError({
+      message: ErEnum.BACKEND_FORBIDDEN_REPO_ID
+    });
   }
 
   tabToOcSessionApi(item: { ocSession: OcSessionTab }): OcSessionApi {

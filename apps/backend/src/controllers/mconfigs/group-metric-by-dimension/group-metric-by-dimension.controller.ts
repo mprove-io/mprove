@@ -31,11 +31,11 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { MalloyService } from '#backend/services/malloy.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ModelTypeEnum } from '#common/enums/model-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -68,6 +68,7 @@ export class GroupMetricByDimensionController {
     private malloyService: MalloyService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -83,7 +84,7 @@ export class GroupMetricByDimensionController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       timezone,
@@ -93,7 +94,11 @@ export class GroupMetricByDimensionController {
       cellMetricsEndDateMs
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

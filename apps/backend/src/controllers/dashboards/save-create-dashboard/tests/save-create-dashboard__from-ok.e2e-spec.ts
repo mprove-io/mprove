@@ -118,7 +118,7 @@ test('1', async t => {
       payload: {
         projectId: projectId,
         envId: PROJECT_ENV_PROD,
-        isRepoProd: false,
+        repoId: userId,
         branchId: BRANCH_MAIN,
         dashboardId: fromDashboardId,
         timezone: 'UTC'
@@ -141,7 +141,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        isRepoProd: false,
+        repoId: userId,
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
         newDashboardId: dashboardId,

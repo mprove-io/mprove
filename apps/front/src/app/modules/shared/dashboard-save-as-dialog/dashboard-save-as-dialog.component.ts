@@ -156,7 +156,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
     let payload: ToBackendGetDashboardsRequestPayload = {
       projectId: nav.projectId,
       branchId: nav.branchId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       envId: nav.envId
     };
 
@@ -243,7 +243,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       newDashboardId: this.newDashboardId,
       fromDashboardId: this.dashboard.dashboardId,
       accessRoles: roles,
@@ -310,7 +310,7 @@ export class DashboardSaveAsDialogComponent implements OnInit {
       projectId: this.nav.projectId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       toDashboardId: this.selectedDashboardId,
       fromDashboardId: this.dashboard.dashboardId,
       accessRoles: roles,

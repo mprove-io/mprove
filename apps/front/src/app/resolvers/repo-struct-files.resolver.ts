@@ -56,7 +56,7 @@ export class RepoStructFilesResolver implements Resolve<Observable<boolean>> {
 
     let payload: ToBackendGetRepoRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: branchId,
       envId: envId,
       isFetch: false

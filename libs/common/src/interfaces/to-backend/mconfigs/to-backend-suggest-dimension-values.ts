@@ -1,6 +1,5 @@
 import { Type } from 'class-transformer';
 import {
-  IsBoolean,
   IsNumber,
   IsOptional,
   IsString,
@@ -15,8 +14,8 @@ export class ToBackendSuggestDimensionValuesRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

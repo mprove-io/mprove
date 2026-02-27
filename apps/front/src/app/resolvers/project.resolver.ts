@@ -7,8 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
-import { PARAMETER_PROJECT_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import {
+  PARAMETER_PROJECT_ID,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
+} from '#common/constants/top';
 import { LOCAL_STORAGE_PROJECT_ID } from '#common/constants/top-front';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -70,7 +75,8 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
               projectId: project.projectId,
               projectName: project.name,
               projectDefaultBranch: project.defaultBranch,
-              isRepoProd: true,
+              repoId: PROD_REPO_ID,
+              repoType: RepoTypeEnum.Prod,
               branchId: project.defaultBranch,
               envId: PROJECT_ENV_PROD
             });

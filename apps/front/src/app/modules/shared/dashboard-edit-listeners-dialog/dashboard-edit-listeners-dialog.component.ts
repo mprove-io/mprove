@@ -111,7 +111,7 @@ export class DashboardEditListenersDialogComponent implements OnInit {
 
     let payload: ToBackendGetModelsRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       filterByModelIds: (this.dashboard as DashboardX2).tiles.map(

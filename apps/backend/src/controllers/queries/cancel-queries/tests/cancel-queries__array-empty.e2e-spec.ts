@@ -4,7 +4,12 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import { DEFAULT_CHART } from '#common/constants/mconfig-chart';
-import { BRANCH_MAIN, PROJECT_ENV_PROD, UTC } from '#common/constants/top';
+import {
+  BRANCH_MAIN,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD,
+  UTC
+} from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -170,7 +175,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        isRepoProd: true,
+        repoId: PROD_REPO_ID,
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
         mconfigIds: []

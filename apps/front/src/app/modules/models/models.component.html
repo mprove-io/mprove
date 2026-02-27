@@ -61,7 +61,9 @@
 
             <div
               [tp]="templateModelsListNewModel"
-              [tpIsEnabled]="isEditor === false || nav?.isRepoProd === true"
+              [tpIsEnabled]="
+                isEditor === false || nav?.repoType === repoTypeEnum.Prod
+              "
               class="ml-5 flex-shrink-0"
             >
               <button
@@ -69,12 +71,15 @@
                 data-cy="modelsNewModelButton"
                 class="text-m0 h-11 flex-shrink-0 select-none rounded px-5 py-2 text-base font-medium focus:outline-none"
                 [ngClass]="{
-                  'bg-m600': isEditor === true && nav?.isRepoProd === false,
+                  'bg-m600':
+                    isEditor === true && nav?.repoType !== repoTypeEnum.Prod,
                   'bg-s400 cursor-default':
-                    isEditor === false || nav?.isRepoProd === true
+                    isEditor === false || nav?.repoType === repoTypeEnum.Prod
                 }"
                 (click)="createModel()"
-                [disabled]="isEditor === false || nav?.isRepoProd === true"
+                [disabled]="
+                  isEditor === false || nav?.repoType === repoTypeEnum.Prod
+                "
                 >New Model</button
               >
             </div>
@@ -85,7 +90,8 @@
                 role</div
               >
 
-              <div *ngIf="isEditor === true && nav?.isRepoProd === true"
+              <div
+                *ngIf="isEditor === true && nav?.repoType === repoTypeEnum.Prod"
                 >To create a new model, switch the branch from the Production
                 repo to the Dev repo</div
               >
@@ -1673,7 +1679,7 @@
                       role</div
                     >
 
-                    <div *ngIf="isEditor === true && nav?.isRepoProd === true"
+                    <div *ngIf="isEditor === true && nav?.repoType === repoTypeEnum.Prod"
                       >To edit model file, switch the branch from the Production
                       repo to the Dev repo</div
                     >

@@ -17,6 +17,7 @@ import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { BranchItem } from '#common/interfaces/front/branch-item';
@@ -62,7 +63,8 @@ export class MergeBranchDialogComponent implements OnInit {
   mergeForm: FormGroup;
 
   branchesList: BranchItem[] = this.ref.data.branchesList.filter(
-    (x: BranchItem) => x.isRepoProd === false
+    (x: BranchItem) =>
+      x.repoType !== RepoTypeEnum.Prod && x.repoType !== RepoTypeEnum.Session
   );
 
   selectedBranchItem: BranchItem = undefined;

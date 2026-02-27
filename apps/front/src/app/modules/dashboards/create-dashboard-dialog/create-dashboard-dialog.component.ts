@@ -143,7 +143,7 @@ export class CreateDashboardDialogComponent implements OnInit {
 
     let payload: ToBackendSaveCreateDashboardRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       newDashboardId: this.newDashboardId,

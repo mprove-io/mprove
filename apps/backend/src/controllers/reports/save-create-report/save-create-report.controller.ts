@@ -34,6 +34,7 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ReportsService } from '#backend/services/db/reports.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { ReportDataService } from '#backend/services/report-data.service';
@@ -43,7 +44,6 @@ import {
   EMPTY_STRUCT_ID,
   MPROVE_CONFIG_DIR_DOT_SLASH,
   MPROVE_USERS_FOLDER,
-  PROD_REPO_ID,
   UTC
 } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -80,6 +80,7 @@ export class SaveCreateReportController {
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private reportsService: ReportsService,
+    private sessionsService: SessionsService,
     private reportDataService: ReportDataService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
@@ -97,7 +98,7 @@ export class SaveCreateReportController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       newReportId,
@@ -111,7 +112,11 @@ export class SaveCreateReportController {
       chart
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

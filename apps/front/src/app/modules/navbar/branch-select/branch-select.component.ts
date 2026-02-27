@@ -24,6 +24,7 @@ import {
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -59,6 +60,8 @@ export class BranchSelectComponent {
   onEscKeyUp() {
     this.branchSelectElement?.close();
   }
+
+  repoTypeEnum = RepoTypeEnum;
 
   defaultBranch: string;
   prodRepoID = PROD_REPO_ID;
@@ -113,8 +116,8 @@ export class BranchSelectComponent {
         isDefined(this.nav.projectId) && isDefined(this.nav.branchId)
           ? this.makeBranchItem({
               branchId: this.nav.branchId,
-              isRepoProd: this.nav.isRepoProd,
-              isRepoSession: this.nav.isRepoSession,
+              repoId: this.nav.repoId,
+              repoType: this.nav.repoType,
               alias: user.alias,
               userId: user.userId
             })
@@ -191,7 +194,9 @@ export class BranchSelectComponent {
     this.branchesListLoading = true;
 
     let payload: ToBackendGetBranchesListRequestPayload = {
-      projectId: this.selectedProjectId
+      projectId: this.selectedProjectId,
+      sessionRepoId:
+        nav.repoType === RepoTypeEnum.Session ? nav.repoId : undefined
     };
 
     this.apiService
@@ -207,26 +212,41 @@ export class BranchSelectComponent {
             this.branchesList = resp.payload.branchesList.map(y =>
               this.makeBranchItem({
                 branchId: y.branchId,
-                isRepoProd: y.isRepoProd,
+                repoId: y.repoId,
+                repoType: y.repoType,
                 alias: user.alias,
                 userId: user.userId
               })
             );
 
             let prodBranchesDefault = this.branchesList.filter(
-              y => y.isRepoProd === true && y.branchId === this.defaultBranch
+              y =>
+                y.repoType === RepoTypeEnum.Prod &&
+                y.branchId === this.defaultBranch
             );
 
             let prodBranchesNotDefault = this.branchesList.filter(
-              y => y.isRepoProd === true && y.branchId !== this.defaultBranch
+              y =>
+                y.repoType === RepoTypeEnum.Prod &&
+                y.branchId !== this.defaultBranch
             );
 
-            let localBranchesDefault = this.branchesList.filter(
-              y => y.isRepoProd === false && y.branchId === this.defaultBranch
+            let devBranchesDefault = this.branchesList.filter(
+              y =>
+                y.repoType === RepoTypeEnum.Dev &&
+                y.branchId === this.defaultBranch
             );
 
-            let localBranchesNotDefault = this.branchesList.filter(
-              y => y.isRepoProd === false && y.branchId !== this.defaultBranch
+            let devBranchesNotDefault = this.branchesList.filter(
+              y =>
+                y.repoType === RepoTypeEnum.Dev &&
+                y.branchId !== this.defaultBranch
+            );
+
+            let sessionBranchesNotDefault = this.branchesList.filter(
+              y =>
+                y.repoType === RepoTypeEnum.Session &&
+                y.branchId !== this.defaultBranch
             );
 
             this.branchesList =
@@ -234,8 +254,9 @@ export class BranchSelectComponent {
                 ? [
                     ...prodBranchesDefault,
                     ...prodBranchesNotDefault,
-                    ...localBranchesDefault,
-                    ...localBranchesNotDefault
+                    ...devBranchesDefault,
+                    ...devBranchesNotDefault,
+                    ...sessionBranchesNotDefault
                   ]
                 : [...prodBranchesDefault, ...prodBranchesNotDefault];
 
@@ -300,7 +321,8 @@ export class BranchSelectComponent {
       defaultBranch: this.defaultBranch,
       branchId: this.selectedBranchItem.branchId,
       envId: this.nav.envId,
-      isRepoProd: this.selectedBranchItem.isRepoProd,
+      repoId: this.selectedBranchItem.repoId,
+      repoType: this.selectedBranchItem.repoType,
       alias: alias,
       hideBranchSelectFn: this.hideBranchSelect.bind(this)
     });
@@ -319,24 +341,20 @@ export class BranchSelectComponent {
     let nav = this.navQuery.getValue();
 
     if (
-      (nav.isRepoProd === true && newSelectedBranchItem.isRepoProd === false) ||
-      (nav.isRepoProd === false && newSelectedBranchItem.isRepoProd === true)
+      (nav.repoType === RepoTypeEnum.Prod &&
+        newSelectedBranchItem.repoType !== RepoTypeEnum.Prod) ||
+      (nav.repoType === RepoTypeEnum.Dev &&
+        newSelectedBranchItem.repoType !== RepoTypeEnum.Dev) ||
+      (nav.repoType === RepoTypeEnum.Session &&
+        newSelectedBranchItem.repoType !== RepoTypeEnum.Session)
     ) {
       this.hideBranchSelect();
     }
 
-    let userId;
-    this.userQuery.userId$
-      .pipe(
-        tap(x => (userId = x)),
-        take(1)
-      )
-      .subscribe();
-
-    let repoId =
-      newSelectedBranchItem.isRepoProd === true ? PROD_REPO_ID : userId;
-
-    let envId = repoId === PROD_REPO_ID ? PROJECT_ENV_PROD : this.nav.envId;
+    let envId =
+      newSelectedBranchItem.repoType === RepoTypeEnum.Prod
+        ? PROJECT_ENV_PROD
+        : this.nav.envId;
 
     let urlParts = this.router.url.split('?')[0].split('/');
 
@@ -351,7 +369,7 @@ export class BranchSelectComponent {
       PATH_PROJECT,
       this.selectedProjectId,
       PATH_REPO,
-      repoId,
+      newSelectedBranchItem.repoId,
       PATH_BRANCH,
       newSelectedBranchItem.branchId,
       PATH_ENV,
@@ -415,28 +433,27 @@ export class BranchSelectComponent {
 
   makeBranchItem(item: {
     branchId: string;
-    isRepoProd: boolean;
-    isRepoSession?: boolean;
+    repoId: string;
+    repoType: RepoTypeEnum;
     alias: string;
     userId: string;
   }) {
     let extraId = makeBranchExtraId({
       branchId: item.branchId,
-      isRepoProd: item.isRepoProd,
-      isRepoSession: item.isRepoSession,
+      repoType: item.repoType,
       userId: item.userId
     });
 
     let extraName = makeBranchExtraName({
       branchId: item.branchId,
-      isRepoProd: item.isRepoProd,
-      isRepoSession: item.isRepoSession,
+      repoType: item.repoType,
       alias: item.alias
     });
 
     let branchItem: BranchItem = {
       branchId: item.branchId,
-      isRepoProd: item.isRepoProd,
+      repoId: item.repoId,
+      repoType: item.repoType,
       extraId: extraId,
       extraName: extraName
     };

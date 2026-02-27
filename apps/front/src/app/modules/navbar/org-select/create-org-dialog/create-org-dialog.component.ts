@@ -20,12 +20,14 @@ import { take, tap } from 'rxjs/operators';
 import {
   PATH_ACCOUNT,
   PATH_ORG,
+  PROD_REPO_ID,
   PROJECT_ENV_PROD
 } from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
   LOCAL_STORAGE_PROJECT_ID
 } from '#common/constants/top-front';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -112,7 +114,8 @@ export class CreateOrgDialogComponent implements OnInit {
               projectId: undefined,
               projectName: undefined,
               projectDefaultBranch: undefined,
-              isRepoProd: true,
+              repoId: PROD_REPO_ID,
+              repoType: RepoTypeEnum.Prod,
               branchId: undefined,
               envId: PROJECT_ENV_PROD,
               needValidate: false

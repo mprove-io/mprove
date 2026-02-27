@@ -23,5 +23,8 @@ export async function getLoginToken(context: CustomContext) {
     host: context.config.mproveCliHost
   });
 
+  context.loginToken = loginUserResp.payload.token;
+  context.userId = loginUserResp.payload.user.userId;
+
   return loginUserResp.payload.token;
 }

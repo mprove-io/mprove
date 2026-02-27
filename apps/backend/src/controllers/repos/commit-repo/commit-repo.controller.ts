@@ -9,10 +9,12 @@ import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import {
@@ -33,6 +35,7 @@ export class CommitRepoController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private sessionsService: SessionsService,
     private rpcService: RpcService,
     private branchesService: BranchesService,
     private cs: ConfigService<BackendConfig>
@@ -42,15 +45,19 @@ export class CommitRepoController {
   async commitRepo(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCommitRepoRequest = request.body;
 
-    let { projectId, branchId, isRepoProd, commitMessage } = reqValid.payload;
+    let { projectId, branchId, repoId, commitMessage } = reqValid.payload;
 
-    if (isRepoProd === true) {
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
+
+    if (repoType === RepoTypeEnum.Prod) {
       throw new ServerError({
         message: ErEnum.BACKEND_MANUAL_COMMIT_TO_PRODUCTION_REPO_IS_FORBIDDEN
       });
     }
-
-    let repoId = user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

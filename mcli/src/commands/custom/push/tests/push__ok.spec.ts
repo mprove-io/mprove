@@ -5,7 +5,7 @@ import { BRANCH_MAIN } from '#common/constants/top';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
-import { RepoEnum } from '#common/enums/repo.enum';
+import { RepoParameterEnum } from '#common/enums/repo-parameter.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
@@ -33,7 +33,7 @@ test('1', async () => {
   let context: CustomContext;
 
   await retry(async (bail: any) => {
-    let repo = RepoEnum.Dev;
+    let repo = RepoParameterEnum.Dev;
     let branch = BRANCH_MAIN;
 
     let projectId = makeId();
@@ -132,7 +132,7 @@ test('1', async () => {
 
       let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
         projectId: projectId,
-        isRepoProd: false,
+        repoId: userId,
         branchId: branch,
         commitMessage: 'm1'
       };

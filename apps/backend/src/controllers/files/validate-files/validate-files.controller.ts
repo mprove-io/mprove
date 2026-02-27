@@ -29,10 +29,10 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -56,6 +56,7 @@ export class ValidateFilesController {
     private membersService: MembersService,
     private modelsService: ModelsService,
     private rpcService: RpcService,
+    private sessionsService: SessionsService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
     private structsService: StructsService,
@@ -70,9 +71,13 @@ export class ValidateFilesController {
     let reqValid: ToBackendValidateFilesRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, envId, branchId } = reqValid.payload;
+    let { projectId, repoId, envId, branchId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

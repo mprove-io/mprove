@@ -9,9 +9,12 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendGetBranchesListRequest,
   ToBackendGetBranchesListResponsePayload
@@ -24,6 +27,7 @@ export class GetBranchesListController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private membersService: MembersService,
+    private sessionsService: SessionsService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -31,7 +35,7 @@ export class GetBranchesListController {
   async getBranchesList(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetBranchesListRequest = request.body;
 
-    let { projectId } = reqValid.payload;
+    let { projectId, sessionRepoId } = reqValid.payload;
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -42,10 +46,21 @@ export class GetBranchesListController {
       projectId: projectId
     });
 
+    let repoIds = [PROD_REPO_ID, user.userId];
+
+    if (isDefined(sessionRepoId)) {
+      await this.sessionsService.checkRepoId({
+        repoId: sessionRepoId,
+        userId: user.userId,
+        projectId: projectId
+      });
+      repoIds.push(sessionRepoId);
+    }
+
     let branches = await this.db.drizzle.query.branchesTable.findMany({
       where: and(
         eq(branchesTable.projectId, projectId),
-        inArray(branchesTable.repoId, [PROD_REPO_ID, user.userId])
+        inArray(branchesTable.repoId, repoIds)
       ),
       orderBy: asc(branchesTable.branchId)
     });
@@ -57,8 +72,14 @@ export class GetBranchesListController {
     let payload: ToBackendGetBranchesListResponsePayload = {
       userMember: apiMember,
       branchesList: branches.map(x => ({
-        branchId: x.branchId,
-        isRepoProd: x.repoId === PROD_REPO_ID
+        repoId: x.repoId,
+        repoType:
+          x.repoId === PROD_REPO_ID
+            ? RepoTypeEnum.Prod
+            : isDefined(sessionRepoId) && x.repoId === sessionRepoId
+              ? RepoTypeEnum.Session
+              : RepoTypeEnum.Dev,
+        branchId: x.branchId
       }))
     };
 

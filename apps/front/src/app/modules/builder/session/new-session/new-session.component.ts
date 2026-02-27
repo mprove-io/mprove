@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -72,7 +73,7 @@ export class NewSessionComponent implements OnInit {
         tap((resp: ToBackendGetBranchesListResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.branches = resp.payload.branchesList
-              .filter(b => b.isRepoProd === true)
+              .filter(b => b.repoType === RepoTypeEnum.Prod)
               .map(b => b.branchId);
           }
           this.branchesLoading = false;

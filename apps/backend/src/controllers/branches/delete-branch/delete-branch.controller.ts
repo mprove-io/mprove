@@ -22,11 +22,12 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ToBackendDeleteBranchRequest } from '#common/interfaces/to-backend/branches/to-backend-delete-branch';
@@ -44,6 +45,7 @@ export class DeleteBranchController {
     private tabService: TabService,
     private projectsService: ProjectsService,
     private rpcService: RpcService,
+    private sessionsService: SessionsService,
     private membersService: MembersService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -54,9 +56,19 @@ export class DeleteBranchController {
   async deleteBranch(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteBranchRequest = request.body;
 
-    let { projectId, isRepoProd, branchId } = reqValid.payload;
+    let { projectId, repoId, branchId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
+
+    if (repoType === RepoTypeEnum.Session) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_SESSION_BRANCH_CANNOT_BE_DELETED
+      });
+    }
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

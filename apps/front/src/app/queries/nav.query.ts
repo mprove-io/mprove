@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createStore, select, withProps } from '@ngneat/elf';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { BaseQuery } from './base.query';
 
 export class NavState {
@@ -12,8 +13,8 @@ export class NavState {
   projectId: string;
   projectName: string;
   projectDefaultBranch: string;
-  isRepoProd: boolean;
-  isRepoSession: boolean;
+  repoId: string;
+  repoType: RepoTypeEnum;
   branchId: string;
   envId: string;
   needValidate: boolean;
@@ -30,8 +31,8 @@ let navState: NavState = {
   projectId: undefined,
   projectName: undefined,
   projectDefaultBranch: undefined,
-  isRepoProd: undefined,
-  isRepoSession: false,
+  repoId: undefined,
+  repoType: undefined,
   branchId: undefined,
   envId: PROJECT_ENV_PROD,
   needValidate: false,
@@ -61,7 +62,7 @@ export class NavQuery extends BaseQuery<NavState> {
 
   projectId$ = this.store.pipe(select(state => state.projectId));
   orgId$ = this.store.pipe(select(state => state.orgId));
-  isRepoProd$ = this.store.pipe(select(state => state.isRepoProd));
+  repoType$ = this.store.pipe(select(state => state.repoType));
   branchId$ = this.store.pipe(select(state => state.branchId));
   mproveVersion$ = this.store.pipe(select(state => state.mproveVersion));
 
@@ -78,8 +79,8 @@ export class NavQuery extends BaseQuery<NavState> {
         projectId: undefined,
         projectName: undefined,
         projectDefaultBranch: undefined,
-        isRepoProd: true,
-        isRepoSession: false,
+        repoId: undefined,
+        repoType: undefined,
         branchId: undefined
       })
     );
@@ -91,8 +92,8 @@ export class NavQuery extends BaseQuery<NavState> {
         projectId: undefined,
         projectName: undefined,
         projectDefaultBranch: undefined,
-        isRepoProd: true,
-        isRepoSession: false,
+        repoId: undefined,
+        repoType: undefined,
         branchId: undefined
       })
     );

@@ -23,8 +23,7 @@ import {
   PATH_REPORTS,
   PATH_REPORTS_LIST,
   PATH_SELECT_FILE,
-  PATH_SESSION,
-  PROD_REPO_ID
+  PATH_SESSION
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -85,8 +84,6 @@ export class NavigateService {
     right?: string;
     selectFile?: boolean;
   }) {
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let uiState = this.uiQuery.getValue();
 
     let left = item?.left || uiState.builderLeft;
@@ -107,7 +104,7 @@ export class NavigateService {
         PATH_PROJECT,
         this.nav.projectId,
         PATH_REPO,
-        repoId,
+        this.nav.repoId,
         PATH_BRANCH,
         isDefined(item?.branchId) ? item.branchId : this.nav.branchId,
         PATH_ENV,
@@ -131,15 +128,13 @@ export class NavigateService {
     let left = builderLeft || uiState.builderLeft;
     let right = uiState.builderRight;
 
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let ar: any[] = [
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
       PATH_REPO,
-      repoId,
+      this.nav.repoId,
       PATH_BRANCH,
       this.nav.branchId,
       PATH_ENV,
@@ -159,15 +154,13 @@ export class NavigateService {
   }
 
   async navigateToModels() {
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     return this.router.navigate([
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
       PATH_REPO,
-      repoId,
+      this.nav.repoId,
       PATH_BRANCH,
       this.nav.branchId,
       PATH_ENV,
@@ -179,8 +172,6 @@ export class NavigateService {
   async navigateToChartsList(item: { modelId: string }) {
     let { modelId } = item;
 
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let navTo = isDefined(modelId)
       ? [
           PATH_ORG,
@@ -188,7 +179,7 @@ export class NavigateService {
           PATH_PROJECT,
           this.nav.projectId,
           PATH_REPO,
-          repoId,
+          this.nav.repoId,
           PATH_BRANCH,
           this.nav.branchId,
           PATH_ENV,
@@ -204,7 +195,7 @@ export class NavigateService {
           PATH_PROJECT,
           this.nav.projectId,
           PATH_REPO,
-          repoId,
+          this.nav.repoId,
           PATH_BRANCH,
           this.nav.branchId,
           PATH_ENV,
@@ -219,8 +210,6 @@ export class NavigateService {
   async navigateToModelsList(item: { modelId: string }) {
     let { modelId } = item;
 
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let navTo = isDefined(modelId)
       ? [
           PATH_ORG,
@@ -228,7 +217,7 @@ export class NavigateService {
           PATH_PROJECT,
           this.nav.projectId,
           PATH_REPO,
-          repoId,
+          this.nav.repoId,
           PATH_BRANCH,
           this.nav.branchId,
           PATH_ENV,
@@ -244,7 +233,7 @@ export class NavigateService {
           PATH_PROJECT,
           this.nav.projectId,
           PATH_REPO,
-          repoId,
+          this.nav.repoId,
           PATH_BRANCH,
           this.nav.branchId,
           PATH_ENV,
@@ -259,8 +248,6 @@ export class NavigateService {
   async navigateToChart(item: { modelId: string; chartId: string }) {
     let { modelId, chartId } = item;
 
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let uiState = this.uiQuery.getValue();
 
     return this.router.navigate(
@@ -270,7 +257,7 @@ export class NavigateService {
         PATH_PROJECT,
         this.nav.projectId,
         PATH_REPO,
-        repoId,
+        this.nav.repoId,
         PATH_BRANCH,
         this.nav.branchId,
         PATH_ENV,
@@ -286,15 +273,13 @@ export class NavigateService {
   }
 
   async navigateToDashboards(item?: { extra?: any }) {
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let navTo = [
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
       PATH_REPO,
-      repoId,
+      this.nav.repoId,
       PATH_BRANCH,
       this.nav.branchId,
       PATH_ENV,
@@ -306,15 +291,13 @@ export class NavigateService {
   }
 
   async navigateToDashboardsList() {
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let navTo = [
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
       PATH_REPO,
-      repoId,
+      this.nav.repoId,
       PATH_BRANCH,
       this.nav.branchId,
       PATH_ENV,
@@ -329,8 +312,6 @@ export class NavigateService {
   async navigateToDashboard(item: { dashboardId: string }) {
     let { dashboardId } = item;
 
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let uiState = this.uiQuery.getValue();
 
     return this.router.navigate(
@@ -340,7 +321,7 @@ export class NavigateService {
         PATH_PROJECT,
         this.nav.projectId,
         PATH_REPO,
-        repoId,
+        this.nav.repoId,
         PATH_BRANCH,
         this.nav.branchId,
         PATH_ENV,
@@ -354,15 +335,13 @@ export class NavigateService {
   }
 
   async navigateToReports() {
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let navTo = [
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
       PATH_REPO,
-      repoId,
+      this.nav.repoId,
       PATH_BRANCH,
       this.nav.branchId,
       PATH_ENV,
@@ -374,15 +353,13 @@ export class NavigateService {
   }
 
   async navigateToReportsList() {
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let navTo = [
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
       PATH_REPO,
-      repoId,
+      this.nav.repoId,
       PATH_BRANCH,
       this.nav.branchId,
       PATH_ENV,
@@ -408,9 +385,7 @@ export class NavigateService {
     let left = item.left || uiState.builderLeft;
     let right = item.right || uiState.builderRight;
 
-    let repoId =
-      item.repoId ||
-      (this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId);
+    let repoId = item.repoId || this.nav.repoId;
 
     let branchId = item.branchId || this.nav.branchId;
 
@@ -443,15 +418,13 @@ export class NavigateService {
       uiState.gridApi.deselectAll();
     }
 
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
-
     let navTo = [
       PATH_ORG,
       this.nav.orgId,
       PATH_PROJECT,
       this.nav.projectId,
       PATH_REPO,
-      repoId,
+      this.nav.repoId,
       PATH_BRANCH,
       this.nav.branchId,
       PATH_ENV,

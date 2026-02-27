@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { IsTimezone } from '#common/functions/is-timezone';
 import { ChartX } from '#common/interfaces/backend/chart-x';
 import { Member } from '#common/interfaces/backend/member';
@@ -10,8 +10,8 @@ export class ToBackendGetChartRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

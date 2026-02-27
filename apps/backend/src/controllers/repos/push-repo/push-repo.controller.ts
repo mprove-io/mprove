@@ -31,6 +31,7 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
@@ -59,6 +60,7 @@ export class PushRepoController {
     private membersService: MembersService,
     private modelsService: ModelsService,
     private rpcService: RpcService,
+    private sessionsService: SessionsService,
     private structsService: StructsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -74,9 +76,13 @@ export class PushRepoController {
     let reqValid: ToBackendPushRepoRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId } = reqValid.payload;
+    let { projectId, repoId, branchId, envId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

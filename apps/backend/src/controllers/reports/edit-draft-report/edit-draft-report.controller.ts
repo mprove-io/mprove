@@ -13,11 +13,11 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ReportsService } from '#backend/services/db/reports.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { ReportDataService } from '#backend/services/report-data.service';
 import { ReportRowService } from '#backend/services/report-row.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -36,6 +36,7 @@ export class EditDraftReportController {
     private membersService: MembersService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
+    private sessionsService: SessionsService,
     private reportDataService: ReportDataService,
     private reportRowService: ReportRowService,
     private branchesService: BranchesService,
@@ -52,7 +53,7 @@ export class EditDraftReportController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       reportId,
@@ -67,6 +68,12 @@ export class EditDraftReportController {
       chart
     } = reqValid.payload;
 
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
+
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
     });
@@ -78,7 +85,7 @@ export class EditDraftReportController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

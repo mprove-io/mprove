@@ -123,7 +123,7 @@ export class StructDashboardResolver implements Resolve<Observable<boolean>> {
 
     let payload: ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       dashboardId: parametersDashboardId,

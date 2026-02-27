@@ -193,7 +193,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     let payload: ToBackendSaveCreateReportRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       newReportId: this.newReportId,
@@ -264,7 +264,7 @@ export class ReportSaveAsDialogComponent implements OnInit {
 
     let payload: ToBackendSaveModifyReportRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       modReportId: this.selectedReportId,

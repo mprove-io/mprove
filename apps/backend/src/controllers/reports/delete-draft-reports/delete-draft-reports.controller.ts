@@ -24,8 +24,8 @@ import { BridgesService } from '#backend/services/db/bridges.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendDeleteDraftReportsRequest } from '#common/interfaces/to-backend/reports/to-backend-delete-draft-reports';
@@ -38,6 +38,7 @@ export class DeleteDraftReportsController {
     private tabService: TabService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private sessionsService: SessionsService,
     private branchesService: BranchesService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
@@ -51,10 +52,13 @@ export class DeleteDraftReportsController {
     let reqValid: ToBackendDeleteDraftReportsRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, reportIds } =
-      reqValid.payload;
+    let { projectId, repoId, branchId, envId, reportIds } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

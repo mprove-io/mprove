@@ -24,10 +24,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ReportsService } from '#backend/services/db/reports.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { ReportDataService } from '#backend/services/report-data.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import {
   DEFAULT_SRV_UI,
   THROTTLE_MULTIPLIER
@@ -64,6 +64,7 @@ export class GetReportController {
     private modelsService: ModelsService,
     private projectsService: ProjectsService,
     private reportsService: ReportsService,
+    private sessionsService: SessionsService,
     private reportDataService: ReportDataService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -81,7 +82,7 @@ export class GetReportController {
     let { traceId } = reqValid.info;
     let {
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       reportId,
@@ -89,6 +90,12 @@ export class GetReportController {
       timeSpec,
       timezone
     } = reqValid.payload;
+
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -101,7 +108,7 @@ export class GetReportController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

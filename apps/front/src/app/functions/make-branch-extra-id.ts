@@ -1,16 +1,16 @@
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isUndefined } from '#common/functions/is-undefined';
 
 export function makeBranchExtraId(item: {
-  isRepoProd: boolean;
+  repoType: RepoTypeEnum;
   branchId: string;
   userId: string;
-  isRepoSession?: boolean;
 }) {
-  return isUndefined(item.isRepoProd) || isUndefined(item.branchId)
+  return isUndefined(item.repoType) || isUndefined(item.branchId)
     ? undefined
-    : item.isRepoSession === true
+    : item.repoType === RepoTypeEnum.Session
       ? `session-${item.branchId}`
-      : item.isRepoProd === true
+      : item.repoType === RepoTypeEnum.Prod
         ? `production-${item.branchId}`
         : `${item.userId}-${item.branchId}`;
 }

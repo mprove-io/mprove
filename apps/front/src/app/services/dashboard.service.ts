@@ -125,7 +125,7 @@ export class DashboardService {
 
     let payload: ToBackendCreateDraftDashboardRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       oldDashboardId: oldDashboardId,
@@ -216,7 +216,7 @@ export class DashboardService {
 
     let payload: ToBackendEditDraftDashboardRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       oldDashboardId: oldDashboardId,
@@ -256,7 +256,7 @@ export class DashboardService {
 
     let payload: ToBackendDeleteDraftDashboardsRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       dashboardIds: dashboardIds

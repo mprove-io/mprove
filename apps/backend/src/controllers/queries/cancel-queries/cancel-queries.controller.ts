@@ -38,10 +38,11 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -68,6 +69,7 @@ export class CancelQueriesController {
     private projectsService: ProjectsService,
     private membersService: MembersService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -78,10 +80,13 @@ export class CancelQueriesController {
   async cancelQueries(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendCancelQueriesRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, mconfigIds } =
-      reqValid.payload;
+    let { projectId, repoId, branchId, envId, mconfigIds } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

@@ -47,6 +47,7 @@ import {
 } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { FileExtensionEnum } from '#common/enums/file-extension.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
@@ -98,6 +99,8 @@ export const malloyCommentToggle = Annotation.define<'toggle'>();
   templateUrl: './file-editor.component.html'
 })
 export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
+  repoTypeEnum = RepoTypeEnum;
+
   isEditorOptionsInitComplete = false;
 
   builderLeftTree = BuilderLeftEnum.Tree;
@@ -786,19 +789,19 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? nav.isRepoProd === true
+        ? nav.repoType === RepoTypeEnum.Prod
           ? LIGHT_PLUS_THEME_EXTRA_SINGLE_READ
           : LIGHT_PLUS_THEME_EXTRA_SINGLE
-        : nav.isRepoProd === true
+        : nav.repoType === RepoTypeEnum.Prod
           ? VS_LIGHT_THEME_EXTRA_SINGLE_READ
           : VS_LIGHT_THEME_EXTRA_SINGLE;
 
     let themeDIff =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? nav.isRepoProd === true
+        ? nav.repoType === RepoTypeEnum.Prod
           ? LIGHT_PLUS_THEME_EXTRA_DIFF_READ
           : LIGHT_PLUS_THEME_EXTRA_DIFF
-        : nav.isRepoProd === true
+        : nav.repoType === RepoTypeEnum.Prod
           ? VS_LIGHT_THEME_EXTRA_DIFF_READ
           : VS_LIGHT_THEME_EXTRA_DIFF;
 
@@ -1219,7 +1222,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       let payload: ToBackendGetModelsRequestPayload = {
         projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
+        repoId: nav.repoId,
         branchId: nav.branchId,
         envId: nav.envId
       };
@@ -1269,7 +1272,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
       let payload: ToBackendGetChartRequestPayload = {
         projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
+        repoId: nav.repoId,
         branchId: nav.branchId,
         envId: nav.envId,
         chartId: id,

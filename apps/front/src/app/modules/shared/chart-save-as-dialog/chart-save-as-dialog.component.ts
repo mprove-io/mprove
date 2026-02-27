@@ -189,7 +189,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd
+      repoId: nav.repoId
     };
 
     let apiService: ApiService = this.ref.data.apiService;
@@ -322,7 +322,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let payload: ToBackendGetDashboardRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       dashboardId: this.selectedDashboardId,
@@ -378,7 +378,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let payload: ToBackendSaveCreateChartRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       fromChartId: this.chart.chartId,
@@ -454,7 +454,7 @@ export class ChartSaveAsDialogComponent implements OnInit {
 
     let payloadModifyDashboard: ToBackendSaveModifyDashboardRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       toDashboardId: this.selectedDashboardId,

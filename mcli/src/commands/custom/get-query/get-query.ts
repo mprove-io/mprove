@@ -1,10 +1,11 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { RepoEnum } from '#common/enums/repo.enum';
+import { RepoParameterEnum } from '#common/enums/repo-parameter.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -125,8 +126,8 @@ export class GetQueryCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(RepoEnum),
-    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
+    validator: t.isEnum(RepoParameterEnum),
+    description: `(required, "${RepoParameterEnum.Dev}" or "${RepoParameterEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -249,9 +250,10 @@ export class GetQueryCommand extends CustomCommand {
       throw serverError;
     }
 
-    let isRepoProd = this.repo === 'production' ? true : false;
-
     let loginToken = await getLoginToken(this.context);
+
+    let repoId =
+      this.repo === 'production' ? PROD_REPO_ID : this.context.userId;
 
     let getProjectReqPayload: ToBackendGetProjectRequestPayload = {
       projectId: this.projectId
@@ -266,7 +268,7 @@ export class GetQueryCommand extends CustomCommand {
 
     let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
       projectId: this.projectId,
-      isRepoProd: isRepoProd,
+      repoId: repoId,
       branchId: this.branch,
       envId: this.env,
       isFetch: true
@@ -284,7 +286,7 @@ export class GetQueryCommand extends CustomCommand {
     if (isDefined(this.chartId)) {
       let getChartReqPayload: ToBackendGetChartRequestPayload = {
         projectId: this.projectId,
-        isRepoProd: isRepoProd,
+        repoId: repoId,
         branchId: this.branch,
         envId: this.env,
         chartId: this.chartId,
@@ -354,7 +356,7 @@ export class GetQueryCommand extends CustomCommand {
     if (isDefined(this.dashboardId)) {
       let getDashboardReqPayload: ToBackendGetDashboardRequestPayload = {
         projectId: this.projectId,
-        isRepoProd: isRepoProd,
+        repoId: repoId,
         branchId: this.branch,
         envId: this.env,
         dashboardId: this.dashboardId,
@@ -440,7 +442,7 @@ export class GetQueryCommand extends CustomCommand {
     if (isDefined(this.reportId)) {
       let getRepReqPayload: ToBackendGetReportRequestPayload = {
         projectId: this.projectId,
-        isRepoProd: isRepoProd,
+        repoId: repoId,
         branchId: this.branch,
         envId: this.env,
         reportId: this.reportId,

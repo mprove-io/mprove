@@ -267,7 +267,7 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
 
       let payload: ToBackendGetModelsRequestPayload = {
         projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
+        repoId: nav.repoId,
         branchId: nav.branchId,
         envId: nav.envId
       };
@@ -317,7 +317,7 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
 
       let payload: ToBackendGetChartRequestPayload = {
         projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
+        repoId: nav.repoId,
         branchId: nav.branchId,
         envId: nav.envId,
         chartId: id,
@@ -401,7 +401,7 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
       } else {
         let getFilePayload: ToBackendGetFileRequestPayload = {
           projectId: nav.projectId,
-          isRepoProd: nav.isRepoProd,
+          repoId: nav.repoId,
           branchId: nav.branchId,
           envId: nav.envId,
           fileNodeId: this.secondFileNodeId,

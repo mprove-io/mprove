@@ -5,7 +5,9 @@
     >Delete Branch</div
   >
 
-  <div class="text-s1 mt-6 text-lg" *ngIf="ref.data.isRepoProd === false"
+  <div
+    class="text-s1 mt-6 text-lg"
+    *ngIf="ref.data.repoType !== repoTypeEnum.Prod"
     >Are you sure you want to delete branch
     <span class="font-semibold">
       {{ ref.data.branchId }}
@@ -15,7 +17,9 @@
     repository ?</div
   >
 
-  <div class="text-s1 mt-6 text-lg" *ngIf="ref.data.isRepoProd === true"
+  <div
+    class="text-s1 mt-6 text-lg"
+    *ngIf="ref.data.repoType === repoTypeEnum.Prod"
     >Are you sure you want to delete branch
     <span class="font-semibold">
       {{ ref.data.branchId }}

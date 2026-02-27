@@ -93,11 +93,13 @@
       data-cy="branchSelectMergeBranchButton"
       class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
-        'text-s400 cursor-default': selectedBranchItem.isRepoProd === true,
-        'text-m600 hover:bg-m50': selectedBranchItem.isRepoProd === false
+        'text-s400 cursor-default':
+          selectedBranchItem.repoType !== repoTypeEnum.Dev,
+        'text-m600 hover:bg-m50':
+          selectedBranchItem.repoType === repoTypeEnum.Dev
       }"
       (click)="mergeBranch(branchSelect, $event)"
-      [disabled]="selectedBranchItem.isRepoProd === true"
+      [disabled]="selectedBranchItem.repoType !== repoTypeEnum.Dev"
       >Merge Branch</button
     >
 
@@ -112,11 +114,17 @@
       class="w-full rounded py-3 text-base focus:outline-none"
       [ngClass]="{
         'text-s400 cursor-default':
-          selectedBranchItem.branchId === defaultBranch,
-        'text-m600 hover:bg-m50': selectedBranchItem.branchId !== defaultBranch
+          selectedBranchItem.branchId === defaultBranch ||
+          selectedBranchItem.repoType === repoTypeEnum.Session,
+        'text-m600 hover:bg-m50':
+          selectedBranchItem.branchId !== defaultBranch &&
+          selectedBranchItem.repoType !== repoTypeEnum.Session
       }"
       (click)="deleteBranch(branchSelect, $event)"
-      [disabled]="selectedBranchItem.branchId === defaultBranch"
+      [disabled]="
+        selectedBranchItem.branchId === defaultBranch ||
+        selectedBranchItem.repoType === repoTypeEnum.Session
+      "
       >Delete Branch</button
     >
 

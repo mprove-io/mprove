@@ -16,8 +16,7 @@ import {
   PATH_NEW_SESSION,
   PATH_ORG,
   PATH_PROJECT,
-  PATH_REPO,
-  PROD_REPO_ID
+  PATH_REPO
 } from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
@@ -141,10 +140,8 @@ export class ApiService {
     let { res, req, pathInfoName } = item;
 
     let nav = this.navQuery.getValue();
-    let userId = this.userQuery.getValue().userId;
-    let repoId = nav.isRepoProd === true ? PROD_REPO_ID : userId;
 
-    let orgProjectPath = `/${PATH_ORG}/${nav.orgId}/${PATH_PROJECT}/${nav.projectId}/${PATH_REPO}/${repoId}`;
+    let orgProjectPath = `/${PATH_ORG}/${nav.orgId}/${PATH_PROJECT}/${nav.projectId}/${PATH_REPO}/${nav.repoId}`;
 
     let errorData: ErrorData = {
       reqUrl: req.url,
@@ -193,18 +190,13 @@ export class ApiService {
           setTimeout(() => {
             let nav = this.navQuery.getValue();
 
-            let repoId =
-              nav.isRepoProd === true
-                ? PROD_REPO_ID
-                : this.userQuery.getValue().userId;
-
             let arStart = [
               PATH_ORG,
               nav.orgId,
               PATH_PROJECT,
               nav.projectId,
               PATH_REPO,
-              repoId
+              nav.repoId
             ];
 
             let arStartStr = arStart.join('/');
@@ -480,7 +472,7 @@ export class ApiService {
 
     let payload: ToBackendGetReportsRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId
     };

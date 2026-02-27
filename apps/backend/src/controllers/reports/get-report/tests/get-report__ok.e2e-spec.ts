@@ -110,7 +110,7 @@ test('1', async t => {
         projectId: projectId,
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
-        isRepoProd: false,
+        repoId: userId,
         reportId: 'r1',
         timeRangeFractionBrick: 'f`last 5 months`',
         timeSpec: TimeSpecEnum.Months,

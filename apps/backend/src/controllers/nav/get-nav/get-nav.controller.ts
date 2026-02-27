@@ -22,6 +22,7 @@ import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -203,8 +204,8 @@ export class GetNavController {
       projectId: resultProjectId,
       projectName: resultProject?.name,
       projectDefaultBranch: resultProject?.defaultBranch,
-      isRepoProd: true,
-      isRepoSession: false,
+      repoId: PROD_REPO_ID,
+      repoType: RepoTypeEnum.Prod,
       branchId: resultProject?.defaultBranch,
       envId: PROJECT_ENV_PROD,
       needValidate: isDefined(bridge) ? bridge.needValidate : false,

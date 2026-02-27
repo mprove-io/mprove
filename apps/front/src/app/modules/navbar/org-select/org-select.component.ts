@@ -109,7 +109,8 @@ export class OrgSelectComponent {
       projectId: undefined,
       projectName: undefined,
       projectDefaultBranch: undefined,
-      isRepoProd: undefined,
+      repoId: undefined,
+      repoType: undefined,
       branchId: undefined,
       envId: PROJECT_ENV_PROD,
       needValidate: false

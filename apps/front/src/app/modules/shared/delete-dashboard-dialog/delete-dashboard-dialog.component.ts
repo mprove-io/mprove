@@ -10,6 +10,7 @@ import { DialogRef } from '@ngneat/dialog';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
@@ -26,9 +27,10 @@ export interface DeleteDashboardDialogData {
   apiService: ApiService;
   dashboardPart: DashboardPart;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
-  isRepoProd: boolean;
+  repoType: RepoTypeEnum;
   isStartSpinnerUntilNavEnd: boolean;
 }
 
@@ -67,7 +69,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let { projectId, branchId, isRepoProd } = this.ref.data;
+    let { projectId, branchId, repoId } = this.ref.data;
 
     let dashboardPart: DashboardPart = this.ref.data.dashboardPart;
     let apiService: ApiService = this.ref.data.apiService;
@@ -76,7 +78,7 @@ export class DeleteDashboardDialogComponent implements OnInit {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
-      isRepoProd: isRepoProd,
+      repoId: repoId,
       dashboardId: dashboardPart.dashboardId
     };
 

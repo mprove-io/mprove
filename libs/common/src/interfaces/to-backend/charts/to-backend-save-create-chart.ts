@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { ChartX } from '#common/interfaces/backend/chart-x';
 import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -9,8 +9,8 @@ export class ToBackendSaveCreateChartRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

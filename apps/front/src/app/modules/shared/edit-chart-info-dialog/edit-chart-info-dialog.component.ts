@@ -18,6 +18,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { MPROVE_USERS_FOLDER } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -39,7 +40,8 @@ import { SharedModule } from '../shared.module';
 export interface EditChartInfoDialogData {
   apiService: ApiService;
   projectId: string;
-  isRepoProd: boolean;
+  repoId: string;
+  repoType: RepoTypeEnum;
   branchId: string;
   envId: string;
   chart: Chart;
@@ -117,7 +119,7 @@ export class EditChartInfoDialogComponent implements OnInit {
 
       let payload: ToBackendSaveModifyChartRequestPayload = {
         projectId: this.ref.data.projectId,
-        isRepoProd: this.ref.data.isRepoProd,
+        repoId: this.ref.data.repoId,
         branchId: this.ref.data.branchId,
         envId: this.ref.data.envId,
         fromChartId: this.ref.data.chart.chartId,

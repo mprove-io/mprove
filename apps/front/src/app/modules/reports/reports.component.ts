@@ -697,7 +697,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendGetReportRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       reportId: this.report.reportId,
@@ -741,7 +741,7 @@ export class ReportsComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: this.report.rows

@@ -31,10 +31,10 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -59,6 +59,7 @@ export class DuplicateMconfigAndQueryController {
     private structsService: StructsService,
     private mconfigsService: MconfigsService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService,
     private cs: ConfigService<BackendConfig>,
@@ -74,10 +75,13 @@ export class DuplicateMconfigAndQueryController {
     let reqValid: ToBackendDuplicateMconfigAndQueryRequest = request.body;
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, oldMconfigId } =
-      reqValid.payload;
+    let { projectId, repoId, branchId, envId, oldMconfigId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

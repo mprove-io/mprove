@@ -1,9 +1,10 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { RepoEnum } from '#common/enums/repo.enum';
+import { RepoParameterEnum } from '#common/enums/repo-parameter.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -89,8 +90,8 @@ export class RunCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(RepoEnum),
-    description: `(required, "${RepoEnum.Dev}" or "${RepoEnum.Production}")`
+    validator: t.isEnum(RepoParameterEnum),
+    description: `(required, "${RepoParameterEnum.Dev}" or "${RepoParameterEnum.Production}")`
   });
 
   branch = Option.String('--branch', {
@@ -210,9 +211,10 @@ export class RunCommand extends CustomCommand {
       throw serverError;
     }
 
-    let isRepoProd = this.repo === 'production' ? true : false;
-
     let loginToken = await getLoginToken(this.context);
+
+    let repoId =
+      this.repo === 'production' ? PROD_REPO_ID : this.context.userId;
 
     let getProjectReqPayload: ToBackendGetProjectRequestPayload = {
       projectId: this.projectId
@@ -227,7 +229,7 @@ export class RunCommand extends CustomCommand {
 
     let getRepoReqPayload: ToBackendGetRepoRequestPayload = {
       projectId: this.projectId,
-      isRepoProd: isRepoProd,
+      repoId: repoId,
       branchId: this.branch,
       envId: this.env,
       isFetch: true
@@ -250,7 +252,7 @@ export class RunCommand extends CustomCommand {
     if (this.noCharts === false) {
       let getChartsReqPayload: ToBackendGetChartsRequestPayload = {
         projectId: this.projectId,
-        isRepoProd: isRepoProd,
+        repoId: repoId,
         branchId: this.branch,
         envId: this.env
       };
@@ -319,7 +321,7 @@ export class RunCommand extends CustomCommand {
     if (this.noDashboards === false) {
       let getDashboardsReqPayload: ToBackendGetDashboardsRequestPayload = {
         projectId: this.projectId,
-        isRepoProd: isRepoProd,
+        repoId: repoId,
         branchId: this.branch,
         envId: this.env
       };
@@ -399,7 +401,7 @@ export class RunCommand extends CustomCommand {
     //
     let getQueriesReqPayloadStart: ToBackendGetQueriesRequestPayload = {
       projectId: this.projectId,
-      isRepoProd: isRepoProd,
+      repoId: repoId,
       branchId: this.branch,
       envId: this.env,
       mconfigIds: mconfigParts.map(x => x.mconfigId),
@@ -418,7 +420,7 @@ export class RunCommand extends CustomCommand {
 
     let runQueriesReqPayload: ToBackendRunQueriesRequestPayload = {
       projectId: this.projectId,
-      isRepoProd: isRepoProd,
+      repoId: repoId,
       branchId: this.branch,
       envId: this.env,
       mconfigIds: mconfigParts.map(x => x.mconfigId),
@@ -464,7 +466,7 @@ export class RunCommand extends CustomCommand {
       while (mconfigPartsToGet.length > 0) {
         let getQueriesReqPayload: ToBackendGetQueriesRequestPayload = {
           projectId: this.projectId,
-          isRepoProd: isRepoProd,
+          repoId: repoId,
           branchId: this.branch,
           envId: this.env,
           mconfigIds: mconfigPartsToGet.map(x => x.mconfigId),

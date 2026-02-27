@@ -149,7 +149,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
 
               let payload: ToBackendSuggestDimensionValuesRequestPayload = {
                 projectId: nav.projectId,
-                isRepoProd: nav.isRepoProd,
+                repoId: nav.repoId,
                 branchId: nav.branchId,
                 envId: nav.envId,
                 structId: this.structId,
@@ -186,7 +186,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                     ToBackendRequestInfoNameEnum.ToBackendRunQueries,
                   payload: {
                     projectId: nav.projectId,
-                    isRepoProd: nav.isRepoProd,
+                    repoId: nav.repoId,
                     branchId: nav.branchId,
                     envId: nav.envId,
                     mconfigIds: [q1Resp.payload.mconfig.mconfigId]
@@ -216,7 +216,7 @@ export class StoreFractionInputComponent implements OnInit, OnDestroy {
                       ToBackendRequestInfoNameEnum.ToBackendGetQuery,
                     payload: {
                       projectId: nav.projectId,
-                      isRepoProd: nav.isRepoProd,
+                      repoId: nav.repoId,
                       branchId: nav.branchId,
                       envId: nav.envId,
                       mconfigId: q1Resp.payload.mconfig.mconfigId,

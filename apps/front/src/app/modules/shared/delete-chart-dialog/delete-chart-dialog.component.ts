@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { DialogRef } from '@ngneat/dialog';
 import { take, tap } from 'rxjs/operators';
 import { EMPTY_CHART_ID } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { Chart } from '#common/interfaces/blockml/chart';
@@ -26,9 +27,10 @@ export interface DeleteChartDialogData {
   apiService: ApiService;
   chart: Chart;
   projectId: string;
+  repoId: string;
   branchId: string;
   envId: string;
-  isRepoProd: boolean;
+  repoType: RepoTypeEnum;
 }
 
 @Component({
@@ -62,7 +64,7 @@ export class DeleteChartDialogComponent implements OnInit {
   delete() {
     this.ref.close();
 
-    let { projectId, branchId, isRepoProd } = this.ref.data;
+    let { projectId, branchId, repoId } = this.ref.data;
 
     let chart: Chart = this.ref.data.chart;
     let apiService: ApiService = this.ref.data.apiService;
@@ -71,7 +73,7 @@ export class DeleteChartDialogComponent implements OnInit {
       projectId: projectId,
       branchId: branchId,
       envId: this.ref.data.envId,
-      isRepoProd: isRepoProd,
+      repoId: repoId,
       chartId: chart.chartId
     };
 

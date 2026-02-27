@@ -6,6 +6,7 @@ import {
   IsString,
   ValidateNested
 } from 'class-validator';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { Member } from '#common/interfaces/backend/member';
 import { StructX } from '#common/interfaces/backend/struct-x';
 import { User } from '#common/interfaces/backend/user';
@@ -57,11 +58,11 @@ export class ToBackendGetNavResponsePayload {
   @IsString()
   projectDefaultBranch: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
-  @IsBoolean()
-  isRepoSession: boolean;
+  @IsString()
+  repoType: RepoTypeEnum;
 
   @IsString()
   branchId: string;

@@ -15,6 +15,7 @@ import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -58,6 +59,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
   builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
   builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
   builderLeftInfo = BuilderLeftEnum.Info;
+
+  repoTypeEnum = RepoTypeEnum;
 
   repoStatusNeedCommit = RepoStatusEnum.NeedCommit;
   repoStatusNeedPull = RepoStatusEnum.NeedPull;
@@ -298,7 +301,8 @@ export class BuilderComponent implements OnInit, OnDestroy {
     this.myDialogService.showCommit({
       apiService: this.apiService,
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
+      repoType: this.nav.repoType,
       branchId: this.nav.branchId,
       builderLeft: this.builderLeft,
       fileId: this.file.fileId
@@ -308,7 +312,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   push() {
     let payload: ToBackendPushRepoRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId
     };
@@ -354,7 +358,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   pull() {
     let payload: ToBackendPullRepoRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId
     };
@@ -400,7 +404,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   refresh() {
     let payload: ToBackendGetRepoRequestPayload = {
       projectId: this.nav.projectId,
-      isRepoProd: this.nav.isRepoProd,
+      repoId: this.nav.repoId,
       branchId: this.nav.branchId,
       envId: this.nav.envId,
       isFetch: true

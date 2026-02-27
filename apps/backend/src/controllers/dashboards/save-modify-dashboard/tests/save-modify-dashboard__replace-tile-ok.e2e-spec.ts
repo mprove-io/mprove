@@ -114,7 +114,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        isRepoProd: false,
+        repoId: userId,
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
         dashboardId: dashboardId,
@@ -138,7 +138,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        isRepoProd: false,
+        repoId: userId,
         branchId: BRANCH_MAIN,
         envId: PROJECT_ENV_PROD,
         toDashboardId: dashboardId,

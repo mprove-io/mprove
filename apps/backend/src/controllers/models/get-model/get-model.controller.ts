@@ -10,9 +10,9 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetModelRequest,
@@ -27,6 +27,7 @@ export class GetModelController {
     private branchesService: BranchesService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private sessionsService: SessionsService,
     private structsService: StructsService,
     private modelsService: ModelsService,
     private bridgesService: BridgesService,
@@ -37,7 +38,13 @@ export class GetModelController {
   async getModel(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetModelRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, modelId, envId } = reqValid.payload;
+    let { projectId, repoId, branchId, modelId, envId } = reqValid.payload;
+
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -50,7 +57,7 @@ export class GetModelController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

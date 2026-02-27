@@ -24,11 +24,11 @@ import {
   PATH_ORG,
   PATH_PROJECT,
   PATH_REPO,
-  PATH_SELECT_FILE,
-  PROD_REPO_ID
+  PATH_SELECT_FILE
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { decodeFilePath } from '#common/functions/decode-file-path';
@@ -69,6 +69,8 @@ export class BuilderLeftComponent implements OnDestroy {
   @Output()
   newFileClick = new EventEmitter<void>();
 
+  repoTypeEnum = RepoTypeEnum;
+
   builderLeftTree = BuilderLeftEnum.Tree;
   builderLeftChangesToCommit = BuilderLeftEnum.ChangesToCommit;
   builderLeftChangesToPush = BuilderLeftEnum.ChangesToPush;
@@ -98,7 +100,8 @@ export class BuilderLeftComponent implements OnDestroy {
     actionMapping: this.actionMapping,
     displayField: 'name',
     allowDrag: (node: TreeNode) =>
-      this.nav?.isRepoProd === false && node.data.id !== this.nav.projectId,
+      this.nav?.repoType !== RepoTypeEnum.Prod &&
+      node.data.id !== this.nav.projectId,
     allowDrop: (node: TreeNode, to: { parent: any; index: number }) =>
       (to.parent.data.isFolder && to.parent.data.id !== node.parent.data.id) ||
       (!to.parent.data.isFolder &&
@@ -381,18 +384,13 @@ export class BuilderLeftComponent implements OnDestroy {
           this.cd.reattach();
 
           if (isMoveSuccess === false) {
-            let repoId =
-              this.nav.isRepoProd === true
-                ? PROD_REPO_ID
-                : this.userQuery.getValue().userId;
-
             let arStart = [
               PATH_ORG,
               this.nav.orgId,
               PATH_PROJECT,
               this.nav.projectId,
               PATH_REPO,
-              repoId,
+              this.nav.repoId,
               PATH_BRANCH,
               this.nav.branchId,
               PATH_ENV,

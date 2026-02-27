@@ -13,6 +13,7 @@ import {
   PATH_PROJECT,
   PROD_REPO_ID
 } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { NavState } from '../queries/nav.query';
 
@@ -42,8 +43,8 @@ export function checkNavOrgProjectRepoBranchEnv(item: {
 
   if (isDefined(parametersRepoId)) {
     if (
-      (nav.isRepoProd === true && parametersRepoId !== PROD_REPO_ID) ||
-      (nav.isRepoProd === false && parametersRepoId !== userId) ||
+      (nav.repoType === RepoTypeEnum.Prod &&
+        parametersRepoId !== PROD_REPO_ID) ||
       nav.branchId !== parametersBranchId ||
       nav.envId !== parametersEnvId
     ) {

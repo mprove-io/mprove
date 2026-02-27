@@ -38,14 +38,14 @@
             >Files can be edited by project members with FilesEditor role</div
           >
 
-          <div *ngIf="isEditor === true && nav?.isRepoProd === true"
+          <div *ngIf="isEditor === true && nav?.repoType === repoTypeEnum.Prod"
             >Switch branch from Production repo to Dev repo to edit files</div
           >
 
           <div
             *ngIf="
               isEditor === true &&
-              nav?.isRepoProd === false &&
+              nav?.repoType !== repoTypeEnum.Prod &&
               needSave === true
             "
             >Need to Save changes</div
@@ -55,7 +55,9 @@
         <div
           [tp]="templateNewFile"
           [tpIsEnabled]="
-            isEditor === false || nav?.isRepoProd === true || needSave === true
+            isEditor === false ||
+            nav?.repoType === repoTypeEnum.Prod ||
+            needSave === true
           "
           class="mr-9 flex-shrink-0"
         >
@@ -66,17 +68,17 @@
             [ngClass]="{
               'border-s400 text-s500 hover:bg-s100':
                 isEditor === true &&
-                nav?.isRepoProd === false &&
+                nav?.repoType !== repoTypeEnum.Prod &&
                 needSave === false,
               'border-s300 text-s400 cursor-default':
                 isEditor === false ||
-                nav?.isRepoProd === true ||
+                nav?.repoType === repoTypeEnum.Prod ||
                 needSave === true
             }"
             (click)="newFileClick.emit()"
             [disabled]="
               isEditor === false ||
-              nav?.isRepoProd === true ||
+              nav?.repoType === repoTypeEnum.Prod ||
               needSave === true
             "
           >
@@ -264,11 +266,11 @@
 
                       <div
                         class="ml-3 h-9 w-9 flex-shrink-0"
-                        *ngIf="nav.isRepoProd === true"
+                        *ngIf="nav.repoType === repoTypeEnum.Prod"
                       ></div>
 
                       <div
-                        *ngIf="nav.isRepoProd === false"
+                        *ngIf="nav.repoType !== repoTypeEnum.Prod"
                         class="text-s1 invisible ml-3 flex flex-shrink-0 group-hover:visible"
                       >
                         <m-folder-options

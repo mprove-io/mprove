@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  ArrayNotEmpty,
-  IsBoolean,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { ArrayNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
 import { Query } from '#common/interfaces/blockml/query';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -14,8 +9,8 @@ export class ToBackendRunQueriesDryRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

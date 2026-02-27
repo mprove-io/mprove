@@ -16,9 +16,9 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { ReportsService } from '#backend/services/db/reports.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { FieldClassEnum } from '#common/enums/field-class.enum';
 import { FieldResultEnum } from '#common/enums/field-result.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
@@ -39,6 +39,7 @@ export class GetSuggestFieldsController {
     private modelsService: ModelsService,
     private dashboardsService: DashboardsService,
     private reportsService: ReportsService,
+    private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private branchesService: BranchesService,
     private bridgesService: BridgesService,
@@ -51,8 +52,14 @@ export class GetSuggestFieldsController {
   async getSuggestFields(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetSuggestFieldsRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, parentId, parentType } =
+    let { projectId, repoId, branchId, envId, parentId, parentType } =
       reqValid.payload;
+
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -65,7 +72,7 @@ export class GetSuggestFieldsController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

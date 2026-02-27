@@ -61,7 +61,8 @@ export class DashboardOptionsComponent {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
+      repoType: nav.repoType,
       dashboardPart: item
     });
   }
@@ -77,7 +78,8 @@ export class DashboardOptionsComponent {
       projectId: nav.projectId,
       branchId: nav.branchId,
       envId: nav.envId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
+      repoType: nav.repoType,
       isStartSpinnerUntilNavEnd:
         this.dashboardQuery.getValue().dashboardId ===
         this.dashboardPart.dashboardId

@@ -9,8 +9,8 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
@@ -24,6 +24,7 @@ export class IsBranchExistController {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
+    private sessionsService: SessionsService,
     private membersService: MembersService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -32,9 +33,13 @@ export class IsBranchExistController {
   async isBranchExist(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendIsBranchExistRequest = request.body;
 
-    let { projectId, branchId, isRepoProd } = reqValid.payload;
+    let { projectId, branchId, repoId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     await this.projectsService.getProjectCheckExists({
       projectId: projectId

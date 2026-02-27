@@ -10,10 +10,10 @@ import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -38,6 +38,7 @@ export class GetFileController {
     private branchesService: BranchesService,
     private structsService: StructsService,
     private rpcService: RpcService,
+    private sessionsService: SessionsService,
     private bridgesService: BridgesService,
     private envsService: EnvsService
   ) {}
@@ -46,10 +47,14 @@ export class GetFileController {
   async getFile(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendGetFileRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, fileNodeId, builderLeft } =
+    let { projectId, repoId, branchId, envId, fileNodeId, builderLeft } =
       reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -89,7 +94,7 @@ export class GetFileController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

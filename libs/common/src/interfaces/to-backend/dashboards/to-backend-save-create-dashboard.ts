@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { DashboardPart } from '#common/interfaces/backend/dashboard-part';
 import { TileX } from '#common/interfaces/backend/tile-x';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -14,8 +9,8 @@ export class ToBackendSaveCreateDashboardRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

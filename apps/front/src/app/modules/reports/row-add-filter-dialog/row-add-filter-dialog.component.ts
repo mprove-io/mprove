@@ -115,7 +115,7 @@ export class RowAddFilterDialogComponent implements OnInit {
 
     let payload: ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       modelId: metric.modelId

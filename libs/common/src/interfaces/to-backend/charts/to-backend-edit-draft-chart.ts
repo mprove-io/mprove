@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsOptional,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ChartX } from '#common/interfaces/backend/chart-x';
 import { MconfigX } from '#common/interfaces/backend/mconfig-x';
 import { QueryOperation } from '#common/interfaces/backend/query-operation';
@@ -15,8 +10,8 @@ export class ToBackendEditDraftChartRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

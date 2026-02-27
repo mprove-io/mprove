@@ -39,6 +39,7 @@ import { ConnectionsService } from '#backend/services/db/connections.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb.service';
@@ -50,7 +51,7 @@ import { TrinoService } from '#backend/services/dwh/trino.service';
 import { ParentService } from '#backend/services/parent.service';
 import { StoreService } from '#backend/services/store.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -77,6 +78,7 @@ export class RunQueriesController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private connectionsService: ConnectionsService,
     private membersService: MembersService,
     private pgService: PgService,
@@ -98,8 +100,14 @@ export class RunQueriesController {
   async runQueries(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendRunQueriesRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, mconfigIds, poolSize } =
+    let { projectId, repoId, branchId, envId, mconfigIds, poolSize } =
       reqValid.payload;
+
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
@@ -108,7 +116,7 @@ export class RunQueriesController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

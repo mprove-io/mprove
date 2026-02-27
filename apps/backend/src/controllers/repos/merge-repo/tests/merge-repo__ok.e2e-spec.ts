@@ -99,7 +99,7 @@ test('1', async t => {
         projectId: projectId,
         fromBranchId: branchId,
         newBranchId: theirBranchId,
-        isRepoProd: false
+        repoId: userId
       }
     };
 

@@ -1,10 +1,5 @@
 import { Type } from 'class-transformer';
-import {
-  ArrayNotEmpty,
-  IsBoolean,
-  IsString,
-  ValidateNested
-} from 'class-validator';
+import { ArrayNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { Query } from '#common/interfaces/blockml/query';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
@@ -13,8 +8,8 @@ export class ToBackendCancelQueriesRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

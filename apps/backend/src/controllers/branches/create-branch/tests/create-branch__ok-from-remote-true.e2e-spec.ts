@@ -3,7 +3,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
-import { BRANCH_MAIN } from '#common/constants/top';
+import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -94,7 +94,7 @@ test('1', async t => {
         projectId: projectId,
         fromBranchId: fromBranchId,
         newBranchId: newBranchId,
-        isRepoProd: true
+        repoId: PROD_REPO_ID
       }
     };
 

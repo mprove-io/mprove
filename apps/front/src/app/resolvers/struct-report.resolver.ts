@@ -120,7 +120,7 @@ export class StructReportResolver implements Resolve<Observable<boolean>> {
 
     let payload: ToBackendGetReportRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       reportId: parametersReportId,

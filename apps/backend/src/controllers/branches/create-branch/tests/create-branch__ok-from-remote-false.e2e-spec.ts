@@ -94,7 +94,7 @@ test('1', async t => {
         projectId: projectId,
         fromBranchId: fromBranchId,
         newBranchId: newBranchId,
-        isRepoProd: false
+        repoId: userId
       }
     };
 

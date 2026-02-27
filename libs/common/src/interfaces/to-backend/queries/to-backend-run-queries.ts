@@ -1,7 +1,6 @@
 import { Type } from 'class-transformer';
 import {
   ArrayNotEmpty,
-  IsBoolean,
   IsInt,
   IsOptional,
   IsPositive,
@@ -16,8 +15,8 @@ export class ToBackendRunQueriesRequestPayload {
   @IsString()
   projectId: string;
 
-  @IsBoolean()
-  isRepoProd: boolean;
+  @IsString()
+  repoId: string;
 
   @IsString()
   branchId: string;

@@ -34,11 +34,11 @@ import { MembersService } from '#backend/services/db/members.service';
 import { ModelsService } from '#backend/services/db/models.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { HashService } from '#backend/services/hash.service';
 import { MalloyService } from '#backend/services/malloy.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { MconfigParentTypeEnum } from '#common/enums/mconfig-parent-type.enum';
@@ -69,6 +69,7 @@ export class CreateDraftChartController {
     private structsService: StructsService,
     private bridgesService: BridgesService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private envsService: EnvsService,
     private mconfigsService: MconfigsService,
     private chartsService: ChartsService,
@@ -86,7 +87,7 @@ export class CreateDraftChartController {
       mconfig: apiMconfig,
       isKeepQueryId,
       projectId,
-      isRepoProd,
+      repoId,
       branchId,
       envId,
       cellMetricsStartDateMs,
@@ -94,7 +95,11 @@ export class CreateDraftChartController {
       queryOperation
     } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

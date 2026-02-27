@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { PARAMETER_REPO_ID, PROD_REPO_ID } from '#common/constants/top';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { NavQuery, NavState } from '../queries/nav.query';
 import { UserQuery } from '../queries/user.query';
@@ -40,12 +41,16 @@ export class RepoIdResolver implements Resolve<Observable<boolean>> {
       )
       .subscribe();
 
-    let isRepoSession =
-      repoId !== PROD_REPO_ID && repoId !== userId ? true : false;
+    let repoType =
+      repoId === PROD_REPO_ID
+        ? RepoTypeEnum.Prod
+        : repoId === userId
+          ? RepoTypeEnum.Dev
+          : RepoTypeEnum.Session;
 
     this.navQuery.updatePart({
-      isRepoProd: repoId === PROD_REPO_ID,
-      isRepoSession: isRepoSession
+      repoId: repoId,
+      repoType: repoType
     });
 
     return of(false);

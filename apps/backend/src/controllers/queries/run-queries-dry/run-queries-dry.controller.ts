@@ -30,11 +30,12 @@ import { ConnectionsService } from '#backend/services/db/connections.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { QueriesService } from '#backend/services/db/queries.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery.service';
 import { ParentService } from '#backend/services/parent.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -55,6 +56,7 @@ export class RunQueriesDryController {
     private bridgesService: BridgesService,
     private structsService: StructsService,
     private queriesService: QueriesService,
+    private sessionsService: SessionsService,
     private connectionsService: ConnectionsService,
     private bigqueryService: BigQueryService,
     private membersService: MembersService,
@@ -68,8 +70,14 @@ export class RunQueriesDryController {
   async runQueriesDry(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendRunQueriesDryRequest = request.body;
 
-    let { projectId, isRepoProd, branchId, envId, mconfigIds, dryId } =
+    let { projectId, repoId, branchId, envId, mconfigIds, dryId } =
       reqValid.payload;
+
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let userMember = await this.membersService.getMemberCheckExists({
       projectId: projectId,
@@ -78,7 +86,7 @@ export class RunQueriesDryController {
 
     let branch = await this.branchesService.getBranchCheckExists({
       projectId: projectId,
-      repoId: isRepoProd === true ? PROD_REPO_ID : user.userId,
+      repoId: repoId,
       branchId: branchId
     });
 

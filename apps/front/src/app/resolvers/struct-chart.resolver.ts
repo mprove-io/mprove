@@ -128,7 +128,7 @@ export class StructChartResolver implements Resolve<Observable<boolean>> {
 
     let payload: ToBackendGetChartRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       chartId: parametersChartId,

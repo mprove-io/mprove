@@ -184,7 +184,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
       let payload: ToBackendDuplicateMconfigAndQueryRequestPayload = {
         projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
+        repoId: nav.repoId,
         branchId: nav.branchId,
         envId: nav.envId,
         oldMconfigId: oldMconfigId
@@ -251,7 +251,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
               projectId: nav.projectId,
               branchId: nav.branchId,
               envId: nav.envId,
-              isRepoProd: nav.isRepoProd,
+              repoId: nav.repoId,
               mconfigId: this.mconfig.mconfigId,
               queryId: this.query.queryId
             };
@@ -350,7 +350,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendRunQueriesRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       mconfigIds: [this.mconfig.mconfigId]
@@ -449,7 +449,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
 
     let payload: ToBackendGetModelRequestPayload = {
       projectId: nav.projectId,
-      isRepoProd: nav.isRepoProd,
+      repoId: nav.repoId,
       branchId: nav.branchId,
       envId: nav.envId,
       modelId: metric.modelId
@@ -516,7 +516,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
     if (isDefined(groupByFieldId)) {
       let payload: ToBackendGroupMetricByDimensionRequestPayload = {
         projectId: nav.projectId,
-        isRepoProd: nav.isRepoProd,
+        repoId: nav.repoId,
         branchId: nav.branchId,
         envId: nav.envId,
         timezone: this.emptyGroupMconfig.timezone,
@@ -567,7 +567,7 @@ export class ChartDialogComponent implements OnInit, OnDestroy {
         projectId: nav.projectId,
         branchId: nav.branchId,
         envId: nav.envId,
-        isRepoProd: nav.isRepoProd,
+        repoId: nav.repoId,
         mconfigId: newMconfig.mconfigId,
         queryId: newMconfig.queryId
       };

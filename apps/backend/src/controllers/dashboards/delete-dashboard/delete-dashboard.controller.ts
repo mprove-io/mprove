@@ -30,10 +30,11 @@ import { DashboardsService } from '#backend/services/db/dashboards.service';
 import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { UsersService } from '#backend/services/db/users.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
+import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
@@ -54,6 +55,7 @@ export class DeleteDashboardController {
     private rpcService: RpcService,
     private membersService: MembersService,
     private projectsService: ProjectsService,
+    private sessionsService: SessionsService,
     private dashboardsService: DashboardsService,
     private envsService: EnvsService,
     private bridgesService: BridgesService,
@@ -69,10 +71,13 @@ export class DeleteDashboardController {
     this.usersService.checkUserIsNotRestricted({ user: user });
 
     let { traceId } = reqValid.info;
-    let { projectId, isRepoProd, branchId, envId, dashboardId } =
-      reqValid.payload;
+    let { projectId, repoId, branchId, envId, dashboardId } = reqValid.payload;
 
-    let repoId = isRepoProd === true ? PROD_REPO_ID : user.userId;
+    let repoType = await this.sessionsService.checkRepoId({
+      repoId: repoId,
+      userId: user.userId,
+      projectId: projectId
+    });
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

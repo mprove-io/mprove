@@ -120,7 +120,7 @@ test('1', async () => {
 
       let createBranchReqPayload: ToBackendCreateBranchRequestPayload = {
         projectId: projectId,
-        isRepoProd: false,
+        repoId: userId,
         newBranchId: theirBranch,
         fromBranchId: defaultBranch
       };
@@ -149,7 +149,7 @@ test('1', async () => {
 
       let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
         projectId: projectId,
-        isRepoProd: false,
+        repoId: userId,
         branchId: theirBranch,
         commitMessage: 'm1'
       };

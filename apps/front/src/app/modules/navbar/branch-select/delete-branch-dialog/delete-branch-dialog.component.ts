@@ -19,6 +19,7 @@ import {
   PROD_REPO_ID
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
@@ -34,7 +35,8 @@ export interface DeleteBranchDialogData {
   branchId: string;
   envId: string;
   defaultBranch: string;
-  isRepoProd: boolean;
+  repoId: string;
+  repoType: RepoTypeEnum;
   alias: string;
   hideBranchSelectFn: () => void;
 }
@@ -52,8 +54,14 @@ export class DeleteBranchDialogComponent implements OnInit {
     this.ref.close();
   }
 
+  repoTypeEnum = RepoTypeEnum;
+
   repoName =
-    this.ref.data.isRepoProd === true ? PROD_REPO_ID : this.ref.data.alias;
+    this.ref.data.repoType === RepoTypeEnum.Prod
+      ? PROD_REPO_ID
+      : this.ref.data.repoType === RepoTypeEnum.Dev
+        ? this.ref.data.alias
+        : 'unknown';
 
   constructor(
     public ref: DialogRef<DeleteBranchDialogData>,
@@ -76,7 +84,7 @@ export class DeleteBranchDialogComponent implements OnInit {
 
     let payload: ToBackendDeleteBranchRequestPayload = {
       projectId: this.ref.data.projectId,
-      isRepoProd: this.ref.data.isRepoProd,
+      repoId: this.ref.data.repoId,
       branchId: this.ref.data.branchId
     };
 
