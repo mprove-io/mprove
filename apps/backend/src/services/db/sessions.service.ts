@@ -24,6 +24,8 @@ export class SessionsService {
 
   makeSession(item: {
     sessionId: string;
+    repoId: string;
+    branchId: string;
     userId: string;
     projectId: string;
     sandboxType: string;
@@ -38,6 +40,8 @@ export class SessionsService {
     opencodeSessionId?: string;
     opencodePassword?: string;
     firstMessage?: string;
+    initialBranch: string;
+    initialCommit?: string;
     status: SessionStatusEnum;
     lastActivityTs: number;
     runningStartTs?: number;
@@ -46,6 +50,8 @@ export class SessionsService {
   }): SessionTab {
     let session: SessionTab = {
       sessionId: item.sessionId,
+      repoId: item.repoId,
+      branchId: item.branchId,
       userId: item.userId,
       projectId: item.projectId,
       sandboxType: item.sandboxType,
@@ -60,6 +66,8 @@ export class SessionsService {
       opencodeSessionId: item.opencodeSessionId,
       opencodePassword: item.opencodePassword,
       firstMessage: item.firstMessage,
+      initialBranch: item.initialBranch,
+      initialCommit: item.initialCommit,
       status: item.status,
       archivedReason: undefined,
       lastActivityTs: item.lastActivityTs,
@@ -117,6 +125,8 @@ export class SessionsService {
 
     return {
       sessionId: session.sessionId,
+      repoId: session.repoId,
+      branchId: session.branchId,
       provider: session.provider,
       agent: session.agent,
       model: session.model,
@@ -124,6 +134,8 @@ export class SessionsService {
       lastMessageVariant: session.lastMessageVariant,
       status: session.status,
       archivedReason: session.archivedReason,
+      initialBranch: session.initialBranch,
+      initialCommit: session.initialCommit,
       createdTs: session.createdTs,
       lastActivityTs: session.lastActivityTs,
       firstMessage: session.firstMessage,

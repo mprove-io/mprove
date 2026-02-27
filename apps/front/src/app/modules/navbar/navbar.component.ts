@@ -119,6 +119,8 @@ export class NavbarComponent implements OnInit {
     if (isDefined(pLink?.sessionId)) {
       this.navigateService.navigateToSession({
         sessionId: pLink.sessionId,
+        repoId: pLink.repoId,
+        branchId: pLink.branchId,
         left: BuilderLeftEnum.Info,
         right: BuilderRightEnum.Sessions
       });

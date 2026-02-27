@@ -28,6 +28,12 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsString()
   variant?: string;
 
+  @IsString()
+  envId: string;
+
+  @IsString()
+  initialBranch: string;
+
   @IsOptional()
   @IsString()
   firstMessage?: string;
@@ -42,6 +48,12 @@ export class ToBackendCreateAgentSessionRequest extends ToBackendRequest {
 export class ToBackendCreateAgentSessionResponsePayload {
   @IsString()
   sessionId: string;
+
+  @IsString()
+  repoId: string;
+
+  @IsString()
+  branchId: string;
 }
 
 export class ToBackendCreateAgentSessionResponse extends MyResponse {

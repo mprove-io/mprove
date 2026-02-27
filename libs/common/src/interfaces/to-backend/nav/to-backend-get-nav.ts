@@ -60,6 +60,9 @@ export class ToBackendGetNavResponsePayload {
   @IsBoolean()
   isRepoProd: boolean;
 
+  @IsBoolean()
+  isRepoSession: boolean;
+
   @IsString()
   branchId: string;
 

@@ -122,8 +122,12 @@ export class UiService {
     this.setUserUi({ projectSessionLinks: newProjectSessionLinks });
   }
 
-  setProjectSessionLink(item: { sessionId: string }) {
-    let { sessionId } = item;
+  setProjectSessionLink(item: {
+    sessionId: string;
+    repoId?: string;
+    branchId?: string;
+  }) {
+    let { sessionId, repoId, branchId } = item;
 
     let projectId = this.navQuery.getValue().projectId;
 
@@ -142,6 +146,8 @@ export class UiService {
     let newLink: ProjectSessionLink = {
       projectId: projectId,
       sessionId: sessionId,
+      repoId: repoId,
+      branchId: branchId,
       navTs: Date.now()
     };
 

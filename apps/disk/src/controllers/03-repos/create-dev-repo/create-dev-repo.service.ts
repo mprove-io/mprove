@@ -11,6 +11,7 @@ import {
 import { DiskConfig } from '#disk/config/disk-config';
 import { getNodesAndFiles } from '#disk/functions/disk/get-nodes-and-files';
 import { isPathExist } from '#disk/functions/disk/is-path-exist';
+import { checkoutBranch } from '#disk/functions/git/checkout-branch';
 import { cloneRemoteToDev } from '#disk/functions/git/clone-remote-to-dev';
 import { createGit } from '#disk/functions/git/create-git';
 import { getRepoStatus } from '#disk/functions/git/get-repo-status';
@@ -40,7 +41,8 @@ export class CreateDevRepoService {
       logger: this.logger
     });
 
-    let { orgId, baseProject, devRepoId } = requestValid.payload;
+    let { orgId, baseProject, devRepoId, initialBranch, sessionBranch } =
+      requestValid.payload;
 
     let projectSt: ProjectSt = this.diskTabService.decrypt<ProjectSt>({
       encryptedString: baseProject.st
@@ -117,6 +119,27 @@ export class CreateDevRepoService {
       passPhrase: passPhrase
     });
 
+    let initialCommitHash: string | undefined;
+
+    if (initialBranch) {
+      await checkoutBranch({
+        projectId: projectId,
+        projectDir: projectDir,
+        repoId: devRepoId,
+        repoDir: devRepoDir,
+        branchName: initialBranch,
+        git: devGit,
+        isFetch: true
+      });
+
+      let logResult = await devGit.log({ n: 1 });
+      initialCommitHash = logResult.latest?.hash?.substring(0, 7);
+
+      if (sessionBranch) {
+        await devGit.checkout(['-b', sessionBranch]);
+      }
+    }
+
     let {
       repoStatus,
       currentBranch,
@@ -154,7 +177,8 @@ export class CreateDevRepoService {
         changesToPush: changesToPush
       },
       files: itemCatalog.files,
-      mproveDir: itemCatalog.mproveDir
+      mproveDir: itemCatalog.mproveDir,
+      initialCommitHash: initialCommitHash
     };
 
     return payload;

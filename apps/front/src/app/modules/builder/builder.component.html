@@ -169,7 +169,14 @@
           </div>
 
           <div
-            *ngIf="nav?.isRepoProd === false"
+            *ngIf="nav?.isRepoSession === true"
+            class="text-s500 mr-5 flex h-11 flex-shrink-0 select-none flex-row items-center text-lg font-semibold"
+          >
+            session - {{ nav.branchId }}
+          </div>
+
+          <div
+            *ngIf="nav?.isRepoProd === false && nav?.isRepoSession !== true"
             class="text-s500 mr-5 flex h-11 flex-shrink-0 select-none flex-row items-center text-lg font-semibold"
           >
             dev-{{ user.alias }} - {{ nav.branchId }}

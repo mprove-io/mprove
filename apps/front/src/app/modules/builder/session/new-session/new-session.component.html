@@ -13,5 +13,16 @@
       [scrollableInput]="true"
       (send)="sendMessage($event)"
     ></m-session-input>
+
+    <div class="mt-4 flex justify-start">
+      <ng-select
+        class="w-[240px] select-none text-base"
+        [items]="branches"
+        [clearable]="false"
+        [(ngModel)]="initialBranch"
+        [loading]="branchesLoading"
+        placeholder="Initial Branch"
+      ></ng-select>
+    </div>
   </div>
 </div>

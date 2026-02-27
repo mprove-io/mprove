@@ -10,7 +10,7 @@ import { prepareTestAndSeed } from '#backend/functions/prepare-test';
 import { sendToBackend } from '#backend/functions/send-to-backend';
 import { Prep } from '#backend/interfaces/prep';
 import type { AgentEvent } from '#backend/services/agent.service';
-import { BRANCH_MAIN } from '#common/constants/top';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -135,7 +135,9 @@ export async function forTestsRunAgentSessionE2x(item: {
         provider: 'opencode',
         model: item.model,
         agent: 'plan',
-        permissionMode: 'default'
+        permissionMode: 'default',
+        envId: PROJECT_ENV_PROD,
+        initialBranch: BRANCH_MAIN
       }
     };
 

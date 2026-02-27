@@ -9,6 +9,14 @@ export class ProjectSessionLink {
   sessionId: string;
 
   @IsOptional()
+  @IsString()
+  repoId?: string;
+
+  @IsOptional()
+  @IsString()
+  branchId?: string;
+
+  @IsOptional()
   @IsInt()
   navTs: number;
 }

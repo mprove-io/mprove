@@ -204,6 +204,7 @@ export class GetNavController {
       projectName: resultProject?.name,
       projectDefaultBranch: resultProject?.defaultBranch,
       isRepoProd: true,
+      isRepoSession: false,
       branchId: resultProject?.defaultBranch,
       envId: PROJECT_ENV_PROD,
       needValidate: isDefined(bridge) ? bridge.needValidate : false,

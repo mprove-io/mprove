@@ -9,38 +9,56 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
 import retry from 'async-retry';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  BridgeTab,
   OcSessionTab,
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
+import { BlockmlService } from '#backend/services/blockml.service';
+import { BranchesService } from '#backend/services/db/branches.service';
+import { BridgesService } from '#backend/services/db/bridges.service';
 import { MembersService } from '#backend/services/db/members.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { RpcService } from '#backend/services/rpc.service';
 import { SandboxService } from '#backend/services/sandbox.service.js';
 import { TabService } from '#backend/services/tab.service.js';
+import { EMPTY_STRUCT_ID, PROD_REPO_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { splitModel } from '#common/functions/split-model';
 import {
   ToBackendCreateAgentSessionRequest,
   ToBackendCreateAgentSessionResponsePayload
 } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+import {
+  ToDiskCreateDevRepoRequest,
+  ToDiskCreateDevRepoResponse
+} from '#common/interfaces/to-disk/03-repos/to-disk-create-dev-repo';
 import { ServerError } from '#common/models/server-error';
+
+const { forEachSeries } = pIteration;
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -52,6 +70,10 @@ export class CreateAgentSessionController {
     private sessionsService: SessionsService,
     private agentService: AgentService,
     private sandboxService: SandboxService,
+    private rpcService: RpcService,
+    private blockmlService: BlockmlService,
+    private branchesService: BranchesService,
+    private bridgesService: BridgesService,
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -69,6 +91,8 @@ export class CreateAgentSessionController {
       agent,
       permissionMode,
       variant,
+      envId,
+      initialBranch,
       firstMessage
     } = reqValid.payload;
 
@@ -122,6 +146,8 @@ export class CreateAgentSessionController {
 
     let session: SessionTab = this.sessionsService.makeSession({
       sessionId: sessionId,
+      repoId: sessionId,
+      branchId: sessionId,
       userId: user.userId,
       projectId: projectId,
       sandboxType: sandboxType,
@@ -132,6 +158,8 @@ export class CreateAgentSessionController {
       agent: agent,
       permissionMode: permissionMode,
       firstMessage: firstMessage,
+      initialBranch: initialBranch,
+      initialCommit: undefined,
       status: SessionStatusEnum.New,
       lastActivityTs: now,
       createdTs: now
@@ -166,14 +194,28 @@ export class CreateAgentSessionController {
       variant: variant,
       firstMessage: firstMessage
     }).catch(e => {
-      console.log(
-        `Failed to activate session ${sessionId}: ${e?.message}`,
-        e?.stack
-      );
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
+    });
+
+    // Phase 3: Create session repo (awaited)
+
+    let { repoId, branchId } = await this.createSessionRepoAsync({
+      session: session,
+      project: project,
+      envId: envId,
+      initialBranch: initialBranch,
+      traceId: reqValid.info.traceId
     });
 
     let payload: ToBackendCreateAgentSessionResponsePayload = {
-      sessionId: session.sessionId
+      sessionId: session.sessionId,
+      repoId: repoId,
+      branchId: branchId
     };
 
     return payload;
@@ -299,10 +341,12 @@ export class CreateAgentSessionController {
           });
       }
     } catch (e: any) {
-      console.log(
-        `Session activation failed for ${sessionId}: ${e?.message}`,
-        e?.stack
-      );
+      logToConsoleBackend({
+        log: e,
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
 
       let errorSession: SessionTab = {
         ...session,
@@ -322,13 +366,139 @@ export class CreateAgentSessionController {
           ),
         getRetryOption(this.cs, this.logger)
       ).catch(retryErr => {
-        console.log(
-          `Failed to update session ${sessionId} to Error status: ${retryErr?.message}`,
-          retryErr?.stack
-        );
+        logToConsoleBackend({
+          log: retryErr,
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
       });
 
       throw e;
     }
+  }
+
+  private async createSessionRepoAsync(item: {
+    session: SessionTab;
+    project: any;
+    envId: string;
+    initialBranch: string;
+    traceId: string;
+  }): Promise<{ repoId: string; branchId: string }> {
+    let { session, project, envId, initialBranch, traceId } = item;
+    let sessionId = session.sessionId;
+    let projectId = session.projectId;
+
+    let baseProject = this.tabService.projectTabToBaseProject({
+      project: project
+    });
+
+    let toDiskCreateDevRepoRequest: ToDiskCreateDevRepoRequest = {
+      info: {
+        name: ToDiskRequestInfoNameEnum.ToDiskCreateDevRepo,
+        traceId: traceId
+      },
+      payload: {
+        orgId: project.orgId,
+        baseProject: baseProject,
+        devRepoId: sessionId,
+        initialBranch: initialBranch,
+        sessionBranch: sessionId
+      }
+    };
+
+    let diskResponse =
+      await this.rpcService.sendToDisk<ToDiskCreateDevRepoResponse>({
+        orgId: project.orgId,
+        projectId: projectId,
+        repoId: sessionId,
+        message: toDiskCreateDevRepoRequest,
+        checkIsOk: true
+      });
+
+    let repoId = sessionId;
+    let branchId = sessionId;
+    let initialCommit = diskResponse.payload.initialCommitHash;
+
+    let prodBranch = await this.db.drizzle.query.branchesTable.findFirst({
+      where: and(
+        eq(branchesTable.projectId, projectId),
+        eq(branchesTable.repoId, PROD_REPO_ID),
+        eq(branchesTable.branchId, project.defaultBranch)
+      )
+    });
+
+    let sessionBranch = this.branchesService.makeBranch({
+      projectId: projectId,
+      repoId: sessionId,
+      branchId: sessionId
+    });
+
+    let prodBranchBridges = await this.db.drizzle.query.bridgesTable.findMany({
+      where: and(
+        eq(bridgesTable.projectId, prodBranch.projectId),
+        eq(bridgesTable.repoId, prodBranch.repoId),
+        eq(bridgesTable.branchId, prodBranch.branchId)
+      )
+    });
+
+    let sessionBranchBridges: BridgeTab[] = [];
+
+    prodBranchBridges.forEach(x => {
+      let sessionBranchBridge = this.bridgesService.makeBridge({
+        projectId: sessionBranch.projectId,
+        repoId: sessionBranch.repoId,
+        branchId: sessionBranch.branchId,
+        envId: x.envId,
+        structId: EMPTY_STRUCT_ID,
+        needValidate: true
+      });
+
+      sessionBranchBridges.push(sessionBranchBridge);
+    });
+
+    await forEachSeries(sessionBranchBridges, async x => {
+      if (x.envId === envId) {
+        let structId = makeId();
+
+        await this.blockmlService.rebuildStruct({
+          traceId: traceId,
+          orgId: project.orgId,
+          projectId: projectId,
+          repoId: sessionId,
+          structId: structId,
+          diskFiles: diskResponse.payload.files,
+          mproveDir: diskResponse.payload.mproveDir,
+          envId: x.envId,
+          overrideTimezone: undefined
+        });
+
+        x.structId = structId;
+        x.needValidate = false;
+      } else {
+        x.structId = EMPTY_STRUCT_ID;
+        x.needValidate = true;
+      }
+    });
+
+    await retry(
+      async () =>
+        await this.db.drizzle.transaction(
+          async tx =>
+            await this.db.packer.write({
+              tx: tx,
+              insert: {
+                branches: [sessionBranch],
+                bridges: [...sessionBranchBridges]
+              },
+              rawQueries: [
+                sql`UPDATE sessions SET initial_commit = ${initialCommit} WHERE session_id = ${sessionId}`
+              ]
+            })
+        ),
+      getRetryOption(this.cs, this.logger)
+    );
+
+    return { repoId, branchId };
   }
 }

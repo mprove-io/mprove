@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -9,6 +9,10 @@ import {
   ToBackendCreateAgentSessionRequestPayload,
   ToBackendCreateAgentSessionResponse
 } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
+import {
+  ToBackendGetBranchesListRequestPayload,
+  ToBackendGetBranchesListResponse
+} from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -21,12 +25,16 @@ import { UiService } from '#front/app/services/ui.service';
   selector: 'm-new-session',
   templateUrl: './new-session.component.html'
 })
-export class NewSessionComponent {
+export class NewSessionComponent implements OnInit {
   isSubmitting = false;
 
   model = 'default';
   agent = 'plan';
   variant = 'default';
+
+  initialBranch: string;
+  branches: string[] = [];
+  branchesLoading = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -41,7 +49,38 @@ export class NewSessionComponent {
     let savedVariant = this.uiQuery.getValue().lastSelectedVariant || 'default';
     this.variant = savedVariant;
 
+    this.initialBranch = this.navQuery.getValue().projectDefaultBranch;
+
     this.uiService.clearProjectSessionLink();
+  }
+
+  ngOnInit() {
+    let nav = this.navQuery.getValue();
+
+    this.branchesLoading = true;
+
+    let payload: ToBackendGetBranchesListRequestPayload = {
+      projectId: nav.projectId
+    };
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetBranchesList,
+        payload: payload
+      })
+      .pipe(
+        tap((resp: ToBackendGetBranchesListResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.branches = resp.payload.branchesList
+              .filter(b => b.isRepoProd === true)
+              .map(b => b.branchId);
+          }
+          this.branchesLoading = false;
+          this.cd.detectChanges();
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   getProviderFromModel(): string {
@@ -69,6 +108,8 @@ export class NewSessionComponent {
       agent: this.agent,
       permissionMode: 'default',
       variant: this.variant !== 'default' ? this.variant : undefined,
+      envId: nav.envId,
+      initialBranch: this.initialBranch,
       firstMessage: text
     };
 
@@ -80,18 +121,22 @@ export class NewSessionComponent {
       .pipe(
         tap((resp: ToBackendCreateAgentSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let sessionId = resp.payload.sessionId;
+            let { sessionId, repoId, branchId } = resp.payload;
 
             // Add new session to the sessions list
             let currentSessions = this.sessionsQuery.getValue().sessions;
             let newSession: SessionApi = {
               sessionId: sessionId,
+              repoId: repoId,
+              branchId: branchId,
               provider: provider,
               agent: this.agent,
               model: this.model,
               lastMessageProviderModel: this.model,
               lastMessageVariant:
                 this.variant !== 'default' ? this.variant : undefined,
+              initialBranch: this.initialBranch,
+              initialCommit: undefined,
               status: SessionStatusEnum.New,
               createdTs: Date.now(),
               lastActivityTs: Date.now(),
@@ -101,9 +146,17 @@ export class NewSessionComponent {
               sessions: [newSession, ...currentSessions]
             });
 
-            // Navigate to session route
-            this.navigateService.navigateToSession({ sessionId: sessionId });
-            this.uiService.setProjectSessionLink({ sessionId: sessionId });
+            // Navigate to session route with session repoId/branchId
+            this.navigateService.navigateToSession({
+              sessionId: newSession.sessionId,
+              repoId: newSession.repoId,
+              branchId: newSession.branchId
+            });
+            this.uiService.setProjectSessionLink({
+              sessionId: newSession.sessionId,
+              repoId: newSession.repoId,
+              branchId: newSession.branchId
+            });
           }
           this.isSubmitting = false;
           this.cd.detectChanges();

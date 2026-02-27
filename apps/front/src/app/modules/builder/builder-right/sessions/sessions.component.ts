@@ -354,10 +354,14 @@ export class SessionsComponent implements OnInit {
     }
     this.sessionQuery.update(session);
     this.navigateService.navigateToSession({
-      sessionId: session.sessionId
+      sessionId: session.sessionId,
+      repoId: session.repoId,
+      branchId: session.branchId
     });
     this.uiService.setProjectSessionLink({
-      sessionId: session.sessionId
+      sessionId: session.sessionId,
+      repoId: session.repoId,
+      branchId: session.branchId
     });
   }
 }

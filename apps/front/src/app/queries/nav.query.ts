@@ -13,6 +13,7 @@ export class NavState {
   projectName: string;
   projectDefaultBranch: string;
   isRepoProd: boolean;
+  isRepoSession: boolean;
   branchId: string;
   envId: string;
   needValidate: boolean;
@@ -30,6 +31,7 @@ let navState: NavState = {
   projectName: undefined,
   projectDefaultBranch: undefined,
   isRepoProd: undefined,
+  isRepoSession: false,
   branchId: undefined,
   envId: PROJECT_ENV_PROD,
   needValidate: false,
@@ -77,6 +79,7 @@ export class NavQuery extends BaseQuery<NavState> {
         projectName: undefined,
         projectDefaultBranch: undefined,
         isRepoProd: true,
+        isRepoSession: false,
         branchId: undefined
       })
     );
@@ -89,6 +92,7 @@ export class NavQuery extends BaseQuery<NavState> {
         projectName: undefined,
         projectDefaultBranch: undefined,
         isRepoProd: true,
+        isRepoSession: false,
         branchId: undefined
       })
     );

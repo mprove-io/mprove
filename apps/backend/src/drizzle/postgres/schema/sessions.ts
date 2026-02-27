@@ -14,6 +14,8 @@ export const sessionsTable = pgTable(
   'sessions',
   {
     sessionId: varchar('session_id', { length: 255 }).notNull().primaryKey(),
+    repoId: varchar('repo_id', { length: 255 }).notNull(),
+    branchId: varchar('branch_id', { length: 255 }).notNull(),
     userId: varchar('user_id', { length: 32 }).notNull(),
     projectId: varchar('project_id', { length: 32 }).notNull(),
     sandboxType: varchar('sandbox_type', { length: 32 }).notNull(),
@@ -37,6 +39,8 @@ export const sessionsTable = pgTable(
     lt: json('lt')
       .$type<{ encrypted: string; decrypted: SessionLt }>()
       .notNull(),
+    initialBranch: varchar('initial_branch', { length: 255 }).notNull(),
+    initialCommit: varchar('initial_commit', { length: 64 }),
     keyTag: text('key_tag'),
     lastActivityTs: bigint('last_activity_ts', { mode: 'number' }),
     runningStartTs: bigint('running_start_ts', { mode: 'number' }),

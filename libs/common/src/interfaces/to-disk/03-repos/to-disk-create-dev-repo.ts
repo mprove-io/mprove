@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsString, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, ValidateNested } from 'class-validator';
 import { BaseProject } from '#common/interfaces/backend/base-project';
 import { DiskCatalogFile } from '#common/interfaces/disk/disk-catalog-file';
 import { Repo } from '#common/interfaces/disk/repo';
@@ -16,6 +16,14 @@ export class ToDiskCreateDevRepoRequestPayload {
 
   @IsString()
   devRepoId: string;
+
+  @IsOptional()
+  @IsString()
+  initialBranch?: string;
+
+  @IsOptional()
+  @IsString()
+  sessionBranch?: string;
 }
 
 export class ToDiskCreateDevRepoRequest extends ToDiskRequest {
@@ -35,6 +43,10 @@ export class ToDiskCreateDevRepoResponsePayload {
 
   @IsString()
   mproveDir: string;
+
+  @IsOptional()
+  @IsString()
+  initialCommitHash?: string;
 }
 
 export class ToDiskCreateDevRepoResponse extends MyResponse {

@@ -1012,6 +1012,8 @@ export class TabToEntService {
 
     let sessionEnt: SessionEnt = {
       sessionId: tab.sessionId,
+      repoId: tab.repoId,
+      branchId: tab.branchId,
       userId: tab.userId,
       projectId: tab.projectId,
       model: tab.model,
@@ -1023,6 +1025,8 @@ export class TabToEntService {
       permissionMode: tab.permissionMode,
       status: tab.status,
       archivedReason: tab.archivedReason,
+      initialBranch: tab.initialBranch,
+      initialCommit: tab.initialCommit,
       ...this.getEntProps({
         dataSt: sessionSt,
         dataLt: sessionLt,

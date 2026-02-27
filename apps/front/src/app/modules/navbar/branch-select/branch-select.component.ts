@@ -114,6 +114,7 @@ export class BranchSelectComponent {
           ? this.makeBranchItem({
               branchId: this.nav.branchId,
               isRepoProd: this.nav.isRepoProd,
+              isRepoSession: this.nav.isRepoSession,
               alias: user.alias,
               userId: user.userId
             })
@@ -415,18 +416,21 @@ export class BranchSelectComponent {
   makeBranchItem(item: {
     branchId: string;
     isRepoProd: boolean;
+    isRepoSession?: boolean;
     alias: string;
     userId: string;
   }) {
     let extraId = makeBranchExtraId({
       branchId: item.branchId,
       isRepoProd: item.isRepoProd,
+      isRepoSession: item.isRepoSession,
       userId: item.userId
     });
 
     let extraName = makeBranchExtraName({
       branchId: item.branchId,
       isRepoProd: item.isRepoProd,
+      isRepoSession: item.isRepoSession,
       alias: item.alias
     });
 

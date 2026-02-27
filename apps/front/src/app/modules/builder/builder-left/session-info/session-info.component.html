@@ -45,6 +45,25 @@
                 {{ formatTimestamp(session?.createdTs) }}
               </div>
             </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Branch</div>
+              <div class="text-s400 text-base">{{ session?.sessionId }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Initial Branch</div>
+              <div class="text-s400 text-base">{{
+                session?.initialBranch || '-'
+              }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Initial Commit</div>
+              <div class="text-s400 text-base">{{
+                session?.initialCommit || '-'
+              }}</div>
+            </div>
           </div>
         </div>
 

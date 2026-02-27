@@ -396,6 +396,8 @@ export class NavigateService {
 
   async navigateToSession(item: {
     sessionId: string;
+    repoId?: string;
+    branchId?: string;
     left?: BuilderLeftEnum;
     right?: string;
   }) {
@@ -406,7 +408,11 @@ export class NavigateService {
     let left = item.left || uiState.builderLeft;
     let right = item.right || uiState.builderRight;
 
-    let repoId = this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId;
+    let repoId =
+      item.repoId ||
+      (this.nav.isRepoProd === true ? PROD_REPO_ID : this.userId);
+
+    let branchId = item.branchId || this.nav.branchId;
 
     return this.router.navigate(
       [
@@ -417,7 +423,7 @@ export class NavigateService {
         PATH_REPO,
         repoId,
         PATH_BRANCH,
-        this.nav.branchId,
+        branchId,
         PATH_ENV,
         this.nav.envId,
         PATH_BUILDER,
