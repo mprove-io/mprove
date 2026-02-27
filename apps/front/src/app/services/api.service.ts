@@ -16,7 +16,8 @@ import {
   PATH_NEW_SESSION,
   PATH_ORG,
   PATH_PROJECT,
-  PATH_REPO
+  PATH_REPO,
+  PROD_REPO_ID
 } from '#common/constants/top';
 import {
   APP_SPINNER_NAME,
@@ -268,6 +269,33 @@ export class ApiService {
             .navigateByUrl(orgProjectPath, { skipLocationChange: true })
             .then(() => {
               this.navigateToLastModelChart(nav);
+            });
+        }).bind(this);
+
+        this.myDialogService.showError({ errorData, isThrow: false });
+      } else if (
+        [ErEnum.BACKEND_FORBIDDEN_REPO_ID].indexOf(infoErrorMessage) > -1
+      ) {
+        errorData.message = 'Session is not found';
+        errorData.leftButtonText = 'Ok';
+        errorData.leftOnClickFnBindThis = (() => {
+          this.router
+            .navigateByUrl(orgProjectPath, { skipLocationChange: true })
+            .then(() => {
+              this.router.navigate([
+                PATH_ORG,
+                nav.orgId,
+                PATH_PROJECT,
+                nav.projectId,
+                PATH_REPO,
+                PROD_REPO_ID,
+                PATH_BRANCH,
+                nav.projectDefaultBranch,
+                PATH_ENV,
+                nav.envId,
+                PATH_BUILDER,
+                PATH_NEW_SESSION
+              ]);
             });
         }).bind(this);
 
