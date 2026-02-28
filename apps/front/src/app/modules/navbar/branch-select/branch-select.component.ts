@@ -377,8 +377,7 @@ export class BranchSelectComponent {
         navArray.push(PATH_FILE);
         navArray.push(urlParts[13]);
       } else if (urlParts[12] === PATH_SESSION && isDefined(urlParts[13])) {
-        navArray.push(PATH_SESSION);
-        navArray.push(urlParts[13]);
+        navArray.push(PATH_NEW_SESSION);
       } else {
         navArray.push(urlParts[12] || PATH_NEW_SESSION);
       }
