@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -162,7 +163,13 @@ export class SessionsComponent implements OnInit {
   }
 
   newSession() {
-    this.navigateService.navigateToBuilder();
+    this.sessionBundleQuery.reset();
+    this.sessionEventsQuery.reset();
+    this.sessionQuery.reset();
+    this.navigateService.navigateToBuilder({
+      repoId: PROD_REPO_ID,
+      branchId: this.navQuery.getValue().projectDefaultBranch
+    });
   }
 
   pauseSession(event: MouseEvent, session: SessionApiX) {

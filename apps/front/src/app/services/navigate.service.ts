@@ -79,6 +79,7 @@ export class NavigateService {
   }
 
   async navigateToBuilder(item?: {
+    repoId?: string;
     branchId?: string;
     left?: BuilderLeftEnum;
     right?: string;
@@ -104,7 +105,7 @@ export class NavigateService {
         PATH_PROJECT,
         this.nav.projectId,
         PATH_REPO,
-        this.nav.repoId,
+        isDefined(item?.repoId) ? item.repoId : this.nav.repoId,
         PATH_BRANCH,
         isDefined(item?.branchId) ? item.branchId : this.nav.branchId,
         PATH_ENV,
