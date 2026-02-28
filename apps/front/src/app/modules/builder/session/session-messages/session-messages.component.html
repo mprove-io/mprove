@@ -349,19 +349,6 @@
           </div>
         </ng-container>
 
-        <!-- No messages state -->
-        <div
-          *ngIf="
-            turns.length === 0 &&
-            !session?.firstMessage &&
-            !isActivating &&
-            !isSessionError
-          "
-          class="text-s500 flex items-center justify-center py-8 text-[17px]"
-        >
-          No messages yet
-        </div>
-
         <div class="flex-grow"></div>
       </div>
     </div>

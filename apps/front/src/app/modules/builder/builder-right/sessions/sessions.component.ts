@@ -12,6 +12,7 @@ import {
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -93,7 +94,8 @@ export class SessionsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private uiService: UiService,
     private spinner: NgxSpinnerService,
-    private myDialogService: MyDialogService
+    private myDialogService: MyDialogService,
+    private sessionBundleQuery: SessionBundleQuery
   ) {}
 
   ngOnInit() {
@@ -352,7 +354,9 @@ export class SessionsComponent implements OnInit {
     if (this.sessionId) {
       this.uiQuery.updatePart({ showSessionMessages: false });
     }
-    this.sessionQuery.update(session);
+    this.sessionBundleQuery.reset();
+    this.sessionEventsQuery.reset();
+    this.sessionQuery.update({ ...session, firstMessage: undefined });
     this.navigateService.navigateToSession({
       sessionId: session.sessionId,
       repoId: session.repoId,
