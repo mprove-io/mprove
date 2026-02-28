@@ -177,23 +177,10 @@ export class BranchSelectComponent {
       )
       .subscribe();
 
-    let nav: NavState;
-    this.navQuery
-      .select()
-      .pipe(
-        tap(x => {
-          nav = x;
-        }),
-        take(1)
-      )
-      .subscribe();
-
     this.branchesListLoading = true;
 
     let payload: ToBackendGetBranchesListRequestPayload = {
-      projectId: this.selectedProjectId,
-      sessionRepoId:
-        nav.repoType === RepoTypeEnum.Session ? nav.repoId : undefined
+      projectId: this.selectedProjectId
     };
 
     this.apiService
@@ -216,46 +203,28 @@ export class BranchSelectComponent {
               })
             );
 
-            let prodBranchesDefault = this.branchesList.filter(
-              y =>
-                y.repoType === RepoTypeEnum.Prod &&
-                y.branchId === this.defaultBranch
-            );
+            let sortDefaultFirst = (a: BranchItem, b: BranchItem) => {
+              if (a.branchId === this.defaultBranch) return -1;
+              if (b.branchId === this.defaultBranch) return 1;
+              return a.branchId.localeCompare(b.branchId);
+            };
 
-            let prodBranchesNotDefault = this.branchesList.filter(
-              y =>
-                y.repoType === RepoTypeEnum.Prod &&
-                y.branchId !== this.defaultBranch
-            );
+            let prodBranches = this.branchesList
+              .filter(y => y.repoType === RepoTypeEnum.Prod)
+              .sort(sortDefaultFirst);
 
-            let devBranchesDefault = this.branchesList.filter(
-              y =>
-                y.repoType === RepoTypeEnum.Dev &&
-                y.branchId === this.defaultBranch
-            );
+            let devBranches = this.branchesList
+              .filter(y => y.repoType === RepoTypeEnum.Dev)
+              .sort(sortDefaultFirst);
 
-            let devBranchesNotDefault = this.branchesList.filter(
-              y =>
-                y.repoType === RepoTypeEnum.Dev &&
-                y.branchId !== this.defaultBranch
-            );
-
-            let sessionBranchesNotDefault = this.branchesList.filter(
-              y =>
-                y.repoType === RepoTypeEnum.Session &&
-                y.branchId !== this.defaultBranch
-            );
+            let sessionBranches = this.branchesList
+              .filter(y => y.repoType === RepoTypeEnum.Session)
+              .sort(sortDefaultFirst);
 
             this.branchesList =
               this.isEditor === true
-                ? [
-                    ...prodBranchesDefault,
-                    ...prodBranchesNotDefault,
-                    ...devBranchesDefault,
-                    ...devBranchesNotDefault,
-                    ...sessionBranchesNotDefault
-                  ]
-                : [...prodBranchesDefault, ...prodBranchesNotDefault];
+                ? [...prodBranches, ...devBranches, ...sessionBranches]
+                : [...prodBranches];
 
             this.branchesListLength = this.branchesList.length;
             this.branchesListLoading = false;
@@ -366,7 +335,10 @@ export class BranchSelectComponent {
         right: uiState.builderRight
       };
 
-      if (isChangeView) {
+      if (newSelectedBranchItem.repoType === RepoTypeEnum.Session) {
+        navArray.push(PATH_SESSION);
+        navArray.push(newSelectedBranchItem.repoId);
+      } else if (isChangeView) {
         navArray.push(PATH_SELECT_FILE);
       } else if (urlParts[12] === PATH_FILE && isDefined(urlParts[13])) {
         navArray.push(PATH_FILE);

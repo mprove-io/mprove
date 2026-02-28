@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsString, ValidateNested } from 'class-validator';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { Member } from '#common/interfaces/backend/member';
 import { MyResponse } from '#common/interfaces/to/my-response';
@@ -8,10 +8,6 @@ import { ToBackendRequest } from '../to-backend-request';
 export class ToBackendGetBranchesListRequestPayload {
   @IsString()
   projectId: string;
-
-  @IsOptional()
-  @IsString()
-  sessionRepoId?: string;
 }
 
 export class ToBackendGetBranchesListRequest extends ToBackendRequest {
