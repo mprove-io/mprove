@@ -521,7 +521,11 @@ ng-select .ng-select-container .ng-value-container .ng-placeholder {
   animation-duration: var(--text-shimmer-duration);
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  animation-delay: calc(var(--text-shimmer-step) * var(--text-shimmer-index));
+  animation-delay: calc(
+    var(--text-shimmer-step) * var(--text-shimmer-index) - var(
+        --text-shimmer-duration
+      )
+  );
 }
 
 @keyframes text-shimmer-char {
