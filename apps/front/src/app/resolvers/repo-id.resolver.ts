@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { PARAMETER_REPO_ID, PROD_REPO_ID } from '#common/constants/top';
+import {
+  PARAMETER_BRANCH_ID,
+  PARAMETER_REPO_ID,
+  PROD_REPO_ID
+} from '#common/constants/top';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { checkNavOrgProject } from '../functions/check-nav-org-project';
 import { NavQuery, NavState } from '../queries/nav.query';
@@ -48,10 +52,18 @@ export class RepoIdResolver implements Resolve<Observable<boolean>> {
           ? RepoTypeEnum.Dev
           : RepoTypeEnum.Session;
 
-    this.navQuery.updatePart({
+    let branchId = route.firstChild?.params[PARAMETER_BRANCH_ID];
+
+    let part: Partial<NavState> = {
       repoId: repoId,
       repoType: repoType
-    });
+    };
+
+    if (branchId !== undefined) {
+      part.branchId = branchId;
+    }
+
+    this.navQuery.updatePart(part);
 
     return of(false);
   }

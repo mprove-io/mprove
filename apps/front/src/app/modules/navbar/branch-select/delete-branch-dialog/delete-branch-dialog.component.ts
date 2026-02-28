@@ -38,7 +38,6 @@ export interface DeleteBranchDialogData {
   repoId: string;
   repoType: RepoTypeEnum;
   alias: string;
-  hideBranchSelectFn: () => void;
 }
 
 @Component({
@@ -76,8 +75,6 @@ export class DeleteBranchDialogComponent implements OnInit {
   }
 
   delete() {
-    this.ref.data.hideBranchSelectFn();
-
     this.ref.close();
 
     this.spinner.show(APP_SPINNER_NAME);

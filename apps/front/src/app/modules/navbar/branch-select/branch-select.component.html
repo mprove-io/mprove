@@ -1,13 +1,4 @@
 <ng-select
-  *ngIf="showEmptySelector === true"
-  #emptyBranchSelect
-  [fixNgSelectBottom]="emptyBranchSelect"
-  class="w-72 text-base"
-  appendTo="body"
-></ng-select>
-
-<ng-select
-  *ngIf="showEmptySelector === false"
   #branchSelect
   [fixNgSelectBottom]="branchSelect"
   data-cy="branchSelect"

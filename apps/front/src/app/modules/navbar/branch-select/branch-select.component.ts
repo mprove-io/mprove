@@ -145,12 +145,9 @@ export class BranchSelectComponent {
   needSave = false;
   needSave$ = this.uiQuery.needSave$.pipe(tap(x => (this.needSave = x)));
 
-  showEmptySelector = false;
-
   routerEvents$ = this.router.events.pipe(
     filter(ev => ev instanceof NavigationEnd),
-    tap((x: any) => {
-      this.showEmptySelector = false;
+    tap(() => {
       this.cd.detectChanges();
     })
   );
@@ -281,8 +278,7 @@ export class BranchSelectComponent {
       projectId: this.selectedProjectId,
       branchesList: this.branchesList,
       selectedBranchItem: this.selectedBranchItem,
-      selectedBranchExtraId: this.selectedBranchExtraId,
-      hideBranchSelectFn: this.hideBranchSelect.bind(this)
+      selectedBranchExtraId: this.selectedBranchExtraId
     });
   }
 
@@ -323,33 +319,14 @@ export class BranchSelectComponent {
       envId: this.nav.envId,
       repoId: this.selectedBranchItem.repoId,
       repoType: this.selectedBranchItem.repoType,
-      alias: alias,
-      hideBranchSelectFn: this.hideBranchSelect.bind(this)
+      alias: alias
     });
-  }
-
-  hideBranchSelect() {
-    this.showEmptySelector = true;
-    this.cd.detectChanges();
   }
 
   branchChange() {
     let newSelectedBranchItem = this.branchesList.find(
       x => x.extraId === this.selectedBranchExtraId
     );
-
-    let nav = this.navQuery.getValue();
-
-    if (
-      (nav.repoType === RepoTypeEnum.Prod &&
-        newSelectedBranchItem.repoType !== RepoTypeEnum.Prod) ||
-      (nav.repoType === RepoTypeEnum.Dev &&
-        newSelectedBranchItem.repoType !== RepoTypeEnum.Dev) ||
-      (nav.repoType === RepoTypeEnum.Session &&
-        newSelectedBranchItem.repoType !== RepoTypeEnum.Session)
-    ) {
-      this.hideBranchSelect();
-    }
 
     let envId =
       newSelectedBranchItem.repoType === RepoTypeEnum.Prod

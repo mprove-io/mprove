@@ -49,7 +49,6 @@ export interface CreateBranchDialogData {
   branchesList: BranchItem[];
   selectedBranchItem: BranchItem;
   selectedBranchExtraId: string;
-  hideBranchSelectFn: () => void;
 }
 
 @Component({
@@ -158,8 +157,6 @@ export class CreateBranchDialogComponent implements OnInit {
     if (!this.createBranchForm.valid) {
       return;
     }
-
-    this.ref.data.hideBranchSelectFn();
 
     this.spinner.show(APP_SPINNER_NAME);
 
