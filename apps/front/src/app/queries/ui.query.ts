@@ -14,7 +14,6 @@ import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link'
 import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
 import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
 import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
-import { ProjectSessionLink } from '#common/interfaces/backend/project-session-link';
 import { Column } from '#common/interfaces/blockml/column';
 import { Fraction } from '#common/interfaces/blockml/fraction';
 import { ChartPointsData } from '#common/interfaces/front/chart-points-data';
@@ -65,7 +64,6 @@ export class UiState {
   timezone: string;
   timeSpec: TimeSpecEnum;
   timeRangeFraction: Fraction;
-  projectSessionLinks: ProjectSessionLink[];
   projectModelLinks: ProjectModelLink[];
   projectChartLinks: ProjectChartLink[];
   projectDashboardLinks: ProjectDashboardLink[];
@@ -120,7 +118,6 @@ let uiState: UiState = {
   timezone: undefined,
   timeSpec: undefined,
   timeRangeFraction: undefined,
-  projectSessionLinks: [],
   projectModelLinks: [],
   projectChartLinks: [],
   projectDashboardLinks: [],
@@ -159,10 +156,6 @@ export class UiQuery extends BaseQuery<UiState> {
   isAutoRun$ = this.store.pipe(select(state => state.isAutoRun));
 
   showSchema$ = this.store.pipe(select(state => state.showSchema));
-
-  projectSessionLinks$ = this.store.pipe(
-    select(state => state.projectSessionLinks)
-  );
 
   projectModelLinks$ = this.store.pipe(
     select(state => state.projectModelLinks)

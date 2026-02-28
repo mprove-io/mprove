@@ -9,7 +9,6 @@ import { ProjectChartLink } from '#common/interfaces/backend/project-chart-link'
 import { ProjectDashboardLink } from '#common/interfaces/backend/project-dashboard-link';
 import { ProjectModelLink } from '#common/interfaces/backend/project-model-link';
 import { ProjectReportLink } from '#common/interfaces/backend/project-report-link';
-import { ProjectSessionLink } from '#common/interfaces/backend/project-session-link';
 import { Ui } from '#common/interfaces/backend/ui';
 import {
   ToBackendSetUserUiRequestPayload,
@@ -30,7 +29,6 @@ export class UiService {
   async setUserUi(item: {
     timezone?: string;
     modelTreeLevels?: ModelTreeLevelsEnum;
-    projectSessionLinks?: ProjectSessionLink[];
     projectModelLinks?: ProjectModelLink[];
     projectChartLinks?: ProjectChartLink[];
     projectDashboardLinks?: ProjectDashboardLink[];
@@ -41,7 +39,6 @@ export class UiService {
     let {
       timezone,
       modelTreeLevels,
-      projectSessionLinks,
       projectModelLinks,
       projectChartLinks,
       projectDashboardLinks,
@@ -59,9 +56,6 @@ export class UiService {
       timezone: isDefined(timezone) ? timezone : uiState.timezone,
       timeSpec: uiState.timeSpec,
       timeRangeFraction: uiState.timeRangeFraction,
-      projectSessionLinks: isDefined(projectSessionLinks)
-        ? projectSessionLinks
-        : uiState.projectSessionLinks,
       projectModelLinks: isDefined(projectModelLinks)
         ? projectModelLinks
         : uiState.projectModelLinks,
@@ -99,77 +93,6 @@ export class UiService {
         take(1)
       )
       .subscribe();
-  }
-
-  clearProjectSessionLink() {
-    let projectId = this.navQuery.getValue().projectId;
-
-    if (isUndefined(projectId)) {
-      return;
-    }
-
-    let links = this.uiQuery.getValue().projectSessionLinks;
-
-    let link: ProjectSessionLink = links.find(l => l.projectId === projectId);
-
-    if (isUndefined(link)) {
-      return;
-    }
-
-    let newProjectSessionLinks = links.filter(l => l.projectId !== projectId);
-
-    this.uiQuery.updatePart({ projectSessionLinks: newProjectSessionLinks });
-    this.setUserUi({ projectSessionLinks: newProjectSessionLinks });
-  }
-
-  setProjectSessionLink(item: {
-    sessionId: string;
-    repoId?: string;
-    branchId?: string;
-  }) {
-    let { sessionId, repoId, branchId } = item;
-
-    let projectId = this.navQuery.getValue().projectId;
-
-    if (isUndefined(projectId) || isUndefined(sessionId)) {
-      return;
-    }
-
-    let links = this.uiQuery.getValue().projectSessionLinks;
-
-    let link: ProjectSessionLink = links.find(l => l.projectId === projectId);
-
-    if (link?.sessionId === sessionId) {
-      return;
-    }
-
-    let newLink: ProjectSessionLink = {
-      projectId: projectId,
-      sessionId: sessionId,
-      repoId: repoId,
-      branchId: branchId,
-      navTs: Date.now()
-    };
-
-    let newProjectSessionLinks: ProjectSessionLink[];
-
-    if (isDefined(link)) {
-      newProjectSessionLinks = [
-        newLink,
-        ...links.filter(r => !(r.projectId === projectId))
-      ];
-    } else {
-      newProjectSessionLinks = [newLink, ...links];
-    }
-
-    let oneYearAgoTimestamp = Date.now() - 1000 * 60 * 60 * 24 * 365;
-
-    newProjectSessionLinks = newProjectSessionLinks.filter(
-      l => l.navTs >= oneYearAgoTimestamp
-    );
-
-    this.uiQuery.updatePart({ projectSessionLinks: newProjectSessionLinks });
-    this.setUserUi({ projectSessionLinks: newProjectSessionLinks });
   }
 
   setProjectChartLink(item: { chartId: string }) {

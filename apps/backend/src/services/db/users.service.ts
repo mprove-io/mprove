@@ -51,10 +51,6 @@ export class UsersService {
         timeRangeFraction:
           user.ui?.timeRangeFraction || defaultSrvUi.timeRangeFraction,
         //
-        projectSessionLinks: isDefined(user.ui?.projectSessionLinks)
-          ? user.ui?.projectSessionLinks
-          : defaultSrvUi.projectSessionLinks,
-        //
         projectModelLinks: isDefined(user.ui?.projectModelLinks)
           ? user.ui?.projectModelLinks
           : defaultSrvUi.projectModelLinks,

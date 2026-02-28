@@ -50,7 +50,6 @@ import { ApiService } from '#front/app/services/api.service';
 import { FileService } from '#front/app/services/file.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -175,7 +174,6 @@ export class BranchSelectComponent {
     private navigateService: NavigateService,
     private fileService: FileService,
     private myDialogService: MyDialogService,
-    private uiService: UiService,
     private cd: ChangeDetectorRef,
     private router: Router
   ) {}
@@ -364,22 +362,19 @@ export class BranchSelectComponent {
           this.sessionQuery.update({ ...session, firstMessage: undefined });
         }
 
-        this.uiService.setProjectSessionLink({
-          sessionId: newSelectedBranchItem.repoId,
-          repoId: newSelectedBranchItem.repoId,
-          branchId: newSelectedBranchItem.branchId
-        });
         navArray.push(PATH_SESSION);
         navArray.push(newSelectedBranchItem.repoId);
-      } else if (isChangeView) {
-        navArray.push(PATH_SELECT_FILE);
-      } else if (urlParts[12] === PATH_FILE && isDefined(urlParts[13])) {
-        navArray.push(PATH_FILE);
-        navArray.push(urlParts[13]);
-      } else if (urlParts[12] === PATH_SESSION && isDefined(urlParts[13])) {
-        navArray.push(PATH_NEW_SESSION);
       } else {
-        navArray.push(urlParts[12] || PATH_NEW_SESSION);
+        if (isChangeView) {
+          navArray.push(PATH_SELECT_FILE);
+        } else if (urlParts[12] === PATH_FILE && isDefined(urlParts[13])) {
+          navArray.push(PATH_FILE);
+          navArray.push(urlParts[13]);
+        } else if (urlParts[12] === PATH_SESSION && isDefined(urlParts[13])) {
+          navArray.push(PATH_NEW_SESSION);
+        } else {
+          navArray.push(urlParts[12] || PATH_NEW_SESSION);
+        }
       }
 
       this.router.navigate(navArray, { queryParams });

@@ -8,7 +8,6 @@ import { ProjectChartLink } from './project-chart-link';
 import { ProjectDashboardLink } from './project-dashboard-link';
 import { ProjectModelLink } from './project-model-link';
 import { ProjectReportLink } from './project-report-link';
-import { ProjectSessionLink } from './project-session-link';
 
 export class Ui {
   @IsEnum(ModelTreeLevelsEnum)
@@ -23,10 +22,6 @@ export class Ui {
   @ValidateNested()
   @Type(() => Fraction)
   timeRangeFraction: Fraction;
-
-  @ValidateNested()
-  @Type(() => ProjectSessionLink)
-  projectSessionLinks: ProjectSessionLink[];
 
   @ValidateNested()
   @Type(() => ProjectModelLink)

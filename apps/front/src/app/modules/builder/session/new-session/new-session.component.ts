@@ -19,7 +19,6 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -43,16 +42,13 @@ export class NewSessionComponent implements OnInit {
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
     private uiQuery: UiQuery,
-    private navigateService: NavigateService,
-    private uiService: UiService
+    private navigateService: NavigateService
   ) {
     this.model = this.uiQuery.getValue().lastSelectedProviderModel || 'default';
     let savedVariant = this.uiQuery.getValue().lastSelectedVariant || 'default';
     this.variant = savedVariant;
 
     this.initialBranch = this.navQuery.getValue().projectDefaultBranch;
-
-    this.uiService.clearProjectSessionLink();
   }
 
   ngOnInit() {
@@ -149,11 +145,6 @@ export class NewSessionComponent implements OnInit {
 
             // Navigate to session route with session repoId/branchId
             this.navigateService.navigateToSession({
-              sessionId: newSession.sessionId,
-              repoId: newSession.repoId,
-              branchId: newSession.branchId
-            });
-            this.uiService.setProjectSessionLink({
               sessionId: newSession.sessionId,
               repoId: newSession.repoId,
               branchId: newSession.branchId

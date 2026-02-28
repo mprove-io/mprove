@@ -20,7 +20,6 @@ import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
-import { UiService } from '#front/app/services/ui.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
@@ -93,7 +92,6 @@ export class SessionsComponent implements OnInit {
     private apiService: ApiService,
     private navigateService: NavigateService,
     private cd: ChangeDetectorRef,
-    private uiService: UiService,
     private spinner: NgxSpinnerService,
     private myDialogService: MyDialogService,
     private sessionBundleQuery: SessionBundleQuery
@@ -365,11 +363,6 @@ export class SessionsComponent implements OnInit {
     this.sessionEventsQuery.reset();
     this.sessionQuery.update({ ...session, firstMessage: undefined });
     this.navigateService.navigateToSession({
-      sessionId: session.sessionId,
-      repoId: session.repoId,
-      branchId: session.branchId
-    });
-    this.uiService.setProjectSessionLink({
       sessionId: session.sessionId,
       repoId: session.repoId,
       branchId: session.branchId

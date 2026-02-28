@@ -47,6 +47,7 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
+import { makeSessionId } from '#common/functions/make-session-id';
 import { splitModel } from '#common/functions/split-model';
 import {
   ToBackendCreateAgentSessionRequest,
@@ -141,36 +142,38 @@ export class CreateAgentSessionController {
 
     // Phase 1: Save session with status=New and return immediately
 
-    let sessionId = makeId().toLowerCase();
     let now = Date.now();
-
-    let session: SessionTab = this.sessionsService.makeSession({
-      sessionId: sessionId,
-      repoId: sessionId,
-      branchId: sessionId,
-      userId: user.userId,
-      projectId: projectId,
-      sandboxType: sandboxType,
-      provider: provider,
-      model: model,
-      lastMessageProviderModel: model,
-      lastMessageVariant: variant,
-      agent: agent,
-      permissionMode: permissionMode,
-      firstMessage: firstMessage,
-      initialBranch: initialBranch,
-      initialCommit: undefined,
-      status: SessionStatusEnum.New,
-      lastActivityTs: now,
-      createdTs: now
-    });
-
-    let ocSession = this.sessionsService.makeOcSession({
-      sessionId: sessionId
-    });
+    let session!: SessionTab;
 
     await retry(
-      async () =>
+      async () => {
+        let sessionId = makeSessionId();
+
+        session = this.sessionsService.makeSession({
+          sessionId: sessionId,
+          repoId: sessionId,
+          branchId: sessionId,
+          userId: user.userId,
+          projectId: projectId,
+          sandboxType: sandboxType,
+          provider: provider,
+          model: model,
+          lastMessageProviderModel: model,
+          lastMessageVariant: variant,
+          agent: agent,
+          permissionMode: permissionMode,
+          firstMessage: firstMessage,
+          initialBranch: initialBranch,
+          initialCommit: undefined,
+          status: SessionStatusEnum.New,
+          lastActivityTs: now,
+          createdTs: now
+        });
+
+        let ocSession = this.sessionsService.makeOcSession({
+          sessionId: sessionId
+        });
+
         await this.db.drizzle.transaction(
           async tx =>
             await this.db.packer.write({
@@ -180,7 +183,8 @@ export class CreateAgentSessionController {
                 ocSessions: [ocSession]
               }
             })
-        ),
+        );
+      },
       getRetryOption(this.cs, this.logger)
     );
 

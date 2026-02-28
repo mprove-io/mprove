@@ -10,6 +10,7 @@ import {
 } from '#common/constants/top';
 import { BuilderLeftEnum } from '#common/enums/builder-left.enum';
 import { BuilderRightEnum } from '#common/enums/builder-right.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { Member } from '#common/interfaces/backend/member';
 import { MemberQuery } from '#front/app/queries/member.query';
@@ -110,17 +111,11 @@ export class NavbarComponent implements OnInit {
       return;
     }
 
-    let projectSessionLinks = this.uiQuery.getValue().projectSessionLinks;
-
-    let pLink = projectSessionLinks.find(
-      link => link.projectId === this.nav.projectId
-    );
-
-    if (isDefined(pLink?.sessionId)) {
+    if (this.nav.repoType === RepoTypeEnum.Session) {
       this.navigateService.navigateToSession({
-        sessionId: pLink.sessionId,
-        repoId: pLink.repoId,
-        branchId: pLink.branchId,
+        sessionId: this.nav.repoId,
+        repoId: this.nav.repoId,
+        branchId: this.nav.branchId,
         left: BuilderLeftEnum.Info,
         right: BuilderRightEnum.Sessions
       });

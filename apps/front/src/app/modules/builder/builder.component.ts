@@ -265,15 +265,12 @@ export class BuilderComponent implements OnInit, OnDestroy {
       urlTree.queryParams['left'] = x;
       this.location.replaceState(this.router.serializeUrl(urlTree));
     } else if (x === BuilderLeftEnum.Tree || x === BuilderLeftEnum.Info) {
-      let pLink = this.uiQuery
-        .getValue()
-        .projectSessionLinks.find(
-          link => link.projectId === this.nav.projectId
-        );
-
-      if (isDefined(pLink?.sessionId)) {
+      if (
+        this.nav.repoType === RepoTypeEnum.Session &&
+        isDefined(this.sessionId)
+      ) {
         this.navigateService.navigateToSession({
-          sessionId: pLink.sessionId,
+          sessionId: this.sessionId,
           left: x
         });
       } else {
