@@ -37,14 +37,11 @@ export class SessionInputComponent implements OnChanges {
   @Input() showSelects = true;
   @Input() scrollableInput = false;
   @Input() sessionId: string | undefined;
-  @Input() showAutoScroll = false;
-  @Input() autoScroll = false;
   @Input() isWaitingForResponse = false;
 
   @Output() send = new EventEmitter<string>();
   @Output() stop = new EventEmitter<void>();
   @Output() providerHasApiKeyChange = new EventEmitter<boolean>();
-  @Output() autoScrollChange = new EventEmitter<boolean>();
 
   messageText = '';
 
@@ -110,11 +107,6 @@ export class SessionInputComponent implements OnChanges {
     this.modelChange.emit(this.model);
     this.variantChange.emit(this.variant);
     this.persistSelections();
-  }
-
-  onAutoScrollToggle() {
-    this.autoScroll = !this.autoScroll;
-    this.autoScrollChange.emit(this.autoScroll);
   }
 
   onAgentSelect() {

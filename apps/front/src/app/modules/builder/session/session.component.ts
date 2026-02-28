@@ -111,7 +111,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   isAborting = false;
   retryMessage: string;
   isSessionError = false;
-  autoScroll = false;
 
   get statusText(): string {
     if (this.isWaitingForResponse) {
@@ -491,6 +490,9 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   connectSseWithTicket(sessionId: string, sseTicket: string) {
+    if (!this.session?.sessionId || this.session.sessionId !== sessionId) {
+      return;
+    }
     this.closeSse();
 
     let url =
@@ -684,14 +686,11 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.previousLastTurnResponsesExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
-    // Don't set showSessionMessages here — when switching sessions,
-    // openSession() sets it to false. Let updateSessionData() set it
-    // to true once the correct data arrives from the resolver.
-    // For first load, showSessionMessages is already true.
-
     // Recreate session-messages — ngAfterViewInit will scroll to bottom
     this.isSessionSwitching = false;
-    this.managePollingAndSse();
+    if (this.showSessionMessages) {
+      this.managePollingAndSse();
+    }
   }
 
   updateSessionData(sessionData: SessionBundleState) {

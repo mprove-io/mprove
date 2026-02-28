@@ -69,7 +69,6 @@ export class SessionMessagesComponent
   @Input() retryMessage: string;
   @Input() isSessionError = false;
   @Input() scrollTrigger = 0;
-  @Input() autoScroll = true;
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
 
@@ -120,15 +119,14 @@ export class SessionMessagesComponent
 
     this.updateResponseMinHeight();
 
-    // Auto-scroll: when turns change WITHOUT scrollTrigger, scroll to bottom
-    if (this.autoScroll && changes['turns'] && !changes['scrollTrigger']) {
-      setTimeout(() => {
-        if (this.chatScrollbar) {
-          let viewport = this.chatScrollbar.adapter.viewportElement;
-          viewport.scrollTop = viewport.scrollHeight;
-        }
-      });
-    }
+    // if (changes['turns'] && !changes['scrollTrigger']) {
+    //   setTimeout(() => {
+    //     if (this.chatScrollbar) {
+    //       let viewport = this.chatScrollbar.adapter.viewportElement;
+    //       viewport.scrollTop = viewport.scrollHeight;
+    //     }
+    //   });
+    // }
 
     setTimeout(() => this.updateScrollState());
   }
