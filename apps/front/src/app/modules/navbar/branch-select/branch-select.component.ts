@@ -28,6 +28,7 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { SessionApi } from '#common/interfaces/backend/session-api';
 import { BranchItem } from '#common/interfaces/front/branch-item';
 import {
   ToBackendGetBranchesListRequestPayload,
@@ -40,12 +41,16 @@ import { FileQuery, FileState } from '#front/app/queries/file.query';
 import { MemberQuery } from '#front/app/queries/member.query';
 import { NavQuery, NavState } from '#front/app/queries/nav.query';
 import { RepoQuery, RepoState } from '#front/app/queries/repo.query';
+import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { UserQuery, UserState } from '#front/app/queries/user.query';
 import { ApiService } from '#front/app/services/api.service';
 import { FileService } from '#front/app/services/file.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -87,6 +92,7 @@ export class BranchSelectComponent {
   branchesList: BranchItem[] = [];
   branchesListLoading = false;
   branchesListLength = 0;
+  sessionsList: SessionApi[] = [];
 
   selectedOrgId: string;
   selectedProjectId: string;
@@ -126,7 +132,10 @@ export class BranchSelectComponent {
       this.selectedBranchExtraId = this.selectedBranchItem?.extraId;
 
       this.branchesList =
-        isDefined(this.selectedBranchItem) && this.branchesList.length === 0
+        isDefined(this.selectedBranchItem) &&
+        !this.branchesList.some(
+          item => item.extraId === this.selectedBranchItem.extraId
+        )
           ? [this.selectedBranchItem]
           : this.branchesList;
 
@@ -159,10 +168,14 @@ export class BranchSelectComponent {
     private navQuery: NavQuery,
     private fileQuery: FileQuery,
     private repoQuery: RepoQuery,
+    private sessionQuery: SessionQuery,
+    private sessionBundleQuery: SessionBundleQuery,
+    private sessionEventsQuery: SessionEventsQuery,
     private apiService: ApiService,
     private navigateService: NavigateService,
     private fileService: FileService,
     private myDialogService: MyDialogService,
+    private uiService: UiService,
     private cd: ChangeDetectorRef,
     private router: Router
   ) {}
@@ -192,6 +205,7 @@ export class BranchSelectComponent {
         tap((resp: ToBackendGetBranchesListResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.memberQuery.update(resp.payload.userMember);
+            this.sessionsList = resp.payload.sessionsList;
 
             this.branchesList = resp.payload.branchesList.map(y =>
               this.makeBranchItem({
@@ -336,6 +350,25 @@ export class BranchSelectComponent {
       };
 
       if (newSelectedBranchItem.repoType === RepoTypeEnum.Session) {
+        let currentSession = this.sessionQuery.getValue();
+        if (currentSession?.sessionId) {
+          this.uiQuery.updatePart({ showSessionMessages: false });
+        }
+        this.sessionBundleQuery.reset();
+        this.sessionEventsQuery.reset();
+
+        let session = this.sessionsList.find(
+          s => s.repoId === newSelectedBranchItem.repoId
+        );
+        if (session) {
+          this.sessionQuery.update({ ...session, firstMessage: undefined });
+        }
+
+        this.uiService.setProjectSessionLink({
+          sessionId: newSelectedBranchItem.repoId,
+          repoId: newSelectedBranchItem.repoId,
+          branchId: newSelectedBranchItem.branchId
+        });
         navArray.push(PATH_SESSION);
         navArray.push(newSelectedBranchItem.repoId);
       } else if (isChangeView) {

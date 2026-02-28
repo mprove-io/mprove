@@ -53,12 +53,17 @@ export class SessionResolver {
             this.sessionQuery.update(resp.payload.session);
 
             let sessions = this.sessionsQuery.getValue().sessions;
+            let found = sessions.some(
+              s => s.sessionId === resp.payload.session.sessionId
+            );
             this.sessionsQuery.update({
-              sessions: sessions.map(s =>
-                s.sessionId === resp.payload.session.sessionId
-                  ? resp.payload.session
-                  : s
-              )
+              sessions: found
+                ? sessions.map(s =>
+                    s.sessionId === resp.payload.session.sessionId
+                      ? resp.payload.session
+                      : s
+                  )
+                : [resp.payload.session, ...sessions]
             });
 
             this.sessionEventsQuery.updatePart({
