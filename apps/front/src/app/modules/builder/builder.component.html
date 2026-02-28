@@ -290,6 +290,17 @@
             <div *ngIf="needSave === false && repo.repoStatus === repoStatusOk"
               >No committed changes to Push</div
             >
+
+            <div
+              *ngIf="
+                needSave === false &&
+                nav?.repoType === repoTypeEnum.Session &&
+                repo?.changesToCommit?.length === 0 &&
+                repo?.changesToPush?.length === 0 &&
+                repo.repoStatus === repoStatusNeedPush
+              "
+              >No committed changes to Push</div
+            >
           </ng-template>
 
           <div
@@ -297,7 +308,11 @@
             *ngIf="isEditor === true"
             [tp]="templatePushToRemote"
             [tpIsEnabled]="
-              repo.repoStatus !== repoStatusNeedPush || needSave === true
+              repo.repoStatus !== repoStatusNeedPush ||
+              needSave === true ||
+              (nav?.repoType === repoTypeEnum.Session &&
+                repo?.changesToCommit?.length === 0 &&
+                repo?.changesToPush?.length === 0)
             "
           >
             <button
@@ -307,12 +322,20 @@
               [ngClass]="{
                 'bg-m600':
                   needSave === false &&
+                  !(
+                    nav?.repoType === repoTypeEnum.Session &&
+                    repo?.changesToCommit?.length === 0 &&
+                    repo?.changesToPush?.length === 0
+                  ) &&
                   (repo.repoStatus === repoStatusNeedPush ||
                     (repo.repoStatus === repoStatusOk &&
                       repo?.changesToCommit?.length === 0 &&
                       repo?.changesToPush?.length > 0)),
                 'bg-s400 cursor-default':
                   needSave === true ||
+                  (nav?.repoType === repoTypeEnum.Session &&
+                    repo?.changesToCommit?.length === 0 &&
+                    repo?.changesToPush?.length === 0) ||
                   (repo.repoStatus !== repoStatusNeedPush &&
                     !(
                       repo.repoStatus === repoStatusOk &&
@@ -323,6 +346,9 @@
               (click)="push()"
               [disabled]="
                 needSave === true ||
+                (nav?.repoType === repoTypeEnum.Session &&
+                  repo?.changesToCommit?.length === 0 &&
+                  repo?.changesToPush?.length === 0) ||
                 (repo.repoStatus !== repoStatusNeedPush &&
                   !(
                     repo.repoStatus === repoStatusOk &&
