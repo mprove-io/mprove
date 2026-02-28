@@ -161,9 +161,13 @@ export class SessionsComponent implements OnInit {
   }
 
   newSession() {
+    if (this.sessionId) {
+      this.uiQuery.updatePart({ showSessionMessages: false });
+    }
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
-    this.sessionQuery.reset();
+    let session = this.sessionQuery.getValue();
+    this.sessionQuery.update({ ...session, firstMessage: undefined });
     this.navigateService.navigateToBuilder({
       repoId: PROD_REPO_ID,
       branchId: this.navQuery.getValue().projectDefaultBranch

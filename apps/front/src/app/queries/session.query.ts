@@ -15,7 +15,8 @@ let sessionState: SessionState = {
   initialBranch: undefined,
   initialCommit: undefined,
   createdTs: undefined,
-  lastActivityTs: undefined
+  lastActivityTs: undefined,
+  firstMessage: undefined
 };
 
 @Injectable({ providedIn: 'root' })
