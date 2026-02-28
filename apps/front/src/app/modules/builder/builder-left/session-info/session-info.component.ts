@@ -1,10 +1,10 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import type { AssistantMessage, Todo } from '@opencode-ai/sdk/v2';
-import { combineLatest, interval } from 'rxjs';
+import type { Todo } from '@opencode-ai/sdk/v2';
+import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
-import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
+// import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { TimeService } from '#front/app/services/time.service';
@@ -67,48 +67,48 @@ export class SessionInfoComponent {
     })
   );
 
-  metrics$ = combineLatest([
-    this.sessionBundleQuery.messages$,
-    this.agentModelsQuery.models$
-  ]).pipe(
-    tap(([messages, models]) => {
-      this.usageDisplay = '-';
-
-      for (let i = messages.length - 1; i >= 0; i--) {
-        let msg = messages[i];
-        if (msg.role !== 'assistant') continue;
-
-        let am = msg.ocMessage as AssistantMessage;
-        if (!am.tokens) continue;
-
-        let total =
-          am.tokens.input +
-          am.tokens.output +
-          am.tokens.reasoning +
-          am.tokens.cache.read +
-          am.tokens.cache.write;
-
-        if (total <= 0) continue;
-
-        let model = models.find(m => m.id === am.modelID);
-        if (model?.contextLimit) {
-          let pct = Math.round((total / model.contextLimit) * 100);
-          this.usageDisplay = `${pct}% - ${total.toLocaleString()} of ${model.contextLimit.toLocaleString()}`;
-        } else {
-          this.usageDisplay = total.toLocaleString();
-        }
-
-        break;
-      }
-
-      this.cd.detectChanges();
-    })
-  );
+  // metrics$ = combineLatest([
+  //   this.sessionBundleQuery.messages$,
+  //   this.agentModelsQuery.models$
+  // ]).pipe(
+  //   tap(([messages, models]) => {
+  //     this.usageDisplay = '-';
+  //
+  //     for (let i = messages.length - 1; i >= 0; i--) {
+  //       let msg = messages[i];
+  //       if (msg.role !== 'assistant') continue;
+  //
+  //       let am = msg.ocMessage as AssistantMessage;
+  //       if (!am.tokens) continue;
+  //
+  //       let total =
+  //         am.tokens.input +
+  //         am.tokens.output +
+  //         am.tokens.reasoning +
+  //         am.tokens.cache.read +
+  //         am.tokens.cache.write;
+  //
+  //       if (total <= 0) continue;
+  //
+  //       let model = models.find(m => m.id === am.modelID);
+  //       if (model?.contextLimit) {
+  //         let pct = Math.round((total / model.contextLimit) * 100);
+  //         this.usageDisplay = `${pct}% - ${total.toLocaleString()} of ${model.contextLimit.toLocaleString()}`;
+  //       } else {
+  //         this.usageDisplay = total.toLocaleString();
+  //       }
+  //
+  //       break;
+  //     }
+  //
+  //     this.cd.detectChanges();
+  //   })
+  // );
 
   constructor(
     private sessionQuery: SessionQuery,
     private sessionBundleQuery: SessionBundleQuery,
-    private agentModelsQuery: AgentModelsQuery,
+    // private agentModelsQuery: AgentModelsQuery,
     private timeService: TimeService,
     private cd: ChangeDetectorRef
   ) {}

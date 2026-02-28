@@ -68,7 +68,7 @@
         </div>
 
         <!-- Context Section -->
-        <div class="mb-8">
+        <!-- <div class="mb-8">
           <div class="text-s500 mb-4 flex flex-row justify-start font-semibold">
             Context
           </div>
@@ -89,7 +89,7 @@
               <div class="text-s400 text-base">{{ usageDisplay }}</div>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <!-- TODOs Section -->
         <div *ngIf="todos.length > 0">
@@ -159,5 +159,5 @@
 
 <div *ngIf="session$ | async"></div>
 <div *ngIf="todos$ | async"></div>
-<div *ngIf="metrics$ | async"></div>
+<!-- <div *ngIf="metrics$ | async"></div> -->
 <div *ngIf="interval$ | async"></div>
