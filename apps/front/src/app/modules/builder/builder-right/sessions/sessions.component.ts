@@ -25,6 +25,14 @@ import { NavigateService } from '#front/app/services/navigate.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
+let STATUS_ORDER: Record<string, number> = {
+  New: 0,
+  Active: 1,
+  Error: 2,
+  Paused: 3,
+  Archived: 4
+};
+
 export class SessionApiX extends SessionApi {
   displayTitle: string;
   providerLabel: string;
@@ -54,12 +62,19 @@ export class SessionsComponent implements OnInit {
 
   sessions$ = this.sessionsQuery.sessions$.pipe(
     tap(x => {
-      this.sessions = x.map(s =>
-        Object.assign({}, s, <SessionApiX>{
-          displayTitle: makeTitle(s),
-          providerLabel: this.providerLabels[s.provider] || s.provider
-        })
-      );
+      this.sessions = x
+        .map(s =>
+          Object.assign({}, s, <SessionApiX>{
+            displayTitle: makeTitle(s),
+            providerLabel: this.providerLabels[s.provider] || s.provider
+          })
+        )
+        .sort((a, b) => {
+          let statusDiff =
+            (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99);
+          if (statusDiff !== 0) return statusDiff;
+          return b.createdTs - a.createdTs;
+        });
       this.cd.detectChanges();
     })
   );

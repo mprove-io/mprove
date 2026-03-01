@@ -163,6 +163,21 @@ export class GetAgentSessionsListController {
       }
     }
 
+    let statusOrder: Record<string, number> = {
+      [SessionStatusEnum.New]: 0,
+      [SessionStatusEnum.Active]: 1,
+      [SessionStatusEnum.Error]: 2,
+      [SessionStatusEnum.Paused]: 3,
+      [SessionStatusEnum.Archived]: 4
+    };
+
+    allEnts.sort((a, b) => {
+      let statusDiff =
+        (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
+      if (statusDiff !== 0) return statusDiff;
+      return b.createdTs - a.createdTs;
+    });
+
     let sessionIds = allEnts.map(e => e.sessionId);
 
     let ocSessionEnts =
