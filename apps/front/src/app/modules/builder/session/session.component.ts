@@ -650,7 +650,11 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.model =
       this.session.lastMessageProviderModel || this.session.model || 'default';
     this.sseRetryCount = 0;
-    this.lastProcessedEventIndex = -1;
+    let loadedEvents = this.sessionEventsQuery.getValue().events;
+    this.lastProcessedEventIndex = loadedEvents.reduce(
+      (max, e) => Math.max(max, e.eventIndex),
+      -1
+    );
     this.isAborting = false;
     this.pendingUserMessages = [];
     this.lastKnownStoreUserCount = sessionData.messages.filter(
