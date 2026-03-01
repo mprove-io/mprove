@@ -71,8 +71,8 @@ import { NewPasswordWasSetComponent } from './modules/auth/password/04-new-passw
 import { BuilderComponent } from './modules/builder/builder.component';
 import { FileEditorComponent } from './modules/builder/file-editor/file-editor.component';
 import { SelectFileComponent } from './modules/builder/select-file/select-file.component';
-import { NewSessionComponent } from './modules/builder/session/new-session/new-session.component';
-import { SessionComponent } from './modules/builder/session/session.component';
+import { NewSessionWrapperComponent } from './modules/builder/session/new-session-wrapper/new-session-wrapper.component';
+import { SessionWrapperComponent } from './modules/builder/session/session-wrapper/session-wrapper.component';
 import { DashboardComponent } from './modules/dashboards/dashboard/dashboard.component';
 import { DashboardsComponent } from './modules/dashboards/dashboards.component';
 import { DashboardsListComponent } from './modules/dashboards/dashboards-list/dashboards-list.component';
@@ -275,7 +275,7 @@ export const appRoutes: Routes = [
                                 path: PATH_SELECT_FILE
                               },
                               {
-                                component: NewSessionComponent,
+                                component: NewSessionWrapperComponent,
                                 path: PATH_NEW_SESSION
                               },
                               {
@@ -285,7 +285,7 @@ export const appRoutes: Routes = [
                                 resolve: [FileResolver]
                               },
                               {
-                                component: SessionComponent,
+                                component: SessionWrapperComponent,
                                 path:
                                   PATH_SESSION + `/:${PARAMETER_SESSION_ID}`,
                                 resolve: [SessionResolver]

@@ -58,7 +58,7 @@ export class UiState {
   sessionToggleAllEvents: number;
   sessionAllEventsExpanded: boolean;
   isNavigatingSession: boolean;
-  showSessionMessages: boolean;
+  showContent: boolean;
   //
   modelTreeLevels: ModelTreeLevelsEnum;
   timezone: string;
@@ -112,7 +112,7 @@ let uiState: UiState = {
   sessionToggleAllEvents: 0,
   sessionAllEventsExpanded: false,
   isNavigatingSession: false,
-  showSessionMessages: true,
+  showContent: true,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -217,9 +217,7 @@ export class UiQuery extends BaseQuery<UiState> {
     select(state => state.isNavigatingSession)
   );
 
-  showSessionMessages$ = this.store.pipe(
-    select(state => state.showSessionMessages)
-  );
+  showContent$ = this.store.pipe(select(state => state.showContent));
 
   constructor() {
     super(createStore({ name: 'ui' }, withProps<UiState>(uiState)));

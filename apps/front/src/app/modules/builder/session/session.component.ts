@@ -98,7 +98,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   questions: QuestionRequest[] = [];
   scrollTrigger = 0;
   isSessionSwitching = false;
-  showSessionMessages = true;
+
   previousTurnsCount = 0;
   previousLastTurnResponsesExist = false;
   previousSessionId: string;
@@ -179,13 +179,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   debugMode$ = this.uiQuery.sessionDebugMode$.pipe(
     tap(x => {
       this.debugMode = x;
-      this.cd.detectChanges();
-    })
-  );
-
-  showSessionMessages$ = this.uiQuery.showSessionMessages$.pipe(
-    tap(x => {
-      this.showSessionMessages = x;
       this.cd.detectChanges();
     })
   );
@@ -688,9 +681,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     // Recreate session-messages — ngAfterViewInit will scroll to bottom
     this.isSessionSwitching = false;
-    if (this.showSessionMessages) {
-      this.managePollingAndSse();
-    }
+    this.managePollingAndSse();
   }
 
   updateSessionData(sessionData: SessionBundleState) {
@@ -745,10 +736,6 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
     this.updateStatusTextChars();
-
-    if (!this.showSessionMessages) {
-      this.uiQuery.updatePart({ showSessionMessages: true });
-    }
 
     this.managePollingAndSse();
 

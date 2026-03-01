@@ -121,6 +121,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
         this.sessionEventsQuery.reset();
       }
 
+      this.uiQuery.updatePart({ showContent: true });
       this.cd.detectChanges();
     })
   );

@@ -164,9 +164,11 @@ export class SessionsComponent implements OnInit {
   }
 
   newSession() {
-    if (this.sessionId) {
-      this.uiQuery.updatePart({ showSessionMessages: false });
+    if (!this.sessionId) {
+      return;
     }
+
+    this.uiQuery.updatePart({ showContent: false });
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
 
@@ -177,6 +179,7 @@ export class SessionsComponent implements OnInit {
       changesToCommit: [],
       changesToPush: []
     });
+
     this.navigateService.navigateToBuilder({
       repoId: PROD_REPO_ID,
       branchId: this.navQuery.getValue().projectDefaultBranch
@@ -369,9 +372,11 @@ export class SessionsComponent implements OnInit {
   }
 
   openSession(session: SessionApi) {
-    if (this.sessionId) {
-      this.uiQuery.updatePart({ showSessionMessages: false });
+    if (session.sessionId === this.sessionId) {
+      return;
     }
+
+    this.uiQuery.updatePart({ showContent: false });
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
     this.sessionQuery.update({ ...session, firstMessage: undefined });

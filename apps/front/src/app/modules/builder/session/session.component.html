@@ -6,7 +6,7 @@
   >
     <m-session-messages
       class="h-full w-full"
-      *ngIf="showSessionMessages && !isSessionSwitching"
+      *ngIf="!isSessionSwitching"
       [turns]="turns"
       [session]="session"
       [isActivating]="isActivating"
@@ -161,5 +161,5 @@
 <div *ngIf="sessionAndData$ | async"></div>
 <div *ngIf="debugEvents$ | async"></div>
 <div *ngIf="debugMode$ | async"></div>
-<div *ngIf="showSessionMessages$ | async"></div>
+
 <div *ngIf="toggleAllEvents$ | async"></div>

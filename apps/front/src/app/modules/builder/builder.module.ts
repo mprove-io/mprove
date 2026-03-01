@@ -24,12 +24,14 @@ import { FileEditorComponent } from './file-editor/file-editor.component';
 import { RepoOptionsComponent } from './repo-options/repo-options.component';
 import { SelectFileComponent } from './select-file/select-file.component';
 import { NewSessionComponent } from './session/new-session/new-session.component';
+import { NewSessionWrapperComponent } from './session/new-session-wrapper/new-session-wrapper.component';
 import { QuestionPromptComponent } from './session/question-prompt/question-prompt.component';
 import { SessionComponent } from './session/session.component';
 import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
 import { ContextUsageCircleComponent } from './session/session-input/context-usage-circle/context-usage-circle.component';
 import { SessionInputComponent } from './session/session-input/session-input.component';
 import { SessionMessagesComponent } from './session/session-messages/session-messages.component';
+import { SessionWrapperComponent } from './session/session-wrapper/session-wrapper.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,9 @@ import { SessionMessagesComponent } from './session/session-messages/session-mes
     BuilderRightComponent,
     SessionsComponent,
     NewSessionComponent,
+    NewSessionWrapperComponent,
     SessionComponent,
+    SessionWrapperComponent,
     SessionDebugEventsComponent,
     SessionInputComponent,
     ContextUsageCircleComponent,

@@ -350,7 +350,7 @@ export class BranchSelectComponent {
       if (newSelectedBranchItem.repoType === RepoTypeEnum.Session) {
         let currentSession = this.sessionQuery.getValue();
         if (currentSession?.sessionId) {
-          this.uiQuery.updatePart({ showSessionMessages: false });
+          this.uiQuery.updatePart({ showContent: false });
         }
         this.sessionBundleQuery.reset();
         this.sessionEventsQuery.reset();
