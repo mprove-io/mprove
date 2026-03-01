@@ -23,6 +23,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
+  MessageTab,
   OcSessionTab,
   PartTab,
   SessionTab
@@ -454,17 +455,25 @@ export class AgentService implements OnModuleDestroy {
       })
     );
 
-    let messageTabs = items
-      .filter(item => item.event.type === 'message.updated')
-      .map(item => {
-        let props = (item.event as EventMessageUpdated).properties;
-        return this.messagesService.makeMessage({
-          messageId: props.info.id,
-          sessionId: sessionId,
-          role: props.info.role,
-          ocMessage: props.info
-        });
+    let uniqueMessages: MessageTab[] = [];
+
+    for (let item of items.filter(i => i.event.type === 'message.updated')) {
+      let props = (item.event as EventMessageUpdated).properties;
+      let tab = this.messagesService.makeMessage({
+        messageId: props.info.id,
+        sessionId: sessionId,
+        role: props.info.role,
+        ocMessage: props.info
       });
+      let idx = uniqueMessages.findIndex(m => m.messageId === tab.messageId);
+      if (idx >= 0) {
+        uniqueMessages[idx] = tab;
+      } else {
+        uniqueMessages.push(tab);
+      }
+    }
+
+    let messageTabs = uniqueMessages;
 
     // Accumulate part states across drain cycles (updates + deltas)
     let sessionParts = this.partStates.get(sessionId);
@@ -550,8 +559,10 @@ export class AgentService implements OnModuleDestroy {
         ocSessionTab = this.sessionsService.makeOcSession({ sessionId });
       }
 
-      for (let item of sessionUpdatedItems) {
-        let ocSessionData = (item.event as EventSessionUpdated).properties.info;
+      if (sessionUpdatedItems.length > 0) {
+        let lastItem = sessionUpdatedItems[sessionUpdatedItems.length - 1];
+        let ocSessionData = (lastItem.event as EventSessionUpdated).properties
+          .info;
         ocSessionTabs.push({ ...ocSessionTab, openSession: ocSessionData });
       }
 

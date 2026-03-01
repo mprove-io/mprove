@@ -88,11 +88,8 @@ export class GetAgentSessionController {
       ? this.sessionsService.tabToOcSessionApi({ ocSession })
       : undefined;
 
-    let payload: ToBackendGetAgentSessionResponsePayload = {
-      session: sessionApi,
-      ocSession: ocSessionApi,
-      events: events
-    };
+    let messages: AgentMessageApi[] = [];
+    let parts: AgentPartApi[] = [];
 
     if (includeMessagesAndParts === true) {
       let messageEnts = await this.db.drizzle.query.messagesTable.findMany({
@@ -100,7 +97,7 @@ export class GetAgentSessionController {
         orderBy: [asc(messagesTable.messageId)]
       });
 
-      let messages: AgentMessageApi[] = messageEnts.map(ent => {
+      messages = messageEnts.map(ent => {
         let tab = this.tabService.messageEntToTab(ent);
         return {
           messageId: tab.messageId,
@@ -115,7 +112,7 @@ export class GetAgentSessionController {
         orderBy: [asc(partsTable.partId)]
       });
 
-      let parts: AgentPartApi[] = partEnts.map(ent => {
+      parts = partEnts.map(ent => {
         let tab = this.tabService.partEntToTab(ent);
         return {
           partId: tab.partId,
@@ -124,9 +121,6 @@ export class GetAgentSessionController {
           ocPart: tab.ocPart
         };
       });
-
-      payload.messages = messages;
-      payload.parts = parts;
     }
 
     let result = await this.sessionsService.getBasicSessionsList({
@@ -134,8 +128,16 @@ export class GetAgentSessionController {
       userId: user.userId,
       currentSessionId: sessionId
     });
-    payload.sessions = result.sessions;
-    payload.hasMoreArchived = result.hasMoreArchived;
+
+    let payload: ToBackendGetAgentSessionResponsePayload = {
+      session: sessionApi,
+      ocSession: ocSessionApi,
+      events: events,
+      messages: messages,
+      parts: parts,
+      sessions: result.sessions,
+      hasMoreArchived: result.hasMoreArchived
+    };
 
     return payload;
   }
