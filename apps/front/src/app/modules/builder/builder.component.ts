@@ -121,6 +121,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
         this.sessionEventsQuery.reset();
       }
 
+      this.spinner.hide(APP_SPINNER_NAME);
       this.uiQuery.updatePart({ showContent: true });
       this.cd.detectChanges();
     })

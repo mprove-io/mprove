@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -38,6 +40,7 @@ export class NewSessionComponent implements OnInit {
 
   constructor(
     private cd: ChangeDetectorRef,
+    private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
@@ -93,6 +96,8 @@ export class NewSessionComponent implements OnInit {
     }
 
     this.isSubmitting = true;
+    this.uiQuery.updatePart({ showContent: false });
+    this.spinner.show(APP_SPINNER_NAME);
 
     let nav = this.navQuery.getValue();
     let provider = this.getProviderFromModel();
