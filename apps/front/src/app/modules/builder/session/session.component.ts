@@ -18,6 +18,7 @@ import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
 import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
 import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
@@ -106,21 +107,21 @@ export class SessionComponent implements OnInit, OnDestroy {
   isActivating = false;
   isArchived = false;
   archivedReason: string | undefined;
-  isWaitingForResponse = false;
   isAgentBusy = false;
+  isWorking = false;
   isAborting = false;
   retryMessage: string;
   isSessionError = false;
 
   get statusText(): string {
-    if (this.isWaitingForResponse) {
+    if (this.isAgentBusy) {
       return this.retryMessage ? 'Retrying' : 'Working';
     }
     return '';
   }
 
   get statusTooltip(): string {
-    if (this.isWaitingForResponse && this.retryMessage) {
+    if (this.isAgentBusy && this.retryMessage) {
       return this.retryMessage;
     }
     return '';
@@ -288,7 +289,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     // Optimistic: show user message immediately
     this.pendingUserMessages.push(text);
     this.rebuildMessagesAndTurns();
-    this.isWaitingForResponse = true;
+    this.isAgentBusy = true;
     this.scrollTrigger++;
     this.cd.detectChanges();
 
@@ -307,7 +308,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     }
 
     this.isAborting = true;
-    this.isAgentBusy = false;
+    this.isWorking = false;
     this.cd.detectChanges();
 
     this.sendInteraction({
@@ -674,10 +675,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.archivedReason = this.session.archivedReason;
-    this.isWaitingForResponse = this.checkIsWaitingForResponse(
-      sessionData.sdkSessionStatus
-    );
     this.isAgentBusy = this.checkIsAgentBusy(sessionData.sdkSessionStatus);
+    this.isWorking = this.checkIsWorking(sessionData.sdkSessionStatus);
     this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
@@ -734,12 +733,12 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.archivedReason = this.session.archivedReason;
-    this.isWaitingForResponse =
+    this.isAgentBusy =
       this.questions.length === 0 &&
       this.permissions.length === 0 &&
       (this.pendingUserMessages.length > 0 ||
-        this.checkIsWaitingForResponse(sessionData.sdkSessionStatus));
-    this.isAgentBusy = this.checkIsAgentBusy(sessionData.sdkSessionStatus);
+        this.checkIsAgentBusy(sessionData.sdkSessionStatus));
+    this.isWorking = this.checkIsWorking(sessionData.sdkSessionStatus);
     this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
 
@@ -801,47 +800,57 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isConnectingSse = false;
   }
 
-  checkIsWaitingForResponse(sdkSessionStatus: SessionStatus): boolean {
-    if (this.session?.status !== SessionStatusEnum.Active) {
-      return false;
-    }
-    if (sdkSessionStatus) {
-      let result = sdkSessionStatus.type !== 'idle';
-      return result;
-    }
-    if (this.messages.length === 0) {
-      return true;
-    }
-    let lastMessage = this.messages[this.messages.length - 1];
-    if (lastMessage.role === 'error') {
-      return false;
-    }
-    let result = lastMessage.role === 'user' || lastMessage.role === 'tool';
-    return result;
-  }
-
   checkIsAgentBusy(sdkSessionStatus: SessionStatus): boolean {
     if (this.session?.status !== SessionStatusEnum.Active) {
       return false;
     }
+
+    if (
+      isDefined(sdkSessionStatus) &&
+      ['busy', 'retry'].indexOf(sdkSessionStatus.type) > -1
+    ) {
+      return true;
+    }
+
+    // let lastMessage = this.messages[this.messages.length - 1];
+
+    // if (lastMessage.role === 'error') {
+    //   return false;
+    // }
+
+    // return lastMessage.role === 'user' || lastMessage.role === 'tool'
+
+    return false;
+  }
+
+  checkIsWorking(sdkSessionStatus: SessionStatus): boolean {
+    if (this.session?.status !== SessionStatusEnum.Active) {
+      return false;
+    }
+
     if (sdkSessionStatus) {
-      let busy = sdkSessionStatus.type !== 'idle';
-      if (!busy) {
+      let isBusy = ['busy', 'retry'].indexOf(sdkSessionStatus.type) > -1;
+
+      if (!isBusy) {
         this.isAborting = false;
       }
+
       if (this.isAborting) {
         return false;
       }
-      return busy;
+
+      return isBusy;
     }
-    if (this.messages.length === 0) {
-      return false;
-    }
-    let lastMessage = this.messages[this.messages.length - 1];
-    if (lastMessage.role === 'error') {
-      return false;
-    }
-    return lastMessage.role === 'user' || lastMessage.role === 'tool';
+
+    // let lastMessage = this.messages[this.messages.length - 1];
+
+    // if (lastMessage.role === 'error') {
+    //   return false;
+    // }
+
+    // return lastMessage.role === 'user' || lastMessage.role === 'tool'
+
+    return false;
   }
 
   getRetryMessage(sdkSessionStatus: SessionStatus): string {

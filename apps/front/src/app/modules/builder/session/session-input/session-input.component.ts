@@ -37,7 +37,7 @@ export class SessionInputComponent implements OnChanges {
   @Input() showSelects = true;
   @Input() scrollableInput = false;
   @Input() sessionId: string | undefined;
-  @Input() isWaitingForResponse = false;
+  @Input() isWorking = false;
 
   @Output() send = new EventEmitter<string>();
   @Output() stop = new EventEmitter<void>();

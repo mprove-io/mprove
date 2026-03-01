@@ -65,7 +65,7 @@ export class SessionMessagesComponent
   @Input() session: SessionApi;
   @Input() isActivating = false;
   @Input() isArchived = false;
-  @Input() isWaitingForResponse = false;
+  @Input() isAgentBusy = false;
   @Input() retryMessage: string;
   @Input() isSessionError = false;
   @Input() scrollTrigger = 0;

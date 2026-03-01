@@ -262,9 +262,7 @@
 
             <!-- File changes summary (only show when turn is complete) -->
             <div
-              *ngIf="
-                turn.fileDiffs?.length > 0 && (!isLast || !isWaitingForResponse)
-              "
+              *ngIf="turn.fileDiffs?.length > 0 && (!isLast || !isAgentBusy)"
               class="mb-4 ml-[34px] flex items-start gap-3"
             >
               <span
