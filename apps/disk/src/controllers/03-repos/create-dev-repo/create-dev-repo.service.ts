@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ErEnum } from '#common/enums/er.enum';
+import { RepoStatusEnum } from '#common/enums/repo-status.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { DiskItemCatalog } from '#common/interfaces/disk/disk-item-catalog';
 import { DiskItemStatus } from '#common/interfaces/disk/disk-item-status';
 import { ProjectLt, ProjectSt } from '#common/interfaces/st-lt';
@@ -129,7 +131,7 @@ export class CreateDevRepoService {
         repoDir: devRepoDir,
         branchName: initialBranch,
         git: devGit,
-        isFetch: true
+        isFetch: false
       });
 
       let logResult = await devGit.log({ n: 1 });
@@ -152,9 +154,13 @@ export class CreateDevRepoService {
       repoId: devRepoId,
       repoDir: devRepoDir,
       git: devGit,
-      isFetch: true,
+      isFetch: false, // or !sessionBranch
       isCheckConflicts: true
     });
+
+    if (isDefined(sessionBranch)) {
+      repoStatus = RepoStatusEnum.NeedPush; // remote does not have branch equal to sessionId, and we save fetch request
+    }
 
     let itemCatalog = <DiskItemCatalog>await getNodesAndFiles({
       projectId: projectId,

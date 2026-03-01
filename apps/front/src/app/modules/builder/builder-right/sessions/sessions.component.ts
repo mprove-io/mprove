@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
+import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -12,6 +13,7 @@ import {
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
+import { RepoQuery } from '#front/app/queries/repo.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
@@ -94,7 +96,8 @@ export class SessionsComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private spinner: NgxSpinnerService,
     private myDialogService: MyDialogService,
-    private sessionBundleQuery: SessionBundleQuery
+    private sessionBundleQuery: SessionBundleQuery,
+    private repoQuery: RepoQuery
   ) {}
 
   ngOnInit() {
@@ -166,8 +169,14 @@ export class SessionsComponent implements OnInit {
     }
     this.sessionBundleQuery.reset();
     this.sessionEventsQuery.reset();
+
     let session = this.sessionQuery.getValue();
     this.sessionQuery.update({ ...session, firstMessage: undefined });
+    this.repoQuery.updatePart({
+      repoStatus: RepoStatusEnum.Ok, // for "Push to Remote" not flash during navigation
+      changesToCommit: [],
+      changesToPush: []
+    });
     this.navigateService.navigateToBuilder({
       repoId: PROD_REPO_ID,
       branchId: this.navQuery.getValue().projectDefaultBranch

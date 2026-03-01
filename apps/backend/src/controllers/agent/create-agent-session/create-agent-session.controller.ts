@@ -208,6 +208,7 @@ export class CreateAgentSessionController {
 
     // Phase 3: Create session repo (awaited)
 
+    let createSessionRepoStart = Date.now();
     let { repoId, branchId } = await this.createSessionRepoAsync({
       session: session,
       project: project,
@@ -215,6 +216,9 @@ export class CreateAgentSessionController {
       initialBranch: initialBranch,
       traceId: reqValid.info.traceId
     });
+    console.log(
+      `createSessionRepoAsync took ${(Date.now() - createSessionRepoStart) / 1000}s`
+    );
 
     let payload: ToBackendCreateAgentSessionResponsePayload = {
       sessionId: session.sessionId,
@@ -411,6 +415,7 @@ export class CreateAgentSessionController {
       }
     };
 
+    let sendToDiskStart = Date.now();
     let diskResponse =
       await this.rpcService.sendToDisk<ToDiskCreateDevRepoResponse>({
         orgId: project.orgId,
@@ -419,6 +424,7 @@ export class CreateAgentSessionController {
         message: toDiskCreateDevRepoRequest,
         checkIsOk: true
       });
+    console.log(`sendToDisk took ${(Date.now() - sendToDiskStart) / 1000}s`);
 
     let repoId = sessionId;
     let branchId = sessionId;
@@ -465,6 +471,7 @@ export class CreateAgentSessionController {
       if (x.envId === envId) {
         let structId = makeId();
 
+        let rebuildStructStart = Date.now();
         await this.blockmlService.rebuildStruct({
           traceId: traceId,
           orgId: project.orgId,
@@ -476,6 +483,9 @@ export class CreateAgentSessionController {
           envId: x.envId,
           overrideTimezone: undefined
         });
+        console.log(
+          `rebuildStruct took ${(Date.now() - rebuildStructStart) / 1000}s`
+        );
 
         x.structId = structId;
         x.needValidate = false;
