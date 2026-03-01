@@ -191,7 +191,8 @@ export class CreateAgentSessionController {
     // Phase 2: Activate session asynchronously (fire-and-forget)
 
     this.activateSessionAsync({
-      session: session,
+      sessionId: session.sessionId,
+      model: session.model,
       sandboxType: sandboxType,
       sandboxEnvs: sandboxEnvs,
       project: project,
@@ -230,17 +231,23 @@ export class CreateAgentSessionController {
   }
 
   private async activateSessionAsync(item: {
-    session: SessionTab;
+    sessionId: string;
+    model?: string;
     sandboxType: SandboxTypeEnum;
     sandboxEnvs: Record<string, string>;
     project: any;
     variant?: string;
     firstMessage?: string;
   }) {
-    let { session, sandboxType, sandboxEnvs, project, variant, firstMessage } =
-      item;
-
-    let sessionId = session.sessionId;
+    let {
+      sessionId,
+      model,
+      sandboxType,
+      sandboxEnvs,
+      project,
+      variant,
+      firstMessage
+    } = item;
 
     try {
       let sandboxTimeoutMinutes = this.cs.get<
@@ -281,8 +288,35 @@ export class CreateAgentSessionController {
 
       let now = Date.now();
 
+      let currentSession: SessionTab;
+      let retryMs = 15_000;
+      let intervalMs = 1_000;
+      let start = Date.now();
+
+      while (true) {
+        currentSession = await this.sessionsService.getSessionByIdCheckExists({
+          sessionId
+        });
+        if (currentSession.initialCommit) break;
+        if (Date.now() - start >= retryMs) {
+          await this.db.drizzle.execute(
+            sql`UPDATE sessions SET status = ${SessionStatusEnum.Error} WHERE session_id = ${sessionId}`
+          );
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_AGENT_FAILED_TO_GET_INITIAL_COMMIT
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+          return;
+        }
+        await new Promise(r => setTimeout(r, intervalMs));
+      }
+
       let updatedSession: SessionTab = {
-        ...session,
+        ...currentSession,
         sandboxId: sandboxId,
         sandboxBaseUrl: sandboxBaseUrl,
         opencodeSessionId: opencodeSessionId,
@@ -324,7 +358,7 @@ export class CreateAgentSessionController {
           parts: [{ type: 'text', text: firstMessage }]
         };
 
-        let split = splitModel(session.model);
+        let split = splitModel(model);
         if (split) {
           promptBody.model = split;
         }
@@ -356,20 +390,15 @@ export class CreateAgentSessionController {
         cs: this.cs
       });
 
-      let errorSession: SessionTab = {
-        ...session,
-        status: SessionStatusEnum.Error
-      };
-
       await retry(
         async () =>
           await this.db.drizzle.transaction(
             async tx =>
               await this.db.packer.write({
                 tx: tx,
-                insertOrUpdate: {
-                  sessions: [errorSession]
-                }
+                rawQueries: [
+                  sql`UPDATE sessions SET status = ${SessionStatusEnum.Error} WHERE session_id = ${sessionId}`
+                ]
               })
           ),
         getRetryOption(this.cs, this.logger)
