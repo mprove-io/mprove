@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq } from 'drizzle-orm';
+import { and, desc, eq, inArray, notInArray } from 'drizzle-orm';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
@@ -7,7 +7,10 @@ import type {
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
+import {
+  SessionEnt,
+  sessionsTable
+} from '#backend/drizzle/postgres/schema/sessions';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
@@ -187,5 +190,102 @@ export class SessionsService {
       questions: ocSession.questions,
       permissions: ocSession.permissions
     };
+  }
+
+  async getBasicSessionsList(item: {
+    projectId: string;
+    userId: string;
+    currentSessionId?: string;
+  }): Promise<{ sessions: SessionApi[]; hasMoreArchived: boolean }> {
+    let { projectId, userId, currentSessionId } = item;
+
+    let sessionEnts = await this.db.drizzle.query.sessionsTable.findMany({
+      where: and(
+        eq(sessionsTable.projectId, projectId),
+        eq(sessionsTable.userId, userId),
+        notInArray(sessionsTable.status, [
+          SessionStatusEnum.Deleted,
+          SessionStatusEnum.Archived
+        ])
+      ),
+      orderBy: [desc(sessionsTable.createdTs)]
+    });
+
+    let allEnts: SessionEnt[] = [...sessionEnts];
+
+    if (currentSessionId) {
+      let alreadyIncluded = allEnts.some(e => e.sessionId === currentSessionId);
+      if (!alreadyIncluded) {
+        let currentSessionEnt =
+          await this.db.drizzle.query.sessionsTable.findFirst({
+            where: and(
+              eq(sessionsTable.sessionId, currentSessionId),
+              eq(sessionsTable.projectId, projectId),
+              eq(sessionsTable.userId, userId)
+            )
+          });
+        if (currentSessionEnt) {
+          allEnts = [...allEnts, currentSessionEnt];
+        }
+      }
+    }
+
+    let archivedExists = await this.db.drizzle.query.sessionsTable.findFirst({
+      where: and(
+        eq(sessionsTable.projectId, projectId),
+        eq(sessionsTable.userId, userId),
+        eq(sessionsTable.status, SessionStatusEnum.Archived)
+      ),
+      columns: { sessionId: true }
+    });
+
+    let sessions = await this.entsToSessionApis({ allEnts });
+
+    return {
+      sessions,
+      hasMoreArchived: archivedExists !== undefined
+    };
+  }
+
+  async entsToSessionApis(item: {
+    allEnts: SessionEnt[];
+  }): Promise<SessionApi[]> {
+    let { allEnts } = item;
+
+    let statusOrder: Record<string, number> = {
+      [SessionStatusEnum.New]: 0,
+      [SessionStatusEnum.Active]: 1,
+      [SessionStatusEnum.Error]: 2,
+      [SessionStatusEnum.Paused]: 3,
+      [SessionStatusEnum.Archived]: 4
+    };
+
+    allEnts.sort((a, b) => {
+      let statusDiff =
+        (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
+      if (statusDiff !== 0) return statusDiff;
+      return b.createdTs - a.createdTs;
+    });
+
+    let sessionIds = allEnts.map(e => e.sessionId);
+
+    let ocSessionEnts =
+      sessionIds.length > 0
+        ? await this.db.drizzle.query.ocSessionsTable.findMany({
+            where: inArray(ocSessionsTable.sessionId, sessionIds)
+          })
+        : [];
+
+    let ocSessionTabs = ocSessionEnts.map(e =>
+      this.tabService.ocSessionEntToTab(e)
+    );
+
+    return allEnts.map(ent => {
+      let session = this.tabService.sessionEntToTab(ent);
+      let ocSession = ocSessionTabs.find(
+        o => o.sessionId === session.sessionId
+      );
+      return this.tabToSessionApi({ session, ocSession });
+    });
   }
 }

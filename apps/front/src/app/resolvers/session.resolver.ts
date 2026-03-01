@@ -52,19 +52,24 @@ export class SessionResolver {
 
             this.sessionQuery.update(resp.payload.session);
 
-            let sessions = this.sessionsQuery.getValue().sessions;
-            let found = sessions.some(
-              s => s.sessionId === resp.payload.session.sessionId
-            );
-            this.sessionsQuery.updatePart({
-              sessions: found
-                ? sessions.map(s =>
-                    s.sessionId === resp.payload.session.sessionId
-                      ? resp.payload.session
-                      : s
-                  )
-                : [resp.payload.session, ...sessions]
-            });
+            if (resp.payload.sessions.length > 0) {
+              let existing = this.sessionsQuery.getValue().sessions;
+              let merged = [...existing];
+              resp.payload.sessions.map(incoming => {
+                let idx = merged.findIndex(
+                  s => s.sessionId === incoming.sessionId
+                );
+                if (idx >= 0) {
+                  merged[idx] = incoming;
+                } else {
+                  merged.push(incoming);
+                }
+              });
+              this.sessionsQuery.updatePart({
+                sessions: merged,
+                isListLoaded: true
+              });
+            }
 
             this.sessionEventsQuery.updatePart({
               events: resp.payload.events

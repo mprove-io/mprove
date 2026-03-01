@@ -1,11 +1,10 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { and, desc, eq, gte, inArray, lt, notInArray } from 'drizzle-orm';
+import { and, desc, eq, gte, lt, notInArray } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import {
   SessionEnt,
   sessionsTable
@@ -15,7 +14,6 @@ import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -32,7 +30,6 @@ export class GetAgentSessionsListController {
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private agentService: AgentService,
-    private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -163,41 +160,8 @@ export class GetAgentSessionsListController {
       }
     }
 
-    let statusOrder: Record<string, number> = {
-      [SessionStatusEnum.New]: 0,
-      [SessionStatusEnum.Active]: 1,
-      [SessionStatusEnum.Error]: 2,
-      [SessionStatusEnum.Paused]: 3,
-      [SessionStatusEnum.Archived]: 4
-    };
-
-    allEnts.sort((a, b) => {
-      let statusDiff =
-        (statusOrder[a.status] ?? 99) - (statusOrder[b.status] ?? 99);
-      if (statusDiff !== 0) return statusDiff;
-      return b.createdTs - a.createdTs;
-    });
-
-    let sessionIds = allEnts.map(e => e.sessionId);
-
-    let ocSessionEnts =
-      sessionIds.length > 0
-        ? await this.db.drizzle.query.ocSessionsTable.findMany({
-            where: inArray(ocSessionsTable.sessionId, sessionIds)
-          })
-        : [];
-
-    let ocSessionMap = new Map(
-      ocSessionEnts.map(e => [
-        e.sessionId,
-        this.tabService.ocSessionEntToTab(e)
-      ])
-    );
-
-    payload.sessions = allEnts.map(ent => {
-      let session = this.tabService.sessionEntToTab(ent);
-      let ocSession = ocSessionMap.get(session.sessionId);
-      return this.sessionsService.tabToSessionApi({ session, ocSession });
+    payload.sessions = await this.sessionsService.entsToSessionApis({
+      allEnts
     });
 
     return payload;

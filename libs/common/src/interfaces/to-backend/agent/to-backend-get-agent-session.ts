@@ -34,6 +34,8 @@ export class ToBackendGetAgentSessionResponsePayload {
   events: AgentEventApi[];
   messages?: AgentMessageApi[];
   parts?: AgentPartApi[];
+  sessions: SessionApi[];
+  hasMoreArchived: boolean;
 }
 
 export class ToBackendGetAgentSessionResponse extends MyResponse {

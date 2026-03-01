@@ -129,6 +129,14 @@ export class GetAgentSessionController {
       payload.parts = parts;
     }
 
+    let result = await this.sessionsService.getBasicSessionsList({
+      projectId: session.projectId,
+      userId: user.userId,
+      currentSessionId: sessionId
+    });
+    payload.sessions = result.sessions;
+    payload.hasMoreArchived = result.hasMoreArchived;
+
     return payload;
   }
 }
