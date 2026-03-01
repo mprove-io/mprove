@@ -85,11 +85,14 @@ export class SessionMessagesComponent
   responseMinHeight = 0;
   isAtBottom = true;
   isOverflowing = false;
+  isAutoScrollEnabled = true;
   isReady = false;
 
   private scrollListener: (() => void) | null = null;
   private rafId: number | null = null;
   private isScrollingToBottom = false;
+  private mutationObserver: MutationObserver | null = null;
+  private autoScrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
   ngAfterViewInit() {
     if (this.chatScrollbar) {
@@ -108,6 +111,17 @@ export class SessionMessagesComponent
       this.scrollListener = () => this.scheduleScrollStateUpdate();
       viewport.addEventListener('scroll', this.scrollListener, {
         passive: true
+      });
+
+      this.mutationObserver = new MutationObserver(() => {
+        if (this.isAutoScrollEnabled) {
+          this.scheduleAutoScroll();
+        }
+      });
+      this.mutationObserver.observe(viewport, {
+        childList: true,
+        subtree: true,
+        characterData: true
       });
     }
   }
@@ -141,13 +155,43 @@ export class SessionMessagesComponent
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
     }
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect();
+      this.mutationObserver = null;
+    }
+    if (this.autoScrollTimeout !== null) {
+      clearTimeout(this.autoScrollTimeout);
+      this.autoScrollTimeout = null;
+    }
   }
 
   scrollToBottom() {
     if (!this.chatScrollbar) {
       return;
     }
-    this.isAtBottom = true;
+    this.isAutoScrollEnabled = true;
+    this.cd.detectChanges();
+    this.scheduleAutoScroll();
+  }
+
+  private scheduleAutoScroll() {
+    if (this.autoScrollTimeout !== null) {
+      clearTimeout(this.autoScrollTimeout);
+    }
+    this.autoScrollTimeout = setTimeout(() => {
+      this.autoScrollTimeout = null;
+      this.autoScrollToBottom();
+    }, 50);
+  }
+
+  private autoScrollToBottom() {
+    if (
+      !this.isAutoScrollEnabled ||
+      !this.chatScrollbar ||
+      this.isScrollingToBottom
+    ) {
+      return;
+    }
     this.isScrollingToBottom = true;
     let viewport = this.chatScrollbar.adapter.viewportElement;
     let scrollMax = viewport.scrollHeight - viewport.clientHeight;
@@ -155,7 +199,7 @@ export class SessionMessagesComponent
     setTimeout(() => {
       this.isScrollingToBottom = false;
       this.updateScrollState();
-    }, 300);
+    }, 250);
   }
 
   private scheduleScrollStateUpdate() {
@@ -164,11 +208,11 @@ export class SessionMessagesComponent
     }
     this.rafId = requestAnimationFrame(() => {
       this.rafId = null;
-      this.updateScrollState();
+      this.updateScrollState(true);
     });
   }
 
-  private updateScrollState() {
+  private updateScrollState(fromUserScroll = false) {
     if (this.isScrollingToBottom || !this.chatScrollbar) {
       return;
     }
@@ -177,12 +221,18 @@ export class SessionMessagesComponent
     let newIsOverflowing = max > 1;
     let newIsAtBottom = !newIsOverflowing || viewport.scrollTop >= max - 2;
 
-    if (
+    let changed =
       this.isOverflowing !== newIsOverflowing ||
-      this.isAtBottom !== newIsAtBottom
-    ) {
-      this.isOverflowing = newIsOverflowing;
-      this.isAtBottom = newIsAtBottom;
+      this.isAtBottom !== newIsAtBottom;
+
+    this.isOverflowing = newIsOverflowing;
+    this.isAtBottom = newIsAtBottom;
+
+    if (fromUserScroll) {
+      this.isAutoScrollEnabled = newIsAtBottom;
+    }
+
+    if (changed) {
       this.cd.detectChanges();
     }
   }

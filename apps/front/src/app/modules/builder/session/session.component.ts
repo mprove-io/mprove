@@ -51,6 +51,7 @@ import { EventReducerService } from '#front/app/services/event-reducer.service';
 import { UiService } from '#front/app/services/ui.service';
 import { environment } from '#front/environments/environment';
 import { SessionInputComponent } from './session-input/session-input.component';
+import { SessionMessagesComponent } from './session-messages/session-messages.component';
 
 interface FileDiffInfo {
   file: string;
@@ -84,6 +85,8 @@ interface ChatTurn {
 })
 export class SessionComponent implements OnInit, OnDestroy {
   @ViewChild(SessionInputComponent) sessionInput: SessionInputComponent;
+  @ViewChild(SessionMessagesComponent)
+  sessionMessages: SessionMessagesComponent;
 
   archivedReasonEnum = ArchivedReasonEnum;
   model = 'default';
@@ -291,6 +294,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.rebuildMessagesAndTurns();
     this.isAgentBusy = true;
     this.scrollTrigger++;
+    this.sessionMessages?.scrollToBottom();
     this.cd.detectChanges();
 
     this.sendInteraction({
@@ -330,6 +334,8 @@ export class SessionComponent implements OnInit, OnDestroy {
       )
     });
 
+    this.sessionMessages?.scrollToBottom();
+
     this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Permission,
@@ -349,6 +355,8 @@ export class SessionComponent implements OnInit, OnDestroy {
       questions: currentState.questions.filter(q => q.id !== event.questionId)
     });
 
+    this.sessionMessages?.scrollToBottom();
+
     this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Question,
@@ -367,6 +375,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.sessionBundleQuery.updatePart({
       questions: currentState.questions.filter(q => q.id !== event.questionId)
     });
+
+    this.sessionMessages?.scrollToBottom();
 
     this.sendInteraction({
       sessionId: this.session.sessionId,
