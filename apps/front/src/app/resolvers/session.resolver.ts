@@ -56,7 +56,7 @@ export class SessionResolver {
             let found = sessions.some(
               s => s.sessionId === resp.payload.session.sessionId
             );
-            this.sessionsQuery.update({
+            this.sessionsQuery.updatePart({
               sessions: found
                 ? sessions.map(s =>
                     s.sessionId === resp.payload.session.sessionId

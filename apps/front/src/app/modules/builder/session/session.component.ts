@@ -97,7 +97,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   permissions: PermissionRequest[] = [];
   questions: QuestionRequest[] = [];
   scrollTrigger = 0;
-  isSessionSwitching = false;
+  // isSessionSwitching = false;
 
   previousTurnsCount = 0;
   previousLastTurnResponsesExist = false;
@@ -207,21 +207,29 @@ export class SessionComponent implements OnInit, OnDestroy {
       if (!hasSession) {
         // No session in store yet (resolver hasn't completed)
         return;
+      } else if (hasSession && !hadPrevSession) {
+        // Session selected — first load
+        this.enterSession(sessionData);
+      } else if (
+        hasSession &&
+        hadPrevSession &&
+        currentSessionId === this.previousSessionId
+      ) {
+        // Same session — data update (streaming/polling)
+        this.updateSessionData(sessionData);
       } else if (
         hasSession &&
         hadPrevSession &&
         currentSessionId !== this.previousSessionId
       ) {
         // Session changed — switching from one to another
-        this.closeSse();
-        this.stopPolling();
-        this.enterSession(sessionData);
-      } else if (hasSession && !hadPrevSession) {
-        // Session selected — first load
-        this.enterSession(sessionData);
-      } else {
-        // Same session — data update (streaming/polling)
-        this.updateSessionData(sessionData);
+        // should not be there because of showContent flag
+        console.log(
+          'hasSession && hadPrevSession && currentSessionId !== this.previousSessionId'
+        );
+        //   this.closeSse();
+        //   this.stopPolling();
+        //   this.enterSession(sessionData);
       }
 
       this.previousSessionId = currentSessionId;
@@ -634,8 +642,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   enterSession(sessionData: SessionBundleState) {
     // Destroy session-messages to reset scroll state
-    this.isSessionSwitching = true;
-    this.cd.detectChanges();
+    // this.isSessionSwitching = true;
+    // this.cd.detectChanges();
 
     this.agent = this.session.agent;
     this.model =
@@ -680,7 +688,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
     // Recreate session-messages — ngAfterViewInit will scroll to bottom
-    this.isSessionSwitching = false;
+    // this.isSessionSwitching = false;
     this.managePollingAndSse();
   }
 

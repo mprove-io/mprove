@@ -101,8 +101,7 @@ export class SessionsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    let sessions = this.sessionsQuery.getValue().sessions;
-    if (sessions.length === 0) {
+    if (!this.sessionsQuery.getValue().isListLoaded) {
       this.loadSessions();
     }
   }
@@ -146,8 +145,9 @@ export class SessionsComponent implements OnInit {
               }
             }
 
-            this.sessionsQuery.update({
-              sessions: sessions
+            this.sessionsQuery.updatePart({
+              sessions: sessions,
+              isListLoaded: true
             });
           }
 
@@ -313,7 +313,7 @@ export class SessionsComponent implements OnInit {
               }
             }
 
-            this.sessionsQuery.update({
+            this.sessionsQuery.updatePart({
               sessions: sessions
             });
             this.hasMoreArchived = resp.payload.hasMoreArchived ?? false;

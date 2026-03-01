@@ -5,10 +5,12 @@ import { BaseQuery } from './base.query';
 
 export class SessionsState {
   sessions: SessionApi[];
+  isListLoaded: boolean;
 }
 
 let sessionsState: SessionsState = {
-  sessions: []
+  sessions: [],
+  isListLoaded: false
 };
 
 @Injectable({ providedIn: 'root' })
