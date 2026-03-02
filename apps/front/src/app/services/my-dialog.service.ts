@@ -129,6 +129,10 @@ import {
   EditPhotoDialogData
 } from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
 import {
+  EditApiKeyDialogComponent,
+  EditApiKeyDialogData
+} from '../modules/project/project-api-keys/edit-api-key-dialog/edit-api-key-dialog.component';
+import {
   AddConnectionDialogComponent,
   AddConnectionDialogData
 } from '../modules/project/project-connections/add-connection-dialog/add-connection-dialog.component';
@@ -168,10 +172,6 @@ import {
   DeleteProjectDialogComponent,
   DeleteProjectDialogData
 } from '../modules/project/project-info/delete-project-dialog/delete-project-dialog.component';
-import {
-  EditApiKeyDialogComponent,
-  EditApiKeyDialogData
-} from '../modules/project/project-info/edit-api-key-dialog/edit-api-key-dialog.component';
 import {
   EditProjectNameDialogComponent,
   EditProjectNameDialogData

@@ -24,14 +24,14 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
-  ToBackendSetProjectInfoRequest,
-  ToBackendSetProjectInfoResponsePayload
-} from '#common/interfaces/to-backend/projects/to-backend-set-project-info';
+  ToBackendSetProjectApiKeyRequest,
+  ToBackendSetProjectApiKeyResponsePayload
+} from '#common/interfaces/to-backend/projects/to-backend-set-project-api-key';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
-export class SetProjectInfoController {
+export class SetProjectApiKeyController {
   constructor(
     private tabService: TabService,
     private projectsService: ProjectsService,
@@ -41,11 +41,12 @@ export class SetProjectInfoController {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  @Post(ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo)
-  async setProjectInfo(@AttachUser() user: UserTab, @Req() request: any) {
-    let reqValid: ToBackendSetProjectInfoRequest = request.body;
+  @Post(ToBackendRequestInfoNameEnum.ToBackendSetProjectApiKey)
+  async setProjectApiKey(@AttachUser() user: UserTab, @Req() request: any) {
+    let reqValid: ToBackendSetProjectApiKeyRequest = request.body;
 
-    let { projectId, name } = reqValid.payload;
+    let { projectId, zenApiKey, anthropicApiKey, openaiApiKey, e2bApiKey } =
+      reqValid.payload;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId
@@ -56,8 +57,21 @@ export class SetProjectInfoController {
       memberId: user.userId
     });
 
-    if (isDefined(name)) {
-      project.name = name;
+    if (isDefined(zenApiKey)) {
+      project.zenApiKey = zenApiKey === '' ? undefined : zenApiKey;
+    }
+
+    if (isDefined(anthropicApiKey)) {
+      project.anthropicApiKey =
+        anthropicApiKey === '' ? undefined : anthropicApiKey;
+    }
+
+    if (isDefined(openaiApiKey)) {
+      project.openaiApiKey = openaiApiKey === '' ? undefined : openaiApiKey;
+    }
+
+    if (isDefined(e2bApiKey)) {
+      project.e2bApiKey = e2bApiKey === '' ? undefined : e2bApiKey;
     }
 
     await retry(
@@ -74,7 +88,7 @@ export class SetProjectInfoController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload: ToBackendSetProjectInfoResponsePayload = {
+    let payload: ToBackendSetProjectApiKeyResponsePayload = {
       project: this.projectsService.tabToApiProject({
         project: project,
         isAddPublicKey: userMember.isAdmin,

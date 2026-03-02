@@ -81,6 +81,7 @@ import { ToBackendGetProjectRequest } from '#common/interfaces/to-backend/projec
 import { ToBackendGetProjectsListRequest } from '#common/interfaces/to-backend/projects/to-backend-get-projects-list';
 import { ToBackendIsProjectExistRequest } from '#common/interfaces/to-backend/projects/to-backend-is-project-exist';
 import { ToBackendSetProjectAllowTimezonesRequest } from '#common/interfaces/to-backend/projects/to-backend-set-project-allow-timezones';
+import { ToBackendSetProjectApiKeyRequest } from '#common/interfaces/to-backend/projects/to-backend-set-project-api-key';
 import { ToBackendSetProjectInfoRequest } from '#common/interfaces/to-backend/projects/to-backend-set-project-info';
 import { ToBackendSetProjectTimezoneRequest } from '#common/interfaces/to-backend/projects/to-backend-set-project-timezone';
 import { ToBackendSetProjectWeekStartRequest } from '#common/interfaces/to-backend/projects/to-backend-set-project-week-start';
@@ -200,6 +201,8 @@ export const nameToClass = {
     ToBackendDeleteProjectRequest,
   [ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo]:
     ToBackendSetProjectInfoRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendSetProjectApiKey]:
+    ToBackendSetProjectApiKeyRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetEnvsList]:
     ToBackendGetEnvsListRequest,

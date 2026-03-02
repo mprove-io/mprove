@@ -44,6 +44,7 @@ export enum ToBackendRequestInfoNameEnum {
   ToBackendGetProjectsList = 'api/ToBackendGetProjectsList',
   ToBackendDeleteProject = 'api/ToBackendDeleteProject',
   ToBackendSetProjectInfo = 'api/ToBackendSetProjectInfo',
+  ToBackendSetProjectApiKey = 'api/ToBackendSetProjectApiKey',
   //
   ToBackendGetEnvsList = 'api/ToBackendGetEnvsList',
   ToBackendGetEnvs = 'api/ToBackendGetEnvs',

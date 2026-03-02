@@ -82,6 +82,7 @@ import { GenerateProjectRemoteKeyController } from './controllers/projects/gener
 import { GetProjectController } from './controllers/projects/get-project/get-project.controller';
 import { GetProjectsListController } from './controllers/projects/get-projects-list/get-projects-list.controller';
 import { IsProjectExistController } from './controllers/projects/is-project-exist/is-project-exist.controller';
+import { SetProjectApiKeyController } from './controllers/projects/set-project-api-key/set-project-api-key.controller';
 import { SetProjectInfoController } from './controllers/projects/set-project-info/set-project-info.controller';
 import { CancelQueriesController } from './controllers/queries/cancel-queries/cancel-queries.controller';
 import { GetQueriesController } from './controllers/queries/get-queries/get-queries.controller';
@@ -198,6 +199,7 @@ export const appControllers = [
   GetProjectController,
   GetProjectsListController,
   IsProjectExistController,
+  SetProjectApiKeyController,
   SetProjectInfoController,
 
   CreateEnvController,

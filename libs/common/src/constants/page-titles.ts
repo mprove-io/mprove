@@ -21,6 +21,7 @@ export const PROJECT_ENVIRONMENTS_PAGE_TITLE = 'Project - Environments';
 export const PROJECT_CONNECTIONS_PAGE_TITLE = 'Project - Connections';
 export const PROJECT_INFO_PAGE_TITLE = 'Project - Info';
 export const PROJECT_TEAM_PAGE_TITLE = 'Project - Team';
+export const PROJECT_API_KEYS_PAGE_TITLE = 'Project - API Keys';
 
 export const BUILDER_PAGE_TITLE = 'Builder';
 export const CHARTS_PAGE_TITLE = 'Models';

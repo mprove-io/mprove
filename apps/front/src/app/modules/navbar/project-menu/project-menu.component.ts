@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter, tap } from 'rxjs/operators';
 import {
   DEMO_ORG_NAME,
+  PATH_API_KEYS,
   PATH_CONNECTIONS,
   PATH_ENVIRONMENTS,
   PATH_INFO,
@@ -28,6 +29,7 @@ export class ProjectMenuComponent implements OnInit {
   demoOrgName = DEMO_ORG_NAME;
 
   pathInfo = PATH_INFO;
+  pathApiKeys = PATH_API_KEYS;
   pathConnections = PATH_CONNECTIONS;
   pathEnvironments = PATH_ENVIRONMENTS;
   pathTeam = PATH_TEAM;
@@ -128,6 +130,16 @@ export class ProjectMenuComponent implements OnInit {
       PATH_PROJECT,
       this.nav.projectId,
       PATH_TEAM
+    ]);
+  }
+
+  navigateApiKeys() {
+    this.router.navigate([
+      PATH_ORG,
+      this.nav.orgId,
+      PATH_PROJECT,
+      this.nav.projectId,
+      PATH_API_KEYS
     ]);
   }
 }

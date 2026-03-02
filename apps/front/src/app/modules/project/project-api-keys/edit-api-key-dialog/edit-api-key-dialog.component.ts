@@ -18,9 +18,9 @@ import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
-  ToBackendSetProjectInfoRequestPayload,
-  ToBackendSetProjectInfoResponse
-} from '#common/interfaces/to-backend/projects/to-backend-set-project-info';
+  ToBackendSetProjectApiKeyRequestPayload,
+  ToBackendSetProjectApiKeyResponse
+} from '#common/interfaces/to-backend/projects/to-backend-set-project-api-key';
 import { SharedModule } from '#front/app/modules/shared/shared.module';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -79,7 +79,7 @@ export class EditApiKeyDialogComponent implements OnInit {
 
     this.ref.close();
 
-    let payload: ToBackendSetProjectInfoRequestPayload = {
+    let payload: ToBackendSetProjectApiKeyRequestPayload = {
       projectId: this.ref.data.projectId,
       [this.ref.data.fieldName]: value.trim()
     };
@@ -88,12 +88,12 @@ export class EditApiKeyDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetProjectApiKey,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: ToBackendSetProjectInfoResponse) => {
+        tap((resp: ToBackendSetProjectApiKeyResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.projectQuery.update(resp.payload.project);
           }
@@ -106,7 +106,7 @@ export class EditApiKeyDialogComponent implements OnInit {
   deleteKey() {
     this.ref.close();
 
-    let payload: ToBackendSetProjectInfoRequestPayload = {
+    let payload: ToBackendSetProjectApiKeyRequestPayload = {
       projectId: this.ref.data.projectId,
       [this.ref.data.fieldName]: ''
     };
@@ -115,12 +115,12 @@ export class EditApiKeyDialogComponent implements OnInit {
 
     apiService
       .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetProjectInfo,
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSetProjectApiKey,
         payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap((resp: ToBackendSetProjectInfoResponse) => {
+        tap((resp: ToBackendSetProjectApiKeyResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.projectQuery.update(resp.payload.project);
           }
