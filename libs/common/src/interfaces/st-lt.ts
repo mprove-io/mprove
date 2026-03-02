@@ -276,10 +276,10 @@ export class UserLt {
 
 //
 
-export class EventSt {
+export class OcEventSt {
   ocEvent: Event;
 }
-export class EventLt {
+export class OcEventLt {
   emptyData?: number;
 }
 
@@ -310,18 +310,18 @@ export class OcSessionLt {
 
 //
 
-export class MessageSt {
+export class OcMessageSt {
   ocMessage: Message;
 }
-export class MessageLt {
+export class OcMessageLt {
   emptyData?: number;
 }
 
 //
 
-export class PartSt {
+export class OcPartSt {
   ocPart: Part;
 }
-export class PartLt {
+export class OcPartLt {
   emptyData?: number;
 }

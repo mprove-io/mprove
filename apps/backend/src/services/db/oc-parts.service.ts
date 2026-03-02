@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import type { Part } from '@opencode-ai/sdk/v2';
-import type { PartTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OcPartTab } from '#backend/drizzle/postgres/schema/_tabs';
 
 @Injectable()
-export class PartsService {
-  makePart(item: {
+export class OcPartsService {
+  makeOcPart(item: {
     partId: string;
     messageId: string;
     sessionId: string;
     ocPart: Part;
-  }): PartTab {
+  }): OcPartTab {
     let now = Date.now();
 
-    let partTab: PartTab = {
+    let partTab: OcPartTab = {
       partId: item.partId,
       messageId: item.messageId,
       sessionId: item.sessionId,

@@ -27,16 +27,16 @@ import { connectionsTable } from './schema/connections';
 import { dashboardsTable } from './schema/dashboards';
 import { dconfigsTable } from './schema/dconfigs';
 import { envsTable } from './schema/envs';
-import { eventsTable } from './schema/events';
 import { kitsTable } from './schema/kits';
 import { mconfigsTable } from './schema/mconfigs';
 import { membersTable } from './schema/members';
-import { messagesTable } from './schema/messages';
 import { modelsTable } from './schema/models';
 import { notesTable } from './schema/notes';
+import { ocEventsTable } from './schema/oc-events';
+import { ocMessagesTable } from './schema/oc-messages';
+import { ocPartsTable } from './schema/oc-parts';
 import { ocSessionsTable } from './schema/oc-sessions';
 import { orgsTable } from './schema/orgs';
-import { partsTable } from './schema/parts';
 import { projectsTable } from './schema/projects';
 import { queriesTable } from './schema/queries';
 import { reportsTable } from './schema/reports';
@@ -254,8 +254,8 @@ export class DrizzlePacker {
         await tx.insert(chartsTable).values(insertEnts.charts);
       }
 
-      if (insertEnts.events.length > 0) {
-        await tx.insert(eventsTable).values(insertEnts.events);
+      if (insertEnts.ocEvents.length > 0) {
+        await tx.insert(ocEventsTable).values(insertEnts.ocEvents);
       }
 
       if (insertEnts.sessions.length > 0) {
@@ -266,12 +266,12 @@ export class DrizzlePacker {
         await tx.insert(ocSessionsTable).values(insertEnts.ocSessions);
       }
 
-      if (insertEnts.messages.length > 0) {
-        await tx.insert(messagesTable).values(insertEnts.messages);
+      if (insertEnts.ocMessages.length > 0) {
+        await tx.insert(ocMessagesTable).values(insertEnts.ocMessages);
       }
 
-      if (insertEnts.parts.length > 0) {
-        await tx.insert(partsTable).values(insertEnts.parts);
+      if (insertEnts.ocParts.length > 0) {
+        await tx.insert(ocPartsTable).values(insertEnts.ocParts);
       }
     }
 
@@ -554,17 +554,17 @@ export class DrizzlePacker {
         });
       }
 
-      if (updateEnts.events.length > 0) {
-        updateEnts.events = setUndefinedToNull({
-          ents: updateEnts.events,
-          table: eventsTable
+      if (updateEnts.ocEvents.length > 0) {
+        updateEnts.ocEvents = setUndefinedToNull({
+          ents: updateEnts.ocEvents,
+          table: ocEventsTable
         });
 
-        await forEachSeries(updateEnts.events, async x => {
+        await forEachSeries(updateEnts.ocEvents, async x => {
           await tx
-            .update(eventsTable)
+            .update(ocEventsTable)
             .set(x)
-            .where(eq(eventsTable.eventId, x.eventId));
+            .where(eq(ocEventsTable.eventId, x.eventId));
         });
       }
 
@@ -596,31 +596,31 @@ export class DrizzlePacker {
         });
       }
 
-      if (updateEnts.messages.length > 0) {
-        updateEnts.messages = setUndefinedToNull({
-          ents: updateEnts.messages,
-          table: messagesTable
+      if (updateEnts.ocMessages.length > 0) {
+        updateEnts.ocMessages = setUndefinedToNull({
+          ents: updateEnts.ocMessages,
+          table: ocMessagesTable
         });
 
-        await forEachSeries(updateEnts.messages, async x => {
+        await forEachSeries(updateEnts.ocMessages, async x => {
           await tx
-            .update(messagesTable)
+            .update(ocMessagesTable)
             .set(x)
-            .where(eq(messagesTable.messageId, x.messageId));
+            .where(eq(ocMessagesTable.messageId, x.messageId));
         });
       }
 
-      if (updateEnts.parts.length > 0) {
-        updateEnts.parts = setUndefinedToNull({
-          ents: updateEnts.parts,
-          table: partsTable
+      if (updateEnts.ocParts.length > 0) {
+        updateEnts.ocParts = setUndefinedToNull({
+          ents: updateEnts.ocParts,
+          table: ocPartsTable
         });
 
-        await forEachSeries(updateEnts.parts, async x => {
+        await forEachSeries(updateEnts.ocParts, async x => {
           await tx
-            .update(partsTable)
+            .update(ocPartsTable)
             .set(x)
-            .where(eq(partsTable.partId, x.partId));
+            .where(eq(ocPartsTable.partId, x.partId));
         });
       }
     }
@@ -1014,22 +1014,22 @@ export class DrizzlePacker {
           });
       }
 
-      if (insOrUpdEnts.events.length > 0) {
-        insOrUpdEnts.events = Array.from(
-          new Set(insOrUpdEnts.events.map(x => x.eventId))
-        ).map(id => insOrUpdEnts.events.find(x => x.eventId === id));
+      if (insOrUpdEnts.ocEvents.length > 0) {
+        insOrUpdEnts.ocEvents = Array.from(
+          new Set(insOrUpdEnts.ocEvents.map(x => x.eventId))
+        ).map(id => insOrUpdEnts.ocEvents.find(x => x.eventId === id));
 
-        insOrUpdEnts.events = setUndefinedToNull({
-          ents: insOrUpdEnts.events,
-          table: eventsTable
+        insOrUpdEnts.ocEvents = setUndefinedToNull({
+          ents: insOrUpdEnts.ocEvents,
+          table: ocEventsTable
         });
 
         await tx
-          .insert(eventsTable)
-          .values(insOrUpdEnts.events)
+          .insert(ocEventsTable)
+          .values(insOrUpdEnts.ocEvents)
           .onConflictDoUpdate({
-            target: eventsTable.eventId,
-            set: drizzleSetAllColumnsFull({ table: eventsTable })
+            target: ocEventsTable.eventId,
+            set: drizzleSetAllColumnsFull({ table: ocEventsTable })
           });
       }
 
@@ -1071,41 +1071,41 @@ export class DrizzlePacker {
           });
       }
 
-      if (insOrUpdEnts.messages.length > 0) {
-        insOrUpdEnts.messages = Array.from(
-          new Set(insOrUpdEnts.messages.map(x => x.messageId))
-        ).map(id => insOrUpdEnts.messages.find(x => x.messageId === id));
+      if (insOrUpdEnts.ocMessages.length > 0) {
+        insOrUpdEnts.ocMessages = Array.from(
+          new Set(insOrUpdEnts.ocMessages.map(x => x.messageId))
+        ).map(id => insOrUpdEnts.ocMessages.find(x => x.messageId === id));
 
-        insOrUpdEnts.messages = setUndefinedToNull({
-          ents: insOrUpdEnts.messages,
-          table: messagesTable
+        insOrUpdEnts.ocMessages = setUndefinedToNull({
+          ents: insOrUpdEnts.ocMessages,
+          table: ocMessagesTable
         });
 
         await tx
-          .insert(messagesTable)
-          .values(insOrUpdEnts.messages)
+          .insert(ocMessagesTable)
+          .values(insOrUpdEnts.ocMessages)
           .onConflictDoUpdate({
-            target: messagesTable.messageId,
-            set: drizzleSetAllColumnsFull({ table: messagesTable })
+            target: ocMessagesTable.messageId,
+            set: drizzleSetAllColumnsFull({ table: ocMessagesTable })
           });
       }
 
-      if (insOrUpdEnts.parts.length > 0) {
-        insOrUpdEnts.parts = Array.from(
-          new Set(insOrUpdEnts.parts.map(x => x.partId))
-        ).map(id => insOrUpdEnts.parts.find(x => x.partId === id));
+      if (insOrUpdEnts.ocParts.length > 0) {
+        insOrUpdEnts.ocParts = Array.from(
+          new Set(insOrUpdEnts.ocParts.map(x => x.partId))
+        ).map(id => insOrUpdEnts.ocParts.find(x => x.partId === id));
 
-        insOrUpdEnts.parts = setUndefinedToNull({
-          ents: insOrUpdEnts.parts,
-          table: partsTable
+        insOrUpdEnts.ocParts = setUndefinedToNull({
+          ents: insOrUpdEnts.ocParts,
+          table: ocPartsTable
         });
 
         await tx
-          .insert(partsTable)
-          .values(insOrUpdEnts.parts)
+          .insert(ocPartsTable)
+          .values(insOrUpdEnts.ocParts)
           .onConflictDoUpdate({
-            target: partsTable.partId,
-            set: drizzleSetAllColumnsFull({ table: partsTable })
+            target: ocPartsTable.partId,
+            set: drizzleSetAllColumnsFull({ table: ocPartsTable })
           });
       }
     }

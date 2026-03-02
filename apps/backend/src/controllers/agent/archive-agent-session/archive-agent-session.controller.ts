@@ -18,7 +18,7 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { eventsTable } from '#backend/drizzle/postgres/schema/events';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
@@ -97,8 +97,8 @@ export class ArchiveAgentSessionController {
           });
 
           await tx
-            .delete(eventsTable)
-            .where(and(eq(eventsTable.sessionId, sessionId)));
+            .delete(ocEventsTable)
+            .where(and(eq(ocEventsTable.sessionId, sessionId)));
         }),
       getRetryOption(this.cs, this.logger)
     );

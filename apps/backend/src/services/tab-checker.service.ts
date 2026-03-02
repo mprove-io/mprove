@@ -23,16 +23,16 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { dashboardsTable } from '#backend/drizzle/postgres/schema/dashboards';
 import { dconfigsTable } from '#backend/drizzle/postgres/schema/dconfigs';
 import { envsTable } from '#backend/drizzle/postgres/schema/envs';
-import { eventsTable } from '#backend/drizzle/postgres/schema/events';
 import { kitsTable } from '#backend/drizzle/postgres/schema/kits';
 import { mconfigsTable } from '#backend/drizzle/postgres/schema/mconfigs';
 import { membersTable } from '#backend/drizzle/postgres/schema/members';
-import { messagesTable } from '#backend/drizzle/postgres/schema/messages';
 import { modelsTable } from '#backend/drizzle/postgres/schema/models';
 import { notesTable } from '#backend/drizzle/postgres/schema/notes';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
+import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
+import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
-import { partsTable } from '#backend/drizzle/postgres/schema/parts';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
@@ -104,9 +104,9 @@ export class TabCheckerService {
     await this.checkProjects(isAllRecords);
     await this.checkQueries(isAllRecords);
     await this.checkUsers(isAllRecords);
-    await this.checkEvents(isAllRecords);
-    await this.checkMessages(isAllRecords);
-    await this.checkParts(isAllRecords);
+    await this.checkOcEvents(isAllRecords);
+    await this.checkOcMessages(isAllRecords);
+    await this.checkOcParts(isAllRecords);
     await this.checkSessions(isAllRecords);
     await this.checkOcSessions(isAllRecords);
     //
@@ -1281,13 +1281,13 @@ export class TabCheckerService {
     });
   }
 
-  async checkEvents(isAllRecords: boolean) {
+  async checkOcEvents(isAllRecords: boolean) {
     let startTs = Date.now();
-    let eventLatest = await this.db.drizzle.query.eventsTable
+    let eventLatest = await this.db.drizzle.query.ocEventsTable
       .findFirst({
-        orderBy: desc(eventsTable.serverTs)
+        orderBy: desc(ocEventsTable.serverTs)
       })
-      .then(x => this.tabService.eventEntToTab(x));
+      .then(x => this.tabService.ocEventEntToTab(x));
 
     if (isUndefined(eventLatest)) {
       return;
@@ -1295,21 +1295,21 @@ export class TabCheckerService {
 
     let where =
       isAllRecords === true
-        ? lte(eventsTable.serverTs, eventLatest.serverTs)
+        ? lte(ocEventsTable.serverTs, eventLatest.serverTs)
         : this.isEncryptDb === true
           ? or(
-              isNull(eventsTable.keyTag),
-              eq(eventsTable.keyTag, this.prevKeyTag)
+              isNull(ocEventsTable.keyTag),
+              eq(ocEventsTable.keyTag, this.prevKeyTag)
             )
           : or(
-              eq(eventsTable.keyTag, this.keyTag),
-              eq(eventsTable.keyTag, this.prevKeyTag)
+              eq(ocEventsTable.keyTag, this.keyTag),
+              eq(ocEventsTable.keyTag, this.prevKeyTag)
             );
 
     while (true) {
-      let event = await this.db.drizzle.query.eventsTable
+      let event = await this.db.drizzle.query.ocEventsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.eventEntToTab(x));
+        .then(x => this.tabService.ocEventEntToTab(x));
 
       if (isUndefined(event)) {
         break;
@@ -1322,7 +1322,7 @@ export class TabCheckerService {
               await this.db.packer.write({
                 tx: tx,
                 update: {
-                  events: [event]
+                  ocEvents: [event]
                 }
               })
           ),
@@ -1332,14 +1332,14 @@ export class TabCheckerService {
 
     let eventsResult = await this.db.drizzle
       .select({
-        record: eventsTable,
+        record: ocEventsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
       })
-      .from(eventsTable)
+      .from(ocEventsTable)
       .where(
         and(
-          isNotNull(eventsTable.keyTag),
-          notInArray(eventsTable.keyTag, this.keyTags)
+          isNotNull(ocEventsTable.keyTag),
+          notInArray(ocEventsTable.keyTag, this.keyTags)
         )
       );
 
@@ -1348,7 +1348,7 @@ export class TabCheckerService {
         message:
           ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
         customData: {
-          table: 'events',
+          table: 'oc_events',
           count: eventsResult[0].total
         }
       });
@@ -1357,20 +1357,20 @@ export class TabCheckerService {
     let durationMs = Date.now() - startTs;
 
     logToConsoleBackend({
-      log: `TabChecker - Events, ${durationMs} ms`,
+      log: `TabChecker - OcEvents, ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs
     });
   }
 
-  async checkMessages(isAllRecords: boolean) {
+  async checkOcMessages(isAllRecords: boolean) {
     let startTs = Date.now();
-    let messageLatest = await this.db.drizzle.query.messagesTable
+    let messageLatest = await this.db.drizzle.query.ocMessagesTable
       .findFirst({
-        orderBy: desc(messagesTable.serverTs)
+        orderBy: desc(ocMessagesTable.serverTs)
       })
-      .then(x => this.tabService.messageEntToTab(x));
+      .then(x => this.tabService.ocMessageEntToTab(x));
 
     if (isUndefined(messageLatest)) {
       return;
@@ -1378,21 +1378,21 @@ export class TabCheckerService {
 
     let where =
       isAllRecords === true
-        ? lte(messagesTable.serverTs, messageLatest.serverTs)
+        ? lte(ocMessagesTable.serverTs, messageLatest.serverTs)
         : this.isEncryptDb === true
           ? or(
-              isNull(messagesTable.keyTag),
-              eq(messagesTable.keyTag, this.prevKeyTag)
+              isNull(ocMessagesTable.keyTag),
+              eq(ocMessagesTable.keyTag, this.prevKeyTag)
             )
           : or(
-              eq(messagesTable.keyTag, this.keyTag),
-              eq(messagesTable.keyTag, this.prevKeyTag)
+              eq(ocMessagesTable.keyTag, this.keyTag),
+              eq(ocMessagesTable.keyTag, this.prevKeyTag)
             );
 
     while (true) {
-      let message = await this.db.drizzle.query.messagesTable
+      let message = await this.db.drizzle.query.ocMessagesTable
         .findFirst({ where: where })
-        .then(x => this.tabService.messageEntToTab(x));
+        .then(x => this.tabService.ocMessageEntToTab(x));
 
       if (isUndefined(message)) {
         break;
@@ -1405,7 +1405,7 @@ export class TabCheckerService {
               await this.db.packer.write({
                 tx: tx,
                 update: {
-                  messages: [message]
+                  ocMessages: [message]
                 }
               })
           ),
@@ -1415,14 +1415,14 @@ export class TabCheckerService {
 
     let messagesResult = await this.db.drizzle
       .select({
-        record: messagesTable,
+        record: ocMessagesTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
       })
-      .from(messagesTable)
+      .from(ocMessagesTable)
       .where(
         and(
-          isNotNull(messagesTable.keyTag),
-          notInArray(messagesTable.keyTag, this.keyTags)
+          isNotNull(ocMessagesTable.keyTag),
+          notInArray(ocMessagesTable.keyTag, this.keyTags)
         )
       );
 
@@ -1431,7 +1431,7 @@ export class TabCheckerService {
         message:
           ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
         customData: {
-          table: 'messages',
+          table: 'oc_messages',
           count: messagesResult[0].total
         }
       });
@@ -1440,20 +1440,20 @@ export class TabCheckerService {
     let durationMs = Date.now() - startTs;
 
     logToConsoleBackend({
-      log: `TabChecker - Messages, ${durationMs} ms`,
+      log: `TabChecker - OcMessages, ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs
     });
   }
 
-  async checkParts(isAllRecords: boolean) {
+  async checkOcParts(isAllRecords: boolean) {
     let startTs = Date.now();
-    let partLatest = await this.db.drizzle.query.partsTable
+    let partLatest = await this.db.drizzle.query.ocPartsTable
       .findFirst({
-        orderBy: desc(partsTable.serverTs)
+        orderBy: desc(ocPartsTable.serverTs)
       })
-      .then(x => this.tabService.partEntToTab(x));
+      .then(x => this.tabService.ocPartEntToTab(x));
 
     if (isUndefined(partLatest)) {
       return;
@@ -1461,21 +1461,21 @@ export class TabCheckerService {
 
     let where =
       isAllRecords === true
-        ? lte(partsTable.serverTs, partLatest.serverTs)
+        ? lte(ocPartsTable.serverTs, partLatest.serverTs)
         : this.isEncryptDb === true
           ? or(
-              isNull(partsTable.keyTag),
-              eq(partsTable.keyTag, this.prevKeyTag)
+              isNull(ocPartsTable.keyTag),
+              eq(ocPartsTable.keyTag, this.prevKeyTag)
             )
           : or(
-              eq(partsTable.keyTag, this.keyTag),
-              eq(partsTable.keyTag, this.prevKeyTag)
+              eq(ocPartsTable.keyTag, this.keyTag),
+              eq(ocPartsTable.keyTag, this.prevKeyTag)
             );
 
     while (true) {
-      let part = await this.db.drizzle.query.partsTable
+      let part = await this.db.drizzle.query.ocPartsTable
         .findFirst({ where: where })
-        .then(x => this.tabService.partEntToTab(x));
+        .then(x => this.tabService.ocPartEntToTab(x));
 
       if (isUndefined(part)) {
         break;
@@ -1488,7 +1488,7 @@ export class TabCheckerService {
               await this.db.packer.write({
                 tx: tx,
                 update: {
-                  parts: [part]
+                  ocParts: [part]
                 }
               })
           ),
@@ -1498,14 +1498,14 @@ export class TabCheckerService {
 
     let partsResult = await this.db.drizzle
       .select({
-        record: partsTable,
+        record: ocPartsTable,
         total: sql<number>`CAST(COUNT(*) OVER() AS INTEGER)`
       })
-      .from(partsTable)
+      .from(ocPartsTable)
       .where(
         and(
-          isNotNull(partsTable.keyTag),
-          notInArray(partsTable.keyTag, this.keyTags)
+          isNotNull(ocPartsTable.keyTag),
+          notInArray(ocPartsTable.keyTag, this.keyTags)
         )
       );
 
@@ -1514,7 +1514,7 @@ export class TabCheckerService {
         message:
           ErEnum.BACKEND_DB_RECORDS_EXIST_WITH_KEY_TAGS_THAT_DO_NOT_MATCH_CURRENT_OR_PREV,
         customData: {
-          table: 'parts',
+          table: 'oc_parts',
           count: partsResult[0].total
         }
       });
@@ -1523,7 +1523,7 @@ export class TabCheckerService {
     let durationMs = Date.now() - startTs;
 
     logToConsoleBackend({
-      log: `TabChecker - Parts, ${durationMs} ms`,
+      log: `TabChecker - OcParts, ${durationMs} ms`,
       logLevel: LogLevelEnum.Info,
       logger: this.logger,
       cs: this.cs

@@ -11,16 +11,16 @@ import type {
   DashboardTab,
   DconfigTab,
   EnvTab,
-  EventTab,
   KitTab,
   MconfigTab,
   MemberTab,
-  MessageTab,
   ModelTab,
   NoteTab,
+  OcEventTab,
+  OcMessageTab,
+  OcPartTab,
   OcSessionTab,
   OrgTab,
-  PartTab,
   ProjectTab,
   QueryTab,
   ReportTab,
@@ -37,16 +37,16 @@ import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
 import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
-import { EventEnt } from '#backend/drizzle/postgres/schema/events';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
-import { MessageEnt } from '#backend/drizzle/postgres/schema/messages';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
+import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
+import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
 import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
-import { PartEnt } from '#backend/drizzle/postgres/schema/parts';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
@@ -551,12 +551,12 @@ export class TabService {
     return ocSession;
   }
 
-  eventEntToTab(eventEnt: EventEnt): EventTab {
+  ocEventEntToTab(eventEnt: OcEventEnt): OcEventTab {
     if (isUndefined(eventEnt)) {
       return;
     }
 
-    let event: EventTab = {
+    let event: OcEventTab = {
       ...eventEnt,
       ...this.getTabProps({ ent: eventEnt })
     };
@@ -564,12 +564,12 @@ export class TabService {
     return event;
   }
 
-  messageEntToTab(messageEnt: MessageEnt): MessageTab {
+  ocMessageEntToTab(messageEnt: OcMessageEnt): OcMessageTab {
     if (isUndefined(messageEnt)) {
       return;
     }
 
-    let message: MessageTab = {
+    let message: OcMessageTab = {
       ...messageEnt,
       ...this.getTabProps({ ent: messageEnt })
     };
@@ -577,12 +577,12 @@ export class TabService {
     return message;
   }
 
-  partEntToTab(partEnt: PartEnt): PartTab {
+  ocPartEntToTab(partEnt: OcPartEnt): OcPartTab {
     if (isUndefined(partEnt)) {
       return;
     }
 
-    let part: PartTab = {
+    let part: OcPartTab = {
       ...partEnt,
       ...this.getTabProps({ ent: partEnt })
     };

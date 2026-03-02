@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import type { Event } from '@opencode-ai/sdk/v2';
-import type { EventTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type { OcEventTab } from '#backend/drizzle/postgres/schema/_tabs';
 
 @Injectable()
-export class EventsService {
-  makeEventFullId(item: { sessionId: string; eventIndex: number }): string {
+export class OcEventsService {
+  makeOcEventFullId(item: { sessionId: string; eventIndex: number }): string {
     return `${item.sessionId}_${item.eventIndex}`;
   }
 
-  makeEvent(item: {
+  makeOcEvent(item: {
     sessionId: string;
     event: Event;
     eventIndex: number;
-  }): EventTab {
+  }): OcEventTab {
     let now = Date.now();
 
-    let eventTab: EventTab = {
-      eventId: this.makeEventFullId({
+    let eventTab: OcEventTab = {
+      eventId: this.makeOcEventFullId({
         sessionId: item.sessionId,
         eventIndex: item.eventIndex
       }),

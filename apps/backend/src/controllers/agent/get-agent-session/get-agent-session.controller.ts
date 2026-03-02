@@ -5,9 +5,9 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { eventsTable } from '#backend/drizzle/postgres/schema/events';
-import { messagesTable } from '#backend/drizzle/postgres/schema/messages';
-import { partsTable } from '#backend/drizzle/postgres/schema/parts';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
+import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
+import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { SessionsService } from '#backend/services/db/sessions.service';
@@ -63,13 +63,13 @@ export class GetAgentSessionController {
     let events: AgentEventApi[] = [];
 
     if (session.status !== SessionStatusEnum.Archived) {
-      let eventEnts = await this.db.drizzle.query.eventsTable.findMany({
-        where: eq(eventsTable.sessionId, sessionId),
-        orderBy: [asc(eventsTable.eventIndex)]
+      let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
+        where: eq(ocEventsTable.sessionId, sessionId),
+        orderBy: [asc(ocEventsTable.eventIndex)]
       });
 
       events = eventEnts.map(ent => {
-        let tab = this.tabService.eventEntToTab(ent);
+        let tab = this.tabService.ocEventEntToTab(ent);
         return {
           eventId: tab.eventId,
           eventIndex: tab.eventIndex,
@@ -92,13 +92,13 @@ export class GetAgentSessionController {
     let parts: AgentPartApi[] = [];
 
     if (includeMessagesAndParts === true) {
-      let messageEnts = await this.db.drizzle.query.messagesTable.findMany({
-        where: eq(messagesTable.sessionId, sessionId),
-        orderBy: [asc(messagesTable.messageId)]
+      let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
+        where: eq(ocMessagesTable.sessionId, sessionId),
+        orderBy: [asc(ocMessagesTable.messageId)]
       });
 
       messages = messageEnts.map(ent => {
-        let tab = this.tabService.messageEntToTab(ent);
+        let tab = this.tabService.ocMessageEntToTab(ent);
         return {
           messageId: tab.messageId,
           sessionId: tab.sessionId,
@@ -107,13 +107,13 @@ export class GetAgentSessionController {
         };
       });
 
-      let partEnts = await this.db.drizzle.query.partsTable.findMany({
-        where: eq(partsTable.sessionId, sessionId),
-        orderBy: [asc(partsTable.partId)]
+      let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
+        where: eq(ocPartsTable.sessionId, sessionId),
+        orderBy: [asc(ocPartsTable.partId)]
       });
 
       parts = partEnts.map(ent => {
-        let tab = this.tabService.partEntToTab(ent);
+        let tab = this.tabService.ocPartEntToTab(ent);
         return {
           partId: tab.partId,
           messageId: tab.messageId,

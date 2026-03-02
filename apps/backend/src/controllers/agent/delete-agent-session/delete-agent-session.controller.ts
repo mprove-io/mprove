@@ -18,10 +18,10 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { eventsTable } from '#backend/drizzle/postgres/schema/events';
-import { messagesTable } from '#backend/drizzle/postgres/schema/messages.js';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
+import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
+import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
-import { partsTable } from '#backend/drizzle/postgres/schema/parts.js';
 import { getRetryOption } from '#backend/functions/get-retry-option.js';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
@@ -105,16 +105,16 @@ export class DeleteAgentSessionController {
       async () =>
         await this.db.drizzle.transaction(async tx => {
           await tx
-            .delete(messagesTable)
-            .where(and(eq(messagesTable.sessionId, sessionId)));
+            .delete(ocMessagesTable)
+            .where(and(eq(ocMessagesTable.sessionId, sessionId)));
 
           await tx
-            .delete(partsTable)
-            .where(and(eq(partsTable.sessionId, sessionId)));
+            .delete(ocPartsTable)
+            .where(and(eq(ocPartsTable.sessionId, sessionId)));
 
           await tx
-            .delete(eventsTable)
-            .where(and(eq(eventsTable.sessionId, sessionId)));
+            .delete(ocEventsTable)
+            .where(and(eq(ocEventsTable.sessionId, sessionId)));
 
           await tx
             .delete(ocSessionsTable)

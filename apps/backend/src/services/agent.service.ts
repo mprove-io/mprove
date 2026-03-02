@@ -23,12 +23,12 @@ import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type {
-  MessageTab,
+  OcMessageTab,
+  OcPartTab,
   OcSessionTab,
-  PartTab,
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
-import { eventsTable } from '#backend/drizzle/postgres/schema/events.js';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
@@ -37,9 +37,9 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
-import { EventsService } from './db/events.service';
-import { MessagesService } from './db/messages.service';
-import { PartsService } from './db/parts.service';
+import { OcEventsService } from './db/oc-events.service';
+import { OcMessagesService } from './db/oc-messages.service';
+import { OcPartsService } from './db/oc-parts.service';
 import { ProjectsService } from './db/projects.service';
 import { SessionsService } from './db/sessions.service';
 import { SandboxService } from './sandbox.service';
@@ -74,9 +74,9 @@ export class AgentService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private eventsService: EventsService,
-    private messagesService: MessagesService,
-    private partsService: PartsService,
+    private ocEventsService: OcEventsService,
+    private ocMessagesService: OcMessagesService,
+    private ocPartsService: OcPartsService,
     private sessionsService: SessionsService,
     private tabService: TabService,
     private projectsService: ProjectsService,
@@ -299,16 +299,16 @@ export class AgentService implements OnModuleDestroy {
     sessionId: string,
     lastEventIndex: number
   ): Promise<AgentEvent[]> {
-    let eventEnts = await this.db.drizzle.query.eventsTable.findMany({
+    let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
       where: and(
-        eq(eventsTable.sessionId, sessionId),
-        gt(eventsTable.eventIndex, lastEventIndex)
+        eq(ocEventsTable.sessionId, sessionId),
+        gt(ocEventsTable.eventIndex, lastEventIndex)
       ),
-      orderBy: [asc(eventsTable.eventIndex)]
+      orderBy: [asc(ocEventsTable.eventIndex)]
     });
 
     return eventEnts.map(ent => {
-      let tab = this.tabService.eventEntToTab(ent);
+      let tab = this.tabService.ocEventEntToTab(ent);
       return {
         eventId: tab.eventId,
         eventIndex: tab.eventIndex,
@@ -330,9 +330,9 @@ export class AgentService implements OnModuleDestroy {
     let eventIndex = this.eventCounters.get(item.sessionId);
     if (eventIndex === undefined) {
       let maxRow = await this.db.drizzle
-        .select({ maxIndex: max(eventsTable.eventIndex) })
-        .from(eventsTable)
-        .where(eq(eventsTable.sessionId, item.sessionId));
+        .select({ maxIndex: max(ocEventsTable.eventIndex) })
+        .from(ocEventsTable)
+        .where(eq(ocEventsTable.sessionId, item.sessionId));
       eventIndex = maxRow[0]?.maxIndex != null ? maxRow[0].maxIndex + 1 : 0;
     }
 
@@ -448,18 +448,18 @@ export class AgentService implements OnModuleDestroy {
     let items = queue.slice(0, itemCount);
 
     let eventTabs = items.map(item =>
-      this.eventsService.makeEvent({
+      this.ocEventsService.makeOcEvent({
         sessionId: item.sessionId,
         event: item.event,
         eventIndex: item.eventIndex
       })
     );
 
-    let uniqueMessages: MessageTab[] = [];
+    let uniqueMessages: OcMessageTab[] = [];
 
     for (let item of items.filter(i => i.event.type === 'message.updated')) {
       let props = (item.event as EventMessageUpdated).properties;
-      let tab = this.messagesService.makeMessage({
+      let tab = this.ocMessagesService.makeOcMessage({
         messageId: props.info.id,
         sessionId: sessionId,
         role: props.info.role,
@@ -507,12 +507,12 @@ export class AgentService implements OnModuleDestroy {
       }
     }
 
-    let partTabs: PartTab[] = [];
+    let partTabs: OcPartTab[] = [];
     for (let partId of touchedPartIds) {
       let part = sessionParts.get(partId);
       if (part) {
         partTabs.push(
-          this.partsService.makePart({
+          this.ocPartsService.makeOcPart({
             partId: part.id as string,
             messageId: part.messageID as string,
             sessionId: sessionId,
@@ -664,11 +664,11 @@ export class AgentService implements OnModuleDestroy {
         await this.db.packer.write({
           tx: tx,
           insert: {
-            events: eventTabs
+            ocEvents: eventTabs
           },
           insertOrUpdate: {
-            messages: messageTabs,
-            parts: partTabs,
+            ocMessages: messageTabs,
+            ocParts: partTabs,
             ocSessions: ocSessionTabs
           }
         });

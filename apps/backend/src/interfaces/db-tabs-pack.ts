@@ -7,16 +7,16 @@ import type {
   DashboardTab,
   DconfigTab,
   EnvTab,
-  EventTab,
   KitTab,
   MconfigTab,
   MemberTab,
-  MessageTab,
   ModelTab,
   NoteTab,
+  OcEventTab,
+  OcMessageTab,
+  OcPartTab,
   OcSessionTab,
   OrgTab,
-  PartTab,
   ProjectTab,
   QueryTab,
   ReportTab,
@@ -34,16 +34,16 @@ export class DbTabsPack {
   dashboards?: DashboardTab[];
   dconfigs?: DconfigTab[];
   envs?: EnvTab[];
-  events?: EventTab[];
+  ocEvents?: OcEventTab[];
   kits?: KitTab[];
   mconfigs?: MconfigTab[];
   members?: MemberTab[];
-  messages?: MessageTab[];
+  ocMessages?: OcMessageTab[];
   models?: ModelTab[];
   notes?: NoteTab[];
   ocSessions?: OcSessionTab[];
   orgs?: OrgTab[];
-  parts?: PartTab[];
+  ocParts?: OcPartTab[];
   projects?: ProjectTab[];
   queries?: QueryTab[];
   reports?: ReportTab[];

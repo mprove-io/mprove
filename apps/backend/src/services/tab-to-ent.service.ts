@@ -10,16 +10,16 @@ import type {
   DashboardTab,
   DconfigTab,
   EnvTab,
-  EventTab,
   KitTab,
   MconfigTab,
   MemberTab,
-  MessageTab,
   ModelTab,
   NoteTab,
+  OcEventTab,
+  OcMessageTab,
+  OcPartTab,
   OcSessionTab,
   OrgTab,
-  PartTab,
   ProjectTab,
   QueryTab,
   ReportTab,
@@ -36,16 +36,16 @@ import { ConnectionEnt } from '#backend/drizzle/postgres/schema/connections';
 import { DashboardEnt } from '#backend/drizzle/postgres/schema/dashboards';
 import { DconfigEnt } from '#backend/drizzle/postgres/schema/dconfigs';
 import { EnvEnt } from '#backend/drizzle/postgres/schema/envs';
-import { EventEnt } from '#backend/drizzle/postgres/schema/events';
 import { KitEnt } from '#backend/drizzle/postgres/schema/kits';
 import { MconfigEnt } from '#backend/drizzle/postgres/schema/mconfigs';
 import { MemberEnt } from '#backend/drizzle/postgres/schema/members';
-import { MessageEnt } from '#backend/drizzle/postgres/schema/messages';
 import { ModelEnt } from '#backend/drizzle/postgres/schema/models';
 import { NoteEnt } from '#backend/drizzle/postgres/schema/notes';
+import { OcEventEnt } from '#backend/drizzle/postgres/schema/oc-events';
+import { OcMessageEnt } from '#backend/drizzle/postgres/schema/oc-messages';
+import { OcPartEnt } from '#backend/drizzle/postgres/schema/oc-parts';
 import { OcSessionEnt } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { OrgEnt } from '#backend/drizzle/postgres/schema/orgs';
-import { PartEnt } from '#backend/drizzle/postgres/schema/parts';
 import { ProjectEnt } from '#backend/drizzle/postgres/schema/projects';
 import { QueryEnt } from '#backend/drizzle/postgres/schema/queries';
 import { ReportEnt } from '#backend/drizzle/postgres/schema/reports';
@@ -73,26 +73,26 @@ import {
   DconfigSt,
   EnvLt,
   EnvSt,
-  EventLt,
-  EventSt,
   KitLt,
   KitSt,
   MconfigLt,
   MconfigSt,
   MemberLt,
   MemberSt,
-  MessageLt,
-  MessageSt,
   ModelLt,
   ModelSt,
   NoteLt,
   NoteSt,
+  OcEventLt,
+  OcEventSt,
+  OcMessageLt,
+  OcMessageSt,
+  OcPartLt,
+  OcPartSt,
   OcSessionLt,
   OcSessionSt,
   OrgLt,
   OrgSt,
-  PartLt,
-  PartSt,
   ProjectLt,
   ProjectSt,
   QueryLt,
@@ -192,11 +192,12 @@ export class TabToEntService {
           ?.filter(x => isDefined(x))
           .map(x => this.memberTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
-      messages:
-        tabsPack.messages
+      ocMessages:
+        tabsPack.ocMessages
           ?.filter(x => isDefined(x))
-          .map(x => this.messageTabToEnt({ tab: x, hashSecret: hashSecret })) ??
-        [],
+          .map(x =>
+            this.ocMessageTabToEnt({ tab: x, hashSecret: hashSecret })
+          ) ?? [],
       models:
         tabsPack.models
           ?.filter(x => isDefined(x))
@@ -217,10 +218,10 @@ export class TabToEntService {
         tabsPack.orgs
           ?.filter(x => isDefined(x))
           .map(x => this.orgTabToEnt({ tab: x, hashSecret: hashSecret })) ?? [],
-      parts:
-        tabsPack.parts
+      ocParts:
+        tabsPack.ocParts
           ?.filter(x => isDefined(x))
-          .map(x => this.partTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+          .map(x => this.ocPartTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
       projects:
         tabsPack.projects
@@ -247,10 +248,10 @@ export class TabToEntService {
           ?.filter(x => isDefined(x))
           .map(x => this.userTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
-      events:
-        tabsPack.events
+      ocEvents:
+        tabsPack.ocEvents
           ?.filter(x => isDefined(x))
-          .map(x => this.eventTabToEnt({ tab: x, hashSecret: hashSecret })) ??
+          .map(x => this.ocEventTabToEnt({ tab: x, hashSecret: hashSecret })) ??
         [],
       sessions:
         tabsPack.sessions
@@ -971,16 +972,16 @@ export class TabToEntService {
     return userEnt;
   }
 
-  eventTabToEnt(item: { tab: EventTab; hashSecret: string }): EventEnt {
+  ocEventTabToEnt(item: { tab: OcEventTab; hashSecret: string }): OcEventEnt {
     let { tab } = item;
 
-    let eventSt: EventSt = {
+    let eventSt: OcEventSt = {
       ocEvent: tab.ocEvent
     };
 
-    let eventLt: EventLt = {};
+    let eventLt: OcEventLt = {};
 
-    let eventEnt: EventEnt = {
+    let eventEnt: OcEventEnt = {
       eventId: tab.eventId,
       sessionId: tab.sessionId,
       eventIndex: tab.eventIndex,
@@ -1070,16 +1071,19 @@ export class TabToEntService {
     return ocSessionEnt;
   }
 
-  messageTabToEnt(item: { tab: MessageTab; hashSecret: string }): MessageEnt {
+  ocMessageTabToEnt(item: {
+    tab: OcMessageTab;
+    hashSecret: string;
+  }): OcMessageEnt {
     let { tab } = item;
 
-    let messageSt: MessageSt = {
+    let messageSt: OcMessageSt = {
       ocMessage: tab.ocMessage
     };
 
-    let messageLt: MessageLt = {};
+    let messageLt: OcMessageLt = {};
 
-    let messageEnt: MessageEnt = {
+    let messageEnt: OcMessageEnt = {
       messageId: tab.messageId,
       sessionId: tab.sessionId,
       role: tab.role,
@@ -1095,16 +1099,16 @@ export class TabToEntService {
     return messageEnt;
   }
 
-  partTabToEnt(item: { tab: PartTab; hashSecret: string }): PartEnt {
+  ocPartTabToEnt(item: { tab: OcPartTab; hashSecret: string }): OcPartEnt {
     let { tab } = item;
 
-    let partSt: PartSt = {
+    let partSt: OcPartSt = {
       ocPart: tab.ocPart
     };
 
-    let partLt: PartLt = {};
+    let partLt: OcPartLt = {};
 
-    let partEnt: PartEnt = {
+    let partEnt: OcPartEnt = {
       partId: tab.partId,
       messageId: tab.messageId,
       sessionId: tab.sessionId,

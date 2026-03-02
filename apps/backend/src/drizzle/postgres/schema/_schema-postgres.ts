@@ -6,16 +6,16 @@ import * as connections from '#backend/drizzle/postgres/schema/connections';
 import * as dashboards from '#backend/drizzle/postgres/schema/dashboards';
 import * as dconfigs from '#backend/drizzle/postgres/schema/dconfigs';
 import * as envs from '#backend/drizzle/postgres/schema/envs';
-import * as events from '#backend/drizzle/postgres/schema/events';
 import * as kits from '#backend/drizzle/postgres/schema/kits';
 import * as mconfigs from '#backend/drizzle/postgres/schema/mconfigs';
 import * as members from '#backend/drizzle/postgres/schema/members';
-import * as messages from '#backend/drizzle/postgres/schema/messages';
 import * as models from '#backend/drizzle/postgres/schema/models';
 import * as notes from '#backend/drizzle/postgres/schema/notes';
+import * as ocEvents from '#backend/drizzle/postgres/schema/oc-events';
+import * as ocMessages from '#backend/drizzle/postgres/schema/oc-messages';
+import * as ocParts from '#backend/drizzle/postgres/schema/oc-parts';
 import * as ocSessions from '#backend/drizzle/postgres/schema/oc-sessions';
 import * as orgs from '#backend/drizzle/postgres/schema/orgs';
-import * as parts from '#backend/drizzle/postgres/schema/parts';
 import * as projects from '#backend/drizzle/postgres/schema/projects';
 import * as queries from '#backend/drizzle/postgres/schema/queries';
 import * as reports from '#backend/drizzle/postgres/schema/reports';
@@ -25,9 +25,6 @@ import * as uconfigs from '#backend/drizzle/postgres/schema/uconfigs';
 import * as users from '#backend/drizzle/postgres/schema/users';
 
 export const schemaPostgres = {
-  ...events,
-  ...ocSessions,
-  ...sessions,
   ...avatars,
   ...branches,
   ...bridges,
@@ -39,14 +36,17 @@ export const schemaPostgres = {
   ...kits,
   ...mconfigs,
   ...members,
-  ...messages,
   ...models,
   ...notes,
+  ...ocEvents,
+  ...ocMessages,
+  ...ocParts,
+  ...ocSessions,
   ...orgs,
-  ...parts,
   ...projects,
   ...queries,
   ...reports,
+  ...sessions,
   ...structs,
   ...uconfigs,
   ...users

@@ -14,15 +14,15 @@ import { ConnectionsService } from './services/db/connections.service';
 import { DashboardsService } from './services/db/dashboards.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { EnvsService } from './services/db/envs.service';
-import { EventsService } from './services/db/events.service';
 import { KitsService } from './services/db/kits.service';
 import { MconfigsService } from './services/db/mconfigs.service';
 import { MembersService } from './services/db/members.service';
-import { MessagesService } from './services/db/messages.service';
 import { ModelsService } from './services/db/models.service';
 import { NotesService } from './services/db/notes.service';
+import { OcEventsService } from './services/db/oc-events.service';
+import { OcMessagesService } from './services/db/oc-messages.service';
+import { OcPartsService } from './services/db/oc-parts.service';
 import { OrgsService } from './services/db/orgs.service';
-import { PartsService } from './services/db/parts.service';
 import { ProjectsService } from './services/db/projects.service';
 import { QueriesService } from './services/db/queries.service';
 import { ReportsService } from './services/db/reports.service';
@@ -67,15 +67,15 @@ export const appProviders = [
   DashboardsService,
   DconfigsService,
   EnvsService,
-  EventsService,
+  OcEventsService,
   KitsService,
   MconfigsService,
   MembersService,
-  MessagesService,
+  OcMessagesService,
   ModelsService,
   NotesService,
   OrgsService,
-  PartsService,
+  OcPartsService,
   ProjectsService,
   QueriesService,
   ReportsService,

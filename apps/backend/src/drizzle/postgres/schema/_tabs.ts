@@ -15,26 +15,26 @@ import {
   DconfigSt,
   EnvLt,
   EnvSt,
-  EventLt,
-  EventSt,
   KitLt,
   KitSt,
   MconfigLt,
   MconfigSt,
   MemberLt,
   MemberSt,
-  MessageLt,
-  MessageSt,
   ModelLt,
   ModelSt,
   NoteLt,
   NoteSt,
+  OcEventLt,
+  OcEventSt,
+  OcMessageLt,
+  OcMessageSt,
+  OcPartLt,
+  OcPartSt,
   OcSessionLt,
   OcSessionSt,
   OrgLt,
   OrgSt,
-  PartLt,
-  PartSt,
   ProjectLt,
   ProjectSt,
   QueryLt,
@@ -58,16 +58,16 @@ import { ConnectionEnt } from './connections';
 import { DashboardEnt } from './dashboards';
 import { DconfigEnt } from './dconfigs';
 import { EnvEnt } from './envs';
-import { EventEnt } from './events';
 import { KitEnt } from './kits';
 import { MconfigEnt } from './mconfigs';
 import { MemberEnt } from './members';
-import { MessageEnt } from './messages';
 import { ModelEnt } from './models';
 import { NoteEnt } from './notes';
+import { OcEventEnt } from './oc-events';
+import { OcMessageEnt } from './oc-messages';
+import { OcPartEnt } from './oc-parts';
 import { OcSessionEnt } from './oc-sessions';
 import { OrgEnt } from './orgs';
-import { PartEnt } from './parts';
 import { ProjectEnt } from './projects';
 import { QueryEnt } from './queries';
 import { ReportEnt } from './reports';
@@ -156,17 +156,20 @@ export interface StructTab
 
 export interface UserTab extends Omit<UserEnt, 'st' | 'lt'>, UserSt, UserLt {}
 
-export interface EventTab
-  extends Omit<EventEnt, 'st' | 'lt'>,
-    EventSt,
-    EventLt {}
+export interface OcEventTab
+  extends Omit<OcEventEnt, 'st' | 'lt'>,
+    OcEventSt,
+    OcEventLt {}
 
-export interface MessageTab
-  extends Omit<MessageEnt, 'st' | 'lt'>,
-    MessageSt,
-    MessageLt {}
+export interface OcMessageTab
+  extends Omit<OcMessageEnt, 'st' | 'lt'>,
+    OcMessageSt,
+    OcMessageLt {}
 
-export interface PartTab extends Omit<PartEnt, 'st' | 'lt'>, PartSt, PartLt {}
+export interface OcPartTab
+  extends Omit<OcPartEnt, 'st' | 'lt'>,
+    OcPartSt,
+    OcPartLt {}
 
 export interface OcSessionTab
   extends Omit<OcSessionEnt, 'st' | 'lt'>,
