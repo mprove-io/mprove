@@ -5,6 +5,7 @@ import { BRANCH_MAIN, PROD_REPO_ID } from '#common/constants/top';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
@@ -29,7 +30,7 @@ test('1', async () => {
   await retry(async (bail: any) => {
     let defaultBranch = BRANCH_MAIN;
 
-    let repo = 'dev';
+    let repo = RepoTypeEnum.Dev;
     let branch = 'b1';
 
     let projectId = makeId();
