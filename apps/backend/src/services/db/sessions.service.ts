@@ -156,7 +156,7 @@ export class SessionsService {
     let { repoId, userId, projectId } = item;
 
     if (repoId === PROD_REPO_ID) {
-      return RepoTypeEnum.Prod;
+      return RepoTypeEnum.Production;
     }
 
     if (repoId === userId) {

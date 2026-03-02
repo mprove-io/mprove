@@ -76,7 +76,7 @@ export class ProjectResolver implements Resolve<Observable<boolean>> {
               projectName: project.name,
               projectDefaultBranch: project.defaultBranch,
               repoId: PROD_REPO_ID,
-              repoType: RepoTypeEnum.Prod,
+              repoType: RepoTypeEnum.Production,
               branchId: project.defaultBranch,
               envId: PROJECT_ENV_PROD
             });

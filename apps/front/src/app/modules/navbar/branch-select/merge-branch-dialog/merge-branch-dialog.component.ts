@@ -64,7 +64,8 @@ export class MergeBranchDialogComponent implements OnInit {
 
   branchesList: BranchItem[] = this.ref.data.branchesList.filter(
     (x: BranchItem) =>
-      x.repoType !== RepoTypeEnum.Prod && x.repoType !== RepoTypeEnum.Session
+      x.repoType !== RepoTypeEnum.Production &&
+      x.repoType !== RepoTypeEnum.Session
   );
 
   selectedBranchItem: BranchItem = undefined;

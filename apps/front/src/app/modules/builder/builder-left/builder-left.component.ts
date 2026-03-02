@@ -100,7 +100,7 @@ export class BuilderLeftComponent implements OnDestroy {
     actionMapping: this.actionMapping,
     displayField: 'name',
     allowDrag: (node: TreeNode) =>
-      this.nav?.repoType !== RepoTypeEnum.Prod &&
+      this.nav?.repoType !== RepoTypeEnum.Production &&
       node.data.id !== this.nav.projectId,
     allowDrop: (node: TreeNode, to: { parent: any; index: number }) =>
       (to.parent.data.isFolder && to.parent.data.id !== node.parent.data.id) ||

@@ -56,7 +56,7 @@ export class DeleteBranchDialogComponent implements OnInit {
   repoTypeEnum = RepoTypeEnum;
 
   repoName =
-    this.ref.data.repoType === RepoTypeEnum.Prod
+    this.ref.data.repoType === RepoTypeEnum.Production
       ? PROD_REPO_ID
       : this.ref.data.repoType === RepoTypeEnum.Dev
         ? this.ref.data.alias

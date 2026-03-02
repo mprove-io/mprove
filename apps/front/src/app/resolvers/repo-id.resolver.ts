@@ -47,7 +47,7 @@ export class RepoIdResolver implements Resolve<Observable<boolean>> {
 
     let repoType =
       repoId === PROD_REPO_ID
-        ? RepoTypeEnum.Prod
+        ? RepoTypeEnum.Production
         : repoId === userId
           ? RepoTypeEnum.Dev
           : RepoTypeEnum.Session;

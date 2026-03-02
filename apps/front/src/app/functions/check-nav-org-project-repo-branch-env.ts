@@ -43,7 +43,7 @@ export function checkNavOrgProjectRepoBranchEnv(item: {
 
   if (isDefined(parametersRepoId)) {
     if (
-      (nav.repoType === RepoTypeEnum.Prod &&
+      (nav.repoType === RepoTypeEnum.Production &&
         parametersRepoId !== PROD_REPO_ID) ||
       nav.branchId !== parametersBranchId ||
       nav.envId !== parametersEnvId

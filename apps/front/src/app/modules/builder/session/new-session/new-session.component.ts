@@ -72,7 +72,7 @@ export class NewSessionComponent implements OnInit {
         tap((resp: ToBackendGetBranchesListResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.branches = resp.payload.branchesList
-              .filter(b => b.repoType === RepoTypeEnum.Prod)
+              .filter(b => b.repoType === RepoTypeEnum.Production)
               .map(b => b.branchId);
           }
           this.branchesLoading = false;

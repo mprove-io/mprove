@@ -10,7 +10,7 @@ export function makeBranchExtraId(item: {
     ? undefined
     : item.repoType === RepoTypeEnum.Session
       ? `session-${item.branchId}`
-      : item.repoType === RepoTypeEnum.Prod
+      : item.repoType === RepoTypeEnum.Production
         ? `production-${item.branchId}`
         : `${item.userId}-${item.branchId}`;
 }

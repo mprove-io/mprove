@@ -110,7 +110,7 @@ export class GetBranchesListController {
         repoId: x.repoId,
         repoType:
           x.repoId === PROD_REPO_ID
-            ? RepoTypeEnum.Prod
+            ? RepoTypeEnum.Production
             : x.repoId === user.userId
               ? RepoTypeEnum.Dev
               : RepoTypeEnum.Session,

@@ -789,19 +789,19 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.theme =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? nav.repoType === RepoTypeEnum.Prod
+        ? nav.repoType === RepoTypeEnum.Production
           ? LIGHT_PLUS_THEME_EXTRA_SINGLE_READ
           : LIGHT_PLUS_THEME_EXTRA_SINGLE
-        : nav.repoType === RepoTypeEnum.Prod
+        : nav.repoType === RepoTypeEnum.Production
           ? VS_LIGHT_THEME_EXTRA_SINGLE_READ
           : VS_LIGHT_THEME_EXTRA_SINGLE;
 
     let themeDIff =
       LIGHT_PLUS_LANGUAGES.indexOf(this.lang?.toLowerCase()) > -1
-        ? nav.repoType === RepoTypeEnum.Prod
+        ? nav.repoType === RepoTypeEnum.Production
           ? LIGHT_PLUS_THEME_EXTRA_DIFF_READ
           : LIGHT_PLUS_THEME_EXTRA_DIFF
-        : nav.repoType === RepoTypeEnum.Prod
+        : nav.repoType === RepoTypeEnum.Production
           ? VS_LIGHT_THEME_EXTRA_DIFF_READ
           : VS_LIGHT_THEME_EXTRA_DIFF;
 

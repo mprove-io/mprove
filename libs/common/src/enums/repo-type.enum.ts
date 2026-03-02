@@ -1,5 +1,5 @@
 export enum RepoTypeEnum {
-  Prod = 'Prod',
-  Dev = 'Dev',
-  Session = 'Session'
+  Production = 'production',
+  Dev = 'dev',
+  Session = 'session'
 }

@@ -126,7 +126,7 @@ export class CreateBranchDialogComponent implements OnInit {
   }
 
   prodOnClick() {
-    this.targetRepoType = RepoTypeEnum.Prod;
+    this.targetRepoType = RepoTypeEnum.Production;
 
     this.branchesList = makeCopy<BranchItem[]>(
       this.ref.data.branchesList
@@ -171,7 +171,7 @@ export class CreateBranchDialogComponent implements OnInit {
       .subscribe();
 
     let repoId =
-      this.targetRepoType === RepoTypeEnum.Prod ? PROD_REPO_ID : userId;
+      this.targetRepoType === RepoTypeEnum.Production ? PROD_REPO_ID : userId;
 
     let payload: ToBackendCreateBranchRequestPayload = {
       projectId: this.ref.data.projectId,

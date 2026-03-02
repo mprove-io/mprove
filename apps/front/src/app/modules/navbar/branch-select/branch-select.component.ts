@@ -222,7 +222,7 @@ export class BranchSelectComponent {
             };
 
             let prodBranches = this.branchesList
-              .filter(y => y.repoType === RepoTypeEnum.Prod)
+              .filter(y => y.repoType === RepoTypeEnum.Production)
               .sort(sortDefaultFirst);
 
             let devBranches = this.branchesList
@@ -310,7 +310,7 @@ export class BranchSelectComponent {
     );
 
     let envId =
-      newSelectedBranchItem.repoType === RepoTypeEnum.Prod
+      newSelectedBranchItem.repoType === RepoTypeEnum.Production
         ? PROJECT_ENV_PROD
         : this.nav.envId;
 

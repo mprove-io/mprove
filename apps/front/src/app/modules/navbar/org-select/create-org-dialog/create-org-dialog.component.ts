@@ -115,7 +115,7 @@ export class CreateOrgDialogComponent implements OnInit {
               projectName: undefined,
               projectDefaultBranch: undefined,
               repoId: PROD_REPO_ID,
-              repoType: RepoTypeEnum.Prod,
+              repoType: RepoTypeEnum.Production,
               branchId: undefined,
               envId: PROJECT_ENV_PROD,
               needValidate: false

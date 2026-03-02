@@ -53,7 +53,7 @@ export class CommitRepoController {
       projectId: projectId
     });
 
-    if (repoType === RepoTypeEnum.Prod) {
+    if (repoType === RepoTypeEnum.Production) {
       throw new ServerError({
         message: ErEnum.BACKEND_MANUAL_COMMIT_TO_PRODUCTION_REPO_IS_FORBIDDEN
       });
