@@ -156,6 +156,8 @@ export class NewSessionComponent implements OnInit {
             });
           }
           this.isSubmitting = false;
+          this.uiQuery.updatePart({ showContent: true });
+          this.spinner.hide(APP_SPINNER_NAME);
           this.cd.detectChanges();
         }),
         take(1)

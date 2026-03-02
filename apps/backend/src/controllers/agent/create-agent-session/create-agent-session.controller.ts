@@ -289,7 +289,7 @@ export class CreateAgentSessionController {
       let now = Date.now();
 
       let currentSession: SessionTab;
-      let retryMs = 15_000;
+      let retryMs = 20_000;
       let intervalMs = 1_000;
       let start = Date.now();
 
