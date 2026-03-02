@@ -5,7 +5,7 @@ import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { RepoParameterEnum } from '#common/enums/repo-parameter.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { RowTypeEnum } from '#common/enums/row-type.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -126,8 +126,8 @@ export class GetQueryCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(RepoParameterEnum),
-    description: `(required, "${RepoParameterEnum.Dev}" or "${RepoParameterEnum.Production}")`
+    validator: t.isEnum(RepoTypeEnum),
+    description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
   });
 
   branch = Option.String('--branch', {

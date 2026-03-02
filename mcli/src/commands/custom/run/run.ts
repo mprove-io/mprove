@@ -4,7 +4,7 @@ import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { RepoParameterEnum } from '#common/enums/repo-parameter.enum';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
@@ -90,8 +90,8 @@ export class RunCommand extends CustomCommand {
 
   repo = Option.String('--repo', {
     required: true,
-    validator: t.isEnum(RepoParameterEnum),
-    description: `(required, "${RepoParameterEnum.Dev}" or "${RepoParameterEnum.Production}")`
+    validator: t.isEnum(RepoTypeEnum),
+    description: `(required, "${RepoTypeEnum.Dev}", "${RepoTypeEnum.Production}" or "${RepoTypeEnum.Session}")`
   });
 
   branch = Option.String('--branch', {
