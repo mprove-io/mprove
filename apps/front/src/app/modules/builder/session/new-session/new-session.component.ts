@@ -154,11 +154,14 @@ export class NewSessionComponent implements OnInit {
               repoId: newSession.repoId,
               branchId: newSession.branchId
             });
+            this.isSubmitting = false;
+            this.cd.detectChanges();
+          } else {
+            this.isSubmitting = false;
+            this.uiQuery.updatePart({ showContent: true });
+            this.spinner.hide(APP_SPINNER_NAME);
+            this.cd.detectChanges();
           }
-          this.isSubmitting = false;
-          this.uiQuery.updatePart({ showContent: true });
-          this.spinner.hide(APP_SPINNER_NAME);
-          this.cd.detectChanges();
         }),
         take(1)
       )
