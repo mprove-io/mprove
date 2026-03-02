@@ -247,6 +247,25 @@
                 </div>
               </div>
 
+              <!-- Compaction indicator -->
+              <div
+                *ngIf="msg.role === 'compaction'"
+                class="ml-[34px] flex items-start gap-3"
+              >
+                <span
+                  class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-blue-400"
+                ></span>
+                <div
+                  class="border-s200 max-w-[90%] overflow-hidden rounded-lg border"
+                >
+                  <div class="flex items-center gap-2 px-3 py-2">
+                    <span class="text-s1 text-base font-medium">{{
+                      msg.text
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+
               <!-- Error -->
               <div
                 *ngIf="msg.role === 'error'"
@@ -342,6 +361,31 @@
                     Session activation failed. Please try again.
                   </div>
                 </div>
+              </div>
+
+              <!-- Session error indicator (compact, clickable) -->
+              <div
+                *ngIf="lastSessionError && !isSessionError"
+                class="mb-4 ml-[34px] flex items-start gap-3"
+              >
+                <span
+                  class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full"
+                  [ngClass]="{
+                    'bg-red-500': !isLastErrorRecovered,
+                    'bg-red-300': isLastErrorRecovered
+                  }"
+                ></span>
+                <button
+                  class="border-s200 max-w-[90%] overflow-hidden rounded-lg border text-left hover:bg-gray-50 focus:outline-none"
+                  (click)="openSessionErrorDialog()"
+                >
+                  <div class="flex items-center gap-2 px-3 py-2">
+                    <span class="text-s1 text-base font-medium">Error</span>
+                    <span class="text-s500 min-w-0 flex-1 truncate text-base">{{
+                      getSessionErrorName()
+                    }}</span>
+                  </div>
+                </button>
               </div>
             </ng-container>
           </div>

@@ -6,6 +6,7 @@ import type {
   PermissionRequest,
   QuestionRequest,
   Session,
+  SessionStatus,
   Todo
 } from '@opencode-ai/sdk/v2';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
@@ -303,6 +304,9 @@ export class OcSessionSt {
   todos?: Todo[];
   questions?: QuestionRequest[];
   permissions?: PermissionRequest[];
+  ocSessionStatus?: SessionStatus;
+  lastSessionError?: Record<string, unknown>;
+  isLastErrorRecovered?: boolean;
 }
 export class OcSessionLt {
   emptyData?: number;

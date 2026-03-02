@@ -12,31 +12,11 @@ import type { ToolPart } from '@opencode-ai/sdk/v2';
 import { NgScrollbar } from 'ngx-scrollbar';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyDialogService } from '../../../../services/my-dialog.service';
-
-interface FileDiffInfo {
-  file: string;
-  additions: number;
-  deletions: number;
-  status?: 'added' | 'deleted' | 'modified';
-  before?: string;
-  after?: string;
-}
-
-interface ChatMessage {
-  role: 'user' | 'agent' | 'tool' | 'thought' | 'error';
-  text: string;
-  toolPart?: ToolPart;
-  agentName?: string;
-  modelId?: string;
-  variant?: string;
-  summaryDiffs?: FileDiffInfo[];
-}
-
-interface ChatTurn {
-  userMessage?: ChatMessage;
-  responses: ChatMessage[];
-  fileDiffs?: FileDiffInfo[];
-}
+import {
+  ChatMessage,
+  ChatTurn,
+  FileDiffInfo
+} from '../session-chat.interfaces';
 
 const TOOL_TITLE_MAP: Record<string, string> = {
   bash: 'Shell',
@@ -68,6 +48,8 @@ export class SessionMessagesComponent
   @Input() isAgentBusy = false;
   @Input() retryMessage: string;
   @Input() isSessionError = false;
+  @Input() lastSessionError: Record<string, unknown> | undefined;
+  @Input() isLastErrorRecovered: boolean | undefined;
   @Input() scrollTrigger = 0;
 
   @ViewChild('chatScroll') chatScrollbar: NgScrollbar;
@@ -374,6 +356,31 @@ export class SessionMessagesComponent
   openFileDiff(diff: FileDiffInfo) {
     this.myDialogService.showFileDiffs({
       diff
+    });
+  }
+
+  getSessionErrorName(): string {
+    if (!this.lastSessionError) return '';
+    let name = this.lastSessionError['name'] as string | undefined;
+    let data = this.lastSessionError['data'] as
+      | Record<string, unknown>
+      | undefined;
+    let message = data?.['message'] as string | undefined;
+    return message || name || 'Unknown error';
+  }
+
+  openSessionErrorDialog() {
+    if (!this.lastSessionError) return;
+    let name = (this.lastSessionError['name'] as string) || 'Error';
+    let data = this.lastSessionError['data'] as
+      | Record<string, unknown>
+      | undefined;
+    let message = (data?.['message'] as string) || JSON.stringify(data ?? {});
+    this.myDialogService.showToolOutput({
+      title: 'Session Error',
+      subtitle: name,
+      output: message,
+      isError: true
     });
   }
 }

@@ -188,7 +188,10 @@ export class SessionsService {
       sessionId: ocSession.sessionId,
       todos: ocSession.todos,
       questions: ocSession.questions,
-      permissions: ocSession.permissions
+      permissions: ocSession.permissions,
+      ocSessionStatus: ocSession.ocSessionStatus,
+      lastSessionError: ocSession.lastSessionError,
+      isLastErrorRecovered: ocSession.isLastErrorRecovered
     };
   }
 

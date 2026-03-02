@@ -50,33 +50,9 @@ import { ApiService } from '#front/app/services/api.service';
 import { EventReducerService } from '#front/app/services/event-reducer.service';
 import { UiService } from '#front/app/services/ui.service';
 import { environment } from '#front/environments/environment';
+import { ChatMessage, ChatTurn, FileDiffInfo } from './session-chat.interfaces';
 import { SessionInputComponent } from './session-input/session-input.component';
 import { SessionMessagesComponent } from './session-messages/session-messages.component';
-
-interface FileDiffInfo {
-  file: string;
-  additions: number;
-  deletions: number;
-  status?: 'added' | 'deleted' | 'modified';
-  before?: string;
-  after?: string;
-}
-
-interface ChatMessage {
-  role: 'user' | 'agent' | 'tool' | 'thought' | 'error';
-  text: string;
-  toolPart?: ToolPart;
-  agentName?: string;
-  modelId?: string;
-  variant?: string;
-  summaryDiffs?: FileDiffInfo[];
-}
-
-interface ChatTurn {
-  userMessage?: ChatMessage;
-  responses: ChatMessage[];
-  fileDiffs?: FileDiffInfo[];
-}
 
 @Component({
   standalone: false,
@@ -115,6 +91,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   isAborting = false;
   retryMessage: string;
   isSessionError = false;
+  lastSessionError: Record<string, unknown> | undefined;
+  isLastErrorRecovered: boolean | undefined;
 
   get statusText(): string {
     if (this.isAgentBusy) {
@@ -435,13 +413,6 @@ export class SessionComponent implements OnInit, OnDestroy {
               });
             }
 
-            let sdkSessionStatus: SessionStatus;
-            for (let e of resp.payload.events) {
-              if (e.ocEvent?.type === 'session.status') {
-                sdkSessionStatus = e.ocEvent.properties.status;
-              }
-            }
-
             this.sessionBundleQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
@@ -450,7 +421,9 @@ export class SessionComponent implements OnInit, OnDestroy {
               todos: resp.payload.ocSession?.todos ?? [],
               questions: resp.payload.ocSession?.questions ?? [],
               permissions: resp.payload.ocSession?.permissions ?? [],
-              sdkSessionStatus
+              ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
+              lastSessionError: resp.payload.ocSession?.lastSessionError,
+              isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
             });
 
             // Update session in the sessions list
@@ -589,13 +562,6 @@ export class SessionComponent implements OnInit, OnDestroy {
               this.lastProcessedEventIndex = maxIndex;
             }
 
-            let sdkSessionStatus: SessionStatus;
-            for (let e of resp.payload.events) {
-              if (e.ocEvent?.type === 'session.status') {
-                sdkSessionStatus = e.ocEvent.properties.status;
-              }
-            }
-
             this.sessionBundleQuery.updatePart({
               messages: resp.payload.messages || [],
               parts: resp.payload.parts
@@ -604,7 +570,9 @@ export class SessionComponent implements OnInit, OnDestroy {
               todos: resp.payload.ocSession?.todos ?? [],
               questions: resp.payload.ocSession?.questions ?? [],
               permissions: resp.payload.ocSession?.permissions ?? [],
-              sdkSessionStatus
+              ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
+              lastSessionError: resp.payload.ocSession?.lastSessionError,
+              isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
             });
 
             // Release the guard, then connect SSE directly
@@ -689,10 +657,12 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.archivedReason = this.session.archivedReason;
-    this.isAgentBusy = this.checkIsAgentBusy(sessionData.sdkSessionStatus);
-    this.isWorking = this.checkIsWorking(sessionData.sdkSessionStatus);
-    this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
+    this.isAgentBusy = this.checkIsAgentBusy(sessionData.ocSessionStatus);
+    this.isWorking = this.checkIsWorking(sessionData.ocSessionStatus);
+    this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
+    this.lastSessionError = sessionData.lastSessionError;
+    this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
 
     this.updateStatusTextChars();
 
@@ -751,10 +721,12 @@ export class SessionComponent implements OnInit, OnDestroy {
       this.questions.length === 0 &&
       this.permissions.length === 0 &&
       (this.pendingUserMessages.length > 0 ||
-        this.checkIsAgentBusy(sessionData.sdkSessionStatus));
-    this.isWorking = this.checkIsWorking(sessionData.sdkSessionStatus);
-    this.retryMessage = this.getRetryMessage(sessionData.sdkSessionStatus);
+        this.checkIsAgentBusy(sessionData.ocSessionStatus));
+    this.isWorking = this.checkIsWorking(sessionData.ocSessionStatus);
+    this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
+    this.lastSessionError = sessionData.lastSessionError;
+    this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
 
     this.updateStatusTextChars();
 
@@ -814,14 +786,14 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isConnectingSse = false;
   }
 
-  checkIsAgentBusy(sdkSessionStatus: SessionStatus): boolean {
+  checkIsAgentBusy(ocSessionStatus: SessionStatus): boolean {
     if (this.session?.status !== SessionStatusEnum.Active) {
       return false;
     }
 
     if (
-      isDefined(sdkSessionStatus) &&
-      ['busy', 'retry'].indexOf(sdkSessionStatus.type) > -1
+      isDefined(ocSessionStatus) &&
+      ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1
     ) {
       return true;
     }
@@ -837,13 +809,13 @@ export class SessionComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  checkIsWorking(sdkSessionStatus: SessionStatus): boolean {
+  checkIsWorking(ocSessionStatus: SessionStatus): boolean {
     if (this.session?.status !== SessionStatusEnum.Active) {
       return false;
     }
 
-    if (sdkSessionStatus) {
-      let isBusy = ['busy', 'retry'].indexOf(sdkSessionStatus.type) > -1;
+    if (ocSessionStatus) {
+      let isBusy = ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1;
 
       if (!isBusy) {
         this.isAborting = false;
@@ -867,9 +839,9 @@ export class SessionComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  getRetryMessage(sdkSessionStatus: SessionStatus): string {
-    if (sdkSessionStatus?.type === 'retry') {
-      return `Retrying (attempt ${sdkSessionStatus.attempt}): ${sdkSessionStatus.message}`;
+  getRetryMessage(ocSessionStatus: SessionStatus): string {
+    if (ocSessionStatus?.type === 'retry') {
+      return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
     }
     return undefined;
   }
@@ -990,6 +962,12 @@ export class SessionComponent implements OnInit, OnDestroy {
             chatMessages.push({
               role: 'thought',
               text: part.text || ''
+            });
+            partCount++;
+          } else if (part.type === 'compaction') {
+            chatMessages.push({
+              role: 'compaction',
+              text: part.auto ? 'Auto-compacted' : 'Compacted'
             });
             partCount++;
           }

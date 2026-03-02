@@ -10,6 +10,8 @@ import type {
   EventQuestionAsked,
   EventQuestionRejected,
   EventQuestionReplied,
+  EventSessionError,
+  EventSessionStatus,
   EventSessionUpdated,
   EventTodoUpdated,
   Part,
@@ -542,6 +544,12 @@ export class AgentService implements OnModuleDestroy {
     let permissionRepliedItems = items.filter(
       item => item.event.type === 'permission.replied'
     );
+    let sessionStatusItems = items.filter(
+      item => item.event.type === 'session.status'
+    );
+    let sessionErrorItems = items.filter(
+      item => item.event.type === 'session.error'
+    );
 
     if (
       sessionUpdatedItems.length > 0 ||
@@ -549,7 +557,9 @@ export class AgentService implements OnModuleDestroy {
       questionAskedItems.length > 0 ||
       questionResolvedItems.length > 0 ||
       permissionAskedItems.length > 0 ||
-      permissionRepliedItems.length > 0
+      permissionRepliedItems.length > 0 ||
+      sessionStatusItems.length > 0 ||
+      sessionErrorItems.length > 0
     ) {
       let ocSessionTab = await this.sessionsService.getOcSessionBySessionId({
         sessionId: sessionId
@@ -655,6 +665,56 @@ export class AgentService implements OnModuleDestroy {
           };
         } else {
           ocSessionTabs.push({ ...ocSessionTab, permissions });
+        }
+      }
+
+      if (sessionErrorItems.length > 0 || sessionStatusItems.length > 0) {
+        let existingIndex = ocSessionTabs.findIndex(
+          t => t.sessionId === sessionId
+        );
+        let base =
+          existingIndex >= 0 ? ocSessionTabs[existingIndex] : ocSessionTab;
+
+        let lastSessionError = base.lastSessionError;
+        let isLastErrorRecovered = base.isLastErrorRecovered;
+        let ocSessionStatus = base.ocSessionStatus;
+
+        if (sessionErrorItems.length > 0) {
+          let lastErrorItem = sessionErrorItems[sessionErrorItems.length - 1];
+          let errorProps = (lastErrorItem.event as EventSessionError)
+            .properties;
+          lastSessionError = errorProps.error as
+            | Record<string, unknown>
+            | undefined;
+          isLastErrorRecovered = false;
+        }
+
+        if (sessionStatusItems.length > 0) {
+          let lastStatusItem =
+            sessionStatusItems[sessionStatusItems.length - 1];
+          let statusProps = (lastStatusItem.event as EventSessionStatus)
+            .properties;
+          ocSessionStatus = statusProps.status;
+
+          if (statusProps.status.type === 'idle' && lastSessionError) {
+            isLastErrorRecovered = true;
+          }
+        }
+
+        if (existingIndex >= 0) {
+          ocSessionTabs[existingIndex] = {
+            ...ocSessionTabs[existingIndex],
+            ocSessionStatus,
+            lastSessionError,
+            isLastErrorRecovered
+          };
+        } else {
+          ocSessionTabs.push({
+            ...ocSessionTab,
+            ocSessionStatus,
+            lastSessionError,
+            isLastErrorRecovered
+          });
         }
       }
     }

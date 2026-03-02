@@ -15,9 +15,11 @@ export class SessionBundleState {
   parts: { [messageId: string]: AgentPartApi[] };
   permissions: PermissionRequest[];
   questions: QuestionRequest[];
-  sdkSessionStatus: SessionStatus;
+  ocSessionStatus: SessionStatus;
   sessionTitle?: string;
   todos: Todo[];
+  lastSessionError?: Record<string, unknown>;
+  isLastErrorRecovered?: boolean;
 }
 
 let sessionBundleState: SessionBundleState = {
@@ -25,9 +27,11 @@ let sessionBundleState: SessionBundleState = {
   parts: {},
   permissions: [],
   questions: [],
-  sdkSessionStatus: undefined,
+  ocSessionStatus: undefined,
   sessionTitle: undefined,
-  todos: []
+  todos: [],
+  lastSessionError: undefined,
+  isLastErrorRecovered: undefined
 };
 
 @Injectable({ providedIn: 'root' })
@@ -36,8 +40,12 @@ export class SessionBundleQuery extends BaseQuery<SessionBundleState> {
   parts$ = this.store.pipe(select(state => state.parts));
   permissions$ = this.store.pipe(select(state => state.permissions));
   questions$ = this.store.pipe(select(state => state.questions));
-  sdkSessionStatus$ = this.store.pipe(select(state => state.sdkSessionStatus));
+  ocSessionStatus$ = this.store.pipe(select(state => state.ocSessionStatus));
   todos$ = this.store.pipe(select(state => state.todos));
+  lastSessionError$ = this.store.pipe(select(state => state.lastSessionError));
+  isLastErrorRecovered$ = this.store.pipe(
+    select(state => state.isLastErrorRecovered)
+  );
 
   constructor() {
     super(

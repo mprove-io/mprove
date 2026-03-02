@@ -148,7 +148,25 @@ export class EventReducerService {
       }
 
       case 'session.status': {
-        return { ...state, sdkSessionStatus: event.properties.status };
+        let status = event.properties.status;
+        let updates: Partial<SessionBundleState> = {
+          ocSessionStatus: status
+        };
+        if (status.type === 'idle' && state.lastSessionError) {
+          updates.isLastErrorRecovered = true;
+        }
+        return { ...state, ...updates };
+      }
+
+      case 'session.error': {
+        let error = event.properties.error;
+        return {
+          ...state,
+          lastSessionError: error
+            ? (error as Record<string, unknown>)
+            : undefined,
+          isLastErrorRecovered: false
+        };
       }
 
       case 'session.updated': {
