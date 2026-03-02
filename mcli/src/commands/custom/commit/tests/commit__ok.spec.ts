@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test';
 import assert from 'node:assert/strict';
 import retry from 'async-retry';
-import { BRANCH_MAIN } from '#common/constants/top';
+import { BRANCH_MAIN, PROJECT_ENV_PROD } from '#common/constants/top';
 import { RETRY_OPTIONS } from '#common/constants/top-mcli';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
@@ -111,7 +111,7 @@ test('1', async () => {
       let saveFileReqPayload: ToBackendSaveFileRequestPayload = {
         projectId: projectId,
         branchId: branch,
-        envId: 'prod',
+        envId: PROJECT_ENV_PROD,
         fileNodeId: `${projectId}/readme.md`,
         content: '123'
       };

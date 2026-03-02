@@ -30,7 +30,7 @@ test('1', async () => {
   await retry(async (bail: any) => {
     let defaultBranch = BRANCH_MAIN;
 
-    let repo = RepoTypeEnum.Dev;
+    let repo: RepoTypeEnum = RepoTypeEnum.Dev;
     let branch = 'b1';
 
     let projectId = makeId();
@@ -110,7 +110,10 @@ test('1', async () => {
 
       context = mockContext as any;
 
-      let repoId = repo === 'production' ? PROD_REPO_ID : userId;
+      let repoId =
+        (repo as RepoTypeEnum) === RepoTypeEnum.Production
+          ? PROD_REPO_ID
+          : userId;
 
       let createBranchReqPayload: ToBackendCreateBranchRequestPayload = {
         projectId: projectId,

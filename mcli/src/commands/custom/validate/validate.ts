@@ -89,7 +89,9 @@ export class ValidateCommand extends CustomCommand {
     let loginToken = await getLoginToken(this.context);
 
     let repoId =
-      this.repo === 'production' ? PROD_REPO_ID : this.context.userId;
+      this.repo === RepoTypeEnum.Production
+        ? PROD_REPO_ID
+        : this.context.userId;
 
     let validateFilesReqPayload: ToBackendValidateFilesRequestPayload = {
       projectId: this.projectId,
