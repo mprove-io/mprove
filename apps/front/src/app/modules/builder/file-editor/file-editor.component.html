@@ -47,7 +47,7 @@
     </ng-template>
 
     <div
-      *ngIf="nav?.repoType === repoTypeEnum.Prod"
+      *ngIf="nav?.repoType === repoTypeEnum.Production"
       class="ml-5 mr-6 flex flex-shrink-0 flex-col font-semibold"
     >
       <div class="text-a500 flex select-none text-lg">
@@ -57,7 +57,7 @@
 
     <div
       class="ml-5 flex flex-shrink-0"
-      *ngIf="nav?.repoType !== repoTypeEnum.Prod"
+      *ngIf="nav?.repoType !== repoTypeEnum.Production"
       [tp]="templateSave"
       [tpIsEnabled]="needSave === false"
     >
@@ -81,13 +81,13 @@
 
     <div
       class="ml-3 mr-6 flex flex-shrink-0"
-      *ngIf="nav?.repoType !== repoTypeEnum.Prod"
+      *ngIf="nav?.repoType !== repoTypeEnum.Production"
       [tp]="templateCancel"
       [tpIsEnabled]="needSave === false"
     >
       <button
         class=""
-        *ngIf="nav?.repoType !== repoTypeEnum.Prod"
+        *ngIf="nav?.repoType !== repoTypeEnum.Production"
         type="button"
         data-cy="fileEditorCancelButton"
         class="flex h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-base font-medium focus:outline-none"
@@ -124,7 +124,7 @@
         style="height: 100%"
         [(ngModel)]="content"
         [readonly]="
-          nav?.repoType === repoTypeEnum.Prod || file?.isExist === false
+          nav?.repoType === repoTypeEnum.Production || file?.isExist === false
         "
         [extensions]="mainExtensions"
         [languages]="languages"
@@ -156,7 +156,7 @@
         [originalExtensions]="originalExtensions"
         [modifiedExtensions]="modifiedExtensions"
         [disabled]="
-          nav?.repoType === repoTypeEnum.Prod || file?.isExist === false
+          nav?.repoType === repoTypeEnum.Production || file?.isExist === false
         "
         (originalValueChange)="onOriginalTextChanged()"
         (modifiedValueChange)="onTextChanged({ isDiffEditor: true })"

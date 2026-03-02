@@ -9,7 +9,7 @@
 <div
   tp="Environment can only be selected for Dev repo branches"
   [tpIsEnabled]="
-    showEmptySelector === false && nav?.repoType === repoTypeEnum.Prod
+    showEmptySelector === false && nav?.repoType === repoTypeEnum.Production
   "
 >
   <ng-select
@@ -24,7 +24,7 @@
     [clearable]="false"
     [searchable]="false"
     [disabled]="
-      nav?.repoType === repoTypeEnum.Prod ||
+      nav?.repoType === repoTypeEnum.Production ||
       selectedProjectId === undefined ||
       needSave === true
     "

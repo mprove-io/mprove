@@ -22,11 +22,11 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': targetRepoType === repoTypeEnum.Prod
+          'bg-m600': targetRepoType === repoTypeEnum.Production
         }"
       >
         <m-check-icon
-          *ngIf="targetRepoType === repoTypeEnum.Prod"
+          *ngIf="targetRepoType === repoTypeEnum.Production"
         ></m-check-icon>
       </div>
 
@@ -41,11 +41,11 @@
       <div
         class="border-m600 text-m0 flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none"
         [ngClass]="{
-          'bg-m600': targetRepoType !== repoTypeEnum.Prod
+          'bg-m600': targetRepoType !== repoTypeEnum.Production
         }"
       >
         <m-check-icon
-          *ngIf="targetRepoType !== repoTypeEnum.Prod"
+          *ngIf="targetRepoType !== repoTypeEnum.Production"
         ></m-check-icon>
       </div>
 
