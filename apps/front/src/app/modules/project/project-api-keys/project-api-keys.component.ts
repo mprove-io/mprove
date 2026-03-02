@@ -55,7 +55,7 @@ export class ProjectApiKeysComponent implements OnInit {
     this.myDialogService.showEditApiKey({
       apiService: this.apiService,
       projectId: this.project.projectId,
-      keyLabel: 'Zen API Key',
+      keyLabel: 'Opencode Zen API Key',
       fieldName: 'zenApiKey'
     });
   }
