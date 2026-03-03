@@ -1,0 +1,33 @@
+<div class="bg-m0 flex select-none flex-col p-9">
+  <div class="text-s2 mt-5 flex-grow text-left text-2xl font-semibold"
+    >Your API Key</div
+  >
+
+  <div class="text-s1 mt-3 text-lg"
+    >Copy this key now. You will not be able to see it again.</div
+  >
+
+  <div
+    class="text-s1 mt-5 min-h-[5.5rem] p-4 text-lg"
+    style="word-break: break-all"
+    >{{ showValue ? apiKey : maskedApiKey }}</div
+  >
+
+  <div class="mt-9 flex flex-row items-center gap-4">
+    <button
+      class="border-m600 text-m600 w-[140px] select-none rounded border py-3 text-base font-medium focus:outline-none"
+      (click)="toggleShowValue()"
+    >
+      {{ showValue ? 'Hide Value' : 'Show Value' }}
+    </button>
+
+    <button
+      class="border-m600 text-m600 select-none rounded border px-5 py-3 text-base font-medium focus:outline-none"
+      (click)="copyToClipboard()"
+    >
+      Copy to Clipboard
+    </button>
+
+    <div *ngIf="copied" class="text-s1 text-lg">Copied!</div>
+  </div>
+</div>

@@ -23,10 +23,7 @@ export function getConfig(envPath?: string) {
   let config: McliConfig = {
     mproveCliHost: process.env.MPROVE_CLI_HOST || envFile.MPROVE_CLI_HOST,
 
-    mproveCliEmail: process.env.MPROVE_CLI_EMAIL || envFile.MPROVE_CLI_EMAIL,
-
-    mproveCliPassword:
-      process.env.MPROVE_CLI_PASSWORD || envFile.MPROVE_CLI_PASSWORD,
+    mproveCliApiKey: process.env.MPROVE_API_KEY || envFile.MPROVE_API_KEY,
 
     mproveCliProjectId:
       process.env.MPROVE_CLI_PROJECT_ID || envFile.MPROVE_CLI_PROJECT_ID,

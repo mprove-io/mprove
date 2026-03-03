@@ -26,6 +26,7 @@ export const usersTable = pgTable(
       'email_verification_token_hash'
     ).notNull(),
     passwordResetTokenHash: varchar('password_reset_token_hash'),
+    apiKeyPrefix: varchar('api_key_prefix', { length: 32 }),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
   table => ({
@@ -43,7 +44,10 @@ export const usersTable = pgTable(
     ).on(table.emailVerificationTokenHash),
     uidxUsersPasswordResetTokenHash: uniqueIndex(
       'uidx_users_password_reset_token_hash'
-    ).on(table.passwordResetTokenHash)
+    ).on(table.passwordResetTokenHash),
+    uidxUsersApiKeyPrefix: uniqueIndex('uidx_users_api_key_prefix').on(
+      table.apiKeyPrefix
+    )
   })
 );
 

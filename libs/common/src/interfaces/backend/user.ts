@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { Ui } from './ui';
 
 export class User {
@@ -24,6 +30,10 @@ export class User {
   @ValidateNested()
   @Type(() => Ui)
   ui: Ui;
+
+  @IsOptional()
+  @IsString()
+  apiKeyPrefix?: string;
 
   @IsInt()
   serverTs: number;

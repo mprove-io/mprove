@@ -10,7 +10,6 @@ import {
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
 import { getBuilderUrl } from '#mcli/functions/get-builder-url';
-import { getLoginToken } from '#mcli/functions/get-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
@@ -79,8 +78,6 @@ export class MergeCommand extends CustomCommand {
       throw serverError;
     }
 
-    let loginToken = await getLoginToken(this.context);
-
     let mergeRepoReqPayload: ToBackendMergeRepoRequestPayload = {
       projectId: this.projectId,
       branchId: this.branch,
@@ -89,7 +86,7 @@ export class MergeCommand extends CustomCommand {
     };
 
     let mergeRepoResp = await mreq<ToBackendMergeRepoResponse>({
-      loginToken: loginToken,
+      apiKey: this.context.config.mproveCliApiKey,
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendMergeRepo,
       payload: mergeRepoReqPayload,
       host: this.context.config.mproveCliHost

@@ -5,6 +5,7 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { AgentService } from './services/agent.service';
 import { AgentModelsService } from './services/agent-models.service';
+import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
 import { BranchesService } from './services/db/branches.service';
@@ -111,6 +112,7 @@ export const appProviders = [
   SandboxService,
   AgentService,
   AgentModelsService,
+  ApiKeyService,
   {
     provide: TasksService,
     useFactory: (

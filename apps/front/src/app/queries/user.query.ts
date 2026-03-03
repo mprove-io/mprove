@@ -37,6 +37,7 @@ export class UserQuery extends BaseQuery<UserState> {
   email$ = this.store.pipe(select(state => state.email));
   alias$ = this.store.pipe(select(state => state.alias));
   userId$ = this.store.pipe(select(state => state.userId));
+  apiKeyPrefix$ = this.store.pipe(select(state => state.apiKeyPrefix));
 
   constructor() {
     super(createStore({ name: 'user' }, withProps<UserState>(userState)));

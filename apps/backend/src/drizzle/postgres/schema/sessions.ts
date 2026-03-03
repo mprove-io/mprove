@@ -5,6 +5,7 @@ import {
   json,
   pgTable,
   text,
+  uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -41,6 +42,7 @@ export const sessionsTable = pgTable(
       .notNull(),
     initialBranch: varchar('initial_branch', { length: 255 }).notNull(),
     initialCommit: varchar('initial_commit', { length: 64 }),
+    apiKeyPrefix: varchar('api_key_prefix', { length: 32 }),
     keyTag: text('key_tag'),
     lastActivityTs: bigint('last_activity_ts', { mode: 'number' }),
     runningStartTs: bigint('running_start_ts', { mode: 'number' }),
@@ -61,7 +63,10 @@ export const sessionsTable = pgTable(
     idxSessionsUserId: index('idx_sessions_user_id').on(table.userId),
     idxSessionsProjectId: index('idx_sessions_project_id').on(table.projectId),
     idxSessionsStatus: index('idx_sessions_status').on(table.status),
-    idxSessionsKeyTag: index('idx_sessions_key_tag').on(table.keyTag)
+    idxSessionsKeyTag: index('idx_sessions_key_tag').on(table.keyTag),
+    uidxSessionsApiKeyPrefix: uniqueIndex('uidx_sessions_api_key_prefix').on(
+      table.apiKeyPrefix
+    )
   })
 );
 

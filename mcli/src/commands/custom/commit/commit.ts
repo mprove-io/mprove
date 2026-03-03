@@ -1,6 +1,7 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
@@ -13,7 +14,6 @@ import {
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
 import { getBuilderUrl } from '#mcli/functions/get-builder-url';
-import { getLoginToken } from '#mcli/functions/get-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
 import { CustomCommand } from '#mcli/models/custom-command';
@@ -78,12 +78,14 @@ export class CommitCommand extends CustomCommand {
       throw serverError;
     }
 
-    let loginToken = await getLoginToken(this.context);
+    let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
       this.repo === RepoTypeEnum.Production
         ? PROD_REPO_ID
-        : this.context.userId;
+        : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+          ? apiKey.split('-')[2].toLowerCase()
+          : apiKey.split('-')[2];
 
     let commitRepoReqPayload: ToBackendCommitRepoRequestPayload = {
       projectId: this.projectId,
@@ -93,7 +95,7 @@ export class CommitCommand extends CustomCommand {
     };
 
     let commitRepoResp = await mreq<ToBackendCommitRepoResponse>({
-      loginToken: loginToken,
+      apiKey: apiKey,
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendCommitRepo,
       payload: commitRepoReqPayload,
       host: this.context.config.mproveCliHost

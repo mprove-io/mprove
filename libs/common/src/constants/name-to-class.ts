@@ -115,6 +115,8 @@ import { ToBackendSeedRecordsRequest } from '#common/interfaces/to-backend/test-
 import { ToBackendCompleteUserRegistrationRequest } from '#common/interfaces/to-backend/users/to-backend-complete-user-registration';
 import { ToBackendConfirmUserEmailRequest } from '#common/interfaces/to-backend/users/to-backend-confirm-user-email';
 import { ToBackendDeleteUserRequest } from '#common/interfaces/to-backend/users/to-backend-delete-user';
+import { ToBackendDeleteUserApiKeyRequest } from '#common/interfaces/to-backend/users/to-backend-delete-user-api-key';
+import { ToBackendGenerateUserApiKeyRequest } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
 import { ToBackendGetUserProfileRequest } from '#common/interfaces/to-backend/users/to-backend-get-user-profile';
 import { ToBackendLoginUserRequest } from '#common/interfaces/to-backend/users/to-backend-login-user';
 import { ToBackendLogoutUserRequest } from '#common/interfaces/to-backend/users/to-backend-logout-user';
@@ -387,5 +389,10 @@ export const nameToClass = {
   [ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle]:
     ToBackendSetAgentSessionTitleRequest,
   [ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels]:
-    ToBackendGetAgentProviderModelsRequest
+    ToBackendGetAgentProviderModelsRequest,
+  // user api key
+  [ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey]:
+    ToBackendGenerateUserApiKeyRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey]:
+    ToBackendDeleteUserApiKeyRequest
 };

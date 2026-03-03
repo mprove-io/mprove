@@ -30,6 +30,7 @@ import { orgsTable } from '#backend/drizzle/postgres/schema/orgs';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { reportsTable } from '#backend/drizzle/postgres/schema/reports';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions';
 import { structsTable } from '#backend/drizzle/postgres/schema/structs';
 import { usersTable } from '#backend/drizzle/postgres/schema/users';
 import { getRetryOption } from '#backend/functions/get-retry-option';
@@ -212,6 +213,10 @@ export class DeleteRecordsController {
             await tx
               .delete(queriesTable)
               .where(inArray(queriesTable.projectId, projectIds));
+
+            await tx
+              .delete(sessionsTable)
+              .where(inArray(sessionsTable.projectId, projectIds));
           }
 
           if (structIds.length > 0) {

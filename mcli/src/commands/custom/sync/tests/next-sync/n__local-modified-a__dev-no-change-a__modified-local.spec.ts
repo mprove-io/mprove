@@ -17,6 +17,7 @@ import { getConfig } from '#mcli/config/get.config';
 import { cloneRepo } from '#mcli/functions/clone-repo';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { prepareTest } from '#mcli/functions/prepare-test';
 import { writeSyncConfig } from '#mcli/functions/write-sync-config';
 import { CustomContext } from '#mcli/models/custom-command';
@@ -58,6 +59,7 @@ test('1', async () => {
     let userId = makeId();
     let email = `${testId}@example.com`;
     let password = '123123';
+    let apiKey = makeTestApiKey({ testId, userId });
 
     let orgId = 't' + testId;
     let orgName = testId;
@@ -82,7 +84,8 @@ test('1', async () => {
               userId,
               email: email,
               password: password,
-              isEmailVerified: true
+              isEmailVerified: true,
+              apiKey: apiKey
             }
           ],
           orgs: [
@@ -138,8 +141,7 @@ test('1', async () => {
             }
           ]
         },
-        loginEmail: email,
-        loginPassword: password
+        apiKey: apiKey
       });
 
       context = mockContext as any;

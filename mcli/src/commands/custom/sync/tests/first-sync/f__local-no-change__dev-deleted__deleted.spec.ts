@@ -16,7 +16,9 @@ import {
 } from '#common/interfaces/to-backend/files/to-backend-delete-file';
 import { getConfig } from '#mcli/config/get.config';
 import { cloneRepo } from '#mcli/functions/clone-repo';
+import { getTestLoginToken } from '#mcli/functions/get-test-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
+import { makeTestApiKey } from '#mcli/functions/make-test-api-key';
 import { mreq } from '#mcli/functions/mreq';
 import { prepareTest } from '#mcli/functions/prepare-test';
 import { CustomContext } from '#mcli/models/custom-command';
@@ -57,6 +59,7 @@ test('1', async () => {
     let userId = makeId();
     let email = `${testId}@example.com`;
     let password = '123123';
+    let apiKey = makeTestApiKey({ testId, userId });
 
     let orgId = 't' + testId;
     let orgName = testId;
@@ -79,7 +82,8 @@ test('1', async () => {
               userId,
               email: email,
               password: password,
-              isEmailVerified: true
+              isEmailVerified: true,
+              apiKey: apiKey
             }
           ],
           orgs: [
@@ -135,11 +139,16 @@ test('1', async () => {
             }
           ]
         },
-        loginEmail: email,
-        loginPassword: password
+        apiKey: apiKey
       });
 
       context = mockContext as any;
+
+      let loginToken = await getTestLoginToken({
+        email: email,
+        password: password,
+        host: config.mproveCliHost
+      });
 
       let deleteFileReqPayload: ToBackendDeleteFileRequestPayload = {
         projectId: projectId,
@@ -149,7 +158,7 @@ test('1', async () => {
       };
 
       await mreq<ToBackendDeleteFileResponse>({
-        loginToken: context.loginToken,
+        apiKey: loginToken,
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteFile,
         payload: deleteFileReqPayload,
         host: context.config.mproveCliHost

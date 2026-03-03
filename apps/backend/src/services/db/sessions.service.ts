@@ -45,6 +45,9 @@ export class SessionsService {
     opencodeSessionId?: string;
     opencodePassword?: string;
     firstMessage?: string;
+    apiKeyPrefix?: string;
+    apiKeySecretHash?: string;
+    apiKeySalt?: string;
     initialBranch: string;
     initialCommit?: string;
     status: SessionStatusEnum;
@@ -71,6 +74,9 @@ export class SessionsService {
       opencodeSessionId: item.opencodeSessionId,
       opencodePassword: item.opencodePassword,
       firstMessage: item.firstMessage,
+      apiKeyPrefix: item.apiKeyPrefix,
+      apiKeySecretHash: item.apiKeySecretHash,
+      apiKeySalt: item.apiKeySalt,
       initialBranch: item.initialBranch,
       initialCommit: item.initialCommit,
       status: item.status,

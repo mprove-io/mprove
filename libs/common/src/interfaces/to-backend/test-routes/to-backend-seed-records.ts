@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ConnectionOptions } from '#common/interfaces/backend/connection-parts/connection-options';
 import { Ev } from '#common/interfaces/backend/ev';
 import { Mconfig } from '#common/interfaces/blockml/mconfig';
@@ -43,6 +44,10 @@ export class ToBackendSeedRecordsRequestPayloadUsersItem {
   @IsOptional()
   @IsNumber()
   passwordResetExpiresTs?: number;
+
+  @IsOptional()
+  @IsString()
+  apiKey?: string;
 }
 
 export class ToBackendSeedRecordsRequestPayloadOrgsItem {
@@ -183,6 +188,23 @@ export class ToBackendSeedRecordsRequestPayloadEnvsItem {
   evs: Ev[];
 }
 
+export class ToBackendSeedRecordsRequestPayloadSessionsItem {
+  @IsString()
+  sessionId: string;
+
+  @IsString()
+  userId: string;
+
+  @IsString()
+  projectId: string;
+
+  @IsString()
+  apiKey: string;
+
+  @IsEnum(SessionStatusEnum)
+  status: SessionStatusEnum;
+}
+
 export class ToBackendSeedRecordsRequestPayload {
   @IsOptional()
   @ValidateNested()
@@ -213,6 +235,11 @@ export class ToBackendSeedRecordsRequestPayload {
   @ValidateNested()
   @Type(() => ToBackendSeedRecordsRequestPayloadEnvsItem)
   envs?: ToBackendSeedRecordsRequestPayloadEnvsItem[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ToBackendSeedRecordsRequestPayloadSessionsItem)
+  sessions?: ToBackendSeedRecordsRequestPayloadSessionsItem[];
 
   @IsOptional()
   @ValidateNested()

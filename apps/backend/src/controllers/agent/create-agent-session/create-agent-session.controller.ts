@@ -29,6 +29,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentService } from '#backend/services/agent.service';
+import { ApiKeyService } from '#backend/services/api-key.service';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -70,6 +71,7 @@ export class CreateAgentSessionController {
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private agentService: AgentService,
+    private apiKeyService: ApiKeyService,
     private sandboxService: SandboxService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
@@ -145,8 +147,17 @@ export class CreateAgentSessionController {
     let now = Date.now();
     let session!: SessionTab;
 
+    let apiKeyParts: {
+      prefix: string;
+      secret: string;
+      secretHash: string;
+      salt: string;
+    };
+
     await retry(
       async () => {
+        apiKeyParts = await this.apiKeyService.generateApiKeyParts();
+
         let sessionId = makeSessionId();
 
         session = this.sessionsService.makeSession({
@@ -163,6 +174,9 @@ export class CreateAgentSessionController {
           agent: agent,
           permissionMode: permissionMode,
           firstMessage: firstMessage,
+          apiKeyPrefix: apiKeyParts.prefix,
+          apiKeySecretHash: apiKeyParts.secretHash,
+          apiKeySalt: apiKeyParts.salt,
           initialBranch: initialBranch,
           initialCommit: undefined,
           status: SessionStatusEnum.New,
@@ -189,6 +203,14 @@ export class CreateAgentSessionController {
     );
 
     // Phase 2: Activate session asynchronously (fire-and-forget)
+
+    let sessionApiKey = this.apiKeyService.buildSessionApiKey({
+      prefix: apiKeyParts.prefix,
+      sessionId: session.sessionId,
+      secret: apiKeyParts.secret
+    });
+
+    sandboxEnvs.MPROVE_API_KEY = sessionApiKey;
 
     this.activateSessionAsync({
       sessionId: session.sessionId,

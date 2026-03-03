@@ -273,6 +273,8 @@ export class UserLt {
   passwordResetToken: string;
   passwordResetExpiresTs: number;
   ui: Ui;
+  apiKeySecretHash?: string;
+  apiKeySalt?: string;
 }
 
 //
@@ -292,6 +294,8 @@ export class SessionSt {
   opencodeSessionId?: string;
   opencodePassword?: string;
   firstMessage?: string;
+  apiKeySecretHash?: string;
+  apiKeySalt?: string;
 }
 export class SessionLt {
   emptyData?: number;

@@ -115,7 +115,6 @@ import {
   EditOrgOwnerDialogComponent,
   EditOrgOwnerDialogData
 } from '../modules/org/org-account/edit-org-owner-dialog/edit-org-owner-dialog.component';
-import { ApiKeyDialogComponent } from '../modules/profile/api-key-dialog/api-key-dialog.component';
 import {
   DeleteUserDialogComponent,
   DeleteUserDialogData
@@ -128,6 +127,10 @@ import {
   EditPhotoDialogComponent,
   EditPhotoDialogData
 } from '../modules/profile/edit-photo-dialog/edit-photo-dialog.component';
+import {
+  ShowKeyDialogComponent,
+  ShowKeyDialogData
+} from '../modules/profile/show-key-dialog/show-key-dialog.component';
 import {
   EditApiKeyDialogComponent,
   EditApiKeyDialogData
@@ -317,10 +320,12 @@ export class MyDialogService {
     });
   }
 
-  showApiKey(): void {
-    this.dialogService.open(ApiKeyDialogComponent, {
+  showGeneratedApiKey(item: ShowKeyDialogData): void {
+    this.dialogService.open(ShowKeyDialogComponent, {
       enableClose: false,
-      closeButton: true
+      closeButton: true,
+      data: item,
+      width: 1064
     });
   }
 

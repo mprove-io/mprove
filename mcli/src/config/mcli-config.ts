@@ -5,10 +5,8 @@ export class McliConfig {
   mproveCliHost?: string;
 
   @IsString()
-  mproveCliEmail?: string;
-
-  @IsString()
-  mproveCliPassword?: string;
+  @IsOptional()
+  mproveCliApiKey?: string;
 
   @IsString()
   @IsOptional()

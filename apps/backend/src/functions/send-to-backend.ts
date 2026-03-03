@@ -10,12 +10,15 @@ export async function sendToBackend<T>(item: {
   req: any;
   checkIsOk?: boolean;
   loginToken?: string;
+  apiKey?: string;
 }) {
-  let { httpServer, req, checkIsOk, loginToken } = item;
+  let { httpServer, req, checkIsOk, loginToken, apiKey } = item;
 
   let rq = request(httpServer).post('/' + req.info.name);
 
-  if (isDefined(loginToken)) {
+  if (isDefined(apiKey)) {
+    rq = rq.auth(apiKey, { type: 'bearer' });
+  } else if (isDefined(loginToken)) {
     rq = rq.auth(loginToken, { type: 'bearer' });
   }
 

@@ -23,7 +23,6 @@ import {
 import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
 import { getBuilderUrl } from '#mcli/functions/get-builder-url';
-import { getLoginToken } from '#mcli/functions/get-login-token';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { makeSyncTime } from '#mcli/functions/make-sync-time';
 import { mreq } from '#mcli/functions/mreq';
@@ -152,8 +151,6 @@ export class SyncCommand extends CustomCommand {
     let localChangedFiles = changedFiles;
     let localDeletedFiles = deletedFiles;
 
-    let loginToken = await getLoginToken(this.context);
-
     let localReqSentTime = Date.now();
 
     let syncRepoReqPayload: ToBackendSyncRepoRequestPayload = {
@@ -167,7 +164,7 @@ export class SyncCommand extends CustomCommand {
     };
 
     let syncRepoResp = await mreq<ToBackendSyncRepoResponse>({
-      loginToken: loginToken,
+      apiKey: this.context.config.mproveCliApiKey,
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendSyncRepo,
       payload: syncRepoReqPayload,
       host: this.context.config.mproveCliHost

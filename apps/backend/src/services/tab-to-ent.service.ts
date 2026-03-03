@@ -937,13 +937,16 @@ export class TabToEntService {
       emailVerificationToken: tab.emailVerificationToken,
       passwordResetToken: tab.passwordResetToken,
       passwordResetExpiresTs: tab.passwordResetExpiresTs,
-      ui: tab.ui
+      ui: tab.ui,
+      apiKeySecretHash: tab.apiKeySecretHash,
+      apiKeySalt: tab.apiKeySalt
     };
 
     let userEnt: UserEnt = {
       userId: tab.userId,
       isEmailVerified: tab.isEmailVerified,
       jwtMinIat: tab.jwtMinIat,
+      apiKeyPrefix: tab.apiKeyPrefix,
       ...this.getEntProps({
         dataSt: userSt,
         dataLt: userLt,
@@ -1006,7 +1009,9 @@ export class TabToEntService {
       sandboxBaseUrl: tab.sandboxBaseUrl,
       opencodeSessionId: tab.opencodeSessionId,
       opencodePassword: tab.opencodePassword,
-      firstMessage: tab.firstMessage
+      firstMessage: tab.firstMessage,
+      apiKeySecretHash: tab.apiKeySecretHash,
+      apiKeySalt: tab.apiKeySalt
     };
 
     let sessionLt: SessionLt = {};
@@ -1017,6 +1022,7 @@ export class TabToEntService {
       branchId: tab.branchId,
       userId: tab.userId,
       projectId: tab.projectId,
+      apiKeyPrefix: tab.apiKeyPrefix,
       model: tab.model,
       lastMessageProviderModel: tab.lastMessageProviderModel,
       lastMessageVariant: tab.lastMessageVariant,

@@ -1,9 +1,6 @@
 import { createRequire } from 'node:module';
 import { BaseContext, Cli, CommandClass } from 'clipanion';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-
-const require = createRequire(import.meta.url);
-
 import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendDeleteRecordsRequestPayload,
@@ -13,24 +10,20 @@ import {
   ToBackendSeedRecordsRequestPayload,
   ToBackendSeedRecordsResponse
 } from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
-import {
-  ToBackendLoginUserRequestPayload,
-  ToBackendLoginUserResponse
-} from '#common/interfaces/to-backend/users/to-backend-login-user';
 import { McliConfig } from '#mcli/config/mcli-config';
 import { CustomContext } from '#mcli/models/custom-command';
 import { mreq } from './mreq';
+
+const require = createRequire(import.meta.url);
 
 export async function prepareTest(item: {
   command: CommandClass<CustomContext | BaseContext>;
   config: McliConfig;
   deletePack?: ToBackendDeleteRecordsRequestPayload;
   seedPack?: ToBackendSeedRecordsRequestPayload;
-  loginEmail?: string;
-  loginPassword?: string;
+  apiKey?: string;
 }) {
-  let { command, config, deletePack, seedPack, loginEmail, loginPassword } =
-    item;
+  let { command, config, deletePack, seedPack, apiKey } = item;
 
   let cli = new Cli({
     enableCapture: false,
@@ -60,25 +53,7 @@ export async function prepareTest(item: {
     });
   }
 
-  let loginUserResp: ToBackendLoginUserResponse;
-  if (isDefined(loginEmail) && isDefined(loginPassword)) {
-    let loginUserReqPayload: ToBackendLoginUserRequestPayload = {
-      email: loginEmail,
-      password: loginPassword
-    };
-
-    loginUserResp = await mreq<ToBackendLoginUserResponse>({
-      pathInfoName: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
-      payload: loginUserReqPayload,
-      host: config.mproveCliHost
-    });
-  }
-
-  let createMockContext = (itemC: {
-    loginToken: string;
-    userId: string;
-    config: McliConfig;
-  }) => {
+  let createMockContext = (itemC: { config: McliConfig; apiKey: string }) => {
     let out = '';
     let err = '';
 
@@ -95,16 +70,13 @@ export async function prepareTest(item: {
           out += input;
         }
       },
-      loginToken: itemC.loginToken,
-      userId: itemC.userId,
-      config: itemC.config
+      config: { ...itemC.config, mproveCliApiKey: itemC.apiKey }
     };
   };
 
   let mockContext = createMockContext({
-    loginToken: loginUserResp?.payload?.token,
-    userId: loginUserResp?.payload?.user?.userId,
-    config: config
+    config: config,
+    apiKey: apiKey
   });
 
   return {

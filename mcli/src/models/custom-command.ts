@@ -5,8 +5,6 @@ import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 
 export interface CustomContext extends BaseContext {
   config: McliConfig;
-  loginToken: string;
-  userId: string;
 }
 
 export class CustomCommand extends Command<CustomContext> {

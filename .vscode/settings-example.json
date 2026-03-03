@@ -67,6 +67,8 @@
   "workbench.settings.editor": "json",
   "editor.codeLens": true,
   "files.associations": {
+    "*.env": "properties",
+    "*.envrc": "properties",
     "*.chart": "yaml",
     "*.dashboard": "yaml",
     "*.report": "yaml",

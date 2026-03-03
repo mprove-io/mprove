@@ -9,6 +9,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { SkipThrottle } from '@nestjs/throttler';
 import retry from 'async-retry';
+import * as bcrypt from 'bcrypt';
 import asyncPool from 'tiny-async-pool';
 import { BackendConfig } from '#backend/config/backend-config';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
@@ -28,6 +29,7 @@ import type {
   ProjectTab,
   QueryTab,
   ReportTab,
+  SessionTab,
   StructTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
@@ -35,6 +37,7 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsUsingOffsetFromNow } from '#backend/functions/make-ts-using-offset-from-now';
 import { TestRoutesGuard } from '#backend/guards/test-routes.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { ApiKeyService } from '#backend/services/api-key.service';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -52,7 +55,11 @@ import { UsersService } from '#backend/services/db/users.service';
 import { HashService } from '#backend/services/hash.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
-import { PROD_REPO_ID, PROJECT_ENV_PROD } from '#common/constants/top';
+import {
+  BRANCH_MAIN,
+  PROD_REPO_ID,
+  PROJECT_ENV_PROD
+} from '#common/constants/top';
 import {
   DEFAULT_SRV_UI,
   PASSWORD_EXPIRES_OFFSET
@@ -68,6 +75,7 @@ import {
   ToBackendSeedRecordsRequestPayloadMembersItem,
   ToBackendSeedRecordsRequestPayloadOrgsItem,
   ToBackendSeedRecordsRequestPayloadProjectsItem,
+  ToBackendSeedRecordsRequestPayloadSessionsItem,
   ToBackendSeedRecordsRequestPayloadUsersItem,
   ToBackendSeedRecordsResponse
 } from '#common/interfaces/to-backend/test-routes/to-backend-seed-records';
@@ -86,6 +94,7 @@ import {
 @Controller()
 export class SeedRecordsController {
   constructor(
+    private apiKeyService: ApiKeyService,
     private tabService: TabService,
     private hashService: HashService,
     private branchesService: BranchesService,
@@ -118,6 +127,7 @@ export class SeedRecordsController {
     let payloadProjects = reqValid.payload.projects;
     let payloadConnections = reqValid.payload.connections;
     let payloadEnvs = reqValid.payload.envs;
+    let payloadSessions = reqValid.payload.sessions;
     let payloadQueries = reqValid.payload.queries;
     let payloadMconfigs = reqValid.payload.mconfigs;
 
@@ -139,6 +149,7 @@ export class SeedRecordsController {
     let projects: ProjectTab[] = [];
     let queries: QueryTab[] = [];
     let reports: ReportTab[] = [];
+    let sessions: SessionTab[] = [];
     let structs: StructTab[] = [];
     let users: UserTab[] = [];
 
@@ -152,6 +163,17 @@ export class SeedRecordsController {
           let passwordHS = isDefined(x.password)
             ? await this.hashService.createSaltAndHash({ input: x.password })
             : { salt: undefined, hash: undefined };
+
+          let apiKeyPrefix: string | undefined;
+          let apiKeySecretHash: string | undefined;
+          let apiKeySalt: string | undefined;
+
+          if (isDefined(x.apiKey)) {
+            let parsed = this.apiKeyService.parseApiKey(x.apiKey);
+            apiKeyPrefix = parsed.prefix;
+            apiKeySalt = await bcrypt.genSalt();
+            apiKeySecretHash = await bcrypt.hash(parsed.secret, apiKeySalt);
+          }
 
           let newUser: UserTab = {
             userId: x.userId || makeId(),
@@ -175,11 +197,61 @@ export class SeedRecordsController {
             aliasHash: undefined, // tab-to-ent
             emailVerificationTokenHash: undefined, // tab-to-ent
             passwordResetTokenHash: undefined, // tab-to-ent
+            apiKeyPrefix: apiKeyPrefix,
+            apiKeySecretHash: apiKeySecretHash,
+            apiKeySalt: apiKeySalt,
             keyTag: undefined,
             serverTs: undefined
           };
 
           users.push(newUser);
+        }
+      );
+    }
+
+    if (isDefined(payloadSessions)) {
+      await asyncPool(
+        1,
+        payloadSessions,
+        async (x: ToBackendSeedRecordsRequestPayloadSessionsItem) => {
+          let parsed = this.apiKeyService.parseApiKey(x.apiKey);
+          let apiKeySalt = await bcrypt.genSalt();
+          let apiKeySecretHash = await bcrypt.hash(parsed.secret, apiKeySalt);
+
+          let newSession: SessionTab = {
+            sessionId: x.sessionId,
+            repoId: x.sessionId,
+            branchId: x.sessionId,
+            userId: x.userId,
+            projectId: x.projectId,
+            apiKeyPrefix: parsed.prefix,
+            apiKeySecretHash: apiKeySecretHash,
+            apiKeySalt: apiKeySalt,
+            sandboxType: 'e2b',
+            provider: 'openai',
+            model: undefined,
+            lastMessageProviderModel: undefined,
+            lastMessageVariant: undefined,
+            agent: 'build',
+            permissionMode: 'default',
+            status: x.status,
+            archivedReason: undefined,
+            initialBranch: BRANCH_MAIN,
+            initialCommit: undefined,
+            sandboxId: undefined,
+            sandboxBaseUrl: undefined,
+            opencodeSessionId: undefined,
+            opencodePassword: undefined,
+            firstMessage: 'test',
+            createdTs: Date.now(),
+            lastActivityTs: Date.now(),
+            runningStartTs: undefined,
+            expiresAt: undefined,
+            keyTag: undefined,
+            serverTs: undefined
+          };
+
+          sessions.push(newSession);
         }
       );
     }
@@ -541,7 +613,8 @@ export class SeedRecordsController {
                 models: models,
                 reports: reports,
                 mconfigs: mconfigs,
-                dashboards: dashboards
+                dashboards: dashboards,
+                sessions: sessions
               },
               insertOrUpdate: {
                 queries: queries

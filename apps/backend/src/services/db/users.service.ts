@@ -45,6 +45,7 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       isEmailVerified: user.isEmailVerified,
+      apiKeyPrefix: user.apiKeyPrefix,
       ui: {
         timezone: user.ui?.timezone || defaultSrvUi.timezone,
         timeSpec: user.ui?.timeSpec || defaultSrvUi.timeSpec,
@@ -177,6 +178,7 @@ export class UsersService {
       aliasHash: undefined, // tab-to-ent
       emailVerificationTokenHash: undefined, // tab-to-ent
       passwordResetTokenHash: undefined, // tab-to-ent
+      apiKeyPrefix: undefined,
       keyTag: undefined,
       serverTs: undefined
     };
@@ -227,6 +229,7 @@ export class UsersService {
       aliasHash: undefined, // tab-to-ent
       emailVerificationTokenHash: undefined, // tab-to-ent
       passwordResetTokenHash: undefined, // tab-to-ent
+      apiKeyPrefix: undefined,
       keyTag: undefined,
       serverTs: undefined
     };

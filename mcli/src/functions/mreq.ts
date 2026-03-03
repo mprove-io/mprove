@@ -2,7 +2,6 @@ import axios from 'axios';
 import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
 import { makeId } from '#common/functions/make-id';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '#common/interfaces/to-backend/to-backend-request';
@@ -12,9 +11,9 @@ export async function mreq<T extends MyResponse>(item: {
   host: string;
   pathInfoName: ToBackendRequestInfoNameEnum;
   payload: any;
-  loginToken?: string;
+  apiKey?: string;
 }): Promise<T> {
-  let { host, pathInfoName, payload, loginToken } = item;
+  let { host, pathInfoName, payload, apiKey } = item;
 
   let body: ToBackendRequest = {
     info: {
@@ -29,8 +28,8 @@ export async function mreq<T extends MyResponse>(item: {
 
   let headers: any = {};
 
-  if (isDefined(loginToken)) {
-    headers.Authorization = `Bearer ${loginToken}`;
+  if (apiKey) {
+    headers['Authorization'] = `Bearer ${apiKey}`;
   }
 
   // console.log('url');

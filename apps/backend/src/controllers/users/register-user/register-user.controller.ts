@@ -146,6 +146,7 @@ export class RegisterUserController {
           aliasHash: undefined, // tab-to-ent
           passwordResetTokenHash: undefined, // tab-to-ent
           emailVerificationTokenHash: undefined, // tab-to-ent
+          apiKeyPrefix: undefined,
           keyTag: undefined,
           serverTs: undefined
         };

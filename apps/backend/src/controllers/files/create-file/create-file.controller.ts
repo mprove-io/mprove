@@ -36,6 +36,7 @@ import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { EMPTY_STRUCT_ID } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -77,7 +78,10 @@ export class CreateFileController {
     let { projectId, branchId, parentNodeId, fileName, envId, modelInfo } =
       reqValid.payload;
 
-    let repoId = user.userId;
+    let repoId =
+      request.apiKeyRepoType === RepoTypeEnum.Session
+        ? request.apiKeySessionId
+        : user.userId;
 
     let project = await this.projectsService.getProjectCheckExists({
       projectId: projectId

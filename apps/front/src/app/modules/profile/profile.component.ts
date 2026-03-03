@@ -9,8 +9,11 @@ import {
   RESTRICTED_USER_ALIAS
 } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
+import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToBackendDeleteUserApiKeyResponse } from '#common/interfaces/to-backend/users/to-backend-delete-user-api-key';
+import { ToBackendGenerateUserApiKeyResponse } from '#common/interfaces/to-backend/users/to-backend-generate-user-api-key';
 import {
   ToBackendResetUserPasswordRequestPayload,
   ToBackendResetUserPasswordResponse
@@ -27,6 +30,7 @@ import { MyDialogService } from '#front/app/services/my-dialog.service';
 })
 export class ProfileComponent implements OnInit {
   restrictedUserAlias = RESTRICTED_USER_ALIAS;
+  apiKeyTypeEnum = ApiKeyTypeEnum;
 
   pageTitle = PROFILE_PAGE_TITLE;
 
@@ -66,6 +70,14 @@ export class ProfileComponent implements OnInit {
   userInitials$ = this.userQuery.initials$.pipe(
     tap(x => {
       this.userInitials = x;
+      this.cd.detectChanges();
+    })
+  );
+
+  apiKeyPrefix: string;
+  apiKeyPrefix$ = this.userQuery.apiKeyPrefix$.pipe(
+    tap(x => {
+      this.apiKeyPrefix = x;
       this.cd.detectChanges();
     })
   );
@@ -131,8 +143,51 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  showApiKey() {
-    this.myDialogService.showApiKey();
+  generateApiKey() {
+    let payload = {};
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGenerateUserApiKey,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendGenerateUserApiKeyResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.userQuery.updatePart({
+              apiKeyPrefix: resp.payload.apiKeyPrefix
+            });
+            this.myDialogService.showGeneratedApiKey({
+              apiKey: resp.payload.apiKey
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
+  }
+
+  deleteApiKey() {
+    let payload = {};
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendDeleteUserApiKey,
+        payload: payload,
+        showSpinner: true
+      })
+      .pipe(
+        tap((resp: ToBackendDeleteUserApiKeyResponse) => {
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            this.userQuery.updatePart({
+              apiKeyPrefix: undefined
+            });
+          }
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 
   deleteUser() {

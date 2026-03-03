@@ -117,6 +117,8 @@ import { SeedRecordsController } from './controllers/test-routes/seed-records/se
 import { CompleteUserRegistrationController } from './controllers/users/complete-user-registration/complete-user-registration.controller';
 import { ConfirmUserEmailController } from './controllers/users/confirm-user-email/confirm-user-email.controller';
 import { DeleteUserController } from './controllers/users/delete-user/delete-user.controller';
+import { DeleteUserApiKeyController } from './controllers/users/delete-user-api-key/delete-user-api-key.controller';
+import { GenerateUserApiKeyController } from './controllers/users/generate-user-api-key/generate-user-api-key.controller';
 import { GetUserProfileController } from './controllers/users/get-user-profile/get-user-profile.controller';
 import { LoginUserController } from './controllers/users/login-user/login-user.controller';
 import { LogoutUserController } from './controllers/users/logout-user/logout-user.controller';
@@ -248,6 +250,8 @@ export const appControllers = [
   SetUserNameController,
   SetUserUiController,
   UpdateUserPasswordController,
+  GenerateUserApiKeyController,
+  DeleteUserApiKeyController,
 
   CreateDraftChartController,
   DeleteChartController,

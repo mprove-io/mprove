@@ -1,6 +1,7 @@
 import { Command, Option } from 'clipanion';
 import * as t from 'typanion';
 import { PROD_REPO_ID } from '#common/constants/top';
+import { ApiKeyTypeEnum } from '#common/enums/api-key-type.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
@@ -38,7 +39,6 @@ import { ServerError } from '#common/models/server-error';
 import { getConfig } from '#mcli/config/get.config';
 import { getChartUrl } from '#mcli/functions/get-chart-url';
 import { getDashboardUrl } from '#mcli/functions/get-dashboard-url';
-import { getLoginToken } from '#mcli/functions/get-login-token';
 import { queriesToStats } from '#mcli/functions/get-query-stats';
 import { logToConsoleMcli } from '#mcli/functions/log-to-console-mcli';
 import { mreq } from '#mcli/functions/mreq';
@@ -211,19 +211,21 @@ export class RunCommand extends CustomCommand {
       throw serverError;
     }
 
-    let loginToken = await getLoginToken(this.context);
+    let apiKey = this.context.config.mproveCliApiKey;
 
     let repoId =
       this.repo === RepoTypeEnum.Production
         ? PROD_REPO_ID
-        : this.context.userId;
+        : apiKey.startsWith(`${ApiKeyTypeEnum.SK}-`)
+          ? apiKey.split('-')[2].toLowerCase()
+          : apiKey.split('-')[2];
 
     let getProjectReqPayload: ToBackendGetProjectRequestPayload = {
       projectId: this.projectId
     };
 
     let getProjectResp = await mreq<ToBackendGetProjectResponse>({
-      loginToken: loginToken,
+      apiKey: apiKey,
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetProject,
       payload: getProjectReqPayload,
       host: this.context.config.mproveCliHost
@@ -238,7 +240,7 @@ export class RunCommand extends CustomCommand {
     };
 
     let getRepoResp = await mreq<ToBackendGetRepoResponse>({
-      loginToken: loginToken,
+      apiKey: apiKey,
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetRepo,
       payload: getRepoReqPayload,
       host: this.context.config.mproveCliHost
@@ -260,7 +262,7 @@ export class RunCommand extends CustomCommand {
       };
 
       let getChartsResp = await mreq<ToBackendGetChartsResponse>({
-        loginToken: loginToken,
+        apiKey: apiKey,
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetCharts,
         payload: getChartsReqPayload,
         host: this.context.config.mproveCliHost
@@ -329,7 +331,7 @@ export class RunCommand extends CustomCommand {
       };
 
       let getDashboardsResp = await mreq<ToBackendGetDashboardsResponse>({
-        loginToken: loginToken,
+        apiKey: apiKey,
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetDashboards,
         payload: getDashboardsReqPayload,
         host: this.context.config.mproveCliHost
@@ -411,7 +413,7 @@ export class RunCommand extends CustomCommand {
     };
 
     let getQueriesRespStart = await mreq<ToBackendGetQueriesResponse>({
-      loginToken: loginToken,
+      apiKey: apiKey,
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
       payload: getQueriesReqPayloadStart,
       host: this.context.config.mproveCliHost
@@ -430,7 +432,7 @@ export class RunCommand extends CustomCommand {
     };
 
     let runQueriesResp = await mreq<ToBackendRunQueriesResponse>({
-      loginToken: loginToken,
+      apiKey: apiKey,
       pathInfoName: ToBackendRequestInfoNameEnum.ToBackendRunQueries,
       payload: runQueriesReqPayload,
       host: this.context.config.mproveCliHost
@@ -476,7 +478,7 @@ export class RunCommand extends CustomCommand {
         };
 
         let getQueriesResp = await mreq<ToBackendGetQueriesResponse>({
-          loginToken: loginToken,
+          apiKey: apiKey,
           pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetQueries,
           payload: getQueriesReqPayload,
           host: this.context.config.mproveCliHost

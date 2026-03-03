@@ -1,30 +1,25 @@
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { isDefined } from '#common/functions/is-defined';
 import {
   ToBackendLoginUserRequestPayload,
   ToBackendLoginUserResponse
 } from '#common/interfaces/to-backend/users/to-backend-login-user';
-import { CustomContext } from '#mcli/models/custom-command';
 import { mreq } from './mreq';
 
-export async function getLoginToken(context: CustomContext) {
-  if (isDefined(context?.loginToken)) {
-    return context.loginToken;
-  }
-
+export async function getTestLoginToken(item: {
+  email: string;
+  password: string;
+  host: string;
+}): Promise<string> {
   let loginUserReqPayload: ToBackendLoginUserRequestPayload = {
-    email: context.config.mproveCliEmail,
-    password: context.config.mproveCliPassword
+    email: item.email,
+    password: item.password
   };
 
   let loginUserResp = await mreq<ToBackendLoginUserResponse>({
     pathInfoName: ToBackendRequestInfoNameEnum.ToBackendLoginUser,
     payload: loginUserReqPayload,
-    host: context.config.mproveCliHost
+    host: item.host
   });
-
-  context.loginToken = loginUserResp.payload.token;
-  context.userId = loginUserResp.payload.user.userId;
 
   return loginUserResp.payload.token;
 }
