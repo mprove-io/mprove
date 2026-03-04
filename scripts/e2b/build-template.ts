@@ -26,16 +26,22 @@ let template = Template()
   .runCmd(
     '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
   )
+  // .runCmd(
+  //   '/home/linuxbrew/.linuxbrew/bin/brew install mprove-io/mprove/mprove-cli'
+  // )
+  // .runCmd(
+  //   'sudo ln -s /home/linuxbrew/.linuxbrew/bin/mprove /usr/local/bin/mprove'
+  // )
   .runCmd(
-    '/home/linuxbrew/.linuxbrew/bin/brew install mprove-io/mprove/mprove-cli'
+    'curl -fsSL -o /tmp/mprove-cli.tar.gz https://github.com/mprove-io/mprove-cli/releases/download/11.0.102-dev/mprove-cli-11.0.102-dev-linux-amd64.tar.gz'
   )
   .runCmd(
-    'sudo ln -s /home/linuxbrew/.linuxbrew/bin/mprove /usr/local/bin/mprove'
+    'sudo tar -xzf /tmp/mprove-cli.tar.gz -C /usr/local/bin && rm /tmp/mprove-cli.tar.gz'
   );
 
 let result = await Template.build(template, templateName, {
   cpuCount: 2,
-  memoryMB: 2048,
+  memoryMB: 4096,
   skipCache: true,
   onBuildLogs: defaultBuildLogger()
 });
