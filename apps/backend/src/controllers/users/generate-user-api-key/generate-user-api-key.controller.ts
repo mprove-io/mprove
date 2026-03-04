@@ -58,7 +58,7 @@ export class GenerateUserApiKeyController {
           async tx =>
             await this.db.packer.write({
               tx: tx,
-              insertOrUpdate: {
+              update: {
                 users: [user]
               }
             })
