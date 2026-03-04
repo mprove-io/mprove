@@ -19,7 +19,7 @@
                 class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3"
               >
                 <div
-                  class="text-s1 whitespace-pre-wrap break-words text-[17px]"
+                  class="text-s1 whitespace-pre-wrap break-all text-[17px]"
                   >{{ session.firstMessage }}</div
                 >
               </div>
@@ -31,7 +31,7 @@
           >
             <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
               <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-                <div class="break-words text-[17px] text-red-700">
+                <div class="break-all text-[17px] text-red-700">
                   Session activation failed. Please try again.
                 </div>
               </div>
@@ -55,7 +55,7 @@
                 class="border-s200 bg-s100 max-w-[90%] rounded-2xl border px-5 py-3"
               >
                 <div
-                  class="text-s1 whitespace-pre-wrap break-words text-[17px]"
+                  class="text-s1 whitespace-pre-wrap break-all text-[17px]"
                   >{{ turn.userMessage.text }}</div
                 >
               </div>
@@ -86,7 +86,7 @@
               >
                 <div class="max-w-[90%] rounded-2xl px-4 py-3">
                   <div
-                    class="whitespace-pre-wrap break-words text-[17px] text-gray-800"
+                    class="whitespace-pre-wrap break-all text-[17px] text-gray-800"
                     >{{ msg.text }}</div
                   >
                 </div>
@@ -124,7 +124,7 @@
                     class="border-s200 border-t px-3 py-2"
                   >
                     <div
-                      class="text-s1 whitespace-pre-wrap break-words text-base"
+                      class="text-s1 whitespace-pre-wrap break-all text-base"
                       >{{ getToolOutput(msg.toolPart) }}</div
                     >
                   </div>
@@ -228,7 +228,7 @@
                 <div
                   class="border-s200 max-w-[90%] rounded-lg border px-3 py-2"
                 >
-                  <div class="text-s600 break-words text-[17px]">{{
+                  <div class="text-s600 break-all text-[17px]">{{
                     msg.text
                   }}</div>
                 </div>
@@ -241,7 +241,7 @@
               >
                 <div class="max-w-[90%] rounded-2xl px-4 py-2">
                   <div
-                    class="text-s500 whitespace-pre-wrap break-words text-[17px]"
+                    class="text-s500 whitespace-pre-wrap break-all text-[17px]"
                     >{{ msg.text }}</div
                   >
                 </div>
@@ -272,7 +272,7 @@
                 class="ml-10 flex justify-start"
               >
                 <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-                  <div class="break-words text-[17px] text-red-700">{{
+                  <div class="break-all text-[17px] text-red-700">{{
                     msg.text
                   }}</div>
                 </div>
@@ -357,7 +357,7 @@
               </div>
               <div *ngIf="isSessionError" class="mb-4 ml-10 flex justify-start">
                 <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
-                  <div class="break-words text-[17px] text-red-700">
+                  <div class="break-all text-[17px] text-red-700">
                     Session activation failed. Please try again.
                   </div>
                 </div>
