@@ -210,7 +210,7 @@ export class CreateAgentSessionController {
       secret: apiKeyParts.secret
     });
 
-    sandboxEnvs.MPROVE_API_KEY = sessionApiKey;
+    sandboxEnvs.MPROVE_CLI_API_KEY = sessionApiKey;
 
     this.activateSessionAsync({
       sessionId: session.sessionId,
