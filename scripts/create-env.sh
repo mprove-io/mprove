@@ -149,8 +149,10 @@ BACKEND_CALC_POSTGRES_HOST=calc-postgres
 BACKEND_CALC_POSTGRES_PORT=5437
 BACKEND_CALC_POSTGRES_USERNAME=${CALC_USER}
 BACKEND_CALC_POSTGRES_PASSWORD=${CALC_PASSWORD}
-# replace value of BACKEND_HOST_URL with your real host (for links in transactional emails and CORS)
+# replace the value of BACKEND_HOST_URL with your real host (for links in transactional emails and CORS)
 BACKEND_HOST_URL="http://localhost:3003,http://localhost:4200"
+# replace the value of BACKEND_SANDBOX_MPROVE_CLI_HOST with your real host (for sandbox to be able to communicate to server)
+BACKEND_SANDBOX_MPROVE_CLI_HOST=http://localhost:3000
 BACKEND_SEND_EMAIL_FROM_NAME=Example
 BACKEND_SEND_EMAIL_FROM_ADDRESS=no-reply@example.com
 BACKEND_EMAIL_TRANSPORT=SMTP

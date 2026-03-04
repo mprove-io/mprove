@@ -340,4 +340,7 @@ export class BackendConfig {
 
   @IsString()
   opencodeServerUrl?: string;
+
+  @IsString()
+  sandboxMproveCliHost?: string;
 }

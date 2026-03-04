@@ -100,6 +100,7 @@ export class SandboxService {
     sandboxTimeoutMs: number;
     sandboxEnvs?: Record<string, string>;
     project: ProjectTab;
+    sessionBranch: string;
   }): Promise<CreateSandboxResult> {
     try {
       let createSandboxResult: CreateSandboxResult;
@@ -134,7 +135,8 @@ export class SandboxService {
               publicKey: item.project.publicKey,
               privateKeyEncrypted: item.project.privateKeyEncrypted,
               passPhrase: item.project.passPhrase,
-              cloneDir: '/home/user/project'
+              cloneDir: '/home/user/project',
+              sessionBranch: item.sessionBranch
             });
             // console.log('[sandbox] repo cloned');
           }
@@ -196,6 +198,7 @@ export class SandboxService {
     privateKeyEncrypted: string;
     passPhrase: string;
     cloneDir: string;
+    sessionBranch: string;
   }): Promise<void> {
     let keyDir = '/tmp/ssh-keys';
 
@@ -236,7 +239,18 @@ export class SandboxService {
       if (cloneResult.exitCode !== 0) {
         throw new ServerError({
           message: ErEnum.BACKEND_AGENT_SANDBOX_GIT_CLONE_FAILED,
-          originalError: new Error(cloneResult.stderr)
+          originalError: cloneResult.stderr
+        });
+      }
+
+      let checkoutResult = await item.sandbox.commands.run(
+        `git -C ${item.cloneDir} checkout -b ${item.sessionBranch}`
+      );
+
+      if (checkoutResult.exitCode !== 0) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_SANDBOX_GIT_CHECKOUT_FAILED,
+          originalError: checkoutResult.stderr
         });
       }
     } finally {

@@ -304,7 +304,9 @@ export function getDevConfig() {
 
     opencodeServerPassword: process.env.BACKEND_OPENCODE_SERVER_PASSWORD,
 
-    opencodeServerUrl: process.env.BACKEND_OPENCODE_SERVER_URL
+    opencodeServerUrl: process.env.BACKEND_OPENCODE_SERVER_URL,
+
+    sandboxMproveCliHost: process.env.BACKEND_SANDBOX_MPROVE_CLI_HOST
   };
 
   return devConfig;

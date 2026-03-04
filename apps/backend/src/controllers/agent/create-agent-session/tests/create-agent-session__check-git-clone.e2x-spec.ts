@@ -89,7 +89,8 @@ test('1', async t => {
       publicKey: publicKey,
       privateKeyEncrypted: privateKeyEncrypted,
       passPhrase: passPhrase,
-      cloneDir: '/home/user/project'
+      cloneDir: '/home/user/project',
+      sessionBranch: 'test-session-branch'
     });
 
     // Verify clone succeeded

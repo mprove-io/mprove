@@ -211,6 +211,10 @@ export class CreateAgentSessionController {
     });
 
     sandboxEnvs.MPROVE_CLI_API_KEY = sessionApiKey;
+    sandboxEnvs.MPROVE_CLI_PROJECT_ID = projectId;
+    sandboxEnvs.MPROVE_CLI_HOST = this.cs.get<
+      BackendConfig['sandboxMproveCliHost']
+    >('sandboxMproveCliHost');
 
     this.activateSessionAsync({
       sessionId: session.sessionId,
@@ -286,7 +290,8 @@ export class CreateAgentSessionController {
           sandboxType: sandboxType,
           sandboxTimeoutMs: sandboxTimeoutMs,
           sandboxEnvs: sandboxEnvs,
-          project: project
+          project: project,
+          sessionBranch: sessionId
         });
 
       // console.log('opencode server started');
