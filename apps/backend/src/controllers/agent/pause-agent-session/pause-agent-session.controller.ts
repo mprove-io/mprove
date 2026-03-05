@@ -25,10 +25,12 @@ import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendPauseAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -52,6 +54,12 @@ export class PauseAgentSessionController {
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId
     });
+
+    if (session.userId !== user.userId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_UNAUTHORIZED
+      });
+    }
 
     if (session.sandboxId && session.status === SessionStatusEnum.Active) {
       let project = await this.projectsService.getProjectCheckExists({

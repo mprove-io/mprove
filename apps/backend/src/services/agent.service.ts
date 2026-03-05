@@ -892,15 +892,18 @@ export class AgentService implements OnModuleDestroy {
             archivedReason: ArchivedReasonEnum.Expire
           };
 
-          await this.db.drizzle.transaction(
-            async tx =>
-              await this.db.packer.write({
-                tx: tx,
-                insertOrUpdate: {
-                  sessions: [updatedSession]
-                }
-              })
-          );
+          await this.db.drizzle.transaction(async tx => {
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                sessions: [updatedSession]
+              }
+            });
+
+            await tx
+              .delete(ocEventsTable)
+              .where(and(eq(ocEventsTable.sessionId, session.sessionId)));
+          });
 
           continue;
         }
