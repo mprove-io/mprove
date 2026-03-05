@@ -219,6 +219,7 @@ export class CreateAgentSessionController {
     this.activateSessionAsync({
       sessionId: session.sessionId,
       model: session.model,
+      agent: session.agent,
       sandboxType: sandboxType,
       sandboxEnvs: sandboxEnvs,
       project: project,
@@ -259,6 +260,7 @@ export class CreateAgentSessionController {
   private async activateSessionAsync(item: {
     sessionId: string;
     model?: string;
+    agent?: string;
     sandboxType: SandboxTypeEnum;
     sandboxEnvs: Record<string, string>;
     project: any;
@@ -268,6 +270,7 @@ export class CreateAgentSessionController {
     let {
       sessionId,
       model,
+      agent,
       sandboxType,
       sandboxEnvs,
       project,
@@ -391,6 +394,10 @@ export class CreateAgentSessionController {
 
         if (variant) {
           promptBody.variant = variant;
+        }
+
+        if (agent) {
+          promptBody.agent = agent;
         }
 
         await opencodeClient.session

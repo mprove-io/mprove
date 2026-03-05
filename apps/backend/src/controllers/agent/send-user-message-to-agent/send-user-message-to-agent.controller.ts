@@ -273,6 +273,10 @@ export class SendUserMessageToAgentController {
         promptBody.variant = variant;
       }
 
+      if (session.agent) {
+        promptBody.agent = session.agent;
+      }
+
       await client.session.promptAsync(
         {
           sessionID: session.opencodeSessionId,
