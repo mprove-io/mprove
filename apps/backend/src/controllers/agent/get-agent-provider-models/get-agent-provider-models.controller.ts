@@ -9,14 +9,17 @@ import { uconfigsTable } from '#backend/drizzle/postgres/schema/uconfigs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentModelsService } from '#backend/services/agent-models.service';
+import { SessionsService } from '#backend/services/db/sessions.service.js';
 import { SandboxService } from '#backend/services/sandbox.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetAgentProviderModelsRequest,
   ToBackendGetAgentProviderModelsResponsePayload
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
+import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
@@ -25,6 +28,7 @@ export class GetAgentProviderModelsController {
   constructor(
     private agentModelsService: AgentModelsService,
     private sandboxService: SandboxService,
+    private sessionsService: SessionsService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
@@ -38,6 +42,16 @@ export class GetAgentProviderModelsController {
     let { sessionId } = reqValid.payload;
 
     if (sessionId) {
+      let session = await this.sessionsService.getSessionByIdCheckExists({
+        sessionId
+      });
+
+      if (session.userId !== user.userId) {
+        throw new ServerError({
+          message: ErEnum.BACKEND_UNAUTHORIZED
+        });
+      }
+
       try {
         let client = this.sandboxService.getOpenCodeClient(sessionId);
 
