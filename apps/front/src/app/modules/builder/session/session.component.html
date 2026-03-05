@@ -1,36 +1,35 @@
 <div class="flex h-full w-full flex-col">
   <!-- Messages area (chat view) -->
-  <div
-    *ngIf="!debugMode"
-    class="mt-0.5 flex h-2 w-full flex-grow flex-col overflow-y-auto"
-  >
-    <m-session-messages class="h-full w-full" [scrollTrigger]="scrollTrigger">
-      <m-session-messages-content
-        [turns]="turns"
-        [session]="session"
-        [isActivating]="isActivating"
-        [isArchived]="isArchived"
-        [isAgentBusy]="isAgentBusy"
-        [retryMessage]="retryMessage"
-        [isSessionError]="isSessionError"
-        [lastSessionError]="lastSessionError"
-        [isLastErrorRecovered]="isLastErrorRecovered"
-      ></m-session-messages-content>
+  <div *ngIf="!debugMode" class="mt-0.5 flex h-2 w-full flex-grow flex-row">
+    <div class="flex w-2 flex-1 flex-col overflow-y-auto">
+      <m-session-messages class="h-full w-full" [scrollTrigger]="scrollTrigger">
+        <m-session-messages-content
+          [turns]="turns"
+          [session]="session"
+          [isActivating]="isActivating"
+          [isArchived]="isArchived"
+          [isAgentBusy]="isAgentBusy"
+          [retryMessage]="retryMessage"
+          [isSessionError]="isSessionError"
+          [lastSessionError]="lastSessionError"
+          [isLastErrorRecovered]="isLastErrorRecovered"
+        ></m-session-messages-content>
 
-      <!-- Working indicator -->
-      <div class="ml-8 pb-4">
-        <div *ngIf="isWorking" class="max-w-[90%] py-3">
-          <span class="text-shimmer text-base font-semibold leading-[1.5]"
-            ><span
-              *ngFor="let ch of statusTextChars; trackBy: trackByIndex"
-              class="text-shimmer-char"
-              [style.--text-shimmer-index]="ch.index"
-              >{{ ch.char }}</span
-            ></span
-          >
+        <!-- Working indicator -->
+        <div class="ml-8 pb-4">
+          <div *ngIf="isWorking" class="max-w-[90%] py-3">
+            <span class="text-shimmer text-base font-semibold leading-[1.5]"
+              ><span
+                *ngFor="let ch of statusTextChars; trackBy: trackByIndex"
+                class="text-shimmer-char"
+                [style.--text-shimmer-index]="ch.index"
+                >{{ ch.char }}</span
+              ></span
+            >
+          </div>
         </div>
-      </div>
-    </m-session-messages>
+      </m-session-messages>
+    </div>
   </div>
 
   <div
