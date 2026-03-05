@@ -333,7 +333,7 @@ export class SessionsComponent implements OnInit {
             });
             this.hasMoreArchived = resp.payload.hasMoreArchived ?? false;
             let archivedSessions = resp.payload.sessions.filter(
-              s => s.status === 'Archived'
+              s => s.status === 'Archived' && s.sessionId !== this.sessionId
             );
             if (archivedSessions.length > 0) {
               this.archivedLastCreatedTs =
