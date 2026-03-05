@@ -10,7 +10,14 @@ export interface FileDiffInfo {
 }
 
 export interface ChatMessage {
-  role: 'user' | 'agent' | 'tool' | 'thought' | 'error' | 'compaction';
+  role:
+    | 'user'
+    | 'agent'
+    | 'tool'
+    | 'thought'
+    | 'error'
+    | 'compaction'
+    | 'interrupted';
   text: string;
   toolPart?: ToolPart;
   agentName?: string;

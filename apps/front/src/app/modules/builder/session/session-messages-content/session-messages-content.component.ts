@@ -155,6 +155,10 @@ export class SessionMessagesContentComponent {
     });
   }
 
+  isAbortError(): boolean {
+    return this.lastSessionError?.['name'] === 'MessageAbortedError';
+  }
+
   getSessionErrorName(): string {
     if (!this.lastSessionError) return '';
     let name = this.lastSessionError['name'] as string | undefined;

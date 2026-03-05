@@ -293,6 +293,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isWorking = false;
     this.cd.detectChanges();
 
+    this.sessionMessages?.scrollToBottom();
+
     this.sendInteraction({
       sessionId: this.session.sessionId,
       interactionType: InteractionTypeEnum.Abort
@@ -977,13 +979,12 @@ export class SessionComponent implements OnInit, OnDestroy {
           }
         }
 
-        // Show error if assistant message has no visible parts but has an error
-        if (partCount === 0) {
-          let error = (msg.ocMessage as any)?.error;
-          if (error && error.name !== 'MessageAbortedError') {
-            let errorText = unwrapErrorMessage(error.data?.message ?? '');
-            chatMessages.push({ role: 'error', text: errorText });
-          }
+        let error = (msg.ocMessage as any)?.error;
+        if (error?.name === 'MessageAbortedError') {
+          chatMessages.push({ role: 'interrupted', text: 'Interrupted' });
+        } else if (partCount === 0 && error) {
+          let errorText = unwrapErrorMessage(error.data?.message ?? '');
+          chatMessages.push({ role: 'error', text: errorText });
         }
       }
     }

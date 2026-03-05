@@ -217,6 +217,21 @@
         </div>
       </div>
 
+      <!-- Interrupted indicator -->
+      <div
+        *ngIf="msg.role === 'interrupted'"
+        class="ml-[34px] flex items-start gap-3"
+      >
+        <span
+          class="mt-4 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-amber-400"
+        ></span>
+        <div class="border-s200 max-w-[90%] overflow-hidden rounded-lg border">
+          <div class="flex items-center gap-2 px-3 py-2">
+            <span class="text-s500 text-base font-medium">{{ msg.text }}</span>
+          </div>
+        </div>
+      </div>
+
       <!-- Error -->
       <div *ngIf="msg.role === 'error'" class="ml-10 flex justify-start">
         <div class="max-w-[90%] rounded-2xl bg-red-50 px-4 py-3">
@@ -306,7 +321,7 @@
 
       <!-- Session error indicator (compact, clickable) -->
       <div
-        *ngIf="lastSessionError && !isSessionError"
+        *ngIf="lastSessionError && !isSessionError && !isAbortError()"
         class="mb-4 ml-[34px] flex items-start gap-3"
       >
         <span

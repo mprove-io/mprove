@@ -37,6 +37,12 @@ export class QuestionPromptComponent implements OnChanges {
   }
 
   isSelected(qIdx: number, optionLabel: string): boolean {
+    if (
+      this.isCustomActive(qIdx) &&
+      this.customInputs[qIdx]?.trim() === optionLabel
+    ) {
+      return false;
+    }
     return this.answers[qIdx]?.includes(optionLabel) || false;
   }
 
