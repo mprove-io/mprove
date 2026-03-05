@@ -103,7 +103,7 @@ export class CreateAgentSessionController {
       projectId: projectId
     });
 
-    await this.membersService.getMemberCheckExists({
+    await this.membersService.getMemberCheckIsEditor({
       memberId: user.userId,
       projectId: projectId
     });

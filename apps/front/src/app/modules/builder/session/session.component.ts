@@ -946,11 +946,13 @@ export class SessionComponent implements OnInit, OnDestroy {
           if (!part) continue;
 
           if (part.type === 'text') {
-            chatMessages.push({
-              role: 'agent',
-              text: part.text || ''
-            });
-            partCount++;
+            if (part.text) {
+              chatMessages.push({
+                role: 'agent',
+                text: part.text
+              });
+              partCount++;
+            }
           } else if (part.type === 'tool') {
             chatMessages.push({
               role: 'tool',
@@ -959,11 +961,13 @@ export class SessionComponent implements OnInit, OnDestroy {
             });
             partCount++;
           } else if (part.type === 'reasoning') {
-            chatMessages.push({
-              role: 'thought',
-              text: part.text || ''
-            });
-            partCount++;
+            if (part.text) {
+              chatMessages.push({
+                role: 'thought',
+                text: part.text
+              });
+              partCount++;
+            }
           } else if (part.type === 'compaction') {
             chatMessages.push({
               role: 'compaction',

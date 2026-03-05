@@ -1,6 +1,6 @@
 <div
   *ngIf="question && question.questions?.length > 0"
-  class="border-s300 flex max-h-[45vh] flex-col rounded-lg border bg-white"
+  class="border-s300 flex max-h-[55vh] flex-col rounded-lg border bg-white"
 >
   <!-- Scrollable content -->
   <ng-scrollbar
@@ -53,23 +53,24 @@
               >
                 <span
                   *ngIf="isSelected(qIdx, opt.label)"
-                  class="h-2 w-2 rounded-full bg-white"
+                  class="h-[7px] w-[7px] rounded-full bg-white"
                 ></span>
               </span>
 
               <!-- Checkbox indicator (multi-select) -->
-              <span
+              <div
                 *ngIf="q.multiple"
-                class="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded border-2"
+                class="flex h-[18px] w-[18px] flex-shrink-0 items-center justify-center rounded"
                 [ngClass]="{
-                  'border-m600 bg-m600 text-white': isSelected(qIdx, opt.label),
-                  'border-s400': !isSelected(qIdx, opt.label)
+                  'bg-m600': isSelected(qIdx, opt.label),
+                  'border-s400 border': !isSelected(qIdx, opt.label)
                 }"
               >
-                <span *ngIf="isSelected(qIdx, opt.label)" class="text-xs"
-                  >&#10003;</span
-                >
-              </span>
+                <m-check-icon
+                  *ngIf="isSelected(qIdx, opt.label)"
+                  class="text-m0"
+                ></m-check-icon>
+              </div>
 
               <div class="min-w-0 flex-1">
                 <div class="text-s1 text-lg font-medium">
@@ -104,22 +105,23 @@
               >
                 <span
                   *ngIf="isCustomActive(qIdx)"
-                  class="h-2 w-2 rounded-full bg-white"
+                  class="h-[7px] w-[7px] rounded-full bg-white"
                 ></span>
               </span>
-              <span
+              <div
                 *ngIf="q.multiple"
-                class="flex h-[18px] w-[18px] flex-shrink-0 cursor-pointer items-center justify-center rounded border-2"
+                class="flex h-[18px] w-[18px] flex-shrink-0 cursor-pointer items-center justify-center rounded"
                 [ngClass]="{
-                  'border-m600 bg-m600 text-white': isCustomActive(qIdx),
-                  'border-s400': !isCustomActive(qIdx)
+                  'bg-m600': isCustomActive(qIdx),
+                  'border-s400 border': !isCustomActive(qIdx)
                 }"
                 (click)="toggleCustom(qIdx)"
               >
-                <span *ngIf="isCustomActive(qIdx)" class="text-xs"
-                  >&#10003;</span
-                >
-              </span>
+                <m-check-icon
+                  *ngIf="isCustomActive(qIdx)"
+                  class="text-m0"
+                ></m-check-icon>
+              </div>
 
               <input
                 #customInput
@@ -149,12 +151,22 @@
     >
       Cancel
     </button>
-    <button
-      type="button"
-      class="bg-m600 rounded px-4 py-2 text-[17px] text-white hover:opacity-90 focus:outline-none"
-      (click)="submit()"
+    <span
+      [tp]="'Answer all questions to be able to Send'"
+      [tpIsEnabled]="isSendDisabled"
     >
-      Send
-    </button>
+      <button
+        type="button"
+        class="rounded px-4 py-2 text-[17px] text-white focus:outline-none"
+        [ngClass]="{
+          'bg-s400 cursor-default': isSendDisabled,
+          'bg-m600 hover:opacity-90': !isSendDisabled
+        }"
+        [disabled]="isSendDisabled"
+        (click)="submit()"
+      >
+        Send
+      </button>
+    </span>
   </div>
 </div>

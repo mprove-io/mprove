@@ -4,19 +4,33 @@
     *ngIf="!debugMode"
     class="mt-0.5 flex h-2 w-full flex-grow flex-col overflow-y-auto"
   >
-    <m-session-messages
-      class="h-full w-full"
-      [turns]="turns"
-      [session]="session"
-      [isActivating]="isActivating"
-      [isArchived]="isArchived"
-      [isAgentBusy]="isAgentBusy"
-      [retryMessage]="retryMessage"
-      [isSessionError]="isSessionError"
-      [lastSessionError]="lastSessionError"
-      [isLastErrorRecovered]="isLastErrorRecovered"
-      [scrollTrigger]="scrollTrigger"
-    ></m-session-messages>
+    <m-session-messages class="h-full w-full" [scrollTrigger]="scrollTrigger">
+      <m-session-messages-content
+        [turns]="turns"
+        [session]="session"
+        [isActivating]="isActivating"
+        [isArchived]="isArchived"
+        [isAgentBusy]="isAgentBusy"
+        [retryMessage]="retryMessage"
+        [isSessionError]="isSessionError"
+        [lastSessionError]="lastSessionError"
+        [isLastErrorRecovered]="isLastErrorRecovered"
+      ></m-session-messages-content>
+
+      <!-- Working indicator -->
+      <div class="ml-8 pb-4">
+        <div *ngIf="isWorking" class="max-w-[90%] py-3">
+          <span class="text-shimmer text-base font-semibold leading-[1.5]"
+            ><span
+              *ngFor="let ch of statusTextChars; trackBy: trackByIndex"
+              class="text-shimmer-char"
+              [style.--text-shimmer-index]="ch.index"
+              >{{ ch.char }}</span
+            ></span
+          >
+        </div>
+      </div>
+    </m-session-messages>
   </div>
 
   <div
@@ -123,21 +137,6 @@
     *ngIf="permissions.length === 0 && questions.length === 0 && !isArchived"
     class="relative flex-shrink-0 px-6 pb-8 pt-[6px]"
   >
-    <!-- Status text to the left of input -->
-    <div
-      class="absolute bottom-0 left-[104px] top-0 flex items-start whitespace-nowrap pt-[18px]"
-      [tp]="statusTooltip"
-      [tpIsEnabled]="!!statusTooltip"
-    >
-      <span class="text-shimmer text-base font-semibold leading-[1.5]"
-        ><span
-          *ngFor="let ch of statusTextChars; trackBy: trackByIndex"
-          class="text-shimmer-char"
-          [style.--text-shimmer-index]="ch.index"
-          >{{ ch.char }}</span
-        ></span
-      >
-    </div>
     <div class="mx-auto max-w-[860px]">
       <div class="flex items-start">
         <div class="mr-3 w-3 flex-shrink-0"></div>

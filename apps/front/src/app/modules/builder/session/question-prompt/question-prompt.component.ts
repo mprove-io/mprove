@@ -25,6 +25,7 @@ export class QuestionPromptComponent implements OnChanges {
   answers: string[][] = [];
   customInputs: string[] = [];
   customFocused: boolean[] = [];
+  isSendDisabled = true;
 
   ngOnChanges() {
     this.answers = (this.question?.questions || []).map((): string[] => []);
@@ -32,6 +33,7 @@ export class QuestionPromptComponent implements OnChanges {
     this.customFocused = (this.question?.questions || []).map(
       (): boolean => false
     );
+    this.updateSendDisabled();
   }
 
   isSelected(qIdx: number, optionLabel: string): boolean {
@@ -65,6 +67,7 @@ export class QuestionPromptComponent implements OnChanges {
     } else {
       this.answers[qIdx] = [optionLabel];
     }
+    this.updateSendDisabled();
   }
 
   onCustomFocus(qIdx: number) {
@@ -76,6 +79,7 @@ export class QuestionPromptComponent implements OnChanges {
     if (!q.multiple) {
       let value = this.customInputs[qIdx]?.trim();
       this.answers[qIdx] = value ? [value] : [];
+      this.updateSendDisabled();
     }
   }
 
@@ -111,6 +115,7 @@ export class QuestionPromptComponent implements OnChanges {
         this.answers[qIdx] = [];
       }
     }
+    this.updateSendDisabled();
   }
 
   toggleCustom(qIdx: number) {
@@ -122,12 +127,18 @@ export class QuestionPromptComponent implements OnChanges {
         let existing = this.answers[qIdx] ?? [];
         this.answers[qIdx] = existing.filter(v => v !== prevValue);
       }
+      this.updateSendDisabled();
     } else {
       let inputEl = this.customInputRefs?.toArray()[qIdx]?.nativeElement;
       if (inputEl) {
         inputEl.focus();
       }
     }
+  }
+
+  updateSendDisabled() {
+    this.isSendDisabled =
+      this.answers.length === 0 || this.answers.some(a => a.length === 0);
   }
 
   submit() {

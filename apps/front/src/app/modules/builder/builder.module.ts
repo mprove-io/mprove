@@ -31,6 +31,7 @@ import { SessionDebugEventsComponent } from './session/session-debug-events/sess
 import { ContextUsageCircleComponent } from './session/session-input/context-usage-circle/context-usage-circle.component';
 import { SessionInputComponent } from './session/session-input/session-input.component';
 import { SessionMessagesComponent } from './session/session-messages/session-messages.component';
+import { SessionMessagesContentComponent } from './session/session-messages-content/session-messages-content.component';
 import { SessionWrapperComponent } from './session/session-wrapper/session-wrapper.component';
 
 @NgModule({
@@ -53,6 +54,7 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     SessionInputComponent,
     ContextUsageCircleComponent,
     QuestionPromptComponent,
+    SessionMessagesContentComponent,
     SessionMessagesComponent,
     BlockmlErrorsComponent,
     RepoConflictsComponent,
