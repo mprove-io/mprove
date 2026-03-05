@@ -264,17 +264,18 @@ export class SendUserMessageToAgentController {
         parts: [{ type: 'text', text: message }]
       };
 
+      if (session.agent) {
+        promptBody.agent = session.agent;
+      }
+
       let split = splitModel(effectiveModel);
+
       if (split) {
         promptBody.model = split;
       }
 
       if (variant) {
         promptBody.variant = variant;
-      }
-
-      if (session.agent) {
-        promptBody.agent = session.agent;
       }
 
       await client.session.promptAsync(

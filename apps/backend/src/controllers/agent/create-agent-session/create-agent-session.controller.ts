@@ -387,17 +387,18 @@ export class CreateAgentSessionController {
           parts: [{ type: 'text', text: firstMessage }]
         };
 
+        if (agent) {
+          promptBody.agent = agent;
+        }
+
         let split = splitModel(model);
+
         if (split) {
           promptBody.model = split;
         }
 
         if (variant) {
           promptBody.variant = variant;
-        }
-
-        if (agent) {
-          promptBody.agent = agent;
         }
 
         await opencodeClient.session
