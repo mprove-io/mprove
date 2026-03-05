@@ -272,7 +272,7 @@ export function getDevConfig() {
       process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES
     )
       ? Number(process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES)
-      : 30,
+      : 60, // e2b default expiration limit
 
     sandboxIdleMinutes: isDefined(process.env.BACKEND_SANDBOX_IDLE_MINUTES)
       ? Number(process.env.BACKEND_SANDBOX_IDLE_MINUTES)

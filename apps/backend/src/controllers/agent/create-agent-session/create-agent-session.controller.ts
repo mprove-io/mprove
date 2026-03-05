@@ -280,8 +280,7 @@ export class CreateAgentSessionController {
         BackendConfig['sandboxTimeoutMinutes']
       >('sandboxTimeoutMinutes');
 
-      // intentionally * 50 (not * 60) to pause sandbox before provider does
-      let sandboxTimeoutMs = sandboxTimeoutMinutes * 50 * 1000;
+      let sandboxTimeoutMs = sandboxTimeoutMinutes * 60 * 1000;
 
       // console.log('starting opencode server...');
 
