@@ -71,6 +71,12 @@ export class SendUserMessageToAgentController {
       sessionId
     });
 
+    if (session.userId !== user.userId) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_UNAUTHORIZED
+      });
+    }
+
     if (session.status === SessionStatusEnum.New) {
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_SESSION_NOT_READY

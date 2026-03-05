@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
 import { AgentService } from '#backend/services/agent.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
 import { ErEnum } from '#common/enums/er.enum';
 import { ServerError } from '#common/models/server-error';
@@ -16,7 +17,8 @@ export const SSE_AGENT_EVENTS_PATH = 'api/sse/agent-events';
 export class GetAgentEventsSseController {
   constructor(
     private redisService: RedisService,
-    private agentService: AgentService
+    private agentService: AgentService,
+    private sessionsService: SessionsService
   ) {}
 
   @Sse(SSE_AGENT_EVENTS_PATH)
@@ -28,12 +30,16 @@ export class GetAgentEventsSseController {
     return new Observable<MessageEvent>(observer => {
       this.redisService
         .consumeTicket({ ticket })
-        .then(consumedSessionId => {
+        .then(async consumedSessionId => {
           if (!consumedSessionId || consumedSessionId !== sessionId) {
             throw new ServerError({
               message: ErEnum.BACKEND_UNAUTHORIZED
             });
           }
+
+          await this.sessionsService.getSessionByIdCheckExists({
+            sessionId
+          });
 
           let lastEventIndex =
             lastEventIndexStr != null ? parseInt(lastEventIndexStr, 10) : -1;
