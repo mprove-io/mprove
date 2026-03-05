@@ -73,7 +73,8 @@ test('1', async t => {
   try {
     console.log(`Creating sandbox from template: ${templateName}`);
 
-    sandbox = await Sandbox.create(templateName, {
+    sandbox = await Sandbox.betaCreate(templateName, {
+      autoPause: false,
       apiKey: e2bApiKey,
       timeoutMs: 5 * 60 * 1000
     });

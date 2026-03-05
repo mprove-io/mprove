@@ -116,7 +116,8 @@ export class SandboxService {
           //   `[sandbox] creating E2B sandbox from template: ${templateName}`
           // );
 
-          let sandbox = await Sandbox.create(templateName, {
+          let sandbox = await Sandbox.betaCreate(templateName, {
+            autoPause: true,
             apiKey: item.project.e2bApiKey,
             allowInternetAccess: true,
             timeoutMs: item.sandboxTimeoutMs
