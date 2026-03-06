@@ -372,6 +372,8 @@ export class AgentService implements OnModuleDestroy {
           });
         }
       }
+
+      await this.stopEventStream(item.sessionId);
     };
 
     processStream();
@@ -391,6 +393,7 @@ export class AgentService implements OnModuleDestroy {
     this.pendingEvents.delete(sessionId);
     this.eventCounters.delete(sessionId);
     this.partStates.delete(sessionId);
+    this.sandboxService.disposeOpenCodeClient(sessionId);
   }
 
   async respondToPermission(item: {
@@ -781,10 +784,6 @@ export class AgentService implements OnModuleDestroy {
           projectId: session.projectId
         });
 
-        await this.stopEventStream(session.sessionId);
-
-        this.sandboxService.disposeOpenCodeClient(session.sessionId);
-
         await this.sandboxService.pauseSandbox({
           sandboxType: session.sandboxType as SandboxTypeEnum,
           sandboxId: session.sandboxId,
@@ -874,17 +873,23 @@ export class AgentService implements OnModuleDestroy {
       e2bApiKey: item.e2bApiKey
     });
 
-    let sandboxMap = new Map(sandboxes.map(s => [s.sandboxId, s]));
-
     for (let session of sessionsWithSandbox) {
       try {
-        // Skip sessions with active in-memory client to avoid
-        // conflicting with in-flight requests
-        if (this.sandboxService.tryGetOpenCodeClient(session.sessionId)) {
-          continue;
-        }
+        let sandboxInfo = sandboxes.find(
+          s => s.sandboxId === session.sandboxId
+        );
 
-        let sandboxInfo = sandboxMap.get(session.sandboxId);
+        let opencodeClient = this.sandboxService.tryGetOpenCodeClient(
+          session.sessionId
+        );
+
+        // Clean up stale in-memory state if sandbox is paused or gone
+        if (
+          opencodeClient &&
+          (!sandboxInfo || sandboxInfo.state === 'paused')
+        ) {
+          await this.stopEventStream(session.sessionId);
+        }
 
         if (!sandboxInfo) {
           // Sandbox no longer exists
@@ -906,11 +911,7 @@ export class AgentService implements OnModuleDestroy {
               .delete(ocEventsTable)
               .where(and(eq(ocEventsTable.sessionId, session.sessionId)));
           });
-
-          continue;
-        }
-
-        if (
+        } else if (
           session.status === SessionStatusEnum.Active &&
           sandboxInfo.state === 'paused'
         ) {
