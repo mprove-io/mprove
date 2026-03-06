@@ -20,7 +20,7 @@ export interface CreateSandboxResult {
 }
 
 @Injectable()
-export class SandboxService {
+export class AgentSandboxService {
   private opencodeClients = new Map<string, OpencodeClient>();
 
   constructor(

@@ -20,10 +20,10 @@ import type {
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentService } from '#backend/services/agent.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
+import { AgentStreamService } from '#backend/services/agent-stream.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -45,8 +45,8 @@ export class SendUserMessageToAgentController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private agentService: AgentService,
-    private sandboxService: SandboxService,
+    private agentStreamService: AgentStreamService,
+    private agentSandboxService: AgentSandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -106,14 +106,14 @@ export class SendUserMessageToAgentController {
       answers
     };
 
-    let opencodeClient = this.sandboxService.getOpenCodeClient(sessionId);
+    let opencodeClient = this.agentSandboxService.getOpenCodeClient(sessionId);
 
     if (session.status === SessionStatusEnum.Paused || !opencodeClient) {
       session = await this.ensureSandboxConnected({ session });
     }
 
     if (session.status !== SessionStatusEnum.Archived) {
-      await this.agentService.startEventStream({
+      await this.agentStreamService.startEventStream({
         sessionId: session.sessionId
       });
 
@@ -126,7 +126,7 @@ export class SendUserMessageToAgentController {
         session = await this.ensureSandboxConnected({ session });
 
         if (session.status !== SessionStatusEnum.Archived) {
-          await this.agentService.startEventStream({
+          await this.agentStreamService.startEventStream({
             sessionId: session.sessionId
           });
 
@@ -177,7 +177,7 @@ export class SendUserMessageToAgentController {
       projectId: session.projectId
     });
 
-    let sandboxInfo = await this.sandboxService.getSandboxInfo({
+    let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
       sandboxId: session.sandboxId,
       e2bApiKey: project.e2bApiKey
     });
@@ -198,14 +198,14 @@ export class SendUserMessageToAgentController {
       1000;
 
     if (sandboxInfo.state === 'paused') {
-      await this.sandboxService.resumeSandbox({
+      await this.agentSandboxService.resumeSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey,
         timeoutMs: timeoutMs
       });
 
-      sandboxInfo = await this.sandboxService.getSandboxInfo({
+      sandboxInfo = await this.agentSandboxService.getSandboxInfo({
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey
       });
@@ -219,13 +219,13 @@ export class SendUserMessageToAgentController {
       }
     }
 
-    this.sandboxService.connectOpenCodeClient({
+    this.agentSandboxService.connectOpenCodeClient({
       sessionId: session.sessionId,
       sandboxBaseUrl: session.sandboxBaseUrl,
       opencodePassword: session.opencodePassword
     });
 
-    await this.sandboxService.healthCheckOpenCode({
+    await this.agentSandboxService.healthCheckOpenCode({
       sandboxBaseUrl: session.sandboxBaseUrl
     });
 
@@ -264,7 +264,8 @@ export class SendUserMessageToAgentController {
     let sessionId = session.sessionId;
 
     if (interactionType === InteractionTypeEnum.Message) {
-      let client = this.sandboxService.getOpenCodeClientCheckExists(sessionId);
+      let opencodeClient =
+        this.agentSandboxService.getOpenCodeClientCheckExists(sessionId);
 
       let effectiveModel = model !== undefined ? model : session.model;
 
@@ -286,7 +287,7 @@ export class SendUserMessageToAgentController {
         promptBody.variant = variant;
       }
 
-      await client.session.promptAsync(
+      await opencodeClient.session.promptAsync(
         {
           sessionID: session.opencodeSessionId,
           ...promptBody
@@ -301,7 +302,7 @@ export class SendUserMessageToAgentController {
         lastMessageVariant: variant
       };
     } else if (interactionType === InteractionTypeEnum.Permission) {
-      await this.agentService.respondToPermission({
+      await this.agentStreamService.respondToPermission({
         sessionId: sessionId,
         opencodeSessionId: session.opencodeSessionId,
         permissionId: permissionId,
@@ -309,23 +310,24 @@ export class SendUserMessageToAgentController {
       });
     } else if (interactionType === InteractionTypeEnum.Question) {
       if (answers !== undefined) {
-        await this.agentService.respondToQuestion({
+        await this.agentStreamService.respondToQuestion({
           sessionId: sessionId,
           opencodeSessionId: session.opencodeSessionId,
           questionId: questionId,
           answers: answers
         });
       } else {
-        await this.agentService.rejectQuestion({
+        await this.agentStreamService.rejectQuestion({
           sessionId: sessionId,
           opencodeSessionId: session.opencodeSessionId,
           questionId: questionId
         });
       }
     } else if (interactionType === InteractionTypeEnum.Abort) {
-      let client = this.sandboxService.getOpenCodeClientCheckExists(sessionId);
+      let opencodeClient =
+        this.agentSandboxService.getOpenCodeClientCheckExists(sessionId);
 
-      await client.session.abort(
+      await opencodeClient.session.abort(
         {
           sessionID: session.opencodeSessionId
         },

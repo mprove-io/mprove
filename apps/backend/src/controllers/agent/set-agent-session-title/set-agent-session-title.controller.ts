@@ -4,8 +4,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { SandboxService } from '#backend/services/sandbox.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -19,7 +19,7 @@ import { ServerError } from '#common/models/server-error';
 export class SetAgentSessionTitleController {
   constructor(
     private sessionsService: SessionsService,
-    private sandboxService: SandboxService
+    private agentSandboxService: AgentSandboxService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle)
@@ -41,9 +41,10 @@ export class SetAgentSessionTitleController {
       session.status === SessionStatusEnum.Active &&
       session.opencodeSessionId
     ) {
-      let client = this.sandboxService.getOpenCodeClientCheckExists(sessionId);
+      let opencodeClient =
+        this.agentSandboxService.getOpenCodeClientCheckExists(sessionId);
 
-      await client.session.update(
+      await opencodeClient.session.update(
         {
           sessionID: session.opencodeSessionId,
           title: title

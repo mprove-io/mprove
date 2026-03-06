@@ -9,8 +9,8 @@ import { uconfigsTable } from '#backend/drizzle/postgres/schema/uconfigs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentModelsService } from '#backend/services/agent-models.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { SessionsService } from '#backend/services/db/sessions.service.js';
-import { SandboxService } from '#backend/services/sandbox.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -27,7 +27,7 @@ import { ServerError } from '#common/models/server-error';
 export class GetAgentProviderModelsController {
   constructor(
     private agentModelsService: AgentModelsService,
-    private sandboxService: SandboxService,
+    private agentSandboxService: AgentSandboxService,
     private sessionsService: SessionsService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
@@ -54,7 +54,7 @@ export class GetAgentProviderModelsController {
 
       try {
         let client =
-          this.sandboxService.getOpenCodeClientCheckExists(sessionId);
+          this.agentSandboxService.getOpenCodeClientCheckExists(sessionId);
 
         let { data } = await client.provider.list({}, { throwOnError: true });
 

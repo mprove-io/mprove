@@ -5,12 +5,13 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { forTestsStartOpencodeServer } from '#backend/functions/for-tests-start-opencode-server';
 import { prepareTest } from '#backend/functions/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
-import { SandboxService } from '#backend/services/sandbox.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 
 test('1', async t => {
   let prep: Prep = await prepareTest({});
 
-  let sandboxService = prep.moduleRef.get<SandboxService>(SandboxService);
+  let agentSandboxService =
+    prep.moduleRef.get<AgentSandboxService>(AgentSandboxService);
 
   let e2bApiKey = prep.cs.get<BackendConfig['demoProjectE2bApiKey']>(
     'demoProjectE2bApiKey'
@@ -83,7 +84,7 @@ test('1', async t => {
 
     // Clone repo
     console.log('Cloning repo...');
-    await sandboxService.cloneRepoInSandbox({
+    await agentSandboxService.cloneRepoInSandbox({
       sandbox: sandbox,
       gitUrl: gitUrl,
       defaultBranch: 'main',

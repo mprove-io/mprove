@@ -1,7 +1,7 @@
 import type { ExecutionContext } from 'ava';
 import { Prep } from '#backend/interfaces/prep';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { SandboxService } from '#backend/services/sandbox.service';
 import { ToBackendCreateAgentSessionResponse } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
 
 export async function forTestsInspectUi(item: {
@@ -22,12 +22,12 @@ export async function forTestsInspectUi(item: {
   item.t.pass('Session created for inspection');
 
   // Periodic health check
-  let sandboxService = item.prep.app.get(SandboxService);
+  let agentSandboxService = item.prep.app.get(AgentSandboxService);
   let sessionsService = item.prep.app.get(SessionsService);
   let session = await sessionsService.getSessionByIdCheckExists({
     sessionId: item.sessionId
   });
-  let client = sandboxService.getOpenCodeClientCheckExists(item.sessionId);
+  let client = agentSandboxService.getOpenCodeClientCheckExists(item.sessionId);
 
   console.log(`\n=== SANDBOX ===`);
   console.log(`sandboxBaseUrl: ${session.sandboxBaseUrl}`);

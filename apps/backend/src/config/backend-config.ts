@@ -317,11 +317,11 @@ export class BackendConfig {
 
   @IsOptional()
   @IsNumber()
-  sessionPauseThresholdMinutes?: number;
+  sessionLastActivityToPauseMinutes?: number;
 
   @IsOptional()
   @IsNumber()
-  sandboxRefreshMinutes?: number;
+  sessionPauseOnUserTurnMinutes?: number;
 
   @IsOptional()
   @IsNumber()

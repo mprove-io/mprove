@@ -3,8 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
-import { AgentService } from './services/agent.service';
+import { AgentEventsService } from './services/agent-events.service';
 import { AgentModelsService } from './services/agent-models.service';
+import { AgentSandboxService } from './services/agent-sandbox.service';
+import { AgentSandboxLifecycleService } from './services/agent-sandbox-lifecycle.service';
+import { AgentStreamService } from './services/agent-stream.service';
+import { AgentStreamDrainService } from './services/agent-stream-drain.service';
 import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
@@ -47,7 +51,6 @@ import { ReportDataService } from './services/report-data.service';
 import { ReportRowService } from './services/report-row.service';
 import { ReportTimeColumnsService } from './services/report-time-columns.service';
 import { RpcService } from './services/rpc.service';
-import { SandboxService } from './services/sandbox.service';
 import { StoreService } from './services/store.service';
 import { TabService } from './services/tab.service';
 import { TabCheckerService } from './services/tab-checker.service';
@@ -109,8 +112,11 @@ export const appProviders = [
   TabService,
   //
   SessionsService,
-  SandboxService,
-  AgentService,
+  AgentSandboxService,
+  AgentStreamDrainService,
+  AgentEventsService,
+  AgentStreamService,
+  AgentSandboxLifecycleService,
   AgentModelsService,
   ApiKeyService,
   {
@@ -120,7 +126,7 @@ export const appProviders = [
       queriesService: QueriesService,
       structsService: StructsService,
       notesService: NotesService,
-      agentService: AgentService,
+      agentLifecycleService: AgentSandboxLifecycleService,
       agentModelsService: AgentModelsService,
       logger: Logger
     ) =>
@@ -130,7 +136,7 @@ export const appProviders = [
             queriesService,
             structsService,
             notesService,
-            agentService,
+            agentLifecycleService,
             agentModelsService,
             logger
           )
@@ -140,7 +146,7 @@ export const appProviders = [
       QueriesService,
       StructsService,
       NotesService,
-      AgentService,
+      AgentSandboxLifecycleService,
       AgentModelsService
     ]
   },

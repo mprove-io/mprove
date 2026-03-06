@@ -1,5 +1,5 @@
 import type { EventSessionStatus } from '@opencode-ai/sdk/v2';
-import type { AgentEvent } from '#backend/services/agent.service';
+import type { AgentEvent } from '#backend/services/agent-events.service';
 
 function isIdleEvent(agentEvent: AgentEvent): boolean {
   // 'session.idle' is deprecated but still emitted by opencode server.

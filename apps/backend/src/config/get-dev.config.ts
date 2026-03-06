@@ -278,18 +278,18 @@ export function getDevConfig() {
       process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES
     )
       ? Number(process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES)
-      : 60, // e2b default expiration limit
+      : 60, // e2b default expiration limit (check autopause)
 
-    sandboxRefreshMinutes: isDefined(
-      process.env.BACKEND_SANDBOX_REFRESH_MINUTES
+    sessionPauseOnUserTurnMinutes: isDefined(
+      process.env.BACKEND_SESSION_PAUSE_ON_USER_TURN_MINUTES
     )
-      ? Number(process.env.BACKEND_SANDBOX_REFRESH_MINUTES)
+      ? Number(process.env.BACKEND_SESSION_PAUSE_ON_USER_TURN_MINUTES)
       : 40,
 
-    sessionPauseThresholdMinutes: isDefined(
-      process.env.BACKEND_SESSION_PAUSE_THRESHOLD_MINUTES
+    sessionLastActivityToPauseMinutes: isDefined(
+      process.env.BACKEND_SESSION_LAST_ACTIVITY_TO_PAUSE_MINUTES
     )
-      ? Number(process.env.BACKEND_SESSION_PAUSE_THRESHOLD_MINUTES)
+      ? Number(process.env.BACKEND_SESSION_LAST_ACTIVITY_TO_PAUSE_MINUTES)
       : 10,
 
     maxActiveSessionsPerUser: isDefined(

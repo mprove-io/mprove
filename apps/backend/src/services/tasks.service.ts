@@ -6,8 +6,8 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
-import { AgentService } from './agent.service';
 import { AgentModelsService } from './agent-models.service';
+import { AgentSandboxLifecycleService } from './agent-sandbox-lifecycle.service';
 import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
@@ -27,7 +27,7 @@ export class TasksService {
     private queriesService: QueriesService,
     private structsService: StructsService,
     private notesService: NotesService,
-    private agentService: AgentService,
+    private agentSandboxLifecycleService: AgentSandboxLifecycleService,
     private agentModelsService: AgentModelsService,
     private logger: Logger
   ) {}
@@ -148,7 +148,7 @@ export class TasksService {
     if (this.isRunningSyncSandboxStatuses === false) {
       this.isRunningSyncSandboxStatuses = true;
 
-      await this.agentService.syncSandboxStatuses().catch(e => {
+      await this.agentSandboxLifecycleService.syncSandboxStatuses().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_SCHEDULER_SYNC_SANDBOX_STATUSES_FAILED,
@@ -170,7 +170,7 @@ export class TasksService {
     if (this.isRunningPauseIdleSandboxes === false) {
       this.isRunningPauseIdleSandboxes = true;
 
-      await this.agentService.pauseIdleSessions().catch(e => {
+      await this.agentSandboxLifecycleService.pauseIdleSessions().catch(e => {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_SANDBOXES_FAILED,
