@@ -98,7 +98,7 @@ export class SandboxService {
   async startOpencodeServer(item: {
     sandboxType: SandboxTypeEnum;
     sandboxTimeoutMs: number;
-    sandboxEnvs?: Record<string, string>;
+    sandboxEnvs: Record<string, string>;
     project: ProjectTab;
     sessionBranch: string;
   }): Promise<CreateSandboxResult> {

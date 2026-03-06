@@ -18,7 +18,7 @@ import type {
   PermissionRequest,
   QuestionRequest
 } from '@opencode-ai/sdk/v2';
-import { and, asc, eq, gt, inArray, lt, max } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, lt, max, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { Observable, Subject } from 'rxjs';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -722,6 +722,13 @@ export class AgentService implements OnModuleDestroy {
       }
     }
 
+    let hasActivityEvents =
+      messageTabs.length > 0 ||
+      partTabs.length > 0 ||
+      todoItems.length > 0 ||
+      questionAskedItems.length > 0 ||
+      permissionAskedItems.length > 0;
+
     try {
       await this.db.drizzle.transaction(async tx => {
         await this.db.packer.write({
@@ -735,6 +742,14 @@ export class AgentService implements OnModuleDestroy {
             ocSessions: ocSessionTabs
           }
         });
+
+        if (hasActivityEvents) {
+          let now = Date.now();
+
+          await tx.execute(
+            sql`UPDATE sessions SET last_activity_ts = ${now} WHERE session_id = ${sessionId}`
+          );
+        }
       });
     } catch (e) {
       // Restore partStates snapshot so deltas aren't doubled on retry
