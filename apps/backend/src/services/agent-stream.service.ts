@@ -19,6 +19,8 @@ export class AgentStreamService implements OnModuleDestroy {
 
   private activeStreams = new Map<string, () => void>();
 
+  private isRunningDrain = false;
+
   private drainTimer: ReturnType<typeof setInterval>;
 
   constructor(
@@ -42,48 +44,55 @@ export class AgentStreamService implements OnModuleDestroy {
     });
 
     this.drainTimer = setInterval(async () => {
-      try {
-        let safePauseSessionIds = await this.agentDrainService.drainAllQueues();
+      if (this.isRunningDrain === false) {
+        this.isRunningDrain = true;
 
-        for (let sessionId of safePauseSessionIds) {
-          try {
-            await this.stopEventStream(sessionId);
-            await this.agentLifecycleService.pauseSessionById({ sessionId });
-          } catch (e) {
-            logToConsoleBackend({
-              log: new ServerError({
-                message: ErEnum.BACKEND_AGENT_SAFE_PAUSE_SESSION_FAILED,
-                originalError: e
-              }),
-              logLevel: LogLevelEnum.Error,
-              logger: this.logger,
-              cs: this.cs
-            });
+        try {
+          let safePauseSessionIds =
+            await this.agentDrainService.drainAllQueues();
+
+          for (let sessionId of safePauseSessionIds) {
+            try {
+              await this.stopEventStream(sessionId);
+              await this.agentLifecycleService.pauseSessionById({ sessionId });
+            } catch (e) {
+              logToConsoleBackend({
+                log: new ServerError({
+                  message: ErEnum.BACKEND_AGENT_SAFE_PAUSE_SESSION_FAILED,
+                  originalError: e
+                }),
+                logLevel: LogLevelEnum.Error,
+                logger: this.logger,
+                cs: this.cs
+              });
+            }
           }
+        } catch (e) {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_AGENT_DRAIN_QUEUES_FAILED,
+              originalError: e
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
         }
-      } catch (e) {
-        logToConsoleBackend({
-          log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_DRAIN_QUEUES_FAILED,
-            originalError: e
-          }),
-          logLevel: LogLevelEnum.Error,
-          logger: this.logger,
-          cs: this.cs
-        });
-      }
 
-      this.refreshStreamLocks().catch(e => {
-        logToConsoleBackend({
-          log: new ServerError({
-            message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
-            originalError: e
-          }),
-          logLevel: LogLevelEnum.Error,
-          logger: this.logger,
-          cs: this.cs
+        this.refreshStreamLocks().catch(e => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
+              originalError: e
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
         });
-      });
+
+        this.isRunningDrain = false;
+      }
     }, 1000);
   }
 
