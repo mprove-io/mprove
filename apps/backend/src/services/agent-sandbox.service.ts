@@ -4,11 +4,17 @@ import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
+import type {
+  ProjectTab,
+  SessionTab
+} from '#backend/drizzle/postgres/schema/_tabs';
+import { ProjectsService } from '#backend/services/db/projects.service';
+import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
 
 export interface CreateSandboxResult {
@@ -25,6 +31,7 @@ export class AgentSandboxService {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
+    private projectsService: ProjectsService,
     private logger: Logger
   ) {}
 
@@ -317,6 +324,77 @@ export class AgentSandboxService {
           message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
         });
     }
+  }
+
+  async ensureSandboxConnected(item: {
+    session: SessionTab;
+  }): Promise<SessionTab> {
+    let { session } = item;
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
+
+    let sandboxInfo = await this.getSandboxInfo({
+      sandboxId: session.sandboxId,
+      e2bApiKey: project.e2bApiKey
+    });
+
+    if (!sandboxInfo) {
+      return {
+        ...session,
+        status: SessionStatusEnum.Archived,
+        archivedReason: ArchivedReasonEnum.Expire
+      };
+    }
+
+    let timeoutMs =
+      this.cs.get<BackendConfig['sandboxTimeoutMinutes']>(
+        'sandboxTimeoutMinutes'
+      ) *
+      60 *
+      1000;
+
+    if (sandboxInfo.state === 'paused') {
+      await this.resumeSandbox({
+        sandboxType: session.sandboxType as SandboxTypeEnum,
+        sandboxId: session.sandboxId,
+        e2bApiKey: project.e2bApiKey,
+        timeoutMs: timeoutMs
+      });
+
+      sandboxInfo = await this.getSandboxInfo({
+        sandboxId: session.sandboxId,
+        e2bApiKey: project.e2bApiKey
+      });
+
+      if (!sandboxInfo) {
+        return {
+          ...session,
+          status: SessionStatusEnum.Archived,
+          archivedReason: ArchivedReasonEnum.Expire
+        };
+      }
+    }
+
+    this.connectOpenCodeClient({
+      sessionId: session.sessionId,
+      sandboxBaseUrl: session.sandboxBaseUrl,
+      opencodePassword: session.opencodePassword
+    });
+
+    await this.healthCheckOpenCode({
+      sandboxBaseUrl: session.sandboxBaseUrl
+    });
+
+    return {
+      ...session,
+      status: SessionStatusEnum.Active,
+      sandboxStartTs: sandboxInfo.startedAt.getTime(),
+      sandboxEndTs: sandboxInfo.endAt.getTime(),
+      sandboxInfo: sandboxInfo,
+      lastActivityTs: Date.now()
+    };
   }
 
   async healthCheckOpenCode(item: {

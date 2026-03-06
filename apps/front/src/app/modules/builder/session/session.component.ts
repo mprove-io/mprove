@@ -493,6 +493,11 @@ export class SessionComponent implements OnInit, OnDestroy {
 
       let agentEvent: AgentEventApi = JSON.parse(event.data);
 
+      if (agentEvent.eventType === 'session.mprove-reload-session') {
+        this.scheduleReconnect(sessionId);
+        return;
+      }
+
       // Deduplicate by eventIndex (O(1) check)
       if (agentEvent.eventIndex <= this.lastProcessedEventIndex) {
         return;
@@ -508,28 +513,30 @@ export class SessionComponent implements OnInit, OnDestroy {
     });
 
     this.eventSource.onerror = () => {
-      this.closeSse();
-
       if (this.sseRetryCount >= this.SSE_MAX_RETRIES) {
+        this.closeSse();
         return;
       }
 
       this.sseRetryCount++;
-
-      // Prevent sessionAndData$ from triggering connectSse during retry delay
-      this.isConnectingSse = true;
-
-      setTimeout(() => {
-        if (
-          this.session?.sessionId === sessionId &&
-          this.session?.status === SessionStatusEnum.Active
-        ) {
-          this.reconnectSse(sessionId);
-        } else {
-          this.isConnectingSse = false;
-        }
-      }, this.SSE_RETRY_DELAY_MS);
+      this.scheduleReconnect(sessionId);
     };
+  }
+
+  scheduleReconnect(sessionId: string) {
+    this.closeSse();
+    this.isConnectingSse = true;
+
+    setTimeout(() => {
+      if (
+        this.session?.sessionId === sessionId &&
+        this.session?.status === SessionStatusEnum.Active
+      ) {
+        this.reconnectSse(sessionId);
+      } else {
+        this.isConnectingSse = false;
+      }
+    }, this.SSE_RETRY_DELAY_MS);
   }
 
   reconnectSse(sessionId: string) {

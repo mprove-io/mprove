@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
   Event,
@@ -14,6 +14,7 @@ import type {
   EventSessionStatus,
   EventSessionUpdated,
   EventTodoUpdated,
+  OpencodeClient,
   Part,
   PermissionRequest,
   QuestionRequest
@@ -28,6 +29,10 @@ import type {
   OcSessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { ServerError } from '#common/models/server-error';
 import { AgentEventsService } from './agent-events.service';
 import { OcEventsService } from './db/oc-events.service';
 import { OcMessagesService } from './db/oc-messages.service';
@@ -52,6 +57,7 @@ export class AgentStreamDrainService {
     private ocMessagesService: OcMessagesService,
     private ocPartsService: OcPartsService,
     private sessionsService: SessionsService,
+    private logger: Logger,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -75,6 +81,95 @@ export class AgentStreamDrainService {
     }
     queue.push(item);
     this.eventCounters.set(item.sessionId, item.eventIndex + 1);
+  }
+
+  async refetchFromOpenCode(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    client: OpencodeClient;
+  }): Promise<void> {
+    try {
+      let [messagesResp, sessionResp, todoResp, statusResp] = await Promise.all(
+        [
+          item.client.session.messages({
+            sessionID: item.opencodeSessionId
+          }),
+          item.client.session.get({ sessionID: item.opencodeSessionId }),
+          item.client.session.todo({ sessionID: item.opencodeSessionId }),
+          item.client.session.status()
+        ]
+      );
+
+      let messageTabs = (messagesResp.data ?? []).map(m =>
+        this.ocMessagesService.makeOcMessage({
+          messageId: m.info.id,
+          sessionId: item.sessionId,
+          role: m.info.role,
+          ocMessage: m.info
+        })
+      );
+
+      let partTabs = (messagesResp.data ?? []).flatMap(m =>
+        m.parts.map(p =>
+          this.ocPartsService.makeOcPart({
+            partId: p.id as string,
+            messageId: m.info.id,
+            sessionId: item.sessionId,
+            ocPart: p
+          })
+        )
+      );
+
+      let ocSessionTab = await this.sessionsService.getOcSessionBySessionId({
+        sessionId: item.sessionId
+      });
+
+      if (!ocSessionTab) {
+        ocSessionTab = this.sessionsService.makeOcSession({
+          sessionId: item.sessionId
+        });
+      }
+
+      ocSessionTab = {
+        ...ocSessionTab,
+        openSession: sessionResp.data,
+        todos: todoResp.data ?? []
+      };
+
+      if (statusResp.data) {
+        let ocSessionStatus =
+          statusResp.data[item.opencodeSessionId] ??
+          Object.values(statusResp.data)[0];
+        if (ocSessionStatus) {
+          ocSessionTab = { ...ocSessionTab, ocSessionStatus };
+        }
+      }
+
+      await this.db.drizzle.transaction(async tx => {
+        await this.db.packer.write({
+          tx: tx,
+          insertOrUpdate: {
+            ocMessages: messageTabs,
+            ocParts: partTabs,
+            ocSessions: [ocSessionTab]
+          }
+        });
+
+        await tx.execute(
+          sql`UPDATE sessions SET last_activity_ts = ${Date.now()} WHERE session_id = ${item.sessionId}`
+        );
+      });
+    } catch (e) {
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_AGENT_REFETCH_FROM_OPENCODE_FAILED,
+          originalError: e
+        }),
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }
   }
 
   cleanup(sessionId: string): void {

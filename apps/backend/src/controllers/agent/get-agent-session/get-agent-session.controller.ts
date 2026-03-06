@@ -10,6 +10,8 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
+import { AgentStreamService } from '#backend/services/agent-stream.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -32,6 +34,8 @@ export class GetAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
     private tabService: TabService,
+    private agentSandboxService: AgentSandboxService,
+    private agentStreamService: AgentStreamService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -54,6 +58,38 @@ export class GetAgentSessionController {
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_SESSION_NOT_FOUND
       });
+    }
+
+    if (
+      session.status === SessionStatusEnum.Active &&
+      session.opencodeSessionId
+    ) {
+      let opencodeClient =
+        this.agentSandboxService.getOpenCodeClient(sessionId);
+
+      if (!opencodeClient) {
+        session = await this.agentSandboxService.ensureSandboxConnected({
+          session
+        });
+
+        if (session.status !== SessionStatusEnum.Active) {
+          await this.db.drizzle.transaction(async tx => {
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                sessions: [session]
+              }
+            });
+          });
+        }
+      }
+
+      if (session.status === SessionStatusEnum.Active) {
+        await this.agentStreamService.startEventStream({
+          sessionId,
+          opencodeSessionId: session.opencodeSessionId
+        });
+      }
     }
 
     let ocSession = await this.sessionsService.getOcSessionBySessionId({

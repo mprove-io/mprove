@@ -22,13 +22,10 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { AgentStreamService } from '#backend/services/agent-stream.service';
-import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { splitModel } from '#common/functions/split-model';
@@ -44,7 +41,6 @@ import { ServerError } from '#common/models/server-error';
 export class SendUserMessageToAgentController {
   constructor(
     private sessionsService: SessionsService,
-    private projectsService: ProjectsService,
     private agentStreamService: AgentStreamService,
     private agentSandboxService: AgentSandboxService,
     private cs: ConfigService<BackendConfig>,
@@ -109,12 +105,15 @@ export class SendUserMessageToAgentController {
     let opencodeClient = this.agentSandboxService.getOpenCodeClient(sessionId);
 
     if (session.status === SessionStatusEnum.Paused || !opencodeClient) {
-      session = await this.ensureSandboxConnected({ session });
+      session = await this.agentSandboxService.ensureSandboxConnected({
+        session
+      });
     }
 
     if (session.status !== SessionStatusEnum.Archived) {
       await this.agentStreamService.startEventStream({
-        sessionId: session.sessionId
+        sessionId: session.sessionId,
+        opencodeSessionId: session.opencodeSessionId
       });
 
       try {
@@ -123,11 +122,14 @@ export class SendUserMessageToAgentController {
           ...interactionParams
         });
       } catch (e) {
-        session = await this.ensureSandboxConnected({ session });
+        session = await this.agentSandboxService.ensureSandboxConnected({
+          session
+        });
 
         if (session.status !== SessionStatusEnum.Archived) {
           await this.agentStreamService.startEventStream({
-            sessionId: session.sessionId
+            sessionId: session.sessionId,
+            opencodeSessionId: session.opencodeSessionId
           });
 
           session = await this.executeInteraction({
@@ -166,77 +168,6 @@ export class SendUserMessageToAgentController {
     };
 
     return payload;
-  }
-
-  private async ensureSandboxConnected(item: {
-    session: SessionTab;
-  }): Promise<SessionTab> {
-    let { session } = item;
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: session.projectId
-    });
-
-    let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
-      sandboxId: session.sandboxId,
-      e2bApiKey: project.e2bApiKey
-    });
-
-    if (!sandboxInfo) {
-      return {
-        ...session,
-        status: SessionStatusEnum.Archived,
-        archivedReason: ArchivedReasonEnum.Expire
-      };
-    }
-
-    let timeoutMs =
-      this.cs.get<BackendConfig['sandboxTimeoutMinutes']>(
-        'sandboxTimeoutMinutes'
-      ) *
-      60 *
-      1000;
-
-    if (sandboxInfo.state === 'paused') {
-      await this.agentSandboxService.resumeSandbox({
-        sandboxType: session.sandboxType as SandboxTypeEnum,
-        sandboxId: session.sandboxId,
-        e2bApiKey: project.e2bApiKey,
-        timeoutMs: timeoutMs
-      });
-
-      sandboxInfo = await this.agentSandboxService.getSandboxInfo({
-        sandboxId: session.sandboxId,
-        e2bApiKey: project.e2bApiKey
-      });
-
-      if (!sandboxInfo) {
-        return {
-          ...session,
-          status: SessionStatusEnum.Archived,
-          archivedReason: ArchivedReasonEnum.Expire
-        };
-      }
-    }
-
-    this.agentSandboxService.connectOpenCodeClient({
-      sessionId: session.sessionId,
-      sandboxBaseUrl: session.sandboxBaseUrl,
-      opencodePassword: session.opencodePassword
-    });
-
-    await this.agentSandboxService.healthCheckOpenCode({
-      sandboxBaseUrl: session.sandboxBaseUrl
-    });
-
-    return {
-      ...session,
-      status: SessionStatusEnum.Active,
-      sandboxStartTs: sandboxInfo.startedAt.getTime(),
-      sandboxEndTs: sandboxInfo.endAt.getTime(),
-      sandboxInfo: sandboxInfo,
-      lastActivityTs: Date.now()
-    };
   }
 
   private async executeInteraction(item: {

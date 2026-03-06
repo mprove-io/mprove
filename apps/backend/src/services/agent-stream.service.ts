@@ -7,6 +7,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
+import { AgentEventsService } from './agent-events.service';
 import { AgentSandboxService } from './agent-sandbox.service';
 import { AgentSandboxLifecycleService } from './agent-sandbox-lifecycle.service';
 import { AgentStreamDrainService } from './agent-stream-drain.service';
@@ -26,7 +27,8 @@ export class AgentStreamService implements OnModuleDestroy {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private agentDrainService: AgentStreamDrainService,
-    private agentLifecycleService: AgentSandboxLifecycleService,
+    private agentEventsService: AgentEventsService,
+    private agentSandboxLifecycleService: AgentSandboxLifecycleService,
     private agentSandboxService: AgentSandboxService,
     private logger: Logger
   ) {
@@ -54,7 +56,9 @@ export class AgentStreamService implements OnModuleDestroy {
           for (let sessionId of safePauseSessionIds) {
             try {
               await this.stopEventStream(sessionId);
-              await this.agentLifecycleService.pauseSessionById({ sessionId });
+              await this.agentSandboxLifecycleService.pauseSessionById({
+                sessionId
+              });
             } catch (e) {
               logToConsoleBackend({
                 log: new ServerError({
@@ -135,7 +139,10 @@ export class AgentStreamService implements OnModuleDestroy {
 
   // stream
 
-  async startEventStream(item: { sessionId: string }): Promise<void> {
+  async startEventStream(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+  }): Promise<void> {
     if (this.activeStreams.has(item.sessionId)) {
       return;
     }
@@ -160,6 +167,12 @@ export class AgentStreamService implements OnModuleDestroy {
       { signal: abortController.signal }
     );
 
+    await this.agentDrainService.refetchFromOpenCode({
+      sessionId: item.sessionId,
+      opencodeSessionId: item.opencodeSessionId,
+      client: opencodeClient
+    });
+
     let processStream = async () => {
       try {
         for await (let event of response.stream) {
@@ -174,22 +187,22 @@ export class AgentStreamService implements OnModuleDestroy {
         if (e.name !== 'AbortError') {
           logToConsoleBackend({
             log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_SSE_STREAM_ERROR,
+              message: ErEnum.BACKEND_AGENT_SSE_STREAM_FAILED,
               originalError: e
             }),
             logLevel: LogLevelEnum.Error,
             logger: this.logger,
             cs: this.cs
           });
-        } else {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_SSE_STREAM_ABORT,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
+
+          await this.agentEventsService.publish(item.sessionId, {
+            eventId: `${item.sessionId}_${eventIndex}`,
+            eventIndex: eventIndex,
+            eventType: 'session.mprove-reload-session',
+            ocEvent: {
+              type: 'session.mprove-reload-session' as any,
+              properties: {}
+            }
           });
         }
       }

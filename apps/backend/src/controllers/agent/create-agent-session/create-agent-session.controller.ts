@@ -380,7 +380,8 @@ export class CreateAgentSessionController {
       );
 
       await this.agentStreamService.startEventStream({
-        sessionId: sessionId
+        sessionId: sessionId,
+        opencodeSessionId: opencodeSessionId
       });
 
       if (firstMessage) {
