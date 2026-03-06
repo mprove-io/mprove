@@ -245,8 +245,9 @@ export class SeedRecordsController {
             firstMessage: 'test',
             createdTs: Date.now(),
             lastActivityTs: Date.now(),
-            runningStartTs: undefined,
-            expiresAt: undefined,
+            sandboxStartTs: undefined,
+            sandboxEndTs: undefined,
+            sandboxInfo: undefined,
             keyTag: undefined,
             serverTs: undefined
           };

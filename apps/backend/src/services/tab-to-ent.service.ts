@@ -1040,8 +1040,9 @@ export class TabToEntService {
         isMetadata: false
       }),
       lastActivityTs: tab.lastActivityTs,
-      runningStartTs: tab.runningStartTs,
-      expiresAt: tab.expiresAt,
+      sandboxStartTs: tab.sandboxStartTs,
+      sandboxEndTs: tab.sandboxEndTs,
+      sandboxInfo: tab.sandboxInfo,
       createdTs: tab.createdTs,
       serverTs: tab.serverTs
     };

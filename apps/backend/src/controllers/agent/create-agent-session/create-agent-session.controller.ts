@@ -287,7 +287,7 @@ export class CreateAgentSessionController {
 
       // console.log('starting opencode server...');
 
-      let { sandboxId, sandboxBaseUrl, opencodePassword } =
+      let { sandboxId, sandboxBaseUrl, opencodePassword, sandboxInfo } =
         await this.sandboxService.startOpencodeServer({
           sandboxType: sandboxType,
           sandboxTimeoutMs: sandboxTimeoutMs,
@@ -352,8 +352,9 @@ export class CreateAgentSessionController {
         opencodePassword: opencodePassword,
         status: SessionStatusEnum.Active,
         lastActivityTs: now,
-        runningStartTs: now,
-        expiresAt: now + sandboxTimeoutMs
+        sandboxStartTs: sandboxInfo.startedAt.getTime(),
+        sandboxEndTs: sandboxInfo.endAt.getTime(),
+        sandboxInfo: sandboxInfo
       };
 
       let updatedOcSession: OcSessionTab = {

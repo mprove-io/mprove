@@ -204,6 +204,19 @@ export class SendUserMessageToAgentController {
         e2bApiKey: project.e2bApiKey,
         timeoutMs: timeoutMs
       });
+
+      sandboxInfo = await this.sandboxService.getSandboxInfo({
+        sandboxId: session.sandboxId,
+        e2bApiKey: project.e2bApiKey
+      });
+
+      if (!sandboxInfo) {
+        return {
+          ...session,
+          status: SessionStatusEnum.Archived,
+          archivedReason: ArchivedReasonEnum.Expire
+        };
+      }
     }
 
     this.sandboxService.connectOpenCodeClient({
@@ -220,14 +233,13 @@ export class SendUserMessageToAgentController {
       sessionId: session.sessionId
     });
 
-    let now = Date.now();
-
     return {
       ...session,
       status: SessionStatusEnum.Active,
-      runningStartTs: now,
-      expiresAt: now + timeoutMs,
-      lastActivityTs: now
+      sandboxStartTs: sandboxInfo.startedAt.getTime(),
+      sandboxEndTs: sandboxInfo.endAt.getTime(),
+      sandboxInfo: sandboxInfo,
+      lastActivityTs: Date.now()
     };
   }
 

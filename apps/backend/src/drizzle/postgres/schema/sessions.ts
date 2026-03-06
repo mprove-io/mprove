@@ -45,8 +45,9 @@ export const sessionsTable = pgTable(
     apiKeyPrefix: varchar('api_key_prefix', { length: 32 }),
     keyTag: text('key_tag'),
     lastActivityTs: bigint('last_activity_ts', { mode: 'number' }),
-    runningStartTs: bigint('running_start_ts', { mode: 'number' }),
-    expiresAt: bigint('expires_at', { mode: 'number' }),
+    sandboxStartTs: bigint('sandbox_start_ts', { mode: 'number' }),
+    sandboxEndTs: bigint('sandbox_end_ts', { mode: 'number' }),
+    sandboxInfo: json('sandbox_info'),
     createdTs: bigint('created_ts', { mode: 'number' }).notNull(),
     serverTs: bigint('server_ts', { mode: 'number' }).notNull()
   },
@@ -55,10 +56,12 @@ export const sessionsTable = pgTable(
     idxSessionsLastActivityTs: index('idx_sessions_last_activity_ts').on(
       table.lastActivityTs
     ),
-    idxSessionsRunningStartTs: index('idx_sessions_running_start_ts').on(
-      table.runningStartTs
+    idxSessionsSandboxStartTs: index('idx_sessions_sandbox_start_ts').on(
+      table.sandboxStartTs
     ),
-    idxSessionsExpiresTs: index('idx_sessions_expires_ts').on(table.expiresAt),
+    idxSessionsSandboxEndTs: index('idx_sessions_sandbox_end_ts').on(
+      table.sandboxEndTs
+    ),
     idxSessionsCreatedTs: index('idx_sessions_created_ts').on(table.createdTs),
     idxSessionsUserId: index('idx_sessions_user_id').on(table.userId),
     idxSessionsProjectId: index('idx_sessions_project_id').on(table.projectId),

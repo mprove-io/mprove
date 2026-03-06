@@ -52,8 +52,9 @@ export class SessionsService {
     initialCommit?: string;
     status: SessionStatusEnum;
     lastActivityTs: number;
-    runningStartTs?: number;
-    expiresAt?: number;
+    sandboxStartTs?: number;
+    sandboxEndTs?: number;
+    sandboxInfo?: any;
     createdTs: number;
   }): SessionTab {
     let session: SessionTab = {
@@ -82,8 +83,9 @@ export class SessionsService {
       status: item.status,
       archivedReason: undefined,
       lastActivityTs: item.lastActivityTs,
-      runningStartTs: item.runningStartTs,
-      expiresAt: item.expiresAt,
+      sandboxStartTs: item.sandboxStartTs,
+      sandboxEndTs: item.sandboxEndTs,
+      sandboxInfo: item.sandboxInfo,
       createdTs: item.createdTs,
       serverTs: undefined,
       keyTag: undefined

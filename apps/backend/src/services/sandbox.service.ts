@@ -16,6 +16,7 @@ export interface CreateSandboxResult {
   sandboxBaseUrl: string;
   opencodePassword: string;
   sandbox: Sandbox;
+  sandboxInfo: SandboxInfo;
 }
 
 @Injectable()
@@ -167,11 +168,14 @@ export class SandboxService {
             maxAttempts: 30
           });
 
+          let sandboxInfo = await sandbox.getInfo();
+
           createSandboxResult = {
             sandboxId: sandbox.sandboxId,
             sandboxBaseUrl: sandboxBaseUrl,
             opencodePassword: opencodePassword,
-            sandbox: sandbox
+            sandbox: sandbox,
+            sandboxInfo: sandboxInfo
           };
 
           break;

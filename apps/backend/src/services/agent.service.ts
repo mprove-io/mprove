@@ -932,7 +932,10 @@ export class AgentService implements OnModuleDestroy {
         ) {
           let updatedSession: SessionTab = {
             ...session,
-            status: SessionStatusEnum.Paused
+            status: SessionStatusEnum.Paused,
+            sandboxStartTs: sandboxInfo.startedAt.getTime(),
+            sandboxEndTs: sandboxInfo.endAt.getTime(),
+            sandboxInfo: sandboxInfo
           };
 
           await this.db.drizzle.transaction(
