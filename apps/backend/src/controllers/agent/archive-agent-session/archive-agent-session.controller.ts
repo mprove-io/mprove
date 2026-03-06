@@ -69,10 +69,6 @@ export class ArchiveAgentSessionController {
         projectId: session.projectId
       });
 
-      await this.agentService.stopEventStream(sessionId);
-
-      this.sandboxService.disposeOpenCodeClient(sessionId);
-
       await this.sandboxService.stopSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,

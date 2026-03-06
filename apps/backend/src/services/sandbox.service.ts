@@ -52,11 +52,11 @@ export class SandboxService {
     return client;
   }
 
-  tryGetOpenCodeClient(sessionId: string): OpencodeClient | undefined {
+  getOpenCodeClient(sessionId: string): OpencodeClient | undefined {
     return this.opencodeClients.get(sessionId);
   }
 
-  getOpenCodeClient(sessionId: string): OpencodeClient {
+  getOpenCodeClientCheckExists(sessionId: string): OpencodeClient {
     let client = this.opencodeClients.get(sessionId);
 
     if (!client) {

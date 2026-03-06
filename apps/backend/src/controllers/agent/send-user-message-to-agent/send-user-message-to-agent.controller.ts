@@ -106,29 +106,30 @@ export class SendUserMessageToAgentController {
       answers
     };
 
-    // Ensure sandbox is connected (handles Paused status and missing client)
-    if (
-      session.status === SessionStatusEnum.Paused ||
-      !this.sandboxService.tryGetOpenCodeClient(sessionId)
-    ) {
+    let opencodeClient = this.sandboxService.getOpenCodeClient(sessionId);
+
+    if (session.status === SessionStatusEnum.Paused || !opencodeClient) {
       session = await this.ensureSandboxConnected({ session });
     }
 
-    // Execute interaction (skip if archived due to expired sandbox)
     if (session.status !== SessionStatusEnum.Archived) {
+      await this.agentService.startEventStream({
+        sessionId: session.sessionId
+      });
+
       try {
         session = await this.executeInteraction({
           session,
           ...interactionParams
         });
       } catch (e) {
-        // Sandbox may have been killed or paused by E2B — attempt recovery
-        await this.agentService.stopEventStream(sessionId);
-        this.sandboxService.disposeOpenCodeClient(sessionId);
-
         session = await this.ensureSandboxConnected({ session });
 
         if (session.status !== SessionStatusEnum.Archived) {
+          await this.agentService.startEventStream({
+            sessionId: session.sessionId
+          });
+
           session = await this.executeInteraction({
             session,
             ...interactionParams
@@ -137,7 +138,6 @@ export class SendUserMessageToAgentController {
       }
     }
 
-    // Single save, single transform, single return
     await retry(
       async () =>
         await this.db.drizzle.transaction(
@@ -229,10 +229,6 @@ export class SendUserMessageToAgentController {
       sandboxBaseUrl: session.sandboxBaseUrl
     });
 
-    await this.agentService.startEventStream({
-      sessionId: session.sessionId
-    });
-
     return {
       ...session,
       status: SessionStatusEnum.Active,
@@ -268,7 +264,7 @@ export class SendUserMessageToAgentController {
     let sessionId = session.sessionId;
 
     if (interactionType === InteractionTypeEnum.Message) {
-      let client = this.sandboxService.getOpenCodeClient(sessionId);
+      let client = this.sandboxService.getOpenCodeClientCheckExists(sessionId);
 
       let effectiveModel = model !== undefined ? model : session.model;
 
@@ -327,7 +323,7 @@ export class SendUserMessageToAgentController {
         });
       }
     } else if (interactionType === InteractionTypeEnum.Abort) {
-      let client = this.sandboxService.getOpenCodeClient(sessionId);
+      let client = this.sandboxService.getOpenCodeClientCheckExists(sessionId);
 
       await client.session.abort(
         {

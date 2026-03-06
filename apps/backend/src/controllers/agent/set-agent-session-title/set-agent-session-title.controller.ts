@@ -41,7 +41,7 @@ export class SetAgentSessionTitleController {
       session.status === SessionStatusEnum.Active &&
       session.opencodeSessionId
     ) {
-      let client = this.sandboxService.getOpenCodeClient(sessionId);
+      let client = this.sandboxService.getOpenCodeClientCheckExists(sessionId);
 
       await client.session.update(
         {

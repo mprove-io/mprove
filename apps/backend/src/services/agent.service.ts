@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type {
@@ -56,6 +57,8 @@ export interface AgentEvent {
 
 @Injectable()
 export class AgentService implements OnModuleDestroy {
+  private podId = crypto.randomUUID();
+
   private redisPubClient: Redis;
   private redisSubClient: Redis;
 
@@ -137,6 +140,18 @@ export class AgentService implements OnModuleDestroy {
           cs: this.cs
         });
       });
+
+      this.refreshStreamLocks().catch(e => {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      });
     }, 1000);
   }
 
@@ -144,6 +159,41 @@ export class AgentService implements OnModuleDestroy {
 
   private channelName(sessionId: string): string {
     return `agent-events:${sessionId}`;
+  }
+
+  private streamLockKey(sessionId: string): string {
+    return `stream-owner:${sessionId}`;
+  }
+
+  private async tryAcquireStreamLock(sessionId: string): Promise<boolean> {
+    let result = await this.redisPubClient.set(
+      this.streamLockKey(sessionId),
+      this.podId,
+      'EX',
+      10,
+      'NX'
+    );
+    return result === 'OK';
+  }
+
+  private async refreshStreamLocks(): Promise<void> {
+    for (let sessionId of this.activeStreams.keys()) {
+      await this.redisPubClient.eval(
+        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], 10) else return 0 end`,
+        1,
+        this.streamLockKey(sessionId),
+        this.podId
+      );
+    }
+  }
+
+  private async releaseStreamLock(sessionId: string): Promise<void> {
+    await this.redisPubClient.eval(
+      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
+      1,
+      this.streamLockKey(sessionId),
+      this.podId
+    );
   }
 
   async publish(sessionId: string, event: AgentEvent): Promise<void> {
@@ -323,9 +373,18 @@ export class AgentService implements OnModuleDestroy {
   // stream
 
   async startEventStream(item: { sessionId: string }): Promise<void> {
-    await this.stopEventStream(item.sessionId);
+    if (this.activeStreams.has(item.sessionId)) {
+      return;
+    }
 
-    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
+    let acquired = await this.tryAcquireStreamLock(item.sessionId);
+    if (!acquired) {
+      return;
+    }
+
+    let client = this.sandboxService.getOpenCodeClientCheckExists(
+      item.sessionId
+    );
 
     let abortController = new AbortController();
 
@@ -370,6 +429,16 @@ export class AgentService implements OnModuleDestroy {
             logger: this.logger,
             cs: this.cs
           });
+        } else {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_AGENT_SSE_STREAM_ABORT,
+              originalError: e
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
         }
       }
 
@@ -394,6 +463,7 @@ export class AgentService implements OnModuleDestroy {
     this.eventCounters.delete(sessionId);
     this.partStates.delete(sessionId);
     this.sandboxService.disposeOpenCodeClient(sessionId);
+    await this.releaseStreamLock(sessionId);
   }
 
   async respondToPermission(item: {
@@ -402,7 +472,9 @@ export class AgentService implements OnModuleDestroy {
     permissionId: string;
     reply: string;
   }): Promise<void> {
-    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
+    let client = this.sandboxService.getOpenCodeClientCheckExists(
+      item.sessionId
+    );
 
     await client.permission.respond({
       sessionID: item.opencodeSessionId,
@@ -417,7 +489,9 @@ export class AgentService implements OnModuleDestroy {
     questionId: string;
     answers: string[][];
   }): Promise<void> {
-    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
+    let client = this.sandboxService.getOpenCodeClientCheckExists(
+      item.sessionId
+    );
 
     await client.question.reply({
       requestID: item.questionId,
@@ -430,7 +504,9 @@ export class AgentService implements OnModuleDestroy {
     opencodeSessionId: string;
     questionId: string;
   }): Promise<void> {
-    let client = this.sandboxService.getOpenCodeClient(item.sessionId);
+    let client = this.sandboxService.getOpenCodeClientCheckExists(
+      item.sessionId
+    );
 
     await client.question.reject({
       requestID: item.questionId
@@ -893,18 +969,6 @@ export class AgentService implements OnModuleDestroy {
         let sandboxInfo = sandboxes.find(
           s => s.sandboxId === session.sandboxId
         );
-
-        let opencodeClient = this.sandboxService.tryGetOpenCodeClient(
-          session.sessionId
-        );
-
-        // Clean up stale in-memory state if sandbox is paused or gone
-        if (
-          opencodeClient &&
-          (!sandboxInfo || sandboxInfo.state === 'paused')
-        ) {
-          await this.stopEventStream(session.sessionId);
-        }
 
         if (!sandboxInfo) {
           // Sandbox no longer exists
