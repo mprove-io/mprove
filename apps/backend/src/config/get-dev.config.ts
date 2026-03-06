@@ -268,15 +268,17 @@ export function getDevConfig() {
 
     e2bPublicTemplate: process.env.BACKEND_E2B_PUBLIC_TEMPLATE,
 
+    opencodeServerPassword: process.env.BACKEND_OPENCODE_SERVER_PASSWORD,
+
+    opencodeServerUrl: process.env.BACKEND_OPENCODE_SERVER_URL,
+
+    sandboxMproveCliHost: process.env.BACKEND_SANDBOX_MPROVE_CLI_HOST,
+
     sandboxTimeoutMinutes: isDefined(
       process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES
     )
       ? Number(process.env.BACKEND_SANDBOX_TIMEOUT_MINUTES)
       : 60, // e2b default expiration limit
-
-    sandboxIdleMinutes: isDefined(process.env.BACKEND_SANDBOX_IDLE_MINUTES)
-      ? Number(process.env.BACKEND_SANDBOX_IDLE_MINUTES)
-      : 10,
 
     sandboxRefreshMinutes: isDefined(
       process.env.BACKEND_SANDBOX_REFRESH_MINUTES
@@ -284,29 +286,17 @@ export function getDevConfig() {
       ? Number(process.env.BACKEND_SANDBOX_REFRESH_MINUTES)
       : 40,
 
+    sessionPauseThresholdMinutes: isDefined(
+      process.env.BACKEND_SESSION_PAUSE_THRESHOLD_MINUTES
+    )
+      ? Number(process.env.BACKEND_SESSION_PAUSE_THRESHOLD_MINUTES)
+      : 10,
+
     maxActiveSessionsPerUser: isDefined(
       process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER
     )
       ? Number(process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER)
-      : 100,
-
-    coordinatorLockTtlSeconds: isDefined(
-      process.env.BACKEND_COORDINATOR_LOCK_TTL_SECONDS
-    )
-      ? Number(process.env.BACKEND_COORDINATOR_LOCK_TTL_SECONDS)
-      : 10,
-
-    coordinatorHeartbeatMs: isDefined(
-      process.env.BACKEND_COORDINATOR_HEARTBEAT_MS
-    )
-      ? Number(process.env.BACKEND_COORDINATOR_HEARTBEAT_MS)
-      : 3000,
-
-    opencodeServerPassword: process.env.BACKEND_OPENCODE_SERVER_PASSWORD,
-
-    opencodeServerUrl: process.env.BACKEND_OPENCODE_SERVER_URL,
-
-    sandboxMproveCliHost: process.env.BACKEND_SANDBOX_MPROVE_CLI_HOST
+      : 10
   };
 
   return devConfig;

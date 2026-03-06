@@ -317,7 +317,7 @@ export class BackendConfig {
 
   @IsOptional()
   @IsNumber()
-  sandboxIdleMinutes?: number;
+  sessionPauseThresholdMinutes?: number;
 
   @IsOptional()
   @IsNumber()
@@ -326,14 +326,6 @@ export class BackendConfig {
   @IsOptional()
   @IsNumber()
   maxActiveSessionsPerUser?: number;
-
-  @IsOptional()
-  @IsNumber()
-  coordinatorLockTtlSeconds?: number;
-
-  @IsOptional()
-  @IsNumber()
-  coordinatorHeartbeatMs?: number;
 
   @IsString()
   opencodeServerPassword?: string;

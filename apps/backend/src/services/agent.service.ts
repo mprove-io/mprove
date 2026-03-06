@@ -755,10 +755,12 @@ export class AgentService implements OnModuleDestroy {
   // Scheduled task
 
   async pauseIdleSessions(): Promise<void> {
-    let idleMinutes =
-      this.cs.get<BackendConfig['sandboxIdleMinutes']>('sandboxIdleMinutes');
+    let sessionPauseThresholdMinutes = this.cs.get<
+      BackendConfig['sessionPauseThresholdMinutes']
+    >('sessionPauseThresholdMinutes');
 
-    let pauseThresholdTs = Date.now() - idleMinutes * 60 * 1000;
+    let pauseThresholdTs =
+      Date.now() - sessionPauseThresholdMinutes * 60 * 1000;
 
     let sessionsToPause = await this.db.drizzle.query.sessionsTable
       .findMany({

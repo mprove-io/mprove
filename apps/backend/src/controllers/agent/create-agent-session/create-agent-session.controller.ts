@@ -108,7 +108,7 @@ export class CreateAgentSessionController {
       projectId: projectId
     });
 
-    let maxActiveSandboxesPerUser = this.cs.get<
+    let maxActiveSessionsPerUser = this.cs.get<
       BackendConfig['maxActiveSessionsPerUser']
     >('maxActiveSessionsPerUser');
 
@@ -124,7 +124,7 @@ export class CreateAgentSessionController {
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-    if (activeSessions.length >= maxActiveSandboxesPerUser) {
+    if (activeSessions.length >= maxActiveSessionsPerUser) {
       throw new ServerError({
         message: ErEnum.BACKEND_TOO_MANY_ACTIVE_SESSIONS
       });
