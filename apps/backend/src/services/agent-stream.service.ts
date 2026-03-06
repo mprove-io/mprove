@@ -41,35 +41,37 @@ export class AgentStreamService implements OnModuleDestroy {
       password: valkeyPassword
     });
 
-    this.drainTimer = setInterval(() => {
-      this.agentDrainService
-        .drainAllQueues()
-        .then(safePauseSessionIds => {
-          for (let sessionId of safePauseSessionIds) {
-            this.safePauseSession(sessionId).catch(e => {
-              logToConsoleBackend({
-                log: new ServerError({
-                  message: ErEnum.BACKEND_AGENT_SAFE_PAUSE_SESSION_FAILED,
-                  originalError: e
-                }),
-                logLevel: LogLevelEnum.Error,
-                logger: this.logger,
-                cs: this.cs
-              });
+    this.drainTimer = setInterval(async () => {
+      try {
+        let safePauseSessionIds = await this.agentDrainService.drainAllQueues();
+
+        for (let sessionId of safePauseSessionIds) {
+          try {
+            await this.stopEventStream(sessionId);
+            await this.agentLifecycleService.pauseSessionById({ sessionId });
+          } catch (e) {
+            logToConsoleBackend({
+              log: new ServerError({
+                message: ErEnum.BACKEND_AGENT_SAFE_PAUSE_SESSION_FAILED,
+                originalError: e
+              }),
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
             });
           }
-        })
-        .catch(e => {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_DRAIN_QUEUES_FAILED,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
+        }
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_DRAIN_QUEUES_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
         });
+      }
 
       this.refreshStreamLocks().catch(e => {
         logToConsoleBackend({
@@ -250,11 +252,6 @@ export class AgentStreamService implements OnModuleDestroy {
     await opencodeClient.question.reject({
       requestID: item.questionId
     });
-  }
-
-  private async safePauseSession(sessionId: string): Promise<void> {
-    await this.stopEventStream(sessionId);
-    await this.agentLifecycleService.pauseSessionById({ sessionId });
   }
 
   onModuleDestroy() {
