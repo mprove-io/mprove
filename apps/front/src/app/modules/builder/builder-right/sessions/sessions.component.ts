@@ -53,7 +53,7 @@ export class SessionsComponent implements OnInit {
   isRefreshing = false;
   spinnerName = SESSIONS_SPINNER_NAME;
   debugMode = false;
-  isShowDebugToggle = false;
+  isShowDebugToggle = true;
   allEventsExpanded = false;
   providerLabels: Record<string, string> = {
     opencode: 'Zen',
