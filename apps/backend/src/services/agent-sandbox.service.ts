@@ -75,6 +75,12 @@ export class AgentSandboxService {
     return client;
   }
 
+  disposeOpenCodeClient(sessionId: string): void {
+    this.opencodeClients = this.opencodeClients.filter(
+      x => x.sessionId !== sessionId
+    );
+  }
+
   async getSandboxInfo(item: {
     sandboxId: string;
     e2bApiKey: string;
@@ -98,12 +104,6 @@ export class AgentSandboxService {
     }
 
     return all;
-  }
-
-  disposeOpenCodeClient(sessionId: string): void {
-    this.opencodeClients = this.opencodeClients.filter(
-      x => x.sessionId !== sessionId
-    );
   }
 
   async startOpencodeServer(item: {

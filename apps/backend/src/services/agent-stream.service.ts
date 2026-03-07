@@ -174,6 +174,8 @@ export class AgentStreamService implements OnModuleDestroy {
     });
 
     let processStream = async () => {
+      let streamFailed = false;
+
       try {
         for await (let event of response.stream) {
           this.agentDrainService.enqueue({
@@ -195,19 +197,23 @@ export class AgentStreamService implements OnModuleDestroy {
             cs: this.cs
           });
 
-          await this.agentEventsService.publish(item.sessionId, {
-            eventId: `${item.sessionId}_${eventIndex}`,
-            eventIndex: eventIndex,
-            eventType: 'session.mprove-reload-session',
-            ocEvent: {
-              type: 'session.mprove-reload-session' as any,
-              properties: {}
-            }
-          });
+          streamFailed = true;
         }
       }
 
       await this.stopEventStream(item.sessionId);
+
+      if (streamFailed) {
+        await this.agentEventsService.publish(item.sessionId, {
+          eventId: `${item.sessionId}_${eventIndex}`,
+          eventIndex: eventIndex,
+          eventType: 'session.mprove-reload-session',
+          ocEvent: {
+            type: 'session.mprove-reload-session' as any,
+            properties: {}
+          }
+        });
+      }
     };
 
     this.activeStreams.set(item.sessionId, () => abortController.abort());
@@ -223,10 +229,12 @@ export class AgentStreamService implements OnModuleDestroy {
       this.activeStreams.delete(sessionId);
     }
 
-    await this.agentDrainService.drainQueue(sessionId);
-    this.agentDrainService.cleanup(sessionId);
-    this.agentSandboxService.disposeOpenCodeClient(sessionId);
-    await this.releaseStreamLock(sessionId);
+    try {
+      await this.agentDrainService.drainQueue(sessionId);
+    } finally {
+      this.agentDrainService.cleanup(sessionId);
+      await this.releaseStreamLock(sessionId);
+    }
   }
 
   async respondToPermission(item: {
