@@ -13,21 +13,22 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import type {
-  SessionTab,
-  UserTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { AgentStreamService } from '#backend/services/agent-stream.service';
+import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
+import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { splitModel } from '#common/functions/split-model';
 import {
   ToBackendSendUserMessageToAgentRequest,
@@ -41,6 +42,7 @@ import { ServerError } from '#common/models/server-error';
 export class SendUserMessageToAgentController {
   constructor(
     private sessionsService: SessionsService,
+    private projectsService: ProjectsService,
     private agentStreamService: AgentStreamService,
     private agentSandboxService: AgentSandboxService,
     private cs: ConfigService<BackendConfig>,
@@ -67,6 +69,10 @@ export class SendUserMessageToAgentController {
       sessionId
     });
 
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
+
     if (session.userId !== user.userId) {
       throw new ServerError({
         message: ErEnum.BACKEND_UNAUTHORIZED
@@ -91,55 +97,135 @@ export class SendUserMessageToAgentController {
       });
     }
 
-    let interactionParams = {
-      interactionType,
-      message,
-      model,
-      variant,
-      permissionId,
-      reply,
-      questionId,
-      answers
-    };
-
-    let hasClient = this.agentSandboxService.hasOpenCodeClient({
-      sessionId: sessionId
+    let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
+      sandboxId: session.sandboxId,
+      e2bApiKey: project.e2bApiKey
     });
 
-    if (session.status === SessionStatusEnum.Paused || !hasClient) {
-      session = await this.agentSandboxService.ensureSandboxConnected({
-        session
-      });
+    if (isDefined(sandboxInfo) === true) {
+      if (sandboxInfo.state === 'paused') {
+        await this.agentSandboxService.resumeSandbox({
+          sandboxType: session.sandboxType as SandboxTypeEnum,
+          sandboxId: session.sandboxId,
+          e2bApiKey: project.e2bApiKey,
+          timeoutMs:
+            this.cs.get<BackendConfig['sandboxTimeoutMinutes']>(
+              'sandboxTimeoutMinutes'
+            ) * 60_000
+        });
+
+        sandboxInfo = await this.agentSandboxService.getSandboxInfo({
+          sandboxId: session.sandboxId,
+          e2bApiKey: project.e2bApiKey
+        });
+      }
+
+      if (sandboxInfo.state === 'running') {
+        await this.agentSandboxService.getOpenCodeClient({
+          sessionId: session.sessionId,
+          sandboxBaseUrl: session.sandboxBaseUrl,
+          opencodePassword: session.opencodePassword
+        });
+
+        await this.agentSandboxService.healthCheckOpenCode({
+          sandboxBaseUrl: session.sandboxBaseUrl
+        });
+
+        session.status = SessionStatusEnum.Active;
+        session.sandboxStartTs = sandboxInfo.startedAt.getTime();
+        session.sandboxEndTs = sandboxInfo.endAt.getTime();
+        session.sandboxInfo = sandboxInfo;
+        session.lastActivityTs = Date.now();
+      } else {
+        session.status = SessionStatusEnum.Error;
+      }
+    } else {
+      session.status = SessionStatusEnum.Archived;
+      session.archivedReason = ArchivedReasonEnum.Expire;
     }
 
-    if (session.status !== SessionStatusEnum.Archived) {
+    if (session.status === SessionStatusEnum.Active) {
+      // execute interaction
+      if (interactionType === InteractionTypeEnum.Message) {
+        let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+          sessionId: sessionId
+        });
+
+        let effectiveModel = model !== undefined ? model : session.model;
+
+        let promptBody: any = {
+          parts: [{ type: 'text', text: message }]
+        };
+
+        if (session.agent) {
+          promptBody.agent = session.agent;
+        }
+
+        let split = splitModel(effectiveModel);
+
+        if (split) {
+          promptBody.model = split;
+        }
+
+        if (variant) {
+          promptBody.variant = variant;
+        }
+
+        await opencodeClient.session.promptAsync(
+          {
+            sessionID: session.opencodeSessionId,
+            ...promptBody
+          },
+          { throwOnError: true }
+        );
+
+        session = {
+          ...session,
+          model: model !== undefined ? model : session.model,
+          lastMessageProviderModel: effectiveModel,
+          lastMessageVariant: variant
+        };
+      } else if (interactionType === InteractionTypeEnum.Permission) {
+        await this.agentStreamService.respondToPermission({
+          sessionId: sessionId,
+          opencodeSessionId: session.opencodeSessionId,
+          permissionId: permissionId,
+          reply: reply
+        });
+      } else if (interactionType === InteractionTypeEnum.Question) {
+        if (answers !== undefined) {
+          await this.agentStreamService.respondToQuestion({
+            sessionId: sessionId,
+            opencodeSessionId: session.opencodeSessionId,
+            questionId: questionId,
+            answers: answers
+          });
+        } else {
+          await this.agentStreamService.rejectQuestion({
+            sessionId: sessionId,
+            opencodeSessionId: session.opencodeSessionId,
+            questionId: questionId
+          });
+        }
+      } else if (interactionType === InteractionTypeEnum.Abort) {
+        let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+          sessionId: sessionId
+        });
+
+        await opencodeClient.session.abort(
+          {
+            sessionID: session.opencodeSessionId
+          },
+          { throwOnError: true }
+        );
+      }
+
+      session.lastActivityTs = Date.now();
+
       await this.agentStreamService.startEventStream({
         sessionId: session.sessionId,
         opencodeSessionId: session.opencodeSessionId
       });
-
-      try {
-        session = await this.executeInteraction({
-          session,
-          ...interactionParams
-        });
-      } catch (e) {
-        session = await this.agentSandboxService.ensureSandboxConnected({
-          session
-        });
-
-        if (session.status !== SessionStatusEnum.Archived) {
-          await this.agentStreamService.startEventStream({
-            sessionId: session.sessionId,
-            opencodeSessionId: session.opencodeSessionId
-          });
-
-          session = await this.executeInteraction({
-            session,
-            ...interactionParams
-          });
-        }
-      }
     }
 
     await retry(
@@ -170,109 +256,5 @@ export class SendUserMessageToAgentController {
     };
 
     return payload;
-  }
-
-  private async executeInteraction(item: {
-    session: SessionTab;
-    interactionType: InteractionTypeEnum;
-    message?: string;
-    model?: string;
-    variant?: string;
-    permissionId?: string;
-    reply?: string;
-    questionId?: string;
-    answers?: string[][];
-  }): Promise<SessionTab> {
-    let {
-      session,
-      interactionType,
-      message,
-      model,
-      variant,
-      permissionId,
-      reply,
-      questionId,
-      answers
-    } = item;
-    let sessionId = session.sessionId;
-
-    if (interactionType === InteractionTypeEnum.Message) {
-      let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
-        sessionId: sessionId
-      });
-
-      let effectiveModel = model !== undefined ? model : session.model;
-
-      let promptBody: any = {
-        parts: [{ type: 'text', text: message }]
-      };
-
-      if (session.agent) {
-        promptBody.agent = session.agent;
-      }
-
-      let split = splitModel(effectiveModel);
-
-      if (split) {
-        promptBody.model = split;
-      }
-
-      if (variant) {
-        promptBody.variant = variant;
-      }
-
-      await opencodeClient.session.promptAsync(
-        {
-          sessionID: session.opencodeSessionId,
-          ...promptBody
-        },
-        { throwOnError: true }
-      );
-
-      session = {
-        ...session,
-        model: model !== undefined ? model : session.model,
-        lastMessageProviderModel: effectiveModel,
-        lastMessageVariant: variant
-      };
-    } else if (interactionType === InteractionTypeEnum.Permission) {
-      await this.agentStreamService.respondToPermission({
-        sessionId: sessionId,
-        opencodeSessionId: session.opencodeSessionId,
-        permissionId: permissionId,
-        reply: reply
-      });
-    } else if (interactionType === InteractionTypeEnum.Question) {
-      if (answers !== undefined) {
-        await this.agentStreamService.respondToQuestion({
-          sessionId: sessionId,
-          opencodeSessionId: session.opencodeSessionId,
-          questionId: questionId,
-          answers: answers
-        });
-      } else {
-        await this.agentStreamService.rejectQuestion({
-          sessionId: sessionId,
-          opencodeSessionId: session.opencodeSessionId,
-          questionId: questionId
-        });
-      }
-    } else if (interactionType === InteractionTypeEnum.Abort) {
-      let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
-        sessionId: sessionId
-      });
-
-      await opencodeClient.session.abort(
-        {
-          sessionID: session.opencodeSessionId
-        },
-        { throwOnError: true }
-      );
-    }
-
-    return {
-      ...session,
-      lastActivityTs: Date.now()
-    };
   }
 }
