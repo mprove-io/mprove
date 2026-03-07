@@ -53,7 +53,7 @@ export class GetAgentProviderModelsController {
       }
 
       try {
-        let client = this.agentSandboxService.getOpenCodeClient({
+        let client = await this.agentSandboxService.getOpenCodeClient({
           sessionId: sessionId
         });
 

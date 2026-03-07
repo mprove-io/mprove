@@ -27,7 +27,7 @@ export async function forTestsInspectUi(item: {
   let session = await sessionsService.getSessionByIdCheckExists({
     sessionId: item.sessionId
   });
-  let client = agentSandboxService.getOpenCodeClient({
+  let client = await agentSandboxService.getOpenCodeClient({
     sessionId: item.sessionId
   });
 

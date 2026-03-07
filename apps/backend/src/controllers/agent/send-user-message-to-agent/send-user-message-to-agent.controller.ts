@@ -197,7 +197,7 @@ export class SendUserMessageToAgentController {
     let sessionId = session.sessionId;
 
     if (interactionType === InteractionTypeEnum.Message) {
-      let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+      let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
         sessionId: sessionId
       });
 
@@ -258,7 +258,7 @@ export class SendUserMessageToAgentController {
         });
       }
     } else if (interactionType === InteractionTypeEnum.Abort) {
-      let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+      let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
         sessionId: sessionId
       });
 

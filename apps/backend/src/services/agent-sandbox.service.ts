@@ -9,6 +9,7 @@ import type {
   SessionTab
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { SessionsService } from '#backend/services/db/sessions.service';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
@@ -32,40 +33,46 @@ export class AgentSandboxService {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private projectsService: ProjectsService,
+    private sessionsService: SessionsService,
     private logger: Logger
   ) {}
 
-  getOpenCodeClient(item: {
+  hasOpenCodeClient(item: { sessionId: string }): boolean {
+    return this.opencodeClients.some(x => x.sessionId === item.sessionId);
+  }
+
+  async getOpenCodeClient(item: {
     sessionId: string;
     sandboxBaseUrl?: string;
     opencodePassword?: string;
-  }): OpencodeClient {
+  }): Promise<OpencodeClient> {
     let client = this.opencodeClients.find(
       x => x.sessionId === item.sessionId
     )?.client;
 
-    if (!client && item.sandboxBaseUrl && item.opencodePassword) {
+    if (!client) {
+      let sandboxBaseUrl = item.sandboxBaseUrl;
+      let opencodePassword = item.opencodePassword;
+
+      if (!sandboxBaseUrl || !opencodePassword) {
+        let session = await this.sessionsService.getSessionByIdCheckExists({
+          sessionId: item.sessionId
+        });
+        sandboxBaseUrl = session.sandboxBaseUrl;
+        opencodePassword = session.opencodePassword;
+      }
+
       client = createOpencodeClient({
-        baseUrl: item.sandboxBaseUrl,
+        baseUrl: sandboxBaseUrl,
         directory: '/home/user/project',
         headers: {
-          Authorization: `Basic ${Buffer.from(`opencode:${item.opencodePassword}`).toString('base64')}`
+          Authorization: `Basic ${Buffer.from(`opencode:${opencodePassword}`).toString('base64')}`
         }
       });
       this.opencodeClients.push({ sessionId: item.sessionId, client: client });
     }
 
-    if (!client) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_CLIENT_NOT_FOUND
-      });
-    }
-
     return client;
-  }
-
-  hasOpenCodeClient(item: { sessionId: string }): boolean {
-    return this.opencodeClients.some(x => x.sessionId === item.sessionId);
   }
 
   async getSandboxInfo(item: {
@@ -373,7 +380,7 @@ export class AgentSandboxService {
       }
     }
 
-    this.getOpenCodeClient({
+    await this.getOpenCodeClient({
       sessionId: session.sessionId,
       sandboxBaseUrl: session.sandboxBaseUrl,
       opencodePassword: session.opencodePassword

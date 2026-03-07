@@ -152,7 +152,7 @@ export class AgentStreamService implements OnModuleDestroy {
       return;
     }
 
-    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -235,7 +235,7 @@ export class AgentStreamService implements OnModuleDestroy {
     permissionId: string;
     reply: string;
   }): Promise<void> {
-    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -252,7 +252,7 @@ export class AgentStreamService implements OnModuleDestroy {
     questionId: string;
     answers: string[][];
   }): Promise<void> {
-    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -267,7 +267,7 @@ export class AgentStreamService implements OnModuleDestroy {
     opencodeSessionId: string;
     questionId: string;
   }): Promise<void> {
-    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
