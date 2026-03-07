@@ -12,7 +12,7 @@ import type {
   ToolPart
 } from '@opencode-ai/sdk/v2';
 import { combineLatest, interval, Subscription } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import { exhaustMap, take, tap } from 'rxjs/operators';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -396,7 +396,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   startPolling(sessionId: string) {
     this.pollSubscription = interval(1000)
       .pipe(
-        switchMap(() =>
+        exhaustMap(() =>
           this.apiService.req({
             pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
             payload: {
