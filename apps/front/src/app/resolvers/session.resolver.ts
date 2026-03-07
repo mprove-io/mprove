@@ -14,8 +14,8 @@ import { SessionQuery } from '../queries/session.query';
 import { SessionBundleQuery } from '../queries/session-bundle.query';
 import { SessionEventsQuery } from '../queries/session-events.query';
 import { SessionsQuery } from '../queries/sessions.query';
+import { AgentEventsService } from '../services/agent-events.service';
 import { ApiService } from '../services/api.service';
-import { EventReducerService } from '../services/event-reducer.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionResolver {
@@ -25,7 +25,7 @@ export class SessionResolver {
     private sessionsQuery: SessionsQuery,
     private sessionEventsQuery: SessionEventsQuery,
     private sessionBundleQuery: SessionBundleQuery,
-    private eventReducerService: EventReducerService
+    private agentEventsService: AgentEventsService
   ) {}
 
   resolve(
@@ -47,7 +47,7 @@ export class SessionResolver {
       .pipe(
         map((resp: ToBackendGetAgentSessionResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.eventReducerService.resetAll();
+            this.agentEventsService.resetAll();
 
             this.sessionQuery.update(resp.payload.session);
 

@@ -9,7 +9,7 @@ import {
 } from '../queries/session-bundle.query';
 
 @Injectable({ providedIn: 'root' })
-export class EventReducerService {
+export class AgentEventsService {
   constructor(private sessionBundleQuery: SessionBundleQuery) {}
 
   applyEvent(event: Event) {

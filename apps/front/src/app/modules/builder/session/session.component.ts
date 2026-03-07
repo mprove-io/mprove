@@ -8,35 +8,21 @@ import {
 import type {
   PermissionRequest,
   QuestionRequest,
-  SessionStatus,
-  ToolPart
+  SessionStatus
 } from '@opencode-ai/sdk/v2';
-import { combineLatest, interval, Subscription } from 'rxjs';
-import { exhaustMap, take, tap } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { take, tap } from 'rxjs/operators';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
-import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
-import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
-import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
-import {
-  ToBackendCreateAgentSseTicketRequestPayload,
-  ToBackendCreateAgentSseTicketResponse
-} from '#common/interfaces/to-backend/agent/to-backend-create-agent-sse-ticket';
-import {
-  ToBackendGetAgentSessionRequestPayload,
-  ToBackendGetAgentSessionResponse
-} from '#common/interfaces/to-backend/agent/to-backend-get-agent-session';
 import {
   ToBackendSendUserMessageToAgentRequestPayload,
   ToBackendSendUserMessageToAgentResponse
 } from '#common/interfaces/to-backend/agent/to-backend-send-user-message-to-agent';
-import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
-import { unwrapErrorMessage } from '#front/app/functions/unwrap-error-message';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
 import {
@@ -46,11 +32,10 @@ import {
 import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { AgentMessagesService } from '#front/app/services/agent-messages.service';
+import { AgentSessionService } from '#front/app/services/agent-session.service';
 import { ApiService } from '#front/app/services/api.service';
-import { EventReducerService } from '#front/app/services/event-reducer.service';
-import { UiService } from '#front/app/services/ui.service';
-import { environment } from '#front/environments/environment';
-import { ChatMessage, ChatTurn, FileDiffInfo } from './session-chat.interfaces';
+import { ChatMessage, ChatTurn } from './session-chat.interfaces';
 import { SessionInputComponent } from './session-input/session-input.component';
 import { SessionMessagesComponent } from './session-messages/session-messages.component';
 
@@ -61,95 +46,47 @@ import { SessionMessagesComponent } from './session-messages/session-messages.co
 })
 export class SessionComponent implements OnInit, OnDestroy {
   @ViewChild(SessionInputComponent) sessionInput: SessionInputComponent;
+
   @ViewChild(SessionMessagesComponent)
   sessionMessages: SessionMessagesComponent;
 
   archivedReasonEnum = ArchivedReasonEnum;
-  model = 'default';
+
   agent = 'plan';
+  model = 'default';
   variant = 'default';
 
-  // Chat mode
   session: SessionApi;
   events: AgentEventApi[] = [];
   messages: ChatMessage[] = [];
   turns: ChatTurn[] = [];
   permissions: PermissionRequest[] = [];
   questions: QuestionRequest[] = [];
-  scrollTrigger = 0;
-  // isSessionSwitching = false;
 
-  previousTurnsCount = 0;
   previousLastTurnResponsesExist = false;
-  previousSessionId: string;
   userSentMessage = false;
   isActivating = false;
   isArchived = false;
-  archivedReason: string | undefined;
   isAgentBusy = false;
   isWorking = false;
   isAborting = false;
-  retryMessage: string;
   isSessionError = false;
-  lastSessionError: Record<string, unknown> | undefined;
-  isLastErrorRecovered: boolean | undefined;
-
-  get statusText(): string {
-    if (this.isAgentBusy) {
-      return this.retryMessage ? 'Retrying' : 'Working';
-    }
-    return '';
-  }
-
-  get statusTooltip(): string {
-    if (this.isAgentBusy && this.retryMessage) {
-      return this.retryMessage;
-    }
-    return '';
-  }
-
-  statusTextChars: { char: string; index: number }[] = [];
-  private cachedStatusText = '';
-
-  updateStatusTextChars() {
-    const text = this.statusText;
-    if (text !== this.cachedStatusText) {
-      this.cachedStatusText = text;
-      if (!text) {
-        this.statusTextChars = [];
-      } else {
-        this.statusTextChars = text.split('').map((char, i) => ({
-          char: char === ' ' ? '\u00A0' : char,
-          index: i
-        }));
-      }
-    }
-  }
-
-  trackByIndex(index: number): number {
-    return index;
-  }
-
   debugMode = false;
-  debugExpandedEvents: Record<string, boolean> = {};
   allEventsExpanded = false;
-  eventSource: EventSource;
-  isConnectingSse = false;
-  sseRetryCount = 0;
-  SSE_MAX_RETRIES = 5;
-  SSE_RETRY_DELAY_MS = 3000;
-  lastProcessedEventIndex = -1;
+  isLastErrorRecovered: boolean;
 
-  // Optimistic
-  pendingUserMessages: string[] = [];
+  scrollTrigger = 0;
+  previousTurnsCount = 0;
   lastKnownStoreUserCount = 0;
 
-  // SSE event batching
-  sseEventBuffer: AgentEventApi[] = [];
-  sseRafId: number;
-
-  // Polling
-  pollSubscription: Subscription;
+  previousSessionId: string;
+  archivedReason: string;
+  retryMessage: string;
+  lastSessionError: Record<string, unknown>;
+  statusTextChars: { char: string; index: number }[] = [];
+  cachedStatusText = '';
+  debugExpandedEvents: Record<string, boolean> = {};
+  pendingUserMessages: string[] = [];
 
   debugEvents$ = this.sessionEventsQuery.events$.pipe(
     tap(x => {
@@ -165,7 +102,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     })
   );
 
-  private toggleAllEventsLastValue = 0;
+  toggleAllEventsLastValue = 0;
   toggleAllEvents$ = this.uiQuery.sessionToggleAllEvents$.pipe(
     tap(x => {
       if (x !== this.toggleAllEventsLastValue) {
@@ -209,17 +146,12 @@ export class SessionComponent implements OnInit, OnDestroy {
         console.log(
           'hasSession && hadPrevSession && currentSessionId !== this.previousSessionId'
         );
-        //   this.closeSse();
-        //   this.stopPolling();
-        //   this.enterSession(sessionData);
       }
 
       this.previousSessionId = currentSessionId;
       this.cd.detectChanges();
     })
   );
-
-  ngOnInit() {}
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -229,14 +161,79 @@ export class SessionComponent implements OnInit, OnDestroy {
     private sessionEventsQuery: SessionEventsQuery,
     private sessionBundleQuery: SessionBundleQuery,
     private uiQuery: UiQuery,
-    private uiService: UiService,
     private agentModelsQuery: AgentModelsQuery,
-    private eventReducerService: EventReducerService
+    private agentSessionService: AgentSessionService,
+    private agentMessagesService: AgentMessagesService
   ) {}
 
+  ngOnInit() {}
+
   ngOnDestroy() {
-    this.closeSse();
-    this.stopPolling();
+    this.agentSessionService.destroy();
+  }
+
+  trackByIndex(index: number): number {
+    return index;
+  }
+
+  updateStatusTextChars() {
+    const text = this.isAgentBusy
+      ? this.retryMessage
+        ? 'Retrying'
+        : 'Working'
+      : '';
+    if (text !== this.cachedStatusText) {
+      this.cachedStatusText = text;
+      if (!text) {
+        this.statusTextChars = [];
+      } else {
+        this.statusTextChars = text.split('').map((char, i) => ({
+          char: char === ' ' ? '\u00A0' : char,
+          index: i
+        }));
+      }
+    }
+  }
+
+  checkIsAgentBusy(ocSessionStatus: SessionStatus): boolean {
+    if (this.session?.status !== SessionStatusEnum.Active) {
+      return false;
+    }
+
+    if (
+      isDefined(ocSessionStatus) &&
+      ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  checkIsWorking(ocSessionStatus: SessionStatus): boolean {
+    if (this.session?.status !== SessionStatusEnum.Active) {
+      return false;
+    }
+
+    if (ocSessionStatus) {
+      let isBusy = ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1;
+
+      if (!isBusy) {
+        this.isAborting = false;
+      }
+
+      if (this.isAborting) {
+        return false;
+      }
+      return isBusy;
+    }
+    return false;
+  }
+
+  getRetryMessage(ocSessionStatus: SessionStatus): string {
+    if (ocSessionStatus?.type === 'retry') {
+      return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
+    }
+    return undefined;
   }
 
   toggleAllEvents() {
@@ -253,13 +250,6 @@ export class SessionComponent implements OnInit, OnDestroy {
     });
   }
 
-  getProviderFromModel(): string {
-    if (this.model === 'default') {
-      return 'opencode';
-    }
-    return this.model.split('/')[0];
-  }
-
   sendFollowUp(text: string) {
     if (!this.session) {
       return;
@@ -269,7 +259,23 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     // Optimistic: show user message immediately
     this.pendingUserMessages.push(text);
-    this.rebuildMessagesAndTurns();
+
+    let data = this.sessionBundleQuery.getValue();
+
+    this.messages = this.agentMessagesService.buildMessagesFromStores({
+      storeMessages: data.messages,
+      storeParts: data.parts,
+      session: this.session,
+      model: this.model,
+      agent: this.agent,
+      variant: this.variant,
+      pendingUserMessages: this.pendingUserMessages
+    });
+
+    this.turns = this.agentMessagesService.buildTurns({
+      messages: this.messages
+    });
+
     this.isAgentBusy = true;
     this.scrollTrigger++;
     this.sessionMessages?.scrollToBottom();
@@ -393,259 +399,18 @@ export class SessionComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  startPolling(sessionId: string) {
-    this.pollSubscription = interval(1000)
-      .pipe(
-        exhaustMap(() =>
-          this.apiService.req({
-            pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
-            payload: {
-              sessionId: sessionId,
-              includeMessagesAndParts: true
-            } as ToBackendGetAgentSessionRequestPayload
-          })
-        ),
-        tap((resp: ToBackendGetAgentSessionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.sessionQuery.update(resp.payload.session);
-
-            if (resp.payload.events.length > 0) {
-              this.sessionEventsQuery.updatePart({
-                events: resp.payload.events
-              });
-            }
-
-            this.sessionBundleQuery.updatePart({
-              messages: resp.payload.messages || [],
-              parts: resp.payload.parts
-                ? groupPartsByMessageId(resp.payload.parts)
-                : {},
-              todos: resp.payload.ocSession?.todos ?? [],
-              questions: resp.payload.ocSession?.questions ?? [],
-              permissions: resp.payload.ocSession?.permissions ?? [],
-              ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
-              lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
-            });
-
-            // Update session in the sessions list
-            let sessions = this.sessionsQuery.getValue().sessions;
-            let updated = sessions.map(s =>
-              s.sessionId === sessionId ? resp.payload.session : s
-            );
-            this.sessionsQuery.updatePart({ sessions: updated });
-          }
-        })
-      )
-      .subscribe();
-  }
-
-  stopPolling() {
-    if (this.pollSubscription) {
-      this.pollSubscription.unsubscribe();
-      this.pollSubscription = undefined;
-    }
-  }
-
-  connectSse(sessionId: string) {
-    if (this.isConnectingSse || this.eventSource) {
-      return;
-    }
-
-    this.isConnectingSse = true;
-
-    let payload: ToBackendCreateAgentSseTicketRequestPayload = {
-      sessionId: sessionId
-    };
-
-    this.apiService
-      .req({
-        pathInfoName:
-          ToBackendRequestInfoNameEnum.ToBackendCreateAgentSseTicket,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: ToBackendCreateAgentSseTicketResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.connectSseWithTicket(sessionId, resp.payload.sseTicket);
-          }
-          this.isConnectingSse = false;
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  connectSseWithTicket(sessionId: string, sseTicket: string) {
-    if (!this.session?.sessionId || this.session.sessionId !== sessionId) {
-      return;
-    }
-    this.closeSse();
-
-    let url =
-      environment.httpUrl +
-      `/api/sse/agent-events?sessionId=${sessionId}&ticket=${sseTicket}&lastEventIndex=${this.lastProcessedEventIndex}`;
-
-    this.eventSource = new EventSource(url);
-
-    this.eventSource.addEventListener('agent-event', (event: MessageEvent) => {
-      this.sseRetryCount = 0;
-
-      let agentEvent: AgentEventApi = JSON.parse(event.data);
-
-      if (agentEvent.eventType === 'session.mprove-reload-session') {
-        this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
-        return;
-      }
-
-      if (agentEvent.eventIndex <= this.lastProcessedEventIndex) {
-        return;
-      }
-
-      this.sseEventBuffer.push(agentEvent);
-
-      if (this.sseRafId === undefined) {
-        this.sseRafId = requestAnimationFrame(() => {
-          this.flushSseBuffer();
-        });
-      }
-    });
-
-    this.eventSource.onerror = () => {
-      if (this.sseRetryCount >= this.SSE_MAX_RETRIES) {
-        this.closeSse();
-        return;
-      }
-
-      this.sseRetryCount++;
-      this.scheduleReconnect({
-        sessionId: sessionId,
-        delay: this.SSE_RETRY_DELAY_MS
-      });
-    };
-  }
-
-  scheduleReconnect(item: { sessionId: string; delay: number }) {
-    let { sessionId, delay } = item;
-
-    this.closeSse();
-    this.isConnectingSse = true;
-
-    setTimeout(() => {
-      if (
-        this.session?.sessionId === sessionId &&
-        this.session?.status === SessionStatusEnum.Active
-      ) {
-        this.reconnectSse(sessionId);
-      } else {
-        this.isConnectingSse = false;
-      }
-    }, delay);
-  }
-
-  reconnectSse(sessionId: string) {
-    // Guard to prevent sessionAndData$ from triggering connectSse during store updates
-    this.isConnectingSse = true;
-
-    let payload: ToBackendGetAgentSessionRequestPayload = {
-      sessionId: sessionId,
-      includeMessagesAndParts: true
-    };
-
-    this.apiService
-      .req({
-        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetAgentSession,
-        payload: payload
-      })
-      .pipe(
-        tap((resp: ToBackendGetAgentSessionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.sessionQuery.update(resp.payload.session);
-
-            if (resp.payload.events.length > 0) {
-              this.sessionEventsQuery.updatePart({
-                events: resp.payload.events
-              });
-
-              // Update lastProcessedEventIndex from fetched events
-              let maxIndex = resp.payload.events.reduce(
-                (max, e) => Math.max(max, e.eventIndex),
-                -1
-              );
-              this.lastProcessedEventIndex = maxIndex;
-            }
-
-            this.sessionBundleQuery.updatePart({
-              messages: resp.payload.messages || [],
-              parts: resp.payload.parts
-                ? groupPartsByMessageId(resp.payload.parts)
-                : {},
-              todos: resp.payload.ocSession?.todos ?? [],
-              questions: resp.payload.ocSession?.questions ?? [],
-              permissions: resp.payload.ocSession?.permissions ?? [],
-              ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
-              lastSessionError: resp.payload.ocSession?.lastSessionError,
-              isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
-            });
-
-            // Release the guard, then connect SSE directly
-            this.isConnectingSse = false;
-            this.connectSse(sessionId);
-          } else {
-            this.isConnectingSse = false;
-          }
-        }),
-        take(1)
-      )
-      .subscribe();
-  }
-
-  flushSseBuffer() {
-    if (this.sseRafId !== undefined) {
-      cancelAnimationFrame(this.sseRafId);
-      this.sseRafId = undefined;
-    }
-
-    let buffer = this.sseEventBuffer;
-    if (buffer.length === 0) return;
-    this.sseEventBuffer = [];
-
-    // Batch debug events store update
-    let currentEvents = this.sessionEventsQuery.getValue().events;
-    let updatedEvents = [...currentEvents, ...buffer].sort(
-      (a, b) => a.eventIndex - b.eventIndex
-    );
-    this.sessionEventsQuery.updatePart({ events: updatedEvents });
-
-    // Batch reducer events
-    let ocEvents = buffer.filter(e => e.ocEvent).map(e => e.ocEvent);
-
-    if (ocEvents.length > 0) {
-      this.eventReducerService.applyEvents(ocEvents);
-    }
-
-    // Update lastProcessedEventIndex from batch
-    let maxIndex = buffer.reduce(
-      (max, e) => Math.max(max, e.eventIndex),
-      this.lastProcessedEventIndex
-    );
-    this.lastProcessedEventIndex = maxIndex;
-  }
-
   enterSession(sessionData: SessionBundleState) {
-    // Destroy session-messages to reset scroll state
-    // this.isSessionSwitching = true;
-    // this.cd.detectChanges();
-
     this.agent = this.session.agent;
     this.model =
       this.session.lastMessageProviderModel || this.session.model || 'default';
-    this.sseRetryCount = 0;
     let loadedEvents = this.sessionEventsQuery.getValue().events;
-    this.lastProcessedEventIndex = loadedEvents.reduce(
-      (max, e) => Math.max(max, e.eventIndex),
+    let maxEventIndex = loadedEvents.reduce(
+      (max: number, e: AgentEventApi) => Math.max(max, e.eventIndex),
       -1
     );
+    this.agentSessionService.initForSession({
+      lastProcessedEventIndex: maxEventIndex
+    });
     this.isAborting = false;
     this.pendingUserMessages = [];
     this.lastKnownStoreUserCount = sessionData.messages.filter(
@@ -661,11 +426,18 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.permissions = sessionData.permissions || [];
     this.questions = sessionData.questions || [];
 
-    this.messages = this.buildMessagesFromStores(
-      sessionData.messages,
-      sessionData.parts
-    );
-    this.turns = this.buildTurns(this.messages);
+    this.messages = this.agentMessagesService.buildMessagesFromStores({
+      storeMessages: sessionData.messages,
+      storeParts: sessionData.parts,
+      session: this.session,
+      model: this.model,
+      agent: this.agent,
+      variant: this.variant,
+      pendingUserMessages: this.pendingUserMessages
+    });
+    this.turns = this.agentMessagesService.buildTurns({
+      messages: this.messages
+    });
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
@@ -683,9 +455,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.previousLastTurnResponsesExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
-    // Recreate session-messages — ngAfterViewInit will scroll to bottom
-    // this.isSessionSwitching = false;
-    this.managePollingAndSse();
+    this.agentSessionService.managePollingAndSse();
   }
 
   updateSessionData(sessionData: SessionBundleState) {
@@ -721,29 +491,40 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.permissions = sessionData.permissions || [];
     this.questions = sessionData.questions || [];
 
-    this.messages = this.buildMessagesFromStores(
-      sessionData.messages,
-      sessionData.parts
-    );
-    this.turns = this.buildTurns(this.messages);
+    this.messages = this.agentMessagesService.buildMessagesFromStores({
+      storeMessages: sessionData.messages,
+      storeParts: sessionData.parts,
+      session: this.session,
+      model: this.model,
+      agent: this.agent,
+      variant: this.variant,
+      pendingUserMessages: this.pendingUserMessages
+    });
+    this.turns = this.agentMessagesService.buildTurns({
+      messages: this.messages
+    });
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.archivedReason = this.session.archivedReason;
+
     this.isAgentBusy =
       this.questions.length === 0 &&
       this.permissions.length === 0 &&
       (this.pendingUserMessages.length > 0 ||
         this.checkIsAgentBusy(sessionData.ocSessionStatus));
+
     this.isWorking = this.checkIsWorking(sessionData.ocSessionStatus);
+
     this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
+
     this.isSessionError = this.session.status === SessionStatusEnum.Error;
     this.lastSessionError = sessionData.lastSessionError;
     this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
 
     this.updateStatusTextChars();
 
-    this.managePollingAndSse();
+    this.agentSessionService.managePollingAndSse();
 
     let shouldScroll = false;
 
@@ -764,272 +545,5 @@ export class SessionComponent implements OnInit, OnDestroy {
     if (shouldScroll) {
       this.scrollTrigger++;
     }
-  }
-
-  managePollingAndSse() {
-    if (
-      this.session.status === SessionStatusEnum.New &&
-      !this.pollSubscription
-    ) {
-      this.startPolling(this.session.sessionId);
-    }
-
-    if (
-      this.session.status !== SessionStatusEnum.New &&
-      this.pollSubscription
-    ) {
-      this.stopPolling();
-    }
-
-    if (
-      this.session.status === SessionStatusEnum.Active &&
-      !this.eventSource &&
-      !this.isConnectingSse
-    ) {
-      this.connectSse(this.session.sessionId);
-    }
-  }
-
-  closeSse() {
-    this.flushSseBuffer();
-    if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = undefined;
-    }
-    this.isConnectingSse = false;
-  }
-
-  checkIsAgentBusy(ocSessionStatus: SessionStatus): boolean {
-    if (this.session?.status !== SessionStatusEnum.Active) {
-      return false;
-    }
-
-    if (
-      isDefined(ocSessionStatus) &&
-      ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1
-    ) {
-      return true;
-    }
-
-    // let lastMessage = this.messages[this.messages.length - 1];
-
-    // if (lastMessage.role === 'error') {
-    //   return false;
-    // }
-
-    // return lastMessage.role === 'user' || lastMessage.role === 'tool'
-
-    return false;
-  }
-
-  checkIsWorking(ocSessionStatus: SessionStatus): boolean {
-    if (this.session?.status !== SessionStatusEnum.Active) {
-      return false;
-    }
-
-    if (ocSessionStatus) {
-      let isBusy = ['busy', 'retry'].indexOf(ocSessionStatus.type) > -1;
-
-      if (!isBusy) {
-        this.isAborting = false;
-      }
-
-      if (this.isAborting) {
-        return false;
-      }
-
-      return isBusy;
-    }
-
-    // let lastMessage = this.messages[this.messages.length - 1];
-
-    // if (lastMessage.role === 'error') {
-    //   return false;
-    // }
-
-    // return lastMessage.role === 'user' || lastMessage.role === 'tool'
-
-    return false;
-  }
-
-  getRetryMessage(ocSessionStatus: SessionStatus): string {
-    if (ocSessionStatus?.type === 'retry') {
-      return `Retrying (attempt ${ocSessionStatus.attempt}): ${ocSessionStatus.message}`;
-    }
-    return undefined;
-  }
-
-  rebuildMessagesAndTurns() {
-    let data = this.sessionBundleQuery.getValue();
-    this.messages = this.buildMessagesFromStores(data.messages, data.parts);
-    this.turns = this.buildTurns(this.messages);
-  }
-
-  buildTurns(messages: ChatMessage[]): ChatTurn[] {
-    let turns: ChatTurn[] = [];
-    let currentTurn: ChatTurn | undefined;
-
-    for (let msg of messages) {
-      if (msg.role === 'user') {
-        currentTurn = {
-          userMessage: msg,
-          responses: [],
-          fileDiffs: msg.summaryDiffs?.length > 0 ? msg.summaryDiffs : undefined
-        };
-        turns.push(currentTurn);
-      } else {
-        if (!currentTurn) {
-          currentTurn = { responses: [] };
-          turns.push(currentTurn);
-        }
-        currentTurn.responses.push(msg);
-      }
-    }
-
-    return turns;
-  }
-
-  buildMessagesFromStores(
-    storeMessages: AgentMessageApi[],
-    storeParts: { [messageId: string]: AgentPartApi[] }
-  ): ChatMessage[] {
-    let chatMessages: ChatMessage[] = [];
-
-    for (let msg of storeMessages) {
-      let messageId = msg.messageId;
-      let role = msg.role;
-      let parts = storeParts[messageId] || [];
-
-      if (role === 'user') {
-        let found = parts.find(p => p.ocPart?.type === 'text')?.ocPart;
-        let text = found?.type === 'text' ? found.text || '' : '';
-
-        // Fallback to session.firstMessage for first user message
-        if (!text && this.session?.firstMessage) {
-          let isFirst =
-            storeMessages.indexOf(msg) === 0 ||
-            storeMessages.filter(m => m.role === 'user').indexOf(msg) === 0;
-          if (isFirst) {
-            text = this.session.firstMessage;
-          }
-        }
-
-        // Extract metadata from ocMessage (UserMessage type)
-        let userOcMsg = msg.ocMessage as any;
-        let agentName = userOcMsg?.agent || '';
-        let modelId = userOcMsg?.model?.modelID || '';
-        let variant = userOcMsg?.variant || '';
-
-        // Extract summary diffs
-        let summaryDiffs: FileDiffInfo[] | undefined;
-        let rawDiffs = userOcMsg?.summary?.diffs;
-        if (Array.isArray(rawDiffs) && rawDiffs.length > 0) {
-          let seen = new Set<string>();
-          let deduped: FileDiffInfo[] = [];
-          for (let i = rawDiffs.length - 1; i >= 0; i--) {
-            let d = rawDiffs[i];
-            if (!seen.has(d.file)) {
-              seen.add(d.file);
-              deduped.push({
-                file: d.file,
-                additions: d.additions,
-                deletions: d.deletions,
-                status: d.status,
-                before: d.before ?? '',
-                after: d.after ?? ''
-              });
-            }
-          }
-          summaryDiffs = deduped.reverse();
-        }
-
-        chatMessages.push({
-          role: 'user',
-          text,
-          agentName,
-          modelId,
-          variant,
-          summaryDiffs
-        });
-      } else {
-        // Assistant message - process each part
-        let partCount = 0;
-        for (let partApi of parts) {
-          let part = partApi.ocPart;
-          if (!part) continue;
-
-          if (part.type === 'text') {
-            if (part.text) {
-              chatMessages.push({
-                role: 'agent',
-                text: part.text
-              });
-              partCount++;
-            }
-          } else if (part.type === 'tool') {
-            chatMessages.push({
-              role: 'tool',
-              text: part.tool || 'tool',
-              toolPart: part as ToolPart
-            });
-            partCount++;
-          } else if (part.type === 'reasoning') {
-            if (part.text) {
-              chatMessages.push({
-                role: 'thought',
-                text: part.text
-              });
-              partCount++;
-            }
-          } else if (part.type === 'compaction') {
-            chatMessages.push({
-              role: 'compaction',
-              text: part.auto ? 'Auto-compacted' : 'Compacted'
-            });
-            partCount++;
-          }
-        }
-
-        let error = (msg.ocMessage as any)?.error;
-        if (error?.name === 'MessageAbortedError') {
-          chatMessages.push({ role: 'interrupted', text: 'Interrupted' });
-        } else if (partCount === 0 && error) {
-          let errorText = unwrapErrorMessage(error.data?.message ?? '');
-          chatMessages.push({ role: 'error', text: errorText });
-        }
-      }
-    }
-
-    // If no messages yet but session has firstMessage, show it
-    if (chatMessages.length === 0 && this.session?.firstMessage) {
-      let firstModelId =
-        this.model !== 'default' && this.model.includes('/')
-          ? this.model.substring(this.model.indexOf('/') + 1)
-          : this.model;
-      chatMessages.push({
-        role: 'user',
-        text: this.session.firstMessage,
-        agentName: this.agent,
-        modelId: firstModelId,
-        variant: this.variant !== 'default' ? this.variant : ''
-      });
-    }
-
-    // Append pending optimistic user messages
-    let optimisticModelId =
-      this.model !== 'default' && this.model.includes('/')
-        ? this.model.substring(this.model.indexOf('/') + 1)
-        : this.model;
-    for (let text of this.pendingUserMessages) {
-      chatMessages.push({
-        role: 'user',
-        text,
-        agentName: this.agent,
-        modelId: optimisticModelId,
-        variant: this.variant !== 'default' ? this.variant : ''
-      });
-    }
-
-    return chatMessages;
   }
 }
