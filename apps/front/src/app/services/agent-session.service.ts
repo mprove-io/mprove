@@ -201,6 +201,7 @@ export class AgentSessionService {
       let agentEvent: AgentEventApi = JSON.parse(event.data);
 
       if (agentEvent.eventType === 'session.mprove-reload-session') {
+        console.log('reloading session...');
         this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
         return;
       }
