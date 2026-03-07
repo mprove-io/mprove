@@ -67,27 +67,29 @@ export class GetAgentSessionController {
       });
     }
 
-    let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
-      sandboxId: session.sandboxId,
-      e2bApiKey: project.e2bApiKey
-    });
-
-    if (!sandboxInfo || sandboxInfo.state === 'paused') {
-      if (!sandboxInfo) {
-        session.status = SessionStatusEnum.Archived;
-        session.archivedReason = ArchivedReasonEnum.Expire;
-      } else if (sandboxInfo.state === 'paused') {
-        session.status = SessionStatusEnum.Paused;
-      }
-
-      await this.db.drizzle.transaction(async tx => {
-        await this.db.packer.write({
-          tx: tx,
-          insertOrUpdate: {
-            sessions: [session]
-          }
-        });
+    if (session.sandboxId) {
+      let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
+        sandboxId: session.sandboxId,
+        e2bApiKey: project.e2bApiKey
       });
+
+      if (!sandboxInfo || sandboxInfo.state === 'paused') {
+        if (!sandboxInfo) {
+          session.status = SessionStatusEnum.Archived;
+          session.archivedReason = ArchivedReasonEnum.Expire;
+        } else if (sandboxInfo.state === 'paused') {
+          session.status = SessionStatusEnum.Paused;
+        }
+
+        await this.db.drizzle.transaction(async tx => {
+          await this.db.packer.write({
+            tx: tx,
+            insertOrUpdate: {
+              sessions: [session]
+            }
+          });
+        });
+      }
     }
 
     if (
