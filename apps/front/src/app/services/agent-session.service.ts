@@ -168,10 +168,13 @@ export class AgentSessionService {
       .pipe(
         tap((resp: ToBackendCreateAgentSseTicketResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            console.log('connectSse - get ticket - ok');
             this.connectSseWithTicket({
               sessionId: sessionId,
               sseTicket: resp.payload.sseTicket
             });
+          } else {
+            console.log('connectSse - get ticket - error');
           }
           this.isConnectingSse = false;
         }),
@@ -195,13 +198,17 @@ export class AgentSessionService {
 
     this.eventSource = new EventSource(url);
 
+    this.eventSource.onopen = () => {
+      console.log('eventSource - sse connected');
+    };
+
     this.eventSource.addEventListener('agent-event', (event: MessageEvent) => {
       this.sseRetryCount = 0;
 
       let agentEvent: AgentEventApi = JSON.parse(event.data);
 
       if (agentEvent.eventType === 'session.mprove-reload-session') {
-        console.log('reloading session...');
+        console.log('eventSource - reloading session...');
         this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
         return;
       }
@@ -220,6 +227,7 @@ export class AgentSessionService {
     });
 
     this.eventSource.onerror = () => {
+      console.log(`eventSource.onerror, retryCount: ${this.sseRetryCount}`);
       if (this.sseRetryCount >= this.SSE_MAX_RETRIES) {
         this.closeSse();
         return;
@@ -299,10 +307,12 @@ export class AgentSessionService {
               isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
             });
 
+            console.log('reconnectSse - get session - ok');
             // Release the guard, then connect SSE directly
             this.isConnectingSse = false;
             this.connectSse({ sessionId: sessionId });
           } else {
+            console.log('reconnectSse - get session - error');
             this.isConnectingSse = false;
           }
         }),
