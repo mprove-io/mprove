@@ -89,16 +89,23 @@ export class AgentStreamDrainService {
     client: OpencodeClient;
   }): Promise<void> {
     try {
-      let [messagesResp, sessionResp, todoResp, statusResp] = await Promise.all(
-        [
-          item.client.session.messages({
-            sessionID: item.opencodeSessionId
-          }),
-          item.client.session.get({ sessionID: item.opencodeSessionId }),
-          item.client.session.todo({ sessionID: item.opencodeSessionId }),
-          item.client.session.status()
-        ]
-      );
+      let [
+        messagesResp,
+        sessionResp,
+        todoResp,
+        statusResp,
+        questionsResp,
+        permissionsResp
+      ] = await Promise.all([
+        item.client.session.messages({
+          sessionID: item.opencodeSessionId
+        }),
+        item.client.session.get({ sessionID: item.opencodeSessionId }),
+        item.client.session.todo({ sessionID: item.opencodeSessionId }),
+        item.client.session.status(),
+        item.client.question.list(),
+        item.client.permission.list()
+      ]);
 
       let messageTabs = (messagesResp.data ?? []).map(m =>
         this.ocMessagesService.makeOcMessage({
@@ -130,10 +137,22 @@ export class AgentStreamDrainService {
         });
       }
 
+      let questions = (questionsResp.data ?? []).filter(
+        (q): q is QuestionRequest =>
+          !!q?.id && q.sessionID === item.opencodeSessionId
+      );
+
+      let permissions = (permissionsResp.data ?? []).filter(
+        (p): p is PermissionRequest =>
+          !!p?.id && p.sessionID === item.opencodeSessionId
+      );
+
       ocSessionTab = {
         ...ocSessionTab,
         openSession: sessionResp.data,
-        todos: todoResp.data ?? []
+        todos: todoResp.data ?? [],
+        questions: questions,
+        permissions: permissions
       };
 
       if (statusResp.data) {
