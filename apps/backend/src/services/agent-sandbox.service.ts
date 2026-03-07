@@ -4,18 +4,13 @@ import { ConfigService } from '@nestjs/config';
 import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
-import type {
-  ProjectTab,
-  SessionTab
-} from '#backend/drizzle/postgres/schema/_tabs';
+import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
 
 export interface CreateSandboxResult {
@@ -104,6 +99,109 @@ export class AgentSandboxService {
     }
 
     return all;
+  }
+
+  async stopSandbox(item: {
+    sandboxType: SandboxTypeEnum;
+    sandboxId: string;
+    e2bApiKey: string;
+  }): Promise<void> {
+    switch (item.sandboxType) {
+      case SandboxTypeEnum.E2B:
+        await Sandbox.kill(item.sandboxId, { apiKey: item.e2bApiKey });
+
+        break;
+      default:
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
+        });
+    }
+  }
+
+  async pauseSandbox(item: {
+    sandboxType: SandboxTypeEnum;
+    sandboxId: string;
+    e2bApiKey: string;
+  }): Promise<void> {
+    switch (item.sandboxType) {
+      case SandboxTypeEnum.E2B:
+        await Sandbox.betaPause(item.sandboxId, { apiKey: item.e2bApiKey });
+
+        break;
+      default:
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
+        });
+    }
+  }
+
+  async resumeSandbox(item: {
+    sandboxType: SandboxTypeEnum;
+    sandboxId: string;
+    e2bApiKey: string;
+    timeoutMs: number;
+  }): Promise<void> {
+    switch (item.sandboxType) {
+      case SandboxTypeEnum.E2B:
+        await Sandbox.connect(item.sandboxId, { apiKey: item.e2bApiKey });
+
+        await Sandbox.setTimeout(item.sandboxId, item.timeoutMs, {
+          apiKey: item.e2bApiKey
+        });
+
+        break;
+      default:
+        throw new ServerError({
+          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
+        });
+    }
+  }
+
+  async healthCheckOpenCode(item: {
+    sandboxBaseUrl: string;
+    maxAttempts?: number;
+  }): Promise<void> {
+    let maxAttempts = item.maxAttempts ?? 15;
+
+    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+
+    let healthy = false;
+
+    // console.log(
+    //   `[sandbox] polling health check at ${item.sandboxBaseUrl}/config`
+    // );
+
+    for (let i = 0; i < maxAttempts; i++) {
+      try {
+        let res = await fetch(`${item.sandboxBaseUrl}/config`);
+
+        if (res.status === 401) {
+          healthy = true;
+          // console.log(
+          //   `[sandbox] health check passed on attempt ${i + 1}/${maxAttempts}`
+          // );
+          break;
+        } else {
+          // console.log(
+          //   `[sandbox] health check attempt ${i + 1}/${maxAttempts}: status ${res.status} (expected 401)`
+          // );
+        }
+      } catch (e: any) {
+        if (backendEnv !== BackendEnvEnum.PROD) {
+          console.log(
+            `[sandbox] health check attempt ${i + 1}/${maxAttempts} failed: ${e?.message}`
+          );
+        }
+      }
+
+      await new Promise(r => setTimeout(r, 1000));
+    }
+
+    if (!healthy) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
+      });
+    }
   }
 
   async startOpencodeServer(item: {
@@ -270,180 +368,6 @@ export class AgentSandboxService {
       }
     } finally {
       await item.sandbox.commands.run(`rm -rf ${keyDir}`).catch(() => {});
-    }
-  }
-
-  async stopSandbox(item: {
-    sandboxType: SandboxTypeEnum;
-    sandboxId: string;
-    e2bApiKey: string;
-  }): Promise<void> {
-    switch (item.sandboxType) {
-      case SandboxTypeEnum.E2B:
-        await Sandbox.kill(item.sandboxId, { apiKey: item.e2bApiKey });
-
-        break;
-      default:
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
-        });
-    }
-  }
-
-  async pauseSandbox(item: {
-    sandboxType: SandboxTypeEnum;
-    sandboxId: string;
-    e2bApiKey: string;
-  }): Promise<void> {
-    switch (item.sandboxType) {
-      case SandboxTypeEnum.E2B:
-        await Sandbox.betaPause(item.sandboxId, { apiKey: item.e2bApiKey });
-
-        break;
-      default:
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
-        });
-    }
-  }
-
-  async resumeSandbox(item: {
-    sandboxType: SandboxTypeEnum;
-    sandboxId: string;
-    e2bApiKey: string;
-    timeoutMs: number;
-  }): Promise<void> {
-    switch (item.sandboxType) {
-      case SandboxTypeEnum.E2B:
-        await Sandbox.connect(item.sandboxId, { apiKey: item.e2bApiKey });
-
-        await Sandbox.setTimeout(item.sandboxId, item.timeoutMs, {
-          apiKey: item.e2bApiKey
-        });
-
-        break;
-      default:
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
-        });
-    }
-  }
-
-  async ensureSandboxConnected(item: {
-    session: SessionTab;
-  }): Promise<SessionTab> {
-    let { session } = item;
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: session.projectId
-    });
-
-    let sandboxInfo = await this.getSandboxInfo({
-      sandboxId: session.sandboxId,
-      e2bApiKey: project.e2bApiKey
-    });
-
-    if (!sandboxInfo) {
-      return {
-        ...session,
-        status: SessionStatusEnum.Archived,
-        archivedReason: ArchivedReasonEnum.Expire
-      };
-    }
-
-    let timeoutMs =
-      this.cs.get<BackendConfig['sandboxTimeoutMinutes']>(
-        'sandboxTimeoutMinutes'
-      ) *
-      60 *
-      1000;
-
-    if (sandboxInfo.state === 'paused') {
-      await this.resumeSandbox({
-        sandboxType: session.sandboxType as SandboxTypeEnum,
-        sandboxId: session.sandboxId,
-        e2bApiKey: project.e2bApiKey,
-        timeoutMs: timeoutMs
-      });
-
-      sandboxInfo = await this.getSandboxInfo({
-        sandboxId: session.sandboxId,
-        e2bApiKey: project.e2bApiKey
-      });
-
-      if (!sandboxInfo) {
-        return {
-          ...session,
-          status: SessionStatusEnum.Archived,
-          archivedReason: ArchivedReasonEnum.Expire
-        };
-      }
-    }
-
-    await this.getOpenCodeClient({
-      sessionId: session.sessionId,
-      sandboxBaseUrl: session.sandboxBaseUrl,
-      opencodePassword: session.opencodePassword
-    });
-
-    await this.healthCheckOpenCode({
-      sandboxBaseUrl: session.sandboxBaseUrl
-    });
-
-    return {
-      ...session,
-      status: SessionStatusEnum.Active,
-      sandboxStartTs: sandboxInfo.startedAt.getTime(),
-      sandboxEndTs: sandboxInfo.endAt.getTime(),
-      sandboxInfo: sandboxInfo,
-      lastActivityTs: Date.now()
-    };
-  }
-
-  async healthCheckOpenCode(item: {
-    sandboxBaseUrl: string;
-    maxAttempts?: number;
-  }): Promise<void> {
-    let maxAttempts = item.maxAttempts ?? 15;
-
-    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
-
-    let healthy = false;
-
-    // console.log(
-    //   `[sandbox] polling health check at ${item.sandboxBaseUrl}/config`
-    // );
-
-    for (let i = 0; i < maxAttempts; i++) {
-      try {
-        let res = await fetch(`${item.sandboxBaseUrl}/config`);
-
-        if (res.status === 401) {
-          healthy = true;
-          // console.log(
-          //   `[sandbox] health check passed on attempt ${i + 1}/${maxAttempts}`
-          // );
-          break;
-        } else {
-          // console.log(
-          //   `[sandbox] health check attempt ${i + 1}/${maxAttempts}: status ${res.status} (expected 401)`
-          // );
-        }
-      } catch (e: any) {
-        if (backendEnv !== BackendEnvEnum.PROD) {
-          console.log(
-            `[sandbox] health check attempt ${i + 1}/${maxAttempts} failed: ${e?.message}`
-          );
-        }
-      }
-
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    if (!healthy) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
-      });
     }
   }
 }
