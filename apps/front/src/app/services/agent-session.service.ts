@@ -235,6 +235,7 @@ export class AgentSessionService {
 
       if (agentEvent.eventType === 'session.mprove-reload-session') {
         console.log('eventSource - reloading session...');
+        this.reconnectCounter = 0;
         this.scheduleReconnect({ sessionId: sessionId, delay: 0 });
         return;
       }
@@ -359,6 +360,13 @@ export class AgentSessionService {
               lastSessionError: resp.payload.ocSession?.lastSessionError,
               isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
             });
+
+            // Update session in the sessions list
+            let sessions = this.sessionsQuery.getValue().sessions;
+            let updated = sessions.map(s =>
+              s.sessionId === sessionId ? resp.payload.session : s
+            );
+            this.sessionsQuery.updatePart({ sessions: updated });
 
             console.log('reconnectSse - get session - ok');
 
