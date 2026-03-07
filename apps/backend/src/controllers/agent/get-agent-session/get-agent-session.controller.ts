@@ -12,9 +12,11 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { AgentStreamService } from '#backend/services/agent-stream.service';
+import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
+import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -33,6 +35,7 @@ import { ServerError } from '#common/models/server-error';
 export class GetAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
+    private projectsService: ProjectsService,
     private tabService: TabService,
     private agentSandboxService: AgentSandboxService,
     private agentStreamService: AgentStreamService,
@@ -48,6 +51,10 @@ export class GetAgentSessionController {
       sessionId
     });
 
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
+
     if (session.userId !== user.userId) {
       throw new ServerError({
         message: ErEnum.BACKEND_UNAUTHORIZED
@@ -60,37 +67,37 @@ export class GetAgentSessionController {
       });
     }
 
+    let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
+      sandboxId: session.sandboxId,
+      e2bApiKey: project.e2bApiKey
+    });
+
+    if (!sandboxInfo || sandboxInfo.state === 'paused') {
+      if (!sandboxInfo) {
+        session.status = SessionStatusEnum.Archived;
+        session.archivedReason = ArchivedReasonEnum.Expire;
+      } else if (sandboxInfo.state === 'paused') {
+        session.status = SessionStatusEnum.Paused;
+      }
+
+      await this.db.drizzle.transaction(async tx => {
+        await this.db.packer.write({
+          tx: tx,
+          insertOrUpdate: {
+            sessions: [session]
+          }
+        });
+      });
+    }
+
     if (
       session.status === SessionStatusEnum.Active &&
       session.opencodeSessionId
     ) {
-      let hasClient = this.agentSandboxService.hasOpenCodeClient({
-        sessionId: sessionId
+      await this.agentStreamService.startEventStream({
+        sessionId,
+        opencodeSessionId: session.opencodeSessionId
       });
-
-      if (!hasClient) {
-        session = await this.agentSandboxService.ensureSandboxConnected({
-          session
-        });
-
-        if (session.status !== SessionStatusEnum.Active) {
-          await this.db.drizzle.transaction(async tx => {
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                sessions: [session]
-              }
-            });
-          });
-        }
-      }
-
-      if (session.status === SessionStatusEnum.Active) {
-        await this.agentStreamService.startEventStream({
-          sessionId,
-          opencodeSessionId: session.opencodeSessionId
-        });
-      }
     }
 
     let ocSession = await this.sessionsService.getOcSessionBySessionId({
