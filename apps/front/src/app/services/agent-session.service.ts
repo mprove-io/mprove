@@ -48,32 +48,10 @@ export class AgentSessionService {
 
   initForSession(item: { lastProcessedEventIndex: number }) {
     let { lastProcessedEventIndex } = item;
+
     this.sseRetryCount = 0;
     this.lastProcessedEventIndex = lastProcessedEventIndex;
     this.isConnectingSse = false;
-  }
-
-  destroy() {
-    this.closeSse();
-    this.stopPolling();
-  }
-
-  closeSse() {
-    this.flushSseBuffer();
-
-    if (this.eventSource) {
-      this.eventSource.close();
-      this.eventSource = undefined;
-    }
-
-    this.isConnectingSse = false;
-  }
-
-  stopPolling() {
-    if (this.pollSubscription) {
-      this.pollSubscription.unsubscribe();
-      this.pollSubscription = undefined;
-    }
   }
 
   managePollingAndSse() {
@@ -96,7 +74,30 @@ export class AgentSessionService {
     }
   }
 
-  startPolling(item: { sessionId: string }) {
+  destroy() {
+    this.closeSse();
+    this.stopPolling();
+  }
+
+  private closeSse() {
+    this.flushSseBuffer();
+
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = undefined;
+    }
+
+    this.isConnectingSse = false;
+  }
+
+  private stopPolling() {
+    if (this.pollSubscription) {
+      this.pollSubscription.unsubscribe();
+      this.pollSubscription = undefined;
+    }
+  }
+
+  private startPolling(item: { sessionId: string }) {
     let { sessionId } = item;
 
     this.pollSubscription = interval(1000)
@@ -145,7 +146,7 @@ export class AgentSessionService {
       .subscribe();
   }
 
-  connectSse(item: { sessionId: string }) {
+  private connectSse(item: { sessionId: string }) {
     let { sessionId } = item;
 
     if (this.isConnectingSse || this.eventSource) {
@@ -179,7 +180,7 @@ export class AgentSessionService {
       .subscribe();
   }
 
-  connectSseWithTicket(item: { sessionId: string; sseTicket: string }) {
+  private connectSseWithTicket(item: { sessionId: string; sseTicket: string }) {
     let { sessionId, sseTicket } = item;
 
     let session = this.sessionQuery.getValue();
@@ -231,7 +232,7 @@ export class AgentSessionService {
     };
   }
 
-  scheduleReconnect(item: { sessionId: string; delay: number }) {
+  private scheduleReconnect(item: { sessionId: string; delay: number }) {
     let { sessionId, delay } = item;
 
     this.closeSse();
@@ -250,7 +251,7 @@ export class AgentSessionService {
     }, delay);
   }
 
-  reconnectSse(item: { sessionId: string }) {
+  private reconnectSse(item: { sessionId: string }) {
     let { sessionId } = item;
 
     // Guard to prevent sessionAndData$ from triggering connectSse during store updates
@@ -309,7 +310,7 @@ export class AgentSessionService {
       .subscribe();
   }
 
-  flushSseBuffer() {
+  private flushSseBuffer() {
     if (this.sseRafId !== undefined) {
       cancelAnimationFrame(this.sseRafId);
       this.sseRafId = undefined;
