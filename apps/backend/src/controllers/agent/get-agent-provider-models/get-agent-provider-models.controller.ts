@@ -53,8 +53,9 @@ export class GetAgentProviderModelsController {
       }
 
       try {
-        let client =
-          this.agentSandboxService.getOpenCodeClientCheckExists(sessionId);
+        let client = this.agentSandboxService.getOpenCodeClient({
+          sessionId: sessionId
+        });
 
         let { data } = await client.provider.list({}, { throwOnError: true });
 

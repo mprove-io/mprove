@@ -64,10 +64,11 @@ export class GetAgentSessionController {
       session.status === SessionStatusEnum.Active &&
       session.opencodeSessionId
     ) {
-      let opencodeClient =
-        this.agentSandboxService.getOpenCodeClient(sessionId);
+      let hasClient = this.agentSandboxService.hasOpenCodeClient({
+        sessionId: sessionId
+      });
 
-      if (!opencodeClient) {
+      if (!hasClient) {
         session = await this.agentSandboxService.ensureSandboxConnected({
           session
         });

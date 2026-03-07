@@ -27,7 +27,7 @@ export interface CreateSandboxResult {
 
 @Injectable()
 export class AgentSandboxService {
-  private opencodeClients = new Map<string, OpencodeClient>();
+  private opencodeClients: { sessionId: string; client: OpencodeClient }[] = [];
 
   constructor(
     private cs: ConfigService<BackendConfig>,
@@ -35,43 +35,37 @@ export class AgentSandboxService {
     private logger: Logger
   ) {}
 
-  connectOpenCodeClient(item: {
+  getOpenCodeClient(item: {
     sessionId: string;
-    sandboxBaseUrl: string;
-    opencodePassword: string;
+    sandboxBaseUrl?: string;
+    opencodePassword?: string;
   }): OpencodeClient {
-    let existing = this.opencodeClients.get(item.sessionId);
+    let client = this.opencodeClients.find(
+      x => x.sessionId === item.sessionId
+    )?.client;
 
-    if (existing) {
-      return existing;
+    if (!client && item.sandboxBaseUrl && item.opencodePassword) {
+      client = createOpencodeClient({
+        baseUrl: item.sandboxBaseUrl,
+        directory: '/home/user/project',
+        headers: {
+          Authorization: `Basic ${Buffer.from(`opencode:${item.opencodePassword}`).toString('base64')}`
+        }
+      });
+      this.opencodeClients.push({ sessionId: item.sessionId, client: client });
     }
-
-    let client = createOpencodeClient({
-      baseUrl: item.sandboxBaseUrl,
-      directory: '/home/user/project',
-      headers: {
-        Authorization: `Basic ${Buffer.from(`opencode:${item.opencodePassword}`).toString('base64')}`
-      }
-    });
-
-    this.opencodeClients.set(item.sessionId, client);
-
-    return client;
-  }
-
-  getOpenCodeClient(sessionId: string): OpencodeClient | undefined {
-    return this.opencodeClients.get(sessionId);
-  }
-
-  getOpenCodeClientCheckExists(sessionId: string): OpencodeClient {
-    let client = this.opencodeClients.get(sessionId);
 
     if (!client) {
       throw new ServerError({
         message: ErEnum.BACKEND_AGENT_CLIENT_NOT_FOUND
       });
     }
+
     return client;
+  }
+
+  hasOpenCodeClient(item: { sessionId: string }): boolean {
+    return this.opencodeClients.some(x => x.sessionId === item.sessionId);
   }
 
   async getSandboxInfo(item: {
@@ -100,7 +94,9 @@ export class AgentSandboxService {
   }
 
   disposeOpenCodeClient(sessionId: string): void {
-    this.opencodeClients.delete(sessionId);
+    this.opencodeClients = this.opencodeClients.filter(
+      x => x.sessionId !== sessionId
+    );
   }
 
   async startOpencodeServer(item: {
@@ -377,7 +373,7 @@ export class AgentSandboxService {
       }
     }
 
-    this.connectOpenCodeClient({
+    this.getOpenCodeClient({
       sessionId: session.sessionId,
       sandboxBaseUrl: session.sandboxBaseUrl,
       opencodePassword: session.opencodePassword

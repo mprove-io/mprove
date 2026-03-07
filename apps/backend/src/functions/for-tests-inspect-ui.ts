@@ -27,7 +27,9 @@ export async function forTestsInspectUi(item: {
   let session = await sessionsService.getSessionByIdCheckExists({
     sessionId: item.sessionId
   });
-  let client = agentSandboxService.getOpenCodeClientCheckExists(item.sessionId);
+  let client = agentSandboxService.getOpenCodeClient({
+    sessionId: item.sessionId
+  });
 
   console.log(`\n=== SANDBOX ===`);
   console.log(`sandboxBaseUrl: ${session.sandboxBaseUrl}`);

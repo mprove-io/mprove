@@ -67,8 +67,6 @@ Run `pnpm catalog-write` to sync catalog versions to `libs/common`, `libs/node-c
 | e2e        | `pnpm e2e:turbo && pnpm e2e:mcli`                                       |
 | inst       | `pnpm catalog-write && pnpm install && pnpm install:mcli`               |
 
-Use `pnpm check` instead of running `pnpm typecheck` and `pnpm lint` separately.
-
 Scripts follow pattern: `pnpm <task>` runs for all packages, `pnpm <task>:<app>` for specific package.
 
 **Filters:** `backend`, `blockml`, `disk`, `front`, `common`, `node-common`, `mcli`
@@ -144,6 +142,52 @@ NodeJS-specific utilities shared across services (backend, blockml, disk) and mc
 src/
 ├── decorators/     # NestJS method decorators
 └── functions/      # Node.js utility functions
+```
+
+## Instructions
+
+### Typecheck and lint
+
+Always use top `pnpm check` for typecheck or lint.
+
+### Function and method args
+
+Functions and methods must use a single object argument named `item` with an inline type. Destructure `item` inside the function body.
+
+Example:
+
+```ts
+export function doSomething(item: { orgId: string; projectId: string }) {
+  let { orgId, projectId } = item;
+  // ...
+}
+```
+
+### Object properties
+
+Always use explicit `key: value` syntax in object literals — never use shorthand property names.
+
+```ts
+// correct
+let payload = { models: models };
+doSomething({ sessionId: sessionId });
+
+// wrong
+let payload = { models };
+doSomething({ sessionId });
+```
+
+### No calls in conditions
+
+Do not call functions or methods inside `if` conditions. Extract the result to a variable first.
+
+```ts
+// correct
+let member = this.membersService.getMember(memberId);
+if (!member) {
+
+// wrong
+if (!this.membersService.getMember(memberId)) {
 ```
 
 ## External Dependencies

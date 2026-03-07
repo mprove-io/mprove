@@ -152,9 +152,9 @@ export class AgentStreamService implements OnModuleDestroy {
       return;
     }
 
-    let opencodeClient = this.agentSandboxService.getOpenCodeClientCheckExists(
-      item.sessionId
-    );
+    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+      sessionId: item.sessionId
+    });
 
     let abortController = new AbortController();
 
@@ -235,9 +235,9 @@ export class AgentStreamService implements OnModuleDestroy {
     permissionId: string;
     reply: string;
   }): Promise<void> {
-    let opencodeClient = this.agentSandboxService.getOpenCodeClientCheckExists(
-      item.sessionId
-    );
+    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+      sessionId: item.sessionId
+    });
 
     await opencodeClient.permission.respond({
       sessionID: item.opencodeSessionId,
@@ -252,9 +252,9 @@ export class AgentStreamService implements OnModuleDestroy {
     questionId: string;
     answers: string[][];
   }): Promise<void> {
-    let opencodeClient = this.agentSandboxService.getOpenCodeClientCheckExists(
-      item.sessionId
-    );
+    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+      sessionId: item.sessionId
+    });
 
     await opencodeClient.question.reply({
       requestID: item.questionId,
@@ -267,9 +267,9 @@ export class AgentStreamService implements OnModuleDestroy {
     opencodeSessionId: string;
     questionId: string;
   }): Promise<void> {
-    let opencodeClient = this.agentSandboxService.getOpenCodeClientCheckExists(
-      item.sessionId
-    );
+    let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+      sessionId: item.sessionId
+    });
 
     await opencodeClient.question.reject({
       requestID: item.questionId

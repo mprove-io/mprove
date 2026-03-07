@@ -298,7 +298,7 @@ export class CreateAgentSessionController {
 
       // console.log('opencode server started');
 
-      let opencodeClient = this.agentSandboxService.connectOpenCodeClient({
+      let opencodeClient = this.agentSandboxService.getOpenCodeClient({
         sessionId: sessionId,
         sandboxBaseUrl: sandboxBaseUrl,
         opencodePassword: opencodePassword

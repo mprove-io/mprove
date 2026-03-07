@@ -102,9 +102,11 @@ export class SendUserMessageToAgentController {
       answers
     };
 
-    let opencodeClient = this.agentSandboxService.getOpenCodeClient(sessionId);
+    let hasClient = this.agentSandboxService.hasOpenCodeClient({
+      sessionId: sessionId
+    });
 
-    if (session.status === SessionStatusEnum.Paused || !opencodeClient) {
+    if (session.status === SessionStatusEnum.Paused || !hasClient) {
       session = await this.agentSandboxService.ensureSandboxConnected({
         session
       });
@@ -195,8 +197,9 @@ export class SendUserMessageToAgentController {
     let sessionId = session.sessionId;
 
     if (interactionType === InteractionTypeEnum.Message) {
-      let opencodeClient =
-        this.agentSandboxService.getOpenCodeClientCheckExists(sessionId);
+      let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+        sessionId: sessionId
+      });
 
       let effectiveModel = model !== undefined ? model : session.model;
 
@@ -255,8 +258,9 @@ export class SendUserMessageToAgentController {
         });
       }
     } else if (interactionType === InteractionTypeEnum.Abort) {
-      let opencodeClient =
-        this.agentSandboxService.getOpenCodeClientCheckExists(sessionId);
+      let opencodeClient = this.agentSandboxService.getOpenCodeClient({
+        sessionId: sessionId
+      });
 
       await opencodeClient.session.abort(
         {
