@@ -5,6 +5,7 @@ import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum'
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
+import { ErrorData } from '#common/interfaces/front/error-data';
 import {
   ToBackendCreateAgentSseTicketRequestPayload,
   ToBackendCreateAgentSseTicketResponse
@@ -20,17 +21,26 @@ import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { AgentEventsService } from '#front/app/services/agent-events.service';
 import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { NavigateService } from '#front/app/services/navigate.service';
 import { environment } from '#front/environments/environment';
+
+type SsePhase =
+  | 'idle'
+  | 'fetching-ticket'
+  | 'connected'
+  | 'waiting-to-reconnect';
 
 @Injectable({ providedIn: 'root' })
 export class AgentSessionService {
-  private isConnectingSse = false;
+  private initId = 0;
+  private ssePhase: SsePhase = 'idle';
+  private reconnectCounter = 0;
+  private SSE_MAX_RECONNECTS = 3;
   private lastProcessedEventIndex = -1;
   private eventSource: EventSource;
 
-  private sseRetryCount = 0;
-  private SSE_MAX_RETRIES = 5;
-  private SSE_RETRY_DELAY_MS = 3000;
+  private SSE_RECONNECT_DELAY_MS = 3000;
 
   private sseEventBuffer: AgentEventApi[] = [];
   private sseRafId: number;
@@ -43,15 +53,18 @@ export class AgentSessionService {
     private sessionEventsQuery: SessionEventsQuery,
     private sessionBundleQuery: SessionBundleQuery,
     private sessionsQuery: SessionsQuery,
-    private agentEventsService: AgentEventsService
+    private agentEventsService: AgentEventsService,
+    private myDialogService: MyDialogService,
+    private navigateService: NavigateService
   ) {}
 
   initForSession(item: { lastProcessedEventIndex: number }) {
     let { lastProcessedEventIndex } = item;
 
-    this.sseRetryCount = 0;
+    this.initId++;
+    this.destroy();
+    this.reconnectCounter = 0;
     this.lastProcessedEventIndex = lastProcessedEventIndex;
-    this.isConnectingSse = false;
   }
 
   managePollingAndSse() {
@@ -67,8 +80,7 @@ export class AgentSessionService {
 
     if (
       session.status === SessionStatusEnum.Active &&
-      !this.eventSource &&
-      !this.isConnectingSse
+      this.ssePhase === 'idle'
     ) {
       this.connectSse({ sessionId: session.sessionId });
     }
@@ -80,14 +92,17 @@ export class AgentSessionService {
   }
 
   private closeSse() {
+    this.closeEventSource();
+    this.ssePhase = 'idle';
+  }
+
+  private closeEventSource() {
     this.flushSseBuffer();
 
     if (this.eventSource) {
       this.eventSource.close();
       this.eventSource = undefined;
     }
-
-    this.isConnectingSse = false;
   }
 
   private stopPolling() {
@@ -149,11 +164,13 @@ export class AgentSessionService {
   private connectSse(item: { sessionId: string }) {
     let { sessionId } = item;
 
-    if (this.isConnectingSse || this.eventSource) {
+    if (this.ssePhase !== 'idle') {
       return;
     }
 
-    this.isConnectingSse = true;
+    let initId = this.initId;
+
+    this.ssePhase = 'fetching-ticket';
 
     let payload: ToBackendCreateAgentSseTicketRequestPayload = {
       sessionId: sessionId
@@ -167,29 +184,39 @@ export class AgentSessionService {
       })
       .pipe(
         tap((resp: ToBackendCreateAgentSseTicketResponse) => {
+          if (this.initId !== initId) {
+            return;
+          }
+
+          this.ssePhase = 'idle';
+
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             console.log('connectSse - get ticket - ok');
             this.connectSseWithTicket({
               sessionId: sessionId,
-              sseTicket: resp.payload.sseTicket
+              sseTicket: resp.payload.sseTicket,
+              initId: initId
             });
           } else {
             console.log('connectSse - get ticket - error');
           }
-          this.isConnectingSse = false;
         }),
         take(1)
       )
       .subscribe();
   }
 
-  private connectSseWithTicket(item: { sessionId: string; sseTicket: string }) {
-    let { sessionId, sseTicket } = item;
+  private connectSseWithTicket(item: {
+    sessionId: string;
+    sseTicket: string;
+    initId: number;
+  }) {
+    let { sessionId, sseTicket, initId } = item;
 
-    let session = this.sessionQuery.getValue();
-    if (!session?.sessionId || session.sessionId !== sessionId) {
+    if (this.initId !== initId) {
       return;
     }
+
     this.closeSse();
 
     let url =
@@ -197,14 +224,13 @@ export class AgentSessionService {
       `/api/sse/agent-events?sessionId=${sessionId}&ticket=${sseTicket}&lastEventIndex=${this.lastProcessedEventIndex}`;
 
     this.eventSource = new EventSource(url);
+    this.ssePhase = 'connected';
 
     this.eventSource.onopen = () => {
       console.log('eventSource - sse connected');
     };
 
     this.eventSource.addEventListener('agent-event', (event: MessageEvent) => {
-      this.sseRetryCount = 0;
-
       let agentEvent: AgentEventApi = JSON.parse(event.data);
 
       if (agentEvent.eventType === 'session.mprove-reload-session') {
@@ -217,6 +243,7 @@ export class AgentSessionService {
         return;
       }
 
+      this.reconnectCounter = 0;
       this.sseEventBuffer.push(agentEvent);
 
       if (this.sseRafId === undefined) {
@@ -227,16 +254,28 @@ export class AgentSessionService {
     });
 
     this.eventSource.onerror = () => {
-      console.log(`eventSource.onerror, retryCount: ${this.sseRetryCount}`);
-      if (this.sseRetryCount >= this.SSE_MAX_RETRIES) {
+      this.reconnectCounter++;
+      console.log(
+        `eventSource.onerror, reconnectCounter: ${this.reconnectCounter}`
+      );
+      if (this.reconnectCounter > this.SSE_MAX_RECONNECTS) {
         this.closeSse();
+        let errorData = new ErrorData();
+        errorData.message = 'Session connection lost';
+        errorData.description = 'Try to reload session...';
+        errorData.leftButtonText = 'Ok';
+        errorData.leftOnClickFnBindThis = (() => {
+          this.navigateService.navigateToBuilder();
+        }).bind(this);
+        this.myDialogService.showError({
+          errorData: errorData,
+          isThrow: false
+        });
         return;
       }
-
-      this.sseRetryCount++;
       this.scheduleReconnect({
         sessionId: sessionId,
-        delay: this.SSE_RETRY_DELAY_MS
+        delay: this.SSE_RECONNECT_DELAY_MS
       });
     };
   }
@@ -244,27 +283,35 @@ export class AgentSessionService {
   private scheduleReconnect(item: { sessionId: string; delay: number }) {
     let { sessionId, delay } = item;
 
-    this.closeSse();
-    this.isConnectingSse = true;
+    this.closeEventSource();
+
+    if (this.ssePhase === 'waiting-to-reconnect') {
+      return;
+    }
+
+    this.ssePhase = 'waiting-to-reconnect';
+
+    let initId = this.initId;
 
     setTimeout(() => {
+      if (this.initId !== initId) {
+        return;
+      }
+
       let session = this.sessionQuery.getValue();
       if (
         session?.sessionId === sessionId &&
         session?.status === SessionStatusEnum.Active
       ) {
-        this.reconnectSse({ sessionId: sessionId });
+        this.reconnectSse({ sessionId: sessionId, initId: initId });
       } else {
-        this.isConnectingSse = false;
+        this.ssePhase = 'idle';
       }
     }, delay);
   }
 
-  private reconnectSse(item: { sessionId: string }) {
-    let { sessionId } = item;
-
-    // Guard to prevent sessionAndData$ from triggering connectSse during store updates
-    this.isConnectingSse = true;
+  private reconnectSse(item: { sessionId: string; initId: number }) {
+    let { sessionId, initId } = item;
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
       sessionId: sessionId,
@@ -278,6 +325,12 @@ export class AgentSessionService {
       })
       .pipe(
         tap((resp: ToBackendGetAgentSessionResponse) => {
+          if (this.initId !== initId) {
+            return;
+          }
+
+          this.ssePhase = 'idle';
+
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.sessionQuery.update(resp.payload.session);
 
@@ -308,12 +361,12 @@ export class AgentSessionService {
             });
 
             console.log('reconnectSse - get session - ok');
-            // Release the guard, then connect SSE directly
-            this.isConnectingSse = false;
-            this.connectSse({ sessionId: sessionId });
+
+            if (resp.payload.session.status === SessionStatusEnum.Active) {
+              this.connectSse({ sessionId: sessionId });
+            }
           } else {
             console.log('reconnectSse - get session - error');
-            this.isConnectingSse = false;
           }
         }),
         take(1)
