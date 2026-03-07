@@ -227,7 +227,7 @@ export class SeedRecordsController {
             apiKeyPrefix: parsed.prefix,
             apiKeySecretHash: apiKeySecretHash,
             apiKeySalt: apiKeySalt,
-            sandboxType: 'e2b',
+            sandboxType: SandboxTypeEnum.E2B,
             provider: 'openai',
             model: undefined,
             lastMessageProviderModel: undefined,

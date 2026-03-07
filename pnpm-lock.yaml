@@ -184,8 +184,8 @@ catalogs:
       specifier: 7.0.0
       version: 7.0.0
     '@opencode-ai/sdk':
-      specifier: 1.2.10
-      version: 1.2.10
+      specifier: 1.2.20
+      version: 1.2.20
     '@opentelemetry/api':
       specifier: 1.9.0
       version: 1.9.0
@@ -478,8 +478,8 @@ catalogs:
       specifier: 7.0.11
       version: 7.0.11
     opencode-ai:
-      specifier: 1.2.10
-      version: 1.2.10
+      specifier: 1.2.20
+      version: 1.2.20
     p-iteration:
       specifier: 1.1.8
       version: 1.1.8
@@ -739,7 +739,7 @@ importers:
         version: 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
       '@opencode-ai/sdk':
         specifier: 'catalog:'
-        version: 1.2.10
+        version: 1.2.20
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.0
@@ -844,7 +844,7 @@ importers:
         version: 7.0.11
       opencode-ai:
         specifier: 'catalog:'
-        version: 1.2.10
+        version: 1.2.20
       p-iteration:
         specifier: 'catalog:'
         version: 1.1.8
@@ -862,7 +862,7 @@ importers:
         version: 8.13.0
       pg-promise:
         specifier: 'catalog:'
-        version: 11.10.1(pg-query-stream@4.2.3(pg@8.13.0))
+        version: 11.10.1(pg-query-stream@4.7.0(pg@8.13.0))
       reflect-metadata:
         specifier: 'catalog:'
         version: 0.2.2
@@ -1345,7 +1345,7 @@ importers:
         version: 7.0.0(@angular/core@21.1.0(@angular/compiler@21.1.0)(rxjs@7.8.1)(zone.js@0.16.0))
       '@opencode-ai/sdk':
         specifier: 'catalog:'
-        version: 1.2.10
+        version: 1.2.20
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.9.0
@@ -1570,8 +1570,8 @@ importers:
         specifier: 6.4.0
         version: 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
       '@opencode-ai/sdk':
-        specifier: 1.2.10
-        version: 1.2.10
+        specifier: 1.2.20
+        version: 1.2.20
       '@replit/codemirror-indentation-markers':
         specifier: 6.5.3
         version: 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
@@ -4546,8 +4546,8 @@ packages:
   '@open-wc/dedupe-mixin@1.4.0':
     resolution: {integrity: sha512-Sj7gKl1TLcDbF7B6KUhtvr+1UCxdhMbNY5KxdU5IfMFWqL8oy1ZeAcCANjoB1TL0AJTcPmcCFsCbHf8X2jGDUA==}
 
-  '@opencode-ai/sdk@1.2.10':
-    resolution: {integrity: sha512-SyXcVqry2hitPVvQtvXOhqsWyFhSycG/+LTLYXrcq8AFmd9FR7dyBSDB3f5Ol6IPkYOegk8P2Eg2kKPNSNiKGw==}
+  '@opencode-ai/sdk@1.2.20':
+    resolution: {integrity: sha512-U5ROpG21D8jg9rkc1IgKAk1g5dn6X/rkOBfveupd0peSDO9n6VM9aikYccVLaMObxVqdjtG08IeQOFTPVS8ySQ==}
 
   '@opentelemetry/api-logs@0.208.0':
     resolution: {integrity: sha512-CjruKY9V6NMssL/T1kAFgzosF1v9o6oeN+aX5JB/C/xPNtmgIJqcXHG7fA82Ou1zCpWGl4lROQUKwUNE1pMCyg==}
@@ -9838,62 +9838,62 @@ packages:
   openapi-typescript-helpers@0.0.15:
     resolution: {integrity: sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==}
 
-  opencode-ai@1.2.10:
-    resolution: {integrity: sha512-hF93CJSJJE++cw/P2YKNp8YD3pZBYOboaZV/ZkOi9hnifFN8UCyoJDeqJrfBZSHp9k9url/7b5mCRan1sOVEzQ==}
+  opencode-ai@1.2.20:
+    resolution: {integrity: sha512-n/a0Z1zyo+KX1qgW1bVOQdQsqwM/p6UzRiOYqZFTPJTMdWObQxY19ia/K0/5uLcuJ77n4Hp5UFNvbbmTBlFNvg==}
     hasBin: true
 
-  opencode-darwin-arm64@1.2.10:
-    resolution: {integrity: sha512-r4kxYe1tWc9P2sZ8igUC77JDqQM23fS82C6C1DlIJg6+dbcg1XLqESYsKyByIMIiST4ZDzPOnMQt8u8fGy4S1g==}
+  opencode-darwin-arm64@1.2.20:
+    resolution: {integrity: sha512-KnT0IraBRix4UqHJY0F+xZ46udMTgm8Z2zu7LslDDQVXlAsPZ2zYBAwvf+1FeJO0WvtSVvA6bHvhXDPPydFoAg==}
     cpu: [arm64]
     os: [darwin]
 
-  opencode-darwin-x64-baseline@1.2.10:
-    resolution: {integrity: sha512-9O4I3RQpGAIixIDUz1tT1iJ3l1DGb84xGD+Cvik7QBTcRxYLg/JEP70jx8XGQUVVN6rRvsHQqTw7uPsjtIgvJQ==}
+  opencode-darwin-x64-baseline@1.2.20:
+    resolution: {integrity: sha512-H7GRbWDtL8KH2R8WbiJm7QiLWfjLashYlrcvz9eQd93Nckaagj7YgWA6yhM0Ws6wWLg3rFk6av6zpzLMUvdeIQ==}
     cpu: [x64]
     os: [darwin]
 
-  opencode-darwin-x64@1.2.10:
-    resolution: {integrity: sha512-fpkoTb6e8g1Nwl4KX/Jj7DmT7pXYXSd28oHZ/A3q0dJ7T8lS94V2vaK8O3QfHuD5H5jgDKxFpNh4XP/w1pyAiQ==}
+  opencode-darwin-x64@1.2.20:
+    resolution: {integrity: sha512-umKRmzjDQL2sYndUvBR1ezRyC2wez7lvALA/03bqEXksSOqcPpdxAKBYWfGiaanLAIJLTbZ/CEdpLhQ8PsxEnQ==}
     cpu: [x64]
     os: [darwin]
 
-  opencode-linux-arm64-musl@1.2.10:
-    resolution: {integrity: sha512-VHylFyTXjOpgv9gheq8wwnt5gZZPFyUatFuoAffZNNUvNGlk8hQNYZH4+FryDceWYqCrZl1R9H0Gj68jipNQ3A==}
+  opencode-linux-arm64-musl@1.2.20:
+    resolution: {integrity: sha512-h8XB0fKqygcZSQXl3iWB0TtZ4taCx2n8HHpJYOMz0wtoW7XgNcLMl3YuN0NkuUJEtrbN8Bltv8fHkY+7YkKedg==}
     cpu: [arm64]
     os: [linux]
 
-  opencode-linux-arm64@1.2.10:
-    resolution: {integrity: sha512-p/FDTWCoQ4AfGy1ejZWYgYor87J/e3X1H0n5piNI420L4LTB8L9KZWvqpgV95NBVNdAgEvrR5JKHYfUIRzk13Q==}
+  opencode-linux-arm64@1.2.20:
+    resolution: {integrity: sha512-b3yDqpoGg4EieYC9/cOhtITXE8LA2GHukXKUNf6aiycCFQ9E1MZqnyxSiAajFhw82/ZB0LYGkhoipCjKDyXWmg==}
     cpu: [arm64]
     os: [linux]
 
-  opencode-linux-x64-baseline-musl@1.2.10:
-    resolution: {integrity: sha512-+s5kT6mcJPBahgdIgK5Tj6g16bXkQfM2HqNRpuNEpIJnf54GtWkTz5S2mu5OTquKS7botXzXuUdegvhos03qQw==}
+  opencode-linux-x64-baseline-musl@1.2.20:
+    resolution: {integrity: sha512-cOPgOXCQOZrmzCjyLjAGrHg47ePH8AUFyCJPcbuaclNNmwm7yjselcoxItmi904i9m/FoMDbGrkxXrHgx31EYQ==}
     cpu: [x64]
     os: [linux]
 
-  opencode-linux-x64-baseline@1.2.10:
-    resolution: {integrity: sha512-L7Lb1M2Op3GE068sb8/clIyUgyUZpEtkoBkpdYU163fMKDX8dhwljUb+nxsywhmS2qZRDk1q8AIUpCpsRUYIIg==}
+  opencode-linux-x64-baseline@1.2.20:
+    resolution: {integrity: sha512-05x6sq+7VuL9oUlvcgAgwtZybo5eMVOpWej51Bjiq83wEt4RxAh+tzuClCx1qmZFMyogn82njPrtdxfoTtKmLw==}
     cpu: [x64]
     os: [linux]
 
-  opencode-linux-x64-musl@1.2.10:
-    resolution: {integrity: sha512-ihSqT1AWCMCsLitd6duLocfeamjq1CWtIehFMpLKIysAdBN5LjZAcPaoJD8aiKtOe8Ehu63IH22Knc8s1UFjTg==}
+  opencode-linux-x64-musl@1.2.20:
+    resolution: {integrity: sha512-KlT0CEwki7Ps5PmhWLVw9hPThpFPXDWdCguiVDupu0QptbaHcsreQxTNqqEjb3eRViPHVlYVMRHSgAE/K9q3/Q==}
     cpu: [x64]
     os: [linux]
 
-  opencode-linux-x64@1.2.10:
-    resolution: {integrity: sha512-JiRyKYMwpWX7lm8hJ6Qs/P/9bpAJkijL47b2ujauRbt9XVIlV6kVq/kCX2DggiHVWP9oHPrcTXNev3n8739w5Q==}
+  opencode-linux-x64@1.2.20:
+    resolution: {integrity: sha512-GfjBhIP9OJ2q0nwk3LQcZLUCdfFjvx3Khhzl+zLQ0KjxMnW/I/WNPEH0AIho4HcauFR9FUNIKbFSisYUSIFAJA==}
     cpu: [x64]
     os: [linux]
 
-  opencode-windows-x64-baseline@1.2.10:
-    resolution: {integrity: sha512-ImHpnIAyBqPMJ66qab5KNIFteuPp9j+5ZlvybtMN3dnBMDiK+HWz0FttwomODOfz791a5mAZBHrKgznHb3qDbQ==}
+  opencode-windows-x64-baseline@1.2.20:
+    resolution: {integrity: sha512-bRNNZfi+4sxD9DLUpTcv89uoR57wEa+rDy/8A2fAaNCtQ2qh2pfKlsmDEMI0lKTnUtjUn0NCfqAl9gJ2OnXkJQ==}
     cpu: [x64]
     os: [win32]
 
-  opencode-windows-x64@1.2.10:
-    resolution: {integrity: sha512-Apa0LyS0XUKLc7dX8fcwqAxnxQinX3ZzQdyiXO0JM209EM427dxgK4pWxE2xHRoLm6IooWF0crw9NWhZ1DgYkQ==}
+  opencode-windows-x64@1.2.20:
+    resolution: {integrity: sha512-OlrqrEY9r3QFl/gC1Ev/WoL+QTmNMLqbQVteaLrifFce43JYaTwKi2VibphvBWpeV2pRGcCVEaimZq6u5K2zJg==}
     cpu: [x64]
     os: [win32]
 
@@ -10115,6 +10115,11 @@ packages:
 
   pg-query-stream@4.2.3:
     resolution: {integrity: sha512-3mrOzffAoGGi2EqsfTdKanKn444ZB+E+Gbz/EJL3rd0thlXD3kb3ZBrwX42bRnQssrEd7/kVFM1FbiIMSQ5ung==}
+
+  pg-query-stream@4.7.0:
+    resolution: {integrity: sha512-aQpK8yfFTvOzvPmhXEzWfkwM24lv2Y3TfFY0HJYwx0YM/2fL4DhqpBhLni2Kd+l9p/XoDEi+HFvEvOCm7oqaLg==}
+    peerDependencies:
+      pg: ^8
 
   pg-types@2.2.0:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
@@ -15594,7 +15599,7 @@ snapshots:
       '@malloydata/malloy-interfaces': 0.0.336
       '@malloydata/malloy-tag': 0.0.336
       '@nestjs/throttler': 6.4.0(@nestjs/common@11.1.0(class-transformer@0.3.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@11.1.0)(reflect-metadata@0.2.2)
-      '@opencode-ai/sdk': 1.2.10
+      '@opencode-ai/sdk': 1.2.20
       '@replit/codemirror-indentation-markers': 6.5.3(@codemirror/language@6.11.3)(@codemirror/state@6.5.2)(@codemirror/view@6.36.7)
       '@vaadin/date-picker': 23.5.3
       class-transformer: 0.3.1
@@ -15966,7 +15971,7 @@ snapshots:
 
   '@open-wc/dedupe-mixin@1.4.0': {}
 
-  '@opencode-ai/sdk@1.2.10': {}
+  '@opencode-ai/sdk@1.2.20': {}
 
   '@opentelemetry/api-logs@0.208.0':
     dependencies:
@@ -21977,51 +21982,51 @@ snapshots:
 
   openapi-typescript-helpers@0.0.15: {}
 
-  opencode-ai@1.2.10:
+  opencode-ai@1.2.20:
     optionalDependencies:
-      opencode-darwin-arm64: 1.2.10
-      opencode-darwin-x64: 1.2.10
-      opencode-darwin-x64-baseline: 1.2.10
-      opencode-linux-arm64: 1.2.10
-      opencode-linux-arm64-musl: 1.2.10
-      opencode-linux-x64: 1.2.10
-      opencode-linux-x64-baseline: 1.2.10
-      opencode-linux-x64-baseline-musl: 1.2.10
-      opencode-linux-x64-musl: 1.2.10
-      opencode-windows-x64: 1.2.10
-      opencode-windows-x64-baseline: 1.2.10
+      opencode-darwin-arm64: 1.2.20
+      opencode-darwin-x64: 1.2.20
+      opencode-darwin-x64-baseline: 1.2.20
+      opencode-linux-arm64: 1.2.20
+      opencode-linux-arm64-musl: 1.2.20
+      opencode-linux-x64: 1.2.20
+      opencode-linux-x64-baseline: 1.2.20
+      opencode-linux-x64-baseline-musl: 1.2.20
+      opencode-linux-x64-musl: 1.2.20
+      opencode-windows-x64: 1.2.20
+      opencode-windows-x64-baseline: 1.2.20
 
-  opencode-darwin-arm64@1.2.10:
+  opencode-darwin-arm64@1.2.20:
     optional: true
 
-  opencode-darwin-x64-baseline@1.2.10:
+  opencode-darwin-x64-baseline@1.2.20:
     optional: true
 
-  opencode-darwin-x64@1.2.10:
+  opencode-darwin-x64@1.2.20:
     optional: true
 
-  opencode-linux-arm64-musl@1.2.10:
+  opencode-linux-arm64-musl@1.2.20:
     optional: true
 
-  opencode-linux-arm64@1.2.10:
+  opencode-linux-arm64@1.2.20:
     optional: true
 
-  opencode-linux-x64-baseline-musl@1.2.10:
+  opencode-linux-x64-baseline-musl@1.2.20:
     optional: true
 
-  opencode-linux-x64-baseline@1.2.10:
+  opencode-linux-x64-baseline@1.2.20:
     optional: true
 
-  opencode-linux-x64-musl@1.2.10:
+  opencode-linux-x64-musl@1.2.20:
     optional: true
 
-  opencode-linux-x64@1.2.10:
+  opencode-linux-x64@1.2.20:
     optional: true
 
-  opencode-windows-x64-baseline@1.2.10:
+  opencode-windows-x64-baseline@1.2.20:
     optional: true
 
-  opencode-windows-x64@1.2.10:
+  opencode-windows-x64@1.2.20:
     optional: true
 
   ora@5.4.1:
@@ -22249,12 +22254,12 @@ snapshots:
     dependencies:
       pg: 8.13.0
 
-  pg-promise@11.10.1(pg-query-stream@4.2.3(pg@8.13.0)):
+  pg-promise@11.10.1(pg-query-stream@4.7.0(pg@8.13.0)):
     dependencies:
       assert-options: 0.8.2
       pg: 8.13.0
       pg-minify: 1.6.5
-      pg-query-stream: 4.2.3(pg@8.13.0)
+      pg-query-stream: 4.7.0(pg@8.13.0)
       spex: 3.4.0
     transitivePeerDependencies:
       - pg-native
@@ -22266,6 +22271,11 @@ snapshots:
       pg-cursor: 2.15.3(pg@8.13.0)
     transitivePeerDependencies:
       - pg
+
+  pg-query-stream@4.7.0(pg@8.13.0):
+    dependencies:
+      pg: 8.13.0
+      pg-cursor: 2.15.3(pg@8.13.0)
 
   pg-types@2.2.0:
     dependencies:
