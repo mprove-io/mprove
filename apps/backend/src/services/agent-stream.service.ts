@@ -210,9 +210,9 @@ export class AgentStreamService implements OnModuleDestroy {
       await this.stopEventStream(item.sessionId);
     };
 
-    processStream();
-
     this.activeStreams.set(item.sessionId, () => abortController.abort());
+
+    processStream();
   }
 
   async stopEventStream(sessionId: string): Promise<void> {
