@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { interval, Subscription } from 'rxjs';
 import { exhaustMap, take, tap } from 'rxjs/operators';
+import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -233,7 +234,7 @@ export class AgentSessionService {
     this.eventSource.addEventListener('agent-event', (event: MessageEvent) => {
       let agentEvent: AgentEventApi = JSON.parse(event.data);
 
-      if (agentEvent.eventType === 'session.mprove-reload-session') {
+      if (agentEvent.eventType === RELOAD_SESSION_EVENT_TYPE) {
         console.log('eventSource - reloading session...');
         this.reconnectCounter = 0;
         this.scheduleReconnect({ sessionId: sessionId, delay: 0 });

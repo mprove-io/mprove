@@ -8,6 +8,7 @@ import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { AgentModelsService } from './agent-models.service';
 import { AgentSandboxLifecycleService } from './agent-sandbox-lifecycle.service';
+import { AgentStreamService } from './agent-stream.service';
 import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
@@ -28,6 +29,7 @@ export class TasksService {
     private structsService: StructsService,
     private notesService: NotesService,
     private agentSandboxLifecycleService: AgentSandboxLifecycleService,
+    private agentStreamService: AgentStreamService,
     private agentModelsService: AgentModelsService,
     private logger: Logger
   ) {}
@@ -170,7 +172,31 @@ export class TasksService {
     if (this.isRunningPauseIdleSandboxes === false) {
       this.isRunningPauseIdleSandboxes = true;
 
-      await this.agentSandboxLifecycleService.pauseIdleSessions().catch(e => {
+      try {
+        let sessionIdsToPause =
+          await this.agentSandboxLifecycleService.getSessionIdsToPause();
+
+        for (let sessionId of sessionIdsToPause) {
+          try {
+            await this.agentStreamService.publishStopSessionStream({
+              sessionId: sessionId
+            });
+            await this.agentSandboxLifecycleService.pauseSessionById({
+              sessionId: sessionId
+            });
+          } catch (e) {
+            logToConsoleBackend({
+              log: new ServerError({
+                message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_SANDBOXES_FAILED,
+                originalError: e
+              }),
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
+            });
+          }
+        }
+      } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_SCHEDULER_PAUSE_IDLE_SANDBOXES_FAILED,
@@ -180,7 +206,7 @@ export class TasksService {
           logger: this.logger,
           cs: this.cs
         });
-      });
+      }
 
       this.isRunningPauseIdleSandboxes = false;
     }

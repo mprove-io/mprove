@@ -127,6 +127,7 @@ export const appProviders = [
       structsService: StructsService,
       notesService: NotesService,
       agentLifecycleService: AgentSandboxLifecycleService,
+      agentStreamService: AgentStreamService,
       agentModelsService: AgentModelsService,
       logger: Logger
     ) =>
@@ -137,6 +138,7 @@ export const appProviders = [
             structsService,
             notesService,
             agentLifecycleService,
+            agentStreamService,
             agentModelsService,
             logger
           )
@@ -147,6 +149,7 @@ export const appProviders = [
       StructsService,
       NotesService,
       AgentSandboxLifecycleService,
+      AgentStreamService,
       AgentModelsService
     ]
   },

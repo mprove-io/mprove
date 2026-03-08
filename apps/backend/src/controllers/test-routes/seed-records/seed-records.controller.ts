@@ -64,6 +64,7 @@ import {
   DEFAULT_SRV_UI,
   PASSWORD_EXPIRES_OFFSET
 } from '#common/constants/top-backend';
+import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';

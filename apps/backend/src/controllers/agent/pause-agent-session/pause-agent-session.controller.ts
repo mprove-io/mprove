@@ -5,6 +5,7 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxLifecycleService } from '#backend/services/agent-sandbox-lifecycle.service';
+import { AgentStreamService } from '#backend/services/agent-stream.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -18,7 +19,8 @@ import { ServerError } from '#common/models/server-error';
 export class PauseAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
-    private agentLifecycleService: AgentSandboxLifecycleService
+    private agentLifecycleService: AgentSandboxLifecycleService,
+    private agentStreamService: AgentStreamService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession)
@@ -36,7 +38,11 @@ export class PauseAgentSessionController {
       });
     }
 
-    await this.agentLifecycleService.pauseSessionById({ sessionId });
+    await this.agentStreamService.publishStopSessionStream({
+      sessionId: sessionId
+    });
+
+    await this.agentLifecycleService.pauseSessionById({ sessionId: sessionId });
 
     let payload = {};
 

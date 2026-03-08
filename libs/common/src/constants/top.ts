@@ -340,3 +340,5 @@ export const STORE_FIELD_DETAIL_VALUES = [
 ];
 
 export const LOGIC_VALUES = [FractionLogicEnum.Or, FractionLogicEnum.AndNot];
+
+export const RELOAD_SESSION_EVENT_TYPE = 'session.mprove-reload-session';

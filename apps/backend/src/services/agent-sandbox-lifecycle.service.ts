@@ -31,7 +31,7 @@ export class AgentSandboxLifecycleService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async pauseIdleSessions(): Promise<void> {
+  async getSessionIdsToPause(): Promise<string[]> {
     let sessionLastActivityToPauseMinutes = this.cs.get<
       BackendConfig['sessionLastActivityToPauseMinutes']
     >('sessionLastActivityToPauseMinutes');
@@ -48,38 +48,14 @@ export class AgentSandboxLifecycleService {
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-    for (let session of sessionsToPause) {
-      if (
-        session.lastActivityTs &&
-        session.lastActivityTs < pauseThresholdTs &&
-        session.sandboxId
-      ) {
-        let project = await this.projectsService.getProjectCheckExists({
-          projectId: session.projectId
-        });
+    let sessionIdsToPause = sessionsToPause
+      .filter(
+        s =>
+          s.lastActivityTs && s.lastActivityTs < pauseThresholdTs && s.sandboxId
+      )
+      .map(s => s.sessionId);
 
-        await this.agentSandboxService.pauseSandbox({
-          sandboxType: session.sandboxType as SandboxTypeEnum,
-          sandboxId: session.sandboxId,
-          e2bApiKey: project.e2bApiKey
-        });
-
-        let updatedSession: SessionTab = {
-          ...session,
-          status: SessionStatusEnum.Paused
-        };
-
-        await this.db.drizzle.transaction(
-          async tx =>
-            await this.db.packer.write({
-              tx: tx,
-              insertOrUpdate: {
-                sessions: [updatedSession]
-              }
-            })
-        );
-      }
-    }
+    return sessionIdsToPause;
   }
 
   async pauseSessionById(item: { sessionId: string }): Promise<void> {

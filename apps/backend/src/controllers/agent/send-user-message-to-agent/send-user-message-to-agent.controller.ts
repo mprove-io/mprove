@@ -104,6 +104,17 @@ export class SendUserMessageToAgentController {
 
     if (isDefined(sandboxInfo) === true) {
       if (sandboxInfo.state === 'paused') {
+        let isLockExist =
+          await this.agentStreamService.publishStopSessionStream({
+            sessionId: session.sessionId
+          });
+
+        if (isLockExist) {
+          await this.agentStreamService.waitForStreamLockRelease({
+            sessionId: session.sessionId
+          });
+        }
+
         await this.agentSandboxService.resumeSandbox({
           sandboxType: session.sandboxType as SandboxTypeEnum,
           sandboxId: session.sandboxId,
