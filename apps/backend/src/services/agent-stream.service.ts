@@ -67,7 +67,7 @@ export class AgentStreamService implements OnModuleDestroy {
 
     this.redisSubscriber.on('message', (_channel, sessionId) => {
       if (this.activeStreams.has(sessionId)) {
-        this.logger.log(
+        console.log(
           `[stop-stream] received pub/sub stop for sessionId=${sessionId}`
         );
 
@@ -174,7 +174,7 @@ export class AgentStreamService implements OnModuleDestroy {
     sessionId: string;
     eventIndex: number;
   }): Promise<void> {
-    this.logger.log(
+    console.log(
       `[publishReloadSession] publishing reload for sessionId=${item.sessionId}`
     );
 
@@ -216,7 +216,7 @@ export class AgentStreamService implements OnModuleDestroy {
       );
 
       if (result === 0) {
-        this.logger.log(
+        console.log(
           `[refreshStreamLocks] lock lost, cleaning up sessionId=${sessionId}`
         );
 
@@ -248,7 +248,7 @@ export class AgentStreamService implements OnModuleDestroy {
     opencodeSessionId: string;
   }): Promise<void> {
     if (this.activeStreams.has(item.sessionId)) {
-      this.logger.log(
+      console.log(
         `[startEventStream] skip - already in activeStreams sessionId=${item.sessionId}`
       );
       return;
@@ -256,13 +256,13 @@ export class AgentStreamService implements OnModuleDestroy {
 
     let acquired = await this.tryAcquireStreamLock(item.sessionId);
     if (!acquired) {
-      this.logger.log(
+      console.log(
         `[startEventStream] skip - lock not acquired sessionId=${item.sessionId}`
       );
       return;
     }
 
-    this.logger.log(
+    console.log(
       `[startEventStream] lock acquired, subscribing sessionId=${item.sessionId}`
     );
 
@@ -281,7 +281,7 @@ export class AgentStreamService implements OnModuleDestroy {
       { signal: abortController.signal }
     );
 
-    this.logger.log(
+    console.log(
       `[startEventStream] subscribed, starting refetch sessionId=${item.sessionId}`
     );
 
@@ -291,7 +291,7 @@ export class AgentStreamService implements OnModuleDestroy {
       client: opencodeClient
     });
 
-    this.logger.log(
+    console.log(
       `[startEventStream] refetch complete sessionId=${item.sessionId}`
     );
 
@@ -309,7 +309,7 @@ export class AgentStreamService implements OnModuleDestroy {
           eventIndex++;
         }
 
-        this.logger.log(
+        console.log(
           `[processStream] stream ended naturally sessionId=${item.sessionId}`
         );
       } catch (e: any) {
@@ -326,11 +326,11 @@ export class AgentStreamService implements OnModuleDestroy {
 
           streamFailed = true;
 
-          this.logger.log(
+          console.log(
             `[processStream] stream failed sessionId=${item.sessionId} error=${e.message}`
           );
         } else {
-          this.logger.log(
+          console.log(
             `[processStream] stream aborted sessionId=${item.sessionId}`
           );
         }
@@ -436,7 +436,7 @@ export class AgentStreamService implements OnModuleDestroy {
       let isStalled = elapsed > AgentStreamService.STREAM_STALL_THRESHOLD_MS;
 
       if (isStalled) {
-        this.logger.log(
+        console.log(
           `[checkStreamStalls] stream stalled for sessionId=${sessionId} elapsed=${elapsed}ms`
         );
 
@@ -469,7 +469,7 @@ export class AgentStreamService implements OnModuleDestroy {
         elapsed >= AgentStreamService.STREAM_LOCK_WAIT_TIMEOUT_MS;
 
       if (isTimedOut) {
-        this.logger.log(
+        console.log(
           `[waitForStreamLockRelease] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
         );
         return;
