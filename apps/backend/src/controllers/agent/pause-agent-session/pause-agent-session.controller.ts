@@ -10,7 +10,10 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendPauseAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
+import {
+  ToBackendPauseAgentSessionRequest,
+  ToBackendPauseAgentSessionResponsePayload
+} from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
@@ -44,7 +47,17 @@ export class PauseAgentSessionController {
 
     await this.agentLifecycleService.pauseSessionById({ sessionId: sessionId });
 
-    let payload = {};
+    let freshSession = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId: sessionId
+    });
+
+    let freshSessionApi = this.sessionsService.tabToSessionApi({
+      session: freshSession
+    });
+
+    let payload: ToBackendPauseAgentSessionResponsePayload = {
+      session: freshSessionApi
+    };
 
     return payload;
   }

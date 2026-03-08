@@ -31,7 +31,10 @@ import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendArchiveAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
+import {
+  ToBackendArchiveAgentSessionRequest,
+  ToBackendArchiveAgentSessionResponsePayload
+} from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
@@ -97,7 +100,13 @@ export class ArchiveAgentSessionController {
       getRetryOption(this.cs, this.logger)
     );
 
-    let payload = {};
+    let sessionApi = this.sessionsService.tabToSessionApi({
+      session: updatedSession
+    });
+
+    let payload: ToBackendArchiveAgentSessionResponsePayload = {
+      session: sessionApi
+    };
 
     return payload;
   }

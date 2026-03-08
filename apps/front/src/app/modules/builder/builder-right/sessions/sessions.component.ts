@@ -4,13 +4,20 @@ import { map, take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
+import {
+  ToBackendArchiveAgentSessionRequestPayload,
+  ToBackendArchiveAgentSessionResponse
+} from '#common/interfaces/to-backend/agent/to-backend-archive-agent-session';
 import {
   ToBackendGetAgentSessionsListRequestPayload,
   ToBackendGetAgentSessionsListResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-sessions-list';
+import {
+  ToBackendPauseAgentSessionRequestPayload,
+  ToBackendPauseAgentSessionResponse
+} from '#common/interfaces/to-backend/agent/to-backend-pause-agent-session';
 import { makeTitle } from '#front/app/functions/make-title';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { RepoQuery } from '#front/app/queries/repo.query';
@@ -207,28 +214,46 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
+    let payload: ToBackendPauseAgentSessionRequestPayload = {
+      sessionId: sessionId
+    };
+
     this.apiService
       .req({
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession,
-        payload: { sessionId: sessionId },
+        payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap(() => {
-          let sessions = this.sessionsQuery.getValue().sessions;
-          let updated = sessions.map(s =>
-            s.sessionId === sessionId
-              ? { ...s, status: SessionStatusEnum.Paused }
-              : s
-          );
-          this.sessionsQuery.updatePart({ sessions: updated });
+        map((resp: ToBackendPauseAgentSessionResponse) => {
+          let respSession = resp.payload.session;
 
-          let currentSession = this.sessionQuery.getValue();
-          if (currentSession?.sessionId === sessionId) {
-            this.sessionQuery.update({
-              ...currentSession,
-              status: SessionStatusEnum.Paused
+          if (respSession.status === 'Archived') {
+            this.updatedArchivedSessions({
+              session: session,
+              respSession: respSession
             });
+          } else {
+            let sessions = this.sessionsQuery.getValue().sessions;
+            let updated = sessions.map(s =>
+              s.sessionId === sessionId
+                ? {
+                    ...s,
+                    status: respSession.status,
+                    archivedReason: respSession.archivedReason
+                  }
+                : s
+            );
+            this.sessionsQuery.updatePart({ sessions: updated });
+
+            let currentSession = this.sessionQuery.getValue();
+            if (currentSession?.sessionId === sessionId) {
+              this.sessionQuery.update({
+                ...currentSession,
+                status: respSession.status,
+                archivedReason: respSession.archivedReason
+              });
+            }
           }
         }),
         take(1)
@@ -241,54 +266,77 @@ export class SessionsComponent implements OnInit {
 
     let sessionId = session.sessionId;
 
+    let payload: ToBackendArchiveAgentSessionRequestPayload = {
+      sessionId: sessionId
+    };
+
     this.apiService
       .req({
         pathInfoName: ToBackendRequestInfoNameEnum.ToBackendArchiveAgentSession,
-        payload: { sessionId: sessionId },
+        payload: payload,
         showSpinner: true
       })
       .pipe(
-        tap(() => {
-          let sessions = this.sessionsQuery.getValue().sessions;
+        map((resp: ToBackendArchiveAgentSessionResponse) => {
+          let respSession = resp.payload.session;
 
-          if (
-            this.archivedLastCreatedTs !== undefined &&
-            session.createdTs >= this.archivedLastCreatedTs
-          ) {
-            // Move to archived section
-            let others = sessions.filter(s => s.sessionId !== sessionId);
-            let nonArchived = others.filter(s => s.status !== 'Archived');
-            let archived = others.filter(s => s.status === 'Archived');
-            let archivedSession = { ...session, status: 'Archived' };
-
-            let insertIdx = archived.findIndex(
-              s => s.createdTs < archivedSession.createdTs
-            );
-            if (insertIdx === -1) {
-              archived.push(archivedSession);
-            } else {
-              archived.splice(insertIdx, 0, archivedSession);
-            }
-
-            this.sessionsQuery.updatePart({
-              sessions: [...nonArchived, ...archived]
-            });
-          } else {
-            // Remove from list
-            let updated = sessions.filter(s => s.sessionId !== sessionId);
-            this.sessionsQuery.updatePart({ sessions: updated });
-          }
-
-          this.hasMoreArchived = true;
-
-          let currentSession = this.sessionQuery.getValue();
-          if (currentSession?.sessionId === sessionId) {
-            this.navigateService.navigateToBuilder();
-          }
+          this.updatedArchivedSessions({
+            session: session,
+            respSession: respSession
+          });
         }),
         take(1)
       )
       .subscribe();
+  }
+
+  private updatedArchivedSessions(item: {
+    session: SessionApiX;
+    respSession: SessionApi;
+  }) {
+    let { session, respSession } = item;
+    let sessionId = session.sessionId;
+
+    let sessions = this.sessionsQuery.getValue().sessions;
+
+    if (
+      this.archivedLastCreatedTs !== undefined &&
+      session.createdTs >= this.archivedLastCreatedTs
+    ) {
+      // Move to archived section
+      let others = sessions.filter(s => s.sessionId !== sessionId);
+      let nonArchived = others.filter(s => s.status !== 'Archived');
+      let archived = others.filter(s => s.status === 'Archived');
+      let archivedSession = {
+        ...session,
+        status: respSession.status,
+        archivedReason: respSession.archivedReason
+      };
+
+      let insertIdx = archived.findIndex(
+        s => s.createdTs < archivedSession.createdTs
+      );
+      if (insertIdx === -1) {
+        archived.push(archivedSession);
+      } else {
+        archived.splice(insertIdx, 0, archivedSession);
+      }
+
+      this.sessionsQuery.updatePart({
+        sessions: [...nonArchived, ...archived]
+      });
+    } else {
+      // Remove from list
+      let updated = sessions.filter(s => s.sessionId !== sessionId);
+      this.sessionsQuery.updatePart({ sessions: updated });
+    }
+
+    this.hasMoreArchived = true;
+
+    let currentSession = this.sessionQuery.getValue();
+    if (currentSession?.sessionId === sessionId) {
+      this.navigateService.navigateToBuilder();
+    }
   }
 
   loadArchivedSessions() {
