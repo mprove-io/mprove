@@ -381,17 +381,17 @@ export class SessionComponent implements OnInit, OnDestroy {
       .pipe(
         tap((resp: ToBackendSendUserMessageToAgentResponse) => {
           let session = resp?.payload?.session;
-          if (session) {
+
+          if (session.sessionId === this.session?.sessionId) {
             this.sessionQuery.update(session);
 
-            let sessionId = this.session?.sessionId;
-            if (sessionId) {
-              let sessions = this.sessionsQuery.getValue().sessions;
-              let updated = sessions.map(s =>
-                s.sessionId === sessionId ? session : s
-              );
-              this.sessionsQuery.updatePart({ sessions: updated });
-            }
+            let sessions = this.sessionsQuery.getValue().sessions;
+
+            this.sessionsQuery.updatePart({
+              sessions: sessions.map(x =>
+                x.sessionId === session.sessionId ? session : x
+              )
+            });
           }
         }),
         take(1)
