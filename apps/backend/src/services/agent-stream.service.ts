@@ -363,10 +363,8 @@ export class AgentStreamService implements OnModuleDestroy {
 
     this.lastEventTsMap.delete(sessionId);
 
-    console.log('stopEventStream part 1 done');
     try {
       await this.agentDrainService.drainQueue(sessionId);
-      console.log('stopEventStream part 2 done');
     } finally {
       this.agentDrainService.cleanup(sessionId);
       await this.releaseStreamLock(sessionId);
