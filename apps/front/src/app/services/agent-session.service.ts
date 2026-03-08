@@ -80,10 +80,17 @@ export class AgentSessionService {
     }
 
     if (
+      session.status !== SessionStatusEnum.Active &&
+      this.ssePhase !== 'idle'
+    ) {
+      this.closeSse();
+    }
+
+    if (
       session.status === SessionStatusEnum.Active &&
       this.ssePhase === 'idle'
     ) {
-      this.connectSse({ sessionId: session.sessionId });
+      this.refreshAndConnectSse({ sessionId: session.sessionId });
     }
   }
 
@@ -93,6 +100,7 @@ export class AgentSessionService {
   }
 
   private closeSse() {
+    console.log('closeSse - closing, was phase:', this.ssePhase);
     this.closeEventSource();
     this.ssePhase = 'idle';
   }
@@ -305,15 +313,17 @@ export class AgentSessionService {
         session?.sessionId === sessionId &&
         session?.status === SessionStatusEnum.Active
       ) {
-        this.reconnectSse({ sessionId: sessionId, initId: initId });
+        this.refreshAndConnectSse({ sessionId: sessionId });
       } else {
         this.ssePhase = 'idle';
       }
     }, delay);
   }
 
-  private reconnectSse(item: { sessionId: string; initId: number }) {
-    let { sessionId, initId } = item;
+  private refreshAndConnectSse(item: { sessionId: string }) {
+    let { sessionId } = item;
+    let initId = this.initId;
+    this.ssePhase = 'fetching-ticket';
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
       sessionId: sessionId,
@@ -334,20 +344,26 @@ export class AgentSessionService {
           this.ssePhase = 'idle';
 
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.sessionQuery.update(resp.payload.session);
-
             if (resp.payload.events.length > 0) {
               this.sessionEventsQuery.updatePart({
                 events: resp.payload.events
               });
 
-              // Update lastProcessedEventIndex from fetched events
               let maxIndex = resp.payload.events.reduce(
                 (max, e) => Math.max(max, e.eventIndex),
                 -1
               );
               this.lastProcessedEventIndex = maxIndex;
             }
+
+            // Connect SSE BEFORE store updates to prevent re-entry
+            // (store updates trigger managePollingAndSse synchronously;
+            //  connectSse sets ssePhase='fetching-ticket' which blocks re-entry)
+            if (resp.payload.session.status === SessionStatusEnum.Active) {
+              this.connectSse({ sessionId: sessionId });
+            }
+
+            this.sessionQuery.update(resp.payload.session);
 
             this.sessionBundleQuery.updatePart({
               messages: resp.payload.messages || [],
@@ -362,20 +378,13 @@ export class AgentSessionService {
               isLastErrorRecovered: resp.payload.ocSession?.isLastErrorRecovered
             });
 
-            // Update session in the sessions list
             let sessions = this.sessionsQuery.getValue().sessions;
             let updated = sessions.map(s =>
               s.sessionId === sessionId ? resp.payload.session : s
             );
             this.sessionsQuery.updatePart({ sessions: updated });
 
-            console.log('reconnectSse - get session - ok');
-
-            if (resp.payload.session.status === SessionStatusEnum.Active) {
-              this.connectSse({ sessionId: sessionId });
-            }
-          } else {
-            console.log('reconnectSse - get session - error');
+            console.log('refreshAndConnectSse - get session - ok');
           }
         }),
         take(1)
