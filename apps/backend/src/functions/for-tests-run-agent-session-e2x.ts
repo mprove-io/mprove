@@ -41,7 +41,8 @@ export async function forTestsRunAgentSessionE2x(item: {
     anthropicApiKey?: string;
     openaiApiKey?: string;
   };
-  model?: string;
+  model: string;
+  variant: string;
 }): Promise<void> {
   let { t, testId, inspectUI } = item;
 
@@ -136,6 +137,7 @@ export async function forTestsRunAgentSessionE2x(item: {
         model: item.model,
         agent: 'plan',
         permissionMode: 'default',
+        variant: item.variant,
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN
       }
@@ -197,7 +199,10 @@ export async function forTestsRunAgentSessionE2x(item: {
       payload: {
         sessionId: sessionId,
         interactionType: InteractionTypeEnum.Message,
-        message: 'hello, what model is used?'
+        message: 'hello, what model is used?',
+        agent: 'plan',
+        model: item.model,
+        variant: item.variant
       }
     };
 
@@ -232,7 +237,10 @@ export async function forTestsRunAgentSessionE2x(item: {
       payload: {
         sessionId: sessionId,
         interactionType: InteractionTypeEnum.Message,
-        message: 'what is 2 + 2?'
+        message: 'what is 2 + 2?',
+        agent: 'plan',
+        model: item.model,
+        variant: item.variant
       }
     };
 

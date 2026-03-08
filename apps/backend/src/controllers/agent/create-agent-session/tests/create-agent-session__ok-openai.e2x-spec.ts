@@ -22,7 +22,8 @@ test('1', async t => {
       e2bApiKey,
       openaiApiKey
     },
-    model: 'openai/gpt-5.1-codex-mini'
+    model: 'openai/gpt-5.1-codex-mini',
     // model: 'opencode/big-pickle'
+    variant: 'default'
   });
 });

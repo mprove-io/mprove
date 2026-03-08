@@ -22,6 +22,7 @@ test('1', async t => {
       e2bApiKey,
       zenApiKey
     },
-    model: 'opencode/big-pickle'
+    model: 'opencode/big-pickle',
+    variant: 'default'
   });
 });

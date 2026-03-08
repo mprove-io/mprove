@@ -32,6 +32,10 @@ export class ToBackendSendUserMessageToAgentRequestPayload {
 
   @IsOptional()
   @IsString()
+  agent?: string;
+
+  @IsOptional()
+  @IsString()
   permissionId?: string;
 
   @IsOptional()

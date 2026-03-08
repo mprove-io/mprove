@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import type { SessionPromptAsyncData } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
 import { BackendConfig } from '#backend/config/backend-config';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
@@ -57,6 +58,7 @@ export class SendUserMessageToAgentController {
       sessionId,
       interactionType,
       message,
+      agent,
       model,
       variant,
       permissionId,
@@ -158,21 +160,35 @@ export class SendUserMessageToAgentController {
     if (session.status === SessionStatusEnum.Active) {
       // execute interaction
       if (interactionType === InteractionTypeEnum.Message) {
+        if (agent === undefined) {
+          throw new ServerError({
+            message: ErEnum.BACKEND_AGENT_MESSAGE_AGENT_REQUIRED
+          });
+        }
+
+        if (model === undefined) {
+          throw new ServerError({
+            message: ErEnum.BACKEND_AGENT_MESSAGE_MODEL_REQUIRED
+          });
+        }
+
+        if (variant === undefined) {
+          throw new ServerError({
+            message: ErEnum.BACKEND_AGENT_MESSAGE_VARIANT_REQUIRED
+          });
+        }
+
         let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
           sessionId: sessionId
         });
 
-        let effectiveModel = model !== undefined ? model : session.model;
-
-        let promptBody: any = {
+        let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
           parts: [{ type: 'text', text: message }]
         };
 
-        if (session.agent) {
-          promptBody.agent = session.agent;
-        }
+        promptBody.agent = agent;
 
-        let split = splitModel(effectiveModel);
+        let split = splitModel(model);
 
         if (split) {
           promptBody.model = split;
@@ -192,8 +208,9 @@ export class SendUserMessageToAgentController {
 
         session = {
           ...session,
-          model: model !== undefined ? model : session.model,
-          lastMessageProviderModel: effectiveModel,
+          agent: agent,
+          model: model,
+          lastMessageProviderModel: model,
           lastMessageVariant: variant
         };
       } else if (interactionType === InteractionTypeEnum.Permission) {

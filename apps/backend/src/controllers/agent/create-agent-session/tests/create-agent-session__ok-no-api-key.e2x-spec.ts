@@ -16,6 +16,7 @@ test('1', async t => {
     projectApiKeys: {
       e2bApiKey
     },
-    model: 'opencode/big-pickle'
+    model: 'opencode/big-pickle',
+    variant: 'default'
   });
 });

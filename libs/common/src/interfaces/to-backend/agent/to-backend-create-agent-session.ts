@@ -14,19 +14,17 @@ export class ToBackendCreateAgentSessionRequestPayload {
   @IsString()
   provider: string;
 
-  @IsOptional()
   @IsString()
-  model?: string;
+  model: string;
 
   @IsString()
   agent: string;
 
   @IsString()
-  permissionMode: string;
+  variant: string;
 
-  @IsOptional()
   @IsString()
-  variant?: string;
+  permissionMode: string;
 
   @IsString()
   envId: string;

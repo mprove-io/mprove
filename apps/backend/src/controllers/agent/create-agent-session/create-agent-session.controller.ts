@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Throttle } from '@nestjs/throttler';
+import type { SessionPromptAsyncData } from '@opencode-ai/sdk/v2';
 import retry from 'async-retry';
 import { and, eq, inArray, sql } from 'drizzle-orm';
 import pIteration from 'p-iteration';
@@ -385,7 +386,7 @@ export class CreateAgentSessionController {
       });
 
       if (firstMessage) {
-        let promptBody: any = {
+        let promptBody: NonNullable<SessionPromptAsyncData['body']> = {
           parts: [{ type: 'text', text: firstMessage }]
         };
 

@@ -109,7 +109,7 @@ export class NewSessionComponent implements OnInit {
       model: this.model,
       agent: this.agent,
       permissionMode: 'default',
-      variant: this.variant !== 'default' ? this.variant : undefined,
+      variant: this.variant,
       envId: nav.envId,
       initialBranch: this.initialBranch,
       firstMessage: text
@@ -135,8 +135,7 @@ export class NewSessionComponent implements OnInit {
               agent: this.agent,
               model: this.model,
               lastMessageProviderModel: this.model,
-              lastMessageVariant:
-                this.variant !== 'default' ? this.variant : undefined,
+              lastMessageVariant: this.variant,
               initialBranch: this.initialBranch,
               initialCommit: undefined,
               status: SessionStatusEnum.New,

@@ -286,7 +286,8 @@ export class SessionComponent implements OnInit, OnDestroy {
       interactionType: InteractionTypeEnum.Message,
       message: text,
       model: this.model,
-      variant: this.variant !== 'default' ? this.variant : undefined
+      variant: this.variant,
+      agent: this.agent
     });
   }
 

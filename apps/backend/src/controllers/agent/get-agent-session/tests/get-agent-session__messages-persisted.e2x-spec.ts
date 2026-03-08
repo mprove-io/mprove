@@ -122,6 +122,7 @@ test('1', async t => {
         model: 'opencode/big-pickle',
         agent: 'plan',
         permissionMode: 'default',
+        variant: 'default',
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN
       }
@@ -174,7 +175,10 @@ test('1', async t => {
       payload: {
         sessionId: sessionId,
         interactionType: InteractionTypeEnum.Message,
-        message: 'what is 10 + 20?'
+        message: 'what is 10 + 20?',
+        agent: 'plan',
+        model: 'opencode/big-pickle',
+        variant: 'default'
       }
     };
 
