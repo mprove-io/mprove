@@ -84,7 +84,13 @@ export class UsersService {
           user.ui?.permissionsAutoAcceptSessionIds
         )
           ? user.ui?.permissionsAutoAcceptSessionIds
-          : defaultSrvUi.permissionsAutoAcceptSessionIds
+          : defaultSrvUi.permissionsAutoAcceptSessionIds,
+        //
+        newSessionPermissionsAutoAccept: isDefined(
+          user.ui?.newSessionPermissionsAutoAccept
+        )
+          ? user.ui?.newSessionPermissionsAutoAccept
+          : defaultSrvUi.newSessionPermissionsAutoAccept
       },
       serverTs: Number(user.serverTs)
     };

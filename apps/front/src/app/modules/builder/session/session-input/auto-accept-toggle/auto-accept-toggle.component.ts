@@ -17,22 +17,24 @@ export class AutoAcceptToggleComponent {
 
   state$ = combineLatest([
     this.uiQuery.permissionsAutoAcceptSessionIds$,
-    this.uiQuery.newSessionAutoAccept$
+    this.uiQuery.newSessionPermissionsAutoAccept$
   ]).pipe(
-    tap(([permissionsAutoAcceptSessionIds, newSessionAutoAccept]) => {
-      if (this.sessionId) {
-        let ids = permissionsAutoAcceptSessionIds || [];
-        this.autoAccept = ids.includes(this.sessionId);
-      } else {
-        this.autoAccept = newSessionAutoAccept;
+    tap(
+      ([permissionsAutoAcceptSessionIds, newSessionPermissionsAutoAccept]) => {
+        if (this.sessionId) {
+          let ids = permissionsAutoAcceptSessionIds || [];
+          this.autoAccept = ids.includes(this.sessionId);
+        } else {
+          this.autoAccept = newSessionPermissionsAutoAccept;
+        }
+
+        this.tooltipText = this.autoAccept
+          ? 'Permissions auto-accept: ON'
+          : 'Permissions auto-accept: OFF';
+
+        this.cd.detectChanges();
       }
-
-      this.tooltipText = this.autoAccept
-        ? 'Permissions auto-accept: ON'
-        : 'Permissions auto-accept: OFF';
-
-      this.cd.detectChanges();
-    })
+    )
   );
 
   constructor(
@@ -56,7 +58,8 @@ export class AutoAcceptToggleComponent {
         permissionsAutoAcceptSessionIds: newIds
       });
     } else {
-      this.uiQuery.updatePart({ newSessionAutoAccept: newValue });
+      this.uiQuery.updatePart({ newSessionPermissionsAutoAccept: newValue });
+      this.uiService.setUserUi({ newSessionPermissionsAutoAccept: newValue });
     }
   }
 }

@@ -59,7 +59,7 @@ export class UiState {
   sessionAllEventsExpanded: boolean;
   isNavigatingSession: boolean;
   showContent: boolean;
-  newSessionAutoAccept: boolean;
+  newSessionPermissionsAutoAccept: boolean;
   //
   modelTreeLevels: ModelTreeLevelsEnum;
   timezone: string;
@@ -115,7 +115,7 @@ let uiState: UiState = {
   sessionAllEventsExpanded: false,
   isNavigatingSession: false,
   showContent: true,
-  newSessionAutoAccept: false,
+  newSessionPermissionsAutoAccept: false,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -223,8 +223,8 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showContent$ = this.store.pipe(select(state => state.showContent));
 
-  newSessionAutoAccept$ = this.store.pipe(
-    select(state => state.newSessionAutoAccept)
+  newSessionPermissionsAutoAccept$ = this.store.pipe(
+    select(state => state.newSessionPermissionsAutoAccept)
   );
 
   permissionsAutoAcceptSessionIds$ = this.store.pipe(

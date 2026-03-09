@@ -149,7 +149,7 @@ export class NewSessionComponent implements OnInit {
             });
 
             // Persist autoAccept for the new session
-            if (this.uiQuery.getValue().newSessionAutoAccept) {
+            if (this.uiQuery.getValue().newSessionPermissionsAutoAccept) {
               let sessionIds =
                 this.uiQuery.getValue().permissionsAutoAcceptSessionIds || [];
               let newSessionIds = [...sessionIds, sessionId];

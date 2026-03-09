@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { ModelTreeLevelsEnum } from '#common/enums/model-tree-levels-enum.enum';
 import { TimeSpecEnum } from '#common/enums/timespec.enum';
 import { IsTimezone } from '#common/functions/is-timezone';
@@ -50,4 +56,8 @@ export class Ui {
   @IsOptional()
   @IsString({ each: true })
   permissionsAutoAcceptSessionIds?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  newSessionPermissionsAutoAccept?: boolean;
 }
