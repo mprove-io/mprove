@@ -46,18 +46,18 @@ export class Ui {
   projectReportLinks: ProjectReportLink[];
 
   @IsOptional()
-  @IsString()
-  lastSelectedProviderModel?: string;
-
-  @IsOptional()
-  @IsString()
-  lastSelectedVariant?: string;
-
-  @IsOptional()
   @IsString({ each: true })
   permissionsAutoAcceptSessionIds?: string[];
 
   @IsOptional()
   @IsBoolean()
   newSessionPermissionsAutoAccept?: boolean;
+
+  @IsOptional()
+  @IsString()
+  newSessionProviderModel?: string;
+
+  @IsOptional()
+  @IsString()
+  newSessionVariant?: string;
 }

@@ -104,44 +104,45 @@ export class SessionInputComponent implements OnChanges {
     this.send.emit(text);
   }
 
+  onAgentSelect() {
+    this.agentChange.emit(this.agent);
+  }
+
   onModelSelect() {
     this.updateVariants();
     this.updateProviderHasApiKey();
     this.modelChange.emit(this.model);
     this.variantChange.emit(this.variant);
-    this.persistSelections();
-  }
 
-  onAgentSelect() {
-    this.agentChange.emit(this.agent);
+    this.uiQuery.updatePart({
+      newSessionProviderModel: this.model,
+      newSessionVariant: this.variant
+    });
+    this.uiService.setUserUi({
+      newSessionProviderModel: this.model,
+      newSessionVariant: this.variant
+    });
   }
 
   onVariantSelect() {
     this.variantChange.emit(this.variant);
-    this.persistSelections();
-  }
-
-  persistSelections() {
-    this.uiQuery.updatePart({
-      lastSelectedProviderModel: this.model,
-      lastSelectedVariant: this.variant
-    });
     this.uiService.setUserUi({
-      lastSelectedProviderModel: this.model,
-      lastSelectedVariant: this.variant
+      newSessionProviderModel: this.model,
+      newSessionVariant: this.variant
     });
-  }
 
-  getProviderFromModel(): string {
-    if (this.model === 'default') {
-      return 'opencode';
-    }
-    return this.model.split('/')[0];
+    this.uiService.setUserUi({
+      newSessionProviderModel: this.model,
+      newSessionVariant: this.variant
+    });
   }
 
   updateProviderHasApiKey() {
-    let provider = this.getProviderFromModel();
     let project = this.projectQuery.getValue();
+
+    let provider =
+      this.model === 'default' ? 'opencode' : this.model.split('/')[0];
+
     if (provider === 'opencode') {
       this.providerHasApiKey = !!project.isZenApiKeySet;
     } else if (provider === 'openai') {

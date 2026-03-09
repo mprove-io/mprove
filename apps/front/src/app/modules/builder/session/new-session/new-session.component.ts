@@ -29,15 +29,30 @@ import { UiService } from '#front/app/services/ui.service';
   templateUrl: './new-session.component.html'
 })
 export class NewSessionComponent implements OnInit {
-  isSubmitting = false;
+  agent = 'plan';
 
   model = 'default';
-  agent = 'plan';
+  newSessionProviderModel$ = this.uiQuery.newSessionProviderModel$.pipe(
+    tap(newSessionProviderModel => {
+      this.model = newSessionProviderModel;
+      this.cd.detectChanges();
+    })
+  );
+
   variant = 'default';
+  newSessionVariant$ = this.uiQuery.newSessionVariant$.pipe(
+    tap(newSessionVariant => {
+      this.variant = newSessionVariant;
+      this.cd.detectChanges();
+    })
+  );
 
   initialBranch: string;
+
   branches: string[] = [];
   branchesLoading = false;
+
+  isSubmitting = false;
 
   constructor(
     private cd: ChangeDetectorRef,
@@ -49,10 +64,6 @@ export class NewSessionComponent implements OnInit {
     private navigateService: NavigateService,
     private uiService: UiService
   ) {
-    this.model = this.uiQuery.getValue().lastSelectedProviderModel || 'default';
-    let savedVariant = this.uiQuery.getValue().lastSelectedVariant || 'default';
-    this.variant = savedVariant;
-
     this.initialBranch = this.navQuery.getValue().projectDefaultBranch;
   }
 
@@ -85,13 +96,6 @@ export class NewSessionComponent implements OnInit {
       .subscribe();
   }
 
-  getProviderFromModel(): string {
-    if (this.model === 'default') {
-      return 'opencode';
-    }
-    return this.model.split('/')[0];
-  }
-
   sendMessage(text: string) {
     if (this.isSubmitting) {
       return;
@@ -101,8 +105,10 @@ export class NewSessionComponent implements OnInit {
     this.uiQuery.updatePart({ showContent: false });
     this.spinner.show(APP_SPINNER_NAME);
 
+    let provider =
+      this.model === 'default' ? 'opencode' : this.model.split('/')[0];
+
     let nav = this.navQuery.getValue();
-    let provider = this.getProviderFromModel();
 
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,

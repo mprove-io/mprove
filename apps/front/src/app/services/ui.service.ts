@@ -33,10 +33,10 @@ export class UiService {
     projectChartLinks?: ProjectChartLink[];
     projectDashboardLinks?: ProjectDashboardLink[];
     projectReportLinks?: ProjectReportLink[];
-    lastSelectedProviderModel?: string;
-    lastSelectedVariant?: string;
     permissionsAutoAcceptSessionIds?: string[];
     newSessionPermissionsAutoAccept?: boolean;
+    newSessionProviderModel?: string;
+    newSessionVariant?: string;
   }) {
     let {
       timezone,
@@ -45,10 +45,10 @@ export class UiService {
       projectChartLinks,
       projectDashboardLinks,
       projectReportLinks,
-      lastSelectedProviderModel,
-      lastSelectedVariant,
       permissionsAutoAcceptSessionIds,
-      newSessionPermissionsAutoAccept
+      newSessionPermissionsAutoAccept,
+      newSessionProviderModel,
+      newSessionVariant
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -72,12 +72,6 @@ export class UiService {
       projectReportLinks: isDefined(projectReportLinks)
         ? projectReportLinks
         : uiState.projectReportLinks,
-      lastSelectedProviderModel: isDefined(lastSelectedProviderModel)
-        ? lastSelectedProviderModel
-        : uiState.lastSelectedProviderModel,
-      lastSelectedVariant: isDefined(lastSelectedVariant)
-        ? lastSelectedVariant
-        : uiState.lastSelectedVariant,
       permissionsAutoAcceptSessionIds: isDefined(
         permissionsAutoAcceptSessionIds
       )
@@ -87,7 +81,13 @@ export class UiService {
         newSessionPermissionsAutoAccept
       )
         ? newSessionPermissionsAutoAccept
-        : uiState.newSessionPermissionsAutoAccept
+        : uiState.newSessionPermissionsAutoAccept,
+      newSessionProviderModel: isDefined(newSessionProviderModel)
+        ? newSessionProviderModel
+        : uiState.newSessionProviderModel,
+      newSessionVariant: isDefined(newSessionVariant)
+        ? newSessionVariant
+        : uiState.newSessionVariant
     };
 
     let payload: ToBackendSetUserUiRequestPayload = {

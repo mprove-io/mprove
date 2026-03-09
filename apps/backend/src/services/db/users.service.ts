@@ -72,14 +72,6 @@ export class UsersService {
           ? user.ui?.modelTreeLevels
           : defaultSrvUi.modelTreeLevels,
         //
-        lastSelectedProviderModel: isDefined(user.ui?.lastSelectedProviderModel)
-          ? user.ui?.lastSelectedProviderModel
-          : defaultSrvUi.lastSelectedProviderModel,
-        //
-        lastSelectedVariant: isDefined(user.ui?.lastSelectedVariant)
-          ? user.ui?.lastSelectedVariant
-          : defaultSrvUi.lastSelectedVariant,
-        //
         permissionsAutoAcceptSessionIds: isDefined(
           user.ui?.permissionsAutoAcceptSessionIds
         )
@@ -90,7 +82,15 @@ export class UsersService {
           user.ui?.newSessionPermissionsAutoAccept
         )
           ? user.ui?.newSessionPermissionsAutoAccept
-          : defaultSrvUi.newSessionPermissionsAutoAccept
+          : defaultSrvUi.newSessionPermissionsAutoAccept,
+        //
+        newSessionProviderModel: isDefined(user.ui?.newSessionProviderModel)
+          ? user.ui?.newSessionProviderModel
+          : defaultSrvUi.newSessionProviderModel,
+        //
+        newSessionVariant: isDefined(user.ui?.newSessionVariant)
+          ? user.ui?.newSessionVariant
+          : defaultSrvUi.newSessionVariant
       },
       serverTs: Number(user.serverTs)
     };

@@ -59,7 +59,6 @@ export class UiState {
   sessionAllEventsExpanded: boolean;
   isNavigatingSession: boolean;
   showContent: boolean;
-  newSessionPermissionsAutoAccept: boolean;
   //
   modelTreeLevels: ModelTreeLevelsEnum;
   timezone: string;
@@ -69,9 +68,10 @@ export class UiState {
   projectChartLinks: ProjectChartLink[];
   projectDashboardLinks: ProjectDashboardLink[];
   projectReportLinks: ProjectReportLink[];
-  lastSelectedProviderModel: string;
-  lastSelectedVariant: string;
   permissionsAutoAcceptSessionIds: string[];
+  newSessionPermissionsAutoAccept: boolean;
+  newSessionProviderModel: string;
+  newSessionVariant: string;
 }
 
 let uiState: UiState = {
@@ -115,7 +115,6 @@ let uiState: UiState = {
   sessionAllEventsExpanded: false,
   isNavigatingSession: false,
   showContent: true,
-  newSessionPermissionsAutoAccept: false,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -125,9 +124,10 @@ let uiState: UiState = {
   projectChartLinks: [],
   projectDashboardLinks: [],
   projectReportLinks: [],
-  lastSelectedProviderModel: undefined,
-  lastSelectedVariant: undefined,
-  permissionsAutoAcceptSessionIds: []
+  permissionsAutoAcceptSessionIds: [],
+  newSessionPermissionsAutoAccept: false,
+  newSessionProviderModel: undefined,
+  newSessionVariant: undefined
 };
 
 @Injectable({ providedIn: 'root' })
@@ -223,12 +223,20 @@ export class UiQuery extends BaseQuery<UiState> {
 
   showContent$ = this.store.pipe(select(state => state.showContent));
 
+  permissionsAutoAcceptSessionIds$ = this.store.pipe(
+    select(state => state.permissionsAutoAcceptSessionIds)
+  );
+
   newSessionPermissionsAutoAccept$ = this.store.pipe(
     select(state => state.newSessionPermissionsAutoAccept)
   );
 
-  permissionsAutoAcceptSessionIds$ = this.store.pipe(
-    select(state => state.permissionsAutoAcceptSessionIds)
+  newSessionProviderModel$ = this.store.pipe(
+    select(state => state.newSessionProviderModel)
+  );
+
+  newSessionVariant$ = this.store.pipe(
+    select(state => state.newSessionVariant)
   );
 
   constructor() {
