@@ -336,6 +336,7 @@ export class SessionsComponent implements OnInit {
     }
 
     this.hasMoreArchived = true;
+    this.cd.detectChanges();
 
     let currentSession = this.sessionQuery.getValue();
     if (currentSession?.sessionId === sessionId) {

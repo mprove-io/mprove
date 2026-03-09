@@ -65,7 +65,12 @@ export class ArchiveAgentSessionController {
       });
     }
 
-    if (session.sandboxId && session.status === SessionStatusEnum.Active) {
+    if (
+      session.sandboxId &&
+      [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
+        session.status
+      ) > -1
+    ) {
       let project = await this.projectsService.getProjectCheckExists({
         projectId: session.projectId
       });
