@@ -78,5 +78,6 @@ export const DEFAULT_SRV_UI: Ui = {
   projectDashboardLinks: [],
   projectReportLinks: [],
   lastSelectedProviderModel: undefined,
-  lastSelectedVariant: undefined
+  lastSelectedVariant: undefined,
+  permissionsAutoAcceptSessionIds: []
 };

@@ -78,7 +78,13 @@ export class UsersService {
         //
         lastSelectedVariant: isDefined(user.ui?.lastSelectedVariant)
           ? user.ui?.lastSelectedVariant
-          : defaultSrvUi.lastSelectedVariant
+          : defaultSrvUi.lastSelectedVariant,
+        //
+        permissionsAutoAcceptSessionIds: isDefined(
+          user.ui?.permissionsAutoAcceptSessionIds
+        )
+          ? user.ui?.permissionsAutoAcceptSessionIds
+          : defaultSrvUi.permissionsAutoAcceptSessionIds
       },
       serverTs: Number(user.serverTs)
     };
