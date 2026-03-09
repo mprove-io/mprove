@@ -23,7 +23,7 @@ import { AgentStreamService } from '#backend/services/agent-stream.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
@@ -154,7 +154,7 @@ export class SendUserMessageToAgentController {
       }
     } else {
       session.status = SessionStatusEnum.Archived;
-      session.archivedReason = ArchivedReasonEnum.Expire;
+      session.archiveReason = ArchiveReasonEnum.Expire;
     }
 
     if (session.status === SessionStatusEnum.Active) {

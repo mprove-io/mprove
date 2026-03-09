@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import type { Todo } from '@opencode-ai/sdk/v2';
 import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
@@ -17,7 +17,7 @@ import { TimeService } from '#front/app/services/time.service';
   templateUrl: './session-info.component.html'
 })
 export class SessionInfoComponent {
-  archivedReasonEnum = ArchivedReasonEnum;
+  archiveReasonEnum = ArchiveReasonEnum;
   pauseReasonEnum = PauseReasonEnum;
   sessionStatusEnum = SessionStatusEnum;
 

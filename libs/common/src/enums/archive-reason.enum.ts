@@ -1,4 +1,4 @@
-export enum ArchivedReasonEnum {
+export enum ArchiveReasonEnum {
   User = 'User',
   Expire = 'Expire'
 }

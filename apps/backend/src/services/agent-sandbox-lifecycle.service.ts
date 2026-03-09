@@ -8,7 +8,7 @@ import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
@@ -182,7 +182,7 @@ export class AgentSandboxLifecycleService {
           let updatedSession: SessionTab = {
             ...session,
             status: SessionStatusEnum.Archived,
-            archivedReason: ArchivedReasonEnum.Expire
+            archiveReason: ArchiveReasonEnum.Expire
           };
 
           await this.db.drizzle.transaction(async tx => {

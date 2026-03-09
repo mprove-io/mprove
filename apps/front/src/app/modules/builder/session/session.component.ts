@@ -12,7 +12,7 @@ import type {
 } from '@opencode-ai/sdk/v2';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -51,7 +51,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   @ViewChild(SessionMessagesComponent)
   sessionMessages: SessionMessagesComponent;
 
-  archivedReasonEnum = ArchivedReasonEnum;
+  archiveReasonEnum = ArchiveReasonEnum;
   pauseReasonEnum = PauseReasonEnum;
   sessionStatusEnum = SessionStatusEnum;
 
@@ -83,8 +83,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   lastKnownStoreUserCount = 0;
 
   previousSessionId: string;
-  archivedReason: string;
-  pauseReason: string;
+  archiveReason: ArchiveReasonEnum;
+  pauseReason: PauseReasonEnum;
   retryMessage: string;
   lastSessionError: Record<string, unknown>;
   statusTextChars: { char: string; index: number }[] = [];
@@ -446,7 +446,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
-    this.archivedReason = this.session.archivedReason;
+    this.archiveReason = this.session.archiveReason;
     this.pauseReason = this.session.pauseReason;
     this.isAgentBusy = this.checkIsAgentBusy(sessionData.ocSessionStatus);
     this.isWorking = this.checkIsWorking(sessionData.ocSessionStatus);
@@ -512,7 +512,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
-    this.archivedReason = this.session.archivedReason;
+    this.archiveReason = this.session.archiveReason;
     this.pauseReason = this.session.pauseReason;
 
     this.isAgentBusy =

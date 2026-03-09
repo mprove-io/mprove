@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" RENAME COLUMN "archived_reason" TO "archive_reason";

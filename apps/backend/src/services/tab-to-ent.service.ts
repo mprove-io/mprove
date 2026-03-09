@@ -1031,7 +1031,7 @@ export class TabToEntService {
       agent: tab.agent,
       permissionMode: tab.permissionMode,
       status: tab.status,
-      archivedReason: tab.archivedReason,
+      archiveReason: tab.archiveReason,
       pauseReason: tab.pauseReason,
       initialBranch: tab.initialBranch,
       initialCommit: tab.initialCommit,

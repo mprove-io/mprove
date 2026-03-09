@@ -27,7 +27,7 @@
               <div class="text-s400 text-base font-medium">Status</div>
               <div class="text-s400 text-base">{{
                 session?.status === sessionStatusEnum.Archived
-                  ? session?.archivedReason === archivedReasonEnum.Expire
+                  ? session?.archiveReason === archiveReasonEnum.Expire
                     ? 'Archived (sandbox expired)'
                     : 'Archived by User'
                   : session?.status === sessionStatusEnum.Paused

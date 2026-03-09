@@ -236,7 +236,7 @@ export class SeedRecordsController {
             agent: 'build',
             permissionMode: 'default',
             status: x.status,
-            archivedReason: undefined,
+            archiveReason: undefined,
             pauseReason: undefined,
             initialBranch: BRANCH_MAIN,
             initialCommit: undefined,

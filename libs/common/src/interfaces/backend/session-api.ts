@@ -1,4 +1,6 @@
 import { IsInt, IsOptional, IsString } from 'class-validator';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 
 export class SessionApi {
   @IsString()
@@ -27,11 +29,11 @@ export class SessionApi {
 
   @IsOptional()
   @IsString()
-  archivedReason?: string;
+  archiveReason?: ArchiveReasonEnum;
 
   @IsOptional()
   @IsString()
-  pauseReason?: string;
+  pauseReason?: PauseReasonEnum;
 
   @IsString()
   repoId: string;

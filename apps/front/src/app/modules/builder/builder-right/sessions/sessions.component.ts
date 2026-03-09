@@ -254,7 +254,7 @@ export class SessionsComponent implements OnInit {
                 ? {
                     ...s,
                     status: respSession.status,
-                    archivedReason: respSession.archivedReason,
+                    archiveReason: respSession.archiveReason,
                     pauseReason: respSession.pauseReason
                   }
                 : s
@@ -267,7 +267,7 @@ export class SessionsComponent implements OnInit {
               this.sessionQuery.update({
                 ...currentSession,
                 status: respSession.status,
-                archivedReason: respSession.archivedReason,
+                archiveReason: respSession.archiveReason,
                 pauseReason: respSession.pauseReason
               });
             }
@@ -327,7 +327,7 @@ export class SessionsComponent implements OnInit {
       let archivedSession = {
         ...session,
         status: respSession.status,
-        archivedReason: respSession.archivedReason,
+        archiveReason: respSession.archiveReason,
         pauseReason: respSession.pauseReason
       };
 

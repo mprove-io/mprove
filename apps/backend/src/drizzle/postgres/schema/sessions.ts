@@ -8,7 +8,7 @@ import {
   uniqueIndex,
   varchar
 } from 'drizzle-orm/pg-core';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionLt, SessionSt } from '#common/interfaces/st-lt';
@@ -35,9 +35,9 @@ export const sessionsTable = pgTable(
     status: varchar('status', { length: 32 })
       .notNull()
       .$type<SessionStatusEnum>(),
-    archivedReason: varchar('archived_reason', {
+    archiveReason: varchar('archive_reason', {
       length: 32
-    }).$type<ArchivedReasonEnum>(),
+    }).$type<ArchiveReasonEnum>(),
     pauseReason: varchar('pause_reason', {
       length: 32
     }).$type<PauseReasonEnum>(),

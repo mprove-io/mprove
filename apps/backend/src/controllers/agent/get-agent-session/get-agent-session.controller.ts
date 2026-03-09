@@ -16,7 +16,7 @@ import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -76,7 +76,7 @@ export class GetAgentSessionController {
       if (!sandboxInfo || sandboxInfo.state === 'paused') {
         if (!sandboxInfo) {
           session.status = SessionStatusEnum.Archived;
-          session.archivedReason = ArchivedReasonEnum.Expire;
+          session.archiveReason = ArchiveReasonEnum.Expire;
         } else if (sandboxInfo.state === 'paused') {
           session.status = SessionStatusEnum.Paused;
         }
