@@ -54,7 +54,7 @@ export class SessionsComponent implements OnInit {
   sessionStatusArchived = SessionStatusEnum.Archived;
   spinnerName = SESSIONS_SPINNER_NAME;
   debugMode = false;
-  isShowDebugToggle = false;
+  isShowDebugToggle = true;
   allEventsExpanded = false;
   providerLabels: Record<string, string> = {
     opencode: 'Zen',

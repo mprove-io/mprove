@@ -291,8 +291,13 @@ export class SessionComponent implements OnInit, OnDestroy {
     });
 
     this.isAgentBusy = true;
+    this.isWorking = true;
+
+    this.updateStatusTextChars();
+
     this.scrollTrigger++;
     this.sessionMessages?.scrollToBottom();
+
     this.cd.detectChanges();
 
     this.sendInteraction({
@@ -547,7 +552,9 @@ export class SessionComponent implements OnInit, OnDestroy {
       (this.pendingUserMessages.length > 0 ||
         this.checkIsAgentBusy(sessionData.ocSessionStatus));
 
-    this.isWorking = this.checkIsWorking(sessionData.ocSessionStatus);
+    this.isWorking =
+      (this.pendingUserMessages.length > 0 && !this.isAborting) ||
+      this.checkIsWorking(sessionData.ocSessionStatus);
 
     this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
 
