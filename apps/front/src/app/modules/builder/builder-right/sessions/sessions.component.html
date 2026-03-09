@@ -117,12 +117,14 @@
           <span
             class="min-w-0 flex-1 truncate text-[17px]"
             [ngClass]="{
-              'text-m600 font-semibold': session.sessionId === sessionId,
+              'text-m600 font-semibold':
+                session.sessionId === currentSession?.sessionId,
               'text-s400':
                 session.status === 'Archived' &&
-                session.sessionId !== sessionId,
+                session.sessionId !== currentSession?.sessionId,
               'text-s1':
-                session.sessionId !== sessionId && session.status !== 'Archived'
+                session.sessionId !== currentSession?.sessionId &&
+                session.status !== 'Archived'
             }"
             >{{ session.displayTitle }}</span
           >
@@ -203,7 +205,8 @@
             {{
               isLoadingArchived
                 ? 'Loading...'
-                : archivedLastCreatedTs
+                : archivedLastCreatedTs ||
+                    currentSession?.status === sessionStatusArchived
                   ? 'Load more archived sessions'
                   : 'Load archived sessions'
             }}
@@ -214,6 +217,7 @@
   </div>
 </div>
 <div *ngIf="sessions$ | async"></div>
+<div *ngIf="hasMoreArchived$ | async"></div>
 <div *ngIf="session$ | async"></div>
 <div *ngIf="debugMode$ | async"></div>
 <div *ngIf="allEventsExpanded$ | async"></div>

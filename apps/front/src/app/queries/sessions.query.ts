@@ -6,16 +6,19 @@ import { BaseQuery } from './base.query';
 export class SessionsState {
   sessions: SessionApi[];
   isListLoaded: boolean;
+  hasMoreArchived: boolean;
 }
 
 let sessionsState: SessionsState = {
   sessions: [],
-  isListLoaded: false
+  isListLoaded: false,
+  hasMoreArchived: false
 };
 
 @Injectable({ providedIn: 'root' })
 export class SessionsQuery extends BaseQuery<SessionsState> {
   sessions$ = this.store.pipe(select(state => state.sessions));
+  hasMoreArchived$ = this.store.pipe(select(state => state.hasMoreArchived));
 
   constructor() {
     super(

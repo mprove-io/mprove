@@ -4,6 +4,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { PROD_REPO_ID } from '#common/constants/top';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
@@ -56,8 +57,9 @@ export class SessionsComponent implements OnInit {
   hasMoreArchived = false;
   isLoadingArchived = false;
   archivedLastCreatedTs: number = undefined;
-  sessionId: string;
+  currentSession: SessionApi;
   isRefreshing = false;
+  sessionStatusArchived = SessionStatusEnum.Archived;
   spinnerName = SESSIONS_SPINNER_NAME;
   debugMode = false;
   isShowDebugToggle = true;
@@ -101,9 +103,16 @@ export class SessionsComponent implements OnInit {
     })
   );
 
+  hasMoreArchived$ = this.sessionsQuery.hasMoreArchived$.pipe(
+    tap(x => {
+      this.hasMoreArchived = x;
+      this.cd.detectChanges();
+    })
+  );
+
   session$ = this.sessionQuery.select().pipe(
     tap(x => {
-      this.sessionId = x?.sessionId;
+      this.currentSession = x;
       this.cd.detectChanges();
     })
   );
@@ -124,8 +133,11 @@ export class SessionsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (!this.sessionsQuery.getValue().isListLoaded) {
+    let isListLoaded = this.sessionsQuery.getValue().isListLoaded;
+    if (!isListLoaded) {
       this.loadSessions();
+    } else {
+      this.sessionsLoaded = true;
     }
   }
 
@@ -137,7 +149,7 @@ export class SessionsComponent implements OnInit {
     });
 
     let currentSessionId =
-      this.sessionId ?? this.sessionQuery.getValue()?.sessionId;
+      this.currentSession?.sessionId ?? this.sessionQuery.getValue()?.sessionId;
 
     let payload: ToBackendGetAgentSessionsListRequestPayload = {
       projectId: projectId,
@@ -168,16 +180,18 @@ export class SessionsComponent implements OnInit {
               }
             }
 
+            let hasMoreArchived = resp.payload.hasMoreArchived ?? false;
+
             this.sessionsQuery.updatePart({
               sessions: sessions,
-              isListLoaded: true
+              isListLoaded: true,
+              hasMoreArchived: hasMoreArchived
             });
           }
 
           this.isRefreshing = false;
           this.spinner.hide(SESSIONS_SPINNER_NAME);
           this.sessionsLoaded = true;
-          this.hasMoreArchived = resp.payload.hasMoreArchived ?? false;
           this.archivedLastCreatedTs = undefined;
           this.cd.detectChanges();
         }),
@@ -187,7 +201,7 @@ export class SessionsComponent implements OnInit {
   }
 
   newSession() {
-    if (!this.sessionId) {
+    if (!this.currentSession?.sessionId) {
       return;
     }
 
@@ -327,15 +341,18 @@ export class SessionsComponent implements OnInit {
       }
 
       this.sessionsQuery.updatePart({
-        sessions: [...nonArchived, ...archived]
+        sessions: [...nonArchived, ...archived],
+        hasMoreArchived: true
       });
     } else {
       // Remove from list
       let updated = sessions.filter(s => s.sessionId !== sessionId);
-      this.sessionsQuery.updatePart({ sessions: updated });
+      this.sessionsQuery.updatePart({
+        sessions: updated,
+        hasMoreArchived: true
+      });
     }
 
-    this.hasMoreArchived = true;
     this.cd.detectChanges();
 
     let currentSession = this.sessionQuery.getValue();
@@ -356,7 +373,7 @@ export class SessionsComponent implements OnInit {
       includeArchived: true,
       archivedLimit: 10,
       archivedLastCreatedTs: this.archivedLastCreatedTs,
-      currentSessionId: this.sessionId
+      currentSessionId: this.currentSession?.sessionId
     };
 
     this.isLoadingArchived = true;
@@ -373,21 +390,25 @@ export class SessionsComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let sessions = resp.payload.sessions;
 
-            if (this.sessionId) {
+            if (this.currentSession?.sessionId) {
               let freshCurrentSession = sessions.find(
-                s => s.sessionId === this.sessionId
+                s => s.sessionId === this.currentSession?.sessionId
               );
               if (freshCurrentSession) {
                 this.sessionQuery.update(freshCurrentSession);
               }
             }
 
+            let hasMoreArchived = resp.payload.hasMoreArchived ?? false;
+
             this.sessionsQuery.updatePart({
-              sessions: sessions
+              sessions: sessions,
+              hasMoreArchived: hasMoreArchived
             });
-            this.hasMoreArchived = resp.payload.hasMoreArchived ?? false;
             let archivedSessions = resp.payload.sessions.filter(
-              s => s.status === 'Archived' && s.sessionId !== this.sessionId
+              s =>
+                s.status === SessionStatusEnum.Archived &&
+                s.sessionId !== this.currentSession?.sessionId
             );
             if (archivedSessions.length > 0) {
               this.archivedLastCreatedTs =
@@ -441,7 +462,7 @@ export class SessionsComponent implements OnInit {
   }
 
   openSession(session: SessionApi) {
-    if (session.sessionId === this.sessionId) {
+    if (session.sessionId === this.currentSession?.sessionId) {
       return;
     }
 
