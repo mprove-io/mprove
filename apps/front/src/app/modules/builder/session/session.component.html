@@ -14,21 +14,24 @@
           [lastSessionError]="lastSessionError"
           [isLastErrorRecovered]="isLastErrorRecovered"
         ></m-session-messages-content>
-
-        <!-- Working indicator -->
-        <div class="ml-8 pb-4">
-          <div *ngIf="isWorking" class="max-w-[90%] py-3">
-            <span class="text-shimmer text-base font-semibold leading-[1.5]"
-              ><span
-                *ngFor="let ch of statusTextChars; trackBy: trackByIndex"
-                class="text-shimmer-char"
-                [style.--text-shimmer-index]="ch.index"
-                >{{ ch.char }}</span
-              ></span
-            >
-          </div>
-        </div>
       </m-session-messages>
+    </div>
+  </div>
+
+  <!-- Working indicator -->
+  <div
+    class="ml-[105px] flex h-[30px] flex-col justify-center"
+    *ngIf="!debugMode"
+  >
+    <div *ngIf="isWorking" class="flex">
+      <span class="text-shimmer text-base font-semibold leading-[1.5]"
+        ><span
+          *ngFor="let ch of statusTextChars; trackBy: trackByIndex"
+          class="text-shimmer-char"
+          [style.--text-shimmer-index]="ch.index"
+          >{{ ch.char }}</span
+        ></span
+      >
     </div>
   </div>
 
