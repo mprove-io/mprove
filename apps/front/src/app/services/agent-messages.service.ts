@@ -82,7 +82,8 @@ export class AgentMessagesService {
         let userOcMsg = msg.ocMessage as any;
         let agentName = userOcMsg?.agent || '';
         let modelId = userOcMsg?.model?.modelID || '';
-        let msgVariant = userOcMsg?.variant || '';
+        let rawVariant = userOcMsg?.variant || '';
+        let msgVariant = rawVariant !== 'default' ? rawVariant : '';
 
         // Extract summary diffs
         let summaryDiffs: FileDiffInfo[] | undefined;
