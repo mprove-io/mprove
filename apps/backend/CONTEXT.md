@@ -65,7 +65,7 @@ src/
 
 ## Controllers (by domain)
 
-avatars, branches, catalogs, charts, check, connections, dashboards, envs, files, folders, mconfigs, members, models, nav, orgs, org-users, projects, queries, reports, repos, special, structs, suggest-fields, telemetry, test-routes, users
+agent, avatars, branches, catalogs, charts, check, connections, dashboards, envs, files, folders, mconfigs, members, models, nav, orgs, org-users, projects, queries, reports, repos, special, structs, suggest-fields, telemetry, test-routes, users
 
 ## Database
 

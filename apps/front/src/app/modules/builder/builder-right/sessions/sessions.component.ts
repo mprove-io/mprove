@@ -33,14 +33,6 @@ import { NavigateService } from '#front/app/services/navigate.service';
 
 let SESSIONS_SPINNER_NAME = 'sessionsRefresh';
 
-let STATUS_ORDER: Record<string, number> = {
-  New: 0,
-  Active: 1,
-  Error: 2,
-  Paused: 3,
-  Archived: 4
-};
-
 export class SessionApiX extends SessionApi {
   displayTitle: string;
   providerLabel: string;
@@ -62,7 +54,7 @@ export class SessionsComponent implements OnInit {
   sessionStatusArchived = SessionStatusEnum.Archived;
   spinnerName = SESSIONS_SPINNER_NAME;
   debugMode = false;
-  isShowDebugToggle = true;
+  isShowDebugToggle = false;
   allEventsExpanded = false;
   providerLabels: Record<string, string> = {
     opencode: 'Zen',
@@ -80,10 +72,9 @@ export class SessionsComponent implements OnInit {
           })
         )
         .sort((a, b) => {
-          let statusDiff =
-            (STATUS_ORDER[a.status] ?? 99) - (STATUS_ORDER[b.status] ?? 99);
-          if (statusDiff !== 0) return statusDiff;
-          return b.createdTs - a.createdTs;
+          let aArchived = a.status === SessionStatusEnum.Archived ? 1 : 0;
+          let bArchived = b.status === SessionStatusEnum.Archived ? 1 : 0;
+          return aArchived - bArchived || b.createdTs - a.createdTs;
         });
       this.cd.detectChanges();
     })
