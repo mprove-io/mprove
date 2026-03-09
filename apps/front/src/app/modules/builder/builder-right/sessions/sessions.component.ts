@@ -248,11 +248,13 @@ export class SessionsComponent implements OnInit {
             this.sessionsQuery.updatePart({ sessions: updated });
 
             let currentSession = this.sessionQuery.getValue();
+
             if (currentSession?.sessionId === sessionId) {
               this.sessionQuery.update({
                 ...currentSession,
                 status: respSession.status,
-                archivedReason: respSession.archivedReason
+                archivedReason: respSession.archivedReason,
+                pauseReason: respSession.pauseReason
               });
             }
           }
