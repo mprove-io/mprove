@@ -1032,6 +1032,7 @@ export class TabToEntService {
       permissionMode: tab.permissionMode,
       status: tab.status,
       archivedReason: tab.archivedReason,
+      pauseReason: tab.pauseReason,
       initialBranch: tab.initialBranch,
       initialCommit: tab.initialCommit,
       ...this.getEntProps({

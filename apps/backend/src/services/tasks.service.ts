@@ -4,6 +4,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
 import { AgentModelsService } from './agent-models.service';
@@ -150,7 +151,28 @@ export class TasksService {
     if (this.isRunningSyncSandboxStatuses === false) {
       this.isRunningSyncSandboxStatuses = true;
 
-      await this.agentSandboxLifecycleService.syncSandboxStatuses().catch(e => {
+      try {
+        let pausedSessionIds =
+          await this.agentSandboxLifecycleService.syncSandboxStatuses();
+
+        for (let sessionId of pausedSessionIds) {
+          try {
+            await this.agentStreamService.publishReloadSession({
+              sessionId: sessionId
+            });
+          } catch (e) {
+            logToConsoleBackend({
+              log: new ServerError({
+                message: ErEnum.BACKEND_SCHEDULER_PUBLISH_RELOAD_SESSION_FAILED,
+                originalError: e
+              }),
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
+            });
+          }
+        }
+      } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
             message: ErEnum.BACKEND_SCHEDULER_SYNC_SANDBOX_STATUSES_FAILED,
@@ -160,7 +182,7 @@ export class TasksService {
           logger: this.logger,
           cs: this.cs
         });
-      });
+      }
 
       this.isRunningSyncSandboxStatuses = false;
     }
@@ -182,6 +204,10 @@ export class TasksService {
               sessionId: sessionId
             });
             await this.agentSandboxLifecycleService.pauseSessionById({
+              sessionId: sessionId,
+              pauseReason: PauseReasonEnum.Idle
+            });
+            await this.agentStreamService.publishReloadSession({
               sessionId: sessionId
             });
           } catch (e) {

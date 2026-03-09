@@ -9,6 +9,7 @@ import { AgentStreamService } from '#backend/services/agent-stream.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendPauseAgentSessionRequest,
@@ -45,7 +46,10 @@ export class PauseAgentSessionController {
       sessionId: sessionId
     });
 
-    await this.agentLifecycleService.pauseSessionById({ sessionId: sessionId });
+    await this.agentLifecycleService.pauseSessionById({
+      sessionId: sessionId,
+      pauseReason: PauseReasonEnum.User
+    });
 
     let freshSession = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: sessionId

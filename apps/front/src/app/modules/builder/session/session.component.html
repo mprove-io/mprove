@@ -131,6 +131,26 @@
     </div>
   </div>
 
+  <!-- Paused session message -->
+  <div
+    *ngIf="session?.status === sessionStatusEnum.Paused"
+    class="flex-shrink-0 px-6 pb-8 pt-[6px]"
+  >
+    <div class="mx-auto flex max-w-[860px] items-center justify-center">
+      <div class="text-s400 py-4 text-lg">{{
+        pauseReason === pauseReasonEnum.User
+          ? 'Session is paused by User'
+          : pauseReason === pauseReasonEnum.Idle
+            ? 'Session is paused (idle)'
+            : pauseReason === pauseReasonEnum.Safe
+              ? 'Session is paused (safe)'
+              : pauseReason === pauseReasonEnum.External
+                ? 'Session is paused (external)'
+                : 'Session is paused'
+      }}</div>
+    </div>
+  </div>
+
   <!-- Input area (pinned to bottom, hidden when docks are active) -->
   <div
     *ngIf="permissions.length === 0 && questions.length === 0 && !isArchived"

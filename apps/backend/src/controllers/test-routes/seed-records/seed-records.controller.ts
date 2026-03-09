@@ -237,6 +237,7 @@ export class SeedRecordsController {
             permissionMode: 'default',
             status: x.status,
             archivedReason: undefined,
+            pauseReason: undefined,
             initialBranch: BRANCH_MAIN,
             initialCommit: undefined,
             sandboxId: undefined,

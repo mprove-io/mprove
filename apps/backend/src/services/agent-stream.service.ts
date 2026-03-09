@@ -7,6 +7,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ServerError } from '#common/models/server-error';
 import { AgentEventsService } from './agent-events.service';
 import { AgentSandboxService } from './agent-sandbox.service';
@@ -97,7 +98,12 @@ export class AgentStreamService implements OnModuleDestroy {
             try {
               await this.stopEventStream(sessionId);
               await this.agentSandboxLifecycleService.pauseSessionById({
-                sessionId
+                sessionId: sessionId,
+                pauseReason: PauseReasonEnum.Safe
+              });
+
+              await this.publishReloadSession({
+                sessionId: sessionId
               });
             } catch (e) {
               logToConsoleBackend({
@@ -170,17 +176,14 @@ export class AgentStreamService implements OnModuleDestroy {
     return true;
   }
 
-  private async publishReloadSession(item: {
-    sessionId: string;
-    eventIndex: number;
-  }): Promise<void> {
+  async publishReloadSession(item: { sessionId: string }): Promise<void> {
     console.log(
       `[publishReloadSession] publishing reload for sessionId=${item.sessionId}`
     );
 
     await this.agentEventsService.publish(item.sessionId, {
-      eventId: `${item.sessionId}_${item.eventIndex}`,
-      eventIndex: item.eventIndex,
+      eventId: `${item.sessionId}_0`,
+      eventIndex: 0,
       eventType: RELOAD_SESSION_EVENT_TYPE,
       ocEvent: {
         type: RELOAD_SESSION_EVENT_TYPE as any,
@@ -340,8 +343,7 @@ export class AgentStreamService implements OnModuleDestroy {
 
       if (streamFailed) {
         await this.publishReloadSession({
-          sessionId: item.sessionId,
-          eventIndex: eventIndex
+          sessionId: item.sessionId
         });
       }
     };
@@ -438,14 +440,10 @@ export class AgentStreamService implements OnModuleDestroy {
           `[checkStreamStalls] stream stalled for sessionId=${sessionId} elapsed=${elapsed}ms`
         );
 
-        let eventIndex =
-          this.agentDrainService.eventCounters.get(sessionId) ?? 0;
-
         await this.stopEventStream(sessionId);
 
         await this.publishReloadSession({
-          sessionId: sessionId,
-          eventIndex: eventIndex
+          sessionId: sessionId
         });
       }
     }

@@ -240,7 +240,8 @@ export class SessionsComponent implements OnInit {
                 ? {
                     ...s,
                     status: respSession.status,
-                    archivedReason: respSession.archivedReason
+                    archivedReason: respSession.archivedReason,
+                    pauseReason: respSession.pauseReason
                   }
                 : s
             );
@@ -310,7 +311,8 @@ export class SessionsComponent implements OnInit {
       let archivedSession = {
         ...session,
         status: respSession.status,
-        archivedReason: respSession.archivedReason
+        archivedReason: respSession.archivedReason,
+        pauseReason: respSession.pauseReason
       };
 
       let insertIdx = archived.findIndex(

@@ -29,6 +29,10 @@ export class SessionApi {
   @IsString()
   archivedReason?: string;
 
+  @IsOptional()
+  @IsString()
+  pauseReason?: string;
+
   @IsString()
   repoId: string;
 

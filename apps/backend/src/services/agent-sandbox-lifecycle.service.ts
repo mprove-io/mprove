@@ -11,6 +11,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
@@ -58,7 +59,10 @@ export class AgentSandboxLifecycleService {
     return sessionIdsToPause;
   }
 
-  async pauseSessionById(item: { sessionId: string }): Promise<void> {
+  async pauseSessionById(item: {
+    sessionId: string;
+    pauseReason: PauseReasonEnum;
+  }): Promise<void> {
     let session = await this.sessionsService.getSessionByIdCheckExists({
       sessionId: item.sessionId
     });
@@ -79,7 +83,8 @@ export class AgentSandboxLifecycleService {
 
     let updatedSession: SessionTab = {
       ...session,
-      status: SessionStatusEnum.Paused
+      status: SessionStatusEnum.Paused,
+      pauseReason: item.pauseReason
     };
 
     await this.db.drizzle.transaction(
@@ -93,7 +98,7 @@ export class AgentSandboxLifecycleService {
     );
   }
 
-  async syncSandboxStatuses(): Promise<void> {
+  async syncSandboxStatuses(): Promise<string[]> {
     let sessions = await this.db.drizzle.query.sessionsTable
       .findMany({
         where: inArray(sessionsTable.status, [
@@ -108,16 +113,20 @@ export class AgentSandboxLifecycleService {
       ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
     ];
 
+    let pausedSessionIds: string[] = [];
+
     for (let projectId of projectIds) {
       try {
         let project = await this.projectsService.getProjectCheckExists({
           projectId: projectId
         });
 
-        await this.syncProjectSandboxStatuses({
+        let projectPausedSessionIds = await this.syncProjectSandboxStatuses({
           projectId: projectId,
           e2bApiKey: project.e2bApiKey
         });
+
+        pausedSessionIds.push(...projectPausedSessionIds);
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({
@@ -130,12 +139,14 @@ export class AgentSandboxLifecycleService {
         });
       }
     }
+
+    return pausedSessionIds;
   }
 
   async syncProjectSandboxStatuses(item: {
     projectId: string;
     e2bApiKey: string;
-  }): Promise<void> {
+  }): Promise<string[]> {
     let sessions = await this.db.drizzle.query.sessionsTable
       .findMany({
         where: and(
@@ -151,12 +162,14 @@ export class AgentSandboxLifecycleService {
     let sessionsWithSandbox = sessions.filter(s => s.sandboxId);
 
     if (sessionsWithSandbox.length === 0) {
-      return;
+      return [];
     }
 
     let sandboxes = await this.agentSandboxService.listSandboxes({
       e2bApiKey: item.e2bApiKey
     });
+
+    let pausedSessionIds: string[] = [];
 
     for (let session of sessionsWithSandbox) {
       try {
@@ -191,6 +204,7 @@ export class AgentSandboxLifecycleService {
           let updatedSession: SessionTab = {
             ...session,
             status: SessionStatusEnum.Paused,
+            pauseReason: PauseReasonEnum.External,
             sandboxStartTs: sandboxInfo.startedAt.getTime(),
             sandboxEndTs: sandboxInfo.endAt.getTime(),
             sandboxInfo: sandboxInfo
@@ -205,6 +219,8 @@ export class AgentSandboxLifecycleService {
                 }
               })
           );
+
+          pausedSessionIds.push(session.sessionId);
         }
       } catch (e) {
         logToConsoleBackend({
@@ -218,5 +234,7 @@ export class AgentSandboxLifecycleService {
         });
       }
     }
+
+    return pausedSessionIds;
   }
 }

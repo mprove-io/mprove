@@ -3,6 +3,8 @@ import type { Todo } from '@opencode-ai/sdk/v2';
 import { interval } from 'rxjs';
 import { startWith, tap } from 'rxjs/operators';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 // import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { SessionQuery } from '#front/app/queries/session.query';
@@ -16,6 +18,8 @@ import { TimeService } from '#front/app/services/time.service';
 })
 export class SessionInfoComponent {
   archivedReasonEnum = ArchivedReasonEnum;
+  pauseReasonEnum = PauseReasonEnum;
+  sessionStatusEnum = SessionStatusEnum;
 
   sessionId: string;
   session: SessionApi;

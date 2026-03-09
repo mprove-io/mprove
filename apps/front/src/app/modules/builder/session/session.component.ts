@@ -14,6 +14,7 @@ import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { ArchivedReasonEnum } from '#common/enums/archived-reason.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -51,6 +52,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   sessionMessages: SessionMessagesComponent;
 
   archivedReasonEnum = ArchivedReasonEnum;
+  pauseReasonEnum = PauseReasonEnum;
+  sessionStatusEnum = SessionStatusEnum;
 
   agent = 'plan';
   model = 'default';
@@ -81,6 +84,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   previousSessionId: string;
   archivedReason: string;
+  pauseReason: string;
   retryMessage: string;
   lastSessionError: Record<string, unknown>;
   statusTextChars: { char: string; index: number }[] = [];
@@ -443,6 +447,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.archivedReason = this.session.archivedReason;
+    this.pauseReason = this.session.pauseReason;
     this.isAgentBusy = this.checkIsAgentBusy(sessionData.ocSessionStatus);
     this.isWorking = this.checkIsWorking(sessionData.ocSessionStatus);
     this.retryMessage = this.getRetryMessage(sessionData.ocSessionStatus);
@@ -508,6 +513,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isActivating = this.session.status === SessionStatusEnum.New;
     this.isArchived = this.session.status === SessionStatusEnum.Archived;
     this.archivedReason = this.session.archivedReason;
+    this.pauseReason = this.session.pauseReason;
 
     this.isAgentBusy =
       this.questions.length === 0 &&
