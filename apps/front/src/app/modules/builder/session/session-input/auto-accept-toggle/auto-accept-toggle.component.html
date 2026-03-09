@@ -1,0 +1,18 @@
+<div
+  class="flex h-10 w-10 flex-shrink-0 items-center justify-center"
+  [tp]="tooltipText"
+  tpPlacement="top"
+>
+  <button
+    type="button"
+    class="flex h-7 w-7 cursor-pointer items-center justify-center focus:outline-none"
+    [ngClass]="{
+      'text-green-600': autoAccept,
+      'text-s400': !autoAccept
+    }"
+    (click)="onToggle()"
+  >
+    <m-chevron-double-right-icon></m-chevron-double-right-icon>
+  </button>
+</div>
+<div *ngIf="state$ | async"></div>

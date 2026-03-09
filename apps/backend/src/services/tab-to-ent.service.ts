@@ -1029,7 +1029,6 @@ export class TabToEntService {
       sandboxType: tab.sandboxType,
       provider: tab.provider,
       agent: tab.agent,
-      permissionMode: tab.permissionMode,
       status: tab.status,
       archiveReason: tab.archiveReason,
       pauseReason: tab.pauseReason,

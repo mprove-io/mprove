@@ -39,7 +39,6 @@ export class SessionsService {
     lastMessageProviderModel?: string;
     lastMessageVariant?: string;
     agent: string;
-    permissionMode: string;
     sandboxId?: string;
     sandboxBaseUrl?: string;
     opencodeSessionId?: string;
@@ -69,7 +68,6 @@ export class SessionsService {
       lastMessageProviderModel: item.lastMessageProviderModel,
       lastMessageVariant: item.lastMessageVariant,
       agent: item.agent,
-      permissionMode: item.permissionMode,
       sandboxId: item.sandboxId,
       sandboxBaseUrl: item.sandboxBaseUrl,
       opencodeSessionId: item.opencodeSessionId,

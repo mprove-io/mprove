@@ -234,7 +234,6 @@ export class SeedRecordsController {
             lastMessageProviderModel: undefined,
             lastMessageVariant: undefined,
             agent: 'build',
-            permissionMode: 'default',
             status: x.status,
             archiveReason: undefined,
             pauseReason: undefined,

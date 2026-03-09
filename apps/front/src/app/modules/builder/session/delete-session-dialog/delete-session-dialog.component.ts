@@ -11,8 +11,10 @@ import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-reques
 import { ToBackendDeleteAgentSessionRequestPayload } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
 import { SessionQuery } from '#front/app/queries/session.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
+import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 export interface DeleteSessionDialogData {
   apiService: ApiService;
@@ -37,7 +39,9 @@ export class DeleteSessionDialogComponent implements OnInit {
     public ref: DialogRef<DeleteSessionDialogData>,
     private sessionQuery: SessionQuery,
     private sessionsQuery: SessionsQuery,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private uiQuery: UiQuery,
+    private uiService: UiService
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +72,19 @@ export class DeleteSessionDialogComponent implements OnInit {
           let sessions = this.sessionsQuery.getValue().sessions;
           let updated = sessions.filter(s => s.sessionId !== sessionId);
           this.sessionsQuery.updatePart({ sessions: updated });
+
+          // Remove from permissionsAutoAcceptSessionIds
+          let sessionIds =
+            this.uiQuery.getValue().permissionsAutoAcceptSessionIds || [];
+          if (sessionIds.includes(sessionId)) {
+            let newSessionIds = sessionIds.filter(id => id !== sessionId);
+            this.uiQuery.updatePart({
+              permissionsAutoAcceptSessionIds: newSessionIds
+            });
+            this.uiService.setUserUi({
+              permissionsAutoAcceptSessionIds: newSessionIds
+            });
+          }
 
           let currentSession = this.sessionQuery.getValue();
           if (currentSession?.sessionId === sessionId) {

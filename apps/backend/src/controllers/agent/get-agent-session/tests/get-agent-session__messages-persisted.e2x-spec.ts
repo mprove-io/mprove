@@ -121,7 +121,6 @@ test('1', async t => {
         provider: 'opencode',
         model: 'opencode/big-pickle',
         agent: 'plan',
-        permissionMode: 'default',
         variant: 'default',
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN

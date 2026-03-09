@@ -11,7 +11,10 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
-import { ToBackendGetAgentProviderModelsResponse } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
+import {
+  ToBackendGetAgentProviderModelsRequestPayload,
+  ToBackendGetAgentProviderModelsResponse
+} from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -36,7 +39,7 @@ export class SessionInputComponent implements OnChanges {
   @Input() disabled = false;
   @Input() showSelects = true;
   @Input() scrollableInput = false;
-  @Input() sessionId: string | undefined;
+  @Input() sessionId: string;
   @Input() isWorking = false;
 
   @Output() send = new EventEmitter<string>();
@@ -200,7 +203,8 @@ export class SessionInputComponent implements OnChanges {
   openModelSelect() {
     this.modelsLoading = true;
 
-    let payload: { sessionId?: string } = {};
+    let payload: ToBackendGetAgentProviderModelsRequestPayload = {};
+
     if (this.sessionId) {
       payload.sessionId = this.sessionId;
     }

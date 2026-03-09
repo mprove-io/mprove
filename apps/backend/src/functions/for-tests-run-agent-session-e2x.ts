@@ -136,7 +136,6 @@ export async function forTestsRunAgentSessionE2x(item: {
         provider: 'opencode',
         model: item.model,
         agent: 'plan',
-        permissionMode: 'default',
         variant: item.variant,
         envId: PROJECT_ENV_PROD,
         initialBranch: BRANCH_MAIN

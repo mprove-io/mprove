@@ -69,6 +69,7 @@ import { ArrowUpIconComponent } from './icons/arrow-up-icon/arrow-up-icon.compon
 import { AscIconComponent } from './icons/asc-icon/asc-icon.component';
 import { BottomPanelIconComponent } from './icons/bottom-panel-icon/bottom-panel-icon.component';
 import { CheckIconComponent } from './icons/check-icon/check-icon.component';
+import { ChevronDoubleRightIconComponent } from './icons/chevron-double-right-icon/chevron-double-right-icon.component';
 import { ChevronDownIconComponent } from './icons/chevron-down-icon/chevron-down-icon.component';
 import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left-icon.component';
 import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-right-icon.component';
@@ -175,6 +176,7 @@ let sharedComponents = [
   ChevronLeftIconComponent,
   ChevronRightIconComponent,
   ChevronUpIconComponent,
+  ChevronDoubleRightIconComponent,
   ChevronDownIconComponent,
   FolderOpenIconComponent,
   FolderClosedIconComponent,

@@ -497,6 +497,22 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.permissions = sessionData.permissions || [];
     this.questions = sessionData.questions || [];
 
+    let ids = this.uiQuery.getValue().permissionsAutoAcceptSessionIds || [];
+
+    if (
+      this.session?.sessionId &&
+      ids.includes(this.session.sessionId) &&
+      this.permissions.length > 0
+    ) {
+      // auto respond
+      this.permissions.forEach(permission => {
+        this.respondToPermission({
+          permissionId: permission.id,
+          reply: 'always'
+        });
+      });
+    }
+
     this.messages = this.agentMessagesService.buildMessagesFromStores({
       storeMessages: sessionData.messages,
       storeParts: sessionData.parts,

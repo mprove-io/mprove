@@ -28,6 +28,7 @@ import { NewSessionWrapperComponent } from './session/new-session-wrapper/new-se
 import { QuestionPromptComponent } from './session/question-prompt/question-prompt.component';
 import { SessionComponent } from './session/session.component';
 import { SessionDebugEventsComponent } from './session/session-debug-events/session-debug-events.component';
+import { AutoAcceptToggleComponent } from './session/session-input/auto-accept-toggle/auto-accept-toggle.component';
 import { ContextUsageCircleComponent } from './session/session-input/context-usage-circle/context-usage-circle.component';
 import { SessionInputComponent } from './session/session-input/session-input.component';
 import { SessionMessagesComponent } from './session/session-messages/session-messages.component';
@@ -52,6 +53,7 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     SessionWrapperComponent,
     SessionDebugEventsComponent,
     SessionInputComponent,
+    AutoAcceptToggleComponent,
     ContextUsageCircleComponent,
     QuestionPromptComponent,
     SessionMessagesContentComponent,

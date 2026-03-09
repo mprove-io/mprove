@@ -58,7 +58,9 @@
   *ngIf="showSelects"
   class="mt-4 flex flex-row items-center justify-center space-x-3"
 >
-  <div class="h-10 w-10 flex-shrink-0"></div>
+  <div class="h-10 w-10 flex-shrink-0">
+    <m-auto-accept-toggle [sessionId]="sessionId"></m-auto-accept-toggle>
+  </div>
 
   <ng-select
     class="session-agents-select w-[140px] select-none text-base"

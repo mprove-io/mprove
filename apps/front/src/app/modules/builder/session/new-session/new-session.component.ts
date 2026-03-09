@@ -21,6 +21,7 @@ import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
+import { UiService } from '#front/app/services/ui.service';
 
 @Component({
   standalone: false,
@@ -45,7 +46,8 @@ export class NewSessionComponent implements OnInit {
     private apiService: ApiService,
     private sessionsQuery: SessionsQuery,
     private uiQuery: UiQuery,
-    private navigateService: NavigateService
+    private navigateService: NavigateService,
+    private uiService: UiService
   ) {
     this.model = this.uiQuery.getValue().lastSelectedProviderModel || 'default';
     let savedVariant = this.uiQuery.getValue().lastSelectedVariant || 'default';
@@ -108,7 +110,6 @@ export class NewSessionComponent implements OnInit {
       provider: provider,
       model: this.model,
       agent: this.agent,
-      permissionMode: 'default',
       variant: this.variant,
       envId: nav.envId,
       initialBranch: this.initialBranch,
@@ -146,6 +147,19 @@ export class NewSessionComponent implements OnInit {
             this.sessionsQuery.updatePart({
               sessions: [newSession, ...currentSessions]
             });
+
+            // Persist autoAccept for the new session
+            if (this.uiQuery.getValue().newSessionAutoAccept) {
+              let sessionIds =
+                this.uiQuery.getValue().permissionsAutoAcceptSessionIds || [];
+              let newSessionIds = [...sessionIds, sessionId];
+              this.uiQuery.updatePart({
+                permissionsAutoAcceptSessionIds: newSessionIds
+              });
+              this.uiService.setUserUi({
+                permissionsAutoAcceptSessionIds: newSessionIds
+              });
+            }
 
             // Navigate to session route with session repoId/branchId
             this.navigateService.navigateToSession({

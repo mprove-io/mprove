@@ -24,9 +24,6 @@ export class ToBackendCreateAgentSessionRequestPayload {
   variant: string;
 
   @IsString()
-  permissionMode: string;
-
-  @IsString()
   envId: string;
 
   @IsString()

@@ -35,6 +35,7 @@ export class UiService {
     projectReportLinks?: ProjectReportLink[];
     lastSelectedProviderModel?: string;
     lastSelectedVariant?: string;
+    permissionsAutoAcceptSessionIds?: string[];
   }) {
     let {
       timezone,
@@ -44,7 +45,8 @@ export class UiService {
       projectDashboardLinks,
       projectReportLinks,
       lastSelectedProviderModel,
-      lastSelectedVariant
+      lastSelectedVariant,
+      permissionsAutoAcceptSessionIds
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -73,7 +75,12 @@ export class UiService {
         : uiState.lastSelectedProviderModel,
       lastSelectedVariant: isDefined(lastSelectedVariant)
         ? lastSelectedVariant
-        : uiState.lastSelectedVariant
+        : uiState.lastSelectedVariant,
+      permissionsAutoAcceptSessionIds: isDefined(
+        permissionsAutoAcceptSessionIds
+      )
+        ? permissionsAutoAcceptSessionIds
+        : uiState.permissionsAutoAcceptSessionIds
     };
 
     let payload: ToBackendSetUserUiRequestPayload = {

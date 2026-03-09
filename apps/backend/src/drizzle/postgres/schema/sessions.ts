@@ -31,7 +31,6 @@ export const sessionsTable = pgTable(
       length: 64
     }),
     agent: varchar('agent', { length: 64 }),
-    permissionMode: varchar('permission_mode', { length: 64 }),
     status: varchar('status', { length: 32 })
       .notNull()
       .$type<SessionStatusEnum>(),

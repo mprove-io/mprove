@@ -59,6 +59,7 @@ export class UiState {
   sessionAllEventsExpanded: boolean;
   isNavigatingSession: boolean;
   showContent: boolean;
+  newSessionAutoAccept: boolean;
   //
   modelTreeLevels: ModelTreeLevelsEnum;
   timezone: string;
@@ -70,6 +71,7 @@ export class UiState {
   projectReportLinks: ProjectReportLink[];
   lastSelectedProviderModel: string;
   lastSelectedVariant: string;
+  permissionsAutoAcceptSessionIds: string[];
 }
 
 let uiState: UiState = {
@@ -113,6 +115,7 @@ let uiState: UiState = {
   sessionAllEventsExpanded: false,
   isNavigatingSession: false,
   showContent: true,
+  newSessionAutoAccept: false,
   //
   modelTreeLevels: undefined,
   timezone: undefined,
@@ -123,7 +126,8 @@ let uiState: UiState = {
   projectDashboardLinks: [],
   projectReportLinks: [],
   lastSelectedProviderModel: undefined,
-  lastSelectedVariant: undefined
+  lastSelectedVariant: undefined,
+  permissionsAutoAcceptSessionIds: []
 };
 
 @Injectable({ providedIn: 'root' })
@@ -218,6 +222,14 @@ export class UiQuery extends BaseQuery<UiState> {
   );
 
   showContent$ = this.store.pipe(select(state => state.showContent));
+
+  newSessionAutoAccept$ = this.store.pipe(
+    select(state => state.newSessionAutoAccept)
+  );
+
+  permissionsAutoAcceptSessionIds$ = this.store.pipe(
+    select(state => state.permissionsAutoAcceptSessionIds)
+  );
 
   constructor() {
     super(createStore({ name: 'ui' }, withProps<UiState>(uiState)));

@@ -46,4 +46,8 @@ export class Ui {
   @IsOptional()
   @IsString()
   lastSelectedVariant?: string;
+
+  @IsOptional()
+  @IsString({ each: true })
+  permissionsAutoAcceptSessionIds?: string[];
 }
