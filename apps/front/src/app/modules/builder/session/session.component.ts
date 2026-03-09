@@ -70,6 +70,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   userSentMessage = false;
   isActivating = false;
   isArchived = false;
+
   isAgentBusy = false;
   isWorking = false;
   isAborting = false;
@@ -91,6 +92,15 @@ export class SessionComponent implements OnInit, OnDestroy {
   cachedStatusText = '';
   debugExpandedEvents: Record<string, boolean> = {};
   pendingUserMessages: string[] = [];
+
+  permissionsAutoAcceptSessionIds: string[] = [];
+  permissionsAutoAcceptSessionIds$ =
+    this.uiQuery.permissionsAutoAcceptSessionIds$.pipe(
+      tap(ids => {
+        this.permissionsAutoAcceptSessionIds = ids || [];
+        this.cd.detectChanges();
+      })
+    );
 
   debugEvents$ = this.sessionEventsQuery.events$.pipe(
     tap(x => {
