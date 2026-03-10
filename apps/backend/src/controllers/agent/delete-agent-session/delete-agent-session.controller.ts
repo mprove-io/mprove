@@ -18,6 +18,8 @@ import type {
   SessionTab,
   UserTab
 } from '#backend/drizzle/postgres/schema/_tabs';
+import { branchesTable } from '#backend/drizzle/postgres/schema/branches';
+import { bridgesTable } from '#backend/drizzle/postgres/schema/bridges';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
@@ -28,12 +30,19 @@ import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { RpcService } from '#backend/services/rpc.service';
+import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
+import {
+  ToDiskDeleteDevRepoRequest,
+  ToDiskDeleteDevRepoResponse
+} from '#common/interfaces/to-disk/03-repos/to-disk-delete-dev-repo';
 import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
@@ -44,6 +53,8 @@ export class DeleteAgentSessionController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private agentSandboxService: AgentSandboxService,
+    private tabService: TabService,
+    private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -52,10 +63,11 @@ export class DeleteAgentSessionController {
   @Post(ToBackendRequestInfoNameEnum.ToBackendDeleteAgentSession)
   async deleteSession(@AttachUser() user: UserTab, @Req() request: any) {
     let reqValid: ToBackendDeleteAgentSessionRequest = request.body;
+    let { traceId } = reqValid.info;
     let { sessionId } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId
+      sessionId: sessionId
     });
 
     if (session.userId !== user.userId) {
@@ -64,19 +76,46 @@ export class DeleteAgentSessionController {
       });
     }
 
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
+
     if (
       session.sandboxId &&
       (session.status === SessionStatusEnum.Active ||
         session.status === SessionStatusEnum.Paused)
     ) {
-      let project = await this.projectsService.getProjectCheckExists({
-        projectId: session.projectId
-      });
-
       await this.agentSandboxService.stopSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
         sandboxId: session.sandboxId,
         e2bApiKey: project.e2bApiKey
+      });
+    }
+
+    if (session.repoId === sessionId) {
+      let baseProject = this.tabService.projectTabToBaseProject({
+        project: project
+      });
+
+      let toDiskDeleteDevRepoRequest: ToDiskDeleteDevRepoRequest = {
+        info: {
+          name: ToDiskRequestInfoNameEnum.ToDiskDeleteDevRepo,
+          traceId: traceId
+        },
+        payload: {
+          orgId: project.orgId,
+          projectId: session.projectId,
+          baseProject: baseProject,
+          devRepoId: sessionId
+        }
+      };
+
+      await this.rpcService.sendToDisk<ToDiskDeleteDevRepoResponse>({
+        orgId: project.orgId,
+        projectId: session.projectId,
+        repoId: sessionId,
+        message: toDiskDeleteDevRepoRequest,
+        checkIsOk: true
       });
     }
 
@@ -113,6 +152,26 @@ export class DeleteAgentSessionController {
           await tx
             .delete(ocSessionsTable)
             .where(and(eq(ocSessionsTable.sessionId, sessionId)));
+
+          if (session.repoId === sessionId) {
+            await tx
+              .delete(branchesTable)
+              .where(
+                and(
+                  eq(branchesTable.projectId, session.projectId),
+                  eq(branchesTable.repoId, sessionId)
+                )
+              );
+
+            await tx
+              .delete(bridgesTable)
+              .where(
+                and(
+                  eq(bridgesTable.projectId, session.projectId),
+                  eq(bridgesTable.repoId, sessionId)
+                )
+              );
+          }
         }),
       getRetryOption(this.cs, this.logger)
     );
