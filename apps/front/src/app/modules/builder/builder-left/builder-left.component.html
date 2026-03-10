@@ -102,12 +102,13 @@
         *ngIf="builderLeft === builderLeftTree"
       >
         <ng-scrollbar
+          class="ml-6"
           [orientation]="'vertical'"
           [visibility]="'hover'"
           [appearance]="'compact'"
         >
           <div class="mt-2 h-full w-full">
-            <div *ngIf="!!word" class="ml-6 mr-5">
+            <div *ngIf="!!word" class="mr-5">
               <div
                 *ngFor="let fileItem of filteredFileItems"
                 class="hover:bg-m50 group flex flex-row items-center rounded py-2 pl-3 pr-3 hover:cursor-pointer"
@@ -170,13 +171,14 @@
             >
               <ng-template #treeNodeTemplate let-node="node">
                 <div
-                  class="flex h-11 w-full flex-row pl-3 pr-5"
+                  class="flex h-11 w-full flex-row pr-5"
                   *ngIf="node.parent !== null && !node.parent.data.virtual"
                 >
                   <div
                     data-cy="filesTreeItem"
                     (click)="nodeOnClick(node)"
-                    class="hover:bg-m50 mycls group flex w-full cursor-pointer select-none flex-row"
+                    class="hover:bg-m50 mycls group flex w-full cursor-pointer select-none flex-row rounded"
+                    [style.padding-left.px]="(node.level - 2) * 12"
                     [ngClass]="{
                       'text-m600 bg-m50 font-semibold':
                         !!fileNodeId && node.data.id === fileNodeId
