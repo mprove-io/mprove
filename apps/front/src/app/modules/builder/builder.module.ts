@@ -16,6 +16,7 @@ import { FilesRightPanelToggleComponent } from './builder-left/files-right-panel
 import { FolderOptionsComponent } from './builder-left/folder-options/folder-options.component';
 import { SessionInfoComponent } from './builder-left/session-info/session-info.component';
 import { BuilderRightComponent } from './builder-right/builder-right.component';
+import { SchemasComponent } from './builder-right/schemas/schemas.component';
 import { SessionsComponent } from './builder-right/sessions/sessions.component';
 import { BlockmlErrorsComponent } from './builder-right/validation-status/blockml-errors/blockml-errors.component';
 import { RepoConflictsComponent } from './builder-right/validation-status/repo-conflicts/repo-conflicts.component';
@@ -46,6 +47,7 @@ import { SessionWrapperComponent } from './session/session-wrapper/session-wrapp
     RepoOptionsComponent,
     SelectFileComponent,
     BuilderRightComponent,
+    SchemasComponent,
     SessionsComponent,
     NewSessionComponent,
     NewSessionWrapperComponent,

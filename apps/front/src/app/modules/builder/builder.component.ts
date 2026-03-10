@@ -144,6 +144,7 @@ export class BuilderComponent implements OnInit, OnDestroy {
   );
 
   builderRightSessions = BuilderRightEnum.Sessions;
+  builderRightSchemas = BuilderRightEnum.Schemas;
   builderRightValidation = BuilderRightEnum.Validation;
 
   isEditor: boolean;

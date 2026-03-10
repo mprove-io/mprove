@@ -14,7 +14,14 @@ import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { SchemaTableTypeEnum } from '#common/enums/schema-table-type.enum';
 import { isDefined } from '#common/functions/is-defined';
+import {
+  ConnectionSchema,
+  SchemaColumn,
+  SchemaIndex,
+  SchemaTable
+} from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
 import { TabService } from '../tab.service';
@@ -43,6 +50,128 @@ export class MysqlService {
     };
 
     return connectionOptions;
+  }
+
+  async fetchSchema(item: {
+    connection: ConnectionTab;
+  }): Promise<ConnectionSchema> {
+    let { connection } = item;
+
+    let mysqlConnectionOptions = this.optionsToMysqlOptions({
+      connection: connection
+    });
+
+    let mc: MYSQL.Connection;
+
+    try {
+      mc = await MYSQL.createConnection(mysqlConnectionOptions);
+
+      let [tablesResult] = await mc.query(`
+        SELECT table_name, table_type
+        FROM information_schema.tables
+        WHERE table_schema = DATABASE()
+        ORDER BY table_name
+      `);
+      let tablesRows = tablesResult as {
+        TABLE_NAME: string;
+        TABLE_TYPE: string;
+      }[];
+
+      let [columnsResult] = await mc.query(`
+        SELECT table_name, column_name, data_type, is_nullable, column_key
+        FROM information_schema.columns
+        WHERE table_schema = DATABASE()
+        ORDER BY table_name, ordinal_position
+      `);
+      let columnsRows = columnsResult as {
+        TABLE_NAME: string;
+        COLUMN_NAME: string;
+        DATA_TYPE: string;
+        IS_NULLABLE: string;
+      }[];
+
+      let [indexesResult] = await mc.query(`
+        SELECT table_name, index_name,
+          GROUP_CONCAT(column_name ORDER BY seq_in_index) as index_columns,
+          non_unique
+        FROM information_schema.statistics
+        WHERE table_schema = DATABASE()
+        GROUP BY table_name, index_name, non_unique
+        ORDER BY table_name, index_name
+      `);
+      let indexesRows = indexesResult as {
+        TABLE_NAME: string;
+        INDEX_NAME: string;
+        index_columns: string;
+        NON_UNIQUE: number;
+      }[];
+
+      let tables: SchemaTable[] = tablesRows.map(row => {
+        let tableName = row.TABLE_NAME;
+
+        let columns: SchemaColumn[] = columnsRows
+          .filter(c => c.TABLE_NAME === tableName)
+          .map(c => ({
+            columnName: c.COLUMN_NAME,
+            dataType: c.DATA_TYPE,
+            isNullable: c.IS_NULLABLE === 'YES'
+          }));
+
+        let indexes: SchemaIndex[] = indexesRows
+          .filter(ix => ix.TABLE_NAME === tableName)
+          .map(ix => {
+            let colsStr = ix.index_columns || '';
+            let indexColumns = colsStr
+              .split(',')
+              .map(s => s.trim())
+              .filter(s => s.length > 0);
+
+            return {
+              indexName: ix.INDEX_NAME,
+              indexColumns: indexColumns,
+              isUnique: ix.NON_UNIQUE === 0,
+              isPrimaryKey: ix.INDEX_NAME === 'PRIMARY'
+            };
+          });
+
+        return {
+          schemaName: connection.options.mysql.database,
+          tableName: tableName,
+          tableType:
+            row.TABLE_TYPE === 'BASE TABLE'
+              ? SchemaTableTypeEnum.Table
+              : SchemaTableTypeEnum.View,
+          columns: columns,
+          indexes: indexes
+        };
+      });
+
+      return {
+        tables: tables,
+        lastRefreshedTs: Date.now(),
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        tables: [],
+        lastRefreshedTs: Date.now(),
+        errorMessage: `Schema fetch failed: ${err.message}`
+      };
+    } finally {
+      if (isDefined(mc)) {
+        mc.end().catch(er => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_MYSQL_CONNECTION_CLOSE_ERROR,
+              originalError: er
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+        });
+      }
+    }
   }
 
   async testConnection(item: {

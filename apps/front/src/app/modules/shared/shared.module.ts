@@ -76,6 +76,7 @@ import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-ri
 import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.component';
 import { ClockIconComponent } from './icons/clock-icon/clock-icon.component';
 import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/currency-dollar-icon.component';
+import { DatabaseZapIconComponent } from './icons/database-zap-icon/database-zap-icon.component';
 import { DeleteBigIconComponent } from './icons/delete-big-icon/delete-big-icon.component';
 import { DeleteIconComponent } from './icons/delete-icon/delete-icon.component';
 import { DescIconComponent } from './icons/desc-icon/desc-icon.component';
@@ -102,6 +103,7 @@ import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.componen
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { RightPanelIconComponent } from './icons/right-panel-icon/right-panel-icon.component';
 import { SaveIconComponent } from './icons/save-icon/save-icon.component';
+import { ScrollIconComponent } from './icons/scroll-icon/scroll-icon.component';
 import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { StopIconComponent } from './icons/stop-icon/stop-icon.component';
@@ -229,6 +231,8 @@ let sharedComponents = [
   RefreshIconComponent,
   LockClosedIconComponent,
   ListIconComponent,
+  ScrollIconComponent,
+  DatabaseZapIconComponent,
   ArrowDropDownIconComponent,
   DragIconComponent,
   ResizeIconComponent,

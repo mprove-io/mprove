@@ -10,6 +10,7 @@ import type {
   Todo
 } from '@opencode-ai/sdk/v2';
 import { ConnectionOptions } from './backend/connection-parts/connection-options';
+import { ConnectionSchema } from './backend/connection-schema';
 import { Ev } from './backend/ev';
 import { MproveConfig } from './backend/mprove-config';
 import { Ui } from './backend/ui';
@@ -72,7 +73,7 @@ export class ConnectionSt {
   options: ConnectionOptions;
 }
 export class ConnectionLt {
-  emptyData?: number;
+  schema?: ConnectionSchema;
 }
 
 //

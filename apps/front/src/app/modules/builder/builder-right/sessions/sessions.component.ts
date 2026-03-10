@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take, tap } from 'rxjs/operators';
-import { PROD_REPO_ID } from '#common/constants/top';
+import { PATH_NEW_SESSION, PROD_REPO_ID } from '#common/constants/top';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
@@ -116,6 +117,7 @@ export class SessionsComponent implements OnInit {
     private navQuery: NavQuery,
     private apiService: ApiService,
     private navigateService: NavigateService,
+    private router: Router,
     private cd: ChangeDetectorRef,
     private spinner: NgxSpinnerService,
     private myDialogService: MyDialogService,
@@ -192,7 +194,11 @@ export class SessionsComponent implements OnInit {
   }
 
   newSession() {
-    if (!this.currentSession?.sessionId) {
+    let ar = this.router.url.split('?')[0].split('/');
+
+    let isNewSessionRoute = ar[ar.length - 1] === PATH_NEW_SESSION;
+
+    if (!this.currentSession?.sessionId && isNewSessionRoute) {
       return;
     }
 

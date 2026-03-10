@@ -12,7 +12,14 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
+import { SchemaTableTypeEnum } from '#common/enums/schema-table-type.enum';
 import { isDefined } from '#common/functions/is-defined';
+import {
+  ConnectionSchema,
+  SchemaColumn,
+  SchemaIndex,
+  SchemaTable
+} from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
@@ -43,6 +50,133 @@ export class PgService {
     };
 
     return connectionOptions;
+  }
+
+  async fetchSchema(item: {
+    connection: ConnectionTab;
+  }): Promise<ConnectionSchema> {
+    let { connection } = item;
+
+    let postgresConnectionOptions: pg.IConnectionParameters<pg.IClient> =
+      this.optionsToPostgresOptions({
+        connection: connection
+      });
+
+    let pgp = pgPromise({ noWarnings: true });
+    let pgDb = pgp(postgresConnectionOptions);
+
+    try {
+      let tablesRows = await pgDb.any<{
+        table_schema: string;
+        table_name: string;
+        table_type: string;
+      }>(`
+        SELECT table_schema, table_name, table_type
+        FROM information_schema.tables
+        WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
+          AND table_type IN ('BASE TABLE', 'VIEW')
+        ORDER BY table_schema, table_name
+      `);
+
+      let columnsRows = await pgDb.any<{
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        data_type: string;
+        is_nullable: string;
+      }>(`
+        SELECT table_schema, table_name, column_name, data_type, is_nullable
+        FROM information_schema.columns
+        WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
+        ORDER BY table_schema, table_name, ordinal_position
+      `);
+
+      let indexesRows = await pgDb.any<{
+        schemaname: string;
+        tablename: string;
+        indexname: string;
+        indexdef: string;
+        is_primary: boolean;
+      }>(`
+        SELECT
+          i.schemaname,
+          i.tablename,
+          i.indexname,
+          i.indexdef,
+          CASE WHEN c.contype = 'p' THEN true ELSE false END as is_primary
+        FROM pg_indexes i
+        LEFT JOIN pg_constraint c
+          ON c.conname = i.indexname
+          AND c.connamespace = (
+            SELECT oid FROM pg_namespace WHERE nspname = i.schemaname
+          )
+          AND c.contype = 'p'
+        WHERE i.schemaname NOT IN ('pg_catalog', 'information_schema')
+        ORDER BY i.schemaname, i.tablename, i.indexname
+      `);
+
+      let tables: SchemaTable[] = tablesRows.map(row => {
+        let columns: SchemaColumn[] = columnsRows
+          .filter(
+            c =>
+              c.table_schema === row.table_schema &&
+              c.table_name === row.table_name
+          )
+          .map(c => ({
+            columnName: c.column_name,
+            dataType: c.data_type,
+            isNullable: c.is_nullable === 'YES'
+          }));
+
+        let indexes: SchemaIndex[] = indexesRows
+          .filter(
+            ix =>
+              ix.schemaname === row.table_schema &&
+              ix.tablename === row.table_name
+          )
+          .map(ix => {
+            let indexDef = ix.indexdef || '';
+            let colsMatch = indexDef.match(/\(([^)]+)\)/);
+            let indexColumns = colsMatch
+              ? colsMatch[1].split(',').map((s: string) => s.trim())
+              : [];
+
+            let isUnique = indexDef.toUpperCase().includes('UNIQUE') === true;
+
+            return {
+              indexName: ix.indexname,
+              indexColumns: indexColumns,
+              isUnique: isUnique,
+              isPrimaryKey: ix.is_primary === true
+            };
+          });
+
+        return {
+          schemaName: row.table_schema,
+          tableName: row.table_name,
+          tableType:
+            row.table_type === 'BASE TABLE'
+              ? SchemaTableTypeEnum.Table
+              : SchemaTableTypeEnum.View,
+          columns: columns,
+          indexes: indexes
+        };
+      });
+
+      return {
+        tables: tables,
+        lastRefreshedTs: Date.now(),
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        tables: [],
+        lastRefreshedTs: Date.now(),
+        errorMessage: `Schema fetch failed: ${err.message}`
+      };
+    } finally {
+      pgDb.$pool.end();
+    }
   }
 
   async testConnection(item: {

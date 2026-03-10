@@ -434,7 +434,7 @@ export class TabToEntService {
     let { tab, hashSecret } = item;
 
     let connectionSt: ConnectionSt = { options: tab.options };
-    let connectionLt: ConnectionLt = {};
+    let connectionLt: ConnectionLt = { schema: tab.schema };
 
     let connectionEnt: ConnectionEnt = {
       connectionFullId: this.hashService.makeConnectionFullId({

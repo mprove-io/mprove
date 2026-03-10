@@ -1,0 +1,149 @@
+<div class="bg-m0 relative flex h-full w-full flex-col rounded shadow">
+  <div class="mb-6 mt-6 flex h-11 flex-shrink-0 flex-row items-center">
+    <m-search-icon class="text-s1 ml-8"></m-search-icon>
+
+    <input
+      spellcheck="false"
+      autocomplete="off"
+      class="form-input focus:border-m600 border-s400 ml-3 h-10 w-[225px] select-none rounded"
+      placeholder="Search"
+      [ngClass]="{
+        'bg-p200': !!searchWord
+      }"
+      [(ngModel)]="searchWord"
+      (ngModelChange)="searchWordChange()"
+    />
+
+    <div class="ml-3 h-9 w-9 flex-shrink-0" *ngIf="!!searchWord">
+      <m-delete-icon
+        class="text-s1 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+        [ngClass]="{
+          'bg-p200 hover:bg-p300 cursor-pointer': !!searchWord
+        }"
+        (click)="resetSearch()"
+      ></m-delete-icon>
+    </div>
+
+    <div
+      class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+      [tp]="showIndexes ? 'Indexes: ON' : 'Indexes: OFF'"
+      tpPlacement="top"
+    >
+      <button
+        type="button"
+        class="flex h-7 w-7 cursor-pointer items-center justify-center focus:outline-none"
+        [ngClass]="{
+          'text-green-600': showIndexes,
+          'text-s500': !showIndexes
+        }"
+        (click)="toggleIndexes()"
+      >
+        <m-database-zap-icon></m-database-zap-icon>
+      </button>
+    </div>
+
+    <div class="relative ml-5 flex h-7 w-7 flex-shrink-0">
+      <ngx-spinner
+        *ngIf="isRefreshing"
+        [name]="spinnerName"
+        color="#0084d1"
+        bdColor="#00000000"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+
+    <div class="flex flex-1"></div>
+  </div>
+
+  <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
+    <div class="flex flex-row"></div>
+    <div class="flex flex-row"></div>
+  </div>
+
+  <div
+    *ngIf="schemasLoaded && treeNodes.length === 0"
+    class="pointer-events-none absolute inset-0 flex select-none items-center justify-center text-xl"
+  >
+    No SQL Schemas Found
+  </div>
+
+  <div
+    *ngIf="filteredTreeNodes.length > 0"
+    class="flex h-2 w-full flex-grow flex-col overflow-y-auto"
+  >
+    <ng-scrollbar
+      [orientation]="'vertical'"
+      [visibility]="'hover'"
+      [appearance]="'compact'"
+    >
+      <div class="mt-2 h-full w-full pb-6 pl-6 pr-6">
+        <tree-root
+          #itemsTree
+          [nodes]="filteredTreeNodes"
+          [options]="treeOptions"
+        >
+          <ng-template #treeNodeTemplate let-node="node">
+            <div
+              class="flex h-11 w-full select-none flex-row items-center rounded"
+              [ngClass]="{
+                'cursor-pointer': node.hasChildren,
+                'hover:bg-m50': true
+              }"
+              [style.padding-left.px]="(node.level - 1) * 12"
+              (click)="nodeOnClick({ node: node })"
+            >
+              <div class="flex flex-row items-center pl-4">
+                <div *ngIf="node.hasChildren" class="flex items-center">
+                  <m-chevron-right-icon
+                    class="text-s500"
+                    *ngIf="!node.isExpanded"
+                  ></m-chevron-right-icon>
+
+                  <m-chevron-down-icon
+                    class="text-s500"
+                    *ngIf="node.isExpanded"
+                  ></m-chevron-down-icon>
+                </div>
+
+                <div *ngIf="!node.hasChildren" class="w-[24px]"></div>
+              </div>
+
+              <div
+                *ngIf="node.data.nodeType !== 'column'"
+                class="ml-2 truncate"
+                [ngClass]="{
+                  'text-s500 text-[18px]': node.data.nodeType === 'connection',
+                  'text-s1 text-[17px]': node.data.nodeType !== 'connection'
+                }"
+                [tp]="node.data.errorMessage"
+                tpPlacement="top"
+              >
+                {{ node.data.name }}
+              </div>
+
+              <div
+                *ngIf="node.data.nodeType === 'column'"
+                class="ml-2 flex items-center truncate text-[17px]"
+              >
+                <span class="text-s1 font-semibold">{{
+                  node.data.columnName
+                }}</span>
+                <span class="text-s400 ml-3 uppercase">{{
+                  node.data.dataType
+                }}</span>
+                <span *ngIf="node.data.isNullable" class="text-s400 ml-1"
+                  >(null)</span
+                >
+              </div>
+            </div>
+          </ng-template>
+        </tree-root>
+      </div>
+    </ng-scrollbar>
+  </div>
+</div>

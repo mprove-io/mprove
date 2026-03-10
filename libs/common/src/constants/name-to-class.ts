@@ -28,6 +28,7 @@ import { ToBackendSaveModifyChartRequest } from '#common/interfaces/to-backend/c
 import { ToBackendCreateConnectionRequest } from '#common/interfaces/to-backend/connections/to-backend-create-connection';
 import { ToBackendDeleteConnectionRequest } from '#common/interfaces/to-backend/connections/to-backend-delete-connection';
 import { ToBackendEditConnectionRequest } from '#common/interfaces/to-backend/connections/to-backend-edit-connection';
+import { ToBackendGetConnectionSchemasRequest } from '#common/interfaces/to-backend/connections/to-backend-get-connection-schemas';
 import { ToBackendGetConnectionsRequest } from '#common/interfaces/to-backend/connections/to-backend-get-connections';
 import { ToBackendTestConnectionRequest } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ToBackendCreateDraftDashboardRequest } from '#common/interfaces/to-backend/dashboards/to-backend-create-draft-dashboard';
@@ -248,6 +249,8 @@ export const nameToClass = {
     ToBackendEditConnectionRequest,
   [ToBackendRequestInfoNameEnum.ToBackendTestConnection]:
     ToBackendTestConnectionRequest,
+  [ToBackendRequestInfoNameEnum.ToBackendGetConnectionSchemas]:
+    ToBackendGetConnectionSchemasRequest,
   //
   [ToBackendRequestInfoNameEnum.ToBackendGetBranchesList]:
     ToBackendGetBranchesListRequest,

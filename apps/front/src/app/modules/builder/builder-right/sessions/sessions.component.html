@@ -11,20 +11,6 @@
     </div>
 
     <button
-      *ngIf="isShowDebugToggle"
-      tp="Toggle debug mode"
-      type="button"
-      class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-      [ngClass]="{
-        'bg-orange-100 text-orange-700': debugMode,
-        'text-s500 hover:bg-m200': !debugMode
-      }"
-      (click)="toggleDebug()"
-    >
-      <m-list-icon></m-list-icon>
-    </button>
-
-    <button
       tp="Refresh sessions"
       type="button"
       class="hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
@@ -48,6 +34,8 @@
       </ngx-spinner>
     </div>
 
+    <div class="flex flex-1"></div>
+
     <button
       *ngIf="debugMode"
       type="button"
@@ -63,11 +51,23 @@
       class="text-s500 hover:bg-s100 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
       (click)="toggleAllEvents()"
     >
-      <m-unfold-more-icon *ngIf="!allEventsExpanded"></m-unfold-more-icon>
-      <m-unfold-less-icon *ngIf="allEventsExpanded"></m-unfold-less-icon>
+      <m-folder-closed-icon *ngIf="allEventsExpanded"></m-folder-closed-icon>
+      <m-folder-open-icon *ngIf="!allEventsExpanded"></m-folder-open-icon>
     </button>
 
-    <div class="flex flex-1"></div>
+    <button
+      *ngIf="isShowDebugToggle"
+      tp="Toggle debug mode"
+      type="button"
+      class="ml-5 mr-9 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      [ngClass]="{
+        'bg-orange-100 text-orange-700': debugMode,
+        'text-s500 hover:bg-m200': !debugMode
+      }"
+      (click)="toggleDebug()"
+    >
+      <m-scroll-icon></m-scroll-icon>
+    </button>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">

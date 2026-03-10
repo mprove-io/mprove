@@ -229,7 +229,8 @@ export class ConnectionsService {
     let connectionSt: ConnectionSt = {
       options: connection.options
     };
-    let connectionLt: ConnectionLt = {};
+
+    let connectionLt: ConnectionLt = { schema: connection.schema };
 
     let apiBaseConnection: BaseConnection = {
       connectionId: connection.connectionId,

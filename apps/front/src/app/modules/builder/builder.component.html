@@ -429,6 +429,32 @@
             >
 
             <button
+              class="ml-7 flex w-[90px] select-none items-center justify-center text-lg focus:outline-none"
+              [ngClass]="{
+                'text-m500 font-semibold':
+                  builderRight === builderRightSchemas &&
+                  !secondFileNodeId &&
+                  (builderLeft === builderLeftTree ||
+                    builderLeft === builderLeftInfo ||
+                    lastUrl === pathNewSession ||
+                    lastUrl === pathSelectFile ||
+                    !file?.fileId),
+                'text-s500':
+                  builderRight !== builderRightSchemas ||
+                  secondFileNodeId ||
+                  !(
+                    builderLeft === builderLeftTree ||
+                    builderLeft === builderLeftInfo ||
+                    lastUrl === pathNewSession ||
+                    lastUrl === pathSelectFile ||
+                    !file?.fileId
+                  )
+              }"
+              (click)="setBuilderRight(builderRightSchemas)"
+              >Schemas</button
+            >
+
+            <button
               class="ml-7 flex w-[100px] select-none flex-row items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':

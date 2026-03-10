@@ -3,6 +3,11 @@
   class="flex w-full"
 ></m-sessions>
 
+<m-schemas
+  *ngIf="builderRight === builderRightSchemas && !secondFileNodeId"
+  class="flex w-full"
+></m-schemas>
+
 <div
   *ngIf="builderRight === builderRightValidation || !!secondFileNodeId"
   class="bg-m0 w-full min-w-[2px] select-none rounded shadow"
