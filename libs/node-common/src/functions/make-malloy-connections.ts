@@ -1,4 +1,5 @@
 import { BigQueryConnection } from '@malloydata/db-bigquery';
+import { DatabricksConnection } from '@malloydata/db-databricks';
 import { DuckDBConnection } from '@malloydata/db-duckdb';
 import { MySQLConnection } from '@malloydata/db-mysql';
 import { PostgresConnection } from '@malloydata/db-postgres';
@@ -11,6 +12,7 @@ import { ProjectConnection } from '#common/interfaces/backend/project-connection
 export type MalloyConnection =
   | PostgresConnection
   | BigQueryConnection
+  | DatabricksConnection
   | SnowflakeConnection
   | DuckDBConnection
   | MySQLConnection
@@ -96,7 +98,18 @@ export function makeMalloyConnections(item: {
                           : `md:`,
                         motherDuckToken: x.options.motherduck?.motherduckToken
                       })
-                    : undefined;
+                    : x.type === ConnectionTypeEnum.Databricks
+                      ? new DatabricksConnection(x.connectionId, {
+                          host: x.options.databricks?.host,
+                          path: x.options.databricks?.path,
+                          token: x.options.databricks?.token,
+                          oauthClientId: x.options.databricks?.oauthClientId,
+                          oauthClientSecret:
+                            x.options.databricks?.oauthClientSecret,
+                          defaultCatalog: x.options.databricks?.defaultCatalog,
+                          defaultSchema: x.options.databricks?.defaultSchema
+                        })
+                      : undefined;
 
     if (isDefined(mConnection)) {
       malloyConnections.push(mConnection);

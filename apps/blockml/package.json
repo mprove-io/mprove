@@ -40,6 +40,7 @@
     "class-validator": "catalog:",
     "date-fns": "catalog:",
     "@malloydata/db-bigquery": "catalog:",
+    "@malloydata/db-databricks": "catalog:",
     "@malloydata/db-duckdb": "catalog:",
     "@malloydata/db-mysql": "catalog:",
     "@malloydata/db-postgres": "catalog:",

@@ -25,10 +25,12 @@
     "clean-turbo": "rimraf --glob \".turbo/*\" \".turbo/.[!.]*\""
   },
   "dependencies": {
+    "@databricks/sql": "catalog:",
     "@duckdb/node-api": "catalog:",
     "@google-cloud/bigquery": "catalog:",
     "@kubiks/otel-drizzle": "catalog:",
     "@malloydata/db-bigquery": "catalog:",
+    "@malloydata/db-databricks": "catalog:",
     "@malloydata/db-duckdb": "catalog:",
     "@malloydata/db-mysql": "catalog:",
     "@malloydata/db-postgres": "catalog:",

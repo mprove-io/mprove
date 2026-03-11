@@ -1017,6 +1017,206 @@
 
     <form
       class="flex w-80 flex-col text-base"
+      [formGroup]="addDatabricksForm"
+      *ngIf="addForm.controls['type'].value === typeDatabricks"
+    >
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Host</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogDatabricksHostInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addDatabricksForm.controls['host'].invalid &&
+                addDatabricksForm.controls['host'].touched
+            }"
+            formControlName="host"
+          />
+          <m-validation
+            [control]="addDatabricksForm.controls['host']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">HTTP Path</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogDatabricksPathInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addDatabricksForm.controls['path'].invalid &&
+                addDatabricksForm.controls['path'].touched
+            }"
+            formControlName="path"
+          />
+          <m-validation
+            [control]="addDatabricksForm.controls['path']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="mb-6 flex flex-row items-center">
+        <div class="w-[200px] flex-shrink-0 font-semibold">Auth Type</div>
+
+        <div class="flex flex-col">
+          <ng-select
+            data-cy="addConnectionDialogDatabricksAuthTypeSelect"
+            class="w-[400px] text-base"
+            [items]="databricksAuthTypes"
+            [clearable]="false"
+            [searchable]="false"
+            appendTo="body"
+            formControlName="authType"
+          ></ng-select>
+        </div>
+      </div>
+
+      <ng-container
+        *ngIf="
+          addDatabricksForm.controls['authType'].value ===
+          databricksAuthTypeOAuthM2M
+        "
+      >
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+            >OAuth Client ID</div
+          >
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogDatabricksOauthClientIdInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  addDatabricksForm.controls['oauthClientId'].invalid &&
+                  addDatabricksForm.controls['oauthClientId'].touched
+              }"
+              formControlName="oauthClientId"
+            />
+            <m-validation
+              [control]="addDatabricksForm.controls['oauthClientId']"
+            ></m-validation>
+          </div>
+        </div>
+
+        <div class="flex flex-row items-center">
+          <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+            >OAuth Client Secret</div
+          >
+
+          <div class="flex flex-col">
+            <input
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="addConnectionDialogDatabricksOauthClientSecretInput"
+              class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+              [ngClass]="{
+                'border-r600':
+                  addDatabricksForm.controls['oauthClientSecret'].invalid &&
+                  addDatabricksForm.controls['oauthClientSecret'].touched
+              }"
+              formControlName="oauthClientSecret"
+              type="password"
+            />
+            <m-validation
+              [control]="addDatabricksForm.controls['oauthClientSecret']"
+            ></m-validation>
+          </div>
+        </div>
+      </ng-container>
+
+      <div
+        class="flex flex-row items-center"
+        *ngIf="
+          addDatabricksForm.controls['authType'].value === databricksAuthTypePAT
+        "
+      >
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold">Token</div>
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogDatabricksTokenInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addDatabricksForm.controls['token'].invalid &&
+                addDatabricksForm.controls['token'].touched
+            }"
+            formControlName="token"
+            type="password"
+          />
+          <m-validation
+            [control]="addDatabricksForm.controls['token']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+          >Default Catalog</div
+        >
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogDatabricksDefaultCatalogInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addDatabricksForm.controls['defaultCatalog'].invalid &&
+                addDatabricksForm.controls['defaultCatalog'].touched
+            }"
+            formControlName="defaultCatalog"
+            placeholder="Optional"
+          />
+          <m-validation
+            [control]="addDatabricksForm.controls['defaultCatalog']"
+          ></m-validation>
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center">
+        <div class="mb-6 w-[200px] flex-shrink-0 font-semibold"
+          >Default Schema</div
+        >
+
+        <div class="flex flex-col">
+          <input
+            autocomplete="off"
+            spellcheck="false"
+            data-cy="addConnectionDialogDatabricksDefaultSchemaInput"
+            class="form-input border-s3 focus:border-m600 w-[400px] rounded"
+            [ngClass]="{
+              'border-r600':
+                addDatabricksForm.controls['defaultSchema'].invalid &&
+                addDatabricksForm.controls['defaultSchema'].touched
+            }"
+            formControlName="defaultSchema"
+            placeholder="Optional"
+          />
+          <m-validation
+            [control]="addDatabricksForm.controls['defaultSchema']"
+          ></m-validation>
+        </div>
+      </div>
+    </form>
+
+    <form
+      class="flex w-80 flex-col text-base"
       [formGroup]="addApiForm"
       *ngIf="addForm.controls['type'].value === typeApi"
     >

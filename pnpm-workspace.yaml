@@ -32,6 +32,7 @@ catalog:
   '@codemirror/search': 6.5.11
   '@codemirror/state': 6.5.2
   '@codemirror/view': 6.36.7
+  '@databricks/sql': 1.13.0
   '@duckdb/node-api': 1.4.3-r.1
   '@google-cloud/bigquery': 5.12.0
   '@katoid/angular-grid-layout': 3.1.0
@@ -39,6 +40,7 @@ catalog:
   '@leeoniya/ufuzzy': 1.0.18
   '@lezer/highlight': 1.2.3
   '@malloydata/db-bigquery': 0.0.356
+  '@malloydata/db-databricks': 0.0.356
   '@malloydata/db-duckdb': 0.0.356
   '@malloydata/db-mysql': 0.0.356
   '@malloydata/db-postgres': 0.0.356

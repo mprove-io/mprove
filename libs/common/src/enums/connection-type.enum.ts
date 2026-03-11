@@ -4,6 +4,7 @@ export enum ConnectionTypeEnum {
   // ClickHouse = 'ClickHouse',
   SnowFlake = 'SnowFlake',
   BigQuery = 'BigQuery',
+  Databricks = 'Databricks',
   MotherDuck = 'MotherDuck',
   Presto = 'Presto',
   Trino = 'Trino',

@@ -42,6 +42,7 @@ import { QueriesService } from '#backend/services/db/queries.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { StructsService } from '#backend/services/db/structs.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery.service';
+import { DatabricksService } from '#backend/services/dwh/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb.service';
 import { MysqlService } from '#backend/services/dwh/mysql.service';
 import { PgService } from '#backend/services/dwh/pg.service';
@@ -83,6 +84,7 @@ export class RunQueriesController {
     private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
+    private databricksService: DatabricksService,
     private duckdbService: DuckDbService,
     private prestoService: PrestoService,
     private trinoService: TrinoService,
@@ -379,6 +381,14 @@ export class RunQueriesController {
               querySql: query.sql,
               projectId: projectId
             });
+          } else if (connection.type === ConnectionTypeEnum.Databricks) {
+            await this.databricksService.runQuery({
+              connection: connection,
+              queryId: query.queryId,
+              queryJobId: query.queryJobId,
+              querySql: query.sql,
+              projectId: projectId
+            });
           } else if (
             [ConnectionTypeEnum.Api, ConnectionTypeEnum.GoogleApi].indexOf(
               connection.type
@@ -613,6 +623,26 @@ export class RunQueriesController {
                 logToConsoleBackend({
                   log: new ServerError({
                     message: ErEnum.BACKEND_RUN_QUERY_DUCKDB_ERROR,
+                    originalError: e
+                  }),
+                  logLevel: LogLevelEnum.Error,
+                  logger: this.logger,
+                  cs: this.cs
+                });
+              });
+          } else if (connection.type === ConnectionTypeEnum.Databricks) {
+            this.databricksService
+              .runQuery({
+                connection: connection,
+                queryId: query.queryId,
+                queryJobId: query.queryJobId,
+                querySql: query.sql,
+                projectId: projectId
+              })
+              .catch(e => {
+                logToConsoleBackend({
+                  log: new ServerError({
+                    message: ErEnum.BACKEND_RUN_QUERY_DATABRICKS_ERROR,
                     originalError: e
                   }),
                   logLevel: LogLevelEnum.Error,

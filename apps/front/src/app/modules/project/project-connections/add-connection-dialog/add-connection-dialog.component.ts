@@ -21,6 +21,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { map, take, tap } from 'rxjs/operators';
 import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
+import { DatabricksAuthTypeEnum } from '#common/enums/databricks-auth-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -81,6 +82,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
   addBigqueryForm: FormGroup;
   // addClickhouseForm: FormGroup;
+  addDatabricksForm: FormGroup;
   addMotherduckForm: FormGroup;
   addPostgresForm: FormGroup;
   addMysqlForm: FormGroup;
@@ -107,6 +109,7 @@ export class AddConnectionDialogComponent implements OnInit {
     // ConnectionTypeEnum.ClickHouse,
     ConnectionTypeEnum.SnowFlake,
     ConnectionTypeEnum.BigQuery,
+    ConnectionTypeEnum.Databricks,
     ConnectionTypeEnum.MotherDuck,
     ConnectionTypeEnum.Api,
     ConnectionTypeEnum.GoogleApi
@@ -118,6 +121,13 @@ export class AddConnectionDialogComponent implements OnInit {
   typePresto = ConnectionTypeEnum.Presto;
   typeSnowFlake = ConnectionTypeEnum.SnowFlake;
   // typeClickHouse = ConnectionTypeEnum.ClickHouse;
+  typeDatabricks = ConnectionTypeEnum.Databricks;
+  databricksAuthTypes = [
+    DatabricksAuthTypeEnum.OAuthM2M,
+    DatabricksAuthTypeEnum.PersonalAccessToken
+  ];
+  databricksAuthTypeOAuthM2M = DatabricksAuthTypeEnum.OAuthM2M;
+  databricksAuthTypePAT = DatabricksAuthTypeEnum.PersonalAccessToken;
   typeMotherDuck = ConnectionTypeEnum.MotherDuck;
   typeBigQuery = ConnectionTypeEnum.BigQuery;
   typeApi = ConnectionTypeEnum.Api;
@@ -219,6 +229,17 @@ export class AddConnectionDialogComponent implements OnInit {
       password: [undefined, [Validators.required]]
     });
 
+    this.addDatabricksForm = this.fb.group({
+      authType: [DatabricksAuthTypeEnum.OAuthM2M, [Validators.required]],
+      host: [undefined, [Validators.required]],
+      path: [undefined, [Validators.required]],
+      token: [undefined, []],
+      oauthClientId: [undefined, [Validators.required]],
+      oauthClientSecret: [undefined, [Validators.required]],
+      defaultCatalog: [undefined, []],
+      defaultSchema: [undefined, []]
+    });
+
     this.addApiForm = this.fb.group({
       baseUrl: [undefined, [Validators.required]],
       headers: this.fb.array([])
@@ -282,6 +303,15 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addSnowflakeForm.get('username').updateValueAndValidity();
       this.addSnowflakeForm.get('password').updateValueAndValidity();
 
+      this.addDatabricksForm.get('authType').updateValueAndValidity();
+      this.addDatabricksForm.get('host').updateValueAndValidity();
+      this.addDatabricksForm.get('path').updateValueAndValidity();
+      this.addDatabricksForm.get('token').updateValueAndValidity();
+      this.addDatabricksForm.get('oauthClientId').updateValueAndValidity();
+      this.addDatabricksForm.get('oauthClientSecret').updateValueAndValidity();
+      this.addDatabricksForm.get('defaultCatalog').updateValueAndValidity();
+      this.addDatabricksForm.get('defaultSchema').updateValueAndValidity();
+
       this.addApiForm.get('baseUrl').updateValueAndValidity();
       this.addApiForm.get('headers').updateValueAndValidity();
 
@@ -292,6 +322,34 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addGoogleApiForm.get('headers').updateValueAndValidity();
       this.addGoogleApiForm.get('scopes').updateValueAndValidity();
     });
+
+    this.addDatabricksForm
+      .get('authType')
+      .valueChanges.subscribe((authType: DatabricksAuthTypeEnum) => {
+        if (authType === DatabricksAuthTypeEnum.OAuthM2M) {
+          this.addDatabricksForm
+            .get('oauthClientId')
+            .setValidators([Validators.required]);
+          this.addDatabricksForm
+            .get('oauthClientSecret')
+            .setValidators([Validators.required]);
+          this.addDatabricksForm.get('token').clearValidators();
+          this.addDatabricksForm.get('token').reset();
+        } else {
+          this.addDatabricksForm
+            .get('token')
+            .setValidators([Validators.required]);
+          this.addDatabricksForm.get('oauthClientId').clearValidators();
+          this.addDatabricksForm.get('oauthClientSecret').clearValidators();
+          this.addDatabricksForm.get('oauthClientId').reset();
+          this.addDatabricksForm.get('oauthClientSecret').reset();
+        }
+        this.addDatabricksForm.get('token').updateValueAndValidity();
+        this.addDatabricksForm.get('oauthClientId').updateValueAndValidity();
+        this.addDatabricksForm
+          .get('oauthClientSecret')
+          .updateValueAndValidity();
+      });
 
     setTimeout(() => {
       (document.activeElement as HTMLElement).blur();
@@ -456,6 +514,19 @@ export class AddConnectionDialogComponent implements OnInit {
       this.addSnowflakeForm.controls['password'].reset();
     }
 
+    if (type !== ConnectionTypeEnum.Databricks) {
+      this.addDatabricksForm.controls['authType'].reset(
+        DatabricksAuthTypeEnum.OAuthM2M
+      );
+      this.addDatabricksForm.controls['host'].reset();
+      this.addDatabricksForm.controls['path'].reset();
+      this.addDatabricksForm.controls['token'].reset();
+      this.addDatabricksForm.controls['oauthClientId'].reset();
+      this.addDatabricksForm.controls['oauthClientSecret'].reset();
+      this.addDatabricksForm.controls['defaultCatalog'].reset();
+      this.addDatabricksForm.controls['defaultSchema'].reset();
+    }
+
     if (type !== ConnectionTypeEnum.Api) {
       this.addApiForm.controls['baseUrl'].reset();
       this.addApiForm.controls['headers'].reset();
@@ -490,6 +561,7 @@ export class AddConnectionDialogComponent implements OnInit {
 
     this.addBigqueryForm.markAllAsTouched();
     // this.addClickhouseForm.markAllAsTouched();
+    this.addDatabricksForm.markAllAsTouched();
     this.addMotherduckForm.markAllAsTouched();
     this.addPostgresForm.markAllAsTouched();
     this.addMysqlForm.markAllAsTouched();
@@ -515,6 +587,8 @@ export class AddConnectionDialogComponent implements OnInit {
       (cType === ConnectionTypeEnum.Presto && !this.addPrestoForm.valid) ||
       (cType === ConnectionTypeEnum.SnowFlake &&
         !this.addSnowflakeForm.valid) ||
+      (cType === ConnectionTypeEnum.Databricks &&
+        !this.addDatabricksForm.valid) ||
       (cType === ConnectionTypeEnum.Api && !this.addApiForm.valid) ||
       (cType === ConnectionTypeEnum.GoogleApi && !this.addGoogleApiForm.valid)
     ) {
@@ -626,6 +700,19 @@ export class AddConnectionDialogComponent implements OnInit {
               database: this.addSnowflakeForm.value.database,
               username: this.addSnowflakeForm.value.username,
               password: this.addSnowflakeForm.value.password
+            }
+          : undefined,
+      databricks:
+        cType === ConnectionTypeEnum.Databricks
+          ? {
+              authType: this.addDatabricksForm.value.authType,
+              host: this.addDatabricksForm.value.host,
+              path: this.addDatabricksForm.value.path,
+              token: this.addDatabricksForm.value.token,
+              oauthClientId: this.addDatabricksForm.value.oauthClientId,
+              oauthClientSecret: this.addDatabricksForm.value.oauthClientSecret,
+              defaultCatalog: this.addDatabricksForm.value.defaultCatalog,
+              defaultSchema: this.addDatabricksForm.value.defaultSchema
             }
           : undefined,
       storeApi:

@@ -19,6 +19,7 @@ import { ConnectionsService } from '#backend/services/db/connections.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery.service';
+import { DatabricksService } from '#backend/services/dwh/databricks.service';
 import { DuckDbService } from '#backend/services/dwh/duckdb.service';
 import { MysqlService } from '#backend/services/dwh/mysql.service';
 import { PgService } from '#backend/services/dwh/pg.service';
@@ -50,6 +51,7 @@ export class TestConnectionController {
     private connectionsService: ConnectionsService,
     private mysqlService: MysqlService,
     private pgService: PgService,
+    private databricksService: DatabricksService,
     private duckDbService: DuckDbService,
     private trinoService: TrinoService,
     private prestoService: PrestoService,
@@ -127,7 +129,11 @@ export class TestConnectionController {
                     ? await this.snowFlakeService.testConnection({
                         connection: testConnection
                       })
-                    : undefined;
+                    : testConnection.type === ConnectionTypeEnum.Databricks
+                      ? await this.databricksService.testConnection({
+                          connection: testConnection
+                        })
+                      : undefined;
     // testConnection.type === ConnectionTypeEnum.Api ||
     //     testConnection.type === ConnectionTypeEnum.GoogleApi
     //   ? await this.storeService.testConnection({

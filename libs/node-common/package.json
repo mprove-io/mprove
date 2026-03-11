@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@malloydata/db-bigquery": "0.0.356",
+    "@malloydata/db-databricks": "0.0.356",
     "@malloydata/db-duckdb": "0.0.356",
     "@malloydata/db-mysql": "0.0.356",
     "@malloydata/db-postgres": "0.0.356",

@@ -113,6 +113,24 @@ export class ConnectionsService {
         //       isSSL: options.clickhouse.isSSL
         //     }
         //   : undefined,
+        databricks: isDefined(options.databricks)
+          ? {
+              authType: options.databricks.authType,
+              host: options.databricks.host,
+              path: options.databricks.path,
+              token:
+                isIncludePasswords === true
+                  ? options.databricks.token
+                  : undefined,
+              oauthClientId: options.databricks.oauthClientId,
+              oauthClientSecret:
+                isIncludePasswords === true
+                  ? options.databricks.oauthClientSecret
+                  : undefined,
+              defaultCatalog: options.databricks.defaultCatalog,
+              defaultSchema: options.databricks.defaultSchema
+            }
+          : undefined,
         motherduck: isDefined(options.motherduck)
           ? {
               motherduckToken:
