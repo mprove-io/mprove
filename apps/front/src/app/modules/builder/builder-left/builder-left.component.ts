@@ -69,6 +69,9 @@ export class BuilderLeftComponent implements OnDestroy {
   @Output()
   newFileClick = new EventEmitter<void>();
 
+  @Output()
+  builderLeftChange = new EventEmitter<BuilderLeftEnum>();
+
   repoTypeEnum = RepoTypeEnum;
 
   builderLeftTree = BuilderLeftEnum.Tree;
@@ -266,6 +269,18 @@ export class BuilderLeftComponent implements OnDestroy {
     }
 
     this.itemsTree.treeModel.getNodeById(this.nav.projectId).expand();
+  }
+
+  subNavToCommitOnClick() {
+    this.builderLeftChange.emit(BuilderLeftEnum.ChangesToCommit);
+  }
+
+  subNavToPushOnClick() {
+    let hasChangesToCommit = this.repo?.changesToCommit?.length > 0;
+    if (hasChangesToCommit) {
+      return;
+    }
+    this.builderLeftChange.emit(BuilderLeftEnum.ChangesToPush);
   }
 
   changeToCommitOnClick(fileId: string) {

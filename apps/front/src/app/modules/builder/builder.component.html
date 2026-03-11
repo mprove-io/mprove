@@ -36,15 +36,18 @@
             >
               <button
                 class="flex flex-shrink-0 cursor-pointer flex-row items-center focus:outline-none"
-                (click)="setBuilderLeft(builderLeftChangesToCommit)"
+                (click)="changesOnClick()"
                 [disabled]="needSave === true"
               >
                 <div
                   class="flex w-[85px] flex-shrink-0 justify-center text-lg"
                   [ngClass]="{
                     'text-m500 font-semibold':
-                      builderLeft === builderLeftChangesToCommit,
-                    'text-s500': builderLeft !== builderLeftChangesToCommit
+                      builderLeft === builderLeftChangesToCommit ||
+                      builderLeft === builderLeftChangesToPush,
+                    'text-s500':
+                      builderLeft !== builderLeftChangesToCommit &&
+                      builderLeft !== builderLeftChangesToPush
                   }"
                   >Changes</div
                 >
@@ -52,88 +55,30 @@
                 <div
                   class="text-m0 ml-4 flex h-7 min-w-7 flex-shrink-0 items-center justify-center rounded px-2 py-[1px]"
                   [ngClass]="{
-                    'bg-m500': builderLeft === builderLeftChangesToCommit,
+                    'bg-m500':
+                      builderLeft === builderLeftChangesToCommit ||
+                      builderLeft === builderLeftChangesToPush,
+                    'bg-g1':
+                      builderLeft !== builderLeftChangesToCommit &&
+                      builderLeft !== builderLeftChangesToPush &&
+                      repo?.changesToPush?.length > 0,
                     'bg-m600':
                       builderLeft !== builderLeftChangesToCommit &&
+                      builderLeft !== builderLeftChangesToPush &&
+                      !(repo?.changesToPush?.length > 0) &&
                       repo?.changesToCommit?.length > 0,
                     'bg-s400':
                       builderLeft !== builderLeftChangesToCommit &&
+                      builderLeft !== builderLeftChangesToPush &&
+                      !(repo?.changesToPush?.length > 0) &&
                       !(repo?.changesToCommit?.length > 0)
                   }"
-                  >{{ repo?.changesToCommit?.length }}</div
                 >
-              </button>
-            </div>
-
-            <ng-template #templateChangesToPush>
-              <div *ngIf="needSave === true">Need to Save changes</div>
-              <div
-                *ngIf="needSave === false && repo?.changesToCommit?.length > 0"
-                >Commit to see Changes to Push</div
-              >
-              <div
-                *ngIf="
-                  needSave === false &&
-                  repo?.changesToCommit?.length === 0 &&
-                  repo?.changesToPush?.length === 0 &&
-                  repo.repoStatus === repoStatusNeedPush
-                "
-                >Push branch to Remote</div
-              >
-            </ng-template>
-
-            <div
-              class="ml-7"
-              [tp]="templateChangesToPush"
-              [tpIsEnabled]="
-                needSave === true ||
-                repo?.changesToCommit?.length > 0 ||
-                (repo?.changesToPush?.length === 0 &&
-                  repo.repoStatus === repoStatusNeedPush)
-              "
-            >
-              <button
-                class="flex flex-shrink-0 flex-row items-center focus:outline-none"
-                [ngClass]="{
-                  'cursor-pointer': repo?.changesToCommit?.length === 0
-                }"
-                [disabled]="
-                  needSave === true || repo?.changesToCommit?.length > 0
-                "
-                (click)="setBuilderLeft(builderLeftChangesToPush)"
-              >
-                <div
-                  class="flex w-[80px] flex-shrink-0 justify-end text-lg"
-                  [ngClass]="{
-                    'text-m500 font-semibold':
-                      builderLeft === builderLeftChangesToPush,
-                    'text-s500': builderLeft !== builderLeftChangesToPush
-                  }"
-                  >To Push</div
-                >
-
-                <div
-                  class="ml-4 flex h-7 min-w-7 flex-shrink-0 items-center rounded"
-                >
-                  <div
-                    class="text-m0 flex h-7 min-w-7 flex-shrink-0 items-center rounded px-2 py-[1px]"
-                    [ngClass]="{
-                      'bg-m500': builderLeft === builderLeftChangesToPush,
-                      'bg-m600':
-                        builderLeft !== builderLeftChangesToPush &&
-                        repo?.changesToPush?.length > 0,
-                      'bg-s400':
-                        builderLeft !== builderLeftChangesToPush &&
-                        !(repo?.changesToPush?.length > 0)
-                    }"
-                    *ngIf="
-                      repo?.changesToCommit?.length === 0 &&
-                      (repo?.changesToPush?.length > 0 ||
-                        repo.repoStatus !== repoStatusNeedPush)
-                    "
-                  >
-                    {{ repo?.changesToPush?.length }}
-                  </div>
+                  {{
+                    repo?.changesToPush?.length > 0
+                      ? repo?.changesToPush?.length
+                      : repo?.changesToCommit?.length
+                  }}
                 </div>
               </button>
             </div>
@@ -526,6 +471,7 @@
             [builderLeft]="builderLeft"
             [isEditor]="isEditor"
             (newFileClick)="newFile()"
+            (builderLeftChange)="setBuilderLeft($event)"
             class="flex w-full"
           ></m-builder-left>
         </div>

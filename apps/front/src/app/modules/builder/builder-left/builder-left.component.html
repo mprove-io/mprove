@@ -304,9 +304,61 @@
   *ngIf="builderLeft !== builderLeftTree && builderLeft !== builderLeftInfo"
   class="bg-m0 flex h-full w-full flex-grow rounded shadow"
 >
-  <div class="flex h-full w-full flex-col">
-    <div class="flex h-full flex-1 flex-col">
-      <div class="flex h-full w-full flex-grow flex-col overflow-y-auto">
+  <div class="text-s1 mt-6 flex w-full flex-col text-base">
+    <div class="flex flex-1 flex-col">
+      <div class="mb-6 ml-6 mr-9 flex h-11 flex-row items-center">
+        <div
+          class="ml-3 flex w-[150px] cursor-pointer flex-row items-center"
+          (click)="subNavToCommitOnClick()"
+        >
+          <div
+            class="flex select-none items-center text-lg"
+            [ngClass]="{
+              'text-m500 font-semibold':
+                builderLeft === builderLeftChangesToCommit,
+              'text-s500': builderLeft !== builderLeftChangesToCommit
+            }"
+          >
+            To commit ({{ repo?.changesToCommit?.length }})
+          </div>
+        </div>
+
+        <div
+          class="ml-3 flex w-[135px] flex-row items-center"
+          [ngClass]="{
+            'cursor-pointer': !(repo?.changesToCommit?.length > 0),
+            'cursor-default': repo?.changesToCommit?.length > 0
+          }"
+          [tp]="templateToPush"
+          [tpIsEnabled]="
+            needSave === true ||
+            repo?.changesToCommit?.length > 0 ||
+            (repo?.changesToPush?.length === 0 &&
+              repo.repoStatus === repoStatusNeedPush)
+          "
+          (click)="subNavToPushOnClick()"
+        >
+          <div
+            class="flex select-none items-center text-lg"
+            [ngClass]="{
+              'text-m500 font-semibold':
+                builderLeft === builderLeftChangesToPush,
+              'text-s500': builderLeft !== builderLeftChangesToPush
+            }"
+          >
+            To push<ng-container *ngIf="!(repo?.changesToCommit?.length > 0)">
+              ({{ repo?.changesToPush?.length }})</ng-container
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="divide-s300 ml-6 mr-9 flex flex-col divide-y">
+        <div class="flex flex-row"></div>
+        <div class="flex flex-row"></div>
+      </div>
+
+      <div class="flex h-2 w-full flex-grow flex-col overflow-y-auto">
         <ng-scrollbar
           [orientation]="'vertical'"
           [visibility]="'hover'"
@@ -319,13 +371,6 @@
               repo?.changesToCommit?.length > 0
             "
           >
-            <div
-              *ngIf="repo.changesToCommit.length > 0"
-              class="text-s500 mb-4 ml-6 mt-6 flex flex-row justify-start font-semibold"
-            >
-              Changes To Commit
-            </div>
-
             <div
               *ngFor="let change of repo.changesToCommit"
               class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
@@ -377,13 +422,6 @@
               repo?.changesToPush?.length > 0
             "
           >
-            <div
-              *ngIf="repo.changesToPush.length > 0"
-              class="text-s500 mb-4 ml-6 mt-6 flex flex-row justify-start font-semibold"
-            >
-              Changes To Push
-            </div>
-
             <div
               *ngFor="let change of repo.changesToPush"
               class="hover:bg-m50 ml-6 mr-5 flex flex-row items-center rounded py-2 pl-3 pr-6 hover:cursor-pointer"
@@ -438,7 +476,20 @@
           *ngIf="
             builderLeft === builderLeftChangesToPush &&
             repo?.changesToPush?.length === 0 &&
-            repo.repoStatus !== repoStatusNeedPush
+            repo.repoStatus !== repoStatusNeedPush &&
+            repo?.changesToCommit?.length > 0
+          "
+          class="flex h-full w-full flex-col items-center justify-center"
+        >
+          <div class="text-xl">Commit to see Changes to Push</div>
+        </div>
+
+        <div
+          *ngIf="
+            builderLeft === builderLeftChangesToPush &&
+            repo?.changesToPush?.length === 0 &&
+            repo.repoStatus !== repoStatusNeedPush &&
+            !(repo?.changesToCommit?.length > 0)
           "
           class="flex h-full w-full flex-col items-center justify-center"
         >
@@ -475,3 +526,20 @@
 <div *ngIf="needSave$ | async"></div>
 <div *ngIf="secondFileNodeId$ | async"></div>
 <div *ngIf="file$ | async"></div>
+
+<ng-template #templateToPush>
+  <div *ngIf="needSave === true">Need to Save changes</div>
+  <div *ngIf="needSave === false && repo?.changesToCommit?.length > 0">
+    Commit to see Changes to Push
+  </div>
+  <div
+    *ngIf="
+      needSave === false &&
+      repo?.changesToCommit?.length === 0 &&
+      repo?.changesToPush?.length === 0 &&
+      repo.repoStatus === repoStatusNeedPush
+    "
+  >
+    Push branch to Remote
+  </div>
+</ng-template>

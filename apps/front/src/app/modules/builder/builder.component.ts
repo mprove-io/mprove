@@ -248,6 +248,15 @@ export class BuilderComponent implements OnInit, OnDestroy {
     this.location.replaceState(this.router.serializeUrl(urlTree));
   }
 
+  changesOnClick() {
+    let hasChangesToPush = this.repo?.changesToPush?.length > 0;
+    if (hasChangesToPush) {
+      this.setBuilderLeft(BuilderLeftEnum.ChangesToPush);
+    } else {
+      this.setBuilderLeft(BuilderLeftEnum.ChangesToCommit);
+    }
+  }
+
   setBuilderLeft(x: BuilderLeftEnum) {
     if (this.needSave === true) {
       return;
