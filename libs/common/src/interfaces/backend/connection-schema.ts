@@ -11,12 +11,10 @@ export class SchemaIndex {
   isPrimaryKey: boolean;
 }
 
-import { SchemaTableTypeEnum } from '#common/enums/schema-table-type.enum';
-
 export class SchemaTable {
   schemaName: string;
   tableName: string;
-  tableType: SchemaTableTypeEnum;
+  tableType: string;
   columns: SchemaColumn[];
   indexes: SchemaIndex[];
 }

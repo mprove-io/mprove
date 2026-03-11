@@ -15,6 +15,11 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
+import {
+  ConnectionSchema,
+  SchemaColumn,
+  SchemaTable
+} from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
 import { TabService } from '../tab.service';
@@ -106,6 +111,115 @@ export class SnowFlakeService {
         isSuccess: false,
         errorMessage: `Connection failed: ${err.message}`
       };
+    }
+  }
+
+  async fetchSchema(item: {
+    connection: ConnectionTab;
+  }): Promise<ConnectionSchema> {
+    let { connection } = item;
+
+    let snoflakeOptions = this.optionsToSnowFlakeOptions({
+      connection: connection
+    });
+
+    let snowflakeConnection = snowflake.createConnection(snoflakeOptions);
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        snowflakeConnection.connect((err, conn) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+
+      let tablesResult = await this.snowflakeConnectionExecute(
+        snowflakeConnection,
+        {
+          sqlText: `
+            SELECT TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE
+            FROM INFORMATION_SCHEMA.TABLES
+            WHERE TABLE_SCHEMA != 'INFORMATION_SCHEMA'
+              AND TABLE_TYPE NOT IN ('LOCAL TEMPORARY', 'GLOBAL TEMPORARY')
+            ORDER BY TABLE_SCHEMA, TABLE_NAME
+          `
+        }
+      );
+      let tablesRows = tablesResult.rows as {
+        TABLE_SCHEMA: string;
+        TABLE_NAME: string;
+        TABLE_TYPE: string;
+      }[];
+
+      let columnsResult = await this.snowflakeConnectionExecute(
+        snowflakeConnection,
+        {
+          sqlText: `
+            SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE, IS_NULLABLE
+            FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA != 'INFORMATION_SCHEMA'
+            ORDER BY TABLE_SCHEMA, TABLE_NAME, ORDINAL_POSITION
+          `
+        }
+      );
+      let columnsRows = columnsResult.rows as {
+        TABLE_SCHEMA: string;
+        TABLE_NAME: string;
+        COLUMN_NAME: string;
+        DATA_TYPE: string;
+        IS_NULLABLE: string;
+      }[];
+
+      let tables: SchemaTable[] = tablesRows.map(row => {
+        let columns: SchemaColumn[] = columnsRows
+          .filter(
+            c =>
+              c.TABLE_SCHEMA === row.TABLE_SCHEMA &&
+              c.TABLE_NAME === row.TABLE_NAME
+          )
+          .map(c => ({
+            columnName: c.COLUMN_NAME,
+            dataType: c.DATA_TYPE,
+            isNullable: c.IS_NULLABLE === 'YES'
+          }));
+
+        return {
+          schemaName: row.TABLE_SCHEMA,
+          tableName: row.TABLE_NAME,
+          tableType: row.TABLE_TYPE,
+          columns: columns,
+          indexes: [] as SchemaTable['indexes']
+        };
+      });
+
+      return {
+        tables: tables,
+        lastRefreshedTs: Date.now(),
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        tables: [],
+        lastRefreshedTs: Date.now(),
+        errorMessage: `Schema fetch failed: ${err.message}`
+      };
+    } finally {
+      snowflakeConnection.destroy(destroyErr => {
+        if (destroyErr) {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_SNOWFLAKE_FAILED_TO_DESTROY_CONNECTION,
+              originalError: destroyErr
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+        }
+      });
     }
   }
 

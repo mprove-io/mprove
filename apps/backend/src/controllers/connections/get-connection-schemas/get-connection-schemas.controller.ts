@@ -14,8 +14,14 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
+import { BigQueryService } from '#backend/services/dwh/bigquery.service';
+import { DatabricksService } from '#backend/services/dwh/databricks.service';
+import { DuckDbService } from '#backend/services/dwh/duckdb.service';
 import { MysqlService } from '#backend/services/dwh/mysql.service';
 import { PgService } from '#backend/services/dwh/pg.service';
+import { PrestoService } from '#backend/services/dwh/presto.service';
+import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
+import { TrinoService } from '#backend/services/dwh/trino.service';
 import { TabService } from '#backend/services/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -43,6 +49,12 @@ export class GetConnectionSchemasController {
     private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
+    private snowFlakeService: SnowFlakeService,
+    private databricksService: DatabricksService,
+    private bigQueryService: BigQueryService,
+    private duckDbService: DuckDbService,
+    private prestoService: PrestoService,
+    private trinoService: TrinoService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -77,7 +89,13 @@ export class GetConnectionSchemasController {
         c.type !== ConnectionTypeEnum.GoogleApi &&
         c.type !== ConnectionTypeEnum.Api &&
         (c.type === ConnectionTypeEnum.PostgreSQL ||
-          c.type === ConnectionTypeEnum.MySQL)
+          c.type === ConnectionTypeEnum.MySQL ||
+          c.type === ConnectionTypeEnum.SnowFlake ||
+          c.type === ConnectionTypeEnum.Databricks ||
+          c.type === ConnectionTypeEnum.BigQuery ||
+          c.type === ConnectionTypeEnum.MotherDuck ||
+          c.type === ConnectionTypeEnum.Presto ||
+          c.type === ConnectionTypeEnum.Trino)
     );
 
     let connectionSchemaItems: ConnectionSchemaItem[];
@@ -93,6 +111,30 @@ export class GetConnectionSchemasController {
             });
           } else if (connection.type === ConnectionTypeEnum.MySQL) {
             schema = await this.mysqlService.fetchSchema({
+              connection: connection
+            });
+          } else if (connection.type === ConnectionTypeEnum.SnowFlake) {
+            schema = await this.snowFlakeService.fetchSchema({
+              connection: connection
+            });
+          } else if (connection.type === ConnectionTypeEnum.Databricks) {
+            schema = await this.databricksService.fetchSchema({
+              connection: connection
+            });
+          } else if (connection.type === ConnectionTypeEnum.BigQuery) {
+            schema = await this.bigQueryService.fetchSchema({
+              connection: connection
+            });
+          } else if (connection.type === ConnectionTypeEnum.MotherDuck) {
+            schema = await this.duckDbService.fetchSchema({
+              connection: connection
+            });
+          } else if (connection.type === ConnectionTypeEnum.Presto) {
+            schema = await this.prestoService.fetchSchema({
+              connection: connection
+            });
+          } else if (connection.type === ConnectionTypeEnum.Trino) {
+            schema = await this.trinoService.fetchSchema({
               connection: connection
             });
           }

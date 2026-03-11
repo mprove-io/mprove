@@ -14,7 +14,6 @@ import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { SchemaTableTypeEnum } from '#common/enums/schema-table-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
   ConnectionSchema,
@@ -137,10 +136,7 @@ export class MysqlService {
         return {
           schemaName: connection.options.mysql.database,
           tableName: tableName,
-          tableType:
-            row.TABLE_TYPE === 'BASE TABLE'
-              ? SchemaTableTypeEnum.Table
-              : SchemaTableTypeEnum.View,
+          tableType: row.TABLE_TYPE,
           columns: columns,
           indexes: indexes
         };

@@ -115,15 +115,27 @@
 
               <div
                 *ngIf="node.data.nodeType !== 'column'"
-                class="ml-2 truncate"
+                class="ml-2 flex min-w-0 items-center"
                 [ngClass]="{
                   'text-s500 text-[18px]': node.data.nodeType === 'connection',
-                  'text-s1 text-[17px]': node.data.nodeType !== 'connection'
+                  'text-[17px] text-red-600': node.data.nodeType === 'error',
+                  'text-s1 text-[17px]':
+                    node.data.nodeType !== 'connection' &&
+                    node.data.nodeType !== 'error'
                 }"
                 [tp]="node.data.errorMessage"
                 tpPlacement="top"
               >
-                {{ node.data.name }}
+                <span class="truncate">{{ node.data.name }}</span>
+                <span
+                  *ngIf="
+                    node.data.tableType &&
+                    node.data.tableType !== 'BASE TABLE' &&
+                    node.data.tableType !== 'MANAGED'
+                  "
+                  class="ml-3 flex-shrink-0 uppercase text-blue-400"
+                  >{{ node.data.tableType }}</span
+                >
               </div>
 
               <div

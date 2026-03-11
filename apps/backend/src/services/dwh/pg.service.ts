@@ -12,7 +12,6 @@ import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
-import { SchemaTableTypeEnum } from '#common/enums/schema-table-type.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
   ConnectionSchema,
@@ -74,7 +73,7 @@ export class PgService {
         SELECT table_schema, table_name, table_type
         FROM information_schema.tables
         WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
-          AND table_type IN ('BASE TABLE', 'VIEW')
+          AND table_type NOT IN ('LOCAL TEMPORARY')
         ORDER BY table_schema, table_name
       `);
 
@@ -154,10 +153,7 @@ export class PgService {
         return {
           schemaName: row.table_schema,
           tableName: row.table_name,
-          tableType:
-            row.table_type === 'BASE TABLE'
-              ? SchemaTableTypeEnum.Table
-              : SchemaTableTypeEnum.View,
+          tableType: row.table_type,
           columns: columns,
           indexes: indexes
         };

@@ -13,6 +13,11 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
+import {
+  ConnectionSchema,
+  SchemaColumn,
+  SchemaTable
+} from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
@@ -76,6 +81,92 @@ export class DuckDbService {
         isSuccess: false,
         errorMessage: `Connection failed: ${err.message}`
       };
+    }
+  }
+
+  async fetchSchema(item: {
+    connection: ConnectionTab;
+  }): Promise<ConnectionSchema> {
+    let { connection } = item;
+
+    let { duckdbConnectionOptions, dbPath } = this.optionsToDuckDbOptions({
+      connection: connection
+    });
+
+    let duckDbInstance: DuckDBInstance;
+    let dc: DuckDBConnection;
+
+    try {
+      duckDbInstance = await DuckDBInstance.create(
+        dbPath,
+        duckdbConnectionOptions
+      );
+
+      dc = await duckDbInstance.connect();
+
+      let tablesReader = await dc.runAndReadAll(`
+        SELECT table_schema, table_name, table_type
+        FROM information_schema.tables
+        WHERE table_schema NOT IN ('information_schema', 'pg_catalog')
+          AND table_type NOT IN ('LOCAL TEMPORARY')
+        ORDER BY table_schema, table_name
+      `);
+      let tablesRows = tablesReader.getRowObjectsJson() as {
+        table_schema: string;
+        table_name: string;
+        table_type: string;
+      }[];
+
+      let columnsReader = await dc.runAndReadAll(`
+        SELECT table_schema, table_name, column_name, data_type, is_nullable
+        FROM information_schema.columns
+        WHERE table_schema NOT IN ('information_schema', 'pg_catalog')
+        ORDER BY table_schema, table_name, ordinal_position
+      `);
+      let columnsRows = columnsReader.getRowObjectsJson() as {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        data_type: string;
+        is_nullable: string;
+      }[];
+
+      let tables: SchemaTable[] = tablesRows.map(row => {
+        let columns: SchemaColumn[] = columnsRows
+          .filter(
+            c =>
+              c.table_schema === row.table_schema &&
+              c.table_name === row.table_name
+          )
+          .map(c => ({
+            columnName: c.column_name,
+            dataType: c.data_type,
+            isNullable: c.is_nullable === 'YES'
+          }));
+
+        return {
+          schemaName: row.table_schema,
+          tableName: row.table_name,
+          tableType: row.table_type,
+          columns: columns,
+          indexes: [] as SchemaTable['indexes']
+        };
+      });
+
+      return {
+        tables: tables,
+        lastRefreshedTs: Date.now(),
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        tables: [],
+        lastRefreshedTs: Date.now(),
+        errorMessage: `Schema fetch failed: ${err.message}`
+      };
+    } finally {
+      dc?.closeSync();
+      duckDbInstance?.closeSync();
     }
   }
 

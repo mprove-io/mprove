@@ -8,7 +8,6 @@ import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
-import { SchemaTableTypeEnum } from '#common/enums/schema-table-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
@@ -34,6 +33,7 @@ interface SchemaTreeNode {
   nodeType: 'connection' | 'table' | 'column' | 'index' | 'error';
   connectionId?: string;
   schemaDisplayName?: string;
+  tableType?: string;
   columnName?: string;
   dataType?: string;
   isNullable?: boolean;
@@ -247,11 +247,6 @@ export class SchemasComponent implements OnInit {
           schemaDisplayName:
             schemaName.charAt(0).toUpperCase() + schemaName.slice(1),
           children: tables.map(table => {
-            let tableLabel =
-              table.tableType === SchemaTableTypeEnum.View
-                ? `${table.tableName} (VIEW)`
-                : table.tableName;
-
             let columnChildren: SchemaTreeNode[] = table.columns.map(
               (col, colIdx) => ({
                 id: `${cs.connectionId}__${schemaName}__${table.tableName}__col__${colIdx}`,
@@ -283,9 +278,10 @@ export class SchemasComponent implements OnInit {
 
             return {
               id: `${cs.connectionId}__${schemaName}__${table.tableName}`,
-              name: tableLabel,
+              name: table.tableName,
               searchName: table.tableName,
               nodeType: 'table' as const,
+              tableType: table.tableType,
               children: [...columnChildren, ...indexChildren]
             };
           })

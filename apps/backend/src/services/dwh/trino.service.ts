@@ -14,6 +14,12 @@ import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import {
+  ConnectionSchema,
+  SchemaColumn,
+  SchemaIndex,
+  SchemaTable
+} from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
@@ -74,6 +80,146 @@ export class TrinoService {
       return {
         isSuccess: false,
         errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
+  async fetchSchema(item: {
+    connection: ConnectionTab;
+  }): Promise<ConnectionSchema> {
+    let { connection } = item;
+
+    let trinoConnectionOptions = this.optionsToTrinoOptions({
+      connection: connection
+    });
+
+    try {
+      let tc = Trino.create(trinoConnectionOptions);
+
+      let tablesResult = await tc.query(`
+        SELECT table_schema, table_name, table_type
+        FROM information_schema.tables
+        WHERE table_schema != 'information_schema'
+        ORDER BY table_schema, table_name
+      `);
+
+      let tablesQueryResult = await tablesResult.next();
+
+      if (
+        isUndefined(tablesQueryResult?.value) ||
+        isDefined(tablesQueryResult?.value?.error)
+      ) {
+        let errorMsg = isUndefined(tablesQueryResult?.value)
+          ? 'tablesQueryResult.value is not defined'
+          : tablesQueryResult?.value?.error?.toString();
+        return {
+          tables: [],
+          lastRefreshedTs: Date.now(),
+          errorMessage: `Schema fetch failed: ${errorMsg}`
+        };
+      }
+
+      let tablesColumns = tablesQueryResult.value.columns;
+      let tablesOutputRows: unknown[][] = [];
+
+      while (tablesQueryResult !== null) {
+        let rows = tablesQueryResult.value.data ?? [];
+        for (let row of rows) {
+          tablesOutputRows.push(row as unknown[]);
+        }
+        if (!tablesQueryResult.done) {
+          tablesQueryResult = await tablesResult.next();
+        } else {
+          break;
+        }
+      }
+
+      let tablesRows = tablesOutputRows.map(r => {
+        let dRow: { [name: string]: any } = {};
+        tablesColumns.forEach((column: any, index: number) => {
+          dRow[column.name as string] = r[index];
+        });
+        return dRow;
+      });
+
+      let columnsResult = await tc.query(`
+        SELECT table_schema, table_name, column_name, data_type, is_nullable
+        FROM information_schema.columns
+        WHERE table_schema != 'information_schema'
+        ORDER BY table_schema, table_name, ordinal_position
+      `);
+
+      let columnsQueryResult = await columnsResult.next();
+
+      if (
+        isUndefined(columnsQueryResult?.value) ||
+        isDefined(columnsQueryResult?.value?.error)
+      ) {
+        let errorMsg = isUndefined(columnsQueryResult?.value)
+          ? 'columnsQueryResult.value is not defined'
+          : columnsQueryResult?.value?.error?.toString();
+        return {
+          tables: [],
+          lastRefreshedTs: Date.now(),
+          errorMessage: `Schema fetch failed: ${errorMsg}`
+        };
+      }
+
+      let columnsColumns = columnsQueryResult.value.columns;
+      let columnsOutputRows: unknown[][] = [];
+
+      while (columnsQueryResult !== null) {
+        let rows = columnsQueryResult.value.data ?? [];
+        for (let row of rows) {
+          columnsOutputRows.push(row as unknown[]);
+        }
+        if (!columnsQueryResult.done) {
+          columnsQueryResult = await columnsResult.next();
+        } else {
+          break;
+        }
+      }
+
+      let columnsRows = columnsOutputRows.map(r => {
+        let dRow: { [name: string]: any } = {};
+        columnsColumns.forEach((column: any, index: number) => {
+          dRow[column.name as string] = r[index];
+        });
+        return dRow;
+      });
+
+      let tables: SchemaTable[] = tablesRows.map(row => {
+        let columns: SchemaColumn[] = columnsRows
+          .filter(
+            c =>
+              c.table_schema === row.table_schema &&
+              c.table_name === row.table_name
+          )
+          .map(c => ({
+            columnName: c.column_name,
+            dataType: c.data_type,
+            isNullable: c.is_nullable === 'YES'
+          }));
+
+        return {
+          schemaName: row.table_schema,
+          tableName: row.table_name,
+          tableType: row.table_type,
+          columns: columns,
+          indexes: [] as SchemaIndex[]
+        };
+      });
+
+      return {
+        tables: tables,
+        lastRefreshedTs: Date.now(),
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        tables: [],
+        lastRefreshedTs: Date.now(),
+        errorMessage: `Schema fetch failed: ${err.message}`
       };
     }
   }

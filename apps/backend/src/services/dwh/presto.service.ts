@@ -4,9 +4,8 @@ import type {
   PrestoClientConfig,
   PrestoQuery
 } from '@prestodb/presto-js-client';
-import PrestoClient from '@prestodb/presto-js-client';
+import _PrestoClientModule from '@prestodb/presto-js-client';
 import retry from 'async-retry';
-
 import { and, eq } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
@@ -17,8 +16,18 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
+import {
+  ConnectionSchema,
+  SchemaColumn,
+  SchemaIndex,
+  SchemaTable
+} from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
+
+// CJS interop: default import gets module.exports object, unwrap to get the class
+const PrestoClient = (_PrestoClientModule as any)
+  .default as typeof _PrestoClientModule;
 
 @Injectable()
 export class PrestoService {
@@ -74,6 +83,86 @@ export class PrestoService {
       return {
         isSuccess: false,
         errorMessage: `Connection failed: ${err.message}`
+      };
+    }
+  }
+
+  async fetchSchema(item: {
+    connection: ConnectionTab;
+  }): Promise<ConnectionSchema> {
+    let { connection } = item;
+
+    let prestoClientConfig = this.optionsToPrestoClientConfig({
+      connection: connection
+    });
+
+    try {
+      let pc = new PrestoClient(prestoClientConfig);
+
+      let tablesResult: PrestoQuery = await pc.query(`
+        SELECT table_schema, table_name, table_type
+        FROM information_schema.tables
+        WHERE table_schema != 'information_schema'
+        ORDER BY table_schema, table_name
+      `);
+
+      let tablesColumns = tablesResult.columns;
+      let tablesRows = tablesResult.data.map(r => {
+        let dRow: { [name: string]: any } = {};
+        tablesColumns.forEach((column: any, index: number) => {
+          dRow[column.name as string] = r[index];
+        });
+        return dRow;
+      });
+
+      let columnsResult: PrestoQuery = await pc.query(`
+        SELECT table_schema, table_name, column_name, data_type, is_nullable
+        FROM information_schema.columns
+        WHERE table_schema != 'information_schema'
+        ORDER BY table_schema, table_name, ordinal_position
+      `);
+
+      let columnsColumns = columnsResult.columns;
+      let columnsRows = columnsResult.data.map(r => {
+        let dRow: { [name: string]: any } = {};
+        columnsColumns.forEach((column: any, index: number) => {
+          dRow[column.name as string] = r[index];
+        });
+        return dRow;
+      });
+
+      let tables: SchemaTable[] = tablesRows.map(row => {
+        let columns: SchemaColumn[] = columnsRows
+          .filter(
+            c =>
+              c.table_schema === row.table_schema &&
+              c.table_name === row.table_name
+          )
+          .map(c => ({
+            columnName: c.column_name,
+            dataType: c.data_type,
+            isNullable: c.is_nullable === 'YES'
+          }));
+
+        return {
+          schemaName: row.table_schema,
+          tableName: row.table_name,
+          tableType: row.table_type,
+          columns: columns,
+          indexes: [] as SchemaIndex[]
+        };
+      });
+
+      return {
+        tables: tables,
+        lastRefreshedTs: Date.now(),
+        errorMessage: undefined
+      };
+    } catch (err: any) {
+      return {
+        tables: [],
+        lastRefreshedTs: Date.now(),
+        errorMessage: `Schema fetch failed: ${err.message}`
       };
     }
   }
