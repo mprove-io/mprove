@@ -175,6 +175,29 @@ export class PgService {
       }
 
       let tables: SchemaTable[] = tablesRows.map(row => {
+        let indexes: SchemaIndex[] = indexesRows
+          .filter(
+            ix =>
+              ix.schemaname === row.table_schema &&
+              ix.tablename === row.table_name
+          )
+          .map(ix => {
+            let indexDef = ix.indexdef || '';
+            let colsMatch = indexDef.match(/\(([^)]+)\)/);
+            let indexColumns = colsMatch
+              ? colsMatch[1].split(',').map((s: string) => s.trim())
+              : [];
+
+            let isUnique = indexDef.toUpperCase().includes('UNIQUE') === true;
+
+            return {
+              indexName: ix.indexname,
+              indexColumns: indexColumns,
+              isUnique: isUnique,
+              isPrimaryKey: ix.is_primary === true
+            };
+          });
+
         let columns: SchemaColumn[] = columnsRows
           .filter(
             c =>
@@ -196,34 +219,25 @@ export class PgService {
                 referencedColumnName: fk.referenced_column
               }));
 
+            let isPrimaryKey = indexes.some(
+              idx =>
+                idx.isPrimaryKey === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
+            let isUnique = indexes.some(
+              idx =>
+                idx.isUnique === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
             return {
               columnName: c.column_name,
               dataType: c.data_type,
               isNullable: c.is_nullable === 'YES',
+              isPrimaryKey: isPrimaryKey || undefined,
+              isUnique: isUnique || undefined,
               foreignKeys: foreignKeys
-            };
-          });
-
-        let indexes: SchemaIndex[] = indexesRows
-          .filter(
-            ix =>
-              ix.schemaname === row.table_schema &&
-              ix.tablename === row.table_name
-          )
-          .map(ix => {
-            let indexDef = ix.indexdef || '';
-            let colsMatch = indexDef.match(/\(([^)]+)\)/);
-            let indexColumns = colsMatch
-              ? colsMatch[1].split(',').map((s: string) => s.trim())
-              : [];
-
-            let isUnique = indexDef.toUpperCase().includes('UNIQUE') === true;
-
-            return {
-              indexName: ix.indexname,
-              indexColumns: indexColumns,
-              isUnique: isUnique,
-              isPrimaryKey: ix.is_primary === true
             };
           });
 

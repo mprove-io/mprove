@@ -9,6 +9,8 @@ export class SchemaColumn {
   columnName: string;
   dataType: string;
   isNullable: boolean;
+  isPrimaryKey?: boolean;
+  isUnique?: boolean;
   foreignKeys: SchemaForeignKey[];
 }
 

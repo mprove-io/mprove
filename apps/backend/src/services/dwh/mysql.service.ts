@@ -145,6 +145,23 @@ export class MysqlService {
       let tables: SchemaTable[] = tablesRows.map(row => {
         let tableName = row.TABLE_NAME;
 
+        let indexes: SchemaIndex[] = indexesRows
+          .filter(ix => ix.TABLE_NAME === tableName)
+          .map(ix => {
+            let colsStr = ix.index_columns || '';
+            let indexColumns = colsStr
+              .split(',')
+              .map(s => s.trim())
+              .filter(s => s.length > 0);
+
+            return {
+              indexName: ix.INDEX_NAME,
+              indexColumns: indexColumns,
+              isUnique: ix.NON_UNIQUE === 0,
+              isPrimaryKey: ix.INDEX_NAME === 'PRIMARY'
+            };
+          });
+
         let columns: SchemaColumn[] = columnsRows
           .filter(c => c.TABLE_NAME === tableName)
           .map(c => {
@@ -161,28 +178,25 @@ export class MysqlService {
                 referencedColumnName: fk.REFERENCED_COLUMN_NAME
               }));
 
+            let isPrimaryKey = indexes.some(
+              idx =>
+                idx.isPrimaryKey === true &&
+                idx.indexColumns.includes(c.COLUMN_NAME)
+            );
+
+            let isUnique = indexes.some(
+              idx =>
+                idx.isUnique === true &&
+                idx.indexColumns.includes(c.COLUMN_NAME)
+            );
+
             return {
               columnName: c.COLUMN_NAME,
               dataType: c.DATA_TYPE,
               isNullable: c.IS_NULLABLE === 'YES',
+              isPrimaryKey: isPrimaryKey || undefined,
+              isUnique: isUnique || undefined,
               foreignKeys: foreignKeys
-            };
-          });
-
-        let indexes: SchemaIndex[] = indexesRows
-          .filter(ix => ix.TABLE_NAME === tableName)
-          .map(ix => {
-            let colsStr = ix.index_columns || '';
-            let indexColumns = colsStr
-              .split(',')
-              .map(s => s.trim())
-              .filter(s => s.length > 0);
-
-            return {
-              indexName: ix.INDEX_NAME,
-              indexColumns: indexColumns,
-              isUnique: ix.NON_UNIQUE === 0,
-              isPrimaryKey: ix.INDEX_NAME === 'PRIMARY'
             };
           });
 

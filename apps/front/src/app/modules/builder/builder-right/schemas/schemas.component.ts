@@ -38,6 +38,8 @@ interface SchemaTreeNode {
   columnName?: string;
   dataType?: string;
   isNullable?: boolean;
+  isPrimaryKey?: boolean;
+  isUnique?: boolean;
   foreignKeys?: SchemaForeignKey[];
   errorMessage?: string;
 }
@@ -258,6 +260,8 @@ export class SchemasComponent implements OnInit {
                 columnName: col.columnName,
                 dataType: col.dataType,
                 isNullable: col.isNullable,
+                isPrimaryKey: col.isPrimaryKey,
+                isUnique: col.isUnique,
                 foreignKeys: col.foreignKeys
               })
             );

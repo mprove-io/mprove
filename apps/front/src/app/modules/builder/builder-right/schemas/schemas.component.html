@@ -26,7 +26,7 @@
 
     <div
       class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center"
-      [tp]="showIndexes ? 'Indexes: ON' : 'Indexes: OFF'"
+      [tp]="showIndexes ? 'Swos Indexes: ON' : 'Show Indexes: OFF'"
       tpPlacement="top"
     >
       <button
@@ -150,6 +150,14 @@
                 }}</span>
                 <span *ngIf="node.data.isNullable" class="text-s400 ml-1"
                   >(null)</span
+                >
+                <span *ngIf="node.data.isPrimaryKey" class="ml-1 text-blue-400"
+                  >PK</span
+                >
+                <span
+                  *ngIf="node.data.isUnique && !node.data.isPrimaryKey"
+                  class="ml-1 text-blue-400"
+                  >UNIQUE</span
                 >
 
                 <button
