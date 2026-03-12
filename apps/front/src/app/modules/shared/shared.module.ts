@@ -91,7 +91,6 @@ import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-clo
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
-import { KeyIconComponent } from './icons/key-icon/key-icon.component';
 import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.component';
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
@@ -234,7 +233,6 @@ let sharedComponents = [
   ListIconComponent,
   ScrollIconComponent,
   DatabaseZapIconComponent,
-  KeyIconComponent,
   ArrowDropDownIconComponent,
   DragIconComponent,
   ResizeIconComponent,

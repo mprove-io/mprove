@@ -145,12 +145,17 @@
                 <span class="text-s1 font-semibold">{{
                   node.data.columnName
                 }}</span>
+
+                <span
+                  *ngIf="node.data.isNullable === false"
+                  class="text-s400 ml-3"
+                  >not null</span
+                >
+
                 <span class="text-s400 ml-3 uppercase">{{
                   node.data.dataType
                 }}</span>
-                <span *ngIf="node.data.isNullable === false" class="text-s400"
-                  >, not null</span
-                >
+
                 <span *ngIf="node.data.isPrimaryKey" class="ml-3 text-blue-400"
                   >PK</span
                 >
@@ -162,14 +167,14 @@
 
                 <button
                   *ngIf="node.data.foreignKeys?.length > 0"
-                  class="hover:bg-m200 text-s400 ml-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  class="hover:bg-m200 text-s1 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [tp]="fkTemplate"
                   [tpHideOnEscape]="true"
                   tpVariation="menu"
                   className="my-menu"
                   (click)="$event.stopPropagation()"
                 >
-                  <m-key-icon></m-key-icon>
+                  <m-link-icon></m-link-icon>
                 </button>
 
                 <ng-template #fkTemplate>
