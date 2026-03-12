@@ -377,7 +377,7 @@
               class="ml-7 flex w-[90px] select-none items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':
-                  builderRight === builderRightSchemas &&
+                  builderRight === builderRightSchema &&
                   !secondFileNodeId &&
                   (builderLeft === builderLeftTree ||
                     builderLeft === builderLeftInfo ||
@@ -385,7 +385,7 @@
                     lastUrl === pathSelectFile ||
                     !file?.fileId),
                 'text-s500':
-                  builderRight !== builderRightSchemas ||
+                  builderRight !== builderRightSchema ||
                   secondFileNodeId ||
                   !(
                     builderLeft === builderLeftTree ||
@@ -395,8 +395,8 @@
                     !file?.fileId
                   )
               }"
-              (click)="setBuilderRight(builderRightSchemas)"
-              >Schemas</button
+              (click)="setBuilderRight(builderRightSchema)"
+              >SCHEMA</button
             >
 
             <button

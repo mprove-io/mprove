@@ -1,6 +1,6 @@
 export enum BuilderRightEnum {
   Sessions = 'Sessions',
-  Schemas = 'Schemas',
+  Schema = 'Schema',
   Validation = 'Validation',
   File = 'File'
 }

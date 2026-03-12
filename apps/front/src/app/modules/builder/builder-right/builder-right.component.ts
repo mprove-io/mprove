@@ -123,7 +123,7 @@ export class BuilderRightComponent implements OnInit, OnDestroy {
   );
 
   builderRightSessions = BuilderRightEnum.Sessions;
-  builderRightSchemas = BuilderRightEnum.Schemas;
+  builderRightSchema = BuilderRightEnum.Schema;
   builderRightValidation = BuilderRightEnum.Validation;
 
   builderRight = BuilderRightEnum.Sessions;

@@ -116,7 +116,7 @@ export class TrinoService {
         ) {
           let errorMsg = isUndefined(catalogsQueryResult?.value)
             ? 'catalogsQueryResult.value is not defined'
-            : catalogsQueryResult?.value?.error?.toString();
+            : catalogsQueryResult?.value?.error?.message;
           return {
             tables: [],
             lastRefreshedTs: Date.now(),
@@ -324,7 +324,7 @@ export class TrinoService {
             q.queryJobId = undefined;
             q.lastErrorMessage = isUndefined(queryResult?.value)
               ? 'queryResult.value is not defined'
-              : queryResult?.value?.error?.toString();
+              : queryResult?.value?.error?.message;
             q.lastErrorTs = makeTsNumber();
           } else {
             let columns = queryResult.value.columns;
