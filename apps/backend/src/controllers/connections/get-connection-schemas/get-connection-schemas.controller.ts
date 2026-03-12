@@ -1,6 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -12,6 +12,7 @@ import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
+import { EnvsService } from '#backend/services/db/envs.service';
 import { MembersService } from '#backend/services/db/members.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { BigQueryService } from '#backend/services/dwh/bigquery.service';
@@ -24,6 +25,7 @@ import { SnowFlakeService } from '#backend/services/dwh/snowflake.service';
 import { TrinoService } from '#backend/services/dwh/trino.service';
 import { TabService } from '#backend/services/tab.service';
 import { TabToEntService } from '#backend/services/tab-to-ent.service';
+import { PROJECT_ENV_PROD } from '#common/constants/top';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ConnectionTypeEnum } from '#common/enums/connection-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
@@ -46,6 +48,7 @@ export class GetConnectionSchemasController {
     private tabService: TabService,
     private tabToEntService: TabToEntService,
     private projectsService: ProjectsService,
+    private envsService: EnvsService,
     private membersService: MembersService,
     private pgService: PgService,
     private mysqlService: MysqlService,
@@ -74,12 +77,27 @@ export class GetConnectionSchemasController {
       projectId: projectId
     });
 
+    let apiEnvs = await this.envsService.getApiEnvs({
+      projectId: projectId
+    });
+
+    let apiEnv = apiEnvs.find(x => x.envId === envId);
+
     let connections: ConnectionTab[] =
       await this.db.drizzle.query.connectionsTable
         .findMany({
           where: and(
             eq(connectionsTable.projectId, projectId),
-            eq(connectionsTable.envId, envId)
+            or(
+              eq(connectionsTable.envId, envId),
+              and(
+                eq(connectionsTable.envId, PROJECT_ENV_PROD),
+                inArray(
+                  connectionsTable.connectionId,
+                  apiEnv.fallbackConnectionIds
+                )
+              )
+            )
           )
         })
         .then(xs => xs.map(x => this.tabService.connectionEntToTab(x)));
