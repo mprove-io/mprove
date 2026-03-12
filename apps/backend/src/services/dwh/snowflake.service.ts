@@ -18,6 +18,7 @@ import { isDefined } from '#common/functions/is-defined';
 import {
   ConnectionSchema,
   SchemaColumn,
+  SchemaForeignKey,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
@@ -173,6 +174,61 @@ export class SnowFlakeService {
         IS_NULLABLE: string;
       }[];
 
+      let fkRows: {
+        TABLE_SCHEMA: string;
+        TABLE_NAME: string;
+        COLUMN_NAME: string;
+        CONSTRAINT_NAME: string;
+        REFERENCED_SCHEMA: string;
+        REFERENCED_TABLE: string;
+        REFERENCED_COLUMN: string;
+      }[] = [];
+
+      try {
+        let fkResult = await this.snowflakeConnectionExecute(
+          snowflakeConnection,
+          {
+            sqlText: `
+              SELECT
+                fk_tco.TABLE_SCHEMA,
+                fk_tco.TABLE_NAME,
+                kcu.COLUMN_NAME,
+                fk_tco.CONSTRAINT_NAME,
+                rco.UNIQUE_CONSTRAINT_SCHEMA AS REFERENCED_SCHEMA,
+                pk_tco.TABLE_NAME AS REFERENCED_TABLE,
+                pk_kcu.COLUMN_NAME AS REFERENCED_COLUMN
+              FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS fk_tco
+              JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rco
+                ON rco.CONSTRAINT_NAME = fk_tco.CONSTRAINT_NAME
+                AND rco.CONSTRAINT_SCHEMA = fk_tco.TABLE_SCHEMA
+              JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk_tco
+                ON pk_tco.CONSTRAINT_NAME = rco.UNIQUE_CONSTRAINT_NAME
+                AND pk_tco.TABLE_SCHEMA = rco.UNIQUE_CONSTRAINT_SCHEMA
+              JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                ON kcu.CONSTRAINT_NAME = fk_tco.CONSTRAINT_NAME
+                AND kcu.TABLE_SCHEMA = fk_tco.TABLE_SCHEMA
+              JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE pk_kcu
+                ON pk_kcu.CONSTRAINT_NAME = rco.UNIQUE_CONSTRAINT_NAME
+                AND pk_kcu.TABLE_SCHEMA = rco.UNIQUE_CONSTRAINT_SCHEMA
+                AND pk_kcu.ORDINAL_POSITION = kcu.ORDINAL_POSITION
+              WHERE fk_tco.CONSTRAINT_TYPE = 'FOREIGN KEY'
+                AND fk_tco.TABLE_SCHEMA != 'INFORMATION_SCHEMA'
+            `
+          }
+        );
+        fkRows = fkResult.rows as typeof fkRows;
+      } catch (fkErr: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_FETCH_FK_SNOWFLAKE_ERROR,
+            originalError: fkErr
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
       let tables: SchemaTable[] = tablesRows.map(row => {
         let columns: SchemaColumn[] = columnsRows
           .filter(
@@ -180,11 +236,28 @@ export class SnowFlakeService {
               c.TABLE_SCHEMA === row.TABLE_SCHEMA &&
               c.TABLE_NAME === row.TABLE_NAME
           )
-          .map(c => ({
-            columnName: c.COLUMN_NAME,
-            dataType: c.DATA_TYPE,
-            isNullable: c.IS_NULLABLE === 'YES'
-          }));
+          .map(c => {
+            let foreignKeys: SchemaForeignKey[] = fkRows
+              .filter(
+                fk =>
+                  fk.TABLE_SCHEMA === c.TABLE_SCHEMA &&
+                  fk.TABLE_NAME === c.TABLE_NAME &&
+                  fk.COLUMN_NAME === c.COLUMN_NAME
+              )
+              .map(fk => ({
+                constraintName: fk.CONSTRAINT_NAME,
+                referencedSchemaName: fk.REFERENCED_SCHEMA,
+                referencedTableName: fk.REFERENCED_TABLE,
+                referencedColumnName: fk.REFERENCED_COLUMN
+              }));
+
+            return {
+              columnName: c.COLUMN_NAME,
+              dataType: c.DATA_TYPE,
+              isNullable: c.IS_NULLABLE === 'YES',
+              foreignKeys: foreignKeys
+            };
+          });
 
         return {
           schemaName: row.TABLE_SCHEMA,

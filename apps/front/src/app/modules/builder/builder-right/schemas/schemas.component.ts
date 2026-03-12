@@ -14,6 +14,7 @@ import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty
 import { makeCopy } from '#common/functions/make-copy';
 import {
   ConnectionSchemaItem,
+  SchemaForeignKey,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import {
@@ -37,6 +38,7 @@ interface SchemaTreeNode {
   columnName?: string;
   dataType?: string;
   isNullable?: boolean;
+  foreignKeys?: SchemaForeignKey[];
   errorMessage?: string;
 }
 
@@ -255,7 +257,8 @@ export class SchemasComponent implements OnInit {
                 nodeType: 'column' as const,
                 columnName: col.columnName,
                 dataType: col.dataType,
-                isNullable: col.isNullable
+                isNullable: col.isNullable,
+                foreignKeys: col.foreignKeys
               })
             );
 

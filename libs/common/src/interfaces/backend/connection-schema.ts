@@ -1,7 +1,15 @@
+export class SchemaForeignKey {
+  constraintName: string;
+  referencedSchemaName: string;
+  referencedTableName: string;
+  referencedColumnName: string;
+}
+
 export class SchemaColumn {
   columnName: string;
   dataType: string;
   isNullable: boolean;
+  foreignKeys: SchemaForeignKey[];
 }
 
 export class SchemaIndex {

@@ -18,6 +18,7 @@ import { isDefined } from '#common/functions/is-defined';
 import {
   ConnectionSchema,
   SchemaColumn,
+  SchemaForeignKey,
   SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
@@ -105,16 +106,68 @@ export class MysqlService {
         NON_UNIQUE: number;
       }[];
 
+      let fkRows: {
+        TABLE_NAME: string;
+        COLUMN_NAME: string;
+        CONSTRAINT_NAME: string;
+        REFERENCED_TABLE_SCHEMA: string;
+        REFERENCED_TABLE_NAME: string;
+        REFERENCED_COLUMN_NAME: string;
+      }[] = [];
+
+      try {
+        let [fkResult] = await mc.query(`
+          SELECT
+            kcu.TABLE_NAME,
+            kcu.COLUMN_NAME,
+            kcu.CONSTRAINT_NAME,
+            kcu.REFERENCED_TABLE_SCHEMA,
+            kcu.REFERENCED_TABLE_NAME,
+            kcu.REFERENCED_COLUMN_NAME
+          FROM information_schema.KEY_COLUMN_USAGE kcu
+          WHERE kcu.TABLE_SCHEMA = DATABASE()
+            AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
+          ORDER BY kcu.TABLE_NAME, kcu.COLUMN_NAME
+        `);
+        fkRows = fkResult as typeof fkRows;
+      } catch (fkErr: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_FETCH_FK_MYSQL_ERROR,
+            originalError: fkErr
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
       let tables: SchemaTable[] = tablesRows.map(row => {
         let tableName = row.TABLE_NAME;
 
         let columns: SchemaColumn[] = columnsRows
           .filter(c => c.TABLE_NAME === tableName)
-          .map(c => ({
-            columnName: c.COLUMN_NAME,
-            dataType: c.DATA_TYPE,
-            isNullable: c.IS_NULLABLE === 'YES'
-          }));
+          .map(c => {
+            let foreignKeys: SchemaForeignKey[] = fkRows
+              .filter(
+                fk =>
+                  fk.TABLE_NAME === tableName &&
+                  fk.COLUMN_NAME === c.COLUMN_NAME
+              )
+              .map(fk => ({
+                constraintName: fk.CONSTRAINT_NAME,
+                referencedSchemaName: fk.REFERENCED_TABLE_SCHEMA,
+                referencedTableName: fk.REFERENCED_TABLE_NAME,
+                referencedColumnName: fk.REFERENCED_COLUMN_NAME
+              }));
+
+            return {
+              columnName: c.COLUMN_NAME,
+              dataType: c.DATA_TYPE,
+              isNullable: c.IS_NULLABLE === 'YES',
+              foreignKeys: foreignKeys
+            };
+          });
 
         let indexes: SchemaIndex[] = indexesRows
           .filter(ix => ix.TABLE_NAME === tableName)

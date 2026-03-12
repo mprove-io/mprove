@@ -10,15 +10,20 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
   ConnectionSchema,
   SchemaColumn,
+  SchemaForeignKey,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
+import { ServerError } from '#common/models/server-error';
 import { TabService } from '../tab.service';
 
 @Injectable()
@@ -131,6 +136,48 @@ export class DuckDbService {
         is_nullable: string;
       }[];
 
+      let fkRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        constraint_name: string;
+        referenced_schema: string;
+        referenced_table: string;
+        referenced_column: string;
+      }[] = [];
+
+      try {
+        let fkReader = await dc.runAndReadAll(`
+          SELECT
+            kcu.table_schema,
+            kcu.table_name,
+            kcu.column_name,
+            kcu.constraint_name,
+            ccu.table_schema AS referenced_schema,
+            ccu.table_name AS referenced_table,
+            ccu.column_name AS referenced_column
+          FROM information_schema.key_column_usage kcu
+          JOIN information_schema.table_constraints tc
+            ON tc.constraint_name = kcu.constraint_name
+            AND tc.table_schema = kcu.table_schema
+            AND tc.constraint_type = 'FOREIGN KEY'
+          JOIN information_schema.constraint_column_usage ccu
+            ON ccu.constraint_name = tc.constraint_name
+          WHERE kcu.table_schema NOT IN ('information_schema', 'pg_catalog')
+        `);
+        fkRows = fkReader.getRowObjectsJson() as typeof fkRows;
+      } catch (fkErr: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_FETCH_FK_DUCKDB_ERROR,
+            originalError: fkErr
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
       let tables: SchemaTable[] = tablesRows.map(row => {
         let columns: SchemaColumn[] = columnsRows
           .filter(
@@ -138,11 +185,28 @@ export class DuckDbService {
               c.table_schema === row.table_schema &&
               c.table_name === row.table_name
           )
-          .map(c => ({
-            columnName: c.column_name,
-            dataType: c.data_type,
-            isNullable: c.is_nullable === 'YES'
-          }));
+          .map(c => {
+            let foreignKeys: SchemaForeignKey[] = fkRows
+              .filter(
+                fk =>
+                  fk.table_schema === c.table_schema &&
+                  fk.table_name === c.table_name &&
+                  fk.column_name === c.column_name
+              )
+              .map(fk => ({
+                constraintName: fk.constraint_name,
+                referencedSchemaName: fk.referenced_schema,
+                referencedTableName: fk.referenced_table,
+                referencedColumnName: fk.referenced_column
+              }));
+
+            return {
+              columnName: c.column_name,
+              dataType: c.data_type,
+              isNullable: c.is_nullable === 'YES',
+              foreignKeys: foreignKeys
+            };
+          });
 
         return {
           schemaName: row.table_schema,

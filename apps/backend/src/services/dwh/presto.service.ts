@@ -141,7 +141,8 @@ export class PrestoService {
           .map(c => ({
             columnName: c.column_name,
             dataType: c.data_type,
-            isNullable: c.is_nullable === 'YES'
+            isNullable: c.is_nullable === 'YES',
+            foreignKeys: [] as SchemaColumn['foreignKeys']
           }));
 
         return {

@@ -19,6 +19,7 @@ import { isDefined } from '#common/functions/is-defined';
 import {
   ConnectionSchema,
   SchemaColumn,
+  SchemaForeignKey,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
@@ -179,6 +180,54 @@ export class DatabricksService {
       }[];
       await columnsOperation.close();
 
+      let fkRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        constraint_name: string;
+        referenced_schema: string;
+        referenced_table: string;
+        referenced_column: string;
+      }[] = [];
+
+      try {
+        let fkOperation = await session.executeStatement(
+          `
+          SELECT
+            kcu.table_schema,
+            kcu.table_name,
+            kcu.column_name,
+            tc.constraint_name,
+            ccu.table_schema AS referenced_schema,
+            ccu.table_name AS referenced_table,
+            ccu.column_name AS referenced_column
+          FROM information_schema.table_constraints tc
+          JOIN information_schema.key_column_usage kcu
+            ON kcu.constraint_name = tc.constraint_name
+            AND kcu.constraint_schema = tc.constraint_schema
+          JOIN information_schema.constraint_column_usage ccu
+            ON ccu.constraint_name = tc.constraint_name
+            AND ccu.constraint_schema = tc.constraint_schema
+          WHERE tc.table_catalog = '${config.defaultCatalog}'
+            AND tc.constraint_type = 'FOREIGN KEY'
+            AND tc.table_schema != 'information_schema'
+          `,
+          { runAsync: true }
+        );
+        fkRows = (await fkOperation.fetchAll()) as typeof fkRows;
+        await fkOperation.close();
+      } catch (fkErr: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_FETCH_FK_DATABRICKS_ERROR,
+            originalError: fkErr
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
       await session.close();
 
       let tables: SchemaTable[] = tablesRows.map(row => {
@@ -188,11 +237,28 @@ export class DatabricksService {
               c.table_schema === row.table_schema &&
               c.table_name === row.table_name
           )
-          .map(c => ({
-            columnName: c.column_name,
-            dataType: c.data_type,
-            isNullable: c.is_nullable === 'YES'
-          }));
+          .map(c => {
+            let foreignKeys: SchemaForeignKey[] = fkRows
+              .filter(
+                fk =>
+                  fk.table_schema === c.table_schema &&
+                  fk.table_name === c.table_name &&
+                  fk.column_name === c.column_name
+              )
+              .map(fk => ({
+                constraintName: fk.constraint_name,
+                referencedSchemaName: fk.referenced_schema,
+                referencedTableName: fk.referenced_table,
+                referencedColumnName: fk.referenced_column
+              }));
+
+            return {
+              columnName: c.column_name,
+              dataType: c.data_type,
+              isNullable: c.is_nullable === 'YES',
+              foreignKeys: foreignKeys
+            };
+          });
 
         return {
           schemaName: row.table_schema,

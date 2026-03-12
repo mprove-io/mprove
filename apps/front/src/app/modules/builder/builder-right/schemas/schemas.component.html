@@ -151,6 +151,33 @@
                 <span *ngIf="node.data.isNullable" class="text-s400 ml-1"
                   >(null)</span
                 >
+
+                <button
+                  *ngIf="node.data.foreignKeys?.length > 0"
+                  class="hover:bg-m200 text-s400 ml-2 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  [tp]="fkTemplate"
+                  [tpHideOnEscape]="true"
+                  tpVariation="menu"
+                  className="my-menu"
+                  (click)="$event.stopPropagation()"
+                >
+                  <m-key-icon></m-key-icon>
+                </button>
+
+                <ng-template #fkTemplate>
+                  <div
+                    class="border-s4 bg-m0 w-64 rounded-md border-2 shadow-xl"
+                  >
+                    <div
+                      *ngFor="let fk of node.data.foreignKeys"
+                      class="text-s1 w-full px-4 py-2 text-left text-base"
+                    >
+                      {{ fk.referencedSchemaName }}.{{
+                        fk.referencedTableName
+                      }}.{{ fk.referencedColumnName }}
+                    </div>
+                  </div>
+                </ng-template>
               </div>
             </div>
           </ng-template>

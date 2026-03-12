@@ -10,16 +10,21 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
 import {
   ConnectionSchema,
   SchemaColumn,
+  SchemaForeignKey,
   SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
+import { ServerError } from '#common/models/server-error';
 import { TabService } from '../tab.service';
 
 @Injectable()
@@ -114,6 +119,61 @@ export class PgService {
         ORDER BY i.schemaname, i.tablename, i.indexname
       `);
 
+      let fkRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        constraint_name: string;
+        referenced_schema: string;
+        referenced_table: string;
+        referenced_column: string;
+      }[] = [];
+
+      try {
+        fkRows = await pgDb.any<{
+          table_schema: string;
+          table_name: string;
+          column_name: string;
+          constraint_name: string;
+          referenced_schema: string;
+          referenced_table: string;
+          referenced_column: string;
+        }>(`
+          SELECT
+            n.nspname AS table_schema,
+            cl.relname AS table_name,
+            a.attname AS column_name,
+            con.conname AS constraint_name,
+            rn.nspname AS referenced_schema,
+            rcl.relname AS referenced_table,
+            ra.attname AS referenced_column
+          FROM pg_constraint con
+          JOIN pg_class cl ON cl.oid = con.conrelid
+          JOIN pg_namespace n ON n.oid = cl.relnamespace
+          JOIN pg_class rcl ON rcl.oid = con.confrelid
+          JOIN pg_namespace rn ON rn.oid = rcl.relnamespace
+          JOIN LATERAL unnest(con.conkey, con.confkey)
+            WITH ORDINALITY AS cols(conkey, confkey, ord) ON true
+          JOIN pg_attribute a
+            ON a.attrelid = con.conrelid AND a.attnum = cols.conkey
+          JOIN pg_attribute ra
+            ON ra.attrelid = con.confrelid AND ra.attnum = cols.confkey
+          WHERE con.contype = 'f'
+            AND n.nspname NOT IN ('pg_catalog', 'information_schema')
+          ORDER BY n.nspname, cl.relname, a.attname
+        `);
+      } catch (fkErr: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_FETCH_FK_POSTGRES_ERROR,
+            originalError: fkErr
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
       let tables: SchemaTable[] = tablesRows.map(row => {
         let columns: SchemaColumn[] = columnsRows
           .filter(
@@ -121,11 +181,28 @@ export class PgService {
               c.table_schema === row.table_schema &&
               c.table_name === row.table_name
           )
-          .map(c => ({
-            columnName: c.column_name,
-            dataType: c.data_type,
-            isNullable: c.is_nullable === 'YES'
-          }));
+          .map(c => {
+            let foreignKeys: SchemaForeignKey[] = fkRows
+              .filter(
+                fk =>
+                  fk.table_schema === c.table_schema &&
+                  fk.table_name === c.table_name &&
+                  fk.column_name === c.column_name
+              )
+              .map(fk => ({
+                constraintName: fk.constraint_name,
+                referencedSchemaName: fk.referenced_schema,
+                referencedTableName: fk.referenced_table,
+                referencedColumnName: fk.referenced_column
+              }));
+
+            return {
+              columnName: c.column_name,
+              dataType: c.data_type,
+              isNullable: c.is_nullable === 'YES',
+              foreignKeys: foreignKeys
+            };
+          });
 
         let indexes: SchemaIndex[] = indexesRows
           .filter(
