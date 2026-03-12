@@ -302,6 +302,8 @@ export class SchemasComponent implements OnInit {
       });
     });
 
+    nodes.sort((a, b) => a.name.localeCompare(b.name));
+
     return nodes;
   }
 }
