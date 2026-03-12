@@ -17,6 +17,12 @@ export class ToBackendGetConnectionSchemasRequestPayload {
   @IsString()
   envId: string;
 
+  @IsString()
+  repoId: string;
+
+  @IsString()
+  branchId: string;
+
   @IsOptional()
   @IsBoolean()
   isRefresh?: boolean;

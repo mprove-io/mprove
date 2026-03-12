@@ -1,6 +1,16 @@
+import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
+
 export class SchemaForeignKey {
   constraintName: string;
   referencedSchemaName: string;
+  referencedTableName: string;
+  referencedColumnName: string;
+}
+
+export class ColumnCombinedReference {
+  relationshipType?: RelationshipTypeEnum;
+  isForeignKey: boolean;
+  referencedSchemaName?: string;
   referencedTableName: string;
   referencedColumnName: string;
 }
@@ -12,6 +22,7 @@ export class SchemaColumn {
   isPrimaryKey?: boolean;
   isUnique?: boolean;
   foreignKeys: SchemaForeignKey[];
+  combinedReferences?: ColumnCombinedReference[];
 }
 
 export class SchemaIndex {

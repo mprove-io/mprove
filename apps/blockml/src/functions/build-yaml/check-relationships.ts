@@ -431,6 +431,52 @@ export function checkRelationships(
         );
         return;
       }
+
+      if (isDefined(refElement.to_schema)) {
+        let toSchemaValue = refElement.to_schema.toString();
+        let toSchemaDotIndex = toSchemaValue.indexOf('.');
+
+        if (toSchemaDotIndex < 0) {
+          item.errors.push(
+            new BmError({
+              title: ErTitleEnum.WRONG_RELATIONSHIP_REFERENCE_TO_SCHEMA_FORMAT,
+              message: `"${ParameterEnum.ToSchema}" value "${toSchemaValue}" must contain a dot to separate connection name from schema name`,
+              lines: [
+                {
+                  line: refElement.to_schema_line_num,
+                  name: conf.fileName,
+                  path: conf.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+
+        let toSchemaConnectionId = toSchemaValue.substring(0, toSchemaDotIndex);
+        let schemaConnectionId = schemaValue.substring(
+          0,
+          schemaValue.indexOf('.')
+        );
+
+        if (toSchemaConnectionId !== schemaConnectionId) {
+          item.errors.push(
+            new BmError({
+              title:
+                ErTitleEnum.WRONG_RELATIONSHIP_REFERENCE_TO_SCHEMA_CONNECTION,
+              message: `"${ParameterEnum.ToSchema}" connection "${toSchemaConnectionId}" must match "${ParameterEnum.Schema}" connection "${schemaConnectionId}"`,
+              lines: [
+                {
+                  line: refElement.to_schema_line_num,
+                  name: conf.fileName,
+                  path: conf.filePath
+                }
+              ]
+            })
+          );
+          return;
+        }
+      }
     });
   });
 

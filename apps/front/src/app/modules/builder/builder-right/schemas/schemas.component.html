@@ -42,6 +42,15 @@
       </button>
     </div>
 
+    <button
+      tp="Refresh schemas"
+      type="button"
+      class="hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      (click)="loadSchemas()"
+    >
+      <m-refresh-icon></m-refresh-icon>
+    </button>
+
     <div class="relative ml-5 flex h-7 w-7 flex-shrink-0">
       <ngx-spinner
         *ngIf="isRefreshing"
@@ -117,9 +126,9 @@
                 *ngIf="node.data.nodeType !== 'column'"
                 class="ml-2 flex min-w-0 items-center"
                 [ngClass]="{
-                  'text-s500 text-[18px]': node.data.nodeType === 'connection',
-                  'text-[17px] text-red-600': node.data.nodeType === 'error',
-                  'text-s1 text-[17px]':
+                  'text-s500 text-[17px]': node.data.nodeType === 'connection',
+                  'text-[16px] text-red-600': node.data.nodeType === 'error',
+                  'text-s1 text-[16px]':
                     node.data.nodeType !== 'connection' &&
                     node.data.nodeType !== 'error'
                 }"
@@ -140,7 +149,7 @@
 
               <div
                 *ngIf="node.data.nodeType === 'column'"
-                class="ml-2 flex items-center truncate text-[17px]"
+                class="ml-2 flex items-center truncate text-[16px]"
               >
                 <span class="text-s1 font-semibold">{{
                   node.data.columnName
@@ -166,7 +175,7 @@
                 >
 
                 <button
-                  *ngIf="node.data.foreignKeys?.length > 0"
+                  *ngIf="node.data.combinedReferences?.length > 0"
                   class="hover:bg-m200 text-s1 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [tp]="fkTemplate"
                   [tpHideOnEscape]="true"
@@ -179,15 +188,34 @@
 
                 <ng-template #fkTemplate>
                   <div
-                    class="border-s4 bg-m0 w-64 rounded-md border-2 shadow-xl"
+                    class="border-s4 bg-m0 w-max rounded-md border-2 shadow-xl"
                   >
                     <div
-                      *ngFor="let fk of node.data.foreignKeys"
+                      *ngFor="let ref of node.data.combinedReferences"
                       class="text-s1 w-full px-4 py-2 text-left text-base"
                     >
-                      {{ fk.referencedSchemaName }}.{{
-                        fk.referencedTableName
-                      }}.{{ fk.referencedColumnName }}
+                      <span *ngIf="ref.isForeignKey" class="text-blue-400"
+                        >FK</span
+                      ><span
+                        *ngIf="ref.isForeignKey && ref.relationshipType"
+                        class="ml-3"
+                      >
+                      </span
+                      ><span
+                        *ngIf="ref.relationshipType"
+                        class="text-orange-500"
+                        >{{ ref.relationshipType }}</span
+                      ><span *ngIf="ref.relationshipType" class="ml-3"> </span
+                      ><span
+                        *ngIf="!ref.relationshipType && ref.isForeignKey"
+                        class="ml-3"
+                      >
+                      </span
+                      ><span *ngIf="ref.referencedSchemaName"
+                        >{{ ref.referencedSchemaName }}.</span
+                      >{{ ref.referencedTableName }}.{{
+                        ref.referencedColumnName
+                      }}
                     </div>
                   </div>
                 </ng-template>

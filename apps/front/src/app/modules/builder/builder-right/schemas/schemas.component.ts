@@ -13,6 +13,7 @@ import { isDefined } from '#common/functions/is-defined';
 import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { makeCopy } from '#common/functions/make-copy';
 import {
+  ColumnCombinedReference,
   ConnectionSchemaItem,
   SchemaForeignKey,
   SchemaTable
@@ -41,6 +42,7 @@ interface SchemaTreeNode {
   isPrimaryKey?: boolean;
   isUnique?: boolean;
   foreignKeys?: SchemaForeignKey[];
+  combinedReferences?: ColumnCombinedReference[];
   errorMessage?: string;
 }
 
@@ -90,6 +92,8 @@ export class SchemasComponent implements OnInit {
     let payload: ToBackendGetConnectionSchemasRequestPayload = {
       projectId: nav.projectId,
       envId: nav.envId,
+      repoId: nav.repoId,
+      branchId: nav.branchId,
       isRefresh: true
     };
 
@@ -262,7 +266,8 @@ export class SchemasComponent implements OnInit {
                 isNullable: col.isNullable,
                 isPrimaryKey: col.isPrimaryKey,
                 isUnique: col.isUnique,
-                foreignKeys: col.foreignKeys
+                foreignKeys: col.foreignKeys,
+                combinedReferences: col.combinedReferences
               })
             );
 
