@@ -20,6 +20,7 @@ import {
   ConnectionSchema,
   SchemaColumn,
   SchemaForeignKey,
+  SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
@@ -228,9 +229,75 @@ export class DatabricksService {
         });
       }
 
+      let constraintRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        constraint_name: string;
+        constraint_type: string;
+      }[] = [];
+
+      try {
+        let constraintOperation = await session.executeStatement(
+          `
+          SELECT
+            tc.table_schema,
+            tc.table_name,
+            kcu.column_name,
+            tc.constraint_name,
+            tc.constraint_type
+          FROM information_schema.table_constraints tc
+          JOIN information_schema.key_column_usage kcu
+            ON kcu.constraint_name = tc.constraint_name
+            AND kcu.constraint_schema = tc.constraint_schema
+          WHERE tc.table_catalog = '${config.defaultCatalog}'
+            AND tc.constraint_type IN ('PRIMARY KEY', 'UNIQUE')
+            AND tc.table_schema != 'information_schema'
+          `,
+          { runAsync: true }
+        );
+        constraintRows =
+          (await constraintOperation.fetchAll()) as typeof constraintRows;
+        await constraintOperation.close();
+      } catch (constraintErr: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_FETCH_CONSTRAINTS_DATABRICKS_ERROR,
+            originalError: constraintErr
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
       await session.close();
 
       let tables: SchemaTable[] = tablesRows.map(row => {
+        let tableConstraintRows = constraintRows.filter(
+          cr =>
+            cr.table_schema === row.table_schema &&
+            cr.table_name === row.table_name
+        );
+
+        let constraintNames = [
+          ...new Set(tableConstraintRows.map(cr => cr.constraint_name))
+        ];
+
+        let indexes: SchemaIndex[] = constraintNames.map(constraintName => {
+          let constraintGroup = tableConstraintRows.filter(
+            cr => cr.constraint_name === constraintName
+          );
+          let isPrimaryKey =
+            constraintGroup[0].constraint_type === 'PRIMARY KEY';
+          return {
+            indexName: constraintName,
+            indexColumns: constraintGroup.map(cr => cr.column_name),
+            isUnique: true,
+            isPrimaryKey: isPrimaryKey
+          };
+        });
+
         let columns: SchemaColumn[] = columnsRows
           .filter(
             c =>
@@ -252,10 +319,24 @@ export class DatabricksService {
                 referencedColumnName: fk.referenced_column
               }));
 
+            let isPrimaryKey = indexes.some(
+              idx =>
+                idx.isPrimaryKey === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
+            let isUnique = indexes.some(
+              idx =>
+                idx.isUnique === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
             return {
               columnName: c.column_name,
               dataType: c.data_type,
               isNullable: c.is_nullable === 'YES',
+              isPrimaryKey: isPrimaryKey,
+              isUnique: isUnique,
               foreignKeys: foreignKeys
             };
           });
@@ -265,7 +346,7 @@ export class DatabricksService {
           tableName: row.table_name,
           tableType: row.table_type,
           columns: columns,
-          indexes: [] as SchemaTable['indexes']
+          indexes: indexes
         };
       });
 

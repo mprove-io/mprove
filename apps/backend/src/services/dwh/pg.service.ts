@@ -235,8 +235,8 @@ export class PgService {
               columnName: c.column_name,
               dataType: c.data_type,
               isNullable: c.is_nullable === 'YES',
-              isPrimaryKey: isPrimaryKey || undefined,
-              isUnique: isUnique || undefined,
+              isPrimaryKey: isPrimaryKey,
+              isUnique: isUnique,
               foreignKeys: foreignKeys
             };
           });

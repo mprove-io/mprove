@@ -148,15 +148,15 @@
                 <span class="text-s400 ml-3 uppercase">{{
                   node.data.dataType
                 }}</span>
-                <span *ngIf="node.data.isNullable" class="text-s400 ml-1"
-                  >(null)</span
+                <span *ngIf="node.data.isNullable === false" class="text-s400"
+                  >, not null</span
                 >
-                <span *ngIf="node.data.isPrimaryKey" class="ml-1 text-blue-400"
+                <span *ngIf="node.data.isPrimaryKey" class="ml-3 text-blue-400"
                   >PK</span
                 >
                 <span
                   *ngIf="node.data.isUnique && !node.data.isPrimaryKey"
-                  class="ml-1 text-blue-400"
+                  class="ml-3 text-blue-400"
                   >UNIQUE</span
                 >
 

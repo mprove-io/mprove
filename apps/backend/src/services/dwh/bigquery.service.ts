@@ -16,6 +16,7 @@ import {
   ConnectionSchema,
   SchemaColumn,
   SchemaForeignKey,
+  SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
@@ -104,6 +105,14 @@ export class BigQueryService {
         referenced_column: string;
       }[] = [];
 
+      let allConstraintRows: {
+        table_schema: string;
+        table_name: string;
+        column_name: string;
+        constraint_name: string;
+        constraint_type: string;
+      }[] = [];
+
       for (let dataset of datasets) {
         let datasetId = dataset.id;
 
@@ -152,12 +161,70 @@ export class BigQueryService {
               cs: this.cs
             });
           }
+
+          try {
+            let [constraintRows] = await bigquery.query(`
+              SELECT
+                kcu.table_schema,
+                kcu.table_name,
+                kcu.column_name,
+                tc.constraint_name,
+                tc.constraint_type
+              FROM \`${datasetId}\`.INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+              JOIN \`${datasetId}\`.INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                ON kcu.constraint_name = tc.constraint_name
+              WHERE tc.constraint_type IN ('PRIMARY KEY', 'UNIQUE')
+            `);
+            allConstraintRows.push(...constraintRows);
+          } catch (constraintErr: any) {
+            logToConsoleBackend({
+              log: new ServerError({
+                message: ErEnum.BACKEND_FETCH_CONSTRAINTS_BIGQUERY_ERROR,
+                originalError: constraintErr
+              }),
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
+            });
+          }
         } catch (datasetErr: any) {
-          // Some datasets may not be accessible, skip
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_FETCH_DATASET_BIGQUERY_ERROR,
+              originalError: datasetErr
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
         }
       }
 
       let tables: SchemaTable[] = allTablesRows.map(row => {
+        let tableConstraintRows = allConstraintRows.filter(
+          cr =>
+            cr.table_schema === row.table_schema &&
+            cr.table_name === row.table_name
+        );
+
+        let constraintNames = [
+          ...new Set(tableConstraintRows.map(cr => cr.constraint_name))
+        ];
+
+        let indexes: SchemaIndex[] = constraintNames.map(constraintName => {
+          let constraintGroup = tableConstraintRows.filter(
+            cr => cr.constraint_name === constraintName
+          );
+          let isPrimaryKey =
+            constraintGroup[0].constraint_type === 'PRIMARY KEY';
+          return {
+            indexName: constraintName,
+            indexColumns: constraintGroup.map(cr => cr.column_name),
+            isUnique: true,
+            isPrimaryKey: isPrimaryKey
+          };
+        });
+
         let columns: SchemaColumn[] = allColumnsRows
           .filter(
             c =>
@@ -179,10 +246,24 @@ export class BigQueryService {
                 referencedColumnName: fk.referenced_column
               }));
 
+            let isPrimaryKey = indexes.some(
+              idx =>
+                idx.isPrimaryKey === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
+            let isUnique = indexes.some(
+              idx =>
+                idx.isUnique === true &&
+                idx.indexColumns.includes(c.column_name)
+            );
+
             return {
               columnName: c.column_name,
               dataType: c.data_type,
               isNullable: c.is_nullable === 'YES',
+              isPrimaryKey: isPrimaryKey,
+              isUnique: isUnique,
               foreignKeys: foreignKeys
             };
           });
@@ -192,7 +273,7 @@ export class BigQueryService {
           tableName: row.table_name,
           tableType: row.table_type,
           columns: columns,
-          indexes: [] as SchemaTable['indexes']
+          indexes: indexes
         };
       });
 

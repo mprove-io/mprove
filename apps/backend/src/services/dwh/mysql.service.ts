@@ -194,8 +194,8 @@ export class MysqlService {
               columnName: c.COLUMN_NAME,
               dataType: c.DATA_TYPE,
               isNullable: c.IS_NULLABLE === 'YES',
-              isPrimaryKey: isPrimaryKey || undefined,
-              isUnique: isUnique || undefined,
+              isPrimaryKey: isPrimaryKey,
+              isUnique: isUnique,
               foreignKeys: foreignKeys
             };
           });

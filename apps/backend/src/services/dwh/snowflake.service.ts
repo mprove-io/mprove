@@ -19,6 +19,7 @@ import {
   ConnectionSchema,
   SchemaColumn,
   SchemaForeignKey,
+  SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
@@ -229,7 +230,72 @@ export class SnowFlakeService {
         });
       }
 
+      let constraintRows: {
+        TABLE_SCHEMA: string;
+        TABLE_NAME: string;
+        COLUMN_NAME: string;
+        CONSTRAINT_NAME: string;
+        CONSTRAINT_TYPE: string;
+      }[] = [];
+
+      try {
+        let constraintResult = await this.snowflakeConnectionExecute(
+          snowflakeConnection,
+          {
+            sqlText: `
+              SELECT
+                tc.TABLE_SCHEMA,
+                tc.TABLE_NAME,
+                kcu.COLUMN_NAME,
+                tc.CONSTRAINT_NAME,
+                tc.CONSTRAINT_TYPE
+              FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+              JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
+                ON kcu.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
+                AND kcu.TABLE_SCHEMA = tc.TABLE_SCHEMA
+              WHERE tc.CONSTRAINT_TYPE IN ('PRIMARY KEY', 'UNIQUE')
+                AND tc.TABLE_SCHEMA != 'INFORMATION_SCHEMA'
+            `
+          }
+        );
+        constraintRows = constraintResult.rows as typeof constraintRows;
+      } catch (constraintErr: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_FETCH_CONSTRAINTS_SNOWFLAKE_ERROR,
+            originalError: constraintErr
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
       let tables: SchemaTable[] = tablesRows.map(row => {
+        let tableConstraintRows = constraintRows.filter(
+          cr =>
+            cr.TABLE_SCHEMA === row.TABLE_SCHEMA &&
+            cr.TABLE_NAME === row.TABLE_NAME
+        );
+
+        let constraintNames = [
+          ...new Set(tableConstraintRows.map(cr => cr.CONSTRAINT_NAME))
+        ];
+
+        let indexes: SchemaIndex[] = constraintNames.map(constraintName => {
+          let constraintGroup = tableConstraintRows.filter(
+            cr => cr.CONSTRAINT_NAME === constraintName
+          );
+          let isPrimaryKey =
+            constraintGroup[0].CONSTRAINT_TYPE === 'PRIMARY KEY';
+          return {
+            indexName: constraintName,
+            indexColumns: constraintGroup.map(cr => cr.COLUMN_NAME),
+            isUnique: true,
+            isPrimaryKey: isPrimaryKey
+          };
+        });
+
         let columns: SchemaColumn[] = columnsRows
           .filter(
             c =>
@@ -251,10 +317,24 @@ export class SnowFlakeService {
                 referencedColumnName: fk.REFERENCED_COLUMN
               }));
 
+            let isPrimaryKey = indexes.some(
+              idx =>
+                idx.isPrimaryKey === true &&
+                idx.indexColumns.includes(c.COLUMN_NAME)
+            );
+
+            let isUnique = indexes.some(
+              idx =>
+                idx.isUnique === true &&
+                idx.indexColumns.includes(c.COLUMN_NAME)
+            );
+
             return {
               columnName: c.COLUMN_NAME,
               dataType: c.DATA_TYPE,
               isNullable: c.IS_NULLABLE === 'YES',
+              isPrimaryKey: isPrimaryKey,
+              isUnique: isUnique,
               foreignKeys: foreignKeys
             };
           });
@@ -264,7 +344,7 @@ export class SnowFlakeService {
           tableName: row.TABLE_NAME,
           tableType: row.TABLE_TYPE,
           columns: columns,
-          indexes: [] as SchemaTable['indexes']
+          indexes: indexes
         };
       });
 
