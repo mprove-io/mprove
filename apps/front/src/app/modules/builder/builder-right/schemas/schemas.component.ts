@@ -248,12 +248,11 @@ export class SchemasComponent implements OnInit {
       schemaGroups.forEach((tables, schemaName) => {
         let connectionNode: SchemaTreeNode = {
           id: `${cs.connectionId}__${schemaName}`,
-          name: `${cs.connectionId} - ${schemaName.charAt(0).toUpperCase() + schemaName.slice(1)}`,
+          name: `${cs.connectionId} - ${schemaName}`,
           searchName: `${cs.connectionId} ${schemaName}`,
           nodeType: 'connection',
           connectionId: cs.connectionId,
-          schemaDisplayName:
-            schemaName.charAt(0).toUpperCase() + schemaName.slice(1),
+          schemaDisplayName: schemaName,
           children: tables.map(table => {
             let columnChildren: SchemaTreeNode[] = table.columns.map(
               (col, colIdx) => ({

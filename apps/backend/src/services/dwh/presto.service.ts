@@ -13,9 +13,12 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import {
   ConnectionSchema,
   SchemaColumn,
@@ -99,40 +102,80 @@ export class PrestoService {
     try {
       let pc = new PrestoClient(prestoClientConfig);
 
-      let tablesResult: PrestoQuery = await pc.query(`
-        SELECT table_schema, table_name, table_type
-        FROM information_schema.tables
-        WHERE table_schema != 'information_schema'
-        ORDER BY table_schema, table_name
-      `);
+      let catalog = connection.options.presto.catalog;
+      let catalogs: string[];
+      let catalogDiscovered = false;
 
-      let tablesColumns = tablesResult.columns;
-      let tablesRows = tablesResult.data.map(r => {
-        let dRow: { [name: string]: any } = {};
-        tablesColumns.forEach((column: any, index: number) => {
-          dRow[column.name as string] = r[index];
-        });
-        return dRow;
-      });
+      if (isDefinedAndNotEmpty(catalog)) {
+        catalogs = [catalog];
+      } else {
+        catalogDiscovered = true;
+        let catalogsResult: PrestoQuery = await pc.query('SHOW CATALOGS');
+        catalogs = catalogsResult.data
+          .map(r => r[0] as string)
+          .filter(c => c !== 'system');
+      }
 
-      let columnsResult: PrestoQuery = await pc.query(`
-        SELECT table_schema, table_name, column_name, data_type, is_nullable
-        FROM information_schema.columns
-        WHERE table_schema != 'information_schema'
-        ORDER BY table_schema, table_name, ordinal_position
-      `);
+      let allTablesRows: { [name: string]: any }[] = [];
+      let allColumnsRows: { [name: string]: any }[] = [];
 
-      let columnsColumns = columnsResult.columns;
-      let columnsRows = columnsResult.data.map(r => {
-        let dRow: { [name: string]: any } = {};
-        columnsColumns.forEach((column: any, index: number) => {
-          dRow[column.name as string] = r[index];
-        });
-        return dRow;
-      });
+      for (let cat of catalogs) {
+        try {
+          let tablesResult: PrestoQuery = await pc.query(`
+            SELECT table_schema, table_name, table_type
+            FROM ${cat}.information_schema.tables
+            WHERE table_schema != 'information_schema'
+            ORDER BY table_schema, table_name
+          `);
 
-      let tables: SchemaTable[] = tablesRows.map(row => {
-        let columns: SchemaColumn[] = columnsRows
+          let tablesColumns = tablesResult.columns;
+          let tablesRows = tablesResult.data.map(r => {
+            let dRow: { [name: string]: any } = {};
+            tablesColumns.forEach((column: any, index: number) => {
+              dRow[column.name as string] = r[index];
+            });
+            return dRow;
+          });
+
+          let columnsResult: PrestoQuery = await pc.query(`
+            SELECT table_schema, table_name, column_name, data_type, is_nullable
+            FROM ${cat}.information_schema.columns
+            WHERE table_schema != 'information_schema'
+            ORDER BY table_schema, table_name, ordinal_position
+          `);
+
+          let columnsColumns = columnsResult.columns;
+          let columnsRows = columnsResult.data.map(r => {
+            let dRow: { [name: string]: any } = {};
+            columnsColumns.forEach((column: any, index: number) => {
+              dRow[column.name as string] = r[index];
+            });
+            return dRow;
+          });
+
+          let schemaPrefix = catalogDiscovered ? `${cat}.` : '';
+
+          for (let row of tablesRows) {
+            row.table_schema = `${schemaPrefix}${row.table_schema}`;
+            allTablesRows.push(row);
+          }
+
+          for (let row of columnsRows) {
+            row.table_schema = `${schemaPrefix}${row.table_schema}`;
+            allColumnsRows.push(row);
+          }
+        } catch (e: any) {
+          logToConsoleBackend({
+            log: `Presto fetchSchema skipping catalog "${cat}": ${e.message}`,
+            logLevel: LogLevelEnum.Info,
+            logger: this.logger,
+            cs: this.cs
+          });
+        }
+      }
+
+      let tables: SchemaTable[] = allTablesRows.map(row => {
+        let columns: SchemaColumn[] = allColumnsRows
           .filter(
             c =>
               c.table_schema === row.table_schema &&

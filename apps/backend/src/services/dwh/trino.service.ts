@@ -10,9 +10,12 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { ConnectionTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { queriesTable } from '#backend/drizzle/postgres/schema/queries';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { QueryStatusEnum } from '#common/enums/query-status.enum';
 import { isDefined } from '#common/functions/is-defined';
+import { isDefinedAndNotEmpty } from '#common/functions/is-defined-and-not-empty';
 import { isUndefined } from '#common/functions/is-undefined';
 import {
   ConnectionSchema,
@@ -96,100 +99,156 @@ export class TrinoService {
     try {
       let tc = Trino.create(trinoConnectionOptions);
 
-      let tablesResult = await tc.query(`
-        SELECT table_schema, table_name, table_type
-        FROM information_schema.tables
-        WHERE table_schema != 'information_schema'
-        ORDER BY table_schema, table_name
-      `);
+      let catalog = connection.options.trino.catalog;
+      let catalogs: string[];
+      let catalogDiscovered = false;
 
-      let tablesQueryResult = await tablesResult.next();
+      if (isDefinedAndNotEmpty(catalog)) {
+        catalogs = [catalog];
+      } else {
+        catalogDiscovered = true;
+        let catalogsResult = await tc.query('SHOW CATALOGS');
+        let catalogsQueryResult = await catalogsResult.next();
 
-      if (
-        isUndefined(tablesQueryResult?.value) ||
-        isDefined(tablesQueryResult?.value?.error)
-      ) {
-        let errorMsg = isUndefined(tablesQueryResult?.value)
-          ? 'tablesQueryResult.value is not defined'
-          : tablesQueryResult?.value?.error?.toString();
-        return {
-          tables: [],
-          lastRefreshedTs: Date.now(),
-          errorMessage: `Schema fetch failed: ${errorMsg}`
-        };
+        if (
+          isUndefined(catalogsQueryResult?.value) ||
+          isDefined(catalogsQueryResult?.value?.error)
+        ) {
+          let errorMsg = isUndefined(catalogsQueryResult?.value)
+            ? 'catalogsQueryResult.value is not defined'
+            : catalogsQueryResult?.value?.error?.toString();
+          return {
+            tables: [],
+            lastRefreshedTs: Date.now(),
+            errorMessage: `Schema fetch failed: ${errorMsg}`
+          };
+        }
+
+        let catalogsOutputRows: unknown[][] = [];
+
+        while (catalogsQueryResult !== null) {
+          let rows = catalogsQueryResult.value.data ?? [];
+          for (let row of rows) {
+            catalogsOutputRows.push(row as unknown[]);
+          }
+          if (!catalogsQueryResult.done) {
+            catalogsQueryResult = await catalogsResult.next();
+          } else {
+            break;
+          }
+        }
+
+        catalogs = catalogsOutputRows
+          .map(r => r[0] as string)
+          .filter(c => c !== 'system');
       }
 
-      let tablesColumns = tablesQueryResult.value.columns;
-      let tablesOutputRows: unknown[][] = [];
+      let allTablesRows: { [name: string]: any }[] = [];
+      let allColumnsRows: { [name: string]: any }[] = [];
 
-      while (tablesQueryResult !== null) {
-        let rows = tablesQueryResult.value.data ?? [];
-        for (let row of rows) {
-          tablesOutputRows.push(row as unknown[]);
-        }
-        if (!tablesQueryResult.done) {
-          tablesQueryResult = await tablesResult.next();
-        } else {
-          break;
+      for (let cat of catalogs) {
+        try {
+          let tablesResult = await tc.query(`
+            SELECT table_schema, table_name, table_type
+            FROM ${cat}.information_schema.tables
+            WHERE table_schema != 'information_schema'
+            ORDER BY table_schema, table_name
+          `);
+
+          let tablesQueryResult = await tablesResult.next();
+
+          if (
+            isUndefined(tablesQueryResult?.value) ||
+            isDefined(tablesQueryResult?.value?.error)
+          ) {
+            continue;
+          }
+
+          let tablesColumns = tablesQueryResult.value.columns;
+          let tablesOutputRows: unknown[][] = [];
+
+          while (tablesQueryResult !== null) {
+            let rows = tablesQueryResult.value.data ?? [];
+            for (let row of rows) {
+              tablesOutputRows.push(row as unknown[]);
+            }
+            if (!tablesQueryResult.done) {
+              tablesQueryResult = await tablesResult.next();
+            } else {
+              break;
+            }
+          }
+
+          let tablesRows = tablesOutputRows.map(r => {
+            let dRow: { [name: string]: any } = {};
+            tablesColumns.forEach((column: any, index: number) => {
+              dRow[column.name as string] = r[index];
+            });
+            return dRow;
+          });
+
+          let columnsResult = await tc.query(`
+            SELECT table_schema, table_name, column_name, data_type, is_nullable
+            FROM ${cat}.information_schema.columns
+            WHERE table_schema != 'information_schema'
+            ORDER BY table_schema, table_name, ordinal_position
+          `);
+
+          let columnsQueryResult = await columnsResult.next();
+
+          if (
+            isUndefined(columnsQueryResult?.value) ||
+            isDefined(columnsQueryResult?.value?.error)
+          ) {
+            continue;
+          }
+
+          let columnsColumns = columnsQueryResult.value.columns;
+          let columnsOutputRows: unknown[][] = [];
+
+          while (columnsQueryResult !== null) {
+            let rows = columnsQueryResult.value.data ?? [];
+            for (let row of rows) {
+              columnsOutputRows.push(row as unknown[]);
+            }
+            if (!columnsQueryResult.done) {
+              columnsQueryResult = await columnsResult.next();
+            } else {
+              break;
+            }
+          }
+
+          let columnsRows = columnsOutputRows.map(r => {
+            let dRow: { [name: string]: any } = {};
+            columnsColumns.forEach((column: any, index: number) => {
+              dRow[column.name as string] = r[index];
+            });
+            return dRow;
+          });
+
+          let schemaPrefix = catalogDiscovered ? `${cat}.` : '';
+
+          for (let row of tablesRows) {
+            row.table_schema = `${schemaPrefix}${row.table_schema}`;
+            allTablesRows.push(row);
+          }
+
+          for (let row of columnsRows) {
+            row.table_schema = `${schemaPrefix}${row.table_schema}`;
+            allColumnsRows.push(row);
+          }
+        } catch (e: any) {
+          logToConsoleBackend({
+            log: `Trino fetchSchema skipping catalog "${cat}": ${e.message}`,
+            logLevel: LogLevelEnum.Info,
+            logger: this.logger,
+            cs: this.cs
+          });
         }
       }
 
-      let tablesRows = tablesOutputRows.map(r => {
-        let dRow: { [name: string]: any } = {};
-        tablesColumns.forEach((column: any, index: number) => {
-          dRow[column.name as string] = r[index];
-        });
-        return dRow;
-      });
-
-      let columnsResult = await tc.query(`
-        SELECT table_schema, table_name, column_name, data_type, is_nullable
-        FROM information_schema.columns
-        WHERE table_schema != 'information_schema'
-        ORDER BY table_schema, table_name, ordinal_position
-      `);
-
-      let columnsQueryResult = await columnsResult.next();
-
-      if (
-        isUndefined(columnsQueryResult?.value) ||
-        isDefined(columnsQueryResult?.value?.error)
-      ) {
-        let errorMsg = isUndefined(columnsQueryResult?.value)
-          ? 'columnsQueryResult.value is not defined'
-          : columnsQueryResult?.value?.error?.toString();
-        return {
-          tables: [],
-          lastRefreshedTs: Date.now(),
-          errorMessage: `Schema fetch failed: ${errorMsg}`
-        };
-      }
-
-      let columnsColumns = columnsQueryResult.value.columns;
-      let columnsOutputRows: unknown[][] = [];
-
-      while (columnsQueryResult !== null) {
-        let rows = columnsQueryResult.value.data ?? [];
-        for (let row of rows) {
-          columnsOutputRows.push(row as unknown[]);
-        }
-        if (!columnsQueryResult.done) {
-          columnsQueryResult = await columnsResult.next();
-        } else {
-          break;
-        }
-      }
-
-      let columnsRows = columnsOutputRows.map(r => {
-        let dRow: { [name: string]: any } = {};
-        columnsColumns.forEach((column: any, index: number) => {
-          dRow[column.name as string] = r[index];
-        });
-        return dRow;
-      });
-
-      let tables: SchemaTable[] = tablesRows.map(row => {
-        let columns: SchemaColumn[] = columnsRows
+      let tables: SchemaTable[] = allTablesRows.map(row => {
+        let columns: SchemaColumn[] = allColumnsRows
           .filter(
             c =>
               c.table_schema === row.table_schema &&
