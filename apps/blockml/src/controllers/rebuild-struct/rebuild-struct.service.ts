@@ -57,12 +57,16 @@ import { makeId } from '#common/functions/make-id';
 import { toBooleanFromLowercaseString } from '#common/functions/to-boolean-from-lowercase-string';
 import { Ev } from '#common/interfaces/backend/ev';
 import { MproveConfig } from '#common/interfaces/backend/mprove-config';
+import { MproveConfigReference } from '#common/interfaces/backend/mprove-config-reference';
+import { MproveConfigRelationship } from '#common/interfaces/backend/mprove-config-relationship';
 import { ProjectConnection } from '#common/interfaces/backend/project-connection';
 import { BmlFile } from '#common/interfaces/blockml/bml-file';
 import { FileChart } from '#common/interfaces/blockml/internal/file-chart';
 import { FileDashboard } from '#common/interfaces/blockml/internal/file-dashboard';
 import { FileMod } from '#common/interfaces/blockml/internal/file-mod';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
+import { FileRelationship } from '#common/interfaces/blockml/internal/file-relationship';
+import { FileRelationshipReference } from '#common/interfaces/blockml/internal/file-relationship-reference';
 import { FileReport } from '#common/interfaces/blockml/internal/file-report';
 import { FileStore } from '#common/interfaces/blockml/internal/file-store';
 import { Model } from '#common/interfaces/blockml/model';
@@ -363,7 +367,24 @@ export class RebuildStructService {
               PROJECT_CONFIG_CURRENCY_SUFFIX,
             thousands_separator:
               item.cachedMproveConfig.thousandsSeparator ??
-              PROJECT_CONFIG_THOUSANDS_SEPARATOR
+              PROJECT_CONFIG_THOUSANDS_SEPARATOR,
+            relationships: (item.cachedMproveConfig.relationships ?? []).map(
+              rel => {
+                let fileRelationship: FileRelationship = {
+                  schema: rel.schema,
+                  references: (rel.references ?? []).map(ref => {
+                    let fileRelReference: FileRelationshipReference = {
+                      from: ref.from,
+                      to: ref.to,
+                      to_schema: ref.toSchema,
+                      type: ref.type
+                    };
+                    return fileRelReference;
+                  })
+                };
+                return fileRelationship;
+              }
+            )
           }
         : yamlBuildItem.projectConfig;
 
@@ -390,7 +411,8 @@ export class RebuildStructService {
           formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
           caseSensitiveStringFilters: toBooleanFromLowercaseString(
             PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS
-          )
+          ),
+          relationships: []
         }
       };
     }
@@ -764,7 +786,22 @@ export class RebuildStructService {
         thousandsSeparator: projectConfig.thousands_separator,
         caseSensitiveStringFilters: toBooleanFromLowercaseString(
           projectConfig.case_sensitive_string_filters
-        )
+        ),
+        relationships: (projectConfig.relationships ?? []).map(rel => {
+          let configRelationship: MproveConfigRelationship = {
+            schema: rel.schema,
+            references: (rel.references ?? []).map(ref => {
+              let relReference: MproveConfigReference = {
+                from: ref.from,
+                to: ref.to,
+                toSchema: ref.to_schema,
+                type: ref.type
+              };
+              return relReference;
+            })
+          };
+          return configRelationship;
+        })
       }
     };
 

@@ -85,7 +85,8 @@ export class StructsService {
         formatNumber: PROJECT_CONFIG_FORMAT_NUMBER,
         currencyPrefix: PROJECT_CONFIG_CURRENCY_PREFIX,
         currencySuffix: PROJECT_CONFIG_CURRENCY_SUFFIX,
-        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR
+        thousandsSeparator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
+        relationships: []
       },
       mproveVersion:
         this.cs.get<BackendConfig['mproveReleaseTag']>('mproveReleaseTag'),

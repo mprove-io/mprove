@@ -27,6 +27,7 @@ import { isUndefined } from '#common/functions/is-undefined';
 import { FileProjectConf } from '#common/interfaces/blockml/internal/file-project-conf';
 import { MyRegex } from '#common/models/my-regex';
 import { log } from '../extra/log';
+import { checkRelationships } from './check-relationships';
 
 let func = FuncEnum.CheckProjectConfig;
 
@@ -54,6 +55,7 @@ export function checkProjectConfig(
     format_number: PROJECT_CONFIG_FORMAT_NUMBER,
     thousands_separator: PROJECT_CONFIG_THOUSANDS_SEPARATOR,
     case_sensitive_string_filters: PROJECT_CONFIG_CASE_SENSITIVE_STRING_FILTERS,
+    relationships: [],
     fileName: undefined,
     fileExt: undefined,
     filePath: undefined,
@@ -260,6 +262,18 @@ export function checkProjectConfig(
         }
       }
     });
+
+    if (errorsOnStart === item.errors.length) {
+      checkRelationships(
+        {
+          conf: conf,
+          errors: item.errors,
+          structId: item.structId,
+          caller: item.caller
+        },
+        cs
+      );
+    }
 
     projectConfig = Object.assign(projectConfig, conf);
   } else if (

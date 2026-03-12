@@ -1,0 +1,9 @@
+mprove_dir: ./
+relationships:
+  - schema: c1.s1
+    references:
+      - from:
+          - a
+          - b
+        to: t2.c2
+        type: one_to_one

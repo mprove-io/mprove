@@ -1,5 +1,6 @@
 import { ProjectWeekStartEnum } from '#common/enums/project-week-start.enum';
 import { FileBasic } from './file-basic';
+import { FileRelationship } from './file-relationship';
 
 export interface FileProjectConf extends FileBasic {
   mprove_dir?: string;
@@ -28,4 +29,7 @@ export interface FileProjectConf extends FileBasic {
 
   thousands_separator?: string;
   thousands_separator_line_num?: number;
+
+  relationships?: FileRelationship[];
+  relationships_line_num?: number;
 }

@@ -1,0 +1,5 @@
+mprove_dir: ./
+relationships:
+  - schema: c1.s1
+    references:
+      - abc

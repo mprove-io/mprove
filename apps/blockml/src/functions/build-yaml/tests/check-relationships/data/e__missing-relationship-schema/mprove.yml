@@ -1,0 +1,6 @@
+mprove_dir: ./
+relationships:
+  - references:
+      - from: t1.c1
+        to: t2.c2
+        type: one_to_one

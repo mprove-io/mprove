@@ -119,5 +119,12 @@ export enum ParameterEnum {
   PlateWidth = 'plate_width',
   PlateHeight = 'plate_height',
   PlateX = 'plate_x',
-  PlateY = 'plate_y'
+  PlateY = 'plate_y',
+  //
+  Relationships = 'relationships',
+  Schema = 'schema',
+  References = 'references',
+  From = 'from',
+  To = 'to',
+  ToSchema = 'to_schema'
 }

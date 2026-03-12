@@ -184,7 +184,8 @@ export function checkTopUnknownParameters(
                 ParameterEnum.CurrencyPrefix.toString(),
                 ParameterEnum.CurrencySuffix.toString(),
                 ParameterEnum.ThousandsSeparator.toString(),
-                ParameterEnum.CaseSensitiveStringFilters.toString()
+                ParameterEnum.CaseSensitiveStringFilters.toString(),
+                ParameterEnum.Relationships.toString()
               ].indexOf(parameter) < 0
             ) {
               item.errors.push(
@@ -219,7 +220,8 @@ export function checkTopUnknownParameters(
             ParameterEnum.FieldTimeGroups.toString(),
             ParameterEnum.Results.toString(),
             ParameterEnum.Rows.toString(),
-            ParameterEnum.AccessRoles.toString()
+            ParameterEnum.AccessRoles.toString(),
+            ParameterEnum.Relationships.toString()
           ].indexOf(parameter) < 0
         ) {
           item.errors.push(
@@ -289,7 +291,8 @@ export function checkTopUnknownParameters(
             ParameterEnum.FieldTimeGroups.toString(),
             ParameterEnum.Results.toString(),
             ParameterEnum.Rows.toString(),
-            ParameterEnum.AccessRoles.toString()
+            ParameterEnum.AccessRoles.toString(),
+            ParameterEnum.Relationships.toString()
           ].indexOf(parameter) > -1
         ) {
           item.errors.push(
