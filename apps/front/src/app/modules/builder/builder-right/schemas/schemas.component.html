@@ -213,9 +213,10 @@
                       </span
                       ><span *ngIf="ref.referencedSchemaName"
                         >{{ ref.referencedSchemaName }}.</span
-                      >{{ ref.referencedTableName }}.{{
-                        ref.referencedColumnName
-                      }}
+                      >{{ ref.referencedTableName }}.<span
+                        class="font-semibold"
+                        >{{ ref.referencedColumnName }}</span
+                      >
                     </div>
                   </div>
                 </ng-template>
