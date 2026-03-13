@@ -18,12 +18,15 @@ import {
   SchemaForeignKey,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
+import { ToBackendGetConnectionSampleResponse } from '#common/interfaces/to-backend/connections/to-backend-get-connection-sample';
 import {
   ToBackendGetConnectionSchemasRequestPayload,
   ToBackendGetConnectionSchemasResponse
 } from '#common/interfaces/to-backend/connections/to-backend-get-connection-schemas';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
+import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { SampleDialogData } from './sample-dialog/sample-dialog.component';
 
 let SCHEMAS_SPINNER_NAME = 'schemasRefresh';
 
@@ -35,6 +38,7 @@ interface SchemaTreeNode {
   nodeType: 'connection' | 'table' | 'column' | 'index' | 'error';
   connectionId?: string;
   schemaDisplayName?: string;
+  tableName?: string;
   tableType?: string;
   columnName?: string;
   dataType?: string;
@@ -78,6 +82,7 @@ export class SchemasComponent implements OnInit {
   constructor(
     private navQuery: NavQuery,
     private apiService: ApiService,
+    private myDialogService: MyDialogService,
     private cd: ChangeDetectorRef,
     private spinner: NgxSpinnerService
   ) {}
@@ -260,6 +265,9 @@ export class SchemasComponent implements OnInit {
                 name: col.columnName,
                 searchName: col.columnName,
                 nodeType: 'column' as const,
+                connectionId: cs.connectionId,
+                schemaDisplayName: schemaName,
+                tableName: table.tableName,
                 columnName: col.columnName,
                 dataType: col.dataType,
                 isNullable: col.isNullable,
@@ -292,6 +300,9 @@ export class SchemasComponent implements OnInit {
               name: table.tableName,
               searchName: table.tableName,
               nodeType: 'table' as const,
+              connectionId: cs.connectionId,
+              schemaDisplayName: schemaName,
+              tableName: table.tableName,
               tableType: table.tableType,
               children: [...columnChildren, ...indexChildren]
             };
@@ -305,5 +316,59 @@ export class SchemasComponent implements OnInit {
     nodes.sort((a, b) => a.name.localeCompare(b.name));
 
     return nodes;
+  }
+
+  sampleOnClick(item: { node: TreeNode; event: MouseEvent }) {
+    let { node, event } = item;
+    event.stopPropagation();
+
+    let data = node.data as SchemaTreeNode;
+
+    let isColumn = data.nodeType === 'column';
+    let title = `${data.connectionId} - ${data.schemaDisplayName}`;
+    let subtitle = data.tableName;
+
+    let nav = this.navQuery.getValue();
+
+    this.apiService
+      .req({
+        pathInfoName: ToBackendRequestInfoNameEnum.ToBackendGetConnectionSample,
+        payload: {
+          projectId: nav.projectId,
+          envId: nav.envId,
+          connectionId: data.connectionId,
+          schemaName: data.schemaDisplayName,
+          tableName: data.tableName,
+          columnName: isColumn ? data.columnName : undefined
+        }
+      })
+      .pipe(
+        map((resp: ToBackendGetConnectionSampleResponse) => {
+          let dialogData: SampleDialogData = {
+            title: title,
+            subtitle: subtitle,
+            columnNames: [],
+            rows: [],
+            errorMessage: undefined,
+            projectId: nav.projectId,
+            envId: nav.envId,
+            connectionId: data.connectionId,
+            schemaName: data.schemaDisplayName,
+            tableName: data.tableName,
+            columnName: isColumn ? data.columnName : undefined
+          };
+
+          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            dialogData.columnNames = resp.payload.columnNames;
+            dialogData.rows = resp.payload.rows;
+          } else {
+            dialogData.errorMessage = 'Failed to fetch sample data';
+          }
+
+          this.myDialogService.showSample(dialogData);
+        }),
+        take(1)
+      )
+      .subscribe();
   }
 }

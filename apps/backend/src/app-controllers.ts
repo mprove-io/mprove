@@ -30,6 +30,7 @@ import { CheckSignUpController } from './controllers/check/check-sign-up/check-s
 import { CreateConnectionController } from './controllers/connections/create-connection/create-connection.controller';
 import { DeleteConnectionController } from './controllers/connections/delete-connection/delete-connection.controller';
 import { EditConnectionController } from './controllers/connections/edit-connection/edit-connection.controller';
+import { GetConnectionSampleController } from './controllers/connections/get-connection-sample/get-connection-sample.controller';
 import { GetConnectionSchemasController } from './controllers/connections/get-connection-schemas/get-connection-schemas.controller';
 import { GetConnectionsController } from './controllers/connections/get-connections/get-connections.controller';
 import { TestConnectionController } from './controllers/connections/test-connection/test-connection.controller';
@@ -160,6 +161,7 @@ export const appControllers = [
   DeleteConnectionController,
   GetConnectionsController,
   GetConnectionSchemasController,
+  GetConnectionSampleController,
 
   CreateFileController,
   DeleteFileController,

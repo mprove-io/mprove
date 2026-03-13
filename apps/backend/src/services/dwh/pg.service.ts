@@ -266,6 +266,48 @@ export class PgService {
     }
   }
 
+  async fetchSample(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+    let { connection, schemaName, tableName, columnName, offset } = item;
+
+    let postgresConnectionOptions: pg.IConnectionParameters<pg.IClient> =
+      this.optionsToPostgresOptions({
+        connection: connection
+      });
+
+    let pgp = pgPromise({ noWarnings: true });
+    let pgDb = pgp(postgresConnectionOptions);
+
+    try {
+      let sqlText: string;
+
+      if (isDefined(columnName)) {
+        sqlText = `SELECT DISTINCT "${columnName}" FROM (SELECT "${columnName}" FROM "${schemaName}"."${tableName}" LIMIT 10000) sub LIMIT 100`;
+      } else {
+        let sqlOffset = isDefined(offset) ? offset : 0;
+        sqlText = `SELECT * FROM "${schemaName}"."${tableName}" LIMIT 100 OFFSET ${sqlOffset}`;
+      }
+
+      let resultRows = await pgDb.any(sqlText);
+
+      let columnNames: string[] =
+        resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+
+      let rows: string[][] = resultRows.map(row =>
+        columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+      );
+
+      return { columnNames: columnNames, rows: rows };
+    } finally {
+      pgDb.$pool.end();
+    }
+  }
+
   async testConnection(item: {
     connection: ConnectionTab;
   }): Promise<TestConnectionResult> {

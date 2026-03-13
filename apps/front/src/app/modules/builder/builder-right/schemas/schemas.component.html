@@ -98,7 +98,7 @@
         >
           <ng-template #treeNodeTemplate let-node="node">
             <div
-              class="flex h-11 w-full select-none flex-row items-center rounded pr-5"
+              class="group flex h-11 w-full select-none flex-row items-center rounded pr-5"
               [ngClass]="{
                 'cursor-pointer': node.hasChildren,
                 'hover:bg-m50': true
@@ -124,7 +124,7 @@
 
               <div
                 *ngIf="node.data.nodeType !== 'column'"
-                class="ml-2 flex min-w-0 items-center"
+                class="ml-2 flex min-w-0 flex-1 items-center"
                 [ngClass]="{
                   'text-s500 text-[17px]': node.data.nodeType === 'connection',
                   'text-[16px] text-red-600': node.data.nodeType === 'error',
@@ -147,9 +147,18 @@
                 >
               </div>
 
+              <button
+                *ngIf="node.data.nodeType === 'table'"
+                type="button"
+                class="border-s400 text-s500 invisible ml-auto flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-400 hover:text-blue-400 focus:outline-none group-hover:visible"
+                (click)="sampleOnClick({ node: node, event: $event })"
+              >
+                Sample
+              </button>
+
               <div
                 *ngIf="node.data.nodeType === 'column'"
-                class="ml-2 flex items-center truncate text-[16px]"
+                class="ml-2 flex min-w-0 flex-1 items-center truncate text-[16px]"
               >
                 <span class="text-s1 font-semibold">{{
                   node.data.columnName
@@ -221,6 +230,15 @@
                   </div>
                 </ng-template>
               </div>
+
+              <button
+                *ngIf="node.data.nodeType === 'column'"
+                type="button"
+                class="border-s400 text-s500 invisible ml-auto flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-400 hover:text-blue-400 focus:outline-none group-hover:visible"
+                (click)="sampleOnClick({ node: node, event: $event })"
+              >
+                Sample
+              </button>
             </div>
           </ng-template>
         </tree-root>

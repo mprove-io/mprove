@@ -1,0 +1,102 @@
+<div class="flex max-h-[80vh] min-h-[300px] flex-col">
+  <div
+    class="border-s200 flex flex-shrink-0 flex-row items-center border-b px-8 py-5"
+  >
+    <div class="flex flex-col">
+      <span class="text-s500 text-base">{{ dataItem.title }}</span>
+      <span class="text-s1 text-lg font-medium">{{ dataItem.subtitle }}</span>
+      <span *ngIf="dataItem.columnName" class="text-s400 mt-3 text-base">
+        Distinct values from first 10 000 rows
+      </span>
+    </div>
+
+    <button
+      *ngIf="!dataItem.columnName"
+      type="button"
+      class="ml-20 flex flex-shrink-0 select-none items-center rounded border px-4 py-2 text-base focus:outline-none"
+      [ngClass]="
+        hasMore
+          ? 'border-s400 text-s500 hover:bg-s100'
+          : 'border-s200 text-s300'
+      "
+      [disabled]="!hasMore"
+      (click)="loadNext()"
+    >
+      Next 100 rows
+    </button>
+
+    <div *ngIf="isLoading" class="relative ml-5 flex h-7 w-7 flex-shrink-0">
+      <ngx-spinner
+        name="sampleNext"
+        color="#0084d1"
+        bdColor="#00000000"
+        size="default"
+        type="ball-clip-rotate"
+        [fullScreen]="false"
+        [disableAnimation]="true"
+        [zIndex]="99998"
+      >
+      </ngx-spinner>
+    </div>
+  </div>
+
+  <div
+    *ngIf="dataItem.errorMessage"
+    class="flex flex-1 items-center justify-center py-12"
+  >
+    <span class="text-base text-red-600">{{ dataItem.errorMessage }}</span>
+  </div>
+
+  <ng-scrollbar
+    *ngIf="!dataItem.errorMessage"
+    [orientation]="'vertical'"
+    [visibility]="'hover'"
+    [appearance]="'compact'"
+    class="flex-1"
+  >
+    <div class="px-8 py-5">
+      <div class="overflow-x-auto">
+        <table *ngIf="dataItem.columnNames?.length > 0">
+          <thead>
+            <tr>
+              <th
+                *ngFor="let col of dataItem.columnNames"
+                class="border-m0 bg-m150 min-w-[200px] max-w-[350px] border-4 p-0 align-top"
+              >
+                <div
+                  class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
+                >
+                  <div
+                    class="flex select-none flex-col items-start justify-center"
+                  >
+                    <div class="flex flex-row text-left font-semibold">
+                      {{ col }}
+                    </div>
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of dataItem.rows; let i = index">
+              <td
+                *ngFor="let cell of row"
+                class="min-w-[200px] max-w-[350px] truncate px-5"
+                [ngClass]="{ 'bg-s100': (i + 1) % 2 === 0 }"
+              >
+                {{ cell }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div
+          *ngIf="dataItem.columnNames?.length === 0"
+          class="text-s500 py-4 text-center text-base"
+        >
+          No data
+        </div>
+      </div>
+    </div>
+  </ng-scrollbar>
+</div>

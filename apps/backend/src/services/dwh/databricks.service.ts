@@ -128,6 +128,67 @@ export class DatabricksService {
     }
   }
 
+  async fetchSample(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+    let { connection, schemaName, tableName, columnName, offset } = item;
+
+    let config = this.optionsToDatabricksConfig({
+      connection: connection
+    });
+
+    let client = new DBSQLClient({ logger: quietLogger });
+
+    try {
+      await client.connect(this.buildConnectOptions({ config: config }));
+
+      let session = await client.openSession();
+
+      let sqlText: string;
+
+      if (isDefined(columnName)) {
+        sqlText = `SELECT DISTINCT \`${columnName}\` FROM (SELECT \`${columnName}\` FROM \`${schemaName}\`.\`${tableName}\` LIMIT 10000) sub LIMIT 100`;
+      } else {
+        let sqlOffset = isDefined(offset) ? offset : 0;
+        sqlText = `SELECT * FROM \`${schemaName}\`.\`${tableName}\` LIMIT 100 OFFSET ${sqlOffset}`;
+      }
+
+      let operation = await session.executeStatement(sqlText, {
+        runAsync: true
+      });
+      let resultRows = (await operation.fetchAll()) as any[];
+      await operation.close();
+      await session.close();
+
+      let columnNames: string[] =
+        resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+
+      let rows: string[][] = resultRows.map(row =>
+        columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+      );
+
+      return { columnNames: columnNames, rows: rows };
+    } finally {
+      try {
+        await client.close();
+      } catch (err: any) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_DATABRICKS_FAILED_TO_CLOSE_CONNECTION,
+            originalError: err
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+    }
+  }
+
   async fetchSchema(item: {
     connection: ConnectionTab;
   }): Promise<ConnectionSchema> {

@@ -90,6 +90,53 @@ export class PrestoService {
     }
   }
 
+  async fetchSample(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+    let { connection, schemaName, tableName, columnName, offset } = item;
+
+    let prestoClientConfig = this.optionsToPrestoClientConfig({
+      connection: connection
+    });
+
+    let pc = new PrestoClient(prestoClientConfig);
+
+    let catalog = connection.options.presto.catalog;
+
+    let sqlText: string;
+
+    if (isDefined(columnName)) {
+      sqlText = `SELECT DISTINCT "${columnName}" FROM (SELECT "${columnName}" FROM "${catalog}"."${schemaName}"."${tableName}" LIMIT 10000) sub LIMIT 100`;
+    } else {
+      let sqlOffset = isDefined(offset) ? offset : 0;
+      sqlText = `SELECT * FROM "${catalog}"."${schemaName}"."${tableName}" OFFSET ${sqlOffset} LIMIT 100`;
+    }
+
+    let result: PrestoQuery = await pc.query(sqlText);
+
+    let columns = result.columns;
+    let resultRows = result.data.map(r => {
+      let dRow: { [name: string]: any } = {};
+      columns.forEach((column: any, index: number) => {
+        dRow[column.name as string] = r[index];
+      });
+      return dRow;
+    });
+
+    let columnNames: string[] =
+      resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+
+    let rows: string[][] = resultRows.map(row =>
+      columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+    );
+
+    return { columnNames: columnNames, rows: rows };
+  }
+
   async fetchSchema(item: {
     connection: ConnectionTab;
   }): Promise<ConnectionSchema> {

@@ -32,6 +32,10 @@ import {
   RenameFolderDialogData
 } from '../modules/builder/builder-left/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
+  SampleDialogComponent,
+  SampleDialogData
+} from '../modules/builder/builder-right/schemas/sample-dialog/sample-dialog.component';
+import {
   CommitDialogComponent,
   CommitDialogDialogData
 } from '../modules/builder/commit-dialog/commit-dialog.component';
@@ -848,6 +852,23 @@ export class MyDialogService {
       closeButton: true,
       data: item,
       width: '80vw'
+    });
+  }
+
+  showSample(item: SampleDialogData): void {
+    let columnsCount = item.columnNames.length;
+
+    let minWidth = 500;
+
+    let calculatedWidth = Math.max(columnsCount * 300 + 64, minWidth);
+
+    let maxWidth = window.innerWidth * 0.9;
+
+    this.dialogService.open(SampleDialogComponent, {
+      enableClose: false,
+      closeButton: true,
+      data: item,
+      width: Math.min(calculatedWidth, maxWidth)
     });
   }
 }

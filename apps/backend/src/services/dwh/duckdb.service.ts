@@ -90,6 +90,56 @@ export class DuckDbService {
     }
   }
 
+  async fetchSample(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+    let { connection, schemaName, tableName, columnName, offset } = item;
+
+    let { duckdbConnectionOptions, dbPath } = this.optionsToDuckDbOptions({
+      connection: connection
+    });
+
+    let duckDbInstance: DuckDBInstance;
+    let dc: DuckDBConnection;
+
+    try {
+      duckDbInstance = await DuckDBInstance.create(
+        dbPath,
+        duckdbConnectionOptions
+      );
+
+      dc = await duckDbInstance.connect();
+
+      let sqlText: string;
+
+      if (isDefined(columnName)) {
+        sqlText = `SELECT DISTINCT "${columnName}" FROM (SELECT "${columnName}" FROM "${schemaName}"."${tableName}" LIMIT 10000) sub LIMIT 100`;
+      } else {
+        let sqlOffset = isDefined(offset) ? offset : 0;
+        sqlText = `SELECT * FROM "${schemaName}"."${tableName}" LIMIT 100 OFFSET ${sqlOffset}`;
+      }
+
+      let reader = await dc.runAndReadAll(sqlText);
+      let resultRows = reader.getRowObjectsJson() as any[];
+
+      let columnNames: string[] =
+        resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+
+      let rows: string[][] = resultRows.map(row =>
+        columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+      );
+
+      return { columnNames: columnNames, rows: rows };
+    } finally {
+      dc?.closeSync();
+      duckDbInstance?.closeSync();
+    }
+  }
+
   async fetchSchema(item: {
     connection: ConnectionTab;
   }): Promise<ConnectionSchema> {

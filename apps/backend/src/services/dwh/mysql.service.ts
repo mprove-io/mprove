@@ -237,6 +237,61 @@ export class MysqlService {
     }
   }
 
+  async fetchSample(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+    let { connection, schemaName, tableName, columnName, offset } = item;
+
+    let mysqlConnectionOptions = this.optionsToMysqlOptions({
+      connection: connection
+    });
+
+    let mc: MYSQL.Connection;
+
+    try {
+      mc = await MYSQL.createConnection(mysqlConnectionOptions);
+
+      let sqlText: string;
+
+      if (isDefined(columnName)) {
+        sqlText = `SELECT DISTINCT \`${columnName}\` FROM (SELECT \`${columnName}\` FROM \`${schemaName}\`.\`${tableName}\` LIMIT 10000) sub LIMIT 100`;
+      } else {
+        let sqlOffset = isDefined(offset) ? offset : 0;
+        sqlText = `SELECT * FROM \`${schemaName}\`.\`${tableName}\` LIMIT 100 OFFSET ${sqlOffset}`;
+      }
+
+      let [resultRows] = await mc.query(sqlText);
+      let dataRows = resultRows as any[];
+
+      let columnNames: string[] =
+        dataRows.length > 0 ? Object.keys(dataRows[0]) : [];
+
+      let rows: string[][] = dataRows.map(row =>
+        columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+      );
+
+      return { columnNames: columnNames, rows: rows };
+    } finally {
+      if (isDefined(mc)) {
+        mc.end().catch(er => {
+          logToConsoleBackend({
+            log: new ServerError({
+              message: ErEnum.BACKEND_MYSQL_CONNECTION_CLOSE_ERROR,
+              originalError: er
+            }),
+            logLevel: LogLevelEnum.Error,
+            logger: this.logger,
+            cs: this.cs
+          });
+        });
+      }
+    }
+  }
+
   async testConnection(item: {
     connection: ConnectionTab;
   }): Promise<TestConnectionResult> {

@@ -87,6 +87,78 @@ export class TrinoService {
     }
   }
 
+  async fetchSample(item: {
+    connection: ConnectionTab;
+    schemaName: string;
+    tableName: string;
+    columnName?: string;
+    offset?: number;
+  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+    let { connection, schemaName, tableName, columnName, offset } = item;
+
+    let trinoConnectionOptions = this.optionsToTrinoOptions({
+      connection: connection
+    });
+
+    let tc = Trino.create(trinoConnectionOptions);
+
+    let catalog = connection.options.trino.catalog;
+
+    let sqlText: string;
+
+    if (isDefined(columnName)) {
+      sqlText = `SELECT DISTINCT "${columnName}" FROM (SELECT "${columnName}" FROM "${catalog}"."${schemaName}"."${tableName}" LIMIT 10000) sub LIMIT 100`;
+    } else {
+      let sqlOffset = isDefined(offset) ? offset : 0;
+      sqlText = `SELECT * FROM "${catalog}"."${schemaName}"."${tableName}" OFFSET ${sqlOffset} LIMIT 100`;
+    }
+
+    let result = await tc.query(sqlText);
+    let queryResult = await result.next();
+
+    if (
+      isUndefined(queryResult?.value) ||
+      isDefined(queryResult?.value?.error)
+    ) {
+      let errorMsg = isUndefined(queryResult?.value)
+        ? 'queryResult.value is not defined'
+        : queryResult?.value?.error?.message;
+      throw new Error(`Sample query failed: ${errorMsg}`);
+    }
+
+    let trinoColumns = queryResult.value.columns;
+    let outputRows: unknown[][] = [];
+
+    while (queryResult !== null) {
+      let dataRows = queryResult.value.data ?? [];
+      for (let row of dataRows) {
+        outputRows.push(row as unknown[]);
+      }
+      if (!queryResult.done) {
+        queryResult = await result.next();
+      } else {
+        break;
+      }
+    }
+
+    let resultRows = outputRows.map(r => {
+      let dRow: { [name: string]: any } = {};
+      trinoColumns.forEach((column: any, index: number) => {
+        dRow[column.name as string] = r[index];
+      });
+      return dRow;
+    });
+
+    let columnNames: string[] =
+      resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+
+    let rows: string[][] = resultRows.map(row =>
+      columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+    );
+
+    return { columnNames: columnNames, rows: rows };
+  }
+
   async fetchSchema(item: {
     connection: ConnectionTab;
   }): Promise<ConnectionSchema> {
