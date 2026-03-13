@@ -12,6 +12,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { map, take } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
+import { isDefined } from '#common/functions/is-defined';
 import { ToBackendGetConnectionSampleResponse } from '#common/interfaces/to-backend/connections/to-backend-get-connection-sample';
 import { ApiService } from '#front/app/services/api.service';
 import { SharedModule } from '../../../../shared/shared.module';
@@ -92,7 +93,12 @@ export class SampleDialogComponent implements OnInit {
       .pipe(
         map((resp: ToBackendGetConnectionSampleResponse) => {
           setTimeout(() => {
-            if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+            if (
+              resp.info?.status === ResponseInfoStatusEnum.Ok &&
+              isDefined(resp.payload.errorMessage)
+            ) {
+              this.dataItem.errorMessage = resp.payload.errorMessage;
+            } else if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
               this.dataItem.columnNames = resp.payload.columnNames;
               this.dataItem.rows = resp.payload.rows;
               this.dataItem.errorMessage = undefined;

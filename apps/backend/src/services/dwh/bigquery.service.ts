@@ -20,6 +20,7 @@ import {
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
+import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
 
@@ -73,34 +74,42 @@ export class BigQueryService {
     tableName: string;
     columnName?: string;
     offset?: number;
-  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+  }): Promise<FetchSampleResult> {
     let { connection, schemaName, tableName, columnName, offset } = item;
 
     let bigqueryConnectionOptions = this.optionsToBigQueryOptions({
       connection: connection
     });
 
-    let bigquery = new BigQuery(bigqueryConnectionOptions);
+    try {
+      let bigquery = new BigQuery(bigqueryConnectionOptions);
 
-    let sqlText: string;
+      let sqlText: string;
 
-    if (isDefined(columnName)) {
-      sqlText = `SELECT DISTINCT \`${columnName}\` FROM (SELECT \`${columnName}\` FROM \`${schemaName}\`.\`${tableName}\` LIMIT 10000) sub LIMIT 100`;
-    } else {
-      let sqlOffset = isDefined(offset) ? offset : 0;
-      sqlText = `SELECT * FROM \`${schemaName}\`.\`${tableName}\` LIMIT 100 OFFSET ${sqlOffset}`;
+      if (isDefined(columnName)) {
+        sqlText = `SELECT DISTINCT \`${columnName}\` FROM (SELECT \`${columnName}\` FROM \`${schemaName}\`.\`${tableName}\` LIMIT 10000) sub LIMIT 100`;
+      } else {
+        let sqlOffset = isDefined(offset) ? offset : 0;
+        sqlText = `SELECT * FROM \`${schemaName}\`.\`${tableName}\` LIMIT 100 OFFSET ${sqlOffset}`;
+      }
+
+      let [resultRows] = await bigquery.query(sqlText);
+
+      let columnNames: string[] =
+        resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+
+      let rows: string[][] = resultRows.map((row: any) =>
+        columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+      );
+
+      return { columnNames: columnNames, rows: rows };
+    } catch (e: any) {
+      return {
+        columnNames: [],
+        rows: [],
+        errorMessage: `Sample fetch failed: ${e.message}`
+      };
     }
-
-    let [resultRows] = await bigquery.query(sqlText);
-
-    let columnNames: string[] =
-      resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
-
-    let rows: string[][] = resultRows.map((row: any) =>
-      columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
-    );
-
-    return { columnNames: columnNames, rows: rows };
   }
 
   async fetchSchema(item: {

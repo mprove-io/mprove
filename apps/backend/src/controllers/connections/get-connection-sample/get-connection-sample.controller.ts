@@ -30,6 +30,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { isUndefined } from '#common/functions/is-undefined';
+import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import {
   ToBackendGetConnectionSampleRequest,
   ToBackendGetConnectionSampleResponsePayload
@@ -166,7 +167,7 @@ export class GetConnectionSampleController {
       });
     }
 
-    let sampleResult: { columnNames: string[]; rows: string[][] };
+    let sampleResult: FetchSampleResult;
 
     if (connection.type === ConnectionTypeEnum.PostgreSQL) {
       sampleResult = await this.pgService.fetchSample({
@@ -236,7 +237,8 @@ export class GetConnectionSampleController {
 
     let payload: ToBackendGetConnectionSampleResponsePayload = {
       columnNames: sampleResult.columnNames,
-      rows: sampleResult.rows
+      rows: sampleResult.rows,
+      errorMessage: sampleResult.errorMessage
     };
 
     return payload;

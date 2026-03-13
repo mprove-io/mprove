@@ -17,7 +17,7 @@
       [ngClass]="
         hasMore
           ? 'border-s400 text-s500 hover:bg-s100'
-          : 'border-s200 text-s300'
+          : 'border-s300 text-s400'
       "
       [disabled]="!hasMore"
       (click)="loadNext()"
@@ -42,7 +42,7 @@
 
   <div
     *ngIf="dataItem.errorMessage"
-    class="flex flex-1 items-center justify-center py-12"
+    class="flex flex-1 items-center justify-center px-8 py-12"
   >
     <span class="text-base text-red-600">{{ dataItem.errorMessage }}</span>
   </div>

@@ -22,6 +22,7 @@ import {
   SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
+import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
 import { TabService } from '../tab.service';
@@ -58,7 +59,7 @@ export class SnowFlakeService {
     tableName: string;
     columnName?: string;
     offset?: number;
-  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+  }): Promise<FetchSampleResult> {
     let { connection, schemaName, tableName, columnName, offset } = item;
 
     let snoflakeOptions = this.optionsToSnowFlakeOptions({
@@ -101,6 +102,12 @@ export class SnowFlakeService {
       );
 
       return { columnNames: columnNames, rows: rows };
+    } catch (e: any) {
+      return {
+        columnNames: [],
+        rows: [],
+        errorMessage: `Sample fetch failed: ${e.message}`
+      };
     } finally {
       snowflakeConnection.destroy(destroyErr => {
         if (destroyErr) {

@@ -43,6 +43,8 @@ export class ToBackendGetConnectionSampleResponsePayload {
   columnNames: string[];
 
   rows: string[][];
+
+  errorMessage?: string;
 }
 
 export class ToBackendGetConnectionSampleResponse extends MyResponse {

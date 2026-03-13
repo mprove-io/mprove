@@ -23,6 +23,7 @@ import {
   SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
+import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
 
@@ -93,70 +94,82 @@ export class TrinoService {
     tableName: string;
     columnName?: string;
     offset?: number;
-  }): Promise<{ columnNames: string[]; rows: string[][] }> {
+  }): Promise<FetchSampleResult> {
     let { connection, schemaName, tableName, columnName, offset } = item;
 
     let trinoConnectionOptions = this.optionsToTrinoOptions({
       connection: connection
     });
 
-    let tc = Trino.create(trinoConnectionOptions);
+    try {
+      let tc = Trino.create(trinoConnectionOptions);
 
-    let catalog = connection.options.trino.catalog;
+      let catalog = connection.options.trino.catalog;
 
-    let sqlText: string;
+      let sqlText: string;
 
-    if (isDefined(columnName)) {
-      sqlText = `SELECT DISTINCT "${columnName}" FROM (SELECT "${columnName}" FROM "${catalog}"."${schemaName}"."${tableName}" LIMIT 10000) sub LIMIT 100`;
-    } else {
-      let sqlOffset = isDefined(offset) ? offset : 0;
-      sqlText = `SELECT * FROM "${catalog}"."${schemaName}"."${tableName}" OFFSET ${sqlOffset} LIMIT 100`;
-    }
-
-    let result = await tc.query(sqlText);
-    let queryResult = await result.next();
-
-    if (
-      isUndefined(queryResult?.value) ||
-      isDefined(queryResult?.value?.error)
-    ) {
-      let errorMsg = isUndefined(queryResult?.value)
-        ? 'queryResult.value is not defined'
-        : queryResult?.value?.error?.message;
-      throw new Error(`Sample query failed: ${errorMsg}`);
-    }
-
-    let trinoColumns = queryResult.value.columns;
-    let outputRows: unknown[][] = [];
-
-    while (queryResult !== null) {
-      let dataRows = queryResult.value.data ?? [];
-      for (let row of dataRows) {
-        outputRows.push(row as unknown[]);
-      }
-      if (!queryResult.done) {
-        queryResult = await result.next();
+      if (isDefined(columnName)) {
+        sqlText = `SELECT DISTINCT "${columnName}" FROM (SELECT "${columnName}" FROM "${catalog}"."${schemaName}"."${tableName}" LIMIT 10000) sub LIMIT 100`;
       } else {
-        break;
+        let sqlOffset = isDefined(offset) ? offset : 0;
+        sqlText = `SELECT * FROM "${catalog}"."${schemaName}"."${tableName}" OFFSET ${sqlOffset} LIMIT 100`;
       }
-    }
 
-    let resultRows = outputRows.map(r => {
-      let dRow: { [name: string]: any } = {};
-      trinoColumns.forEach((column: any, index: number) => {
-        dRow[column.name as string] = r[index];
+      let result = await tc.query(sqlText);
+      let queryResult = await result.next();
+
+      if (
+        isUndefined(queryResult?.value) ||
+        isDefined(queryResult?.value?.error)
+      ) {
+        let errorMsg = isUndefined(queryResult?.value)
+          ? 'queryResult.value is not defined'
+          : queryResult?.value?.error?.message;
+        return {
+          columnNames: [],
+          rows: [],
+          errorMessage: `Sample fetch failed: ${errorMsg}`
+        };
+      }
+
+      let trinoColumns = queryResult.value.columns;
+      let outputRows: unknown[][] = [];
+
+      while (queryResult !== null) {
+        let dataRows = queryResult.value.data ?? [];
+        for (let row of dataRows) {
+          outputRows.push(row as unknown[]);
+        }
+        if (!queryResult.done) {
+          queryResult = await result.next();
+        } else {
+          break;
+        }
+      }
+
+      let resultRows = outputRows.map(r => {
+        let dRow: { [name: string]: any } = {};
+        trinoColumns.forEach((column: any, index: number) => {
+          dRow[column.name as string] = r[index];
+        });
+        return dRow;
       });
-      return dRow;
-    });
 
-    let columnNames: string[] =
-      resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
+      let columnNames: string[] =
+        resultRows.length > 0 ? Object.keys(resultRows[0]) : [];
 
-    let rows: string[][] = resultRows.map(row =>
-      columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
-    );
+      let rows: string[][] = resultRows.map(row =>
+        columnNames.map(col => (row[col] === null ? 'NULL' : String(row[col])))
+      );
 
-    return { columnNames: columnNames, rows: rows };
+      return { columnNames: columnNames, rows: rows };
+    } catch (e: any) {
+      return {
+        columnNames: [],
+        rows: [],
+        errorMessage: `Sample fetch failed: ${e.message}`
+      };
+    }
   }
 
   async fetchSchema(item: {

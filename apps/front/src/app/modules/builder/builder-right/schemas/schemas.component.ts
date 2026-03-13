@@ -358,7 +358,12 @@ export class SchemasComponent implements OnInit {
             columnName: isColumn ? data.columnName : undefined
           };
 
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
+          if (
+            resp.info?.status === ResponseInfoStatusEnum.Ok &&
+            isDefined(resp.payload.errorMessage)
+          ) {
+            dialogData.errorMessage = resp.payload.errorMessage;
+          } else if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             dialogData.columnNames = resp.payload.columnNames;
             dialogData.rows = resp.payload.rows;
           } else {
