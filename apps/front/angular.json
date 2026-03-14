@@ -35,6 +35,11 @@
                 "output": "/assets/vscode-oniguruma"
               },
               {
+                "glob": "vizdom_ts_bg.wasm",
+                "input": "node_modules/@vizdom/vizdom-ts-web",
+                "output": "/assets/vizdom"
+              },
+              {
                 "glob": "**/markdown.tmLanguage.json",
                 "input": "node_modules/shiki/languages",
                 "output": "/assets/shiki/languages"

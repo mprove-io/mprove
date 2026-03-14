@@ -1,0 +1,139 @@
+::ng-deep .schema-table-node {
+  min-width: 220px;
+  width: 250px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  overflow: hidden;
+  font-size: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .node-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+::ng-deep .node-header-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+::ng-deep .node-sample-btn {
+  flex-shrink: 0;
+  margin-left: 6px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  &:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+}
+
+::ng-deep .node-columns {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+::ng-deep .node-column {
+  display: flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  gap: 6px;
+  position: relative;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+::ng-deep .node-col-name {
+  font-weight: 600;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100px;
+}
+
+::ng-deep .node-col-type {
+  color: #9ca3af;
+  text-transform: uppercase;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+::ng-deep .node-col-badge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+::ng-deep .node-col-badge.pk {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+::ng-deep .node-col-badge.unique {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+::ng-deep .node-col-badge.fk {
+  background: #dbeafe;
+  color: #2563eb;
+}
+::ng-deep .node-col-sample-btn {
+  flex-shrink: 0;
+  margin-left: auto;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+  .node-column:hover & {
+    opacity: 1;
+  }
+  &:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+}
+
+// Hide ngx-vflow default handle circles
+::ng-deep .default-handle {
+  r: 0;
+  fill: none;
+  stroke: none;
+}
+
+// Edge label styling
+::ng-deep .edge-label {
+  font-size: 10px;
+  fill: #6b7280;
+}

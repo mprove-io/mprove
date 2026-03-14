@@ -32,6 +32,10 @@ import {
   RenameFolderDialogData
 } from '../modules/builder/builder-left/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
+  MapDialogComponent,
+  MapDialogData
+} from '../modules/builder/builder-right/schemas/map-dialog/map-dialog.component';
+import {
   SampleDialogComponent,
   SampleDialogData
 } from '../modules/builder/builder-right/schemas/sample-dialog/sample-dialog.component';
@@ -852,6 +856,16 @@ export class MyDialogService {
       closeButton: true,
       data: item,
       width: '80vw'
+    });
+  }
+
+  showMap(item: MapDialogData): void {
+    this.dialogService.open(MapDialogComponent, {
+      enableClose: false,
+      closeButton: true,
+      data: item,
+      width: '90vw',
+      height: '85vh'
     });
   }
 

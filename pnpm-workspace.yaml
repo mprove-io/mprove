@@ -119,6 +119,7 @@ catalog:
   '@types/tiny-async-pool': 1.0.5
   '@types/walk': 2.3.4
   '@vaadin/date-picker': 23.5.3
+  '@vizdom/vizdom-ts-web': 0.1.19
   '@vaadin/time-picker': 23.5.3
   e2b: 2.12.0
   ag-grid-angular: 33.3.0
@@ -165,6 +166,7 @@ catalog:
   nanoid: 3.3.10
   neoip: 3.0.1
   nest-winston: 1.9.4
+  ngx-vflow: 2.5.0
   ngx-color: 10.1.0
   ngx-echarts: 21.0.0
   ngx-image-compress: 18.1.5

@@ -26,6 +26,7 @@ import {
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
+import { MapDialogData } from './map-dialog/map-dialog.component';
 import { SampleDialogData } from './sample-dialog/sample-dialog.component';
 
 let SCHEMAS_SPINNER_NAME = 'schemasRefresh';
@@ -316,6 +317,25 @@ export class SchemasComponent implements OnInit {
     nodes.sort((a, b) => a.name.localeCompare(b.name));
 
     return nodes;
+  }
+
+  graphOnClick(item: { node: TreeNode; event: MouseEvent }) {
+    let { node, event } = item;
+    event.stopPropagation();
+
+    let data = node.data as SchemaTreeNode;
+    let nav = this.navQuery.getValue();
+
+    let dialogData: MapDialogData = {
+      connectionSchemaItems: this.connectionSchemaItems,
+      connectionId: data.connectionId,
+      schemaName: data.schemaDisplayName,
+      tableName: undefined,
+      projectId: nav.projectId,
+      envId: nav.envId
+    };
+
+    this.myDialogService.showMap(dialogData);
   }
 
   sampleOnClick(item: { node: TreeNode; event: MouseEvent }) {

@@ -74,6 +74,8 @@
     "js-yaml": "catalog:",
     "luxon": "catalog:",
     "nanoid": "catalog:",
+    "@vizdom/vizdom-ts-web": "catalog:",
+    "ngx-vflow": "catalog:",
     "ngx-color": "catalog:",
     "ngx-echarts": "catalog:",
     "ngx-image-compress": "catalog:",
