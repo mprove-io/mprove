@@ -400,7 +400,7 @@
             >
 
             <button
-              class="ml-7 flex w-[100px] select-none flex-row items-center justify-center text-lg focus:outline-none"
+              class="ml-7 mr-5 flex w-[155px] select-none flex-row items-center justify-center text-lg focus:outline-none"
               [ngClass]="{
                 'text-m500 font-semibold':
                   builderRight === builderRightValidation &&
@@ -422,44 +422,43 @@
                   )
               }"
               (click)="setBuilderRight(builderRightValidation)"
-              >Validation</button
-            >
-
-            <div
-              class="text-m0 ml-4 mr-5 flex h-7 min-w-7 flex-shrink-0 select-none items-center justify-center rounded px-2 py-[1px]"
-              [ngClass]="{
-                'bg-m500':
-                  builderRight === builderRightValidation &&
-                  !secondFileNodeId &&
-                  (builderLeft === builderLeftTree ||
-                    builderLeft === builderLeftInfo ||
-                    lastUrl === pathNewSession ||
-                    lastUrl === pathSelectFile ||
-                    !file?.fileId),
-                'bg-r1':
-                  (builderRight !== builderRightValidation ||
-                    !(
-                      !secondFileNodeId &&
-                      (builderLeft === builderLeftTree ||
-                        builderLeft === builderLeftInfo ||
-                        lastUrl === pathNewSession ||
-                        lastUrl === pathSelectFile ||
-                        !file?.fileId)
-                    )) &&
-                  struct?.errors?.length > 0,
-                'bg-s400':
-                  (builderRight !== builderRightValidation ||
-                    !(
-                      !secondFileNodeId &&
-                      (builderLeft === builderLeftTree ||
-                        builderLeft === builderLeftInfo ||
-                        lastUrl === pathNewSession ||
-                        lastUrl === pathSelectFile ||
-                        !file?.fileId)
-                    )) &&
-                  !(struct?.errors?.length > 0)
-              }"
-              >{{ struct?.errors?.length }}</div
+              ><span class="w-[100px]">Validation</span>
+              <div
+                class="text-m0 ml-4 flex h-7 min-w-7 flex-shrink-0 select-none items-center justify-center rounded px-2 py-[1px]"
+                [ngClass]="{
+                  'bg-m500':
+                    builderRight === builderRightValidation &&
+                    !secondFileNodeId &&
+                    (builderLeft === builderLeftTree ||
+                      builderLeft === builderLeftInfo ||
+                      lastUrl === pathNewSession ||
+                      lastUrl === pathSelectFile ||
+                      !file?.fileId),
+                  'bg-r1':
+                    (builderRight !== builderRightValidation ||
+                      !(
+                        !secondFileNodeId &&
+                        (builderLeft === builderLeftTree ||
+                          builderLeft === builderLeftInfo ||
+                          lastUrl === pathNewSession ||
+                          lastUrl === pathSelectFile ||
+                          !file?.fileId)
+                      )) &&
+                    struct?.errors?.length > 0,
+                  'bg-s400':
+                    (builderRight !== builderRightValidation ||
+                      !(
+                        !secondFileNodeId &&
+                        (builderLeft === builderLeftTree ||
+                          builderLeft === builderLeftInfo ||
+                          lastUrl === pathNewSession ||
+                          lastUrl === pathSelectFile ||
+                          !file?.fileId)
+                      )) &&
+                    !(struct?.errors?.length > 0)
+                }"
+                >{{ struct?.errors?.length }}</div
+              ></button
             >
           </div>
         </div>
