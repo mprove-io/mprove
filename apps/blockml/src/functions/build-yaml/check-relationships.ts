@@ -4,6 +4,7 @@ import { BmError } from '#blockml/models/bm-error';
 import { RELATIONSHIP_TYPE_VALUES } from '#common/constants/top';
 import { LINE_NUM } from '#common/constants/top-blockml';
 import { ParameterEnum } from '#common/enums/docs/parameter.enum';
+import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import { CallerEnum } from '#common/enums/special/caller.enum';
 import { ErTitleEnum } from '#common/enums/special/er-title.enum';
 import { FuncEnum } from '#common/enums/special/func.enum';
@@ -17,6 +18,19 @@ import { MyRegex } from '#common/models/my-regex';
 import { log } from '../extra/log';
 
 let func = FuncEnum.CheckRelationships;
+
+function getExpectedMirrorType(item: {
+  type: RelationshipTypeEnum;
+}): RelationshipTypeEnum {
+  let { type } = item;
+  if (type === RelationshipTypeEnum.OneToMany) {
+    return RelationshipTypeEnum.ManyToOne;
+  }
+  if (type === RelationshipTypeEnum.ManyToOne) {
+    return RelationshipTypeEnum.OneToMany;
+  }
+  return type;
+}
 
 export function checkRelationships(
   item: {
@@ -213,6 +227,8 @@ export function checkRelationships(
       );
       return;
     }
+
+    let relErrorsBeforeRefs = item.errors.length;
 
     relElement.references.forEach(refElement => {
       if (isDefined(refElement) && refElement.constructor !== Object) {
@@ -478,6 +494,107 @@ export function checkRelationships(
         }
       }
     });
+
+    let hasRefErrors = item.errors.length > relErrorsBeforeRefs;
+    if (hasRefErrors) {
+      return;
+    }
+
+    // Duplicate detection
+    let refKeyMap: Map<string, number[]> = new Map();
+
+    relElement.references.forEach(refElement => {
+      let fromValue = refElement.from.toString();
+      let toValue = refElement.to.toString();
+      let toSchemaValue = isDefined(refElement.to_schema)
+        ? refElement.to_schema.toString()
+        : '';
+      let key = fromValue + '|' + toValue + '|' + toSchemaValue;
+
+      let existing = refKeyMap.get(key);
+      if (isUndefined(existing)) {
+        refKeyMap.set(key, [refElement.from_line_num]);
+      } else {
+        existing.push(refElement.from_line_num);
+      }
+    });
+
+    let hasDuplicates = false;
+
+    refKeyMap.forEach(lineNums => {
+      if (lineNums.length > 1) {
+        hasDuplicates = true;
+        item.errors.push(
+          new BmError({
+            title: ErTitleEnum.RELATIONSHIP_REFERENCE_DUPLICATE,
+            message:
+              'duplicate reference with same "from" and "to" values found within the same schema',
+            lines: lineNums.map(l => ({
+              line: l,
+              name: conf.fileName,
+              path: conf.filePath
+            }))
+          })
+        );
+      }
+    });
+
+    if (hasDuplicates) {
+      return;
+    }
+
+    // Mirror type mismatch detection
+    let refs = relElement.references;
+
+    for (let i = 0; i < refs.length; i++) {
+      for (let j = i + 1; j < refs.length; j++) {
+        let refA = refs[i];
+        let refB = refs[j];
+
+        let aFrom = refA.from.toString();
+        let aTo = refA.to.toString();
+        let bFrom = refB.from.toString();
+        let bTo = refB.to.toString();
+
+        let aToSchema = isDefined(refA.to_schema)
+          ? refA.to_schema.toString()
+          : '';
+        let bToSchema = isDefined(refB.to_schema)
+          ? refB.to_schema.toString()
+          : '';
+
+        let isMirror =
+          aFrom === bTo && aTo === bFrom && aToSchema === bToSchema;
+
+        if (isMirror) {
+          let expectedType = getExpectedMirrorType({ type: refA.type });
+          let actualType = refB.type;
+
+          let isTypeMismatch = expectedType !== actualType;
+
+          if (isTypeMismatch) {
+            item.errors.push(
+              new BmError({
+                title: ErTitleEnum.RELATIONSHIP_REFERENCE_TYPE_MISMATCH,
+                message: `mirror references have incompatible types: "${refA.type}" and "${refB.type}"`,
+                lines: [
+                  {
+                    line: refA.type_line_num,
+                    name: conf.fileName,
+                    path: conf.filePath
+                  },
+                  {
+                    line: refB.type_line_num,
+                    name: conf.fileName,
+                    path: conf.filePath
+                  }
+                ]
+              })
+            );
+          }
+        }
+      }
+    }
   });
 
   if (errorsOnStart !== item.errors.length) {
