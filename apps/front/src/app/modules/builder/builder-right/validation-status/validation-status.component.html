@@ -1,5 +1,5 @@
 <div
-  class="flex h-full flex-col items-center justify-center"
+  class="bg-m0 flex h-full w-full min-w-[2px] select-none flex-col items-center justify-center rounded shadow"
   *ngIf="
     nav?.needValidate === true ||
     (repo &&
@@ -44,11 +44,12 @@
     <button
       *ngIf="nav?.needValidate === true"
       data-cy="filesRightValidateButton"
-      class="text-m0 mt-7 h-11 rounded px-5 py-2 text-lg font-medium focus:outline-none"
+      class="mt-7 h-11 rounded border px-5 py-2 text-lg font-medium focus:outline-none"
       type="button"
       [ngClass]="{
-        'bg-m600': isEditor === true && needSave === false,
-        'bg-s400 cursor-default': isEditor === false || needSave === true
+        'bg-m600 border-m600 text-m0': isEditor === true && needSave === false,
+        'border-s300 text-s400 cursor-default':
+          isEditor === false || needSave === true
       }"
       (click)="validate()"
       [disabled]="isEditor === false || needSave === true"
@@ -61,10 +62,12 @@
       "
       type="button"
       data-cy="filesRightRevalidateButton"
-      class="border-s400 text-s500 mt-5 h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-lg font-medium focus:outline-none"
+      class="mt-5 h-11 flex-shrink-0 select-none rounded border px-5 py-2 text-lg font-medium focus:outline-none"
       [ngClass]="{
-        'hover:bg-gray-50': isEditor === true && needSave === false,
-        'cursor-default bg-gray-100': isEditor === false || needSave === true
+        'border-s400 text-s500 hover:bg-gray-50':
+          isEditor === true && needSave === false,
+        'border-s300 text-s400 cursor-default':
+          isEditor === false || needSave === true
       }"
       (click)="validate()"
       [disabled]="isEditor === false || needSave === true"
@@ -75,6 +78,7 @@
 
 <m-repo-conflicts
   *ngIf="nav?.needValidate === false && repo && repo.conflicts.length > 0"
+  class="flex w-full"
 ></m-repo-conflicts>
 
 <m-blockml-errors
@@ -85,6 +89,7 @@
     struct &&
     struct.errors.length > 0
   "
+  class="flex w-full"
 ></m-blockml-errors>
 
 <div *ngIf="repo$ | async"></div>
