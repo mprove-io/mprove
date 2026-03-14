@@ -10,6 +10,7 @@ import type {
   QuestionRequest,
   SessionStatus
 } from '@opencode-ai/sdk/v2';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { combineLatest } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
@@ -88,8 +89,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   pauseReason: PauseReasonEnum;
   retryMessage: string;
   lastSessionError: Record<string, unknown>;
-  statusTextChars: { char: string; index: number }[] = [];
-  cachedStatusText = '';
+  workingSpinnerName = 'sessionInProgress';
+  workingSpinnerColor = '#0084d1';
   debugExpandedEvents: Record<string, boolean> = {};
   pendingUserMessages: string[] = [];
 
@@ -177,7 +178,8 @@ export class SessionComponent implements OnInit, OnDestroy {
     private uiQuery: UiQuery,
     private agentModelsQuery: AgentModelsQuery,
     private agentSessionService: AgentSessionService,
-    private agentMessagesService: AgentMessagesService
+    private agentMessagesService: AgentMessagesService,
+    private spinner: NgxSpinnerService
   ) {}
 
   ngOnInit() {}
@@ -186,26 +188,12 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.agentSessionService.destroy();
   }
 
-  trackByIndex(index: number): number {
-    return index;
-  }
-
-  updateStatusTextChars() {
-    const text = this.isAgentBusy
-      ? this.retryMessage
-        ? 'Retrying'
-        : 'Working'
-      : '';
-    if (text !== this.cachedStatusText) {
-      this.cachedStatusText = text;
-      if (!text) {
-        this.statusTextChars = [];
-      } else {
-        this.statusTextChars = text.split('').map((char, i) => ({
-          char: char === ' ' ? '\u00A0' : char,
-          index: i
-        }));
-      }
+  updateWorkingSpinner() {
+    if (this.isWorking) {
+      this.workingSpinnerColor = this.retryMessage ? '#fbbf24' : '#0084d1';
+      this.spinner.show(this.workingSpinnerName);
+    } else {
+      this.spinner.hide(this.workingSpinnerName);
     }
   }
 
@@ -293,7 +281,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.isAgentBusy = true;
     this.isWorking = true;
 
-    this.updateStatusTextChars();
+    this.updateWorkingSpinner();
 
     this.scrollTrigger++;
     this.sessionMessages?.scrollToBottom();
@@ -470,7 +458,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.lastSessionError = sessionData.lastSessionError;
     this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
 
-    this.updateStatusTextChars();
+    this.updateWorkingSpinner();
 
     this.previousTurnsCount = this.turns.length;
     this.previousLastTurnResponsesExist =
@@ -562,7 +550,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.lastSessionError = sessionData.lastSessionError;
     this.isLastErrorRecovered = sessionData.isLastErrorRecovered;
 
-    this.updateStatusTextChars();
+    this.updateWorkingSpinner();
 
     this.agentSessionService.managePollingAndSse();
 
