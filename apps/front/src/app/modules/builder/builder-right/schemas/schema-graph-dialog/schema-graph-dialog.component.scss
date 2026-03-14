@@ -27,12 +27,13 @@
 ::ng-deep .node-header-subtitle {
   font-size: 10px;
   font-weight: 400;
-  opacity: 0.7;
   padding: 3px 10px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  border-bottom: 1px solid #f3f4f6;
+  border-top: 1px solid #e5e7eb;
+  background-color: #fafafa;
+  color: #1f2937;
 }
 
 ::ng-deep .node-sample-btn {
@@ -155,6 +156,59 @@
     background: #f3f4f6;
     color: #374151;
   }
+}
+
+::ng-deep .node-indexes {
+  border-top: 1px solid #e5e7eb;
+  background-color: #fafafa;
+}
+
+::ng-deep .node-index {
+  display: flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  gap: 6px;
+  overflow: hidden;
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+::ng-deep .node-idx-name {
+  font-weight: 400;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 20px;
+  max-width: 100px;
+  font-size: 10px;
+}
+
+::ng-deep .node-idx-meta {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+::ng-deep .node-idx-badge {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+::ng-deep .node-idx-columns {
+  color: #9ca3af;
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 // Hide ngx-vflow default handle circles

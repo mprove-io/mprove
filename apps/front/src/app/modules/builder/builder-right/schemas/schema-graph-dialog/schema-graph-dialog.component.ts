@@ -8,6 +8,7 @@ import {
   WritableSignal
 } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { TippyDirective } from '@ngneat/helipopper';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Edge, Node, Vflow, VflowComponent } from 'ngx-vflow';
@@ -63,6 +64,7 @@ interface SchemaGraphTableNode {
   imports: [
     CommonModule,
     SharedModule,
+    TippyDirective,
     ...Vflow,
     NgScrollbarModule,
     NgxSpinnerModule
@@ -93,6 +95,7 @@ export class SchemaGraphDialogComponent implements OnInit {
   graphLoading = true;
   graphOverlay = true;
   showNodeSubtitle = false;
+  showIndexes = false;
 
   showSample = false;
   sampleTitle = '';
@@ -233,6 +236,11 @@ export class SchemaGraphDialogComponent implements OnInit {
     this.showNodeSubtitle = connectionSchemaKeys.size > 1;
   }
 
+  toggleIndexes() {
+    this.showIndexes = !this.showIndexes;
+    this.rebuildGraph();
+  }
+
   toggleSchemaExpanded(item: { schemaNode: SchemaGraphSchemaNode }) {
     let { schemaNode } = item;
     schemaNode.expanded = !schemaNode.expanded;
@@ -294,6 +302,7 @@ export class SchemaGraphDialogComponent implements OnInit {
 
     let result: MapGraphResult = await buildAllTablesGraph({
       tables: checkedTables,
+      showIndexes: this.showIndexes,
       onSelect: selectItem => {
         this.selectTable(selectItem);
       },
@@ -348,6 +357,7 @@ export class SchemaGraphDialogComponent implements OnInit {
 
     let result: MapGraphResult = await buildAllTablesGraph({
       tables: checkedTables,
+      showIndexes: this.showIndexes,
       onSelect: selectItem => {
         this.selectTable(selectItem);
       },

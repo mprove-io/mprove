@@ -4,6 +4,7 @@ import { Edge, Node } from 'ngx-vflow';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import {
   SchemaColumn,
+  SchemaIndex,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
 
@@ -17,6 +18,7 @@ export interface MapNodeData {
   schemaName: string;
   tableName: string;
   columns: SchemaColumn[];
+  indexes: SchemaIndex[];
   color: 'orange' | 'gray';
   selectedColumnName: string;
   onSelect: () => void;
@@ -97,9 +99,12 @@ function getEdgeMarkers(item: {
   }
 }
 
-function estimateNodeHeight(item: { columnCount: number }): number {
-  let { columnCount } = item;
-  return HEADER_HEIGHT + columnCount * ROW_HEIGHT + NODE_PADDING;
+function estimateNodeHeight(item: {
+  columnCount: number;
+  indexCount: number;
+}): number {
+  let { columnCount, indexCount } = item;
+  return HEADER_HEIGHT + (columnCount + indexCount) * ROW_HEIGHT + NODE_PADDING;
 }
 
 let vizdomInitialized = false;
@@ -115,6 +120,7 @@ async function ensureVizdomInitialized(): Promise<void> {
 
 export async function buildAllTablesGraph(item: {
   tables: GraphTable[];
+  showIndexes: boolean;
   onSelect: (item: {
     tableFullId: string;
     connectionId: string;
@@ -139,6 +145,7 @@ export async function buildAllTablesGraph(item: {
 }): Promise<MapGraphResult> {
   let {
     tables,
+    showIndexes,
     onSelect,
     onHover,
     onUnhover,
@@ -235,8 +242,10 @@ export async function buildAllTablesGraph(item: {
   let nodeHeights = new Map<string, number>();
 
   for (let table of allTables) {
+    let indexCount = showIndexes ? table.indexes.length : 0;
     let height = estimateNodeHeight({
-      columnCount: table.columns.length
+      columnCount: table.columns.length,
+      indexCount: indexCount
     });
     nodeHeights.set(table.tableFullId, height);
 
@@ -293,6 +302,7 @@ export async function buildAllTablesGraph(item: {
       schemaName: table.schemaName,
       tableName: table.tableName,
       columns: table.columns,
+      indexes: showIndexes ? table.indexes : [],
       color: 'gray',
       selectedColumnName: undefined,
       onSelect: () =>

@@ -220,11 +220,6 @@
                 }}</span>
               </div>
 
-              <div *ngIf="showNodeSubtitle" class="node-header-subtitle"
-                >{{ ctx.data().connectionId }} -
-                {{ ctx.data().schemaName }}</div
-              >
-
               <!-- Columns list -->
               <div class="node-columns">
                 @for (col of ctx.data().columns; track col.columnName) {
@@ -288,6 +283,37 @@
                   </div>
                 }
               </div>
+
+              <!-- Indexes list -->
+              @if (ctx.data().indexes.length > 0) {
+                <div class="node-indexes">
+                  @for (idx of ctx.data().indexes; track idx.indexName) {
+                    <div class="node-index">
+                      <span class="node-idx-name">{{ idx.indexName }}</span>
+                      <span class="node-idx-meta">
+                        @if (idx.isPrimaryKey) {
+                          <span class="node-idx-badge text-[10px] text-blue-400"
+                            >PRIMARY</span
+                          >
+                        }
+                        @if (idx.isUnique && !idx.isPrimaryKey) {
+                          <span class="node-idx-badge text-[10px] text-blue-400"
+                            >UNIQUE</span
+                          >
+                        }
+                        <span class="node-idx-columns">{{
+                          idx.indexColumns.join(', ')
+                        }}</span>
+                      </span>
+                    </div>
+                  }
+                </div>
+              }
+
+              <div *ngIf="showNodeSubtitle" class="node-header-subtitle"
+                >{{ ctx.data().connectionId }} -
+                {{ ctx.data().schemaName }}</div
+              >
             </div>
           </ng-template>
 
@@ -413,6 +439,23 @@
     <div class="border-s200 flex w-[420px] flex-shrink-0 flex-col border-l">
       <div class="my-5 ml-8 flex flex-shrink-0 items-center">
         <span class="text-s1 text-lg font-semibold">Relationships Graph</span>
+        <div
+          class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+          [tp]="showIndexes ? 'Show Indexes: ON' : 'Show Indexes: OFF'"
+          tpPlacement="top"
+        >
+          <button
+            type="button"
+            class="flex h-7 w-7 cursor-pointer items-center justify-center focus:outline-none"
+            [ngClass]="{
+              'text-green-600': showIndexes,
+              'text-s500': !showIndexes
+            }"
+            (click)="toggleIndexes()"
+          >
+            <m-database-zap-icon></m-database-zap-icon>
+          </button>
+        </div>
       </div>
 
       <div class="divide-s300 ml-2 mr-2 flex flex-col divide-y">
