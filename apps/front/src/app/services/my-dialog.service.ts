@@ -32,13 +32,13 @@ import {
   RenameFolderDialogData
 } from '../modules/builder/builder-left/folder-options/rename-folder-dialog/rename-folder-dialog.component';
 import {
-  MapDialogComponent,
-  MapDialogData
-} from '../modules/builder/builder-right/schemas/map-dialog/map-dialog.component';
-import {
   SampleDialogComponent,
   SampleDialogData
 } from '../modules/builder/builder-right/schemas/sample-dialog/sample-dialog.component';
+import {
+  SchemaGraphDialogComponent,
+  SchemaGraphDialogData
+} from '../modules/builder/builder-right/schemas/schema-graph-dialog/schema-graph-dialog.component';
 import {
   CommitDialogComponent,
   CommitDialogDialogData
@@ -859,8 +859,8 @@ export class MyDialogService {
     });
   }
 
-  showMap(item: MapDialogData): void {
-    this.dialogService.open(MapDialogComponent, {
+  showSchemaGraphDialog(item: SchemaGraphDialogData): void {
+    this.dialogService.open(SchemaGraphDialogComponent, {
       enableClose: false,
       closeButton: true,
       data: item,

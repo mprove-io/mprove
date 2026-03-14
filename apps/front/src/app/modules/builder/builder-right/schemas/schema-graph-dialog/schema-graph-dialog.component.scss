@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   padding: 6px 10px;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 13px;
 }
 
@@ -22,6 +22,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+::ng-deep .node-header-subtitle {
+  font-size: 10px;
+  font-weight: 400;
+  opacity: 0.7;
+  padding: 3px 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 ::ng-deep .node-sample-btn {
@@ -56,6 +67,7 @@
   border-bottom: 1px solid #f3f4f6;
   gap: 6px;
   position: relative;
+  overflow: hidden;
   &:last-child {
     border-bottom: none;
   }
@@ -64,17 +76,37 @@
 ::ng-deep .node-col-name {
   font-weight: 600;
   color: #1f2937;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100px;
+  min-width: 20px;
+  max-width: 120px;
+}
+
+::ng-deep .node-col-meta {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 ::ng-deep .node-col-type {
   color: #9ca3af;
   text-transform: uppercase;
   font-size: 10px;
-  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+::ng-deep .node-col-badge-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 ::ng-deep .node-col-badge {

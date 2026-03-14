@@ -1,0 +1,517 @@
+<!-- SVG marker definitions for relationship line endings -->
+<svg style="position: absolute; top: 0; left: 0; width: 0; height: 0">
+  <defs>
+    <!-- hasOne: circle marker -->
+    <marker
+      id="hasOne"
+      viewBox="0 0 6 6"
+      markerHeight="6.75"
+      markerWidth="6.75"
+      markerUnits="userSpaceOnUse"
+      refX="6"
+      refY="3"
+      fill="none"
+    >
+      <circle cx="3" cy="3" r="3" fill="#B1B1B6" />
+    </marker>
+    <marker
+      id="hasOneReversed"
+      viewBox="0 0 6 6"
+      markerHeight="6.75"
+      markerWidth="6.75"
+      markerUnits="userSpaceOnUse"
+      refX="6"
+      refY="3"
+      fill="none"
+      orient="auto-start-reverse"
+    >
+      <circle cx="3" cy="3" r="3" fill="#B1B1B6" />
+    </marker>
+    <!-- hasMany: crow's foot marker -->
+    <marker
+      id="hasMany"
+      viewBox="0 0 10 13"
+      markerHeight="14.0625"
+      markerWidth="18.28125"
+      markerUnits="userSpaceOnUse"
+      refX="10"
+      refY="6.5"
+      fill="none"
+      orient="auto-start-reverse"
+    >
+      <line
+        x1="10"
+        y1="12"
+        x2="1"
+        y2="6.5"
+        stroke="#B1B1B6"
+        stroke-width="1.25"
+      />
+      <line
+        x1="10"
+        y1="1"
+        x2="1"
+        y2="6.5"
+        stroke="#B1B1B6"
+        stroke-width="1.25"
+      />
+    </marker>
+    <marker
+      id="hasManyReversed"
+      viewBox="0 0 10 13"
+      markerHeight="14.0625"
+      markerWidth="18.28125"
+      markerUnits="userSpaceOnUse"
+      refX="10"
+      refY="6.5"
+      fill="none"
+      orient="auto-start-reverse"
+    >
+      <line
+        x1="10"
+        y1="12"
+        x2="1"
+        y2="6.5"
+        stroke="#B1B1B6"
+        stroke-width="1.25"
+      />
+      <line
+        x1="10"
+        y1="1"
+        x2="1"
+        y2="6.5"
+        stroke="#B1B1B6"
+        stroke-width="1.25"
+      />
+    </marker>
+    <!-- Highlighted versions -->
+    <marker
+      id="hasOneHighlighted"
+      viewBox="0 0 6 6"
+      markerHeight="6.75"
+      markerWidth="6.75"
+      markerUnits="userSpaceOnUse"
+      refX="6"
+      refY="3"
+      fill="none"
+    >
+      <circle cx="3" cy="3" r="3" fill="#60a5fa" />
+    </marker>
+    <marker
+      id="hasOneReversedHighlighted"
+      viewBox="0 0 6 6"
+      markerHeight="6.75"
+      markerWidth="6.75"
+      markerUnits="userSpaceOnUse"
+      refX="6"
+      refY="3"
+      fill="none"
+      orient="auto-start-reverse"
+    >
+      <circle cx="3" cy="3" r="3" fill="#60a5fa" />
+    </marker>
+    <marker
+      id="hasManyHighlighted"
+      viewBox="0 0 10 13"
+      markerHeight="14.0625"
+      markerWidth="18.28125"
+      markerUnits="userSpaceOnUse"
+      refX="10"
+      refY="6.5"
+      fill="none"
+      orient="auto-start-reverse"
+    >
+      <line
+        x1="10"
+        y1="12"
+        x2="1"
+        y2="6.5"
+        stroke="#60a5fa"
+        stroke-width="1.5"
+      />
+      <line
+        x1="10"
+        y1="1"
+        x2="1"
+        y2="6.5"
+        stroke="#60a5fa"
+        stroke-width="1.5"
+      />
+    </marker>
+    <marker
+      id="hasManyReversedHighlighted"
+      viewBox="0 0 10 13"
+      markerHeight="14.0625"
+      markerWidth="18.28125"
+      markerUnits="userSpaceOnUse"
+      refX="10"
+      refY="6.5"
+      fill="none"
+      orient="auto-start-reverse"
+    >
+      <line
+        x1="10"
+        y1="12"
+        x2="1"
+        y2="6.5"
+        stroke="#60a5fa"
+        stroke-width="1.5"
+      />
+      <line
+        x1="10"
+        y1="1"
+        x2="1"
+        y2="6.5"
+        stroke="#60a5fa"
+        stroke-width="1.5"
+      />
+    </marker>
+  </defs>
+</svg>
+
+<div class="flex h-[85vh] w-[90vw] flex-col">
+  <!-- Main content: graph + tree -->
+  <div class="flex flex-1 flex-row overflow-hidden">
+    <!-- Left side: graph + sample -->
+    <div class="flex flex-1 flex-col overflow-hidden">
+      <!-- Graph area -->
+      <div
+        class="relative flex-1"
+        [ngClass]="{
+          'h-[80%]': showSample,
+          'h-full': !showSample
+        }"
+      >
+        <div *ngIf="graphOverlay" class="absolute inset-0 z-10 bg-white"></div>
+        <vflow
+          *ngIf="!graphLoading"
+          view="auto"
+          [nodes]="nodes"
+          [edges]="edges"
+          [entitiesSelectable]="false"
+          [background]="{
+            type: 'dots',
+            color: '#aaa',
+            gap: 16,
+            size: 1,
+            backgroundColor: '#ffffff'
+          }"
+        >
+          <ng-template let-ctx nodeHtml>
+            <div
+              class="schema-table-node"
+              (mouseenter)="ctx.data().onHover()"
+              (mouseleave)="ctx.data().onUnhover()"
+            >
+              <!-- Table header -->
+              <div
+                class="node-header cursor-pointer"
+                [ngClass]="{
+                  'bg-green-300 text-gray-800': ctx.data().color === 'orange',
+                  'text-gray-800': ctx.data().color === 'gray'
+                }"
+                [style.background-color]="
+                  ctx.data().color === 'gray' ? '#ffd791' : null
+                "
+                (click)="ctx.data().onSelect(); $event.stopPropagation()"
+              >
+                <span class="node-header-title">{{
+                  ctx.data().tableName
+                }}</span>
+              </div>
+
+              <div *ngIf="showNodeSubtitle" class="node-header-subtitle"
+                >{{ ctx.data().connectionId }} -
+                {{ ctx.data().schemaName }}</div
+              >
+
+              <!-- Columns list -->
+              <div class="node-columns">
+                @for (col of ctx.data().columns; track col.columnName) {
+                  <div
+                    class="node-column cursor-pointer"
+                    [ngClass]="{
+                      'bg-green-100':
+                        ctx.data().selectedColumnName === col.columnName,
+                      'hover:bg-gray-100':
+                        ctx.data().selectedColumnName !== col.columnName
+                    }"
+                    (click)="
+                      ctx.data().onColumnSampleToggle({
+                        columnName: col.columnName
+                      });
+                      $event.stopPropagation()
+                    "
+                  >
+                    <span class="node-col-name">{{ col.columnName }}</span>
+                    <span class="node-col-meta">
+                      <span class="node-col-type">{{ col.dataType }}</span>
+                      @if (col.isPrimaryKey) {
+                        <span
+                          class="node-col-badge-text text-[10px] text-blue-400"
+                          >PRIMARY</span
+                        >
+                      }
+                      @if (col.isUnique && !col.isPrimaryKey) {
+                        <span
+                          class="node-col-badge-text text-[10px] text-blue-400"
+                          >UNIQUE</span
+                        >
+                      }
+                      @if (col.foreignKeys?.length > 0) {
+                        <span
+                          class="node-col-badge-text text-[10px] text-blue-400"
+                          >FK</span
+                        >
+                      }
+                    </span>
+                    <handle
+                      position="left"
+                      type="source"
+                      [id]="col.columnName + '-left-source'"
+                    />
+                    <handle
+                      position="right"
+                      type="source"
+                      [id]="col.columnName + '-right-source'"
+                    />
+                    <handle
+                      position="left"
+                      type="target"
+                      [id]="col.columnName + '-left-target'"
+                    />
+                    <handle
+                      position="right"
+                      type="target"
+                      [id]="col.columnName + '-right-target'"
+                    />
+                  </div>
+                }
+              </div>
+            </div>
+          </ng-template>
+
+          <!-- Custom edge template for crow's foot markers -->
+          <ng-template let-ctx edge>
+            <svg:g customTemplateEdge>
+              <svg:path
+                fill="none"
+                [attr.d]="ctx.path()"
+                [attr.stroke]="
+                  ctx.edge.data?.()?.highlighted ? '#60a5fa' : '#B1B1B6'
+                "
+                [attr.stroke-width]="ctx.edge.data?.()?.highlighted ? 2 : 1.5"
+                [attr.marker-start]="
+                  ctx.edge.data?.()?.markerStartId
+                    ? 'url(#' +
+                      ctx.edge.data().markerStartId +
+                      (ctx.edge.data()?.highlighted ? 'Highlighted' : '') +
+                      ')'
+                    : null
+                "
+                [attr.marker-end]="
+                  ctx.edge.data?.()?.markerEndId
+                    ? 'url(#' +
+                      ctx.edge.data().markerEndId +
+                      (ctx.edge.data()?.highlighted ? 'Highlighted' : '') +
+                      ')'
+                    : null
+                "
+              />
+            </svg:g>
+          </ng-template>
+        </vflow>
+      </div>
+
+      <!-- Sample panel -->
+      <div
+        *ngIf="showSample"
+        class="border-s200 flex h-[20%] flex-shrink-0 flex-col border-t"
+      >
+        <div
+          *ngIf="sampleIsLoading"
+          class="ml-12 mt-8 flex flex-shrink-0 items-center"
+        >
+          <div class="relative flex h-7 w-7 flex-shrink-0">
+            <ngx-spinner
+              name="mapSample"
+              color="#0084d1"
+              bdColor="#00000000"
+              size="default"
+              type="ball-clip-rotate"
+              [fullScreen]="false"
+              [disableAnimation]="true"
+              [zIndex]="99998"
+            >
+            </ngx-spinner>
+          </div>
+        </div>
+
+        <div
+          *ngIf="sampleErrorMessage"
+          class="flex flex-1 items-center justify-center px-8 py-12"
+        >
+          <span class="text-base text-red-600">{{ sampleErrorMessage }}</span>
+        </div>
+
+        <ng-scrollbar
+          *ngIf="!sampleErrorMessage"
+          [orientation]="'vertical'"
+          [visibility]="'hover'"
+          [appearance]="'compact'"
+          class="flex-1"
+        >
+          <div class="px-8 py-5">
+            <div class="overflow-x-auto">
+              <table *ngIf="sampleColumnNames?.length > 0">
+                <thead>
+                  <tr>
+                    <th
+                      *ngFor="let col of sampleColumnNames"
+                      class="border-m0 bg-m150 min-w-[200px] max-w-[350px] border-4 p-0 align-top"
+                    >
+                      <div
+                        class="flex flex-col items-start justify-center overflow-hidden text-clip px-5 py-2"
+                      >
+                        <div
+                          class="flex select-none flex-col items-start justify-center"
+                        >
+                          <div class="flex flex-row text-left font-semibold">
+                            {{ col }}
+                          </div>
+                        </div>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of sampleRows; let i = index">
+                    <td
+                      *ngFor="let cell of row"
+                      class="min-w-[200px] max-w-[350px] truncate px-5"
+                      [ngClass]="{ 'bg-s100': (i + 1) % 2 === 0 }"
+                    >
+                      {{ cell }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div
+                *ngIf="sampleColumnNames?.length === 0 && !sampleIsLoading"
+                class="text-s500 py-4 text-center text-base"
+              >
+                No data
+              </div>
+            </div>
+          </div>
+        </ng-scrollbar>
+      </div>
+    </div>
+
+    <!-- Right side: tree panel -->
+    <div class="border-s200 flex w-[420px] flex-shrink-0 flex-col border-l">
+      <div class="my-5 ml-8 flex flex-shrink-0 items-center">
+        <span class="text-s1 text-lg font-semibold">Relationships Graph</span>
+      </div>
+
+      <div class="divide-s300 ml-2 mr-2 flex flex-col divide-y">
+        <div class="flex flex-row"></div>
+        <div class="flex flex-row"></div>
+      </div>
+
+      <ng-scrollbar
+        [orientation]="'vertical'"
+        [visibility]="'hover'"
+        [appearance]="'compact'"
+        class="flex-1"
+      >
+        <div class="ml-2 mr-2 mt-2 pb-6">
+          @for (
+            schemaNode of schemaNodes;
+            track schemaNode.connectionId + '__' + schemaNode.schemaName
+          ) {
+            <!-- Schema row -->
+            <div
+              class="hover:bg-m50 flex h-11 cursor-pointer select-none flex-row items-center rounded pr-5"
+              (click)="toggleSchemaExpanded({ schemaNode: schemaNode })"
+            >
+              <div class="flex flex-row items-center pl-4">
+                @if (schemaNode.expanded) {
+                  <m-chevron-down-icon class="text-s500"></m-chevron-down-icon>
+                } @else {
+                  <m-chevron-right-icon
+                    class="text-s500"
+                  ></m-chevron-right-icon>
+                }
+              </div>
+              <button
+                class="text-m0 border-m600 ml-2 mr-3 flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded border-2 focus:outline-none"
+                [ngClass]="{
+                  'bg-m600': isSchemaAllChecked({ schemaNode: schemaNode }),
+                  'bg-m300': isSchemaSomeChecked({ schemaNode: schemaNode })
+                }"
+                (click)="
+                  toggleSchema({ schemaNode: schemaNode });
+                  $event.stopPropagation()
+                "
+              >
+                <m-check-icon
+                  *ngIf="
+                    isSchemaAllChecked({ schemaNode: schemaNode }) ||
+                    isSchemaSomeChecked({ schemaNode: schemaNode })
+                  "
+                ></m-check-icon>
+              </button>
+              <span class="text-s1 truncate text-[17px]"
+                >{{ schemaNode.connectionId }} -
+                {{ schemaNode.schemaName }}</span
+              >
+            </div>
+
+            <!-- Table rows -->
+            @if (schemaNode.expanded) {
+              @for (tableNode of schemaNode.tables; track tableNode.tableName) {
+                <div
+                  class="flex h-11 cursor-pointer select-none flex-row items-center rounded pr-5"
+                  [ngClass]="{
+                    'bg-green-100': selectedTableKey === tableNode.tableFullId,
+                    'hover:bg-m50': selectedTableKey !== tableNode.tableFullId
+                  }"
+                  [style.padding-left.px]="36"
+                  (click)="
+                    centerOnTable({
+                      tableFullId: tableNode.tableFullId,
+                      connectionId: tableNode.connectionId,
+                      schemaName: tableNode.schemaName,
+                      tableName: tableNode.tableName
+                    })
+                  "
+                >
+                  <div class="flex flex-row items-center pl-4">
+                    <div class="w-[24px]"></div>
+                  </div>
+                  <button
+                    class="text-m0 border-m600 mr-3 flex h-5 w-5 flex-shrink-0 cursor-pointer items-center justify-center rounded border-2 focus:outline-none"
+                    [ngClass]="{
+                      'bg-m600': tableNode.checked
+                    }"
+                    (click)="
+                      toggleTable({ tableNode: tableNode });
+                      $event.stopPropagation()
+                    "
+                  >
+                    <m-check-icon *ngIf="tableNode.checked"></m-check-icon>
+                  </button>
+                  <span class="text-s1 truncate text-[16px]">{{
+                    tableNode.tableName
+                  }}</span>
+                </div>
+              }
+            }
+          }
+        </div>
+      </ng-scrollbar>
+    </div>
+  </div>
+</div>

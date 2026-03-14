@@ -126,11 +126,14 @@
                 *ngIf="node.data.nodeType !== 'column'"
                 class="ml-2 flex min-w-0 flex-1 items-center"
                 [ngClass]="{
-                  'text-s500 text-[17px]': node.data.nodeType === 'connection',
-                  'text-[16px] text-red-600': node.data.nodeType === 'error',
-                  'text-s1 text-[16px]':
+                  'text-[17px]':
+                    node.data.nodeType === 'connection' ||
+                    node.data.nodeType === 'error',
+                  'text-[16px]':
                     node.data.nodeType !== 'connection' &&
-                    node.data.nodeType !== 'error'
+                    node.data.nodeType !== 'error',
+                  'text-s1': node.data.nodeType !== 'error',
+                  'text-red-600': node.data.nodeType === 'error'
                 }"
                 [tp]="node.data.errorMessage"
                 tpPlacement="top"
@@ -184,7 +187,7 @@
                 }}</span>
 
                 <span *ngIf="node.data.isPrimaryKey" class="ml-3 text-blue-400"
-                  >PK</span
+                  >PRIMARY</span
                 >
                 <span
                   *ngIf="node.data.isUnique && !node.data.isPrimaryKey"

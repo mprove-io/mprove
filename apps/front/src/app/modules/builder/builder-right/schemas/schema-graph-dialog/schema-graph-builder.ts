@@ -3,7 +3,6 @@ import initVizdom, { DirectedGraph, RankDir } from '@vizdom/vizdom-ts-web';
 import { Edge, Node } from 'ngx-vflow';
 import { RelationshipTypeEnum } from '#common/enums/relationship-type.enum';
 import {
-  ConnectionSchemaItem,
   SchemaColumn,
   SchemaTable
 } from '#common/interfaces/backend/connection-schema';
@@ -14,6 +13,8 @@ let ROW_HEIGHT = 26;
 let NODE_PADDING = 16;
 
 export interface MapNodeData {
+  connectionId: string;
+  schemaName: string;
   tableName: string;
   columns: SchemaColumn[];
   color: 'orange' | 'gray';
@@ -39,6 +40,19 @@ export interface MapGraphResult {
   nodeDataSignals: Map<string, WritableSignal<MapNodeData>>;
   edgeDataSignals: Map<string, WritableSignal<MapEdgeData>>;
   edgesByTable: Map<string, Set<string>>;
+}
+
+export interface GraphTable extends SchemaTable {
+  tableFullId: string;
+  connectionId: string;
+}
+
+export function tableKey(item: {
+  connectionId: string;
+  schemaName: string;
+  tableName: string;
+}): string {
+  return `${item.connectionId}__${item.schemaName}__${item.tableName}`;
 }
 
 function getEdgeMarkers(item: {
@@ -100,22 +114,31 @@ async function ensureVizdomInitialized(): Promise<void> {
 }
 
 export async function buildAllTablesGraph(item: {
-  connectionSchemaItems: ConnectionSchemaItem[];
-  connectionId: string;
-  schemaName: string;
-  onSelect: (item: { tableName: string }) => void;
-  onHover: (item: { tableName: string }) => void;
-  onUnhover: (item: { tableName: string }) => void;
-  onTableSampleToggle: (item: { tableName: string }) => void;
+  tables: GraphTable[];
+  onSelect: (item: {
+    tableFullId: string;
+    connectionId: string;
+    schemaName: string;
+    tableName: string;
+  }) => void;
+  onHover: (item: { tableFullId: string }) => void;
+  onUnhover: (item: { tableFullId: string }) => void;
+  onTableSampleToggle: (item: {
+    tableFullId: string;
+    connectionId: string;
+    schemaName: string;
+    tableName: string;
+  }) => void;
   onColumnSampleToggle: (item: {
+    tableFullId: string;
+    connectionId: string;
+    schemaName: string;
     tableName: string;
     columnName: string;
   }) => void;
 }): Promise<MapGraphResult> {
   let {
-    connectionSchemaItems,
-    connectionId,
-    schemaName,
+    tables,
     onSelect,
     onHover,
     onUnhover,
@@ -123,22 +146,7 @@ export async function buildAllTablesGraph(item: {
     onColumnSampleToggle
   } = item;
 
-  // 1. Find matching ConnectionSchemaItem
-  let csItem = connectionSchemaItems.find(
-    cs => cs.connectionId === connectionId
-  );
-  if (!csItem) {
-    return {
-      nodes: [],
-      edges: [],
-      nodeDataSignals: new Map(),
-      edgeDataSignals: new Map(),
-      edgesByTable: new Map()
-    };
-  }
-
-  // 2. Find all tables in the same schema
-  let allTables = csItem.schema.tables.filter(t => t.schemaName === schemaName);
+  let allTables = tables;
 
   if (allTables.length === 0) {
     return {
@@ -150,16 +158,16 @@ export async function buildAllTablesGraph(item: {
     };
   }
 
-  // 3. Build table lookup
-  let tableMap = new Map<string, SchemaTable>();
+  // Build table lookup using composite keys
+  let tableMap = new Map<string, GraphTable>();
   for (let table of allTables) {
-    tableMap.set(table.tableName, table);
+    tableMap.set(table.tableFullId, table);
   }
 
-  // 4. Collect all edges (relationships) between tables
+  // Collect all edges (relationships) between tables
   interface EdgeInfo {
-    sourceTable: string;
-    targetTable: string;
+    sourceKey: string;
+    targetKey: string;
     sourceColumn: string;
     targetColumn: string;
     relationshipType: RelationshipTypeEnum;
@@ -170,19 +178,28 @@ export async function buildAllTablesGraph(item: {
   let connectedPairs = new Set<string>();
 
   for (let table of allTables) {
+    let sourceKey = table.tableFullId;
+
     for (let col of table.columns) {
       if (col.combinedReferences) {
         for (let ref of col.combinedReferences) {
-          let hasTarget = tableMap.has(ref.referencedTableName);
+          let refSchemaName = ref.referencedSchemaName ?? table.schemaName;
+          let targetKey = tableKey({
+            connectionId: table.connectionId,
+            schemaName: refSchemaName,
+            tableName: ref.referencedTableName
+          });
+
+          let hasTarget = tableMap.has(targetKey);
           if (!hasTarget) {
             continue;
           }
-          let isSelfRef = ref.referencedTableName === table.tableName;
+          let isSelfRef = targetKey === sourceKey;
           if (isSelfRef) {
             continue;
           }
 
-          let pairKey = `${table.tableName}:${col.columnName}->${ref.referencedTableName}:${ref.referencedColumnName}`;
+          let pairKey = `${sourceKey}:${col.columnName}->${targetKey}:${ref.referencedColumnName}`;
           let alreadyAdded = connectedPairs.has(pairKey);
           if (alreadyAdded) {
             continue;
@@ -190,8 +207,8 @@ export async function buildAllTablesGraph(item: {
           connectedPairs.add(pairKey);
 
           edgeInfos.push({
-            sourceTable: table.tableName,
-            targetTable: ref.referencedTableName,
+            sourceKey: sourceKey,
+            targetKey: targetKey,
             sourceColumn: col.columnName,
             targetColumn: ref.referencedColumnName,
             relationshipType: ref.relationshipType,
@@ -202,7 +219,7 @@ export async function buildAllTablesGraph(item: {
     }
   }
 
-  // 5. Compute layout with vizdom
+  // Compute layout with vizdom
   await ensureVizdomInitialized();
 
   let graph = new DirectedGraph({
@@ -221,7 +238,7 @@ export async function buildAllTablesGraph(item: {
     let height = estimateNodeHeight({
       columnCount: table.columns.length
     });
-    nodeHeights.set(table.tableName, height);
+    nodeHeights.set(table.tableFullId, height);
 
     let vertexRef = graph.new_vertex(
       {
@@ -230,18 +247,18 @@ export async function buildAllTablesGraph(item: {
           shape_h: height
         },
         render: {
-          id: table.tableName
+          id: table.tableFullId
         }
       },
       { compute_bounding_box: false }
     );
-    vertexRefs.set(table.tableName, vertexRef);
+    vertexRefs.set(table.tableFullId, vertexRef);
   }
 
   // Add edges to vizdom graph for layout
   for (let edgeInfo of edgeInfos) {
-    let sourceRef = vertexRefs.get(edgeInfo.sourceTable);
-    let targetRef = vertexRefs.get(edgeInfo.targetTable);
+    let sourceRef = vertexRefs.get(edgeInfo.sourceKey);
+    let targetRef = vertexRefs.get(edgeInfo.targetKey);
     if (sourceRef && targetRef) {
       graph.new_edge(sourceRef, targetRef);
     }
@@ -250,49 +267,65 @@ export async function buildAllTablesGraph(item: {
   let positioned = graph.layout();
   let jsonResult = positioned.to_json().to_obj();
 
-  // 6. Build position map from vizdom output
+  // Build position map from vizdom output
   let positionMap = new Map<string, { x: number; y: number }>();
 
   for (let vertex of jsonResult.nodes) {
-    let tableName = vertex.id;
-    if (tableName) {
-      positionMap.set(tableName, {
+    let vertexId = vertex.id;
+    if (vertexId) {
+      positionMap.set(vertexId, {
         x: vertex.x - vertex.width / 2,
         y: vertex.y - vertex.height / 2
       });
     }
   }
 
-  // 7. Build ngx-vflow nodes
+  // Build ngx-vflow nodes
   let nodeDataSignals = new Map<string, WritableSignal<MapNodeData>>();
   let nodes: Node[] = [];
 
   for (let table of allTables) {
-    let pos = positionMap.get(table.tableName) || { x: 0, y: 0 };
-    let height = nodeHeights.get(table.tableName);
+    let pos = positionMap.get(table.tableFullId) || { x: 0, y: 0 };
+    let height = nodeHeights.get(table.tableFullId);
 
     let nodeData: MapNodeData = {
+      connectionId: table.connectionId,
+      schemaName: table.schemaName,
       tableName: table.tableName,
       columns: table.columns,
       color: 'gray',
       selectedColumnName: undefined,
-      onSelect: () => onSelect({ tableName: table.tableName }),
-      onHover: () => onHover({ tableName: table.tableName }),
-      onUnhover: () => onUnhover({ tableName: table.tableName }),
+      onSelect: () =>
+        onSelect({
+          tableFullId: table.tableFullId,
+          connectionId: table.connectionId,
+          schemaName: table.schemaName,
+          tableName: table.tableName
+        }),
+      onHover: () => onHover({ tableFullId: table.tableFullId }),
+      onUnhover: () => onUnhover({ tableFullId: table.tableFullId }),
       onTableSampleToggle: () =>
-        onTableSampleToggle({ tableName: table.tableName }),
+        onTableSampleToggle({
+          tableFullId: table.tableFullId,
+          connectionId: table.connectionId,
+          schemaName: table.schemaName,
+          tableName: table.tableName
+        }),
       onColumnSampleToggle: (colItem: { columnName: string }) =>
         onColumnSampleToggle({
+          tableFullId: table.tableFullId,
+          connectionId: table.connectionId,
+          schemaName: table.schemaName,
           tableName: table.tableName,
           columnName: colItem.columnName
         })
     };
 
     let dataSignal = signal(nodeData);
-    nodeDataSignals.set(table.tableName, dataSignal);
+    nodeDataSignals.set(table.tableFullId, dataSignal);
 
     nodes.push({
-      id: table.tableName,
+      id: table.tableFullId,
       type: 'html-template',
       point: signal({ x: pos.x, y: pos.y }),
       width: signal(NODE_WIDTH),
@@ -301,15 +334,15 @@ export async function buildAllTablesGraph(item: {
     });
   }
 
-  // 8. Build ngx-vflow edges
+  // Build ngx-vflow edges
   let edgeDataSignals = new Map<string, WritableSignal<MapEdgeData>>();
   let edgesByTable = new Map<string, Set<string>>();
   let edges: Edge[] = [];
   let edgeIndex = 0;
 
   for (let edgeInfo of edgeInfos) {
-    let sourcePos = positionMap.get(edgeInfo.sourceTable) || { x: 0, y: 0 };
-    let targetPos = positionMap.get(edgeInfo.targetTable) || { x: 0, y: 0 };
+    let sourcePos = positionMap.get(edgeInfo.sourceKey) || { x: 0, y: 0 };
+    let targetPos = positionMap.get(edgeInfo.targetKey) || { x: 0, y: 0 };
 
     let isLeft = sourcePos.x > targetPos.x;
     let isReversed = isLeft;
@@ -351,25 +384,25 @@ export async function buildAllTablesGraph(item: {
     edgeDataSignals.set(edgeId, edgeDataSignal);
 
     // Track which tables this edge touches
-    let sourceEdges = edgesByTable.get(edgeInfo.sourceTable);
+    let sourceEdges = edgesByTable.get(edgeInfo.sourceKey);
     if (!sourceEdges) {
       sourceEdges = new Set<string>();
-      edgesByTable.set(edgeInfo.sourceTable, sourceEdges);
+      edgesByTable.set(edgeInfo.sourceKey, sourceEdges);
     }
     sourceEdges.add(edgeId);
 
-    let targetEdges = edgesByTable.get(edgeInfo.targetTable);
+    let targetEdges = edgesByTable.get(edgeInfo.targetKey);
     if (!targetEdges) {
       targetEdges = new Set<string>();
-      edgesByTable.set(edgeInfo.targetTable, targetEdges);
+      edgesByTable.set(edgeInfo.targetKey, targetEdges);
     }
     targetEdges.add(edgeId);
 
     edges.push({
       id: edgeId,
       type: 'template',
-      source: edgeInfo.sourceTable,
-      target: edgeInfo.targetTable,
+      source: edgeInfo.sourceKey,
+      target: edgeInfo.targetKey,
       sourceHandle: `${edgeInfo.sourceColumn}-${sourceSide}-source`,
       targetHandle: `${edgeInfo.targetColumn}-${targetSide}-target`,
       curve: signal('smooth-step' as const),

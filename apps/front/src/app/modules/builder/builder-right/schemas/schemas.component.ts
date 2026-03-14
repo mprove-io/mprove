@@ -26,8 +26,8 @@ import {
 import { NavQuery } from '#front/app/queries/nav.query';
 import { ApiService } from '#front/app/services/api.service';
 import { MyDialogService } from '#front/app/services/my-dialog.service';
-import { MapDialogData } from './map-dialog/map-dialog.component';
 import { SampleDialogData } from './sample-dialog/sample-dialog.component';
+import { SchemaGraphDialogData } from './schema-graph-dialog/schema-graph-dialog.component';
 
 let SCHEMAS_SPINNER_NAME = 'schemasRefresh';
 
@@ -326,7 +326,7 @@ export class SchemasComponent implements OnInit {
     let data = node.data as SchemaTreeNode;
     let nav = this.navQuery.getValue();
 
-    let dialogData: MapDialogData = {
+    let dialogData: SchemaGraphDialogData = {
       connectionSchemaItems: this.connectionSchemaItems,
       connectionId: data.connectionId,
       schemaName: data.schemaDisplayName,
@@ -335,7 +335,7 @@ export class SchemasComponent implements OnInit {
       envId: nav.envId
     };
 
-    this.myDialogService.showMap(dialogData);
+    this.myDialogService.showSchemaGraphDialog(dialogData);
   }
 
   sampleOnClick(item: { node: TreeNode; event: MouseEvent }) {
