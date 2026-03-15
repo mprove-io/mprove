@@ -434,6 +434,17 @@
                       lastUrl === pathNewSession ||
                       lastUrl === pathSelectFile ||
                       !file?.fileId),
+                  'bg-a500':
+                    (builderRight !== builderRightValidation ||
+                      !(
+                        !secondFileNodeId &&
+                        (builderLeft === builderLeftTree ||
+                          builderLeft === builderLeftInfo ||
+                          lastUrl === pathNewSession ||
+                          lastUrl === pathSelectFile ||
+                          !file?.fileId)
+                      )) &&
+                    nav?.needValidate === true,
                   'bg-r1':
                     (builderRight !== builderRightValidation ||
                       !(
@@ -444,6 +455,7 @@
                           lastUrl === pathSelectFile ||
                           !file?.fileId)
                       )) &&
+                    nav?.needValidate === false &&
                     struct?.errors?.length > 0,
                   'bg-s400':
                     (builderRight !== builderRightValidation ||
@@ -455,6 +467,7 @@
                           lastUrl === pathSelectFile ||
                           !file?.fileId)
                       )) &&
+                    nav?.needValidate === false &&
                     !(struct?.errors?.length > 0)
                 }"
                 >{{ struct?.errors?.length }}</div
