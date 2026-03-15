@@ -16,6 +16,7 @@ import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
+import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
@@ -49,7 +50,7 @@ export class NewSessionComponent implements OnInit {
 
   initialBranch: string;
 
-  branches: string[] = [];
+  branches: { branchId: string; extraName: string }[] = [];
   branchesLoading = false;
 
   isSubmitting = false;
@@ -86,7 +87,14 @@ export class NewSessionComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             this.branches = resp.payload.branchesList
               .filter(b => b.repoType === RepoTypeEnum.Production)
-              .map(b => b.branchId);
+              .map(b => ({
+                branchId: b.branchId,
+                extraName: makeBranchExtraName({
+                  repoType: b.repoType,
+                  branchId: b.branchId,
+                  alias: ''
+                })
+              }));
           }
           this.branchesLoading = false;
           this.cd.detectChanges();
