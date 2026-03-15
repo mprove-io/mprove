@@ -3,12 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
+import { AgentDrainService } from './services/agent-drain.service';
 import { AgentEventsService } from './services/agent-events.service';
 import { AgentModelsService } from './services/agent-models.service';
 import { AgentSandboxService } from './services/agent-sandbox.service';
 import { AgentSandboxLifecycleService } from './services/agent-sandbox-lifecycle.service';
 import { AgentStreamService } from './services/agent-stream.service';
 import { AgentStreamDrainService } from './services/agent-stream-drain.service';
+import { AiSdkService } from './services/ai-sdk.service';
+import { AiSdkStreamService } from './services/ai-sdk-stream.service';
 import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
@@ -116,10 +119,13 @@ export const appProviders = [
   SessionsService,
   AgentSandboxService,
   AgentStreamDrainService,
+  AgentDrainService,
   AgentEventsService,
   AgentStreamService,
   AgentSandboxLifecycleService,
   AgentModelsService,
+  AiSdkService,
+  AiSdkStreamService,
   ApiKeyService,
   {
     provide: TasksService,

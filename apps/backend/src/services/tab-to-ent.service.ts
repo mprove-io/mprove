@@ -1018,6 +1018,7 @@ export class TabToEntService {
 
     let sessionEnt: SessionEnt = {
       sessionId: tab.sessionId,
+      sessionType: tab.sessionType,
       repoId: tab.repoId,
       branchId: tab.branchId,
       userId: tab.userId,

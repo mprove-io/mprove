@@ -10,12 +10,14 @@ import {
 import uFuzzy from '@leeoniya/ufuzzy';
 import { take, tap } from 'rxjs/operators';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetAgentProviderModelsRequestPayload,
   ToBackendGetAgentProviderModelsResponse
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
 import { AgentModelsQuery } from '#front/app/queries/agent-models.query';
+import { NavQuery } from '#front/app/queries/nav.query';
 import { ProjectQuery } from '#front/app/queries/project.query';
 import { UiQuery } from '#front/app/queries/ui.query';
 import { ApiService } from '#front/app/services/api.service';
@@ -35,6 +37,10 @@ export class SessionInputComponent implements OnChanges {
 
   @Input() variant = 'default';
   @Output() variantChange = new EventEmitter<string>();
+
+  sessionTypeEnum = SessionTypeEnum;
+
+  @Input() sessionType: SessionTypeEnum = SessionTypeEnum.B;
 
   @Input() disabled = false;
   @Input() showSelects = true;
@@ -66,6 +72,7 @@ export class SessionInputComponent implements OnChanges {
   constructor(
     private cd: ChangeDetectorRef,
     private projectQuery: ProjectQuery,
+    private navQuery: NavQuery,
     private apiService: ApiService,
     private uiQuery: UiQuery,
     private uiService: UiService,
@@ -206,7 +213,11 @@ export class SessionInputComponent implements OnChanges {
 
     let payload: ToBackendGetAgentProviderModelsRequestPayload = {};
 
-    if (this.sessionId) {
+    if (this.sessionType === SessionTypeEnum.A) {
+      let nav = this.navQuery.getValue();
+      payload.sessionType = SessionTypeEnum.A;
+      payload.projectId = nav.projectId;
+    } else if (this.sessionId) {
       payload.sessionId = this.sessionId;
     }
 

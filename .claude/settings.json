@@ -1,5 +1,4 @@
 {
-  "model": "claude-opus-4-6[1m]",
   "effortLevel": "high",
   "defaultMode": "plan",
   "alwaysThinkingEnabled": true,

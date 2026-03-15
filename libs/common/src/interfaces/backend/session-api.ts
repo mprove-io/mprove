@@ -1,10 +1,14 @@
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 
 export class SessionApi {
   @IsString()
   sessionId: string;
+
+  @IsEnum(SessionTypeEnum)
+  sessionType: SessionTypeEnum;
 
   @IsString()
   provider: string;

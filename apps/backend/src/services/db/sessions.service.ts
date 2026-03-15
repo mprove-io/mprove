@@ -15,6 +15,7 @@ import { PROD_REPO_ID } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { OcSessionApi } from '#common/interfaces/backend/oc-session-api';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import { ServerError } from '#common/models/server-error';
@@ -29,6 +30,7 @@ export class SessionsService {
 
   makeSession(item: {
     sessionId: string;
+    sessionType: SessionTypeEnum;
     repoId: string;
     branchId: string;
     userId: string;
@@ -58,6 +60,7 @@ export class SessionsService {
   }): SessionTab {
     let session: SessionTab = {
       sessionId: item.sessionId,
+      sessionType: item.sessionType,
       repoId: item.repoId,
       branchId: item.branchId,
       userId: item.userId,
@@ -137,6 +140,7 @@ export class SessionsService {
 
     return {
       sessionId: session.sessionId,
+      sessionType: session.sessionType,
       repoId: session.repoId,
       branchId: session.branchId,
       provider: session.provider,

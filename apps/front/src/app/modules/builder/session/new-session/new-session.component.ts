@@ -7,6 +7,7 @@ import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
@@ -17,10 +18,15 @@ import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
+import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';
+import { SessionQuery } from '#front/app/queries/session.query';
+import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
+import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
+import { AgentEventsService } from '#front/app/services/agent-events.service';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
@@ -31,6 +37,10 @@ import { UiService } from '#front/app/services/ui.service';
   templateUrl: './new-session.component.html'
 })
 export class NewSessionComponent implements OnInit {
+  sessionTypeEnum = SessionTypeEnum;
+  sessionType: SessionTypeEnum = SessionTypeEnum.A;
+  sessionTypes = [SessionTypeEnum.A, SessionTypeEnum.B];
+
   agent = 'plan';
 
   model = 'default';
@@ -61,8 +71,12 @@ export class NewSessionComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private apiService: ApiService,
+    private sessionQuery: SessionQuery,
     private sessionsQuery: SessionsQuery,
+    private sessionBundleQuery: SessionBundleQuery,
+    private sessionEventsQuery: SessionEventsQuery,
     private uiQuery: UiQuery,
+    private agentEventsService: AgentEventsService,
     private navigateService: NavigateService,
     private uiService: UiService
   ) {
@@ -130,12 +144,15 @@ export class NewSessionComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
+    let isTypeA = this.sessionType === SessionTypeEnum.A;
+
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
-      sandboxType: SandboxTypeEnum.E2B,
+      sessionType: this.sessionType,
+      sandboxType: isTypeA ? undefined : SandboxTypeEnum.E2B,
       provider: provider,
       model: this.model,
-      agent: this.agent,
+      agent: isTypeA ? undefined : this.agent,
       variant: this.variant,
       envId: nav.envId,
       initialBranch: this.initialBranch,
@@ -152,27 +169,61 @@ export class NewSessionComponent implements OnInit {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
             let { sessionId, repoId, branchId } = resp.payload;
 
-            // Add new session to the sessions list
-            let currentSessions = this.sessionsQuery.getValue().sessions;
-            let newSession: SessionApi = {
-              sessionId: sessionId,
-              repoId: repoId,
-              branchId: branchId,
-              provider: provider,
-              agent: this.agent,
-              model: this.model,
-              lastMessageProviderModel: this.model,
-              lastMessageVariant: this.variant,
-              initialBranch: this.initialBranch,
-              initialCommit: undefined,
-              status: SessionStatusEnum.New,
-              createdTs: Date.now(),
-              lastActivityTs: Date.now(),
-              firstMessage: text
-            };
-            this.sessionsQuery.updatePart({
-              sessions: [newSession, ...currentSessions]
-            });
+            // For session A: populate stores from expanded create response
+            if (isTypeA && resp.payload.session) {
+              this.agentEventsService.resetAll();
+
+              this.sessionQuery.update(resp.payload.session);
+
+              if (resp.payload.sessions && resp.payload.sessions.length > 0) {
+                this.sessionsQuery.updatePart({
+                  sessions: resp.payload.sessions,
+                  isListLoaded: true,
+                  hasMoreArchived: resp.payload.hasMoreArchived ?? false
+                });
+              }
+
+              this.sessionEventsQuery.updatePart({
+                events: resp.payload.events || []
+              });
+
+              this.sessionBundleQuery.updatePart({
+                messages: resp.payload.messages || [],
+                parts: resp.payload.parts
+                  ? groupPartsByMessageId(resp.payload.parts)
+                  : {},
+                todos: [],
+                questions: [],
+                permissions: [],
+                ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
+                lastSessionError: resp.payload.ocSession?.lastSessionError,
+                isLastErrorRecovered:
+                  resp.payload.ocSession?.isLastErrorRecovered
+              });
+            } else {
+              // Type B: add new session to the sessions list
+              let currentSessions = this.sessionsQuery.getValue().sessions;
+              let newSession: SessionApi = {
+                sessionId: sessionId,
+                sessionType: this.sessionType,
+                repoId: repoId,
+                branchId: branchId,
+                provider: provider,
+                agent: this.agent,
+                model: this.model,
+                lastMessageProviderModel: this.model,
+                lastMessageVariant: this.variant,
+                initialBranch: this.initialBranch,
+                initialCommit: undefined,
+                status: SessionStatusEnum.New,
+                createdTs: Date.now(),
+                lastActivityTs: Date.now(),
+                firstMessage: text
+              };
+              this.sessionsQuery.updatePart({
+                sessions: [newSession, ...currentSessions]
+              });
+            }
 
             // Persist autoAccept for the new session
             if (this.uiQuery.getValue().newSessionPermissionsAutoAccept) {
@@ -187,12 +238,20 @@ export class NewSessionComponent implements OnInit {
               });
             }
 
-            // Navigate to session route with session repoId/branchId
-            this.navigateService.navigateToSession({
-              sessionId: newSession.sessionId,
-              repoId: newSession.repoId,
-              branchId: newSession.branchId
-            });
+            // Navigate to session route
+            // Type A: use current nav repo/branch (no session repo)
+            // Type B: use session repo/branch
+            if (isTypeA) {
+              this.navigateService.navigateToSession({
+                sessionId: sessionId
+              });
+            } else {
+              this.navigateService.navigateToSession({
+                sessionId: sessionId,
+                repoId: repoId,
+                branchId: branchId
+              });
+            }
             this.isSubmitting = false;
             this.cd.detectChanges();
           } else {

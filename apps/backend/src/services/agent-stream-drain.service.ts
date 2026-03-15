@@ -519,6 +519,25 @@ export class AgentStreamDrainService {
     } catch (e) {
       // Restore partStates snapshot so deltas aren't doubled on retry
       this.partStates.set(sessionId, savedParts);
+
+      let eventIds = eventTabs.map(t => t.eventId);
+      let queueLength = queue.length;
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_AGENT_DRAIN_QUEUE_FAILED,
+          customData: {
+            sessionId: sessionId,
+            eventCount: eventIds.length,
+            eventIds: eventIds,
+            queueLengthAfterFail: queueLength
+          },
+          originalError: e
+        }),
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
+
       throw e;
     }
 

@@ -65,6 +65,7 @@ import {
   PASSWORD_EXPIRES_OFFSET
 } from '#common/constants/top-backend';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -221,6 +222,7 @@ export class SeedRecordsController {
 
           let newSession: SessionTab = {
             sessionId: x.sessionId,
+            sessionType: SessionTypeEnum.B,
             repoId: x.sessionId,
             branchId: x.sessionId,
             userId: x.userId,

@@ -10,10 +10,13 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentModelsService } from '#backend/services/agent-models.service';
 import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
+import { AiSdkService } from '#backend/services/ai-sdk.service';
+import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service.js';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetAgentProviderModelsRequest,
@@ -26,8 +29,10 @@ import { ServerError } from '#common/models/server-error';
 @Controller()
 export class GetAgentProviderModelsController {
   constructor(
+    private aiSdkService: AiSdkService,
     private agentModelsService: AgentModelsService,
     private agentSandboxService: AgentSandboxService,
+    private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
@@ -39,7 +44,25 @@ export class GetAgentProviderModelsController {
     @Req() request: any
   ) {
     let reqValid: ToBackendGetAgentProviderModelsRequest = request.body;
-    let { sessionId } = reqValid.payload;
+    let { sessionId, sessionType, projectId } = reqValid.payload;
+
+    // Type A: fetch models directly from provider APIs
+    if (sessionType === SessionTypeEnum.A && projectId) {
+      let project = await this.projectsService.getProjectCheckExists({
+        projectId: projectId
+      });
+
+      let models = await this.aiSdkService.listModels({
+        openaiApiKey: project.openaiApiKey,
+        anthropicApiKey: project.anthropicApiKey
+      });
+
+      let payload: ToBackendGetAgentProviderModelsResponsePayload = {
+        models: models
+      };
+
+      return payload;
+    }
 
     if (sessionId) {
       let session = await this.sessionsService.getSessionByIdCheckExists({

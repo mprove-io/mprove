@@ -17,6 +17,7 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
@@ -55,6 +56,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   archiveReasonEnum = ArchiveReasonEnum;
   pauseReasonEnum = PauseReasonEnum;
   sessionStatusEnum = SessionStatusEnum;
+  sessionTypeEnum = SessionTypeEnum;
 
   agent = 'plan';
   model = 'default';

@@ -20,6 +20,7 @@ import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { AgentStreamService } from '#backend/services/agent-stream.service';
+import { AiSdkStreamService } from '#backend/services/ai-sdk-stream.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -28,6 +29,7 @@ import { ErEnum } from '#common/enums/er.enum';
 import { InteractionTypeEnum } from '#common/enums/interaction-type.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { isDefined } from '#common/functions/is-defined';
 import { splitModel } from '#common/functions/split-model';
@@ -44,6 +46,7 @@ export class SendUserMessageToAgentController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
+    private aiSdkStreamService: AiSdkStreamService,
     private agentStreamService: AgentStreamService,
     private agentSandboxService: AgentSandboxService,
     private cs: ConfigService<BackendConfig>,
@@ -99,6 +102,81 @@ export class SendUserMessageToAgentController {
       });
     }
 
+    // Type A: direct AI SDK, no sandbox
+    if (session.sessionType === SessionTypeEnum.A) {
+      if (interactionType === InteractionTypeEnum.Message) {
+        let split = splitModel(model);
+        let modelProvider = split ? split.providerID : session.provider;
+        let modelId = split ? split.modelID : model;
+
+        let apiKey = '';
+        if (modelProvider === 'openai') {
+          apiKey = project.openaiApiKey || '';
+        } else if (modelProvider === 'anthropic') {
+          apiKey = project.anthropicApiKey || '';
+        }
+
+        session = {
+          ...session,
+          model: model,
+          lastMessageProviderModel: model,
+          lastMessageVariant: variant,
+          lastActivityTs: Date.now()
+        };
+
+        await retry(
+          async () =>
+            await this.db.drizzle.transaction(
+              async tx =>
+                await this.db.packer.write({
+                  tx: tx,
+                  insertOrUpdate: {
+                    sessions: [session]
+                  }
+                })
+            ),
+          getRetryOption(this.cs, this.logger)
+        );
+
+        // Fire-and-forget streaming
+        this.aiSdkStreamService
+          .streamMessage({
+            sessionId: session.sessionId,
+            provider: modelProvider,
+            modelId: modelId,
+            apiKey: apiKey,
+            userMessage: message
+          })
+          .catch(() => {});
+      } else if (interactionType === InteractionTypeEnum.Abort) {
+        let isLockExist = await this.aiSdkStreamService.publishAbortStream({
+          sessionId: session.sessionId
+        });
+
+        if (isLockExist) {
+          await this.aiSdkStreamService.waitForStreamLockRelease({
+            sessionId: session.sessionId
+          });
+        }
+      }
+
+      let ocSession = await this.sessionsService.getOcSessionBySessionId({
+        sessionId: session.sessionId
+      });
+
+      let sessionApi = this.sessionsService.tabToSessionApi({
+        session: session,
+        ocSession: ocSession
+      });
+
+      let payload: ToBackendSendUserMessageToAgentResponsePayload = {
+        session: sessionApi
+      };
+
+      return payload;
+    }
+
+    // Type B: sandboxed opencode flow
     let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
       sandboxId: session.sandboxId,
       e2bApiKey: project.e2bApiKey

@@ -5,10 +5,11 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
+import { AiSdkStreamService } from '#backend/services/ai-sdk-stream.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToBackendSetAgentSessionTitleRequest } from '#common/interfaces/to-backend/agent/to-backend-set-agent-session-title';
 import { ServerError } from '#common/models/server-error';
@@ -19,7 +20,8 @@ import { ServerError } from '#common/models/server-error';
 export class SetAgentSessionTitleController {
   constructor(
     private sessionsService: SessionsService,
-    private agentSandboxService: AgentSandboxService
+    private agentSandboxService: AgentSandboxService,
+    private aiSdkStreamService: AiSdkStreamService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle)
@@ -28,7 +30,7 @@ export class SetAgentSessionTitleController {
     let { sessionId, title } = reqValid.payload;
 
     let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId
+      sessionId: sessionId
     });
 
     if (session.userId !== user.userId) {
@@ -37,10 +39,8 @@ export class SetAgentSessionTitleController {
       });
     }
 
-    if (
-      session.status === SessionStatusEnum.Active &&
-      session.opencodeSessionId
-    ) {
+    if (session.sessionType === SessionTypeEnum.B) {
+      // Type B: proxy to OpenCode
       let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
         sessionId: sessionId
       });
@@ -52,6 +52,12 @@ export class SetAgentSessionTitleController {
         },
         { throwOnError: true }
       );
+    } else {
+      // Type A: set title via lock-holding pod (or acquire lock if none)
+      await this.aiSdkStreamService.setTitle({
+        sessionId: sessionId,
+        title: title
+      });
     }
 
     let payload = {};

@@ -16,6 +16,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
@@ -132,6 +133,7 @@ export async function forTestsRunAgentSessionE2x(item: {
       },
       payload: {
         projectId: projectId,
+        sessionType: SessionTypeEnum.B,
         sandboxType: SandboxTypeEnum.E2B,
         provider: 'opencode',
         model: item.model,

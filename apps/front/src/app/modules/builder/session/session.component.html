@@ -56,6 +56,7 @@
   <!-- Permission dock -->
   <div
     *ngIf="
+      session?.sessionType !== sessionTypeEnum.A &&
       permissions.length > 0 &&
       !isArchived &&
       session.sessionId &&
@@ -123,7 +124,11 @@
 
   <!-- Question dock -->
   <div
-    *ngIf="questions.length > 0 && !isArchived"
+    *ngIf="
+      session?.sessionType !== sessionTypeEnum.A &&
+      questions.length > 0 &&
+      !isArchived
+    "
     class="mx-auto mb-8 flex w-full max-w-[976px] flex-shrink-0 flex-col gap-2 px-6 pb-2 pt-2"
   >
     <m-question-prompt
@@ -185,6 +190,7 @@
             [(agent)]="agent"
             [(model)]="model"
             [(variant)]="variant"
+            [sessionType]="session?.sessionType"
             [disabled]="isActivating || isSessionError"
             [isWorking]="isWorking"
             [showSelects]="messages.length > 0"

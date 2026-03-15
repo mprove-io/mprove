@@ -1,0 +1,1 @@
+ALTER TABLE "sessions" ALTER COLUMN "sandbox_type" DROP NOT NULL;

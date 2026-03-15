@@ -33,10 +33,6 @@ export class AgentStreamService implements OnModuleDestroy {
 
   private lastEventTsMap = new Map<string, number>();
 
-  private isRunningDrain = false;
-
-  private drainTimer: ReturnType<typeof setInterval>;
-
   constructor(
     private cs: ConfigService<BackendConfig>,
     private agentDrainService: AgentStreamDrainService,
@@ -85,77 +81,6 @@ export class AgentStreamService implements OnModuleDestroy {
         });
       }
     });
-
-    this.drainTimer = setInterval(async () => {
-      if (this.isRunningDrain === false) {
-        this.isRunningDrain = true;
-
-        try {
-          let safePauseSessionIds =
-            await this.agentDrainService.drainAllQueues();
-
-          for (let sessionId of safePauseSessionIds) {
-            try {
-              await this.stopEventStream(sessionId);
-              await this.agentSandboxLifecycleService.pauseSessionById({
-                sessionId: sessionId,
-                pauseReason: PauseReasonEnum.Safe
-              });
-
-              await this.publishReloadSession({
-                sessionId: sessionId
-              });
-            } catch (e) {
-              logToConsoleBackend({
-                log: new ServerError({
-                  message: ErEnum.BACKEND_AGENT_SAFE_PAUSE_SESSION_FAILED,
-                  originalError: e
-                }),
-                logLevel: LogLevelEnum.Error,
-                logger: this.logger,
-                cs: this.cs
-              });
-            }
-          }
-        } catch (e) {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_DRAIN_QUEUES_FAILED,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        }
-
-        this.refreshStreamLocks().catch(e => {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-
-        this.checkStreamStalls().catch(e => {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_STREAM_STALL_CHECK_FAILED,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-
-        this.isRunningDrain = false;
-      }
-    }, 1000);
   }
 
   async publishStopSessionStream(item: {
@@ -192,6 +117,32 @@ export class AgentStreamService implements OnModuleDestroy {
     });
   }
 
+  async processSafePause(item: { sessionIds: string[] }): Promise<void> {
+    for (let sessionId of item.sessionIds) {
+      try {
+        await this.stopEventStream(sessionId);
+        await this.agentSandboxLifecycleService.pauseSessionById({
+          sessionId: sessionId,
+          pauseReason: PauseReasonEnum.Safe
+        });
+
+        await this.publishReloadSession({
+          sessionId: sessionId
+        });
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_SAFE_PAUSE_SESSION_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+    }
+  }
+
   // stream locks
 
   private makeStreamLockKey(sessionId: string): string {
@@ -209,7 +160,7 @@ export class AgentStreamService implements OnModuleDestroy {
     return result === 'OK';
   }
 
-  private async refreshStreamLocks(): Promise<void> {
+  async refreshActiveLocks(): Promise<void> {
     for (let sessionId of this.activeStreams.keys()) {
       let result = await this.redisClient.eval(
         `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
@@ -422,7 +373,7 @@ export class AgentStreamService implements OnModuleDestroy {
     });
   }
 
-  private async checkStreamStalls(): Promise<void> {
+  async checkStreamStalls(): Promise<void> {
     let now = Date.now();
 
     for (let sessionId of this.activeStreams.keys()) {
@@ -476,7 +427,6 @@ export class AgentStreamService implements OnModuleDestroy {
   }
 
   onModuleDestroy() {
-    clearInterval(this.drainTimer);
     this.redisSubscriber.disconnect();
     this.redisClient.disconnect();
   }
