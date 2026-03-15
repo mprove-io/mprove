@@ -22,6 +22,8 @@
         class="w-[240px] select-none text-base"
         [items]="branches"
         [clearable]="false"
+        [searchable]="true"
+        [searchFn]="branchesSearchFn"
         [(ngModel)]="initialBranch"
         [loading]="branchesLoading"
         placeholder="Initial Branch"

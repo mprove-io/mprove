@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
@@ -102,6 +103,17 @@ export class NewSessionComponent implements OnInit {
         take(1)
       )
       .subscribe();
+  }
+
+  branchesSearchFn(
+    term: string,
+    branch: { branchId: string; extraName: string }
+  ) {
+    let haystack = [`${branch.extraName}`];
+    let opts = {};
+    let uf = new uFuzzy(opts);
+    let idxs = uf.filter(haystack, term);
+    return idxs != null && idxs.length > 0;
   }
 
   sendMessage(text: string) {
