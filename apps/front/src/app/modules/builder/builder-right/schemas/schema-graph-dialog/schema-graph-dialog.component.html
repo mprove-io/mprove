@@ -476,7 +476,7 @@
           ) {
             <!-- Schema row -->
             <div
-              class="hover:bg-m50 flex h-11 cursor-pointer select-none flex-row items-center rounded pr-5"
+              class="hover:bg-m50 group flex h-11 cursor-pointer select-none flex-row items-center rounded pr-5"
               (click)="toggleSchemaExpanded({ schemaNode: schemaNode })"
             >
               <div class="flex flex-row items-center pl-4">
@@ -510,13 +510,27 @@
                 >{{ schemaNode.connectionId }} -
                 {{ schemaNode.schemaName }}</span
               >
+              <button
+                type="button"
+                tp="Copy schema name"
+                tpPlacement="top"
+                class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                (click)="
+                  copyToClipboard({
+                    text: schemaNode.schemaName,
+                    event: $event
+                  })
+                "
+              >
+                <m-copy-icon></m-copy-icon>
+              </button>
             </div>
 
             <!-- Table rows -->
             @if (schemaNode.expanded) {
               @for (tableNode of schemaNode.tables; track tableNode.tableName) {
                 <div
-                  class="flex h-11 cursor-pointer select-none flex-row items-center rounded pr-5"
+                  class="group flex h-11 cursor-pointer select-none flex-row items-center rounded pr-5"
                   [ngClass]="{
                     'bg-green-100': selectedTableKey === tableNode.tableFullId,
                     'hover:bg-m50': selectedTableKey !== tableNode.tableFullId
@@ -549,6 +563,20 @@
                   <span class="text-s1 truncate text-[16px]">{{
                     tableNode.tableName
                   }}</span>
+                  <button
+                    type="button"
+                    tp="Copy table name"
+                    tpPlacement="top"
+                    class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                    (click)="
+                      copyToClipboard({
+                        text: tableNode.tableName,
+                        event: $event
+                      })
+                    "
+                  >
+                    <m-copy-icon></m-copy-icon>
+                  </button>
                 </div>
               }
             }

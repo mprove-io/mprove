@@ -713,6 +713,12 @@ export class SchemaGraphDialogComponent implements OnInit {
     }
   }
 
+  copyToClipboard(item: { text: string; event: MouseEvent }) {
+    let { text, event } = item;
+    event.stopPropagation();
+    navigator.clipboard.writeText(text);
+  }
+
   closeSample() {
     this.showSample = false;
     this.cd.detectChanges();

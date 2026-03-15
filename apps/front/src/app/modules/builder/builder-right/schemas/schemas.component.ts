@@ -338,6 +338,12 @@ export class SchemasComponent implements OnInit {
     this.myDialogService.showSchemaGraphDialog(dialogData);
   }
 
+  copyToClipboard(item: { text: string; event: MouseEvent }) {
+    let { text, event } = item;
+    event.stopPropagation();
+    navigator.clipboard.writeText(text);
+  }
+
   sampleOnClick(item: { node: TreeNode; event: MouseEvent }) {
     let { node, event } = item;
     event.stopPropagation();

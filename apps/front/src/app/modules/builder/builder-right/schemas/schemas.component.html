@@ -153,10 +153,42 @@
               <button
                 *ngIf="node.data.nodeType === 'connection'"
                 type="button"
-                class="border-s400 text-s500 ml-auto flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-500 hover:text-blue-500 focus:outline-none"
+                tp="Copy schema name"
+                tpPlacement="top"
+                class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                (click)="
+                  copyToClipboard({
+                    text: node.data.schemaDisplayName,
+                    event: $event
+                  })
+                "
+              >
+                <m-copy-icon></m-copy-icon>
+              </button>
+
+              <button
+                *ngIf="node.data.nodeType === 'connection'"
+                type="button"
+                class="border-s400 text-s500 ml-2 flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-500 hover:text-blue-500 focus:outline-none"
                 (click)="graphOnClick({ node: node, event: $event })"
               >
                 Graph
+              </button>
+
+              <button
+                *ngIf="node.data.nodeType === 'table'"
+                type="button"
+                tp="Copy table name"
+                tpPlacement="top"
+                class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                (click)="
+                  copyToClipboard({
+                    text: node.data.tableName,
+                    event: $event
+                  })
+                "
+              >
+                <m-copy-icon></m-copy-icon>
               </button>
 
               <button
@@ -246,7 +278,23 @@
               <button
                 *ngIf="node.data.nodeType === 'column'"
                 type="button"
-                class="border-s400 text-s500 invisible ml-auto flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-400 hover:text-blue-400 focus:outline-none group-hover:visible"
+                tp="Copy column name"
+                tpPlacement="top"
+                class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                (click)="
+                  copyToClipboard({
+                    text: node.data.columnName,
+                    event: $event
+                  })
+                "
+              >
+                <m-copy-icon></m-copy-icon>
+              </button>
+
+              <button
+                *ngIf="node.data.nodeType === 'column'"
+                type="button"
+                class="border-s400 text-s500 invisible ml-2 flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-400 hover:text-blue-400 focus:outline-none group-hover:visible"
                 (click)="sampleOnClick({ node: node, event: $event })"
               >
                 Sample

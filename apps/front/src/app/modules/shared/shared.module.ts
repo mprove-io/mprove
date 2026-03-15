@@ -75,6 +75,7 @@ import { ChevronLeftIconComponent } from './icons/chevron-left-icon/chevron-left
 import { ChevronRightIconComponent } from './icons/chevron-right-icon/chevron-right-icon.component';
 import { ChevronUpIconComponent } from './icons/chevron-up-icon/chevron-up-icon.component';
 import { ClockIconComponent } from './icons/clock-icon/clock-icon.component';
+import { CopyIconComponent } from './icons/copy-icon/copy-icon.component';
 import { CurrencyDollarIconComponent } from './icons/currency-dollar-icon/currency-dollar-icon.component';
 import { DatabaseZapIconComponent } from './icons/database-zap-icon/database-zap-icon.component';
 import { DeleteBigIconComponent } from './icons/delete-big-icon/delete-big-icon.component';
@@ -267,6 +268,7 @@ let sharedComponents = [
   LinkOffIconComponent,
   FormulaIconComponent,
   ClockIconComponent,
+  CopyIconComponent,
   ReportSaveAsDialogComponent,
   ChartSaveAsDialogComponent,
   DashboardSaveAsDialogComponent,
