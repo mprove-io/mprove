@@ -68,6 +68,7 @@ export class CreateProjectDialogComponent implements OnInit {
   publicKey: string;
 
   isDeployKeyAdded = false;
+  copied = false;
 
   spinnerName = 'createProjectDialogSpinner';
 
@@ -195,6 +196,13 @@ export class CreateProjectDialogComponent implements OnInit {
     event.stopPropagation();
     this.isDeployKeyAdded = !this.isDeployKeyAdded;
     this.cd.detectChanges();
+  }
+
+  copyToClipboard() {
+    navigator.clipboard.writeText(this.publicKey).then(() => {
+      this.copied = true;
+      this.cd.detectChanges();
+    });
   }
 
   cancel() {

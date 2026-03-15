@@ -151,7 +151,7 @@
       </div>
     </div>
 
-    <div class="mt-8">
+    <div class="mt-8 flex flex-row items-center">
       <button
         data-cy="createProjectDialogCreateButton"
         class="bg-m600 text-m0 w-28 select-none rounded py-3 font-medium focus:outline-none"
@@ -178,6 +178,18 @@
         (click)="cancel()"
         >Cancel</button
       >
+
+      <div *ngIf="copied" class="text-s1 ml-auto text-lg">Copied!</div>
+
+      <button
+        *ngIf="publicKey"
+        class="border-s400 text-s500 select-none rounded border px-5 py-3 text-base font-medium focus:outline-none"
+        [ngClass]="{ 'ml-auto': !copied, 'ml-3': copied }"
+        type="button"
+        (click)="copyToClipboard()"
+      >
+        Copy to Clipboard
+      </button>
     </div>
   </form>
 </div>
