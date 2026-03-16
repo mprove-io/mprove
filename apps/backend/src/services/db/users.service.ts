@@ -84,13 +84,21 @@ export class UsersService {
           ? user.ui?.newSessionPermissionsAutoAccept
           : defaultSrvUi.newSessionPermissionsAutoAccept,
         //
-        newSessionProviderModel: isDefined(user.ui?.newSessionProviderModel)
-          ? user.ui?.newSessionProviderModel
-          : defaultSrvUi.newSessionProviderModel,
+        newSessionExplorerProviderModel: isDefined(
+          user.ui?.newSessionExplorerProviderModel
+        )
+          ? user.ui?.newSessionExplorerProviderModel
+          : defaultSrvUi.newSessionExplorerProviderModel,
         //
-        newSessionVariant: isDefined(user.ui?.newSessionVariant)
-          ? user.ui?.newSessionVariant
-          : defaultSrvUi.newSessionVariant
+        newSessionEditorProviderModel: isDefined(
+          user.ui?.newSessionEditorProviderModel
+        )
+          ? user.ui?.newSessionEditorProviderModel
+          : defaultSrvUi.newSessionEditorProviderModel,
+        //
+        newSessionEditorVariant: isDefined(user.ui?.newSessionEditorVariant)
+          ? user.ui?.newSessionEditorVariant
+          : defaultSrvUi.newSessionEditorVariant
       },
       serverTs: Number(user.serverTs)
     };

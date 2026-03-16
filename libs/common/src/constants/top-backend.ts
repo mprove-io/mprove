@@ -79,6 +79,7 @@ export const DEFAULT_SRV_UI: Ui = {
   projectReportLinks: [],
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
-  newSessionProviderModel: 'default',
-  newSessionVariant: 'default'
+  newSessionExplorerProviderModel: undefined,
+  newSessionEditorProviderModel: undefined,
+  newSessionEditorVariant: 'default'
 };

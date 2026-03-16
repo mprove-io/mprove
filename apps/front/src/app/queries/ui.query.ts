@@ -70,8 +70,9 @@ export class UiState {
   projectReportLinks: ProjectReportLink[];
   permissionsAutoAcceptSessionIds: string[];
   newSessionPermissionsAutoAccept: boolean;
-  newSessionProviderModel: string;
-  newSessionVariant: string;
+  newSessionExplorerProviderModel: string;
+  newSessionEditorProviderModel: string;
+  newSessionEditorVariant: string;
 }
 
 let uiState: UiState = {
@@ -126,8 +127,9 @@ let uiState: UiState = {
   projectReportLinks: [],
   permissionsAutoAcceptSessionIds: [],
   newSessionPermissionsAutoAccept: false,
-  newSessionProviderModel: undefined,
-  newSessionVariant: undefined
+  newSessionExplorerProviderModel: undefined,
+  newSessionEditorProviderModel: undefined,
+  newSessionEditorVariant: undefined
 };
 
 @Injectable({ providedIn: 'root' })
@@ -231,12 +233,16 @@ export class UiQuery extends BaseQuery<UiState> {
     select(state => state.newSessionPermissionsAutoAccept)
   );
 
-  newSessionProviderModel$ = this.store.pipe(
-    select(state => state.newSessionProviderModel)
+  newSessionExplorerProviderModel$ = this.store.pipe(
+    select(state => state.newSessionExplorerProviderModel)
   );
 
-  newSessionVariant$ = this.store.pipe(
-    select(state => state.newSessionVariant)
+  newSessionEditorProviderModel$ = this.store.pipe(
+    select(state => state.newSessionEditorProviderModel)
+  );
+
+  newSessionEditorVariant$ = this.store.pipe(
+    select(state => state.newSessionEditorVariant)
   );
 
   constructor() {

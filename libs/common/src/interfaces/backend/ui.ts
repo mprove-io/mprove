@@ -55,9 +55,13 @@ export class Ui {
 
   @IsOptional()
   @IsString()
-  newSessionProviderModel?: string;
+  newSessionExplorerProviderModel?: string;
 
   @IsOptional()
   @IsString()
-  newSessionVariant?: string;
+  newSessionEditorProviderModel?: string;
+
+  @IsOptional()
+  @IsString()
+  newSessionEditorVariant?: string;
 }

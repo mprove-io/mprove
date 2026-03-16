@@ -59,7 +59,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   sessionTypeEnum = SessionTypeEnum;
 
   agent = 'plan';
-  model = 'default';
+  model: string;
   variant = 'default';
 
   session: SessionApi;
@@ -411,8 +411,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   enterSession(sessionData: SessionBundleState) {
     this.agent = this.session.agent;
-    this.model =
-      this.session.lastMessageProviderModel || this.session.model || 'default';
+    this.model = this.session.lastMessageProviderModel || this.session.model;
     let loadedEvents = this.sessionEventsQuery.getValue().events;
     let maxEventIndex = loadedEvents.reduce(
       (max: number, e: AgentEventApi) => Math.max(max, e.eventIndex),

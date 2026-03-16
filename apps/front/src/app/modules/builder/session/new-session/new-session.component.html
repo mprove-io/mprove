@@ -10,6 +10,7 @@
         [clearable]="false"
         [searchable]="false"
         [(ngModel)]="sessionType"
+        (ngModelChange)="onSessionTypeChange()"
         placeholder="Session Type"
       ></ng-select>
     </div>
@@ -48,5 +49,3 @@
     ></m-session-input>
   </div>
 </div>
-<div *ngIf="newSessionProviderModel$ | async"></div>
-<div *ngIf="newSessionVariant$ | async"></div>

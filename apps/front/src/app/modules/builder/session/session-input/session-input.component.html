@@ -30,15 +30,15 @@
         [ngClass]="{
           'bg-m600 cursor-pointer':
             (isWorking && !messageText.trim()) ||
-            (messageText.trim() && !effectiveDisabled),
+            (messageText.trim() && !effectiveDisabled && !!model),
           'bg-s300 cursor-default':
             !(isWorking && !messageText.trim()) &&
-            (!messageText.trim() || effectiveDisabled)
+            (!messageText.trim() || effectiveDisabled || !model)
         }"
         (click)="isWorking && !messageText.trim() ? onStop() : onSend()"
         [disabled]="
           !(isWorking && !messageText.trim()) &&
-          (!messageText.trim() || effectiveDisabled)
+          (!messageText.trim() || effectiveDisabled || !model)
         "
       >
         <m-stop-icon
@@ -81,6 +81,7 @@
 
   <ng-select
     class="session-models-select w-[340px] select-none text-base"
+    [ngClass]="{ 'session-models-select-error': !model && messageText.trim() }"
     [items]="models"
     bindLabel="label"
     bindValue="value"
@@ -93,7 +94,7 @@
     (open)="openModelSelect()"
     [disabled]="disabled"
     appendTo="body"
-    placeholder="Model"
+    placeholder="Select LLM"
   >
     <ng-template ng-label-tmp let-item="item">
       <div class="ml-1 flex items-center truncate">

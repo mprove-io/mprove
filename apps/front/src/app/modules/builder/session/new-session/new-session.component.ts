@@ -43,21 +43,16 @@ export class NewSessionComponent implements OnInit {
 
   agent = 'plan';
 
-  model = 'default';
-  newSessionProviderModel$ = this.uiQuery.newSessionProviderModel$.pipe(
-    tap(newSessionProviderModel => {
-      this.model = newSessionProviderModel;
-      this.cd.detectChanges();
-    })
-  );
-
+  model: string;
   variant = 'default';
-  newSessionVariant$ = this.uiQuery.newSessionVariant$.pipe(
-    tap(newSessionVariant => {
-      this.variant = newSessionVariant;
-      this.cd.detectChanges();
-    })
-  );
+
+  onSessionTypeChange() {
+    let uiState = this.uiQuery.getValue();
+    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
+    this.model = isExplorer
+      ? uiState.newSessionExplorerProviderModel
+      : uiState.newSessionEditorProviderModel;
+  }
 
   initialBranch: string;
 
@@ -84,6 +79,10 @@ export class NewSessionComponent implements OnInit {
   }
 
   ngOnInit() {
+    let uiState = this.uiQuery.getValue();
+    this.model = uiState.newSessionExplorerProviderModel;
+    this.variant = uiState.newSessionEditorVariant || 'default';
+
     let nav = this.navQuery.getValue();
 
     this.branchesLoading = true;
@@ -139,8 +138,7 @@ export class NewSessionComponent implements OnInit {
     this.uiQuery.updatePart({ showContent: false });
     this.spinner.show(APP_SPINNER_NAME);
 
-    let provider =
-      this.model === 'default' ? 'opencode' : this.model.split('/')[0];
+    let provider = this.model.split('/')[0];
 
     let nav = this.navQuery.getValue();
 

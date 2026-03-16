@@ -35,8 +35,9 @@ export class UiService {
     projectReportLinks?: ProjectReportLink[];
     permissionsAutoAcceptSessionIds?: string[];
     newSessionPermissionsAutoAccept?: boolean;
-    newSessionProviderModel?: string;
-    newSessionVariant?: string;
+    newSessionExplorerProviderModel?: string;
+    newSessionEditorProviderModel?: string;
+    newSessionEditorVariant?: string;
   }) {
     let {
       timezone,
@@ -47,8 +48,9 @@ export class UiService {
       projectReportLinks,
       permissionsAutoAcceptSessionIds,
       newSessionPermissionsAutoAccept,
-      newSessionProviderModel,
-      newSessionVariant
+      newSessionExplorerProviderModel,
+      newSessionEditorProviderModel,
+      newSessionEditorVariant
     } = item;
 
     let uiState = this.uiQuery.getValue();
@@ -82,12 +84,17 @@ export class UiService {
       )
         ? newSessionPermissionsAutoAccept
         : uiState.newSessionPermissionsAutoAccept,
-      newSessionProviderModel: isDefined(newSessionProviderModel)
-        ? newSessionProviderModel
-        : uiState.newSessionProviderModel,
-      newSessionVariant: isDefined(newSessionVariant)
-        ? newSessionVariant
-        : uiState.newSessionVariant
+      newSessionExplorerProviderModel: isDefined(
+        newSessionExplorerProviderModel
+      )
+        ? newSessionExplorerProviderModel
+        : uiState.newSessionExplorerProviderModel,
+      newSessionEditorProviderModel: isDefined(newSessionEditorProviderModel)
+        ? newSessionEditorProviderModel
+        : uiState.newSessionEditorProviderModel,
+      newSessionEditorVariant: isDefined(newSessionEditorVariant)
+        ? newSessionEditorVariant
+        : uiState.newSessionEditorVariant
     };
 
     let payload: ToBackendSetUserUiRequestPayload = {

@@ -29,7 +29,7 @@ import { UiService } from '#front/app/services/ui.service';
   templateUrl: './session-input.component.html'
 })
 export class SessionInputComponent implements OnChanges {
-  @Input() model = 'default';
+  @Input() model: string;
   @Output() modelChange = new EventEmitter<string>();
 
   @Input() agent = 'plan';
@@ -60,15 +60,7 @@ export class SessionInputComponent implements OnChanges {
     modelId: string;
     providerId: string;
     providerName: string;
-  }[] = [
-    {
-      value: 'default',
-      label: 'default',
-      modelId: 'default',
-      providerId: '',
-      providerName: ''
-    }
-  ];
+  }[] = [];
   modelsLoading = false;
   agents = ['build', 'plan'];
   variants: string[] = ['default'];
@@ -127,7 +119,7 @@ export class SessionInputComponent implements OnChanges {
   }
 
   onSend() {
-    if (!this.messageText.trim() || this.effectiveDisabled) {
+    if (!this.messageText.trim() || this.effectiveDisabled || !this.model) {
       return;
     }
     let text = this.messageText.trim();
@@ -145,34 +137,55 @@ export class SessionInputComponent implements OnChanges {
     this.modelChange.emit(this.model);
     this.variantChange.emit(this.variant);
 
-    this.uiQuery.updatePart({
-      newSessionProviderModel: this.model,
-      newSessionVariant: this.variant
-    });
-    this.uiService.setUserUi({
-      newSessionProviderModel: this.model,
-      newSessionVariant: this.variant
-    });
+    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
+
+    if (isExplorer) {
+      this.uiQuery.updatePart({
+        newSessionExplorerProviderModel: this.model
+      });
+      this.uiService.setUserUi({
+        newSessionExplorerProviderModel: this.model
+      });
+    } else {
+      this.uiQuery.updatePart({
+        newSessionEditorProviderModel: this.model,
+        newSessionEditorVariant: this.variant
+      });
+      this.uiService.setUserUi({
+        newSessionEditorProviderModel: this.model,
+        newSessionEditorVariant: this.variant
+      });
+    }
   }
 
   onVariantSelect() {
     this.variantChange.emit(this.variant);
-    this.uiService.setUserUi({
-      newSessionProviderModel: this.model,
-      newSessionVariant: this.variant
-    });
 
-    this.uiService.setUserUi({
-      newSessionProviderModel: this.model,
-      newSessionVariant: this.variant
-    });
+    let isExplorer = this.sessionType === SessionTypeEnum.Explorer;
+
+    if (isExplorer) {
+      this.uiService.setUserUi({
+        newSessionExplorerProviderModel: this.model
+      });
+    } else {
+      this.uiService.setUserUi({
+        newSessionEditorProviderModel: this.model,
+        newSessionEditorVariant: this.variant
+      });
+    }
   }
 
   updateProviderHasApiKey() {
+    if (!this.model) {
+      this.providerHasApiKey = true;
+      this.effectiveDisabled = this.disabled;
+      this.providerHasApiKeyChange.emit(this.providerHasApiKey);
+      return;
+    }
+
     let project = this.projectQuery.getValue();
 
-    let provider =
-      this.model === 'default' ? 'opencode' : this.model.split('/')[0];
+    let provider = this.model.split('/')[0];
 
     if (provider === 'opencode') {
       this.providerHasApiKey = !!project.isZenApiKeySet;
@@ -221,16 +234,7 @@ export class SessionInputComponent implements OnChanges {
         providerName: m.providerName
       };
     });
-    this.models = [
-      {
-        value: 'default',
-        label: 'default',
-        modelId: 'default',
-        providerId: '',
-        providerName: ''
-      },
-      ...modelOptions
-    ];
+    this.models = modelOptions;
     this.updateVariants();
   }
 
