@@ -81,7 +81,7 @@
 
   <ng-select
     class="session-models-select w-[340px] select-none text-base"
-    [ngClass]="{ 'session-models-select-error': !model && messageText.trim() }"
+    [class.session-models-select-error]="!model && messageText.trim()"
     [items]="models"
     bindLabel="label"
     bindValue="value"
