@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PARAMETER_SESSION_ID } from '#common/constants/top';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -33,13 +33,6 @@ export class SessionResolver {
     routerStateSnapshot: RouterStateSnapshot
   ): Observable<boolean> {
     let sessionId = route.params[PARAMETER_SESSION_ID];
-
-    // Skip fetch if stores already have data for this session
-    // (populated by create-session response)
-    let currentSession = this.sessionQuery.getValue();
-    if (currentSession?.sessionId === sessionId) {
-      return of(true);
-    }
 
     let payload: ToBackendGetAgentSessionRequestPayload = {
       sessionId: sessionId,
