@@ -38,8 +38,8 @@ import { UiService } from '#front/app/services/ui.service';
 })
 export class NewSessionComponent implements OnInit {
   sessionTypeEnum = SessionTypeEnum;
-  sessionType: SessionTypeEnum = SessionTypeEnum.A;
-  sessionTypes = [SessionTypeEnum.A, SessionTypeEnum.B];
+  sessionType: SessionTypeEnum = SessionTypeEnum.Explorer;
+  sessionTypes = [SessionTypeEnum.Explorer, SessionTypeEnum.Editor];
 
   agent = 'plan';
 
@@ -144,15 +144,15 @@ export class NewSessionComponent implements OnInit {
 
     let nav = this.navQuery.getValue();
 
-    let isTypeA = this.sessionType === SessionTypeEnum.A;
+    let isSessionExplorer = this.sessionType === SessionTypeEnum.Explorer;
 
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
       sessionType: this.sessionType,
-      sandboxType: isTypeA ? undefined : SandboxTypeEnum.E2B,
+      sandboxType: isSessionExplorer ? undefined : SandboxTypeEnum.E2B,
       provider: provider,
       model: this.model,
-      agent: isTypeA ? undefined : this.agent,
+      agent: isSessionExplorer ? undefined : this.agent,
       variant: this.variant,
       envId: nav.envId,
       initialBranch: this.initialBranch,
@@ -165,43 +165,51 @@ export class NewSessionComponent implements OnInit {
         payload: payload
       })
       .pipe(
-        tap((resp: ToBackendCreateAgentSessionResponse) => {
-          if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            let { sessionId, repoId, branchId } = resp.payload;
+        tap((resp2: ToBackendCreateAgentSessionResponse) => {
+          if (resp2.info?.status === ResponseInfoStatusEnum.Ok) {
+            let {
+              sessionId,
+              repoId,
+              branchId,
+              session,
+              sessions,
+              hasMoreArchived,
+              events,
+              messages,
+              parts,
+              ocSession
+            } = resp2.payload;
 
-            // For session A: populate stores from expanded create response
-            if (isTypeA && resp.payload.session) {
+            // For Explorer session: populate stores from expanded create response
+            if (isSessionExplorer && session) {
               this.agentEventsService.resetAll();
 
-              this.sessionQuery.update(resp.payload.session);
+              this.sessionQuery.update(session);
 
-              if (resp.payload.sessions && resp.payload.sessions.length > 0) {
+              if (sessions && sessions.length > 0) {
                 this.sessionsQuery.updatePart({
-                  sessions: resp.payload.sessions,
+                  sessions: sessions,
                   isListLoaded: true,
-                  hasMoreArchived: resp.payload.hasMoreArchived ?? false
+                  hasMoreArchived: hasMoreArchived ?? false
                 });
               }
 
               this.sessionEventsQuery.updatePart({
-                events: resp.payload.events || []
+                events: events || []
               });
 
               this.sessionBundleQuery.updatePart({
-                messages: resp.payload.messages || [],
-                parts: resp.payload.parts
-                  ? groupPartsByMessageId(resp.payload.parts)
-                  : {},
+                messages: messages || [],
+                parts: parts ? groupPartsByMessageId(parts) : {},
                 todos: [],
                 questions: [],
                 permissions: [],
-                ocSessionStatus: resp.payload.ocSession?.ocSessionStatus,
-                lastSessionError: resp.payload.ocSession?.lastSessionError,
-                isLastErrorRecovered:
-                  resp.payload.ocSession?.isLastErrorRecovered
+                ocSessionStatus: ocSession?.ocSessionStatus,
+                lastSessionError: ocSession?.lastSessionError,
+                isLastErrorRecovered: ocSession?.isLastErrorRecovered
               });
             } else {
-              // Type B: add new session to the sessions list
+              // Type Editor: add new session to the sessions list
               let currentSessions = this.sessionsQuery.getValue().sessions;
               let newSession: SessionApi = {
                 sessionId: sessionId,
@@ -238,20 +246,12 @@ export class NewSessionComponent implements OnInit {
               });
             }
 
-            // Navigate to session route
-            // Type A: use current nav repo/branch (no session repo)
-            // Type B: use session repo/branch
-            if (isTypeA) {
-              this.navigateService.navigateToSession({
-                sessionId: sessionId
-              });
-            } else {
-              this.navigateService.navigateToSession({
-                sessionId: sessionId,
-                repoId: repoId,
-                branchId: branchId
-              });
-            }
+            this.navigateService.navigateToSession({
+              sessionId: sessionId,
+              repoId: repoId,
+              branchId: branchId
+            });
+
             this.isSubmitting = false;
             this.cd.detectChanges();
           } else {

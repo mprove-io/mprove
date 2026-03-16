@@ -56,7 +56,7 @@
   <!-- Permission dock -->
   <div
     *ngIf="
-      session?.sessionType !== sessionTypeEnum.A &&
+      session?.sessionType !== sessionTypeEnum.Explorer &&
       permissions.length > 0 &&
       !isArchived &&
       session.sessionId &&
@@ -125,7 +125,7 @@
   <!-- Question dock -->
   <div
     *ngIf="
-      session?.sessionType !== sessionTypeEnum.A &&
+      session?.sessionType !== sessionTypeEnum.Explorer &&
       questions.length > 0 &&
       !isArchived
     "

@@ -59,14 +59,14 @@
   class="mt-4 flex flex-row items-center justify-center space-x-3"
 >
   <div
-    *ngIf="sessionType !== sessionTypeEnum.A"
+    *ngIf="sessionType !== sessionTypeEnum.Explorer"
     class="h-10 w-10 flex-shrink-0"
   >
     <m-auto-accept-toggle [sessionId]="sessionId"></m-auto-accept-toggle>
   </div>
 
   <ng-select
-    *ngIf="sessionType !== sessionTypeEnum.A"
+    *ngIf="sessionType !== sessionTypeEnum.Explorer"
     class="session-agents-select w-[140px] select-none text-base"
     [items]="agents"
     [clearable]="false"
@@ -132,7 +132,7 @@
   ></ng-select>
 
   <div
-    *ngIf="sessionType !== sessionTypeEnum.A"
+    *ngIf="sessionType !== sessionTypeEnum.Explorer"
     class="h-10 w-10 flex-shrink-0"
   >
     <m-context-usage-circle></m-context-usage-circle>

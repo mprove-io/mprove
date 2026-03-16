@@ -40,7 +40,7 @@ export class SessionInputComponent implements OnChanges {
 
   sessionTypeEnum = SessionTypeEnum;
 
-  @Input() sessionType: SessionTypeEnum = SessionTypeEnum.A;
+  @Input() sessionType: SessionTypeEnum = SessionTypeEnum.Explorer;
 
   @Input() disabled = false;
   @Input() showSelects = true;
@@ -88,7 +88,7 @@ export class SessionInputComponent implements OnChanges {
     let state = this.agentModelsQuery.getValue();
 
     let models =
-      this.sessionType === SessionTypeEnum.A
+      this.sessionType === SessionTypeEnum.Explorer
         ? state.modelsAi
         : state.modelsOpencode;
 
@@ -100,7 +100,7 @@ export class SessionInputComponent implements OnChanges {
       let state = this.agentModelsQuery.getValue();
 
       let models =
-        this.sessionType === SessionTypeEnum.A
+        this.sessionType === SessionTypeEnum.Explorer
           ? state.modelsAi
           : state.modelsOpencode;
 
@@ -256,12 +256,12 @@ export class SessionInputComponent implements OnChanges {
             let state = this.agentModelsQuery.getValue();
 
             let updatedModelsOpencode =
-              this.sessionType === SessionTypeEnum.B
+              this.sessionType === SessionTypeEnum.Editor
                 ? resp.payload.modelsOpencode
                 : state.modelsOpencode;
 
             let updatedModelsAi =
-              this.sessionType === SessionTypeEnum.A
+              this.sessionType === SessionTypeEnum.Explorer
                 ? resp.payload.modelsAi
                 : state.modelsAi;
 
@@ -271,7 +271,7 @@ export class SessionInputComponent implements OnChanges {
             });
 
             let models =
-              this.sessionType === SessionTypeEnum.A
+              this.sessionType === SessionTypeEnum.Explorer
                 ? resp.payload.modelsAi
                 : resp.payload.modelsOpencode;
 

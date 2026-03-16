@@ -11,6 +11,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import { makeIdPrefix } from '#common/functions/make-id-prefix';
@@ -91,7 +92,8 @@ test('1', async t => {
             userId: userId,
             projectId: projectId,
             apiKey: sessionApiKey,
-            status: SessionStatusEnum.Archived
+            status: SessionStatusEnum.Archived,
+            type: SessionTypeEnum.Editor
           }
         ]
       }

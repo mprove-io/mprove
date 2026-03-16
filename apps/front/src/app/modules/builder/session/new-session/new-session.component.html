@@ -1,38 +1,40 @@
 <div class="flex h-full w-full flex-col items-center">
-  <div class="h-[40%] flex-shrink-0"></div>
+  <div
+    class="mb-6 mt-32 flex h-11 flex-shrink-0 flex-row items-center justify-center space-x-6"
+  >
+    <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
+      <div class="text-s400 text-right text-base">Session type</div>
+      <ng-select
+        class="w-[160px] select-none text-base"
+        [items]="sessionTypes"
+        [clearable]="false"
+        [searchable]="false"
+        [(ngModel)]="sessionType"
+        placeholder="Session Type"
+      ></ng-select>
+    </div>
+
+    <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
+      <div class="text-s400 text-right text-base">Base branch</div>
+      <ng-select
+        class="w-[240px] select-none text-base"
+        [items]="branches"
+        [clearable]="false"
+        [searchable]="true"
+        [searchFn]="branchesSearchFn"
+        [(ngModel)]="initialBranch"
+        [loading]="branchesLoading"
+        placeholder="Initial Branch"
+        bindLabel="extraName"
+        bindValue="branchId"
+      ></ng-select>
+    </div>
+  </div>
+
+  <div class="h-[20%] flex-shrink-0"></div>
   <div class="flex w-full max-w-[860px] flex-col px-6">
     <div class="mb-10 flex justify-center">
       <img class="w-40" src="assets/logo/mprove_logo_web-01-b-gray.svg" />
-    </div>
-
-    <div class="mb-4 flex flex-row items-center justify-center space-x-6">
-      <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
-        <div class="text-s400 text-right text-base">Session type</div>
-        <ng-select
-          class="w-[160px] select-none text-base"
-          [items]="sessionTypes"
-          [clearable]="false"
-          [searchable]="false"
-          [(ngModel)]="sessionType"
-          placeholder="Session Type"
-        ></ng-select>
-      </div>
-
-      <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
-        <div class="text-s400 text-right text-base">Base branch</div>
-        <ng-select
-          class="w-[240px] select-none text-base"
-          [items]="branches"
-          [clearable]="false"
-          [searchable]="true"
-          [searchFn]="branchesSearchFn"
-          [(ngModel)]="initialBranch"
-          [loading]="branchesLoading"
-          placeholder="Initial Branch"
-          bindLabel="extraName"
-          bindValue="branchId"
-        ></ng-select>
-      </div>
     </div>
 
     <m-session-input

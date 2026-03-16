@@ -81,7 +81,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        sessionTypes: [SessionTypeEnum.A, SessionTypeEnum.B]
+        sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor]
       }
     };
 

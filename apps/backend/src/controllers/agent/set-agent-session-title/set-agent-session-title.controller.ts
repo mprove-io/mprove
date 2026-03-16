@@ -39,8 +39,8 @@ export class SetAgentSessionTitleController {
       });
     }
 
-    if (session.sessionType === SessionTypeEnum.B) {
-      // Type B: proxy to OpenCode
+    if (session.sessionType === SessionTypeEnum.Editor) {
+      // Type Editor: proxy to OpenCode
       let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
         sessionId: sessionId
       });
@@ -53,7 +53,7 @@ export class SetAgentSessionTitleController {
         { throwOnError: true }
       );
     } else {
-      // Type A: set title via lock-holding pod (or acquire lock if none)
+      // Type Explorer: set title via lock-holding pod (or acquire lock if none)
       await this.aiSdkStreamService.setTitle({
         sessionId: sessionId,
         title: title

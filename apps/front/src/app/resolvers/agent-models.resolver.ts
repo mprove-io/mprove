@@ -35,7 +35,7 @@ export class AgentModelsResolver {
 
     let payload: ToBackendGetAgentProviderModelsRequestPayload = {
       projectId: nav.projectId,
-      sessionTypes: [SessionTypeEnum.A, SessionTypeEnum.B],
+      sessionTypes: [SessionTypeEnum.Explorer, SessionTypeEnum.Editor],
       forceLoadFromCache: true
     };
 

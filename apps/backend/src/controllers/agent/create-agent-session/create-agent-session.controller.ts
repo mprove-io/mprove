@@ -124,7 +124,7 @@ export class CreateAgentSessionController {
       .findMany({
         where: and(
           eq(sessionsTable.userId, user.userId),
-          eq(sessionsTable.sessionType, SessionTypeEnum.B),
+          eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
           inArray(sessionsTable.status, [
             SessionStatusEnum.Active,
             SessionStatusEnum.New
@@ -139,7 +139,7 @@ export class CreateAgentSessionController {
       });
     }
 
-    if (sessionType === SessionTypeEnum.A) {
+    if (sessionType === SessionTypeEnum.Explorer) {
       return this.createSessionTypeA({
         user: user,
         projectId: projectId,
@@ -152,7 +152,7 @@ export class CreateAgentSessionController {
       });
     }
 
-    // Type B: existing sandboxed opencode flow
+    // Type Editor: existing sandboxed opencode flow
 
     let sandboxEnvs: Record<string, string> = {};
 
@@ -186,7 +186,7 @@ export class CreateAgentSessionController {
 
         session = this.sessionsService.makeSession({
           sessionId: sessionId,
-          sessionType: SessionTypeEnum.B,
+          sessionType: SessionTypeEnum.Editor,
           repoId: sessionId,
           branchId: sessionId,
           userId: user.userId,
@@ -312,7 +312,7 @@ export class CreateAgentSessionController {
 
         session = this.sessionsService.makeSession({
           sessionId: sessionId,
-          sessionType: SessionTypeEnum.A,
+          sessionType: SessionTypeEnum.Explorer,
           repoId: PROD_REPO_ID,
           branchId: initialBranch,
           userId: user.userId,

@@ -1,4 +1,4 @@
 export enum SessionTypeEnum {
-  A = 'A',
-  B = 'B'
+  Explorer = 'Explorer',
+  Editor = 'Editor'
 }

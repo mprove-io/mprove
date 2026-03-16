@@ -38,7 +38,7 @@ export class GetAgentProviderModelsController {
     });
 
     let [modelsAi, modelsOpencode] = await Promise.all([
-      sessionTypes.includes(SessionTypeEnum.A)
+      sessionTypes.includes(SessionTypeEnum.Explorer)
         ? this.agentModelsAiSdkService.listModels({
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,
@@ -47,7 +47,7 @@ export class GetAgentProviderModelsController {
             forceLoadFromCache: forceLoadFromCache
           })
         : [],
-      sessionTypes.includes(SessionTypeEnum.B)
+      sessionTypes.includes(SessionTypeEnum.Editor)
         ? this.agentModelsOpencodeService.loadOpencodeModels({
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,

@@ -102,8 +102,8 @@ export class SendUserMessageToAgentController {
       });
     }
 
-    // Type A: direct AI SDK, no sandbox
-    if (session.sessionType === SessionTypeEnum.A) {
+    // Explorer: direct AI SDK, no sandbox
+    if (session.sessionType === SessionTypeEnum.Explorer) {
       if (interactionType === InteractionTypeEnum.Message) {
         let split = splitModel(model);
         let modelProvider = split ? split.providerID : session.provider;
@@ -176,7 +176,7 @@ export class SendUserMessageToAgentController {
       return payload;
     }
 
-    // Type B: sandboxed opencode flow
+    // Editor: sandboxed opencode flow
     let sandboxInfo = await this.agentSandboxService.getSandboxInfo({
       sandboxId: session.sandboxId,
       e2bApiKey: project.e2bApiKey
