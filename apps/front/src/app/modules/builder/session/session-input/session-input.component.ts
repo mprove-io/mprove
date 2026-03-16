@@ -58,9 +58,16 @@ export class SessionInputComponent implements OnChanges {
     value: string;
     label: string;
     modelId: string;
+    providerId: string;
     providerName: string;
   }[] = [
-    { value: 'default', label: 'default', modelId: 'default', providerName: '' }
+    {
+      value: 'default',
+      label: 'default',
+      modelId: 'default',
+      providerId: '',
+      providerName: ''
+    }
   ];
   modelsLoading = false;
   agents = ['build', 'plan'];
@@ -207,9 +214,10 @@ export class SessionInputComponent implements OnChanges {
         this.modelVariantsMap.set(value, m.variants);
       }
       return {
-        value,
+        value: value,
         label: `${m.id}`,
         modelId: m.id,
+        providerId: m.providerId,
         providerName: m.providerName
       };
     });
@@ -218,6 +226,7 @@ export class SessionInputComponent implements OnChanges {
         value: 'default',
         label: 'default',
         modelId: 'default',
+        providerId: '',
         providerName: ''
       },
       ...modelOptions
@@ -288,7 +297,7 @@ export class SessionInputComponent implements OnChanges {
     term: string,
     model: { label: string; modelId: string; providerName: string }
   ) {
-    let haystack = [`${model.modelId} ${model.providerName}`];
+    let haystack = [`${model.providerName} ${model.modelId}`];
     let opts = {};
     let uf = new uFuzzy(opts);
     let idxs = uf.filter(haystack, term);

@@ -100,6 +100,7 @@ import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-ic
 import { MagGlassIconComponent } from './icons/mag-glass-icon/mag-glass-icon.component';
 import { MiniChartsIconComponent } from './icons/mini-charts-icon/mini-charts-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
+import { ProviderIconComponent } from './icons/provider-icon/provider-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { RightPanelIconComponent } from './icons/right-panel-icon/right-panel-icon.component';
@@ -246,6 +247,7 @@ let sharedComponents = [
   AdjustmentsIconComponent,
   TableCellsIconComponent,
   MiniChartsIconComponent,
+  ProviderIconComponent,
   TypeNumberIconComponent,
   TypeStringIconComponent,
   TypeCustomIconComponent,

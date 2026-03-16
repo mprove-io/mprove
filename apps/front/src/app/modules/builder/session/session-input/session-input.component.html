@@ -80,7 +80,7 @@
   ></ng-select>
 
   <ng-select
-    class="session-models-select w-[320px] select-none text-base"
+    class="session-models-select w-[340px] select-none text-base"
     [items]="models"
     bindLabel="label"
     bindValue="value"
@@ -96,20 +96,24 @@
     placeholder="Model"
   >
     <ng-template ng-label-tmp let-item="item">
-      <div class="ml-1 truncate">
+      <div class="ml-1 flex items-center truncate">
+        <m-provider-icon
+          *ngIf="item.providerId"
+          [providerId]="item.providerId"
+          class="text-s500 mr-2 flex-shrink-0"
+        ></m-provider-icon>
         <span>{{ item.modelId }}</span>
-        <span *ngIf="item.providerName" class="text-s400 ml-3 mr-2">{{
-          item.providerName
-        }}</span>
       </div>
     </ng-template>
 
     <ng-template ng-option-tmp let-item="item">
-      <div class="ml-1 truncate">
+      <div class="ml-1 flex items-center truncate">
+        <m-provider-icon
+          *ngIf="item.providerId"
+          [providerId]="item.providerId"
+          class="text-s500 mr-2 flex-shrink-0"
+        ></m-provider-icon>
         <span>{{ item.modelId }}</span>
-        <span *ngIf="item.providerName" class="text-s400 ml-3 mr-2">{{
-          item.providerName
-        }}</span>
       </div>
     </ng-template>
   </ng-select>
