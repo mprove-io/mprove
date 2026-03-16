@@ -43,7 +43,7 @@ export class GetAgentProviderModelsController {
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,
-            enableLoadFromCache: true,
+            enableLoadFromCache: false,
             forceLoadFromCache: forceLoadFromCache
           })
         : [],
@@ -53,7 +53,7 @@ export class GetAgentProviderModelsController {
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,
             zenApiKey: project.zenApiKey,
-            enableLoadFromCache: true,
+            enableLoadFromCache: false,
             forceLoadFromCache: forceLoadFromCache
           })
         : []

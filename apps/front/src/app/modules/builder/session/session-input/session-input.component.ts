@@ -242,7 +242,10 @@ export class SessionInputComponent implements OnChanges {
     modelOptions.sort((a, b) => {
       let aOrder = providerOrder[a.providerId] ?? 1;
       let bOrder = providerOrder[b.providerId] ?? 1;
-      return aOrder - bOrder;
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder;
+      }
+      return a.modelId.localeCompare(b.modelId);
     });
     this.models = modelOptions;
     this.updateVariants();

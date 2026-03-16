@@ -6,6 +6,7 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import type { ModelsDevResponse } from '#backend/functions/opencode-models-dev';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -156,13 +157,34 @@ export class AgentModelsAiSdkService {
       ? this.fetchAnthropicModels({ apiKey: anthropicApiKey })
       : Promise.resolve([]);
 
-    let [openaiModels, anthropicModels] = await Promise.all([
+    let capMapPromise = this.fetchModelsDevCapabilities({
+      providerIds: ['openai', 'anthropic']
+    });
+
+    let [openaiModels, anthropicModels, capMap] = await Promise.all([
       openaiPromise,
-      anthropicPromise
+      anthropicPromise,
+      capMapPromise
     ]);
 
     let models: AgentModelApi[] = [];
     models.push(...openaiModels, ...anthropicModels);
+
+    if (capMap) {
+      models = models.filter(m => {
+        let cap = capMap.get(m.id);
+        if (!cap) {
+          return false;
+        }
+
+        let isNotDeprecated =
+          cap.status !== 'deprecated' && cap.status !== 'alpha';
+        let hasToolCall = cap.toolcall;
+        let hasTextOutput = cap.outputText;
+
+        return isNotDeprecated && hasToolCall && hasTextOutput;
+      });
+    }
 
     return models;
   }
@@ -183,28 +205,14 @@ export class AgentModelsAiSdkService {
         data: { id: string; owned_by: string }[];
       };
 
-      let chatModels = data.data
-        .filter(m => {
-          let id = m.id;
-          let isChat =
-            id.startsWith('gpt-') ||
-            id.startsWith('o1') ||
-            id.startsWith('o3') ||
-            id.startsWith('o4');
-          let isNotLegacy =
-            !id.includes('instruct') &&
-            !id.includes('0301') &&
-            !id.includes('0314');
-          return isChat && isNotLegacy;
-        })
-        .map(m => ({
-          id: m.id,
-          name: m.id,
-          providerId: 'openai',
-          providerName: 'OpenAI'
-        }));
+      let models = data.data.map(m => ({
+        id: m.id,
+        name: m.id,
+        providerId: 'openai',
+        providerName: 'OpenAI'
+      }));
 
-      return chatModels;
+      return models;
     } catch (e) {
       logToConsoleBackend({
         log: new ServerError({
@@ -257,6 +265,57 @@ export class AgentModelsAiSdkService {
         cs: this.cs
       });
       return [];
+    }
+  }
+
+  private async fetchModelsDevCapabilities(item: {
+    providerIds: string[];
+  }): Promise<
+    | Map<string, { toolcall: boolean; outputText: boolean; status: string }>
+    | undefined
+  > {
+    let { providerIds } = item;
+
+    try {
+      let response = await fetch('https://models.dev/api.json', {
+        signal: AbortSignal.timeout(10_000)
+      });
+
+      let modelsDevResponse = (await response.json()) as ModelsDevResponse;
+
+      let capMap = new Map<
+        string,
+        { toolcall: boolean; outputText: boolean; status: string }
+      >();
+
+      for (let [providerId, mdProvider] of Object.entries(modelsDevResponse)) {
+        let isIncluded = providerIds.includes(providerId);
+
+        if (!isIncluded) {
+          continue;
+        }
+
+        for (let [_modelKey, model] of Object.entries(mdProvider.models)) {
+          capMap.set(model.id, {
+            toolcall: model.tool_call,
+            outputText: model.modalities?.output?.includes('text') ?? false,
+            status: model.status ?? 'active'
+          });
+        }
+      }
+
+      return capMap;
+    } catch (e) {
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_AGENT_MODELS_CACHE_PROVIDER_MODELS_ERROR,
+          originalError: e
+        }),
+        logLevel: LogLevelEnum.Info,
+        logger: this.logger,
+        cs: this.cs
+      });
+      return undefined;
     }
   }
 }
