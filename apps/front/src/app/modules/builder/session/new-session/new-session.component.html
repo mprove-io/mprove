@@ -1,20 +1,5 @@
 <div class="flex h-full w-full flex-col items-center">
-  <div
-    class="mb-6 mt-32 flex h-11 flex-shrink-0 flex-row items-center justify-center space-x-6"
-  >
-    <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
-      <div class="text-s400 text-right text-base">Session type</div>
-      <ng-select
-        class="w-[160px] select-none text-base"
-        [items]="sessionTypes"
-        [clearable]="false"
-        [searchable]="false"
-        [(ngModel)]="sessionType"
-        (ngModelChange)="onSessionTypeChange()"
-        placeholder="Session Type"
-      ></ng-select>
-    </div>
-
+  <div class="mb-6 mt-12 flex flex-shrink-0 flex-col items-start">
     <div class="grid grid-cols-[auto_1fr] items-center gap-x-3">
       <div class="text-s400 text-right text-base">Base branch</div>
       <ng-select
@@ -32,9 +17,32 @@
     </div>
   </div>
 
-  <div class="h-[20%] flex-shrink-0"></div>
+  <div class="h-[30%] flex-shrink-0"></div>
   <div class="flex w-full max-w-[860px] flex-col px-6">
-    <div class="mb-10 flex justify-center">
+    <div class="relative mb-10 flex items-center justify-center">
+      <div class="absolute left-0">
+        <div
+          class="border-s200 bg-s100 flex w-[240px] select-none flex-row rounded-lg border p-0.5"
+        >
+          <button
+            *ngFor="let st of sessionTypes"
+            class="flex-1 appearance-none rounded-md border-none px-4 py-1.5 text-lg outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 active:outline-none active:ring-0 [&]:[-webkit-tap-highlight-color:transparent]"
+            [ngClass]="{
+              'text-m800 border-s200 border bg-white font-medium shadow-sm':
+                sessionType === st,
+              'text-s500': sessionType !== st
+            }"
+            (click)="sessionType = st; onSessionTypeChange()"
+          >
+            <span class="flex flex-col items-center">
+              <span>{{ st }}</span>
+              <span class="invisible h-0 font-medium" aria-hidden="true">{{
+                st
+              }}</span>
+            </span>
+          </button>
+        </div>
+      </div>
       <img class="w-40" src="assets/logo/mprove_logo_web-01-b-gray.svg" />
     </div>
 
