@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import uFuzzy from '@leeoniya/ufuzzy';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { take, tap } from 'rxjs/operators';
+import { PROD_REPO_ID } from '#common/constants/top';
 import { APP_SPINNER_NAME } from '#common/constants/top-front';
 import { RepoTypeEnum } from '#common/enums/repo-type.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
@@ -75,7 +76,9 @@ export class NewSessionComponent implements OnInit {
     private navigateService: NavigateService,
     private uiService: UiService
   ) {
-    this.initialBranch = this.navQuery.getValue().projectDefaultBranch;
+    let nav = this.navQuery.getValue();
+    let isProduction = nav.repoId === PROD_REPO_ID;
+    this.initialBranch = isProduction ? nav.branchId : nav.projectDefaultBranch;
   }
 
   ngOnInit() {
@@ -117,6 +120,16 @@ export class NewSessionComponent implements OnInit {
       )
       .subscribe();
   }
+
+  navBranch$ = this.navQuery.branchId$.pipe(
+    tap(branchId => {
+      let nav = this.navQuery.getValue();
+      let isProduction = nav.repoId === PROD_REPO_ID;
+      if (isProduction) {
+        this.initialBranch = branchId;
+      }
+    })
+  );
 
   branchesSearchFn(
     term: string,
