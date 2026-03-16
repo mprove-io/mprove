@@ -54,8 +54,6 @@ import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info
 import { makeId } from '#common/functions/make-id';
 import { makeSessionId } from '#common/functions/make-session-id';
 import { splitModel } from '#common/functions/split-model';
-import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
-import { OcSessionApi } from '#common/interfaces/backend/oc-session-api';
 import {
   ToBackendCreateAgentSessionRequest,
   ToBackendCreateAgentSessionResponsePayload
@@ -304,7 +302,6 @@ export class CreateAgentSessionController {
 
     let now = Date.now();
     let session!: SessionTab;
-    let busyEventApi: AgentEventApi | undefined;
 
     await retry(
       async () => {
@@ -335,12 +332,12 @@ export class CreateAgentSessionController {
           sessionId: sessionId
         });
 
-        let busyEvent: Event = {
-          type: 'session.status',
-          properties: { status: { type: 'busy' } }
-        } as Event;
-
         if (firstMessage) {
+          let busyEvent: Event = {
+            type: 'session.status',
+            properties: { status: { type: 'busy' } }
+          } as Event;
+
           ocSession = {
             ...ocSession,
             ocSessionStatus: { type: 'busy' } as any
@@ -351,13 +348,6 @@ export class CreateAgentSessionController {
             event: busyEvent,
             eventIndex: 0
           });
-
-          busyEventApi = {
-            eventId: busyEventTab.eventId,
-            eventIndex: busyEventTab.eventIndex,
-            eventType: busyEventTab.type,
-            ocEvent: busyEvent
-          };
 
           await this.db.drizzle.transaction(
             async tx =>
@@ -385,25 +375,6 @@ export class CreateAgentSessionController {
       },
       getRetryOption(this.cs, this.logger)
     );
-
-    // Build full response (same shape as GetAgentSession)
-    let sessionApi = this.sessionsService.tabToSessionApi({
-      session: session
-    });
-
-    let ocSession = await this.sessionsService.getOcSessionBySessionId({
-      sessionId: session.sessionId
-    });
-
-    let ocSessionApi: OcSessionApi | undefined = ocSession
-      ? this.sessionsService.tabToOcSessionApi({ ocSession: ocSession })
-      : undefined;
-
-    let result = await this.sessionsService.getBasicSessionsList({
-      projectId: projectId,
-      userId: user.userId,
-      currentSessionId: session.sessionId
-    });
 
     // Fire-and-forget first message streaming
     if (firstMessage) {
@@ -439,14 +410,7 @@ export class CreateAgentSessionController {
     let payload: ToBackendCreateAgentSessionResponsePayload = {
       sessionId: session.sessionId,
       repoId: session.repoId,
-      branchId: session.branchId,
-      session: sessionApi,
-      ocSession: ocSessionApi,
-      events: busyEventApi ? [busyEventApi] : [],
-      messages: [],
-      parts: [],
-      sessions: result.sessions,
-      hasMoreArchived: result.hasMoreArchived
+      branchId: session.branchId
     };
 
     return payload;

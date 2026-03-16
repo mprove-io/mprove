@@ -2,11 +2,6 @@ import { Type } from 'class-transformer';
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
-import { AgentEventApi } from '#common/interfaces/backend/agent-event-api';
-import { AgentMessageApi } from '#common/interfaces/backend/agent-message-api';
-import { AgentPartApi } from '#common/interfaces/backend/agent-part-api';
-import { OcSessionApi } from '#common/interfaces/backend/oc-session-api';
-import { SessionApi } from '#common/interfaces/backend/session-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
@@ -60,27 +55,6 @@ export class ToBackendCreateAgentSessionResponsePayload {
 
   @IsString()
   branchId: string;
-
-  @IsOptional()
-  session?: SessionApi;
-
-  @IsOptional()
-  ocSession?: OcSessionApi;
-
-  @IsOptional()
-  events?: AgentEventApi[];
-
-  @IsOptional()
-  messages?: AgentMessageApi[];
-
-  @IsOptional()
-  parts?: AgentPartApi[];
-
-  @IsOptional()
-  sessions?: SessionApi[];
-
-  @IsOptional()
-  hasMoreArchived?: boolean;
 }
 
 export class ToBackendCreateAgentSessionResponse extends MyResponse {

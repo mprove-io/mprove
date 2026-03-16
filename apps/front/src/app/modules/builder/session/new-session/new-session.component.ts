@@ -19,15 +19,10 @@ import {
   ToBackendGetBranchesListRequestPayload,
   ToBackendGetBranchesListResponse
 } from '#common/interfaces/to-backend/branches/to-backend-get-branches-list';
-import { groupPartsByMessageId } from '#front/app/functions/group-parts-by-message-id';
 import { makeBranchExtraName } from '#front/app/functions/make-branch-extra-name';
 import { NavQuery } from '#front/app/queries/nav.query';
-import { SessionQuery } from '#front/app/queries/session.query';
-import { SessionBundleQuery } from '#front/app/queries/session-bundle.query';
-import { SessionEventsQuery } from '#front/app/queries/session-events.query';
 import { SessionsQuery } from '#front/app/queries/sessions.query';
 import { UiQuery } from '#front/app/queries/ui.query';
-import { AgentEventsService } from '#front/app/services/agent-events.service';
 import { ApiService } from '#front/app/services/api.service';
 import { NavigateService } from '#front/app/services/navigate.service';
 import { UiService } from '#front/app/services/ui.service';
@@ -67,12 +62,8 @@ export class NewSessionComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private navQuery: NavQuery,
     private apiService: ApiService,
-    private sessionQuery: SessionQuery,
     private sessionsQuery: SessionsQuery,
-    private sessionBundleQuery: SessionBundleQuery,
-    private sessionEventsQuery: SessionEventsQuery,
     private uiQuery: UiQuery,
-    private agentEventsService: AgentEventsService,
     private navigateService: NavigateService,
     private uiService: UiService
   ) {
@@ -178,48 +169,9 @@ export class NewSessionComponent implements OnInit {
       .pipe(
         tap((resp2: ToBackendCreateAgentSessionResponse) => {
           if (resp2.info?.status === ResponseInfoStatusEnum.Ok) {
-            let {
-              sessionId,
-              repoId,
-              branchId,
-              session,
-              sessions,
-              hasMoreArchived,
-              events,
-              messages,
-              parts,
-              ocSession
-            } = resp2.payload;
+            let { sessionId, repoId, branchId } = resp2.payload;
 
-            // For Explorer session: populate stores from expanded create response
-            if (isSessionExplorer && session) {
-              this.agentEventsService.resetAll();
-
-              this.sessionQuery.update(session);
-
-              if (sessions && sessions.length > 0) {
-                this.sessionsQuery.updatePart({
-                  sessions: sessions,
-                  isListLoaded: true,
-                  hasMoreArchived: hasMoreArchived ?? false
-                });
-              }
-
-              this.sessionEventsQuery.updatePart({
-                events: events || []
-              });
-
-              this.sessionBundleQuery.updatePart({
-                messages: messages || [],
-                parts: parts ? groupPartsByMessageId(parts) : {},
-                todos: [],
-                questions: [],
-                permissions: [],
-                ocSessionStatus: ocSession?.ocSessionStatus,
-                lastSessionError: ocSession?.lastSessionError,
-                isLastErrorRecovered: ocSession?.isLastErrorRecovered
-              });
-            } else {
+            if (!isSessionExplorer) {
               // Type Editor: add new session to the sessions list
               let currentSessions = this.sessionsQuery.getValue().sessions;
               let newSession: SessionApi = {
