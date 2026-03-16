@@ -472,7 +472,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.previousLastTurnResponsesExist =
       this.turns[this.turns.length - 1]?.responses?.length > 0;
 
-    this.agentSessionService.managePollingAndSse();
+    this.agentSessionService.managePollingAndSse({ skipRefresh: true });
   }
 
   updateSessionData(sessionData: SessionBundleState) {

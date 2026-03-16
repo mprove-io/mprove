@@ -68,7 +68,7 @@ export class AgentSessionService {
     this.lastProcessedEventIndex = lastProcessedEventIndex;
   }
 
-  managePollingAndSse() {
+  managePollingAndSse(item?: { skipRefresh?: boolean }) {
     let session = this.sessionQuery.getValue();
 
     if (session.status === SessionStatusEnum.New && !this.pollSubscription) {
@@ -90,7 +90,11 @@ export class AgentSessionService {
       session.status === SessionStatusEnum.Active &&
       this.ssePhase === 'idle'
     ) {
-      this.refreshAndConnectSse({ sessionId: session.sessionId });
+      if (item?.skipRefresh) {
+        this.connectSse({ sessionId: session.sessionId });
+      } else {
+        this.refreshAndConnectSse({ sessionId: session.sessionId });
+      }
     }
   }
 
