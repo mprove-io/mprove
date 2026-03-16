@@ -430,7 +430,14 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.variant = savedVariant;
 
     if (this.sessionInput) {
-      this.sessionInput.applyModels(this.agentModelsQuery.getValue().models);
+      let state = this.agentModelsQuery.getValue();
+
+      let models =
+        this.session.sessionType === SessionTypeEnum.A
+          ? state.modelsAi
+          : state.modelsOpencode;
+
+      this.sessionInput.applyModels(models);
     }
 
     this.permissions = sessionData.permissions || [];

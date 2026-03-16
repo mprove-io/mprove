@@ -59,15 +59,21 @@ export class SetProjectApiKeyController {
 
     if (isDefined(zenApiKey)) {
       project.zenApiKey = zenApiKey === '' ? undefined : zenApiKey;
+      project.providerModelsAiTs = undefined;
+      project.providerModelsOpencodeTs = undefined;
     }
 
     if (isDefined(anthropicApiKey)) {
       project.anthropicApiKey =
         anthropicApiKey === '' ? undefined : anthropicApiKey;
+      project.providerModelsAiTs = undefined;
+      project.providerModelsOpencodeTs = undefined;
     }
 
     if (isDefined(openaiApiKey)) {
       project.openaiApiKey = openaiApiKey === '' ? undefined : openaiApiKey;
+      project.providerModelsAiTs = undefined;
+      project.providerModelsOpencodeTs = undefined;
     }
 
     if (isDefined(e2bApiKey)) {

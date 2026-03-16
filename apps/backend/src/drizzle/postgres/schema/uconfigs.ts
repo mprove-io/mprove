@@ -7,14 +7,12 @@ import {
   text,
   varchar
 } from 'drizzle-orm/pg-core';
-import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
 import { UconfigLt, UconfigSt } from '#common/interfaces/st-lt';
 
 export const uconfigsTable = pgTable(
   'uconfigs',
   {
     uconfigId: varchar('uconfig_id', { length: 32 }).notNull().primaryKey(),
-    providerModels: json('provider_models').$type<AgentModelApi[]>().notNull(),
     st: json('st')
       .$type<{ encrypted: string; decrypted: UconfigSt }>()
       .notNull(),

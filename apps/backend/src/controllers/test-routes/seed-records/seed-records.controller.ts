@@ -348,6 +348,10 @@ export class SeedRecordsController {
             openaiApiKey: x.openaiApiKey,
             nameHash: undefined, // tab-to-ent
             gitUrlHash: undefined, // tab-to-ent
+            providerModelsOpencode: undefined,
+            providerModelsOpencodeTs: undefined,
+            providerModelsAi: undefined,
+            providerModelsAiTs: undefined,
             keyTag: undefined,
             serverTs: undefined
           };

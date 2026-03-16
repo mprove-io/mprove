@@ -1,41 +1,28 @@
-import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { isNotNull } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { uconfigsTable } from '#backend/drizzle/postgres/schema/uconfigs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentModelsService } from '#backend/services/agent-models.service';
-import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
-import { AiSdkService } from '#backend/services/ai-sdk.service';
+import { AgentModelsAiSdkService } from '#backend/services/agent-models-ai-sdk.service';
+import { AgentModelsOpencodeService } from '#backend/services/agent-models-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
-import { SessionsService } from '#backend/services/db/sessions.service.js';
-import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
-import { ErEnum } from '#common/enums/er.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetAgentProviderModelsRequest,
   ToBackendGetAgentProviderModelsResponsePayload
 } from '#common/interfaces/to-backend/agent/to-backend-get-agent-provider-models';
-import { ServerError } from '#common/models/server-error';
 
 @UseGuards(ThrottlerUserIdGuard, ValidateRequestGuard)
 @Throttle(THROTTLE_CUSTOM)
 @Controller()
 export class GetAgentProviderModelsController {
   constructor(
-    private aiSdkService: AiSdkService,
-    private agentModelsService: AgentModelsService,
-    private agentSandboxService: AgentSandboxService,
-    private projectsService: ProjectsService,
-    private sessionsService: SessionsService,
-    private tabService: TabService,
-    @Inject(DRIZZLE) private db: Db
+    private agentModelsAiSdkService: AgentModelsAiSdkService,
+    private agentModelsOpencodeService: AgentModelsOpencodeService,
+    private projectsService: ProjectsService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendGetAgentProviderModels)
@@ -44,71 +31,37 @@ export class GetAgentProviderModelsController {
     @Req() request: any
   ) {
     let reqValid: ToBackendGetAgentProviderModelsRequest = request.body;
-    let { sessionId, sessionType, projectId } = reqValid.payload;
+    let { sessionTypes, projectId, forceLoadFromCache } = reqValid.payload;
 
-    // Type A: fetch models directly from provider APIs
-    if (sessionType === SessionTypeEnum.A && projectId) {
-      let project = await this.projectsService.getProjectCheckExists({
-        projectId: projectId
-      });
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: projectId
+    });
 
-      let models = await this.aiSdkService.listModels({
-        openaiApiKey: project.openaiApiKey,
-        anthropicApiKey: project.anthropicApiKey
-      });
-
-      let payload: ToBackendGetAgentProviderModelsResponsePayload = {
-        models: models
-      };
-
-      return payload;
-    }
-
-    if (sessionId) {
-      let session = await this.sessionsService.getSessionByIdCheckExists({
-        sessionId
-      });
-
-      if (session.userId !== user.userId) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_UNAUTHORIZED
-        });
-      }
-
-      try {
-        let client = await this.agentSandboxService.getOpenCodeClient({
-          sessionId: sessionId
-        });
-
-        let { data } = await client.provider.list({}, { throwOnError: true });
-
-        let models = this.agentModelsService.mapProviderModels(data.all);
-
-        let payload: ToBackendGetAgentProviderModelsResponsePayload = {
-          models: models
-        };
-
-        return payload;
-      } catch (er) {
-        // console.log(
-        //   'Sandbox not reachable, fall through to agentModelsService'
-        // );
-      }
-    }
-
-    let uconfig = await this.db.drizzle.query.uconfigsTable
-      .findFirst({
-        where: isNotNull(uconfigsTable.uconfigId)
-      })
-      .then(x => this.tabService.uconfigEntToTab(x));
-
-    let models =
-      uconfig?.providerModels?.length > 0
-        ? uconfig.providerModels
-        : await this.agentModelsService.loadSharedModels();
+    let [modelsAi, modelsOpencode] = await Promise.all([
+      sessionTypes.includes(SessionTypeEnum.A)
+        ? this.agentModelsAiSdkService.listModels({
+            projectId: projectId,
+            openaiApiKey: project.openaiApiKey,
+            anthropicApiKey: project.anthropicApiKey,
+            enableLoadFromCache: true,
+            forceLoadFromCache: forceLoadFromCache
+          })
+        : [],
+      sessionTypes.includes(SessionTypeEnum.B)
+        ? this.agentModelsOpencodeService.loadOpencodeModels({
+            projectId: projectId,
+            openaiApiKey: project.openaiApiKey,
+            anthropicApiKey: project.anthropicApiKey,
+            zenApiKey: project.zenApiKey,
+            enableLoadFromCache: true,
+            forceLoadFromCache: forceLoadFromCache
+          })
+        : []
+    ]);
 
     let payload: ToBackendGetAgentProviderModelsResponsePayload = {
-      models: models
+      modelsOpencode: modelsOpencode,
+      modelsAi: modelsAi
     };
 
     return payload;

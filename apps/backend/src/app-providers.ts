@@ -5,7 +5,8 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { AgentDrainService } from './services/agent-drain.service';
 import { AgentEventsService } from './services/agent-events.service';
-import { AgentModelsService } from './services/agent-models.service';
+import { AgentModelsAiSdkService } from './services/agent-models-ai-sdk.service';
+import { AgentModelsOpencodeService } from './services/agent-models-opencode.service';
 import { AgentSandboxService } from './services/agent-sandbox.service';
 import { AgentSandboxLifecycleService } from './services/agent-sandbox-lifecycle.service';
 import { AgentStreamService } from './services/agent-stream.service';
@@ -123,7 +124,8 @@ export const appProviders = [
   AgentEventsService,
   AgentStreamService,
   AgentSandboxLifecycleService,
-  AgentModelsService,
+  AgentModelsAiSdkService,
+  AgentModelsOpencodeService,
   AiSdkService,
   AiSdkStreamService,
   ApiKeyService,
@@ -136,7 +138,6 @@ export const appProviders = [
       notesService: NotesService,
       agentLifecycleService: AgentSandboxLifecycleService,
       agentStreamService: AgentStreamService,
-      agentModelsService: AgentModelsService,
       logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
@@ -147,7 +148,6 @@ export const appProviders = [
             notesService,
             agentLifecycleService,
             agentStreamService,
-            agentModelsService,
             logger
           )
         : {},
@@ -157,8 +157,7 @@ export const appProviders = [
       StructsService,
       NotesService,
       AgentSandboxLifecycleService,
-      AgentStreamService,
-      AgentModelsService
+      AgentStreamService
     ]
   },
   UserCodeService

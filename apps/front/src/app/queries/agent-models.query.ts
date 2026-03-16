@@ -4,16 +4,19 @@ import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
 import { BaseQuery } from './base.query';
 
 export class AgentModelsState {
-  models: AgentModelApi[];
+  modelsOpencode: AgentModelApi[];
+  modelsAi: AgentModelApi[];
 }
 
 let agentModelsState: AgentModelsState = {
-  models: []
+  modelsOpencode: [],
+  modelsAi: []
 };
 
 @Injectable({ providedIn: 'root' })
 export class AgentModelsQuery extends BaseQuery<AgentModelsState> {
-  models$ = this.store.pipe(select(state => state.models));
+  modelsOpencode$ = this.store.pipe(select(state => state.modelsOpencode));
+  modelsAi$ = this.store.pipe(select(state => state.modelsAi));
 
   constructor() {
     super(

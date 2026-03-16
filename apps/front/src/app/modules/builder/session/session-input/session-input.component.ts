@@ -40,7 +40,7 @@ export class SessionInputComponent implements OnChanges {
 
   sessionTypeEnum = SessionTypeEnum;
 
-  @Input() sessionType: SessionTypeEnum = SessionTypeEnum.B;
+  @Input() sessionType: SessionTypeEnum = SessionTypeEnum.A;
 
   @Input() disabled = false;
   @Input() showSelects = true;
@@ -78,10 +78,27 @@ export class SessionInputComponent implements OnChanges {
     private uiService: UiService,
     private agentModelsQuery: AgentModelsQuery
   ) {
-    this.applyModels(this.agentModelsQuery.getValue().models);
+    let state = this.agentModelsQuery.getValue();
+
+    let models =
+      this.sessionType === SessionTypeEnum.A
+        ? state.modelsAi
+        : state.modelsOpencode;
+
+    this.applyModels(models);
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes['sessionType']) {
+      let state = this.agentModelsQuery.getValue();
+
+      let models =
+        this.sessionType === SessionTypeEnum.A
+          ? state.modelsAi
+          : state.modelsOpencode;
+
+      this.applyModels(models);
+    }
     if (changes['model']) {
       this.updateVariants();
       this.updateProviderHasApiKey();
@@ -211,15 +228,12 @@ export class SessionInputComponent implements OnChanges {
   openModelSelect() {
     this.modelsLoading = true;
 
-    let payload: ToBackendGetAgentProviderModelsRequestPayload = {};
+    let nav = this.navQuery.getValue();
 
-    if (this.sessionType === SessionTypeEnum.A) {
-      let nav = this.navQuery.getValue();
-      payload.sessionType = SessionTypeEnum.A;
-      payload.projectId = nav.projectId;
-    } else if (this.sessionId) {
-      payload.sessionId = this.sessionId;
-    }
+    let payload: ToBackendGetAgentProviderModelsRequestPayload = {
+      projectId: nav.projectId,
+      sessionTypes: [this.sessionType]
+    };
 
     this.apiService
       .req({
@@ -230,8 +244,29 @@ export class SessionInputComponent implements OnChanges {
       .pipe(
         tap((resp: ToBackendGetAgentProviderModelsResponse) => {
           if (resp.info?.status === ResponseInfoStatusEnum.Ok) {
-            this.agentModelsQuery.update({ models: resp.payload.models });
-            this.applyModels(resp.payload.models);
+            let state = this.agentModelsQuery.getValue();
+
+            let updatedModelsOpencode =
+              this.sessionType === SessionTypeEnum.B
+                ? resp.payload.modelsOpencode
+                : state.modelsOpencode;
+
+            let updatedModelsAi =
+              this.sessionType === SessionTypeEnum.A
+                ? resp.payload.modelsAi
+                : state.modelsAi;
+
+            this.agentModelsQuery.update({
+              modelsOpencode: updatedModelsOpencode,
+              modelsAi: updatedModelsAi
+            });
+
+            let models =
+              this.sessionType === SessionTypeEnum.A
+                ? resp.payload.modelsAi
+                : resp.payload.modelsOpencode;
+
+            this.applyModels(models);
           }
           this.modelsLoading = false;
           this.cd.detectChanges();

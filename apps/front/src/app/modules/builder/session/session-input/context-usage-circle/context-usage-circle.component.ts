@@ -24,7 +24,7 @@ export class ContextUsageCircleComponent {
 
   metrics$ = combineLatest([
     this.sessionBundleQuery.messages$,
-    this.agentModelsQuery.models$
+    this.agentModelsQuery.modelsOpencode$
   ]).pipe(
     tap(([messages, models]) => {
       this.percentage = 0;

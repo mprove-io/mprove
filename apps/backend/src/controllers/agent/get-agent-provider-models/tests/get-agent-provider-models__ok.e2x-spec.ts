@@ -5,6 +5,7 @@ import { sendToBackend } from '#backend/functions/send-to-backend';
 import { BRANCH_MAIN } from '#common/constants/top';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { makeId } from '#common/functions/make-id';
 import {
@@ -23,7 +24,6 @@ test('1', async t => {
   let projectName = testId;
 
   let prep;
-  let provider = 'openai';
   let resp;
 
   try {
@@ -79,7 +79,10 @@ test('1', async t => {
         traceId: traceId,
         idempotencyKey: makeId()
       },
-      payload: {}
+      payload: {
+        projectId: projectId,
+        sessionTypes: [SessionTypeEnum.A, SessionTypeEnum.B]
+      }
     };
 
     resp = await sendToBackend<ToBackendGetAgentProviderModelsResponse>({
@@ -100,14 +103,13 @@ test('1', async t => {
   }
 
   console.log(
-    `[test] provider '${provider}' returned ${resp.payload.models.length} models`
+    `[test] returned ${resp.payload.modelsOpencode.length} opencode models and ${resp.payload.modelsAi.length} ai models`
   );
-  // for (let model of resp.payload.models) {
-  //   console.log(`[test]   ${model.providerId}/${model.id} - ${model.name}`);
-  // }
 
   t.true(
-    resp.payload.models.length > 0,
-    `Expected at least one model for provider '${provider}'`
+    resp.payload.modelsOpencode.length > 0,
+    'Expected at least one opencode model'
   );
+
+  t.true(resp.payload.modelsAi.length > 0, 'Expected at least one ai model');
 });

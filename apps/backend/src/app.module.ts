@@ -71,7 +71,6 @@ import { usersTable } from './drizzle/postgres/schema/users';
 import { getRetryOption } from './functions/get-retry-option';
 import { logToConsoleBackend } from './functions/log-to-console-backend';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { AgentModelsService } from './services/agent-models.service';
 import { ConnectionsService } from './services/db/connections.service';
 import { DconfigsService } from './services/db/dconfigs.service';
 import { MembersService } from './services/db/members.service';
@@ -183,7 +182,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
     private checkTabService: TabCheckerService,
     private projectsService: ProjectsService,
     private connectionsService: ConnectionsService,
-    private agentModelsService: AgentModelsService,
     private hashService: HashService,
     private tabService: TabService,
     private cs: ConfigService<BackendConfig>,
@@ -293,7 +291,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
         if (isUndefined(uconfig)) {
           let uconfigInit: UconfigTab = {
             uconfigId: makeId(),
-            providerModels: [],
             keyTag: undefined,
             serverTs: undefined
           };
@@ -312,10 +309,6 @@ export class AppModule implements OnModuleInit, OnModuleDestroy {
             getRetryOption(this.cs, this.logger)
           );
         }
-
-        // agent models cache
-
-        this.agentModelsService.loadSharedModels();
 
         // admin
 

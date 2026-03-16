@@ -522,7 +522,6 @@ export class TabToEntService {
 
     let uconfigEnt: UconfigEnt = {
       uconfigId: tab.uconfigId,
-      providerModels: tab.providerModels,
       ...this.getEntProps({
         dataSt: uconfigSt,
         dataLt: uconfigLt,
@@ -802,6 +801,10 @@ export class TabToEntService {
         input: tab.gitUrl,
         hashSecret: hashSecret
       }),
+      providerModelsOpencode: tab.providerModelsOpencode,
+      providerModelsOpencodeTs: tab.providerModelsOpencodeTs,
+      providerModelsAi: tab.providerModelsAi,
+      providerModelsAiTs: tab.providerModelsAiTs,
       serverTs: tab.serverTs
     };
 

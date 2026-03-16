@@ -7,7 +7,6 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
-import { AgentModelsService } from './agent-models.service';
 import { AgentSandboxLifecycleService } from './agent-sandbox-lifecycle.service';
 import { AgentStreamService } from './agent-stream.service';
 import { NotesService } from './db/notes.service';
@@ -20,7 +19,6 @@ export class TasksService {
   private isRunningRemoveStructs = false;
   private isRunningRemoveQueries = false;
   private isRunningRemoveNotes = false;
-  private isRunningUpdateAgentModelsCache = false;
   private isRunningSyncSandboxStatuses = false;
   private isRunningPauseIdleSandboxes = false;
 
@@ -31,7 +29,6 @@ export class TasksService {
     private notesService: NotesService,
     private agentSandboxLifecycleService: AgentSandboxLifecycleService,
     private agentStreamService: AgentStreamService,
-    private agentModelsService: AgentModelsService,
     private logger: Logger
   ) {}
 
@@ -120,28 +117,6 @@ export class TasksService {
       });
 
       this.isRunningRemoveNotes = false;
-    }
-  }
-
-  @Cron(CronExpression.EVERY_HOUR)
-  @WithTraceSpan()
-  async loopUpdateAgentModelsCache() {
-    if (this.isRunningUpdateAgentModelsCache === false) {
-      this.isRunningUpdateAgentModelsCache = true;
-
-      await this.agentModelsService.loadSharedModels().catch(e => {
-        logToConsoleBackend({
-          log: new ServerError({
-            message: ErEnum.BACKEND_SCHEDULER_UPDATE_AGENT_MODELS_CACHE_FAILED,
-            originalError: e
-          }),
-          logLevel: LogLevelEnum.Error,
-          logger: this.logger,
-          cs: this.cs
-        });
-      });
-
-      this.isRunningUpdateAgentModelsCache = false;
     }
   }
 

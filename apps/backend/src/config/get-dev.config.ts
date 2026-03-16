@@ -268,10 +268,6 @@ export function getDevConfig() {
 
     e2bPublicTemplate: process.env.BACKEND_E2B_PUBLIC_TEMPLATE,
 
-    opencodeServerPassword: process.env.BACKEND_OPENCODE_SERVER_PASSWORD,
-
-    opencodeServerUrl: process.env.BACKEND_OPENCODE_SERVER_URL,
-
     sandboxMproveCliHost: process.env.BACKEND_SANDBOX_MPROVE_CLI_HOST,
 
     sandboxTimeoutMinutes: isDefined(

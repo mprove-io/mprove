@@ -328,11 +328,5 @@ export class BackendConfig {
   maxActiveSessionsPerUser?: number;
 
   @IsString()
-  opencodeServerPassword?: string;
-
-  @IsString()
-  opencodeServerUrl?: string;
-
-  @IsString()
   sandboxMproveCliHost?: string;
 }

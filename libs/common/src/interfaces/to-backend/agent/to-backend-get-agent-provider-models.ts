@@ -1,22 +1,28 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  ValidateNested
+} from 'class-validator';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
 import { MyResponse } from '#common/interfaces/to/my-response';
 import { ToBackendRequest } from '../to-backend-request';
 
 export class ToBackendGetAgentProviderModelsRequestPayload {
-  @IsOptional()
   @IsString()
-  projectId?: string;
+  projectId: string;
+
+  @IsArray()
+  @IsEnum(SessionTypeEnum, { each: true })
+  sessionTypes: SessionTypeEnum[];
 
   @IsOptional()
-  @IsEnum(SessionTypeEnum)
-  sessionType?: SessionTypeEnum;
-
-  @IsOptional()
-  @IsString()
-  sessionId?: string;
+  @IsBoolean()
+  forceLoadFromCache?: boolean;
 }
 
 export class ToBackendGetAgentProviderModelsRequest extends ToBackendRequest {
@@ -26,7 +32,8 @@ export class ToBackendGetAgentProviderModelsRequest extends ToBackendRequest {
 }
 
 export class ToBackendGetAgentProviderModelsResponsePayload {
-  models: AgentModelApi[];
+  modelsOpencode: AgentModelApi[];
+  modelsAi: AgentModelApi[];
 }
 
 export class ToBackendGetAgentProviderModelsResponse extends MyResponse {
