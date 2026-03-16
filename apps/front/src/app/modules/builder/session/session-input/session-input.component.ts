@@ -234,6 +234,16 @@ export class SessionInputComponent implements OnChanges {
         providerName: m.providerName
       };
     });
+    let providerOrder: Record<string, number> = {
+      anthropic: 0,
+      openai: 1,
+      opencode: 2
+    };
+    modelOptions.sort((a, b) => {
+      let aOrder = providerOrder[a.providerId] ?? 1;
+      let bOrder = providerOrder[b.providerId] ?? 1;
+      return aOrder - bOrder;
+    });
     this.models = modelOptions;
     this.updateVariants();
   }
