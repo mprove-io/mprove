@@ -11,15 +11,15 @@ export class ValidationComponent {
   @Input() control: AbstractControl;
 
   get errorMessage() {
-    for (let propertyName in this.control.errors) {
-      if (
-        Object.prototype.hasOwnProperty.call(this.control.errors, propertyName)
-      ) {
-        return ValidationService.getValidatorErrorMessage(
-          propertyName,
-          this.control.errors[propertyName]
-        );
-      }
+    let errorKeys = Object.keys(this.control.errors || {});
+
+    let firstKey = errorKeys[0];
+
+    if (firstKey) {
+      return ValidationService.getValidatorErrorMessage(
+        firstKey,
+        this.control.errors[firstKey]
+      );
     }
     return null;
   }

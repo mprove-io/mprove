@@ -18,7 +18,7 @@ export class AgentMessagesService {
     let turns: ChatTurn[] = [];
     let currentTurn: ChatTurn | undefined;
 
-    for (let msg of messages) {
+    messages.forEach(msg => {
       if (msg.role === 'user') {
         currentTurn = {
           userMessage: msg,
@@ -33,7 +33,7 @@ export class AgentMessagesService {
         }
         currentTurn.responses.push(msg);
       }
-    }
+    });
 
     return turns;
   }
@@ -59,7 +59,7 @@ export class AgentMessagesService {
 
     let chatMessages: ChatMessage[] = [];
 
-    for (let msg of storeMessages) {
+    storeMessages.forEach(msg => {
       let messageId = msg.messageId;
       let role = msg.role;
       let parts = storeParts[messageId] || [];
@@ -119,9 +119,10 @@ export class AgentMessagesService {
       } else {
         // Assistant message - process each part
         let partCount = 0;
-        for (let partApi of parts) {
+
+        parts.forEach(partApi => {
           let part = partApi.ocPart;
-          if (!part) continue;
+          if (!part) return;
 
           if (part.type === 'text') {
             if (part.text) {
@@ -153,7 +154,7 @@ export class AgentMessagesService {
             });
             partCount++;
           }
-        }
+        });
 
         let error = (msg.ocMessage as any)?.error;
         if (error?.name === 'MessageAbortedError') {
@@ -163,7 +164,7 @@ export class AgentMessagesService {
           chatMessages.push({ role: 'error', text: errorText });
         }
       }
-    }
+    });
 
     // If no messages yet but session has firstMessage, show it
     if (chatMessages.length === 0 && session?.firstMessage) {
@@ -185,7 +186,8 @@ export class AgentMessagesService {
       model !== 'default' && model.includes('/')
         ? model.substring(model.indexOf('/') + 1)
         : model;
-    for (let text of pendingUserMessages) {
+
+    pendingUserMessages.forEach(text => {
       chatMessages.push({
         role: 'user',
         text: text,
@@ -193,7 +195,7 @@ export class AgentMessagesService {
         modelId: optimisticModelId,
         variant: variant !== 'default' ? variant : ''
       });
-    }
+    });
 
     return chatMessages;
   }

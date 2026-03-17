@@ -22,7 +22,7 @@ export class ContextUsageCircleComponent {
   tooltipText = '';
   hasData = false;
 
-  metrics$ = combineLatest([
+  contextUsage$ = combineLatest([
     this.sessionBundleQuery.messages$,
     this.agentModelsQuery.modelsOpencode$
   ]).pipe(

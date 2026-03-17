@@ -658,14 +658,11 @@ export class SchemaGraphDialogComponent implements OnInit {
   }
 
   findTableNode(item: { tableFullId: string }): SchemaGraphTableNode {
-    for (let schemaNode of this.schemaNodes) {
-      for (let tableNode of schemaNode.tables) {
-        if (tableNode.tableFullId === item.tableFullId) {
-          return tableNode;
-        }
-      }
-    }
-    return undefined;
+    let found = this.schemaNodes
+      .flatMap(schemaNode => schemaNode.tables)
+      .find(tableNode => tableNode.tableFullId === item.tableFullId);
+
+    return found;
   }
 
   async centerOnTable(item: {

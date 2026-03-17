@@ -264,7 +264,7 @@ test('1', async t => {
       'Expected at least one assistant text part'
     );
 
-    for (let part of assistantTextParts) {
+    assistantTextParts.forEach(part => {
       let text = (part.ocPart as any).text;
       console.log(
         `[test] assistant text part ${part.partId}: "${text?.substring(0, 100)}"`
@@ -273,7 +273,7 @@ test('1', async t => {
         typeof text === 'string' && text.length > 0,
         `Expected assistant text part ${part.partId} to have non-empty text`
       );
-    }
+    });
 
     // Cleanup
     let deleteSessionReq: ToBackendDeleteAgentSessionRequest = {

@@ -18,30 +18,46 @@ export class CycleGraph {
     return cycle ? [cycle.map(name => ({ name }))] : [];
   }
 
-  private findCycle(): string[] | null {
+  private findCycle(): string[] {
     let visited = new Set<string>();
     let stack = new Set<string>();
 
-    let dfs = (node: string, path: string[]): string[] | null => {
+    let dfs = (node: string, path: string[]): string[] => {
       if (stack.has(node)) return path.slice(path.indexOf(node));
       if (visited.has(node)) return null;
 
       visited.add(node);
       stack.add(node);
 
-      for (let dep of this.edges.get(node) || []) {
+      let deps = this.edges.get(node) || [];
+
+      let foundCycle: string[] = null;
+
+      deps.forEach(dep => {
+        if (foundCycle) return;
+
         let cycle = dfs(dep, [...path, node]);
-        if (cycle) return cycle;
-      }
+
+        if (cycle) foundCycle = cycle;
+      });
+
+      if (foundCycle) return foundCycle;
 
       stack.delete(node);
       return null;
     };
 
-    for (let node of this.edges.keys()) {
+    let nodes = [...this.edges.keys()];
+
+    let result: string[] = null;
+
+    nodes.forEach(node => {
+      if (result) return;
+
       let cycle = dfs(node, []);
-      if (cycle) return cycle;
-    }
-    return null;
+
+      if (cycle) result = cycle;
+    });
+    return result;
   }
 }

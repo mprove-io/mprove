@@ -422,11 +422,13 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async checkStreamStalls(): Promise<void> {
     let now = Date.now();
 
-    for (let sessionId of this.activeStreams.keys()) {
+    let activeSessionIds = [...this.activeStreams.keys()];
+
+    activeSessionIds.forEach(async sessionId => {
       let lastEventTs = this.lastEventTsMap.get(sessionId);
 
       if (lastEventTs === undefined) {
-        continue;
+        return;
       }
 
       let elapsed = now - lastEventTs;
@@ -443,7 +445,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
           sessionId: sessionId
         });
       }
-    }
+    });
   }
 
   async waitForStreamLockRelease(item: { sessionId: string }): Promise<void> {
