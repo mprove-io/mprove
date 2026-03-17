@@ -32,10 +32,10 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   private podId = crypto.randomUUID();
 
   // OpenCode sends heartbeat every 10s (hardcoded in workspace-server/routes.ts) + 4s buffer
-  private static STREAM_STALL_THRESHOLD_MS = 14_000;
+  private STREAM_STALL_THRESHOLD_MS = 14_000;
 
-  private static STREAM_LOCK_TTL_SECONDS = 16;
-  private static STREAM_LOCK_WAIT_TIMEOUT_MS = 18_000;
+  private STREAM_LOCK_TTL_SECONDS = 16;
+  private STREAM_LOCK_WAIT_TIMEOUT_MS = 18_000;
 
   private redisClient: Redis;
 
@@ -197,7 +197,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId,
       'EX',
-      AgentStreamOpencodeService.STREAM_LOCK_TTL_SECONDS,
+      this.STREAM_LOCK_TTL_SECONDS,
       'NX'
     );
     return result === 'OK';
@@ -206,7 +206,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async refreshActiveLocks(): Promise<void> {
     for (let sessionId of this.activeStreams.keys()) {
       let result = await this.redisClient.eval(
-        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamOpencodeService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
+        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
         1,
         this.makeStreamLockKey({ sessionId: sessionId }),
         this.podId
@@ -425,8 +425,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       }
 
       let elapsed = now - lastEventTs;
-      let isStalled =
-        elapsed > AgentStreamOpencodeService.STREAM_STALL_THRESHOLD_MS;
+      let isStalled = elapsed > this.STREAM_STALL_THRESHOLD_MS;
 
       if (isStalled) {
         console.log(
@@ -454,8 +453,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       }
 
       let elapsed = Date.now() - startTs;
-      let isTimedOut =
-        elapsed >= AgentStreamOpencodeService.STREAM_LOCK_WAIT_TIMEOUT_MS;
+      let isTimedOut = elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS;
 
       if (isTimedOut) {
         console.log(

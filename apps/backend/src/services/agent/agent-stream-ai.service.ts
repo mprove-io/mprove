@@ -26,10 +26,10 @@ import { AgentModelsAiService } from './agent-models-ai.service';
 export class AgentStreamAiService implements OnModuleDestroy {
   private podId = crypto.randomUUID();
 
-  private static STREAM_LOCK_POLL_MS = 500;
+  private STREAM_LOCK_POLL_MS = 500;
 
-  private static STREAM_LOCK_TTL_SECONDS = 8;
-  private static STREAM_LOCK_WAIT_TIMEOUT_MS = 10_000;
+  private STREAM_LOCK_TTL_SECONDS = 8;
+  private STREAM_LOCK_WAIT_TIMEOUT_MS = 10_000;
 
   private redisClient: Redis;
 
@@ -125,7 +125,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId,
       'EX',
-      AgentStreamAiService.STREAM_LOCK_TTL_SECONDS,
+      this.STREAM_LOCK_TTL_SECONDS,
       'NX'
     );
     return result === 'OK';
@@ -136,7 +136,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   }): Promise<boolean> {
     let { sessionId } = item;
     let result = await this.redisClient.eval(
-      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamAiService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
+      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
       1,
       this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId
@@ -167,13 +167,11 @@ export class AgentStreamAiService implements OnModuleDestroy {
       }
 
       let elapsed = Date.now() - startTs;
-      if (elapsed >= AgentStreamAiService.STREAM_LOCK_WAIT_TIMEOUT_MS) {
+      if (elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS) {
         return false;
       }
 
-      await new Promise(r =>
-        setTimeout(r, AgentStreamAiService.STREAM_LOCK_POLL_MS)
-      );
+      await new Promise(r => setTimeout(r, this.STREAM_LOCK_POLL_MS));
     }
   }
 
@@ -189,8 +187,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       }
 
       let elapsed = Date.now() - startTs;
-      let isTimedOut =
-        elapsed >= AgentStreamAiService.STREAM_LOCK_WAIT_TIMEOUT_MS;
+      let isTimedOut = elapsed >= this.STREAM_LOCK_WAIT_TIMEOUT_MS;
 
       if (isTimedOut) {
         console.log(
@@ -199,9 +196,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
         return;
       }
 
-      await new Promise(r =>
-        setTimeout(r, AgentStreamAiService.STREAM_LOCK_POLL_MS)
-      );
+      await new Promise(r => setTimeout(r, this.STREAM_LOCK_POLL_MS));
     }
   }
 
@@ -604,7 +599,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   // --- Title generation ---
 
-  private static TITLE_SYSTEM_PROMPT =
+  private TITLE_SYSTEM_PROMPT =
     `You are a title generator. You output ONLY a thread title. Nothing else.
 
 <task>
@@ -666,7 +661,7 @@ Your output must be:
 
     let result = await generateText({
       model: model,
-      system: AgentStreamAiService.TITLE_SYSTEM_PROMPT,
+      system: this.TITLE_SYSTEM_PROMPT,
       prompt: `Generate a title for this conversation:\n${userMessage}`
     });
 

@@ -18,7 +18,7 @@ import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class AgentModelsAiService {
-  private static MODELS_AI_TTL_MS = 60 * 60 * 1000; // 1 hour
+  private MODELS_AI_TTL_MS = 60 * 60 * 1000; // 1 hour
 
   constructor(
     private cs: ConfigService<BackendConfig>,
@@ -109,8 +109,7 @@ export class AgentModelsAiService {
     }
 
     let isFresh =
-      hasTs &&
-      Date.now() - providerModelsAiTs < AgentModelsAiService.MODELS_AI_TTL_MS;
+      hasTs && Date.now() - providerModelsAiTs < this.MODELS_AI_TTL_MS;
 
     if (hasModels && isFresh) {
       return providerModelsAi;

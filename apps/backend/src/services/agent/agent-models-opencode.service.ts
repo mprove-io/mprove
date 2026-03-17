@@ -19,7 +19,7 @@ import { ServerError } from '#common/models/server-error';
 
 @Injectable()
 export class AgentModelsOpencodeService {
-  private static MODELS_DEV_TTL_MS = 60 * 60 * 1000; // 1 hour
+  private MODELS_DEV_TTL_MS = 60 * 60 * 1000; // 1 hour
 
   constructor(
     private cs: ConfigService<BackendConfig>,
@@ -114,9 +114,7 @@ export class AgentModelsOpencodeService {
     }
 
     let isFresh =
-      hasTs &&
-      Date.now() - providerModelsOpencodeTs <
-        AgentModelsOpencodeService.MODELS_DEV_TTL_MS;
+      hasTs && Date.now() - providerModelsOpencodeTs < this.MODELS_DEV_TTL_MS;
 
     if (hasModels && isFresh) {
       return providerModelsOpencode;
