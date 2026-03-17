@@ -60,6 +60,13 @@ export class AgentDrainService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
+  cleanup(item: { sessionId: string }): void {
+    let { sessionId } = item;
+    this.pendingEvents.delete(sessionId);
+    this.eventCounters.delete(sessionId);
+    this.partStates.delete(sessionId);
+  }
+
   async initEventCounter(item: { sessionId: string }): Promise<void> {
     let { sessionId } = item;
     if (!this.eventCounters.has(sessionId)) {
@@ -85,13 +92,6 @@ export class AgentDrainService {
       eventIndex: eventIndex
     });
     this.eventCounters.set(item.sessionId, eventIndex + 1);
-  }
-
-  cleanup(item: { sessionId: string }): void {
-    let { sessionId } = item;
-    this.pendingEvents.delete(sessionId);
-    this.eventCounters.delete(sessionId);
-    this.partStates.delete(sessionId);
   }
 
   async drainAllQueues(): Promise<string[]> {

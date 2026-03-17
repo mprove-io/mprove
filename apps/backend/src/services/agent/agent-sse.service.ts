@@ -74,11 +74,6 @@ export class AgentSseService implements OnModuleDestroy {
     });
   }
 
-  onModuleDestroy() {
-    this.redisPubClient.disconnect();
-    this.redisSubClient.disconnect();
-  }
-
   async publish(item: { sessionId: string; event: AgentEvent }): Promise<void> {
     let { sessionId, event } = item;
     await this.redisPubClient.publish(
@@ -195,5 +190,10 @@ export class AgentSseService implements OnModuleDestroy {
         }
       };
     });
+  }
+
+  onModuleDestroy() {
+    this.redisPubClient.disconnect();
+    this.redisSubClient.disconnect();
   }
 }
