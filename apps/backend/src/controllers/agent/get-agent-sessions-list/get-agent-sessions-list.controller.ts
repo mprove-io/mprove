@@ -11,7 +11,7 @@ import {
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxLifecycleService } from '#backend/services/agent-sandbox-lifecycle.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -29,7 +29,7 @@ export class GetAgentSessionsListController {
   constructor(
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
-    private agentLifecycleService: AgentSandboxLifecycleService,
+    private agentSandboxService: AgentSandboxService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -49,7 +49,7 @@ export class GetAgentSessionsListController {
     });
 
     if (project.e2bApiKey) {
-      await this.agentLifecycleService.syncProjectSandboxStatuses({
+      await this.agentSandboxService.syncProjectSandboxStatuses({
         projectId: projectId,
         e2bApiKey: project.e2bApiKey
       });

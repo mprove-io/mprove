@@ -18,9 +18,10 @@ import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
-import { AgentStreamService } from '#backend/services/agent-stream.service';
-import { AiSdkStreamService } from '#backend/services/ai-sdk-stream.service';
+import { AgentOpencodeService } from '#backend/services/agent-opencode.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service.js';
+import { AgentStreamAiService } from '#backend/services/agent-stream-ai.service';
+import { AgentStreamOpencodeService } from '#backend/services/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -46,8 +47,9 @@ export class SendUserMessageToAgentController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private aiSdkStreamService: AiSdkStreamService,
-    private agentStreamService: AgentStreamService,
+    private aiSdkStreamService: AgentStreamAiService,
+    private agentStreamService: AgentStreamOpencodeService,
+    private agentOpencodeService: AgentOpencodeService,
     private agentSandboxService: AgentSandboxService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
@@ -212,13 +214,13 @@ export class SendUserMessageToAgentController {
       }
 
       if (sandboxInfo.state === 'running') {
-        await this.agentSandboxService.getOpenCodeClient({
+        await this.agentOpencodeService.getOpenCodeClient({
           sessionId: session.sessionId,
           sandboxBaseUrl: session.sandboxBaseUrl,
           opencodePassword: session.opencodePassword
         });
 
-        await this.agentSandboxService.healthCheckOpenCode({
+        await this.agentOpencodeService.healthCheckOpenCode({
           sandboxBaseUrl: session.sandboxBaseUrl
         });
 
@@ -256,7 +258,7 @@ export class SendUserMessageToAgentController {
           });
         }
 
-        let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+        let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
           sessionId: sessionId
         });
 
@@ -314,7 +316,7 @@ export class SendUserMessageToAgentController {
           });
         }
       } else if (interactionType === InteractionTypeEnum.Abort) {
-        let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+        let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
           sessionId: sessionId
         });
 

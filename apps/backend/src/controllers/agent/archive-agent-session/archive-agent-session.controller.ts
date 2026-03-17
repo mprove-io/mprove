@@ -22,7 +22,7 @@ import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { getRetryOption } from '#backend/functions/get-retry-option';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service.js';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

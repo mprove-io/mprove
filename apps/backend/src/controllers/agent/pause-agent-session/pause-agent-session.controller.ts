@@ -4,8 +4,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxLifecycleService } from '#backend/services/agent-sandbox-lifecycle.service';
-import { AgentStreamService } from '#backend/services/agent-stream.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
+import { AgentStreamOpencodeService } from '#backend/services/agent-stream-opencode.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -23,8 +23,8 @@ import { ServerError } from '#common/models/server-error';
 export class PauseAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
-    private agentLifecycleService: AgentSandboxLifecycleService,
-    private agentStreamService: AgentStreamService
+    private agentSandboxService: AgentSandboxService,
+    private agentStreamService: AgentStreamOpencodeService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession)
@@ -46,7 +46,7 @@ export class PauseAgentSessionController {
       sessionId: sessionId
     });
 
-    await this.agentLifecycleService.pauseSessionById({
+    await this.agentSandboxService.pauseSessionById({
       sessionId: sessionId,
       pauseReason: PauseReasonEnum.User
     });

@@ -4,15 +4,14 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { AgentDrainService } from './services/agent-drain.service';
+import { AgentDrainTimerService } from './services/agent-drain-timer.service';
 import { AgentEventsService } from './services/agent-events.service';
-import { AgentModelsAiSdkService } from './services/agent-models-ai-sdk.service';
+import { AgentModelsAiService } from './services/agent-models-ai.service';
 import { AgentModelsOpencodeService } from './services/agent-models-opencode.service';
+import { AgentOpencodeService } from './services/agent-opencode.service';
 import { AgentSandboxService } from './services/agent-sandbox.service';
-import { AgentSandboxLifecycleService } from './services/agent-sandbox-lifecycle.service';
-import { AgentStreamService } from './services/agent-stream.service';
-import { AgentStreamDrainService } from './services/agent-stream-drain.service';
-import { AiSdkService } from './services/ai-sdk.service';
-import { AiSdkStreamService } from './services/ai-sdk-stream.service';
+import { AgentStreamAiService } from './services/agent-stream-ai.service';
+import { AgentStreamOpencodeService } from './services/agent-stream-opencode.service';
 import { ApiKeyService } from './services/api-key.service';
 import { BlockmlService } from './services/blockml.service';
 import { AvatarsService } from './services/db/avatars.service';
@@ -118,16 +117,15 @@ export const appProviders = [
   TabService,
   //
   SessionsService,
-  AgentSandboxService,
-  AgentStreamDrainService,
+  AgentOpencodeService,
   AgentDrainService,
+  AgentDrainTimerService,
   AgentEventsService,
-  AgentStreamService,
-  AgentSandboxLifecycleService,
-  AgentModelsAiSdkService,
+  AgentStreamOpencodeService,
+  AgentSandboxService,
+  AgentModelsAiService,
   AgentModelsOpencodeService,
-  AiSdkService,
-  AiSdkStreamService,
+  AgentStreamAiService,
   ApiKeyService,
   {
     provide: TasksService,
@@ -136,8 +134,8 @@ export const appProviders = [
       queriesService: QueriesService,
       structsService: StructsService,
       notesService: NotesService,
-      agentLifecycleService: AgentSandboxLifecycleService,
-      agentStreamService: AgentStreamService,
+      agentSandboxService: AgentSandboxService,
+      agentStreamOpencodeService: AgentStreamOpencodeService,
       logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
@@ -146,8 +144,8 @@ export const appProviders = [
             queriesService,
             structsService,
             notesService,
-            agentLifecycleService,
-            agentStreamService,
+            agentSandboxService,
+            agentStreamOpencodeService,
             logger
           )
         : {},
@@ -156,8 +154,8 @@ export const appProviders = [
       QueriesService,
       StructsService,
       NotesService,
-      AgentSandboxLifecycleService,
-      AgentStreamService
+      AgentSandboxService,
+      AgentStreamOpencodeService
     ]
   },
   UserCodeService

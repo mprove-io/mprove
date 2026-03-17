@@ -7,8 +7,8 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
-import { AgentSandboxLifecycleService } from './agent-sandbox-lifecycle.service';
-import { AgentStreamService } from './agent-stream.service';
+import { AgentSandboxService } from './agent-sandbox.service';
+import { AgentStreamOpencodeService } from './agent-stream-opencode.service';
 import { NotesService } from './db/notes.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
@@ -27,8 +27,8 @@ export class TasksService {
     private queriesService: QueriesService,
     private structsService: StructsService,
     private notesService: NotesService,
-    private agentSandboxLifecycleService: AgentSandboxLifecycleService,
-    private agentStreamService: AgentStreamService,
+    private agentSandboxService: AgentSandboxService,
+    private agentStreamService: AgentStreamOpencodeService,
     private logger: Logger
   ) {}
 
@@ -128,7 +128,7 @@ export class TasksService {
 
       try {
         let pausedSessionIds =
-          await this.agentSandboxLifecycleService.syncSandboxStatuses();
+          await this.agentSandboxService.syncSandboxStatuses();
 
         for (let sessionId of pausedSessionIds) {
           try {
@@ -171,14 +171,14 @@ export class TasksService {
 
       try {
         let sessionIdsToPause =
-          await this.agentSandboxLifecycleService.getSessionIdsToPause();
+          await this.agentSandboxService.getSessionIdsToPause();
 
         for (let sessionId of sessionIdsToPause) {
           try {
             await this.agentStreamService.publishStopSessionStream({
               sessionId: sessionId
             });
-            await this.agentSandboxLifecycleService.pauseSessionById({
+            await this.agentSandboxService.pauseSessionById({
               sessionId: sessionId,
               pauseReason: PauseReasonEnum.Idle
             });

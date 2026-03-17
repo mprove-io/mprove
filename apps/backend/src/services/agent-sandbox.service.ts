@@ -1,80 +1,35 @@
-import crypto from 'node:crypto';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createOpencodeClient, type OpencodeClient } from '@opencode-ai/sdk/v2';
+import { and, eq, inArray, lt } from 'drizzle-orm';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { ProjectTab } from '#backend/drizzle/postgres/schema/_tabs';
-import { ProjectsService } from '#backend/services/db/projects.service';
-import { SessionsService } from '#backend/services/db/sessions.service';
-import { BackendEnvEnum } from '#common/enums/env/backend-env.enum';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import type { SessionTab } from '#backend/drizzle/postgres/schema/_tabs';
+import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
+import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
-import { ProjectRemoteTypeEnum } from '#common/enums/project-remote-type.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
+import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
+import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
-
-export interface CreateSandboxResult {
-  sandboxId: string;
-  sandboxBaseUrl: string;
-  opencodePassword: string;
-  sandbox: Sandbox;
-  sandboxInfo: SandboxInfo;
-}
+import { ProjectsService } from './db/projects.service';
+import { SessionsService } from './db/sessions.service';
+import { TabService } from './tab.service';
 
 @Injectable()
 export class AgentSandboxService {
-  private opencodeClients: { sessionId: string; client: OpencodeClient }[] = [];
-
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private projectsService: ProjectsService,
     private sessionsService: SessionsService,
-    private logger: Logger
+    private projectsService: ProjectsService,
+    private tabService: TabService,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {}
-
-  hasOpenCodeClient(item: { sessionId: string }): boolean {
-    return this.opencodeClients.some(x => x.sessionId === item.sessionId);
-  }
-
-  async getOpenCodeClient(item: {
-    sessionId: string;
-    sandboxBaseUrl?: string;
-    opencodePassword?: string;
-  }): Promise<OpencodeClient> {
-    let client = this.opencodeClients.find(
-      x => x.sessionId === item.sessionId
-    )?.client;
-
-    if (!client) {
-      let sandboxBaseUrl = item.sandboxBaseUrl;
-      let opencodePassword = item.opencodePassword;
-
-      if (!sandboxBaseUrl || !opencodePassword) {
-        let session = await this.sessionsService.getSessionByIdCheckExists({
-          sessionId: item.sessionId
-        });
-        sandboxBaseUrl = session.sandboxBaseUrl;
-        opencodePassword = session.opencodePassword;
-      }
-
-      client = createOpencodeClient({
-        baseUrl: sandboxBaseUrl,
-        directory: '/home/user/project',
-        headers: {
-          Authorization: `Basic ${Buffer.from(`opencode:${opencodePassword}`).toString('base64')}`
-        }
-      });
-      this.opencodeClients.push({ sessionId: item.sessionId, client: client });
-    }
-
-    return client;
-  }
-
-  disposeOpenCodeClient(sessionId: string): void {
-    this.opencodeClients = this.opencodeClients.filter(
-      x => x.sessionId !== sessionId
-    );
-  }
 
   async getSandboxInfo(item: {
     sandboxId: string;
@@ -157,217 +112,209 @@ export class AgentSandboxService {
     }
   }
 
-  async healthCheckOpenCode(item: {
-    sandboxBaseUrl: string;
-    maxAttempts?: number;
-  }): Promise<void> {
-    let maxAttempts = item.maxAttempts ?? 15;
+  async getSessionIdsToPause(): Promise<string[]> {
+    let sessionLastActivityToPauseMinutes = this.cs.get<
+      BackendConfig['sessionLastActivityToPauseMinutes']
+    >('sessionLastActivityToPauseMinutes');
 
-    let backendEnv = this.cs.get<BackendConfig['backendEnv']>('backendEnv');
+    let pauseThresholdTs =
+      Date.now() - sessionLastActivityToPauseMinutes * 60 * 1000;
 
-    let healthy = false;
+    let sessionsToPause = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: and(
+          eq(sessionsTable.status, SessionStatusEnum.Active),
+          lt(sessionsTable.lastActivityTs, pauseThresholdTs)
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-    // console.log(
-    //   `[sandbox] polling health check at ${item.sandboxBaseUrl}/config`
-    // );
+    let sessionIdsToPause = sessionsToPause
+      .filter(
+        s =>
+          s.lastActivityTs && s.lastActivityTs < pauseThresholdTs && s.sandboxId
+      )
+      .map(s => s.sessionId);
 
-    for (let i = 0; i < maxAttempts; i++) {
-      try {
-        let res = await fetch(`${item.sandboxBaseUrl}/config`);
-
-        if (res.status === 401) {
-          healthy = true;
-          // console.log(
-          //   `[sandbox] health check passed on attempt ${i + 1}/${maxAttempts}`
-          // );
-          break;
-        } else {
-          // console.log(
-          //   `[sandbox] health check attempt ${i + 1}/${maxAttempts}: status ${res.status} (expected 401)`
-          // );
-        }
-      } catch (e: any) {
-        if (backendEnv !== BackendEnvEnum.PROD) {
-          console.log(
-            `[sandbox] health check attempt ${i + 1}/${maxAttempts} failed: ${e?.message}`
-          );
-        }
-      }
-
-      await new Promise(r => setTimeout(r, 1000));
-    }
-
-    if (!healthy) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SANDBOX_HEALTH_CHECK_FAILED
-      });
-    }
+    return sessionIdsToPause;
   }
 
-  async startOpencodeServer(item: {
-    sandboxType: SandboxTypeEnum;
-    sandboxTimeoutMs: number;
-    sandboxEnvs: Record<string, string>;
-    project: ProjectTab;
-    sessionBranch: string;
-  }): Promise<CreateSandboxResult> {
-    try {
-      let createSandboxResult: CreateSandboxResult;
+  async pauseSessionById(item: {
+    sessionId: string;
+    pauseReason: PauseReasonEnum;
+  }): Promise<void> {
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId: item.sessionId
+    });
 
-      switch (item.sandboxType) {
-        case SandboxTypeEnum.E2B: {
-          let templateName =
-            this.cs.get<BackendConfig['e2bPublicTemplate']>(
-              'e2bPublicTemplate'
-            );
+    if (session.status !== SessionStatusEnum.Active || !session.sandboxId) {
+      return;
+    }
 
-          // console.log(
-          //   `[sandbox] creating E2B sandbox from template: ${templateName}`
-          // );
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
 
-          let sandbox = await Sandbox.betaCreate(templateName, {
-            autoPause: true,
-            apiKey: item.project.e2bApiKey,
-            allowInternetAccess: true,
-            timeoutMs: item.sandboxTimeoutMs
-          });
+    await this.pauseSandbox({
+      sandboxType: session.sandboxType as SandboxTypeEnum,
+      sandboxId: session.sandboxId,
+      e2bApiKey: project.e2bApiKey
+    });
 
-          // console.log(`[sandbox] sandbox created: ${sandbox.sandboxId}`);
+    let updatedSession: SessionTab = {
+      ...session,
+      status: SessionStatusEnum.Paused,
+      pauseReason: item.pauseReason
+    };
 
-          await sandbox.commands.run('mkdir -p /home/user/project');
-
-          if (item.project.remoteType === ProjectRemoteTypeEnum.GitClone) {
-            // console.log('[sandbox] cloning repo...');
-            await this.cloneRepoInSandbox({
-              sandbox: sandbox,
-              gitUrl: item.project.gitUrl,
-              defaultBranch: item.project.defaultBranch,
-              publicKey: item.project.publicKey,
-              privateKeyEncrypted: item.project.privateKeyEncrypted,
-              passPhrase: item.project.passPhrase,
-              cloneDir: '/home/user/project',
-              sessionBranch: item.sessionBranch
-            });
-            // console.log('[sandbox] repo cloned');
+    await this.db.drizzle.transaction(
+      async tx =>
+        await this.db.packer.write({
+          tx: tx,
+          insertOrUpdate: {
+            sessions: [updatedSession]
           }
+        })
+    );
+  }
 
-          let opencodePassword = crypto.randomBytes(32).toString('hex');
+  async syncSandboxStatuses(): Promise<string[]> {
+    let sessions = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: inArray(sessionsTable.status, [
+          SessionStatusEnum.Active,
+          SessionStatusEnum.Paused
+        ])
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-          // console.log('[sandbox] starting opencode serve...');
+    // Collect unique projectIds
+    let projectIds = [
+      ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
+    ];
 
-          await sandbox.commands.run(
-            `cd /home/user/project && opencode serve --port 3000`,
-            {
-              background: true,
-              timeoutMs: 0,
-              envs: {
-                ...item.sandboxEnvs,
-                OPENCODE_SERVER_PASSWORD: opencodePassword
+    let pausedSessionIds: string[] = [];
+
+    for (let projectId of projectIds) {
+      try {
+        let project = await this.projectsService.getProjectCheckExists({
+          projectId: projectId
+        });
+
+        let projectPausedSessionIds = await this.syncProjectSandboxStatuses({
+          projectId: projectId,
+          e2bApiKey: project.e2bApiKey
+        });
+
+        pausedSessionIds.push(...projectPausedSessionIds);
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_SYNC_SANDBOX_STATUSES_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+    }
+
+    return pausedSessionIds;
+  }
+
+  async syncProjectSandboxStatuses(item: {
+    projectId: string;
+    e2bApiKey: string;
+  }): Promise<string[]> {
+    let sessions = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: and(
+          eq(sessionsTable.projectId, item.projectId),
+          inArray(sessionsTable.status, [
+            SessionStatusEnum.Active,
+            SessionStatusEnum.Paused
+          ])
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+
+    let sessionsWithSandbox = sessions.filter(s => s.sandboxId);
+
+    if (sessionsWithSandbox.length === 0) {
+      return [];
+    }
+
+    let sandboxes = await this.listSandboxes({
+      e2bApiKey: item.e2bApiKey
+    });
+
+    let pausedSessionIds: string[] = [];
+
+    for (let session of sessionsWithSandbox) {
+      try {
+        let sandboxInfo = sandboxes.find(
+          s => s.sandboxId === session.sandboxId
+        );
+
+        if (!sandboxInfo) {
+          // Sandbox no longer exists
+          let updatedSession: SessionTab = {
+            ...session,
+            status: SessionStatusEnum.Archived,
+            archiveReason: ArchiveReasonEnum.Expire
+          };
+
+          await this.db.drizzle.transaction(async tx => {
+            await this.db.packer.write({
+              tx: tx,
+              insertOrUpdate: {
+                sessions: [updatedSession]
               }
-            }
-          );
+            });
 
-          let host = sandbox.getHost(3000);
-
-          let sandboxBaseUrl = `https://${host}`;
-
-          await this.healthCheckOpenCode({
-            sandboxBaseUrl: sandboxBaseUrl,
-            maxAttempts: 30
+            await tx
+              .delete(ocEventsTable)
+              .where(and(eq(ocEventsTable.sessionId, session.sessionId)));
           });
-
-          let sandboxInfo = await sandbox.getInfo();
-
-          createSandboxResult = {
-            sandboxId: sandbox.sandboxId,
-            sandboxBaseUrl: sandboxBaseUrl,
-            opencodePassword: opencodePassword,
-            sandbox: sandbox,
+        } else if (
+          session.status === SessionStatusEnum.Active &&
+          sandboxInfo.state === 'paused'
+        ) {
+          let updatedSession: SessionTab = {
+            ...session,
+            status: SessionStatusEnum.Paused,
+            pauseReason: PauseReasonEnum.External,
+            sandboxStartTs: sandboxInfo.startedAt.getTime(),
+            sandboxEndTs: sandboxInfo.endAt.getTime(),
             sandboxInfo: sandboxInfo
           };
 
-          break;
+          await this.db.drizzle.transaction(
+            async tx =>
+              await this.db.packer.write({
+                tx: tx,
+                insertOrUpdate: {
+                  sessions: [updatedSession]
+                }
+              })
+          );
+
+          pausedSessionIds.push(session.sessionId);
         }
-        default:
-          throw new ServerError({
-            message: ErEnum.BACKEND_AGENT_UNKNOWN_SANDBOX_TYPE
-          });
-      }
-
-      return createSandboxResult;
-    } catch (e) {
-      throw new ServerError({
-        message: ErEnum.BACKEND_AGENT_SANDBOX_CREATE_FAILED,
-        originalError: e
-      });
-    }
-  }
-
-  async cloneRepoInSandbox(item: {
-    sandbox: Sandbox;
-    gitUrl: string;
-    defaultBranch: string;
-    publicKey: string;
-    privateKeyEncrypted: string;
-    passPhrase: string;
-    cloneDir: string;
-    sessionBranch: string;
-  }): Promise<void> {
-    let keyDir = '/tmp/ssh-keys';
-
-    let privateKeyPath = `${keyDir}/id_rsa`;
-    let pubKeyPath = `${keyDir}/id_rsa.pub`;
-    let askpassPath = `${keyDir}/ssh-askpass.sh`;
-
-    await item.sandbox.commands.run(`mkdir -p ${keyDir}`);
-
-    await item.sandbox.files.write(pubKeyPath, item.publicKey);
-    await item.sandbox.files.write(privateKeyPath, item.privateKeyEncrypted);
-    await item.sandbox.files.write(
-      askpassPath,
-      '#!/bin/sh\necho $SSH_PASSPHRASE'
-    );
-
-    await item.sandbox.commands.run(
-      `chmod 600 ${privateKeyPath} && chmod 700 ${askpassPath}`
-    );
-
-    try {
-      let gitSshCommand = `ssh -i ${privateKeyPath} -F /dev/null -o IdentitiesOnly=yes -o StrictHostKeyChecking=no`;
-
-      let cloneResult = await item.sandbox.commands.run(
-        `git clone --branch ${item.defaultBranch} ${item.gitUrl} ${item.cloneDir}`,
-        {
-          envs: {
-            GIT_SSH_COMMAND: gitSshCommand,
-            SSH_PASSPHRASE: item.passPhrase,
-            SSH_ASKPASS: askpassPath,
-            SSH_ASKPASS_REQUIRE: 'force',
-            DISPLAY: '1'
-          },
-          timeoutMs: 5 * 60 * 1000
-        }
-      );
-
-      if (cloneResult.exitCode !== 0) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_SANDBOX_GIT_CLONE_FAILED,
-          originalError: cloneResult.stderr
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_SCHEDULER_SYNC_SANDBOX_STATUS_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
         });
       }
-
-      let checkoutResult = await item.sandbox.commands.run(
-        `git -C ${item.cloneDir} checkout -b ${item.sessionBranch}`
-      );
-
-      if (checkoutResult.exitCode !== 0) {
-        throw new ServerError({
-          message: ErEnum.BACKEND_AGENT_SANDBOX_GIT_CHECKOUT_FAILED,
-          originalError: checkoutResult.stderr
-        });
-      }
-    } finally {
-      await item.sandbox.commands.run(`rm -rf ${keyDir}`).catch(() => {});
     }
+
+    return pausedSessionIds;
   }
 }

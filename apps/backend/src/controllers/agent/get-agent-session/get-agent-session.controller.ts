@@ -10,8 +10,8 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
-import { AgentStreamService } from '#backend/services/agent-stream.service';
+import { AgentSandboxService } from '#backend/services/agent-sandbox.service.js';
+import { AgentStreamOpencodeService } from '#backend/services/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { TabService } from '#backend/services/tab.service';
@@ -38,7 +38,7 @@ export class GetAgentSessionController {
     private projectsService: ProjectsService,
     private tabService: TabService,
     private agentSandboxService: AgentSandboxService,
-    private agentStreamService: AgentStreamService,
+    private agentStreamService: AgentStreamOpencodeService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 

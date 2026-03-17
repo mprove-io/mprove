@@ -1,21 +1,32 @@
 import crypto from 'node:crypto';
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type {
+  OpencodeClient,
+  PermissionRequest,
+  QuestionRequest
+} from '@opencode-ai/sdk/v2';
+import { sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { BackendConfig } from '#backend/config/backend-config';
+import type { Db } from '#backend/drizzle/drizzle.module';
+import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ServerError } from '#common/models/server-error';
+import { AgentDrainService } from './agent-drain.service';
 import { AgentEventsService } from './agent-events.service';
+import { AgentOpencodeService } from './agent-opencode.service';
 import { AgentSandboxService } from './agent-sandbox.service';
-import { AgentSandboxLifecycleService } from './agent-sandbox-lifecycle.service';
-import { AgentStreamDrainService } from './agent-stream-drain.service';
+import { OcMessagesService } from './db/oc-messages.service';
+import { OcPartsService } from './db/oc-parts.service';
+import { SessionsService } from './db/sessions.service';
 
 @Injectable()
-export class AgentStreamService implements OnModuleDestroy {
+export class AgentStreamOpencodeService implements OnModuleDestroy {
   private podId = crypto.randomUUID();
 
   // OpenCode sends heartbeat every 10s (hardcoded in workspace-server/routes.ts) + 4s buffer
@@ -35,11 +46,15 @@ export class AgentStreamService implements OnModuleDestroy {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private agentDrainService: AgentStreamDrainService,
+    private agentDrainService: AgentDrainService,
     private agentEventsService: AgentEventsService,
-    private agentSandboxLifecycleService: AgentSandboxLifecycleService,
     private agentSandboxService: AgentSandboxService,
-    private logger: Logger
+    private agentOpencodeService: AgentOpencodeService,
+    private sessionsService: SessionsService,
+    private ocMessagesService: OcMessagesService,
+    private ocPartsService: OcPartsService,
+    private logger: Logger,
+    @Inject(DRIZZLE) private db: Db
   ) {
     let valkeyHost =
       this.cs.get<BackendConfig['backendValkeyHost']>('backendValkeyHost');
@@ -60,7 +75,9 @@ export class AgentStreamService implements OnModuleDestroy {
       password: valkeyPassword
     });
 
-    this.redisSubscriber.subscribe(AgentStreamService.STOP_STREAM_CHANNEL);
+    this.redisSubscriber.subscribe(
+      AgentStreamOpencodeService.STOP_STREAM_CHANNEL
+    );
 
     this.redisSubscriber.on('message', (_channel, sessionId) => {
       if (this.activeStreams.has(sessionId)) {
@@ -94,7 +111,7 @@ export class AgentStreamService implements OnModuleDestroy {
     }
 
     await this.redisClient.publish(
-      AgentStreamService.STOP_STREAM_CHANNEL,
+      AgentStreamOpencodeService.STOP_STREAM_CHANNEL,
       item.sessionId
     );
 
@@ -121,7 +138,7 @@ export class AgentStreamService implements OnModuleDestroy {
     for (let sessionId of item.sessionIds) {
       try {
         await this.stopEventStream(sessionId);
-        await this.agentSandboxLifecycleService.pauseSessionById({
+        await this.agentSandboxService.pauseSessionById({
           sessionId: sessionId,
           pauseReason: PauseReasonEnum.Safe
         });
@@ -154,7 +171,7 @@ export class AgentStreamService implements OnModuleDestroy {
       this.makeStreamLockKey(sessionId),
       this.podId,
       'EX',
-      AgentStreamService.STREAM_LOCK_TTL_SECONDS,
+      AgentStreamOpencodeService.STREAM_LOCK_TTL_SECONDS,
       'NX'
     );
     return result === 'OK';
@@ -163,7 +180,7 @@ export class AgentStreamService implements OnModuleDestroy {
   async refreshActiveLocks(): Promise<void> {
     for (let sessionId of this.activeStreams.keys()) {
       let result = await this.redisClient.eval(
-        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
+        `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamOpencodeService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
         1,
         this.makeStreamLockKey(sessionId),
         this.podId
@@ -220,7 +237,7 @@ export class AgentStreamService implements OnModuleDestroy {
       `[startEventStream] lock acquired, subscribing sessionId=${item.sessionId}`
     );
 
-    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -239,7 +256,7 @@ export class AgentStreamService implements OnModuleDestroy {
       `[startEventStream] subscribed, starting refetch sessionId=${item.sessionId}`
     );
 
-    await this.agentDrainService.refetchFromOpenCode({
+    await this.refetchFromOpenCode({
       sessionId: item.sessionId,
       opencodeSessionId: item.opencodeSessionId,
       client: opencodeClient
@@ -332,7 +349,7 @@ export class AgentStreamService implements OnModuleDestroy {
     permissionId: string;
     reply: string;
   }): Promise<void> {
-    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -349,7 +366,7 @@ export class AgentStreamService implements OnModuleDestroy {
     questionId: string;
     answers: string[][];
   }): Promise<void> {
-    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -364,7 +381,7 @@ export class AgentStreamService implements OnModuleDestroy {
     opencodeSessionId: string;
     questionId: string;
   }): Promise<void> {
-    let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+    let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
       sessionId: item.sessionId
     });
 
@@ -384,7 +401,8 @@ export class AgentStreamService implements OnModuleDestroy {
       }
 
       let elapsed = now - lastEventTs;
-      let isStalled = elapsed > AgentStreamService.STREAM_STALL_THRESHOLD_MS;
+      let isStalled =
+        elapsed > AgentStreamOpencodeService.STREAM_STALL_THRESHOLD_MS;
 
       if (isStalled) {
         console.log(
@@ -413,7 +431,7 @@ export class AgentStreamService implements OnModuleDestroy {
 
       let elapsed = Date.now() - startTs;
       let isTimedOut =
-        elapsed >= AgentStreamService.STREAM_LOCK_WAIT_TIMEOUT_MS;
+        elapsed >= AgentStreamOpencodeService.STREAM_LOCK_WAIT_TIMEOUT_MS;
 
       if (isTimedOut) {
         console.log(
@@ -423,6 +441,114 @@ export class AgentStreamService implements OnModuleDestroy {
       }
 
       await new Promise(r => setTimeout(r, 500));
+    }
+  }
+
+  async refetchFromOpenCode(item: {
+    sessionId: string;
+    opencodeSessionId: string;
+    client: OpencodeClient;
+  }): Promise<void> {
+    try {
+      let [
+        messagesResp,
+        sessionResp,
+        todoResp,
+        statusResp,
+        questionsResp,
+        permissionsResp
+      ] = await Promise.all([
+        item.client.session.messages({
+          sessionID: item.opencodeSessionId
+        }),
+        item.client.session.get({ sessionID: item.opencodeSessionId }),
+        item.client.session.todo({ sessionID: item.opencodeSessionId }),
+        item.client.session.status(),
+        item.client.question.list(),
+        item.client.permission.list()
+      ]);
+
+      let messageTabs = (messagesResp.data ?? []).map(m =>
+        this.ocMessagesService.makeOcMessage({
+          messageId: m.info.id,
+          sessionId: item.sessionId,
+          role: m.info.role,
+          ocMessage: m.info
+        })
+      );
+
+      let partTabs = (messagesResp.data ?? []).flatMap(m =>
+        m.parts.map(p =>
+          this.ocPartsService.makeOcPart({
+            partId: p.id as string,
+            messageId: m.info.id,
+            sessionId: item.sessionId,
+            ocPart: p
+          })
+        )
+      );
+
+      let ocSessionTab = await this.sessionsService.getOcSessionBySessionId({
+        sessionId: item.sessionId
+      });
+
+      if (!ocSessionTab) {
+        ocSessionTab = this.sessionsService.makeOcSession({
+          sessionId: item.sessionId
+        });
+      }
+
+      let questions = (questionsResp.data ?? []).filter(
+        (q): q is QuestionRequest =>
+          !!q?.id && q.sessionID === item.opencodeSessionId
+      );
+
+      let permissions = (permissionsResp.data ?? []).filter(
+        (p): p is PermissionRequest =>
+          !!p?.id && p.sessionID === item.opencodeSessionId
+      );
+
+      ocSessionTab = {
+        ...ocSessionTab,
+        openSession: sessionResp.data,
+        todos: todoResp.data ?? [],
+        questions: questions,
+        permissions: permissions
+      };
+
+      if (statusResp.data) {
+        let ocSessionStatus =
+          statusResp.data[item.opencodeSessionId] ??
+          Object.values(statusResp.data)[0];
+        if (ocSessionStatus) {
+          ocSessionTab = { ...ocSessionTab, ocSessionStatus };
+        }
+      }
+
+      await this.db.drizzle.transaction(async tx => {
+        await this.db.packer.write({
+          tx: tx,
+          insertOrUpdate: {
+            ocMessages: messageTabs,
+            ocParts: partTabs,
+            ocSessions: [ocSessionTab]
+          }
+        });
+
+        await tx.execute(
+          sql`UPDATE sessions SET last_activity_ts = ${Date.now()} WHERE session_id = ${item.sessionId}`
+        );
+      });
+    } catch (e) {
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_AGENT_REFETCH_FROM_OPENCODE_FAILED,
+          originalError: e
+        }),
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
     }
   }
 

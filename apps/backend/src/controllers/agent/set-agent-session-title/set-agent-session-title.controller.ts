@@ -4,8 +4,8 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
-import { AiSdkStreamService } from '#backend/services/ai-sdk-stream.service';
+import { AgentOpencodeService } from '#backend/services/agent-opencode.service';
+import { AgentStreamAiService } from '#backend/services/agent-stream-ai.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
@@ -20,8 +20,8 @@ import { ServerError } from '#common/models/server-error';
 export class SetAgentSessionTitleController {
   constructor(
     private sessionsService: SessionsService,
-    private agentSandboxService: AgentSandboxService,
-    private aiSdkStreamService: AiSdkStreamService
+    private agentOpencodeService: AgentOpencodeService,
+    private aiSdkStreamService: AgentStreamAiService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle)
@@ -41,7 +41,7 @@ export class SetAgentSessionTitleController {
 
     if (session.sessionType === SessionTypeEnum.Editor) {
       // Type Editor: proxy to OpenCode
-      let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+      let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
         sessionId: sessionId
       });
 

@@ -14,7 +14,7 @@ import { AgentModelApi } from '#common/interfaces/backend/agent-model-api';
 import { ServerError } from '#common/models/server-error';
 
 @Injectable()
-export class AgentModelsAiSdkService {
+export class AgentModelsAiService {
   private static MODELS_AI_TTL_MS = 60 * 60 * 1000; // 1 hour
 
   constructor(
@@ -107,8 +107,7 @@ export class AgentModelsAiSdkService {
 
     let isFresh =
       hasTs &&
-      Date.now() - providerModelsAiTs <
-        AgentModelsAiSdkService.MODELS_AI_TTL_MS;
+      Date.now() - providerModelsAiTs < AgentModelsAiService.MODELS_AI_TTL_MS;
 
     if (hasModels && isFresh) {
       return providerModelsAi;

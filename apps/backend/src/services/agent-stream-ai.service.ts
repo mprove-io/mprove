@@ -1,25 +1,29 @@
 import crypto from 'node:crypto';
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { createOpenAI } from '@ai-sdk/openai';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Event } from '@opencode-ai/sdk/v2';
+import type { CoreMessage, LanguageModel } from 'ai';
 import { generateText, streamText } from 'ai';
-import { sql } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
+import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
+import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
 import { AsyncQueue } from '#backend/functions/async-queue';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
-import { AgentEventsService } from './agent-events.service';
-import { AgentStreamDrainService } from './agent-stream-drain.service';
-import { AiSdkService } from './ai-sdk.service';
+import { AgentDrainService } from './agent-drain.service';
+import { TabService } from './tab.service';
 
 @Injectable()
-export class AiSdkStreamService implements OnModuleDestroy {
+export class AgentStreamAiService implements OnModuleDestroy {
   private podId = crypto.randomUUID();
 
   private static STREAM_LOCK_TTL_SECONDS = 16;
@@ -37,11 +41,10 @@ export class AiSdkStreamService implements OnModuleDestroy {
   private abortControllers = new Map<string, AbortController>();
 
   constructor(
-    private aiSdkService: AiSdkService,
-    private agentStreamDrainService: AgentStreamDrainService,
-    private agentEventsService: AgentEventsService,
     private cs: ConfigService<BackendConfig>,
+    private agentDrainService: AgentDrainService,
     private logger: Logger,
+    private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {
     let valkeyHost =
@@ -63,7 +66,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       password: valkeyPassword
     });
 
-    this.redisSubscriber.subscribe(AiSdkStreamService.AI_SDK_COMMAND_CHANNEL);
+    this.redisSubscriber.subscribe(AgentStreamAiService.AI_SDK_COMMAND_CHANNEL);
 
     this.redisSubscriber.on('message', (_channel, rawMessage) => {
       try {
@@ -106,7 +109,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       this.makeStreamLockKey(sessionId),
       this.podId,
       'EX',
-      AiSdkStreamService.STREAM_LOCK_TTL_SECONDS,
+      AgentStreamAiService.STREAM_LOCK_TTL_SECONDS,
       'NX'
     );
     return result === 'OK';
@@ -114,7 +117,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
 
   private async refreshStreamLock(sessionId: string): Promise<boolean> {
     let result = await this.redisClient.eval(
-      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AiSdkStreamService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
+      `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamAiService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
       1,
       this.makeStreamLockKey(sessionId),
       this.podId
@@ -141,12 +144,12 @@ export class AiSdkStreamService implements OnModuleDestroy {
       }
 
       let elapsed = Date.now() - startTs;
-      if (elapsed >= AiSdkStreamService.STREAM_LOCK_WAIT_TIMEOUT_MS) {
+      if (elapsed >= AgentStreamAiService.STREAM_LOCK_WAIT_TIMEOUT_MS) {
         return false;
       }
 
       await new Promise(r =>
-        setTimeout(r, AiSdkStreamService.STREAM_LOCK_POLL_MS)
+        setTimeout(r, AgentStreamAiService.STREAM_LOCK_POLL_MS)
       );
     }
   }
@@ -164,7 +167,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
 
       let elapsed = Date.now() - startTs;
       let isTimedOut =
-        elapsed >= AiSdkStreamService.STREAM_LOCK_WAIT_TIMEOUT_MS;
+        elapsed >= AgentStreamAiService.STREAM_LOCK_WAIT_TIMEOUT_MS;
 
       if (isTimedOut) {
         console.log(
@@ -174,7 +177,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       }
 
       await new Promise(r =>
-        setTimeout(r, AiSdkStreamService.STREAM_LOCK_POLL_MS)
+        setTimeout(r, AgentStreamAiService.STREAM_LOCK_POLL_MS)
       );
     }
   }
@@ -190,7 +193,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
     }
 
     await this.redisClient.publish(
-      AiSdkStreamService.AI_SDK_COMMAND_CHANNEL,
+      AgentStreamAiService.AI_SDK_COMMAND_CHANNEL,
       JSON.stringify({ command: 'abort', sessionId: item.sessionId })
     );
 
@@ -203,7 +206,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
 
     if (exists === 1) {
       await this.redisClient.publish(
-        AiSdkStreamService.AI_SDK_COMMAND_CHANNEL,
+        AgentStreamAiService.AI_SDK_COMMAND_CHANNEL,
         JSON.stringify({
           command: 'set-title',
           sessionId: item.sessionId,
@@ -215,7 +218,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       if (!acquired) {
         // Race: another pod just acquired. Publish via pub/sub instead.
         await this.redisClient.publish(
-          AiSdkStreamService.AI_SDK_COMMAND_CHANNEL,
+          AgentStreamAiService.AI_SDK_COMMAND_CHANNEL,
           JSON.stringify({
             command: 'set-title',
             sessionId: item.sessionId,
@@ -226,7 +229,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       }
 
       try {
-        let eventIndex = await this.agentStreamDrainService.getNextEventIndex(
+        let eventIndex = await this.agentDrainService.getNextEventIndex(
           item.sessionId
         );
 
@@ -235,15 +238,15 @@ export class AiSdkStreamService implements OnModuleDestroy {
           properties: { info: { title: item.title } }
         } as Event;
 
-        this.agentStreamDrainService.enqueue({
+        this.agentDrainService.enqueue({
           sessionId: item.sessionId,
           event: titleEvent,
           eventIndex: eventIndex
         });
 
-        await this.agentStreamDrainService.drainQueue(item.sessionId);
+        await this.agentDrainService.drainQueue(item.sessionId);
       } finally {
-        this.agentStreamDrainService.cleanup(item.sessionId);
+        this.agentDrainService.cleanup(item.sessionId);
         await this.releaseStreamLock(item.sessionId);
       }
     }
@@ -315,7 +318,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
 
     try {
       let eventIndex =
-        await this.agentStreamDrainService.getNextEventIndex(sessionId);
+        await this.agentDrainService.getNextEventIndex(sessionId);
 
       // Producer (fire-and-forget async)
       let producerTask = this.runProducer({
@@ -330,7 +333,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
 
       // Consumer: single point of eventIndex assignment
       for await (let event of queue) {
-        this.agentStreamDrainService.enqueue({
+        this.agentDrainService.enqueue({
           sessionId: sessionId,
           event: event,
           eventIndex: eventIndex
@@ -341,7 +344,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       // Queue closed — producer finished
       await producerTask;
 
-      await this.agentStreamDrainService.drainQueue(sessionId);
+      await this.agentDrainService.drainQueue(sessionId);
 
       // Update last_activity_ts
       await this.db.drizzle.transaction(async tx => {
@@ -363,7 +366,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       // Emit error + idle
       try {
         let errorEventIndex =
-          await this.agentStreamDrainService.getNextEventIndex(sessionId);
+          await this.agentDrainService.getNextEventIndex(sessionId);
 
         let errorEvent = {
           type: 'session.error',
@@ -371,7 +374,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
             error: { message: e?.message || 'AI SDK streaming failed' }
           }
         } as unknown as Event;
-        this.agentStreamDrainService.enqueue({
+        this.agentDrainService.enqueue({
           sessionId: sessionId,
           event: errorEvent,
           eventIndex: errorEventIndex
@@ -381,13 +384,13 @@ export class AiSdkStreamService implements OnModuleDestroy {
           type: 'session.status',
           properties: { status: { type: 'idle' } }
         } as Event;
-        this.agentStreamDrainService.enqueue({
+        this.agentDrainService.enqueue({
           sessionId: sessionId,
           event: idleEvent,
           eventIndex: errorEventIndex + 1
         });
 
-        await this.agentStreamDrainService.drainQueue(sessionId);
+        await this.agentDrainService.drainQueue(sessionId);
       } catch (drainError) {
         logToConsoleBackend({
           log: new ServerError({
@@ -402,7 +405,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
     } finally {
       this.activeStreams.delete(sessionId);
       this.abortControllers.delete(sessionId);
-      this.agentStreamDrainService.cleanup(sessionId);
+      this.agentDrainService.cleanup(sessionId);
       await this.releaseStreamLock(sessionId);
     }
   }
@@ -428,7 +431,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       queue
     } = item;
 
-    let history = await this.aiSdkService.loadMessageHistory({
+    let history = await this.loadMessageHistory({
       sessionId: sessionId
     });
 
@@ -508,7 +511,7 @@ export class AiSdkStreamService implements OnModuleDestroy {
       : undefined;
 
     // Stream AI response
-    let model = this.aiSdkService.getModel({
+    let model = this.getModel({
       provider: provider,
       modelId: modelId,
       apiKey: apiKey
@@ -664,7 +667,7 @@ Your output must be:
   }): Promise<string | undefined> {
     let { provider, modelId, apiKey, userMessage } = item;
 
-    let model = this.aiSdkService.getModel({
+    let model = this.getModel({
       provider: provider,
       modelId: modelId,
       apiKey: apiKey
@@ -672,7 +675,7 @@ Your output must be:
 
     let result = await generateText({
       model: model,
-      system: AiSdkStreamService.TITLE_SYSTEM_PROMPT,
+      system: AgentStreamAiService.TITLE_SYSTEM_PROMPT,
       prompt: `Generate a title for this conversation:\n${userMessage}`
     });
 
@@ -697,6 +700,79 @@ Your output must be:
     for (let sessionId of this.activeStreams.keys()) {
       await this.refreshStreamLock(sessionId);
     }
+  }
+
+  //
+
+  getModel(item: {
+    provider: string;
+    modelId: string;
+    apiKey: string;
+  }): LanguageModel {
+    let { provider, modelId, apiKey } = item;
+
+    if (provider === 'openai') {
+      let openai = createOpenAI({ apiKey: apiKey });
+      return openai(modelId);
+    } else if (provider === 'anthropic') {
+      let anthropic = createAnthropic({ apiKey: apiKey });
+      return anthropic(modelId);
+    }
+
+    throw new ServerError({
+      message: ErEnum.BACKEND_AGENT_PROMPT_FAILED
+    });
+  }
+
+  async loadMessageHistory(item: {
+    sessionId: string;
+  }): Promise<CoreMessage[]> {
+    let { sessionId } = item;
+
+    let messageEnts = await this.db.drizzle.query.ocMessagesTable.findMany({
+      where: eq(ocMessagesTable.sessionId, sessionId),
+      orderBy: [asc(ocMessagesTable.createdTs)]
+    });
+
+    let messageTabs = messageEnts.map(m =>
+      this.tabService.ocMessageEntToTab(m)
+    );
+
+    let partEnts = await this.db.drizzle.query.ocPartsTable.findMany({
+      where: eq(ocPartsTable.sessionId, sessionId),
+      orderBy: [asc(ocPartsTable.createdTs)]
+    });
+
+    let partTabs = partEnts.map(p => this.tabService.ocPartEntToTab(p));
+
+    let partsByMessageId = new Map<string, typeof partTabs>();
+
+    for (let part of partTabs) {
+      let existing = partsByMessageId.get(part.messageId);
+      if (existing) {
+        existing.push(part);
+      } else {
+        partsByMessageId.set(part.messageId, [part]);
+      }
+    }
+
+    let coreMessages: CoreMessage[] = [];
+
+    for (let msg of messageTabs) {
+      let msgParts = partsByMessageId.get(msg.messageId) || [];
+      let textContent = msgParts
+        .filter(p => p.type === 'text')
+        .map(p => ((p.ocPart as Record<string, unknown>).text as string) || '')
+        .join('');
+
+      if (msg.role === 'user') {
+        coreMessages.push({ role: 'user', content: textContent });
+      } else if (msg.role === 'assistant') {
+        coreMessages.push({ role: 'assistant', content: textContent });
+      }
+    }
+
+    return coreMessages;
   }
 
   onModuleDestroy() {

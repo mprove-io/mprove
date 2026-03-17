@@ -29,9 +29,9 @@ import { getRetryOption } from '#backend/functions/get-retry-option';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent-sandbox.service.js';
-import { AgentStreamService } from '#backend/services/agent-stream.service';
-import { AiSdkStreamService } from '#backend/services/ai-sdk-stream.service';
+import { AgentOpencodeService } from '#backend/services/agent-opencode.service.js';
+import { AgentStreamAiService } from '#backend/services/agent-stream-ai.service';
+import { AgentStreamOpencodeService } from '#backend/services/agent-stream-opencode.service';
 import { ApiKeyService } from '#backend/services/api-key.service';
 import { BlockmlService } from '#backend/services/blockml.service';
 import { BranchesService } from '#backend/services/db/branches.service';
@@ -75,10 +75,10 @@ export class CreateAgentSessionController {
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private ocEventsService: OcEventsService,
-    private agentStreamService: AgentStreamService,
+    private agentStreamService: AgentStreamOpencodeService,
     private apiKeyService: ApiKeyService,
-    private aiSdkStreamService: AiSdkStreamService,
-    private agentSandboxService: AgentSandboxService,
+    private aiSdkStreamService: AgentStreamAiService,
+    private agentOpencodeService: AgentOpencodeService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
     private branchesService: BranchesService,
@@ -447,7 +447,7 @@ export class CreateAgentSessionController {
       // console.log('starting opencode server...');
 
       let { sandboxId, sandboxBaseUrl, opencodePassword, sandboxInfo } =
-        await this.agentSandboxService.startOpencodeServer({
+        await this.agentOpencodeService.startOpencodeServer({
           sandboxType: sandboxType,
           sandboxTimeoutMs: sandboxTimeoutMs,
           sandboxEnvs: sandboxEnvs,
@@ -457,7 +457,7 @@ export class CreateAgentSessionController {
 
       // console.log('opencode server started');
 
-      let opencodeClient = await this.agentSandboxService.getOpenCodeClient({
+      let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
         sessionId: sessionId,
         sandboxBaseUrl: sandboxBaseUrl,
         opencodePassword: opencodePassword

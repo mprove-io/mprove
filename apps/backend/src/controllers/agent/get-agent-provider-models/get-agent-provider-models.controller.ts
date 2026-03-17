@@ -4,7 +4,7 @@ import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { UserTab } from '#backend/drizzle/postgres/schema/_tabs';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentModelsAiSdkService } from '#backend/services/agent-models-ai-sdk.service';
+import { AgentModelsAiService } from '#backend/services/agent-models-ai.service';
 import { AgentModelsOpencodeService } from '#backend/services/agent-models-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service.js';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
@@ -20,7 +20,7 @@ import {
 @Controller()
 export class GetAgentProviderModelsController {
   constructor(
-    private agentModelsAiSdkService: AgentModelsAiSdkService,
+    private agentModelsAiSdkService: AgentModelsAiService,
     private agentModelsOpencodeService: AgentModelsOpencodeService,
     private projectsService: ProjectsService
   ) {}
