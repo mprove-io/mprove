@@ -138,10 +138,12 @@ export class TasksService {
             await this.agentStreamService.publishStopSessionStream({
               sessionId: sessionId
             });
+
             await this.agentSandboxService.pauseSessionById({
               sessionId: sessionId,
               pauseReason: PauseReasonEnum.Idle
             });
+
             await this.agentStreamService.publishReloadSession({
               sessionId: sessionId
             });
