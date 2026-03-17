@@ -16,6 +16,10 @@ export const CHANNEL_AGENT_SSE = 'agent-sse';
 export const CHANNEL_OPENCODE_STREAM_COMMAND = 'opencode-stream-command';
 export const CHANNEL_AI_STREAM_COMMAND = 'ai-stream-command';
 
+export const KEY_SSE_TICKET = 'sse-ticket';
+export const KEY_OPENCODE_STREAM_OWNER = 'opencode-stream-owner';
+export const KEY_AI_STREAM_OWNER = 'ai-stream-owner';
+
 export const MODEL_PROVIDERS: { provider_id: string; label: string }[] = [
   { provider_id: 'openai', label: 'OpenAI' },
   { provider_id: 'anthropic', label: 'Anthropic' },

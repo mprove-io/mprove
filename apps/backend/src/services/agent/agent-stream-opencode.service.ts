@@ -13,7 +13,10 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { RELOAD_SESSION_EVENT_TYPE } from '#common/constants/top';
-import { CHANNEL_OPENCODE_STREAM_COMMAND } from '#common/constants/top-backend';
+import {
+  CHANNEL_OPENCODE_STREAM_COMMAND,
+  KEY_OPENCODE_STREAM_OWNER
+} from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { OpencodeStreamCommandEnum } from '#common/enums/opencode-stream-command.enum';
@@ -119,7 +122,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async publishStopSessionStream(item: {
     sessionId: string;
   }): Promise<boolean> {
-    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
+    let key = `${KEY_OPENCODE_STREAM_OWNER}:${item.sessionId}`;
     let exists = await this.redisClient.exists(key);
 
     if (exists === 0) {
@@ -184,17 +187,12 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
   // stream locks
 
-  private makeStreamLockKey(item: { sessionId: string }): string {
-    let { sessionId } = item;
-    return `stream-owner:${sessionId}`;
-  }
-
   private async tryAcquireStreamLock(item: {
     sessionId: string;
   }): Promise<boolean> {
     let { sessionId } = item;
     let result = await this.redisClient.set(
-      this.makeStreamLockKey({ sessionId: sessionId }),
+      `${KEY_OPENCODE_STREAM_OWNER}:${sessionId}`,
       this.podId,
       'EX',
       this.STREAM_LOCK_TTL_SECONDS,
@@ -208,7 +206,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       let result = await this.redisClient.eval(
         `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
         1,
-        this.makeStreamLockKey({ sessionId: sessionId }),
+        `${KEY_OPENCODE_STREAM_OWNER}:${sessionId}`,
         this.podId
       );
 
@@ -234,7 +232,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     await this.redisClient.eval(
       `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
       1,
-      this.makeStreamLockKey({ sessionId: sessionId }),
+      `${KEY_OPENCODE_STREAM_OWNER}:${sessionId}`,
       this.podId
     );
   }
@@ -442,7 +440,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   }
 
   async waitForStreamLockRelease(item: { sessionId: string }): Promise<void> {
-    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
+    let key = `${KEY_OPENCODE_STREAM_OWNER}:${item.sessionId}`;
     let startTs = Date.now();
 
     while (true) {

@@ -15,6 +15,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ServerError } from '#common/models/server-error';
 import { ProjectsService } from '../db/projects.service';
 import { SessionsService } from '../db/sessions.service';
@@ -181,21 +182,23 @@ export class AgentSandboxService {
   async syncSandboxStatuses(): Promise<string[]> {
     let sessions = await this.db.drizzle.query.sessionsTable
       .findMany({
-        where: inArray(sessionsTable.status, [
-          SessionStatusEnum.Active,
-          SessionStatusEnum.Paused
-        ])
+        where: and(
+          eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
+          inArray(sessionsTable.status, [
+            SessionStatusEnum.Active,
+            SessionStatusEnum.Paused
+          ])
+        )
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-    // Collect unique projectIds
-    let projectIds = [
+    let uniqueProjectIds = [
       ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
     ];
 
     let pausedSessionIds: string[] = [];
 
-    for (let projectId of projectIds) {
+    for (let projectId of uniqueProjectIds) {
       try {
         let project = await this.projectsService.getProjectCheckExists({
           projectId: projectId
@@ -231,6 +234,7 @@ export class AgentSandboxService {
       .findMany({
         where: and(
           eq(sessionsTable.projectId, item.projectId),
+          eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
           inArray(sessionsTable.status, [
             SessionStatusEnum.Active,
             SessionStatusEnum.Paused

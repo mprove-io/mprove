@@ -12,7 +12,10 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
-import { CHANNEL_AI_STREAM_COMMAND } from '#common/constants/top-backend';
+import {
+  CHANNEL_AI_STREAM_COMMAND,
+  KEY_AI_STREAM_OWNER
+} from '#common/constants/top-backend';
 import { AiStreamCommandEnum } from '#common/enums/ai-stream-command.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -112,17 +115,12 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   // --- Locking ---
 
-  private makeStreamLockKey(item: { sessionId: string }): string {
-    let { sessionId } = item;
-    return `ai-stream-owner:${sessionId}`;
-  }
-
   private async tryAcquireStreamLock(item: {
     sessionId: string;
   }): Promise<boolean> {
     let { sessionId } = item;
     let result = await this.redisClient.set(
-      this.makeStreamLockKey({ sessionId: sessionId }),
+      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
       this.podId,
       'EX',
       this.STREAM_LOCK_TTL_SECONDS,
@@ -138,7 +136,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     let result = await this.redisClient.eval(
       `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
       1,
-      this.makeStreamLockKey({ sessionId: sessionId }),
+      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
       this.podId
     );
     return result !== 0;
@@ -149,7 +147,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     await this.redisClient.eval(
       `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
       1,
-      this.makeStreamLockKey({ sessionId: sessionId }),
+      `${KEY_AI_STREAM_OWNER}:${sessionId}`,
       this.podId
     );
   }
@@ -176,7 +174,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   }
 
   async waitForStreamLockRelease(item: { sessionId: string }): Promise<void> {
-    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
+    let key = `${KEY_AI_STREAM_OWNER}:${item.sessionId}`;
     let startTs = Date.now();
 
     while (true) {
@@ -203,7 +201,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   // --- Pub/sub commands ---
 
   async publishStopStream(item: { sessionId: string }): Promise<boolean> {
-    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
+    let key = `${KEY_AI_STREAM_OWNER}:${item.sessionId}`;
     let exists = await this.redisClient.exists(key);
 
     if (exists === 0) {
@@ -222,7 +220,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   }
 
   async setTitle(item: { sessionId: string; title: string }): Promise<void> {
-    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
+    let key = `${KEY_AI_STREAM_OWNER}:${item.sessionId}`;
     let exists = await this.redisClient.exists(key);
 
     if (exists === 1) {
