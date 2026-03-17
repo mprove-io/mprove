@@ -87,25 +87,32 @@ export class AgentMessagesService {
 
         // Extract summary diffs
         let summaryDiffs: FileDiffInfo[] | undefined;
+
         let rawDiffs = userOcMsg?.summary?.diffs;
+
         if (Array.isArray(rawDiffs) && rawDiffs.length > 0) {
-          let seen = new Set<string>();
-          let deduped: FileDiffInfo[] = [];
-          for (let i = rawDiffs.length - 1; i >= 0; i--) {
-            let d = rawDiffs[i];
-            if (!seen.has(d.file)) {
-              seen.add(d.file);
-              deduped.push({
-                file: d.file,
-                additions: d.additions,
-                deletions: d.deletions,
-                status: d.status,
-                before: d.before ?? '',
-                after: d.after ?? ''
-              });
+          let seenFiles: string[] = [];
+          let diffs: FileDiffInfo[] = [];
+
+          rawDiffs.forEach(d => {
+            let idx = seenFiles.indexOf(d.file);
+            let diff: FileDiffInfo = {
+              file: d.file,
+              additions: d.additions,
+              deletions: d.deletions,
+              status: d.status,
+              before: d.before ?? '',
+              after: d.after ?? ''
+            };
+            if (idx < 0) {
+              seenFiles.push(d.file);
+              diffs.push(diff);
+            } else {
+              diffs[idx] = diff;
             }
-          }
-          summaryDiffs = deduped.reverse();
+          });
+
+          summaryDiffs = diffs;
         }
 
         chatMessages.push({
