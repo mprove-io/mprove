@@ -6,6 +6,7 @@ import { PATH_NEW_SESSION, PROD_REPO_ID } from '#common/constants/top';
 import { RepoStatusEnum } from '#common/enums/repo-status.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { SessionApi } from '#common/interfaces/backend/session-api';
 import {
@@ -53,6 +54,7 @@ export class SessionsComponent implements OnInit {
   currentSession: SessionApi;
   isRefreshing = false;
   sessionStatusArchived = SessionStatusEnum.Archived;
+  sessionTypeEnum = SessionTypeEnum;
   spinnerName = SESSIONS_SPINNER_NAME;
   debugMode = false;
   isShowDebugToggle = true;

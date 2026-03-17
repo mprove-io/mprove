@@ -159,11 +159,12 @@
                   *ngIf="session.status === 'Active'"
                   class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
                   [ngClass]="{
-                    'text-s400 cursor-default': session.type === 'Explorer'
+                    'text-s400 cursor-default':
+                      session.type === sessionTypeEnum.Explorer
                   }"
-                  [disabled]="session.type === 'Explorer'"
+                  [disabled]="session.type === sessionTypeEnum.Explorer"
                   [tp]="
-                    session.type === 'Explorer'
+                    session.type === sessionTypeEnum.Explorer
                       ? 'Pause is not needed for Explorer session'
                       : null
                   "
