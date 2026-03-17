@@ -10,6 +10,7 @@ import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendPauseAgentSessionRequest,
@@ -39,6 +40,12 @@ export class PauseAgentSessionController {
     if (session.userId !== user.userId) {
       throw new ServerError({
         message: ErEnum.BACKEND_UNAUTHORIZED
+      });
+    }
+
+    if (session.sessionType !== SessionTypeEnum.Editor) {
+      throw new ServerError({
+        message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EDITOR
       });
     }
 
