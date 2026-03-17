@@ -158,6 +158,16 @@
                 <button
                   *ngIf="session.status === 'Active'"
                   class="text-s1 hover:bg-m50 w-full px-4 py-2 text-left text-base focus:outline-none"
+                  [ngClass]="{
+                    'text-s400 cursor-default':
+                      session.sessionType === 'Explorer'
+                  }"
+                  [disabled]="session.sessionType === 'Explorer'"
+                  [tp]="
+                    session.sessionType === 'Explorer'
+                      ? 'Pause is not needed for Explorer session'
+                      : null
+                  "
                   (click)="tpRef.hide(); pauseSession($event, session)"
                   >Pause Session</button
                 >
