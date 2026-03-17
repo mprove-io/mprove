@@ -288,10 +288,10 @@ export function getDevConfig() {
       ? Number(process.env.BACKEND_SESSION_LAST_ACTIVITY_TO_PAUSE_MINUTES)
       : 10,
 
-    maxActiveSessionsPerUser: isDefined(
-      process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER
+    maxActiveEditorSessionsPerProjectUser: isDefined(
+      process.env.BACKEND_MAX_ACTIVE_EDITOR_SESSIONS_PER_PROJECT_USER
     )
-      ? Number(process.env.BACKEND_MAX_ACTIVE_SESSIONS_PER_USER)
+      ? Number(process.env.BACKEND_MAX_ACTIVE_EDITOR_SESSIONS_PER_PROJECT_USER)
       : 10
   };
 

@@ -114,9 +114,9 @@ export class CreateAgentSessionController {
       projectId: projectId
     });
 
-    let maxActiveSessionsPerUser = this.cs.get<
-      BackendConfig['maxActiveSessionsPerUser']
-    >('maxActiveSessionsPerUser');
+    let maxActiveEditorSessionsPerProjectUser = this.cs.get<
+      BackendConfig['maxActiveEditorSessionsPerProjectUser']
+    >('maxActiveEditorSessionsPerProjectUser');
 
     let activeSessions = await this.db.drizzle.query.sessionsTable
       .findMany({
@@ -131,9 +131,9 @@ export class CreateAgentSessionController {
       })
       .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
 
-    if (activeSessions.length >= maxActiveSessionsPerUser) {
+    if (activeSessions.length >= maxActiveEditorSessionsPerProjectUser) {
       throw new ServerError({
-        message: ErEnum.BACKEND_TOO_MANY_ACTIVE_SANDBOX_SESSIONS
+        message: ErEnum.BACKEND_TOO_MANY_ACTIVE_EDITOR_SESSIONS
       });
     }
 

@@ -325,7 +325,7 @@ export class BackendConfig {
 
   @IsOptional()
   @IsNumber()
-  maxActiveSessionsPerUser?: number;
+  maxActiveEditorSessionsPerProjectUser?: number;
 
   @IsString()
   sandboxMproveCliHost?: string;
