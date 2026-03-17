@@ -1,29 +1,20 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { and, eq, inArray } from 'drizzle-orm';
 import pIteration from 'p-iteration';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
-import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
-import { SessionStatusEnum } from '#common/enums/session-status.enum';
-import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
-
-const { forEachSeries } = pIteration;
-
 import { AgentSandboxService } from './agent/agent-sandbox.service';
 import { AgentStreamOpencodeService } from './agent/agent-stream-opencode.service';
 import { NotesService } from './db/notes.service';
-import { ProjectsService } from './db/projects.service';
 import { QueriesService } from './db/queries.service';
 import { StructsService } from './db/structs.service';
-import { TabService } from './tab.service';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class TasksService {
@@ -39,12 +30,9 @@ export class TasksService {
     private queriesService: QueriesService,
     private structsService: StructsService,
     private notesService: NotesService,
-    private projectsService: ProjectsService,
     private agentSandboxService: AgentSandboxService,
     private agentStreamService: AgentStreamOpencodeService,
-    private tabService: TabService,
-    private logger: Logger,
-    @Inject(DRIZZLE) private db: Db
+    private logger: Logger
   ) {}
 
   @Cron('*/3 * * * * *') // EVERY_3_SECONDS
@@ -135,78 +123,6 @@ export class TasksService {
     }
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
-  @WithTraceSpan()
-  async loopSyncEditorSessionsStatus() {
-    if (this.isRunningSyncEditorSessionsStatus === false) {
-      this.isRunningSyncEditorSessionsStatus = true;
-
-      let sessions = await this.db.drizzle.query.sessionsTable
-        .findMany({
-          where: and(
-            eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
-            inArray(sessionsTable.status, [
-              SessionStatusEnum.Active,
-              SessionStatusEnum.Paused
-            ])
-          )
-        })
-        .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
-
-      let uniqueProjectIds = [
-        ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
-      ];
-
-      await forEachSeries(uniqueProjectIds, async projectId => {
-        try {
-          let project = await this.projectsService.getProjectCheckExists({
-            projectId: projectId
-          });
-
-          let editorSessions = sessions.filter(s => s.projectId === projectId);
-
-          let pausedSessionIds =
-            await this.agentSandboxService.syncEditorSessionsStatus({
-              editorSessions: editorSessions,
-              e2bApiKey: project.e2bApiKey
-            });
-
-          await forEachSeries(pausedSessionIds, async sessionId => {
-            try {
-              await this.agentStreamService.publishReloadSession({
-                sessionId: sessionId
-              });
-            } catch (e) {
-              logToConsoleBackend({
-                log: new ServerError({
-                  message:
-                    ErEnum.BACKEND_SCHEDULER_PUBLISH_RELOAD_SESSION_FAILED,
-                  originalError: e
-                }),
-                logLevel: LogLevelEnum.Error,
-                logger: this.logger,
-                cs: this.cs
-              });
-            }
-          });
-        } catch (e) {
-          logToConsoleBackend({
-            log: new ServerError({
-              message:
-                ErEnum.BACKEND_SCHEDULER_SYNC_EDITOR_SESSIONS_STATUS_FAILED,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        }
-      });
-
-      this.isRunningSyncEditorSessionsStatus = false;
-    }
-  }
-
   @Cron(CronExpression.EVERY_MINUTE)
   @WithTraceSpan()
   async loopPauseIdleEditorSessions() {
@@ -255,6 +171,38 @@ export class TasksService {
       }
 
       this.isRunningPauseIdleEditorSessions = false;
+    }
+  }
+
+  @Cron(CronExpression.EVERY_5_MINUTES)
+  @WithTraceSpan()
+  async loopSyncEditorSessionsStatus() {
+    if (this.isRunningSyncEditorSessionsStatus === false) {
+      this.isRunningSyncEditorSessionsStatus = true;
+
+      try {
+        let pausedSessionIds =
+          await this.agentSandboxService.syncAllEditorSessionsStatus();
+
+        await forEachSeries(pausedSessionIds, async sessionId => {
+          await this.agentStreamService.publishReloadSession({
+            sessionId: sessionId
+          });
+        });
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message:
+              ErEnum.BACKEND_SCHEDULER_SYNC_EDITOR_SESSIONS_STATUS_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+
+      this.isRunningSyncEditorSessionsStatus = false;
     }
   }
 }

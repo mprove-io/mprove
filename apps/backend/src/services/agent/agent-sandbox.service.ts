@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { and, eq, lt } from 'drizzle-orm';
+import { and, eq, inArray, lt } from 'drizzle-orm';
 import { Sandbox, type SandboxInfo } from 'e2b';
 import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
@@ -16,6 +16,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ServerError } from '#common/models/server-error';
 import { ProjectsService } from '../db/projects.service';
 import { SessionsService } from '../db/sessions.service';
@@ -115,6 +116,122 @@ export class AgentSandboxService {
     }
   }
 
+  async getEditorSessionsToPause(): Promise<string[]> {
+    let sessionLastActivityToPauseMinutes = this.cs.get<
+      BackendConfig['sessionLastActivityToPauseMinutes']
+    >('sessionLastActivityToPauseMinutes');
+
+    let pauseThresholdTs =
+      Date.now() - sessionLastActivityToPauseMinutes * 60 * 1000;
+
+    let sessionsToPause = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: and(
+          eq(sessionsTable.status, SessionStatusEnum.Active),
+          lt(sessionsTable.lastActivityTs, pauseThresholdTs)
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+
+    let sessionIdsToPause = sessionsToPause
+      .filter(
+        s =>
+          s.lastActivityTs && s.lastActivityTs < pauseThresholdTs && s.sandboxId
+      )
+      .map(s => s.sessionId);
+
+    return sessionIdsToPause;
+  }
+
+  async pauseSessionById(item: {
+    sessionId: string;
+    pauseReason: PauseReasonEnum;
+  }): Promise<void> {
+    let session = await this.sessionsService.getSessionByIdCheckExists({
+      sessionId: item.sessionId
+    });
+
+    if (session.status !== SessionStatusEnum.Active || !session.sandboxId) {
+      return;
+    }
+
+    let project = await this.projectsService.getProjectCheckExists({
+      projectId: session.projectId
+    });
+
+    await this.pauseSandbox({
+      sandboxType: session.sandboxType as SandboxTypeEnum,
+      sandboxId: session.sandboxId,
+      e2bApiKey: project.e2bApiKey
+    });
+
+    let updatedSession: SessionTab = {
+      ...session,
+      status: SessionStatusEnum.Paused,
+      pauseReason: item.pauseReason
+    };
+
+    await this.db.drizzle.transaction(
+      async tx =>
+        await this.db.packer.write({
+          tx: tx,
+          insertOrUpdate: {
+            sessions: [updatedSession]
+          }
+        })
+    );
+  }
+
+  async syncAllEditorSessionsStatus(): Promise<string[]> {
+    let sessions = await this.db.drizzle.query.sessionsTable
+      .findMany({
+        where: and(
+          eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
+          inArray(sessionsTable.status, [
+            SessionStatusEnum.Active,
+            SessionStatusEnum.Paused
+          ])
+        )
+      })
+      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+
+    let uniqueProjectIds = [
+      ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
+    ];
+
+    let allPausedSessionIds: string[] = [];
+
+    await forEachSeries(uniqueProjectIds, async projectId => {
+      try {
+        let project = await this.projectsService.getProjectCheckExists({
+          projectId: projectId
+        });
+
+        let editorSessions = sessions.filter(s => s.projectId === projectId);
+
+        let pausedSessionIds = await this.syncEditorSessionsStatus({
+          editorSessions: editorSessions,
+          e2bApiKey: project.e2bApiKey
+        });
+
+        allPausedSessionIds.push(...pausedSessionIds);
+      } catch (e) {
+        logToConsoleBackend({
+          log: new ServerError({
+            message:
+              ErEnum.BACKEND_SCHEDULER_SYNC_EDITOR_SESSIONS_STATUS_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      }
+    });
+
+    return allPausedSessionIds;
+  }
+
   async syncEditorSessionsStatus(item: {
     editorSessions: SessionTab[];
     e2bApiKey: string;
@@ -196,71 +313,5 @@ export class AgentSandboxService {
     });
 
     return pausedSessionIds;
-  }
-
-  async getEditorSessionsToPause(): Promise<string[]> {
-    let sessionLastActivityToPauseMinutes = this.cs.get<
-      BackendConfig['sessionLastActivityToPauseMinutes']
-    >('sessionLastActivityToPauseMinutes');
-
-    let pauseThresholdTs =
-      Date.now() - sessionLastActivityToPauseMinutes * 60 * 1000;
-
-    let sessionsToPause = await this.db.drizzle.query.sessionsTable
-      .findMany({
-        where: and(
-          eq(sessionsTable.status, SessionStatusEnum.Active),
-          lt(sessionsTable.lastActivityTs, pauseThresholdTs)
-        )
-      })
-      .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
-
-    let sessionIdsToPause = sessionsToPause
-      .filter(
-        s =>
-          s.lastActivityTs && s.lastActivityTs < pauseThresholdTs && s.sandboxId
-      )
-      .map(s => s.sessionId);
-
-    return sessionIdsToPause;
-  }
-
-  async pauseSessionById(item: {
-    sessionId: string;
-    pauseReason: PauseReasonEnum;
-  }): Promise<void> {
-    let session = await this.sessionsService.getSessionByIdCheckExists({
-      sessionId: item.sessionId
-    });
-
-    if (session.status !== SessionStatusEnum.Active || !session.sandboxId) {
-      return;
-    }
-
-    let project = await this.projectsService.getProjectCheckExists({
-      projectId: session.projectId
-    });
-
-    await this.pauseSandbox({
-      sandboxType: session.sandboxType as SandboxTypeEnum,
-      sandboxId: session.sandboxId,
-      e2bApiKey: project.e2bApiKey
-    });
-
-    let updatedSession: SessionTab = {
-      ...session,
-      status: SessionStatusEnum.Paused,
-      pauseReason: item.pauseReason
-    };
-
-    await this.db.drizzle.transaction(
-      async tx =>
-        await this.db.packer.write({
-          tx: tx,
-          insertOrUpdate: {
-            sessions: [updatedSession]
-          }
-        })
-    );
   }
 }

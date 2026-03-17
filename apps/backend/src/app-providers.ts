@@ -1,8 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { BackendConfig } from '#backend/config/backend-config';
-import type { Db } from '#backend/drizzle/drizzle.module';
-import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { AgentDrainService } from './services/agent/agent-drain.service';
@@ -136,12 +134,9 @@ export const appProviders = [
       queriesService: QueriesService,
       structsService: StructsService,
       notesService: NotesService,
-      projectsService: ProjectsService,
       agentSandboxService: AgentSandboxService,
       agentStreamOpencodeService: AgentStreamOpencodeService,
-      tabService: TabService,
-      logger: Logger,
-      db: Db
+      logger: Logger
     ) =>
       cs.get<BackendConfig['isScheduler']>('isScheduler') === true
         ? new TasksService(
@@ -149,12 +144,9 @@ export const appProviders = [
             queriesService,
             structsService,
             notesService,
-            projectsService,
             agentSandboxService,
             agentStreamOpencodeService,
-            tabService,
-            logger,
-            db
+            logger
           )
         : {},
     inject: [
@@ -162,11 +154,9 @@ export const appProviders = [
       QueriesService,
       StructsService,
       NotesService,
-      ProjectsService,
       AgentSandboxService,
       AgentStreamOpencodeService,
-      TabService,
-      DRIZZLE
+      Logger
     ]
   },
   UserCodeService

@@ -144,22 +144,34 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   }
 
   async publishReloadSession(item: { sessionId: string }): Promise<void> {
-    console.log(
-      `[oc-stream] publishing reload for sessionId=${item.sessionId}`
-    );
+    try {
+      console.log(
+        `[oc-stream] publishing reload for sessionId=${item.sessionId}`
+      );
 
-    await this.agentSseService.publish({
-      sessionId: item.sessionId,
-      event: {
-        eventId: `${item.sessionId}_0`,
-        eventIndex: 0,
-        eventType: RELOAD_SESSION_EVENT_TYPE,
-        ocEvent: {
-          type: RELOAD_SESSION_EVENT_TYPE as any,
-          properties: {}
+      await this.agentSseService.publish({
+        sessionId: item.sessionId,
+        event: {
+          eventId: `${item.sessionId}_0`,
+          eventIndex: 0,
+          eventType: RELOAD_SESSION_EVENT_TYPE,
+          ocEvent: {
+            type: RELOAD_SESSION_EVENT_TYPE as any,
+            properties: {}
+          }
         }
-      }
-    });
+      });
+    } catch (e) {
+      logToConsoleBackend({
+        log: new ServerError({
+          message: ErEnum.BACKEND_SCHEDULER_PUBLISH_RELOAD_SESSION_FAILED,
+          originalError: e
+        }),
+        logLevel: LogLevelEnum.Error,
+        logger: this.logger,
+        cs: this.cs
+      });
+    }
   }
 
   async processSafePause(item: { sessionIds: string[] }): Promise<void> {
