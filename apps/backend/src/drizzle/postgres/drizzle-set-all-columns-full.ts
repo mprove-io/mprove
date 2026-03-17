@@ -23,12 +23,12 @@ export function drizzleSetAllColumnsFull<TTable extends PgTable>(item: {
 
   let conflictUpdateSet = {} as PgUpdateSetSource<TTable>;
 
-  for (const [columnName, columnInfo] of Object.entries(columns)) {
+  Object.entries(columns).forEach(([columnName, columnInfo]) => {
     if (ignoreColumnNames.indexOf(columnName) < 0) {
       conflictUpdateSet[columnName as keyof PgUpdateSetSource<TTable>] =
         sql.raw(`excluded.${columnInfo.name}`);
     }
-  }
+  });
 
   return conflictUpdateSet;
 }

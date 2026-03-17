@@ -13,13 +13,13 @@ export function setUndefinedToNull<
   const processItem = (obj: TEntity): TEntity => {
     const result = {} as TEntity;
 
-    for (const [key, value] of Object.entries(obj)) {
+    Object.entries(obj).forEach(([key, value]) => {
       if (schemaColumns.has(key)) {
         (result as any)[key] = isUndefined(value) ? null : value;
       } else {
         (result as any)[key] = value;
       }
-    }
+    });
     return result;
   };
 

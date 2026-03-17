@@ -60,12 +60,12 @@ export class TelemetryTracesController {
       let body = request.body;
 
       if (body?.resourceSpans) {
-        for (const rs of body.resourceSpans) {
+        body.resourceSpans.forEach((rs: any) => {
           rs.resource?.attributes?.push({
             key: 'enduser.id',
             value: { stringValue: user.userId }
           });
-        }
+        });
       }
 
       await axios.post(`${process.env.TELEMETRY_ENDPOINT}/v1/traces`, body, {

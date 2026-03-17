@@ -34,25 +34,36 @@ export class ContextUsageCircleComponent {
       this.hasData = false;
       this.dashOffset = this.circumference;
 
-      for (let i = messages.length - 1; i >= 0; i--) {
-        let msg = messages[i];
-        if (msg.role !== 'assistant') continue;
+      let found = [...messages].reverse().find(msg => {
+        if (msg.role !== 'assistant') return false;
 
-        let am = msg.ocMessage as AssistantMessage;
-        if (!am.tokens) continue;
+        let assistantMessage = msg.ocMessage as AssistantMessage;
+
+        if (!assistantMessage.tokens) return false;
 
         let total =
-          am.tokens.input +
-          am.tokens.output +
-          am.tokens.reasoning +
-          am.tokens.cache.read +
-          am.tokens.cache.write;
+          assistantMessage.tokens.input +
+          assistantMessage.tokens.output +
+          assistantMessage.tokens.reasoning +
+          assistantMessage.tokens.cache.read +
+          assistantMessage.tokens.cache.write;
 
-        if (total <= 0) continue;
+        return total > 0;
+      });
+
+      if (found) {
+        let assistantMessage = found.ocMessage as AssistantMessage;
+
+        let total =
+          assistantMessage.tokens.input +
+          assistantMessage.tokens.output +
+          assistantMessage.tokens.reasoning +
+          assistantMessage.tokens.cache.read +
+          assistantMessage.tokens.cache.write;
 
         this.total = total;
         this.hasData = true;
-        let model = models.find(m => m.id === am.modelID);
+        let model = models.find(m => m.id === assistantMessage.modelID);
         this.contextLimit = model?.contextLimit;
 
         if (this.contextLimit) {
@@ -64,8 +75,6 @@ export class ContextUsageCircleComponent {
           this.dashOffset = this.circumference;
           this.tooltipText = '';
         }
-
-        break;
       }
 
       this.cd.detectChanges();
