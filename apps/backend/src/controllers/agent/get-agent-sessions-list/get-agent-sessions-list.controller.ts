@@ -11,7 +11,7 @@ import {
 } from '#backend/drizzle/postgres/schema/sessions';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
-import { AgentSandboxService } from '#backend/services/agent-sandbox.service';
+import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';

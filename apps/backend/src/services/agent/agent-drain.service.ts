@@ -32,11 +32,11 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
+import { OcEventsService } from '../db/oc-events.service';
+import { OcMessagesService } from '../db/oc-messages.service';
+import { OcPartsService } from '../db/oc-parts.service';
+import { SessionsService } from '../db/sessions.service';
 import { AgentEventsService } from './agent-events.service';
-import { OcEventsService } from './db/oc-events.service';
-import { OcMessagesService } from './db/oc-messages.service';
-import { OcPartsService } from './db/oc-parts.service';
-import { SessionsService } from './db/sessions.service';
 
 @Injectable()
 export class AgentDrainService {

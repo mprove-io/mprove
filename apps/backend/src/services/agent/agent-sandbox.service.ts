@@ -16,9 +16,9 @@ import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { ServerError } from '#common/models/server-error';
-import { ProjectsService } from './db/projects.service';
-import { SessionsService } from './db/sessions.service';
-import { TabService } from './tab.service';
+import { ProjectsService } from '../db/projects.service';
+import { SessionsService } from '../db/sessions.service';
+import { TabService } from '../tab.service';
 
 @Injectable()
 export class AgentSandboxService {

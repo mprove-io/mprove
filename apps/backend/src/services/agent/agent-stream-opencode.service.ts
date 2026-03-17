@@ -17,13 +17,13 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { PauseReasonEnum } from '#common/enums/pause-reason.enum';
 import { ServerError } from '#common/models/server-error';
+import { OcMessagesService } from '../db/oc-messages.service';
+import { OcPartsService } from '../db/oc-parts.service';
+import { SessionsService } from '../db/sessions.service';
 import { AgentDrainService } from './agent-drain.service';
 import { AgentEventsService } from './agent-events.service';
 import { AgentOpencodeService } from './agent-opencode.service';
 import { AgentSandboxService } from './agent-sandbox.service';
-import { OcMessagesService } from './db/oc-messages.service';
-import { OcPartsService } from './db/oc-parts.service';
-import { SessionsService } from './db/sessions.service';
 
 @Injectable()
 export class AgentStreamOpencodeService implements OnModuleDestroy {

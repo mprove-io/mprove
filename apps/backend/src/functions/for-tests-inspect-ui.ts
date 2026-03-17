@@ -1,6 +1,6 @@
 import type { ExecutionContext } from 'ava';
 import { Prep } from '#backend/interfaces/prep';
-import { AgentOpencodeService } from '#backend/services/agent-opencode.service';
+import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { ToBackendCreateAgentSessionResponse } from '#common/interfaces/to-backend/agent/to-backend-create-agent-session';
 

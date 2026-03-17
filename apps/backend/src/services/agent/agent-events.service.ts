@@ -12,7 +12,7 @@ import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
-import { TabService } from './tab.service';
+import { TabService } from '../tab.service';
 
 export interface AgentEvent {
   eventId: string;

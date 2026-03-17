@@ -5,7 +5,7 @@ import { BackendConfig } from '#backend/config/backend-config';
 import { forTestsStartOpencodeServer } from '#backend/functions/for-tests-start-opencode-server';
 import { prepareTest } from '#backend/functions/prepare-test';
 import { Prep } from '#backend/interfaces/prep';
-import { AgentOpencodeService } from '#backend/services/agent-opencode.service';
+import { AgentOpencodeService } from '#backend/services/agent/agent-opencode.service';
 
 test('1', async t => {
   let prep: Prep = await prepareTest({});

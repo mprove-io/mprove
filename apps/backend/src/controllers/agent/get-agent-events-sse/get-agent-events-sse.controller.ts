@@ -3,7 +3,7 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SkipJwtCheck } from '#backend/decorators/skip-jwt-check.decorator';
-import { AgentEventsService } from '#backend/services/agent-events.service';
+import { AgentEventsService } from '#backend/services/agent/agent-events.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RedisService } from '#backend/services/redis.service';
 import { ErEnum } from '#common/enums/er.enum';

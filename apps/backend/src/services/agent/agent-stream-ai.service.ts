@@ -16,9 +16,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
+import { TabService } from '../tab.service';
 import { AgentDrainService } from './agent-drain.service';
 import { AgentModelsAiService } from './agent-models-ai.service';
-import { TabService } from './tab.service';
 
 @Injectable()
 export class AgentStreamAiService implements OnModuleDestroy {
