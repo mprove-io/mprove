@@ -87,7 +87,7 @@ export class AgentDrainTimerService implements OnModuleDestroy {
           cs: this.cs
         });
       });
-    }, 1000);
+    }, 2000);
   }
 
   onModuleDestroy() {
