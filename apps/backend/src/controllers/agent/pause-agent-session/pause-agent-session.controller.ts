@@ -43,7 +43,7 @@ export class PauseAgentSessionController {
       });
     }
 
-    if (session.sessionType !== SessionTypeEnum.Editor) {
+    if (session.type !== SessionTypeEnum.Editor) {
       throw new ServerError({
         message: ErEnum.BACKEND_SESSION_TYPE_IS_NOT_EDITOR
       });

@@ -7,7 +7,7 @@ export class SessionState extends SessionApi {}
 
 let sessionState: SessionState = {
   sessionId: undefined,
-  sessionType: undefined,
+  type: undefined,
   repoId: undefined,
   branchId: undefined,
   provider: undefined,

@@ -221,7 +221,7 @@ export class SeedRecordsController {
 
           let newSession: SessionTab = {
             sessionId: x.sessionId,
-            sessionType: x.type,
+            type: x.type,
             repoId: x.sessionId,
             branchId: x.sessionId,
             userId: x.userId,

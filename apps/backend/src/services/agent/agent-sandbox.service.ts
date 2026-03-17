@@ -127,7 +127,7 @@ export class AgentSandboxService {
     let sessionsToPause = await this.db.drizzle.query.sessionsTable
       .findMany({
         where: and(
-          eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
+          eq(sessionsTable.type, SessionTypeEnum.Editor),
           eq(sessionsTable.status, SessionStatusEnum.Active),
           lt(sessionsTable.lastActivityTs, pauseThresholdTs)
         )
@@ -153,7 +153,7 @@ export class AgentSandboxService {
     });
 
     if (
-      session.sessionType !== SessionTypeEnum.Editor ||
+      session.type !== SessionTypeEnum.Editor ||
       session.status !== SessionStatusEnum.Active ||
       !session.sandboxId
     ) {
@@ -191,7 +191,7 @@ export class AgentSandboxService {
     let sessions = await this.db.drizzle.query.sessionsTable
       .findMany({
         where: and(
-          eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
+          eq(sessionsTable.type, SessionTypeEnum.Editor),
           inArray(sessionsTable.status, [
             SessionStatusEnum.Active,
             SessionStatusEnum.Paused

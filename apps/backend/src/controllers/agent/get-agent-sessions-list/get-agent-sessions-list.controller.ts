@@ -56,7 +56,7 @@ export class GetAgentSessionsListController {
         .findMany({
           where: and(
             eq(sessionsTable.projectId, projectId),
-            eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
+            eq(sessionsTable.type, SessionTypeEnum.Editor),
             inArray(sessionsTable.status, [
               SessionStatusEnum.Active,
               SessionStatusEnum.Paused

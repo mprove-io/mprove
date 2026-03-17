@@ -133,7 +133,7 @@ export async function forTestsRunAgentSessionE2x(item: {
       },
       payload: {
         projectId: projectId,
-        sessionType: SessionTypeEnum.Editor,
+        type: SessionTypeEnum.Editor,
         sandboxType: SandboxTypeEnum.E2B,
         provider: 'opencode',
         model: item.model,

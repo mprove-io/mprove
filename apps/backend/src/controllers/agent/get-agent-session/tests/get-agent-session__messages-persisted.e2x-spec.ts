@@ -118,7 +118,7 @@ test('1', async t => {
       },
       payload: {
         projectId: projectId,
-        sessionType: SessionTypeEnum.Editor,
+        type: SessionTypeEnum.Editor,
         sandboxType: SandboxTypeEnum.E2B,
         provider: 'opencode',
         model: 'opencode/big-pickle',

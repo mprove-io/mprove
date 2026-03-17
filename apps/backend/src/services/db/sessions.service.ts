@@ -30,7 +30,7 @@ export class SessionsService {
 
   makeSession(item: {
     sessionId: string;
-    sessionType: SessionTypeEnum;
+    type: SessionTypeEnum;
     repoId: string;
     branchId: string;
     userId: string;
@@ -60,7 +60,7 @@ export class SessionsService {
   }): SessionTab {
     let session: SessionTab = {
       sessionId: item.sessionId,
-      sessionType: item.sessionType,
+      type: item.type,
       repoId: item.repoId,
       branchId: item.branchId,
       userId: item.userId,
@@ -140,7 +140,7 @@ export class SessionsService {
 
     return {
       sessionId: session.sessionId,
-      sessionType: session.sessionType,
+      type: session.type,
       repoId: session.repoId,
       branchId: session.branchId,
       provider: session.provider,

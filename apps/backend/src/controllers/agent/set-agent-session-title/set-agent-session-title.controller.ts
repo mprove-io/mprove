@@ -39,7 +39,7 @@ export class SetAgentSessionTitleController {
       });
     }
 
-    if (session.sessionType === SessionTypeEnum.Editor) {
+    if (session.type === SessionTypeEnum.Editor) {
       // Type Editor: proxy to OpenCode
       let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
         sessionId: sessionId

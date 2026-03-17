@@ -8,7 +8,7 @@ export class SessionApi {
   sessionId: string;
 
   @IsEnum(SessionTypeEnum)
-  sessionType: SessionTypeEnum;
+  type: SessionTypeEnum;
 
   @IsString()
   provider: string;

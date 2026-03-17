@@ -94,7 +94,7 @@ export class CreateAgentSessionController {
     let reqValid: ToBackendCreateAgentSessionRequest = request.body;
     let {
       projectId,
-      sessionType,
+      type,
       sandboxType,
       provider,
       model,
@@ -122,7 +122,7 @@ export class CreateAgentSessionController {
       .findMany({
         where: and(
           eq(sessionsTable.userId, user.userId),
-          eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
+          eq(sessionsTable.type, SessionTypeEnum.Editor),
           inArray(sessionsTable.status, [
             SessionStatusEnum.Active,
             SessionStatusEnum.New
@@ -137,7 +137,7 @@ export class CreateAgentSessionController {
       });
     }
 
-    if (sessionType === SessionTypeEnum.Explorer) {
+    if (type === SessionTypeEnum.Explorer) {
       return this.createSessionTypeA({
         user: user,
         projectId: projectId,
@@ -184,7 +184,7 @@ export class CreateAgentSessionController {
 
         session = this.sessionsService.makeSession({
           sessionId: sessionId,
-          sessionType: SessionTypeEnum.Editor,
+          type: SessionTypeEnum.Editor,
           repoId: sessionId,
           branchId: sessionId,
           userId: user.userId,
@@ -309,7 +309,7 @@ export class CreateAgentSessionController {
 
         session = this.sessionsService.makeSession({
           sessionId: sessionId,
-          sessionType: SessionTypeEnum.Explorer,
+          type: SessionTypeEnum.Explorer,
           repoId: PROD_REPO_ID,
           branchId: initialBranch,
           userId: user.userId,

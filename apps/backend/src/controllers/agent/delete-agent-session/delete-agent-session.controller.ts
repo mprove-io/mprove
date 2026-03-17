@@ -88,7 +88,7 @@ export class DeleteAgentSessionController {
     });
 
     if (
-      session.sessionType === SessionTypeEnum.Editor &&
+      session.type === SessionTypeEnum.Editor &&
       [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
         session.status
       ) > -1
@@ -100,7 +100,7 @@ export class DeleteAgentSessionController {
       });
     }
 
-    if (session.sessionType === SessionTypeEnum.Editor) {
+    if (session.type === SessionTypeEnum.Editor) {
       let baseProject = this.tabService.projectTabToBaseProject({
         project: project
       });
@@ -161,7 +161,7 @@ export class DeleteAgentSessionController {
             .delete(ocSessionsTable)
             .where(and(eq(ocSessionsTable.sessionId, sessionId)));
 
-          if (session.sessionType === SessionTypeEnum.Editor) {
+          if (session.type === SessionTypeEnum.Editor) {
             await tx
               .delete(branchesTable)
               .where(
@@ -185,7 +185,7 @@ export class DeleteAgentSessionController {
     );
 
     setTimeout(() => {
-      if (session.sessionType === SessionTypeEnum.Explorer) {
+      if (session.type === SessionTypeEnum.Explorer) {
         this.agentStreamAiService
           .publishStopStream({
             sessionId: sessionId
@@ -198,7 +198,7 @@ export class DeleteAgentSessionController {
               cs: this.cs
             });
           });
-      } else if (session.sessionType === SessionTypeEnum.Editor) {
+      } else if (session.type === SessionTypeEnum.Editor) {
         this.agentStreamOpencodeService
           .publishStopSessionStream({
             sessionId: sessionId

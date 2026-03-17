@@ -73,7 +73,7 @@ export class ArchiveAgentSessionController {
     }
 
     if (
-      session.sessionType === SessionTypeEnum.Editor &&
+      session.type === SessionTypeEnum.Editor &&
       [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
         session.status
       ) > -1
@@ -113,7 +113,7 @@ export class ArchiveAgentSessionController {
     );
 
     setTimeout(() => {
-      if (session.sessionType === SessionTypeEnum.Explorer) {
+      if (session.type === SessionTypeEnum.Explorer) {
         this.agentStreamAiService
           .publishStopStream({
             sessionId: sessionId
@@ -126,7 +126,7 @@ export class ArchiveAgentSessionController {
               cs: this.cs
             });
           });
-      } else if (session.sessionType === SessionTypeEnum.Editor) {
+      } else if (session.type === SessionTypeEnum.Editor) {
         this.agentStreamOpencodeService
           .publishStopSessionStream({
             sessionId: sessionId

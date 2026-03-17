@@ -18,9 +18,7 @@ export const sessionsTable = pgTable(
   'sessions',
   {
     sessionId: varchar('session_id', { length: 255 }).notNull().primaryKey(),
-    sessionType: varchar('session_type', { length: 32 })
-      .notNull()
-      .$type<SessionTypeEnum>(),
+    type: varchar('type', { length: 32 }).notNull().$type<SessionTypeEnum>(),
     repoId: varchar('repo_id', { length: 255 }).notNull(),
     branchId: varchar('branch_id', { length: 255 }).notNull(),
     userId: varchar('user_id', { length: 32 }).notNull(),

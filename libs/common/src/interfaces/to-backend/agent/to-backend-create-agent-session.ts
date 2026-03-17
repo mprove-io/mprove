@@ -10,7 +10,7 @@ export class ToBackendCreateAgentSessionRequestPayload {
   projectId: string;
 
   @IsEnum(SessionTypeEnum)
-  sessionType: SessionTypeEnum;
+  type: SessionTypeEnum;
 
   @IsOptional()
   @IsEnum(SandboxTypeEnum)

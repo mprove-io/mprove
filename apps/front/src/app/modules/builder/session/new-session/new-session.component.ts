@@ -150,7 +150,7 @@ export class NewSessionComponent implements OnInit {
 
     let payload: ToBackendCreateAgentSessionRequestPayload = {
       projectId: nav.projectId,
-      sessionType: this.sessionType,
+      type: this.sessionType,
       sandboxType: isSessionExplorer ? undefined : SandboxTypeEnum.E2B,
       provider: provider,
       model: this.model,
@@ -176,7 +176,7 @@ export class NewSessionComponent implements OnInit {
               let currentSessions = this.sessionsQuery.getValue().sessions;
               let newSession: SessionApi = {
                 sessionId: sessionId,
-                sessionType: this.sessionType,
+                type: this.sessionType,
                 repoId: repoId,
                 branchId: branchId,
                 provider: provider,

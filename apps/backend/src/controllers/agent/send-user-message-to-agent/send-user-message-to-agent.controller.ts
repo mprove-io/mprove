@@ -105,7 +105,7 @@ export class SendUserMessageToAgentController {
     }
 
     // Explorer: direct AI SDK, no sandbox
-    if (session.sessionType === SessionTypeEnum.Explorer) {
+    if (session.type === SessionTypeEnum.Explorer) {
       if (interactionType === InteractionTypeEnum.Message) {
         let split = splitModel(model);
         let modelProvider = split ? split.providerID : session.provider;

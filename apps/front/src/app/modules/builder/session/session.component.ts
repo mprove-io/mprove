@@ -432,7 +432,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       let state = this.agentModelsQuery.getValue();
 
       let models =
-        this.session.sessionType === SessionTypeEnum.Explorer
+        this.session.type === SessionTypeEnum.Explorer
           ? state.modelsAi
           : state.modelsOpencode;
 
