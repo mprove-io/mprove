@@ -15,6 +15,8 @@ export class AgentDrainTimerService implements OnModuleDestroy {
 
   private drainTimer: ReturnType<typeof setInterval>;
 
+  private lockTimer: ReturnType<typeof setInterval>;
+
   constructor(
     private cs: ConfigService<BackendConfig>,
     private agentDrainService: AgentDrainService,
@@ -45,30 +47,6 @@ export class AgentDrainTimerService implements OnModuleDestroy {
           });
         }
 
-        this.agentStreamAiService.refreshActiveLocks().catch(e => {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-
-        this.agentStreamOpencodeService.refreshActiveLocks().catch(e => {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
-              originalError: e
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-
         this.agentStreamOpencodeService.checkStreamStalls().catch(e => {
           logToConsoleBackend({
             log: new ServerError({
@@ -84,9 +62,36 @@ export class AgentDrainTimerService implements OnModuleDestroy {
         this.isRunningDrain = false;
       }
     }, 1000);
+
+    this.lockTimer = setInterval(() => {
+      this.agentStreamAiService.refreshActiveLocks().catch(e => {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      });
+
+      this.agentStreamOpencodeService.refreshActiveLocks().catch(e => {
+        logToConsoleBackend({
+          log: new ServerError({
+            message: ErEnum.BACKEND_AGENT_REFRESH_STREAM_LOCKS_FAILED,
+            originalError: e
+          }),
+          logLevel: LogLevelEnum.Error,
+          logger: this.logger,
+          cs: this.cs
+        });
+      });
+    }, 1000);
   }
 
   onModuleDestroy() {
     clearInterval(this.drainTimer);
+    clearInterval(this.lockTimer);
   }
 }

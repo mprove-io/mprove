@@ -31,6 +31,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
   // OpenCode sends heartbeat every 10s (hardcoded in workspace-server/routes.ts) + 4s buffer
   private static STREAM_STALL_THRESHOLD_MS = 14_000;
+
   private static STREAM_LOCK_TTL_SECONDS = 16;
   private static STREAM_LOCK_WAIT_TIMEOUT_MS = 18_000;
 

@@ -24,9 +24,10 @@ import { TabService } from './tab.service';
 export class AgentStreamAiService implements OnModuleDestroy {
   private podId = crypto.randomUUID();
 
-  private static STREAM_LOCK_TTL_SECONDS = 16;
-  private static STREAM_LOCK_WAIT_TIMEOUT_MS = 30_000;
   private static STREAM_LOCK_POLL_MS = 500;
+
+  private static STREAM_LOCK_TTL_SECONDS = 8;
+  private static STREAM_LOCK_WAIT_TIMEOUT_MS = 10_000;
 
   private static AI_SDK_COMMAND_CHANNEL = 'ai-sdk-stream-command';
 
