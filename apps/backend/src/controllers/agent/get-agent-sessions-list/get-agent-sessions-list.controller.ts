@@ -1,6 +1,6 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import { and, desc, eq, gte, lt, notInArray } from 'drizzle-orm';
+import { and, desc, eq, gte, inArray, lt, notInArray } from 'drizzle-orm';
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -14,8 +14,10 @@ import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
+import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendGetAgentSessionsListRequest,
@@ -30,6 +32,7 @@ export class GetAgentSessionsListController {
     private projectsService: ProjectsService,
     private sessionsService: SessionsService,
     private agentSandboxService: AgentSandboxService,
+    private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -49,8 +52,21 @@ export class GetAgentSessionsListController {
     });
 
     if (project.e2bApiKey) {
-      await this.agentSandboxService.syncProjectSandboxStatuses({
-        projectId: projectId,
+      let editorSessions = await this.db.drizzle.query.sessionsTable
+        .findMany({
+          where: and(
+            eq(sessionsTable.projectId, projectId),
+            eq(sessionsTable.sessionType, SessionTypeEnum.Editor),
+            inArray(sessionsTable.status, [
+              SessionStatusEnum.Active,
+              SessionStatusEnum.Paused
+            ])
+          )
+        })
+        .then(xs => xs.map(x => this.tabService.sessionEntToTab(x)));
+
+      await this.agentSandboxService.syncEditorSessionsStatus({
+        editorSessions: editorSessions,
         e2bApiKey: project.e2bApiKey
       });
     }
