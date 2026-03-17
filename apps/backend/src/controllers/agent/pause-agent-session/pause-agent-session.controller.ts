@@ -25,7 +25,7 @@ export class PauseAgentSessionController {
   constructor(
     private sessionsService: SessionsService,
     private agentSandboxService: AgentSandboxService,
-    private agentStreamService: AgentStreamOpencodeService
+    private agentStreamOpencodeService: AgentStreamOpencodeService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendPauseAgentSession)
@@ -49,7 +49,7 @@ export class PauseAgentSessionController {
       });
     }
 
-    await this.agentStreamService.publishStopSessionStream({
+    await this.agentStreamOpencodeService.publishStopSessionStream({
       sessionId: sessionId
     });
 

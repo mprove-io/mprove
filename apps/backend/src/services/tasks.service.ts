@@ -31,7 +31,7 @@ export class TasksService {
     private structsService: StructsService,
     private notesService: NotesService,
     private agentSandboxService: AgentSandboxService,
-    private agentStreamService: AgentStreamOpencodeService,
+    private agentStreamOpencodeService: AgentStreamOpencodeService,
     private logger: Logger
   ) {}
 
@@ -135,7 +135,7 @@ export class TasksService {
 
         await forEachSeries(sessionIdsToPause, async sessionId => {
           try {
-            await this.agentStreamService.publishStopSessionStream({
+            await this.agentStreamOpencodeService.publishStopSessionStream({
               sessionId: sessionId
             });
 
@@ -144,7 +144,7 @@ export class TasksService {
               pauseReason: PauseReasonEnum.Idle
             });
 
-            await this.agentStreamService.publishReloadSession({
+            await this.agentStreamOpencodeService.publishReloadSession({
               sessionId: sessionId
             });
           } catch (e) {
@@ -187,7 +187,7 @@ export class TasksService {
           await this.agentSandboxService.syncAllEditorSessionsStatus();
 
         await forEachSeries(pausedSessionIds, async sessionId => {
-          await this.agentStreamService.publishReloadSession({
+          await this.agentStreamOpencodeService.publishReloadSession({
             sessionId: sessionId
           });
         });

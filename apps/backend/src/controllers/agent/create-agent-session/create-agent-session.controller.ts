@@ -75,9 +75,9 @@ export class CreateAgentSessionController {
     private membersService: MembersService,
     private sessionsService: SessionsService,
     private ocEventsService: OcEventsService,
-    private agentStreamService: AgentStreamOpencodeService,
+    private agentStreamOpencodeService: AgentStreamOpencodeService,
     private apiKeyService: ApiKeyService,
-    private aiSdkStreamService: AgentStreamAiService,
+    private agentStreamAiService: AgentStreamAiService,
     private agentOpencodeService: AgentOpencodeService,
     private rpcService: RpcService,
     private blockmlService: BlockmlService,
@@ -389,7 +389,7 @@ export class CreateAgentSessionController {
         apiKey = project.anthropicApiKey || '';
       }
 
-      this.aiSdkStreamService
+      this.agentStreamAiService
         .streamMessage({
           sessionId: session.sessionId,
           provider: modelProvider,
@@ -538,7 +538,7 @@ export class CreateAgentSessionController {
         getRetryOption(this.cs, this.logger)
       );
 
-      await this.agentStreamService.startEventStream({
+      await this.agentStreamOpencodeService.startEventStream({
         sessionId: sessionId,
         opencodeSessionId: opencodeSessionId
       });

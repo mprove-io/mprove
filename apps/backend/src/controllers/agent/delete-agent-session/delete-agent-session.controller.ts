@@ -25,15 +25,19 @@ import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts';
 import { ocSessionsTable } from '#backend/drizzle/postgres/schema/oc-sessions';
 import { getRetryOption } from '#backend/functions/get-retry-option.js';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service.js';
+import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
+import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { RpcService } from '#backend/services/rpc.service';
 import { TabService } from '#backend/services/tab.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
@@ -54,6 +58,8 @@ export class DeleteAgentSessionController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private agentSandboxService: AgentSandboxService,
+    private agentStreamOpencodeService: AgentStreamOpencodeService,
+    private agentStreamAiService: AgentStreamAiService,
     private tabService: TabService,
     private rpcService: RpcService,
     private cs: ConfigService<BackendConfig>,
@@ -177,6 +183,36 @@ export class DeleteAgentSessionController {
         }),
       getRetryOption(this.cs, this.logger)
     );
+
+    setTimeout(() => {
+      if (session.sessionType === SessionTypeEnum.Explorer) {
+        this.agentStreamAiService
+          .publishStopStream({
+            sessionId: sessionId
+          })
+          .catch(e => {
+            logToConsoleBackend({
+              log: e,
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
+            });
+          });
+      } else if (session.sessionType === SessionTypeEnum.Editor) {
+        this.agentStreamOpencodeService
+          .publishStopSessionStream({
+            sessionId: sessionId
+          })
+          .catch(e => {
+            logToConsoleBackend({
+              log: e,
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
+            });
+          });
+      }
+    }, 10_000);
 
     let payload = {};
 

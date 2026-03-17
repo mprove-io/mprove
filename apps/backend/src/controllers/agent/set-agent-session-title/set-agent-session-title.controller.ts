@@ -21,7 +21,7 @@ export class SetAgentSessionTitleController {
   constructor(
     private sessionsService: SessionsService,
     private agentOpencodeService: AgentOpencodeService,
-    private aiSdkStreamService: AgentStreamAiService
+    private agentStreamAiService: AgentStreamAiService
   ) {}
 
   @Post(ToBackendRequestInfoNameEnum.ToBackendSetAgentSessionTitle)
@@ -54,7 +54,7 @@ export class SetAgentSessionTitleController {
       );
     } else {
       // Type Explorer: set title via lock-holding pod (or acquire lock if none)
-      await this.aiSdkStreamService.setTitle({
+      await this.agentStreamAiService.setTitle({
         sessionId: sessionId,
         title: title
       });

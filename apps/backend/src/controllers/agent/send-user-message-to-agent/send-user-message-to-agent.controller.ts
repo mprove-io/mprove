@@ -47,8 +47,8 @@ export class SendUserMessageToAgentController {
   constructor(
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
-    private aiSdkStreamService: AgentStreamAiService,
-    private agentStreamService: AgentStreamOpencodeService,
+    private agentStreamAiService: AgentStreamAiService,
+    private agentStreamOpencodeService: AgentStreamOpencodeService,
     private agentOpencodeService: AgentOpencodeService,
     private agentSandboxService: AgentSandboxService,
     private cs: ConfigService<BackendConfig>,
@@ -141,7 +141,7 @@ export class SendUserMessageToAgentController {
         );
 
         // Fire-and-forget streaming
-        this.aiSdkStreamService
+        this.agentStreamAiService
           .streamMessage({
             sessionId: session.sessionId,
             provider: modelProvider,
@@ -151,12 +151,12 @@ export class SendUserMessageToAgentController {
           })
           .catch(() => {});
       } else if (interactionType === InteractionTypeEnum.Stop) {
-        let isLockExist = await this.aiSdkStreamService.publishStopStream({
+        let isLockExist = await this.agentStreamAiService.publishStopStream({
           sessionId: session.sessionId
         });
 
         if (isLockExist) {
-          await this.aiSdkStreamService.waitForStreamLockRelease({
+          await this.agentStreamAiService.waitForStreamLockRelease({
             sessionId: session.sessionId
           });
         }
@@ -187,12 +187,12 @@ export class SendUserMessageToAgentController {
     if (isDefined(sandboxInfo) === true) {
       if (sandboxInfo.state === 'paused') {
         let isLockExist =
-          await this.agentStreamService.publishStopSessionStream({
+          await this.agentStreamOpencodeService.publishStopSessionStream({
             sessionId: session.sessionId
           });
 
         if (isLockExist) {
-          await this.agentStreamService.waitForStreamLockRelease({
+          await this.agentStreamOpencodeService.waitForStreamLockRelease({
             sessionId: session.sessionId
           });
         }
@@ -294,7 +294,7 @@ export class SendUserMessageToAgentController {
           lastMessageVariant: variant
         };
       } else if (interactionType === InteractionTypeEnum.Permission) {
-        await this.agentStreamService.respondToPermission({
+        await this.agentStreamOpencodeService.respondToPermission({
           sessionId: sessionId,
           opencodeSessionId: session.opencodeSessionId,
           permissionId: permissionId,
@@ -302,14 +302,14 @@ export class SendUserMessageToAgentController {
         });
       } else if (interactionType === InteractionTypeEnum.Question) {
         if (answers !== undefined) {
-          await this.agentStreamService.respondToQuestion({
+          await this.agentStreamOpencodeService.respondToQuestion({
             sessionId: sessionId,
             opencodeSessionId: session.opencodeSessionId,
             questionId: questionId,
             answers: answers
           });
         } else {
-          await this.agentStreamService.rejectQuestion({
+          await this.agentStreamOpencodeService.rejectQuestion({
             sessionId: sessionId,
             opencodeSessionId: session.opencodeSessionId,
             questionId: questionId
@@ -330,7 +330,7 @@ export class SendUserMessageToAgentController {
 
       session.lastActivityTs = Date.now();
 
-      await this.agentStreamService.startEventStream({
+      await this.agentStreamOpencodeService.startEventStream({
         sessionId: session.sessionId,
         opencodeSessionId: session.opencodeSessionId
       });

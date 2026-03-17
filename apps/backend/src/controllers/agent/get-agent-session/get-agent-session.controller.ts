@@ -38,7 +38,7 @@ export class GetAgentSessionController {
     private projectsService: ProjectsService,
     private tabService: TabService,
     private agentSandboxService: AgentSandboxService,
-    private agentStreamService: AgentStreamOpencodeService,
+    private agentStreamOpencodeService: AgentStreamOpencodeService,
     @Inject(DRIZZLE) private db: Db
   ) {}
 
@@ -96,7 +96,7 @@ export class GetAgentSessionController {
       session.status === SessionStatusEnum.Active &&
       session.opencodeSessionId
     ) {
-      await this.agentStreamService.startEventStream({
+      await this.agentStreamOpencodeService.startEventStream({
         sessionId,
         opencodeSessionId: session.opencodeSessionId
       });

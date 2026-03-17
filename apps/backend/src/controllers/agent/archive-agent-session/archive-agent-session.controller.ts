@@ -20,14 +20,18 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events';
 import { getRetryOption } from '#backend/functions/get-retry-option';
+import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { AgentSandboxService } from '#backend/services/agent/agent-sandbox.service.js';
+import { AgentStreamAiService } from '#backend/services/agent/agent-stream-ai.service';
+import { AgentStreamOpencodeService } from '#backend/services/agent/agent-stream-opencode.service';
 import { ProjectsService } from '#backend/services/db/projects.service';
 import { SessionsService } from '#backend/services/db/sessions.service';
 import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
+import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
@@ -46,6 +50,8 @@ export class ArchiveAgentSessionController {
     private sessionsService: SessionsService,
     private projectsService: ProjectsService,
     private agentSandboxService: AgentSandboxService,
+    private agentStreamOpencodeService: AgentStreamOpencodeService,
+    private agentStreamAiService: AgentStreamAiService,
     private cs: ConfigService<BackendConfig>,
     private logger: Logger,
     @Inject(DRIZZLE) private db: Db
@@ -105,6 +111,36 @@ export class ArchiveAgentSessionController {
         }),
       getRetryOption(this.cs, this.logger)
     );
+
+    setTimeout(() => {
+      if (session.sessionType === SessionTypeEnum.Explorer) {
+        this.agentStreamAiService
+          .publishStopStream({
+            sessionId: sessionId
+          })
+          .catch(e => {
+            logToConsoleBackend({
+              log: e,
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
+            });
+          });
+      } else if (session.sessionType === SessionTypeEnum.Editor) {
+        this.agentStreamOpencodeService
+          .publishStopSessionStream({
+            sessionId: sessionId
+          })
+          .catch(e => {
+            logToConsoleBackend({
+              log: e,
+              logLevel: LogLevelEnum.Error,
+              logger: this.logger,
+              cs: this.cs
+            });
+          });
+      }
+    }, 10_000);
 
     let sessionApi = this.sessionsService.tabToSessionApi({
       session: updatedSession
