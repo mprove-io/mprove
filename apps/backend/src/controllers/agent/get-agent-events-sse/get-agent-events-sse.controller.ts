@@ -45,7 +45,10 @@ export class GetAgentEventsSseController {
             lastEventIndexStr != null ? parseInt(lastEventIndexStr, 10) : -1;
 
           let subscription = this.agentEventsService
-            .subscribeWithBackfill(sessionId, lastEventIndex)
+            .subscribeWithBackfill({
+              sessionId: sessionId,
+              lastEventIndex: lastEventIndex
+            })
             .pipe(
               map(
                 event =>

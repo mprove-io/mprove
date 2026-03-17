@@ -60,7 +60,8 @@ export class AgentDrainService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async initEventCounter(sessionId: string): Promise<void> {
+  async initEventCounter(item: { sessionId: string }): Promise<void> {
+    let { sessionId } = item;
     if (!this.eventCounters.has(sessionId)) {
       let maxRow = await this.db.drizzle
         .select({ maxIndex: max(ocEventsTable.eventIndex) })
@@ -86,7 +87,8 @@ export class AgentDrainService {
     this.eventCounters.set(item.sessionId, eventIndex + 1);
   }
 
-  cleanup(sessionId: string): void {
+  cleanup(item: { sessionId: string }): void {
+    let { sessionId } = item;
     this.pendingEvents.delete(sessionId);
     this.eventCounters.delete(sessionId);
     this.partStates.delete(sessionId);
@@ -95,7 +97,7 @@ export class AgentDrainService {
   async drainAllQueues(): Promise<string[]> {
     let safePauseSessionIds: string[] = [];
     for (let sessionId of Array.from(this.pendingEvents.keys())) {
-      let result = await this.drainQueue(sessionId);
+      let result = await this.drainQueue({ sessionId: sessionId });
       if (result.needsSafePause) {
         safePauseSessionIds.push(sessionId);
       }
@@ -103,7 +105,10 @@ export class AgentDrainService {
     return safePauseSessionIds;
   }
 
-  async drainQueue(sessionId: string): Promise<{ needsSafePause: boolean }> {
+  async drainQueue(item: {
+    sessionId: string;
+  }): Promise<{ needsSafePause: boolean }> {
+    let { sessionId } = item;
     let queue = this.pendingEvents.get(sessionId);
     if (!queue || queue.length === 0) {
       return { needsSafePause: false };
@@ -440,11 +445,14 @@ export class AgentDrainService {
 
     for (let item of items) {
       let eventId = `${item.sessionId}_${item.eventIndex}`;
-      await this.agentEventsService.publish(item.sessionId, {
-        eventId: eventId,
-        eventIndex: item.eventIndex,
-        eventType: item.event.type,
-        ocEvent: item.event
+      await this.agentEventsService.publish({
+        sessionId: item.sessionId,
+        event: {
+          eventId: eventId,
+          eventIndex: item.eventIndex,
+          eventType: item.event.type,
+          ocEvent: item.event
+        }
       });
     }
 

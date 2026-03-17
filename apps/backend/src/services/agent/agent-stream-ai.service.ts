@@ -114,13 +114,17 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   // --- Locking ---
 
-  private makeStreamLockKey(sessionId: string): string {
+  private makeStreamLockKey(item: { sessionId: string }): string {
+    let { sessionId } = item;
     return `ai-stream-owner:${sessionId}`;
   }
 
-  private async tryAcquireStreamLock(sessionId: string): Promise<boolean> {
+  private async tryAcquireStreamLock(item: {
+    sessionId: string;
+  }): Promise<boolean> {
+    let { sessionId } = item;
     let result = await this.redisClient.set(
-      this.makeStreamLockKey(sessionId),
+      this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId,
       'EX',
       AgentStreamAiService.STREAM_LOCK_TTL_SECONDS,
@@ -129,30 +133,37 @@ export class AgentStreamAiService implements OnModuleDestroy {
     return result === 'OK';
   }
 
-  private async refreshStreamLock(sessionId: string): Promise<boolean> {
+  private async refreshStreamLock(item: {
+    sessionId: string;
+  }): Promise<boolean> {
+    let { sessionId } = item;
     let result = await this.redisClient.eval(
       `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamAiService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
       1,
-      this.makeStreamLockKey(sessionId),
+      this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId
     );
     return result !== 0;
   }
 
-  private async releaseStreamLock(sessionId: string): Promise<void> {
+  private async releaseStreamLock(item: { sessionId: string }): Promise<void> {
+    let { sessionId } = item;
     await this.redisClient.eval(
       `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
       1,
-      this.makeStreamLockKey(sessionId),
+      this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId
     );
   }
 
-  private async waitForStreamLock(sessionId: string): Promise<boolean> {
+  private async waitForStreamLock(item: {
+    sessionId: string;
+  }): Promise<boolean> {
+    let { sessionId } = item;
     let startTs = Date.now();
 
     while (true) {
-      let acquired = await this.tryAcquireStreamLock(sessionId);
+      let acquired = await this.tryAcquireStreamLock({ sessionId: sessionId });
       if (acquired) {
         return true;
       }
@@ -169,7 +180,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   }
 
   async waitForStreamLockRelease(item: { sessionId: string }): Promise<void> {
-    let key = this.makeStreamLockKey(item.sessionId);
+    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
     let startTs = Date.now();
 
     while (true) {
@@ -199,7 +210,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   // --- Pub/sub commands ---
 
   async publishAbortStream(item: { sessionId: string }): Promise<boolean> {
-    let key = this.makeStreamLockKey(item.sessionId);
+    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
     let exists = await this.redisClient.exists(key);
 
     if (exists === 0) {
@@ -215,7 +226,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   }
 
   async setTitle(item: { sessionId: string; title: string }): Promise<void> {
-    let key = this.makeStreamLockKey(item.sessionId);
+    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
     let exists = await this.redisClient.exists(key);
 
     if (exists === 1) {
@@ -228,7 +239,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
         })
       );
     } else {
-      let acquired = await this.tryAcquireStreamLock(item.sessionId);
+      let acquired = await this.tryAcquireStreamLock({
+        sessionId: item.sessionId
+      });
       if (!acquired) {
         // Race: another pod just acquired. Publish via pub/sub instead.
         await this.redisClient.publish(
@@ -243,7 +256,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
       }
 
       try {
-        await this.agentDrainService.initEventCounter(item.sessionId);
+        await this.agentDrainService.initEventCounter({
+          sessionId: item.sessionId
+        });
 
         let titleEvent: Event = {
           type: 'session.updated',
@@ -255,10 +270,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
           event: titleEvent
         });
 
-        await this.agentDrainService.drainQueue(item.sessionId);
+        await this.agentDrainService.drainQueue({ sessionId: item.sessionId });
       } finally {
-        this.agentDrainService.cleanup(item.sessionId);
-        await this.releaseStreamLock(item.sessionId);
+        this.agentDrainService.cleanup({ sessionId: item.sessionId });
+        await this.releaseStreamLock({ sessionId: item.sessionId });
       }
     }
   }
@@ -275,7 +290,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     let { sessionId, provider, modelId, apiKey, userMessage } = item;
 
     // Acquire lock
-    let acquired = await this.waitForStreamLock(sessionId);
+    let acquired = await this.waitForStreamLock({ sessionId: sessionId });
     if (!acquired) {
       logToConsoleBackend({
         log: new ServerError({
@@ -296,7 +311,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     this.abortControllers.set(sessionId, abortController);
 
     try {
-      await this.agentDrainService.initEventCounter(sessionId);
+      await this.agentDrainService.initEventCounter({ sessionId: sessionId });
 
       await this.runProducer({
         sessionId: sessionId,
@@ -307,7 +322,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
         abortController: abortController
       });
 
-      await this.agentDrainService.drainQueue(sessionId);
+      await this.agentDrainService.drainQueue({ sessionId: sessionId });
 
       // Update last_activity_ts
       await this.db.drizzle.transaction(async tx => {
@@ -348,7 +363,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
           event: idleEvent
         });
 
-        await this.agentDrainService.drainQueue(sessionId);
+        await this.agentDrainService.drainQueue({ sessionId: sessionId });
       } catch (drainError) {
         logToConsoleBackend({
           log: new ServerError({
@@ -364,8 +379,8 @@ export class AgentStreamAiService implements OnModuleDestroy {
       this.activeStreams.delete(sessionId);
       this.abortControllers.delete(sessionId);
 
-      this.agentDrainService.cleanup(sessionId);
-      await this.releaseStreamLock(sessionId);
+      this.agentDrainService.cleanup({ sessionId: sessionId });
+      await this.releaseStreamLock({ sessionId: sessionId });
     }
   }
 
@@ -673,7 +688,7 @@ Your output must be:
 
   async refreshActiveLocks(): Promise<void> {
     for (let sessionId of this.activeStreams.keys()) {
-      await this.refreshStreamLock(sessionId);
+      await this.refreshStreamLock({ sessionId: sessionId });
     }
   }
 

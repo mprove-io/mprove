@@ -33,7 +33,8 @@ export class AgentOpencodeService {
     return this.opencodeClients.some(x => x.sessionId === item.sessionId);
   }
 
-  disposeOpenCodeClient(sessionId: string): void {
+  disposeOpenCodeClient(item: { sessionId: string }): void {
+    let { sessionId } = item;
     this.opencodeClients = this.opencodeClients.filter(
       x => x.sessionId !== sessionId
     );

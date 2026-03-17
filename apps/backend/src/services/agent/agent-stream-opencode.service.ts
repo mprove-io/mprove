@@ -86,7 +86,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
           `[stop-stream] received pub/sub stop for sessionId=${sessionId}`
         );
 
-        this.stopEventStream(sessionId).catch(e => {
+        this.stopEventStream({ sessionId: sessionId }).catch(e => {
           logToConsoleBackend({
             log: new ServerError({
               message: ErEnum.BACKEND_AGENT_STOP_STREAM_PUBSUB_FAILED,
@@ -104,7 +104,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async publishStopSessionStream(item: {
     sessionId: string;
   }): Promise<boolean> {
-    let key = this.makeStreamLockKey(item.sessionId);
+    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
     let exists = await this.redisClient.exists(key);
 
     if (exists === 0) {
@@ -124,13 +124,16 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       `[publishReloadSession] publishing reload for sessionId=${item.sessionId}`
     );
 
-    await this.agentEventsService.publish(item.sessionId, {
-      eventId: `${item.sessionId}_0`,
-      eventIndex: 0,
-      eventType: RELOAD_SESSION_EVENT_TYPE,
-      ocEvent: {
-        type: RELOAD_SESSION_EVENT_TYPE as any,
-        properties: {}
+    await this.agentEventsService.publish({
+      sessionId: item.sessionId,
+      event: {
+        eventId: `${item.sessionId}_0`,
+        eventIndex: 0,
+        eventType: RELOAD_SESSION_EVENT_TYPE,
+        ocEvent: {
+          type: RELOAD_SESSION_EVENT_TYPE as any,
+          properties: {}
+        }
       }
     });
   }
@@ -138,7 +141,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   async processSafePause(item: { sessionIds: string[] }): Promise<void> {
     for (let sessionId of item.sessionIds) {
       try {
-        await this.stopEventStream(sessionId);
+        await this.stopEventStream({ sessionId: sessionId });
         await this.agentSandboxService.pauseSessionById({
           sessionId: sessionId,
           pauseReason: PauseReasonEnum.Safe
@@ -163,13 +166,17 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
   // stream locks
 
-  private makeStreamLockKey(sessionId: string): string {
+  private makeStreamLockKey(item: { sessionId: string }): string {
+    let { sessionId } = item;
     return `stream-owner:${sessionId}`;
   }
 
-  private async tryAcquireStreamLock(sessionId: string): Promise<boolean> {
+  private async tryAcquireStreamLock(item: {
+    sessionId: string;
+  }): Promise<boolean> {
+    let { sessionId } = item;
     let result = await this.redisClient.set(
-      this.makeStreamLockKey(sessionId),
+      this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId,
       'EX',
       AgentStreamOpencodeService.STREAM_LOCK_TTL_SECONDS,
@@ -183,7 +190,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       let result = await this.redisClient.eval(
         `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${AgentStreamOpencodeService.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
         1,
-        this.makeStreamLockKey(sessionId),
+        this.makeStreamLockKey({ sessionId: sessionId }),
         this.podId
       );
 
@@ -199,16 +206,17 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         }
 
         this.lastEventTsMap.delete(sessionId);
-        this.agentDrainService.cleanup(sessionId);
+        this.agentDrainService.cleanup({ sessionId: sessionId });
       }
     }
   }
 
-  private async releaseStreamLock(sessionId: string): Promise<void> {
+  private async releaseStreamLock(item: { sessionId: string }): Promise<void> {
+    let { sessionId } = item;
     await this.redisClient.eval(
       `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end`,
       1,
-      this.makeStreamLockKey(sessionId),
+      this.makeStreamLockKey({ sessionId: sessionId }),
       this.podId
     );
   }
@@ -226,7 +234,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
       return;
     }
 
-    let acquired = await this.tryAcquireStreamLock(item.sessionId);
+    let acquired = await this.tryAcquireStreamLock({
+      sessionId: item.sessionId
+    });
     if (!acquired) {
       console.log(
         `[startEventStream] skip - lock not acquired sessionId=${item.sessionId}`
@@ -244,7 +254,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
     let abortController = new AbortController();
 
-    await this.agentDrainService.initEventCounter(item.sessionId);
+    await this.agentDrainService.initEventCounter({
+      sessionId: item.sessionId
+    });
 
     let response = await opencodeClient.event.subscribe(
       {},
@@ -304,7 +316,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         }
       }
 
-      await this.stopEventStream(item.sessionId);
+      await this.stopEventStream({ sessionId: item.sessionId });
 
       if (streamFailed) {
         await this.publishReloadSession({
@@ -319,7 +331,8 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     processStream();
   }
 
-  async stopEventStream(sessionId: string): Promise<void> {
+  async stopEventStream(item: { sessionId: string }): Promise<void> {
+    let { sessionId } = item;
     console.log('stopEventStream started');
     let stopFn = this.activeStreams.get(sessionId);
 
@@ -331,10 +344,10 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
     this.lastEventTsMap.delete(sessionId);
 
     try {
-      await this.agentDrainService.drainQueue(sessionId);
+      await this.agentDrainService.drainQueue({ sessionId: sessionId });
     } finally {
-      this.agentDrainService.cleanup(sessionId);
-      await this.releaseStreamLock(sessionId);
+      this.agentDrainService.cleanup({ sessionId: sessionId });
+      await this.releaseStreamLock({ sessionId: sessionId });
     }
 
     console.log('stopEventStream completed');
@@ -406,7 +419,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
           `[checkStreamStalls] stream stalled for sessionId=${sessionId} elapsed=${elapsed}ms`
         );
 
-        await this.stopEventStream(sessionId);
+        await this.stopEventStream({ sessionId: sessionId });
 
         await this.publishReloadSession({
           sessionId: sessionId
@@ -416,7 +429,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   }
 
   async waitForStreamLockRelease(item: { sessionId: string }): Promise<void> {
-    let key = this.makeStreamLockKey(item.sessionId);
+    let key = this.makeStreamLockKey({ sessionId: item.sessionId });
     let startTs = Date.now();
 
     while (true) {

@@ -74,19 +74,22 @@ export class AgentEventsService implements OnModuleDestroy {
     });
   }
 
-  private channelName(sessionId: string): string {
+  private channelName(item: { sessionId: string }): string {
+    let { sessionId } = item;
     return `agent-events:${sessionId}`;
   }
 
-  async publish(sessionId: string, event: AgentEvent): Promise<void> {
+  async publish(item: { sessionId: string; event: AgentEvent }): Promise<void> {
+    let { sessionId, event } = item;
     await this.redisPubClient.publish(
-      this.channelName(sessionId),
+      this.channelName({ sessionId: sessionId }),
       JSON.stringify(event)
     );
   }
 
-  subscribe(sessionId: string): Observable<AgentEvent> {
-    let channel = this.channelName(sessionId);
+  subscribe(item: { sessionId: string }): Observable<AgentEvent> {
+    let { sessionId } = item;
+    let channel = this.channelName({ sessionId: sessionId });
 
     return new Observable<AgentEvent>(observer => {
       let subject = new Subject<AgentEvent>();
@@ -138,11 +141,12 @@ export class AgentEventsService implements OnModuleDestroy {
     });
   }
 
-  subscribeWithBackfill(
-    sessionId: string,
-    lastEventIndex: number
-  ): Observable<AgentEvent> {
-    let channel = this.channelName(sessionId);
+  subscribeWithBackfill(item: {
+    sessionId: string;
+    lastEventIndex: number;
+  }): Observable<AgentEvent> {
+    let { sessionId, lastEventIndex } = item;
+    let channel = this.channelName({ sessionId: sessionId });
 
     return new Observable<AgentEvent>(observer => {
       let buffer: AgentEvent[] = [];
@@ -179,7 +183,10 @@ export class AgentEventsService implements OnModuleDestroy {
       }
 
       // 2. Backfill from DB, then flush buffer and go live
-      this.getEventsSince(sessionId, lastEventIndex)
+      this.getEventsSince({
+        sessionId: sessionId,
+        lastEventIndex: lastEventIndex
+      })
         .then(dbEvents => {
           for (let event of dbEvents) {
             observer.next(event);
@@ -229,10 +236,11 @@ export class AgentEventsService implements OnModuleDestroy {
     });
   }
 
-  private async getEventsSince(
-    sessionId: string,
-    lastEventIndex: number
-  ): Promise<AgentEvent[]> {
+  private async getEventsSince(item: {
+    sessionId: string;
+    lastEventIndex: number;
+  }): Promise<AgentEvent[]> {
+    let { sessionId, lastEventIndex } = item;
     let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
       where: and(
         eq(ocEventsTable.sessionId, sessionId),
