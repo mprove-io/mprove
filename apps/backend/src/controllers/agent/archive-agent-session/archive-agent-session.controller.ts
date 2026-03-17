@@ -30,6 +30,7 @@ import { ArchiveReasonEnum } from '#common/enums/archive-reason.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import {
   ToBackendArchiveAgentSessionRequest,
@@ -66,7 +67,7 @@ export class ArchiveAgentSessionController {
     }
 
     if (
-      session.sandboxId &&
+      session.sessionType === SessionTypeEnum.Editor &&
       [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
         session.status
       ) > -1

@@ -36,6 +36,7 @@ import { THROTTLE_CUSTOM } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { SandboxTypeEnum } from '#common/enums/sandbox-type.enum';
 import { SessionStatusEnum } from '#common/enums/session-status.enum';
+import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ToBackendRequestInfoNameEnum } from '#common/enums/to/to-backend-request-info-name.enum';
 import { ToDiskRequestInfoNameEnum } from '#common/enums/to/to-disk-request-info-name.enum';
 import { ToBackendDeleteAgentSessionRequest } from '#common/interfaces/to-backend/agent/to-backend-delete-agent-session';
@@ -81,9 +82,10 @@ export class DeleteAgentSessionController {
     });
 
     if (
-      session.sandboxId &&
-      (session.status === SessionStatusEnum.Active ||
-        session.status === SessionStatusEnum.Paused)
+      session.sessionType === SessionTypeEnum.Editor &&
+      [SessionStatusEnum.Active, SessionStatusEnum.Paused].indexOf(
+        session.status
+      ) > -1
     ) {
       await this.agentSandboxService.stopSandbox({
         sandboxType: session.sandboxType as SandboxTypeEnum,
@@ -92,7 +94,7 @@ export class DeleteAgentSessionController {
       });
     }
 
-    if (session.repoId === sessionId) {
+    if (session.sessionType === SessionTypeEnum.Editor) {
       let baseProject = this.tabService.projectTabToBaseProject({
         project: project
       });
@@ -153,7 +155,7 @@ export class DeleteAgentSessionController {
             .delete(ocSessionsTable)
             .where(and(eq(ocSessionsTable.sessionId, sessionId)));
 
-          if (session.repoId === sessionId) {
+          if (session.sessionType === SessionTypeEnum.Editor) {
             await tx
               .delete(branchesTable)
               .where(
