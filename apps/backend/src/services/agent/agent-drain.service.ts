@@ -36,7 +36,7 @@ import { OcEventsService } from '../db/oc-events.service';
 import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
-import { AgentEventsService } from './agent-events.service';
+import { AgentSseService } from './agent-sse.service';
 
 @Injectable()
 export class AgentDrainService {
@@ -51,7 +51,7 @@ export class AgentDrainService {
 
   constructor(
     private cs: ConfigService<BackendConfig>,
-    private agentEventsService: AgentEventsService,
+    private agentSseService: AgentSseService,
     private sessionsService: SessionsService,
     private ocEventsService: OcEventsService,
     private ocMessagesService: OcMessagesService,
@@ -445,7 +445,7 @@ export class AgentDrainService {
 
     for (let item of items) {
       let eventId = `${item.sessionId}_${item.eventIndex}`;
-      await this.agentEventsService.publish({
+      await this.agentSseService.publish({
         sessionId: item.sessionId,
         event: {
           eventId: eventId,

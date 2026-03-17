@@ -1,4 +1,4 @@
-import type { AgentEvent } from '#backend/services/agent/agent-events.service';
+import type { AgentEvent } from '#backend/services/agent/agent-sse.service';
 
 export function forTestsExtractDialogLines(item: {
   events: AgentEvent[];

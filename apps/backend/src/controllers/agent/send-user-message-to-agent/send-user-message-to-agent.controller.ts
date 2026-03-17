@@ -150,8 +150,8 @@ export class SendUserMessageToAgentController {
             userMessage: message
           })
           .catch(() => {});
-      } else if (interactionType === InteractionTypeEnum.Abort) {
-        let isLockExist = await this.aiSdkStreamService.publishAbortStream({
+      } else if (interactionType === InteractionTypeEnum.Stop) {
+        let isLockExist = await this.aiSdkStreamService.publishStopStream({
           sessionId: session.sessionId
         });
 
@@ -315,7 +315,7 @@ export class SendUserMessageToAgentController {
             questionId: questionId
           });
         }
-      } else if (interactionType === InteractionTypeEnum.Abort) {
+      } else if (interactionType === InteractionTypeEnum.Stop) {
         let opencodeClient = await this.agentOpencodeService.getOpenCodeClient({
           sessionId: sessionId
         });

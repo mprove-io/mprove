@@ -300,7 +300,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     });
   }
 
-  abortSession() {
+  stopSession() {
     if (!this.session) {
       return;
     }
@@ -313,7 +313,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this.sendInteraction({
       sessionId: this.session.sessionId,
-      interactionType: InteractionTypeEnum.Abort
+      interactionType: InteractionTypeEnum.Stop
     });
   }
 

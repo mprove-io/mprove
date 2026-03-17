@@ -5,6 +5,7 @@ import Redis from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { BackendConfig } from '#backend/config/backend-config';
 import { calculateDiskShard } from '#backend/functions/calculate-disk-shard';
+import { CHANNEL_RPC_REPLY } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { ResponseInfoStatusEnum } from '#common/enums/response-info-status.enum';
 import { RpcNamespacesEnum } from '#common/enums/rpc-namespaces.enum';
@@ -76,7 +77,7 @@ export class RpcService implements OnModuleDestroy {
 
     let correlationId = uuidv4();
 
-    let replyTo = `rpc:reply:${correlationId}`;
+    let replyTo = `${CHANNEL_RPC_REPLY}:${correlationId}`;
 
     let queue = this.getQueue(namespace);
 

@@ -196,7 +196,7 @@
             [showSelects]="messages.length > 0"
             [sessionId]="session?.sessionId"
             (send)="sendFollowUp($event)"
-            (stop)="abortSession()"
+            (stop)="stopSession()"
           ></m-session-input>
         </div>
         <div class="ml-3 w-3 flex-shrink-0"></div>

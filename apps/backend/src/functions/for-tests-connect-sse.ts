@@ -1,5 +1,5 @@
 import { SSE_AGENT_EVENTS_PATH } from '#backend/controllers/agent/get-agent-events-sse/get-agent-events-sse.controller';
-import type { AgentEvent } from '#backend/services/agent/agent-events.service';
+import type { AgentEvent } from '#backend/services/agent/agent-sse.service';
 
 export async function forTestsConnectSse(item: {
   httpServer: any;

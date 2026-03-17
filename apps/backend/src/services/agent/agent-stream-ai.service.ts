@@ -12,6 +12,8 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { CHANNEL_AI_STREAM_COMMAND } from '#common/constants/top-backend';
+import { AiStreamCommandEnum } from '#common/enums/ai-stream-command.enum';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
@@ -28,8 +30,6 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   private static STREAM_LOCK_TTL_SECONDS = 8;
   private static STREAM_LOCK_WAIT_TIMEOUT_MS = 10_000;
-
-  private static AI_SDK_COMMAND_CHANNEL = 'ai-sdk-stream-command';
 
   private redisClient: Redis;
 
@@ -66,7 +66,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       password: valkeyPassword
     });
 
-    this.redisSubscriber.subscribe(AgentStreamAiService.AI_SDK_COMMAND_CHANNEL);
+    this.redisSubscriber.subscribe(CHANNEL_AI_STREAM_COMMAND);
 
     this.redisSubscriber.on('message', (_channel, rawMessage) => {
       try {
@@ -77,16 +77,14 @@ export class AgentStreamAiService implements OnModuleDestroy {
           return;
         }
 
-        if (command === 'abort') {
-          console.log(
-            `[ai-sdk-abort] received abort for sessionId=${sessionId}`
-          );
+        if (command === AiStreamCommandEnum.Stop) {
+          console.log(`[ai-stream] received stop for sessionId=${sessionId}`);
 
           let ac = this.abortControllers.get(sessionId);
           ac.abort();
-        } else if (command === 'set-title') {
+        } else if (command === AiStreamCommandEnum.SetTitle) {
           console.log(
-            `[ai-sdk-set-title] received set-title for sessionId=${sessionId}`
+            `[ai-stream] received set-title for sessionId=${sessionId}`
           );
 
           let titleEvent: Event = {
@@ -196,7 +194,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
       if (isTimedOut) {
         console.log(
-          `[waitForStreamLockRelease] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
+          `[ai-stream] timed out after ${elapsed}ms for sessionId=${item.sessionId}`
         );
         return;
       }
@@ -209,7 +207,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   // --- Pub/sub commands ---
 
-  async publishAbortStream(item: { sessionId: string }): Promise<boolean> {
+  async publishStopStream(item: { sessionId: string }): Promise<boolean> {
     let key = this.makeStreamLockKey({ sessionId: item.sessionId });
     let exists = await this.redisClient.exists(key);
 
@@ -218,8 +216,11 @@ export class AgentStreamAiService implements OnModuleDestroy {
     }
 
     await this.redisClient.publish(
-      AgentStreamAiService.AI_SDK_COMMAND_CHANNEL,
-      JSON.stringify({ command: 'abort', sessionId: item.sessionId })
+      CHANNEL_AI_STREAM_COMMAND,
+      JSON.stringify({
+        command: AiStreamCommandEnum.Stop,
+        sessionId: item.sessionId
+      })
     );
 
     return true;
@@ -231,9 +232,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
     if (exists === 1) {
       await this.redisClient.publish(
-        AgentStreamAiService.AI_SDK_COMMAND_CHANNEL,
+        CHANNEL_AI_STREAM_COMMAND,
         JSON.stringify({
-          command: 'set-title',
+          command: AiStreamCommandEnum.SetTitle,
           sessionId: item.sessionId,
           title: item.title
         })
@@ -245,9 +246,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
       if (!acquired) {
         // Race: another pod just acquired. Publish via pub/sub instead.
         await this.redisClient.publish(
-          AgentStreamAiService.AI_SDK_COMMAND_CHANNEL,
+          CHANNEL_AI_STREAM_COMMAND,
           JSON.stringify({
-            command: 'set-title',
+            command: AiStreamCommandEnum.SetTitle,
             sessionId: item.sessionId,
             title: item.title
           })

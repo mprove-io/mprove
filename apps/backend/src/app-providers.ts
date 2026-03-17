@@ -5,11 +5,11 @@ import { JwtStrategy } from './auth-strategies/jwt.strategy';
 import { LocalStrategy } from './auth-strategies/local-strategy.strategy';
 import { AgentDrainService } from './services/agent/agent-drain.service';
 import { AgentDrainTimerService } from './services/agent/agent-drain-timer.service';
-import { AgentEventsService } from './services/agent/agent-events.service';
 import { AgentModelsAiService } from './services/agent/agent-models-ai.service';
 import { AgentModelsOpencodeService } from './services/agent/agent-models-opencode.service';
 import { AgentOpencodeService } from './services/agent/agent-opencode.service';
 import { AgentSandboxService } from './services/agent/agent-sandbox.service';
+import { AgentSseService } from './services/agent/agent-sse.service';
 import { AgentStreamAiService } from './services/agent/agent-stream-ai.service';
 import { AgentStreamOpencodeService } from './services/agent/agent-stream-opencode.service';
 import { ApiKeyService } from './services/api-key.service';
@@ -120,7 +120,7 @@ export const appProviders = [
   AgentOpencodeService,
   AgentDrainService,
   AgentDrainTimerService,
-  AgentEventsService,
+  AgentSseService,
   AgentStreamOpencodeService,
   AgentSandboxService,
   AgentModelsAiService,

@@ -9,6 +9,7 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocEventsTable } from '#backend/drizzle/postgres/schema/oc-events.js';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
+import { CHANNEL_AGENT_SSE } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { ServerError } from '#common/models/server-error';
@@ -22,7 +23,7 @@ export interface AgentEvent {
 }
 
 @Injectable()
-export class AgentEventsService implements OnModuleDestroy {
+export class AgentSseService implements OnModuleDestroy {
   private redisPubClient: Redis;
   private redisSubClient: Redis;
 
@@ -48,7 +49,6 @@ export class AgentEventsService implements OnModuleDestroy {
     };
 
     this.redisPubClient = new Redis(redisOptions);
-
     this.redisSubClient = new Redis(redisOptions);
 
     this.redisSubClient.on('error', (err: Error) => {
@@ -74,71 +74,17 @@ export class AgentEventsService implements OnModuleDestroy {
     });
   }
 
-  private channelName(item: { sessionId: string }): string {
-    let { sessionId } = item;
-    return `agent-events:${sessionId}`;
+  onModuleDestroy() {
+    this.redisPubClient.disconnect();
+    this.redisSubClient.disconnect();
   }
 
   async publish(item: { sessionId: string; event: AgentEvent }): Promise<void> {
     let { sessionId, event } = item;
     await this.redisPubClient.publish(
-      this.channelName({ sessionId: sessionId }),
+      `${CHANNEL_AGENT_SSE}:${sessionId}`,
       JSON.stringify(event)
     );
-  }
-
-  subscribe(item: { sessionId: string }): Observable<AgentEvent> {
-    let { sessionId } = item;
-    let channel = this.channelName({ sessionId: sessionId });
-
-    return new Observable<AgentEvent>(observer => {
-      let subject = new Subject<AgentEvent>();
-      let subscription = subject.subscribe(observer);
-
-      let listeners = this.channelListeners.get(channel);
-
-      if (listeners) {
-        listeners.add(subject);
-      } else {
-        listeners = new Set([subject]);
-        this.channelListeners.set(channel, listeners);
-        this.redisSubClient.subscribe(channel).catch((err: Error) => {
-          logToConsoleBackend({
-            log: new ServerError({
-              message: ErEnum.BACKEND_AGENT_REDIS_SUBSCRIBE_FAILED,
-              originalError: err
-            }),
-            logLevel: LogLevelEnum.Error,
-            logger: this.logger,
-            cs: this.cs
-          });
-        });
-      }
-
-      return () => {
-        subscription.unsubscribe();
-        subject.complete();
-
-        let currentListeners = this.channelListeners.get(channel);
-        if (currentListeners) {
-          currentListeners.delete(subject);
-          if (currentListeners.size === 0) {
-            this.channelListeners.delete(channel);
-            this.redisSubClient.unsubscribe(channel).catch((err: Error) => {
-              logToConsoleBackend({
-                log: new ServerError({
-                  message: ErEnum.BACKEND_AGENT_REDIS_UNSUBSCRIBE_FAILED,
-                  originalError: err
-                }),
-                logLevel: LogLevelEnum.Error,
-                logger: this.logger,
-                cs: this.cs
-              });
-            });
-          }
-        }
-      };
-    });
   }
 
   subscribeWithBackfill(item: {
@@ -146,7 +92,7 @@ export class AgentEventsService implements OnModuleDestroy {
     lastEventIndex: number;
   }): Observable<AgentEvent> {
     let { sessionId, lastEventIndex } = item;
-    let channel = this.channelName({ sessionId: sessionId });
+    let channel = `${CHANNEL_AGENT_SSE}:${sessionId}`;
 
     return new Observable<AgentEvent>(observer => {
       let buffer: AgentEvent[] = [];
@@ -183,11 +129,26 @@ export class AgentEventsService implements OnModuleDestroy {
       }
 
       // 2. Backfill from DB, then flush buffer and go live
-      this.getEventsSince({
-        sessionId: sessionId,
-        lastEventIndex: lastEventIndex
-      })
-        .then(dbEvents => {
+      (async () => {
+        try {
+          let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
+            where: and(
+              eq(ocEventsTable.sessionId, sessionId),
+              gt(ocEventsTable.eventIndex, lastEventIndex)
+            ),
+            orderBy: [asc(ocEventsTable.eventIndex)]
+          });
+
+          let dbEvents = eventEnts.map(ent => {
+            let tab = this.tabService.ocEventEntToTab(ent);
+            return {
+              eventId: tab.eventId,
+              eventIndex: tab.eventIndex,
+              eventType: tab.type,
+              ocEvent: tab.ocEvent
+            };
+          });
+
           for (let event of dbEvents) {
             observer.next(event);
           }
@@ -205,10 +166,10 @@ export class AgentEventsService implements OnModuleDestroy {
             }
           }
           buffer = [];
-        })
-        .catch(err => {
+        } catch (err) {
           observer.error(err);
-        });
+        }
+      })();
 
       return () => {
         liveSub.unsubscribe();
@@ -234,34 +195,5 @@ export class AgentEventsService implements OnModuleDestroy {
         }
       };
     });
-  }
-
-  private async getEventsSince(item: {
-    sessionId: string;
-    lastEventIndex: number;
-  }): Promise<AgentEvent[]> {
-    let { sessionId, lastEventIndex } = item;
-    let eventEnts = await this.db.drizzle.query.ocEventsTable.findMany({
-      where: and(
-        eq(ocEventsTable.sessionId, sessionId),
-        gt(ocEventsTable.eventIndex, lastEventIndex)
-      ),
-      orderBy: [asc(ocEventsTable.eventIndex)]
-    });
-
-    return eventEnts.map(ent => {
-      let tab = this.tabService.ocEventEntToTab(ent);
-      return {
-        eventId: tab.eventId,
-        eventIndex: tab.eventIndex,
-        eventType: tab.type,
-        ocEvent: tab.ocEvent
-      };
-    });
-  }
-
-  onModuleDestroy() {
-    this.redisPubClient.disconnect();
-    this.redisSubClient.disconnect();
   }
 }

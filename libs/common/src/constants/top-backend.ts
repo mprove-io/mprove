@@ -11,6 +11,11 @@ import { UTC } from './top';
 export const APP_NAME_BACKEND = 'BACKEND';
 export const APP_NAME_SCHEDULER = 'SCHEDULER';
 
+export const CHANNEL_RPC_REPLY = 'rpc-reply';
+export const CHANNEL_AGENT_SSE = 'agent-sse';
+export const CHANNEL_OPENCODE_STREAM_COMMAND = 'opencode-stream-command';
+export const CHANNEL_AI_STREAM_COMMAND = 'ai-stream-command';
+
 export const MODEL_PROVIDERS: { provider_id: string; label: string }[] = [
   { provider_id: 'openai', label: 'OpenAI' },
   { provider_id: 'anthropic', label: 'Anthropic' },
