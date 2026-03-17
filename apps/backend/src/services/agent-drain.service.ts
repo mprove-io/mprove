@@ -60,26 +60,30 @@ export class AgentDrainService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async getNextEventIndex(sessionId: string): Promise<number> {
-    let eventIndex = this.eventCounters.get(sessionId);
-    if (eventIndex === undefined) {
+  async initEventCounter(sessionId: string): Promise<void> {
+    if (!this.eventCounters.has(sessionId)) {
       let maxRow = await this.db.drizzle
         .select({ maxIndex: max(ocEventsTable.eventIndex) })
         .from(ocEventsTable)
         .where(eq(ocEventsTable.sessionId, sessionId));
-      eventIndex = maxRow[0]?.maxIndex != null ? maxRow[0].maxIndex + 1 : 0;
+      let eventIndex = maxRow[0]?.maxIndex != null ? maxRow[0].maxIndex + 1 : 0;
+      this.eventCounters.set(sessionId, eventIndex);
     }
-    return eventIndex;
   }
 
-  enqueue(item: { sessionId: string; event: Event; eventIndex: number }): void {
+  enqueue(item: { sessionId: string; event: Event }): void {
+    let eventIndex = this.eventCounters.get(item.sessionId) ?? 0;
     let queue = this.pendingEvents.get(item.sessionId);
     if (!queue) {
       queue = [];
       this.pendingEvents.set(item.sessionId, queue);
     }
-    queue.push(item);
-    this.eventCounters.set(item.sessionId, item.eventIndex + 1);
+    queue.push({
+      sessionId: item.sessionId,
+      event: item.event,
+      eventIndex: eventIndex
+    });
+    this.eventCounters.set(item.sessionId, eventIndex + 1);
   }
 
   cleanup(sessionId: string): void {

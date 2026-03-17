@@ -13,7 +13,6 @@ import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { ocMessagesTable } from '#backend/drizzle/postgres/schema/oc-messages.js';
 import { ocPartsTable } from '#backend/drizzle/postgres/schema/oc-parts.js';
-import { AsyncQueue } from '#backend/functions/async-queue';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
@@ -36,7 +35,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
   private redisSubscriber: Redis;
 
-  private activeStreams = new Map<string, AsyncQueue<Event>>();
+  private activeStreams = new Set<string>();
 
   private abortControllers = new Map<string, AbortController>();
 
@@ -229,9 +228,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       }
 
       try {
-        let eventIndex = await this.agentDrainService.getNextEventIndex(
-          item.sessionId
-        );
+        await this.agentDrainService.initEventCounter(item.sessionId);
 
         let titleEvent: Event = {
           type: 'session.updated',
@@ -240,8 +237,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
         this.agentDrainService.enqueue({
           sessionId: item.sessionId,
-          event: titleEvent,
-          eventIndex: eventIndex
+          event: titleEvent
         });
 
         await this.agentDrainService.drainQueue(item.sessionId);
@@ -273,13 +269,15 @@ export class AgentStreamAiService implements OnModuleDestroy {
       `[ai-sdk-set-title] received set-title for sessionId=${item.sessionId}`
     );
 
-    let queue = this.activeStreams.get(item.sessionId);
-    if (queue) {
+    if (this.activeStreams.has(item.sessionId)) {
       let titleEvent: Event = {
         type: 'session.updated',
         properties: { info: { title: item.title } }
       } as Event;
-      queue.push({ value: titleEvent });
+      this.agentDrainService.enqueue({
+        sessionId: item.sessionId,
+        event: titleEvent
+      });
     }
   }
 
@@ -312,37 +310,20 @@ export class AgentStreamAiService implements OnModuleDestroy {
     }
 
     let abortController = new AbortController();
-    let queue = new AsyncQueue<Event>();
-    this.activeStreams.set(sessionId, queue);
+    this.activeStreams.add(sessionId);
     this.abortControllers.set(sessionId, abortController);
 
     try {
-      let eventIndex =
-        await this.agentDrainService.getNextEventIndex(sessionId);
+      await this.agentDrainService.initEventCounter(sessionId);
 
-      // Producer (fire-and-forget async)
-      let producerTask = this.runProducer({
+      await this.runProducer({
         sessionId: sessionId,
         provider: provider,
         modelId: modelId,
         apiKey: apiKey,
         userMessage: userMessage,
-        abortController: abortController,
-        queue: queue
+        abortController: abortController
       });
-
-      // Consumer: single point of eventIndex assignment
-      for await (let event of queue) {
-        this.agentDrainService.enqueue({
-          sessionId: sessionId,
-          event: event,
-          eventIndex: eventIndex
-        });
-        eventIndex++;
-      }
-
-      // Queue closed — producer finished
-      await producerTask;
 
       await this.agentDrainService.drainQueue(sessionId);
 
@@ -365,9 +346,6 @@ export class AgentStreamAiService implements OnModuleDestroy {
 
       // Emit error + idle
       try {
-        let errorEventIndex =
-          await this.agentDrainService.getNextEventIndex(sessionId);
-
         let errorEvent = {
           type: 'session.error',
           properties: {
@@ -376,8 +354,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
         } as unknown as Event;
         this.agentDrainService.enqueue({
           sessionId: sessionId,
-          event: errorEvent,
-          eventIndex: errorEventIndex
+          event: errorEvent
         });
 
         let idleEvent: Event = {
@@ -386,8 +363,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
         } as Event;
         this.agentDrainService.enqueue({
           sessionId: sessionId,
-          event: idleEvent,
-          eventIndex: errorEventIndex + 1
+          event: idleEvent
         });
 
         await this.agentDrainService.drainQueue(sessionId);
@@ -405,6 +381,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
     } finally {
       this.activeStreams.delete(sessionId);
       this.abortControllers.delete(sessionId);
+
       this.agentDrainService.cleanup(sessionId);
       await this.releaseStreamLock(sessionId);
     }
@@ -419,17 +396,9 @@ export class AgentStreamAiService implements OnModuleDestroy {
     apiKey: string;
     userMessage: string;
     abortController: AbortController;
-    queue: AsyncQueue<Event>;
   }): Promise<void> {
-    let {
-      sessionId,
-      provider,
-      modelId,
-      apiKey,
-      userMessage,
-      abortController,
-      queue
-    } = item;
+    let { sessionId, provider, modelId, apiKey, userMessage, abortController } =
+      item;
 
     let history = await this.loadMessageHistory({
       sessionId: sessionId
@@ -440,7 +409,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       type: 'session.status',
       properties: { status: { type: 'busy' } }
     } as Event;
-    queue.push({ value: busyEvent });
+    this.agentDrainService.enqueue({ sessionId: sessionId, event: busyEvent });
 
     let userMessageId = makeAscendingId({ prefix: 'msg' });
 
@@ -450,7 +419,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
         info: { id: userMessageId, sessionID: sessionId, role: 'user' }
       }
     } as Event;
-    queue.push({ value: userMsgEvent });
+    this.agentDrainService.enqueue({
+      sessionId: sessionId,
+      event: userMsgEvent
+    });
 
     let userPartId = makeAscendingId({ prefix: 'prt' });
 
@@ -466,7 +438,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
         }
       }
     } as Event;
-    queue.push({ value: userPartEvent });
+    this.agentDrainService.enqueue({
+      sessionId: sessionId,
+      event: userPartEvent
+    });
 
     let assistantMessageId = makeAscendingId({ prefix: 'msg' });
 
@@ -480,7 +455,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
         }
       }
     } as Event;
-    queue.push({ value: assistantMsgEvent });
+    this.agentDrainService.enqueue({
+      sessionId: sessionId,
+      event: assistantMsgEvent
+    });
 
     let assistantPartId = makeAscendingId({ prefix: 'prt' });
 
@@ -496,7 +474,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
         }
       }
     } as Event;
-    queue.push({ value: assistantPartEvent });
+    this.agentDrainService.enqueue({
+      sessionId: sessionId,
+      event: assistantPartEvent
+    });
 
     // Start title generation in parallel
     let isFirstMessage = history.length === 0;
@@ -544,13 +525,15 @@ export class AgentStreamAiService implements OnModuleDestroy {
             delta: chunk
           }
         } as Event;
-        queue.push({ value: deltaEvent });
+        this.agentDrainService.enqueue({
+          sessionId: sessionId,
+          event: deltaEvent
+        });
       }
     } catch (e: any) {
       if (e.name === 'AbortError') {
         wasAborted = true;
       } else {
-        queue.close();
         throw e;
       }
     }
@@ -560,7 +543,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
         type: 'session.status',
         properties: { status: { type: 'idle' } }
       } as Event;
-      queue.push({ value: idleEvent });
+      this.agentDrainService.enqueue({
+        sessionId: sessionId,
+        event: idleEvent
+      });
     } else {
       let finalPartEvent: Event = {
         type: 'message.part.updated',
@@ -574,13 +560,19 @@ export class AgentStreamAiService implements OnModuleDestroy {
           }
         }
       } as Event;
-      queue.push({ value: finalPartEvent });
+      this.agentDrainService.enqueue({
+        sessionId: sessionId,
+        event: finalPartEvent
+      });
 
       let idleEvent: Event = {
         type: 'session.status',
         properties: { status: { type: 'idle' } }
       } as Event;
-      queue.push({ value: idleEvent });
+      this.agentDrainService.enqueue({
+        sessionId: sessionId,
+        event: idleEvent
+      });
 
       // Await title generation
       if (titlePromise) {
@@ -592,7 +584,10 @@ export class AgentStreamAiService implements OnModuleDestroy {
               type: 'session.updated',
               properties: { info: { title: title } }
             } as Event;
-            queue.push({ value: titleEvent });
+            this.agentDrainService.enqueue({
+              sessionId: sessionId,
+              event: titleEvent
+            });
           }
         } catch (titleError) {
           logToConsoleBackend({
@@ -607,8 +602,6 @@ export class AgentStreamAiService implements OnModuleDestroy {
         }
       }
     }
-
-    queue.close();
   }
 
   // --- Title generation ---

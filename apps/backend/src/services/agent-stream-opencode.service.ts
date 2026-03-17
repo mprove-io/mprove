@@ -243,9 +243,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
 
     let abortController = new AbortController();
 
-    let eventIndex = await this.agentDrainService.getNextEventIndex(
-      item.sessionId
-    );
+    await this.agentDrainService.initEventCounter(item.sessionId);
 
     let response = await opencodeClient.event.subscribe(
       {},
@@ -274,10 +272,8 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
           this.lastEventTsMap.set(item.sessionId, Date.now());
           this.agentDrainService.enqueue({
             sessionId: item.sessionId,
-            event: event,
-            eventIndex: eventIndex
+            event: event
           });
-          eventIndex++;
         }
 
         console.log(
