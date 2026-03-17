@@ -177,6 +177,12 @@ let payload = { models };
 doSomething({ sessionId });
 ```
 
+### No "for (let ... of ..." and "for (let ... in ..."
+
+Use `forEach`, `forEachSeries` for async.
+
+Exception: `for (let i = 0; i < ...; i++)` index loops are allowed.
+
 ### No calls in conditions
 
 Do not call functions or methods inside `if` conditions. Extract the result to a variable first.

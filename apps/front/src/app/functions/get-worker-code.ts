@@ -128,10 +128,10 @@ self.onmessage = async (sMessage) => {
     let docPos = 0;
     let docLine = 0;
 
-    for (let tLine of tokenLines) {
+    tokenLines.forEach(tLine => {
       let tIndex = 0;
-      for (let tItem of tLine) {
-        for (let explanation of tItem.explanation) {
+      tLine.forEach(tItem => {
+        tItem.explanation.forEach(explanation => {
           let text = explanation.content;
 
           tokens.push({
@@ -149,12 +149,12 @@ self.onmessage = async (sMessage) => {
           });
 
           docPos += text.length;
-        }
+        });
         tIndex++;
-      }
+      });
       docPos = 0;
       docLine++;
-    }
+    });
 
     self.postMessage({
       type: 'highlightResult',

@@ -8,6 +8,7 @@ import type {
 } from '@opencode-ai/sdk/v2';
 import { sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -29,6 +30,8 @@ import { AgentDrainService } from './agent-drain.service';
 import { AgentOpencodeService } from './agent-opencode.service';
 import { AgentSandboxService } from './agent-sandbox.service';
 import { AgentSseService } from './agent-sse.service';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class AgentStreamOpencodeService implements OnModuleDestroy {
@@ -160,7 +163,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   }
 
   async processSafePause(item: { sessionIds: string[] }): Promise<void> {
-    for (let sessionId of item.sessionIds) {
+    let { sessionIds } = item;
+
+    await forEachSeries(sessionIds, async (sessionId: string) => {
       try {
         await this.stopEventStream({ sessionId: sessionId });
         await this.agentSandboxService.pauseSessionById({
@@ -182,7 +187,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
           cs: this.cs
         });
       }
-    }
+    });
   }
 
   // stream locks
@@ -202,7 +207,9 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
   }
 
   async refreshActiveLocks(): Promise<void> {
-    for (let sessionId of this.activeStreams.keys()) {
+    let activeStreamSessionIds = [...this.activeStreams.keys()];
+
+    await forEachSeries(activeStreamSessionIds, async (sessionId: string) => {
       let result = await this.redisClient.eval(
         `if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("expire", KEYS[1], ${this.STREAM_LOCK_TTL_SECONDS}) else return 0 end`,
         1,
@@ -224,7 +231,7 @@ export class AgentStreamOpencodeService implements OnModuleDestroy {
         this.lastEventTsMap.delete(sessionId);
         this.agentDrainService.cleanup({ sessionId: sessionId });
       }
-    }
+    });
   }
 
   private async releaseStreamLock(item: { sessionId: string }): Promise<void> {

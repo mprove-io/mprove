@@ -7,6 +7,7 @@ import type {
 import _PrestoClientModule from '@prestodb/presto-js-client';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -28,6 +29,8 @@ import {
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
+
+const { forEachSeries } = pIteration;
 
 // CJS interop: default import gets module.exports object, unwrap to get the class
 const PrestoClient = (_PrestoClientModule as any)
@@ -175,7 +178,7 @@ export class PrestoService {
       let allTablesRows: { [name: string]: any }[] = [];
       let allColumnsRows: { [name: string]: any }[] = [];
 
-      for (let cat of catalogs) {
+      await forEachSeries(catalogs, async cat => {
         try {
           let tablesResult: PrestoQuery = await pc.query(`
             SELECT table_schema, table_name, table_type
@@ -211,15 +214,15 @@ export class PrestoService {
 
           let schemaPrefix = catalogDiscovered ? `${cat}.` : '';
 
-          for (let row of tablesRows) {
+          tablesRows.forEach(row => {
             row.table_schema = `${schemaPrefix}${row.table_schema}`;
             allTablesRows.push(row);
-          }
+          });
 
-          for (let row of columnsRows) {
+          columnsRows.forEach(row => {
             row.table_schema = `${schemaPrefix}${row.table_schema}`;
             allColumnsRows.push(row);
-          }
+          });
         } catch (e: any) {
           logToConsoleBackend({
             log: `Presto fetchSchema skipping catalog "${cat}": ${e.message}`,
@@ -228,7 +231,7 @@ export class PrestoService {
             cs: this.cs
           });
         }
-      }
+      });
 
       let tables: SchemaTable[] = allTablesRows.map(row => {
         let columns: SchemaColumn[] = allColumnsRows

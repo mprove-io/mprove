@@ -67,9 +67,9 @@ export class AgentSseService implements OnModuleDestroy {
       let listeners = this.channelListeners.get(channel);
       if (listeners) {
         let event = JSON.parse(message) as AgentEvent;
-        for (let subject of listeners) {
+        listeners.forEach(subject => {
           subject.next(event);
-        }
+        });
       }
     });
   }
@@ -144,9 +144,9 @@ export class AgentSseService implements OnModuleDestroy {
             };
           });
 
-          for (let event of dbEvents) {
+          dbEvents.forEach(event => {
             observer.next(event);
-          }
+          });
 
           let maxDbIndex =
             dbEvents.length > 0
@@ -155,11 +155,11 @@ export class AgentSseService implements OnModuleDestroy {
 
           // Flush buffered live events that aren't covered by DB
           isBackfilling = false;
-          for (let event of buffer) {
+          buffer.forEach(event => {
             if (event.eventIndex > maxDbIndex) {
               observer.next(event);
             }
-          }
+          });
           buffer = [];
         } catch (err) {
           observer.error(err);

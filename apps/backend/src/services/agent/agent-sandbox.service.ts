@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { and, eq, lt } from 'drizzle-orm';
 import { Sandbox, type SandboxInfo } from 'e2b';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -19,6 +20,8 @@ import { ServerError } from '#common/models/server-error';
 import { ProjectsService } from '../db/projects.service';
 import { SessionsService } from '../db/sessions.service';
 import { TabService } from '../tab.service';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class AgentSandboxService {
@@ -128,7 +131,7 @@ export class AgentSandboxService {
 
     let pausedSessionIds: string[] = [];
 
-    for (let session of sessionsWithSandbox) {
+    await forEachSeries(sessionsWithSandbox, async session => {
       try {
         let sandboxInfo = sandboxes.find(
           s => s.sandboxId === session.sandboxId
@@ -190,7 +193,7 @@ export class AgentSandboxService {
           cs: this.cs
         });
       }
-    }
+    });
 
     return pausedSessionIds;
   }

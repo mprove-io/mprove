@@ -309,21 +309,21 @@ export class AgentModelsAiService {
         { toolcall: boolean; outputText: boolean; status: string }
       >();
 
-      for (let [providerId, mdProvider] of Object.entries(modelsDevResponse)) {
+      Object.entries(modelsDevResponse).forEach(([providerId, mdProvider]) => {
         let isIncluded = providerIds.includes(providerId);
 
         if (!isIncluded) {
-          continue;
+          return;
         }
 
-        for (let [_modelKey, model] of Object.entries(mdProvider.models)) {
+        Object.entries(mdProvider.models).forEach(([_modelKey, model]) => {
           capMap.set(model.id, {
             toolcall: model.tool_call,
             outputText: model.modalities?.output?.includes('text') ?? false,
             status: model.status ?? 'active'
           });
-        }
-      }
+        });
+      });
 
       return capMap;
     } catch (e) {

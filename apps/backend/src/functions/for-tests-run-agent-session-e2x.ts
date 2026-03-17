@@ -336,9 +336,10 @@ export async function forTestsRunAgentSessionE2x(item: {
 
     // Log event summary
     let eventTypeCounts: Record<string, number> = {};
-    for (let ev of sse.events) {
-      eventTypeCounts[ev.eventType] = (eventTypeCounts[ev.eventType] || 0) + 1;
-    }
+    sse.events.forEach(sseEvent => {
+      eventTypeCounts[sseEvent.eventType] =
+        (eventTypeCounts[sseEvent.eventType] || 0) + 1;
+    });
     console.log(
       `[test] event summary (${sse.events.length} total): ${JSON.stringify(eventTypeCounts, null, 2)}`
     );

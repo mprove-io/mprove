@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { and, eq, inArray } from 'drizzle-orm';
+import pIteration from 'p-iteration';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { sessionsTable } from '#backend/drizzle/postgres/schema/sessions.js';
@@ -13,6 +14,9 @@ import { SessionStatusEnum } from '#common/enums/session-status.enum';
 import { SessionTypeEnum } from '#common/enums/session-type.enum';
 import { ServerError } from '#common/models/server-error';
 import { WithTraceSpan } from '#node-common/decorators/with-trace-span.decorator';
+
+const { forEachSeries } = pIteration;
+
 import { AgentSandboxService } from './agent/agent-sandbox.service';
 import { AgentStreamOpencodeService } from './agent/agent-stream-opencode.service';
 import { NotesService } from './db/notes.service';
@@ -153,7 +157,7 @@ export class TasksService {
         ...new Set(sessions.filter(s => s.sandboxId).map(s => s.projectId))
       ];
 
-      for (let projectId of uniqueProjectIds) {
+      await forEachSeries(uniqueProjectIds, async projectId => {
         try {
           let project = await this.projectsService.getProjectCheckExists({
             projectId: projectId
@@ -167,7 +171,7 @@ export class TasksService {
               e2bApiKey: project.e2bApiKey
             });
 
-          for (let sessionId of pausedSessionIds) {
+          await forEachSeries(pausedSessionIds, async sessionId => {
             try {
               await this.agentStreamService.publishReloadSession({
                 sessionId: sessionId
@@ -184,7 +188,7 @@ export class TasksService {
                 cs: this.cs
               });
             }
-          }
+          });
         } catch (e) {
           logToConsoleBackend({
             log: new ServerError({
@@ -197,7 +201,7 @@ export class TasksService {
             cs: this.cs
           });
         }
-      }
+      });
 
       this.isRunningSyncEditorSessionsStatus = false;
     }
@@ -213,7 +217,7 @@ export class TasksService {
         let sessionIdsToPause =
           await this.agentSandboxService.getEditorSessionsToPause();
 
-        for (let sessionId of sessionIdsToPause) {
+        await forEachSeries(sessionIdsToPause, async sessionId => {
           try {
             await this.agentStreamService.publishStopSessionStream({
               sessionId: sessionId
@@ -237,7 +241,7 @@ export class TasksService {
               cs: this.cs
             });
           }
-        }
+        });
       } catch (e) {
         logToConsoleBackend({
           log: new ServerError({

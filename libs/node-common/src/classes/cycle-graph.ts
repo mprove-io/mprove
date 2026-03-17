@@ -4,9 +4,9 @@ export class CycleGraph {
   add(node: string, deps: string[]) {
     let existing = this.edges.get(node) || [];
     this.edges.set(node, [...existing, ...deps]);
-    for (let dep of deps) {
+    deps.forEach(dep => {
       if (!this.edges.has(dep)) this.edges.set(dep, []);
-    }
+    });
   }
 
   hasCycle(): boolean {

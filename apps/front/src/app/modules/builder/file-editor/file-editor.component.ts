@@ -321,12 +321,12 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
           let maxLine = -Infinity;
 
           // Find the overall line range
-          for (let range of ranges) {
+          ranges.forEach(range => {
             let startLine = view.state.doc.lineAt(range.from).number;
             let endLine = view.state.doc.lineAt(range.to).number;
             minLine = Math.min(minLine, startLine);
             maxLine = Math.max(maxLine, endLine);
-          }
+          });
 
           // Collect lines and check if all are commented
           let allCommented = true;
@@ -359,7 +359,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
 
           // Apply changes based on state
           let shouldUncomment = allCommented;
-          for (let info of lineInfos) {
+          lineInfos.forEach(info => {
             let newLineText: string;
             if (shouldUncomment) {
               // Uncomment: Remove prefix from most left
@@ -379,7 +379,7 @@ export class FileEditorComponent implements OnInit, OnDestroy, AfterViewInit {
                 insert: newLineText
               });
             }
-          }
+          });
         }
 
         if (changes.length > 0) {

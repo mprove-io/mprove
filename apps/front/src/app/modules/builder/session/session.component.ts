@@ -244,9 +244,9 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.allEventsExpanded = !this.allEventsExpanded;
     let expanded: Record<string, boolean> = {};
     if (this.allEventsExpanded) {
-      for (let event of this.events) {
+      this.events.forEach(event => {
         expanded[event.eventId] = true;
-      }
+      });
     }
     this.debugExpandedEvents = expanded;
     this.uiQuery.updatePart({

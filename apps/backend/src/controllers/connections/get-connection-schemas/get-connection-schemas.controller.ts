@@ -1,6 +1,10 @@
 import { Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { and, eq, inArray, or, sql } from 'drizzle-orm';
+import pIteration from 'p-iteration';
+
+const { forEachSeries } = pIteration;
+
 import { AttachUser } from '#backend/decorators/attach-user.decorator';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -196,7 +200,7 @@ export class GetConnectionSchemasController {
       if (connectionsToUpdate.length > 0) {
         let serverTs = makeTsNumber();
 
-        for (let c of connectionsToUpdate) {
+        await forEachSeries(connectionsToUpdate, async c => {
           let connectionSt: ConnectionSt = { options: c.options };
           let connectionLt: ConnectionLt = { schema: c.schema };
 
@@ -209,7 +213,7 @@ export class GetConnectionSchemasController {
           await this.db.drizzle.execute(
             sql`UPDATE connections SET lt = ${JSON.stringify(entProps.lt)}::json, server_ts = ${serverTs} WHERE connection_full_id = ${c.connectionFullId}`
           );
-        }
+        });
       }
 
       connectionSchemaItems = schemaResults;

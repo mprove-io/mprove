@@ -96,7 +96,7 @@ export async function checkStoreApiHostname(item: { hostname: string }) {
       });
     }
 
-    for (let record of records) {
+    records.forEach(record => {
       let resolvedParsedIp: any;
 
       try {
@@ -113,7 +113,7 @@ export async function checkStoreApiHostname(item: { hostname: string }) {
           resolvedRecordAddress: record.address
         });
       }
-    }
+    });
   }
 }
 

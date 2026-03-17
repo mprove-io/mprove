@@ -631,9 +631,13 @@ export class DrizzlePacker {
 
     if (isDefined(insOrUpdEnts)) {
       if (insOrUpdEnts.avatars.length > 0) {
-        insOrUpdEnts.avatars = Array.from(
-          new Set(insOrUpdEnts.avatars.map(x => x.userId))
-        ).map(id => insOrUpdEnts.avatars.find(x => x.userId === id));
+        let uniqueAvatarUserIds = [
+          ...new Set(insOrUpdEnts.avatars.map(x => x.userId))
+        ];
+
+        insOrUpdEnts.avatars = uniqueAvatarUserIds.map(id =>
+          insOrUpdEnts.avatars.find(x => x.userId === id)
+        );
 
         insOrUpdEnts.avatars = setUndefinedToNull({
           ents: insOrUpdEnts.avatars,
@@ -650,9 +654,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.branches.length > 0) {
-        insOrUpdEnts.branches = Array.from(
-          new Set(insOrUpdEnts.branches.map(x => x.branchFullId))
-        ).map(id => insOrUpdEnts.branches.find(x => x.branchFullId === id));
+        let uniqueBranchFullIds = [
+          ...new Set(insOrUpdEnts.branches.map(x => x.branchFullId))
+        ];
+
+        insOrUpdEnts.branches = uniqueBranchFullIds.map(id =>
+          insOrUpdEnts.branches.find(x => x.branchFullId === id)
+        );
 
         insOrUpdEnts.branches = setUndefinedToNull({
           ents: insOrUpdEnts.branches,
@@ -669,9 +677,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.bridges.length > 0) {
-        insOrUpdEnts.bridges = Array.from(
-          new Set(insOrUpdEnts.bridges.map(x => x.bridgeFullId))
-        ).map(id => insOrUpdEnts.bridges.find(x => x.bridgeFullId === id));
+        let uniqueBridgeFullIds = [
+          ...new Set(insOrUpdEnts.bridges.map(x => x.bridgeFullId))
+        ];
+
+        insOrUpdEnts.bridges = uniqueBridgeFullIds.map(id =>
+          insOrUpdEnts.bridges.find(x => x.bridgeFullId === id)
+        );
 
         insOrUpdEnts.bridges = setUndefinedToNull({
           ents: insOrUpdEnts.bridges,
@@ -688,9 +700,11 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.connections.length > 0) {
-        insOrUpdEnts.connections = Array.from(
-          new Set(insOrUpdEnts.connections.map(x => x.connectionFullId))
-        ).map(id =>
+        let uniqueConnectionFullIds = [
+          ...new Set(insOrUpdEnts.connections.map(x => x.connectionFullId))
+        ];
+
+        insOrUpdEnts.connections = uniqueConnectionFullIds.map(id =>
           insOrUpdEnts.connections.find(x => x.connectionFullId === id)
         );
 
@@ -709,9 +723,11 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.dashboards.length > 0) {
-        insOrUpdEnts.dashboards = Array.from(
-          new Set(insOrUpdEnts.dashboards.map(x => x.dashboardFullId))
-        ).map(id =>
+        let uniqueDashboardFullIds = [
+          ...new Set(insOrUpdEnts.dashboards.map(x => x.dashboardFullId))
+        ];
+
+        insOrUpdEnts.dashboards = uniqueDashboardFullIds.map(id =>
           insOrUpdEnts.dashboards.find(x => x.dashboardFullId === id)
         );
 
@@ -730,9 +746,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.dconfigs.length > 0) {
-        insOrUpdEnts.dconfigs = Array.from(
-          new Set(insOrUpdEnts.dconfigs.map(x => x.dconfigId))
-        ).map(id => insOrUpdEnts.dconfigs.find(x => x.dconfigId === id));
+        let uniqueDconfigIds = [
+          ...new Set(insOrUpdEnts.dconfigs.map(x => x.dconfigId))
+        ];
+
+        insOrUpdEnts.dconfigs = uniqueDconfigIds.map(id =>
+          insOrUpdEnts.dconfigs.find(x => x.dconfigId === id)
+        );
 
         insOrUpdEnts.dconfigs = setUndefinedToNull({
           ents: insOrUpdEnts.dconfigs,
@@ -749,9 +769,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.uconfigs.length > 0) {
-        insOrUpdEnts.uconfigs = Array.from(
-          new Set(insOrUpdEnts.uconfigs.map(x => x.uconfigId))
-        ).map(id => insOrUpdEnts.uconfigs.find(x => x.uconfigId === id));
+        let uniqueUconfigIds = [
+          ...new Set(insOrUpdEnts.uconfigs.map(x => x.uconfigId))
+        ];
+
+        insOrUpdEnts.uconfigs = uniqueUconfigIds.map(id =>
+          insOrUpdEnts.uconfigs.find(x => x.uconfigId === id)
+        );
 
         insOrUpdEnts.uconfigs = setUndefinedToNull({
           ents: insOrUpdEnts.uconfigs,
@@ -768,9 +792,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.envs.length > 0) {
-        insOrUpdEnts.envs = Array.from(
-          new Set(insOrUpdEnts.envs.map(x => x.envFullId))
-        ).map(id => insOrUpdEnts.envs.find(x => x.envFullId === id));
+        let uniqueEnvFullIds = [
+          ...new Set(insOrUpdEnts.envs.map(x => x.envFullId))
+        ];
+
+        insOrUpdEnts.envs = uniqueEnvFullIds.map(id =>
+          insOrUpdEnts.envs.find(x => x.envFullId === id)
+        );
 
         insOrUpdEnts.envs = setUndefinedToNull({
           ents: insOrUpdEnts.envs,
@@ -787,9 +815,11 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.kits.length > 0) {
-        insOrUpdEnts.kits = Array.from(
-          new Set(insOrUpdEnts.kits.map(x => x.kitId))
-        ).map(id => insOrUpdEnts.kits.find(x => x.kitId === id));
+        let uniqueKitIds = [...new Set(insOrUpdEnts.kits.map(x => x.kitId))];
+
+        insOrUpdEnts.kits = uniqueKitIds.map(id =>
+          insOrUpdEnts.kits.find(x => x.kitId === id)
+        );
 
         insOrUpdEnts.kits = setUndefinedToNull({
           ents: insOrUpdEnts.kits,
@@ -806,9 +836,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.mconfigs.length > 0) {
-        insOrUpdEnts.mconfigs = Array.from(
-          new Set(insOrUpdEnts.mconfigs.map(x => x.mconfigId))
-        ).map(id => insOrUpdEnts.mconfigs.find(x => x.mconfigId === id));
+        let uniqueMconfigIds = [
+          ...new Set(insOrUpdEnts.mconfigs.map(x => x.mconfigId))
+        ];
+
+        insOrUpdEnts.mconfigs = uniqueMconfigIds.map(id =>
+          insOrUpdEnts.mconfigs.find(x => x.mconfigId === id)
+        );
 
         insOrUpdEnts.mconfigs = setUndefinedToNull({
           ents: insOrUpdEnts.mconfigs,
@@ -825,9 +859,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.members.length > 0) {
-        insOrUpdEnts.members = Array.from(
-          new Set(insOrUpdEnts.members.map(x => x.memberFullId))
-        ).map(id => insOrUpdEnts.members.find(x => x.memberFullId === id));
+        let uniqueMemberFullIds = [
+          ...new Set(insOrUpdEnts.members.map(x => x.memberFullId))
+        ];
+
+        insOrUpdEnts.members = uniqueMemberFullIds.map(id =>
+          insOrUpdEnts.members.find(x => x.memberFullId === id)
+        );
 
         insOrUpdEnts.members = setUndefinedToNull({
           ents: insOrUpdEnts.members,
@@ -844,9 +882,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.models.length > 0) {
-        insOrUpdEnts.models = Array.from(
-          new Set(insOrUpdEnts.models.map(x => x.modelFullId))
-        ).map(id => insOrUpdEnts.models.find(x => x.modelFullId === id));
+        let uniqueModelFullIds = [
+          ...new Set(insOrUpdEnts.models.map(x => x.modelFullId))
+        ];
+
+        insOrUpdEnts.models = uniqueModelFullIds.map(id =>
+          insOrUpdEnts.models.find(x => x.modelFullId === id)
+        );
 
         insOrUpdEnts.models = setUndefinedToNull({
           ents: insOrUpdEnts.models,
@@ -863,9 +905,11 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.notes.length > 0) {
-        insOrUpdEnts.notes = Array.from(
-          new Set(insOrUpdEnts.notes.map(x => x.noteId))
-        ).map(id => insOrUpdEnts.notes.find(x => x.noteId === id));
+        let uniqueNoteIds = [...new Set(insOrUpdEnts.notes.map(x => x.noteId))];
+
+        insOrUpdEnts.notes = uniqueNoteIds.map(id =>
+          insOrUpdEnts.notes.find(x => x.noteId === id)
+        );
 
         insOrUpdEnts.notes = setUndefinedToNull({
           ents: insOrUpdEnts.notes,
@@ -882,9 +926,11 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.orgs.length > 0) {
-        insOrUpdEnts.orgs = Array.from(
-          new Set(insOrUpdEnts.orgs.map(x => x.orgId))
-        ).map(id => insOrUpdEnts.orgs.find(x => x.orgId === id));
+        let uniqueOrgIds = [...new Set(insOrUpdEnts.orgs.map(x => x.orgId))];
+
+        insOrUpdEnts.orgs = uniqueOrgIds.map(id =>
+          insOrUpdEnts.orgs.find(x => x.orgId === id)
+        );
 
         insOrUpdEnts.orgs = setUndefinedToNull({
           ents: insOrUpdEnts.orgs,
@@ -901,9 +947,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.projects.length > 0) {
-        insOrUpdEnts.projects = Array.from(
-          new Set(insOrUpdEnts.projects.map(x => x.projectId))
-        ).map(id => insOrUpdEnts.projects.find(x => x.projectId === id));
+        let uniqueProjectIds = [
+          ...new Set(insOrUpdEnts.projects.map(x => x.projectId))
+        ];
+
+        insOrUpdEnts.projects = uniqueProjectIds.map(id =>
+          insOrUpdEnts.projects.find(x => x.projectId === id)
+        );
 
         insOrUpdEnts.projects = setUndefinedToNull({
           ents: insOrUpdEnts.projects,
@@ -920,9 +970,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.queries.length > 0) {
-        insOrUpdEnts.queries = Array.from(
-          new Set(insOrUpdEnts.queries.map(x => x.queryId))
-        ).map(id => insOrUpdEnts.queries.find(x => x.queryId === id));
+        let uniqueQueryIds = [
+          ...new Set(insOrUpdEnts.queries.map(x => x.queryId))
+        ];
+
+        insOrUpdEnts.queries = uniqueQueryIds.map(id =>
+          insOrUpdEnts.queries.find(x => x.queryId === id)
+        );
 
         insOrUpdEnts.queries = setUndefinedToNull({
           ents: insOrUpdEnts.queries,
@@ -939,9 +993,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.reports.length > 0) {
-        insOrUpdEnts.reports = Array.from(
-          new Set(insOrUpdEnts.reports.map(x => x.reportFullId))
-        ).map(id => insOrUpdEnts.reports.find(x => x.reportFullId === id));
+        let uniqueReportFullIds = [
+          ...new Set(insOrUpdEnts.reports.map(x => x.reportFullId))
+        ];
+
+        insOrUpdEnts.reports = uniqueReportFullIds.map(id =>
+          insOrUpdEnts.reports.find(x => x.reportFullId === id)
+        );
 
         insOrUpdEnts.reports = setUndefinedToNull({
           ents: insOrUpdEnts.reports,
@@ -958,9 +1016,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.structs.length > 0) {
-        insOrUpdEnts.structs = Array.from(
-          new Set(insOrUpdEnts.structs.map(x => x.structId))
-        ).map(id => insOrUpdEnts.structs.find(x => x.structId === id));
+        let uniqueStructIds = [
+          ...new Set(insOrUpdEnts.structs.map(x => x.structId))
+        ];
+
+        insOrUpdEnts.structs = uniqueStructIds.map(id =>
+          insOrUpdEnts.structs.find(x => x.structId === id)
+        );
 
         insOrUpdEnts.structs = setUndefinedToNull({
           ents: insOrUpdEnts.structs,
@@ -977,9 +1039,11 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.users.length > 0) {
-        insOrUpdEnts.users = Array.from(
-          new Set(insOrUpdEnts.users.map(x => x.userId))
-        ).map(id => insOrUpdEnts.users.find(x => x.userId === id));
+        let uniqueUserIds = [...new Set(insOrUpdEnts.users.map(x => x.userId))];
+
+        insOrUpdEnts.users = uniqueUserIds.map(id =>
+          insOrUpdEnts.users.find(x => x.userId === id)
+        );
 
         insOrUpdEnts.users = setUndefinedToNull({
           ents: insOrUpdEnts.users,
@@ -996,9 +1060,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.charts.length > 0) {
-        insOrUpdEnts.charts = Array.from(
-          new Set(insOrUpdEnts.charts.map(x => x.chartFullId))
-        ).map(id => insOrUpdEnts.charts.find(x => x.chartFullId === id));
+        let uniqueChartFullIds = [
+          ...new Set(insOrUpdEnts.charts.map(x => x.chartFullId))
+        ];
+
+        insOrUpdEnts.charts = uniqueChartFullIds.map(id =>
+          insOrUpdEnts.charts.find(x => x.chartFullId === id)
+        );
 
         insOrUpdEnts.charts = setUndefinedToNull({
           ents: insOrUpdEnts.charts,
@@ -1015,9 +1083,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.ocEvents.length > 0) {
-        insOrUpdEnts.ocEvents = Array.from(
-          new Set(insOrUpdEnts.ocEvents.map(x => x.eventId))
-        ).map(id => insOrUpdEnts.ocEvents.find(x => x.eventId === id));
+        let uniqueEventIds = [
+          ...new Set(insOrUpdEnts.ocEvents.map(x => x.eventId))
+        ];
+
+        insOrUpdEnts.ocEvents = uniqueEventIds.map(id =>
+          insOrUpdEnts.ocEvents.find(x => x.eventId === id)
+        );
 
         insOrUpdEnts.ocEvents = setUndefinedToNull({
           ents: insOrUpdEnts.ocEvents,
@@ -1034,9 +1106,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.sessions.length > 0) {
-        insOrUpdEnts.sessions = Array.from(
-          new Set(insOrUpdEnts.sessions.map(x => x.sessionId))
-        ).map(id => insOrUpdEnts.sessions.find(x => x.sessionId === id));
+        let uniqueSessionIds = [
+          ...new Set(insOrUpdEnts.sessions.map(x => x.sessionId))
+        ];
+
+        insOrUpdEnts.sessions = uniqueSessionIds.map(id =>
+          insOrUpdEnts.sessions.find(x => x.sessionId === id)
+        );
 
         insOrUpdEnts.sessions = setUndefinedToNull({
           ents: insOrUpdEnts.sessions,
@@ -1053,9 +1129,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.ocSessions.length > 0) {
-        insOrUpdEnts.ocSessions = Array.from(
-          new Set(insOrUpdEnts.ocSessions.map(x => x.sessionId))
-        ).map(id => insOrUpdEnts.ocSessions.find(x => x.sessionId === id));
+        let uniqueOcSessionIds = [
+          ...new Set(insOrUpdEnts.ocSessions.map(x => x.sessionId))
+        ];
+
+        insOrUpdEnts.ocSessions = uniqueOcSessionIds.map(id =>
+          insOrUpdEnts.ocSessions.find(x => x.sessionId === id)
+        );
 
         insOrUpdEnts.ocSessions = setUndefinedToNull({
           ents: insOrUpdEnts.ocSessions,
@@ -1072,9 +1152,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.ocMessages.length > 0) {
-        insOrUpdEnts.ocMessages = Array.from(
-          new Set(insOrUpdEnts.ocMessages.map(x => x.messageId))
-        ).map(id => insOrUpdEnts.ocMessages.find(x => x.messageId === id));
+        let uniqueMessageIds = [
+          ...new Set(insOrUpdEnts.ocMessages.map(x => x.messageId))
+        ];
+
+        insOrUpdEnts.ocMessages = uniqueMessageIds.map(id =>
+          insOrUpdEnts.ocMessages.find(x => x.messageId === id)
+        );
 
         insOrUpdEnts.ocMessages = setUndefinedToNull({
           ents: insOrUpdEnts.ocMessages,
@@ -1091,9 +1175,13 @@ export class DrizzlePacker {
       }
 
       if (insOrUpdEnts.ocParts.length > 0) {
-        insOrUpdEnts.ocParts = Array.from(
-          new Set(insOrUpdEnts.ocParts.map(x => x.partId))
-        ).map(id => insOrUpdEnts.ocParts.find(x => x.partId === id));
+        let uniquePartIds = [
+          ...new Set(insOrUpdEnts.ocParts.map(x => x.partId))
+        ];
+
+        insOrUpdEnts.ocParts = uniquePartIds.map(id =>
+          insOrUpdEnts.ocParts.find(x => x.partId === id)
+        );
 
         insOrUpdEnts.ocParts = setUndefinedToNull({
           ents: insOrUpdEnts.ocParts,
@@ -1116,9 +1204,13 @@ export class DrizzlePacker {
 
     if (isDefined(insOrDoNothingEnts)) {
       if (insOrDoNothingEnts.queries.length > 0) {
-        insOrDoNothingEnts.queries = Array.from(
-          new Set(insOrDoNothingEnts.queries.map(x => x.queryId))
-        ).map(id => insOrDoNothingEnts.queries.find(x => x.queryId === id));
+        let uniqueDoNothingQueryIds = [
+          ...new Set(insOrDoNothingEnts.queries.map(x => x.queryId))
+        ];
+
+        insOrDoNothingEnts.queries = uniqueDoNothingQueryIds.map(id =>
+          insOrDoNothingEnts.queries.find(x => x.queryId === id)
+        );
 
         insOrDoNothingEnts.queries = setUndefinedToNull({
           ents: insOrDoNothingEnts.queries,

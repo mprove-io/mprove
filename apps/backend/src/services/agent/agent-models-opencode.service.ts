@@ -180,7 +180,7 @@ export class AgentModelsOpencodeService {
 
     let models: AgentModelApi[] = [];
 
-    for (let [providerId, mdProvider] of Object.entries(modelsDevResponse)) {
+    Object.entries(modelsDevResponse).forEach(([providerId, mdProvider]) => {
       let label = allowedMap.get(providerId);
       let isAllowed = label !== undefined;
       let isIncluded = includeProviders.has(providerId);
@@ -188,7 +188,7 @@ export class AgentModelsOpencodeService {
       if (isAllowed && isIncluded) {
         let transformed = fromModelsDevProvider(mdProvider);
 
-        for (let model of Object.values(transformed.models)) {
+        Object.values(transformed.models).forEach(model => {
           let isExcluded =
             model.status === 'deprecated' || model.status === 'alpha';
 
@@ -207,9 +207,9 @@ export class AgentModelsOpencodeService {
               contextLimit: model.limit?.context
             });
           }
-        }
+        });
       }
-    }
+    });
 
     return models;
   }

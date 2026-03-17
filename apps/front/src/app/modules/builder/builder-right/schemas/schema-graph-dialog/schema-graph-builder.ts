@@ -167,9 +167,9 @@ export async function buildAllTablesGraph(item: {
 
   // Build table lookup using composite keys
   let tableMap = new Map<string, GraphTable>();
-  for (let table of allTables) {
+  allTables.forEach(table => {
     tableMap.set(table.tableFullId, table);
-  }
+  });
 
   // Collect all edges (relationships) between tables
   interface EdgeInfo {
@@ -184,12 +184,12 @@ export async function buildAllTablesGraph(item: {
   let edgeInfos: EdgeInfo[] = [];
   let connectedPairs = new Set<string>();
 
-  for (let table of allTables) {
+  allTables.forEach(table => {
     let sourceKey = table.tableFullId;
 
-    for (let col of table.columns) {
+    table.columns.forEach(col => {
       if (col.combinedReferences) {
-        for (let ref of col.combinedReferences) {
+        col.combinedReferences.forEach(ref => {
           let refSchemaName = ref.referencedSchemaName ?? table.schemaName;
           let targetKey = tableKey({
             connectionId: table.connectionId,
@@ -199,17 +199,17 @@ export async function buildAllTablesGraph(item: {
 
           let hasTarget = tableMap.has(targetKey);
           if (!hasTarget) {
-            continue;
+            return;
           }
           let isSelfRef = targetKey === sourceKey;
           if (isSelfRef) {
-            continue;
+            return;
           }
 
           let pairKey = `${sourceKey}:${col.columnName}->${targetKey}:${ref.referencedColumnName}`;
           let alreadyAdded = connectedPairs.has(pairKey);
           if (alreadyAdded) {
-            continue;
+            return;
           }
           connectedPairs.add(pairKey);
 
@@ -221,10 +221,10 @@ export async function buildAllTablesGraph(item: {
             relationshipType: ref.relationshipType,
             isForeignKey: ref.isForeignKey
           });
-        }
+        });
       }
-    }
-  }
+    });
+  });
 
   // Compute layout with vizdom
   await ensureVizdomInitialized();
@@ -241,7 +241,7 @@ export async function buildAllTablesGraph(item: {
   let vertexRefs = new Map<string, any>();
   let nodeHeights = new Map<string, number>();
 
-  for (let table of allTables) {
+  allTables.forEach(table => {
     let indexCount = showIndexes ? table.indexes.length : 0;
     let height = estimateNodeHeight({
       columnCount: table.columns.length,
@@ -262,16 +262,16 @@ export async function buildAllTablesGraph(item: {
       { compute_bounding_box: false }
     );
     vertexRefs.set(table.tableFullId, vertexRef);
-  }
+  });
 
   // Add edges to vizdom graph for layout
-  for (let edgeInfo of edgeInfos) {
+  edgeInfos.forEach(edgeInfo => {
     let sourceRef = vertexRefs.get(edgeInfo.sourceKey);
     let targetRef = vertexRefs.get(edgeInfo.targetKey);
     if (sourceRef && targetRef) {
       graph.new_edge(sourceRef, targetRef);
     }
-  }
+  });
 
   let positioned = graph.layout();
   let jsonResult = positioned.to_json().to_obj();
@@ -279,7 +279,7 @@ export async function buildAllTablesGraph(item: {
   // Build position map from vizdom output
   let positionMap = new Map<string, { x: number; y: number }>();
 
-  for (let vertex of jsonResult.nodes) {
+  jsonResult.nodes.forEach(vertex => {
     let vertexId = vertex.id;
     if (vertexId) {
       positionMap.set(vertexId, {
@@ -287,13 +287,13 @@ export async function buildAllTablesGraph(item: {
         y: vertex.y - vertex.height / 2
       });
     }
-  }
+  });
 
   // Build ngx-vflow nodes
   let nodeDataSignals = new Map<string, WritableSignal<MapNodeData>>();
   let nodes: Node[] = [];
 
-  for (let table of allTables) {
+  allTables.forEach(table => {
     let pos = positionMap.get(table.tableFullId) || { x: 0, y: 0 };
     let height = nodeHeights.get(table.tableFullId);
 
@@ -342,7 +342,7 @@ export async function buildAllTablesGraph(item: {
       height: signal(height),
       data: dataSignal
     });
-  }
+  });
 
   // Build ngx-vflow edges
   let edgeDataSignals = new Map<string, WritableSignal<MapEdgeData>>();
@@ -350,7 +350,7 @@ export async function buildAllTablesGraph(item: {
   let edges: Edge[] = [];
   let edgeIndex = 0;
 
-  for (let edgeInfo of edgeInfos) {
+  edgeInfos.forEach(edgeInfo => {
     let sourcePos = positionMap.get(edgeInfo.sourceKey) || { x: 0, y: 0 };
     let targetPos = positionMap.get(edgeInfo.targetKey) || { x: 0, y: 0 };
 
@@ -419,7 +419,7 @@ export async function buildAllTablesGraph(item: {
       data: edgeDataSignal,
       edgeLabels: signal({})
     });
-  }
+  });
 
   return {
     nodes: nodes,

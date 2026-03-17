@@ -6,6 +6,7 @@ import type { CoreMessage } from 'ai';
 import { generateText, streamText } from 'ai';
 import { asc, eq, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -21,6 +22,9 @@ import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
+
+const { forEachSeries } = pIteration;
+
 import { TabService } from '../tab.service';
 import { AgentDrainService } from './agent-drain.service';
 import { AgentModelsAiService } from './agent-models-ai.service';
@@ -681,9 +685,11 @@ Your output must be:
   }
 
   async refreshActiveLocks(): Promise<void> {
-    for (let sessionId of this.activeStreams.keys()) {
+    let activeStreamSessionIds = [...this.activeStreams.keys()];
+
+    await forEachSeries(activeStreamSessionIds, async sessionId => {
       await this.refreshStreamLock({ sessionId: sessionId });
-    }
+    });
   }
 
   async loadMessageHistory(item: {
@@ -709,18 +715,18 @@ Your output must be:
 
     let partsByMessageId = new Map<string, typeof partTabs>();
 
-    for (let part of partTabs) {
+    partTabs.forEach(part => {
       let existing = partsByMessageId.get(part.messageId);
       if (existing) {
         existing.push(part);
       } else {
         partsByMessageId.set(part.messageId, [part]);
       }
-    }
+    });
 
     let coreMessages: CoreMessage[] = [];
 
-    for (let msg of messageTabs) {
+    messageTabs.forEach(msg => {
       let msgParts = partsByMessageId.get(msg.messageId) || [];
       let textContent = msgParts
         .filter(p => p.type === 'text')
@@ -732,7 +738,7 @@ Your output must be:
       } else if (msg.role === 'assistant') {
         coreMessages.push({ role: 'assistant', content: textContent });
       }
-    }
+    });
 
     return coreMessages;
   }

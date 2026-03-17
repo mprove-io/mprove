@@ -546,11 +546,8 @@ export function checkRelationships(
     // Mirror type mismatch detection
     let refs = relElement.references;
 
-    for (let i = 0; i < refs.length; i++) {
-      for (let j = i + 1; j < refs.length; j++) {
-        let refA = refs[i];
-        let refB = refs[j];
-
+    refs.forEach((refA, i) => {
+      refs.slice(i + 1).forEach(refB => {
         let aFrom = refA.from.toString();
         let aTo = refA.to.toString();
         let bFrom = refB.from.toString();
@@ -593,8 +590,8 @@ export function checkRelationships(
             );
           }
         }
-      }
-    }
+      });
+    });
   });
 
   if (errorsOnStart !== item.errors.length) {

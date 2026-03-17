@@ -22,9 +22,9 @@ export class AgentEventsService {
 
   applyEvents(events: Event[]) {
     let state = this.sessionBundleQuery.getValue();
-    for (let event of events) {
+    events.forEach(event => {
       state = this.reduceEvent(state, event);
-    }
+    });
     this.sessionBundleQuery.updatePart(state);
   }
 

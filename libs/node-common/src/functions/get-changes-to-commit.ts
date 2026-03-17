@@ -42,12 +42,12 @@ export async function getChangesToCommit(item: {
 
   let uniquePaths = new Set<string>();
   let files: FileWithStatusType[] = [];
-  for (let file of allFiles) {
+  allFiles.forEach(file => {
     if (!uniquePaths.has(file.path)) {
       uniquePaths.add(file.path);
       files.push(file);
     }
-  }
+  });
 
   await forEachSeries(files, async (file: FileWithStatusType) => {
     let path = file.path;

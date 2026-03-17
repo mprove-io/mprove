@@ -40,12 +40,12 @@ export async function getSyncFiles(item: {
 
   let uniquePaths = new Set<string>();
   let files: FileWithStatusType[] = [];
-  for (let file of allFiles) {
+  allFiles.forEach(file => {
     if (!uniquePaths.has(file.path)) {
       uniquePaths.add(file.path);
       files.push(file);
     }
-  }
+  });
 
   await forEachSeries(files, async (x: FileWithStatusType) => {
     let path = x.path;

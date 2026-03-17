@@ -1,6 +1,7 @@
 import { BigQuery, BigQueryOptions, JobResponse } from '@google-cloud/bigquery';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type {
   ConnectionTab,
@@ -23,6 +24,8 @@ import { QueryEstimate } from '#common/interfaces/backend/query-estimate';
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { ServerError } from '#common/models/server-error';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class BigQueryService {
@@ -158,7 +161,7 @@ export class BigQueryService {
         constraint_type: string;
       }[] = [];
 
-      for (let dataset of datasets) {
+      await forEachSeries(datasets, async dataset => {
         let datasetId = dataset.id;
 
         try {
@@ -243,7 +246,7 @@ export class BigQueryService {
             cs: this.cs
           });
         }
-      }
+      });
 
       let tables: SchemaTable[] = allTablesRows.map(row => {
         let tableConstraintRows = allConstraintRows.filter(

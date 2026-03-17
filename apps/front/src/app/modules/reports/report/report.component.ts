@@ -455,7 +455,7 @@ export class ReportComponent {
   rowDragEndHandle(event: RowDragEndEvent<DataRow>): void {
     let gridApi = event.api;
 
-    let rowIds = [];
+    let rowIds: string[] = [];
     let displayedRowsCount = gridApi.getDisplayedRowCount();
     for (let i = 0; i < displayedRowsCount; i++) {
       let rowNode = gridApi.getDisplayedRowAtIndex(i);

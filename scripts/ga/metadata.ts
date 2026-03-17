@@ -67,7 +67,7 @@ function toSnakeCase(str: string): string {
 }
 
 function makeYaml(data: any): string {
-  let groups = new Set<string>();
+  let groups: string[] = [];
   let fields: any[] = [];
 
   data.dimensions?.forEach((dimension: any) => {
@@ -102,7 +102,9 @@ function makeYaml(data: any): string {
         'nthMinute'
       ].indexOf(apiName) < 0
     ) {
-      groups.add(group);
+      if (!groups.includes(group)) {
+        groups.push(group);
+      }
 
       fields.push({
         dimension: toSnakeCase(apiName),
@@ -124,7 +126,9 @@ function makeYaml(data: any): string {
     let group = toSnakeCase(metric.category);
 
     if (group !== 'cohort') {
-      groups.add(group);
+      if (!groups.includes(group)) {
+        groups.push(group);
+      }
 
       fields.push({
         measure: toSnakeCase(apiName),
@@ -141,7 +145,7 @@ function makeYaml(data: any): string {
   });
 
   let output = {
-    field_groups: Array.from(groups)
+    field_groups: groups
       .map((g: string) => ({
         group: g,
         label: g
@@ -165,7 +169,7 @@ function makeYaml(data: any): string {
   let formatted: string[] = [];
   let inFieldGroups = false;
 
-  for (let line of lines) {
+  lines.forEach(line => {
     if (line.trim() === 'field_groups:') inFieldGroups = true;
     if (line.trim() === 'fields:') inFieldGroups = false;
 
@@ -179,7 +183,7 @@ function makeYaml(data: any): string {
       }
     }
     formatted.push(line);
-  }
+  });
 
   return formatted.join('\n').trim() + '\n';
 }

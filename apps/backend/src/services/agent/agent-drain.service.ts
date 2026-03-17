@@ -19,6 +19,7 @@ import type {
   QuestionRequest
 } from '@opencode-ai/sdk/v2';
 import { eq, max, sql } from 'drizzle-orm';
+import pIteration from 'p-iteration';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
 import { DRIZZLE } from '#backend/drizzle/drizzle.module';
@@ -37,6 +38,8 @@ import { OcMessagesService } from '../db/oc-messages.service';
 import { OcPartsService } from '../db/oc-parts.service';
 import { SessionsService } from '../db/sessions.service';
 import { AgentSseService } from './agent-sse.service';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class AgentDrainService {
@@ -96,12 +99,16 @@ export class AgentDrainService {
 
   async drainAllQueues(): Promise<string[]> {
     let safePauseSessionIds: string[] = [];
-    for (let sessionId of Array.from(this.pendingEvents.keys())) {
+
+    let pendingSessionIds = [...this.pendingEvents.keys()];
+
+    await forEachSeries(pendingSessionIds, async sessionId => {
       let result = await this.drainQueue({ sessionId: sessionId });
       if (result.needsSafePause) {
         safePauseSessionIds.push(sessionId);
       }
-    }
+    });
+
     return safePauseSessionIds;
   }
 
@@ -127,21 +134,23 @@ export class AgentDrainService {
 
     let uniqueMessages: OcMessageTab[] = [];
 
-    for (let item of items.filter(i => i.event.type === 'message.updated')) {
-      let props = (item.event as EventMessageUpdated).properties;
-      let tab = this.ocMessagesService.makeOcMessage({
-        messageId: props.info.id,
-        sessionId: sessionId,
-        role: props.info.role,
-        ocMessage: props.info
+    items
+      .filter(i => i.event.type === 'message.updated')
+      .forEach(item => {
+        let props = (item.event as EventMessageUpdated).properties;
+        let tab = this.ocMessagesService.makeOcMessage({
+          messageId: props.info.id,
+          sessionId: sessionId,
+          role: props.info.role,
+          ocMessage: props.info
+        });
+        let idx = uniqueMessages.findIndex(m => m.messageId === tab.messageId);
+        if (idx >= 0) {
+          uniqueMessages[idx] = tab;
+        } else {
+          uniqueMessages.push(tab);
+        }
       });
-      let idx = uniqueMessages.findIndex(m => m.messageId === tab.messageId);
-      if (idx >= 0) {
-        uniqueMessages[idx] = tab;
-      } else {
-        uniqueMessages.push(tab);
-      }
-    }
 
     let messageTabs = uniqueMessages;
 
@@ -154,13 +163,13 @@ export class AgentDrainService {
 
     // Snapshot partStates before delta accumulation for rollback on failure
     let savedParts = new Map<string, Part>();
-    for (let [k, v] of sessionParts) {
+    sessionParts.forEach((v, k) => {
       savedParts.set(k, { ...v });
-    }
+    });
 
     let touchedPartIds = new Set<string>();
 
-    for (let item of items) {
+    items.forEach(item => {
       if (item.event.type === 'message.part.updated') {
         let props = (item.event as EventMessagePartUpdated).properties;
         sessionParts.set(props.part.id, { ...props.part });
@@ -175,10 +184,10 @@ export class AgentDrainService {
           touchedPartIds.add(props.partID);
         }
       }
-    }
+    });
 
     let partTabs: OcPartTab[] = [];
-    for (let partId of touchedPartIds) {
+    touchedPartIds.forEach(partId => {
       let part = sessionParts.get(partId);
       if (part) {
         partTabs.push(
@@ -190,7 +199,7 @@ export class AgentDrainService {
           })
         );
       }
-    }
+    });
 
     let ocSessionTabs: OcSessionTab[] = [];
 
@@ -271,7 +280,7 @@ export class AgentDrainService {
           ? [...base.questions]
           : [];
 
-        for (let item of questionAskedItems) {
+        questionAskedItems.forEach(item => {
           let q = (item.event as EventQuestionAsked).properties;
           let idx = questions.findIndex(x => x.id === q.id);
           if (idx >= 0) {
@@ -279,14 +288,14 @@ export class AgentDrainService {
           } else {
             questions.push(q);
           }
-        }
+        });
 
-        for (let item of questionResolvedItems) {
+        questionResolvedItems.forEach(item => {
           let props = (
             item.event as EventQuestionReplied | EventQuestionRejected
           ).properties;
           questions = questions.filter(x => x.id !== props.requestID);
-        }
+        });
 
         if (existingIndex >= 0) {
           ocSessionTabs[existingIndex] = {
@@ -311,7 +320,7 @@ export class AgentDrainService {
           ? [...base.permissions]
           : [];
 
-        for (let item of permissionAskedItems) {
+        permissionAskedItems.forEach(item => {
           let p = (item.event as EventPermissionAsked).properties;
           let idx = permissions.findIndex(x => x.id === p.id);
           if (idx >= 0) {
@@ -319,12 +328,12 @@ export class AgentDrainService {
           } else {
             permissions.push(p);
           }
-        }
+        });
 
-        for (let item of permissionRepliedItems) {
+        permissionRepliedItems.forEach(item => {
           let props = (item.event as EventPermissionReplied).properties;
           permissions = permissions.filter(x => x.id !== props.requestID);
-        }
+        });
 
         if (existingIndex >= 0) {
           ocSessionTabs[existingIndex] = {
@@ -443,7 +452,7 @@ export class AgentDrainService {
 
     queue.splice(0, itemCount);
 
-    for (let item of items) {
+    await forEachSeries(items, async item => {
       let eventId = `${item.sessionId}_${item.eventIndex}`;
       await this.agentSseService.publish({
         sessionId: item.sessionId,
@@ -454,7 +463,7 @@ export class AgentDrainService {
           ocEvent: item.event
         }
       });
-    }
+    });
 
     let needsSafePause = false;
 

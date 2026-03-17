@@ -5,12 +5,12 @@ export function forTestsExtractDialogLines(item: {
 }): string[] {
   // First pass: collect messageID → role from message.updated events
   let messageRoles = new Map<string, string>();
-  for (let e of item.events) {
-    let oc = e.ocEvent;
+  item.events.forEach(event => {
+    let oc = event.ocEvent;
     if (oc.type === 'message.updated') {
       messageRoles.set(oc.properties.info.id, oc.properties.info.role);
     }
-  }
+  });
 
   // Second pass: deduplicate text parts by part ID, keep latest text
   let partTexts = new Map<
@@ -20,8 +20,8 @@ export function forTestsExtractDialogLines(item: {
   let errors: { order: number; line: string }[] = [];
   let orderCounter = 0;
 
-  for (let e of item.events) {
-    let oc = e.ocEvent;
+  item.events.forEach(event => {
+    let oc = event.ocEvent;
 
     if (oc.type === 'message.part.updated') {
       let part = oc.properties.part;
@@ -44,19 +44,21 @@ export function forTestsExtractDialogLines(item: {
         });
       }
     }
-  }
+  });
 
   // Build dialog lines sorted by first appearance
   let allEntries: { order: number; line: string }[] = [];
 
-  for (let [_partId, entry] of partTexts) {
+  let entries = [...partTexts.values()];
+
+  entries.forEach(entry => {
     let role = messageRoles.get(entry.messageID);
     let label = role === 'user' ? 'User' : 'Assistant';
     allEntries.push({
       order: entry.order,
       line: `=== ${label}: ${entry.text}`
     });
-  }
+  });
 
   allEntries.push(...errors);
   allEntries.sort((a, b) => a.order - b.order);

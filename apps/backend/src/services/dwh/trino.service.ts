@@ -3,6 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import retry from 'async-retry';
 import { and, eq } from 'drizzle-orm';
+import pIteration from 'p-iteration';
 import { BasicAuth, Trino } from 'trino-client';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
@@ -26,6 +27,8 @@ import {
 import { FetchSampleResult } from '#common/interfaces/to-backend/connections/fetch-sample-result';
 import { TestConnectionResult } from '#common/interfaces/to-backend/connections/to-backend-test-connection';
 import { TabService } from '../tab.service';
+
+const { forEachSeries } = pIteration;
 
 @Injectable()
 export class TrinoService {
@@ -137,9 +140,9 @@ export class TrinoService {
 
       while (queryResult !== null) {
         let dataRows = queryResult.value.data ?? [];
-        for (let row of dataRows) {
+        dataRows.forEach((row: any) => {
           outputRows.push(row as unknown[]);
-        }
+        });
         if (!queryResult.done) {
           queryResult = await result.next();
         } else {
@@ -213,9 +216,9 @@ export class TrinoService {
 
         while (catalogsQueryResult !== null) {
           let rows = catalogsQueryResult.value.data ?? [];
-          for (let row of rows) {
+          rows.forEach((row: any) => {
             catalogsOutputRows.push(row as unknown[]);
-          }
+          });
           if (!catalogsQueryResult.done) {
             catalogsQueryResult = await catalogsResult.next();
           } else {
@@ -231,7 +234,7 @@ export class TrinoService {
       let allTablesRows: { [name: string]: any }[] = [];
       let allColumnsRows: { [name: string]: any }[] = [];
 
-      for (let cat of catalogs) {
+      await forEachSeries(catalogs, async cat => {
         try {
           let tablesResult = await tc.query(`
             SELECT table_schema, table_name, table_type
@@ -246,7 +249,7 @@ export class TrinoService {
             isUndefined(tablesQueryResult?.value) ||
             isDefined(tablesQueryResult?.value?.error)
           ) {
-            continue;
+            return;
           }
 
           let tablesColumns = tablesQueryResult.value.columns;
@@ -254,9 +257,9 @@ export class TrinoService {
 
           while (tablesQueryResult !== null) {
             let rows = tablesQueryResult.value.data ?? [];
-            for (let row of rows) {
+            rows.forEach((row: any) => {
               tablesOutputRows.push(row as unknown[]);
-            }
+            });
             if (!tablesQueryResult.done) {
               tablesQueryResult = await tablesResult.next();
             } else {
@@ -285,7 +288,7 @@ export class TrinoService {
             isUndefined(columnsQueryResult?.value) ||
             isDefined(columnsQueryResult?.value?.error)
           ) {
-            continue;
+            return;
           }
 
           let columnsColumns = columnsQueryResult.value.columns;
@@ -293,9 +296,9 @@ export class TrinoService {
 
           while (columnsQueryResult !== null) {
             let rows = columnsQueryResult.value.data ?? [];
-            for (let row of rows) {
+            rows.forEach((row: any) => {
               columnsOutputRows.push(row as unknown[]);
-            }
+            });
             if (!columnsQueryResult.done) {
               columnsQueryResult = await columnsResult.next();
             } else {
@@ -313,15 +316,15 @@ export class TrinoService {
 
           let schemaPrefix = catalogDiscovered ? `${cat}.` : '';
 
-          for (let row of tablesRows) {
+          tablesRows.forEach(row => {
             row.table_schema = `${schemaPrefix}${row.table_schema}`;
             allTablesRows.push(row);
-          }
+          });
 
-          for (let row of columnsRows) {
+          columnsRows.forEach(row => {
             row.table_schema = `${schemaPrefix}${row.table_schema}`;
             allColumnsRows.push(row);
-          }
+          });
         } catch (e: any) {
           logToConsoleBackend({
             log: `Trino fetchSchema skipping catalog "${cat}": ${e.message}`,
@@ -330,7 +333,7 @@ export class TrinoService {
             cs: this.cs
           });
         }
-      }
+      });
 
       let tables: SchemaTable[] = allTablesRows.map(row => {
         let columns: SchemaColumn[] = allColumnsRows
@@ -418,9 +421,9 @@ export class TrinoService {
 
             while (queryResult !== null) {
               let rows = queryResult.value.data ?? [];
-              for (let row of rows) {
+              rows.forEach((row: any) => {
                 outputRows.push(row as unknown[]);
-              }
+              });
               if (!queryResult.done) {
                 queryResult = await result.next();
               } else {

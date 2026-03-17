@@ -141,8 +141,8 @@ export class SchemaGraphDialogComponent implements OnInit {
       { connectionId: string; schemaName: string; tables: SchemaTable[] }
     >();
 
-    for (let csItem of this.dataItem.connectionSchemaItems) {
-      for (let table of csItem.schema.tables) {
+    this.dataItem.connectionSchemaItems.forEach(csItem => {
+      csItem.schema.tables.forEach(table => {
         let key = groupKey({
           connectionId: csItem.connectionId,
           schemaName: table.schemaName
@@ -157,8 +157,8 @@ export class SchemaGraphDialogComponent implements OnInit {
           schemaGroups.set(key, group);
         }
         group.tables.push(table);
-      }
-    }
+      });
+    });
 
     this.schemaNodes = [];
 
@@ -198,17 +198,17 @@ export class SchemaGraphDialogComponent implements OnInit {
 
   getCheckedTables(): GraphTable[] {
     let checkedKeys = new Set<string>();
-    for (let schemaNode of this.schemaNodes) {
-      for (let tableNode of schemaNode.tables) {
+    this.schemaNodes.forEach(schemaNode => {
+      schemaNode.tables.forEach(tableNode => {
         if (tableNode.checked) {
           checkedKeys.add(tableNode.tableFullId);
         }
-      }
-    }
+      });
+    });
 
     let allTables: GraphTable[] = [];
-    for (let csItem of this.dataItem.connectionSchemaItems) {
-      for (let table of csItem.schema.tables) {
+    this.dataItem.connectionSchemaItems.forEach(csItem => {
+      csItem.schema.tables.forEach(table => {
         let fullId = tableKey({
           connectionId: csItem.connectionId,
           schemaName: table.schemaName,
@@ -221,8 +221,8 @@ export class SchemaGraphDialogComponent implements OnInit {
             connectionId: csItem.connectionId
           });
         }
-      }
-    }
+      });
+    });
 
     return allTables;
   }
@@ -230,9 +230,9 @@ export class SchemaGraphDialogComponent implements OnInit {
   updateShowNodeSubtitle(item: { checkedTables: GraphTable[] }) {
     let { checkedTables } = item;
     let connectionSchemaKeys = new Set<string>();
-    for (let table of checkedTables) {
+    checkedTables.forEach(table => {
       connectionSchemaKeys.add(`${table.connectionId}__${table.schemaName}`);
-    }
+    });
     this.showNodeSubtitle = connectionSchemaKeys.size > 1;
   }
 
@@ -262,9 +262,9 @@ export class SchemaGraphDialogComponent implements OnInit {
     let { schemaNode } = item;
     let allChecked = this.isSchemaAllChecked({ schemaNode: schemaNode });
     let newValue = !allChecked;
-    for (let tableNode of schemaNode.tables) {
+    schemaNode.tables.forEach(tableNode => {
       tableNode.checked = newValue;
-    }
+    });
     this.rebuildGraph();
   }
 
@@ -442,13 +442,13 @@ export class SchemaGraphDialogComponent implements OnInit {
 
     let edgeIds = this.edgesByTable.get(tableKey);
     if (edgeIds) {
-      for (let edgeId of edgeIds) {
+      edgeIds.forEach(edgeId => {
         let edgeSignal = this.edgeDataSignals.get(edgeId);
         if (edgeSignal) {
           let edgeData = edgeSignal();
           edgeSignal.set({ ...edgeData, highlighted: true });
         }
-      }
+      });
     }
 
     this.cd.detectChanges();
@@ -459,13 +459,13 @@ export class SchemaGraphDialogComponent implements OnInit {
 
     let edgeIds = this.edgesByTable.get(tableKey);
     if (edgeIds) {
-      for (let edgeId of edgeIds) {
+      edgeIds.forEach(edgeId => {
         let edgeSignal = this.edgeDataSignals.get(edgeId);
         if (edgeSignal) {
           let edgeData = edgeSignal();
           edgeSignal.set({ ...edgeData, highlighted: false });
         }
-      }
+      });
     }
 
     if (this.hoveredTableKey === tableKey) {
@@ -689,13 +689,13 @@ export class SchemaGraphDialogComponent implements OnInit {
     }
 
     let connectedNodes = new Set<string>([tableFullId]);
-    for (let edge of this.edges) {
+    this.edges.forEach(edge => {
       if (edge.source === tableFullId) {
         connectedNodes.add(edge.target);
       } else if (edge.target === tableFullId) {
         connectedNodes.add(edge.source);
       }
-    }
+    });
 
     let padding =
       connectedNodes.size <= 1 ? 5 : connectedNodes.size <= 1 ? 2 : 1;
