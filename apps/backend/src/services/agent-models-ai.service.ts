@@ -1,5 +1,8 @@
+import { createAnthropic } from '@ai-sdk/anthropic';
+import { createOpenAI } from '@ai-sdk/openai';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import type { LanguageModel } from 'ai';
 import { eq, sql } from 'drizzle-orm';
 import { BackendConfig } from '#backend/config/backend-config';
 import type { Db } from '#backend/drizzle/drizzle.module';
@@ -265,6 +268,26 @@ export class AgentModelsAiService {
       });
       return [];
     }
+  }
+
+  getModel(item: {
+    provider: string;
+    modelId: string;
+    apiKey: string;
+  }): LanguageModel {
+    let { provider, modelId, apiKey } = item;
+
+    if (provider === 'openai') {
+      let openai = createOpenAI({ apiKey: apiKey });
+      return openai(modelId);
+    } else if (provider === 'anthropic') {
+      let anthropic = createAnthropic({ apiKey: apiKey });
+      return anthropic(modelId);
+    }
+
+    throw new ServerError({
+      message: ErEnum.BACKEND_AGENT_PROMPT_FAILED
+    });
   }
 
   private async fetchModelsDevCapabilities(item: {

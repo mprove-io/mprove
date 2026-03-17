@@ -1,10 +1,8 @@
 import crypto from 'node:crypto';
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { createOpenAI } from '@ai-sdk/openai';
 import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Event } from '@opencode-ai/sdk/v2';
-import type { CoreMessage, LanguageModel } from 'ai';
+import type { CoreMessage } from 'ai';
 import { generateText, streamText } from 'ai';
 import { asc, eq, sql } from 'drizzle-orm';
 import { Redis } from 'ioredis';
@@ -19,6 +17,7 @@ import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { makeAscendingId } from '#common/functions/make-ascending-id';
 import { ServerError } from '#common/models/server-error';
 import { AgentDrainService } from './agent-drain.service';
+import { AgentModelsAiService } from './agent-models-ai.service';
 import { TabService } from './tab.service';
 
 @Injectable()
@@ -42,6 +41,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
   constructor(
     private cs: ConfigService<BackendConfig>,
     private agentDrainService: AgentDrainService,
+    private agentModelsAiService: AgentModelsAiService,
     private logger: Logger,
     private tabService: TabService,
     @Inject(DRIZZLE) private db: Db
@@ -72,15 +72,29 @@ export class AgentStreamAiService implements OnModuleDestroy {
         let parsed = JSON.parse(rawMessage);
         let { command, sessionId } = parsed;
 
-        if (command === 'abort' && this.activeStreams.has(sessionId)) {
-          this.handleAbortCommand({ sessionId: sessionId });
-        } else if (
-          command === 'set-title' &&
-          this.activeStreams.has(sessionId)
-        ) {
-          this.handleSetTitleCommand({
+        if (!this.activeStreams.has(sessionId)) {
+          return;
+        }
+
+        if (command === 'abort') {
+          console.log(
+            `[ai-sdk-abort] received abort for sessionId=${sessionId}`
+          );
+
+          let ac = this.abortControllers.get(sessionId);
+          ac.abort();
+        } else if (command === 'set-title') {
+          console.log(
+            `[ai-sdk-set-title] received set-title for sessionId=${sessionId}`
+          );
+
+          let titleEvent: Event = {
+            type: 'session.updated',
+            properties: { info: { title: parsed.title } }
+          } as Event;
+          this.agentDrainService.enqueue({
             sessionId: sessionId,
-            title: parsed.title
+            event: titleEvent
           });
         }
       } catch (e) {
@@ -245,39 +259,6 @@ export class AgentStreamAiService implements OnModuleDestroy {
         this.agentDrainService.cleanup(item.sessionId);
         await this.releaseStreamLock(item.sessionId);
       }
-    }
-  }
-
-  // --- Command handlers ---
-
-  private handleAbortCommand(item: { sessionId: string }): void {
-    console.log(
-      `[ai-sdk-abort] received abort for sessionId=${item.sessionId}`
-    );
-
-    let ac = this.abortControllers.get(item.sessionId);
-    if (ac) {
-      ac.abort();
-    }
-  }
-
-  private handleSetTitleCommand(item: {
-    sessionId: string;
-    title: string;
-  }): void {
-    console.log(
-      `[ai-sdk-set-title] received set-title for sessionId=${item.sessionId}`
-    );
-
-    if (this.activeStreams.has(item.sessionId)) {
-      let titleEvent: Event = {
-        type: 'session.updated',
-        properties: { info: { title: item.title } }
-      } as Event;
-      this.agentDrainService.enqueue({
-        sessionId: item.sessionId,
-        event: titleEvent
-      });
     }
   }
 
@@ -492,7 +473,7 @@ export class AgentStreamAiService implements OnModuleDestroy {
       : undefined;
 
     // Stream AI response
-    let model = this.getModel({
+    let model = this.agentModelsAiService.getModel({
       provider: provider,
       modelId: modelId,
       apiKey: apiKey
@@ -660,7 +641,7 @@ Your output must be:
   }): Promise<string | undefined> {
     let { provider, modelId, apiKey, userMessage } = item;
 
-    let model = this.getModel({
+    let model = this.agentModelsAiService.getModel({
       provider: provider,
       modelId: modelId,
       apiKey: apiKey
@@ -693,28 +674,6 @@ Your output must be:
     for (let sessionId of this.activeStreams.keys()) {
       await this.refreshStreamLock(sessionId);
     }
-  }
-
-  //
-
-  getModel(item: {
-    provider: string;
-    modelId: string;
-    apiKey: string;
-  }): LanguageModel {
-    let { provider, modelId, apiKey } = item;
-
-    if (provider === 'openai') {
-      let openai = createOpenAI({ apiKey: apiKey });
-      return openai(modelId);
-    } else if (provider === 'anthropic') {
-      let anthropic = createAnthropic({ apiKey: apiKey });
-      return anthropic(modelId);
-    }
-
-    throw new ServerError({
-      message: ErEnum.BACKEND_AGENT_PROMPT_FAILED
-    });
   }
 
   async loadMessageHistory(item: {
