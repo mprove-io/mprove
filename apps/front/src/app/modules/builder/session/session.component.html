@@ -42,15 +42,16 @@
     </div>
   </div>
 
-  <div
-    *ngIf="debugMode"
-    class="thin-scrollbar ml-16 mr-[60px] flex-grow overflow-y-auto"
-  >
-    <m-session-debug-events
-      [events]="events"
-      [expandedEvents]="debugExpandedEvents"
-      (expandedEventsChange)="debugExpandedEvents = $event"
-    ></m-session-debug-events>
+  <div *ngIf="debugMode" class="flex h-2 flex-grow flex-row">
+    <div
+      class="thin-scrollbar ml-16 mr-[60px] flex w-2 flex-1 flex-col overflow-y-auto"
+    >
+      <m-session-debug-events
+        [events]="events"
+        [expandedEvents]="debugExpandedEvents"
+        (expandedEventsChange)="debugExpandedEvents = $event"
+      ></m-session-debug-events>
+    </div>
   </div>
 
   <!-- Permission dock -->
