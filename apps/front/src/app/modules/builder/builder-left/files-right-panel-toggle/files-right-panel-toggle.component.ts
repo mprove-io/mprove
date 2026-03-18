@@ -7,8 +7,8 @@ import { UiQuery } from '#front/app/queries/ui.query';
   templateUrl: 'files-right-panel-toggle.component.html'
 })
 export class FilesRightPanelToggleComponent {
-  @Input()
-  isDisabled: boolean;
+  // @Input()
+  isDisabled: boolean = false;
 
   @Input()
   needValidate: boolean;

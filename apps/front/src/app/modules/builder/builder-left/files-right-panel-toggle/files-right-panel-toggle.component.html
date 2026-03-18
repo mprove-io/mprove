@@ -11,7 +11,6 @@
   <button
     class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded"
     (click)="rightOnClick($event, fileNodeId)"
-    [disabled]="isDisabled === true"
   >
     <m-right-panel-icon
       class="text-m600"
@@ -21,20 +20,20 @@
 </div>
 
 <ng-template #templateRightPanel>
-  <div *ngIf="needValidate === true"
+  <!-- <div *ngIf="needValidate === true"
     >Need to validate files to enable right panel</div
-  >
+  > -->
 
-  <div *ngIf="needValidate === false && repoConflictsIsEmpty === false"
+  <!-- <div *ngIf="needValidate === false && repoConflictsIsEmpty === false"
     >Need to resolve conflicts to enable right panel</div
-  >
+  > -->
 
-  <div
+  <!-- <div
     *ngIf="
       needValidate === false &&
       repoConflictsIsEmpty === true &&
       structErrorsIsEmpty === false
     "
     >Need to resolve errors to enable right panel</div
-  >
+  > -->
 </ng-template>

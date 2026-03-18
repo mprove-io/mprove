@@ -148,11 +148,6 @@
                   [needValidate]="nav?.needValidate === true"
                   [repoConflictsIsEmpty]="repo?.conflicts?.length === 0"
                   [structErrorsIsEmpty]="struct?.errors?.length === 0"
-                  [isDisabled]="
-                    nav?.needValidate === true ||
-                    repo?.conflicts?.length > 0 ||
-                    struct?.errors?.length > 0
-                  "
                 ></m-files-right-panel-toggle>
               </div>
             </div>
@@ -262,11 +257,6 @@
                         [needValidate]="nav?.needValidate === true"
                         [repoConflictsIsEmpty]="repo?.conflicts?.length === 0"
                         [structErrorsIsEmpty]="struct?.errors?.length === 0"
-                        [isDisabled]="
-                          nav?.needValidate === true ||
-                          repo?.conflicts?.length > 0 ||
-                          struct?.errors?.length > 0
-                        "
                       ></m-files-right-panel-toggle>
 
                       <div
