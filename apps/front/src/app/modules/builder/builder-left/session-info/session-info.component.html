@@ -24,6 +24,11 @@
 
           <div class="flex flex-col gap-3">
             <div class="grid grid-cols-[auto_1fr] gap-x-4">
+              <div class="text-s400 text-base font-medium">Type</div>
+              <div class="text-s400 text-base">{{ session?.type || '-' }}</div>
+            </div>
+
+            <div class="grid grid-cols-[auto_1fr] gap-x-4">
               <div class="text-s400 text-base font-medium">Status</div>
               <div class="text-s400 text-base">{{
                 session?.status === sessionStatusEnum.Archived
