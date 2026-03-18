@@ -411,7 +411,12 @@ export class AgentStreamAiService implements OnModuleDestroy {
     let userMsgEvent: Event = {
       type: 'message.updated',
       properties: {
-        info: { id: userMessageId, sessionID: sessionId, role: 'user' }
+        info: {
+          id: userMessageId,
+          sessionID: sessionId,
+          role: 'user',
+          model: { providerID: provider, modelID: modelId }
+        }
       }
     } as Event;
     this.agentDrainService.enqueue({
