@@ -14,6 +14,7 @@ import type {
 } from '#backend/drizzle/postgres/schema/_tabs';
 import { connectionsTable } from '#backend/drizzle/postgres/schema/connections';
 import { makeTsNumber } from '#backend/functions/make-ts-number';
+import { sortSchemaColumns } from '#backend/functions/sort-schema-columns';
 import { ThrottlerUserIdGuard } from '#backend/guards/throttler-user-id.guard';
 import { ValidateRequestGuard } from '#backend/guards/validate-request.guard';
 import { BridgesService } from '#backend/services/db/bridges.service';
@@ -431,10 +432,12 @@ export class GetConnectionSchemasController {
             }
           );
 
+          let sortedColumns = sortSchemaColumns({ columns: combinedColumns });
+
           let combinedTable: CombinedSchemaTable = {
             tableName: rawTable.tableName,
             tableType: rawTable.tableType,
-            columns: combinedColumns,
+            columns: sortedColumns,
             indexes: rawTable.indexes,
             description: extraTable?.description
           };

@@ -255,8 +255,8 @@ export class SchemasComponent implements OnInit {
           schemaDisplayName: schemaName,
           description: combinedSchema.description,
           children: combinedSchema.tables.map(table => {
-            let columnChildren: SchemaTreeNode[] = table.columns
-              .map((col, colIdx) => ({
+            let columnChildren: SchemaTreeNode[] = table.columns.map(
+              (col, colIdx) => ({
                 id: `${cs.connectionId}__${schemaName}__${table.tableName}__col__${colIdx}`,
                 name: col.columnName,
                 searchName: col.columnName,
@@ -273,8 +273,8 @@ export class SchemasComponent implements OnInit {
                 references: col.references,
                 description: col.description,
                 example: col.example
-              }))
-              .sort((a, b) => a.name.localeCompare(b.name));
+              })
+            );
 
             let indexChildren: SchemaTreeNode[] = table.indexes.map(
               (idx, idxIdx) => {
