@@ -26,6 +26,8 @@ export const MODEL_PROVIDERS: { provider_id: string; label: string }[] = [
   { provider_id: 'opencode', label: 'Zen' }
 ];
 
+export const ALLOWED_MODEL_KEYWORDS: string[] = ['opus', 'sonnet', 'codex'];
+
 export const PASSWORD_EXPIRES_OFFSET = 86400000;
 
 export const IDEMP_EXPIRE_SECONDS = 600;

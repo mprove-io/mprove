@@ -39,7 +39,7 @@ export class GetAgentProviderModelsController {
 
     let [modelsAi, modelsOpencode] = await Promise.all([
       sessionTypes.includes(SessionTypeEnum.Explorer)
-        ? this.agentModelsAiSdkService.listModels({
+        ? this.agentModelsAiSdkService.getAiModels({
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,
@@ -48,7 +48,7 @@ export class GetAgentProviderModelsController {
           })
         : [],
       sessionTypes.includes(SessionTypeEnum.Editor)
-        ? this.agentModelsOpencodeService.loadOpencodeModels({
+        ? this.agentModelsOpencodeService.getOpencodeModels({
             projectId: projectId,
             openaiApiKey: project.openaiApiKey,
             anthropicApiKey: project.anthropicApiKey,

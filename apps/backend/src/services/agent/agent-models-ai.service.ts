@@ -10,6 +10,7 @@ import { DRIZZLE } from '#backend/drizzle/drizzle.module';
 import { projectsTable } from '#backend/drizzle/postgres/schema/projects';
 import { logToConsoleBackend } from '#backend/functions/log-to-console-backend';
 import type { ModelsDevResponse } from '#backend/functions/opencode-models-dev';
+import { ALLOWED_MODEL_KEYWORDS } from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -26,7 +27,7 @@ export class AgentModelsAiService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async listModels(item: {
+  async getAiModels(item: {
     projectId: string;
     openaiApiKey?: string;
     anthropicApiKey?: string;
@@ -66,6 +67,11 @@ export class AgentModelsAiService {
     let models = await this.fetchModels({
       openaiApiKey: openaiApiKey,
       anthropicApiKey: anthropicApiKey
+    });
+
+    models = models.filter(m => {
+      let idLower = m.id.toLowerCase();
+      return ALLOWED_MODEL_KEYWORDS.some(kw => idLower.includes(kw));
     });
 
     await this.writeCache({

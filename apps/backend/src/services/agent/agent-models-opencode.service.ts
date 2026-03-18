@@ -10,7 +10,10 @@ import {
   fromModelsDevProvider,
   type ModelsDevResponse
 } from '#backend/functions/opencode-models-dev';
-import { MODEL_PROVIDERS } from '#common/constants/top-backend';
+import {
+  ALLOWED_MODEL_KEYWORDS,
+  MODEL_PROVIDERS
+} from '#common/constants/top-backend';
 import { ErEnum } from '#common/enums/er.enum';
 import { LogLevelEnum } from '#common/enums/log-level.enum';
 import { isDefined } from '#common/functions/is-defined';
@@ -27,7 +30,7 @@ export class AgentModelsOpencodeService {
     @Inject(DRIZZLE) private db: Db
   ) {}
 
-  async loadOpencodeModels(item: {
+  async getOpencodeModels(item: {
     projectId: string;
     openaiApiKey?: string;
     anthropicApiKey?: string;
@@ -70,6 +73,11 @@ export class AgentModelsOpencodeService {
       openaiApiKey: openaiApiKey,
       anthropicApiKey: anthropicApiKey,
       zenApiKey: zenApiKey
+    });
+
+    models = models.filter(m => {
+      let idLower = m.id.toLowerCase();
+      return ALLOWED_MODEL_KEYWORDS.some(kw => idLower.includes(kw));
     });
 
     await this.writeCache({
