@@ -92,7 +92,6 @@ import { FolderClosedIconComponent } from './icons/folder-closed-icon/folder-clo
 import { FolderOpenIconComponent } from './icons/folder-open-icon/folder-open-icon.component';
 import { FormulaIconComponent } from './icons/formula-icon/formula-icon.component';
 import { FullScreenIconComponent } from './icons/full-screen-icon/full-screen-icon.component';
-import { InfoIconComponent } from './icons/info-icon/info-icon.component';
 import { LeftPanelIconComponent } from './icons/left-panel-icon/left-panel-icon.component';
 import { LinkIconComponent } from './icons/link-icon/link-icon.component';
 import { LinkOffIconComponent } from './icons/link-off-icon/link-off-icon.component';
@@ -101,7 +100,9 @@ import { LockClosedIconComponent } from './icons/lock-closed-icon/lock-closed-ic
 import { MagGlassIconComponent } from './icons/mag-glass-icon/mag-glass-icon.component';
 import { MiniChartsIconComponent } from './icons/mini-charts-icon/mini-charts-icon.component';
 import { MinusSmIconComponent } from './icons/minus-sm-icon/minus-sm-icon.component';
+import { NetworkIconComponent } from './icons/network-icon/network-icon.component';
 import { ProviderIconComponent } from './icons/provider-icon/provider-icon.component';
+import { QuestionMarkCircleIconComponent } from './icons/question-mark-circle-icon/question-mark-circle-icon.component';
 import { RefreshIconComponent } from './icons/refresh-icon/refresh-icon.component';
 import { ResizeIconComponent } from './icons/resize-icon/resize-icon.component';
 import { RightPanelIconComponent } from './icons/right-panel-icon/right-panel-icon.component';
@@ -111,6 +112,7 @@ import { SearchIconComponent } from './icons/search-icon/search-icon.component';
 import { SettingsIconComponent } from './icons/settings-icon/settings-icon.component';
 import { StopIconComponent } from './icons/stop-icon/stop-icon.component';
 import { TableCellsIconComponent } from './icons/table-cells-icon/table-cells-icon.component';
+import { TableIconComponent } from './icons/table-icon/table-icon.component';
 import { TrashIconComponent } from './icons/trash-icon/trash-icon.component';
 import { TreeIconComponent } from './icons/tree-icon/tree-icon.component';
 import { TreeStructureIconComponent } from './icons/tree-structure-icon/tree-structure-icon.component';
@@ -270,7 +272,9 @@ let sharedComponents = [
   LinkIconComponent,
   LinkOffIconComponent,
   FormulaIconComponent,
-  InfoIconComponent,
+  NetworkIconComponent,
+  QuestionMarkCircleIconComponent,
+  TableIconComponent,
   ClockIconComponent,
   CopyIconComponent,
   ReportSaveAsDialogComponent,

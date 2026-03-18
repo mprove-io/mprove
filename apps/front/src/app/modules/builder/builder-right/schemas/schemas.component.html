@@ -26,6 +26,28 @@
 
     <div
       class="ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center"
+      [tp]="
+        showQuestionMarks ? 'Show Descriptions: ON' : 'Show Descriptions: OFF'
+      "
+      tpPlacement="top"
+    >
+      <button
+        type="button"
+        class="flex h-9 w-9 cursor-pointer items-center justify-center focus:outline-none"
+        [ngClass]="{
+          'text-green-600': showQuestionMarks,
+          'text-s500': !showQuestionMarks
+        }"
+        (click)="toggleQuestionMarks()"
+      >
+        <m-question-mark-circle-icon
+          class="scale-125"
+        ></m-question-mark-circle-icon>
+      </button>
+    </div>
+
+    <div
+      class="ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center"
       [tp]="showIndexes ? 'Swos Indexes: ON' : 'Show Indexes: OFF'"
       tpPlacement="top"
     >
@@ -45,7 +67,7 @@
     <button
       tp="Refresh schemas"
       type="button"
-      class="hover:bg-m200 ml-5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      class="hover:bg-m200 ml-3 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
       (click)="loadSchemas()"
     >
       <m-refresh-icon></m-refresh-icon>
@@ -67,6 +89,17 @@
     </div>
 
     <div class="flex flex-1"></div>
+
+    <button
+      *ngIf="schemasLoaded && treeNodes.length > 0"
+      tp="Graph all schemas"
+      tpPlacement="top"
+      type="button"
+      class="hover:bg-m200 text-s500 mr-10 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+      (click)="graphAllOnClick()"
+    >
+      <m-network-icon></m-network-icon>
+    </button>
   </div>
 
   <div class="divide-s300 ml-6 mr-6 flex flex-col divide-y">
@@ -145,30 +178,40 @@
                     node.data.tableType !== 'BASE TABLE' &&
                     node.data.tableType !== 'MANAGED'
                   "
-                  class="ml-3 flex-shrink-0 uppercase text-blue-400"
-                  >{{ node.data.tableType }}</span
+                  class="text-s400 ml-3 flex-shrink-0 uppercase"
+                  >[{{ node.data.tableType }}]</span
                 >
-              </div>
 
-              <button
-                *ngIf="
-                  node.data.nodeType === 'connection' && node.data.description
-                "
-                type="button"
-                [tp]="node.data.description"
-                tpPlacement="top"
-                class="text-s500 invisible ml-2 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-                (click)="$event.stopPropagation()"
-              >
-                <m-info-icon></m-info-icon>
-              </button>
+                <button
+                  *ngIf="showQuestionMarks && node.data.description"
+                  type="button"
+                  [tp]="descriptionTemplate"
+                  [tpHideOnEscape]="true"
+                  tpVariation="menu"
+                  className="my-menu"
+                  class="hover:bg-m200 hover:text-s1 text-s400 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  (click)="$event.stopPropagation()"
+                >
+                  <m-question-mark-circle-icon></m-question-mark-circle-icon>
+                </button>
+
+                <ng-template #descriptionTemplate>
+                  <div
+                    class="border-s4 bg-m0 w-max max-w-[800px] rounded-md border-2 shadow-xl"
+                  >
+                    <div class="text-s1 px-4 py-2 text-base">
+                      {{ node.data.description }}
+                    </div>
+                  </div>
+                </ng-template>
+              </div>
 
               <button
                 *ngIf="node.data.nodeType === 'connection'"
                 type="button"
                 tp="Copy schema name"
                 tpPlacement="top"
-                class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-auto flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
                 (click)="
                   copyToClipboard({
                     text: node.data.schemaDisplayName,
@@ -182,21 +225,12 @@
               <button
                 *ngIf="node.data.nodeType === 'connection'"
                 type="button"
-                class="border-s400 text-s500 ml-2 flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-500 hover:text-blue-500 focus:outline-none"
+                tp="Graph"
+                tpPlacement="top"
+                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
                 (click)="graphOnClick({ node: node, event: $event })"
               >
-                Graph
-              </button>
-
-              <button
-                *ngIf="node.data.nodeType === 'table' && node.data.description"
-                type="button"
-                [tp]="node.data.description"
-                tpPlacement="top"
-                class="text-s500 invisible ml-2 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
-                (click)="$event.stopPropagation()"
-              >
-                <m-info-icon></m-info-icon>
+                <m-network-icon></m-network-icon>
               </button>
 
               <button
@@ -204,7 +238,7 @@
                 type="button"
                 tp="Copy table name"
                 tpPlacement="top"
-                class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-auto flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
                 (click)="
                   copyToClipboard({
                     text: node.data.tableName,
@@ -218,42 +252,21 @@
               <button
                 *ngIf="node.data.nodeType === 'table'"
                 type="button"
-                class="border-s400 text-s500 invisible ml-2 flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-400 hover:text-blue-400 focus:outline-none group-hover:visible"
+                tp="Sample"
+                tpPlacement="top"
+                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
                 (click)="sampleOnClick({ node: node, event: $event })"
               >
-                Sample
+                <m-table-icon></m-table-icon>
               </button>
 
               <div
                 *ngIf="node.data.nodeType === 'column'"
                 class="ml-2 flex min-w-0 flex-1 items-center truncate text-[16px]"
               >
-                <span class="text-s1 font-semibold">{{
-                  node.data.columnName
-                }}</span>
-
-                <span
-                  *ngIf="node.data.isNullable === false"
-                  class="text-s400 ml-3"
-                  >not null</span
-                >
-
-                <span class="text-s400 ml-3 uppercase">{{
-                  node.data.dataType
-                }}</span>
-
-                <span *ngIf="node.data.isPrimaryKey" class="ml-3 text-blue-400"
-                  >PRIMARY</span
-                >
-                <span
-                  *ngIf="node.data.isUnique && !node.data.isPrimaryKey"
-                  class="ml-3 text-blue-400"
-                  >UNIQUE</span
-                >
-
                 <button
                   *ngIf="node.data.references?.length > 0"
-                  class="hover:bg-m200 text-s1 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  class="hover:bg-m200 text-s1 mr-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
                   [tp]="fkTemplate"
                   [tpHideOnEscape]="true"
                   tpVariation="menu"
@@ -263,9 +276,13 @@
                   <m-link-icon></m-link-icon>
                 </button>
 
+                <span class="text-s1 font-semibold">{{
+                  node.data.columnName
+                }}</span>
+
                 <ng-template #fkTemplate>
                   <div
-                    class="border-s4 bg-m0 w-max rounded-md border-2 shadow-xl"
+                    class="border-s4 bg-m0 w-max max-w-[800px] rounded-md border-2 shadow-xl"
                   >
                     <div
                       *ngFor="let ref of node.data.references"
@@ -298,21 +315,9 @@
                   </div>
                 </ng-template>
 
-                <button
-                  *ngIf="node.data.description || node.data.example"
-                  class="text-s500 hover:bg-m200 ml-2 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded focus:outline-none"
-                  [tp]="infoTemplate"
-                  [tpHideOnEscape]="true"
-                  tpVariation="menu"
-                  className="my-menu"
-                  (click)="$event.stopPropagation()"
-                >
-                  <m-info-icon></m-info-icon>
-                </button>
-
-                <ng-template #infoTemplate>
+                <ng-template #columnQuestionTemplate>
                   <div
-                    class="border-s4 bg-m0 w-max max-w-xs rounded-md border-2 shadow-xl"
+                    class="border-s4 bg-m0 w-max max-w-[800px] rounded-md border-2 shadow-xl"
                   >
                     <div
                       *ngIf="node.data.description"
@@ -328,6 +333,41 @@
                     </div>
                   </div>
                 </ng-template>
+
+                <span
+                  *ngIf="node.data.isNullable === false"
+                  class="text-s400 ml-3"
+                  >not null</span
+                >
+
+                <span class="text-s400 ml-3 uppercase">{{
+                  node.data.dataType
+                }}</span>
+
+                <span *ngIf="node.data.isPrimaryKey" class="text-s400 ml-3"
+                  >[PRIMARY]</span
+                >
+                <span
+                  *ngIf="node.data.isUnique && !node.data.isPrimaryKey"
+                  class="text-s400 ml-3"
+                  >[UNIQUE]</span
+                >
+
+                <button
+                  *ngIf="
+                    showQuestionMarks &&
+                    (node.data.description || node.data.example)
+                  "
+                  type="button"
+                  [tp]="columnQuestionTemplate"
+                  [tpHideOnEscape]="true"
+                  tpVariation="menu"
+                  className="my-menu"
+                  class="hover:bg-m200 hover:text-s1 text-s400 ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none"
+                  (click)="$event.stopPropagation()"
+                >
+                  <m-question-mark-circle-icon></m-question-mark-circle-icon>
+                </button>
               </div>
 
               <button
@@ -335,7 +375,7 @@
                 type="button"
                 tp="Copy column name"
                 tpPlacement="top"
-                class="text-s500 invisible ml-auto flex h-7 w-7 flex-shrink-0 items-center justify-center rounded hover:text-blue-500 focus:outline-none group-hover:visible"
+                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-auto flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
                 (click)="
                   copyToClipboard({
                     text: node.data.columnName,
@@ -349,10 +389,12 @@
               <button
                 *ngIf="node.data.nodeType === 'column'"
                 type="button"
-                class="border-s400 text-s500 invisible ml-2 flex flex-shrink-0 select-none items-center rounded border px-3 py-0.5 text-base hover:border-blue-400 hover:text-blue-400 focus:outline-none group-hover:visible"
+                tp="Sample"
+                tpPlacement="top"
+                class="hover:bg-m200 hover:text-s1 text-s500 invisible ml-2 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded focus:outline-none group-hover:visible"
                 (click)="sampleOnClick({ node: node, event: $event })"
               >
-                Sample
+                <m-table-icon></m-table-icon>
               </button>
             </div>
           </ng-template>

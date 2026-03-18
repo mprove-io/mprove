@@ -69,6 +69,7 @@ export class SchemasComponent implements OnInit {
   searchWord: string;
   searchTimer: any;
   showIndexes = false;
+  showQuestionMarks = false;
 
   actionMapping: IActionMapping = {
     mouse: {}
@@ -156,6 +157,10 @@ export class SchemasComponent implements OnInit {
     this.searchWord = undefined;
     this.applyFilter();
     this.cd.detectChanges();
+  }
+
+  toggleQuestionMarks() {
+    this.showQuestionMarks = !this.showQuestionMarks;
   }
 
   toggleIndexes() {
@@ -312,6 +317,21 @@ export class SchemasComponent implements OnInit {
     nodes.sort((a, b) => a.name.localeCompare(b.name));
 
     return nodes;
+  }
+
+  graphAllOnClick() {
+    let nav = this.navQuery.getValue();
+
+    let dialogData: SchemaGraphDialogData = {
+      combinedSchemaItems: this.combinedSchemaItems,
+      connectionId: undefined,
+      schemaName: undefined,
+      tableName: undefined,
+      projectId: nav.projectId,
+      envId: nav.envId
+    };
+
+    this.myDialogService.showSchemaGraphDialog(dialogData);
   }
 
   graphOnClick(item: { node: TreeNode; event: MouseEvent }) {

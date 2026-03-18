@@ -132,12 +132,19 @@ export class SchemaGraphDialogComponent implements OnInit {
   buildSchemaTree() {
     this.schemaNodes = [];
 
+    let selectAll = !isDefined(this.dataItem.connectionId);
+
     this.dataItem.combinedSchemaItems.forEach(csItem => {
       if (isDefined(csItem.errorMessage)) {
         return;
       }
 
       csItem.schemas.forEach(combinedSchema => {
+        let isMatch =
+          selectAll ||
+          (csItem.connectionId === this.dataItem.connectionId &&
+            combinedSchema.schemaName === this.dataItem.schemaName);
+
         let tableNodes: SchemaGraphTableNode[] = combinedSchema.tables
           .map(t => ({
             tableFullId: tableKey({
@@ -148,18 +155,14 @@ export class SchemaGraphDialogComponent implements OnInit {
             connectionId: csItem.connectionId,
             schemaName: combinedSchema.schemaName,
             tableName: t.tableName,
-            checked:
-              csItem.connectionId === this.dataItem.connectionId &&
-              combinedSchema.schemaName === this.dataItem.schemaName
+            checked: isMatch
           }))
           .sort((a, b) => a.tableName.localeCompare(b.tableName));
 
         this.schemaNodes.push({
           connectionId: csItem.connectionId,
           schemaName: combinedSchema.schemaName,
-          expanded:
-            csItem.connectionId === this.dataItem.connectionId &&
-            combinedSchema.schemaName === this.dataItem.schemaName,
+          expanded: isMatch,
           tables: tableNodes
         });
       });
