@@ -3,8 +3,8 @@ packages:
   - libs/*
 
 catalog:
-  '@opencode-ai/sdk': 1.2.24
-  'opencode-ai': 1.2.24
+  '@opencode-ai/sdk': 1.2.27
+  'opencode-ai': 1.2.27
   'ai': 5.0.124
   '@ai-sdk/openai': 2.0.89
   '@ai-sdk/anthropic': 2.0.65
