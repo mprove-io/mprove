@@ -237,15 +237,35 @@ export class BuilderComponent implements OnInit, OnDestroy {
       this.uiQuery.updatePart({ secondFileNodeId: undefined });
     }
 
-    if (tab === this.builderRight) {
-      return;
-    }
-
-    this.uiQuery.updatePart({ builderRight: tab });
+    let isChangesLeft =
+      (this.builderLeft === BuilderLeftEnum.ChangesToCommit ||
+        this.builderLeft === BuilderLeftEnum.ChangesToPush) &&
+      isDefined(this.file.fileId);
 
     let urlTree = this.router.parseUrl(this.router.url);
-    urlTree.queryParams['right'] = tab;
-    this.location.replaceState(this.router.serializeUrl(urlTree));
+
+    if (tab === this.builderRight) {
+      if (isChangesLeft) {
+        this.uiQuery.updatePart({ builderLeft: BuilderLeftEnum.Tree });
+        urlTree.queryParams['left'] = BuilderLeftEnum.Tree;
+        this.location.replaceState(this.router.serializeUrl(urlTree));
+      }
+    } else {
+      if (isChangesLeft) {
+        this.uiQuery.updatePart({
+          builderRight: tab,
+          builderLeft: BuilderLeftEnum.Tree
+        });
+      } else {
+        this.uiQuery.updatePart({ builderRight: tab });
+      }
+
+      urlTree.queryParams['right'] = tab;
+      if (isChangesLeft) {
+        urlTree.queryParams['left'] = BuilderLeftEnum.Tree;
+      }
+      this.location.replaceState(this.router.serializeUrl(urlTree));
+    }
   }
 
   changesOnClick() {
